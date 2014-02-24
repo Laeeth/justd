@@ -15,10 +15,11 @@
 /*     wln("fdsf"); */
 /* } */
 
-/**
- * Bounded Arithmetic Wrapper Type.
- *
- * Similar Type Ada Range Types.
+/** Bounded Arithmetic Wrapper Type.
+    Similar to Ada Range Types.
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
  */
 module bound;
 

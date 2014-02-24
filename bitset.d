@@ -1,6 +1,10 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Fixed-Sized Bit-Array */
+/** Fixed-Sized Bit-Array.
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+ */
 module bitset;
 
 import core.bitop;

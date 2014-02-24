@@ -1,6 +1,10 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Operations for Creating Temporary Files and Directories. */
+/** Operations for Creating Temporary Files and Directories.
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+ */
 module tempfs;
 
 /** Create a New Temporary File starting with ($D namePrefix) and ending with 6

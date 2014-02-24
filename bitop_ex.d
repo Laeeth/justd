@@ -1,7 +1,9 @@
 #!/usr/bin/env rdmd-dev-module
 
 /** Various extensions to core.bitop and std.bitmanip.
-    TODO: Why isn't this already in Phobos?
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
 */
 module bitop_ex;
 

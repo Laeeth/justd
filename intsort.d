@@ -2,9 +2,7 @@
 
 /** Integer Sorting Algorithms.
     Copyright: Per Nordlöw 2014-.
-
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
-
     Authors: $(WEB Per Nordlöw)
  */
 module isort;

@@ -1,6 +1,11 @@
 #!/usr/bin/env rdmd-dev-module
 
 /** First and Higher Order Statistics: $(LUCKY Histograms) and $(LUCKY N-grams).
+
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+
     TODO: Replace static ifs with static final switch when Issue 6921 is fixed
 
     TODO: Remove overloads using std.string:representation and use sparse maps

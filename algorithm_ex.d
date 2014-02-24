@@ -1,6 +1,10 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Extensions to std.algorithm. */
+/** Extensions to std.algorithm.
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+ */
 module algorithm_ex;
 
 import std.algorithm: reduce, min, max;

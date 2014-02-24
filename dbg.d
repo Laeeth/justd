@@ -1,6 +1,10 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Various debug tools. */
+/** Various debug tools.
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+*/
 module dbg;
 
 /* http://stackoverflow.com/questions/19413340/escaping-safety-with-debug-statements */
