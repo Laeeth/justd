@@ -1,1 +1,1 @@
-../msgpack.d
+msgpack-d/src/msgpack.d

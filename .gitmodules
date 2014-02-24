@@ -1,0 +1,24 @@
+[submodule "msgpack-d"]
+	path = msgpack-d
+	url = https://github.com/msgpack/msgpack-d.git
+[submodule "backtrace-d"]
+	path = backtrace-d
+	url = https://github.com/yazd/backtrace-d.git
+[submodule "dunit"]
+	path = dunit
+	url = https://github.com/linkrope/dunit.git
+[submodule "Pegged"]
+	path = Pegged
+	url = https://github.com/PhilippeSigaud/Pegged.git
+[submodule "Dgraph"]
+	path = Dgraph
+	url = https://github.com/WebDrake/Dgraph.git
+[submodule "lexer-demo"]
+	path = lexer-demo
+	url = https://github.com/Hackerpilot/lexer-demo.git
+[submodule "DCD"]
+	path = DCD
+	url = https://github.com/Hackerpilot/DCD.git
+[submodule "arsd"]
+	path = arsd
+	url = https://github.com/adamdruppe/misc-stuff-including-D-programming-language-web-stuff.git

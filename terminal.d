@@ -1,1 +1,1 @@
-../terminal.d
+arsd/terminal.d
