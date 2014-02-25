@@ -6,18 +6,18 @@ import std.range: isInputRange, ElementType;
 import std.traits: CommonType, isFloatingPoint;
 import std.algorithm: reduce;
 
-import std.numeric: sum;
+/* import std.numeric: sum; */
 
 /** TODO: Issue 4725: Remove when sum is standard in Phobos.
     See also: http://d.puremagic.com/issues/show_bug.cgi?id=4725
     See also: https://github.com/D-Programming-Language/phobos/pull/1205
     See also: http://forum.dlang.org/thread/bug-4725-3@http.d.puremagic.com%2Fissues%2F
  */
-/* auto sum(Range, SumType = ElementType!Range)(Range range) */
-/*     @safe pure nothrow if (isInputRange!Range) */
-/* { */
-/*     return reduce!"a+b"(0, range); */
-/* } */
+auto sum(Range, SumType = ElementType!Range)(Range range)
+    @safe pure nothrow if (isInputRange!Range)
+{
+    return reduce!"a+b"(0, range);
+}
 unittest { assert([1, 2, 3, 4].sum == 10); }
 
 /** TODO: Remove when product is standard in Phobos. */
@@ -63,11 +63,20 @@ version(none) {
 
 /** Returns: Element in $(D r ) that minimizes $(D fun). TODO: Add to Phobos?
     LaTeX: \underset{x}{\arg\min} */
-    auto argmin(alias fun, Range)(in Range r)
+    auto argmin_(alias fun, Range)(in Range r)
         @safe pure if (isInputRange!Range &&
                        is(typeof(fun(r.front) < fun(r.front)) == bool))
     {
-        return typeof(r.front).max.reduce!((a,b) => fun(a)<fun(b)?a:b)(r);
+        auto bestX = r.front;
+        auto bestY = fun(bestX);
+        r.popFront();
+        foreach (e; r) {
+            auto candY = fun(e);     // candidate
+            if (candY > bestY) continue;
+            bestX = e;
+            bestY = candY;
+        }
+        return bestX;
     }
     unittest {
         assert(argmin!(x => x*x)([1, 2, 3]) == 1);
@@ -76,17 +85,52 @@ version(none) {
 
 /** Returns: Element in $(D r ) that maximizes $(D fun). TODO: Add to Phobos?
     LaTeX: \underset{x}{\arg\max} */
-    auto argmax(alias fun, Range)(in Range r)
+    auto argmax_(alias fun, Range)(in Range r)
         @safe pure if (isInputRange!Range &&
                        is(typeof(fun(r.front) > fun(r.front)) == bool))
     {
-        return typeof(r.front).min.reduce!((a,b) => fun(a)>fun(b)?a:b)(r);
+        auto bestX = r.front;
+        auto bestY = fun(bestX);
+        r.popFront();
+        foreach (e; r) {
+            auto candY = fun(e);     // candidate
+            if (candY < bestY) continue;
+            bestX = e;
+            bestY = candY;
+        }
+        return bestX;
     }
     unittest {
         assert(argmax!(x => x*x)([1, 2, 3]) == 3);
         assert(argmax!(x => x*x)([3, 2, 1]) == 3);
     }
 
+}
+
+/** Returns: Element in $(D r ) that minimizes $(D fun). TODO: Add to Phobos?
+    LaTeX: \underset{x}{\arg\min} */
+auto argmin(alias fun, Range)(in Range r)
+    @safe pure if (isInputRange!Range &&
+                   is(typeof(fun(r.front) < fun(r.front)) == bool))
+{
+    return typeof(r.front).max.reduce!((a,b) => fun(a) < fun(b) ? a : b)(r);
+}
+unittest {
+    assert(argmin!(x => x*x)([1, 2, 3]) == 1);
+    assert(argmin!(x => x*x)([3, 2, 1]) == 1);
+}
+
+/** Returns: Element in $(D r ) that maximizes $(D fun). TODO: Add to Phobos?
+    LaTeX: \underset{x}{\arg\max} */
+auto argmax(alias fun, Range)(in Range r)
+    @safe pure if (isInputRange!Range &&
+                   is(typeof(fun(r.front) > fun(r.front)) == bool))
+{
+    return typeof(r.front).min.reduce!((a,b) => fun(a) > fun(b) ? a : b)(r);
+}
+unittest {
+    assert(argmax!(x => x*x)([1, 2, 3]) == 3);
+    assert(argmax!(x => x*x)([3, 2, 1]) == 3);
 }
 
 // ==============================================================================================
