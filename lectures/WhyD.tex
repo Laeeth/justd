@@ -795,7 +795,8 @@ void main(string[] args)
   \item This has previoulsy only been available in hardware languages such as
     VHDL with huge compilation times
   \item \textbf{Unique Feature}: Deduction of purity (\texttt{pure}) and Safety
-    (\texttt{@safe}) if compiler has the source!
+    (\texttt{@safe}) if compiler has the source! Purity is useful in, for
+    instance, \textbf{common sub-expression elimination}.
   \end{itemize}
 \end{frame}
 
@@ -959,9 +960,10 @@ alias goodName = badName; // potentially many overloads
 \begin{frame}[fragile]{Easy, Flexible \& Safe Module System}
   \begin{itemize}[<+->]
   \item As easy as the easiest languages such as Python and Matlab, but typesafe
-  \item No need for separate .h and .c to keep in sync by default...but
-  \item Compiler can auto-generate interface files based on source code
-    complexity if needed
+  \item No need for separate \texttt{.h} and \texttt{.c} to keep in sync by
+    default...but
+  \item \textbf{Unique Feature}: Compiler can \textbf{auto-generate interface
+      files} if needed!
   \item Consequence: Many github projects are one D file!
   \end{itemize}
 \end{frame}
