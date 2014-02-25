@@ -34,7 +34,7 @@ string nthString(T)(T n) @safe pure {
     case 17: s = "seventeenth"; break;
     case 18: s = "eighteenth"; break;
     case 19: s = "nineteenth"; break;
-    case 20: s = "twenteenth"; break;
+    case 20: s = "twentieth"; break;
     }
     return s;
 }
