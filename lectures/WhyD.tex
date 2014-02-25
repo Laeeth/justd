@@ -820,7 +820,8 @@ void main(string[] args)
 \begin{frame}[fragile]{Message Passing}
   \begin{itemize}[<+->]
   \item Unique Feature: Messages are automatically dynamically typed and can be
-    pattern matched on!
+    pattern matched on like in dynamic languages! Enabled by close interaction
+    with compiler, type mangling (serialization) etc.
 \begin{lstlisting}[frame=single]
 import std.concurrency;
 void f(Tid tid) {
