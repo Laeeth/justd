@@ -60,12 +60,16 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
 
    Params:
      radixNBits = Number of bits in Radix (Digit)
+
+   TODO: x[] = y[] not needed when input is mutable
+
+   TODO: Restrict fun.
  */
-void radixSortImpl(R, uint radixNBits = 16)(R x,
-                                            const bool descending = false,
-                                            bool doInPlace = false,
-                                            ElementType!R elementMin = ElementType!(R).max,
-                                            ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
+void radixSortImpl(R, uint radixNBits = 16, alias fun = "a")(R x,
+                                                             const bool descending = false,
+                                                             bool doInPlace = false,
+                                                             ElementType!R elementMin = ElementType!(R).max,
+                                                             ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
     if (isBidirectionalRange!R &&
         (isIntegral!(ElementType!R) ||
          isFloatingPoint!(ElementType!R))) // if doInPlace isRandomAccessRange else isBidirectionalRange
@@ -198,7 +202,7 @@ void radixSortImpl(R, uint radixNBits = 16)(R x,
                 y[--O[i]] = x[j]; // reorder into y
             }
 
-            x[] = y[];            // put them back into $(D x)
+            x[] = y[];            // put them back into $(D x). TODO: Not needed
         }
     }
 }
