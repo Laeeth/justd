@@ -25,3 +25,6 @@
 [submodule "nordlow-msgpack-d"]
 	path = nordlow-msgpack-d
 	url = https://github.com/nordlow/msgpack-d.git
+[submodule "lectures/minted"]
+	path = lectures/minted
+	url = https://github.com/gpoore/minted.git
