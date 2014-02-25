@@ -1,6 +1,6 @@
 [submodule "msgpack-d"]
 	path = msgpack-d
-	url = https://github.com/msgpack/msgpack-d.git
+	url = https://github.com/nordlow/msgpack-d.git
 [submodule "backtrace-d"]
 	path = backtrace-d
 	url = https://github.com/yazd/backtrace-d.git
