@@ -67,16 +67,7 @@ version(none) {
         @safe pure if (isInputRange!Range &&
                        is(typeof(fun(r.front) < fun(r.front)) == bool))
     {
-        auto bestX = r.front;
-        auto bestY = fun(bestX);
-        r.popFront();
-        foreach (e; r) {
-            auto candY = fun(e);     // candidate
-            if (candY > bestY) continue;
-            bestX = e;
-            bestY = candY;
-        }
-        return bestX;
+        return typeof(r.front).max.reduce!((a,b) => fun(a)<fun(b)?a:b)(r);
     }
     unittest {
         assert(argmin!(x => x*x)([1, 2, 3]) == 1);
@@ -89,16 +80,7 @@ version(none) {
         @safe pure if (isInputRange!Range &&
                        is(typeof(fun(r.front) > fun(r.front)) == bool))
     {
-        auto bestX = r.front;
-        auto bestY = fun(bestX);
-        r.popFront();
-        foreach (e; r) {
-            auto candY = fun(e);     // candidate
-            if (candY < bestY) continue;
-            bestX = e;
-            bestY = candY;
-        }
-        return bestX;
+        return typeof(r.front).min.reduce!((a,b) => fun(a)>fun(b)?a:b)(r);
     }
     unittest {
         assert(argmax!(x => x*x)([1, 2, 3]) == 3);
