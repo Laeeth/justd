@@ -253,30 +253,29 @@ void test(Elem)(int n) @trusted
     immutable show = true;
     import random_ex: randInPlace;
     import std.algorithm: sort, min, max, isSorted;
-    import std.range: retro;
+    import std.range: retro, equal;
+    import std.datetime: StopWatch, AutoStart, TickDuration;
+    auto sw = StopWatch();
     immutable nMax = 5;
 
+    // Generate Random
     auto a = new Elem[n];
     a[].randInPlace();
     if (show) wln("original random: ", a[0..min(nMax, $)]);
 
-    import std.datetime: StopWatch, AutoStart, TickDuration;
-    auto sw = StopWatch();
-
     // Quick Sort
     TickDuration sortTime;
-    {
-        auto b = a.dup;
-        sw.reset; sw.start(); sort(b); sw.stop; sortTime = sw.peek;
-        if (show) wln("quick sorted: ", b[0..min(nMax, $)]);
-        assert(b.isSorted);
-    }
+    auto qa = a.dup;
+    sw.reset; sw.start(); sort(qa); sw.stop; sortTime = sw.peek;
+    if (show) wln("quick sorted: ", qa[0..min(nMax, $)]);
+    assert(qa.isSorted);
 
     // Reverse Radix Sort
     {
         auto b = a.dup;
         radixSortImpl!(typeof(b), 16, "a", false)(b, true);
         if (show) wln("reverse radix sorted: ", b[0..min(nMax, $)]);
+        assert(b.retro.equal(qa));
         assert(b.retro.isSorted);
     }
 
@@ -290,6 +289,7 @@ void test(Elem)(int n) @trusted
                       " sort:", sortTime.usecs,
                       "us radixSort:", radixTime1,
                       "us Speed-Up:", cast(real)sortTime.usecs / radixTime1);
+        assert(b.equal(qa));
         assert(b.isSorted);
     }
 
@@ -297,6 +297,7 @@ void test(Elem)(int n) @trusted
     {
         auto b = a.dup;
         sw.reset; sw.start(); radixSortImpl!(typeof(b), 16, "b", true)(b); sw.stop;
+        assert(b.equal(qa));
         assert(b.isSorted);
         immutable radixTime = sw.peek.usecs;
         if (show) wln("standard radix sorted: ", b[0..min(nMax, $)]);
@@ -311,8 +312,7 @@ void test(Elem)(int n) @trusted
 
 unittest {
     import std.typetuple: TypeTuple;
-    int n = 5;
-    test!ushort(n);
+    int n = 1000_000;
     foreach (ix, T; TypeTuple!(byte, short, int, long)) {
         test!T(n); // test signed
         test!(Unsigned!T)(n); // test unsigned
