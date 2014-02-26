@@ -113,6 +113,7 @@ auto argmin(alias fun, Range)(in Range r)
     @safe pure if (isInputRange!Range &&
                    is(typeof(fun(r.front) < fun(r.front)) == bool))
 {
+    import std.front: front;
     return typeof(r.front).max.reduce!((a,b) => fun(a) < fun(b) ? a : b)(r);
 }
 unittest {
@@ -126,6 +127,7 @@ auto argmax(alias fun, Range)(in Range r)
     @safe pure if (isInputRange!Range &&
                    is(typeof(fun(r.front) > fun(r.front)) == bool))
 {
+    import std.front: front;
     return typeof(r.front).min.reduce!((a,b) => fun(a) > fun(b) ? a : b)(r);
 }
 unittest {
