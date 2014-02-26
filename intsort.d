@@ -62,14 +62,18 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
      radixNBits = Number of bits in Radix (Digit)
 
    TODO: x[] = y[] not needed when input is mutable
-
    TODO: Restrict fun.
+   TODO: Choose fastDigitDiscardal based on elementMin and elementMax (if they
+   are given)
  */
-void radixSortImpl(R, uint radixNBits = 16, alias fun = "a")(R x,
-                                                             const bool descending = false,
-                                                             bool doInPlace = false,
-                                                             ElementType!R elementMin = ElementType!(R).max,
-                                                             ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
+void radixSortImpl(R,
+                   uint radixNBits = 16,
+                   alias fun = "a",
+                   bool fastDigitDiscardal = false)(R x,
+                                                    const bool descending = false,
+                                                    bool doInPlace = false,
+                                                    ElementType!R elementMin = ElementType!(R).max,
+                                                    ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
     if (isBidirectionalRange!R &&
         (isIntegral!(ElementType!R) ||
          isFloatingPoint!(ElementType!R))) // if doInPlace isRandomAccessRange else isBidirectionalRange
@@ -166,28 +170,37 @@ void radixSortImpl(R, uint radixNBits = 16, alias fun = "a")(R x,
 
     } else {
         // Histogram Buckets Upper-Limits/Walls for values in \p x.
-        size_t[radix] O; // most certainly fits in the stack (L1-cache) => Use C99 variable length array (VLA) when available
-        Elem[] y = uninitializedArray!(Elem[])(n); // Non-In-Place requires temporary \p y. TODO: We could allocate these as a Variable Length Arrays (VLA) for small arrays and gain extra speed.
+        size_t[radix] O; // most certainly fits in the stack (L1-cache)
+
+        // Non-In-Place requires temporary \p y. TODO: We could allocate these
+        // as a Variable Length Arrays (VLA) for small arrays and gain extra
+        // speed.
+        Elem[] y = uninitializedArray!(Elem[])(n);
 
         for (uint d = 0; d != nDigits; ++d) { // for each digit-index \c d (in base \c radix) starting with least significant (LSD-first)
             const uint sh = d*radixNBits;   // digit bit shift
 
-            // TODO: Activate and verify that performance is unchanged.
-            // auto uize_ = [descending, sh, mask](Elem x) { return (bijectToUnsigned(x, descending) >> sh) & mask; }; // local shorthand
-
             // Reset Histogram Counters
             O[] = 0;
 
+            // TODO: Make this optional
             // Populate Histogram \c O for current digit
-            U ors  = 0;             // digits "or-sum"
-            U ands = ~ors;          // digits "and-product"
+            static if (fastDigitDiscardal) {
+                U ors  = 0;             // digits "or-sum"
+                U ands = ~ors;          // digits "and-product"
+            }
+
             for (size_t j = 0; j != n; ++j) { // for each element index \c j in \p x
                 const uint i = (bijectToUnsigned(x[j], descending) >> sh) & mask; // digit (index)
                 ++O[i];              // increase histogram bin counter
-                ors |= i; ands &= i; // accumulate bits statistics
+                static if (fastDigitDiscardal) {
+                    ors |= i; ands &= i; // accumulate bits statistics
+                }
             }
-            if ((! ors) || (! ~ands)) { // if bits in digit[d] are either all \em zero or all \em one
-                continue;               // no sorting is needed for this digit
+            static if (fastDigitDiscardal) {
+                if ((! ors) || (! ~ands)) { // if bits in digit[d] are either all \em zero or all \em one
+                    continue;               // no sorting is needed for this digit
+                }
             }
 
             // Bin Boundaries: Accumulate Bin Counters Array
@@ -215,7 +228,7 @@ void test(Elem)(int n) @trusted
     immutable show = true;
     import random_ex: randInPlace;
     import std.algorithm: sort, min, max;
-    /* immutable nMax = 3; */
+    /* immutable nMax = 5; */
 
     auto a = new Elem[n];
 
@@ -229,7 +242,12 @@ void test(Elem)(int n) @trusted
     immutable stdTime = sw.peek.usecs;
 
     a[].randInPlace();
-    sw.reset; sw.start(); radixSortImpl(a); sw.stop;
+    sw.reset; sw.start(); radixSortImpl!(typeof(a), 16, "a", false)(a); sw.stop;
+    immutable radixTime1 = sw.peek.usecs;
+    if (show) writeln(Elem.stringof, " n:", n, " sort:", stdTime, "us radixSort:", radixTime1, "us Speed-Up:", cast(real)stdTime / radixTime1);
+
+    a[].randInPlace();
+    sw.reset; sw.start(); radixSortImpl!(typeof(a), 16, "a", true)(a); sw.stop;
     immutable radixTime = sw.peek.usecs;
     if (show) writeln(Elem.stringof, " n:", n, " sort:", stdTime, "us radixSort:", radixTime, "us Speed-Up:", cast(real)stdTime / radixTime);
 
@@ -241,7 +259,7 @@ void test(Elem)(int n) @trusted
 
 unittest {
     import std.typetuple: TypeTuple;
-    int n = 1000_000;
+    int n = 100_000;
     foreach (ix, T; TypeTuple!(byte, short, int, long)) {
         test!T(n); // test signed
         test!(Unsigned!T)(n); // test unsigned
