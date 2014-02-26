@@ -505,9 +505,9 @@ scoped auto a = [1,2];
   \begin{itemize}[<+->]
   \item Easier Transition from C/C++ with:
     \begin{itemize}[<+->]
-    \item C-Style Arrays Compatible \texttt{int a[2];}
-    \item Easier Transition from C/C++: Clever Leading Principle: ``If it
-      compiles it will behaviour will be equal to C''.
+    \item \textbf{C-Style Arrays Compatible}: \texttt{int a[2];}
+    \item \textbf{Clever Leading Principle}: ``If it compiles its behaviour will be
+      equal to C (and C++)''.
     \end{itemize}
   \item Compare with C/C++11/C++14’s Complexity: \texttt{T[]}, C99 VLA,
     \texttt{std::vector}, \texttt{std::array}, \texttt{std::valarray},
@@ -520,10 +520,12 @@ scoped auto a = [1,2];
   we want.
   \begin{itemize}[<+->]
 
-  \item Pointer part decide ``\textbf{null}ness''
+  \item Pointer part decide ``\textbf{null}ness'' and Bool Conversion
     \begin{lstlisting}[frame=single]
 assert([].ptr == null);
 assert("ab"[$..$].ptr != null);
+assert(![]);
+assert(!null);
     \end{lstlisting}
 
   \item Zero-length slices
@@ -535,14 +537,6 @@ assert("ab"[0..0] == "ab"[$..$]);
 assert("ab"[0..0]); // contextual hit (BOL)
 assert("ab"[$..$]); // contextual hit (EOL)
     \end{lstlisting}
-
-  \item Empty slices implicit convert to \textbf{false}
-    \begin{lstlisting}[frame=single]
-assert(![]);
-assert(!null);
-    \end{lstlisting}
-
-  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Associative Arrays (Maps) Builtin \& Done Right}
