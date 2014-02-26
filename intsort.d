@@ -276,7 +276,6 @@ void test(Elem)(int n) @trusted
         radixSortImpl!(typeof(b), 16, "a", false)(b, true);
         if (show) wln("reverse radix sorted: ", b[0..min(nMax, $)]);
         assert(b.retro.equal(qa));
-        assert(b.retro.isSorted);
     }
 
     // Standard Radix Sort
@@ -290,7 +289,6 @@ void test(Elem)(int n) @trusted
                       "us radixSort:", radixTime1,
                       "us Speed-Up:", cast(real)sortTime.usecs / radixTime1);
         assert(b.equal(qa));
-        assert(b.isSorted);
     }
 
     // Standard Radix Sort
@@ -298,7 +296,6 @@ void test(Elem)(int n) @trusted
         auto b = a.dup;
         sw.reset; sw.start(); radixSortImpl!(typeof(b), 16, "b", true)(b); sw.stop;
         assert(b.equal(qa));
-        assert(b.isSorted);
         immutable radixTime = sw.peek.usecs;
         if (show) wln("standard radix sorted: ", b[0..min(nMax, $)]);
         if (show) wln(Elem.stringof, " n:", n,
