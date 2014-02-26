@@ -20,7 +20,7 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
     T bijectToUnsigned(T)(T a) if (isUnsigned!T) { return a; } ///< Identity.
 
     /** Biject (Shift) Unsigned  $(D a) "back down" to Signed (after radix sorting). */
-    void bijectFromUnsigned(U)(U a, ref Signed!U b)
+    void bijectFromUnsigned(U)(U a, ref Signed!U b) if (isUnsigned!T)
     {
         b = a - (cast(Unsigned!T)1 << (8*U.sizeof - 1)); // "add down""
     }
@@ -37,14 +37,14 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
      * - if it's 1 (negative float), it flips all bits.
      * - if it's 0 (positive float), it flips the sign only.
      */
-    /* @safe pure nothrow uint32_t  ff(uint32_t f) { return f ^ (-(int32_t) (f >> (8*sizeof(f)-1))      | 0x80000000); } */
-    /* @safe pure nothrow uint32_t iff(uint32_t f) { return f ^           (((f >> (8*sizeof(f)-1)) - 1) | 0x80000000); } */
-    /* @safe pure nothrow uint64_t  ff(uint64_t f) { return f ^ (-(int64_t) (f >> (8*sizeof(f)-1))      | 0x8000000000000000LL); } */
-    /* @safe pure nothrow uint64_t iff(uint64_t f) { return f ^           (((f >> (8*sizeof(f)-1)) - 1) | 0x8000000000000000LL); } */
-    /* @safe pure nothrow uint32_t bijectToUnsigned(float  a)  { return ff(*(uint32_t*)(&a)); } */
-    /* @safe pure nothrow uint64_t bijectToUnsigned(double a)  { return ff(*(uint64_t*)(&a)); } */
-    /* void bijectFromUnsigned(uint32_t a, float&   b) { uint32_t t = iff(a); b = *(float*)(&t); } */
-    /* void bijectFromUnsigned(uint64_t a, double&  b) { uint64_t t = iff(a); b = *(double*)(&t); } */
+    @safe pure nothrow uint    ff(uint f) { return f ^ (-cast(int)  (f >> (32-1))      | 0x80000000); }
+    @safe pure nothrow uint   iff(uint f) { return f ^            (((f >> (32-1)) - 1) | 0x80000000); }
+    @safe pure nothrow ulong  ff(ulong f) { return f ^ (-cast(long) (f >> (64-1))      | 0x8000000000000000); }
+    @safe pure nothrow ulong iff(ulong f) { return f ^            (((f >> (64-1)) - 1) | 0x8000000000000000); }
+    /* @trusted pure nothrow uint  bijectToUnsigned(float  a) { return ff(*cast(uint*)(&a)); } */
+    /* @trusted pure nothrow ulong bijectToUnsigned(double a) { return ff(*cast(ulong*)(&a)); } */
+    @trusted pure nothrow void bijectFromUnsigned(uint a,  ref float  b) { uint  t = iff(a); b = *cast(float*)(&t); }
+    @trusted pure nothrow void bijectFromUnsigned(ulong a, ref double b) { ulong t = iff(a); b = *cast(double*)(&t); }
 
     auto bijectToUnsigned(T)(T a, bool descending = false)
     {
@@ -65,6 +65,7 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
    TODO: Restrict fun.
    TODO: Choose fastDigitDiscardal based on elementMin and elementMax (if they
    are given)
+   TODO: Add doInPlace CT-param. If doInPlace isRandomAccessRange!R is needed
  */
 void radixSortImpl(R,
                    uint radixNBits = 16,
@@ -76,7 +77,7 @@ void radixSortImpl(R,
                                                     ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
     if (isBidirectionalRange!R &&
         (isIntegral!(ElementType!R) ||
-         isFloatingPoint!(ElementType!R))) // if doInPlace isRandomAccessRange else isBidirectionalRange
+         isFloatingPoint!(ElementType!R)))
 {
     immutable n = x.length; // number of elements
     alias Elem = ElementType!R;
