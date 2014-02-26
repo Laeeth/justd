@@ -84,7 +84,7 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
    TODO: Add doInPlace CT-param. If doInPlace isRandomAccessRange!R is needed
  */
 void radixSortImpl(R,
-                   uint radixNBits = 16,
+                   uint radixNBitsRequested = 16,
                    alias fun = "a",
                    bool fastDigitDiscardal = false)(R x,
                                                     const bool descending = false,
@@ -92,17 +92,16 @@ void radixSortImpl(R,
                                                     ElementType!R elementMin = ElementType!(R).max,
                                                     ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
     if (isBidirectionalRange!R &&
-        (isIntegral!(ElementType!R) ||
-         isFloatingPoint!(ElementType!R)))
+        (isNumeric!(ElementType!R)))
 {
-    immutable n = x.length; // number of elements
-    alias Elem = ElementType!R;
-    enum typeof(radixNBits) elemBits = 8*Elem.sizeof; // Total Number of Bits needed to code each element
     import std.algorithm: min, max;
     import std.range: front;
 
+    immutable n = x.length; // number of elements
+    alias Elem = ElementType!R;
+    enum elemBits = 8*Elem.sizeof; // Total Number of Bits needed to code each element
+
     // if (ip_sort(x, n)) { return; }    // small size optimizations
-    import std.array: uninitializedArray;
 
     /* Lookup number of radix bits from sizeof ElementType.
        These give optimal performance on Intel Core i7.
@@ -193,13 +192,15 @@ void radixSortImpl(R,
         // Non-In-Place requires temporary \p y. TODO: We could allocate these
         // as a Variable Length Arrays (VLA) for small arrays and gain extra
         // speed.
+        import std.array: uninitializedArray;
         Elem[] y = uninitializedArray!(Elem[])(n);
         import std.algorithm: swap;
 
         import traits_ex: isEven;
         static if (nDigits.isEven) { // if even number of passes
             // auto z = x; // temporary reference to enable swapping when
-            /* swap(z, y); */
+            swap(x, y);
+            swap(y, x);
         }
 
         foreach (d; 0..nDigits) { // for each digit-index \c d (in base \c radix) starting with least significant (LSD-first)
