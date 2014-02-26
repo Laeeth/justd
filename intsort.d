@@ -243,50 +243,76 @@ void radixSortImpl(R,
     }
 }
 
-import std.stdio: writeln;
+import std.stdio: wln = writeln;
 
 /** Test $(D radixSortImpl) with ElementType $(D Elem) */
 void test(Elem)(int n) @trusted
 {
+    wln("ElementType: ", Elem.stringof);
+
     immutable show = true;
     import random_ex: randInPlace;
     import std.algorithm: sort, min, max, isSorted;
     import std.range: retro;
-    /* immutable nMax = 5; */
+    immutable nMax = 5;
 
     auto a = new Elem[n];
+    a[].randInPlace();
+    if (show) wln("original random: ", a[0..min(nMax, $)]);
 
-    /* if (show) writeln(a[0..min(nMax, $)]); */
-
-    import std.datetime: StopWatch, AutoStart;
+    import std.datetime: StopWatch, AutoStart, TickDuration;
     auto sw = StopWatch();
 
-    a[].randInPlace();
-    sw.reset; sw.start(); sort(a); sw.stop;
-    immutable stdTime = sw.peek.usecs;
+    // Quick Sort
+    TickDuration sortTime;
+    {
+        auto b = a.dup;
+        sw.reset; sw.start(); sort(b); sw.stop; sortTime = sw.peek;
+        if (show) wln("quick sorted: ", b[0..min(nMax, $)]);
+        assert(b.isSorted);
+    }
 
-    a[].randInPlace();
-    radixSortImpl!(typeof(a), 16, "a", false)(a, true);
-    assert(a.retro.isSorted);
+    // Reverse Radix Sort
+    {
+        auto b = a.dup;
+        radixSortImpl!(typeof(b), 16, "a", false)(b, true);
+        if (show) wln("reverse radix sorted: ", b[0..min(nMax, $)]);
+        assert(b.retro.isSorted);
+    }
 
-    a[].randInPlace();
-    sw.reset; sw.start(); radixSortImpl!(typeof(a), 16, "a", false)(a); sw.stop;
-    assert(a.isSorted);
-    immutable radixTime1 = sw.peek.usecs;
-    if (show) writeln(Elem.stringof, " n:", n, " sort:", stdTime, "us radixSort:", radixTime1, "us Speed-Up:", cast(real)stdTime / radixTime1);
+    // Standard Radix Sort
+    {
+        auto b = a.dup;
+        sw.reset; sw.start(); radixSortImpl!(typeof(b), 16, "b", false)(b); sw.stop;
+        immutable radixTime1 = sw.peek.usecs;
+        if (show) wln("standard radix sorted: ", b[0..min(nMax, $)]);
+        if (show) wln(Elem.stringof, " n:", n,
+                      " sort:", sortTime.usecs,
+                      "us radixSort:", radixTime1,
+                      "us Speed-Up:", cast(real)sortTime.usecs / radixTime1);
+        assert(b.isSorted);
+    }
 
-    a[].randInPlace();
-    sw.reset; sw.start(); radixSortImpl!(typeof(a), 16, "a", true)(a); sw.stop;
-    assert(a.isSorted);
-    immutable radixTime = sw.peek.usecs;
-    if (show) writeln(Elem.stringof, " n:", n, " sort:", stdTime, "us radixSort:", radixTime, "us Speed-Up:", cast(real)stdTime / radixTime);
+    // Standard Radix Sort
+    {
+        auto b = a.dup;
+        sw.reset; sw.start(); radixSortImpl!(typeof(b), 16, "b", true)(b); sw.stop;
+        assert(b.isSorted);
+        immutable radixTime = sw.peek.usecs;
+        if (show) wln("standard radix sorted: ", b[0..min(nMax, $)]);
+        if (show) wln(Elem.stringof, " n:", n,
+                      " sort:", sortTime.usecs,
+                      "us radixSort:", radixTime,
+                      "us Speed-Up:", cast(real)sortTime.usecs / radixTime);
+    }
 
-    /* if (show) writeln(a[0..min(nMax, $)]); */
+    wln("");
 }
 
 unittest {
     import std.typetuple: TypeTuple;
-    int n = 1000_000;
+    int n = 5;
+    test!ushort(n);
     foreach (ix, T; TypeTuple!(byte, short, int, long)) {
         test!T(n); // test signed
         test!(Unsigned!T)(n); // test unsigned
