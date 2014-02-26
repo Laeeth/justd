@@ -28,3 +28,6 @@
 [submodule "lectures/minted"]
 	path = lectures/minted
 	url = https://github.com/gpoore/minted.git
+[submodule "quantities"]
+	path = quantities
+	url = git://github.com/biozic/quantities.git

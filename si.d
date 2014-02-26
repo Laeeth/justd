@@ -14,9 +14,9 @@
  * License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors: $(WEB klickverbot.at, David Nadlinger)
  */
-module std.si;
+module si;
 
-import std.units;
+import units;
 
 /**
  * The full $(XREF units, PrefixSystem) of SI prefixes.

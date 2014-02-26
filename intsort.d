@@ -84,7 +84,6 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
    TODO: Add doInPlace CT-param. If doInPlace isRandomAccessRange!R is needed
  */
 void radixSortImpl(R,
-                   uint radixNBitsRequested = 16,
                    alias fun = "a",
                    bool fastDigitDiscardal = false)(R x,
                                                     const bool descending = false,
@@ -101,8 +100,6 @@ void radixSortImpl(R,
     alias Elem = ElementType!R;
     enum elemBits = 8*Elem.sizeof; // Total Number of Bits needed to code each element
 
-    // if (ip_sort(x, n)) { return; }    // small size optimizations
-
     /* Lookup number of radix bits from sizeof ElementType.
        These give optimal performance on Intel Core i7.
     */
@@ -118,6 +115,8 @@ void radixSortImpl(R,
 
     // TODO: Activate this: subtract min from all values and then const uint elemBits = is_min(a_max) ? 8*sizeof(Elem) : binlog(a_max); and add it back.
     enum nDigits = elemBits / radixNBits;         // Number of \c nDigits in radix \p radixNBits
+    static assert(elemBits % radixNBits == 0,
+                  "Precision of ElementType must be evenly divisble by bit-precision of Radix.");
 
     /* const nRemBits = elemBits % radixNBits; // number remaining bits to sort */
     /* if (nRemBits) { nDigits++; }     // one more for remainding bits */
@@ -274,7 +273,7 @@ void test(Elem)(int n) @trusted
     // Reverse Radix Sort
     {
         auto b = a.dup;
-        radixSortImpl!(typeof(b), 16, "a", false)(b, true);
+        radixSortImpl!(typeof(b), "a", false)(b, true);
         if (show) wln("reverse radix sorted: ", b[0..min(nMax, $)]);
         assert(b.retro.equal(qa));
     }
@@ -282,7 +281,7 @@ void test(Elem)(int n) @trusted
     // Standard Radix Sort
     {
         auto b = a.dup;
-        sw.reset; sw.start(); radixSortImpl!(typeof(b), 16, "b", false)(b); sw.stop;
+        sw.reset; sw.start(); radixSortImpl!(typeof(b), "b", false)(b); sw.stop;
         immutable radixTime1 = sw.peek.usecs;
         if (show) wln("standard radix sorted: ", b[0..min(nMax, $)]);
         if (show) wln(Elem.stringof, " n:", n,
@@ -295,7 +294,7 @@ void test(Elem)(int n) @trusted
     // Standard Radix Sort
     {
         auto b = a.dup;
-        sw.reset; sw.start(); radixSortImpl!(typeof(b), 16, "b", true)(b); sw.stop;
+        sw.reset; sw.start(); radixSortImpl!(typeof(b), "b", true)(b); sw.stop;
         assert(b.equal(qa));
         immutable radixTime = sw.peek.usecs;
         if (show) wln("standard radix sorted: ", b[0..min(nMax, $)]);

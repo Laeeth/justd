@@ -59,7 +59,7 @@
  * License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors: $(WEB klickverbot.at, David Nadlinger)
  */
-module std.units;
+module units;
 
 /*
  * General implementation notes:
