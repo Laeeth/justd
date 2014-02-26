@@ -1022,8 +1022,8 @@ auto fibonacci(T = int)() if (isIntLike!T)
 {
     struct Fibonacci {
         T a, b;
-        T front() {return b;}
-        bool empty() {return false;}
+        T front() { return b; }
+        bool empty() { return false; }
         void popFront() {
             T c = a+b;
             a = b;
