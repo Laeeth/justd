@@ -67,7 +67,10 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
 }
 
 /**
-   Radix Sort $(D x).
+   Non-Inplace Radix Sort $(D x).
+
+   Note that this implementation of non-inplace radix sort only requires $(D x)
+   to be a BidirectionalRange not a RandomAccessRange.
 
    Note that $(D x) can be a $(D BidirectionalRange) aswell as $(D RandomAccessRange).
 
