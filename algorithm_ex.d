@@ -1015,7 +1015,7 @@ template isIntLike(T) {
             }));
 }
 
-/** Fibonacci Numbers (Infinite Range).
+/** $(LUCKY Fibonacci) Numbers (Infinite Range).
     See also: http://forum.dlang.org/thread/dqlrfoxzsppylcgljyyf@forum.dlang.org#post-mailman.1072.1350619455.5162.digitalmars-d-learn:40puremagic.com
  */
 auto fibonacci(T = int)() if (isIntLike!T)
