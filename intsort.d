@@ -7,7 +7,7 @@
  */
 module isort;
 
-import std.range: isBidirectionalRange, ElementType;
+import std.range: isBidirectionalRange, isRandomAccessRange, ElementType;
 import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, Signed, isNumeric;
 
 /** Biject (Shift) Signed $(D a) "up" to Unsigned (before radix sorting). */
@@ -90,7 +90,7 @@ void radixSortImpl(R,
                                                     bool doInPlace = false,
                                                     ElementType!R elementMin = ElementType!(R).max,
                                                     ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
-    if (isBidirectionalRange!R &&
+    if (isRandomAccessRange!R &&
         (isNumeric!(ElementType!R)))
 {
     import std.algorithm: min, max;
@@ -196,11 +196,6 @@ void radixSortImpl(R,
         import std.algorithm: swap;
 
         import traits_ex: isEven;
-        static if (nDigits.isEven) { // if even number of passes
-            // auto z = x; // temporary reference to enable swapping when
-            swap(x, y);
-            swap(y, x);
-        }
 
         foreach (d; 0..nDigits) { // for each digit-index \c d (in base \c radix) starting with least significant (LSD-first)
             const sh = d*radixNBits;   // digit bit shift
@@ -238,7 +233,11 @@ void radixSortImpl(R,
                 y[--O[i]] = x[j]; // reorder into y
             }
 
-            x[] = y[];            // put them back into $(D x). TODO: Not needed
+            static if (nDigits.isEven) { // if even number of passes
+                swap(x, y);
+            } else {
+                x[] = y[];
+            }
         }
     }
 }
