@@ -503,7 +503,12 @@ scoped auto a = [1,2];
 
 \begin{frame}[fragile]{Arrays Builtin \& Done Right}
   \begin{itemize}[<+->]
-  \item Easier Transition from C/C++ with: \texttt{int a[2];}
+  \item Easier Transition from C/C++ with:
+    \begin{itemize}[<+->]
+    \item C-Style Arrays Compatible \texttt{int a[2];}
+    \item Easier Transition from C/C++: Clever Leading Principle: ``If it
+      compiles it will behaviour will be equal to C''.
+    \end{itemize}
   \item Compare with C/C++11/C++14’s Complexity: \texttt{T[]}, C99 VLA,
     \texttt{std::vector}, \texttt{std::array}, \texttt{std::valarray},
     \texttt{std::dynarray}, etc.
