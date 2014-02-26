@@ -1004,3 +1004,38 @@ unittest {
     assert(2.clamp(0, 2) == 2);
     assert(3.clamp(0, 2) == 2);
 }
+
+// ==============================================================================================
+
+template isIntLike(T) {
+    enum isIntLike = is(typeof({
+		T t = 0;
+		t = t+t;
+		// More if needed
+            }));
+}
+
+/** Fibonacci Numbers (Infinite Range).
+    See also: http://forum.dlang.org/thread/dqlrfoxzsppylcgljyyf@forum.dlang.org#post-mailman.1072.1350619455.5162.digitalmars-d-learn:40puremagic.com
+ */
+auto fibonacci(T = int)() if (isIntLike!T)
+{
+    struct Fibonacci {
+        T a, b;
+        T front() {return b;}
+        bool empty() {return false;}
+        void popFront() {
+            T c = a+b;
+            a = b;
+            b = c;
+        }
+    }
+    return Fibonacci(0, 1);
+}
+
+unittest
+{
+    import dbg:dln;
+    import std.range: take, equal;
+    assert(fibonacci.take(10).equal([1, 1, 2, 3, 5, 8, 13, 21, 34, 55]));
+}
