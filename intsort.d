@@ -118,10 +118,10 @@ void radixSortImpl(R,
     }
 
     // TODO: Activate this: subtract min from all values and then const uint elemBits = is_min(a_max) ? 8*sizeof(Elem) : binlog(a_max); and add it back.
-    uint nDigits = elemBits / radixNBits;         // Number of \c nDigits in radix \p radixNBits
+    enum nDigits = elemBits / radixNBits;         // Number of \c nDigits in radix \p radixNBits
 
-    const nRemBits = elemBits % radixNBits; // number remaining bits to sort
-    if (nRemBits) { nDigits++; }     // one more for remainding bits
+    /* const nRemBits = elemBits % radixNBits; // number remaining bits to sort */
+    /* if (nRemBits) { nDigits++; }     // one more for remainding bits */
 
     enum radix = cast(typeof(radixNBits))1 << radixNBits;    // Bin Count
     enum mask = radix-1;                              // radix bit mask
@@ -194,9 +194,16 @@ void radixSortImpl(R,
         // as a Variable Length Arrays (VLA) for small arrays and gain extra
         // speed.
         Elem[] y = uninitializedArray!(Elem[])(n);
+        import std.algorithm: swap;
 
-        for (uint d = 0; d != nDigits; ++d) { // for each digit-index \c d (in base \c radix) starting with least significant (LSD-first)
-            const uint sh = d*radixNBits;   // digit bit shift
+        import traits_ex: isEven;
+        static if (nDigits.isEven) { // if even number of passes
+            // auto z = x; // temporary reference to enable swapping when
+            /* swap(z, y); */
+        }
+
+        foreach (d; 0..nDigits) { // for each digit-index \c d (in base \c radix) starting with least significant (LSD-first)
+            const sh = d*radixNBits;   // digit bit shift
 
             // Reset Histogram Counters
             O[] = 0;
