@@ -243,7 +243,8 @@ void test(Elem)(int n) @trusted
 {
     immutable show = true;
     import random_ex: randInPlace;
-    import std.algorithm: sort, min, max;
+    import std.algorithm: sort, min, max, isSorted;
+    import std.range: retro;
     /* immutable nMax = 5; */
 
     auto a = new Elem[n];
@@ -258,17 +259,20 @@ void test(Elem)(int n) @trusted
     immutable stdTime = sw.peek.usecs;
 
     a[].randInPlace();
+    radixSortImpl!(typeof(a), 16, "a", false)(a, true);
+    assert(a.retro.isSorted);
+
+    a[].randInPlace();
     sw.reset; sw.start(); radixSortImpl!(typeof(a), 16, "a", false)(a); sw.stop;
+    assert(a.isSorted);
     immutable radixTime1 = sw.peek.usecs;
     if (show) writeln(Elem.stringof, " n:", n, " sort:", stdTime, "us radixSort:", radixTime1, "us Speed-Up:", cast(real)stdTime / radixTime1);
 
     a[].randInPlace();
     sw.reset; sw.start(); radixSortImpl!(typeof(a), 16, "a", true)(a); sw.stop;
+    assert(a.isSorted);
     immutable radixTime = sw.peek.usecs;
     if (show) writeln(Elem.stringof, " n:", n, " sort:", stdTime, "us radixSort:", radixTime, "us Speed-Up:", cast(real)stdTime / radixTime);
-
-    import std.algorithm: isSorted;
-    assert(a.isSorted);
 
     /* if (show) writeln(a[0..min(nMax, $)]); */
 }
