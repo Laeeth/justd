@@ -183,13 +183,11 @@ void radixSortImpl(R,
             // Reset Histogram Counters
             O[] = 0;
 
-            // TODO: Make this optional
             // Populate Histogram \c O for current digit
             static if (fastDigitDiscardal) {
                 U ors  = 0;             // digits "or-sum"
                 U ands = ~ors;          // digits "and-product"
             }
-
             for (size_t j = 0; j != n; ++j) { // for each element index \c j in \p x
                 const uint i = (bijectToUnsigned(x[j], descending) >> sh) & mask; // digit (index)
                 ++O[i];              // increase histogram bin counter
