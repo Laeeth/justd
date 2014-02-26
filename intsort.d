@@ -99,6 +99,7 @@ void radixSortImpl(R,
     alias Elem = ElementType!R;
     enum typeof(radixNBits) elemBits = 8*Elem.sizeof; // Total Number of Bits needed to code each element
     import std.algorithm: min, max;
+    import std.range: front;
 
     // if (ip_sort(x, n)) { return; }    // small size optimizations
     import std.array: uninitializedArray;
@@ -125,7 +126,7 @@ void radixSortImpl(R,
     enum radix = cast(typeof(radixNBits))1 << radixNBits;    // Bin Count
     enum mask = radix-1;                              // radix bit mask
 
-    alias U = typeof(bijectToUnsigned(x[0])); // Get Unsigned Integer Type of same precision as \tparam Elem.
+    alias U = typeof(bijectToUnsigned(x.front)); // Get Unsigned Integer Type of same precision as \tparam Elem.
 
     if (nDigits != 1) {         // if more than one bucket sort pass (BSP)
         doInPlace = false; // we cannot do in-place because each BSP is unstable and may ruin order from previous digit passes
