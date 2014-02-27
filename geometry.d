@@ -636,7 +636,8 @@ enum Layout { columnMajor, rowMajor }; // Matrix Storage Major Dimension.
 ///  rows_ = rows of the matrix
 ///  cols_ = columns of the matrix
 ///  layout = matrix layout
-struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if ((rows_ >= 1) && (cols_ >= 1)) {
+struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if ((rows_ >= 1) && (cols_ >= 1))
+{
     alias type mT; /// Internal type of the _matrix
     static const uint rows = rows_; /// Number of rows
     static const uint cols = cols_; /// Number of columns
@@ -885,6 +886,7 @@ struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if 
     }
 
 }
+alias Matrix!(int, 2, 2) mat2i;
 alias Matrix!(float, 2, 2) mat2;
 alias Matrix!(float, 3, 3) mat3;
 alias Matrix!(float, 3, 4) mat34;

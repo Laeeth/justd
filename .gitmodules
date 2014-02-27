@@ -31,3 +31,6 @@
 [submodule "quantities"]
 	path = quantities
 	url = git://github.com/biozic/quantities.git
+[submodule "dstep"]
+	path = dstep
+	url = https://github.com/jacob-carlborg/dstep.git
