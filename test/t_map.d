@@ -31,5 +31,7 @@ unittest {
     string[int[2]] aa;
     aa[foo] = "";
     writeln(aa);
-    assert([1, 2] in aa);  // FAILS
+    assert(foo in aa);  // OK
+    assert(cast(int[2])[1, 2] in aa);  // OK
+    // assert([1, 2] in aa);  // FAILS
 }
