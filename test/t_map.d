@@ -26,8 +26,10 @@ unittest {
 }
 
 unittest {
+    // Issue 5685: https://d.puremagic.com/issues/show_bug.cgi?id=5685
     int[2] foo = [1, 2];
     string[int[2]] aa;
     aa[foo] = "";
+    writeln(aa);
     assert([1, 2] in aa);  // FAILS
 }
