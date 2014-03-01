@@ -34,3 +34,21 @@
 [submodule "dstep"]
 	path = dstep
 	url = https://github.com/jacob-carlborg/dstep.git
+[submodule "DerelictGL3"]
+	path = DerelictGL3
+	url = https://github.com/DerelictOrg/DerelictGL3.git
+[submodule "DerelictAL"]
+	path = DerelictAL
+	url = https://github.com/DerelictOrg/DerelictAL.git
+[submodule "DerelictFI"]
+	path = DerelictFI
+	url = https://github.com/DerelictOrg/DerelictFI.git
+[submodule "DerelictFT"]
+	path = DerelictFT
+	url = https://github.com/DerelictOrg/DerelictFT.git
+[submodule "DerelictGLFW3"]
+	path = DerelictGLFW3
+	url = https://github.com/DerelictOrg/DerelictGLFW3.git
+[submodule "DerelictUtil"]
+	path = DerelictUtil
+	url = https://github.com/DerelictOrg/DerelictUtil.git
