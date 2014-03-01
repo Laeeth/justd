@@ -1,4 +1,4 @@
-ECTAGS_LANGS = Make,C,D,C++,Pascal,Sh,Ada,D,Lisp,Go,Protobuf
+ECTAGS_LANGS = Make,C,C++,D,Pascal,Sh,Ada,Lisp,Go,Protobuf
 TAGS_FILES = *.d */*.d Makefile
 
 all: tags
