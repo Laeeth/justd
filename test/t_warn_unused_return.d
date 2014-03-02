@@ -15,18 +15,17 @@ import std.stdio, std.algorithm;
     throw new Exception("Here!");
 }
 
-@safe pure nothrow T strictlyPure(T)(T x)
+@safe pure nothrow T f(T)(T x)
 {
     // mayThrow();
     return x*x;
 }
 
-void main(string args[]) {
+void main(string args[])
+{
     alias wln = writeln;
     int x = 3;
     strictVoidReturn(x);
     nonstrictVoidReturn(x);
-    strictlyPure(x);
-    // int y = strictVoidReturn(x);
-    /* mayThrow(); */
- }
+    f(x);
+}
