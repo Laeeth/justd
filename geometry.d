@@ -46,7 +46,7 @@ import core.simd;
 import std.stdio: writeln;
 import std.math: sqrt, isNaN, isInfinity;
 import std.conv: to;
-import std.traits: isSomeString, isFloatingPoint, isNumeric, isSigned, isStaticArray, isDynamicArray, isImplicitlyConvertible, isAssignable, isArray, CommonType;
+import std.traits: isSomeString, isIntegral, isFloatingPoint, isNumeric, isSigned, isStaticArray, isDynamicArray, isImplicitlyConvertible, isAssignable, isArray, CommonType;
 import std.string: format, rightJustify;
 import std.array: join;
 import std.typecons: TypeTuple;
@@ -430,7 +430,8 @@ struct Vector(E, uint D,
         }
     }
 
-    static if (isFloatingPoint!(E)) {
+    static if (isIntegral!E &&
+               isFloatingPoint!E) {
 
         /// Normalize $(D this).
         void normalize() {
