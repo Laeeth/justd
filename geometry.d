@@ -449,7 +449,7 @@ struct Vector(E, uint D,
             return y;
         }
         unittest {
-            static if (D == 2) {
+            static if (D == 2 && !normalizedFlag) {
                 assert(Vector(3, 4).magnitude == 5);
             }
             assert(Vector(0).normalized == 0);
@@ -525,7 +525,6 @@ struct Vector(E, uint D,
         }
     }
 
-    /**  */
     private E[D] _vector;            /// Element data.
 
     unittest {
@@ -534,6 +533,9 @@ struct Vector(E, uint D,
     }
 }
 mixin(makeInstanceAliases("Vector", "vec", 2,4, ["ubyte", "int", "float", "double", "real", "bool"]));
+alias nvec2f = Vector!(float, 2, true);
+alias nvec3f = Vector!(float, 3, true);
+alias nvec4f = Vector!(float, 4, true);
 
 unittest {
     assert(vec2f(2, 3)[] == [2, 3]);
@@ -559,7 +561,7 @@ alias T = transpose; // C++ Armadillo naming convention.
 
 @safe pure nothrow auto elementwiseLessThanOrEqual(Ta, Tb, uint D)(Vector!(Ta, D) a,
                                                                    Vector!(Tb, D) b) {
-    Vector!(bool, D) c;
+    Vector!(bool, D) c = void;
     foreach (i; siota!(0, D)) {
         c[i] = a[i] <= b[i];
     }
@@ -575,7 +577,7 @@ unittest {
                                                           isVector!U &&
                                                           (T.dimension ==
                                                            U.dimension)) {
-    T c;
+    T c = void;
     foreach (i; siota!(0, T.dimension)) {
         c[i] = a[i] * b[i];
     }
@@ -587,7 +589,7 @@ alias dot = dotProduct;
 @safe pure nothrow auto outerProduct(Ta, Tb, uint Da, uint Db)(in Vector!(Ta, Da) a,
                                                                in Vector!(Tb, Db) b) if (Da >= 1,
                                                                                          Db >= 1) {
-    Matrix!(CommonType!(Ta, Tb), Da, Db) y;
+    Matrix!(CommonType!(Ta, Tb), Da, Db) y = void;
     foreach (r; siota!(0, Da)) {
         foreach (c; siota!(0, Db)) {
             y.at(r,c) = a[r] * b[c];
@@ -1064,18 +1066,18 @@ struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2) {
         this.distance = distance;
     }
 
-    unittest {
-        Plane p = Plane(0.0f, 1.0f, 2.0f, 3.0f);
-        assert(p.normal == N(0.0f, 1.0f, 2.0f));
-        assert(p.distance == 3.0f);
+    /* unittest { */
+    /*     Plane p = Plane(0.0f, 1.0f, 2.0f, 3.0f); */
+    /*     assert(p.normal == N(0.0f, 1.0f, 2.0f)); */
+    /*     assert(p.distance == 3.0f); */
 
-        p.normal.x = 4.0f;
-        assert(p.normal == N(4.0f, 1.0f, 2.0f));
-        assert(p.x == 4.0f);
-        assert(p.y == 1.0f);
-        assert(p.c == 2.0f);
-        assert(p.distance == 3.0f);
-    }
+    /*     p.normal.x = 4.0f; */
+    /*     assert(p.normal == N(4.0f, 1.0f, 2.0f)); */
+    /*     assert(p.x == 4.0f); */
+    /*     assert(p.y == 1.0f); */
+    /*     assert(p.c == 2.0f); */
+    /*     assert(p.distance == 3.0f); */
+    /* } */
 
     /// Normalizes the plane inplace.
     void normalize() {
@@ -1100,29 +1102,28 @@ struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2) {
 //         assert(p == pn);
 //     }
 
-//     /// Returns: the distance from a point to the plane.
-//     /// Note: the plane $(RED must) be normalized, the result can be negative.
-//     E distanceTo(N point) const {
-//         return dot(point, normal) + distance;
-//     }
+    /// Returns: the distance from a point to the plane.
+    /// Note: the plane $(RED must) be normalized, the result can be negative.
+    /* E distanceTo(N point) const { */
+    /*     return dot(point, normal) + distance; */
+    /* } */
 
+    /// Returns: the distanceTo from a point to the plane.
+    /// Note: the plane does not have to be normalized, the result can be negative.
+    /* E ndistance(N point) const { */
+    /*     return (dot(point, normal) + distance) / normal.magnitude; */
+    /* } */
 
-//     /// Returns: the distanceTo from a point to the plane.
-//     /// Note: the plane does not have to be normalized, the result can be negative.
-//     E ndistance(N point) const {
-//         return (dot(point, normal) + distance) / normal.length;
-//     }
+    /* unittest { */
+    /*     Plane p = Plane(-1.0f, 4.0f, 19.0f, -10.0f); */
+    /*     assert(almost_equal(p.ndistance(N(5.0f, -2.0f, 0.0f)), -1.182992)); */
+    /*     assert(almost_equal(p.ndistance(N(5.0f, -2.0f, 0.0f)), */
+    /*                         p.normalized.distanceTo(N(5.0f, -2.0f, 0.0f)))); */
+    /* } */
 
-//     unittest {
-//         Plane p = Plane(-1.0f, 4.0f, 19.0f, -10.0f);
-//         assert(almost_equal(p.ndistance(N(5.0f, -2.0f, 0.0f)), -1.182992));
-//         assert(almost_equal(p.ndistance(N(5.0f, -2.0f, 0.0f)),
-//                             p.normalized.distanceTo(N(5.0f, -2.0f, 0.0f))));
-//     }
-
-//     bool opEquals(Plane other) const {
-//         return other.normal == normal && other.distance == distance;
-//     }
+    /* bool opEquals(Plane other) const { */
+    /*     return other.normal == normal && other.distance == distance; */
+    /* } */
 
 }
 mixin(makeInstanceAliases("Plane","plane", 3,4, defaultElementTypes));
