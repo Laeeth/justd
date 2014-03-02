@@ -54,7 +54,7 @@ import std.algorithm;
 
 import mathml;
 import assert_ex;
-alias writeln wrln;
+alias wln = writeln;
 import dbg;
 import rational: Rational;
 import algorithm_ex: siota, clamp;
@@ -485,10 +485,10 @@ struct Vector(E, uint D,
     else static if (D == 3) { void set(E x, E y, E z) { _vector[0] = x; _vector[1] = y; _vector[2] = z; } }
     else static if (D == 4) { void set(E x, E y, E z, E w) { _vector[0] = x; _vector[1] = y; _vector[2] = z; _vector[3] = w; } }
 
-    static if (D >= 1) { alias get_!'x' x; }
-    static if (D >= 2) { alias get_!'y' y; }
-    static if (D >= 3) { alias get_!'z' z; }
-    static if (D >= 4) { alias get_!'w' w; }
+    static if (D >= 1) { alias x = get_!'x'; }
+    static if (D >= 2) { alias y = get_!'y'; }
+    static if (D >= 3) { alias z = get_!'z'; }
+    static if (D >= 4) { alias w = get_!'w'; }
 
     static if (isNumeric!E) {
         /* Need these conversions when E is for instance ubyte.
@@ -545,17 +545,17 @@ unittest {
     assert(any!"a"(vec2b(false, true)[]));
     assert(any!"a"(vec2b(true, false)[]));
     assert(!any!"a"(vec2b(false, false)[]));
-    wrln(vec2f(2, 3));
-    wrln(transpose(vec2f(11, 22)));
-    wrln(vec2f(11, 22).toLaTeX);
-    wrln(vec2f(11, 22).T.toLaTeX);
+    wln(vec2f(2, 3));
+    wln(transpose(vec2f(11, 22)));
+    wln(vec2f(11, 22).toLaTeX);
+    wln(vec2f(11, 22).T.toLaTeX);
     assert((vec2(1, 3)*2.5f)[] == [2.5f, 7.5f]);
 }
 
 @safe pure nothrow auto transpose(E, uint D, bool normalizedFlag)(in Vector!(E, D, normalizedFlag, Orient.column) a) {
     return Vector!(E, D, normalizedFlag, Orient.row)(a);
 }
-alias transpose T; // C++ Armadillo naming convention.
+alias T = transpose; // C++ Armadillo naming convention.
 
 @safe pure nothrow auto elementwiseLessThanOrEqual(Ta, Tb, uint D)(Vector!(Ta, D) a,
                                                                    Vector!(Tb, D) b) {
@@ -581,7 +581,7 @@ unittest {
     }
     return c;
 }
-alias dotProduct dot;
+alias dot = dotProduct;
 
 /// Returns: Outer-Product of Two Vectors $(D a) and $(D b).
 @safe pure nothrow auto outerProduct(Ta, Tb, uint Da, uint Db)(in Vector!(Ta, Da) a,
@@ -595,7 +595,7 @@ alias dotProduct dot;
     }
     return y;
 }
-alias outerProduct outer;
+alias outer = outerProduct;
 
 /// Returns: Vector/Cross-Product of two 3-Dimensional Vectors.
 @safe pure nothrow T cross(T)(in T a, in T b) if (isVector!T &&
@@ -638,7 +638,7 @@ enum Layout { columnMajor, rowMajor }; // Matrix Storage Major Dimension.
 ///  layout = matrix layout
 struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if ((rows_ >= 1) && (cols_ >= 1))
 {
-    alias type mT; /// Internal type of the _matrix
+    alias mT = type; /// Internal type of the _matrix
     static const uint rows = rows_; /// Number of rows
     static const uint cols = cols_; /// Number of columns
 
@@ -724,7 +724,7 @@ struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if 
 
         return "[" ~ join(outer_parts, "\n")[1..$] ~ "]";
     }
-    alias asPrettyString toPrettyString; /// ditto
+    alias toPrettyString = asPrettyString; /// ditto
 
     @safe pure nothrow:
     static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(mT, r, c) m) {
@@ -886,12 +886,12 @@ struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if 
     }
 
 }
-alias Matrix!(int, 2, 2) mat2i;
-alias Matrix!(float, 2, 2) mat2;
-alias Matrix!(float, 3, 3) mat3;
-alias Matrix!(float, 3, 4) mat34;
-alias Matrix!(float, 4, 4) mat4;
-alias Matrix!(float, 2, 2, Layout.columnMajor) mat2_cm;
+alias mat2i = Matrix!(int, 2, 2);
+alias mat2 = Matrix!(float, 2, 2);
+alias mat3 = Matrix!(float, 3, 3);
+alias mat34 = Matrix!(float, 3, 4);
+alias mat4 = Matrix!(float, 4, 4);
+alias mat2_cm = Matrix!(float, 2, 2, Layout.columnMajor);
 
 unittest {
     auto m = mat2(1, 2,
@@ -911,7 +911,7 @@ unittest {
 }
 
 unittest {
-    alias float E;
+    alias E = float;
     immutable a = Vector!(E, 2, false, Orient.column)(1, 2);
     immutable b = Vector!(E, 3, false, Orient.column)(3, 4, 5);
     immutable c = outerProduct(a, b);
@@ -929,7 +929,7 @@ struct Particle(E, uint D,
     Vector!(E, D, normalizedFlag) velocity; ///< Velocity.
     E mass;                         // Mass.
     unittest {
-        // wrln(Particle());
+        // wln(Particle());
     }
 }
 mixin(makeInstanceAliases("Particle","particle", 2,4, defaultElementTypes));
@@ -997,11 +997,11 @@ struct Box(E, uint D) if (D >= 1) {
         }
         return y;
     }
-    static      if (D == 2) { alias sidesProduct area;  }
-    else static if (D == 3) { alias sidesProduct volume;  }
-    else static if (D >= 4) { alias sidesProduct hyperVolume;  }
+    static      if (D == 2) { alias area = sidesProduct;  }
+    else static if (D == 3) { alias volume = sidesProduct;  }
+    else static if (D >= 4) { alias hyperVolume = sidesProduct;  }
 
-    alias expand include;
+    alias include = expand;
 
     Vector!(E,D) min;           /// Low.
     Vector!(E,D) max;           /// High.
@@ -1027,8 +1027,16 @@ mixin(makeInstanceAliases("Box","box", 2,4, ["int", "float", "double", "real"]))
 struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2) {
     static const uint dimension = D; /// Get dimensionality.
 
-    alias Vector!(E, D, true) N; /// Plane Normal Type.
-    N normal;                    /// Plane Normal.
+    alias N = Vector!(E, D, true); /// Plane Normal Type.
+    union {
+        static if (D == 3)
+            struct {
+                E a; /// normal.x
+                E b; /// normal.y
+                E c; /// normal.z
+            }
+        N normal;                    /// Plane Normal.
+    }
     E distance;                  /// Plane Constant (Offset from origo).
 
     @safe pure nothrow:
@@ -1056,32 +1064,32 @@ struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2) {
         this.distance = distance;
     }
 
-    // unittest {
-    //     Plane p = Plane(0.0f, 1.0f, 2.0f, 3.0f);
-    //     assert(p.normal == N(0.0f, 1.0f, 2.0f));
-    //     assert(p.distance == 3.0f);
+    unittest {
+        Plane p = Plane(0.0f, 1.0f, 2.0f, 3.0f);
+        assert(p.normal == N(0.0f, 1.0f, 2.0f));
+        assert(p.distance == 3.0f);
 
-    //     p.normal.x = 4.0f;
-    //     assert(p.normal == N(4.0f, 1.0f, 2.0f));
-    //     assert(p.x == 4.0f);
-    //     assert(p.y == 1.0f);
-    //     assert(p.c == 2.0f);
-    //     assert(p.distance == 3.0f);
-    // }
+        p.normal.x = 4.0f;
+        assert(p.normal == N(4.0f, 1.0f, 2.0f));
+        assert(p.x == 4.0f);
+        assert(p.y == 1.0f);
+        assert(p.c == 2.0f);
+        assert(p.distance == 3.0f);
+    }
 
-    // /// Normalizes the plane inplace.
-    // void normalize() {
-    //     immutable E det = cast(E)1 / normal.length;
-    //     normal *= det;
-    //     distance *= det;
-    // }
+    /// Normalizes the plane inplace.
+    void normalize() {
+        immutable E det = cast(E)1 / normal.magnitude;
+        normal *= det;
+        distance *= det;
+    }
 
-//     /// Returns: a normalized copy of the plane.
-//     @property Plane normalized() const {
-//         Plane y = Plane(a, b, c, distance);
-//         y.normalize();
-//         return y;
-//     }
+    /// Returns: a normalized copy of the plane.
+    /* @property Plane normalized() const { */
+    /*     Plane y = Plane(a, b, c, distance); */
+    /*     y.normalize(); */
+    /*     return y; */
+    /* } */
 
 //     unittest {
 //         Plane p = Plane(0.0f, 1.0f, 2.0f, 3.0f);
@@ -1122,24 +1130,24 @@ mixin(makeInstanceAliases("Plane","plane", 3,4, defaultElementTypes));
 // ==============================================================================================
 
 unittest {
-    wrln(box2f(vec2f(1, 2),
+    wln(box2f(vec2f(1, 2),
                vec2f(3, 3)));
-    wrln([12, 3, 3]);
+    wln([12, 3, 3]);
 
-    wrln(sort(vec2f(2, 3)[]));
-    wrln(vec2f(2, 3));
+    wln(sort(vec2f(2, 3)[]));
+    wln(vec2f(2, 3));
 
-    wrln(vec2f(2, 3));
-    wrln(vec2f(2, 3));
+    wln(vec2f(2, 3));
+    wln(vec2f(2, 3));
 
-    wrln(vec3f(2, 3, 4));
+    wln(vec3f(2, 3, 4));
 
-    wrln(box2f(vec2f(1, 2),
+    wln(box2f(vec2f(1, 2),
                vec2f(3, 4)));
 
-    wrln(vec2i(2, 3));
-    wrln(vec3i(2, 3, 4));
-    wrln( + vec3i(2, 3, 4));
+    wln(vec2i(2, 3));
+    wln(vec3i(2, 3, 4));
+    wln( + vec3i(2, 3, 4));
     writeln("vec2i:\n", vec2i(2, 3).toMathML);
 
     auto m = mat2(1, 2, 3, 4);
