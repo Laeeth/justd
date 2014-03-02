@@ -8,7 +8,7 @@ deps:
 	sudo apt-get update;
 	sudo apt-get dist-upgrade;
 	bld_SDL2_all;
-tags:
+tags: $(TAGS_FILES)
 	@ctags --sort=yes --links=no --excmd=number --languages=$(ECTAGS_LANGS) --extra=+f --file-scope=yes --fields=afikmsSt --totals=yes $(TAGS_FILES)
 clean:
 	$(RM) tags TAGS
