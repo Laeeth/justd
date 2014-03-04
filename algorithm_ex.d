@@ -530,7 +530,7 @@ unittest {
 /** Returns: If range is a palindrome.
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
     */
-bool isPalindrome(R)(in R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R)) {
+bool isPalindrome(R)(R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R)) {
     import std.range: retro;
     import std.algorithm: equal;
     return range.retro.equal(range);
