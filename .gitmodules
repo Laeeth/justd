@@ -52,3 +52,12 @@
 [submodule "DerelictUtil"]
 	path = DerelictUtil
 	url = https://github.com/DerelictOrg/DerelictUtil.git
+[submodule "glad"]
+	path = glad
+	url = https://github.com/Dav1dde/glad.git
+[submodule "gl3n"]
+	path = gl3n
+	url = https://github.com/Dav1dde/gl3n.git
+[submodule "glamour"]
+	path = glamour
+	url = https://github.com/Dav1dde/glamour.git
