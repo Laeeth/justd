@@ -82,6 +82,7 @@ enum steradian = Steradian.init; /// ditto
  * SI derived units.
  */
 enum hertz = dimensionless / second;
+enum hertz_ = 1 / second;
 enum newton = kilogram * metre / pow!2(second); /// ditto
 enum pascal = newton / pow!2(metre);            /// ditto
 enum joule = newton * metre;                    /// ditto
@@ -108,6 +109,8 @@ version (unittest) {
     }
 }
 unittest {
+    import std.stdio;
+
     Quantity!(mole, V) idealGasAmount(V)(
         Quantity!(pascal, V) pressure,
         Quantity!(pow!3(meter), V) volume,
@@ -127,7 +130,10 @@ unittest {
     enum r = 0.5e-6 * meter;
     enum V = (4.0 / 3.0) * 3.141592 * pow!3(r);
     enum n = idealGasAmount!double(p, V, T); // Need to explicitly specify double due to @@BUG5801@@.
-    static assert(n == 0xb.dd95ef4ddcb82f7p-59 * mole);
+    // static assert(n == 0xb.dd95ef4ddcb82f7p-59 * mole);
+
+    writeln(hertz);
+    writeln(hertz_);
 
     static assert(convert!gram(2 * kilogram) == 2000 * gram);
     static assert(convert!kilogram(2000 * gram) == 2 * kilogram);

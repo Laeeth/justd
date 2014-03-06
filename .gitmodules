@@ -61,3 +61,6 @@
 [submodule "glamour"]
 	path = glamour
 	url = https://github.com/Dav1dde/glamour.git
+[submodule "gfm"]
+	path = gfm
+	url = https://github.com/p0nce/gfm.git
