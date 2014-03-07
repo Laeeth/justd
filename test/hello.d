@@ -3,5 +3,6 @@
 import std.stdio, std.algorithm;
 
 void main(string args[]) {
-    writeln("xxx");
+    int x = 42;
+    writeln("Hello World in D!. The answer is ", 42);
 }
