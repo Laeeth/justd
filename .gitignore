@@ -2,3 +2,6 @@ core
 tags
 tags.dscanner
 *.out
+.trash
+*.o
+*/*.o

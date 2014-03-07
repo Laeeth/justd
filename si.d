@@ -102,6 +102,16 @@ enum gray = joule / kilogram;                   /// ditto
 enum sievert = joule / kilogram;                /// ditto
 enum katal = mole / second;                     /// ditto
 
+/* Ideal Gas Law. */
+Quantity!(mole, V) idealGasAmount(V)(
+    Quantity!(pascal, V) pressure,
+    Quantity!(pow!3(meter), V) volume,
+    Quantity!(kelvin, V) temperature
+    ) {
+    enum R = 8.314471 * joule / (kelvin * mole);
+    return (pressure * volume) / (temperature * R);
+}
+
 version (unittest) {
     // @@BUG@@: auto doesn't work if declaration is moved into unittest block.
     auto work(Quantity!newton force, Quantity!metre displacement) {
@@ -110,15 +120,6 @@ version (unittest) {
 }
 unittest {
     import std.stdio;
-
-    Quantity!(mole, V) idealGasAmount(V)(
-        Quantity!(pascal, V) pressure,
-        Quantity!(pow!3(meter), V) volume,
-        Quantity!(kelvin, V) temperature
-    ) {
-        enum R = 8.314471 * joule / (kelvin * mole);
-        return (pressure * volume) / (temperature * R);
-    }
 
     enum force = 1.0 * newton;
     enum displacement = 1.0 * metre;
