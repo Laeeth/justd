@@ -639,7 +639,8 @@ class DirKind {
     string fileName;
     string kindName;
 }
-version(msgpack) unittest {
+version(msgpack) unittest
+{
     auto k = tuple("", "");
     auto data = pack(k);
     Tuple!(string, string) k_; data.unpack(k_);
@@ -650,7 +651,8 @@ import std.file: SysTime, Interval, DirEntry, getLinkAttributes;
 
 /** File.
  */
-class File {
+class File
+{
     this(Dir parent) { this.parent = parent;
         if (parent) { ++parent.gstats.noFiles; }
     }
@@ -668,7 +670,8 @@ class File {
     Bytes64 treeSize() @property @trusted /* @safe pure nothrow */ { return size; }
 
     /** Content Digest of Tree under this Directory. */
-    const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */ {
+    const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */
+    {
         return typeof(return).init;
     }
 
@@ -680,7 +683,8 @@ class File {
     /** Check if $(D this) File has been invalidated by $(D dent).
         Returns: true if $(D this) was obseleted, false otherwise.
     */
-    bool checkObseleted(ref DirEntry dent) @trusted {
+    bool checkObseleted(ref DirEntry dent) @trusted
+    {
         // Git-Style Check for Changes (called Decider in SCons Build Tool)
         bool flag = false;
         if (dent.size != this.size || // size has changes
@@ -701,7 +705,8 @@ class File {
     /** Returns: Path to $(D this) File. */
     string path() @property @trusted pure out (result) {
         /* assertEqual(result, pathRecursive); */
-    } body {
+    } body
+      {
         import std.path: dirSeparator;
         if (!parent) { return dirSeparator; }
 
@@ -737,7 +742,8 @@ class File {
     /** Returns: Path to $(D this) File.
         Recursive Heap-active implementation.
     */
-    string pathRecursive() @property @trusted pure {
+    string pathRecursive() @property @trusted pure
+    {
         if (parent) {
             static if (true) {
                 import std.path: dirSeparator;
@@ -755,12 +761,15 @@ class File {
         }
     }
 
-    version(msgpack) {
-        void toMsgpack(Packer)(ref Packer packer) const {
+    version(msgpack)
+    {
+        void toMsgpack(Packer)(ref Packer packer) const
+        {
             /* writeln("Entering File.toMsgpack ", name); */
             packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime);
         }
-        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) {
+        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
+        {
             long stdTime;
             unpacker.unpack(stdTime); timeLastModified = SysTime(stdTime); // TODO: Functionize
             unpacker.unpack(stdTime); timeLastAccessed = SysTime(stdTime); // TODO: Functionize
@@ -775,8 +784,10 @@ class File {
 }
 
 /** Maps Files to their tags. */
-class FileTags {
-    FileTags addTag(File file, in string tag) @safe pure /* nothrow */ {
+class FileTags
+{
+    FileTags addTag(File file, in string tag) @safe pure /* nothrow */
+    {
         if (file in _tags) {
             if (_tags[file].find(tag).empty) {
                 _tags[file] ~= tag; // add it
@@ -787,20 +798,23 @@ class FileTags {
         }
         return this;
     }
-    FileTags removeTag(File file, string tag) @safe pure {
+    FileTags removeTag(File file, string tag) @safe pure
+    {
         if (file in _tags) {
             import std.algorithm: remove;
             _tags[file] = _tags[file].remove!(a => a == tag);
         }
         return this;
     }
-    auto ref getTags(File file) const @safe pure nothrow {
+    auto ref getTags(File file) const @safe pure nothrow
+    {
         return file in _tags ? _tags[file] : null;
     }
     private string[][File] _tags; // Tags for each registered file.
 }
 
-version(linux) unittest {
+version(linux) unittest
+{
     auto ftags = new FileTags();
     GStats gstats = new GStats();
     auto root = assumeNotNull(new Dir(cast(Dir)null, gstats));
@@ -849,7 +863,8 @@ class Symlink : File {
 
     override Face!Color face() @property @safe pure nothrow { return symlinkFace; }
 
-    string retarget(ref DirEntry dent) @trusted {
+    string retarget(ref DirEntry dent) @trusted
+    {
         return _target = std.file.readLink(dent);
     }
 
@@ -862,7 +877,8 @@ class Symlink : File {
         return _target;
     }
     /** Cached/Memoized/Lazy Lookup for target as absolute normalized path. */
-    string absoluteNormalizedTargetPath() @property @trusted {
+    string absoluteNormalizedTargetPath() @property @trusted
+    {
         import std.path: absolutePath, buildNormalizedPath;
         return target.absolutePath(path.dirName).buildNormalizedPath;
     }
@@ -929,7 +945,8 @@ enum BitStatus
 
 /** Regular File.
  */
-class RegFile : File {
+class RegFile : File
+{
     this(NotNull!Dir parent) {
         super(parent);
         ++parent.gstats.noRegFiles;
@@ -954,7 +971,8 @@ class RegFile : File {
     const(SHA1Digest) contId(inout (ubyte[]) src,
                              File[][SHA1Digest] filesByContId)
         @property pure out(result) { assert(!result.empty); } // must have be defined
-    body {
+    body
+    {
         if (_cstat._contId.empty) { // if not yet defined
             _cstat._contId = src.sha1Of;
             filesByContId[_cstat._contId] ~= this;
@@ -964,7 +982,8 @@ class RegFile : File {
     }
 
     /** Returns: Cached/Memoized Binary Histogram of $(D this) $(D File). */
-    auto ref bistogram8() @property @safe { // ref needed here!
+    auto ref bistogram8() @property @safe // ref needed here!
+    {
         if (_cstat.bist.empty) {
             /* debug dln(this.path, " Recalculating bistogram8."); */
             _cstat.bist.put(readOnlyContents); // memoized calculated
@@ -973,7 +992,8 @@ class RegFile : File {
     }
 
     /** Returns: Cached/Memoized XGram of $(D this) $(D File). */
-    auto ref xgram() @property @safe { // ref needed here!
+    auto ref xgram() @property @safe // ref needed here!
+    {
         if (_cstat.xgram.empty) {
             _cstat.xgram.put(readOnlyContents); // memoized calculated
             /* debug dln(this.path, " Recalculated xgram. empty:", _cstat.xgram.empty); */
@@ -982,7 +1002,8 @@ class RegFile : File {
     }
 
     /** Returns: Cached/Memoized XGram Deep Denseness of $(D this) $(D File). */
-    auto ref xgramDeepDenseness() @property @safe {
+    auto ref xgramDeepDenseness() @property @safe
+    {
         if (!_cstat._xgramDeepDenseness) {
             _cstat._xgramDeepDenseness = xgram.denseness(-1).numerator;
             /* debug dln(this.path, " Recalculating xgramDeepDenseness to ", _cstat._xgramDeepDenseness); */
@@ -996,7 +1017,8 @@ class RegFile : File {
                                 bool doSHA1,
                                 bool doBist,
                                 bool doBitStatus,
-                                NotNull!File[][SHA1Digest] filesByContId) @safe {
+                                NotNull!File[][SHA1Digest] filesByContId) @safe
+    {
         if (_cstat._contId.defined) { doSHA1 = false; }
         if (!_cstat.bist.empty) { doBist = false; }
         if (_cstat.bitStatus != BitStatus.unknown) { doBitStatus = false; }
@@ -1032,7 +1054,8 @@ class RegFile : File {
     }
 
     /** Clear/Reset Contents Statistics of $(D this) $(D File). */
-    void clearCStat(File[][SHA1Digest] filesByContId) @safe nothrow {
+    void clearCStat(File[][SHA1Digest] filesByContId) @safe nothrow
+    {
         // SHA1-digest
         if (_cstat._contId in filesByContId) {
             auto dups = filesByContId[_cstat._contId];
@@ -1043,13 +1066,15 @@ class RegFile : File {
         }
     }
 
-    override string toString() @property @trusted {
+    override string toString() @property @trusted
+    {
         // import std.traits: fullyQualifiedName;
         // return fullyQualifiedName!(typeof(this)) ~ "(" ~ buildPath(parent.name, name) ~ ")"; // TODO: typenameof
         return (typeof(this)).stringof ~ "(" ~ this.path ~ ")"; // TODO: typenameof
     }
 
-    version(msgpack) {
+    version(msgpack)
+    {
         /** Construct from msgpack $(D unpacker).  */
         this(Unpacker)(ref Unpacker unpacker) {
             fromMsgpack(msgpack.Unpacker(unpacker));
@@ -1090,7 +1115,8 @@ class RegFile : File {
         }
 
         /** Unpack. */
-        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) @trusted {
+        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) @trusted
+        {
             unpacker.unpack(this.name, this.size); // Name, Size
 
             // Time
@@ -1141,7 +1167,8 @@ class RegFile : File {
     /** Returns: Read-Only Contents of $(D this) Regular File. */
     // } catch (InvalidMemoryOperationError) { ppln(term, outFile, doHTML, "Failed to mmap ", dent.name); }
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
-    immutable(ubyte[]) readOnlyContents(string file = __FILE__, int line = __LINE__)() @trusted {
+    immutable(ubyte[]) readOnlyContents(string file = __FILE__, int line = __LINE__)() @trusted
+    {
         if (!_mmfile) {
             _mmfile = new MmFile(this.path, MmFile.Mode.read,
                                  mmfile_size, null, pageSize());
@@ -1155,7 +1182,8 @@ class RegFile : File {
     /** Returns: Read-Writable Contents of $(D this) Regular File. */
     // } catch (InvalidMemoryOperationError) { ppln(term, outFile, doHTML, "Failed to mmap ", dent.name); }
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
-    ubyte[] readWriteableContents() @trusted {
+    ubyte[] readWriteableContents() @trusted
+    {
         if (!_mmfile) {
             _mmfile = new MmFile(this.path, MmFile.Mode.readWrite,
                                  mmfile_size, null, pageSize());
@@ -1228,7 +1256,8 @@ enum SymlinkFollowContext
 }
 
 /** Global Scanner Statistics. */
-class GStats {
+class GStats
+{
     NotNull!File[][string] filesByName;    // Potential File Name Duplicates
     NotNull!File[][ino_t] filesByInode;    // Potenial Link Duplicates
     NotNull!File[][SHA1Digest] filesByContId; // File(s) (Duplicates) Indexed on Contents SHA1.
@@ -1270,7 +1299,8 @@ class GStats {
 
 }
 
-struct Results {
+struct Results
+{
     Bytes64 numTotalHits; // Number of total hits.
     Bytes64 numFilesWithHits; // Number of files with hits
 
@@ -1352,12 +1382,14 @@ enum ctxFaces = [face(Color.red, Color.black) ,
 /** Key (Hit) Faces. */
 enum keyFaces = ctxFaces.map!(a => face(a.fg, a.bg, true));
 
-void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) {
+void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
+{
     term.color(face.fg | (face.bright ? Bright : 0) ,
                face.bg);
 }
 
-@safe pure nothrow {
+@safe pure nothrow
+{
     const string lbr(bool doHTML) { return (doHTML ? "<br>" : ""); } // line break
     const string begBold(bool doHTML) { return (doHTML ? "<b>" : ""); } // bold begin
     const string endBold(bool doHTML) { return (doHTML ? "</b>" : ""); } // bold end
@@ -1375,7 +1407,8 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) {
     }
 }
 
-void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args) {
+void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
+{
     if (outFile == stdout) {
         term.write(args);
         term.flush();
@@ -1383,7 +1416,8 @@ void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args) {
         outFile.write(args);
     }
 }
-void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args) {
+void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
+{
     if (outFile == stdout) {
         term.writeln(args, lbr(doHTML));
         term.flush();
@@ -1395,9 +1429,11 @@ void endl(Term)(ref Term term, ioFile outFile, bool doHTML) { return ppln(term, 
 
 /** Dir.
  */
-class Dir : File {
+class Dir : File
+{
     /** Construct File System Root Directory. */
-    this(Dir parent = null, GStats gstats = null) {
+    this(Dir parent = null, GStats gstats = null)
+    {
         super(parent);
         this._gstats = gstats;
         if (gstats) { ++gstats.noDirs; }
@@ -1405,7 +1441,8 @@ class Dir : File {
 
     this(string root_path, GStats gstats)
         in { assert(root_path == "/"); assert(gstats); }
-    body {
+    body
+    {
         auto rootDent = DirEntry(root_path);
         Dir rootParent = null;
         this(rootDent, rootParent, gstats);
@@ -1413,18 +1450,21 @@ class Dir : File {
 
     this(ref DirEntry dent, Dir parent, GStats gstats)
         in { assert(gstats); }
-    body {
+    body
+    {
         this(dent.name.baseName, parent, dent.size.Bytes64, dent.timeLastModified, dent.timeLastAccessed, gstats);
     }
 
     this(string name, Dir parent, Bytes64 size, SysTime timeLastModified, SysTime timeLastAccessed,
-         GStats gstats = null) {
+         GStats gstats = null)
+    {
         super(name, parent, size, timeLastModified, timeLastAccessed);
         this._gstats = gstats;
         if (gstats) { ++gstats.noDirs; }
     }
 
-    override Bytes64 treeSize() @property @trusted /* @safe pure nothrow */ {
+    override Bytes64 treeSize() @property @trusted /* @safe pure nothrow */
+    {
         if (_treeSize.untouched) {
             _treeSize = this.size + reduce!"a+b"(0.Bytes64,
                                                  _subs.byValue.map!"a.treeSize"); // recurse!
@@ -1433,7 +1473,8 @@ class Dir : File {
     }
 
     /** Returns: Contents Id of $(D this). */
-    override const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */ {
+    override const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */
+    {
         if (_treeContId.untouched) {
             _treeContId = reduce!"a ^ b"(SHA1Digest.init,
                                          _subs.byValue.map!"a.treeContId"); // recurse!
@@ -1457,7 +1498,8 @@ class Dir : File {
     }
 
     /** Returns: Depth of Depth from File System root to this File. */
-    override int depth() @property @safe pure nothrow {
+    override int depth() @property @safe pure nothrow
+    {
         if (_depth ==- 1) {
             _depth = parent ? parent.depth + 1 : 0; // memoized depth
         }
@@ -1465,7 +1507,8 @@ class Dir : File {
     }
 
     /** Append Tree Statistics. */
-    void addTreeStatsFromSub(F)(NotNull!F subFile, ref DirEntry subDent) {
+    void addTreeStatsFromSub(F)(NotNull!F subFile, ref DirEntry subDent)
+    {
         if (subDent.isFile) {
             /* _treeSize += subDent.size.Bytes64; */
             // dln("Updating ", _treeSize, " of ", path);
@@ -1484,7 +1527,8 @@ class Dir : File {
     }
 
     /** Update Statistics for Sub-File $(D sub) with $(D subDent) of $(D this) Dir. */
-    void updateStats(F)(NotNull!F subFile, ref DirEntry subDent, bool isRegFile) {
+    void updateStats(F)(NotNull!F subFile, ref DirEntry subDent, bool isRegFile)
+    {
         auto localGStats = gstats();
         if (localGStats) {
             if (localGStats.showNameDups) {
@@ -1504,7 +1548,8 @@ class Dir : File {
     /** Load Contents of $(D this) Directory from Disk using DirEntries.
         Returns: true if Dir was updated (reread) from disk, false otherwise.
     */
-    bool load(int depth = 0, bool force = false) {
+    bool load(int depth = 0, bool force = false)
+    {
         import std.range: empty;
         if (!_obseleteDir && // already loaded
             !force) {        // and not forced reload
@@ -1632,7 +1677,8 @@ class Dir : File {
             }
         }
 
-        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) {
+        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
+        {
             unpacker.unpack(name, size);
 
             long stdTime;
@@ -1696,13 +1742,15 @@ class Dir : File {
         }
     }
 
-    override void makeObselete() @trusted {
+    override void makeObselete() @trusted
+    {
         _obseleteDir = true;
         _treeSize.reset;
         _timeModifiedInterval.reset;
         _timeAccessedInterval.reset;
     }
-    override void makeUnObselete() @safe {
+    override void makeUnObselete() @safe
+    {
         _obseleteDir = false;
     }
 
@@ -1742,7 +1790,8 @@ Bytes64 treeSizeMemoized(NotNull!File file, Bytes64[File] cache) @trusted /* not
 /** Save File System Tree Cache under Directory $(D rootDir).
     Returns: Serialized Byte Array.
 */
-const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Dir rootDir, string cacheFile) @trusted {
+const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Dir rootDir, string cacheFile) @trusted
+{
     immutable tic = Clock.currTime;
     version(msgpack) {
         const data = rootDir.pack();
@@ -1766,7 +1815,8 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML,
 /** Load File System Tree Cache from $(D cacheFile).
     Returns: Root Directory of Loaded Tree.
 */
-Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, string cacheFile, GStats gstats) @trusted {
+Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, string cacheFile, GStats gstats) @trusted
+{
     immutable tic = Clock.currTime;
 
     import std.file: read;
@@ -1797,7 +1847,8 @@ Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, string cac
     }
 }
 
-Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames) {
+Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames)
+{
     Dir[] topDirs;
     foreach (topName; topDirNames) {
         Dir topDir = getDir(rootDir, topName);
@@ -1811,7 +1862,8 @@ Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames) {
 }
 
 /** (Cached) Lookup of Directory $(D dirpath). */
-File getFile(NotNull!Dir rootDir, string filePath, ref DirEntry dent) @trusted {
+File getFile(NotNull!Dir rootDir, string filePath, ref DirEntry dent) @trusted
+{
     if (dent.isDir) {
         return getDir(rootDir, filePath);
     } else {
@@ -1860,7 +1912,8 @@ Dir getDir(NotNull!Dir rootDir, string dirPath, ref DirEntry dent,
 }
 
 /** (Cached) Lookup of Directory $(D dirPath). */
-Dir getDir(NotNull!Dir rootDir, string dirPath) @trusted {
+Dir getDir(NotNull!Dir rootDir, string dirPath) @trusted
+{
     Symlink[] followedSymlinks;
     try {
         auto dirDent = DirEntry(dirPath);
@@ -1876,7 +1929,8 @@ unittest {
 
 enum ulong mmfile_size = 0; // 100*1024
 
-auto pageSize() @trusted {
+auto pageSize() @trusted
+{
     version(linux ) {
         import core.sys.posix.sys.shm: __getpagesize;
         return __getpagesize();
