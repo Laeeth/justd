@@ -163,17 +163,20 @@ version(linux) import std.c.linux.linux;
 /** Exception Describing Process Signal. */
 
 shared uint ctrlC = 0; // Number of times Ctrl-C has been presed
-class SignalCaughtException : Exception {
+class SignalCaughtException : Exception
+{
     int signo = int.max;
     this(int signo, string file = __FILE__, size_t line = __LINE__ ) @safe {
         this.signo = signo;
         super("Signal number " ~ to!string(signo) ~ " at " ~ file ~ ":" ~ to!string(line));
     }
 }
-    void signalHandler(int signo) {
-        if (signo == 2) { ++ctrlC; }
-        // throw new SignalCaughtException(signo);
-    }
+
+void signalHandler(int signo)
+{
+    if (signo == 2) { ++ctrlC; }
+    // throw new SignalCaughtException(signo);
+}
 
 alias signalHandler_t = void function(int);
 extern (C) signalHandler_t signal(int signal, signalHandler_t handler);
@@ -190,7 +193,8 @@ version(cerealed) {
 /** Returns: Duration $(D dur) in a Level-Of-Detail (LOD) string
     representation.
 */
-string shortDurationString(in Duration dur) @safe pure {
+string shortDurationString(in Duration dur) @safe pure
+{
     import std.conv: to;
     immutable weeks = dur.weeks;     if (weeks) {
         if (weeks < 52) {
@@ -214,14 +218,16 @@ string shortDurationString(in Duration dur) @safe pure {
 }
 
 /** Returns: Default Documentation String for value $(D a) of for Type $(D T). */
-string defaultDoc(T)(in T a) @safe pure {
+string defaultDoc(T)(in T a) @safe pure
+{
     return (" (type:" ~ T.stringof ~
             ", default:" ~ to!string(a) ~
             ").") ;
 }
 
 /** Returns: Documentation String for Enumeration Type $(D EnumType). */
-string enumDoc(EnumType, string separator = "|")() @safe pure nothrow {
+string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
+{
     /* import std.traits: EnumMembers; */
     /* return EnumMembers!EnumType.join(separator); */
     /* auto subsSortingNames = EnumMembers!EnumType; */
@@ -465,7 +471,10 @@ class FKind
         value is memoized.
         TODO: Make pure when msgpack.pack is made pure.
     */
-    auto ref const(SHA1Digest) behaviorId() @property @safe out(result) { assert(!result.empty); } body {
+    auto ref const(SHA1Digest) behaviorId() @property @safe
+        out(result) { assert(!result.empty); }
+    body
+    {
         if (_behaviourDigest.empty) { // if not yet defined
             ubyte[] bytes;
             if (const magicLit = cast(Lit)magicData)
@@ -526,7 +535,8 @@ bool matchExtension(in FKind kind,
 
 bool matchName(in FKind kind,
                in string full, size_t six = 0,
-               in string ext = null) @safe pure nothrow {
+               in string ext = null) @safe pure nothrow
+{
     /* debug dln("kind:", kind.kindName); */
     return (kind.matchFullName(full) ||
             kind.matchExtension(ext));
@@ -536,7 +546,8 @@ bool matchName(in FKind kind,
     Returns: true upon match, false otherwise. */
 bool matchContents(Range)(in FKind kind,
                           in Range range,
-                          in RegFile regfile) pure nothrow if (hasSlicing!Range) {
+                          in RegFile regfile) pure nothrow if (hasSlicing!Range)
+{
     const hit = kind.magicData.matchU(range, kind.magicOffset);
     /* debug dln("kind:", kind.kindName,  ", range.length:", hit.length); */
     return (!hit.empty);
@@ -615,14 +626,16 @@ KindHit ofKind(NotNull!RegFile regfile,
 
 /** Directory Kind.
  */
-class DirKind {
+class DirKind
+{
     this(string fn,
          string kn) {
         this.fileName = fn;
         this.kindName = kn;
     }
 
-    version(msgpack) {
+    version(msgpack)
+    {
         this(Unpacker)(ref Unpacker unpacker) {
             fromMsgpack(msgpack.Unpacker(unpacker));
         }
@@ -1593,15 +1606,14 @@ class Dir : File
         return true;
     }
 
-    bool reload(int depth = 0) {
-        return load(depth, true);
-    }
+    bool reload(int depth = 0) { return load(depth, true); }
     alias sync = reload;
 
     /* TODO: Can we get make this const to the outside world perhaps using inout? */
     ref File[string] subs() @property { load(); return _subs; }
 
-    File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property {
+    File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property
+    {
         load();
         auto ssubs = _subs.values;
         /* TODO: Use radix sort to speed things up. */
@@ -1882,7 +1894,10 @@ File getFile(NotNull!Dir rootDir, string filePath, ref DirEntry dent) @trusted
 */
 import std.path: isRooted;
 Dir getDir(NotNull!Dir rootDir, string dirPath, ref DirEntry dent,
-           ref Symlink[] followedSymlinks) @trusted in { assert(dirPath.isRooted); } body {
+           ref Symlink[] followedSymlinks) @trusted
+    in { assert(dirPath.isRooted); }
+body
+{
     Dir currDir = rootDir;
 
     import std.range: drop;
@@ -1948,7 +1963,8 @@ enum KeyStrictness
 }
 
 /** File System Scanner. */
-class Scanner(Term) {
+class Scanner(Term)
+{
     this(string[] args, ref Term term) {
         _scanChunkSize = 32*pageSize();
         loadDirKinds();
@@ -4218,11 +4234,13 @@ body { font: 8px Verdana, sans-serif; }
     }
 }
 
-Scanner!Term scanner(Term)(string[] args, ref Term term) {
+Scanner!Term scanner(Term)(string[] args, ref Term term)
+{
     return new Scanner!Term(args, term);
 }
 
-void main(string[] args) {
+void main(string[] args)
+{
     // Register the SIGINT signal with the signalHandler function call:
     version(linux) {
         signal(SIGABRT, &signalHandler);
