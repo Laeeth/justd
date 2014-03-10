@@ -773,7 +773,8 @@ unittest {
     import msgpack;
     import std.array: array;
 
-    auto times = 3.apply!(Clock.currTime).array;
+    const n = 3;
+    auto times = n.apply!(Clock.currTime).array;
     dln(times);
 
     auto spans = times.forwardDifference;
@@ -917,7 +918,7 @@ struct Limits(T)
 
     @property @safe pure:
 
-    /* Expand Limits to include $(D a). */
+    /** Expand Limits to include $(D a). */
     auto ref include(in T a) nothrow {
         _lims[0] = min(_lims[0], a);
         _lims[1] = max(_lims[1], a);
