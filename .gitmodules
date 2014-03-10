@@ -64,3 +64,9 @@
 [submodule "gfm"]
 	path = gfm
 	url = https://github.com/p0nce/gfm.git
+[submodule "compo"]
+	path = compo
+	url = https://github.com/britseye/compo.git
+[submodule "parallel_algorithm"]
+	path = parallel_algorithm
+	url = https://github.com/dsimcha/parallel_algorithm.git
