@@ -778,7 +778,7 @@ class File
     {
         void toMsgpack(Packer)(ref Packer packer) const
         {
-            /* writeln("Entering File.toMsgpack ", name); */
+            writeln("Entering File.toMsgpack ", name);
             packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime);
         }
         void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
@@ -1532,10 +1532,10 @@ class Dir : File
 
             const lastMod = subDent.timeLastModified;
             _timeModifiedInterval = Interval!SysTime(min(lastMod, _timeModifiedInterval.begin),
-                                                    max(lastMod, _timeModifiedInterval.end));
+                                                     max(lastMod, _timeModifiedInterval.end));
             const lastAcc = subDent.timeLastAccessed;
             _timeAccessedInterval = Interval!SysTime(min(lastAcc, _timeAccessedInterval.begin),
-                                                    max(lastAcc, _timeAccessedInterval.end));
+                                                     max(lastAcc, _timeAccessedInterval.end));
         }
     }
 
@@ -1612,8 +1612,7 @@ class Dir : File
     /* TODO: Can we get make this const to the outside world perhaps using inout? */
     ref File[string] subs() @property { load(); return _subs; }
 
-    File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property
-    {
+    File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property {
         load();
         auto ssubs = _subs.values;
         /* TODO: Use radix sort to speed things up. */
@@ -1662,13 +1661,26 @@ class Dir : File
 
         void toMsgpack(Packer)(ref Packer packer) const {
             /* writeln("Entering Dir.toMsgpack ", this.name); */
-            packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime, kind);
+            packer.pack(name, size,
+                        timeLastModified.stdTime,
+                        timeLastAccessed.stdTime,
+                        kind);
 
             // Contents
             /* TODO: serialize map of polymorphic objects using
              * packer.packArray(_subs) and type trait lookup up all child-classes of
              * File */
             packer.pack(_subs.length);
+
+            auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".forwardDifference;
+            debug dln(name, " modified: ", timesLastModifiedDiffs.array.pack.length);
+
+            auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".forwardDifference;
+            debug dln(name, " accessed: ", timesLastAccessedDiffs.array.pack.length);
+
+            auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime";
+            debug dln(name, " accessed: ", timesLastAccessed.array.pack.length);
+
             foreach (sub; _subs) {
                 if        (const regfile = cast(RegFile)sub) {
                     packer.pack("RegFile");
