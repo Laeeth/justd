@@ -9,8 +9,8 @@ module algorithm_ex;
 
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
-import std.traits: isArray, Unqual, isIntegral, CommonType;
-import std.range: ElementType, isInputRange, isBidirectionalRange, isIterable, isFloatingPoint, isStaticArray;
+import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint;
+import std.range: ElementType, isInputRange, isBidirectionalRange;
 import dbg;
 import traits_ex: isStruct, isClass, allSame;
 
@@ -682,7 +682,7 @@ auto forwardDifference(R)(R r)
         typeof(_range.front - _range.front) _front;
         bool _initialized = false;
 
-        @safe nothrow:
+        /* @safe nothrow: */
 
         this(R range) pure {
             this._range = range;
@@ -721,7 +721,7 @@ auto forwardDifference(R)(R r)
 import std.algorithm: equal;
 
 /** Pack $(D r) using a forwardDifference. */
-auto packForwardDifference(R)(R r) @safe pure nothrow
+auto packForwardDifference(R)(R r) /* @safe */ pure /* nothrow */ if (isInputRange!R)
 {
     import std.range: front;
     return tuple(r.front, forwardDifference(r));
@@ -871,7 +871,7 @@ unittest {
     assert(test(1, 2, 3) == 6);
 }
 
-import std.traits: allSatisfy;
+import std.typetuple : allSatisfy;
 
 /** Zip $(D ranges) together with operation $(D fun).
    TODO: Remove when Issue 8715 is fixed providing zipWith

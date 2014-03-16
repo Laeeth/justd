@@ -110,7 +110,7 @@ version = msgpack; // Use cerealed serialization
 import std.stdio: ioFile = File, stdout;
 import std.typecons: Tuple, tuple;
 import std.algorithm: find, map, filter, reduce, max, min, sort, uniq;
-import std.string: empty, representation;
+import std.string: representation;
 import std.stdio: write, writeln;
 import std.path: baseName, dirName, isAbsolute;
 import std.datetime;

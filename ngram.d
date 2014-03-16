@@ -25,6 +25,7 @@ import rational: Rational;
 import msgpack;
 import std.numeric: dotProduct;
 import std.string: representation;
+import std.conv: to;
 
 // version = print;
 

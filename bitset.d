@@ -802,7 +802,7 @@ unittest
 
 unittest
 {
-    import std.range: isIterable;
+    import std.traits: isIterable;
     static assert(isIterable!(BitSet!256));
 }
 
