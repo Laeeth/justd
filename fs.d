@@ -116,7 +116,7 @@ import std.path: baseName, dirName, isAbsolute;
 import std.datetime;
 import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
-import std.range: repeat, array;
+import std.range: repeat, array, empty;
 import std.stdint: uint64_t;
 import core.memory: GC;
 import core.exception;
@@ -136,7 +136,7 @@ import dbg;
 import backtrace.backtrace;
 import tempfs;
 import rational: Rational;
-import ngram;
+import ngram: Kind, NGram, Storage, Symmetry;
 import notnull;
 
 /* NGram Aliases */
@@ -168,6 +168,7 @@ class SignalCaughtException : Exception
     int signo = int.max;
     this(int signo, string file = __FILE__, size_t line = __LINE__ ) @safe {
         this.signo = signo;
+        import std.conv: to;
         super("Signal number " ~ to!string(signo) ~ " at " ~ file ~ ":" ~ to!string(line));
     }
 }
@@ -220,6 +221,7 @@ string shortDurationString(in Duration dur) @safe pure
 /** Returns: Default Documentation String for value $(D a) of for Type $(D T). */
 string defaultDoc(T)(in T a) @safe pure
 {
+    import std.conv: to;
     return (" (type:" ~ T.stringof ~
             ", default:" ~ to!string(a) ~
             ").") ;
@@ -660,7 +662,8 @@ version(msgpack) unittest
     assert(k == k_);
 }
 
-import std.file: SysTime, Interval, DirEntry, getLinkAttributes;
+import std.file: DirEntry, getLinkAttributes;
+import std.datetime: SysTime, Interval;
 
 /** File.
  */
@@ -738,7 +741,7 @@ class File
         // build path
         auto path_ = new char[pathLength];
         size_t i = 0;
-        import std.algorithm: retro;
+        import std.range: retro;
         foreach (currParent_; parents.retro) {
             immutable parentName = currParent_.name;
             path_[i++] = dirSeparator[0];
@@ -878,7 +881,8 @@ class Symlink : File {
 
     string retarget(ref DirEntry dent) @trusted
     {
-        return _target = std.file.readLink(dent);
+        import std.file: readLink;
+        return _target = readLink(dent);
     }
 
     /** Cached/Memoized/Lazy Lookup for target. */
@@ -1987,10 +1991,11 @@ class Scanner(Term)
 
     SysTime _currTime;
     import std.getopt;
-    import std.string: toLower, toUpper, startsWith, empty, CaseSensitive;
+    import std.string: toLower, toUpper, startsWith, CaseSensitive;
     import std.mmfile;
     import std.stdio: writeln, stdout, stderr, stdin, popen;
-    import std.algorithm: find, joiner, join, count, countUntil, min, splitter;
+    import std.algorithm: find, joiner, count, countUntil, min, splitter;
+    import std.range: join;
     import std.conv: to;
 
     import core.sys.posix.sys.mman;
