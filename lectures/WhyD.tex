@@ -22,8 +22,7 @@
 \usecolortheme[named=Maroon]{structure}
 
 \title[Error Handling \& D]{Error Handling \& D}
-\author[Calle Isaksson \& Per Nordlöw, HiQ]{\textbf {Calle Isaksson \& Per
-    Nordlöw\\HiQ}} % auteur
+\author[Per Nordlöw, HiQ]{\textbf {Per Nordlöw\\HiQ}} % auteur
 
 % \useoutertheme{umbcfootline}
 \setbeamertemplate{background canvas}[vertical shading][bottom=red!20,top=yellow!30]
@@ -40,10 +39,10 @@
   \maketitle
 \end{frame}
 
-\addtobeamertemplate{frametitle}{}{%
-\begin{textblock*}{100mm} (.85\textwidth,-0.5cm)
-\includegraphics[height=1cm,width=2cm]{hiq}
-\end{textblock*}}
+% \addtobeamertemplate{frametitle}{}{%
+% \begin{textblock*}{100mm} (.85\textwidth,-0.5cm)
+% \includegraphics[height=1cm,width=2cm]{hiq}
+% \end{textblock*}}
 
 \begin{frame}[fragile]{Machines, Software and Trust}
   \begin{figure}
@@ -191,8 +190,8 @@
 \begin{frame}[fragile]{Leading Questions}
   \begin{itemize}[<+->]
   \item Why do systems \emph{keep on} crashing?
-  \item Why so many languages?:
-  \item SAAB SimC uses C/C++, Fortran, Ada, Python, Shell, Make, \ldots =>
+  \item Why do projects need so many languages: SAAB SimC uses C/C++, Fortran,
+    Ada, Python, Shell, Make, \ldots =>
   \item Restrictive languages, such as Ada, looses all its safety in the
     wrapping layer.
   \item Background for Ada: Before 100s of langs in US Defence
