@@ -210,6 +210,7 @@ class Acronym : Patt {
     template Tuple(E...) { alias E Tuple; }
 
     override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
+        import std.string: CaseSensitive;
         return haystack.findAcronymAt(_acros, _ctx, CaseSensitive.yes, soff)[0];
     }
 
