@@ -252,7 +252,8 @@ void test(Elem)(int n) @trusted
     immutable show = true;
     import random_ex: randInPlace;
     import std.algorithm: sort, min, max, isSorted;
-    import std.range: retro, equal;
+    import std.range: retro;
+    import std.algorithm: equal;
     import std.datetime: StopWatch, AutoStart, TickDuration;
     auto sw = StopWatch();
     immutable nMax = 5;
