@@ -924,13 +924,15 @@ void main() {
 \end{frame}
 
 \begin{frame}[fragile]{More Inference than in C++11}
-  Along with type inference through \texttt{auto}, D also inferences
+  Along with type inference through \texttt{auto}, also infers
   \begin{itemize}[<+->]
-  \item Accessibility (auto, const or immutable) using inout and
-  \item Value/Reference Semantics using auto ref
+  \item Accessibility (auto, const or immutable) using \textbf{inout} parameter
+    and return qualifier and
+  \item Return by Value or Reference Semantics using \textbf{auto ref}
+  \item These thanks to D strict memory model --- compiler are ware of what code
+  \item This reduces code bloat more than \emph{any} other \emph{imperative}
+    language (Haskell is not imperative)
   \end{itemize}
-  This is a natural extension of \texttt{auto} as compiler has this knowledge
-  (more function-bodies are available by default in D) and reduce code bloat.
 \end{frame}
 
 \begin{frame}[fragile]{Expressiveness: Meta-Programming}
@@ -947,7 +949,7 @@ void main() {
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{CTFE Magic: Pegged}
+\begin{frame}[fragile]{CTFE + Mixin Magic: Pegged}
 \footnotesize
 \begin{lstlisting}[frame=single]
 import pegged.peg;
