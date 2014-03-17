@@ -757,7 +757,9 @@ void main(string[] args)
   \item A number of times faster than 2:nd place which currently is Go
   \item Parses and Analyses Phobos (like C++ STL) on 1.21 s on my laptop. That’s 6 Mbytes
     175k lines of code with more advanced use of generics than C++14 will have
-  \item Compiler DMD itself builds on 20s on my Quad Core laptop.
+  \item DMD itself builds on 11s (with Clang++ 3.4) on my two year old laptop. Iteration!
+  \item Phobos builds and runs \emph{all} its unittest in 2 minutes 33 seconds!
+  \item Multi-threading Unittesting (dtest) to get additional speedups.
   \end{itemize}
 \end{frame}
 
@@ -943,6 +945,35 @@ void main() {
     \item \texttt{std.regex.ctRegex} fastest in the world!
     \end{itemize}
   \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{CTFE Magic: Pegged}
+\footnotesize
+\begin{lstlisting}[frame=single]
+import pegged.peg;
+import pegged.grammar;
+pragma(lib, "pegged");
+
+mixin(grammar(`
+Arithmetic:
+    Term     < Factor (Add / Sub)*
+    Add      < "+" Factor
+    Sub      < "-" Factor
+    Factor   < Primary (Mul / Div)*
+    Mul      < "*" Primary
+    Div      < "/" Primary
+    Primary  < Parens / Neg / Number / Variable
+    Parens   < "(" Term ")"
+    Neg      < "-" Primary
+    Number   < ~([0-9]+)
+    Variable <- identifier`));
+
+void main(string[] args) {
+    enum parseTree1 = Arithmetic("1 + 2 - (3*x-5)*6");
+    assert(parseTree1.matches == ["1", "+", "2", "-",
+           "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
+}
+\end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Concise and Uniform Syntax}
