@@ -619,7 +619,8 @@ unittest {
 /* TODO: Assert that ElementType!R only value semantics.  */
 auto ref packBitParallelRunLengths(R)(in R x) if (isInputRange!R)
 {
-    import std.bitmanip: BitArray, bt;
+    import std.bitmanip: BitArray;
+    import core.bitop: bt;
     alias E = ElementType!R; // element type
     enum nBits = 8*E.sizeof;
 
@@ -763,7 +764,8 @@ auto apply(alias fun, N)(N n) if (isCallable!fun &&
                                   !is(ReturnType!fun == void) &&
                                   isIntegral!N)
 {
-    import std.range: iota, map;
+    import std.range: iota;
+    import std.algorithm: map;
     return n.iota.map!(n => fun);
 }
 
@@ -855,7 +857,7 @@ void static_dotimes(uint n)(lazy void expression) { // TOREVIEW: Should we use d
 
 private string genNaryFun(string fun, V...)() @safe pure {
     string code;
-    import std.format: format;
+    import std.string: format;
     foreach (n, v; V)
         code ~= "alias values[%d] %s;".format(n, cast(char)('a'+n));
     code ~= "return " ~ fun ~ ";";
@@ -1037,6 +1039,7 @@ auto fibonacci(T = int)() if (isIntLike!T)
 unittest
 {
     import dbg:dln;
-    import std.range: take, equal;
+    import std.range: take;
+    import std.algorithm: equal;
     assert(fibonacci.take(10).equal([1, 1, 2, 3, 5, 8, 13, 21, 34, 55]));
 }
