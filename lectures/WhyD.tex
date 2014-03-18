@@ -5,6 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{textpos}
 \usepackage{color}
+\usepackage{hyperref}
 
 % \usepackage[swedish]{babel} %To get a swedish style of the document, swedish typographical rules and so on
 
@@ -757,11 +758,13 @@ void main(string[] args)
   \item A number of times faster than 2:nd place which currently is Go
   \item Parses and Analyses Phobos (like C++ STL) on 1.21 s on my laptop. That’s 6 Mbytes
     175k lines of code with more advanced use of generics than C++14 will have
-  \item DMD itself builds on 11s (with Clang++ 3.4) on my two year old laptop. Iteration!
+  \item DMD itself rebuilds on 11s (with Clang++ 3.4) on my two year old
+    laptop. Rebuild during development takes about a second!
   \item Phobos builds and runs \emph{all} its unittest in 2 minutes 33 seconds! =>
   \item \textbf{Super Feature}: A Github Pull Request is
-    pre-merge-compiled-and-unittested against compiler, runtime and Phobos
-    within half an hour!
+    \href{https://d.puremagic.com/test-results/pull-history.ghtml?projectid=1&repoid=1&pullid=3342}{pre-merge-compiled-and-unittested}
+    against compiler, runtime and Phobos on about 10 configurations within half
+    an hour!
   \item Multi-threading Unittesting (\texttt{dtest}) will get additional
     speedups when they are integrated main development.
   \end{itemize}
