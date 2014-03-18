@@ -4,10 +4,16 @@
    TODO: Propagate ranges in arithmetic:
    - Integer: +,-,*,^^,/
    - FloatingPoint: +,-,*,/,^^,sqrt,
-   TODO: Support Compact Storage of zero-unbalanced integer ranges. For example 100,101,102,103 fits in two bits
+   - and add intelligent warnings/errors when assignment and implicit cast is
+     not allowed showing the range of the expression/inferred variable.
+
+   TODO: Support Compact Storage of zero-unbalanced integer ranges. For example
+         100,101,102,103 fits in two bits
+
    TODO: Add static asserts using template-arguments?
    TODO: Do we need a specific underflow?
    TODO: Add this module to std.numeric
+
    TODO: Merge with limited
    See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
 
