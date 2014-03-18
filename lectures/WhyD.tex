@@ -758,8 +758,12 @@ void main(string[] args)
   \item Parses and Analyses Phobos (like C++ STL) on 1.21 s on my laptop. That’s 6 Mbytes
     175k lines of code with more advanced use of generics than C++14 will have
   \item DMD itself builds on 11s (with Clang++ 3.4) on my two year old laptop. Iteration!
-  \item Phobos builds and runs \emph{all} its unittest in 2 minutes 33 seconds!
-  \item Multi-threading Unittesting (dtest) to get additional speedups.
+  \item Phobos builds and runs \emph{all} its unittest in 2 minutes 33 seconds! =>
+  \item \textbf{Super Feature}: A Github Pull Request is
+    pre-merge-compiled-and-unittested against compiler, runtime and Phobos
+    within half an hour!
+  \item Multi-threading Unittesting (\texttt{dtest}) will get additional
+    speedups when they are integrated main development.
   \end{itemize}
 \end{frame}
 
@@ -931,7 +935,7 @@ void main() {
   \item Return by Value or Reference Semantics using \textbf{auto ref}
   \item These thanks to D strict memory model --- compiler are ware of what code
   \item This reduces code bloat more than \emph{any} other \emph{imperative}
-    language (Haskell is not imperative)
+    (non Haskell-like) language
   \end{itemize}
 \end{frame}
 
