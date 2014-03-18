@@ -91,7 +91,8 @@ struct Bound(T,
           //       wln(uMsg);
           //   }
           overflow:
-            immutable oMsg = "Overflow at " ~ file ~ ":" ~ to!string(line) ~ " (payload: " ~ to!string(value) ~ ")";
+            immutable oMsg = "Overflow at " ~ file ~ ":" ~ to!string(line) ~
+                " (payload: " ~ to!string(value) ~ ")";
             if (exceptional) {
                 throw new BoundOverflowException(oMsg);
             } else {
