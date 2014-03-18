@@ -22,7 +22,8 @@ import traits_ex: isStruct, isClass, allSame;
     TODO: Make use of staticIota when it gets available in Phobos.
 */
 template siota(size_t from, size_t to) { alias siotaImpl!(to-1, from) siota; }
-private template siotaImpl(size_t to, size_t now) {
+private template siotaImpl(size_t to, size_t now)
+{
     static if (now >= to) { alias TypeTuple!(now) siotaImpl; }
     else                  { alias TypeTuple!(now, siotaImpl!(to, now+1)) siotaImpl; }
 }
@@ -88,7 +89,8 @@ unittest {
     Similar to behaviour of Lisps (and a...).
     TODO: Is inout Conversion!T the correct return value?
 */
-CommonType!T every(T...)(T a) @safe pure nothrow if (a.length >= 1) {
+CommonType!T every(T...)(T a) @safe pure nothrow if (a.length >= 1)
+{
     static if (T.length == 1) {
         return a[0];
     } else {
@@ -96,7 +98,8 @@ CommonType!T every(T...)(T a) @safe pure nothrow if (a.length >= 1) {
     }
 }
 /** This overload enables, when possible, lvalue return. */
-auto ref every(T...)(ref T a) @safe pure nothrow if (a.length >= 1 && allSame!T) {
+auto ref every(T...)(ref T a) @safe pure nothrow if (a.length >= 1 && allSame!T)
+{
     static if (T.length == 1) {
         return a[0];
     } else {
@@ -150,7 +153,8 @@ unittest { assert([1, 2, 3].maxElement == 3); }
 
 /** Returns: true if all elements in range are equal (or range is empty).
     http://stackoverflow.com/questions/19258556/equality-of-all-elements-in-a-range/19292822?noredirect=1#19292822 */
-bool allEqual(R)(R range) @safe pure nothrow if (isInputRange!R) {
+bool allEqual(R)(R range) @safe pure nothrow if (isInputRange!R)
+{
     import std.algorithm: findAdjacent;
     import std.range: empty;
     return range.findAdjacent!("a != b").empty;
@@ -159,7 +163,8 @@ unittest { assert([11, 11].allEqual); }
 unittest { assert(![11, 12].allEqual); }
 unittest { int[] x; assert(x.allEqual); }
 
-bool allEqualTo(R, E)(R range, E element) @safe pure nothrow if (isInputRange!R) {
+bool allEqualTo(R, E)(R range, E element) @safe pure nothrow if (isInputRange!R)
+{
     import std.algorithm: all;
     return range.all!(a => a == element);
 }
@@ -168,7 +173,8 @@ unittest { assert([42, 42].allEqualTo(42)); }
 // ==============================================================================================
 
 /** Check if all Elements of $(D x) are zero. */
-bool allZero(T, bool useStatic = true)(in T x) @safe pure nothrow { // TODO: Extend to support struct's and classes's'
+bool allZero(T, bool useStatic = true)(in T x) @safe pure nothrow // TODO: Extend to support struct's and classes's'
+{
     static        if (isStruct!T || isClass!T) {
         foreach (const ref elt; x.tupleof) {
             if (!elt.allZero) { return false; }
@@ -240,7 +246,8 @@ unittest {
 // ==============================================================================================
 
 /** Returns: true iff $(D a) has a value containing meaning information. */
-bool hasContents(T)(T a) @safe pure nothrow {
+bool hasContents(T)(T a) @safe pure nothrow
+{
     static if (isArray!T || isSomeString!T) {
         return cast(bool)a.length; // see: http://stackoverflow.com/questions/18563414/empty-string-should-implicit-convert-to-bool-true/18566334?noredirect=1#18566334
     } else {
@@ -268,7 +275,8 @@ unittest {
 /** Returns: Number of Default-Initialized (Zero) Elements in $(D x) at
     recursion depth $(D depth).
 */
-Rational!ulong sparseness(T)(in T x, int depth = -1) @safe pure nothrow {
+Rational!ulong sparseness(T)(in T x, int depth = -1) @safe pure nothrow
+{
     alias R = typeof(return); // rational shorthand
     static if (isIterable!T) {
         import std.range: empty;
@@ -308,7 +316,8 @@ unittest {
 }
 
 /** Returns: Number of Non-Zero Elements in $(D range). */
-auto denseness(T)(in T x, int recurseDepth = -1) @safe pure nothrow {
+auto denseness(T)(in T x, int recurseDepth = -1) @safe pure nothrow
+{
     return 1 - x.sparseness(recurseDepth);
 }
 unittest {
@@ -320,7 +329,8 @@ unittest {
 
 // ==============================================================================================
 
-bool isSymbol(T)(T a) @safe pure nothrow {
+bool isSymbol(T)(T a) @safe pure nothrow
+{
     import std.ascii: isAlpha;
     return a.isAlpha || a == '_';
 }
@@ -381,7 +391,8 @@ import std.string: CaseSensitive;
 Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b", R, E)(R haystack, E needle,
                                                                   FindContext ctx = FindContext.inWord,
                                                                   CaseSensitive cs = CaseSensitive.yes,
-                                                                  size_t haystackOffset = 0) @safe pure {
+                                                                  size_t haystackOffset = 0) @safe pure
+{
     import std.ascii: isAlpha;
     import std.algorithm: find;
     import std.range: empty;
@@ -462,7 +473,8 @@ import std.algorithm: find;
 
 /** Find $(D needles) In Order in $(D haystack). */
 auto findInOrder(alias pred = "a == b",
-                 alias finder = find, R, E...)(R haystack, E needles) @trusted pure nothrow {
+                 alias finder = find, R, E...)(R haystack, E needles) @trusted pure nothrow
+{
     import std.range: empty;
     auto hit = haystack; // reference
     foreach (needle; needles) { // for every needle in order
@@ -481,7 +493,8 @@ unittest {
 
 /** Returns: Slice Overlap of $(D a) and $(D b) in order given by arguments. */
 inout(T[]) overlapInOrder(T)(inout(T[]) a,
-                             inout(T[]) b) @trusted pure nothrow {
+                             inout(T[]) b) @trusted pure nothrow
+{
     if (a.ptr <= b.ptr &&       // if a-start lies at or before b-start
         b.ptr < a.ptr + a.length) { // if b-start lies before b-end
         import std.algorithm: min, max;
@@ -496,7 +509,8 @@ inout(T[]) overlapInOrder(T)(inout(T[]) a,
 
 /** Returns: Slice Overlap of $(D a) and $(D b) in any order. */
 inout(T[]) overlap(T)(inout(T[]) a,
-                      inout(T[]) b) @safe pure nothrow {
+                      inout(T[]) b) @safe pure nothrow
+{
     if        (inout(T[]) ab = overlapInOrder(a, b)) {
         return ab;
     } else if (inout(T[]) ba = overlapInOrder(b, a)) {
@@ -530,7 +544,8 @@ unittest {
 /** Returns: If range is a palindrome.
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
     */
-bool isPalindrome(R)(R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R)) {
+bool isPalindrome(R)(R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
+{
     import std.range: retro;
     import std.algorithm: equal;
     return range.retro.equal(range);
@@ -855,7 +870,8 @@ void static_dotimes(uint n)(lazy void expression) { // TOREVIEW: Should we use d
     foreach (i; siota(0, n)) expression();
 }
 
-private string genNaryFun(string fun, V...)() @safe pure {
+private string genNaryFun(string fun, V...)() @safe pure
+{
     string code;
     import std.string: format;
     foreach (n, v; V)
@@ -863,7 +879,8 @@ private string genNaryFun(string fun, V...)() @safe pure {
     code ~= "return " ~ fun ~ ";";
     return code;
 }
-template naryFun(string fun) {
+template naryFun(string fun)
+{
     auto naryFun(V...)(V values) {
         mixin(genNaryFun!(fun, V));
     }
@@ -1010,7 +1027,8 @@ unittest {
 
 // ==============================================================================================
 
-template isIntLike(T) {
+template isIntLike(T)
+{
     enum isIntLike = is(typeof({
 		T t = 0;
 		t = t+t;
