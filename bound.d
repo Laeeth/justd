@@ -1,19 +1,24 @@
 #!/usr/bin/env rdmd-dev-module
 
-// TODO: Support Compact Storage of zero-unbalanced integer ranges. For example 100,101,102,103 fits in two bits
-// TODO: Add static asserts using template-arguments?
-// TODO: Do we need a specific underflow?
-// TODO: Add this module to std.numeric
-// TODO: Merge with limited
-   // See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
+/**
+   TODO: Propagate ranges in arithmetic:
+   - Integer: +,-,*,^^,/
+   - FloatingPoint: +,-,*,/,^^,sqrt,
+   TODO: Support Compact Storage of zero-unbalanced integer ranges. For example 100,101,102,103 fits in two bits
+   TODO: Add static asserts using template-arguments?
+   TODO: Do we need a specific underflow?
+   TODO: Add this module to std.numeric
+   TODO: Merge with limited
+   See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
 
-// TODO: Is this a good idea to use?:
-/* import std.typecons; */
-/* mixin Proxy!_t;             // Limited acts as T (almost). */
-/* invariant() { */
-/*     enforce(_t >= lower && _t <= upper); */
-/*     wln("fdsf"); */
-/* } */
+   TODO: Is this a good idea to use?:
+   import std.typecons;
+   mixin Proxy!_t;             // Limited acts as T (almost).
+   invariant() {
+   enforce(_t >= lower && _t <= upper);
+   wln("fdsf");
+   }
+*/
 
 /** Bounded Arithmetic Wrapper Type.
     Similar to Ada Range Types.
@@ -54,12 +59,13 @@ struct Bound(T,
     alias _value this;
 
     inout auto ref value() @property @safe pure inout nothrow { return _value; }
-    @property string toString() const @trusted {
+    @property string toString(bool colorize = false) const @trusted {
         return (to!string(_value) ~
                 " ∈ [" ~ to!string(min) ~
                 ", " ~ to!string(max) ~
                 "]" ~
-                " : " ~ T.stringof);
+                " ⟒ " ~
+                T.stringof); // TODO: Use colorize flag
     }
 
     /** Check if this value is defined. */
