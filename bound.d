@@ -1,7 +1,7 @@
 #!/usr/bin/env rdmd-dev-module
 
 /**
-   TODO: Propagate ranges in arithmetic:
+   TODO: Propagate ranges in arithmetic (opUnary, opBinary):
    - Integer: +,-,*,^^,/
    - FloatingPoint: +,-,*,/,^^,sqrt,
    - and add intelligent warnings/errors when assignment and implicit cast is
