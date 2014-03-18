@@ -1097,6 +1097,15 @@ alias Pair(T) = Tuple!(T, T);
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Compatibility with C/C++}
+  \texttt{@safe} functions can
+  \begin{itemize}[<+->]
+  \item ABI Compatible with C through \texttt{extern}
+  \item No Surprises when porting: C constructs that compiles in D should
+    behave the same as in C
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{Commercial Successes}
   A Brave Few so far:
   \begin{itemize}[<+->]
