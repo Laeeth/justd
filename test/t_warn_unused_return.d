@@ -1,7 +1,5 @@
 #!/usr/bin/env rdmd-dev
 
-import std.stdio, std.algorithm;
-
 @safe pure nothrow void strictVoid(T)(T x) { }
 @safe pure nothrow bool strictBool(T)(T x) { return false; }
 
