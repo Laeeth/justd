@@ -736,8 +736,10 @@ auto forwardDifference(R)(R r)
 
 import std.algorithm: equal;
 
-/** Pack $(D r) using a forwardDifference. */
-auto packForwardDifference(R)(R r) /* @safe */ pure /* nothrow */ if (isInputRange!R)
+/** Pack $(D r) using a forwardDifference.
+    TODO: Can we tag this as nothrow when MapResult becomes nothrow?
+ */
+auto packForwardDifference(R)(R r) if (isInputRange!R)
 {
     import std.range: front;
     return tuple(r.front, forwardDifference(r));
@@ -746,6 +748,11 @@ auto packForwardDifference(R)(R r) /* @safe */ pure /* nothrow */ if (isInputRan
 unittest {
     // source
     auto x = [int.min, 1, 4, 9, 17, int.max];
+
+    int[1] xx;
+    import std.range: front;
+    /* auto d1 = xx.front; */
+    dln(xx[].forwardDifference);
 
     import std.array: array;
     import std.traits: Unqual;

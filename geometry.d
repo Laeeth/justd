@@ -17,12 +17,13 @@
 
 /* TODO: Optimize using core.simd or std.simd
    TODO: Merge with analyticgeometry
+   TODO: Merge with https://github.com/CyberShadow/ae/blob/master/utils/geometry.d
    TODO: Integrate with http://code.dlang.org/packages/blazed2
    TODO: logln, log.warn, log.error, log.info, log.debug
    TODO: Make use of staticReduce etc when they become available in Phobos.
    TODO: Go through all usages of real and use CommonType!(real, E) to make it work when E is a bignum.
    TODO: ead and perhaps make use of http://stackoverflow.com/questions/3098242/fast-vector-struct-that-allows-i-and-xyz-operations-in-d?rq=1
-   TODO: Tag member functions in t_geom.d as pure as is done https://github.com/D-Programming-Language/phobos/blob/master/std/bigint.d
+   TODO: Tag member functions in t_geom.d as pure as is done https://github.com/$(D D)-Programming-Language/phobos/blob/master/std/bigint.d
    TODO: Why is it preferred make slicing with [] explicit as in
    - all!"a"(vec2b(true)[])
    when accessing a data structure as a range.
@@ -51,6 +52,7 @@ import std.string: format, rightJustify;
 import std.array: join;
 import std.typecons: TypeTuple;
 import std.algorithm;
+import std.math: PI;
 
 import mathml;
 import assert_ex;
@@ -140,14 +142,31 @@ in {
     return code;
 }
 
+/* Copied from https://github.com/CyberShadow/ae/blob/master/utils/geometry.d */
+auto sqrtx(T)(T x)
+{
+    static if (is(T : int))
+        return std.math.sqrt(cast(float)x);
+    else
+        return std.math.sqrt(x);
+}
+
 // ==============================================================================================
 
-/// D-Dimensional Point with Coordinate Type (Precision) E.
-struct Point (E, uint D) if (D >= 1) {
+/// $(D D)-Dimensional Point with Coordinate Type (Precision) $(D E).
+struct Point (E, uint D) if (isNumeric!E && D >= 1)
+{
+    alias type = E;
+
+    this(T...)(T args) {
+        foreach (ix, arg; args) {
+            _point[ix] = arg;
+        }
+    }
     private E[D] _point;             /// Element data.
     static const uint dimension = D; /// Get dimensionality.
 
-    @property @trusted string toString() { return format("point:%s", _point); }
+    @property @trusted string toString() const { return "Point:" ~ to!string(_point); }
 
     @safe pure nothrow:
 
@@ -155,16 +174,32 @@ struct Point (E, uint D) if (D >= 1) {
     @property auto area() const { return 0; }
 
     auto opSlice() { return _point[]; }
+
+    auto opBinary(string op, F)(Vector!(F, D) r) const if ((op == "+") ||
+                                                           (op == "-")) {
+        Point!(CommonType!(E, F), D) y;
+        foreach (i; siota!(0, D)) {
+            y._point[i] = mixin("_point[i]" ~ op ~ "r._vector[i]");
+        }
+        return y;
+    }
 }
 mixin(makeInstanceAliases("Point"));
+auto point(T...)(T args) { return Point!(CommonType!T, args.length)(args); }
+
+unittest {
+    dln(point(1.0, 2.0));
+}
 
 enum Orient { column, row }; // Vector Orientation.
 
-/// D-Dimensional Vector with Coordinate/Element Type (Precision) E.
-/// See also: http://physics.stackexchange.com/questions/16850/is-0-0-0-an-undefined-vector
+/** $(D D)-Dimensional Vector with Coordinate/Element Type (Precision) $(D E).
+    See also: http://physics.stackexchange.com/questions/16850/is-0-0-0-an-undefined-vector
+*/
 struct Vector(E, uint D,
               bool normalizedFlag = false, // set to true for UnitVectors
-              Orient orient = Orient.column) if (D >= 1) {
+              Orient orient = Orient.column) if (D >= 1)
+{
 
     // Construct from vector.
     this(V)(V vec) if (isVector!V &&
@@ -924,12 +959,14 @@ unittest {
 
 // ==============================================================================================
 
-/// D-Dimensional Particle with Coordinate Type (Precision) E.
+/** $(D D)-Dimensional Particle with Coordinate Position and Direction/Velocity
+    Type (Precision) $(D E).
+*/
 struct Particle(E, uint D,
-                bool normalizedFlag = false, // set to true for UnitVectors
-    ) if (D >= 1) {
+                bool normalizedVelocityFlag = false) if (D >= 1)
+{
     Point!(E, D) position;          // Position.
-    Vector!(E, D, normalizedFlag) velocity; ///< Velocity.
+    Vector!(E, D, normalizedVelocityFlag) velocity;
     E mass;                         // Mass.
     unittest {
         // wln(Particle());
@@ -939,13 +976,13 @@ mixin(makeInstanceAliases("Particle","particle", 2,4, defaultElementTypes));
 
 // ==============================================================================================
 
-/** D-Dimensional Axis-Aligned (Hyper) Box.
+/** $(D D)-Dimensional Axis-Aligned (Hyper) Box.
     We must use inclusive compares betweeen boxes and points in inclusion
     functions such as inside() and includes() in order for the behaviour of
     bounding boxes (especially in integer space) to work as desired.
  */
-struct Box(E, uint D) if (D >= 1) {
-
+struct Box(E, uint D) if (D >= 1)
+{
     this(Vector!(E,D) lh) { min = lh; max = lh; }
     this(Vector!(E,D) l_,
          Vector!(E,D) h_) { min = l_; max = h_; }
@@ -1024,10 +1061,11 @@ mixin(makeInstanceAliases("Box","box", 2,4, ["int", "float", "double", "real"]))
 
 // ==============================================================================================
 
-/** D-Dimensional Infinite (Hyper)-Plane.
+/** $(D D)-Dimensional Infinite (Hyper)-Plane.
     See also: http://stackoverflow.com/questions/18600328/preferred-representation-of-a-3d-plane-in-c-c
  */
-struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2) {
+struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2)
+{
     static const uint dimension = D; /// Get dimensionality.
 
     alias N = Vector!(E, D, true); /// Plane Normal Type.
@@ -1131,9 +1169,39 @@ mixin(makeInstanceAliases("Plane","plane", 3,4, defaultElementTypes));
 
 // ==============================================================================================
 
+/** $(D D)-Dimensional (Hyper)-Sphere.
+*/
+struct Sphere(E, uint D) if (isNumeric!E && D >= 2)
+{
+    alias P = Point!(E, D);
+    P center;
+    E radius;
+
+    void translate(Vector!(E, D) shift) { center = center + shift; } // point + vector => point
+    alias shift = translate;
+
+    @property:
+
+    E diameter() const { return 2*radius; }
+    static      if (D == 2) {
+        auto area()   const { return PI * radius^^2; }
+    }
+    else static if (D == 3) {
+        auto area()   const { return 4*PI*radius^^2; }
+        auto volume() const { return 4*PI*radius^^3/3; }
+    }
+}
+auto sphere(C, R)(C center, R radius) { return Sphere!(C.type, C.dimension)(center, radius); }
+
+unittest {
+    auto x = sphere(point(1.0, 2.0), 1.0);
+}
+
+// ==============================================================================================
+
 unittest {
     wln(box2f(vec2f(1, 2),
-               vec2f(3, 3)));
+              vec2f(3, 3)));
     wln([12, 3, 3]);
 
     wln(sort(vec2f(2, 3)[]));

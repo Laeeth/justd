@@ -1676,11 +1676,13 @@ class Dir : File
              * File */
             packer.pack(_subs.length);
 
-            auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".forwardDifference;
-            debug dln(name, " modified diffs: ", timesLastModifiedDiffs.array.pack.length);
+            debug dln("sub.length: ", _subs.length);
 
-            auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".forwardDifference;
-            debug dln(name, " accessed diffs: ", timesLastAccessedDiffs.array.pack.length);
+            auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
+            debug dln(name, " modified diffs: ", timesLastModifiedDiffs);
+
+            auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".packForwardDifference;
+            debug dln(name, " accessed diffs: ", timesLastAccessedDiffs);
 
             auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime";
             debug dln(name, " modified: ", timesLastModified.array.pack.length);
