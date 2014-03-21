@@ -1,14 +1,15 @@
 #!/usr/bin/env rdmd-dev-module
 
 /**
+   TODO: Make this work:
+   wln(bound!(256, 257)(256));
+   wln(bound!(256, 257)(257));
+
    TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
    - Integer: +,-,*,^^,/
    - FloatingPoint: +,-,*,/,^^,sqrt,
    - and add intelligent warnings/errors when assignment and implicit cast is
      not allowed showing the range of the expression/inferred variable.
-
-   TODO: Support Compact Storage of zero-unbalanced integer ranges. For example
-         100,101,102,103 fits in two bits
 
    TODO: Add static asserts using template-arguments?
    TODO: Do we need a specific underflow?
@@ -24,6 +25,12 @@
    enforce(_t >= lower && _t <= upper);
    wln("fdsf");
    }
+
+   TODO: If these things take to long to evaluted at compile-time maybe we need
+   to build it into the language for example using a new syntax either using
+   - integer(low..high)
+   - int(low..high)
+   - num(low..high)
 */
 
 /** Bounded Arithmetic Wrapper Type.
@@ -57,6 +64,7 @@ struct Bound(T,
              bool exceptional = true)
 {
     import std.algorithm: min, max;
+    import std.math: abs;
 
     static if (optional) { static assert(upper + 1 == T.max, "upper + 1 cannot equal T.max"); }
 
@@ -111,7 +119,14 @@ struct Bound(T,
 
     auto opUnary(string op, string file = __FILE__, int line = __LINE__)()
     {
-        Bound!(T, -cast(int)T.max, -cast(int)T.min) tmp = void; // TODO: Needs fix
+        static      if (op == "+")
+        {
+            return this;
+        }
+        else static if (op == "-")
+        {
+            Bound!(T, -cast(int)T.max, -cast(int)T.min) tmp = void; // TODO: Needs fix
+        }
         mixin("tmp._value = " ~ op ~ "_value " ~ ";");
         mixin(check());
         return tmp;
@@ -121,6 +136,7 @@ struct Bound(T,
                   string file = __FILE__,
                   int line = __LINE__)(U rhs)
     {
+        alias TU = CommonType!(T, U.type);
         static if (is(U == Bound))
         {
             // do value range propagation
@@ -131,28 +147,49 @@ struct Bound(T,
             }
             else static if (op == "-")
             {
-                enum min_ = min - U.max;
-                enum max_ = max + U.min;
+                enum min_ = min - U.max; // min + min(-U.max)
+                enum max_ = max - U.min; // max + max(-U.max)
             }
-            /* else static if (op == "*") */
-            /* { */
-            /*     enum min_ = min + U.min; */
-            /*     enum max_ = max + U.max; */
-            /* } */
-            /* else static if (op == "/") */
-            /* { */
-            /* } */
-            /* else static if (op == "^^") */
-            /* { */
-            /* } */
-            /* return bound!(min_, max_)(_value + rhs._value); */
-            Bound!(CommonType!(T, U.type), CommonType!(T, U.type), min_, max_) tmp = void;
+            else static if (op == "*")
+            {
+                static if (x*y >= 0) // intuitive case
+                {
+                    enum min_ = abs(min)*abs(U.min);
+                    enum max_ = abs(max)*abs(U.max);
+                }
+                else
+                {
+                    enum min_ = -abs(max)*abs(U.max);
+                    enum max_ = -abs(min)*abs(U.min);
+                }
+            }
+            else static if (op == "/")
+            {
+            }
+            else static if (op == "^^")
+            {
+            }
+            else
+            {
+                static assert(false, "Unsupported binary operator " + op);
+            }
+            alias TU_ = CommonType!(typeof(min_), typeof(max_));
+
+            mixin("const result = _value " ~ op ~ "rhs;");
+
+            /* static assert(false, min_.stringof ~ "," ~ */
+            /*               max_.stringof ~ "," ~ */
+            /*               typeof(result).stringof ~ "," ~ */
+            /*               TU_.stringof); */
+
+            return bound!(min_, max_)(result);
+            // return Bound!(TU_, TU_, min_, max_)(result);
         }
         else
         {
             CommonType!(T, U) tmp = void;
         }
-        mixin("tmp = _value " ~ op ~ "rhs;");
+        mixin("const tmp = _value " ~ op ~ "rhs;");
         mixin(check());
         return tmp;
     }
@@ -186,34 +223,35 @@ template bound(alias min,
                bool packed = true) if (!is(CommonType!(typeof(min),
                                                        typeof(max)) == void))
 {
-    alias typeof(min) min_t;
-    alias typeof(max) max_t;
-    alias C = CommonType!(min_t, max_t);
+    alias typeof(min) MinType;
+    alias typeof(max) MaxType;
+
+    alias C = CommonType!(MinType, MaxType);
 
     enum span = max - min;
     alias typeof(span) span_t;
 
-    static if (isIntegral!(min_t) &&
-               isIntegral!(max_t))
+    static if (isIntegral!(MinType) &&
+               isIntegral!(MaxType))
     {
         static if (min >= 0) {
             static if (packed) {
-                static      if (span <= 0xff)               { auto bound(ubyte value = 0)  { return Bound!(ubyte,  ubyte, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffff)             { auto bound(ushort value = 0) { return Bound!(ushort, ushort, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffff)         { auto bound(uint value = 0)   { return Bound!(uint,   uint, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffffffffffff) { auto bound(ulong value = 0)  { return Bound!(ulong,  ulong, 0, span, optional, exceptional)(value); } }
+                static      if (span <= 0xff)               { auto bound(ubyte value = 0)  { return Bound!(ubyte,  C, 0, span, optional, exceptional)(value); } }
+                else static if (span <= 0xffff)             { auto bound(ushort value = 0) { return Bound!(ushort, C, 0, span, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffff)         { auto bound(uint value = 0)   { return Bound!(uint,   C, 0, span, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffffffffffff) { auto bound(ulong value = 0)  { return Bound!(ulong,  C, 0, span, optional, exceptional)(value); } }
                 else {
-                    auto bound(CommonType!(min_t, max_t) value) { return Bound!(typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                    auto bound(CommonType!(MinType, MaxType) value) { return Bound!(typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
                 }
             } else {
-                auto bound(CommonType!(min_t, max_t) value) { return Bound!(typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                auto bound(CommonType!(MinType, MaxType) value) { return Bound!(typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
             }
         } else {         // negative
             static if (packed) {
-                static      if (min >= -0x80               && max <= 0x7f)               { auto bound(byte value = 0)  { return Bound!(byte, byte ,  min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x8000             && max <= 0x7fff)             { auto bound(short value = 0) { return Bound!(short, short , min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x80000000         && max <= 0x7fffffff)         { auto bound(int value = 0)   { return Bound!(int, int,   min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x8000000000000000 && max <= 0x7fffffffffffffff) { auto bound(long value = 0)  { return Bound!(long, long,  min, max, optional, exceptional)(value); } }
+                static      if (min >= -0x80               && max <= 0x7f)               { auto bound(byte value = 0)  { return Bound!(byte,  byte,  min, max, optional, exceptional)(value); } }
+                else static if (min >= -0x8000             && max <= 0x7fff)             { auto bound(short value = 0) { return Bound!(short, short, min, max, optional, exceptional)(value); } }
+                else static if (min >= -0x80000000         && max <= 0x7fffffff)         { auto bound(int value = 0)   { return Bound!(int,   int,   min, max, optional, exceptional)(value); } }
+                else static if (min >= -0x8000000000000000 && max <= 0x7fffffffffffffff) { auto bound(long value = 0)  { return Bound!(long,  long,  min, max, optional, exceptional)(value); } }
                 else {
                     auto bound(C value = C.init) { return Bound!(typeof(value), typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
                 }
@@ -228,7 +266,18 @@ template bound(alias min,
     }
 }
 
-unittest {
+unittest
+{
+    import std.stdio: wln = writeln;
+
+    /* TODO: Activate this: */
+    /* wln("diff: ", */
+    /*     bound!(10, 20)(10) - */
+    /*     bound!(0, 10)(10)); */
+    /* wln("sum: ", */
+    /*     bound!(0, 10)(3) + */
+    /*     bound!(0, 10)(3)); */
+
     // infer unsigned types
     assert(bound!(0, 0x1)(0x1).type.stringof == "ubyte");
     assert(bound!(0, 0xff)(0xff).type.stringof == "ubyte");
@@ -286,7 +335,6 @@ unittest {
     assertThrown(a += 5);
 
     /* test print */
-    import std.stdio: wln = writeln;
     auto x = bound!(0, 1)(1);
     x += 1;
     wln(bound!(0, 1)(1));
@@ -314,15 +362,6 @@ unittest {
     wln(bound!(0, 0x10000    )(0x10000    ));
     wln(bound!(0, 0x100000000 - 1)(0x100000000 - 1));
     wln(bound!(0, 0x100000000    )(0x100000000    ));
-
-    /* TODO: Activate this: */
-    /* wln(-bound!(0, 10)(3)); */
-    /* wln("diff: ", */
-    /*     bound!(0, 10)(3) - */
-    /*     bound!(0, 10)(3)); */
-    wln("sum: ",
-        bound!(0, 10)(3) +
-        bound!(0, 10)(3));
 }
 
 /** Return $(D x) with Automatic Packed Saturation. */

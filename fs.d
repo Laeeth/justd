@@ -109,7 +109,7 @@ version = msgpack; // Use cerealed serialization
 
 import std.stdio: ioFile = File, stdout;
 import std.typecons: Tuple, tuple;
-import std.algorithm: find, map, filter, reduce, max, min, sort, uniq;
+import std.algorithm: find, map, filter, reduce, max, min, uniq, all;
 import std.string: representation;
 import std.stdio: write, writeln;
 import std.path: baseName, dirName, isAbsolute;
@@ -136,7 +136,7 @@ import dbg;
 import backtrace.backtrace;
 import tempfs;
 import rational: Rational;
-import ngram: Kind, NGram, Storage, Symmetry;
+import ngram;
 import notnull;
 
 /* NGram Aliases */
@@ -1677,10 +1677,13 @@ class Dir : File
             packer.pack(_subs.length);
 
             auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".forwardDifference;
-            debug dln(name, " modified: ", timesLastModifiedDiffs.array.pack.length);
+            debug dln(name, " modified diffs: ", timesLastModifiedDiffs.array.pack.length);
 
             auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".forwardDifference;
-            debug dln(name, " accessed: ", timesLastAccessedDiffs.array.pack.length);
+            debug dln(name, " accessed diffs: ", timesLastAccessedDiffs.array.pack.length);
+
+            auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime";
+            debug dln(name, " modified: ", timesLastModified.array.pack.length);
 
             auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime";
             debug dln(name, " accessed: ", timesLastAccessed.array.pack.length);
@@ -2005,10 +2008,12 @@ class Scanner(Term)
         import core.sys.linux.sys.xattr;
     }
     import core.sys.posix.unistd: getuid, getgid;
-    import std.file: read, FileException, exists, stat_t, S_IRUSR, S_IRGRP, S_IROTH, getcwd;
-    import std.path: extension, buildNormalizedPath, chompPrefix, expandTilde, absolutePath;
+    import std.file: read, FileException, exists, getcwd;
+    import std.path: extension, buildNormalizedPath, expandTilde, absolutePath;
     import std.range: retro;
     import std.exception: ErrnoException;
+    import core.sys.posix.sys.stat: stat_t, S_IRUSR, S_IRGRP, S_IROTH;
+    import std.string: chompPrefix;
 
     uint64_t _hitsCountTotal = 0;
 
@@ -4144,7 +4149,8 @@ body { font: 8px Verdana, sans-serif; }
     F[] filterUnderAnyOfPaths(F)(F[] files,
                                  string[] dirPaths,
                                  FKind[] incKinds) {
-        import std.algorithm: any, array;
+        import std.algorithm: any;
+        import std.array: array;
         auto dupFilesUnderAnyTopDirName = (files
                                            .filter!(dupFile =>
                                                     dirPaths.any!(dirPath =>

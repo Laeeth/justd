@@ -7,7 +7,8 @@
  */
 module random_ex;
 
-import std.range: isIntegral, isFloatingPoint, isNumeric, isInputRange, isIterable, ElementType;
+import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable;
+import std.range: isInputRange, ElementType;
 import std.random: uniform;
 
 /** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
