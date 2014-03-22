@@ -61,7 +61,7 @@ version(none) {
         assert(p3.signalEntropy == 1);
     }
 
-/** Returns: Element in $(D r ) that minimizes $(D fun). TODO: Add to Phobos?
+/** Returns: Element in $(D r ) that minimizes $(D fun).
     LaTeX: \underset{x}{\arg\min} */
     auto argmin_(alias fun, Range)(in Range r)
         @safe pure if (isInputRange!Range &&
@@ -83,7 +83,7 @@ version(none) {
         assert(argmin!(x => x*x)([3, 2, 1]) == 1);
     }
 
-/** Returns: Element in $(D r ) that maximizes $(D fun). TODO: Add to Phobos?
+/** Returns: Element in $(D r ) that maximizes $(D fun).
     LaTeX: \underset{x}{\arg\max} */
     auto argmax_(alias fun, Range)(in Range r)
         @safe pure if (isInputRange!Range &&
@@ -107,7 +107,7 @@ version(none) {
 
 }
 
-/** Returns: Element in $(D r ) that minimizes $(D fun). TODO: Add to Phobos?
+/** Returns: Element in $(D r ) that minimizes $(D fun).
     LaTeX: \underset{x}{\arg\min} */
 auto argmin(alias fun, Range)(in Range r)
     @safe pure if (isInputRange!Range &&
@@ -121,7 +121,7 @@ unittest {
     assert(argmin!(x => x*x)([3, 2, 1]) == 1);
 }
 
-/** Returns: Element in $(D r ) that maximizes $(D fun). TODO: Add to Phobos?
+/** Returns: Element in $(D r ) that maximizes $(D fun).
     LaTeX: \underset{x}{\arg\max} */
 auto argmax(alias fun, Range)(in Range r)
     @safe pure if (isInputRange!Range &&

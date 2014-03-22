@@ -129,7 +129,7 @@ unittest {
 
 // ==============================================================================================
 
-/** Returns: Minimum Element in $(D range). TODO: Add to Phobos? */
+/** Returns: Minimum Element in $(D range). */
 auto minElement(alias F = min, R)(in R range)
     @safe pure nothrow if (isInputRange!R)
 {
@@ -138,7 +138,7 @@ auto minElement(alias F = min, R)(in R range)
 alias smallest = minElement;
 unittest { assert([1, 2, 3].minElement == 1); }
 
-/** Returns: Maximum Element in X. TODO: Add to Phobos? */
+/** Returns: Maximum Element in X. */
 auto maxElement(alias F = max, R)(in R range)
     @safe pure nothrow if (isInputRange!R)
 {
@@ -243,7 +243,7 @@ unittest {
 
 // ==============================================================================================
 
-/** Returns: true iff $(D a) has a value containing meaning information. */
+/** Returns: true iff $(D a) has a value containing meaningful information. */
 bool hasContents(T)(T a) @safe pure nothrow
 {
     static if (isArray!T || isSomeString!T) {
@@ -253,10 +253,12 @@ bool hasContents(T)(T a) @safe pure nothrow
     }
 }
 
-/** Returns: true if $(D a) is set to the default value of its type $(D T),
-    false otherwise. */
+/** Returns: true if $(D a) is set to the default/initial value of its type
+    $(D T), false otherwise.
+*/
 bool defaulted(T)(T x) @safe pure nothrow { return x == T.init; }
 alias untouched = defaulted;
+alias inited = defaulted;
 
 import rational: Rational;
 
