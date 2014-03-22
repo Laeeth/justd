@@ -1676,19 +1676,21 @@ class Dir : File
              * File */
             packer.pack(_subs.length);
 
-            debug dln("sub.length: ", _subs.length);
+            if (_subs.length >= 1) {
+                debug dln("sub.length: ", _subs.length);
 
-            auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
-            debug dln(name, " modified diffs: ", timesLastModifiedDiffs);
+                auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
+                debug dln(name, " modified diffs: ", timesLastModifiedDiffs);
 
-            auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".packForwardDifference;
-            debug dln(name, " accessed diffs: ", timesLastAccessedDiffs);
+                auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".packForwardDifference;
+                debug dln(name, " accessed diffs: ", timesLastAccessedDiffs);
 
-            auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime";
-            debug dln(name, " modified: ", timesLastModified.array.pack.length);
+                auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime";
+                debug dln(name, " modified: ", timesLastModified.array.pack.length);
 
-            auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime";
-            debug dln(name, " accessed: ", timesLastAccessed.array.pack.length);
+                auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime";
+                debug dln(name, " accessed: ", timesLastAccessed.array.pack.length);
+            }
 
             foreach (sub; _subs) {
                 if        (const regfile = cast(RegFile)sub) {
