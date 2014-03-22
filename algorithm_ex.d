@@ -133,8 +133,7 @@ unittest {
 auto minElement(alias F = min, R)(in R range)
     @safe pure nothrow if (isInputRange!R)
 {
-    alias E = ElementType!R;
-    return reduce!F(E.max, range);
+    return reduce!F(ElementType!R.max, range);
 }
 alias smallest = minElement;
 unittest { assert([1, 2, 3].minElement == 1); }
@@ -143,8 +142,7 @@ unittest { assert([1, 2, 3].minElement == 1); }
 auto maxElement(alias F = max, R)(in R range)
     @safe pure nothrow if (isInputRange!R)
 {
-    alias E = ElementType!R;
-    return reduce!F(E.min, range);
+    return reduce!F(ElementType!R.min, range);
 }
 alias largest = maxElement;
 unittest { assert([1, 2, 3].maxElement == 3); }
