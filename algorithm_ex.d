@@ -695,7 +695,7 @@ auto forwardDifference(R)(R r)
     {
         R _range;
         alias E = ElementType!R;                       // Input ElementType
-        alias D = typeof(_range.front - _range.front); // Element Difference Type
+        alias D = typeof(_range.front - _range.front); // Element Difference Type. TODO: Use this as ElementType of range
         D _front;
         bool _initialized = false;
 
@@ -723,7 +723,7 @@ auto forwardDifference(R)(R r)
                 }
             }
         }
-        bool empty() { return _range.empty; }
+        bool empty() const { return _range.empty; }
     }
 
     return ForwardDifference(r);
@@ -746,13 +746,13 @@ auto packForwardDifference(R)(R r) if (isInputRange!R)
 unittest {
     import std.range: front;
 
-    dln([1].windowedReduce!(Reduction.forwardDifference));
-    dln([1, 22].windowedReduce!(Reduction.forwardDifference));
-    dln([1, 22, 333].windowedReduce!(Reduction.forwardDifference));
-
     dln([1].packForwardDifference);
     dln([1, 22].packForwardDifference);
     dln([1, 22, 333].packForwardDifference);
+
+    dln([1].windowedReduce!(Reduction.forwardDifference));
+    dln([1, 22].windowedReduce!(Reduction.forwardDifference));
+    dln([1, 22, 333].windowedReduce!(Reduction.forwardDifference));
 }
 
 unittest {
@@ -1062,12 +1062,12 @@ auto fibonacci(T = int)() if (isIntLike!T)
     struct Fibonacci {
         T a, b;
         T front() { return b; }
-        bool empty() { return false; }
         void popFront() {
             T c = a+b;
             a = b;
             b = c;
         }
+        bool empty() const { return false; }
     }
     return Fibonacci(0, 1);
 }
