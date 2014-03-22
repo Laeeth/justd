@@ -45,14 +45,13 @@ version(NoReciprocalMul) {
 
 import core.simd;
 import std.stdio: writeln;
-import std.math: sqrt, isNaN, isInfinity;
+import std.math: sqrt, isNaN, isInfinity, PI;
 import std.conv: to;
 import std.traits: isSomeString, isIntegral, isFloatingPoint, isNumeric, isSigned, isStaticArray, isDynamicArray, isImplicitlyConvertible, isAssignable, isArray, CommonType;
 import std.string: format, rightJustify;
 import std.array: join;
 import std.typecons: TypeTuple;
 import std.algorithm;
-import std.math: PI;
 
 import mathml;
 import assert_ex;
@@ -175,6 +174,7 @@ struct Point (E, uint D) if (isNumeric!E && D >= 1)
 
     auto opSlice() { return _point[]; }
 
+    /** Points +/- Vector => Point */
     auto opBinary(string op, F)(Vector!(F, D) r) const if ((op == "+") ||
                                                            (op == "-")) {
         Point!(CommonType!(E, F), D) y;
@@ -185,10 +185,11 @@ struct Point (E, uint D) if (isNumeric!E && D >= 1)
     }
 }
 mixin(makeInstanceAliases("Point"));
-auto point(T...)(T args) { return Point!(CommonType!T, args.length)(args); }
+auto point(T...)(T args) if (!is(CommonType!(T) == void)) { return Point!(CommonType!T, args.length)(args); }
 
 unittest {
-    dln(point(1.0, 2.0));
+    assert(point(1, 2) + vector(1, 2) == point(2, 4));
+    assert(point(1, 2) - vector(1, 2) == point(0, 0));
 }
 
 enum Orient { column, row }; // Vector Orientation.
@@ -568,6 +569,8 @@ struct Vector(E, uint D,
         //                                   +Vector!(E,D)(-2)); }
     }
 }
+auto vector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length)(args); }
+
 mixin(makeInstanceAliases("Vector", "vec", 2,4, ["ubyte", "int", "float", "double", "real", "bool"]));
 alias nvec2f = Vector!(float, 2, true);
 alias nvec3f = Vector!(float, 3, true);
@@ -1192,12 +1195,38 @@ struct Sphere(E, uint D) if (isNumeric!E && D >= 2)
     }
 }
 auto sphere(C, R)(C center, R radius) { return Sphere!(C.type, C.dimension)(center, radius); }
+// TODO: Use this instead:
+// auto sphere(R, C...)(Point!(CommonType!C, C.length) center, R radius) {
+// return Sphere!(CommonType!C, C.length)(center, radius);
+// }
 
 unittest {
-    auto x = sphere(point(1.0, 2.0), 1.0);
+    wln(sphere(point(1, 2), 1));
 }
 
-// ==============================================================================================
+/**
+   See also: http://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
+ */
+bool intersects(T)(Circle!T circle, Rect!T rect)
+{
+    Point!T dist = void; // circle distance
+
+    immutable hw = rect.w/2, hh = rect.h/2;
+
+    dist.x = abs(circle.x - rect.x0 - hw);
+    dist.y = abs(circle.y - rect.y0 - hh);
+
+    if (dist.x > (hw + circle.r)) return false;
+    if (dist.y > (hh + circle.r)) return false;
+
+    if (dist.x <= hw) return true;
+    if (dist.y <= hh) return true;
+
+    immutable cornerDistance_sq = ((dist.x - hw)^^2 +
+                                   (dist.y - hh)^^2);
+
+    return (cornerDistance_sq <= circle.r^^2);
+}
 
 unittest {
     wln(box2f(vec2f(1, 2),
@@ -1213,7 +1242,7 @@ unittest {
     wln(vec3f(2, 3, 4));
 
     wln(box2f(vec2f(1, 2),
-               vec2f(3, 4)));
+              vec2f(3, 4)));
 
     wln(vec2i(2, 3));
     wln(vec3i(2, 3, 4));

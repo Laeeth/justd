@@ -1,8 +1,7 @@
 #!/usr/bin/env rdmd-dev-module
 
-module t_string;
-
 unittest {
+    import std.string;
     import std.range: front, retro;
     import std.stdio: wln = writeln;
     auto a = "åäö";

@@ -694,28 +694,24 @@ auto forwardDifference(R)(R r)
     struct ForwardDifference
     {
         R _range;
-        alias E = ElementType!R;
-        typeof(_range.front - _range.front) _front;
+        alias E = ElementType!R;                       // Input ElementType
+        alias D = typeof(_range.front - _range.front); // Element Difference Type
+        D _front;
         bool _initialized = false;
-
-        /* @safe nothrow: */
 
         this(R range) pure {
             this._range = range;
         }
 
         @property:
-
         auto ref front() {
             if (!_initialized) { popFront(); }
             return _front;
         }
-
         auto ref moveFront() {
             popFront();
             return _front;
         }
-
         void popFront() {
             if (empty is false) {
                 _initialized = true;
@@ -727,7 +723,6 @@ auto forwardDifference(R)(R r)
                 }
             }
         }
-
         bool empty() { return _range.empty; }
     }
 
@@ -741,8 +736,23 @@ import std.algorithm: equal;
  */
 auto packForwardDifference(R)(R r) if (isInputRange!R)
 {
+    import std.range: front, empty;
+    if (r.empty)
+        return tuple(r.front, forwardDifference(r));
+    else
+        return tuple(r.front, forwardDifference(r));
+}
+
+unittest {
     import std.range: front;
-    return tuple(r.front, forwardDifference(r));
+
+    dln([1].windowedReduce!(Reduction.forwardDifference));
+    dln([1, 22].windowedReduce!(Reduction.forwardDifference));
+    dln([1, 22, 333].windowedReduce!(Reduction.forwardDifference));
+
+    dln([1].packForwardDifference);
+    dln([1, 22].packForwardDifference);
+    dln([1, 22, 333].packForwardDifference);
 }
 
 unittest {
@@ -752,7 +762,8 @@ unittest {
     int[1] xx;
     import std.range: front;
     /* auto d1 = xx.front; */
-    dln(xx[].forwardDifference);
+    dln([1].forwardDifference);
+    dln([1, 2].forwardDifference);
 
     import std.array: array;
     import std.traits: Unqual;
