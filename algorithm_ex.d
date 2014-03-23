@@ -713,10 +713,7 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
         body {
             auto tmp = range;
             if (tmp.dropOne.empty) // TODO: This may be an unneccesary cost but is practical to remove extra logic
-                static if (isArray!R) // TODO: Construct R in a generic way that include dynamic arrays?
-                    _range = (D[]).init;
-                else
-                    _range = R(); // return empty range
+                _range = R.init; // return empty range
             else
                 _range = range; // store range internally (by reference)
         }

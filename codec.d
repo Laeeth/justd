@@ -17,7 +17,8 @@ import algorithm_ex: forwardDifference;
 auto packForwardDifference(R)(R r) if (isInputRange!R)
 {
     import std.range: front;
-    return tuple(r.front, forwardDifference(r)); // TODO: Use named parts?
+    return tuple(r.front,
+                 r.forwardDifference); // TODO: Use named parts?
 }
 
 auto unpackForwardDifference(E, R)(Tuple!(E, R) x)
@@ -41,6 +42,7 @@ auto unpackForwardDifference(E, R)(Tuple!(E, R) x)
 unittest {
     import std.range: front, dropOne;
     import std.exception: assertThrown, AssertError;
+    import msgpack;
 
     assertThrown!AssertError([1].dropOne.packForwardDifference);
 
@@ -53,6 +55,6 @@ unittest {
     auto x3 = [1, -22, 333];
     assert(x3 == x3.packForwardDifference.unpackForwardDifference);
 
-    auto x4 = [1, -333, 22, 1000, -1100];
+    auto x4 = [1, int.min, 22, 0, int.max, -1100];
     assert(x4 == x4.packForwardDifference.unpackForwardDifference);
 }
