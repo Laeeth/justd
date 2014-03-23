@@ -608,6 +608,13 @@ auto ref windowedReduce(Reduction reduction = Reduction.forwardDifference, R)(R 
 /*     } */
 /* } */
 
+/* unittest { */
+/*     import std.range: front; */
+/*     dln([1].windowedReduce!(Reduction.forwardDifference)); */
+/*     dln([1, 22].windowedReduce!(Reduction.forwardDifference)); */
+/*     dln([1, 22, 333].windowedReduce!(Reduction.forwardDifference)); */
+/* } */
+
 unittest {
     import std.datetime: Clock, SysTime, Duration;
     import std.algorithm: map;
@@ -624,6 +631,7 @@ unittest {
 
 unittest {
     immutable i = [1, 4, 9, 17];
+    import std.algorithm: equal;
     assert(i.windowedReduce!(Reduction.forwardDifference).equal ([+3, +5, +8]));
     assert(i.windowedReduce!(Reduction.backwardDifference).equal([-3, -5, -8]));
     assert(i.windowedReduce!(Reduction.sum).equal ([+5, +13, +26]));
@@ -682,6 +690,8 @@ unittest {
     TODO: Is there a difference between whether R r is immutable, const or
     mutable?
 
+    TODO: If r contains only one element return empty range.
+
     See also: https://stackoverflow.com/questions/21004944/forward-difference-algorithm
     See also: http://forum.dlang.org/thread/ujouqtqeehkegmtaxebg@forum.dlang.org#post-lczzsypupcfigttghkwx:40forum.dlang.org
     See also: http://rosettacode.org/wiki/Forward_difference#D
@@ -689,7 +699,7 @@ unittest {
 auto forwardDifference(R)(R r)
     pure nothrow if (isInputRange!R)
 {
-    import std.range: front, empty, popFront;
+    import std.range: front, empty, popFront, dropOne;
 
     struct ForwardDifference
     {
@@ -699,8 +709,14 @@ auto forwardDifference(R)(R r)
         D _front;
         bool _initialized = false;
 
-        this(R range) pure {
-            this._range = range;
+        this(R range) pure
+        in { assert(!range.empty); }
+        body {
+            auto tail = range.dropOne; // TODO: This may be an unneccesary cost but is practical to remove extra logic
+            if (tail.empty)
+                _range = [];
+            else
+                _range = range; // store range internally (by reference)
         }
 
         @property:
@@ -723,36 +739,12 @@ auto forwardDifference(R)(R r)
                 }
             }
         }
-        bool empty() const { return _range.empty; }
+        bool empty() {
+            return _range.empty;
+        }
     }
 
     return ForwardDifference(r);
-}
-
-import std.algorithm: equal;
-
-/** Pack $(D r) using a forwardDifference.
-    TODO: Can we tag this as nothrow when MapResult becomes nothrow?
- */
-auto packForwardDifference(R)(R r) if (isInputRange!R)
-{
-    import std.range: front, empty;
-    if (r.empty)
-        return tuple(r.front, forwardDifference(r));
-    else
-        return tuple(r.front, forwardDifference(r));
-}
-
-unittest {
-    import std.range: front;
-
-    dln([1].packForwardDifference);
-    dln([1, 22].packForwardDifference);
-    dln([1, 22, 333].packForwardDifference);
-
-    dln([1].windowedReduce!(Reduction.forwardDifference));
-    dln([1, 22].windowedReduce!(Reduction.forwardDifference));
-    dln([1, 22, 333].windowedReduce!(Reduction.forwardDifference));
 }
 
 unittest {
@@ -761,9 +753,6 @@ unittest {
 
     int[1] xx;
     import std.range: front;
-    /* auto d1 = xx.front; */
-    dln([1].forwardDifference);
-    dln([1, 2].forwardDifference);
 
     import std.array: array;
     import std.traits: Unqual;
@@ -802,19 +791,17 @@ auto apply(alias fun, N)(N n) if (isCallable!fun &&
     return n.iota.map!(n => fun);
 }
 
-unittest {
-    import std.datetime: Clock, SysTime, Duration;
-    import std.algorithm: map;
-    import msgpack;
-    import std.array: array;
-
-    const n = 3;
-    auto times = n.apply!(Clock.currTime).array;
-    dln(times);
-
-    auto spans = times.forwardDifference;
-    dln(spans);
-}
+/* unittest { */
+/*     import std.datetime: Clock, SysTime, Duration; */
+/*     import std.algorithm: map; */
+/*     import msgpack; */
+/*     import std.array: array; */
+/*     const n = 3; */
+/*     auto times = n.apply!(Clock.currTime).array; */
+/*     dln(times); */
+/*     auto spans = times.forwardDifference; */
+/*     dln(spans); */
+/* } */
 
 // ==============================================================================================
 

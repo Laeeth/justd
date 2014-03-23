@@ -8,7 +8,7 @@
 module dbg;
 
 /* http://stackoverflow.com/questions/19413340/escaping-safety-with-debug-statements */
-debug auto trustedPureDebugCall (alias fn, A...) (A args) @trusted pure {
+debug auto trustedPureDebugCall(alias fn, A...) (A args) @trusted pure {
     debug return fn(args);
 }
 
