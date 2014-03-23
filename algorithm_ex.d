@@ -696,8 +696,7 @@ unittest {
     See also: http://forum.dlang.org/thread/ujouqtqeehkegmtaxebg@forum.dlang.org#post-lczzsypupcfigttghkwx:40forum.dlang.org
     See also: http://rosettacode.org/wiki/Forward_difference#D
 */
-auto forwardDifference(R)(R r)
-    pure nothrow if (isInputRange!R)
+auto forwardDifference(R)(R r) if (isInputRange!R)
 {
     import std.range: front, empty, popFront, dropOne;
 
@@ -709,12 +708,15 @@ auto forwardDifference(R)(R r)
         D _front;
         bool _initialized = false;
 
-        this(R range) pure
+        this(R range)
         in { assert(!range.empty); }
         body {
-            auto tail = range.dropOne; // TODO: This may be an unneccesary cost but is practical to remove extra logic
-            if (tail.empty)
-                _range = [];
+            auto tmp = range;
+            if (tmp.dropOne.empty) // TODO: This may be an unneccesary cost but is practical to remove extra logic
+                static if (isArray!R) // TODO: Construct R in a generic way that include dynamic arrays?
+                    _range = cast(D[])[];
+                else
+                    _range = R(); // return empty range
             else
                 _range = range; // store range internally (by reference)
         }

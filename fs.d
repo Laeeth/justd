@@ -126,6 +126,7 @@ import traits_ex;
 import getopt_ex;
 import digest_ex;
 import algorithm_ex;
+import codec;
 import csunits;
 alias Bytes64 = Bytes!ulong;
 import terminal;
@@ -1680,10 +1681,10 @@ class Dir : File
                 debug dln("sub.length: ", _subs.length);
 
                 auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
-                debug dln(name, " modified diffs: ", timesLastModifiedDiffs);
+                debug dln(name, " modified diffs: ", timesLastModifiedDiffs[1].array.pack.length);
 
                 auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".packForwardDifference;
-                debug dln(name, " accessed diffs: ", timesLastAccessedDiffs);
+                debug dln(name, " accessed diffs: ", timesLastAccessedDiffs[1].array.pack.length);
 
                 auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime";
                 debug dln(name, " modified: ", timesLastModified.array.pack.length);
