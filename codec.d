@@ -71,15 +71,19 @@ unittest
 
     // in memory pack and unpack
     auto pfd = x.packForwardDifference;
-    dln(pfd.pack);
+    /* dln(pfd.pack); */
     assert(x == pfd.unpackForwardDifference);
 
     alias FDP = ForwardDifferencePack!(typeof(x));
     auto fdp = FDP(x);
     auto raw = fdp.pack;
-    dln(raw);
+    auto raw2 = raw.dup;
+    /* dln(raw); */
 
     FDP fdp_;                   // restored
     raw.unpack(fdp_);           // restore it
     assert(fdp == fdp_);
+
+    auto fdp__ = raw2.unpack!FDP; // restore it (alternatively)
+    assert(fdp == fdp__);
 }
