@@ -747,28 +747,16 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
 }
 
 unittest {
-    // source
-    auto x = [int.min, 1, 4, 9, 17, int.max];
-
-    int[1] xx;
-    import std.range: front;
-
+    import std.stdio: writeln;
+    import msgpack;
     import std.array: array;
-    import std.traits: Unqual;
-    import std.range: ElementType;
 
-    // difference
-    alias E = Unqual!(ElementType!(typeof(x)));
-    auto d = x[0] ~ x[].forwardDifference.array;
+    auto x = [long.max, 0, 1];
+    auto y = x.forwardDifference;
 
-    // restored source
-    auto y = new E[x.length];
-    y[0] = x[0];
-    foreach (ix; 0..x.length - 1) {
-        y[ix + 1] = y[ix] + d[ix + 1];
-    }
-
-    assert(x[] == y[]);
+    /* writeln(y); */
+    /* writeln(y.pack); */
+    /* writeln(y.array.pack); */
 }
 
 import std.traits: isCallable, ReturnType, arity, ParameterTypeTuple;

@@ -90,7 +90,8 @@ unittest {
 }
 
 unittest {
-    immutable x = [1, 2, 3, 4, 5, 6, 7, 8, 127, 128, 8, 9, 10, 11, 12];
+    immutable x = [1, 2, 3, 4, 5, 6, 7, 8, 127, 128, 8, 9, 10, 11, 12,
+                   256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 257];
     auto bytes = x.pack;
     version(print) dln(bytes);
 }

@@ -102,6 +102,8 @@
    differentially as two arrays. Use http://rosettacode.org/wiki/Forward_difference#D
 
    TODO: Perhaps use http://www.chartjs.org/ to visualize stuff
+
+   TODO: Make use of @nonPacked in version(msgpack).
 */
 module fs;
 
@@ -1678,7 +1680,7 @@ class Dir : File
             packer.pack(_subs.length);
 
             if (_subs.length >= 1) {
-                debug dln("sub.length: ", _subs.length);
+                debug dln(this.name, " sub.length: ", _subs.length);
 
                 auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
                 debug dln(name, " modified diffs: ",
