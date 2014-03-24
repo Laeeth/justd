@@ -1682,13 +1682,13 @@ class Dir : File
             if (_subs.length >= 1) {
                 debug dln(this.name, " sub.length: ", _subs.length);
 
-                auto timesLastModifiedDiffs = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
+                auto diffsLastModified = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
                 debug dln(name, " modified diffs: ",
-                          timesLastModifiedDiffs[0].pack.length + timesLastModifiedDiffs[1].array.pack.length);
+                          diffsLastModified[0].pack.length + diffsLastModified[1].array.pack.length);
 
-                auto timesLastAccessedDiffs = _subs.byValue.map!"a.timeLastAccessed.stdTime".packForwardDifference;
+                auto diffsLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime".packForwardDifference;
                 debug dln(name, " accessed diffs: ",
-                          timesLastAccessedDiffs[0].pack.length + timesLastAccessedDiffs[1].array.pack.length);
+                          diffsLastAccessed[0].pack.length + diffsLastAccessed[1].array.pack.length);
 
                 auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime";
                 debug dln(name, " modified: ", timesLastModified.array.pack.length);
