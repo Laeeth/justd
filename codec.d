@@ -32,9 +32,16 @@ private:
     typeof(R.init.forwardDifference.array) _diff; // The Difference
 }
 
+/** Instantiator for $(D ForwardDifferencePack).
+ */
+auto packForwardDifference(R)(R r) if (isInputRange!R)
+{
+    return ForwardDifferencePack!R(r); // TODO: Use named parts?
+}
+
 /** Pack $(D r) using a forwardDifference.
 */
-auto packForwardDifference(R)(R r) if (isInputRange!R)
+auto packForwardDifference_alt(R)(R r) if (isInputRange!R)
 {
     return tuple(r.front,
                  r.forwardDifference); // TODO: Use named parts?
@@ -63,17 +70,17 @@ unittest
     import msgpack;
     import dbg: dln;
 
-    assertThrown!AssertError([1].dropOne.packForwardDifference);
+    assertThrown!AssertError([1].dropOne.packForwardDifference_alt);
 
     auto x = [1, int.min, 22, 0, int.max, -1100];
 
     // in memory pack and unpack
-    auto pfd = x.packForwardDifference;
+    auto pfd = x.packForwardDifference_alt;
     /* dln(pfd.pack); */
     assert(x == pfd.unpackForwardDifference);
 
-    alias FDP = ForwardDifferencePack!(typeof(x));
-    auto fdp = FDP(x);
+    auto fdp = x.packForwardDifference;
+    alias FDP = typeof(fdp);
     auto raw = fdp.pack;
     auto raw2 = raw.dup;
     /* dln(raw); */
