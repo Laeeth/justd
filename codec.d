@@ -12,6 +12,26 @@ import std.range: front, tuple, isInputRange, ElementType;
 import algorithm_ex: forwardDifference;
 import std.array: array;
 
+/** Packing of $(D r) using a forwardDifference.
+ */
+struct ForwardDifferencePack(R) if (isInputRange!R)
+{
+    this(R r)
+    {
+        _front = r.front;
+        _diff = r.forwardDifference.array; // TODO: Can we avoid this?
+    }
+    /* void toMsgpack(Packer)(ref Packer packer) const { */
+    /*     packer.pack(_front, _diff); */
+    /* } */
+    /* void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) { */
+    /*     unpacker.unpack(_front, _diff); */
+    /* } */
+private:
+    typeof(R.init.front) _front; // First element
+    typeof(R.init.forwardDifference.array) _diff; // The Difference
+}
+
 /** Pack $(D r) using a forwardDifference.
 */
 auto packForwardDifference(R)(R r) if (isInputRange!R)
@@ -34,28 +54,6 @@ auto unpackForwardDifference(E, R)(Tuple!(E, R) x)
         y[ix + 1] = y[ix] + a[ix];
     }
     return y;
-}
-
-/** Pack $(D r) using a forwardDifference.
- */
-struct ForwardDifferencePack(R) if (isInputRange!R)
-{
-    this(R r)
-    {
-        _front = r.front;
-        _diff = r.forwardDifference.array; // TODO: Can we avoid this?
-    }
-
-    void toMsgpack(Packer)(ref Packer packer) const {
-        packer.pack(_front, _diff);
-    }
-    void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) {
-        unpacker.unpack(_front, _diff);
-    }
-
-private:
-    typeof(R.init.front) _front; // First element
-    typeof(R.init.forwardDifference.array) _diff; // The Difference
 }
 
 unittest

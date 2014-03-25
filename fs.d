@@ -548,7 +548,7 @@ bool matchName(in FKind kind,
 }
 
 /** Match (Magic) Contents of $(D kind) with $(D range).
-    Returns: true upon match, false otherwise. */
+    Returns: true iff match. */
 bool matchContents(Range)(in FKind kind,
                           in Range range,
                           in RegFile regfile) pure nothrow if (hasSlicing!Range)
@@ -700,7 +700,7 @@ class File
     int depth() @property @safe pure nothrow { return parent ? parent.depth + 1 : 0; }
 
     /** Check if $(D this) File has been invalidated by $(D dent).
-        Returns: true if $(D this) was obseleted, false otherwise.
+        Returns: true iff $(D this) was obseleted.
     */
     bool checkObseleted(ref DirEntry dent) @trusted
     {
@@ -1566,7 +1566,7 @@ class Dir : File
     }
 
     /** Load Contents of $(D this) Directory from Disk using DirEntries.
-        Returns: true if Dir was updated (reread) from disk, false otherwise.
+        Returns: true iff Dir was updated (reread) from disk.
     */
     bool load(int depth = 0, bool force = false)
     {

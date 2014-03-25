@@ -149,8 +149,11 @@ unittest { assert([1, 2, 3].maxElement == 3); }
 
 // ==============================================================================================
 
-/** Returns: true if all elements in range are equal (or range is empty).
-    http://stackoverflow.com/questions/19258556/equality-of-all-elements-in-a-range/19292822?noredirect=1#19292822 */
+/** Returns: true iff all elements in range are equal (or range is empty).
+    http://stackoverflow.com/questions/19258556/equality-of-all-elements-in-a-range/19292822?noredirect=1#19292822
+
+    Possible alternatives or aliases: allElementsEqual, haveEqualElements
+*/
 bool allEqual(R)(R range) @safe pure nothrow if (isInputRange!R)
 {
     import std.algorithm: findAdjacent;
@@ -161,6 +164,10 @@ unittest { assert([11, 11].allEqual); }
 unittest { assert(![11, 12].allEqual); }
 unittest { int[] x; assert(x.allEqual); }
 
+/** Returns: true iff all elements in range are equal (or range is empty) to $(D element).
+
+    Possible alternatives or aliases: allElementsEqualTo
+*/
 bool allEqualTo(R, E)(R range, E element) @safe pure nothrow if (isInputRange!R)
 {
     import std.algorithm: all;
@@ -253,8 +260,7 @@ bool hasContents(T)(T a) @safe pure nothrow
     }
 }
 
-/** Returns: true if $(D a) is set to the default/initial value of its type
-    $(D T), false otherwise.
+/** Returns: true iff $(D a) is set to the default/initial value of its type $(D T).
 */
 bool defaulted(T)(T x) @safe pure nothrow { return x == T.init; }
 alias untouched = defaulted;
