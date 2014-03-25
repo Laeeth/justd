@@ -21,12 +21,6 @@ struct ForwardDifferencePack(R) if (isInputRange!R)
         _front = r.front;
         _diff = r.forwardDifference.array; // TODO: Can we avoid this?
     }
-    /* void toMsgpack(Packer)(ref Packer packer) const { */
-    /*     packer.pack(_front, _diff); */
-    /* } */
-    /* void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) { */
-    /*     unpacker.unpack(_front, _diff); */
-    /* } */
 private:
     typeof(R.init.front) _front; // First element
     typeof(R.init.forwardDifference.array) _diff; // The Difference
