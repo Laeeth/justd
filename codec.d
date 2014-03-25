@@ -19,7 +19,7 @@ struct ForwardDifferencePack(R) if (isInputRange!R)
     this(R r)
     {
         _front = r.front;
-        _diff = r.forwardDifference.array; // TODO: Can we avoid this?
+        _diff = r.forwardDifference.array; // TODO: Can we make msgpack pack r.forwardDifference without .array?
     }
 private:
     typeof(R.init.front) _front; // First element
