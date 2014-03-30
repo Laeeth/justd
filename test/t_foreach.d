@@ -11,4 +11,6 @@ void main(string[] args) {
         a = b; // error
     }
     a = null; // ok
+    alias wln = writeln;
+    wln("hello world");
 }

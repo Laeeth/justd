@@ -14,34 +14,34 @@ import std.array: array;
 
 /** Packing of $(D r) using a forwardDifference.
  */
-struct ForwardDifferencePack(R) if (isInputRange!R)
+struct ForwardDifferenceCode(R) if (isInputRange!R)
 {
     this(R r)
     {
         _front = r.front;
-        _diff = r.forwardDifference.array; // TODO: Can we make msgpack pack r.forwardDifference without .array?
+        _diff = r.forwardDifference.array; // TODO: Can we make msgpack pack r.forwardDifference without .array
     }
 private:
     typeof(R.init.front) _front; // First element
     typeof(R.init.forwardDifference.array) _diff; // The Difference
 }
 
-/** Instantiator for $(D ForwardDifferencePack).
+/** Instantiator for $(D ForwardDifferenceCode).
  */
-auto packForwardDifference(R)(R r) if (isInputRange!R)
+auto encodeForwardDifference(R)(R r) if (isInputRange!R)
 {
-    return ForwardDifferencePack!R(r); // TODO: Use named parts?
+    return ForwardDifferenceCode!R(r); // TODO: Use named parts?
 }
 
 /** Pack $(D r) using a forwardDifference.
 */
-auto packForwardDifference_alt(R)(R r) if (isInputRange!R)
+auto encodeForwardDifference_alt(R)(R r) if (isInputRange!R)
 {
     return tuple(r.front,
                  r.forwardDifference); // TODO: Use named parts?
 }
 
-auto unpackForwardDifference(E, R)(Tuple!(E, R) x)
+auto decodeForwardDifference(E, R)(Tuple!(E, R) x)
     if (isInputRange!R &&
         is(ElementType!R == typeof(E - E)))
 {
@@ -64,16 +64,16 @@ unittest
     import msgpack;
     import dbg: dln;
 
-    assertThrown!AssertError([1].dropOne.packForwardDifference_alt);
+    assertThrown!AssertError([1].dropOne.encodeForwardDifference_alt);
 
     auto x = [1, int.min, 22, 0, int.max, -1100];
 
     // in memory pack and unpack
-    auto pfd = x.packForwardDifference_alt;
+    auto pfd = x.encodeForwardDifference_alt;
     /* dln(pfd.pack); */
-    assert(x == pfd.unpackForwardDifference);
+    assert(x == pfd.decodeForwardDifference);
 
-    auto fdp = x.packForwardDifference;
+    auto fdp = x.encodeForwardDifference;
     alias FDP = typeof(fdp);
     auto raw = fdp.pack;
     auto raw2 = raw.dup;

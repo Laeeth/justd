@@ -1680,19 +1680,19 @@ class Dir : File
             packer.pack(_subs.length);
 
             if (_subs.length >= 1) {
-                debug dln(this.name, " sub.length: ", _subs.length);
 
-                auto diffsLastModified = _subs.byValue.map!"a.timeLastModified.stdTime".packForwardDifference;
-                auto diffsLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime".packForwardDifference;
+                auto diffsLastModified = _subs.byValue.map!"a.timeLastModified.stdTime".encodeForwardDifference;
+                auto diffsLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime".encodeForwardDifference;
+                /* auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime"; */
+                /* auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime"; */
 
-                auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime";
-                auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime";
+                packer.pack(diffsLastModified, diffsLastAccessed);
 
-                debug dln(name, " modified diffs: ", diffsLastModified.pack.length);
-                debug dln(name, " accessed diffs: ", diffsLastAccessed.pack.length);
-
-                debug dln(name, " modified: ", timesLastModified.array.pack.length);
-                debug dln(name, " accessed: ", timesLastAccessed.array.pack.length);
+                /* debug dln(this.name, " sub.length: ", _subs.length); */
+                /* debug dln(name, " modified diffs: ", diffsLastModified.pack.length); */
+                /* debug dln(name, " accessed diffs: ", diffsLastAccessed.pack.length); */
+                /* debug dln(name, " modified: ", timesLastModified.array.pack.length); */
+                /* debug dln(name, " accessed: ", timesLastAccessed.array.pack.length); */
             }
 
             foreach (sub; _subs) {
@@ -1736,6 +1736,12 @@ class Dir : File
             /* TODO: unpacker.unpack(_subs); */
             immutable noPreviousSubs = _subs.length == 0;
             size_t subs_length; unpacker.unpack(subs_length); // TODO: Functionize to unpacker.unpack!size_t()
+
+            ForwardDifferenceCode!(long[]) diffsLastModified, diffsLastAccessed;
+            if (subs_length >= 1) {
+                unpacker.unpack(diffsLastModified, diffsLastAccessed);
+            }
+
             foreach (ix; 0..subs_length) { // repeat for subs_length times
                 string subClassName; unpacker.unpack(subClassName); // TODO: Functionize
                 File sub = null;
