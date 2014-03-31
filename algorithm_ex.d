@@ -149,6 +149,16 @@ auto maxElement(alias F = max, R)(in R range)
 alias largest = maxElement;
 unittest { assert([1, 2, 3].maxElement == 3); }
 
+/** Returns: Minmum and Maximum Element in X. */
+auto minmaxElement(alias F = min, alias G = max, R)(in R range)
+    @safe pure nothrow if (isInputRange!R)
+{
+    import std.typecons: tuple;
+    return reduce!(F, G)(tuple(ElementType!R.max,
+                               ElementType!R.min), range);
+}
+// unittest { assert([1, 2, 3].minmaxElement == tuple(1, 3)); }
+
 // ==============================================================================================
 
 /** Returns: true iff all elements in range are equal (or range is empty).
