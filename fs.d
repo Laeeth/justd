@@ -1740,6 +1740,7 @@ class Dir : File
             ForwardDifferenceCode!(long[]) diffsLastModified, diffsLastAccessed;
             if (subs_length >= 1) {
                 unpacker.unpack(diffsLastModified, diffsLastAccessed);
+                /* auto x = diffsLastModified.decodeForwardDifference; */
             }
 
             foreach (ix; 0..subs_length) { // repeat for subs_length times
