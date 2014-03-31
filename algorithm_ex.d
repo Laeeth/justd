@@ -97,7 +97,9 @@ CommonType!T every(T...)(T a) @safe pure nothrow if (a.length >= 1)
         return a[0] ? every(a[1 .. $]) : a[0]; // recurse
     }
 }
-/** This overload enables, when possible, lvalue return. */
+/** This overload enables, when possible, lvalue return.
+    TODO: Only last argument needs to be an l-value.
+*/
 auto ref every(T...)(ref T a) @safe pure nothrow if (a.length >= 1 && allSame!T)
 {
     static if (T.length == 1) {
