@@ -32,6 +32,9 @@ private template siotaImpl(size_t to, size_t now)
 
 string typestringof(T)(T a) @safe pure nothrow { return T.stringof; }
 
+import std.range: dropOne;
+alias tail = dropOne;
+
 // ==============================================================================================
 
 /** Returns: First Argument (element of $(D a)) whose implicit conversion to
