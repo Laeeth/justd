@@ -13,6 +13,7 @@ import algorithm_ex: forwardDifference;
 import std.array: array;
 
 /** Packing of $(D r) using a forwardDifference.
+    Used to pack elements of type ptrdiff, times, etc.
  */
 struct ForwardDifferenceCode(R) if (isInputRange!R)
 {
@@ -33,12 +34,9 @@ auto encodeForwardDifference(R)(R r) if (isInputRange!R)
     return ForwardDifferenceCode!R(r); // TODO: Use named parts?
 }
 
-/** Pack $(D r) using a forwardDifference.
-*/
 auto encodeForwardDifference_alt(R)(R r) if (isInputRange!R)
 {
-    return tuple(r.front,
-                 r.forwardDifference); // TODO: Use named parts?
+    return tuple(r.front, r.forwardDifference);
 }
 
 auto decodeForwardDifference(E, R)(Tuple!(E, R) x)
