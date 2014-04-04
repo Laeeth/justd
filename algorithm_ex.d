@@ -1074,3 +1074,26 @@ unittest
     import std.algorithm: equal;
     assert(fibonacci.take(10).equal([1, 1, 2, 3, 5, 8, 13, 21, 34, 55]));
 }
+
+/** Expand Static $(D array) into a parameter arguments (TypeTuple!).
+    See also: http://forum.dlang.org/thread/hwellpcaomwbpnpofzlx@forum.dlang.org?page=1
+*/
+template expand(alias array, size_t idx = 0) if (isStaticArray!(typeof(array)))
+{
+    @property ref Delay() { return array[idx]; }
+    static if (idx + 1 < array.length) {
+        alias expand = TypeTuple!(Delay, expand!(array, idx + 1));
+    } else {
+        alias expand = Delay;
+    }
+}
+
+unittest
+{
+    static void foo(int a, int b, int c) {
+        import std.stdio: writefln;
+        writefln("a: %s, b: %s, c: %s", a, b, c);
+    }
+    int[3] arr = [1, 2, 3];
+    foo(expand!arr);
+}
