@@ -34,12 +34,38 @@ auto encodeForwardDifference(R)(R r) if (isInputRange!R)
     return ForwardDifferenceCode!R(r); // TODO: Use named parts?
 }
 
+unittest
+{
+    import std.range: dropOne;
+    import std.exception: assertThrown, AssertError;
+    import msgpack;
+    import dbg: dln;
+
+    assertThrown!AssertError([1].dropOne.encodeForwardDifference_alt);
+
+    auto x = [1, int.min, 22, 0, int.max, -1100];
+
+    auto fdp = x.encodeForwardDifference;
+    alias FDP = typeof(fdp);
+    auto raw = fdp.pack;
+    auto raw2 = raw.dup;
+    /* dln(raw); */
+
+    FDP fdp_;                   // restored
+    raw.unpack(fdp_);           // restore it
+    assert(fdp == fdp_);
+
+    auto fdp__ = raw2.unpack!FDP; // restore it (alternatively)
+    assert(fdp == fdp__);
+}
+
+/** Alternative. */
 auto encodeForwardDifference_alt(R)(R r) if (isInputRange!R)
 {
     return tuple(r.front, r.forwardDifference);
 }
-
-auto decodeForwardDifference(E, R)(Tuple!(E, R) x)
+/** Alternative. */
+auto decodeForwardDifference_alt(E, R)(Tuple!(E, R) x)
     if (isInputRange!R &&
         is(ElementType!R == typeof(E - E)))
 {
@@ -57,30 +83,9 @@ auto decodeForwardDifference(E, R)(Tuple!(E, R) x)
 
 unittest
 {
-    import std.range: dropOne;
-    import std.exception: assertThrown, AssertError;
-    import msgpack;
-    import dbg: dln;
-
-    assertThrown!AssertError([1].dropOne.encodeForwardDifference_alt);
-
     auto x = [1, int.min, 22, 0, int.max, -1100];
-
     // in memory pack and unpack
     auto pfd = x.encodeForwardDifference_alt;
     /* dln(pfd.pack); */
-    assert(x == pfd.decodeForwardDifference);
-
-    auto fdp = x.encodeForwardDifference;
-    alias FDP = typeof(fdp);
-    auto raw = fdp.pack;
-    auto raw2 = raw.dup;
-    /* dln(raw); */
-
-    FDP fdp_;                   // restored
-    raw.unpack(fdp_);           // restore it
-    assert(fdp == fdp_);
-
-    auto fdp__ = raw2.unpack!FDP; // restore it (alternatively)
-    assert(fdp == fdp__);
+    assert(x == pfd.decodeForwardDifference_alt);
 }
