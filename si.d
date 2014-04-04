@@ -49,15 +49,15 @@ alias PrefixSystem!(10, { return [
 
 mixin DefinePrefixSystem!(SiPrefixSystem);
 
-alias BaseUnit!("Ampere", "A") Ampere;
-alias BaseUnit!("candela", "cd") Candela;
-alias BaseUnit!("gram", "g") Gram;
-alias BaseUnit!("Kelvin", "K") Kelvin;
-alias BaseUnit!("metre", "m") Metre;
-alias BaseUnit!("mole", "mol") Mole;
-alias BaseUnit!("second", "s") Second;
-alias BaseUnit!("radian", "rad") Radian;
-alias BaseUnit!("steradian", "sr") Steradian;
+alias Ampere = BaseUnit!("Ampere", "A");
+alias Candela = BaseUnit!("candela", "cd");
+alias Gram = BaseUnit!("gram", "g");
+alias Kelvin = BaseUnit!("Kelvin", "K");
+alias Metre = BaseUnit!("metre", "m");
+alias Mole = BaseUnit!("mole", "mol");
+alias Second = BaseUnit!("second", "s");
+alias Radian = BaseUnit!("radian", "rad");
+alias Steradian = BaseUnit!("steradian", "sr");
 
 /**
  * SI base units.

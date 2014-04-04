@@ -226,10 +226,11 @@ struct NGram(ValueType,
         return rval;
     }
 
-    void clear() @safe nothrow {
-        _bins.clear();
+    void reset() @safe nothrow {
+        import algorithm_ex: reset;
+        _bins.reset();
     }
-    alias reset = clear;
+    // alias reset = clear;
 
     bool empty() const pure @property @trusted nothrow {
         static if (isAA) {
@@ -691,7 +692,7 @@ unittest {
     auto hh = h + h;
     assert(hh.matchDenser(hh) == 4*x1.length);
 
-    h.clear(); assert(h.empty);
+    h.destroy(); assert(h.empty);
 
     auto hU32 = x.histogram!(Kind.saturated, Storage.sparse, Symmetry.ordered, uint);
 }

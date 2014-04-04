@@ -23,7 +23,7 @@ struct BitSet(size_t len, Block = size_t)
 
     @property inout (Block*) ptr() inout { return _data.ptr; }
 
-    void clear() @safe nothrow { _data[] = 0; }
+    void reset() @safe nothrow { _data[] = 0; }
 
     /**
      * Gets the amount of native words backing this $(D BitSet).

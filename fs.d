@@ -1228,8 +1228,8 @@ struct CStat {
         kindId[] = 0;
         _contId[] = 0;
         hitCount = 0;
-        bist.clear();
-        xgram.clear();
+        bist.reset();
+        xgram.reset();
         _xgramDeepDenseness = 0;
         deallocate();
     }
@@ -1580,6 +1580,7 @@ class Dir : File
         _treeSize.reset; // this.size;
         auto oldSubs = _subs;
         _subs.reset;
+        assert(_subs.length == 0); // TODO: Remove when verified
 
         import std.file: dirEntries, SpanMode;
         auto entries = dirEntries(path, SpanMode.shallow, false); // false: skip symlinks
