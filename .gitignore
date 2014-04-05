@@ -5,3 +5,4 @@ tags.dscanner
 .trash
 *.o
 */*.o
+.sconsign.dblite
