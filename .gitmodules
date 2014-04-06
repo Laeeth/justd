@@ -73,3 +73,9 @@
 [submodule "cerealed"]
 	path = cerealed
 	url = https://github.com/atilaneves/cerealed.git
+[submodule "scriptlike"]
+	path = scriptlike
+	url = https://github.com/Abscissa/scriptlike.git
+[submodule "dauth"]
+	path = dauth
+	url = https://github.com/Abscissa/DAuth.git
