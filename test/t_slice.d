@@ -4,6 +4,8 @@
 
 void main(string[] args)
 {
+    auto l = [1, 2, 3, 4][0..$ / 2]; // original
+
     auto x = [1, 2, 3, 4]; // original
 
     auto a = x[0..$ / 2]; // first part
@@ -11,4 +13,7 @@ void main(string[] args)
 
     auto y = x[0..$]; // whole
     auto z = x[0..$ + 1]; // error
+
+    auto w = l.ptr[0..l.length];
+    auto v = [1, 2].ptr[0..$];
 }
