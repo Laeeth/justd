@@ -79,3 +79,6 @@
 [submodule "dauth"]
 	path = dauth
 	url = https://github.com/Abscissa/DAuth.git
+[submodule "dlibgit"]
+	path = dlibgit
+	url = https://github.com/s-ludwig/dlibgit.git
