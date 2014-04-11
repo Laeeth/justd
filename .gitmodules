@@ -82,3 +82,6 @@
 [submodule "dlibgit"]
 	path = dlibgit
 	url = https://github.com/s-ludwig/dlibgit.git
+[submodule "libgit2"]
+	path = libgit2
+	url = https://github.com/libgit2/libgit2.git
