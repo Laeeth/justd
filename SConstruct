@@ -1,4 +1,4 @@
-#!/usr/bin/env scons
+#!/usr/bin/env scons-file
 
 env = Environment()
 # libraries    = ['phobos2', 'pthread', 'm']
