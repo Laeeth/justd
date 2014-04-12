@@ -447,7 +447,7 @@ class FKind
 
         static      if (is(RefPattern == ubyte[])) { this.refPattern = refPattern_; }
         else static if (is(RefPattern == string)) { this.refPattern = refPattern_.representation.dup; }
-        else static if (is(RefPattern == void[])) { this.refPattern = cast(ubyte[])refPattern_.dup; }
+        else static if (is(RefPattern == void[])) { this.refPattern = (cast(ubyte[])refPattern_).dup; }
         else static assert(false, "Cannot handle RefPattern being type " ~ RefPattern.stringof);
 
         this.keywords = keywords_;
