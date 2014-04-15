@@ -1097,3 +1097,17 @@ unittest
     int[3] arr = [1, 2, 3];
     foo(expand!arr);
 }
+
+/** Python Style Alias. */
+@safe pure string str(T)(in T a)
+{
+    import std.conv: to;
+    return to!string(a);
+}
+
+unittest
+{
+    import std.range: map;
+    import std.array: array;
+    assert(([42].map!str).array == ["42"]);
+}
