@@ -136,7 +136,7 @@ import sregex;
 import english;
 import bitset;
 import dbg;
-import backtrace.backtrace;
+/* import backtrace.backtrace; */
 import tempfs;
 import rational: Rational;
 import ngram;
@@ -4266,7 +4266,6 @@ body { font: 8px Verdana, sans-serif; }
         ppln(term, outFile, doHTML, "Unreadable ", results.noBytesUnreadable);
         ppln(term, outFile, doHTML, "Total Contents ", results.noBytesTotalContents);
         ppln(term, outFile, doHTML, "Total ", results.noBytesTotal);
-
         ppln(term, outFile, doHTML, "Total number of hits ", results.numTotalHits);
         ppln(term, outFile, doHTML, "Number of Files with hits ", results.numFilesWithHits);
     }
@@ -4288,7 +4287,7 @@ void main(string[] args)
     }
 
     import std.stdio: stderr;
-    backtrace.backtrace.install(stderr);
+    /* backtrace.backtrace.install(stderr); */
 
     auto term = Terminal(ConsoleOutputType.linear);
 
