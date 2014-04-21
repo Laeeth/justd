@@ -10,7 +10,14 @@ module traits_ex;
 import std.traits: isArray, isAssignable;
 import std.range: ElementType;
 
-/** Returns: true if all types T are the same. */
+/** Returns: true iff $(D ptr) is handled by the garbage collector (GC). */
+bool isGCPointer(void* ptr){
+    import core.memory;
+    return !!GC.addrOf(ptr);
+}
+alias inGC = isGCPointer;
+
+/** Returns: true iff all types T are the same. */
 template allSame(T...) {
     static if (T.length <= 1) {
         enum bool allSame = true;
