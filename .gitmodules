@@ -85,3 +85,6 @@
 [submodule "libgit2"]
 	path = libgit2
 	url = https://github.com/libgit2/libgit2.git
+[submodule "unit-threaded"]
+	path = unit-threaded
+	url = https://github.com/atilaneves/unit-threaded.git
