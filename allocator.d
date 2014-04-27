@@ -299,22 +299,22 @@ private struct Ternary
 
     Ternary opUnary(string s)() if (s == "~")
     {
-        return make((193 >> value & 3) << 1);
+        return make(386 >> value & 6);
     }
 
     Ternary opBinary(string s)(Ternary rhs) if (s == "|")
     {
-        return make((12756 >> (value + rhs.value) & 3) << 1);
+        return make(25512 >> value + rhs.value & 6);
     }
 
     Ternary opBinary(string s)(Ternary rhs) if (s == "&")
     {
-        return make((13072 >> (value + rhs.value) & 3) << 1);
+        return make(26144 >> value + rhs.value & 6);
     }
 
     Ternary opBinary(string s)(Ternary rhs) if (s == "^")
     {
-        return make((13252 >> (value + rhs.value) & 3) << 1);
+        return make(26504 >> value + rhs.value & 6);
     }
 }
 
@@ -413,7 +413,7 @@ unittest
     struct B { int x; }
     static assert(stateSize!B == 4);
     interface I1 {}
-    static assert(stateSize!I1 == 2 * size_t.sizeof);
+    //static assert(stateSize!I1 == 2 * size_t.sizeof);
     class C1 {}
     static assert(stateSize!C1 == 3 * size_t.sizeof);
     class C2 { char c; }
@@ -796,7 +796,7 @@ struct AlignedMallocator
     version (Windows) @system
     bool reallocate(ref void[] b, size_t newSize) shared
     {
-        returned alignedReallocate(b, newSize, alignment);
+        return alignedReallocate(b, newSize, alignment);
     }
 
     /**
@@ -943,7 +943,7 @@ struct AffixAllocator(Allocator, Prefix, Suffix = void)
     static assert(
         !stateSize!Prefix || Allocator.alignment >= Prefix.alignof,
         "AffixAllocator does not work with allocators offering a smaller"
-        " alignment than the prefix alignment.");
+        ~ " alignment than the prefix alignment.");
     static assert(alignment % Suffix.alignof == 0,
         "This restriction could be relaxed in the future.");
 
@@ -951,7 +951,7 @@ struct AffixAllocator(Allocator, Prefix, Suffix = void)
     If $(D Prefix) is $(D void), the alignment is that of the parent. Otherwise, the alignment is the same as the $(D Prefix)'s alignment.
     */
     enum uint alignment =
-        stateSize!Prefix ? Allocator.alignment : Prefix.alignof;
+        stateSize!Prefix ? Prefix.alignof : Allocator.alignment;
 
     /**
     If the parent allocator $(D Allocator) is stateful, an instance of it is
@@ -959,8 +959,8 @@ struct AffixAllocator(Allocator, Prefix, Suffix = void)
     In either case, the name $(D _parent) is uniformly used for accessing the
     parent allocator.
     */
-    static if (stateSize!Allocator) Allocator parent;
-    else alias Allocator.it parent;
+   static if (stateSize!Allocator) Allocator parent;
+    else alias parent = Allocator.it;
 
     template Impl()
     {
@@ -1052,7 +1052,7 @@ struct AffixAllocator(Allocator, Prefix, Suffix = void)
             {
                 auto p = b.ptr - stateSize!Prefix
                     + actualAllocationSize(b.length);
-                return (cast(Prefix*) p)[-1];
+                return (cast(Suffix*) p)[-1];
             }
     }
 
@@ -1118,7 +1118,7 @@ unittest
 
 unittest
 {
-    alias AffixAllocator!(Mallocator, size_t) A;
+    alias A = AffixAllocator!(Mallocator, size_t);
     auto b = A.it.allocate(10);
     A.it.prefix(b) = 10;
     assert(A.it.prefix(b) == 10);
@@ -2692,6 +2692,360 @@ unittest
     auto b = a.allocate(64);
 }
 
+// SimpleBlocklist
+/**
+
+A $(D SimpleBlockList) manages a contiguous chunk of memory by embedding a block
+list onto it. Blocks have variable size, and each is preceded by exactly one
+word that holds that block's size plus a bit indicating whether the block is
+occupied.
+
+Initially the list has only one element, which covers the entire chunk of
+memory. Due to that block's management and a sentinel at the end, the maximum
+amount that can be allocated is $(D n - 2 * size_t.sizeof), where $(D n) is the
+entire chunk size. The first allocation will adjust the size of the first block
+and will likely create a new free block right after it. As memory gets allocated
+and deallocated, the block list will evolve accordingly.
+
+$(D SimpleBlockList) is one of the simplest allocators that is also memory
+efficient. However, the allocation speed is $(BIGOH O(n)), where $(D n) is the
+number of blocks in use. To improve on that, allocations start at the last
+deallocation point, which may lead to constant-time allocation in certain
+situations. (Deallocations are $(D O(1))).
+
+Fragmentation is also an issue; the allocator does coalescing but has no special
+strategy beyond a simple first fit algorithm. Coalescing of blocks is performed
+during allocation. However, a block can be coalesced only with the block of its
+right (it is not possible to iterate blocks right to left), which means an
+allocation may spend more time searching. So $(D SimpleBlockList) should be used
+for simple allocation needs, or for coarse-granular allocations in conjunction
+with specialized allocators for small objects.
+
+*/
+struct SimpleBlocklist
+{
+    private enum busyMask = ~(size_t.max >> 1);
+
+    private static struct Node
+    {
+        size_t _size;
+
+        size_t size()
+        {
+            return _size & ~busyMask;
+        }
+        void size(size_t s)
+        {
+            assert(!occupied, "Can only set size for free nodes");
+            _size = s;
+        }
+
+        bool occupied() const
+        {
+            return (_size & busyMask) != 0;
+        }
+
+        Node* next()
+        {
+            return cast(Node*) ((cast(void*) &this) + size);
+        }
+
+        void occupy()
+        {
+            assert(!occupied);
+            _size |= busyMask;
+        }
+
+        void deoccupy()
+        {
+            _size &= ~busyMask;
+        }
+
+        void coalesce()
+        {
+            if (occupied) return;
+            for (;;)
+            {
+                auto n = cast(Node*) (cast(void*)&this + _size);
+                if (n.occupied) break;
+                _size += n._size;
+            }
+        }
+    }
+
+    private auto byNode(Node* from)
+    {
+        static struct Voldemort
+        {
+            Node* crt;
+            bool empty() { return crt._size == size_t.max; }
+            ref Node front() { return *crt; }
+            void popFront()
+            {
+                assert(!empty);
+                crt = cast(Node*) (cast(void*)crt + crt.size);
+            }
+            @property Voldemort save() { return this; }
+        }
+        auto r = Voldemort(from);
+        return r;
+    }
+
+    private auto byNodeCoalescing(Node* from)
+    {
+        static struct Voldemort
+        {
+            Node* crt;
+            bool empty() { return crt._size == size_t.max; }
+            ref Node front() { return *crt; }
+            void popFront()
+            {
+                assert(!empty);
+                crt = cast(Node*) (cast(void*)crt + crt.size);
+                crt.coalesce();
+            }
+            @property Voldemort save() { return this; }
+        }
+        auto r = Voldemort(from);
+        r.front.coalesce();
+        return r;
+    }
+
+    private Node* deoccupy(void[] b)
+    {
+        assert(b);
+        auto n = cast(Node*) (b.ptr - Node.sizeof);
+        n._size &= ~busyMask;
+        return n;
+    }
+
+    private Node* root;
+    private Node* searchStart;
+    private size_t size; // redundant but makes owns() O(1)
+
+    version(unittest) void dump()
+    {
+        writefln("%s {", typeid(this));
+        size_t total = 0;
+        scope(exit) writefln("} /*total=%s*/", total);
+        foreach (ref n; byNode(root))
+        {
+            writefln("  Block at 0x%s, length=%s, status=%s",
+                cast(void*) &n, n.size, n.occupied ? "occupied" : "free");
+            total += n.size;
+        }
+    }
+
+    /**
+    Create a $(D SimpleBlocklist) managing a chunk of memory. Memory must be
+    larger than two words, word-aligned, and of size multiple of $(D
+    size_t.alignof).
+    */
+    this(void[] b)
+    {
+        assert(b.length % alignment == 0);
+        assert(b.length >= 2 * Node.sizeof);
+        root = cast(Node*) b.ptr;
+        size = b.length;
+        root._size = size - Node.sizeof;
+        root.next._size = size_t.max; // very large occupied node
+        searchStart = root;
+    }
+
+    private void[] allocate(size_t bytes, Node* start)
+    {
+        const effective = bytes + Node.sizeof;
+        const rounded = effective.roundUpToMultipleOf(alignment);
+        assert(rounded < size_t.max / 2);
+        // First fit
+        auto r = find!(a => !a.occupied && a._size >= rounded)
+            (byNodeCoalescing(root));
+        if (r.empty) return null;
+        // Found!
+        auto n = &(r.front());
+        const slackSize = n._size - rounded;
+        if (slackSize > Node.sizeof)
+        {
+            // Create a new node at the end of the allocation
+            n._size = rounded;
+            n.next._size = slackSize;
+        }
+        n.occupy();
+        return (cast(void*) (n + 1))[0 .. bytes];
+    }
+
+    /// Standard allocator primitives.
+    enum alignment = size_t.alignof;
+
+    /// Ditto
+    void[] allocate(size_t bytes)
+    {
+        auto p = allocate(bytes, searchStart);
+        return p ? p : allocate(bytes, root);
+    }
+
+    /// Ditto
+    void deallocate(void[] b)
+    {
+        if (!b) return;
+        searchStart = cast(Node*) (b.ptr - Node.sizeof);
+        searchStart.deoccupy();
+        // Don't coalesce now, it'll happen at allocation.
+    }
+
+    /// Ditto
+    void[] allocateAll()
+    {
+        // Find the last node coalescing on the way, then allocate all available
+        // memory.
+        auto r = minPos!((a, b) => !a.occupied && a.size > b.size)
+            (byNodeCoalescing(root));
+        assert(!r.empty);
+        auto n = &r.front();
+        if (n.occupied) return null;
+        n.occupy();
+        return (cast(void*) (n + 1))[0 .. n.size - size_t.sizeof];
+    }
+
+    /// Ditto
+    void deallocateAll()
+    {
+        root._size = size - Node.sizeof;
+    }
+
+    /// Ditto
+    bool owns(void[] b)
+    {
+        return b.ptr >= root && b.ptr + b.length <= cast(void*) root + size;
+    }
+}
+
+unittest
+{
+    auto alloc = SimpleBlocklist(GCAllocator.it.allocate(1024 * 1024));
+    auto p = alloc.allocateAll();
+    assert(p.length == 1024 * 1024 - 2 * size_t.sizeof);
+    alloc.deallocateAll();
+    p = alloc.allocateAll();
+    assert(p.length == 1024 * 1024 - 2 * size_t.sizeof);
+}
+
+unittest
+{
+    auto alloc = SimpleBlocklist(GCAllocator.it.allocate(1024 * 1024));
+    void[][] array;
+    foreach (i; 1 .. 4)
+    {
+        array ~= alloc.allocate(i);
+        assert(array[$ - 1].length == i);
+    }
+    alloc.deallocate(array[1]);
+    alloc.deallocate(array[0]);
+    alloc.deallocate(array[2]);
+    assert(alloc.allocateAll().length == 1024 * 1024 - 2 * size_t.sizeof);
+}
+
+// Blocklist
+/**
+
+$(D Blocklist) builds additional structure on top of $(D SimpleBlocklist) by
+storing the size of each block not only at the beginning, but also at the end of
+the block. This allows $(D Blocklist) to iterate in both directions, which
+is used for better coalescing capabilities.
+
+Free block coalescing to the right takes place during allocation, whereas free
+block coalescing to the left takes place during deallocation. This makes both
+operations $(BIGOH n) in the number of managed blocks, but improves the chance
+of finding a good block faster than $(D SimpleBlocklist). After deallocation the
+(possibly coalesced) freed block will be the starting point of searching for the
+next allocation.
+
+The allocation overhead is two words per allocated block.
+*/
+struct Blocklist
+{
+    alias AffixAllocator!(SimpleBlocklist, void, size_t) Parent;
+    Parent parent;
+    private alias Node = SimpleBlocklist.Node;
+
+    private Node* prev(Node* n)
+    {
+        const lSize = (cast(size_t*) n)[-1];
+        return cast(Node*) ((cast(void*) n) - lSize);
+    }
+
+    version(unittest) void dump()
+    {
+        return parent.parent.dump;
+    }
+
+    /// Constructs an allocator given a block of memory.
+    this(void[] b)
+    {
+        parent = Parent(SimpleBlocklist(b));
+    }
+
+    /// Standard allocator primitives.
+    alias alignment = SimpleBlocklist.alignment;
+
+    /// Ditto
+    void[] allocate(size_t bytes)
+    {
+        auto r = parent.allocate(bytes);
+        if (r)
+        {
+            parent.suffix(r) =
+                (cast(size_t*) r.ptr)[-1] & ~SimpleBlocklist.busyMask;
+        }
+        return r;
+    }
+
+    /// Ditto
+    void deallocate(void[] b)
+    {
+        // This is the moment to do left coalescing
+        if (!b) return;
+        auto n = cast(Node*) b.ptr - 1;
+        // Can we coalesce to the left?
+        for (;;)
+        {
+            if (n == parent.parent.root) return;
+            auto left = prev(n);
+            if (left.occupied) break;
+            // Yay
+            left._size += n._size;
+            n = left;
+        }
+        parent.suffix(b) = n._size;
+        parent.deallocate(b);
+        parent.parent.searchStart = n;
+    }
+
+    /// Ditto
+    auto owns(void[] b) { return parent.owns(b); }
+    //alias allocateAll = Parent.allocateAll;
+
+    /// Ditto
+    auto deallocateAll() { return parent.deallocateAll; }
+}
+
+unittest
+{
+    auto alloc = Blocklist(new void[4096]);
+    void[][] array;
+    foreach (i; 1 .. 3)
+    {
+        array ~= alloc.allocate(i);
+        assert(array[$ - 1].length == i);
+        assert(alloc.owns(array[$ - 1]));
+    }
+    array ~= alloc.allocate(103);
+    //alloc.dump();
+    alloc.deallocate(array[0]);
+    alloc.deallocate(array[1]);
+    //alloc.dump();
+}
+
 /*
 (This type is not public.)
 
@@ -2904,8 +3258,8 @@ struct InSituRegion(size_t size, size_t minAlign = platformAlignment)
     // alignment.
     union
     {
-        private ubyte[size] _store;
-        private double _forAlignmentOnly;
+        private ubyte[size] _store = void;
+        private double _forAlignmentOnly = void;
     }
     private void* _crt, _end;
 
@@ -2991,7 +3345,7 @@ struct InSituRegion(size_t size, size_t minAlign = platformAlignment)
     */
     void deallocateAll()
     {
-        _crt = null;
+        _crt = _store.ptr;
     }
 
     /**
@@ -3060,6 +3414,208 @@ unittest
     assert(r2.available <= 65536);
     a = r2.allocate(2001);
     assert(a.length == 2001);
+}
+
+private extern(C) void* sbrk(long);
+private extern(C) int brk(shared void*);
+
+/** Allocator backed by $(D $(LUCKY sbrk)) for Posix systems. Due to the fact
+that $(D sbrk) is not thread-safe
+$(WEB lifecs.likai.org/2010/02/sbrk-is-not-thread-safe.html, by design),
+$(D SbrkRegion) uses a mutex internally. This implies that uncontrolled calls to
+$(D brk) and $(D sbrk) may affect the workings of $(D SbrkRegion) adversely.
+
+The $(D deallocateAll) method only works (and returns $(D true)) on systems
+that support reducing the  break address (i.e. accept calls to $(D sbrk) with
+negative offsets). OSX does not accept such.
+
+The $(D deallocate) method only works (and returns $(D true)) under the same
+conditions as $(D deallocateAll), PLUS the argument must be the one returned
+from the last allocation.
+*/
+version(Posix) struct SbrkRegion(uint minAlign = platformAlignment)
+{
+    import core.sys.posix.pthread;
+    static shared pthread_mutex_t sbrkMutex;
+
+    static assert(minAlign.isGoodStaticAlignment);
+    static assert(size_t.sizeof == (void*).sizeof);
+    private shared void* _brkInitial, _brkCurrent;
+
+    /**
+    Instance shared by all callers.
+    */
+    static shared SbrkRegion it;
+
+    /**
+    Standard allocator primitives.
+    */
+    enum uint alignment = minAlign;
+
+    /// Ditto
+    void[] allocate(size_t bytes) shared
+    {
+        static if (minAlign > 1)
+            const rounded = bytes.roundUpToMultipleOf(alignment);
+        else
+            alias rounded = bytes;
+        pthread_mutex_lock(cast(pthread_mutex_t*) &sbrkMutex) || assert(0);
+        scope(exit) pthread_mutex_unlock(cast(pthread_mutex_t*) &sbrkMutex)
+            || assert(0);
+        // Assume sbrk returns the old break. Most online documentation confirms
+        // that, except for http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf,
+        // which claims the returned value is not portable.
+        auto p = sbrk(rounded);
+        if (p == cast(void*) -1)
+        {
+            return null;
+        }
+        if (!_brkInitial)
+        {
+            _brkInitial = cast(shared) p;
+        }
+        _brkCurrent = cast(shared) (p + rounded);
+        return p[0 .. bytes];
+    }
+
+    /// Ditto
+    void[] alignedAllocate(size_t bytes, uint a) shared
+    {
+        pthread_mutex_lock(cast(pthread_mutex_t*) &sbrkMutex) || assert(0);
+        scope(exit) pthread_mutex_unlock(cast(pthread_mutex_t*) &sbrkMutex)
+            || assert(0);
+        if (!_brkInitial)
+        {
+            // This is one extra call, but it'll happen only once.
+            _brkInitial = cast(shared) sbrk(0);
+            (_brkInitial != cast(void*) -1) || assert(0);
+            _brkCurrent = _brkInitial;
+        }
+        immutable size_t delta = cast(shared void*) roundUpToMultipleOf(
+            cast(ulong) _brkCurrent, a) - _brkCurrent;
+        // Still must make sure the total size is aligned to the allocator's
+        // alignment.
+        immutable rounded = (bytes + delta).roundUpToMultipleOf(alignment);
+
+        auto p = sbrk(rounded);
+        if (p == cast(void*) -1)
+        {
+            return null;
+        }
+        _brkCurrent = cast(shared) (p + rounded);
+        return p[delta .. delta + bytes];
+    }
+
+    /// Ditto
+    bool deallocate(void[] b) shared
+    {
+        static if (minAlign > 1)
+            const rounded = b.length.roundUpToMultipleOf(alignment);
+        else
+            const rounded = b.length;
+        pthread_mutex_lock(cast(pthread_mutex_t*) &sbrkMutex) || assert(0);
+        scope(exit) pthread_mutex_unlock(cast(pthread_mutex_t*) &sbrkMutex)
+            || assert(0);
+        if (_brkCurrent != b.ptr + b.length) return false;
+        assert(b.ptr >= _brkInitial);
+        if (sbrk(-rounded) == cast(void*) -1)
+            return false;
+        _brkCurrent = cast(shared) b.ptr;
+        return true;
+    }
+
+    /// Ditto
+    bool deallocateAll() shared
+    {
+        pthread_mutex_lock(cast(pthread_mutex_t*) &sbrkMutex) || assert(0);
+        scope(exit) pthread_mutex_unlock(cast(pthread_mutex_t*) &sbrkMutex)
+            || assert(0);
+        return !_brkInitial || brk(_brkInitial) == 0;
+    }
+
+    /// Ditto
+    bool owns(void[] b) shared
+    {
+        // No need to lock here.
+        assert(!_brkCurrent || b.ptr + b.length <= _brkCurrent);
+        return _brkInitial && b.ptr >= _brkInitial;
+    }
+}
+
+version(Posix) unittest
+{
+    // Let's test the assumption that sbrk(n) returns the old address
+    auto p1 = sbrk(0);
+    auto p2 = sbrk(4096);
+    assert(p1 == p2);
+    auto p3 = sbrk(0);
+    assert(p3 == p2 + 4096);
+    // Try to reset brk, but don't make a fuss if it doesn't work
+    sbrk(-4096);
+}
+
+version(Posix) unittest
+{
+    alias alloc = SbrkRegion!(8).it;
+    auto a = alloc.alignedAllocate(2001, 4096);
+    assert(a.length == 2001);
+    auto b = alloc.allocate(2001);
+    assert(b.length == 2001);
+    assert(alloc.owns(a));
+    assert(alloc.owns(b));
+    // reducing the brk does not work on OSX
+    version(OSX) {} else
+    {
+        assert(alloc.deallocate(b));
+        assert(alloc.deallocateAll);
+    }
+}
+
+// MmapAllocator
+/**
+
+Allocator (currently defined only for Posix) using $(D $(LUCKY mmap)) and $(D
+$(LUCKY munmap)) directly. There is no additional structure: each call to $(D
+allocate(s)) issues a call to $(D mmap(null, s, PROT_READ | PROT_WRITE,
+MAP_PRIVATE | MAP_ANON, -1, 0)), and each call to $(D deallocate(b)) issues $(D
+munmap(b.ptr, b.length)). So $(D MmapAllocator) is usually intended for
+allocating large chunks to be managed by fine-granular allocators.
+
+*/
+version(Posix) struct MmapAllocator
+{
+    import core.sys.posix.sys.mman;
+    /// The one shared instance.
+    static shared MmapAllocator it;
+
+    /**
+    Alignment is page-size and hardcoded to 4096 (even though on certain systems
+    it could be larger).
+    */
+    enum size_t alignment = 4096;
+
+    /// Allocator API.
+    void[] allocate(size_t bytes) shared
+    {
+        auto p = mmap(null, bytes, PROT_READ | PROT_WRITE,
+            MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (p is MAP_FAILED) return null;
+        return p[0 .. bytes];
+    }
+
+    /// Ditto
+    void deallocate(void[] b) shared
+    {
+        munmap(b.ptr, b.length) == 0 || assert(0);
+    }
+}
+
+version(Posix) unittest
+{
+    alias alloc = MmapAllocator.it;
+    auto p = alloc.allocate(100);
+    assert(p.length == 100);
+    alloc.deallocate(p);
 }
 
 /**
@@ -3696,7 +4252,7 @@ struct CascadingAllocator(alias make)
 {
     /// Alias for $(D typeof(make)).
     alias typeof(make()) Allocator;
-    private struct Node
+    static struct Node
     {
         Allocator a;
         Node* next;
@@ -3741,7 +4297,8 @@ struct CascadingAllocator(alias make)
             // Resources truly exhausted, not much to do
             return null;
         }
-        emplace(n.next, Node(make()));
+        static assert(is(typeof(Node(make(), null, false)) == Node));
+        emplace(n.next, make(), cast(Node*) null, false);
         n.nextIsInitialized = true;
         // Reserve room for the next next allocator
         n.next.next = cast(Node*) allocateNoGrow(Node.sizeof).ptr;
@@ -4305,8 +4862,9 @@ TODO: add support for $(D shared).
 */
 class CAllocator
 {
-    /// Returns the alignment offered. By default this method returns $(D
-    /// platformAlignment).
+    /**
+    Returns the alignment offered. By default this method returns $(D platformAlignment).
+    */
     @property uint alignment()
     {
         return platformAlignment;
@@ -4400,7 +4958,7 @@ class CAllocatorImpl(Allocator) : CAllocator
     else alias impl = Allocator.it;
 
     /// Returns $(D impl.alignment).
-    @property uint alignment()
+    override @property uint alignment()
     {
         return impl.alignment;
     }
@@ -4409,7 +4967,7 @@ class CAllocatorImpl(Allocator) : CAllocator
     If $(D Allocator) supports alignment setting, performs it and returns $(D
     true). Otherwise, returns $(D false).
     */
-    @property bool alignment(uint a)
+    override @property bool alignment(uint a)
     {
         static if (is(typeof(impl.alignment = a)))
         {
@@ -4425,7 +4983,7 @@ class CAllocatorImpl(Allocator) : CAllocator
     /**
     Returns $(D impl.goodAllocSize(s)).
     */
-    size_t goodAllocSize(size_t s)
+    override size_t goodAllocSize(size_t s)
     {
         return impl.goodAllocSize(s);
     }
@@ -4433,7 +4991,7 @@ class CAllocatorImpl(Allocator) : CAllocator
     /**
     Returns $(D impl.allocate(s)).
     */
-    void[] allocate(size_t s)
+    override void[] allocate(size_t s)
     {
         return impl.allocate(s);
     }
@@ -4441,7 +4999,7 @@ class CAllocatorImpl(Allocator) : CAllocator
     /**
     Returns $(D true) if $(D Allocator) supports $(D owns).
     */
-    bool supportsOwns()
+    override bool supportsOwns()
     {
         return hasMember!(Allocator, "owns");
     }
@@ -4457,7 +5015,7 @@ class CAllocatorImpl(Allocator) : CAllocator
     }
 
     /// Returns $(D impl.expand(b, s)) if defined, $(D false) otherwise.
-    bool expand(ref void[] b, size_t s)
+    override bool expand(ref void[] b, size_t s)
     {
         static if (hasMember!(Allocator, "expand"))
             return impl.expand(b, s);
@@ -4466,14 +5024,14 @@ class CAllocatorImpl(Allocator) : CAllocator
     }
 
     /// Returns $(D impl.reallocate(b, s)).
-    bool reallocate(ref void[] b, size_t s)
+    override bool reallocate(ref void[] b, size_t s)
     {
         return impl.reallocate(b, s);
     }
 
     /// Calls $(D impl.deallocate(b)) and returns $(D true) if defined,
     /// otherwise returns $(D false).
-    bool deallocate(void[] b)
+    override bool deallocate(void[] b)
     {
         static if (hasMember!(Allocator, "deallocate"))
         {
@@ -4488,7 +5046,7 @@ class CAllocatorImpl(Allocator) : CAllocator
 
     /// Calls $(D impl.deallocateAll()) and returns $(D true) if defined,
     /// otherwise returns $(D false).
-    bool deallocateAll()
+    override bool deallocateAll()
     {
         static if (hasMember!(Allocator, "deallocateAll"))
         {
@@ -4503,7 +5061,7 @@ class CAllocatorImpl(Allocator) : CAllocator
 
     /// Returns $(D true) if allocator supports $(D allocateAll). By default
     /// returns $(D false).
-    bool supportsAllocateAll()
+    override bool supportsAllocateAll()
     {
         return hasMember!(Allocator, "allocateAll");
     }
