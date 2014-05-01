@@ -19,7 +19,8 @@ string enumsHelper(S...)(S s)
 /** Join/Chain/Concatenate/Unite Enums $(D E1), $(D E2), ... into $(D E).
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
-template join(string E, E1, E2) if (isEnum!E1 && isEnum!E2)
+template join(string E, E1, E2) if (isEnum!E1 &&
+                                    isEnum!E2)
 {
     enum join = ("enum " ~ E ~ " { " ~
                  enumsHelper(__traits(allMembers, E1)) ~ "," ~
