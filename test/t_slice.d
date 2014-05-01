@@ -4,6 +4,10 @@
 
 void main(string[] args)
 {
+    import std.range;
+
+    auto arr2 = iota(0, 512).array[0 .. 128];
+
     auto l = [1, 2, 3, 4][0 .. $/2]; // original
     auto x = [1, 2, 3, 4]; // original
 
