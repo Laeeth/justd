@@ -27,7 +27,9 @@ template join(string E, E1, E2) if (isEnum!E1 && isEnum!E2)
         );
 }
 
-template njoin(string E0, E1...)
+import std.typetuple: allSatisfy;
+
+template njoin(string E0, E1...) if (allSatisfy!(isEnum, E1))
 {
     import std.algorithm: map;
     enum string njoin = "enum " ~ E0 ~ " { " ~ "" ~ " } ";
