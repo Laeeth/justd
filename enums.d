@@ -1,8 +1,8 @@
 #!/usr/bin/env rdmd
 
 import std.stdio: writeln;
-import std.traits;
 import traits_ex: isEnum;
+import std.typetuple: allSatisfy;
 
 string enumsHelper(S...)(S s)
 {
@@ -26,8 +26,6 @@ template join(string E, E1, E2) if (isEnum!E1 &&
                  enumsHelper(__traits(allMembers, E1)) ~ "," ~
                  enumsHelper(__traits(allMembers, E2)) ~ " }");
 }
-
-import std.typetuple: allSatisfy;
 
 template njoin(string E0, E1...) if (allSatisfy!(isEnum, E1))
 {
