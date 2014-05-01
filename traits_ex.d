@@ -39,6 +39,23 @@ alias isOdd = unaryFun!(a => (a & 1) == 1);
 alias lessThan = binaryFun!((a, b) => a < b);
 alias greaterThan = binaryFun!((a, b) => a > b);
 
+template isEnum(T) { enum isEnum = is(T == enum ); }
+unittest {
+    interface I {}
+    class A {}
+    class B( T ) {}
+    class C : B!int, I {}
+    struct S {}
+    enum E { X }
+    static assert(!isEnum!A );
+    static assert(!isEnum!( B!int ) );
+    static assert(!isEnum!C );
+    static assert(!isEnum!I );
+    static assert(isEnum!E );
+    static assert(!isEnum!int );
+    static assert(!isEnum!( int* ) );
+}
+
 /* See also: http://d.puremagic.com/issues/show_bug.cgi?id=4427 */
 template isStruct(T) { enum isStruct = is(T == struct ); }
 unittest {
