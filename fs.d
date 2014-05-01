@@ -2685,11 +2685,13 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.audio, FileKindDetection.equalsNameAndContents);
 
-        // https://en.wikipedia.org/wiki/Au_file_format
-        binFKinds ~= new FKind("Au", [], ["au", "snd"], ".snd", 0, [], [],
+        // Au
+        auto auKind = new FKind("Au", [], ["au", "snd"], ".snd", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.audio, FileKindDetection.equalsNameAndContents);
+        auKind.wikiURL = "https://en.wikipedia.org/wiki/Au_file_format";
+        binFKinds ~= auKind;
 
         binFKinds ~= new FKind("Ogg", [], ["ogg", "oga", "ogv"], cast(ubyte[])[0x4F,0x67,0x67,0x53, 0x00,0x02,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00, 0x00], 0, [], [],
                                [], // N/A
