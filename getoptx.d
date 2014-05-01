@@ -62,14 +62,14 @@ private Option[] GetoptHelp(T...)(T opts)
             // it's an option string
 			auto sp = split(opts[0], "|");
 			Option ret;
-			if (sp.length > 1) 
+			if (sp.length > 1)
 			{
-				ret.optShort = "-" ~ (sp[0].length < sp[1].length ? 
+				ret.optShort = "-" ~ (sp[0].length < sp[1].length ?
 					sp[0] : sp[1]);
-				ret.optLong = "--" ~ (sp[0].length > sp[1].length ? 
+				ret.optLong = "--" ~ (sp[0].length > sp[1].length ?
 					sp[0] : sp[1]);
-			} 
-			else 
+			}
+			else
 			{
 				ret.optLong = "--" ~ sp[0];
 			}
@@ -96,8 +96,8 @@ void defaultGetoptPrinter(string text, Option[] opt) {
 	writeln();
 	size_t ls, ll;
 	foreach(it; opt) {
-		ls = max(ls, it.optShort.length);	
-		ll = max(ll, it.optLong.length);	
+		ls = max(ls, it.optShort.length);
+		ll = max(ll, it.optLong.length);
 	}
 
 	size_t argLength = ls + ll + 2;
