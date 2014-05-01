@@ -2,7 +2,7 @@
 
 module digest_ex;
 
-/** SHA-1 Message Digest.
+/** Message Digest.
 
     Zeros contents means uninitialized digest.
 
@@ -13,12 +13,12 @@ module digest_ex;
     See also: http://stackoverflow.com/questions/1902340/can-a-sha-1-hash-be-all-zeroes
     See also: http://stackoverflow.com/questions/20179287/sha1-indexed-hash-table-in-d
 */
-struct SHA1Digest {
+struct Digest(size_t numBytes = 20, string name = "SHA-1") {
     static assert(hash_t.sizeof == 4 ||
                   hash_t.sizeof == 8,
                   ("Unsupported size of hash_t " ~ to!string(hash_t.sizeof)));
 
-    enum numBytes = 20;
+    //enum numBytes = 20;         // TODO: templatize
     enum numInts = numBytes / 4;
     static assert(numBytes % 4 == 0, "numBytes must be a multiple of 4");
 
@@ -39,11 +39,12 @@ struct SHA1Digest {
         return *(cast(hash_t*)&x); // which is required for this execute
     }
 
+    // Alternatively: writefln("%-(%02x%)", digest[0 .. 40])
     string toString() const @property @trusted pure /* nothrow */ {
         import std.digest.sha: toHexString;
         import std.range: chunks;
         import std.algorithm: map, joiner;
-        return "SHA-1:" ~ _bytes[].chunks(4).map!toHexString.joiner(":").to!string;
+        return name ~ ":" ~ _bytes[].chunks(4).map!toHexString.joiner(":").to!string;
     }
 
     /** Check if digest is undefined. */
@@ -59,9 +60,11 @@ struct SHA1Digest {
     /** Check if digest is initialized. */
     bool opCast(T : bool)() const @safe pure nothrow { return defined; }
 
-    SHA1Digest opBinary(string op)(SHA1Digest rhs) {
+    Digest opBinary(string op)(Digest rhs) {
         typeof(return) tmp = void;
-        static if (op == "^") {
+        static if (op == "^" ||
+                   op == "|" ||
+                   op == "&") {
             mixin("tmp = _bytes[] " ~ op ~ " rhs._bytes[];");
         } else {
             static assert(false, "Unsupported binary operator " ~ op);
@@ -87,6 +90,13 @@ struct SHA1Digest {
         }
     }
 }
+
+alias MD5Digest = Digest!(16, "MD5");
+alias SHA1Digest = Digest!(20, "SHA-1");
+alias SHA224Digest = Digest!(28, "SHA-224");
+alias SHA256Digest = Digest!(32, "SHA-256");
+alias SHA384Digest = Digest!(48, "SHA-384");
+alias SHA512Digest = Digest!(64, "SHA-512");
 
 unittest {
     SHA1Digest a, b;
