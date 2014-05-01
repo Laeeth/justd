@@ -94,3 +94,6 @@
 [submodule "y4m-d"]
 	path = y4m-d
 	url = https://github.com/p0nce/y4m-d.git
+[submodule "elf-d"]
+	path = elf-d
+	url = https://github.com/nordlow/elf-d.git
