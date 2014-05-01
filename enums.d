@@ -21,9 +21,9 @@ string enumsHelper(S...)(S s)
 */
 template join(string E, E1, E2) if (isEnum!E1 && isEnum!E2)
 {
-    const join = ("enum " ~ E ~ " { " ~
-                   enumsHelper(__traits(allMembers, E1)) ~ "," ~
-                   enumsHelper(__traits(allMembers, E2)) ~ " }");
+    enum join = ("enum " ~ E ~ " { " ~
+                 enumsHelper(__traits(allMembers, E1)) ~ "," ~
+                 enumsHelper(__traits(allMembers, E2)) ~ " }");
 }
 
 import std.typetuple: allSatisfy;
