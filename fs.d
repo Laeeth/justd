@@ -2568,7 +2568,8 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.machineCode, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("modules.symbols.bin", [], ["bin"], cast(ubyte[])[0xB0, 0x07, 0xF4, 0x57, 0x00, 0x02, 0x00, 0x01, 0x20], 0, [], [],
+        binFKinds ~= new FKind("modules.symbols.bin", [], ["bin"],
+                               cast(ubyte[])[0xB0, 0x07, 0xF4, 0x57, 0x00, 0x02, 0x00, 0x01, 0x20], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.binaryUnknown, FileKindDetection.equalsContents);
@@ -2636,7 +2637,9 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.machineCode);
         binFKinds ~= new FKind("JRun Server Application", [], ["jsa"],
-                               cast(ubyte[])[0xa2,0xab,0x0b,0xf0, 0x01,0x00,0x00,0x00, 0x00,0x00,0x20,0x00], 0, [], [],
+                               cast(ubyte[])[0xa2,0xab,0x0b,0xf0,
+                                             0x01,0x00,0x00,0x00,
+                                             0x00,0x00,0x20,0x00], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.machineCode);
@@ -2698,7 +2701,11 @@ class Scanner(Term)
         auKind.wikiURL = "https://en.wikipedia.org/wiki/Au_file_format";
         binFKinds ~= auKind;
 
-        binFKinds ~= new FKind("Ogg", [], ["ogg", "oga", "ogv"], cast(ubyte[])[0x4F,0x67,0x67,0x53, 0x00,0x02,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00, 0x00], 0, [], [],
+        binFKinds ~= new FKind("Ogg", [], ["ogg", "oga", "ogv"],
+                               cast(ubyte[])[0x4F,0x67,0x67,0x53,
+                                             0x00,0x02,0x00,0x00,
+                                             0x00,0x00,0x00,0x00,
+                                             0x00, 0x00], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.media);
@@ -2737,9 +2744,9 @@ class Scanner(Term)
                                FileContent.archive, FileKindDetection.equalsContents);
 
         binFKinds ~= new FKind("PAK file", [], ["pak"], cast(ubyte[])[0x40, 0x00, 0x00, 0x00,
-                                                                     0x4a, 0x12, 0x00, 0x00,
-                                                                     0x01, 0x2d, 0x23, 0xcb,
-                                                                     0x6d, 0x00, 0x00, 0x2f], 0, [], [],
+                                                                      0x4a, 0x12, 0x00, 0x00,
+                                                                      0x01, 0x2d, 0x23, 0xcb,
+                                                                      0x6d, 0x00, 0x00, 0x2f], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.spellCheckWordList,
@@ -2874,7 +2881,11 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.cache, FileKindDetection.equalsName); // TODO: Add check for binary contents and that some parenting directory is named "firmware"
 
-        binFKinds ~= new FKind("LibreOffice or OpenOffice RDB", [], ["rdb"], cast(ubyte[])[0x43, 0x53, 0x4d, 0x48, 0x4a, 0x2d, 0xd0, 0x26, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x02], 0, [], [],
+        binFKinds ~= new FKind("LibreOffice or OpenOffice RDB", [], ["rdb"],
+                               cast(ubyte[])[0x43,0x53,0x4d,0x48,
+                                             0x4a,0x2d,0xd0,0x26,
+                                             0x00,0x02,0x00,0x00,
+                                             0x00,0x02,0x00,0x02], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.database, FileKindDetection.equalsName); // TODO: Add check for binary contents and that some parenting directory is named "firmware"
