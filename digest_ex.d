@@ -91,8 +91,8 @@ struct Digest(size_t numBytes = 20, string name = "SHA-1") {
     }
 }
 
-alias MD5Digest = Digest!(16, "MD5");
-alias SHA1Digest = Digest!(20, "SHA-1");
+alias MD5Digest    = Digest!(16, "MD5");
+alias SHA1Digest   = Digest!(20, "SHA-1");
 alias SHA224Digest = Digest!(28, "SHA-224");
 alias SHA256Digest = Digest!(32, "SHA-256");
 alias SHA384Digest = Digest!(48, "SHA-384");
