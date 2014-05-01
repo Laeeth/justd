@@ -2635,12 +2635,14 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.machineCode);
-        binFKinds ~= new FKind("JRun Server Application", [], ["jsa"], cast(ubyte[])[0xa2,0xab,0x0b,0xf0, 0x01,0x00,0x00,0x00, 0x00,0x00,0x20,0x00], 0, [], [],
+        binFKinds ~= new FKind("JRun Server Application", [], ["jsa"],
+                               cast(ubyte[])[0xa2,0xab,0x0b,0xf0, 0x01,0x00,0x00,0x00, 0x00,0x00,0x20,0x00], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.machineCode);
 
-        binFKinds ~= new FKind("PNG", [], ["png"], cast(ubyte[])[137, 80, 78, 71, 13, 10, 26, 10], 0, [], [],
+        binFKinds ~= new FKind("PNG", [], ["png"],
+                               cast(ubyte[])[137, 80, 78, 71, 13, 10, 26, 10], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.image);
@@ -2653,7 +2655,10 @@ class Scanner(Term)
         binFKinds ~= kindPDF;
 
         auto kindLatexPDFFmt = new FKind("LaTeX PDF Format", [], ["fmt"],
-                                         cast(ubyte[])['W','2','T','X', 0x00,0x00,0x00,0x08, 0x70,0x64,0x66,0x74, 0x65,0x78], 0, [], [],
+                                         cast(ubyte[])['W','2','T','X',
+                                                       0x00,0x00,0x00,0x08,
+                                                       0x70,0x64,0x66,0x74,
+                                                       0x65,0x78], 0, [], [],
                                          [], // N/A
                                          defaultStringDelims,
                                          FileContent.binaryCache);
