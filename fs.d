@@ -414,7 +414,8 @@ class FKind
                                    FileKindDetection detection_ = FileKindDetection.equalsWhatsGiven,
                                    FKind superKind = null,
                                    FKind[] subKinds = [],
-                                   string description = null) @trusted pure
+                                   string description = null,
+                                   string wikiURL = null) @trusted pure
     {
         this.kindName = kindName_;
 
@@ -469,6 +470,7 @@ class FKind
         this.superKind = superKind;
         this.subKinds = subKinds;
         this.description = description;
+        this.wikiURL = wikiURL;
     }
 
     /** Returns: Id Unique to matching behaviour of $(D this) FKind. If match
@@ -494,8 +496,8 @@ class FKind
 
     string kindName;    // Kind Nick Name.
     string description; // Kind Documenting Description.
+    string wikiURL; // Wikipedia URL
 
-                        // Hard facts describing Kind matching.
     FKind superKind;    // Inherited pattern. For example ELF => ELF core file
     FKind[] subKinds;   // Inherited pattern. For example ELF => ELF core file
     Patt baseNaming;    // Pattern that matches typical file basenames of this Kind. May be null.
@@ -2542,15 +2544,17 @@ class Scanner(Term)
 
         // Binaries
 
-        auto extsELF = ["o", "so", "ko", "os", "out", "bin", "x"]; // ELF file extensions
-        auto extsExeELF = ["out", "bin", "x"]; // ELF file extensions
+        auto extsELF = ["o", "so", "ko", "os", "out", "bin", "x", "elf", "axf", "prx", "puff", "none"]; // ELF file extensions
 
-        // ELF
-        auto elfKind     = new FKind("ELF",               [], extsELF, x"7F45 4C46", 0, [], [],
-                                     [], // N/A
-                                     defaultStringDelims,
-                                     FileContent.machineCode, FileKindDetection.equalsContents);
+        auto elfKind = new FKind("ELF",
+                                 [], extsELF, x"7F45 4C46", 0, [], [],
+                                 [], // N/A
+                                 defaultStringDelims,
+                                 FileContent.machineCode,
+                                 FileKindDetection.equalsContents);
+        elfKind.wikiURL = "https://en.wikipedia.org/wiki/Executable_and_Linkable_Format";
         binFKinds ~= elfKind;
+        /* auto extsExeELF = ["out", "bin", "x", "elf", ]; // ELF file extensions */
         /* auto elfExeKind  = new FKind("ELF executable",    [], extsExeELF,  [0x2, 0x0], 16, [], [], FileContent.machineCode, FileKindDetection.equalsContents, elfKind); */
         /* auto elfSOKind   = new FKind("ELF shared object", [], ["so", "ko"],  [0x3, 0x0], 16, [], [], FileContent.machineCode, FileKindDetection.equalsContents, elfKind); */
         /* auto elfCoreKind = new FKind("ELF core file",     [], ["core"], [0x4, 0x0], 16, [], [], FileContent.machineCode, FileKindDetection.equalsContents, elfKind); */
