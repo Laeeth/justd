@@ -88,3 +88,9 @@
 [submodule "unit-threaded"]
 	path = unit-threaded
 	url = https://github.com/atilaneves/unit-threaded.git
+[submodule "wave-d"]
+	path = wave-d
+	url = https://github.com/p0nce/wave-d.git
+[submodule "y4m-d"]
+	path = y4m-d
+	url = https://github.com/p0nce/y4m-d.git
