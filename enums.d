@@ -1,5 +1,10 @@
 #!/usr/bin/env rdmd
 
+/** Extension to enumerations.
+    TODO: Move to std.typecons (Type Constructor) in Phobos when ready.
+ */
+module enums;
+
 import traits_ex: isEnum;
 import std.typetuple: allSatisfy;
 import std.traits: EnumMembers;
@@ -7,6 +12,7 @@ import std.stdio: writefln;
 
 /** Chain (Join) Member Names of Enumerations $(D E).
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
+    Todo: Nice error messages for name collisions.
 */
 template chainMemberNames(E...) if (allSatisfy!(isEnum, E)) {
     mixin({
@@ -33,6 +39,7 @@ unittest
 }
 
 /** Unite Member Values of Enumerations $(D E).
+    Todo: Nice error messages for value collisions.
  */
 template uniteMemberValues(E...) if (allSatisfy!(isEnum, E)) {
     mixin({
