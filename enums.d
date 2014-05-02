@@ -80,20 +80,7 @@ template MembersUnion(E...) if (allSatisfy!(isEnum, E))
 
                         r ~= to!string(n) ~ "=" ~ to!string(v) ~ ",";
                     }
-                    /* static if (ix >= 1) { */
-                    /*     alias Ep = E[ix - 1]; // previous enumeration */
-                    /*     static assert(Ep.max < T.min, */
-                    /*                   "Members values of enums " ~ Ep.stringof ~ */
-                    /*                   " and " ~ T.stringof ~ */
-                    /*                   " overlap, " ~ */
-                    /*                   Ep.stringof ~ "." ~ to!string(Ep.max) ~ ":" ~ to!string(cast(int)(Ep.max)) ~ " >= " ~ */
-                    /*                   T.stringof  ~ "." ~ to!string(T.min)  ~ ":" ~ to!string(cast(int)(T.min))); */
-                    /* } */
                 }
-                /* import std.range: map, join; */
-                /* r ~= [EnumMembers!T].map!(a => */
-                /*                           (to!string(a) ~ "=" ~ */
-                /*                            to!string(to!int(a)))).join(",") ~ ","; // TODO: add checking for collisions */
             }
             return r ~ " }";
         }());
