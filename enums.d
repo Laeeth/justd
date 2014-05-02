@@ -5,15 +5,16 @@
  */
 module enums;
 
-import std.typetuple: allSatisfy;
+import std.typetuple: allSatisfy, staticMap;
 import std.traits: EnumMembers, CommonType, OriginalType;
 import std.stdio: writefln;
+import std.conv: to;
 
 version = checkCollisions;
 
+/* Helpers */
 private enum isEnum(T) = is(T == enum);
-
-/* TODO: CommonOriginalType(T...) = */
+private alias CommonOriginalType(T...) = CommonType!(staticMap!(OriginalType, T));
 
 /** Chain (Append, Concatenate) Member Names of Enumerations $(D E).
     All enumerator names of $(D E) must be unique.
@@ -60,12 +61,12 @@ template EnumUnion(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
             string r = "enum EnumUnion { ";
+            alias O = CommonOriginalType!E;
             version(checkCollisions) {
                 string[string] names;   // lookup: enumName[memberName]
-                string[int] values;
+                string[O] values;
             }
             foreach (ix, T; E) {
-                import std.conv: to;
                 version(checkCollisions) {
                     foreach (m; EnumMembers!T) { // foreach member
                         // name
@@ -76,7 +77,7 @@ template EnumUnion(E...) if (allSatisfy!(isEnum, E))
                         names[n] = T.stringof;
 
                         // value
-                        enum v = to!int(m);    // value. TODO: Generalize to arbitrary enum type
+                        enum v = to!O(m);
                         assert(v !in values,
                                "Enumerator value of " ~ T.stringof ~"."~n ~" == "~ to!string(v) ~
                                " collides with member value of " ~ values[v]);
@@ -97,7 +98,7 @@ unittest
     enum E3 { x = 2, y = 5, z = 8 }
     alias E = EnumUnion!(E1, E2, E3);
     foreach (immutable e; [EnumMembers!E])
-        writefln("E.%s: %d", e, e);
+        writefln("E.%s: %s", e, to!(OriginalType!E)(e));
 
     enum D1 { a = 0, b = 3, c = 6 }
     enum D3 { x = 0, y = 3, z = 6 }
