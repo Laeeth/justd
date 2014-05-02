@@ -6,22 +6,25 @@
 module enums;
 
 import std.typetuple: allSatisfy;
-import std.traits: EnumMembers;
+import std.traits: EnumMembers, CommonType, OriginalType;
 import std.stdio: writefln;
 
 version = checkCollisions;
 
 private enum isEnum(T) = is(T == enum);
 
+/* TODO: CommonOriginalType(T...) = */
+
 /** Unite (Chain, Join) Member Names of Enumerations $(D E).
+    All enumerator names of $(D E) must be unique.
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
 template EnumChain(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
+            string r = "enum EnumChain { ";
             version(checkCollisions)
                 string[string] names;   // lookup: enumName[memberName]
-            string r = "enum EnumChain { ";
             foreach (T; E) {
                 import std.range: join;
                 version(checkCollisions) {
@@ -51,7 +54,7 @@ unittest
 }
 
 /** Unite Members (both their Names and Values) of Enumerations $(D E).
-    Enumerator names and values of $(D E) must all be unique.
+    All enumerator names and values of $(D E) must be unique.
  */
 template EnumUnion(E...) if (allSatisfy!(isEnum, E))
 {
