@@ -19,16 +19,16 @@ template MemberNamesUnion(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
             version(checkCollisions)
-                string[string] previousMembers;   // used to detect member collisions
+                string[string] cache;   // lookup: enumName[memberName]
             string r = "enum MemberNamesUnion { ";
             foreach (T; E) {
                 import std.range: join;
                 version(checkCollisions) {
-                    foreach (member; __traits(allMembers, T)) {
-                        assert(member !in previousMembers,
-                               "Enumerator " ~ T.stringof ~"."~member ~
-                               " collides with " ~ previousMembers[member] ~"."~member);
-                        previousMembers[member] = T.stringof;
+                    foreach (m; __traits(allMembers, T)) {
+                        assert(m !in cache,
+                               "Enumerator " ~ T.stringof ~"."~m ~
+                               " collides with " ~ cache[m] ~"."~m);
+                        cache[m] = T.stringof;
                     }
                 }
                 r ~= [__traits(allMembers, T)].join(",") ~ ",";
@@ -56,15 +56,15 @@ template MembersUnion(E...) if (allSatisfy!(isEnum, E))
     mixin({
             string r = "enum MembersUnion { ";
             version(checkCollisions)
-                string[string] previousMembers;   // used to detect member collisions
+                string[string] cache;   // lookup: enumName[memberName]
             foreach (ix, T; E) {
                 import std.conv: to;
                 version(checkCollisions) {
-                    foreach (member; __traits(allMembers, T)) {
-                        assert(member !in previousMembers,
-                               "Enumerator " ~ T.stringof ~"."~member ~
-                               " collides with " ~ previousMembers[member] ~"."~member);
-                        previousMembers[member] = T.stringof;
+                    foreach (m; __traits(allMembers, T)) {
+                        assert(m !in cache,
+                               "Enumerator " ~ T.stringof ~"."~m ~
+                               " collides with " ~ cache[m] ~"."~m);
+                        cache[m] = T.stringof;
                     }
                     static if (ix >= 1) {
                         alias Ep = E[ix - 1]; // previous enumeration
