@@ -15,7 +15,7 @@ private enum isEnum(T) = is(T == enum);
 
 /* TODO: CommonOriginalType(T...) = */
 
-/** Unite (Chain, Join) Member Names of Enumerations $(D E).
+/** Chain (Append, Concatenate) Member Names of Enumerations $(D E).
     All enumerator names of $(D E) must be unique.
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
@@ -53,7 +53,7 @@ unittest
         writefln("E123.%s: %d", e, e);
 }
 
-/** Unite Members (both their Names and Values) of Enumerations $(D E).
+/** Unite (Join) Members (both their Names and Values) of Enumerations $(D E).
     All enumerator names and values of $(D E) must be unique.
  */
 template EnumUnion(E...) if (allSatisfy!(isEnum, E))
