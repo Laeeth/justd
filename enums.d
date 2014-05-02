@@ -15,12 +15,12 @@ version = checkCollisions;
 /** Unite (Chain, Join) Member Names of Enumerations $(D E).
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
-template MemberNamesUnion(E...) if (allSatisfy!(isEnum, E))
+template EnumNamesUnion(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
             version(checkCollisions)
                 string[string] names;   // lookup: enumName[memberName]
-            string r = "enum MemberNamesUnion { ";
+            string r = "enum EnumNamesUnion { ";
             foreach (T; E) {
                 import std.range: join;
                 version(checkCollisions) {
@@ -42,26 +42,26 @@ unittest
     enum E1 { a, b, c }
     enum E2 { e, f, g }
     enum E3 { h, i, j }
-    alias E1_ = MemberNamesUnion!(E1);
-    alias E12 = MemberNamesUnion!(E1, E2);
-    alias E123 = MemberNamesUnion!(E1, E2, E3);
+    alias E1_ = EnumNamesUnion!(E1);
+    alias E12 = EnumNamesUnion!(E1, E2);
+    alias E123 = EnumNamesUnion!(E1, E2, E3);
     foreach (immutable e; [EnumMembers!E123])
         writefln("E123.%s: %d", e, e);
 }
 
-/** Unite (Chain, Join) Members (both their Names and Values) of Enumerations $(D E).
-*/
-template MembersUnion(E...) if (allSatisfy!(isEnum, E))
+/** Unite Members (both their Names and Values) of Enumerations $(D E).
+    Enumerator names and values of $(D E) must all be unique.
+ */
+template EnumUnion(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
-            string r = "enum MembersUnion { ";
+            string r = "enum EnumUnion { ";
             version(checkCollisions) {
                 string[string] names;   // lookup: enumName[memberName]
                 string[int] values;
             }
             foreach (ix, T; E) {
                 import std.conv: to;
-                /* TODO: Merge loops over EnumMembers */
                 version(checkCollisions) {
                     foreach (m; EnumMembers!T) { // foreach member
                         // name
@@ -91,7 +91,12 @@ unittest
     enum E1 { a = 0, b = 3, c = 6 }
     enum E2 { p = 1, q = 4, r = 7 }
     enum E3 { x = 2, y = 5, z = 8 }
-    alias E = MembersUnion!(E1, E2, E3);
+    alias E = EnumUnion!(E1, E2, E3);
     foreach (immutable e; [EnumMembers!E])
         writefln("E.%s: %d", e, e);
+
+    enum D1 { a = 0, b = 3, c = 6 }
+    enum D3 { x = 0, y = 3, z = 6 }
+    static assert(!__traits(compiles, { alias ED = EnumUnion!(E1, D1); } ));
+    static assert(!__traits(compiles, { alias ED = EnumUnion!(E1, D3); } ));
 }
