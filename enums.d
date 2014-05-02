@@ -19,16 +19,16 @@ template MemberNamesUnion(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
             version(checkCollisions)
-                string[string] cache;   // lookup: enumName[memberName]
+                string[string] names;   // lookup: enumName[memberName]
             string r = "enum MemberNamesUnion { ";
             foreach (T; E) {
                 import std.range: join;
                 version(checkCollisions) {
                     foreach (m; __traits(allMembers, T)) {
-                        assert(m !in cache,
+                        assert(m !in names,
                                "Enumerator " ~ T.stringof ~"."~m ~
-                               " collides with " ~ cache[m] ~"."~m);
-                        cache[m] = T.stringof;
+                               " collides with " ~ names[m] ~"."~m);
+                        names[m] = T.stringof;
                     }
                 }
                 r ~= [__traits(allMembers, T)].join(",") ~ ",";
@@ -55,31 +55,45 @@ template MembersUnion(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
             string r = "enum MembersUnion { ";
-            version(checkCollisions)
-                string[string] cache;   // lookup: enumName[memberName]
+            version(checkCollisions) {
+                string[string] names;   // lookup: enumName[memberName]
+                string[int] values;
+            }
             foreach (ix, T; E) {
                 import std.conv: to;
+                /* TODO: Merge loops over EnumMembers */
                 version(checkCollisions) {
-                    foreach (m; __traits(allMembers, T)) {
-                        assert(m !in cache,
-                               "Enumerator " ~ T.stringof ~"."~m ~
-                               " collides with " ~ cache[m] ~"."~m);
-                        cache[m] = T.stringof;
+                    foreach (m; EnumMembers!T) { // foreach member
+                        // name
+                        enum n = to!string(m);
+                        assert(n !in names,
+                               "Enumerator name " ~ T.stringof ~"."~n ~
+                               " collides with " ~ names[n] ~"."~n);
+                        names[n] = T.stringof;
+
+                        // value
+                        enum v = to!int(m);    // value. TODO: Generalize to arbitrary enum type
+                        assert(v !in values,
+                               "Enumerator value of " ~ T.stringof ~"."~n ~" == "~ to!string(v) ~
+                               " collides with member value of " ~ values[v]);
+                        values[v] = T.stringof;
+
+                        r ~= to!string(n) ~ "=" ~ to!string(v) ~ ",";
                     }
-                    static if (ix >= 1) {
-                        alias Ep = E[ix - 1]; // previous enumeration
-                        static assert(Ep.max < T.min,
-                                      "Members values of enums " ~ Ep.stringof ~
-                                      " and " ~ T.stringof ~
-                                      " overlap, " ~
-                                      Ep.stringof ~ "." ~ to!string(Ep.max) ~ "==" ~ to!string(cast(int)(Ep.max)) ~ " >= " ~
-                                      T.stringof  ~ "." ~ to!string(T.min)  ~ "==" ~ to!string(cast(int)(T.min)));
-                    }
+                    /* static if (ix >= 1) { */
+                    /*     alias Ep = E[ix - 1]; // previous enumeration */
+                    /*     static assert(Ep.max < T.min, */
+                    /*                   "Members values of enums " ~ Ep.stringof ~ */
+                    /*                   " and " ~ T.stringof ~ */
+                    /*                   " overlap, " ~ */
+                    /*                   Ep.stringof ~ "." ~ to!string(Ep.max) ~ ":" ~ to!string(cast(int)(Ep.max)) ~ " >= " ~ */
+                    /*                   T.stringof  ~ "." ~ to!string(T.min)  ~ ":" ~ to!string(cast(int)(T.min))); */
+                    /* } */
                 }
-                import std.range: map, join;
-                r ~= [EnumMembers!T].map!(a =>
-                                          (to!string(a) ~ "=" ~
-                                           to!string(to!int(a)))).join(",") ~ ","; // TODO: add checking for collisions
+                /* import std.range: map, join; */
+                /* r ~= [EnumMembers!T].map!(a => */
+                /*                           (to!string(a) ~ "=" ~ */
+                /*                            to!string(to!int(a)))).join(",") ~ ","; // TODO: add checking for collisions */
             }
             return r ~ " }";
         }());
@@ -87,9 +101,9 @@ template MembersUnion(E...) if (allSatisfy!(isEnum, E))
 
 unittest
 {
-    enum E1 { a = 0, b, c }
-    enum E2 { p = 10, q, r } // continue after E1
-    enum E3 { x = 20, y, z } // continue after E2
+    enum E1 { a = 0, b = 3, c = 6 }
+    enum E2 { p = 1, q = 4, r = 7 }
+    enum E3 { x = 2, y = 5, z = 8 }
     alias E = MembersUnion!(E1, E2, E3);
     foreach (immutable e; [EnumMembers!E])
         writefln("E.%s: %d", e, e);
