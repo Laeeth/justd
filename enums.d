@@ -26,5 +26,5 @@ unittest
     alias E1_ = join!(E1);
     alias E12 = join!(E1, E2);
     alias E123 = join!(E1, E2, E3);
-    writeln(E123.min, ",", E123.max);
+    // writeln(E123.min, ",", E123.max);
 }
