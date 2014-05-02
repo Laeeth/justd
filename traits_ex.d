@@ -39,7 +39,7 @@ alias isOdd = unaryFun!(a => (a & 1) == 1);
 alias lessThan = binaryFun!((a, b) => a < b);
 alias greaterThan = binaryFun!((a, b) => a > b);
 
-template isEnum(T) { enum isEnum = is(T == enum ); }
+enum isEnum(T) = is(T == enum);
 unittest {
     interface I {}
     class A {}
@@ -57,7 +57,7 @@ unittest {
 }
 
 /* See also: http://d.puremagic.com/issues/show_bug.cgi?id=4427 */
-template isStruct(T) { enum isStruct = is(T == struct ); }
+enum isStruct(T) = is(T == struct);
 unittest {
     interface I {}
     class A {}
@@ -73,7 +73,7 @@ unittest {
     static assert(!isStruct!( int* ) );
 }
 
-template isClass(T) { enum isClass = is(T == class ); }
+enum isClass(T) = is(T == class);
 unittest {
     interface I {}
     class A {}
@@ -89,7 +89,7 @@ unittest {
     static assert(!isClass!( int* ) );
 }
 
-template isInterface(T) { enum isInterface = is(T == interface); }
+enum isInterface(T) = is(T == interface);
 unittest {
     interface I {}
     class A {}

@@ -64,11 +64,11 @@ import algorithm_ex: siota, clamp;
 
 /** See also: http://forum.dlang.org/thread/bug-6384-3@http.d.puremagic.com/issues/
     See also: http://forum.dlang.org/thread/jrqiiicmtpenzokfxvlz@forum.dlang.org */
-template isOpBinary(T, string op, U) { enum isOpBinary = is(typeof(mixin("T.init" ~ op ~ "U.init"))); }
+enum isOpBinary(T, string op, U) = is(typeof(mixin("T.init" ~ op ~ "U.init")));
 
-template isComparable(T) { enum bool isComparable = is(typeof({ return T.init <  T.init; })); }
-template isEquable   (T) { enum bool isEquable    = is(typeof({ return T.init == T.init; })); }
-template isNotEquable(T) { enum bool isNotEquable = is(typeof({ return T.init != T.init; })); }
+enum isComparable(T) = is(typeof({ return T.init <  T.init; }));
+enum isEquable   (T) = is(typeof({ return T.init == T.init; }));
+enum isNotEquable(T) = is(typeof({ return T.init != T.init; }));
 version (unittest) {
     static assert(isComparable!int);
     static assert(isComparable!string);
@@ -79,15 +79,15 @@ version (unittest) {
     static assert(isComparable!Bar);
 }
 
-template isComparable(T, U) { enum bool isComparable = is(typeof({ return T.init <  U.init; })); }
-template isEquable   (T, U) { enum bool isEquable    = is(typeof({ return T.init == U.init; })); }
-template isNotEquable(T, U) { enum bool isNotEquable = is(typeof({ return T.init != U.init; })); }
+enum isComparable(T, U) = is(typeof({ return T.init <  U.init; }));
+enum isEquable   (T, U) = is(typeof({ return T.init == U.init; }));
+enum isNotEquable(T, U) = is(typeof({ return T.init != U.init; }));
 
-template isVector(E)     { enum isVector     = is(typeof(isVectorImpl(E.init))); }
-template isPoint(E)      { enum isPoint      = is(typeof(isPointImpl(E.init))); }
-template isMatrix(E)     { enum isMatrix     = is(typeof(isMatrixImpl(E.init))); }
-template isQuaternion(E) { enum isQuaternion = is(typeof(isQuaternionImpl(E.init))); }
-template isPlane(E)      { enum isPlane      = is(typeof(isPlaneImpl(E.init))); }
+enum isVector(E)     = is(typeof(isVectorImpl(E.init)));
+enum isPoint(E)      = is(typeof(isPointImpl(E.init)));
+enum isMatrix(E)     = is(typeof(isMatrixImpl(E.init)));
+enum isQuaternion(E) = is(typeof(isQuaternionImpl(E.init)));
+enum isPlane(E)      = is(typeof(isPlaneImpl(E.init)));
 
 private void isVectorImpl    (E, uint D)        (Vector    !(E, D)    vec) {}
 private void isPointImpl     (E, uint D)        (Point     !(E, D)    vec) {}
@@ -95,9 +95,9 @@ private void isMatrixImpl    (E, uint R, uint C)(Matrix    !(E, R, C) mat) {}
 private void isQuaternionImpl(E)                (Quaternion!(E)        qu) {}
 private void isPlaneImpl     (E)                (PlaneT    !(E)         p) {}
 
-template isFixVector(E) { enum isFixVector = isFix(typeof(isFixVectorImpl(E.init))); }
-template isFixPoint(E)  { enum isFixPoint  = isFix(typeof(isFixPointImpl (E.init))); }
-template isFixMatrix(E) { enum isFixMatrix = isFix(typeof(isFixMatrixImpl(E.init))); }
+enum isFixVector(E) = isFix(typeof(isFixVectorImpl(E.init)));
+enum isFixPoint(E)  = isFix(typeof(isFixPointImpl (E.init)));
+enum isFixMatrix(E) = isFix(typeof(isFixMatrixImpl(E.init)));
 
 private void isFixVectorImpl (E, uint D)        (Vector!(E, D)    vec) {}
 private void isFixPointImpl  (E, uint D)        (Point !(E, D)    vec) {}
@@ -320,8 +320,8 @@ struct Vector(E, uint D,
 
     static void isCompatibleVectorImpl(uint d)(Vector!(E, d) vec) if (d <= dimension) {}
     static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(E, r, c) m) {}
-    template isCompatibleVector(T) { enum isCompatibleVector = is(typeof(isCompatibleVectorImpl(T.init))); }
-    template isCompatibleMatrix(T) { enum isCompatibleMatrix = is(typeof(isCompatibleMatrixImpl(T.init))); }
+    enum isCompatibleVector(T) = is(typeof(isCompatibleVectorImpl(T.init)));
+    enum isCompatibleMatrix(T) = is(typeof(isCompatibleMatrixImpl(T.init)));
 
     private void construct(uint i)() {
         static assert(i == D, "Not enough arguments passed to constructor"); }
@@ -771,16 +771,11 @@ struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if 
     static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(mT, r, c) m) {
     }
 
-    template isCompatibleMatrix(T) {
-        enum isCompatibleMatrix = is(typeof(isCompatibleMatrixImpl(T.init)));
-    }
+    enum isCompatibleMatrix(T) = is(typeof(isCompatibleMatrixImpl(T.init)));
 
-    static void isCompatibleVectorImpl(uint d)(Vector!(mT, d) vec) {
-    }
+    static void isCompatibleVectorImpl(uint d)(Vector!(mT, d) vec) {}
 
-    template isCompatibleVector(T) {
-        enum isCompatibleVector = is(typeof(isCompatibleVectorImpl(T.init)));
-    }
+    enum isCompatibleVector(T) = is(typeof(isCompatibleVectorImpl(T.init)));
 
     private void construct(uint i, T, Tail...)(T head, Tail tail) {
         static if (i >= rows*cols) {

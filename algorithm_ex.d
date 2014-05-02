@@ -1040,14 +1040,7 @@ unittest {
 
 // ==============================================================================================
 
-template isIntLike(T)
-{
-    enum isIntLike = is(typeof({
-		T t = 0;
-		t = t+t;
-		// More if needed
-            }));
-}
+enum isIntLike(T) = is(typeof({T t = 0; t = t+t;})); // More if needed
 
 /** $(LUCKY Fibonacci) Numbers (Infinite Range).
     See also: http://forum.dlang.org/thread/dqlrfoxzsppylcgljyyf@forum.dlang.org#post-mailman.1072.1350619455.5162.digitalmars-d-learn:40puremagic.com
@@ -1092,7 +1085,7 @@ unittest
 {
     static void foo(int a, int b, int c) {
         import std.stdio: writefln;
-        writefln("a: %s, b: %s, c: %s", a, b, c);
+        /* writefln("a: %s, b: %s, c: %s", a, b, c); */
     }
     int[3] arr = [1, 2, 3];
     foo(expand!arr);
