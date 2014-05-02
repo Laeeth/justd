@@ -7,7 +7,7 @@ module enums;
 
 import std.typetuple: allSatisfy, staticMap;
 import std.traits: EnumMembers, CommonType, OriginalType;
-import std.stdio: writefln;
+import std.stdio: writeln, writefln;
 import std.conv: to;
 
 version = checkCollisions;
@@ -20,21 +20,19 @@ private alias CommonOriginalType(T...) = CommonType!(staticMap!(OriginalType, T)
     All enumerator names of $(D E) must be unique.
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
-template EnumChain(E...) if (allSatisfy!(isEnum, E))
+template EnumChain(E...) if (allSatisfy!(isEnum, E) &&
+                             is(CommonOriginalType!(E)))
 {
     mixin({
             string r = "enum EnumChain { ";
-            version(checkCollisions)
-                string[string] names;   // lookup: enumName[memberName]
+            string[string] names;   // lookup: enumName[memberName]
             foreach (T; E) {
                 import std.range: join;
-                version(checkCollisions) {
-                    foreach (m; __traits(allMembers, T)) {
-                        assert(m !in names,
-                               "Enumerator " ~ T.stringof ~"."~m ~
-                               " collides with " ~ names[m] ~"."~m);
-                        names[m] = T.stringof;
-                    }
+                foreach (m; __traits(allMembers, T)) {
+                    assert(m !in names,
+                           "Enumerator " ~ T.stringof ~"."~m ~
+                           " collides with " ~ names[m] ~"."~m);
+                    names[m] = T.stringof;
                 }
                 r ~= [__traits(allMembers, T)].join(",") ~ ",";
             }
@@ -57,34 +55,31 @@ unittest
 /** Unite (Join) Members (both their Names and Values) of Enumerations $(D E).
     All enumerator names and values of $(D E) must be unique.
  */
-template EnumUnion(E...) if (allSatisfy!(isEnum, E))
+template EnumUnion(E...) if (allSatisfy!(isEnum, E) &&
+                             is(CommonOriginalType!(E)))
 {
     mixin({
             string r = "enum EnumUnion { ";
             alias O = CommonOriginalType!E;
-            version(checkCollisions) {
-                string[string] names;   // lookup: enumName[memberName]
-                string[O] values;
-            }
+            string[string] names;   // lookup: enumName[memberName]
+            string[O] values;
             foreach (ix, T; E) {
-                version(checkCollisions) {
-                    foreach (m; EnumMembers!T) { // foreach member
-                        // name
-                        enum n = to!string(m);
-                        assert(n !in names,
-                               "Enumerator name " ~ T.stringof ~"."~n ~
-                               " collides with " ~ names[n] ~"."~n);
-                        names[n] = T.stringof;
+                foreach (m; EnumMembers!T) { // foreach member
+                    // name
+                    enum n = to!string(m);
+                    assert(n !in names,
+                           "Enumerator name " ~ T.stringof ~"."~n ~
+                           " collides with " ~ names[n] ~"."~n);
+                    names[n] = T.stringof;
 
-                        // value
-                        enum v = to!O(m);
-                        assert(v !in values,
-                               "Enumerator value of " ~ T.stringof ~"."~n ~" == "~ to!string(v) ~
-                               " collides with member value of " ~ values[v]);
-                        values[v] = T.stringof;
+                    // value
+                    enum v = to!O(m);
+                    assert(v !in values,
+                           "Enumerator value of " ~ T.stringof ~"."~n ~" == "~ to!string(v) ~
+                           " collides with member value of " ~ values[v]);
+                    values[v] = T.stringof;
 
-                        r ~= to!string(n) ~ "=" ~ to!string(v) ~ ",";
-                    }
+                    r ~= to!string(n) ~ "=" ~ to!string(v) ~ ",";
                 }
             }
             return r ~ " }";
@@ -93,10 +88,11 @@ template EnumUnion(E...) if (allSatisfy!(isEnum, E))
 
 unittest
 {
-    enum E1 { a = 0, b = 3, c = 6 }
-    enum E2 { p = 1, q = 4, r = 7 }
-    enum E3 { x = 2, y = 5, z = 8 }
+    enum E1:ubyte { a = 0, b = 3, c = 6 }
+    enum E2:ushort { p = 1, q = 4, r = 7 }
+    enum E3:uint { x = 2, y = 5, z = 8 }
     alias E = EnumUnion!(E1, E2, E3);
+    /* writeln((OriginalType!E).stringof); */
     foreach (immutable e; [EnumMembers!E])
         writefln("E.%s: %s", e, to!(OriginalType!E)(e));
 
