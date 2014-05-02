@@ -1,4 +1,4 @@
-#!/usr/bin/env rdmd-fastest
+#!/usr/bin/env rdmd-release
 
 /**
    File Scanning Engine.
