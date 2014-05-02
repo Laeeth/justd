@@ -114,7 +114,7 @@ import std.typecons: Tuple, tuple;
 import std.algorithm: find, map, filter, reduce, max, min, uniq, all;
 import std.string: representation;
 import std.stdio: write, writeln;
-import std.path: baseName, dirName, isAbsolute;
+import std.path: baseName, dirName, isAbsolute, dirSeparator;
 import std.datetime;
 import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
@@ -141,6 +141,7 @@ import tempfs;
 import rational: Rational;
 import ngram;
 import notnull;
+import elf.elf;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
@@ -726,9 +727,9 @@ class File
     /** Returns: Path to $(D this) File. */
     string path() @property @trusted pure out (result) {
         /* assertEqual(result, pathRecursive); */
-    } body
-      {
-        import std.path: dirSeparator;
+    }
+    body
+    {
         if (!parent) { return dirSeparator; }
 
         Dir[] parents; // collected parents
@@ -1420,7 +1421,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
     }
     const T asPath(T)(bool doHTML, T path, T name, bool dirFlag) {
         immutable path_ = asBold(doHTML,
-                                 name ~ (dirFlag ? "/" : ""));
+                                 name ~ (dirFlag ? dirSeparator : ""));
         if (doHTML) {
             return "<a href=\"file://" ~ path ~ "\">" ~ path_ ~ "</a>";
         } else {
@@ -3694,7 +3695,7 @@ body { font: 8px Verdana, sans-serif; }
                     if (offKB >= 0) { // if hit
                         if (!showTree && ctx == ScanContext.fileName) {
                             term.setFace(dirFace, colorFlag);
-                            pp(term, outFile, doHTML, parentDir.path ~ "/");
+                            pp(term, outFile, doHTML, parentDir.path ~ dirSeparator);
                         }
 
                         // Check Context
@@ -4113,7 +4114,7 @@ body { font: 8px Verdana, sans-serif; }
             if (showTree) {
                 immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
                 term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(theDir.depth).join("") ~ intro ~ "─ ");
-                immutable dirName = theDir.isRoot ? "/" : theDir.name;
+                immutable dirName = theDir.isRoot ? dirSeparator : theDir.name;
                 term.setFace(dirFace, colorFlag); pp(term, outFile, doHTML, asPath(doHTML, theDir.path, dirName, true));
                 term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, " modified ",
                                                           shortDurationString(_currTime - theDir.timeLastModified), " ago");
