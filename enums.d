@@ -5,22 +5,23 @@
  */
 module enums;
 
-import traits_ex: isEnum;
 import std.typetuple: allSatisfy;
 import std.traits: EnumMembers;
 import std.stdio: writefln;
 
 version = checkCollisions;
 
+private enum isEnum(T) = is(T == enum);
+
 /** Unite (Chain, Join) Member Names of Enumerations $(D E).
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
-template EnumNamesUnion(E...) if (allSatisfy!(isEnum, E))
+template EnumChain(E...) if (allSatisfy!(isEnum, E))
 {
     mixin({
             version(checkCollisions)
                 string[string] names;   // lookup: enumName[memberName]
-            string r = "enum EnumNamesUnion { ";
+            string r = "enum EnumChain { ";
             foreach (T; E) {
                 import std.range: join;
                 version(checkCollisions) {
@@ -42,9 +43,9 @@ unittest
     enum E1 { a, b, c }
     enum E2 { e, f, g }
     enum E3 { h, i, j }
-    alias E1_ = EnumNamesUnion!(E1);
-    alias E12 = EnumNamesUnion!(E1, E2);
-    alias E123 = EnumNamesUnion!(E1, E2, E3);
+    alias E1_ = EnumChain!(E1);
+    alias E12 = EnumChain!(E1, E2);
+    alias E123 = EnumChain!(E1, E2, E3);
     foreach (immutable e; [EnumMembers!E123])
         writefln("E123.%s: %d", e, e);
 }
