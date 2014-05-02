@@ -4,40 +4,27 @@ import std.stdio: writeln;
 import traits_ex: isEnum;
 import std.typetuple: allSatisfy;
 
-string enumsHelper(S...)(S s)
-{
-    typeof(return) r;
-    foreach (i, e; s)
-    {
-        if (i >= 1)
-            r ~= ", ";
-        r ~= e;
-    }
-    return r;
-}
-
-/** Join/Chain/Concatenate/Unite Enums $(D E1), $(D E2), ... into $(D E).
+/** Join/Chain/Concatenate/Unite Enumerations $(D E).
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
-template join(string E, E1, E2) if (isEnum!E1 &&
-                                    isEnum!E2)
-{
-    enum join = ("enum " ~ E ~ " { " ~
-                 enumsHelper(__traits(allMembers, E1)) ~ "," ~
-                 enumsHelper(__traits(allMembers, E2)) ~ " }");
-}
-
-template njoin(string E0, E1...) if (allSatisfy!(isEnum, E1))
-{
-    import std.algorithm: map;
-    enum string njoin = "enum " ~ E0 ~ " { " ~ "" ~ " } ";
+template join(E...) if (allSatisfy!(isEnum, E)) {
+    mixin({
+            string r = "enum join { ";
+            foreach (T; E) {
+                import std.range: join;
+                r ~= [__traits(allMembers, T), " "].join(",");
+            }
+            return r ~ "}";
+        }());
 }
 
 unittest
 {
-    enum E1 { A, B, C }
-    enum E2 { E, F, G }
-    mixin(join!("E12", E1, E2));
-    E12 e12;
-    writeln(e12.min, ",", e12.max);
+    enum E1 { a, b, c }
+    enum E2 { e, f, g }
+    enum E3 { h, i, j}
+    alias E1_ = join!(E1);
+    alias E12 = join!(E1, E2);
+    alias E123 = join!(E1, E2, E3);
+    writeln(E123.min, ",", E123.max);
 }
