@@ -4,8 +4,8 @@
     TODO: Move to std.typecons (Type Constructor) in Phobos when ready.
     TODO: Implement implicit conversions between EnumChain, EnumUnion and their
     sources similar to Ada's subtype:
-    - Assignment to EnumUnion, EnumChain from its parts is safe and can be done at compile-time.
-    - Assignment from EnumUnion, EnumChain to its parts is unsafe and must be checked at run-time.
+    - Assignment to EnumUnion, EnumChain from its parts is always nothrow.
+    - Assignment from EnumUnion, EnumChain to its parts may throw.
  */
 module enums;
 
