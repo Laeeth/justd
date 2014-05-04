@@ -24,13 +24,12 @@
    invariant() {
    enforce(_t >= lower && _t <= upper);
    wln("fdsf");
-   }
 
    TODO: If these things take to long to evaluted at compile-time maybe we need
    to build it into the language for example using a new syntax either using
-   - integer(low..high)
-   - int(low..high)
-   - num(low..high)
+   - integer(range:low..high, step:1)
+   - int(range:low..high, step:1)
+   - num(range:low..high, step:1)
 */
 
 /** Bounded Arithmetic Wrapper Type.
