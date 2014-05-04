@@ -28,6 +28,8 @@ module enums;
 import std.typetuple: allSatisfy, staticMap;
 import std.traits: EnumMembers, CommonType, OriginalType;
 import std.conv: to;
+import core.exception;
+import std.exception: assertThrown;
 
 /* version = print; */
 version(print) import std.stdio: writefln;
@@ -128,7 +130,8 @@ struct EnumUnion(E...)
                     match = true;
                 }
             }
-            assert(match, "Cast failed");
+            if (!match)
+                throw new RangeError();
             return cast(E[0])_value;
         }
     }
@@ -141,7 +144,8 @@ struct EnumUnion(E...)
                     match = true;
                 }
             }
-            assert(match, "Cast failed");
+            if (!match)
+                throw new RangeError();
             return cast(E[1])_value;
         }
     }
@@ -161,8 +165,8 @@ unittest
     enum E1:ushort { p = 1, q = 4, r = 7 }
     enum E2:uint   { x = 2, y = 5, z = 8 }
 
-    EnumUnion!(E0, E1, E2) eu;
-    alias EU = typeof(eu);
+    alias EU = EnumUnion!(E0, E1, E2);
+    EU eu;
     static assert(is(EU.OriginalType == uint));
 
     version(print)
@@ -176,7 +180,7 @@ unittest
     assert(eu == E0.max);
 
     e0 = cast(E0)eu;            // run-time check is ok
-    /* e1 = cast(E1)eu;            // checked at run-time */
+    assertThrown!RangeError(cast(E1)eu);// run-time check should fail
 
     enum Ex:uint { x = 2, y = 5, z = 8 }
     static assert(!__traits(compiles, { Ex ex = Ex.max; eu = ex; } ));
