@@ -151,13 +151,11 @@ struct EnumUnion(E...)
 
     /* ====================== */
     /* TODO: Why doesn't the following mixin template have an effect? */
-
     mixin template genOpAssign(uint i) {
         void opAssign(E[i] e) {
             _value = cast(U)e;
         }
     }
-
     mixin template genOpCast(uint i) {
         E[i] opCast(T : E[i])() const {
             bool match = false;
@@ -171,7 +169,6 @@ struct EnumUnion(E...)
             return cast(E[i])_value;
         }
     }
-
     /* TODO: Alternative to this set of static if? */
     static if (E.length >= 1) { mixin genOpAssign!0; mixin genOpCast!0; }
     static if (E.length >= 2) { mixin genOpAssign!1; mixin genOpCast!1; }
