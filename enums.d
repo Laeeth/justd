@@ -27,8 +27,10 @@ module enums;
 
 import std.typetuple: allSatisfy, staticMap;
 import std.traits: EnumMembers, CommonType, OriginalType;
-import std.stdio: writeln, writefln;
 import std.conv: to;
+
+/* version = print; */
+version(print) import std.stdio: writefln;
 
 /* Helpers */
 private enum isEnum(T) = is(T == enum);
@@ -66,8 +68,9 @@ unittest
     enum E2 { h, i, j }
     alias E12 = ChainEnum!(E0, E1);
     alias E123 = ChainEnum!(E0, E1, E2);
-    foreach (immutable e; [EnumMembers!E123])
-        writefln("E123.%s: %d", e, e);
+    version(print)
+        foreach (immutable e; [EnumMembers!E123])
+            writefln("E123.%s: %d", e, e);
 }
 
 /** Unite (Join) Members (both their Names and Values) of Enumerations $(D E).
@@ -120,7 +123,7 @@ struct EnumUnion(E...)
         void opAssign(E[0] e) { _value = cast(U)e; }
         E[0] opCast(T : E[0])() const @safe pure nothrow {
             bool match = false;
-            foreach (m; EnumMembers!U) {
+            foreach (m; EnumMembers!(E[0])) {
                 if (m == _value) {
                     match = true;
                 }
@@ -129,7 +132,19 @@ struct EnumUnion(E...)
             return cast(E[0])_value;
         }
     }
-    static if (E.length >= 2) void opAssign(E[1] e) { _value = cast(U)e; }
+    static if (E.length >= 2) {
+        void opAssign(E[1] e) { _value = cast(U)e; }
+        E[1] opCast(T : E[1])() const @safe pure nothrow {
+            bool match = false;
+            foreach (m; EnumMembers!(E[1])) {
+                if (m == _value) {
+                    match = true;
+                }
+            }
+            assert(match, "Cast failed");
+            return cast(E[1])_value;
+        }
+    }
     static if (E.length >= 3) void opAssign(E[2] e) { _value = cast(U)e; }
     static if (E.length >= 4) void opAssign(E[3] e) { _value = cast(U)e; }
     static if (E.length >= 5) void opAssign(E[4] e) { _value = cast(U)e; }
@@ -150,15 +165,18 @@ unittest
     alias EU = typeof(eu);
     static assert(is(EU.OriginalType == uint));
 
-    foreach (immutable e; [EnumMembers!(typeof(eu._value))])
-        writefln("E123.%s: %d", e, e);
+    version(print)
+        foreach (immutable e; [EnumMembers!(typeof(eu._value))])
+            writefln("E123.%s: %d", e, e);
 
-    E0 e0 = E0.max;
+    auto e0 = E0.max;
+    auto e1 = E1.max;
+
     eu = e0;                    // checked at compile-time
     assert(eu == E0.max);
-    writeln(eu);
 
-    e0 = cast(E0)eu;            // checked at run-time
+    e0 = cast(E0)eu;            // run-time check is ok
+    /* e1 = cast(E1)eu;            // checked at run-time */
 
     enum Ex:uint { x = 2, y = 5, z = 8 }
     static assert(!__traits(compiles, { Ex ex = Ex.max; eu = ex; } ));

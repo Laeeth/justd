@@ -41,6 +41,8 @@ module bound;
 import std.conv: to;
 import std.traits: CommonType, isIntegral, isUnsigned, isFloatingPoint;
 
+version = print;
+
 // import std.exception;
 // class BoundUnderflowException : Exception {
 //     this(string msg) { super(msg); }
