@@ -1091,11 +1091,17 @@ unittest
     foo(expand!arr);
 }
 
-/** Python Style Alias. */
+/** Python Style To-String-Conversion Alias. */
 @safe pure string str(T)(in T a)
 {
     import std.conv: to;
     return to!string(a);
+}
+
+/** Python Style Length Alias. */
+@safe pure nothrow string len(T)(in T a)
+{
+    return a.length;
 }
 
 unittest
