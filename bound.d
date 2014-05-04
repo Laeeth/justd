@@ -55,7 +55,13 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
-/** Value of Type $(D T) bound inside Inclusive Range [lower, upper]. */
+/** Value of Type $(D T) bound inside Inclusive Range [lower, upper].
+
+    If $(D optional) is true this stores one extra undefined state (similar to Haskell's Maybe).
+
+    If $(D exceptional) is true range errors will throw a
+    $(D BoundOverflowException), otherwise truncation plus warnings will issued.
+*/
 struct Bound(T,
              B = T, // bounds type
              B lower = B.min,
