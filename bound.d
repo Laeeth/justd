@@ -68,6 +68,8 @@ struct Bound(T,
              bool optional = false,
              bool exceptional = true)
 {
+    static assert(min < max, "Failing requirement: min < max");
+
     static if (optional) { static assert(upper + 1 == T.max, "upper + 1 cannot equal T.max"); }
 
     alias T type;
