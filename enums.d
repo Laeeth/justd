@@ -151,34 +151,39 @@ struct EnumUnion(E...)
 
     /* ====================== */
     /* TODO: Why doesn't the following mixin template have an effect? */
-    mixin template genOpAssign(uint i) {
-        void opAssign(E[i] e) {
-            _value = cast(U)e;
-        }
-    }
-    mixin template genOpCast(uint i) {
-        E[i] opCast(T : E[i])() const {
-            bool match = false;
-            foreach (m; EnumMembers!(E[i])) {
-                if (m == _value) {
-                    match = true;
-                }
+    version(none)
+    {
+        mixin template genOpAssign(uint i) {
+            static if (i == 0)
+                auto fortytwo() { return 42; }
+            void opAssign(E[i] e) {
+                _value = cast(U)e;
             }
-            if (!match)
-                throw new RangeError();
-            return cast(E[i])_value;
         }
+        mixin template genOpCast(uint i) {
+            E[i] opCast(T : E[i])() const {
+                bool match = false;
+                foreach (m; EnumMembers!(E[i])) {
+                    if (m == _value) {
+                        match = true;
+                    }
+                }
+                if (!match)
+                    throw new RangeError();
+                return cast(E[i])_value;
+            }
+        }
+        /* TODO: Alternative to this set of static if? */
+        static if (E.length >= 1) { mixin genOpAssign!0; mixin genOpCast!0; }
+        static if (E.length >= 2) { mixin genOpAssign!1; mixin genOpCast!1; }
+        static if (E.length >= 3) { mixin genOpAssign!2; mixin genOpCast!2; }
+        static if (E.length >= 4) { mixin genOpAssign!3; mixin genOpCast!3; }
+        static if (E.length >= 5) { mixin genOpAssign!4; mixin genOpCast!4; }
+        static if (E.length >= 6) { mixin genOpAssign!5; mixin genOpCast!5; }
+        static if (E.length >= 7) { mixin genOpAssign!6; mixin genOpCast!6; }
+        static if (E.length >= 8) { mixin genOpAssign!7; mixin genOpCast!7; }
+        static if (E.length >= 9) { mixin genOpAssign!8; mixin genOpCast!8; }
     }
-    /* TODO: Alternative to this set of static if? */
-    static if (E.length >= 1) { mixin genOpAssign!0; mixin genOpCast!0; }
-    static if (E.length >= 2) { mixin genOpAssign!1; mixin genOpCast!1; }
-    static if (E.length >= 3) { mixin genOpAssign!2; mixin genOpCast!2; }
-    static if (E.length >= 4) { mixin genOpAssign!3; mixin genOpCast!3; }
-    static if (E.length >= 5) { mixin genOpAssign!4; mixin genOpCast!4; }
-    static if (E.length >= 6) { mixin genOpAssign!5; mixin genOpCast!5; }
-    static if (E.length >= 7) { mixin genOpAssign!6; mixin genOpCast!6; }
-    static if (E.length >= 8) { mixin genOpAssign!7; mixin genOpCast!7; }
-    static if (E.length >= 9) { mixin genOpAssign!8; mixin genOpCast!8; }
 
     /* ====================== */
 
@@ -193,6 +198,7 @@ unittest
 
     alias EU = EnumUnion!(E0, E1, E2);
     EU eu;
+    version(none) auto x = eu.fortytwo;
     static assert(is(EU.OriginalType == uint));
 
     version(print)
