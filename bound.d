@@ -163,7 +163,7 @@ struct Bound(T,
             else static if (op == "*")
             {
                 import std.math: abs;
-                static if (x*y >= 0) // intuitive case
+                static if (_value*rhs._value>= 0) // intuitive case
                 {
                     enum min_ = abs(min)*abs(U.min);
                     enum max_ = abs(max)*abs(U.max);
@@ -174,11 +174,23 @@ struct Bound(T,
                     enum max_ = -abs(min)*abs(U.min);
                 }
             }
-            else static if (op == "/")
+            /* else static if (op == "/") */
+            /* { */
+            /* } */
+            else static if (op == "^^")  // TODO: Verify this case for integers and floats
             {
-            }
-            else static if (op == "^^")
-            {
+                import traits_ex: isEven;
+                if (_value >= 0 ||
+                    rhs._value >= 0 && rhs._value.isEven) // always positive if exponent is even
+                {
+                    enum min_ = min^^U.min;
+                    enum max_ = max^^U.max;
+                }
+                else
+                {
+                    enum min_ = max^^U.max;
+                    enum max_ = min^^U.min;
+                }
             }
             else
             {
