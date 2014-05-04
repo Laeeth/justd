@@ -103,23 +103,12 @@ template EnumUnion(E...) if (E.length >= 2 &&
         }());
 }
 
-unittest
-{
-    enum E0:ubyte  { a = 0, b = 3, c = 6 }
-    enum E1:ushort { p = 1, q = 4, r = 7 }
-    enum E2:uint   { x = 2, y = 5, z = 8 }
-    alias E = EnumUnion!(E0, E1, E2);
-    enum D1 { a = 0, b = 3, c = 6 }
-    enum D3 { x = 0, y = 3, z = 6 }
-    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D1); } ));
-    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D3); } ));
-}
-
 /** Instance Wrapper for EnumUnion.
     Provides assignment from its sub enums.
 */
 struct enumUnion(E...)
 {
+    alias OriginalType = CommonOriginalType!(E);
     alias U = EnumUnion!(E);    // Wrapped Type.
     alias _value this;
     /* TODO: Alternative to this set of static if? */
@@ -146,6 +135,7 @@ struct enumUnion(E...)
     static if (E.length >= 9) void opAssign(E[8] e) { _value = cast(U)e; }
     private U _value;           // Instance.
 }
+
 unittest
 {
     enum E0:ubyte  { a = 0, b = 3, c = 6 }
@@ -153,6 +143,8 @@ unittest
     enum E2:uint   { x = 2, y = 5, z = 8 }
 
     enumUnion!(E0, E1, E2) eu;
+    alias EU = typeof(eu);
+    static assert(is(EU.OriginalType == uint));
 
     foreach (immutable e; [EnumMembers!(typeof(eu._value))])
         writefln("E123.%s: %d", e, e);
@@ -166,4 +158,12 @@ unittest
 
     enum Ex:uint { x = 2, y = 5, z = 8 }
     static assert(!__traits(compiles, { Ex ex = Ex.max; eu = ex; } ));
+
+    /* check for compilation failures */
+    enum D1 { a = 0, b = 3, c = 6 }
+    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D1); } ), "Should give name and value collision");
+    enum D2 { a = 1, b = 4, c = 7 }
+    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D2); } ), "Should give name collision");
+    enum D3 { x = 0, y = 3, z = 6 }
+    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D3); } ),  "Should give value collision");
 }
