@@ -69,8 +69,6 @@ struct Bound(T,
              bool optional = false,
              bool exceptional = true)
 {
-    import std.math: abs;
-
     static if (optional) { static assert(upper + 1 == T.max, "upper + 1 cannot equal T.max"); }
 
     alias T type;
@@ -157,6 +155,7 @@ struct Bound(T,
             }
             else static if (op == "*")
             {
+                import std.math: abs;
                 static if (x*y >= 0) // intuitive case
                 {
                     enum min_ = abs(min)*abs(U.min);
