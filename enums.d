@@ -1,20 +1,24 @@
 #!/usr/bin/env rdmd
 
-/** Extension to enumerations.
+/** Extensions to Enumerations.
 
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    TODO: Wrap EnumChain and UnionEnum in structs with
+    TODO: Join logic for ChainEnum and UnionEnum into common and then define:
+    - UnionEnum: only names must be unique
+    - StrictUnionEnum: both names and values must be unique
+
+    TODO: Wrap ChainEnum and UnionEnum in structs with
     - alias this _EnumChain and _EnumUnion and
     - that allow assignment from their parts and
     - members that convert to their parts.
 
-    TODO: Alternatively: Implement implicit conversions between EnumChain,
+    TODO: Alternatively: Implement implicit conversions between ChainEnum,
     UnionEnum and their sources similar to Ada's subtype:
-    - Assignment to UnionEnum, EnumChain from its parts is always nothrow.
-    - Assignment from UnionEnum, EnumChain to its parts may throw.
+    - Assignment to UnionEnum, ChainEnum from its parts is always nothrow.
+    - Assignment from UnionEnum, ChainEnum to its parts may throw.
     when opImplicitCast is ready for use.
 
     TODO: Move to std.typecons (Type Constructor) in Phobos when ready.
@@ -34,12 +38,12 @@ private alias CommonOriginalType(T...) = CommonType!(staticMap!(OriginalType, T)
     All enumerator names of $(D E) must be unique.
     See also: http://forum.dlang.org/thread/f9vc6p$1b7k$1@digitalmars.com
 */
-template EnumChain(E...) if (E.length >= 2 &&
+template ChainEnum(E...) if (E.length >= 2 &&
                              allSatisfy!(isEnum, E) &&
-                             is(CommonOriginalType!(E)))
+                             is(CommonOriginalType!E))
 {
     mixin({
-            string r = "enum EnumChain { ";
+            string r = "enum ChainEnum { ";
             string[string] names;   // lookup: enumName[memberName]
             foreach (T; E) {
                 import std.range: join;
@@ -60,8 +64,8 @@ unittest
     enum E0 { a, b, c }
     enum E1 { e, f, g }
     enum E2 { h, i, j }
-    alias E12 = EnumChain!(E0, E1);
-    alias E123 = EnumChain!(E0, E1, E2);
+    alias E12 = ChainEnum!(E0, E1);
+    alias E123 = ChainEnum!(E0, E1, E2);
     foreach (immutable e; [EnumMembers!E123])
         writefln("E123.%s: %d", e, e);
 }
@@ -71,7 +75,7 @@ unittest
  */
 template UnionEnum(E...) if (E.length >= 2 &&
                              allSatisfy!(isEnum, E) &&
-                             is(CommonOriginalType!(E)))
+                             is(CommonOriginalType!E))
 {
     mixin({
             string r = "enum UnionEnum { ";
@@ -108,7 +112,7 @@ template UnionEnum(E...) if (E.length >= 2 &&
 */
 struct EnumUnion(E...)
 {
-    alias OriginalType = CommonOriginalType!(E);
+    alias OriginalType = CommonOriginalType!E;
     alias U = UnionEnum!(E);    // Wrapped Type.
     alias _value this;
     /* TODO: Alternative to this set of static if? */
