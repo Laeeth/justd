@@ -10,11 +10,6 @@
     - UnionEnum: only names must be unique
     - StrictUnionEnum: both names and values must be unique
 
-    TODO: Wrap ChainEnum and UnionEnum in structs with
-    - alias this _EnumChain and _EnumUnion and
-    - that allow assignment from their parts and
-    - members that convert to their parts.
-
     TODO: Alternatively: Implement implicit conversions between ChainEnum,
     UnionEnum and their sources similar to Ada's subtype:
     - Assignment to UnionEnum, ChainEnum from its parts is always nothrow.
