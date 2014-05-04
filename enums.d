@@ -6,6 +6,7 @@
     sources similar to Ada's subtype:
     - Assignment to EnumUnion, EnumChain from its parts is always nothrow.
     - Assignment from EnumUnion, EnumChain to its parts may throw.
+    when opImplicitCast is ready for use.
  */
 module enums;
 
