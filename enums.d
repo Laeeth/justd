@@ -110,10 +110,27 @@ struct EnumUnion(E...)
     alias OriginalType = CommonOriginalType!E;
     alias U = UnionEnum!(E);    // Wrapped Type.
     alias _value this;
+    string getOpCast()
+    {
+        return q{
+            E[0] opCast(T : E[0])() const @safe pure nothrow {
+                bool match = false;
+                foreach (m; EnumMembers!(E[0])) {
+                    if (m == _value) {
+                        match = true;
+                    }
+                }
+                if (!match)
+                    throw new RangeError();
+                return cast(E[0])_value;
+            }
+        };
+    }
+
     /* TODO: Alternative to this set of static if? */
     static if (E.length >= 1) {
-        void opAssign(E[0] e) { _value = cast(U)e; }
-        E[0] opCast(T : E[0])() const @safe pure nothrow {
+        @safe pure nothrow void opAssign(E[0] e) { _value = cast(U)e; }
+        @safe pure nothrow E[0] opCast(T : E[0])() const @safe pure nothrow {
             bool match = false;
             foreach (m; EnumMembers!(E[0])) {
                 if (m == _value) {
@@ -126,8 +143,8 @@ struct EnumUnion(E...)
         }
     }
     static if (E.length >= 2) {
-        void opAssign(E[1] e) { _value = cast(U)e; }
-        E[1] opCast(T : E[1])() const @safe pure nothrow {
+        @safe pure nothrow void opAssign(E[1] e) { _value = cast(U)e; }
+        @safe pure nothrow E[1] opCast(T : E[1])() const @safe pure nothrow {
             bool match = false;
             foreach (m; EnumMembers!(E[1])) {
                 if (m == _value) {
@@ -139,13 +156,13 @@ struct EnumUnion(E...)
             return cast(E[1])_value;
         }
     }
-    static if (E.length >= 3) void opAssign(E[2] e) { _value = cast(U)e; }
-    static if (E.length >= 4) void opAssign(E[3] e) { _value = cast(U)e; }
-    static if (E.length >= 5) void opAssign(E[4] e) { _value = cast(U)e; }
-    static if (E.length >= 6) void opAssign(E[5] e) { _value = cast(U)e; }
-    static if (E.length >= 7) void opAssign(E[6] e) { _value = cast(U)e; }
-    static if (E.length >= 8) void opAssign(E[7] e) { _value = cast(U)e; }
-    static if (E.length >= 9) void opAssign(E[8] e) { _value = cast(U)e; }
+    static if (E.length >= 3) @safe pure nothrow void opAssign(E[2] e) { _value = cast(U)e; }
+    static if (E.length >= 4) @safe pure nothrow void opAssign(E[3] e) { _value = cast(U)e; }
+    static if (E.length >= 5) @safe pure nothrow void opAssign(E[4] e) { _value = cast(U)e; }
+    static if (E.length >= 6) @safe pure nothrow void opAssign(E[5] e) { _value = cast(U)e; }
+    static if (E.length >= 7) @safe pure nothrow void opAssign(E[6] e) { _value = cast(U)e; }
+    static if (E.length >= 8) @safe pure nothrow void opAssign(E[7] e) { _value = cast(U)e; }
+    static if (E.length >= 9) @safe pure nothrow void opAssign(E[8] e) { _value = cast(U)e; }
     private U _value;           // Instance.
 }
 
