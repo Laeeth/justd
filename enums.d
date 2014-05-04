@@ -10,12 +10,6 @@
     - UnionEnum: only names must be unique
     - StrictUnionEnum: both names and values must be unique
 
-    TODO: Alternatively: Implement implicit conversions between ChainEnum,
-    UnionEnum and their sources similar to Ada's subtype:
-    - Assignment to UnionEnum, ChainEnum from its parts is always nothrow.
-    - Assignment from UnionEnum, ChainEnum to its parts may throw.
-    when opImplicitCast is ready for use.
-
     TODO: Move to std.typecons (Type Constructor) in Phobos when ready.
  */
 module enums;
