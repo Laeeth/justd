@@ -6,10 +6,10 @@
    Make rich use of Sparse Distributed Representations (SDR) using Hash Digests
    for relating Data and its Relations/Properties/Meta-Data.
 
-   See Also: http://stackoverflow.com/questions/12629749/how-does-grep-run-so-fast
-   See Also: http:www.regular-expressions.info/powergrep.html
-   See Also: http://ridiculousfish.com/blog/posts/old-age-and-treachery.html
-   See Also: http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
+   See also: http://stackoverflow.com/questions/12629749/how-does-grep-run-so-fast
+   See also: http:www.regular-expressions.info/powergrep.html
+   See also: http://ridiculousfish.com/blog/posts/old-age-and-treachery.html
+   See also: http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
 
    Example:
    ---
