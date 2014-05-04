@@ -68,11 +68,14 @@ struct Bound(T,
              bool optional = false,
              bool exceptional = true)
 {
+    /* Requirements */
     static assert(lower < upper,
                   "Requirement not fulfilled: lower < upper, lower = " ~
                   to!string(lower) ~ " and upper = " ~ to!string(upper));
-
-    static if (optional) { static assert(upper + 1 == T.max, "upper + 1 cannot equal T.max"); }
+    static if (optional) {
+        static assert(upper + 1 == T.max,
+                      "upper + 1 cannot equal T.max");
+    }
 
     alias T type;
 
@@ -83,6 +86,7 @@ struct Bound(T,
     alias _value this;
 
     inout auto ref value() @property @safe pure inout nothrow { return _value; }
+
     @property string toString(bool colorize = false) const @trusted
     {
         return (to!string(_value) ~
