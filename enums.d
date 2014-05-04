@@ -6,15 +6,15 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    TODO: Wrap EnumChain and EnumUnion in structs with
+    TODO: Wrap EnumChain and UnionEnum in structs with
     - alias this _EnumChain and _EnumUnion and
     - that allow assignment from their parts and
     - members that convert to their parts.
 
     TODO: Alternatively: Implement implicit conversions between EnumChain,
-    EnumUnion and their sources similar to Ada's subtype:
-    - Assignment to EnumUnion, EnumChain from its parts is always nothrow.
-    - Assignment from EnumUnion, EnumChain to its parts may throw.
+    UnionEnum and their sources similar to Ada's subtype:
+    - Assignment to UnionEnum, EnumChain from its parts is always nothrow.
+    - Assignment from UnionEnum, EnumChain to its parts may throw.
     when opImplicitCast is ready for use.
 
     TODO: Move to std.typecons (Type Constructor) in Phobos when ready.
@@ -69,12 +69,12 @@ unittest
 /** Unite (Join) Members (both their Names and Values) of Enumerations $(D E).
     All enumerator names and values of $(D E) must be unique.
  */
-template EnumUnion(E...) if (E.length >= 2 &&
+template UnionEnum(E...) if (E.length >= 2 &&
                              allSatisfy!(isEnum, E) &&
                              is(CommonOriginalType!(E)))
 {
     mixin({
-            string r = "enum EnumUnion { ";
+            string r = "enum UnionEnum { ";
             alias O = CommonOriginalType!E;
             string[string] names;   // lookup: enumName[memberName]
             string[O] values;
@@ -103,13 +103,13 @@ template EnumUnion(E...) if (E.length >= 2 &&
         }());
 }
 
-/** Instance Wrapper for EnumUnion.
-    Provides assignment from its sub enums.
+/** Instance Wrapper for UnionEnum.
+    Provides safe assignment from its sub enums and check run-time casts.
 */
-struct enumUnion(E...)
+struct EnumUnion(E...)
 {
     alias OriginalType = CommonOriginalType!(E);
-    alias U = EnumUnion!(E);    // Wrapped Type.
+    alias U = UnionEnum!(E);    // Wrapped Type.
     alias _value this;
     /* TODO: Alternative to this set of static if? */
     static if (E.length >= 1) {
@@ -142,7 +142,7 @@ unittest
     enum E1:ushort { p = 1, q = 4, r = 7 }
     enum E2:uint   { x = 2, y = 5, z = 8 }
 
-    enumUnion!(E0, E1, E2) eu;
+    EnumUnion!(E0, E1, E2) eu;
     alias EU = typeof(eu);
     static assert(is(EU.OriginalType == uint));
 
@@ -161,9 +161,9 @@ unittest
 
     /* check for compilation failures */
     enum D1 { a = 0, b = 3, c = 6 }
-    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D1); } ), "Should give name and value collision");
+    static assert(!__traits(compiles, { alias ED = UnionEnum!(E0, D1); } ), "Should give name and value collision");
     enum D2 { a = 1, b = 4, c = 7 }
-    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D2); } ), "Should give name collision");
+    static assert(!__traits(compiles, { alias ED = UnionEnum!(E0, D2); } ), "Should give name collision");
     enum D3 { x = 0, y = 3, z = 6 }
-    static assert(!__traits(compiles, { alias ED = EnumUnion!(E0, D3); } ),  "Should give value collision");
+    static assert(!__traits(compiles, { alias ED = UnionEnum!(E0, D3); } ),  "Should give value collision");
 }
