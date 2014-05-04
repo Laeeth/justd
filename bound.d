@@ -63,7 +63,6 @@ struct Bound(T,
              bool optional = false,
              bool exceptional = true)
 {
-    import std.algorithm: min, max;
     import std.math: abs;
 
     static if (optional) { static assert(upper + 1 == T.max, "upper + 1 cannot equal T.max"); }
