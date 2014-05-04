@@ -153,13 +153,13 @@ struct EnumUnion(E...)
     /* TODO: Why doesn't the following mixin template have an effect? */
 
     mixin template genOpAssign(uint i) {
-        @safe pure nothrow void opAssign(E[i] e) {
+        void opAssign(E[i] e) {
             _value = cast(U)e;
         }
     }
 
     mixin template genOpCast(uint i) {
-        @safe pure nothrow E[i] opCast(T : E[i])() const {
+        E[i] opCast(T : E[i])() const {
             bool match = false;
             foreach (m; EnumMembers!(E[i])) {
                 if (m == _value) {
