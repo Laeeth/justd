@@ -110,27 +110,12 @@ struct EnumUnion(E...)
     alias OriginalType = CommonOriginalType!E;
     alias U = UnionEnum!(E);    // Wrapped Type.
     alias _value this;
-    string getOpCast()
-    {
-        return q{
-            E[0] opCast(T : E[0])() const @safe pure nothrow {
-                bool match = false;
-                foreach (m; EnumMembers!(E[0])) {
-                    if (m == _value) {
-                        match = true;
-                    }
-                }
-                if (!match)
-                    throw new RangeError();
-                return cast(E[0])_value;
-            }
-        };
-    }
 
-    /* TODO: Alternative to this set of static if? */
+    @safe pure nothrow:
+
     static if (E.length >= 1) {
-        @safe pure nothrow void opAssign(E[0] e) { _value = cast(U)e; }
-        @safe pure nothrow E[0] opCast(T : E[0])() const @safe pure nothrow {
+        void opAssign(E[0] e) { _value = cast(U)e; }
+        E[0] opCast(T : E[0])() const {
             bool match = false;
             foreach (m; EnumMembers!(E[0])) {
                 if (m == _value) {
@@ -143,8 +128,8 @@ struct EnumUnion(E...)
         }
     }
     static if (E.length >= 2) {
-        @safe pure nothrow void opAssign(E[1] e) { _value = cast(U)e; }
-        @safe pure nothrow E[1] opCast(T : E[1])() const @safe pure nothrow {
+        void opAssign(E[1] e) { _value = cast(U)e; }
+        E[1] opCast(T : E[1])() const {
             bool match = false;
             foreach (m; EnumMembers!(E[1])) {
                 if (m == _value) {
@@ -156,13 +141,50 @@ struct EnumUnion(E...)
             return cast(E[1])_value;
         }
     }
-    static if (E.length >= 3) @safe pure nothrow void opAssign(E[2] e) { _value = cast(U)e; }
-    static if (E.length >= 4) @safe pure nothrow void opAssign(E[3] e) { _value = cast(U)e; }
-    static if (E.length >= 5) @safe pure nothrow void opAssign(E[4] e) { _value = cast(U)e; }
-    static if (E.length >= 6) @safe pure nothrow void opAssign(E[5] e) { _value = cast(U)e; }
-    static if (E.length >= 7) @safe pure nothrow void opAssign(E[6] e) { _value = cast(U)e; }
-    static if (E.length >= 8) @safe pure nothrow void opAssign(E[7] e) { _value = cast(U)e; }
-    static if (E.length >= 9) @safe pure nothrow void opAssign(E[8] e) { _value = cast(U)e; }
+    static if (E.length >= 3) void opAssign(E[2] e) { _value = cast(U)e; }
+    static if (E.length >= 4) void opAssign(E[3] e) { _value = cast(U)e; }
+    static if (E.length >= 5) void opAssign(E[4] e) { _value = cast(U)e; }
+    static if (E.length >= 6) void opAssign(E[5] e) { _value = cast(U)e; }
+    static if (E.length >= 7) void opAssign(E[6] e) { _value = cast(U)e; }
+    static if (E.length >= 8) void opAssign(E[7] e) { _value = cast(U)e; }
+    static if (E.length >= 9) void opAssign(E[8] e) { _value = cast(U)e; }
+
+    /* ====================== */
+    /* TODO: Why the following mixin template have an effect? */
+
+    mixin template genOpAssign(uint i) {
+        @safe pure nothrow void opAssign(E[i] e) {
+            _value = cast(U)e;
+        }
+    }
+
+    mixin template genOpCast(uint i) {
+        @safe pure nothrow E[i] opCast(T : E[i])() const {
+            bool match = false;
+            foreach (m; EnumMembers!(E[i])) {
+                if (m == _value) {
+                    match = true;
+                }
+            }
+            if (!match)
+                throw new RangeError();
+            return cast(E[i])_value;
+        }
+    }
+
+    /* TODO: Alternative to this set of static if? */
+    static if (E.length >= 1) { mixin genOpAssign!0; mixin genOpCast!0; }
+    static if (E.length >= 2) { mixin genOpAssign!1; mixin genOpCast!1; }
+    static if (E.length >= 3) { mixin genOpAssign!2; mixin genOpCast!2; }
+    static if (E.length >= 4) { mixin genOpAssign!3; mixin genOpCast!3; }
+    static if (E.length >= 5) { mixin genOpAssign!4; mixin genOpCast!4; }
+    static if (E.length >= 6) { mixin genOpAssign!5; mixin genOpCast!5; }
+    static if (E.length >= 7) { mixin genOpAssign!6; mixin genOpCast!6; }
+    static if (E.length >= 8) { mixin genOpAssign!7; mixin genOpCast!7; }
+    static if (E.length >= 9) { mixin genOpAssign!8; mixin genOpCast!8; }
+
+    /* ====================== */
+
     private U _value;           // Instance.
 }
 
