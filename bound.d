@@ -1,42 +1,40 @@
 #!/usr/bin/env rdmd-dev-module
 
-/**
-   TODO: Make this work:
-   wln(bound!(256, 257)(256));
-   wln(bound!(256, 257)(257));
+/** Bounded Arithmetic Wrapper Type, similar to Ada Range Types.
 
-   TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
-   - Integer: +,-,*,^^,/
-   - FloatingPoint: +,-,*,/,^^,sqrt,
-   - and add intelligent warnings/errors when assignment and implicit cast is
-     not allowed showing the range of the expression/inferred variable.
-
-   TODO: Add static asserts using template-arguments?
-   TODO: Do we need a specific underflow?
-   TODO: Add this module to std.numeric
-
-   TODO: Merge with limited
-   See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
-
-   TODO: Is this a good idea to use?:
-   import std.typecons;
-   mixin Proxy!_t;             // Limited acts as T (almost).
-   invariant() {
-   enforce(_t >= lower && _t <= upper);
-   wln("fdsf");
-
-   TODO: If these things take to long to evaluted at compile-time maybe we need
-   to build it into the language for example using a new syntax either using
-   - integer(range:low..high, step:1)
-   - int(range:low..high, step:1)
-   - num(range:low..high, step:1)
-*/
-
-/** Bounded Arithmetic Wrapper Type.
-    Similar to Ada Range Types.
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
+
+    TODO: Make this work:
+    wln(bound!(256, 257)(256));
+    wln(bound!(256, 257)(257));
+
+    TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
+    - Integer: +,-,*,^^,/
+    - FloatingPoint: +,-,*,/,^^,sqrt,
+    - and add intelligent warnings/errors when assignment and implicit cast is
+    not allowed showing the range of the expression/inferred variable.
+
+    TODO: Add static asserts using template-arguments?
+    TODO: Do we need a specific underflow?
+    TODO: Add this module to std.numeric
+
+    TODO: Merge with limited
+    See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
+
+    TODO: Is this a good idea to use?:
+    import std.typecons;
+    mixin Proxy!_t;             // Limited acts as T (almost).
+    invariant() {
+    enforce(_t >= lower && _t <= upper);
+    wln("fdsf");
+
+    TODO: If these things take to long to evaluted at compile-time maybe we need
+    to build it into the language for example using a new syntax either using
+    - integer(range:low..high, step:1)
+    - int(range:low..high, step:1)
+    - num(range:low..high, step:1)
  */
 module bound;
 
