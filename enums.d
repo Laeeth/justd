@@ -108,7 +108,8 @@ template UnionEnum(E...) if (E.length >= 2 &&
 }
 
 /** Instance Wrapper for UnionEnum.
-    Provides safe assignment from its sub enums and check run-time casts.
+    Provides safe assignment and explicit casts.
+    TODO: Use opImplicitCastTo instead of opCast when it becomes available in DMD.
 */
 struct EnumUnion(E...)
 {
