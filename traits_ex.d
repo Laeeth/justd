@@ -139,3 +139,13 @@ unittest {
 }
 
 enum arityMin0(alias fun) = __traits(compiles, fun());
+
+/** Check if Type $(D T) is an instance of $(D K).
+    See also: http://forum.dlang.org/thread/mailman.2901.1316118301.14074.digitalmars-d-learn@puremagic.com#post-zzdpfhsgfdgpszdbgbbt:40forum.dlang.org */
+template IsA(T, K) {
+    static if (is(T t == K!U, U)) {
+        enum IsA = true;
+    } else {
+        enum IsA = false;
+    }
+}

@@ -1490,14 +1490,6 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
     }
 }
 
-template IsA(T, K) {
-    static if (is(T t == K!U, U)) {
-        enum IsA = true;
-    } else {
-        enum IsA = false;
-    }
-}
-
 /** Pretty Print Arguments $(D args) to Terminal $(D term). */
 void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Args args)
 {
