@@ -120,6 +120,7 @@ import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
 import std.range: repeat, array, empty;
 import std.stdint: uint64_t;
+import std.traits: Unqual;
 import core.memory: GC;
 import core.exception;
 
@@ -1387,7 +1388,7 @@ enum contextFace = face(Color.green, Color.black);
 
 enum stdFace = face(Color.white, Color.black);
 enum timeFace = face(Color.white, Color.black);
-enum digestFace = timeFace;
+enum digestFace = face(Color.yellow, Color.black);
 enum infoFace = face(Color.white, Color.black, true);
 enum warnFace = face(Color.yellow, Color.black);
 enum skipFileFace = warnFace;
@@ -1447,15 +1448,24 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
         }
 
         // pick face
+        bool faceChanged = false;
         static if (__traits(hasMember, arg, "face"))
         {
             term.setFace(arg.face, colorFlag);
+            faceChanged = true;
+        }
+        else static if (is(Unqual!(typeof(arg)) == SHA1Digest))
+        {
+            term.setFace(digestFace, colorFlag);
+            faceChanged = true;
         }
 
         // write
         if (outFile == stdout)
         {
             term.write(arg_name);
+            if (faceChanged)
+                term.setFace(stdFace, colorFlag); // restore to standard
         }
         else
         {
@@ -4167,7 +4177,6 @@ body { font: 8px Verdana, sans-serif; }
                     pp(term, outFile, doHTML, colorFlag, " of Tree-Size ", theDir.treeSize);
                 }
                 if (gstats.showSHA1) {
-                    term.setFace(digestFace, colorFlag);
                     pp(term, outFile, doHTML, colorFlag, " with Tree-Content-Id ", theDir.treeContId);
                 }
                 endl(term, outFile, doHTML, colorFlag);
@@ -4192,7 +4201,8 @@ body { font: 8px Verdana, sans-serif; }
                                     term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
                                 }
                                 term.setFace(dirFace, colorFlag);
-                                pp(term, outFile, doHTML, colorFlag, asPath(doHTML, subDir.path, showTree ? subDir.name : subDir.path, true));
+                                pp(term, outFile, doHTML, colorFlag,
+                                   asPath(doHTML, subDir.path, showTree ? subDir.name : subDir.path, true));
 
                                 term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " modified ",
                                                                       shortDurationString(_currTime - subDir.timeLastModified), " ago");
@@ -4214,7 +4224,7 @@ body { font: 8px Verdana, sans-serif; }
                 ++subIndex;
 
                 if (ctrlC) {
-                    ppln(term, outFile, doHTML, colorFlag, "Ctrl-C pressed: Aborting scan of ", theDir.path);
+                    ppln(term, outFile, doHTML, colorFlag, "Ctrl-C pressed: Aborting scan of ", theDir);
                     break;
                 }
             }
@@ -4293,8 +4303,14 @@ body { font: 8px Verdana, sans-serif; }
                 if (dupFilesOk.length >= 2) {
                     term.setFace(infoFace, colorFlag);
                     immutable typeName = cast(RegFile)dupFilesOk[0] ? "Files" : "Directories";
-                    immutable digestHint = gstats.showSHA1 ? " (" ~ to!string(digest) ~ ")" : [];
-                    ppln(term, outFile, doHTML, colorFlag, typeName ~ " with same content", digestHint, " of size ", dupFilesOk[0].size);
+                    pp(term, outFile, doHTML, colorFlag,
+                       typeName,
+                       " with same content");
+                    if (gstats.showSHA1)
+                        pp(term, outFile, doHTML, colorFlag,
+                           " (", digest, ")");
+                    ppln(term, outFile, doHTML, colorFlag,
+                         " of size ", dupFilesOk[0].size);
                     foreach (dupFile; dupFilesOk) {
                         ppln(term, outFile, doHTML, colorFlag, " ", dupFile);
                     }
