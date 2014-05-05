@@ -142,6 +142,7 @@ import rational: Rational;
 import ngram;
 import notnull;
 import elf;
+import allocator;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
@@ -1430,24 +1431,54 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
     }
 }
 
+/** Pretty Print Arguments $(D args) to Terminal $(D term). */
 void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
 {
-    if (outFile == stdout) {
-        term.write(args);
+    if (outFile == stdout)
+    {
+        foreach (arg; args)
+        {
+            static      if (is(arg == Dir))
+            {
+                const arg_name = arg.path;
+            }
+            else static if (is(arg == RegFile))
+            {
+                const arg_name = arg.path;
+            }
+            else static if (is(arg == File))
+            {
+                const arg_name = arg.path;
+            }
+            else
+            {
+                const arg_name = arg;
+            }
+            term.write(arg_name);
+        }
         term.flush();
-    } else {
+    }
+    else
+    {
         outFile.write(args);
     }
 }
+
+/** Pretty Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
 void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
 {
-    if (outFile == stdout) {
+    if (outFile == stdout)
+    {
         term.writeln(args, lbr(doHTML));
         term.flush();
-    } else {
+    }
+    else
+    {
         outFile.writeln(args, lbr(doHTML));
     }
 }
+
+/** Print End of Line to Terminal $(D term). */
 void endl(Term)(ref Term term, ioFile outFile, bool doHTML) { return ppln(term, outFile, doHTML); }
 
 /** Dir.
@@ -3169,7 +3200,7 @@ class Scanner(Term)
                                     "exact", "\tSearch for key only with exact match (strict)" ~ defaultDoc(_keyAsExact), &_keyAsExact,
 
                                     "name-duplicates|snd", "\tDetect & Show file name duplicates" ~ defaultDoc(gstats.showNameDups), &gstats.showNameDups,
-                                    "hardlink-duplicates|shd", "\tDetect & Show multiple links to same inode" ~ defaultDoc(gstats.showLinkDups), &gstats.showLinkDups,
+                                    "hardlink-duplicates|inode-duplicates|shd", "\tDetect & Show multiple links to same inode" ~ defaultDoc(gstats.showLinkDups), &gstats.showLinkDups,
                                     "content-duplicates|scd", "\tDetect & Show file contents duplicates" ~ defaultDoc(gstats.showContentDups), &gstats.showContentDups,
                                     "duplicates|D", "\tDetect & Show file name and contents duplicates" ~ defaultDoc(gstats.showAnyDups), &gstats.showAnyDups,
                                     "duplicates-context", "\tDuplicates Detection Context. Either: " ~ enumDoc!DuplicatesContext, &duplicatesContext,
