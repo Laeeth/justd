@@ -141,7 +141,7 @@ import tempfs;
 import rational: Rational;
 import ngram;
 import notnull;
-import elf.elf;
+import elf;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
@@ -2277,23 +2277,24 @@ class Scanner(Term)
         auto keywordsAda95 = keywordsAda83 ~ ["abstract", "aliased", "tagged", "protected", "until", "requeue"];
         auto keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
         auto keywordsAda2012 = keywordsAda2005 ~ ["some"];
-        srcFKinds ~= new FKind("Ada 82", [], ["ada", "adb", "ads"], [], 0, [], keywordsAda83,
+        auto extensionsAda = ["ada", "adb", "ads"];
+        srcFKinds ~= new FKind("Ada 82", [], extensionsAda, [], 0, [], keywordsAda83,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 95", [], ["ada", "adb", "ads"], [], 0, [], keywordsAda95,
+        srcFKinds ~= new FKind("Ada 95", [], extensionsAda, [], 0, [], keywordsAda95,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 2005", [], ["ada", "adb", "ads"], [], 0, [], keywordsAda2005,
+        srcFKinds ~= new FKind("Ada 2005", [], extensionsAda, [], 0, [], keywordsAda2005,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 2012", [], ["ada", "adb", "ads"], [], 0, [], keywordsAda2012,
+        srcFKinds ~= new FKind("Ada 2012", [], extensionsAda, [], 0, [], keywordsAda2012,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada", [], ["ada", "adb", "ads"], [], 0, [], keywordsAda2012,
+        srcFKinds ~= new FKind("Ada", [], extensionsAda, [], 0, [], keywordsAda2012,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
