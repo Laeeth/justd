@@ -1431,50 +1431,60 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
     }
 }
 
+void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
+{
+    const colorFlag = true;
+    foreach (arg; args)
+    {
+        /* pick path */
+        static if (__traits(hasMember, arg, "path"))
+        {
+            auto arg_name = arg.path;
+        }
+        else
+        {
+            auto arg_name = arg;
+        }
+
+        /* pick face */
+        static if (__traits(hasMember, arg, "face"))
+        {
+            term.setFace(arg.face, colorFlag);
+        }
+
+        if (outFile == stdout)
+        {
+            term.write(arg_name);
+        }
+        else
+        {
+            outFile.write(args);
+        }
+    }
+}
+
 /** Pretty Print Arguments $(D args) to Terminal $(D term). */
 void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
 {
+    ppArgs(term, outFile, doHTML, args);
     if (outFile == stdout)
     {
-        foreach (arg; args)
-        {
-            static      if (is(arg == Dir))
-            {
-                const arg_name = arg.path;
-            }
-            else static if (is(arg == RegFile))
-            {
-                const arg_name = arg.path;
-            }
-            else static if (is(arg == File))
-            {
-                const arg_name = arg.path;
-            }
-            else
-            {
-                const arg_name = arg;
-            }
-            term.write(arg_name);
-        }
         term.flush();
-    }
-    else
-    {
-        outFile.write(args);
     }
 }
 
 /** Pretty Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
 void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
 {
+    ppArgs(term, outFile, doHTML, args);
     if (outFile == stdout)
     {
-        term.writeln(args, lbr(doHTML));
+        term.writeln(lbr(doHTML));
         term.flush();
     }
     else
     {
-        outFile.writeln(args, lbr(doHTML));
+        outFile.writeln(lbr(doHTML));
     }
 }
 
@@ -4184,7 +4194,7 @@ body { font: 8px Verdana, sans-serif; }
                                 pp(term, outFile, doHTML, asPath(doHTML, subDir.path, showTree ? subDir.name : subDir.path, true));
 
                                 term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, " modified ",
-                                                                          shortDurationString(_currTime - subDir.timeLastModified), " ago");
+                                                                      shortDurationString(_currTime - subDir.timeLastModified), " ago");
 
                                 term.setFace(infoFace, colorFlag); ppln(term, outFile, doHTML, ": Skipped Directory of type ", skippedDirKindsMap[sub.name].kindName);
                                 term.setFace(stdFace, colorFlag);
@@ -4203,7 +4213,7 @@ body { font: 8px Verdana, sans-serif; }
                 ++subIndex;
 
                 if (ctrlC) {
-                    ppln(term, outFile, doHTML, "Ctrl-C pressed: Aborting scan of " ~ theDir.path);
+                    ppln(term, outFile, doHTML, "Ctrl-C pressed: Aborting scan of ", theDir.path);
                     break;
                 }
             }
@@ -4297,7 +4307,7 @@ body { font: 8px Verdana, sans-serif; }
             term.setFace(infoFace, colorFlag);
             ppln(term, outFile, doHTML, "Broken Symlinks ");
             foreach (bsl; _brokenSymlinks) {
-                term.setFace(pathFace, colorFlag); ppln(term, outFile, doHTML, " ", bsl.path);
+                ppln(term, outFile, doHTML, " ", bsl);
             }
             term.setFace(stdFace, colorFlag);
         }
