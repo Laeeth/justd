@@ -1387,8 +1387,8 @@ enum symlinkFace = face(Color.cyan, Color.black);
 enum contextFace = face(Color.green, Color.black);
 
 enum stdFace = face(Color.white, Color.black);
-enum timeFace = face(Color.white, Color.black);
 
+enum timeFace = face(Color.magenta, Color.black);
 enum digestFace = face(Color.yellow, Color.black);
 enum bytesFace = face(Color.yellow, Color.black);
 
@@ -1450,6 +1450,8 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
             auto arg_name = arg;
         }
 
+        alias Arg = typeof(arg); // shorthand
+
         // pick face
         bool faceChanged = false;
         static if (__traits(hasMember, arg, "face"))
@@ -1457,16 +1459,22 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
             term.setFace(arg.face, colorFlag);
             faceChanged = true;
         }
-        else static if (is(Unqual!(typeof(arg)) == SHA1Digest))
+        else static if (is(Unqual!(Arg) == SHA1Digest))
         {
             term.setFace(digestFace, colorFlag);
             faceChanged = true;
         }
-        else static if (is(Unqual!(typeof(arg)) == Bytes64))
+        else static if (is(Unqual!(Arg) == Bytes64))
         {
             term.setFace(bytesFace, colorFlag);
             faceChanged = true;
         }
+
+        // TODO: split path along / and print each part in colors
+        /* static assert(!is(Arg == NotNull!File)); */
+        /* static assert(!is(Arg == NotNull!RegFile)); */
+        /* static assert(!is(Arg == NotNull!Dir)); */
+        /* static assert(!is(Arg == NotNull!Dir)); */
 
         // write
         if (outFile == stdout)
@@ -1479,6 +1487,14 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
         {
             outFile.write(args);
         }
+    }
+}
+
+template IsA(T, K) {
+    static if (is(T t == K!U, U)) {
+        enum IsA = true;
+    } else {
+        enum IsA = false;
     }
 }
 
@@ -3756,7 +3772,7 @@ body { font: 8px Verdana, sans-serif; }
                     if (offKB >= 0) { // if hit
                         if (!showTree && ctx == ScanContext.fileName) {
                             term.setFace(dirFace, colorFlag);
-                            pp(term, outFile, doHTML, colorFlag, parentDir.path ~ dirSeparator);
+                            pp(term, outFile, doHTML, colorFlag, parentDir, dirSeparator);
                         }
 
                         // Check Context
@@ -3774,16 +3790,19 @@ body { font: 8px Verdana, sans-serif; }
                             } else {
                                 foreach (fromSymlink; fromSymlinks) {
                                     term.setFace(symlinkFace, colorFlag);
-                                    pp(term, outFile, doHTML, colorFlag, asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
-                                    term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, colorFlag,
-                                                                              " modified ",
-                                                                              shortDurationString(_currTime - fromSymlink.timeLastModified) , " ago");
+                                    pp(term, outFile, doHTML, colorFlag,
+                                       asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
+                                    term.setFace(timeFace, colorFlag);
+                                    pp(term, outFile, doHTML, colorFlag,
+                                       " modified ",
+                                       shortDurationString(_currTime - fromSymlink.timeLastModified) , " ago");
                                     term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " -> ");
                                 }
 
                                 // show file path/name
                                 term.setFace(regFileFace, colorFlag);
-                                pp(term, outFile, doHTML, colorFlag, asPath(doHTML, theFile.path, displayedFileName, false)); // show path
+                                pp(term, outFile, doHTML, colorFlag,
+                                   asPath(doHTML, theFile.path, displayedFileName, false)); // show path
                             }
 
                             // show file line:column
@@ -4131,11 +4150,17 @@ body { font: 8px Verdana, sans-serif; }
                 foreach (ix, fromSymlink; fromSymlinks) {
                     if (showTree && ix == 0) {
                         immutable intro = "├";
-                        term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ");
-                        term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, colorFlag, asPath(doHTML, theSymlink.path, theSymlink.name, false));
+                        term.setFace(stdFace, colorFlag);
+                        pp(term, outFile, doHTML, colorFlag,
+                           "│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ");
+                        term.setFace(symlinkFace, colorFlag);
+                        pp(term, outFile, doHTML, colorFlag,
+                           asPath(doHTML, theSymlink.path, theSymlink.name, false));
                     }
                     else {
-                        term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, colorFlag, asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
+                        term.setFace(symlinkFace, colorFlag);
+                        pp(term, outFile, doHTML, colorFlag,
+                           asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
                     }
                     term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " -> ");
                 }
@@ -4206,7 +4231,8 @@ body { font: 8px Verdana, sans-serif; }
                             if (_showSkipped) {
                                 if (showTree) {
                                     immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
-                                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
+                                    term.setFace(stdFace, colorFlag);
+                                    pp(term, outFile, doHTML, colorFlag, "│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
                                 }
                                 term.setFace(dirFace, colorFlag);
                                 pp(term, outFile, doHTML, colorFlag,
