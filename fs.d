@@ -1464,7 +1464,7 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
             term.setFace(digestFace, colorFlag);
             faceChanged = true;
         }
-        else static if (is(Unqual!(Arg) == Bytes64))
+        else static if (IsA!(Unqual!(Arg), Bytes))
         {
             term.setFace(bytesFace, colorFlag);
             faceChanged = true;
