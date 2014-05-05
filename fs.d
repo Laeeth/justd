@@ -1282,7 +1282,7 @@ enum SymlinkFollowContext
 class GStats
 {
     NotNull!File[][string] filesByName;    // Potential File Name Duplicates
-    NotNull!File[][ino_t] filesByInode;    // Potenial Link Duplicates
+    NotNull!File[][ino_t] filesByInode;    // Potential Link Duplicates
     NotNull!File[][SHA1Digest] filesByContId; // File(s) (Duplicates) Indexed on Contents SHA1.
     FileTags ftags;
     Bytes64[File] treeSizesByFile;
