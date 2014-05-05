@@ -4114,7 +4114,8 @@ body { font: 8px Verdana, sans-serif; }
             size_t subIndex = 0;
             if (showTree) {
                 immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
-                term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(theDir.depth).join("") ~ intro ~ "─ ");
+                term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(theDir.depth).join("") ~ intro ~
+                                                     "─ ");
                 immutable dirName = theDir.isRoot ? dirSeparator : theDir.name;
                 term.setFace(dirFace, colorFlag); pp(term, outFile, doHTML, asPath(doHTML, theDir.path, dirName, true));
                 term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, " modified ",
