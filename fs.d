@@ -1388,7 +1388,10 @@ enum contextFace = face(Color.green, Color.black);
 
 enum stdFace = face(Color.white, Color.black);
 enum timeFace = face(Color.white, Color.black);
+
 enum digestFace = face(Color.yellow, Color.black);
+enum bytesFace = face(Color.yellow, Color.black);
+
 enum infoFace = face(Color.white, Color.black, true);
 enum warnFace = face(Color.yellow, Color.black);
 enum skipFileFace = warnFace;
@@ -1457,6 +1460,11 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
         else static if (is(Unqual!(typeof(arg)) == SHA1Digest))
         {
             term.setFace(digestFace, colorFlag);
+            faceChanged = true;
+        }
+        else static if (is(Unqual!(typeof(arg)) == Bytes64))
+        {
+            term.setFace(bytesFace, colorFlag);
             faceChanged = true;
         }
 
