@@ -1408,8 +1408,9 @@ enum keyFaces = ctxFaces.map!(a => face(a.fg, a.bg, true));
 
 void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
 {
-    term.color(face.fg | (face.bright ? Bright : 0) ,
-               face.bg);
+    if (colorFlag)
+        term.color(face.fg | (face.bright ? Bright : 0) ,
+                   face.bg);
 }
 
 @safe pure nothrow
