@@ -1431,12 +1431,11 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
     }
 }
 
-void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
+void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Args args)
 {
-    const colorFlag = true;
     foreach (arg; args)
     {
-        /* pick path */
+        // pick path
         static if (__traits(hasMember, arg, "path"))
         {
             auto arg_name = arg.path;
@@ -1446,12 +1445,13 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args
             auto arg_name = arg;
         }
 
-        /* pick face */
+        // pick face
         static if (__traits(hasMember, arg, "face"))
         {
             term.setFace(arg.face, colorFlag);
         }
 
+        // write
         if (outFile == stdout)
         {
             term.write(arg_name);
@@ -1464,9 +1464,9 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args
 }
 
 /** Pretty Print Arguments $(D args) to Terminal $(D term). */
-void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
+void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Args args)
 {
-    ppArgs(term, outFile, doHTML, args);
+    ppArgs(term, outFile, doHTML, colorFlag, args);
     if (outFile == stdout)
     {
         term.flush();
@@ -1474,9 +1474,9 @@ void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
 }
 
 /** Pretty Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
-void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
+void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Args args)
 {
-    ppArgs(term, outFile, doHTML, args);
+    ppArgs(term, outFile, doHTML, colorFlag, args);
     if (outFile == stdout)
     {
         term.writeln(lbr(doHTML));
@@ -1489,7 +1489,7 @@ void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, Args args)
 }
 
 /** Print End of Line to Terminal $(D term). */
-void endl(Term)(ref Term term, ioFile outFile, bool doHTML) { return ppln(term, outFile, doHTML); }
+void endl(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag) { return ppln(term, outFile, doHTML, colorFlag); }
 
 /** Dir.
  */
@@ -1897,7 +1897,7 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML,
     cacheFile.write(data);
     immutable toc = Clock.currTime;
     term.setFace(stdFace, colorFlag);
-    ppln(term, outFile, doHTML, "Wrote tree cache of size ", data.length.Bytes64, " to ", cacheFile, " in ",
+    ppln(term, outFile, doHTML, colorFlag, "Wrote tree cache of size ", data.length.Bytes64, " to ", cacheFile, " in ",
          shortDurationString(toc - tic));
     return data;
 }
@@ -1905,7 +1905,7 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML,
 /** Load File System Tree Cache from $(D cacheFile).
     Returns: Root Directory of Loaded Tree.
 */
-Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, string cacheFile, GStats gstats) @trusted
+Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, string cacheFile, GStats gstats) @trusted
 {
     immutable tic = Clock.currTime;
 
@@ -1918,13 +1918,13 @@ Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, string cac
             unpack(cast(ubyte[])data, rootDir); /* Dir rootDir = new Dir(cast(const(ubyte)[])data); */
         }
         immutable toc = Clock.currTime;
-        ppln(term, outFile, doHTML, "Read cache of size ", data.length.Bytes64, " from ", cacheFile, " in ",
+        ppln(term, outFile, doHTML, colorFlag, "Read cache of size ", data.length.Bytes64, " from ", cacheFile, " in ",
              shortDurationString(toc - tic), " containing");
-        pp(term, outFile, doHTML, gstats.noDirs, " Dirs, ");
-        pp(term, outFile, doHTML, gstats.noRegFiles, " Regular Files, ");
-        pp(term, outFile, doHTML, gstats.noSymlinks, " Symbolic Links, ");
-        pp(term, outFile, doHTML, gstats.noSpecialFiles, " Special Files, ");
-        ppln(term, outFile, doHTML, "totalling ", gstats.noFiles + 1, " Files"); // on extra because of lack of root
+        pp(term, outFile, doHTML, colorFlag, gstats.noDirs, " Dirs, ");
+        pp(term, outFile, doHTML, colorFlag, gstats.noRegFiles, " Regular Files, ");
+        pp(term, outFile, doHTML, colorFlag, gstats.noSymlinks, " Symbolic Links, ");
+        pp(term, outFile, doHTML, colorFlag, gstats.noSpecialFiles, " Special Files, ");
+        ppln(term, outFile, doHTML, colorFlag, "totalling ", gstats.noFiles + 1, " Files"); // on extra because of lack of root
         assert(gstats.noDirs +
                gstats.noRegFiles +
                gstats.noSymlinks +
@@ -1932,7 +1932,7 @@ Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, string cac
 
         return rootDir;
     } catch (FileException) {
-        ppln(term, outFile, doHTML, "Failed to read cache from ", cacheFile);
+        ppln(term, outFile, doHTML, colorFlag, "Failed to read cache from ", cacheFile);
         return null;
     }
 }
@@ -3299,7 +3299,7 @@ class Scanner(Term)
             (!keys.empty) &&
             keysXGramsUnion.empty) {
             _useNGrams = false;
-            ppln(term, outFile, doHTML,
+            ppln(term, outFile, doHTML, colorFlag,
                  "Keys must be at least of length " ~
                  to!string(NGramOrder + 1) ~
                  " in order for " ~
@@ -3308,7 +3308,7 @@ class Scanner(Term)
         }
 
         if (doHTML) {
-            ppln(term, outFile, doHTML, "<!DOCTYPE html>
+            ppln(term, outFile, doHTML, colorFlag, "<!DOCTYPE html>
 <html>
 <head>
 <style>
@@ -3319,7 +3319,7 @@ body { font: 8px Verdana, sans-serif; }
 <body>");
         }
 
-        // ppln(term, outFile, doHTML, "<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
+        // ppln(term, outFile, doHTML, colorFlag, "<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
 
         if (includedTypes) {
             foreach (lang; includedTypes.splitter(",")) {
@@ -3365,14 +3365,14 @@ body { font: 8px Verdana, sans-serif; }
             } else {
                 asNote = "";
             }
-            ppln(term, outFile, doHTML,
+            ppln(term, outFile, doHTML, colorFlag,
                  "Searching for \"" ~ commaedKeysString ~ "\"" ~
                  " case-" ~ (_caseFold ? "in" : "") ~"sensitively"
                  ~asNote ~incKindsNote ~underNote);
         }
 
         if (_showSkipped) {
-            ppln(term, outFile, doHTML,
+            ppln(term, outFile, doHTML, colorFlag,
                  "Skipping files of type\n", binFKinds.map!"' '~a.kindName".reduce!"a ~ \"\n\" ~ b");
         }
 
@@ -3387,7 +3387,7 @@ body { font: 8px Verdana, sans-serif; }
         // Setup root directory
         if (!_recache) {
             GC.disable;
-            _rootDir = loadRootDirTree(term, outFile, doHTML, _cacheFile, gstats);
+            _rootDir = loadRootDirTree(term, outFile, doHTML, colorFlag, _cacheFile, gstats);
             GC.enable;
         }
         if (!_rootDir) { // if first time
@@ -3431,11 +3431,11 @@ body { font: 8px Verdana, sans-serif; }
                 auto keysString = (keys.length >= 2 ? "s" : "") ~ " \"" ~ commaedKeysString;
                 term.setFace(stdFace, colorFlag);
                 if (_keyAsAcronym)  {
-                    ppln(term, outFile, doHTML, "No acronym matches for key" ~ keysString ~ `"` ~
+                    ppln(term, outFile, doHTML, colorFlag, "No acronym matches for key" ~ keysString ~ `"` ~
                          (keyAsSymbol ? " as symbol" : "") ~
                          " found in files of type");
                 } else if (!_keyAsExact) {
-                    ppln(term, outFile, doHTML, "No exact matches for key" ~ keysString ~ `"` ~
+                    ppln(term, outFile, doHTML, colorFlag, "No exact matches for key" ~ keysString ~ `"` ~
                          (keyAsSymbol ? " as symbol" : "") ~
                          " found" ~ incKindsNote ~
                          ". Relaxing scan to" ~ (keyAsSymbol ? " symbol" : "") ~ " acronym match.");
@@ -3448,8 +3448,8 @@ body { font: 8px Verdana, sans-serif; }
             }
 
             if (doHTML) {
-                ppln(term, outFile, doHTML, "</body>");
-                ppln(term, outFile, doHTML, "</html>");
+                ppln(term, outFile, doHTML, colorFlag, "</body>");
+                ppln(term, outFile, doHTML, colorFlag, "</html>");
             }
         }
 
@@ -3528,12 +3528,12 @@ body { font: 8px Verdana, sans-serif; }
                 if (showTree) {
                     auto parentDir = file.parent;
                     immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                 }
                 term.setFace(isDir ? dirFace : fileFace, colorFlag);
-                pp(term, outFile, doHTML, asPath(doHTML, file.path, showTree ? file.name : file.path, false));
+                pp(term, outFile, doHTML, colorFlag, asPath(doHTML, file.path, showTree ? file.name : file.path, false));
                 term.setFace(warnFace, colorFlag);
-                ppln(term, outFile, doHTML, ":  ", isDir ? "Directory" : "File", msg);
+                ppln(term, outFile, doHTML, colorFlag, ":  ", isDir ? "Directory" : "File", msg);
             }
         }
     }
@@ -3547,12 +3547,12 @@ body { font: 8px Verdana, sans-serif; }
         if (_showSkipped) {
             if (showTree) {
                 immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
             }
             term.setFace(fileFace, colorFlag);
-            pp(term, outFile, doHTML, asPath(doHTML, regfile.path, showTree ? regfile.name : regfile.path, false));
+            pp(term, outFile, doHTML, colorFlag, asPath(doHTML, regfile.path, showTree ? regfile.name : regfile.path, false));
             term.setFace(skipFileFace, colorFlag);
-            ppln(term, outFile, doHTML,
+            ppln(term, outFile, doHTML, colorFlag,
                  ": Skipped " ~ kind.kindName ~ " file" ~ skipCause);
         }
     }
@@ -3597,11 +3597,11 @@ body { font: 8px Verdana, sans-serif; }
                     if (_showSkipped)  {
                         if (showTree) {
                             immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                            term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                            term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                         }
                         term.setFace(fileFace, colorFlag);
-                        pp(term, outFile, doHTML, asPath(doHTML, regfile.path, showTree ? regfile.name : regfile.path, false));
-                        term.setFace(skipFileFace, colorFlag); ppln(term, outFile, doHTML, ": Skipped " ~ kind.kindName ~ " file at ",
+                        pp(term, outFile, doHTML, colorFlag, asPath(doHTML, regfile.path, showTree ? regfile.name : regfile.path, false));
+                        term.setFace(skipFileFace, colorFlag); ppln(term, outFile, doHTML, colorFlag, ": Skipped " ~ kind.kindName ~ " file at ",
                                                                         nthString(kindIndex + 1), " blind try");
                     }
                     break;
@@ -3737,7 +3737,7 @@ body { font: 8px Verdana, sans-serif; }
                     if (offKB >= 0) { // if hit
                         if (!showTree && ctx == ScanContext.fileName) {
                             term.setFace(dirFace, colorFlag);
-                            pp(term, outFile, doHTML, parentDir.path ~ dirSeparator);
+                            pp(term, outFile, doHTML, colorFlag, parentDir.path ~ dirSeparator);
                         }
 
                         // Check Context
@@ -3751,30 +3751,30 @@ body { font: 8px Verdana, sans-serif; }
                             !anyHit) { // if this is first hit
                             if (showTree) {
                                 term.setFace(stdFace, colorFlag);
-                                pp(term, outFile, doHTML, "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
+                                pp(term, outFile, doHTML, colorFlag, "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
                             } else {
                                 foreach (fromSymlink; fromSymlinks) {
                                     term.setFace(symlinkFace, colorFlag);
-                                    pp(term, outFile, doHTML, asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
-                                    term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML,
+                                    pp(term, outFile, doHTML, colorFlag, asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
+                                    term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, colorFlag,
                                                                               " modified ",
                                                                               shortDurationString(_currTime - fromSymlink.timeLastModified) , " ago");
-                                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, " -> ");
+                                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " -> ");
                                 }
 
                                 // show file path/name
                                 term.setFace(regFileFace, colorFlag);
-                                pp(term, outFile, doHTML, asPath(doHTML, theFile.path, displayedFileName, false)); // show path
+                                pp(term, outFile, doHTML, colorFlag, asPath(doHTML, theFile.path, displayedFileName, false)); // show path
                             }
 
                             // show file line:column
-                            term.setFace(contextFace, colorFlag); pp(term, outFile, doHTML, ":",nL+1, ":",offKB+1, ":");
+                            term.setFace(contextFace, colorFlag); pp(term, outFile, doHTML, colorFlag, ":",nL+1, ":",offKB+1, ":");
                         }
                         anyHit = true; // at least hit
 
                         // show content prefix
                         term.setFace(thisFace, colorFlag);
-                        pp(term, outFile, doHTML, rest[0..offKB]);
+                        pp(term, outFile, doHTML, colorFlag, rest[0..offKB]);
 
                         // show hit part
                         immutable cIx = ix % keyFaces.length;
@@ -3786,14 +3786,14 @@ body { font: 8px Verdana, sans-serif; }
                                 if (aIx >= 1) {
                                     immutable prevOff = acronymOffsets[aIx-1];
                                     if (prevOff + 1 < currOff) { // at least one letter in between
-                                        term.setFace(ctxFace, colorFlag); pp(term, outFile, doHTML, rest[prevOff + 1 .. currOff]);
+                                        term.setFace(ctxFace, colorFlag); pp(term, outFile, doHTML, colorFlag, rest[prevOff + 1 .. currOff]);
                                     }
                                 }
                                 // hit letter
-                                term.setFace(keyFace, colorFlag); pp(term, outFile, doHTML, rest[currOff]);
+                                term.setFace(keyFace, colorFlag); pp(term, outFile, doHTML, colorFlag, rest[currOff]);
                             }
                         } else {
-                            term.setFace(keyFace, colorFlag); pp(term, outFile, doHTML, rest[offKB..offKE]);
+                            term.setFace(keyFace, colorFlag); pp(term, outFile, doHTML, colorFlag, rest[offKB..offKE]);
                         }
 
                         rest = rest[offKE..$]; // move forward in line
@@ -3812,7 +3812,7 @@ body { font: 8px Verdana, sans-serif; }
             // finalize line
             if (anyHit)  {
                 // show final context suffix
-                term.setFace(thisFace, colorFlag); ppln(term, outFile, doHTML, rest);
+                term.setFace(thisFace, colorFlag); ppln(term, outFile, doHTML, colorFlag, rest);
             }
             nL++;
         }
@@ -3832,8 +3832,8 @@ body { font: 8px Verdana, sans-serif; }
         //             immutable offEOL = (cntEOL == -1 ? // if no hit
         //                                 src.length :   // end of file
         //                                 offHit + cntEOL); // normal case
-        //             term.setFace(pathFace, colorFlag); pp(term, outFile, doHTML, asPath(doHTML, dent.name));
-        //             term.setFace(stdFace, colorFlag); ppln(term, outFile, doHTML, ":", rowHit + 1,
+        //             term.setFace(pathFace, colorFlag); pp(term, outFile, doHTML, colorFlag, asPath(doHTML, dent.name));
+        //             term.setFace(stdFace, colorFlag); ppln(term, outFile, doHTML, colorFlag, ":", rowHit + 1,
         //                                                                               ":", colHit + 1,
         //                                                                               ":", cast(string)src[offBOL..offEOL]);
         //         }
@@ -3848,18 +3848,18 @@ body { font: 8px Verdana, sans-serif; }
         // case 1:
         //     immutable hit1 = src.find(keys[0]);
         //     if (!hit1.empty) {
-        //         ppln(term, outFile, doHTML, asPath(doHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
+        //         ppln(term, outFile, doHTML, colorFlag, asPath(doHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
         //     }
         //     break;
         // // case 2:
         // //     immutable hit2 = src.find(keys[0], keys[1]); // find two keys
-        // //     if (!hit2[0].empty) { ppln(term, outFile, doHTML, asPath(doHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
-        // //     if (!hit2[1].empty) { ppln(term, outFile, doHTML, asPath(doHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
+        // //     if (!hit2[0].empty) { ppln(term, outFile, doHTML, colorFlag, asPath(doHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
+        // //     if (!hit2[1].empty) { ppln(term, outFile, doHTML, colorFlag, asPath(doHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
         // //     break;
         // // case 3:
         // //     immutable hit3 = src.find(keys[0], keys[1], keys[2]); // find two keys
         // //     if (!hit3.empty) {
-        // //         ppln(term, outFile, doHTML, asPath(doHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
+        // //         ppln(term, outFile, doHTML, colorFlag, asPath(doHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
         // //     }
         // //     break;
         // }
@@ -4045,7 +4045,7 @@ body { font: 8px Verdana, sans-serif; }
         if (!fromSymlinks.find(theSymlink).empty) {
             if (gstats.showSymlinkCycles) {
                 import std.range: back;
-                ppln(term, outFile, doHTML,
+                ppln(term, outFile, doHTML, colorFlag,
                      "Cycle of symbolic links: " ~ to!string(fromSymlinks.map!"a.path") ~ " -> " ~ to!string(fromSymlinks.back.target));
             }
             return;
@@ -4078,18 +4078,18 @@ body { font: 8px Verdana, sans-serif; }
                 auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent);
 
                 if (showTree) {
-                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
-                    term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, theSymlink.name);
-                    term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, " modified ",
+                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
+                    term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, colorFlag, theSymlink.name);
+                    term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " modified ",
                                                               shortDurationString(_currTime - theSymlink.timeLastModified), " ago");
 
-                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, " -> ");
+                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " -> ");
 
-                    term.setFace(targetFile.face, colorFlag); pp(term, outFile, doHTML, theSymlink.target);
+                    term.setFace(targetFile.face, colorFlag); pp(term, outFile, doHTML, colorFlag, theSymlink.target);
 
-                    term.setFace(infoFace, colorFlag); pp(term, outFile, doHTML, " lying outside of " ~ (_topDirNames.length == 1 ? "tree " : "all trees "));
-                    term.setFace(dirFace, colorFlag); pp(term, outFile, doHTML, _topDirNames.reduce!"a ~ ',' ~ b");
-                    term.setFace(infoFace, colorFlag); ppln(term, outFile, doHTML, " is followed");
+                    term.setFace(infoFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " lying outside of " ~ (_topDirNames.length == 1 ? "tree " : "all trees "));
+                    term.setFace(dirFace, colorFlag); pp(term, outFile, doHTML, colorFlag, _topDirNames.reduce!"a ~ ',' ~ b");
+                    term.setFace(infoFace, colorFlag); ppln(term, outFile, doHTML, colorFlag, " is followed");
                 }
 
                 ++gstats.noScannedSymlinks;
@@ -4112,18 +4112,18 @@ body { font: 8px Verdana, sans-serif; }
                 foreach (ix, fromSymlink; fromSymlinks) {
                     if (showTree && ix == 0) {
                         immutable intro = "├";
-                        term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ");
-                        term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, asPath(doHTML, theSymlink.path, theSymlink.name, false));
+                        term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ");
+                        term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, colorFlag, asPath(doHTML, theSymlink.path, theSymlink.name, false));
                     }
                     else {
-                        term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
+                        term.setFace(symlinkFace, colorFlag); pp(term, outFile, doHTML, colorFlag, asPath(doHTML, fromSymlink.path, fromSymlink.path, false));
                     }
-                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, " -> ");
+                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " -> ");
                 }
 
-                term.setFace(errorFace, colorFlag); pp(term, outFile, doHTML, theSymlink.target);
-                term.setFace(warnFace, colorFlag); pp(term, outFile, doHTML, " is missing");
-                ppln(term, outFile, doHTML);
+                term.setFace(errorFace, colorFlag); pp(term, outFile, doHTML, colorFlag, theSymlink.target);
+                term.setFace(warnFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " is missing");
+                ppln(term, outFile, doHTML, colorFlag);
             }
         }
         fromSymlinks.popBackN(1);
@@ -4155,21 +4155,21 @@ body { font: 8px Verdana, sans-serif; }
             size_t subIndex = 0;
             if (showTree) {
                 immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
-                term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(theDir.depth).join("") ~ intro ~
+                term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(theDir.depth).join("") ~ intro ~
                                                      "─ ");
                 immutable dirName = theDir.isRoot ? dirSeparator : theDir.name;
-                term.setFace(dirFace, colorFlag); pp(term, outFile, doHTML, asPath(doHTML, theDir.path, dirName, true));
-                term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, " modified ",
+                term.setFace(dirFace, colorFlag); pp(term, outFile, doHTML, colorFlag, asPath(doHTML, theDir.path, dirName, true));
+                term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " modified ",
                                                           shortDurationString(_currTime - theDir.timeLastModified), " ago");
                 if (gstats.showUsage) {
                     term.setFace(timeFace, colorFlag);
-                    pp(term, outFile, doHTML, " of Tree-Size ", theDir.treeSize);
+                    pp(term, outFile, doHTML, colorFlag, " of Tree-Size ", theDir.treeSize);
                 }
                 if (gstats.showSHA1) {
                     term.setFace(digestFace, colorFlag);
-                    pp(term, outFile, doHTML, " with Tree-Content-Id ", theDir.treeContId);
+                    pp(term, outFile, doHTML, colorFlag, " with Tree-Content-Id ", theDir.treeContId);
                 }
-                endl(term, outFile, doHTML);
+                endl(term, outFile, doHTML, colorFlag);
             }
 
             ++gstats.noScannedDirs;
@@ -4188,15 +4188,15 @@ body { font: 8px Verdana, sans-serif; }
                             if (_showSkipped) {
                                 if (showTree) {
                                     immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
-                                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, "│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
+                                    term.setFace(stdFace, colorFlag); pp(term, outFile, doHTML, colorFlag, "│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
                                 }
                                 term.setFace(dirFace, colorFlag);
-                                pp(term, outFile, doHTML, asPath(doHTML, subDir.path, showTree ? subDir.name : subDir.path, true));
+                                pp(term, outFile, doHTML, colorFlag, asPath(doHTML, subDir.path, showTree ? subDir.name : subDir.path, true));
 
-                                term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, " modified ",
+                                term.setFace(timeFace, colorFlag); pp(term, outFile, doHTML, colorFlag, " modified ",
                                                                       shortDurationString(_currTime - subDir.timeLastModified), " ago");
 
-                                term.setFace(infoFace, colorFlag); ppln(term, outFile, doHTML, ": Skipped Directory of type ", skippedDirKindsMap[sub.name].kindName);
+                                term.setFace(infoFace, colorFlag); ppln(term, outFile, doHTML, colorFlag, ": Skipped Directory of type ", skippedDirKindsMap[sub.name].kindName);
                                 term.setFace(stdFace, colorFlag);
                             }
                         } else {
@@ -4208,12 +4208,12 @@ body { font: 8px Verdana, sans-serif; }
                     scanSymlink(term, topDir, assumeNotNull(subSymlink), theDir, keys, fromSymlinks);
                 }
                 else {
-                    if (showTree) { ppln(term, outFile, doHTML); }
+                    if (showTree) { ppln(term, outFile, doHTML, colorFlag); }
                 }
                 ++subIndex;
 
                 if (ctrlC) {
-                    ppln(term, outFile, doHTML, "Ctrl-C pressed: Aborting scan of ", theDir.path);
+                    ppln(term, outFile, doHTML, colorFlag, "Ctrl-C pressed: Aborting scan of ", theDir.path);
                     break;
                 }
             }
@@ -4263,9 +4263,9 @@ body { font: 8px Verdana, sans-serif; }
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (!dupFilesOk.empty) {
                     term.setFace(infoFace, colorFlag);
-                    ppln(term, outFile, doHTML, "Files with same name: ", dupFilesOk[0].name);
+                    ppln(term, outFile, doHTML, colorFlag, "Files with same name: ", dupFilesOk[0].name);
                     foreach (dupFile; dupFilesOk) {
-                        term.setFace(dupFile.face, colorFlag); ppln(term, outFile, doHTML, " ", dupFile.path);
+                        ppln(term, outFile, doHTML, colorFlag, " ", dupFile);
                     }
                 }
             }
@@ -4277,9 +4277,9 @@ body { font: 8px Verdana, sans-serif; }
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
                     term.setFace(infoFace, colorFlag);
-                    ppln(term, outFile, doHTML, "Files with same inode (hardlinks): ", inode);
+                    ppln(term, outFile, doHTML, colorFlag, "Files with same inode (hardlinks): ", inode);
                     foreach (dupFile; dupFilesOk) {
-                        term.setFace(regFileFace, colorFlag); ppln(term, outFile, doHTML, " ", dupFile.path);
+                        ppln(term, outFile, doHTML, colorFlag, " ", dupFile);
                     }
                 }
             }
@@ -4293,9 +4293,9 @@ body { font: 8px Verdana, sans-serif; }
                     term.setFace(infoFace, colorFlag);
                     immutable typeName = cast(RegFile)dupFilesOk[0] ? "Files" : "Directories";
                     immutable digestHint = gstats.showSHA1 ? " (" ~ to!string(digest) ~ ")" : [];
-                    ppln(term, outFile, doHTML, typeName ~ " with same content", digestHint, " of size ", dupFilesOk[0].size);
+                    ppln(term, outFile, doHTML, colorFlag, typeName ~ " with same content", digestHint, " of size ", dupFilesOk[0].size);
                     foreach (dupFile; dupFilesOk) {
-                        term.setFace(regFileFace, colorFlag); ppln(term, outFile, doHTML, " ", dupFile.path);
+                        ppln(term, outFile, doHTML, colorFlag, " ", dupFile);
                     }
                 }
             }
@@ -4305,35 +4305,35 @@ body { font: 8px Verdana, sans-serif; }
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty) {
             term.setFace(infoFace, colorFlag);
-            ppln(term, outFile, doHTML, "Broken Symlinks ");
+            ppln(term, outFile, doHTML, colorFlag, "Broken Symlinks ");
             foreach (bsl; _brokenSymlinks) {
-                ppln(term, outFile, doHTML, " ", bsl);
+                ppln(term, outFile, doHTML, colorFlag, " ", bsl);
             }
             term.setFace(stdFace, colorFlag);
         }
 
         /* Counts */
-        pp(term, outFile, doHTML, "Scanned ");
-        pp(term, outFile, doHTML, gstats.noScannedDirs, " Dirs, ");
-        pp(term, outFile, doHTML, gstats.noScannedRegFiles, " Regular Files, ");
-        pp(term, outFile, doHTML, gstats.noScannedSymlinks, " Symbolic Links, ");
-        pp(term, outFile, doHTML, gstats.noScannedSpecialFiles, " Special Files, ");
-        ppln(term, outFile, doHTML, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root
+        pp(term, outFile, doHTML, colorFlag, "Scanned ");
+        pp(term, outFile, doHTML, colorFlag, gstats.noScannedDirs, " Dirs, ");
+        pp(term, outFile, doHTML, colorFlag, gstats.noScannedRegFiles, " Regular Files, ");
+        pp(term, outFile, doHTML, colorFlag, gstats.noScannedSymlinks, " Symbolic Links, ");
+        pp(term, outFile, doHTML, colorFlag, gstats.noScannedSpecialFiles, " Special Files, ");
+        ppln(term, outFile, doHTML, colorFlag, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root
 
         if (gstats.densenessCount) {
-            ppln(term, outFile, doHTML, "Average Byte Bistogram (Binary Histogram) Denseness ",
+            ppln(term, outFile, doHTML, colorFlag, "Average Byte Bistogram (Binary Histogram) Denseness ",
                  cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent");
-            ppln(term, outFile, doHTML, "Average Byte ", NGramOrder, "-Gram Denseness ",
+            ppln(term, outFile, doHTML, colorFlag, "Average Byte ", NGramOrder, "-Gram Denseness ",
                  cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent");
         }
 
-        ppln(term, outFile, doHTML, "Scanned ", results.noBytesScanned);
-        ppln(term, outFile, doHTML, "Skipped ", results.noBytesSkipped);
-        ppln(term, outFile, doHTML, "Unreadable ", results.noBytesUnreadable);
-        ppln(term, outFile, doHTML, "Total Contents ", results.noBytesTotalContents);
-        ppln(term, outFile, doHTML, "Total ", results.noBytesTotal);
-        ppln(term, outFile, doHTML, "Total number of hits ", results.numTotalHits);
-        ppln(term, outFile, doHTML, "Number of Files with hits ", results.numFilesWithHits);
+        ppln(term, outFile, doHTML, colorFlag, "Scanned ", results.noBytesScanned);
+        ppln(term, outFile, doHTML, colorFlag, "Skipped ", results.noBytesSkipped);
+        ppln(term, outFile, doHTML, colorFlag, "Unreadable ", results.noBytesUnreadable);
+        ppln(term, outFile, doHTML, colorFlag, "Total Contents ", results.noBytesTotalContents);
+        ppln(term, outFile, doHTML, colorFlag, "Total ", results.noBytesTotal);
+        ppln(term, outFile, doHTML, colorFlag, "Total number of hits ", results.numTotalHits);
+        ppln(term, outFile, doHTML, colorFlag, "Number of Files with hits ", results.numFilesWithHits);
     }
 }
 
