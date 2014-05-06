@@ -120,7 +120,7 @@ import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
 import std.range: repeat, array, empty;
 import std.stdint: uint64_t;
-import std.traits: Unqual;
+import std.traits: Unqual, isInstanceOf;
 import core.memory: GC;
 import core.exception;
 
@@ -1464,7 +1464,7 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
             term.setFace(digestFace, colorFlag);
             faceChanged = true;
         }
-        else static if (IsA!(Unqual!(Arg), Bytes))
+        else static if (isInstanceOf!(Bytes, Arg))
         {
             term.setFace(bytesFace, colorFlag);
             faceChanged = true;
