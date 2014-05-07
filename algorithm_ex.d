@@ -179,6 +179,18 @@ unittest { assert([11, 11].allEqual); }
 unittest { assert(![11, 12].allEqual); }
 unittest { int[] x; assert(x.allEqual); }
 
+/* See also: http://forum.dlang.org/thread/febepworacvbapkpozjl@forum.dlang.org#post-gbqvablzsbdowqoijxpn:40forum.dlang.org */
+/* import std.range: InputRange; */
+/* bool allEqual_(T)(InputRange!T range) @safe pure nothrow */
+/* { */
+/*     import std.algorithm: findAdjacent; */
+/*     import std.range: empty; */
+/*     return range.findAdjacent!("a != b").empty; */
+/* } */
+/* unittest { assert([11, 11].allEqual_); } */
+/* unittest { assert(![11, 12].allEqual_); } */
+/* unittest { int[] x; assert(x.allEqual_); } */
+
 /** Returns: true iff all elements in range are equal (or range is empty) to $(D element).
 
     Possible alternatives or aliases: allElementsEqualTo
