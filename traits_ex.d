@@ -34,8 +34,8 @@ unittest {
 
 import std.functional: unaryFun, binaryFun;
 
-alias isEven = unaryFun!(a => (a & 1) == 0);
-alias isOdd = unaryFun!(a => (a & 1) == 1);
+alias isEven = unaryFun!(a => (a & 1) == 0); // Limit to Integers?
+alias isOdd = unaryFun!(a => (a & 1) == 1); // Limit to Integers?
 alias lessThan = binaryFun!((a, b) => a < b);
 alias greaterThan = binaryFun!((a, b) => a > b);
 
