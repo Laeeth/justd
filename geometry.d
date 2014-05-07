@@ -876,6 +876,7 @@ struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if 
 
         /// Transpose Current Matrix.
         void transpose() { _matrix = transposed()._matrix; }
+        alias T = transpose; // C++ Armadillo naming convention.
 
         unittest {
             mat2 m2 = mat2(1.0f);
