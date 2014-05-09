@@ -97,3 +97,6 @@
 [submodule "elf-d"]
 	path = elf-d
 	url = https://github.com/nordlow/elf-d.git
+[submodule "containers"]
+	path = containers
+	url = https://github.com/economicmodeling/containers.git

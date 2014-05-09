@@ -142,7 +142,7 @@ import tempfs;
 import rational: Rational;
 import ngram;
 import notnull;
-import elf;
+/* import elf; */
 import allocator;
 
 /* NGram Aliases */
@@ -799,6 +799,8 @@ class File
             unpacker.unpack(stdTime); timeLastAccessed = SysTime(stdTime); // TODO: Functionize
         }
     }
+
+    alias dir = parent; // SCons style alias to parent
 
     Dir parent; // reference to parenting directory (or null if this is a root directory).
     string name; // Empty if root directory.
@@ -1459,7 +1461,7 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
             term.setFace(arg.face, colorFlag);
             faceChanged = true;
         }
-        else static if (is(Unqual!(Arg) == SHA1Digest))
+        else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
         {
             term.setFace(digestFace, colorFlag);
             faceChanged = true;
@@ -2596,6 +2598,16 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.sourceCode);
+
+        // https://en.wikipedia.org/wiki/Diff
+        auto diffKind = new FKind("Diff", [], ["diff", "patch"],
+                                  "diff", 0,
+                                  [], [],
+                                  [], // N/A
+                                  defaultStringDelims,
+                                  FileContent.text);
+        srcFKinds ~= diffKind;
+        diffKind.wikiURL = "https://en.wikipedia.org/wiki/Diff";
 
         // Index Source Kinds by File extension
         FKind[][string] extSrcKinds;

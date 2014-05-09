@@ -1,6 +1,6 @@
 CTAGS = ctags
 ECTAGS_LANGS = Make,C,C++,D,Pascal,Sh,Ada,Lisp,Go,Protobuf
-TAGS_FILES = *.d */*.d Makefile
+TAGS_FILES = *.d */*.d Makefile $(shell find ~/opt/x86_64-unknown-linux-gnu/dmd -type f -iname '*.d')
 
 all: tags
 deps:
