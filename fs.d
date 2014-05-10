@@ -735,20 +735,18 @@ class File
         if (!parent) { return dirSeparator; }
 
         Dir[] parents; // collected parents
-        auto currParent = parent;
+        auto currParent = parent; // current parent
         size_t pathLength = 1 + name.length; // returned path length
-        size_t j = 0;
         while (currParent !is null && !currParent.isRoot) {
             pathLength += 1;
             pathLength += currParent.name.length;
             parents ~= currParent;
             currParent = currParent.parent;
-            ++j;
         }
 
         // build path
         auto path_ = new char[pathLength];
-        size_t i = 0;
+        size_t i = 0; // index to path_
         import std.range: retro;
         foreach (currParent_; parents.retro) {
             immutable parentName = currParent_.name;
@@ -764,7 +762,7 @@ class File
     }
 
     /** Returns: Path to $(D this) File.
-        Recursive Heap-active implementation.
+        Recursive Heap-active implementation, slower than path().
     */
     string pathRecursive() @property @trusted pure
     {
@@ -1442,52 +1440,81 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
 {
     foreach (arg; args)
     {
-        // pick path
-        static if (__traits(hasMember, arg, "path"))
+        static if (__traits(hasMember, arg, "dir"))
         {
-            auto arg_name = arg.path;
-        }
-        else
-        {
-            auto arg_name = arg;
-        }
+            Dir[] parents; // collected parents
+            auto currParent = arg.dir; // current parent
+            while (currParent !is null && !currParent.isRoot) {
+                parents ~= currParent;
+                currParent = currParent.parent;
+            }
 
-        alias Arg = typeof(arg); // shorthand
+            // write parent path
+            size_t i = 0;
+            import std.range: retro;
+            foreach (parent; parents.retro)
+            {
+                term.setFace(stdFace, colorFlag);
+                if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
+                term.setFace(dirFace, colorFlag);
+                if (outFile == stdout) term.write(parent.name); else outFile.write(parent.name);
+            }
 
-        // pick face
-        bool faceChanged = false;
-        static if (__traits(hasMember, arg, "face"))
-        {
+            // write name
+            term.setFace(stdFace, colorFlag);
+            if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
             term.setFace(arg.face, colorFlag);
-            faceChanged = true;
-        }
-        else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
-        {
-            term.setFace(digestFace, colorFlag);
-            faceChanged = true;
-        }
-        else static if (isInstanceOf!(Bytes, Arg))
-        {
-            term.setFace(bytesFace, colorFlag);
-            faceChanged = true;
-        }
-
-        // TODO: split path along / and print each part in colors
-        /* static assert(!is(Arg == NotNull!File)); */
-        /* static assert(!is(Arg == NotNull!RegFile)); */
-        /* static assert(!is(Arg == NotNull!Dir)); */
-        /* static assert(!is(Arg == NotNull!Dir)); */
-
-        // write
-        if (outFile == stdout)
-        {
-            term.write(arg_name);
-            if (faceChanged)
-                term.setFace(stdFace, colorFlag); // restore to standard
+            if (outFile == stdout) term.write(arg.name); else outFile.write(arg.name);
         }
         else
         {
-            outFile.write(args);
+            // pick path
+            static if (__traits(hasMember, arg, "path"))
+            {
+                const arg_string = arg.path;
+            }
+            else
+            {
+                const arg_string = arg;
+            }
+
+            alias Arg = typeof(arg); // shorthand
+
+            // pick face
+            bool faceChanged = false;
+            static if (__traits(hasMember, arg, "face"))
+            {
+                term.setFace(arg.face, colorFlag);
+                faceChanged = true;
+            }
+            else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
+            {
+                term.setFace(digestFace, colorFlag);
+                faceChanged = true;
+            }
+            else static if (isInstanceOf!(Bytes, Arg))
+            {
+                term.setFace(bytesFace, colorFlag);
+                faceChanged = true;
+            }
+
+            // TODO: split path along / and print each part in colors
+            /* static assert(!is(Arg == NotNull!File)); */
+            /* static assert(!is(Arg == NotNull!RegFile)); */
+            /* static assert(!is(Arg == NotNull!Dir)); */
+            /* static assert(!is(Arg == NotNull!Dir)); */
+
+            // write
+            if (outFile == stdout)
+            {
+                term.write(arg_string);
+                if (faceChanged)
+                    term.setFace(stdFace, colorFlag); // restore to standard
+            }
+            else
+            {
+                outFile.write(args);
+            }
         }
     }
 }
