@@ -798,9 +798,24 @@ class File
         }
     }
 
-    alias dir = parent; // SCons style alias to parent
+    /** Get Parenting Dirs starting from file system root downto containing
+     * directory of $(D this). */
+    auto parents()
+    {
+        Dir[] parents; // collected parents
+        auto currParent = dir; // current parent
+        while (currParent !is null && !currParent.isRoot) {
+            parents ~= currParent;
+            currParent = currParent.parent;
+        }
+        import std.range: retro;
+        return parents.retro;
+    }
+    alias dirs = parents; // SCons style alias
 
     Dir parent; // reference to parenting directory (or null if this is a root directory).
+    alias dir = parent; // SCons style alias
+
     string name; // Empty if root directory.
     Bytes64 size; // Size of file in bytes.
     SysTime timeLastModified;
@@ -1440,19 +1455,11 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
 {
     foreach (arg; args)
     {
-        static if (__traits(hasMember, arg, "dir"))
+        static if (__traits(hasMember, arg, "parents"))
         {
-            Dir[] parents; // collected parents
-            auto currParent = arg.dir; // current parent
-            while (currParent !is null && !currParent.isRoot) {
-                parents ~= currParent;
-                currParent = currParent.parent;
-            }
-
             // write parent path
             size_t i = 0;
-            import std.range: retro;
-            foreach (parent; parents.retro)
+            foreach (parent; arg.parents)
             {
                 term.setFace(stdFace, colorFlag);
                 if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
