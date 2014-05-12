@@ -143,7 +143,7 @@ import rational: Rational;
 import ngram;
 import notnull;
 /* import elf; */
-import allocator;
+/* import allocator; */
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
