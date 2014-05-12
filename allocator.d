@@ -313,7 +313,7 @@ pointers on top of another allocator.))
 )
  */
 
-module allocator;
+module std.allocator;
 
 // Example in the synopsis above
 unittest
@@ -348,7 +348,7 @@ version(unittest) import std.random, std.stdio;
 /*
 Ternary by Timon Gehr and Andrei Alexandrescu.
 */
-private struct Ternary
+struct Ternary
 {
     private ubyte value = 6;
     private static Ternary make(ubyte b)
@@ -4106,6 +4106,8 @@ struct InSituRegion(size_t size, size_t minAlign = platformAlignment)
     static assert(minAlign.isGoodStaticAlignment);
     static assert(size >= minAlign);
 
+    @disable this(this);
+
     // The store will be aligned to double.alignof, regardless of the requested
     // alignment.
     union
@@ -5910,6 +5912,54 @@ unittest
 }
 
 /**
+
+Stores an allocator object in thread-local storage (i.e. non-$(D shared) D
+global). $(D ThreadLocal!A) is a subtype of $(D A) so it appears to implement
+$(D A)'s allocator primitives.
+
+$(D A) must hold state, otherwise D ThreadLocal!A) refuses instantiation. This
+$(means e.g. $(D ThreadLocal!Mallocator) does not work because $(D Mallocator)'s
+state is not stored as members of $(D Mallocator), but instead is hidden in the
+C library implementation.
+
+*/
+struct ThreadLocal(A)
+{
+    static assert(stateSize!A,
+        typeof(A).stringof
+        ~ " does not have state so it cannot be used with ThreadLocal");
+
+    /**
+    The allocator instance.
+    */
+    static A it;
+
+    /**
+    $(D ThreadLocal!A) is a subtype of $(D A) so it appears to implement
+    $(D A)'s allocator primitives.
+    */
+    alias it this;
+
+    /**
+    $(D ThreadLocal) disables all constructors. The intended usage is
+    $(D ThreadLocal!A.it).
+    */
+    @disable this();
+    /// Ditto
+    @disable this(this);
+}
+
+///
+unittest
+{
+    static assert(!is(ThreadLocal!Mallocator));
+    static assert(!is(ThreadLocal!GCAllocator));
+    alias ThreadLocal!(Freelist!(GCAllocator, 0, 8, 1)) Allocator;
+    auto b = Allocator.it.allocate(5);
+    static assert(hasMember!(Allocator, "allocate"));
+}
+
+/**
 Dynamic version of an allocator. This should be used wherever a uniform type is
 required for encapsulating various allocator implementations.
 
@@ -5926,17 +5976,6 @@ class CAllocator
     }
 
     /**
-    Sets the alignment and returns $(D true) on success, $(D false) if not
-    supported. By default returns $(D false). An allocator implementation could
-    throw an exception if it does allow setting the alignment but an invalid
-    value is passed.
-    */
-    @property bool alignment(uint)
-    {
-        return false;
-    }
-
-    /**
     Returns the good allocation size that guarantees zero internal
     fragmentation. By default returns $(D s) rounded up to the nearest multiple
     of $(D alignment).
@@ -5947,64 +5986,219 @@ class CAllocator
     }
 
     /**
-    Allocates memory.
+    Allocates memory. The default returns $(D null).
     */
-    abstract void[] allocate(size_t);
+    void[] allocate(size_t)
+    {
+        return null;
+    }
 
     /**
-    Returns $(D true) if the allocator supports $(D owns). By default returns
-    $(D false).
+    Returns $(D Ternary.yes) if the allocator owns $(D b), $(D Ternary.no) if
+    the allocator doesn't own $(D b), and $(D Ternary.unknown) if ownership not
+    supported by the allocator. By default returns $(D Ternary.unknown).
     */
-    bool supportsOwns()
+    Ternary owns(void[] b)
+    {
+        return Ternary.unknown;
+    }
+
+    /**
+
+    Expands a memory block in place. By default, or if expansion not supported
+    by the allocator, returns $(D Ternary.unknown). If implemented, returns $(D
+    Ternary.yes) if expansion succeeded, $(D Ternary.no) otherwise.
+
+    */
+    Ternary expand(ref void[], size_t)
+    {
+        return Ternary.unknown;
+    }
+
+    /// Reallocates a memory block. By default returns $(D false).
+    bool reallocate(ref void[], size_t)
     {
         return false;
     }
 
     /**
-    Returns $(D true) if the allocator owns $(D b). By default issues $(D
-    assert(false)).
+
+    Deallocates a memory block. Returns $(D Ternary.unknown) if deallocation is
+    not supported (default). A simple way to check that an allocator supports
+    deallocation is to call $(D deallocate(null)).
+
     */
-    bool owns(void[] b)
+    Ternary deallocate(void[])
     {
-        assert(false);
+        return Ternary.unknown;
     }
 
-    /// Expands a memory block in place.
-    abstract bool expand(ref void[], size_t);
-
-    /// Reallocates a memory block.
-    abstract bool reallocate(ref void[] b, size_t);
-
-    /// Deallocates a memory block. Returns $(D false) if deallocation is not
-    /// supported.
-    abstract bool deallocate(void[]);
-
-    /// Deallocates all memory. Returns $(D false) if not supported.
-    abstract bool deallocateAll();
-
-    /// Returns $(D true) if allocator supports $(D allocateAll). By default
-    /// returns $(D false).
-    bool supportsAllocateAll()
+    /**
+    Deallocates all memory. Returns $(D Ternary.unknown) if deallocation is
+    not supported (default).
+    */
+    Ternary deallocateAll()
     {
-        return false;
+        return Ternary.unknown;
     }
 
     /**
     Allocates and returns all memory available to this allocator. By default
-    issues $(D assert(false)).
+    returns $(D null).
     */
     void[] allocateAll()
     {
-        assert(false);
+        return null;
     }
+}
+
+/**
+Shared version of $(D CAllocator).
+*/
+class CSharedAllocator
+{
+    /**
+    These method prescribe similar semantics to their $(D CAllocator)
+    counterparts.
+    */
+    @property uint alignment() shared
+    {
+        return platformAlignment;
+    }
+
+    /// Ditto
+    size_t goodAllocSize(size_t s) shared
+    {
+        return s.roundUpToMultipleOf(alignment);
+    }
+
+    /// Ditto
+    void[] allocate(size_t) shared
+    {
+        return null;
+    }
+
+    /// Ditto
+    Ternary owns(void[] b) shared
+    {
+        return Ternary.unknown;
+    }
+
+    /// Ditto
+    Ternary expand(ref void[], size_t) shared
+    {
+        return Ternary.unknown;
+    }
+
+    /// Ditto
+    bool reallocate(ref void[], size_t) shared
+    {
+        return false;
+    }
+
+    /// Ditto
+    Ternary deallocate(void[]) shared
+    {
+        return Ternary.unknown;
+    }
+
+    /// Ditto
+    Ternary deallocateAll() shared
+    {
+        return Ternary.unknown;
+    }
+
+    /// Ditto
+    void[] allocateAll() shared
+    {
+        return null;
+    }
+}
+
+/**
+
+Returns a dynamically-typed $(D CAllocator) built around a given
+statically-typed allocator $(D a) of type $(D A), as follows.
+
+$(UL
+$(LI If $(D A) has no state, the resulting object is allocated in static
+shared storage.)
+$(LI If $(D A) has state and is copyable, the result will store a copy of it
+within. The result itself is allocated in its own statically-typed allocator.)
+$(LI If $(D A) has state and is not copyable, the result will move the
+passed-in argument into the result. The result itself is allocated in its own
+statically-typed allocator.)
+)
+
+*/
+auto allocatorObject(A)(auto ref A a)
+{
+    alias Result = Select!(is(A == shared),
+        shared CSharedAllocator, CAllocator);
+    static if (stateSize!A == 0)
+    {
+        enum s = stateSize!(CAllocatorImpl!A).divideRoundUp(ulong.sizeof);
+        static __gshared ulong[s] state;
+        static __gshared Result result;
+        if (!result)
+        {
+            // Don't care about a few races
+            result = cast(Result) emplace!(CAllocatorImpl!A)(state[]);
+        }
+        assert(result);
+        return result;
+    }
+    else static if (is(typeof({ A b = a; A c = b; }))) // copyable
+    {
+        auto state = a.allocate(stateSize!(CAllocatorImpl!A));
+        static if (hasMember!(A, "deallocate"))
+        {
+            scope(failure) a.deallocate(state);
+        }
+        return cast(Result) emplace!(CAllocatorImpl!A)(state);
+    }
+    else // the allocator object is not copyable
+    {
+        // This is sensitive... create on the stack and then move
+        enum s = stateSize!(CAllocatorImpl!A).divideRoundUp(ulong.sizeof);
+        ulong[s] state;
+        emplace!(CAllocatorImpl!A)(state[], move(a));
+        auto dynState = a.allocate(stateSize!(CAllocatorImpl!A));
+        // Bitblast the object in its final destination
+        dynState[] = state[];
+        return cast(A) dynState.ptr;
+    }
+}
+
+unittest
+{
+    auto a = allocatorObject(Mallocator.it);
+    auto b =            a.allocate(100);
+    assert(b.length == 100, text(b.length));
+
+    Freelist!(GCAllocator, 0, 8, 1) fl;
+    auto sa = allocatorObject(fl);
+    writeln(typeof(sa).stringof);
+    b = a.allocate(101);
+    assert(b.length == 101);
+
+    FallbackAllocator!(InSituRegion!(10240, 64), GCAllocator) fb;
+    // Doesn't work yet...
+    //a = allocatorObject(fb);
+    //b = a.allocate(102);
+    //assert(b.length == 102);
 }
 
 /**
 Implementation of $(D CAllocator) using $(D Allocator). This adapts a
 statically-built allocator type to a uniform dynamic interface that is directly
 usable by non-templated code.
+
+Usually $(D CAllocatorImpl) is used indirectly by calling
+$(LREF allocatorObject).
 */
-class CAllocatorImpl(Allocator) : CAllocator
+class CAllocatorImpl(Allocator)
+    : Select!(is(typeof(Allocator.it) == shared), CSharedAllocator, CAllocator)
 {
     /**
     The implementation is available as a public member.
@@ -6012,134 +6206,117 @@ class CAllocatorImpl(Allocator) : CAllocator
     static if (stateSize!Allocator) Allocator impl;
     else alias impl = Allocator.it;
 
-    /// Returns $(D impl.alignment).
-    override @property uint alignment()
+    template Impl()
     {
-        return impl.alignment;
-    }
-
-    /**
-    If $(D Allocator) supports alignment setting, performs it and returns $(D
-    true). Otherwise, returns $(D false).
-    */
-    override @property bool alignment(uint a)
-    {
-        static if (is(typeof(impl.alignment = a)))
+        /// Returns $(D impl.alignment).
+        override @property uint alignment()
         {
-            impl.alignment = a;
-            return true;
+            return impl.alignment;
         }
-        else
+
+        /**
+        Returns $(D impl.goodAllocSize(s)).
+        */
+        override size_t goodAllocSize(size_t s)
         {
-            return false;
+            return impl.goodAllocSize(s);
         }
-    }
 
-    /**
-    Returns $(D impl.goodAllocSize(s)).
-    */
-    override size_t goodAllocSize(size_t s)
-    {
-        return impl.goodAllocSize(s);
-    }
-
-    /**
-    Returns $(D impl.allocate(s)).
-    */
-    override void[] allocate(size_t s)
-    {
-        return impl.allocate(s);
-    }
-
-    /**
-    Returns $(D true) if $(D Allocator) supports $(D owns).
-    */
-    override bool supportsOwns()
-    {
-        return hasMember!(Allocator, "owns");
-    }
-
-    /**
-    Overridden only if $(D Allocator) implements $(D owns). In that case,
-    returns $(D impl.owns(b)).
-    */
-    static if (hasMember!(Allocator, "owns"))
-    bool owns(void[] b)
-    {
-        return impl.owns(b);
-    }
-
-    /// Returns $(D impl.expand(b, s)) if defined, $(D false) otherwise.
-    override bool expand(ref void[] b, size_t s)
-    {
-        static if (hasMember!(Allocator, "expand"))
-            return impl.expand(b, s);
-        else
-            return false;
-    }
-
-    /// Returns $(D impl.reallocate(b, s)).
-    override bool reallocate(ref void[] b, size_t s)
-    {
-        return impl.reallocate(b, s);
-    }
-
-    /// Calls $(D impl.deallocate(b)) and returns $(D true) if defined,
-    /// otherwise returns $(D false).
-    override bool deallocate(void[] b)
-    {
-        static if (hasMember!(Allocator, "deallocate"))
+        /**
+        Returns $(D impl.allocate(s)).
+        */
+        override void[] allocate(size_t s)
         {
-            impl.deallocate(b);
-            return true;
+            return impl.allocate(s);
         }
-        else
-        {
-            return false;
-        }
-    }
 
-    /// Calls $(D impl.deallocateAll()) and returns $(D true) if defined,
-    /// otherwise returns $(D false).
-    override bool deallocateAll()
-    {
-        static if (hasMember!(Allocator, "deallocateAll"))
+        /**
+        Overridden only if $(D Allocator) implements $(D owns). In that case,
+        returns $(D impl.owns(b)).
+        */
+        static if (hasMember!(Allocator, "owns"))
+        override Ternary owns(void[] b)
         {
-            impl.deallocateAll();
-            return true;
+            return impl.owns(b);
         }
-        else
+
+        /// Returns $(D impl.expand(b, s)) if defined, $(D false) otherwise.
+        override Ternary expand(ref void[] b, size_t s)
         {
-            return false;
+            static if (hasMember!(Allocator, "expand"))
+                return Ternary(impl.expand(b, s));
+            else
+                return Ternary.unknown;
+        }
+
+        /// Returns $(D impl.reallocate(b, s)).
+        override bool reallocate(ref void[] b, size_t s)
+        {
+            return impl.reallocate(b, s);
+        }
+
+        /// Calls $(D impl.deallocate(b)) and returns $(D true) if defined,
+        /// otherwise returns $(D false).
+        override Ternary deallocate(void[] b)
+        {
+            static if (hasMember!(Allocator, "deallocate"))
+            {
+                static if (is(typeof(impl.deallocate(b)) == bool))
+                {
+                    return impl.deallocate(b);
+                }
+                else
+                {
+                    impl.deallocate(b);
+                    return Ternary.yes;
+                }
+            }
+            else
+            {
+                return Ternary.unknown;
+            }
+        }
+
+        /// Calls $(D impl.deallocateAll()) and returns $(D true) if defined,
+        /// otherwise returns $(D false).
+        override Ternary deallocateAll()
+        {
+            static if (hasMember!(Allocator, "deallocateAll"))
+            {
+                impl.deallocateAll();
+                return Ternary.yes;
+            }
+            else
+            {
+                return Ternary.unknown;
+            }
+        }
+
+        /**
+        Overridden only if $(D Allocator) implements $(D allocateAll). In that case,
+        returns $(D impl.allocateAll()).
+        */
+        static if (hasMember!(Allocator, "allocateAll"))
+        void[] allocateAll()
+        {
+            return impl.allocateAll();
         }
     }
 
-    /// Returns $(D true) if allocator supports $(D allocateAll). By default
-    /// returns $(D false).
-    override bool supportsAllocateAll()
-    {
-        return hasMember!(Allocator, "allocateAll");
-    }
-
-    /**
-    Overridden only if $(D Allocator) implements $(D allocateAll). In that case,
-    returns $(D impl.allocateAll()).
-    */
-    static if (hasMember!(Allocator, "deallocateAll"))
-    void[] allocateAll()
-    {
-        return impl.allocateAll();
-    }
+    static if (is(typeof(Allocator.it) == shared))
+        shared { mixin Impl!(); }
+    else
+        mixin Impl!();
 }
 
 ///
 unittest
 {
     /// Define an allocator bound to the built-in GC.
-    CAllocator alloc = new CAllocatorImpl!GCAllocator;
+    shared CSharedAllocator alloc = new CAllocatorImpl!GCAllocator;
     auto b = alloc.allocate(42);
     assert(b.length == 42);
-    assert(alloc.deallocate(b));
+    assert(alloc.deallocate(b) == Ternary.yes);
 
     // Define an elaborate allocator and bind it to the class API.
     // Note that the same variable "alloc" is used.
@@ -6157,9 +6334,9 @@ unittest
         GCAllocator
     );
 
-    alloc = new CAllocatorImpl!A;
+    auto alloc2 = new CAllocatorImpl!A;
     b = alloc.allocate(101);
-    assert(alloc.deallocate(b));
+    assert(alloc.deallocate(b) == Ternary.yes);
 }
 
 private bool isPowerOf2(uint x)
@@ -6656,7 +6833,54 @@ void testAllocator(alias make)()
         assert(a.resolveInternalPointer(b8.ptr + b8.length / 2) is null);
         assert(a.resolveInternalPointer(b8.ptr + b8.length) is null);
     }}
+}
 
+version (std_allocator_benchmark)
+unittest
+{
+    alias A = Freelist!(GCAllocator, 1, 64); A a;
+    //alias ThreadLocal!(Freelist!(GCAllocator, 64)) A; alias a = A.it;
+    //alias GCAllocator A;
+    //alias a = A.it;
+
+    static void testSpeed(A)()
+    {
+        static if (stateSize!A) A a;
+        else alias a = A.it;
+        //writeln("Using ", A.stringof);
+
+        void[][] bufs = cast(void[][]) a.allocate(1024 * 64 * (void[][]).sizeof);
+        bufs[] = null;
+
+        import std.random;
+        foreach (i; 0 .. 1_000_000)
+        {
+            auto j = uniform(0, bufs.length);
+            switch (uniform(0, 2))
+            {
+            case 0:
+                a.deallocate(bufs[j]);
+                bufs[j] = a.allocate(uniform(0, 64));
+                break;
+            case 1:
+                a.deallocate(bufs[j]);
+                bufs[j] = null;
+                break;
+            default:
+                assert(0);
+            }
+        }
+        a.deallocate(bufs);
+    }
+
+    import std.datetime;
+    writeln(benchmark!(
+        testSpeed!GCAllocator,
+        testSpeed!(Freelist!(GCAllocator, 1, 64)),
+        testSpeed!(Freelist!(Mallocator, 1, 64)),
+        testSpeed!(ThreadLocal!(Freelist!(GCAllocator, 1, 64))),
+        testSpeed!(ThreadLocal!(Freelist!(Mallocator, 1, 64))),
+    )(20)[].map!(t => t.to!("seconds", double)));
 }
 
 __EOF__

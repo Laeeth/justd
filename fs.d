@@ -734,14 +734,14 @@ class File
     {
         if (!parent) { return dirSeparator; }
 
-        Dir[] parents; // collected parents
-        auto currParent = parent; // current parent
+        auto curr = parent; // current parent
         size_t pathLength = 1 + name.length; // returned path length
-        while (currParent !is null && !currParent.isRoot) {
+        Dir[] parents; // collected parents
+        while (curr !is null && !curr.isRoot) {
             pathLength += 1;
-            pathLength += currParent.name.length;
-            parents ~= currParent;
-            currParent = currParent.parent;
+            pathLength += curr.name.length;
+            parents ~= curr;
+            curr = curr.parent;
         }
 
         // build path
@@ -762,7 +762,7 @@ class File
     }
 
     /** Returns: Path to $(D this) File.
-        Recursive Heap-active implementation, slower than path().
+        Recursive Heap-active implementation, slower than $(D path()).
     */
     string pathRecursive() @property @trusted pure
     {
@@ -802,11 +802,11 @@ class File
      * directory of $(D this). */
     auto parents()
     {
+        auto curr = dir; // current parent
         Dir[] parents; // collected parents
-        auto currParent = dir; // current parent
-        while (currParent !is null && !currParent.isRoot) {
-            parents ~= currParent;
-            currParent = currParent.parent;
+        while (curr !is null && !curr.isRoot) {
+            parents ~= curr;
+            curr = curr.parent;
         }
         import std.range: retro;
         return parents.retro;
