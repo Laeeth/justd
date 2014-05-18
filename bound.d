@@ -388,13 +388,13 @@ unittest
 }
 
 /** Return $(D x) with Automatic Packed Saturation. */
-auto ref saturated(T, bool packed = true)(inout T x) // TODO: inout may be inrelevant here
+auto ref saturated(T, bool packed = true)(inout T x) // TODO: inout may be irrelevant here
 {
     return bound!(T.min, T.max, false, packed)(x);
 }
 
 /** Return $(D x) with Automatic Packed Saturation. */
-auto ref optional(T, bool packed = true)(inout T x) // TODO: inout may be inrelevant here
+auto ref optional(T, bool packed = true)(inout T x) // TODO: inout may be irrelevant here
 {
     return bound!(T.min, T.max, false, packed)(x);
 }
