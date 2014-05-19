@@ -35,6 +35,8 @@
     - integer(range:low..high, step:1)
     - int(range:low..high, step:1)
     - num(range:low..high, step:1)
+
+    See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
  */
 module bound;
 
@@ -414,4 +416,11 @@ unittest {
 
     immutable im = 255;
     const u = saturated!ubyte(im);
+}
+
+unittest {
+    const sb127 = saturated!byte(127);
+    assert(!__traits(compiles,
+                     { const sb128 = saturated!byte(128); }), "This should fail");
+
 }
