@@ -150,8 +150,8 @@ struct EnumUnion(E...)
     static if (E.length >= 9) void opAssign(E[8] e) { _value = cast(U)e; }
 
     /* ====================== */
-    /* TODO: Why doesn't the following mixin template have an effect? */
-    version(none)
+    /* TODO: Why doesn't the following mixin templates have an effect? */
+    version(linux)
     {
         mixin template genOpAssign(uint i) {
             static if (i == 0)
