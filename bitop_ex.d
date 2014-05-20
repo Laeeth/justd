@@ -26,8 +26,8 @@ template UnsignedOfSameSizeAs(T)
 }
 
 /** Returns: Zero Instance T with $(D bix):th Bit set. */
-T makeBit(T, I...)(I bixs) @safe pure nothrow if (isIntegral!T &&
-                                                  allSatisfy!(isIntegral, I))
+T makeBit(T, I...)(I bixs) @safe @nogc pure nothrow if (isIntegral!T &&
+                                                        allSatisfy!(isIntegral, I))
     in { foreach (bix; bixs) { assert(0 <= bix && bix < 8*T.sizeof); } }
 body {
     typeof(return) x;
@@ -71,13 +71,13 @@ unittest {
 /** Test and sets the $(D bix):th Bit Of $(D a) to one.
     Returns: A non-zero value if the bit was set, and a zero if it was clear.
 */
-void setBit(T, I...)(ref T a, I bixs) @safe pure nothrow if (isIntegral!T &&
-                                                             allSatisfy!(isIntegral, I)) {
+void setBit(T, I...)(ref T a, I bixs) @safe @nogc pure nothrow if (isIntegral!T &&
+                                                                   allSatisfy!(isIntegral, I)) {
     a |= makeBit!T(bixs);
 }
 /** Returns: Check if all $(D bix):th Bits Of $(D a) are set. */
-void setBit(T, I...)(ref T a, I bixs) @trusted pure nothrow if ((!(isIntegral!T)) &&
-                                                                allSatisfy!(isIntegral, I)) {
+void setBit(T, I...)(ref T a, I bixs) @trusted @nogc pure nothrow if ((!(isIntegral!T)) &&
+                                                                      allSatisfy!(isIntegral, I)) {
     alias U = UnsignedOfSameSizeAs!T;
     (*(cast(U*)&a)) |= makeBit!U(bixs); // reuse integer variant
 }
