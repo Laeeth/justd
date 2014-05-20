@@ -36,6 +36,32 @@
     - int(range:low..high, step:1)
     - num(range:low..high, step:1)
 
+    TODO: Use
+    T saveOp(string op, T)(T x, T y) pure @save @nogc if(isIntegral!T
+    && (op=="+" || op=="-" || op=="<<" || op=="*"))
+    {
+    mixin("x "~op~"= y");
+    static if(isSigned!T)
+    {
+    static if(op == "*")
+    {
+    asm naked { jnc opok; }
+    }
+    else
+    {
+    asm naked { jno opok; }
+    }
+    x = T.min;
+    }
+    else // unsigned
+    {
+    asm naked { jnc opok; }
+    x = T.max;
+    }
+    opok:
+    return x;
+    }
+
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
  */
 module bound;
