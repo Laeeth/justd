@@ -25,7 +25,8 @@ enum Format { Text, HTML, };
     TODO: Generalize to Ranges other than slices!?
     TODO: Support HTML
 */
-@trusted void fshow(Args...)(Format format, string[] names, inout (Args) args) {
+@trusted void fshow(Args...)(Format format, string[] names, inout (Args) args)
+{
     import std.stdio: wr = write, wrln = writeln;
     import std.algorithm: map, reduce, min, max, repeat, join;
     import std.string: leftJustify, rightJustify;
