@@ -42,14 +42,14 @@ unittest {
 }
 
 /** Returns: Check if all $(D bix):th Bits Of $(D a) are set. */
-bool getBit(T, I...)(in T a, I bixs) @safe pure nothrow if (isIntegral!T &&
-                                                            allSatisfy!(isIntegral, I))
+bool getBit(T, I...)(in T a, I bixs) @safe @nogc pure nothrow if (isIntegral!T &&
+                                                                  allSatisfy!(isIntegral, I))
 {
     return a & makeBit!T(bixs) ? true : false;
 }
 /** Returns: Check if all $(D bix):th Bits Of $(D a) are set. */
-bool getBit(T, I)(in T a, I bix) @trusted pure nothrow if ((!(isIntegral!T)) &&
-                                                           allSatisfy!(isIntegral, I))
+bool getBit(T, I)(in T a, I bix) @trusted @nogc pure nothrow if ((!(isIntegral!T)) &&
+                                                                 allSatisfy!(isIntegral, I))
 {
     return (*(cast(UnsignedOfSameSizeAs!T*)&a)).getBit(bix); // reuse integer variant
 }
