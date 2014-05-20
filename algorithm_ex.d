@@ -30,7 +30,7 @@ private template siotaImpl(size_t to, size_t now)
 
 // ==============================================================================================
 
-string typestringof(T)(T a) @safe pure nothrow { return T.stringof; }
+string typestringof(T)(T a) @safe @nogc pure nothrow { return T.stringof; }
 
 import std.range: dropOne;
 alias tail = dropOne;
@@ -43,7 +43,7 @@ alias tail = dropOne;
     Similar to behaviour of Lisps (or a...).
     TODO: Is inout Conversion!T the correct return value?
 */
-CommonType!T either(T...)(T a) @safe pure nothrow if (a.length >= 1)
+CommonType!T either(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
 {
     static if (T.length == 1) {
         return a[0];
@@ -52,7 +52,7 @@ CommonType!T either(T...)(T a) @safe pure nothrow if (a.length >= 1)
     }
 }
 /** This overload enables, when possible, lvalue return. */
-auto ref either(T...)(ref T a) @safe pure nothrow if (a.length >= 1 && allSame!T)
+auto ref either(T...)(ref T a) @safe @nogc pure nothrow if (a.length >= 1 && allSame!T)
 {
     static if (T.length == 1) {
         return a[0];
@@ -92,7 +92,7 @@ unittest {
     Similar to behaviour of Lisps (and a...).
     TODO: Is inout Conversion!T the correct return value?
 */
-CommonType!T every(T...)(T a) @safe pure nothrow if (a.length >= 1)
+CommonType!T every(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
 {
     static if (T.length == 1) {
         return a[0];
@@ -103,7 +103,7 @@ CommonType!T every(T...)(T a) @safe pure nothrow if (a.length >= 1)
 /** This overload enables, when possible, lvalue return.
     TODO: Only last argument needs to be an l-value.
 */
-auto ref every(T...)(ref T a) @safe pure nothrow if (a.length >= 1 && allSame!T)
+auto ref every(T...)(ref T a) @safe @nogc pure nothrow if (a.length >= 1 && allSame!T)
 {
     static if (T.length == 1) {
         return a[0];
@@ -160,7 +160,7 @@ auto minmaxElement(alias F = min, alias G = max, R)(in R range)
     return reduce!(F, G)(tuple(ElementType!R.max,
                                ElementType!R.min), range);
 }
-// unittest { assert([1, 2, 3].minmaxElement == tuple(1, 3)); }
+/* unittest { assert([1, 2, 3].minmaxElement == tuple(1, 3)); } */
 
 // ==============================================================================================
 
@@ -169,7 +169,7 @@ auto minmaxElement(alias F = min, alias G = max, R)(in R range)
 
     Possible alternatives or aliases: allElementsEqual, haveEqualElements
 */
-bool allEqual(R)(R range) @safe pure nothrow if (isInputRange!R)
+bool allEqual(R)(R range) @safe /* @nogc */ pure nothrow if (isInputRange!R)
 {
     import std.algorithm: findAdjacent;
     import std.range: empty;
@@ -205,7 +205,7 @@ unittest { assert([42, 42].allEqualTo(42)); }
 // ==============================================================================================
 
 /** Check if all Elements of $(D x) are zero. */
-bool allZero(T, bool useStatic = true)(in T x) @safe pure nothrow // TODO: Extend to support struct's and classes's'
+bool allZero(T, bool useStatic = true)(in T x) @safe @nogc pure nothrow // TODO: Extend to support struct's and classes's'
 {
     static        if (isStruct!T || isClass!T) {
         foreach (const ref elt; x.tupleof) {
@@ -278,7 +278,7 @@ unittest {
 // ==============================================================================================
 
 /** Returns: true iff $(D a) has a value containing meaningful information. */
-bool hasContents(T)(T a) @safe pure nothrow
+bool hasContents(T)(T a) @safe @nogc pure nothrow
 {
     static if (isArray!T || isSomeString!T) {
         return cast(bool)a.length; // see: http://stackoverflow.com/questions/18563414/empty-string-should-implicit-convert-to-bool-true/18566334?noredirect=1#18566334
@@ -308,7 +308,7 @@ unittest {
 /** Returns: Number of Default-Initialized (Zero) Elements in $(D x) at
     recursion depth $(D depth).
 */
-Rational!ulong sparseness(T)(in T x, int depth = -1) @safe pure nothrow
+Rational!ulong sparseness(T)(in T x, int depth = -1) @safe @nogc pure nothrow
 {
     alias R = typeof(return); // rational shorthand
     static if (isIterable!T) {
@@ -349,7 +349,7 @@ unittest {
 }
 
 /** Returns: Number of Non-Zero Elements in $(D range). */
-auto denseness(T)(in T x, int recurseDepth = -1) @safe pure nothrow
+auto denseness(T)(in T x, int recurseDepth = -1) @safe @nogc pure nothrow
 {
     return 1 - x.sparseness(recurseDepth);
 }
@@ -362,7 +362,7 @@ unittest {
 
 // ==============================================================================================
 
-bool isSymbol(T)(T a) @safe pure nothrow
+bool isSymbol(T)(T a) @safe @nogc pure nothrow
 {
     import std.ascii: isAlpha;
     return a.isAlpha || a == '_';
@@ -371,7 +371,7 @@ bool isSymbol(T)(T a) @safe pure nothrow
 enum FindContext { inWord, inSymbol,
                    asWord, asSymbol }
 
-bool isSymbolASCII(string rest, ptrdiff_t off, size_t end) @safe pure nothrow
+bool isSymbolASCII(string rest, ptrdiff_t off, size_t end) @safe @nogc pure nothrow
 in {
     assert(end <= rest.length);
 } body {
@@ -393,7 +393,7 @@ unittest {
 
 // ==============================================================================================
 
-bool isWordASCII(string rest, ptrdiff_t off, size_t end) @safe pure nothrow
+bool isWordASCII(string rest, ptrdiff_t off, size_t end) @safe @nogc pure nothrow
 in {
     assert(end <= rest.length);
 } body {
@@ -1009,6 +1009,7 @@ unittest {
 /*     dln(getTypeString!Rational); */
 /* } */
 
+/** Check if $(D a) and $(D b) are colinear. */
 bool areColinear(T)(T a, T b) @safe pure nothrow
 {
     // a and b are colinear if a.x / a.y == b.x / b.y
@@ -1104,14 +1105,14 @@ unittest
 }
 
 /** Python Style To-String-Conversion Alias. */
-@safe pure string str(T)(in T a)
+string str(T)(in T a) @safe pure
 {
     import std.conv: to;
     return to!string(a);
 }
 
 /** Python Style Length Alias. */
-@safe pure nothrow string len(T)(in T a)
+auto len(T)(in T a) @safe @nogc pure nothrow
 {
     return a.length;
 }
