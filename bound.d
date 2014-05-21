@@ -105,10 +105,16 @@ struct Bound(T,
                       "upper + 1 cannot equal T.max");
     }
 
-    alias T type;
+    alias T type;    /** Nice type property. */
 
+    /** Return true if this is a signed integer. */
+    static bool isSigned() { return lower < 0; }
+    /** Get Lower Inclusive Bound. */
     static auto min() @property @safe pure nothrow { return lower; }
+    alias low = min;
+    /** Get Upper Inclusive Bound. */
     static auto max() @property @safe pure nothrow { return optional ? upper - 1 : upper; }
+    alias high = max;
 
     /** Constructor Magic. */
     alias _value this;
