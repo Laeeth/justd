@@ -107,7 +107,8 @@
 */
 module fs;
 
-version = msgpack; // Use cerealed serialization
+version = msgpack; // Use msgpack serialization
+/* version = cerealed; // Use cerealed serialization */
 
 import std.stdio: ioFile = File, stdout;
 import std.typecons: Tuple, tuple;
