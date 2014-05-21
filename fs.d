@@ -142,7 +142,7 @@ import tempfs;
 import rational: Rational;
 import ngram;
 import notnull;
-/* import elf; */
+import elf;
 /* import allocator; */
 
 /* NGram Aliases */
