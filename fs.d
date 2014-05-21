@@ -121,6 +121,7 @@ import std.digest.sha: sha1Of, toHexString;
 import std.range: repeat, array, empty;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf;
+import std.allocator;
 import core.memory: GC;
 import core.exception;
 
@@ -143,7 +144,6 @@ import rational: Rational;
 import ngram;
 import notnull;
 import elf;
-/* import allocator; */
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
