@@ -1452,7 +1452,18 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
     }
 }
 
-/** Pretty Print Argument $(D arg) to Terminal $(D term). */
+void ppPut(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                      Face!Color face,
+                      Arg arg)
+{
+    term.setFace(face, colorFlag);
+    if (outFile == stdout)
+        term.write(arg);
+    else
+        outFile.write(arg);
+}
+
+/** Pretty-Print Argument $(D arg) to Terminal $(D term). */
 void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
                       Arg arg)
 {
@@ -1462,18 +1473,13 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
         size_t i = 0;
         foreach (parent; arg.parents)
         {
-            term.setFace(stdFace, colorFlag);
-            if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
-
-            term.setFace(dirFace, colorFlag);
-            if (outFile == stdout) term.write(parent.name); else outFile.write(parent.name);
+            ppPut(term, outFile, doHTML, colorFlag, stdFace, dirSeparator[0]);
+            ppPut(term, outFile, doHTML, colorFlag, dirFace, parent.name);
         }
 
         // write name
-        term.setFace(stdFace, colorFlag);
-        if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
-        term.setFace(arg.face, colorFlag);
-        if (outFile == stdout) term.write(arg.name); else outFile.write(arg.name);
+        ppPut(term, outFile, doHTML, colorFlag, stdFace, dirSeparator[0]);
+        ppPut(term, outFile, doHTML, colorFlag, arg.face, arg.name);
     }
     else
     {
@@ -1527,7 +1533,7 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
     }
 }
 
-/** Pretty Print Arguments $(D args) to Terminal $(D term). */
+/** Pretty-Print Arguments $(D args) to Terminal $(D term). */
 void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
                            Args args)
 {
@@ -1537,7 +1543,7 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
     }
 }
 
-/** Pretty Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
+/** Pretty-Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
 void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
                        Args args)
 {
@@ -1548,7 +1554,7 @@ void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFla
     }
 }
 
-/** Pretty Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
+/** Pretty-Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
 void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
                          Args args)
 {
