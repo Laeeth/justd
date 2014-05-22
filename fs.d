@@ -1452,83 +1452,92 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
     }
 }
 
-void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
-                           Args args)
+/** Pretty Print Argument $(D arg) to Terminal $(D term). */
+void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                      Arg arg)
 {
-    foreach (arg; args)
+    static if (__traits(hasMember, arg, "parents"))
     {
-        static if (__traits(hasMember, arg, "parents"))
+        // write parent path
+        size_t i = 0;
+        foreach (parent; arg.parents)
         {
-            // write parent path
-            size_t i = 0;
-            foreach (parent; arg.parents)
-            {
-                term.setFace(stdFace, colorFlag);
-                if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
-                term.setFace(dirFace, colorFlag);
-                if (outFile == stdout) term.write(parent.name); else outFile.write(parent.name);
-            }
-
-            // write name
             term.setFace(stdFace, colorFlag);
             if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
-            term.setFace(arg.face, colorFlag);
-            if (outFile == stdout) term.write(arg.name); else outFile.write(arg.name);
+
+            term.setFace(dirFace, colorFlag);
+            if (outFile == stdout) term.write(parent.name); else outFile.write(parent.name);
+        }
+
+        // write name
+        term.setFace(stdFace, colorFlag);
+        if (outFile == stdout) term.write(dirSeparator[0]); else outFile.write(dirSeparator[0]); // TODO: Functionize
+        term.setFace(arg.face, colorFlag);
+        if (outFile == stdout) term.write(arg.name); else outFile.write(arg.name);
+    }
+    else
+    {
+        // pick path
+        static if (__traits(hasMember, arg, "path"))
+        {
+            const arg_string = arg.path;
         }
         else
         {
-            // pick path
-            static if (__traits(hasMember, arg, "path"))
-            {
-                const arg_string = arg.path;
-            }
-            else
-            {
-                const arg_string = arg;
-            }
+            const arg_string = arg;
+        }
 
-            alias Arg = typeof(arg); // shorthand
+        alias Arg = typeof(arg); // shorthand
 
-            // pick face
-            bool faceChanged = false;
-            static if (__traits(hasMember, arg, "face"))
-            {
-                term.setFace(arg.face, colorFlag);
-                faceChanged = true;
-            }
-            else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
-            {
-                term.setFace(digestFace, colorFlag);
-                faceChanged = true;
-            }
-            else static if (isInstanceOf!(Bytes, Arg))
-            {
-                term.setFace(bytesFace, colorFlag);
-                faceChanged = true;
-            }
+        // pick face
+        bool faceChanged = false;
+        static if (__traits(hasMember, arg, "face"))
+        {
+            term.setFace(arg.face, colorFlag);
+            faceChanged = true;
+        }
+        else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
+        {
+            term.setFace(digestFace, colorFlag);
+            faceChanged = true;
+        }
+        else static if (isInstanceOf!(Bytes, Arg))
+        {
+            term.setFace(bytesFace, colorFlag);
+            faceChanged = true;
+        }
 
-            // TODO: split path along / and print each part in colors
-            /* static assert(!is(Arg == NotNull!File)); */
-            /* static assert(!is(Arg == NotNull!RegFile)); */
-            /* static assert(!is(Arg == NotNull!Dir)); */
-            /* static assert(!is(Arg == NotNull!Dir)); */
+        // TODO: split path along / and print each part in colors
+        /* static assert(!is(Arg == NotNull!File)); */
+        /* static assert(!is(Arg == NotNull!RegFile)); */
+        /* static assert(!is(Arg == NotNull!Dir)); */
+        /* static assert(!is(Arg == NotNull!Dir)); */
 
-            // write
-            if (outFile == stdout)
-            {
-                term.write(arg_string);
-                if (faceChanged)
-                    term.setFace(stdFace, colorFlag); // restore to standard
-            }
-            else
-            {
-                outFile.write(args);
-            }
+        // write
+        if (outFile == stdout)
+        {
+            term.write(arg_string);
+            if (faceChanged)
+                term.setFace(stdFace, colorFlag); // restore to standard
+        }
+        else
+        {
+            outFile.write(arg_string);
         }
     }
 }
 
 /** Pretty Print Arguments $(D args) to Terminal $(D term). */
+void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                           Args args)
+{
+    foreach (arg; args)
+    {
+        ppArg(term, outFile, doHTML, colorFlag, arg);
+    }
+}
+
+/** Pretty Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
 void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
                        Args args)
 {
