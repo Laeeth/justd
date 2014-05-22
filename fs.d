@@ -1452,7 +1452,8 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
     }
 }
 
-void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Args args)
+void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                           Args args)
 {
     foreach (arg; args)
     {
@@ -1528,7 +1529,8 @@ void ppArgs(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colo
 }
 
 /** Pretty Print Arguments $(D args) to Terminal $(D term). */
-void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Args args)
+void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                       Args args)
 {
     ppArgs(term, outFile, doHTML, colorFlag, args);
     if (outFile == stdout)
@@ -1538,7 +1540,8 @@ void pp(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFla
 }
 
 /** Pretty Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
-void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Args args)
+void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                         Args args)
 {
     ppArgs(term, outFile, doHTML, colorFlag, args);
     if (outFile == stdout)
@@ -1944,7 +1947,8 @@ Bytes64 treeSizeMemoized(NotNull!File file, Bytes64[File] cache) @trusted /* not
 /** Save File System Tree Cache under Directory $(D rootDir).
     Returns: Serialized Byte Array.
 */
-const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, Dir rootDir, string cacheFile) @trusted
+const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                                     Dir rootDir, string cacheFile) @trusted
 {
     immutable tic = Clock.currTime;
     version(msgpack) {
@@ -1969,7 +1973,8 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML,
 /** Load File System Tree Cache from $(D cacheFile).
     Returns: Root Directory of Loaded Tree.
 */
-Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag, string cacheFile, GStats gstats) @trusted
+Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
+                          string cacheFile, GStats gstats) @trusted
 {
     immutable tic = Clock.currTime;
 
