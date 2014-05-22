@@ -1,4 +1,4 @@
-#!/usr/bin/env rdmd
+#!/usr/bin/env rdmd-dev-module
 
 /** Extensions to Enumerations.
 
