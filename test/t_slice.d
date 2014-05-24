@@ -16,8 +16,11 @@ void main(string[] args)
 
     auto y = x[0 .. $]; // whole
 
-    auto z = x[0 .. $+1]; // TODO: This should give static error
-    auto z1 = x[-1 .. $]; // TODO: This should give static error
+    // TODO: This should give static error throw some common range propagation
+    // of min/max of lower and upper bound relative to beginning and end of
+    // slice
+    auto z = x[0 .. $+1];
+    auto z1 = x[-1 .. $];
 
     auto w = l.ptr[0 .. l.length];
 }
