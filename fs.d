@@ -1496,21 +1496,21 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
         alias Arg = typeof(arg); // shorthand
 
         // pick face
-        bool faceChanged = false;
         static if (__traits(hasMember, arg, "face"))
         {
             term.setFace(arg.face, colorFlag);
-            faceChanged = true;
         }
         else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
         {
             term.setFace(digestFace, colorFlag);
-            faceChanged = true;
         }
         else static if (isInstanceOf!(Bytes, Arg))
         {
             term.setFace(bytesFace, colorFlag);
-            faceChanged = true;
+        }
+        else
+        {
+            term.setFace(stdFace, colorFlag);
         }
 
         // TODO: split path along / and print each part in colors
@@ -1523,8 +1523,6 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
         if (outFile == stdout)
         {
             term.write(arg_string);
-            if (faceChanged)
-                term.setFace(stdFace, colorFlag); // restore to standard
         }
         else
         {
@@ -1979,9 +1977,11 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML,
     }
     cacheFile.write(data);
     immutable toc = Clock.currTime;
+
     term.setFace(stdFace, colorFlag);
     ppln(term, outFile, doHTML, colorFlag, "Wrote tree cache of size ", data.length.Bytes64, " to ", cacheFile, " in ",
          shortDurationString(toc - tic));
+
     return data;
 }
 
