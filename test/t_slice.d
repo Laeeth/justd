@@ -21,6 +21,7 @@ void main(string[] args)
     // relative to beginning and end of slice
     auto z = x[0 .. $+1];
     auto z1 = x[-1 .. $];
+    auto z2 = x[0 .. $*2];
 
     auto w = l.ptr[0 .. l.length];
 }
