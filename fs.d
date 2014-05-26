@@ -254,18 +254,22 @@ string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
 
 struct Face(Color)
 {
-    this(Color fg, Color bg, bool bright)
+    this(Color fg, Color bg, bool bright, string htmlTag)
     {
         this.fg = fg;
         this.bg = bg;
         this.bright = bright;
+        this.htmlTag = htmlTag;
     }
     Color fg;
     Color bg;
     bool bright;
+    string htmlTag;
 }
 
-Face!Color face(Color)(Color fg, Color bg, bool bright = false) { return Face!Color(fg, bg, bright); }
+Face!Color face(Color)(Color fg, Color bg, bool bright = false, string htmlTag = []) {
+    return Face!Color(fg, bg, bright, htmlTag);
+}
 
 /** File Content Type Code. */
 enum FileContent
@@ -1419,6 +1423,9 @@ enum warnFace = face(Color.yellow, Color.black);
 enum kindFace = warnFace;
 enum errorFace = face(Color.red, Color.black);
 
+enum titleFace = face(Color.white, Color.black, false, "title");
+enum h1Face = face(Color.white, Color.black, false, "h1");
+
 // Support these as immutable
 
 /** Key (Hit) Face Palette. */
@@ -1539,6 +1546,14 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
 
         term.setFace(getFace(arg), colorFlag);
 
+        static if (__traits(hasMember, arg, "face") &&
+                   __traits(hasMember, arg.face, "htmlTag")) {
+            if (doHTML && !arg.face.htmlTag.empty)
+            {
+                outFile.write("<", arg.face.htmlTag, ">");
+            }
+        }
+
         // write
         if (outFile == stdout)
         {
@@ -1547,6 +1562,14 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
         else
         {
             outFile.write(arg_string);
+        }
+
+        static if (__traits(hasMember, arg, "face") &&
+                   __traits(hasMember, arg.face, "htmlTag")) {
+            if (doHTML && !arg.face.htmlTag.empty)
+            {
+                outFile.write("</", arg.face.htmlTag, ">");
+            }
         }
     }
 }
@@ -3430,9 +3453,11 @@ class Scanner(Term)
         }
 
         if (doHTML) {
-            ppln(term, outFile, doHTML, colorFlag, "<!DOCTYPE html>
+            ppln(term, outFile, doHTML, colorFlag,
+                 "<!DOCTYPE html>
 <html>
 <head>
+<meta charset=\"UTF-8\"/>
 <style>
 body { font: 8px Verdana, sans-serif; }
 </style>
@@ -3487,10 +3512,14 @@ body { font: 8px Verdana, sans-serif; }
             } else {
                 asNote = "";
             }
+
+            const title = ("Searching for \"" ~ commaedKeysString ~ "\"" ~
+                           " case-" ~ (_caseFold ? "in" : "") ~"sensitively"
+                           ~asNote ~incKindsNote ~underNote);
             ppln(term, outFile, doHTML, colorFlag,
-                 "Searching for \"" ~ commaedKeysString ~ "\"" ~
-                 " case-" ~ (_caseFold ? "in" : "") ~"sensitively"
-                 ~asNote ~incKindsNote ~underNote);
+                 faze(title, titleFace));
+            ppln(term, outFile, doHTML, colorFlag,
+                 faze(title, h1Face));
         }
 
         if (_showSkipped) {
@@ -4504,12 +4533,12 @@ body { font: 8px Verdana, sans-serif; }
                         if (dupRegFile._cstat.kindId)
                         {
                             pp(term, outFile, doHTML, colorFlag,
-                               " of kind ",
+                               " is ",
                                gstats.allKindsById[dupRegFile._cstat.kindId]);
                         }
                         pp(term, outFile, doHTML, colorFlag,
-                           " ",
-                           (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "7-bit (ASCII)" : ""
+                           " is ",
+                           (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "ASCII" : ""
                             );
                     }
                     ppendl(term, outFile, doHTML, colorFlag);
