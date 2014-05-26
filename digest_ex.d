@@ -40,11 +40,14 @@ struct Digest(size_t numBytes = 20, string name = "SHA-1") {
     }
 
     // Alternatively: writefln("%-(%02x%)", digest[0 .. numBytes])
-    string toString() const @property @trusted pure /* nothrow */ {
+    string toString(bool abbreviated = false) const @property @trusted pure /* nothrow */ {
         import std.digest.sha: toHexString;
         import std.range: chunks;
         import std.algorithm: map, joiner;
-        return name ~ ":" ~ _bytes[].chunks(4).map!toHexString.joiner(":").to!string;
+        if (abbreviated)
+            return name ~ ":" ~ _bytes[0..4].toHexString ~ "\u2026";
+        else
+            return name ~ ":" ~ _bytes[].chunks(4).map!toHexString.joiner(":").to!string;
     }
 
     /** Check if digest is undefined. */
