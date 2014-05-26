@@ -40,7 +40,7 @@ struct Digest(size_t numBytes = 20, string name = "SHA-1") {
     }
 
     // Alternatively: writefln("%-(%02x%)", digest[0 .. numBytes])
-    string toString(bool abbreviated = false) const @property @trusted pure /* nothrow */ {
+    string toString(bool abbreviated = true) const @property @trusted pure /* nothrow */ {
         import std.digest.sha: toHexString;
         import std.range: chunks;
         import std.algorithm: map, joiner;
