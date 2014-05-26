@@ -1481,6 +1481,32 @@ auto faze(T)(T text, Face!Color face = stdFace)
     return Fazed!T(text, face);
 }
 
+auto getFace(Arg)(in Arg arg)
+{
+    // pick face
+    static if (__traits(hasMember, arg, "face"))
+    {
+        return arg.face;
+    }
+    else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
+    {
+        return digestFace;
+    }
+    else static if (isInstanceOf!(Bytes, Arg))
+    {
+        return bytesFace;
+    }
+    else static if (isInstanceOf!(FKind, Arg) ||
+                    isInstanceOf!(NotNull!FKind, Arg))
+    {
+        return kindFace;
+    }
+    else
+    {
+        return stdFace;
+    }
+}
+
 /** Pretty-Print Argument $(D arg) to Terminal $(D term). */
 void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag,
                       Arg arg)
@@ -1511,36 +1537,7 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
             const arg_string = to!string(arg);
         }
 
-        alias Arg = typeof(arg); // shorthand
-
-        // pick face
-        static if (__traits(hasMember, arg, "face"))
-        {
-            term.setFace(arg.face, colorFlag);
-        }
-        else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
-        {
-            term.setFace(digestFace, colorFlag);
-        }
-        else static if (isInstanceOf!(Bytes, Arg))
-        {
-            term.setFace(bytesFace, colorFlag);
-        }
-        else static if (isInstanceOf!(FKind, Arg) ||
-                        isInstanceOf!(NotNull!FKind, Arg))
-        {
-            term.setFace(kindFace, colorFlag);
-        }
-        else
-        {
-            term.setFace(stdFace, colorFlag);
-        }
-
-        // TODO: split path along / and print each part in colors
-        /* static assert(!is(Arg == NotNull!File)); */
-        /* static assert(!is(Arg == NotNull!RegFile)); */
-        /* static assert(!is(Arg == NotNull!Dir)); */
-        /* static assert(!is(Arg == NotNull!Dir)); */
+        term.setFace(getFace(arg), colorFlag);
 
         // write
         if (outFile == stdout)
@@ -1592,7 +1589,10 @@ void ppln(Term, Args...)(ref Term term, ioFile outFile, bool doHTML, bool colorF
 }
 
 /** Print End of Line to Terminal $(D term). */
-void endl(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag) { return ppln(term, outFile, doHTML, colorFlag); }
+void ppendl(Term)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag)
+{
+    return ppln(term, outFile, doHTML, colorFlag);
+}
 
 /** Dir.
  */
@@ -3511,7 +3511,6 @@ body { font: 8px Verdana, sans-serif; }
         _uid = getuid();
         _gid = getgid();
 
-
         // Setup root directory
         if (!_recache) {
             GC.disable;
@@ -4351,7 +4350,7 @@ body { font: 8px Verdana, sans-serif; }
                     pp(term, outFile, doHTML, colorFlag,
                        " with Tree-Content-Id ", theDir.treeContId);
                 }
-                endl(term, outFile, doHTML, colorFlag);
+                ppendl(term, outFile, doHTML, colorFlag);
             }
 
             ++gstats.noScannedDirs;
@@ -4482,18 +4481,44 @@ body { font: 8px Verdana, sans-serif; }
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
 
-                    immutable typeName = cast(RegFile)dupFilesOk[0] ? "Files" : "Directories";
+                    auto firstDup = dupFilesOk[0];
+                    immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
+
                     pp(term, outFile, doHTML, colorFlag,
                        faze(typeName ~
                             " with same content", infoFace));
+
+                    // SHA1
                     if (gstats.showSHA1)
                         pp(term, outFile, doHTML, colorFlag,
                            " (", digest, ")");
-                    ppln(term, outFile, doHTML, colorFlag,
-                         " of size ", dupFilesOk[0].size);
+
+                    // size
+                    pp(term, outFile, doHTML, colorFlag,
+                         " of size ", firstDup.size);
+
+                    // content. TODO: Functionize
+                    auto dupRegFile = cast(RegFile)firstDup;
+                    if (dupRegFile)
+                    {
+                        if (dupRegFile._cstat.kindId)
+                        {
+                            pp(term, outFile, doHTML, colorFlag,
+                               " of kind ",
+                               gstats.allKindsById[dupRegFile._cstat.kindId]);
+                        }
+                        pp(term, outFile, doHTML, colorFlag,
+                           " ",
+                           (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "7-bit (ASCII)" : ""
+                            );
+                    }
+                    ppendl(term, outFile, doHTML, colorFlag);
+
+                    // file list
                     foreach (dupFile; dupFilesOk) {
                         ppln(term, outFile, doHTML, colorFlag, " ", dupFile);
                     }
+
                 }
             }
         }
