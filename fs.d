@@ -3495,8 +3495,13 @@ body { font: 8px Verdana, sans-serif; }
 
         if (_showSkipped) {
             ppln(term, outFile, doHTML, colorFlag,
-                 "Skipping files of type\n",
-                 binFKinds.map!"' '~a.kindName".reduce!"a ~ \"\n\" ~ b");
+                 "Skipping files of type"/* , */
+                 /* binFKinds.map!"' '~a.kindName".reduce!"a ~ \"\n\" ~ b" */);
+            foreach (fkind; binFKinds)
+            {
+                ppln(term, outFile, doHTML, colorFlag,
+                     "- ", fkind);
+            }
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
