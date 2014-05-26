@@ -412,6 +412,7 @@ class FKind
                                    string[] keywords_ = [],
 
                                    Delim[] strings_ = [],
+
                                    Delim[] comments_ = [],
 
                                    FileContent content_ = FileContent.unknown,
@@ -476,6 +477,8 @@ class FKind
         this.description = description;
         this.wikiURL = wikiURL;
     }
+
+    override string toString() const @property @trusted pure nothrow { return kindName; }
 
     /** Returns: Id Unique to matching behaviour of $(D this) FKind. If match
         behaviour of $(D this) FKind changes returned id will change.
@@ -1076,6 +1079,8 @@ class RegFile : File
                 if (doSHA1) { sha1.put(chunk); }
                 if (doBist) { _cstat.bist.put(chunk); }
                 if (doBitStatus) {
+                    /* TODO: This can be parallelized using 64-bit wording!
+                     * Write automatic parallelizing library for this? */
                     foreach (elt; chunk) {
                         import bitop_ex: bt;
                         isASCII = isASCII && !elt.bt(7); // ASCII has no topmost bit set
@@ -1411,7 +1416,7 @@ enum bytesFace = face(Color.yellow, Color.black);
 
 enum infoFace = face(Color.white, Color.black, true);
 enum warnFace = face(Color.yellow, Color.black);
-enum skipFileFace = warnFace;
+enum kindFace = warnFace;
 enum errorFace = face(Color.red, Color.black);
 
 // Support these as immutable
@@ -1520,6 +1525,11 @@ void ppArg(Term, Arg)(ref Term term, ioFile outFile, bool doHTML, bool colorFlag
         else static if (isInstanceOf!(Bytes, Arg))
         {
             term.setFace(bytesFace, colorFlag);
+        }
+        else static if (isInstanceOf!(FKind, Arg) ||
+                        isInstanceOf!(NotNull!FKind, Arg))
+        {
+            term.setFace(kindFace, colorFlag);
         }
         else
         {
@@ -2017,7 +2027,7 @@ Dir loadRootDirTree(Term)(ref Term term, ioFile outFile, bool doHTML, bool color
         }
         immutable toc = Clock.currTime;
         ppln(term, outFile, doHTML, colorFlag,
-             "Read cache of size",
+             "Read cache of size ",
              data.length.Bytes64, " from ", cacheFile, " in ",
              shortDurationString(toc - tic), " containing");
         pp(term, outFile, doHTML, colorFlag, gstats.noDirs, " Dirs, ");
@@ -3674,7 +3684,7 @@ body { font: 8px Verdana, sans-serif; }
                     fileFace));
             ppln(term, outFile, doHTML, colorFlag,
                  ": Skipped ",
-                 faze(kind.kindName, skipFileFace),
+                 kind,
                  " file",
                  skipCause);
         }
@@ -3732,7 +3742,7 @@ body { font: 8px Verdana, sans-serif; }
 
                         ppln(term, outFile, doHTML, colorFlag,
                              ": Skipped ",
-                             faze(kind.kindName, skipFileFace),
+                             kind,
                              " file at ",
                              nthString(kindIndex + 1),
                              " blind try");
