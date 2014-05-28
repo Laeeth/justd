@@ -1123,3 +1123,7 @@ unittest
     import std.array: array;
     assert(([42].map!str).array == ["42"]);
 }
+
+import std.range: InputRange, OutputRange;
+alias Source = InputRange;
+alias Sink = OutputRange;
