@@ -82,6 +82,10 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
    TODO: Choose fastDigitDiscardal based on elementMin and elementMax (if they
    are given)
    TODO: Add doInPlace CT-param. If doInPlace isRandomAccessRange!R is needed
+
+   TODO: Use @nogc attribute when possible
+
+   See also: http://forum.dlang.org/thread/vmytpazcusauxypkwdbn@forum.dlang.org#post-vmytpazcusauxypkwdbn:40forum.dlang.org
  */
 void radixSortImpl(R,
                    alias fun = "a",
