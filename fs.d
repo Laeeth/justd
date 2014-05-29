@@ -4632,6 +4632,13 @@ body { font: 10px Verdana, sans-serif; }
         ppln(term, viz, gstats.noScannedSymlinks, " Symbolic Links, ");
         ppln(term, viz, gstats.noScannedSpecialFiles, " Special Files, ");
         ppln(term, viz, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root
+        /* ppln(term, viz, */
+        /*      list(item(gstats.noScannedDirs, " Dirs, "), */
+        /*           item(gstats.noScannedRegFiles, " Regular Files, "), */
+        /*           item(gstats.noScannedSymlinks, " Symbolic Links, "), */
+        /*           item(gstats.noScannedSpecialFiles, " Special Files, "), */
+        /*           item("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
+        /*          )); */
 
         if (gstats.densenessCount) {
             ppln(term, viz, "Average Byte Bistogram (Binary Histogram) Denseness ",
