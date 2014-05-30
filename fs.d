@@ -1411,6 +1411,10 @@ enum PathFormat
     relative,
 }
 
+/** Header. */
+struct Header(uint L, T...) { T args; enum level = L; }
+auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
+
 /** Printed as Path. */
 struct AsPath(T) { T arg; }
 auto asPath(T)(T arg) { return AsPath!T(arg); }
@@ -1474,9 +1478,6 @@ enum errorFace = face(Color.red, Color.black);
 
 enum titleFace = face(Color.white, Color.black, false, false, ["title"]);
 enum h1Face = face(Color.white, Color.black, false, false, ["h1"]);
-enum h2Face = face(Color.white, Color.black, false, false, ["h2"]);
-enum h3Face = face(Color.white, Color.black, false, false, ["h3"]);
-enum h4Face = face(Color.white, Color.black, false, false, ["h4"]);
 
 // Support these as immutable
 
@@ -1578,6 +1579,17 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
             ppArg(term, viz, depth + 1, subArg);
         }
     }
+    else static if (isInstanceOf!(Header, Arg))
+    {
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace,
+                                              "<h" ~ to!string(arg.level) ~ ">"); }
+        else if (viz.form == VizForm.textASCII) {
+            const tag = "=".repeat(arg.level); // AsciiDoc
+            ppArgs(term, viz, stdFace, tag, " ", arg.args, " ", tag);
+        }
+        ppArgs(term, viz, arg.args);
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</h" ~ to!string(arg.level) ~ ">"); }
+    }
     else static if (isInstanceOf!(UList, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); }
@@ -1659,13 +1671,14 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
         // write name
         static if (__traits(hasMember, arg, "isRoot")) // TODO: Use isDir = Dir or NonNull!Dir
         {
-            term.setFace(arg.getFace(), viz.colorFlag);
             immutable name = arg.isRoot ? dirSeparator : arg.name;
         }
         else
         {
             immutable name = arg.name;
         }
+
+        term.setFace(arg.getFace(), viz.colorFlag);
         ppPut(term, viz, arg.face, name);
 
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</a>"); }
@@ -3696,7 +3709,7 @@ body { font: 10px Verdana, sans-serif; }
                      faze(title, titleFace));
             }
             pp(term, viz,
-               faze(title, h1Face));
+               header!1(title));
         }
 
         if (_showSkipped) {
@@ -4619,43 +4632,40 @@ body { font: 10px Verdana, sans-serif; }
         /* Duplicates */
 
         if (gstats.showNameDups) {
-            pp(term, viz, faze("Name Duplicates", h2Face));
+            pp(term, viz, header!2("Name Duplicates"));
             foreach (digest, dupFiles; gstats.filesByName) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (!dupFilesOk.empty) {
                     pp(term, viz,
-                       faze("Files with same name: " ~ dupFilesOk[0].name,
-                            h3Face));
-                    pp(term, viz, uList(dupFilesOk.map!(x => x.asPath.lItem)));
+                       header!3("Files with same name: " ~ dupFilesOk[0].name),
+                       uList(dupFilesOk.map!(x => x.asPath.lItem)));
                 }
             }
         }
 
         if (gstats.showLinkDups) {
-            pp(term, viz, faze("Inode Duplicates (Hardlinks)", h2Face));
+            pp(term, viz, header!2("Inode Duplicates (Hardlinks)"));
             foreach (inode, dupFiles; gstats.filesByInode) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
                     pp(term, viz,
-                       faze("Files with same inode " ~ to!string(inode) ~
-                            " (hardlinks): ", h3Face));
-                    pp(term, viz, uList(dupFilesOk.map!(x => x.asPath.lItem)));
+                       header!3("Files with same inode " ~ to!string(inode) ~
+                                " (hardlinks): "),
+                       uList(dupFilesOk.map!(x => x.asPath.lItem)));
                 }
             }
         }
 
         if (gstats.showContentDups) {
-            pp(term, viz, faze("Content Duplicates", h2Face));
+            pp(term, viz, header!2("Content Duplicates "));
             foreach (digest, dupFiles; gstats.filesByContId) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
 
                     auto firstDup = dupFilesOk[0];
                     immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
-
                     pp(term, viz,
-                       faze(typeName ~ " with same content",
-                            h3Face));
+                       header!3(typeName ~ " with same content"));
 
                     // SHA1
                     if (gstats.showSHA1)
@@ -4692,18 +4702,18 @@ body { font: 10px Verdana, sans-serif; }
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty) {
             pp(term, viz,
-               faze("Broken Symlinks ", h2Face),
+               header!2("Broken Symlinks "),
                uList(_brokenSymlinks.map!(x => x.asPath.lItem)));
         }
 
         /* Counts */
-        pp(term, viz, faze("Scanned Types", h2Face));
         /* ppln(term, viz, gstats.noScannedDirs, " Dirs, "); */
         /* ppln(term, viz, gstats.noScannedRegFiles, " Regular Files, "); */
         /* ppln(term, viz, gstats.noScannedSymlinks, " Symbolic Links, "); */
         /* ppln(term, viz, gstats.noScannedSpecialFiles, " Special Files, "); */
         /* ppln(term, viz, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root */
         pp(term, viz,
+           header!2("Scanned Types"),
            uList(lItem(gstats.noScannedDirs, " Dirs, "),
                  lItem(gstats.noScannedRegFiles, " Regular Files, "),
                  lItem(gstats.noScannedSymlinks, " Symbolic Links, "),
@@ -4712,16 +4722,16 @@ body { font: 10px Verdana, sans-serif; }
                ));
 
         if (gstats.densenessCount) {
-            pp(term, viz, faze("Histograms", h2Face));
             pp(term, viz,
+               header!2("Histograms"),
                uList(lItem("Average Byte Bistogram (Binary Histogram) Denseness ",
                            cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
                      lItem("Average Byte ", NGramOrder, "-Gram Denseness ",
                            cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
         }
 
-        pp(term, viz, faze("Scanned Bytes", h2Face));
         pp(term, viz,
+           header!2("Scanned Bytes"),
            uList(lItem("Scanned ", results.noBytesScanned),
                  lItem("Skipped ", results.noBytesSkipped),
                  lItem("Unreadable ", results.noBytesUnreadable),
