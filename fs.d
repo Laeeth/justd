@@ -4608,8 +4608,7 @@ body { font: 10px Verdana, sans-serif; }
     {
         /* Duplicates */
 
-        if (gstats.showNameDups &&
-            gstats.filesByName.length) {
+        if (gstats.showNameDups) {
             pp(term, viz, faze("Name Duplicates", h2Face));
             foreach (digest, dupFiles; gstats.filesByName) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
@@ -4617,17 +4616,12 @@ body { font: 10px Verdana, sans-serif; }
                     pp(term, viz,
                        faze("Files with same name: " ~ dupFilesOk[0].name,
                             h3Face));
-                    pp(term, viz, uListBegin());
-                    foreach (dupFile; dupFilesOk) {
-                        pp(term, viz, lItem(asPath(dupFile)));
-                    }
-                    pp(term, viz, uListEnd());
+                    pp(term, viz, uList(dupFilesOk.map!(x => x.asPath.lItem)));
                 }
             }
         }
 
-        if (gstats.showLinkDups &&
-            gstats.filesByInode.length) {
+        if (gstats.showLinkDups) {
             pp(term, viz, faze("Link Duplicates", h2Face));
             foreach (inode, dupFiles; gstats.filesByInode) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
@@ -4635,17 +4629,12 @@ body { font: 10px Verdana, sans-serif; }
                     pp(term, viz,
                        faze("Files with same inode " ~ to!string(inode) ~
                             " (hardlinks): ", h3Face));
-                    pp(term, viz, uListBegin());
-                    foreach (dupFile; dupFilesOk) {
-                        pp(term, viz, lItem(asPath(dupFile)));
-                    }
-                    pp(term, viz, uListEnd());
+                    pp(term, viz, uList(dupFilesOk.map!(x => x.asPath.lItem)));
                 }
             }
         }
 
-        if (gstats.showContentDups &&
-            !gstats.filesByContId.length) {
+        if (gstats.showContentDups) {
             pp(term, viz, faze("Content Duplicates", h2Face));
             foreach (digest, dupFiles; gstats.filesByContId) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
@@ -4684,12 +4673,7 @@ body { font: 10px Verdana, sans-serif; }
                     }
                     ppendl(term, viz);
 
-                    // file list
-                    pp(term, viz, uListBegin());
-                    foreach (dupFile; dupFilesOk) {
-                        ppln(term, viz, " ", asPath(dupFile));
-                    }
-                    pp(term, viz, uListEnd());
+                    pp(term, viz, uList(dupFilesOk.map!(x => x.asPath.lItem)));
                 }
             }
         }
@@ -4705,34 +4689,38 @@ body { font: 10px Verdana, sans-serif; }
         }
 
         /* Counts */
-        pp(term, viz, faze("Scanned ", h2Face));
+        pp(term, viz, faze("Scanned Types", h2Face));
         /* ppln(term, viz, gstats.noScannedDirs, " Dirs, "); */
         /* ppln(term, viz, gstats.noScannedRegFiles, " Regular Files, "); */
         /* ppln(term, viz, gstats.noScannedSymlinks, " Symbolic Links, "); */
         /* ppln(term, viz, gstats.noScannedSpecialFiles, " Special Files, "); */
         /* ppln(term, viz, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root */
-        ppln(term, viz,
-             uList(lItem(gstats.noScannedDirs, " Dirs, "),
-                   lItem(gstats.noScannedRegFiles, " Regular Files, "),
-                   lItem(gstats.noScannedSymlinks, " Symbolic Links, "),
-                   lItem(gstats.noScannedSpecialFiles, " Special Files, "),
-                   lItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root
-                 ));
+        pp(term, viz,
+           uList(lItem(gstats.noScannedDirs, " Dirs, "),
+                 lItem(gstats.noScannedRegFiles, " Regular Files, "),
+                 lItem(gstats.noScannedSymlinks, " Symbolic Links, "),
+                 lItem(gstats.noScannedSpecialFiles, " Special Files, "),
+                 lItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root
+               ));
 
         if (gstats.densenessCount) {
-            ppln(term, viz, "Average Byte Bistogram (Binary Histogram) Denseness ",
-                 cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent");
-            ppln(term, viz, "Average Byte ", NGramOrder, "-Gram Denseness ",
-                 cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent");
+            pp(term, viz, faze("Histograms", h2Face));
+            pp(term, viz,
+               uList(lItem("Average Byte Bistogram (Binary Histogram) Denseness ",
+                           cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
+                     lItem("Average Byte ", NGramOrder, "-Gram Denseness ",
+                           cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
         }
 
-        ppln(term, viz, "Scanned ", results.noBytesScanned);
-        ppln(term, viz, "Skipped ", results.noBytesSkipped);
-        ppln(term, viz, "Unreadable ", results.noBytesUnreadable);
-        ppln(term, viz, "Total Contents ", results.noBytesTotalContents);
-        ppln(term, viz, "Total ", results.noBytesTotal);
-        ppln(term, viz, "Total number of hits ", results.numTotalHits);
-        ppln(term, viz, "Number of Files with hits ", results.numFilesWithHits);
+        pp(term, viz, faze("Scanned Bytes", h2Face));
+        pp(term, viz,
+           uList(lItem("Scanned ", results.noBytesScanned),
+                 lItem("Skipped ", results.noBytesSkipped),
+                 lItem("Unreadable ", results.noBytesUnreadable),
+                 lItem("Total Contents ", results.noBytesTotalContents),
+                 lItem("Total ", results.noBytesTotal),
+                 lItem("Total number of hits ", results.numTotalHits),
+                 lItem("Number of Files with hits ", results.numFilesWithHits)));
     }
 }
 
