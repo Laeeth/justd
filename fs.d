@@ -1259,6 +1259,13 @@ class RegFile : File
     private CStat _cstat;     // Statistics about the contents of this RegFile.
 }
 
+/** Traits */
+enum isFile(T) = (is(T == File) || is (T == NotNull!File));
+enum isDir(T) = (is(T == Dir) || is (T == NotNull!Dir));
+enum isSymlink(T) = (is(T == Symlink) || is (T == NotNull!Symlink));
+enum isRegFile(T) = (is(T == RegFile) || is (T == NotNull!RegFile));
+enum isSpecialFile(T) = (is(T == SpecFile) || is (T == NotNull!SpecFile));
+
 /** Contents Statistics of a Regular File. */
 struct CStat {
     void reset() @safe nothrow {
@@ -1404,11 +1411,25 @@ enum PathFormat
     relative,
 }
 
+/** Printed as Path. */
 struct AsPath(T) { T arg; }
 auto asPath(T)(T arg) { return AsPath!T(arg); }
 
+/** Printed as Name. */
 struct AsName(T) { T arg; }
 auto asName(T)(T arg) { return AsName!T(arg); }
+
+/** Unordered List. */
+struct UList(T...) { T args; }
+auto uList(T...)(T args) { return UList!T(args); }
+
+/** Ordered List. */
+struct OList(T...) { T args; }
+auto oList(T...)(T args) { return OList!T(args); }
+
+/** List Item. */
+struct LItem(T...) { T args; }
+auto lItem(T...)(T args) { return LItem!T(args); }
 
 import std.range: hasSlicing;
 
@@ -1532,16 +1553,8 @@ auto getFace(Arg)(in Arg arg)
     }
 }
 
-/** Traits */
-enum isFile(T) = (is(T == File) || is (T == NotNull!File));
-enum isDir(T) = (is(T == Dir) || is (T == NotNull!Dir));
-enum isSymlink(T) = (is(T == Symlink) || is (T == NotNull!Symlink));
-enum isRegFile(T) = (is(T == RegFile) || is (T == NotNull!RegFile));
-enum isSpecialFile(T) = (is(T == SpecFile) || is (T == NotNull!SpecFile));
-
 /** Pretty-Print Argument $(D arg) to Terminal $(D term). */
-void ppArg(Term, Arg)(ref Term term,
-                      Viz viz,
+void ppArg(Term, Arg)(ref Term term, Viz viz,
                       Arg arg)
 {
     static if (isInputRange!Arg)
@@ -1550,6 +1563,24 @@ void ppArg(Term, Arg)(ref Term term,
         {
             ppArg(term, viz, subArg);
         }
+    }
+    else static if (isInstanceOf!(UList, Arg))
+    {
+        if (viz.useHTML) { ppPut(term, viz, stdFace, "<ul>\n"); }
+        ppArgs(term, viz, arg.args);
+        if (viz.useHTML) { ppPut(term, viz, stdFace, "</ul>\n"); }
+    }
+    else static if (isInstanceOf!(OList, Arg))
+    {
+        if (viz.useHTML) { ppPut(term, viz, stdFace, "<ol>\n"); }
+        ppArgs(term, viz, arg.args);
+        if (viz.useHTML) { ppPut(term, viz, stdFace, "</ol>\n"); }
+    }
+    else static if (isInstanceOf!(LItem, Arg))
+    {
+        if (viz.useHTML) { ppPut(term, viz, stdFace, "<li>\n"); }
+        ppArgs(term, viz, arg.args);
+        if (viz.useHTML) { ppPut(term, viz, stdFace, "</li>\n"); }
     }
     else static if (isInstanceOf!(AsPath, Arg))
     {
@@ -1644,8 +1675,7 @@ void ppArg(Term, Arg)(ref Term term,
 }
 
 /** Pretty-Print Arguments $(D args) to Terminal $(D term). */
-void ppArgs(Term, Args...)(ref Term term,
-                           Viz viz,
+void ppArgs(Term, Args...)(ref Term term, Viz viz,
                            Args args)
 {
     foreach (arg; args)
@@ -4627,18 +4657,18 @@ body { font: 10px Verdana, sans-serif; }
 
         /* Counts */
         pp(term, viz, faze("Scanned ", h2Face));
-        ppln(term, viz, gstats.noScannedDirs, " Dirs, ");
-        ppln(term, viz, gstats.noScannedRegFiles, " Regular Files, ");
-        ppln(term, viz, gstats.noScannedSymlinks, " Symbolic Links, ");
-        ppln(term, viz, gstats.noScannedSpecialFiles, " Special Files, ");
-        ppln(term, viz, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root
-        /* ppln(term, viz, */
-        /*      list(item(gstats.noScannedDirs, " Dirs, "), */
-        /*           item(gstats.noScannedRegFiles, " Regular Files, "), */
-        /*           item(gstats.noScannedSymlinks, " Symbolic Links, "), */
-        /*           item(gstats.noScannedSpecialFiles, " Special Files, "), */
-        /*           item("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
-        /*          )); */
+        /* ppln(term, viz, gstats.noScannedDirs, " Dirs, "); */
+        /* ppln(term, viz, gstats.noScannedRegFiles, " Regular Files, "); */
+        /* ppln(term, viz, gstats.noScannedSymlinks, " Symbolic Links, "); */
+        /* ppln(term, viz, gstats.noScannedSpecialFiles, " Special Files, "); */
+        /* ppln(term, viz, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root */
+        ppln(term, viz,
+             uList(lItem(gstats.noScannedDirs, " Dirs, "),
+                   lItem(gstats.noScannedRegFiles, " Regular Files, "),
+                   lItem(gstats.noScannedSymlinks, " Symbolic Links, "),
+                   lItem(gstats.noScannedSpecialFiles, " Special Files, "),
+                   lItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root
+                 ));
 
         if (gstats.densenessCount) {
             ppln(term, viz, "Average Byte Bistogram (Binary Histogram) Denseness ",
