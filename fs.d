@@ -1581,7 +1581,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     else static if (isInstanceOf!(Header, Arg))
     {
         if (viz.form == VizForm.html) {
-            ppArgs(term, viz, stdFace,
+            ppArgs(term, viz,
                    "<h" ~ to!string(arg.level) ~ ">",
                    arg.args,
                    "</h" ~ to!string(arg.level) ~ ">");
