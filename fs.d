@@ -2253,25 +2253,22 @@ Dir loadRootDirTree(Term)(ref Term term,
             unpack(cast(ubyte[])data, rootDir); /* Dir rootDir = new Dir(cast(const(ubyte)[])data); */
         }
         immutable toc = Clock.currTime;
-        ppln(term, viz,
-             "Read cache of size ",
-             data.length.Bytes64, " from ",
-             faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
-                  regFileFace),
-             " in ",
-             shortDurationString(toc - tic), " containing");
-        pp(term, viz, gstats.noDirs, " Dirs, ");
-        pp(term, viz, gstats.noRegFiles, " Regular Files, ");
-        pp(term, viz, gstats.noSymlinks, " Symbolic Links, ");
-        pp(term, viz, gstats.noSpecialFiles, " Special Files, ");
-        ppln(term, viz,
-             "totalling ",
-             gstats.noFiles + 1, " Files"); // on extra because of lack of root
+        pp(term, viz,
+           "Read cache of size ",
+           data.length.Bytes64, " from ",
+           faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
+                regFileFace),
+           " in ",
+           shortDurationString(toc - tic), " containing",
+           asUList(asItem(gstats.noDirs, " Dirs,"),
+                   asItem(gstats.noRegFiles, " Regular Files,"),
+                   asItem(gstats.noSymlinks, " Symbolic Links,"),
+                   asItem(gstats.noSpecialFiles, " Special Files,"),
+                   asItem("totalling ", gstats.noFiles + 1, " Files")));
         assert(gstats.noDirs +
                gstats.noRegFiles +
                gstats.noSymlinks +
                gstats.noSpecialFiles == gstats.noFiles + 1);
-
         return rootDir;
     } catch (FileException) {
         ppln(term, viz, "Failed to read cache from ", cacheFile);
@@ -3737,14 +3734,9 @@ body { font: 10px Verdana, sans-serif; }
         }
 
         if (_showSkipped) {
-            ppln(term, viz,
-                 "Skipping files of type"/* , */
-                 /* binFKinds.map!"' '~a.kindName".reduce!"a ~ \"\n\" ~ b" */);
-            foreach (fkind; binFKinds)
-            {
-                ppln(term, viz,
-                     "- ", fkind);
-            }
+            pp(term, viz,
+                 "Skipping files of type\n",
+                 asUList(binFKinds.map!(a => a.asItem)));
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
@@ -4680,7 +4672,7 @@ body { font: 10px Verdana, sans-serif; }
         }
 
         if (gstats.showContentDups) {
-            pp(term, viz, header!2("Content Duplicates "));
+            pp(term, viz, header!2("Content Duplicates"));
             foreach (digest, dupFiles; gstats.filesByContId) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
