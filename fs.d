@@ -121,7 +121,7 @@ import std.path: baseName, dirName, isAbsolute, dirSeparator;
 import std.datetime;
 import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
-import std.range: repeat, array, empty;
+import std.range: repeat, array, empty, cycle;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf, isIterable;
 import std.allocator;
@@ -1404,53 +1404,15 @@ enum BuildType
     standard = devel,
 }
 
+/** Header. */
+struct Header(uint L, T...) { T args; enum level = L; }
+auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
+
 enum PathFormat
 {
     absolute,
     relative,
 }
-
-/** Header. */
-struct Header(uint L, T...) { T args; enum level = L; }
-auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
-
-/** Printed as Path. */
-struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
-/** Printed as Name. */
-struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
-
-/** Printed in Italic/Slanted. */
-struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
-/** Printed in Bold. */
-struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
-/** Printed in Fixed. */
-struct InFixed(T) { T arg; } auto inFixed(T)(T arg) { return InFixed!T(arg); }
-/** Printed in Code. */
-struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
-
-/** Unordered List. */
-struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
-/** Ordered List. */
-struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
-
-/* /\** Unordered List Beginner. *\/ */
-/* struct UListBegin(T...) { T args; } */
-/* auto uListBegin(T...)(T args) { return UListBegin!T(args); } */
-/* /\** Unordered List Ender. *\/ */
-/* struct UListEnd(T...) { T args; } */
-/* auto uListEnd(T...)(T args) { return UListEnd!T(args); } */
-
-/* /\** Ordered List Beginner. *\/ */
-/* struct OListBegin(T...) { T args; } */
-/* auto oListBegin(T...)(T args) { return OListBegin!T(args); } */
-/* /\** Ordered List Ender. *\/ */
-/* struct OListEnd(T...) { T args; } */
-/* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
-
-/** List Item. */
-struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args); }
-
-import std.range: hasSlicing;
 
 // Faces (Font/Color)
 
@@ -1499,6 +1461,54 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
         term.color(face.fg | (face.bright ? Bright : 0) ,
                    face.bg);
 }
+
+/** Printed as Path. */
+struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
+/** Printed as Name. */
+struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
+
+/* TODO: Turn these into an enum for more efficient parsing. */
+/** Printed in Italic/Slanted. */
+struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
+/** Printed in Bold. */
+struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
+/** Printed in Fixed. */
+struct InFixed(T) { T arg; } auto inFixed(T)(T arg) { return InFixed!T(arg); }
+/** Printed in Code. */
+struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
+/** Printed as Emphasized. */
+struct AsEmph(T) { T arg; } auto asEmph(T)(T arg) { return AsEmph!T(arg); }
+/** Printed as Performatted. */
+struct AsPre(T) { T arg; } auto asPre(T)(T arg) { return AsPre!T(arg); }
+
+/** Printed as Hit. */
+struct AsHit(T...) { ulong ix; T args; } auto asHit(T)(ulong ix, T args) { return AsHit!T(ix, args); }
+/** Printed as Hit Context. */
+struct AsCtx(T...) { ulong ix; T args; } auto asCtx(T)(ulong ix, T args) { return AsCtx!T(ix, args); }
+
+/** Unordered List. */
+struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
+/** Ordered List. */
+struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
+
+/* /\** Unordered List Beginner. *\/ */
+/* struct UListBegin(T...) { T args; } */
+/* auto uListBegin(T...)(T args) { return UListBegin!T(args); } */
+/* /\** Unordered List Ender. *\/ */
+/* struct UListEnd(T...) { T args; } */
+/* auto uListEnd(T...)(T args) { return UListEnd!T(args); } */
+
+/* /\** Ordered List Beginner. *\/ */
+/* struct OListBegin(T...) { T args; } */
+/* auto oListBegin(T...)(T args) { return OListBegin!T(args); } */
+/* /\** Ordered List Ender. *\/ */
+/* struct OListEnd(T...) { T args; } */
+/* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
+
+/** List Item. */
+struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args); }
+
+import std.range: hasSlicing;
 
 @safe pure nothrow
 {
@@ -1557,6 +1567,14 @@ auto getFace(Arg)(in Arg arg)
     else static if (isInstanceOf!(Bytes, Arg))
     {
         return bytesFace;
+    }
+    else static if (isInstanceOf!(AsHit, Arg))
+    {
+        return keyFaces.cycle[arg.ix];
+    }
+    else static if (isInstanceOf!(AsCtx, Arg))
+    {
+        return ctxFaces.cycle[arg.ix];
     }
     else static if (isInstanceOf!(FKind, Arg) ||
                     isInstanceOf!(NotNull!FKind, Arg))
@@ -1691,14 +1709,15 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
             immutable name = arg.name;
         }
 
-        term.setFace(arg.getFace(), viz.colorFlag);
-
         if (viz.form == VizForm.html)
         {
             static      if (isSymlink!Arg) { ppPut(term, viz, stdFace, "<i>"); }
             else static if (isDir!Arg) { ppPut(term, viz, stdFace, "<b>"); }
         }
+
+        term.setFace(arg.getFace(), viz.colorFlag);
         ppPut(term, viz, arg.face, name);
+
         if (viz.form == VizForm.html)
         {
             static      if (isSymlink!Arg) { ppPut(term, viz, stdFace, "</i>"); }
@@ -1720,9 +1739,6 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
             const arg_string = to!string(arg);
         }
 
-        // set face related to arg, if any
-        term.setFace(arg.getFace(), viz.colorFlag);
-
         static if (__traits(hasMember, arg, "face") &&
                    __traits(hasMember, arg.face, "tagsHTML")) {
             if (viz.form == VizForm.html)
@@ -1735,6 +1751,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
         }
 
         // write
+        term.setFace(arg.getFace(), viz.colorFlag);
         if (viz.outFile == stdout)
         {
             term.write(arg_string);
@@ -1813,7 +1830,7 @@ void ppln(Term, Args...)(ref Term term, Viz viz, Args args)
 void ppendl(Term)(ref Term term,
                   Viz viz)
 {
-    return ppln(term, viz);
+    return ppln(term,viz);
 }
 
 /** Dir.
@@ -2224,7 +2241,7 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term,
     cacheFile.write(data);
     immutable toc = Clock.currTime;
 
-    ppln(term, viz,
+    ppln(term,viz,
          "Wrote tree cache of size ",
          data.length.Bytes64, " to ",
          faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
@@ -2253,7 +2270,7 @@ Dir loadRootDirTree(Term)(ref Term term,
             unpack(cast(ubyte[])data, rootDir); /* Dir rootDir = new Dir(cast(const(ubyte)[])data); */
         }
         immutable toc = Clock.currTime;
-        pp(term, viz,
+        pp(term,viz,
            "Read cache of size ",
            data.length.Bytes64, " from ",
            faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
@@ -2271,7 +2288,7 @@ Dir loadRootDirTree(Term)(ref Term term,
                gstats.noSpecialFiles == gstats.noFiles + 1);
         return rootDir;
     } catch (FileException) {
-        ppln(term, viz, "Failed to read cache from ", cacheFile);
+        ppln(term,viz, "Failed to read cache from ", cacheFile);
         return null;
     }
 }
@@ -3652,7 +3669,7 @@ class Scanner(Term)
             (!keys.empty) &&
             keysXGramsUnion.empty) {
             _useNGrams = false;
-            ppln(term, viz,
+            ppln(term,viz,
                  "Keys must be at least of length " ~
                  to!string(NGramOrder + 1) ~
                  " in order for " ~
@@ -3661,7 +3678,7 @@ class Scanner(Term)
         }
 
         if (useHTML) {
-            ppln(term, viz,
+            ppln(term,viz,
                  "<!DOCTYPE html>
 <html>
 <head>
@@ -3674,7 +3691,7 @@ body { font: 10px Verdana, sans-serif; }
 <body>");
         }
 
-        // ppln(term, viz, "<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
+        // ppln(term,viz, "<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
 
         if (includedTypes) {
             foreach (lang; includedTypes.splitter(",")) {
@@ -3726,15 +3743,15 @@ body { font: 10px Verdana, sans-serif; }
                            ~asNote ~incKindsNote ~underNote);
             if (viz.form == VizForm.html) // only needed for HTML output
             {
-                ppln(term, viz,
+                ppln(term,viz,
                      faze(title, titleFace));
             }
-            pp(term, viz,
+            pp(term,viz,
                header!1(title));
         }
 
         if (_showSkipped) {
-            pp(term, viz,
+            pp(term,viz,
                  "Skipping files of type\n",
                  asUList(binFKinds.map!(a => a.asItem)));
         }
@@ -3793,12 +3810,12 @@ body { font: 10px Verdana, sans-serif; }
             if (keys && _hitsCountTotal == 0) { // if keys given but no hit found
                 auto keysString = (keys.length >= 2 ? "s" : "") ~ " \"" ~ commaedKeysString;
                 if (_keyAsAcronym)  {
-                    ppln(term, viz,
+                    ppln(term,viz,
                          ("No acronym matches for key" ~ keysString ~ `"` ~
                           (keyAsSymbol ? " as symbol" : "") ~
                           " found in files of type"));
                 } else if (!_keyAsExact) {
-                    ppln(term, viz,
+                    ppln(term,viz,
                          ("No exact matches for key" ~ keysString ~ `"` ~
                           (keyAsSymbol ? " as symbol" : "") ~
                           " found" ~ incKindsNote ~
@@ -3812,8 +3829,8 @@ body { font: 10px Verdana, sans-serif; }
             }
 
             if (useHTML) {
-                ppln(term, viz, "</body>");
-                ppln(term, viz, "</html>");
+                ppln(term,viz, "</body>");
+                ppln(term,viz, "</html>");
             }
         }
 
@@ -3893,10 +3910,10 @@ body { font: 10px Verdana, sans-serif; }
                 if (showTree) {
                     auto parentDir = file.parent;
                     immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                    pp(term, viz,
+                    pp(term,viz,
                        "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                 }
-                ppln(term, viz,
+                ppln(term,viz,
                      file,
                      ":  ", isDir ? "Directory" : "File",
                      faze(msg, warnFace));
@@ -3915,10 +3932,10 @@ body { font: 10px Verdana, sans-serif; }
         if (_showSkipped) {
             if (showTree) {
                 immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                pp(term, viz,
+                pp(term,viz,
                    "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
             }
-            ppln(term, viz, regfile, ": Skipped ", kind, " file", skipCause);
+            ppln(term,viz, regfile, ": Skipped ", kind, " file", skipCause);
         }
     }
 
@@ -3964,10 +3981,10 @@ body { font: 10px Verdana, sans-serif; }
                     if (_showSkipped)  {
                         if (showTree) {
                             immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                            pp(term, viz, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                            pp(term,viz, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                         }
 
-                        ppln(term, viz,
+                        ppln(term,viz,
                              regfile, ": Skipped ", kind, " file at ",
                              nthString(kindIndex + 1), " blind try");
                     }
@@ -4104,7 +4121,7 @@ body { font: 10px Verdana, sans-serif; }
 
                     if (offKB >= 0) { // if hit
                         if (!showTree && ctx == ScanContext.fileName) {
-                            pp(term, viz,
+                            pp(term,viz,
                                parentDir,
                                dirSeparator);
                         }
@@ -4119,57 +4136,51 @@ body { font: 10px Verdana, sans-serif; }
                         if (ctx == ScanContext.fileContent &&
                             !anyHit) { // if this is first hit
                             if (showTree) {
-                                pp(term, viz, "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
+                                pp(term,viz, "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
                             } else {
                                 foreach (fromSymlink; fromSymlinks)
                                 {
-                                    pp(term, viz,
+                                    pp(term,viz,
                                        fromSymlink,
                                        " modified ",
                                        faze(shortDurationString(_currTime - fromSymlink.timeLastModified),
                                             timeFace),
-                                       " ago");
-                                    pp(term, viz, " -> ");
+                                       " ago",
+                                       " -> ");
                                 }
 
                                 // show file path/name
-                                pp(term, viz,
+                                pp(term,viz,
                                    faze(asPath(useHTML, theFile.path, displayedFileName, false),
                                         regFileFace)); // show path
                             }
 
                             // show file line:column
-                            pp(term, viz,
+                            pp(term,viz,
                                faze(":" ~ to!string(nL+1) ~ ":" ~ to!string(offKB+1) ~ ":",
                                     contextFace));
                         }
                         anyHit = true; // at least hit
 
                         // show content prefix
-                        pp(term, viz,
+                        pp(term,viz,
                            faze(to!string(rest[0..offKB]), thisFace));
 
                         // show hit part
-                        immutable cIx = ix % keyFaces.length;
-                        const ctxFace = ctxFaces[cIx];
-                        const keyFace = keyFaces[cIx];
                         if (!acronymOffsets.empty) {
                             foreach (aIx, currOff; acronymOffsets) { // TODO: Reuse std.algorithm: zip or lockstep? Or create a new kind say named conv.
                                 // context before
                                 if (aIx >= 1) {
                                     immutable prevOff = acronymOffsets[aIx-1];
                                     if (prevOff + 1 < currOff) { // at least one letter in between
-                                        pp(term, viz,
-                                           faze(to!string(rest[prevOff + 1 .. currOff]), ctxFace));
+                                        pp(term,viz, asCtx(ix, to!string(rest[prevOff + 1 .. currOff])));
                                     }
                                 }
                                 // hit letter
-                                pp(term, viz,
-                                   faze(to!string(rest[currOff]), keyFace));
+                                pp(term,viz, asHit(ix, to!string(rest[currOff])));
                             }
                         } else {
-                            pp(term, viz,
-                               faze(to!string(rest[offKB..offKE]), keyFace));
+                            pp(term,viz, asHit(ix, to!string(rest[offKB..offKE])));
                         }
 
                         rest = rest[offKE..$]; // move forward in line
@@ -4188,7 +4199,7 @@ body { font: 10px Verdana, sans-serif; }
             // finalize line
             if (anyHit)  {
                 // show final context suffix
-                ppln(term, viz,
+                ppln(term,viz,
                      faze(rest, thisFace));
             }
             nL++;
@@ -4209,8 +4220,8 @@ body { font: 10px Verdana, sans-serif; }
         //             immutable offEOL = (cntEOL == -1 ? // if no hit
         //                                 src.length :   // end of file
         //                                 offHit + cntEOL); // normal case
-        //             pp(term, viz, faze(asPath(useHTML, dent.name), pathFace));
-        //             ppln(term, viz, ":", rowHit + 1,
+        //             pp(term,viz, faze(asPath(useHTML, dent.name), pathFace));
+        //             ppln(term,viz, ":", rowHit + 1,
         //                                                                               ":", colHit + 1,
         //                                                                               ":", cast(string)src[offBOL..offEOL]);
         //         }
@@ -4225,18 +4236,18 @@ body { font: 10px Verdana, sans-serif; }
         // case 1:
         //     immutable hit1 = src.find(keys[0]);
         //     if (!hit1.empty) {
-        //         ppln(term, viz, asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
+        //         ppln(term,viz, asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
         //     }
         //     break;
         // // case 2:
         // //     immutable hit2 = src.find(keys[0], keys[1]); // find two keys
-        // //     if (!hit2[0].empty) { ppln(term, viz, asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
-        // //     if (!hit2[1].empty) { ppln(term, viz, asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
+        // //     if (!hit2[0].empty) { ppln(term,viz, asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
+        // //     if (!hit2[1].empty) { ppln(term,viz, asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
         // //     break;
         // // case 3:
         // //     immutable hit3 = src.find(keys[0], keys[1], keys[2]); // find two keys
         // //     if (!hit3.empty) {
-        // //         ppln(term, viz, asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
+        // //         ppln(term,viz, asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
         // //     }
         // //     break;
         // }
@@ -4424,7 +4435,7 @@ body { font: 10px Verdana, sans-serif; }
         if (!fromSymlinks.find(theSymlink).empty) {
             if (gstats.showSymlinkCycles) {
                 import std.range: back;
-                ppln(term, viz,
+                ppln(term,viz,
                      "Cycle of symbolic links: ",
                      asPath(fromSymlinks),
                      " -> ",
@@ -4460,7 +4471,7 @@ body { font: 10px Verdana, sans-serif; }
                 auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent);
 
                 if (showTree) {
-                    ppln(term, viz,
+                    ppln(term,viz,
                          "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ",
                          theSymlink,
                          " modified ",
@@ -4494,17 +4505,17 @@ body { font: 10px Verdana, sans-serif; }
                 foreach (ix, fromSymlink; fromSymlinks) {
                     if (showTree && ix == 0) {
                         immutable intro = "├";
-                        pp(term, viz,
+                        pp(term,viz,
                            "│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ",
                             theSymlink);
                     }
                     else {
-                        pp(term, viz, fromSymlink);
+                        pp(term,viz, fromSymlink);
                     }
-                    pp(term, viz, " -> ");
+                    pp(term,viz, " -> ");
                 }
 
-                ppln(term, viz,
+                ppln(term,viz,
                    faze(theSymlink.target, errorFace),
                    faze(" is missing", warnFace));
             }
@@ -4539,7 +4550,7 @@ body { font: 10px Verdana, sans-serif; }
             if (showTree) {
                 immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
 
-                pp(term, viz,
+                pp(term,viz,
                    "│  ".repeat(theDir.depth).join("") ~ intro ~
                    "─ ", theDir, " modified ",
                    faze(shortDurationString(_currTime -
@@ -4548,11 +4559,11 @@ body { font: 10px Verdana, sans-serif; }
                    " ago");
 
                 if (gstats.showUsage) {
-                    pp(term, viz, " of Tree-Size ", theDir.treeSize);
+                    pp(term,viz, " of Tree-Size ", theDir.treeSize);
                 }
 
                 if (gstats.showSHA1) {
-                    pp(term, viz, " with Tree-Content-Id ", theDir.treeContId);
+                    pp(term,viz, " with Tree-Content-Id ", theDir.treeContId);
                 }
                 ppendl(term, viz);
             }
@@ -4573,11 +4584,11 @@ body { font: 10px Verdana, sans-serif; }
                             if (_showSkipped) {
                                 if (showTree) {
                                     immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
-                                    pp(term, viz,
+                                    pp(term,viz,
                                        "│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
                                 }
 
-                                pp(term, viz,
+                                pp(term,viz,
                                    subDir,
                                    " modified ",
                                    faze(shortDurationString(_currTime -
@@ -4596,12 +4607,12 @@ body { font: 10px Verdana, sans-serif; }
                     scanSymlink(term, viz, topDir, assumeNotNull(subSymlink), theDir, keys, fromSymlinks);
                 }
                 else {
-                    if (showTree) { ppln(term, viz); }
+                    if (showTree) { ppln(term,viz); }
                 }
                 ++subIndex;
 
                 if (ctrlC) {
-                    ppln(term, viz, "Ctrl-C pressed: Aborting scan of ", theDir);
+                    ppln(term,viz, "Ctrl-C pressed: Aborting scan of ", theDir);
                     break;
                 }
             }
@@ -4646,11 +4657,11 @@ body { font: 10px Verdana, sans-serif; }
         /* Duplicates */
 
         if (gstats.showNameDups) {
-            pp(term, viz, header!2("Name Duplicates"));
+            pp(term,viz, header!2("Name Duplicates"));
             foreach (digest, dupFiles; gstats.filesByName) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (!dupFilesOk.empty) {
-                    pp(term, viz,
+                    pp(term,viz,
                        header!3("Files with same name ",
                                 faze(dupFilesOk[0].name, fileFace)),
                        asUList(dupFilesOk.map!(x => x.asPath.asItem)));
@@ -4659,11 +4670,11 @@ body { font: 10px Verdana, sans-serif; }
         }
 
         if (gstats.showLinkDups) {
-            pp(term, viz, header!2("Inode Duplicates (Hardlinks)"));
+            pp(term,viz, header!2("Inode Duplicates (Hardlinks)"));
             foreach (inode, dupFiles; gstats.filesByInode) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
-                    pp(term, viz,
+                    pp(term,viz,
                        header!3("Files with same inode " ~ to!string(inode) ~
                                 " (hardlinks): "),
                        asUList(dupFilesOk.map!(x => x.asPath.asItem)));
@@ -4672,14 +4683,14 @@ body { font: 10px Verdana, sans-serif; }
         }
 
         if (gstats.showContentDups) {
-            pp(term, viz, header!2("Content Duplicates"));
+            pp(term,viz, header!2("Content Duplicates"));
             foreach (digest, dupFiles; gstats.filesByContId) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
 
                     auto firstDup = dupFilesOk[0];
                     immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
-                    pp(term, viz,
+                    pp(term,viz,
                        header!3(typeName ~ " with same content",
                                 " (", digest, ")",
                                 " of size ", firstDup.size));
@@ -4690,17 +4701,17 @@ body { font: 10px Verdana, sans-serif; }
                     {
                         if (dupRegFile._cstat.kindId)
                         {
-                            pp(term, viz,
+                            pp(term,viz,
                                " is ",
                                gstats.allKindsById[dupRegFile._cstat.kindId]);
                         }
-                        pp(term, viz,
+                        pp(term,viz,
                            " is ",
                            (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "ASCII" : ""
                             );
                     }
 
-                    pp(term, viz, asUList(dupFilesOk.map!(x => x.asPath.asItem)));
+                    pp(term,viz, asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
         }
@@ -4708,13 +4719,13 @@ body { font: 10px Verdana, sans-serif; }
         /* Broken Symlinks */
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty) {
-            pp(term, viz,
+            pp(term,viz,
                header!2("Broken Symlinks "),
                asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
         }
 
         /* Counts */
-        pp(term, viz,
+        pp(term,viz,
            header!2("Scanned Types"),
            asUList(asItem(gstats.noScannedDirs, " Dirs, "),
                    asItem(gstats.noScannedRegFiles, " Regular Files, "),
@@ -4724,7 +4735,7 @@ body { font: 10px Verdana, sans-serif; }
                ));
 
         if (gstats.densenessCount) {
-            pp(term, viz,
+            pp(term,viz,
                header!2("Histograms"),
                asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
                               cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
@@ -4732,7 +4743,7 @@ body { font: 10px Verdana, sans-serif; }
                               cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
         }
 
-        pp(term, viz,
+        pp(term,viz,
            header!2("Scanned Bytes"),
            asUList(asItem("Scanned ", results.noBytesScanned),
                    asItem("Skipped ", results.noBytesSkipped),
