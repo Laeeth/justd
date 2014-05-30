@@ -1568,14 +1568,14 @@ auto getFace(Arg)(in Arg arg)
 }
 
 /** Pretty-Print Argument $(D arg) to Terminal $(D term). */
-void ppArg(Term, Arg)(ref Term term, Viz viz,
+void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
                       Arg arg)
 {
     static if (isInputRange!Arg)
     {
         foreach (subArg; arg)
         {
-            ppArg(term, viz, subArg);
+            ppArg(term, viz, depth + 1, subArg);
         }
     }
     else static if (isInstanceOf!(UList, Arg))
@@ -1632,13 +1632,13 @@ void ppArg(Term, Arg)(ref Term term, Viz viz,
     {
         auto vizArg = viz;
         vizArg.treeFlag = false;
-        ppArg(term, vizArg, arg.arg);
+        ppArg(term, vizArg, depth + 1, arg.arg);
     }
     else static if (isInstanceOf!(AsName, Arg))
     {
         auto vizArg = viz;
         vizArg.treeFlag = true;
-        ppArg(term, vizArg, arg.arg);
+        ppArg(term, vizArg, depth + 1, arg.arg);
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
@@ -1726,7 +1726,7 @@ void ppArgs(Term, Args...)(ref Term term, Viz viz,
 {
     foreach (arg; args)
     {
-        ppArg(term, viz, arg);
+        ppArg(term, viz, 0, arg);
     }
 }
 
@@ -4632,7 +4632,7 @@ body { font: 10px Verdana, sans-serif; }
         }
 
         if (gstats.showLinkDups) {
-            pp(term, viz, faze("Link Duplicates", h2Face));
+            pp(term, viz, faze("Inode Duplicates (Hardlinks)", h2Face));
             foreach (inode, dupFiles; gstats.filesByInode) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
@@ -4691,11 +4691,9 @@ body { font: 10px Verdana, sans-serif; }
         /* Broken Symlinks */
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty) {
-            pp(term, viz, faze("Broken Symlinks ", h2Face));
-            foreach (bsl; _brokenSymlinks) {
-                ppln(term, viz, " ",
-                     bsl);
-            }
+            pp(term, viz,
+               faze("Broken Symlinks ", h2Face),
+               uList(_brokenSymlinks.map!(x => x.asPath.lItem)));
         }
 
         /* Counts */
