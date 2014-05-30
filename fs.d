@@ -1259,11 +1259,11 @@ class RegFile : File
 }
 
 /** Traits */
-enum isFile(T) = (is(T == File) || is (T == NotNull!File));
-enum isDir(T) = (is(T == Dir) || is (T == NotNull!Dir));
-enum isSymlink(T) = (is(T == Symlink) || is (T == NotNull!Symlink));
-enum isRegFile(T) = (is(T == RegFile) || is (T == NotNull!RegFile));
-enum isSpecialFile(T) = (is(T == SpecFile) || is (T == NotNull!SpecFile));
+enum isFile(T) = (is(T == File) || is(T == NotNull!File));
+enum isDir(T) = (is(T == Dir) || is(T == NotNull!Dir));
+enum isSymlink(T) = (is(T == Symlink) || is(T == NotNull!Symlink));
+enum isRegFile(T) = (is(T == RegFile) || is(T == NotNull!RegFile));
+enum isSpecialFile(T) = (is(T == SpecFile) || is(T == NotNull!SpecFile));
 
 /** Contents Statistics of a Regular File. */
 struct CStat {
@@ -1415,20 +1415,23 @@ struct Header(uint L, T...) { T args; enum level = L; }
 auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
 
 /** Printed as Path. */
-struct AsPath(T) { T arg; }
-auto asPath(T)(T arg) { return AsPath!T(arg); }
-
+struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
 /** Printed as Name. */
-struct AsName(T) { T arg; }
-auto asName(T)(T arg) { return AsName!T(arg); }
+struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
+
+/** Printed in Italic/Slanted. */
+struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
+/** Printed in Bold. */
+struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
+/** Printed in Fixed. */
+struct InFixed(T) { T arg; } auto inFixed(T)(T arg) { return InFixed!T(arg); }
+/** Printed in Code. */
+struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
 
 /** Unordered List. */
-struct UList(T...) { T args; }
-auto uList(T...)(T args) { return UList!T(args); }
-
+struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
 /** Ordered List. */
-struct OList(T...) { T args; }
-auto oList(T...)(T args) { return OList!T(args); }
+struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
 
 /* /\** Unordered List Beginner. *\/ */
 /* struct UListBegin(T...) { T args; } */
@@ -1445,8 +1448,7 @@ auto oList(T...)(T args) { return OList!T(args); }
 /* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
 
 /** List Item. */
-struct LItem(T...) { T args; }
-auto lItem(T...)(T args) { return LItem!T(args); }
+struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args); }
 
 import std.range: hasSlicing;
 
@@ -1587,17 +1589,19 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
                    "</h" ~ to!string(arg.level) ~ ">");
         }
         else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8) {
+                 viz.form == VizForm.textAsciiDocUTF8)
+        {
             string tag;
             foreach (ix; 0..arg.level)
+            {
                 tag ~= "=";
-            //const tag = "=".repeat(arg.level).joiner("");
-            //pragma(msg, typeof(tag).stringof);
+            }
+            // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
             ppArgs(term, viz,
                    "\n", tag, " ", arg.args, " ", tag, "\n");
         }
     }
-    else static if (isInstanceOf!(UList, Arg))
+    else static if (isInstanceOf!(AsUList, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); }
         else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{enumerate}\n"); }
@@ -1627,7 +1631,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     /*     ppArgs(term, viz, arg.args); */
     /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); } */
     /* } */
-    else static if (isInstanceOf!(OList, Arg))
+    else static if (isInstanceOf!(AsOList, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); }
         else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{itemize}\n"); }
@@ -1635,7 +1639,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); }
         else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\end{itemize}\n"); }
     }
-    else static if (isInstanceOf!(LItem, Arg))
+    else static if (isInstanceOf!(AsItem, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<li>\n"); }
         else if (viz.form == VizForm.textAsciiDoc) { ppPut(term, viz, stdFace, " - "); }
@@ -4495,11 +4499,9 @@ body { font: 10px Verdana, sans-serif; }
                     pp(term, viz, " -> ");
                 }
 
-                pp(term, viz,
-                   faze(theSymlink.target, errorFace));
-                pp(term, viz,
+                ppln(term, viz,
+                   faze(theSymlink.target, errorFace),
                    faze(" is missing", warnFace));
-                ppln(term, viz);
             }
         }
         fromSymlinks.popBackN(1);
@@ -4644,8 +4646,9 @@ body { font: 10px Verdana, sans-serif; }
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (!dupFilesOk.empty) {
                     pp(term, viz,
-                       header!3("Files with same name: " ~ dupFilesOk[0].name),
-                       uList(dupFilesOk.map!(x => x.asPath.lItem)));
+                       header!3("Files with same name ",
+                                faze(dupFilesOk[0].name, fileFace)),
+                       asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
         }
@@ -4658,7 +4661,7 @@ body { font: 10px Verdana, sans-serif; }
                     pp(term, viz,
                        header!3("Files with same inode " ~ to!string(inode) ~
                                 " (hardlinks): "),
-                       uList(dupFilesOk.map!(x => x.asPath.lItem)));
+                       asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
         }
@@ -4672,16 +4675,9 @@ body { font: 10px Verdana, sans-serif; }
                     auto firstDup = dupFilesOk[0];
                     immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
                     pp(term, viz,
-                       header!3(typeName ~ " with same content"));
-
-                    // SHA1
-                    if (gstats.showSHA1)
-                        pp(term, viz,
-                           " (", digest, ")");
-
-                    // size
-                    pp(term, viz,
-                         " of size ", firstDup.size);
+                       header!3(typeName ~ " with same content",
+                                " (", digest, ")",
+                                " of size ", firstDup.size));
 
                     // content. TODO: Functionize
                     auto dupRegFile = cast(RegFile)firstDup;
@@ -4698,9 +4694,8 @@ body { font: 10px Verdana, sans-serif; }
                            (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "ASCII" : ""
                             );
                     }
-                    ppendl(term, viz);
 
-                    pp(term, viz, uList(dupFilesOk.map!(x => x.asPath.lItem)));
+                    pp(term, viz, asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
         }
@@ -4710,42 +4705,37 @@ body { font: 10px Verdana, sans-serif; }
             !_brokenSymlinks.empty) {
             pp(term, viz,
                header!2("Broken Symlinks "),
-               uList(_brokenSymlinks.map!(x => x.asPath.lItem)));
+               asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
         }
 
         /* Counts */
-        /* ppln(term, viz, gstats.noScannedDirs, " Dirs, "); */
-        /* ppln(term, viz, gstats.noScannedRegFiles, " Regular Files, "); */
-        /* ppln(term, viz, gstats.noScannedSymlinks, " Symbolic Links, "); */
-        /* ppln(term, viz, gstats.noScannedSpecialFiles, " Special Files, "); */
-        /* ppln(term, viz, "totalling ", gstats.noScannedFiles, " Files"); // on extra because of lack of root */
         pp(term, viz,
            header!2("Scanned Types"),
-           uList(lItem(gstats.noScannedDirs, " Dirs, "),
-                 lItem(gstats.noScannedRegFiles, " Regular Files, "),
-                 lItem(gstats.noScannedSymlinks, " Symbolic Links, "),
-                 lItem(gstats.noScannedSpecialFiles, " Special Files, "),
-                 lItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root
+           asUList(asItem(gstats.noScannedDirs, " Dirs, "),
+                   asItem(gstats.noScannedRegFiles, " Regular Files, "),
+                   asItem(gstats.noScannedSymlinks, " Symbolic Links, "),
+                   asItem(gstats.noScannedSpecialFiles, " Special Files, "),
+                   asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root
                ));
 
         if (gstats.densenessCount) {
             pp(term, viz,
                header!2("Histograms"),
-               uList(lItem("Average Byte Bistogram (Binary Histogram) Denseness ",
-                           cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
-                     lItem("Average Byte ", NGramOrder, "-Gram Denseness ",
-                           cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
+               asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
+                              cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
+                       asItem("Average Byte ", NGramOrder, "-Gram Denseness ",
+                              cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
         }
 
         pp(term, viz,
            header!2("Scanned Bytes"),
-           uList(lItem("Scanned ", results.noBytesScanned),
-                 lItem("Skipped ", results.noBytesSkipped),
-                 lItem("Unreadable ", results.noBytesUnreadable),
-                 lItem("Total Contents ", results.noBytesTotalContents),
-                 lItem("Total ", results.noBytesTotal),
-                 lItem("Total number of hits ", results.numTotalHits),
-                 lItem("Number of Files with hits ", results.numFilesWithHits)));
+           asUList(asItem("Scanned ", results.noBytesScanned),
+                   asItem("Skipped ", results.noBytesSkipped),
+                   asItem("Unreadable ", results.noBytesUnreadable),
+                   asItem("Total Contents ", results.noBytesTotalContents),
+                   asItem("Total ", results.noBytesTotal),
+                   asItem("Total number of hits ", results.numTotalHits),
+                   asItem("Number of Files with hits ", results.numFilesWithHits)));
     }
 }
 
