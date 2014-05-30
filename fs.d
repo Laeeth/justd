@@ -1422,22 +1422,24 @@ auto asName(T)(T arg) { return AsName!T(arg); }
 /** Unordered List. */
 struct UList(T...) { T args; }
 auto uList(T...)(T args) { return UList!T(args); }
-/** Unordered List Beginner. */
-struct UListBegin(T...) { T args; }
-auto uListBegin(T...)(T args) { return UListBegin!T(args); }
-/** Unordered List Ender. */
-struct UListEnd(T...) { T args; }
-auto uListEnd(T...)(T args) { return UListEnd!T(args); }
 
 /** Ordered List. */
 struct OList(T...) { T args; }
 auto oList(T...)(T args) { return OList!T(args); }
-/** Ordered List Beginner. */
-struct OListBegin(T...) { T args; }
-auto oListBegin(T...)(T args) { return OListBegin!T(args); }
-/** Ordered List Ender. */
-struct OListEnd(T...) { T args; }
-auto oListEnd(T...)(T args) { return OListEnd!T(args); }
+
+/* /\** Unordered List Beginner. *\/ */
+/* struct UListBegin(T...) { T args; } */
+/* auto uListBegin(T...)(T args) { return UListBegin!T(args); } */
+/* /\** Unordered List Ender. *\/ */
+/* struct UListEnd(T...) { T args; } */
+/* auto uListEnd(T...)(T args) { return UListEnd!T(args); } */
+
+/* /\** Ordered List Beginner. *\/ */
+/* struct OListBegin(T...) { T args; } */
+/* auto oListBegin(T...)(T args) { return OListBegin!T(args); } */
+/* /\** Ordered List Ender. *\/ */
+/* struct OListEnd(T...) { T args; } */
+/* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
 
 /** List Item. */
 struct LItem(T...) { T args; }
@@ -1579,42 +1581,50 @@ void ppArg(Term, Arg)(ref Term term, Viz viz,
     else static if (isInstanceOf!(UList, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); }
+        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{enumerate}\n"); }
         ppArgs(term, viz, arg.args);
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ul>\n"); }
+        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\end{enumerate}\n"); }
     }
-    else static if (isInstanceOf!(UListBegin, Arg))
-    {
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); }
-        ppArgs(term, viz, arg.args);
-    }
-    else static if (isInstanceOf!(UListEnd, Arg))
-    {
-        ppArgs(term, viz, arg.args);
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ul>\n"); }
-    }
-    else static if (isInstanceOf!(OListBegin, Arg))
-    {
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); }
-        ppArgs(term, viz, arg.args);
-    }
-    else static if (isInstanceOf!(OListEnd, Arg))
-    {
-        ppArgs(term, viz, arg.args);
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); }
-    }
+    /* else static if (isInstanceOf!(UListBegin, Arg)) */
+    /* { */
+    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); } */
+    /*     else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{enumerate}\n"); } */
+    /*     ppArgs(term, viz, arg.args); */
+    /* } */
+    /* else static if (isInstanceOf!(UListEnd, Arg)) */
+    /* { */
+    /*     ppArgs(term, viz, arg.args); */
+    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ul>\n"); } */
+    /*     else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\end{enumerate}\n"); } */
+    /* } */
+    /* else static if (isInstanceOf!(OListBegin, Arg)) */
+    /* { */
+    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); } */
+    /*     ppArgs(term, viz, arg.args); */
+    /* } */
+    /* else static if (isInstanceOf!(OListEnd, Arg)) */
+    /* { */
+    /*     ppArgs(term, viz, arg.args); */
+    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); } */
+    /* } */
     else static if (isInstanceOf!(OList, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); }
+        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{itemize}\n"); }
         ppArgs(term, viz, arg.args);
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); }
+        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\end{itemize}\n"); }
     }
     else static if (isInstanceOf!(LItem, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<li>\n"); }
         else if (viz.form == VizForm.textASCII) { ppPut(term, viz, stdFace, "- "); }
+        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\item "); }
         else if (viz.form == VizForm.textUTF8) { ppPut(term, viz, stdFace, "• "); }
         ppArgs(term, viz, arg.args);
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</li>\n"); }
+        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\n"); }
         else if (viz.form == VizForm.textASCII ||
                  viz.form == VizForm.textUTF8) { ppPut(term, viz, stdFace, "\n"); }
     }
