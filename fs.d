@@ -1422,10 +1422,22 @@ auto asName(T)(T arg) { return AsName!T(arg); }
 /** Unordered List. */
 struct UList(T...) { T args; }
 auto uList(T...)(T args) { return UList!T(args); }
+/** Unordered List Beginner. */
+struct UListBegin(T...) { T args; }
+auto uListBegin(T...)(T args) { return UListBegin!T(args); }
+/** Unordered List Ender. */
+struct UListEnd(T...) { T args; }
+auto uListEnd(T...)(T args) { return UListEnd!T(args); }
 
 /** Ordered List. */
 struct OList(T...) { T args; }
 auto oList(T...)(T args) { return OList!T(args); }
+/** Ordered List Beginner. */
+struct OListBegin(T...) { T args; }
+auto oListBegin(T...)(T args) { return OListBegin!T(args); }
+/** Ordered List Ender. */
+struct OListEnd(T...) { T args; }
+auto oListEnd(T...)(T args) { return OListEnd!T(args); }
 
 /** List Item. */
 struct LItem(T...) { T args; }
@@ -1566,21 +1578,45 @@ void ppArg(Term, Arg)(ref Term term, Viz viz,
     }
     else static if (isInstanceOf!(UList, Arg))
     {
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "<ul>\n"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); }
         ppArgs(term, viz, arg.args);
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "</ul>\n"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ul>\n"); }
+    }
+    else static if (isInstanceOf!(UListBegin, Arg))
+    {
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); }
+        ppArgs(term, viz, arg.args);
+    }
+    else static if (isInstanceOf!(UListEnd, Arg))
+    {
+        ppArgs(term, viz, arg.args);
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ul>\n"); }
+    }
+    else static if (isInstanceOf!(OListBegin, Arg))
+    {
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); }
+        ppArgs(term, viz, arg.args);
+    }
+    else static if (isInstanceOf!(OListEnd, Arg))
+    {
+        ppArgs(term, viz, arg.args);
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); }
     }
     else static if (isInstanceOf!(OList, Arg))
     {
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "<ol>\n"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); }
         ppArgs(term, viz, arg.args);
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "</ol>\n"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); }
     }
     else static if (isInstanceOf!(LItem, Arg))
     {
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "<li>\n"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<li>\n"); }
+        else if (viz.form == VizForm.textASCII) { ppPut(term, viz, stdFace, "- "); }
+        else if (viz.form == VizForm.textUTF8) { ppPut(term, viz, stdFace, "• "); }
         ppArgs(term, viz, arg.args);
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "</li>\n"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</li>\n"); }
+        else if (viz.form == VizForm.textASCII ||
+                 viz.form == VizForm.textUTF8) { ppPut(term, viz, stdFace, "\n"); }
     }
     else static if (isInstanceOf!(AsPath, Arg))
     {
@@ -1596,7 +1632,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz,
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "<a href=\"file://" ~ arg.path ~ "\">"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<a href=\"file://" ~ arg.path ~ "\">"); }
 
         if (!viz.treeFlag)
         {
@@ -1622,7 +1658,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz,
         }
         ppPut(term, viz, arg.face, name);
 
-        if (viz.useHTML) { ppPut(term, viz, stdFace, "</a>"); }
+        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</a>"); }
     }
     else
     {
@@ -1642,7 +1678,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz,
 
         static if (__traits(hasMember, arg, "face") &&
                    __traits(hasMember, arg.face, "tagsHTML")) {
-            if (viz.useHTML)
+            if (viz.form == VizForm.html)
             {
                 foreach (tag; arg.face.tagsHTML)
                 {
@@ -1663,7 +1699,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz,
 
         static if (__traits(hasMember, arg, "face") &&
                    __traits(hasMember, arg.face, "tagsHTML")) {
-            if (viz.useHTML)
+            if (viz.form == VizForm.html)
             {
                 foreach (tag; arg.face.tagsHTML)
                 {
@@ -1696,12 +1732,18 @@ void pp(Term, Args...)(ref Term term,
     }
 }
 
-/** Viz Backend. */
+/** Visual Form(at). */
+enum VizForm { textASCII,
+               textUTF8,
+               html,
+               latex }
+
+/** Visual Backend. */
 struct Viz
 {
     ioFile outFile;
     bool treeFlag;
-    bool useHTML;
+    VizForm form;
     bool colorFlag;
 }
 
@@ -1711,12 +1753,12 @@ void ppln(Term, Args...)(ref Term term, Viz viz, Args args)
     ppArgs(term, viz, args);
     if (viz.outFile == stdout)
     {
-        term.writeln(lbr(viz.useHTML));
+        term.writeln(lbr(viz.form == VizForm.html));
         term.flush();
     }
     else
     {
-        viz.outFile.writeln(lbr(viz.useHTML));
+        viz.outFile.writeln(lbr(viz.form == VizForm.html));
     }
 }
 
@@ -2138,7 +2180,7 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term,
     ppln(term, viz,
          "Wrote tree cache of size ",
          data.length.Bytes64, " to ",
-         faze(asPath(viz.useHTML, cacheFile, cacheFile, false),
+         faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
               regFileFace),
          " in ",
          shortDurationString(toc - tic));
@@ -2167,7 +2209,7 @@ Dir loadRootDirTree(Term)(ref Term term,
         ppln(term, viz,
              "Read cache of size ",
              data.length.Bytes64, " from ",
-             faze(asPath(viz.useHTML, cacheFile, cacheFile, false),
+             faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
                   regFileFace),
              " in ",
              shortDurationString(toc - tic), " containing");
@@ -3558,7 +3600,9 @@ class Scanner(Term)
         keysBistsUnion = reduce!"a | b"(typeof(keysBists.front).init, keysBists);
         keysXGramsUnion = reduce!"a + b"(typeof(keysXGrams.front).init, keysXGrams);
 
-        auto viz = Viz(outFile, showTree, useHTML, colorFlag);
+        auto viz = Viz(outFile, showTree,
+                       useHTML ? VizForm.html : VizForm.textUTF8,
+                       colorFlag);
 
         if (_useNGrams &&
             (!keys.empty) &&
@@ -3636,7 +3680,7 @@ body { font: 10px Verdana, sans-serif; }
             const title = ("Searching for \"" ~ commaedKeysString ~ "\"" ~
                            " case-" ~ (_caseFold ? "in" : "") ~"sensitively"
                            ~asNote ~incKindsNote ~underNote);
-            if (viz.useHTML) // only needed for HTML output
+            if (viz.form == VizForm.html) // only needed for HTML output
             {
                 ppln(term, viz,
                      faze(title, titleFace));
@@ -4573,9 +4617,11 @@ body { font: 10px Verdana, sans-serif; }
                     pp(term, viz,
                        faze("Files with same name: " ~ dupFilesOk[0].name,
                             h3Face));
+                    pp(term, viz, uListBegin());
                     foreach (dupFile; dupFilesOk) {
-                        ppln(term, viz, " ", asPath(dupFile));
+                        pp(term, viz, lItem(asPath(dupFile)));
                     }
+                    pp(term, viz, uListEnd());
                 }
             }
         }
@@ -4589,9 +4635,11 @@ body { font: 10px Verdana, sans-serif; }
                     pp(term, viz,
                        faze("Files with same inode " ~ to!string(inode) ~
                             " (hardlinks): ", h3Face));
+                    pp(term, viz, uListBegin());
                     foreach (dupFile; dupFilesOk) {
-                        ppln(term, viz, " ", asPath(dupFile));
+                        pp(term, viz, lItem(asPath(dupFile)));
                     }
+                    pp(term, viz, uListEnd());
                 }
             }
         }
@@ -4637,10 +4685,11 @@ body { font: 10px Verdana, sans-serif; }
                     ppendl(term, viz);
 
                     // file list
+                    pp(term, viz, uListBegin());
                     foreach (dupFile; dupFilesOk) {
                         ppln(term, viz, " ", asPath(dupFile));
                     }
-
+                    pp(term, viz, uListEnd());
                 }
             }
         }
