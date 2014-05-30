@@ -1127,3 +1127,8 @@ unittest
 import std.range: InputRange, OutputRange;
 alias Source = InputRange;
 alias Sink = OutputRange;
+
+/* belongs to std.range */
+import std.range: cycle, retro;
+import std.functional: compose;
+alias retroCycle = compose!(cycle, retro);
