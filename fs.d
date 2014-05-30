@@ -1674,7 +1674,9 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
             foreach (parent; arg.parents)
             {
                 ppPut(term, viz, stdFace, dirSeparator[0]);
+                if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<b>"); }
                 ppPut(term, viz, dirFace, parent.name);
+                if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</b>"); }
             }
             ppPut(term, viz, stdFace, dirSeparator[0]);
         }
@@ -1690,7 +1692,18 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
         }
 
         term.setFace(arg.getFace(), viz.colorFlag);
+
+        if (viz.form == VizForm.html)
+        {
+            static      if (isSymlink!Arg) { ppPut(term, viz, stdFace, "<i>"); }
+            else static if (isDir!Arg) { ppPut(term, viz, stdFace, "<b>"); }
+        }
         ppPut(term, viz, arg.face, name);
+        if (viz.form == VizForm.html)
+        {
+            static      if (isSymlink!Arg) { ppPut(term, viz, stdFace, "</i>"); }
+            else static if (isDir!Arg) { ppPut(term, viz, stdFace, "</b>"); }
+        }
 
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</a>"); }
     }
@@ -3615,7 +3628,7 @@ class Scanner(Term)
             useHTML = true;
             immutable outExt = useHTML ? "html" : "results.txt";
             outFile = ioFile("/tmp/test." ~ outExt, "w");
-            popen("firefox " ~ outFile.name);
+            popen("xdg-open " ~ outFile.name);
         } else {
             outFile = stdout;
         }
