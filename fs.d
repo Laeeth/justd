@@ -114,7 +114,7 @@ version = msgpack; // Use msgpack serialization
 
 import std.stdio: ioFile = File, stdout;
 import std.typecons: Tuple, tuple;
-import std.algorithm: find, map, filter, reduce, max, min, uniq, all;
+import std.algorithm: find, map, filter, reduce, max, min, uniq, all, joiner;
 import std.string: representation;
 import std.stdio: write, writeln;
 import std.path: baseName, dirName, isAbsolute, dirSeparator;
@@ -123,7 +123,7 @@ import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
 import std.range: repeat, array, empty;
 import std.stdint: uint64_t;
-import std.traits: Unqual, isInstanceOf;
+import std.traits: Unqual, isInstanceOf, isIterable;
 import std.allocator;
 import core.memory: GC;
 import core.exception;
@@ -244,7 +244,6 @@ string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
     /* auto subsSortingNames = EnumMembers!EnumType; */
     auto x = (__traits(allMembers, EnumType));
     string doc = "";
-    /* import std.algorithm: joiner; */
     /* return joiner(x, separator); */
     /* debug dln(typeof(x).stringof); */
     foreach (ix, name; x) {
@@ -1581,14 +1580,22 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     }
     else static if (isInstanceOf!(Header, Arg))
     {
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace,
-                                              "<h" ~ to!string(arg.level) ~ ">"); }
-        else if (viz.form == VizForm.textASCII) {
-            const tag = "=".repeat(arg.level); // AsciiDoc
-            ppArgs(term, viz, stdFace, tag, " ", arg.args, " ", tag);
+        if (viz.form == VizForm.html) {
+            ppArgs(term, viz, stdFace,
+                   "<h" ~ to!string(arg.level) ~ ">",
+                   arg.args,
+                   "</h" ~ to!string(arg.level) ~ ">");
         }
-        ppArgs(term, viz, arg.args);
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</h" ~ to!string(arg.level) ~ ">"); }
+        else if (viz.form == VizForm.textAsciiDoc ||
+                 viz.form == VizForm.textAsciiDocUTF8) {
+            string tag;
+            foreach (ix; 0..arg.level)
+                tag ~= "=";
+            //const tag = "=".repeat(arg.level).joiner("");
+            //pragma(msg, typeof(tag).stringof);
+            ppArgs(term, viz,
+                   "\n", tag, " ", arg.args, " ", tag, "\n");
+        }
     }
     else static if (isInstanceOf!(UList, Arg))
     {
@@ -1631,14 +1638,14 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     else static if (isInstanceOf!(LItem, Arg))
     {
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<li>\n"); }
-        else if (viz.form == VizForm.textASCII) { ppPut(term, viz, stdFace, "- "); }
+        else if (viz.form == VizForm.textAsciiDoc) { ppPut(term, viz, stdFace, " - "); }
         else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\item "); }
-        else if (viz.form == VizForm.textUTF8) { ppPut(term, viz, stdFace, "• "); }
+        else if (viz.form == VizForm.textAsciiDocUTF8) { ppPut(term, viz, stdFace, " • "); }
         ppArgs(term, viz, arg.args);
         if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</li>\n"); }
         else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\n"); }
-        else if (viz.form == VizForm.textASCII ||
-                 viz.form == VizForm.textUTF8) { ppPut(term, viz, stdFace, "\n"); }
+        else if (viz.form == VizForm.textAsciiDoc ||
+                 viz.form == VizForm.textAsciiDocUTF8) { ppPut(term, viz, stdFace, "\n"); }
     }
     else static if (isInstanceOf!(AsPath, Arg))
     {
@@ -1756,8 +1763,8 @@ void pp(Term, Args...)(ref Term term,
 }
 
 /** Visual Form(at). */
-enum VizForm { textASCII,
-               textUTF8,
+enum VizForm { textAsciiDoc,
+               textAsciiDocUTF8,
                html,
                latex }
 
@@ -2374,7 +2381,7 @@ class Scanner(Term)
     import std.string: toLower, toUpper, startsWith, CaseSensitive;
     import std.mmfile;
     import std.stdio: writeln, stdout, stderr, stdin, popen;
-    import std.algorithm: find, joiner, count, countUntil, min, splitter;
+    import std.algorithm: find, count, countUntil, min, splitter;
     import std.range: join;
     import std.conv: to;
 
@@ -3624,7 +3631,7 @@ class Scanner(Term)
         keysXGramsUnion = reduce!"a + b"(typeof(keysXGrams.front).init, keysXGrams);
 
         auto viz = Viz(outFile, showTree,
-                       useHTML ? VizForm.html : VizForm.textUTF8,
+                       useHTML ? VizForm.html : VizForm.textAsciiDocUTF8,
                        colorFlag);
 
         if (_useNGrams &&
