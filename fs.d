@@ -1529,6 +1529,16 @@ import std.range: hasSlicing;
     }
 }
 
+void ppRaw(Term, Arg)(ref Term term,
+                      Viz viz,
+                      Arg arg)
+{
+    if (viz.outFile == stdout)
+        term.write(arg);
+    else
+        viz.outFile.write(arg);
+}
+
 void ppPut(Term, Arg)(ref Term term,
                       Viz viz,
                       Face!Color face,
@@ -1595,7 +1605,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     {
         foreach (subArg; arg)
         {
-            ppArg(term, viz, depth + 1, subArg);
+            ppArg(term,viz, depth + 1, subArg);
         }
     }
     else static if (isInstanceOf!(Header, Arg))
@@ -1621,53 +1631,31 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     }
     else static if (isInstanceOf!(AsUList, Arg))
     {
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); }
-        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{enumerate}\n"); }
-        ppArgs(term, viz, arg.args);
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ul>\n"); }
-        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\end{enumerate}\n"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<ul>\n"); }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\begin{enumerate}\n"); }
+        ppArgs(term,viz, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</ul>\n"); }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\end{enumerate}\n"); }
     }
-    /* else static if (isInstanceOf!(UListBegin, Arg)) */
-    /* { */
-    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ul>\n"); } */
-    /*     else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{enumerate}\n"); } */
-    /*     ppArgs(term, viz, arg.args); */
-    /* } */
-    /* else static if (isInstanceOf!(UListEnd, Arg)) */
-    /* { */
-    /*     ppArgs(term, viz, arg.args); */
-    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ul>\n"); } */
-    /*     else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\end{enumerate}\n"); } */
-    /* } */
-    /* else static if (isInstanceOf!(OListBegin, Arg)) */
-    /* { */
-    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); } */
-    /*     ppArgs(term, viz, arg.args); */
-    /* } */
-    /* else static if (isInstanceOf!(OListEnd, Arg)) */
-    /* { */
-    /*     ppArgs(term, viz, arg.args); */
-    /*     if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); } */
-    /* } */
     else static if (isInstanceOf!(AsOList, Arg))
     {
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<ol>\n"); }
-        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\begin{itemize}\n"); }
-        ppArgs(term, viz, arg.args);
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</ol>\n"); }
-        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\end{itemize}\n"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<ol>\n"); }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\begin{itemize}\n"); }
+        ppArgs(term,viz, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</ol>\n"); }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\end{itemize}\n"); }
     }
     else static if (isInstanceOf!(AsItem, Arg))
     {
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<li>\n"); }
-        else if (viz.form == VizForm.textAsciiDoc) { ppPut(term, viz, stdFace, " - "); }
-        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\\item "); }
-        else if (viz.form == VizForm.textAsciiDocUTF8) { ppPut(term, viz, stdFace, " • "); }
-        ppArgs(term, viz, arg.args);
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</li>\n"); }
-        else if (viz.form == VizForm.latex) { ppPut(term, viz, stdFace, "\n"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<li>"); }
+        else if (viz.form == VizForm.textAsciiDoc) { ppRaw(term,viz, " - "); }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\item "); }
+        else if (viz.form == VizForm.textAsciiDocUTF8) { ppRaw(term,viz, " • "); }
+        ppArgs(term,viz, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</li>\n"); }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\n"); }
         else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8) { ppPut(term, viz, stdFace, "\n"); }
+                 viz.form == VizForm.textAsciiDocUTF8) { ppRaw(term,viz, "\n"); }
     }
     else static if (isInstanceOf!(AsPath, Arg))
     {
@@ -1681,9 +1669,23 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
         vizArg.treeFlag = true;
         ppArg(term, vizArg, depth + 1, arg.arg);
     }
+    else static if (isInstanceOf!(AsHit, Arg))
+    {
+        const ixs = to!string(arg.ix);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<hit" ~ ixs ~ ">"); }
+        ppArg(term,viz, depth + 1, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</hit" ~ ixs ~ ">"); }
+    }
+    else static if (isInstanceOf!(AsCtx, Arg))
+    {
+        const ixs = to!string(arg.ix);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<hit_context>"); }
+        ppArg(term,viz, depth + 1, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</hit_context>"); }
+    }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<a href=\"file://" ~ arg.path ~ "\">"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<a href=\"file://" ~ arg.path ~ "\">"); }
 
         if (!viz.treeFlag)
         {
@@ -1691,12 +1693,12 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
             size_t i = 0;
             foreach (parent; arg.parents)
             {
-                ppPut(term, viz, stdFace, dirSeparator[0]);
-                if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "<b>"); }
-                ppPut(term, viz, dirFace, parent.name);
-                if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</b>"); }
+                ppRaw(term,viz, dirSeparator[0]);
+                if (viz.form == VizForm.html) { ppRaw(term,viz, "<b>"); }
+                ppPut(term,viz, dirFace, parent.name);
+                if (viz.form == VizForm.html) { ppRaw(term,viz, "</b>"); }
             }
-            ppPut(term, viz, stdFace, dirSeparator[0]);
+            ppRaw(term,viz, dirSeparator[0]);
         }
 
         // write name
@@ -1711,20 +1713,20 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
 
         if (viz.form == VizForm.html)
         {
-            static      if (isSymlink!Arg) { ppPut(term, viz, stdFace, "<i>"); }
-            else static if (isDir!Arg) { ppPut(term, viz, stdFace, "<b>"); }
+            static      if (isSymlink!Arg) { ppRaw(term,viz, "<i>"); }
+            else static if (isDir!Arg) { ppRaw(term,viz, "<b>"); }
         }
 
         term.setFace(arg.getFace(), viz.colorFlag);
-        ppPut(term, viz, arg.face, name);
+        ppPut(term,viz, arg.face, name);
 
         if (viz.form == VizForm.html)
         {
-            static      if (isSymlink!Arg) { ppPut(term, viz, stdFace, "</i>"); }
-            else static if (isDir!Arg) { ppPut(term, viz, stdFace, "</b>"); }
+            static      if (isSymlink!Arg) { ppRaw(term,viz, "</i>"); }
+            else static if (isDir!Arg) { ppRaw(term,viz, "</b>"); }
         }
 
-        if (viz.form == VizForm.html) { ppPut(term, viz, stdFace, "</a>"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</a>"); }
     }
     else
     {
@@ -1780,7 +1782,7 @@ void ppArgs(Term, Args...)(ref Term term, Viz viz,
 {
     foreach (arg; args)
     {
-        ppArg(term, viz, 0, arg);
+        ppArg(term,viz, 0, arg);
     }
 }
 
@@ -1789,7 +1791,7 @@ void pp(Term, Args...)(ref Term term,
                        Viz viz,
                        Args args)
 {
-    ppArgs(term, viz, args);
+    ppArgs(term,viz, args);
     if (viz.outFile == stdout)
     {
         term.flush();
@@ -1814,7 +1816,7 @@ struct Viz
 /** Pretty-Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
 void ppln(Term, Args...)(ref Term term, Viz viz, Args args)
 {
-    ppArgs(term, viz, args);
+    ppArgs(term,viz, args);
     if (viz.outFile == stdout)
     {
         term.writeln(lbr(viz.form == VizForm.html));
@@ -3678,17 +3680,26 @@ class Scanner(Term)
         }
 
         if (useHTML) {
-            ppln(term,viz,
-                 "<!DOCTYPE html>
+            pp(term,viz,
+               "<!DOCTYPE html>
 <html>
 <head>
 <meta charset=\"UTF-8\"/>
 <style>
 body { font: 10px Verdana, sans-serif; }
+hit0 { background-color:#f2b701; border: solid 0px grey; }
+hit1 { background-color:#e57d04; border: solid 0px grey; }
+hit2 { background-color:#dc0030; border: solid 0px grey; }
+hit3 { background-color:#b10058; border: solid 0px grey; }
+hit4 { background-color:#7c378a; border: solid 0px grey; }
+hit5 { background-color:#3465aa; border: solid 0px grey; }
+hit6 { background-color:#09a275; border: solid 0px grey; }
+hit7 { background-color:#7cb854; border: solid 0px grey; }
+hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 </style>
 </head>
-
-<body>");
+<body>
+");
         }
 
         // ppln(term,viz, "<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
@@ -3766,7 +3777,7 @@ body { font: 10px Verdana, sans-serif; }
         // Setup root directory
         if (!_recache) {
             GC.disable;
-            _rootDir = loadRootDirTree(term, viz, _cacheFile, gstats);
+            _rootDir = loadRootDirTree(term,viz, _cacheFile, gstats);
             GC.enable;
         }
         if (!_rootDir) { // if first time
@@ -3779,11 +3790,11 @@ body { font: 10px Verdana, sans-serif; }
         _currTime = Clock.currTime();
 
         GC.disable;
-        scanTopDirs(term, viz, commaedKeysString);
+        scanTopDirs(term,viz, commaedKeysString);
         GC.enable;
 
         GC.disable;
-        saveRootDirTree(term, viz, _rootDir, _cacheFile);
+        saveRootDirTree(term,viz, _rootDir, _cacheFile);
         GC.enable;
 
         // Print statistics
@@ -3796,7 +3807,7 @@ body { font: 10px Verdana, sans-serif; }
     {
         if (_topDirs) {
             foreach (topIx, topDir; _topDirs) {
-                scanDir(term, viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
+                scanDir(term,viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                 if (ctrlC) {
                     auto restDirs = _topDirs[topIx + 1..$];
                     if (!restDirs.empty) {
@@ -3823,7 +3834,7 @@ body { font: 10px Verdana, sans-serif; }
                     _keyAsAcronym = true;
 
                     foreach (topDir; _topDirs) {
-                        scanDir(term, viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
+                        scanDir(term,viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                     }
                 }
             }
@@ -3952,7 +3963,7 @@ body { font: 10px Verdana, sans-serif; }
             if (regfile._cstat.kindId in binFKindsById) {
                 const kind = enforceNotNull(binFKindsById[regfile._cstat.kindId]);
                 hit = KindHit.cached;
-                printSkipped(term, viz, regfile, ext, subIndex, kind, hit,
+                printSkipped(term,viz, regfile, ext, subIndex, kind, hit,
                              " using cached KindId");
             } else {
                 hit = KindHit.none;
@@ -3966,7 +3977,7 @@ body { font: 10px Verdana, sans-serif; }
                 auto nnKind = enforceNotNull(kind);
                 hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
                 if (hit) {
-                    printSkipped(term, viz, regfile, ext, subIndex, nnKind, hit,
+                    printSkipped(term,viz, regfile, ext, subIndex, nnKind, hit,
                                  " (" ~ ext ~ ") at " ~ nthString(kindIndex + 1) ~ " extension try");
                     break;
                 }
@@ -4340,7 +4351,7 @@ body { font: 10px Verdana, sans-serif; }
                     allXGramsMiss = keysXGramUnionMatch == 0;
                 }
 
-                immutable binFlag = isBinary(term, viz, theRegFile, ext, subIndex);
+                immutable binFlag = isBinary(term,viz, theRegFile, ext, subIndex);
 
                 if (binFlag || noBistMatch || allXGramsMiss) // or no hits possible. TODO: Maybe more efficient to do histogram discardal first
                 {
@@ -4413,9 +4424,9 @@ body { font: 10px Verdana, sans-serif; }
                 }
 
             } catch (FileException) {
-                handleError(term, viz, theRegFile, false, subIndex);
+                handleError(term,viz, theRegFile, false, subIndex);
             } catch (ErrnoException) {
-                handleError(term, viz, theRegFile, false, subIndex);
+                handleError(term,viz, theRegFile, false, subIndex);
             }
             theRegFile.freeContents;
         }
@@ -4489,13 +4500,13 @@ body { font: 10px Verdana, sans-serif; }
                 ++gstats.noScannedFiles;
 
                 if      (auto targetRegFile = cast(RegFile)targetFile) {
-                    scanRegFile(term, viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
+                    scanRegFile(term,viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
                 }
                 else if (auto targetDir = cast(Dir)targetFile) {
-                    scanDir(term, viz, topDir, assumeNotNull(targetDir), keys, fromSymlinks);
+                    scanDir(term,viz, topDir, assumeNotNull(targetDir), keys, fromSymlinks);
                 }
                 else if (auto targetSymlink = cast(Symlink)targetFile) { // target is a Symlink
-                    scanSymlink(term, viz, topDir, assumeNotNull(targetSymlink), enforceNotNull(targetSymlink.parent), keys, fromSymlinks);
+                    scanSymlink(term,viz, topDir, assumeNotNull(targetSymlink), enforceNotNull(targetSymlink.parent), keys, fromSymlinks);
                 }
             }
         } else {
@@ -4574,7 +4585,7 @@ body { font: 10px Verdana, sans-serif; }
             auto subsSorted = theDir.subsSorted(subsSorting);
             foreach (key, sub; subsSorted) {
                 if (auto regfile = cast(RegFile)sub) {
-                    scanRegFile(term, viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
+                    scanRegFile(term,viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
                 }
                 else if (auto subDir = cast(Dir)sub) {
                     if (maxDepth == -1 || // if either all levels or
@@ -4599,12 +4610,12 @@ body { font: 10px Verdana, sans-serif; }
                                    skippedDirKindsMap[sub.name].kindName);
                             }
                         } else {
-                            scanDir(term, viz, topDir, assumeNotNull(subDir), keys, fromSymlinks, maxDepth >= 0 ? --maxDepth : maxDepth);
+                            scanDir(term,viz, topDir, assumeNotNull(subDir), keys, fromSymlinks, maxDepth >= 0 ? --maxDepth : maxDepth);
                         }
                     }
                 }
                 else if (auto subSymlink = cast(Symlink)sub) {
-                    scanSymlink(term, viz, topDir, assumeNotNull(subSymlink), theDir, keys, fromSymlinks);
+                    scanSymlink(term,viz, topDir, assumeNotNull(subSymlink), theDir, keys, fromSymlinks);
                 }
                 else {
                     if (showTree) { ppln(term,viz); }
@@ -4617,7 +4628,7 @@ body { font: 10px Verdana, sans-serif; }
                 }
             }
         } catch (FileException) {
-            handleError(term, viz, theDir, true, 0);
+            handleError(term,viz, theDir, true, 0);
         }
     }
 
@@ -4776,7 +4787,7 @@ void main(string[] args)
     auto term = Terminal(ConsoleOutputType.linear);
 
     // term.setTitle("Basic I/O");
-    // auto input = RealTimeConsoleInput(term, viz, &term,
+    // auto input = RealTimeConsoleInput(term,viz, &term,
     //                                   ConsoleInputFlags.raw |
     //                                   ConsoleInputFlags.mouse |
     //                                   ConsoleInputFlags.paste);
