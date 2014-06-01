@@ -184,7 +184,8 @@ class SignalCaughtException : Exception
 
 void signalHandler(int signo)
 {
-    if (signo == 2) { ++ctrlC; }
+    import core.atomic: atomicOp;
+    if (signo == 2) { core.atomic.atomicOp!"+="(ctrlC, 1); }
     // throw new SignalCaughtException(signo);
 }
 
