@@ -88,15 +88,15 @@
 
 \begin{frame}[fragile]{Type System is the Key}
   \begin{itemize}[<+->]
-  \item Statically Inferred is the future!:\\
-    Examples: C++, D, Haskell, Scala, OCaml, F\#, Julia and to a small extent
-    C\#
   \item Information Propagation (DRY): Reflection
   \item Rich Type Programming: Default, Range, Step, Saturation, Physical Unit
   \item Requires \emph{Formal} Language to Capture its Algebra!
   \item Type Inference: Unit Analysis
   \item \emph{Type Safe Linking}: Should Change Everything! We just need to
     fixed GNU ld. GCC already puts types in debug information.
+  \item Trend: Static code inference can give guarantees on
+    (concurrent) code!:\\
+    Examples: Rust, Haskell, D, Scala, OCaml, F\#, Julia partly C\#
   \end{itemize}
 \end{frame}
 
@@ -1123,11 +1123,11 @@ alias Pair(T) = Tuple!(T, T);
 \end{frame}
 
 \begin{frame}[fragile]{Commercial Successes}
-  A Brave Few so far:
+  A Few Brave so far:
   \begin{itemize}[<+->]
   \item \textbf{Sociomantic}: Profitable D-only company with no initial
-    funding/backing
-  \item \textbf{British Game-Engine}: replace scripting languages!
+    funding/backing bought for \$100M.
+  \item \textbf{Remedy Games Engine}: replace scripting languages!
   \item \textbf{Facebook}!: Andrei, Proof-of-Concept, Bounties!
   \end{itemize}
 \end{frame}
@@ -1144,10 +1144,8 @@ alias Pair(T) = Tuple!(T, T);
 \begin{frame}[fragile]{Compilers}
   \begin{itemize}[<+->]
   \item \textbf{DMD}: Reference (Recent Features), Super-Fast Compile
-  \item \textbf{GDC}: GCC, Fast Code, Fast Compile, Ubuntu-Packaged (4.8.1 in
-    13.10). Merged in mainline GCC-4.9?
-  \item \textbf{LDC}: LLVM, Fast Code, Fast Compile, Ubuntu-Packaged (0.11 in
-    13.10)
+  \item \textbf{GDC}: GCC, Fast Code, Fast Compile, Ubuntu-Packaged
+  \item \textbf{LDC}: LLVM, Fast Code, Fast Compile, Ubuntu-Packaged
   \end{itemize}
 \end{frame}
 
@@ -1157,15 +1155,15 @@ alias Pair(T) = Tuple!(T, T);
   \item \textbf{Eclipse DDT}:
   \item \textbf{Emacs FlyCheck}: Including unittests!
   \item \textbf{DCD}: D Completion Daemon: Server-Client! Frontends for Emacs,
-    Vi, etc.
+    Vi, Sublime Text, etc.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Learning Curve \& Cons}
   \begin{itemize}[<+->]
   \item When to use \texttt{x[]}?
-  \item Compiler Messages are better than C++ but not yet perfect ;)
-  \item Template Instance Syntax may take a week: \texttt{Tuple!(S,T,U)}
+  \item Compiler Messages are better than C++ but not yet perfect
+  \item Template Instance Syntax: \texttt{Tuple! (S,T,U)}
   \item Compile-Time Constants:
 \begin{lstlisting}[frame=single]
   enum thisConstantCanNeverChange = 42;
@@ -1176,14 +1174,14 @@ alias Pair(T) = Tuple!(T, T);
 
 \begin{frame}[fragile]{What's Next?}
   \begin{itemize}[<+->]
-  \item 36:th to 18:th place on TIOBE in recent 12 months
-  \item DMD \& Phobos each has around 100 Pending Github Pull Requests!:
-    \begin{itemize}[<+->]
-    \item \textbf{Multi-Dim Slicing} a la Matlab och Fortran 90+:
-      \texttt{x[0..m, 0..n]}. Just merged into DMD 2.066a.
-    \item \textbf{Allocators}: \texttt{std.allocator}
-    \item \textbf{D Parsing}: \texttt{std.lexer}
-    \end{itemize}
+  % \item 36:th to 18:th place on TIOBE in recent 12 months
+  % \item \textbf{Multi-Dim Slicing} a la Matlab och Fortran 90+:
+  %   \texttt{x[0..m, 0..n]}. Just merged into DMD 2.066a.
+  \item \textbf{Allocators}: \texttt{std.allocator}
+  \item \textbf{D Parsing}: \texttt{std.lexer}
+  \item Data-flow Analysis: Inhibit slice index/range checking in
+    Divide-\&-Conquer Algorithms =>
+  \item Escape Analysis
   \item and prepared for the Apocalypse: 128-bits Integers: \texttt{cent} and
     \texttt{ucent} are reserved words!
   \item New Nex-Gen Forum: at http://dlang.org/library/. Example
@@ -1204,11 +1202,12 @@ alias Pair(T) = Tuple!(T, T);
 
 \begin{frame}[fragile]{Conclusion: Productivity and Performance}
   \begin{itemize}[<+->]
-  \item Fastest Compilation of Fast Code
-  \item And statically Checked
-  \item A new level of productivity
-  \item Game-Changer
-  \item Flexible: Memory Management, Functional or Imperative
+  \item \emph{Fastest} Compilation of \emph{Fast} Code gives
+  \item New level of productivity
+  \item And statically Checked gives
+  \item New level of correctness an in turn safety
+  \item This is a Game-Changer
+  \item Flexibility: Fulfils more needs than any other language
   \end{itemize}
 \end{frame}
 
