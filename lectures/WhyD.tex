@@ -1134,6 +1134,8 @@ alias Pair(T) = Tuple!(T, T);
 
 \begin{frame}[fragile]{Other Improvements}
   \begin{itemize}[<+->]
+  \item \textbf{Multi-Dim Slicing} a la Matlab och Fortran 90+:
+    \texttt{x[0..m, 0..n]}. Just merged into DMD 2.066 (git master).
   \item Compacter generics using \texttt{static if}
   \item No darn semicolons after classes/structs!
   \item \textbf{Power-operator}: ^^
@@ -1175,18 +1177,16 @@ alias Pair(T) = Tuple!(T, T);
 \begin{frame}[fragile]{What's Next?}
   \begin{itemize}[<+->]
   % \item 36:th to 18:th place on TIOBE in recent 12 months
-  % \item \textbf{Multi-Dim Slicing} a la Matlab och Fortran 90+:
-  %   \texttt{x[0..m, 0..n]}. Just merged into DMD 2.066a.
   \item \textbf{Allocators}: \texttt{std.allocator}
   \item \textbf{D Parsing}: \texttt{std.lexer}
   \item Data-flow Analysis: Inhibit slice index/range checking in
     Divide-\&-Conquer Algorithms =>
   \item Escape Analysis
+  \item Strongly-Typed ``Nullness'' á lá Haskell's \texttt{Maybe}: \texttt{NotNull} or
+    \texttt{@nullable}
   \item and prepared for the Apocalypse: 128-bits Integers: \texttt{cent} and
     \texttt{ucent} are reserved words!
-  \item New Nex-Gen Forum: at http://dlang.org/library/. Example
-    http://dlang.org/library/std/algorithm/min.html
-    Especially notice the buttons for editing and DISQUS support.
+  \item New Forum look: Buttons for editing and DISQUS support.
   \end{itemize}
 \end{frame}
 
