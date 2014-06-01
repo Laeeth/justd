@@ -905,11 +905,16 @@ void main() {
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Strict Control of Memory/Data Access/Use}
-  Type access qualifiers \textbf{immutable} and \textbf{const} paves way for
+\begin{frame}[fragile]{Strict Control}
   \begin{itemize}[<+->]
-  \item More powerful Static Analysis and
-  \item Automatic Algorithm Parallelization
+  \item Concurrency: \textbf{shared}
+  \item Ownership, Data-flow Analysis: \textbf{immutable}, \textbf{const}
+  \item Exception: \textbf{nothrow}
+  \item Code Access: \textbf{pure}
+  \item Memory Safety: \textbf{@safe}
+  \item Memory Allocation: \textbf{@gc}
+  \item enables better optimization and automatic algorithm parallelization than
+    current mainstream languages (C,C++,Java,C\#).
   \end{itemize}
 \end{frame}
 
@@ -1174,16 +1179,28 @@ alias Pair(T) = Tuple!(T, T);
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Trend: Safe Memory-Models}
+  \begin{itemize}[<+->]
+  \item Not by default in C/C++,
+  \item and compilers optimize away it by default, because
+  \item C,C++ memory models is not built to provide ownership control and safe
+    memory slicing, so range checking gives a significant performance hit
+  \item Firefox \& Rust: 95 \% of browser security holes are potential buffer
+    overflows
+  \item D has thought of this---DMD's \texttt{-release} builds keeps range
+    checking (thanks to Andrei)
+  \item Further, DMD is preparing for \emph{Data-flow Analysis}: Inhibit slice
+    checking in Divide-\&-Conquer Algorithms: Describe example on whiteboard.
+  \item Strongly-Typed ``Nullness'' á lá Haskell's \texttt{Maybe}: \texttt{NotNull} or
+    \texttt{@nullable}: No more ``null-pointer-exceptions''.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{What's Next?}
   \begin{itemize}[<+->]
   % \item 36:th to 18:th place on TIOBE in recent 12 months
   \item \textbf{Allocators}: \texttt{std.allocator}
   \item \textbf{D Parsing}: \texttt{std.lexer}
-  \item Data-flow Analysis: Inhibit slice index/range checking in
-    Divide-\&-Conquer Algorithms =>
-  \item Escape Analysis
-  \item Strongly-Typed ``Nullness'' á lá Haskell's \texttt{Maybe}: \texttt{NotNull} or
-    \texttt{@nullable}
   \item and prepared for the Apocalypse: 128-bits Integers: \texttt{cent} and
     \texttt{ucent} are reserved words!
   \item New Forum look: Buttons for editing and DISQUS support.
