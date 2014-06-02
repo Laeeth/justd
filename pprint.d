@@ -125,11 +125,20 @@ struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(a
 struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
 
 /** Table. */
-struct Table(T...) { T args; } auto table(T...)(T args) { return Table!T(args); }
+struct AsTable(T...) {
+    string border;
+    T args;
+}
+auto asTable(T...)(T args) {
+    return AsTable!T("\"1\"", args);
+}
+
 /** Table Row. */
-struct Row(T...) { T args; } auto row(T...)(T args) { return Row!T(args); }
-/** Table Column. */
-struct Col(T...) { T args; } auto col(T...)(T args) { return Col!T(args); }
+struct AsRow(T...) { T args; } auto asRow(T...)(T args) { return AsRow!T(args); }
+/** Table Cell. */
+struct AsCell(T...) { T args; } auto asCell(T...)(T args) { return AsCell!T(args); }
+/** Table Heading. */
+struct AsTHeading(T...) { T args; } auto asTHeading(T...)(T args) { return AsTHeading!T(args); }
 
 /* /\** Unordered List Beginner. *\/ */
 /* struct UListBegin(T...) { T args; } */
@@ -231,13 +240,25 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
             ppArg(term,viz, depth + 1, subArg);
         }
     }
+    else static if (isInstanceOf!(InBold, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<b>\n"); }
+        ppArgs(term,viz, arg.arg);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</b>\n"); }
+    }
+    else static if (isInstanceOf!(InItalic, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<i>\n"); }
+        ppArgs(term,viz, arg.arg);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</i>\n"); }
+    }
     else static if (isInstanceOf!(Header, Arg))
     {
         if (viz.form == VizForm.html) {
             ppArgs(term, viz,
                    "<h" ~ to!string(arg.level) ~ ">",
                    arg.args,
-                   "</h" ~ to!string(arg.level) ~ ">");
+                   "</h" ~ to!string(arg.level) ~ ">\n");
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
@@ -267,6 +288,35 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
         ppArgs(term,viz, arg.args);
         if (viz.form == VizForm.html) { ppRaw(term,viz, "</ol>\n"); }
         else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\end{itemize}\n"); }
+    }
+    else static if (isInstanceOf!(AsTable, Arg))
+    {
+        if (viz.form == VizForm.html) {
+            const border = (arg.border ? " border=" ~ arg.border : "");
+            ppRaw(term,viz, "<table" ~ border ~ ">\n");
+        }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\begin{tabular}\n"); }
+        ppArgs(term,viz, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</table>\n"); }
+        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\end{tabular}\n"); }
+    }
+    else static if (isInstanceOf!(AsRow, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<tr>\n"); }
+        ppArgs(term,viz, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</tr>\n"); }
+    }
+    else static if (isInstanceOf!(AsCell, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<td>"); }
+        ppArgs(term,viz, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</td>\n"); }
+    }
+    else static if (isInstanceOf!(AsTHeading, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<th>\n"); }
+        ppArgs(term,viz, arg.args);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</th>\n"); }
     }
     else static if (isInstanceOf!(AsItem, Arg))
     {

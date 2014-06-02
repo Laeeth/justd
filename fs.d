@@ -4316,11 +4316,17 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         /* Counts */
         pp(term,viz,
            header!2("Scanned Types"),
-           asUList(asItem(gstats.noScannedDirs, " Dirs, "),
-                   asItem(gstats.noScannedRegFiles, " Regular Files, "),
-                   asItem(gstats.noScannedSymlinks, " Symbolic Links, "),
-                   asItem(gstats.noScannedSpecialFiles, " Special Files, "),
-                   asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root
+           /* asUList(asItem(gstats.noScannedDirs, " Dirs, "), */
+           /*         asItem(gstats.noScannedRegFiles, " Regular Files, "), */
+           /*         asItem(gstats.noScannedSymlinks, " Symbolic Links, "), */
+           /*         asItem(gstats.noScannedSpecialFiles, " Special Files, "), */
+           /*         asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
+           /*     ) */
+           asTable(asRow(asCell(gstats.noScannedDirs), asCell(inItalic("Dirs"))),
+                   asRow(asCell(gstats.noScannedRegFiles), asCell(inItalic("Regular Files"))),
+                   asRow(asCell(gstats.noScannedSymlinks), asCell(inItalic("Symbolic Links"))),
+                   asRow(asCell(gstats.noScannedSpecialFiles), asCell(inItalic("Special Files"))),
+                   asRow(asCell(inBold(gstats.noScannedFiles)), asCell(inBold(inItalic("Files")))) // on extra because of lack of root
                ));
 
         if (gstats.densenessCount) {
