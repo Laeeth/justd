@@ -146,6 +146,7 @@ import tempfs;
 import rational: Rational;
 import ngram;
 import notnull;
+import pprint;
 import elf;
 
 /* NGram Aliases */
@@ -207,7 +208,8 @@ version(cerealed) {
 string shortDurationString(in Duration dur) @safe pure
 {
     import std.conv: to;
-    immutable weeks = dur.weeks;     if (weeks) {
+    immutable weeks = dur.getOnly!"weeks";
+    if (weeks) {
         if (weeks < 52) {
             return to!string(weeks) ~ " week" ~ (weeks >= 2 ? "s" : "");
         } else {
@@ -218,10 +220,10 @@ string shortDurationString(in Duration dur) @safe pure
                 to!string(weeks_rest) ~ " week" ~ (weeks_rest >= 2 ? "s" : "");
         }
     }
-    immutable days = dur.days;       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
-    immutable hours = dur.hours;     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
-    immutable minutes = dur.minutes; if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
-    immutable seconds = dur.seconds; if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
+    immutable days = dur.getOnly!"days";       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
+    immutable hours = dur.getOnly!"hours";     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
+    immutable minutes = dur.getOnly!"minutes"; if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
+    immutable seconds = dur.getOnly!"seconds"; if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
     immutable frac = dur.fracSec;
     immutable msecs = frac.msecs; if (msecs) return to!string(msecs) ~ " millisecond" ~ (msecs >= 2 ? "s" : "");
     immutable usecs = frac.usecs; if (usecs) return to!string(usecs) ~ " microsecond" ~ (msecs >= 2 ? "s" : "");
@@ -252,30 +254,6 @@ string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
         doc ~= name;
     }
     return doc;
-}
-
-struct Face(Color)
-{
-    this(Color fg, Color bg, bool bright, bool italic, string[] tagsHTML)
-    {
-        this.fg = fg;
-        this.bg = bg;
-        this.bright = bright;
-        this.tagsHTML = tagsHTML;
-    }
-    string[] tagsHTML;
-    Color fg;
-    Color bg;
-    bool bright;
-    bool italic;
-}
-
-Face!Color face(Color)(Color fg, Color bg,
-                       bool bright = false,
-                       bool italic = false,
-                       string[] tagsHTML = [])
-{
-    return Face!Color(fg, bg, bright, italic, tagsHTML);
 }
 
 /** File Content Type Code. */
@@ -366,19 +344,22 @@ enum DuplicatesContext
 /** File Operation Type Code. */
 enum FileOp
 {
-    checkSyntax, lint = checkSyntax,
-    compile,
-    run,
+    checkSyntax,
+    lint = checkSyntax,
+
+    compile, // Compile
+    byteCompile, // Byte compile
+    run, // Run (Execute)
 
     /* VCS Operations */
-    status,
+    vcStatus,
 }
 
 /** Directory Operation Type Code. */
 enum DirOp
 {
     /* VCS Operations */
-    status,
+    vcStatus,
 }
 
 /** Shell Command.
@@ -566,6 +547,8 @@ bool matchName(in FKind kind,
     return (kind.matchFullName(full) ||
             kind.matchExtension(ext));
 }
+
+import std.range: hasSlicing;
 
 /** Match (Magic) Contents of $(D kind) with $(D range).
     Returns: true iff match. */
@@ -1405,435 +1388,10 @@ enum BuildType
     standard = devel,
 }
 
-/** Header. */
-struct Header(uint L, T...) { T args; enum level = L; }
-auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
-
 enum PathFormat
 {
     absolute,
     relative,
-}
-
-// Faces (Font/Color)
-
-enum stdFace = face(Color.white, Color.black);
-
-enum pathFace = face(Color.green, Color.black, true);
-
-// Files
-enum dirFace = face(Color.blue, Color.black, true);
-enum fileFace = face(Color.magenta, Color.black, true);
-enum baseNameFace = fileFace;
-enum specialFileFace = face(Color.red, Color.black, true);
-enum regFileFace = face(Color.white, Color.black, true, false, ["b"]);
-enum symlinkFace = face(Color.cyan, Color.black, true, true, ["i"]);
-
-enum contextFace = face(Color.green, Color.black);
-
-enum timeFace = face(Color.magenta, Color.black);
-enum digestFace = face(Color.yellow, Color.black);
-enum bytesFace = face(Color.yellow, Color.black);
-
-enum infoFace = face(Color.white, Color.black, true);
-enum warnFace = face(Color.yellow, Color.black);
-enum kindFace = warnFace;
-enum errorFace = face(Color.red, Color.black);
-
-enum titleFace = face(Color.white, Color.black, false, false, ["title"]);
-enum h1Face = face(Color.white, Color.black, false, false, ["h1"]);
-
-// Support these as immutable
-
-/** Key (Hit) Face Palette. */
-enum ctxFaces = [face(Color.red, Color.black),
-                 face(Color.green, Color.black),
-                 face(Color.blue, Color.black),
-                 face(Color.cyan, Color.black),
-                 face(Color.magenta, Color.black),
-                 face(Color.yellow, Color.black),
-    ];
-/** Key (Hit) Faces. */
-enum keyFaces = ctxFaces.map!(a => face(a.fg, a.bg, true));
-
-void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
-{
-    if (colorFlag)
-        term.color(face.fg | (face.bright ? Bright : 0) ,
-                   face.bg);
-}
-
-/** Printed as Path. */
-struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
-/** Printed as Name. */
-struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
-
-/* TODO: Turn these into an enum for more efficient parsing. */
-/** Printed in Italic/Slanted. */
-struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
-/** Printed in Bold. */
-struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
-/** Printed in Fixed. */
-struct InFixed(T) { T arg; } auto inFixed(T)(T arg) { return InFixed!T(arg); }
-/** Printed in Code. */
-struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
-/** Printed as Emphasized. */
-struct AsEmph(T) { T arg; } auto asEmph(T)(T arg) { return AsEmph!T(arg); }
-/** Printed as Performatted. */
-struct AsPre(T) { T arg; } auto asPre(T)(T arg) { return AsPre!T(arg); }
-
-/** Printed as Hit. */
-struct AsHit(T...) { ulong ix; T args; } auto asHit(T)(ulong ix, T args) { return AsHit!T(ix, args); }
-/** Printed as Hit Context. */
-struct AsCtx(T...) { ulong ix; T args; } auto asCtx(T)(ulong ix, T args) { return AsCtx!T(ix, args); }
-
-/** Unordered List. */
-struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
-/** Ordered List. */
-struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
-
-/* /\** Unordered List Beginner. *\/ */
-/* struct UListBegin(T...) { T args; } */
-/* auto uListBegin(T...)(T args) { return UListBegin!T(args); } */
-/* /\** Unordered List Ender. *\/ */
-/* struct UListEnd(T...) { T args; } */
-/* auto uListEnd(T...)(T args) { return UListEnd!T(args); } */
-
-/* /\** Ordered List Beginner. *\/ */
-/* struct OListBegin(T...) { T args; } */
-/* auto oListBegin(T...)(T args) { return OListBegin!T(args); } */
-/* /\** Ordered List Ender. *\/ */
-/* struct OListEnd(T...) { T args; } */
-/* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
-
-/** List Item. */
-struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args); }
-
-import std.range: hasSlicing;
-
-@safe pure nothrow
-{
-    const string lbr(bool useHTML) { return (useHTML ? "<br>" : ""); } // line break
-    const string begBold(bool useHTML) { return (useHTML ? "<b>" : ""); } // bold begin
-    const string endBold(bool useHTML) { return (useHTML ? "</b>" : ""); } // bold end
-    const T asBold(T)(bool useHTML, T txt) {
-        return begBold(useHTML) ~ txt ~ endBold(useHTML);
-    }
-    const T asPath(T)(bool useHTML, T path, T name, bool dirFlag) {
-        immutable path_ = asBold(useHTML,
-                                 name ~ (dirFlag ? dirSeparator : ""));
-        if (useHTML) {
-            return "<a href=\"file://" ~ path ~ "\">" ~ path_ ~ "</a>";
-        } else {
-            return path_;
-        }
-    }
-}
-
-void ppRaw(Term, Arg)(ref Term term,
-                      Viz viz,
-                      Arg arg)
-{
-    if (viz.outFile == stdout)
-        term.write(arg);
-    else
-        viz.outFile.write(arg);
-}
-
-void ppPut(Term, Arg)(ref Term term,
-                      Viz viz,
-                      Face!Color face,
-                      Arg arg)
-{
-    term.setFace(face, viz.colorFlag);
-    if (viz.outFile == stdout)
-        term.write(arg);
-    else
-        viz.outFile.write(arg);
-}
-
-/** Fazed (Rich) Text. */
-struct Fazed(T)
-{
-    T text;
-    const Face!Color face;
-    string toString() const @property @trusted pure nothrow { return to!string(text); }
-}
-auto faze(T)(T text, in Face!Color face = stdFace)
-{
-    return Fazed!T(text, face);
-}
-
-auto getFace(Arg)(in Arg arg)
-{
-    // pick face
-    static if (__traits(hasMember, arg, "face"))
-    {
-        return arg.face;
-    }
-    else static if (isInstanceOf!(Digest, Arg)) // instead of is(Unqual!(Arg) == SHA1Digest)
-    {
-        return digestFace;
-    }
-    else static if (isInstanceOf!(Bytes, Arg))
-    {
-        return bytesFace;
-    }
-    else static if (isInstanceOf!(AsHit, Arg))
-    {
-        return keyFaces.cycle[arg.ix];
-    }
-    else static if (isInstanceOf!(AsCtx, Arg))
-    {
-        return ctxFaces.cycle[arg.ix];
-    }
-    else static if (isInstanceOf!(FKind, Arg) ||
-                    isInstanceOf!(NotNull!FKind, Arg))
-    {
-        return kindFace;
-    }
-    else
-    {
-        return stdFace;
-    }
-}
-
-/** Pretty-Print Argument $(D arg) to Terminal $(D term). */
-void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
-                      Arg arg)
-{
-    static if (isInputRange!Arg)
-    {
-        foreach (subArg; arg)
-        {
-            ppArg(term,viz, depth + 1, subArg);
-        }
-    }
-    else static if (isInstanceOf!(Header, Arg))
-    {
-        if (viz.form == VizForm.html) {
-            ppArgs(term, viz,
-                   "<h" ~ to!string(arg.level) ~ ">",
-                   arg.args,
-                   "</h" ~ to!string(arg.level) ~ ">");
-        }
-        else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8)
-        {
-            string tag;
-            foreach (ix; 0..arg.level)
-            {
-                tag ~= "=";
-            }
-            // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            ppArgs(term, viz,
-                   "\n", tag, " ", arg.args, " ", tag, "\n");
-        }
-    }
-    else static if (isInstanceOf!(AsUList, Arg))
-    {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<ul>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\begin{enumerate}\n"); }
-        ppArgs(term,viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</ul>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\end{enumerate}\n"); }
-    }
-    else static if (isInstanceOf!(AsOList, Arg))
-    {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<ol>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\begin{itemize}\n"); }
-        ppArgs(term,viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</ol>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\end{itemize}\n"); }
-    }
-    else static if (isInstanceOf!(AsItem, Arg))
-    {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<li>"); }
-        else if (viz.form == VizForm.textAsciiDoc) { ppRaw(term,viz, " - "); }
-        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\\item "); }
-        else if (viz.form == VizForm.textAsciiDocUTF8) { ppRaw(term,viz, " • "); }
-        ppArgs(term,viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</li>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(term,viz, "\n"); }
-        else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8) { ppRaw(term,viz, "\n"); }
-    }
-    else static if (isInstanceOf!(AsPath, Arg))
-    {
-        auto vizArg = viz;
-        vizArg.treeFlag = false;
-        ppArg(term, vizArg, depth + 1, arg.arg);
-    }
-    else static if (isInstanceOf!(AsName, Arg))
-    {
-        auto vizArg = viz;
-        vizArg.treeFlag = true;
-        ppArg(term, vizArg, depth + 1, arg.arg);
-    }
-    else static if (isInstanceOf!(AsHit, Arg))
-    {
-        const ixs = to!string(arg.ix);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<hit" ~ ixs ~ ">"); }
-        ppArg(term,viz, depth + 1, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</hit" ~ ixs ~ ">"); }
-    }
-    else static if (isInstanceOf!(AsCtx, Arg))
-    {
-        const ixs = to!string(arg.ix);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<hit_context>"); }
-        ppArg(term,viz, depth + 1, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</hit_context>"); }
-    }
-    else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
-    {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<a href=\"file://" ~ arg.path ~ "\">"); }
-
-        if (!viz.treeFlag)
-        {
-            // write parent path
-            size_t i = 0;
-            foreach (parent; arg.parents)
-            {
-                ppRaw(term,viz, dirSeparator[0]);
-                if (viz.form == VizForm.html) { ppRaw(term,viz, "<b>"); }
-                ppPut(term,viz, dirFace, parent.name);
-                if (viz.form == VizForm.html) { ppRaw(term,viz, "</b>"); }
-            }
-            ppRaw(term,viz, dirSeparator[0]);
-        }
-
-        // write name
-        static if (__traits(hasMember, arg, "isRoot")) // TODO: Use isDir = Dir or NonNull!Dir
-        {
-            immutable name = arg.isRoot ? dirSeparator : arg.name;
-        }
-        else
-        {
-            immutable name = arg.name;
-        }
-
-        if (viz.form == VizForm.html)
-        {
-            static      if (isSymlink!Arg) { ppRaw(term,viz, "<i>"); }
-            else static if (isDir!Arg) { ppRaw(term,viz, "<b>"); }
-        }
-
-        term.setFace(arg.getFace(), viz.colorFlag);
-        ppPut(term,viz, arg.face, name);
-
-        if (viz.form == VizForm.html)
-        {
-            static      if (isSymlink!Arg) { ppRaw(term,viz, "</i>"); }
-            else static if (isDir!Arg) { ppRaw(term,viz, "</b>"); }
-        }
-
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</a>"); }
-    }
-    else
-    {
-        // pick path
-        static if (__traits(hasMember, arg, "path"))
-        {
-            pragma(msg, "Member arg has a path property!");
-            const arg_string = arg.path;
-        }
-        else
-        {
-            const arg_string = to!string(arg);
-        }
-
-        static if (__traits(hasMember, arg, "face") &&
-                   __traits(hasMember, arg.face, "tagsHTML")) {
-            if (viz.form == VizForm.html)
-            {
-                foreach (tag; arg.face.tagsHTML)
-                {
-                    viz.outFile.write("<", tag, ">");
-                }
-            }
-        }
-
-        // write
-        term.setFace(arg.getFace(), viz.colorFlag);
-        if (viz.outFile == stdout)
-        {
-            term.write(arg_string);
-        }
-        else
-        {
-            viz.outFile.write(arg_string);
-        }
-
-        static if (__traits(hasMember, arg, "face") &&
-                   __traits(hasMember, arg.face, "tagsHTML")) {
-            if (viz.form == VizForm.html)
-            {
-                foreach (tag; arg.face.tagsHTML)
-                {
-                    viz.outFile.write("</", tag, ">");
-                }
-            }
-        }
-    }
-}
-
-/** Pretty-Print Arguments $(D args) to Terminal $(D term). */
-void ppArgs(Term, Args...)(ref Term term, Viz viz,
-                           Args args)
-{
-    foreach (arg; args)
-    {
-        ppArg(term,viz, 0, arg);
-    }
-}
-
-/** Pretty-Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
-void pp(Term, Args...)(ref Term term,
-                       Viz viz,
-                       Args args)
-{
-    ppArgs(term,viz, args);
-    if (viz.outFile == stdout)
-    {
-        term.flush();
-    }
-}
-
-/** Visual Form(at). */
-enum VizForm { textAsciiDoc,
-               textAsciiDocUTF8,
-               html,
-               latex }
-
-/** Visual Backend. */
-struct Viz
-{
-    ioFile outFile;
-    bool treeFlag;
-    VizForm form;
-    bool colorFlag;
-}
-
-/** Pretty-Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
-void ppln(Term, Args...)(ref Term term, Viz viz, Args args)
-{
-    ppArgs(term,viz, args);
-    if (viz.outFile == stdout)
-    {
-        term.writeln(lbr(viz.form == VizForm.html));
-        term.flush();
-    }
-    else
-    {
-        viz.outFile.writeln(lbr(viz.form == VizForm.html));
-    }
-}
-
-/** Print End of Line to Terminal $(D term). */
-void ppendl(Term)(ref Term term,
-                  Viz viz)
-{
-    return ppln(term,viz);
 }
 
 /** Dir.
@@ -2818,10 +2376,13 @@ class Scanner(Term)
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Java", [], ["java", "properties"], [], 0, [], [],
-                               cCommentDelims,
-                               defaultStringDelims,
-                               FileContent.sourceCode);
+
+        auto kindJava = new FKind("Java", [], ["java", "properties"], [], 0, [], [],
+                                  cCommentDelims,
+                                  defaultStringDelims,
+                                  FileContent.sourceCode);
+        srcFKinds ~= kindJava;
+        kindJava.ops ~= tuple(FileOp.byteCompile, "javac");
 
         srcFKinds ~= new FKind("Groovy", [], ["groovy", "gtmpl", "gpp", "grunit"], [], 0, [], [],
                                cCommentDelims,
@@ -2876,12 +2437,15 @@ class Scanner(Term)
                                 Delim("%")], // TODO: Prio 2
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Octave", [], ["m"], [], 0, [], [],
-                               [Delim("%{", "}%"), // TODO: Prio 1
-                                Delim("%"),
-                                Delim("#")],
-                               defaultStringDelims,
-                               FileContent.sourceCode);
+        auto kindOctave = new FKind("Octave", [], ["m"], [], 0, [], [],
+                                    [Delim("%{", "}%"), // TODO: Prio 1
+                                     Delim("%"),
+                                     Delim("#")],
+                                    defaultStringDelims,
+                                    FileContent.sourceCode);
+        srcFKinds ~= kindOctave;
+        kindOctave.ops ~= tuple(FileOp.byteCompile, "octave");
+
         srcFKinds ~= new FKind("Julia", [], ["jl"], [], 0, [], [],
                                [Delim("#")],
                                defaultStringDelims,
@@ -2892,10 +2456,18 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        auto kindElisp = new FKind("Emacs-Lisp", [], ["el", "lisp"], [], 0, [], [],
+        auto magicForElisp = seq(shebangLine(lit("emacs")),
+                                 ws(),
+                                 lit("--script"));
+        auto kindElisp = new FKind("Emacs-Lisp", [],
+                                   ["el", "lisp"],
+                                   magicForElisp, 0, // Script Execution
+                                   [], [],
                                    [Delim(";")],
                                    defaultStringDelims,
                                    FileContent.sourceCode);
+        kindElisp.ops ~= tuple(FileOp.byteCompile, "emacs -batch -f batch-byte-compile");
+        kindElisp.ops ~= tuple(FileOp.byteCompile, "emacs --script");
         /* kindELisp.moduleName = "(provide 'MODULE_NAME)"; */
         /* kindELisp.moduleImport = "(require 'MODULE_NAME)"; */
         srcFKinds ~= kindElisp;
@@ -3048,6 +2620,7 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.machineCode);
+
         binFKinds ~= new FKind("JRun Server Application", [], ["jsa"],
                                cast(ubyte[])[0xa2,0xab,0x0b,0xf0,
                                              0x01,0x00,0x00,0x00,
@@ -3323,6 +2896,11 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.spellCheckWordList, FileKindDetection.equalsNameAndContents);
+
+        binFKinds ~= new FKind("DS_Store", ".DS_Store", [], "Mac OS X Desktop Services Store ", 0, [], [],
+                               [], // N/A
+                               [],
+                               FileContent.binary, FileKindDetection.equalsName);
 
         // By Extension
         foreach (kind; binFKinds) {
