@@ -124,6 +124,13 @@ struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(a
 /** Ordered List. */
 struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
 
+/** Table. */
+struct Table(T...) { T args; } auto table(T...)(T args) { return Table!T(args); }
+/** Table Row. */
+struct Row(T...) { T args; } auto row(T...)(T args) { return Row!T(args); }
+/** Table Column. */
+struct Col(T...) { T args; } auto col(T...)(T args) { return Col!T(args); }
+
 /* /\** Unordered List Beginner. *\/ */
 /* struct UListBegin(T...) { T args; } */
 /* auto uListBegin(T...)(T args) { return UListBegin!T(args); } */
@@ -143,20 +150,6 @@ struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args
 @safe pure nothrow
 {
     const string lbr(bool useHTML) { return (useHTML ? "<br>" : ""); } // line break
-    const string begBold(bool useHTML) { return (useHTML ? "<b>" : ""); } // bold begin
-    const string endBold(bool useHTML) { return (useHTML ? "</b>" : ""); } // bold end
-    const T asBold(T)(bool useHTML, T txt) {
-        return begBold(useHTML) ~ txt ~ endBold(useHTML);
-    }
-    const T asPath(T)(bool useHTML, T path, T name, bool dirFlag) {
-        immutable path_ = asBold(useHTML,
-                                 name ~ (dirFlag ? dirSeparator : ""));
-        if (useHTML) {
-            return "<a href=\"file://" ~ path ~ "\">" ~ path_ ~ "</a>";
-        } else {
-            return path_;
-        }
-    }
 }
 
 void ppRaw(Term, Arg)(ref Term term,

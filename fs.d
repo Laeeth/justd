@@ -1805,8 +1805,7 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term,
     ppln(term,viz,
          "Wrote tree cache of size ",
          data.length.Bytes64, " to ",
-         faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
-              regFileFace),
+         asPath(cacheFile),
          " in ",
          shortDurationString(toc - tic));
 
@@ -1834,8 +1833,7 @@ Dir loadRootDirTree(Term)(ref Term term,
         pp(term,viz,
            "Read cache of size ",
            data.length.Bytes64, " from ",
-           faze(asPath(viz.form == VizForm.html, cacheFile, cacheFile, false),
-                regFileFace),
+           asPath(cacheFile),
            " in ",
            shortDurationString(toc - tic), " containing",
            asUList(asItem(gstats.noDirs, " Dirs,"),
@@ -3741,8 +3739,9 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
                                 // show file path/name
                                 pp(term,viz,
-                                   faze(asPath(useHTML, theFile.path, displayedFileName, false),
-                                        regFileFace)); // show path
+                                   asPath(displayedFileName)
+                                   /* faze(asPath(useHTML, theFile.path, displayedFileName, false), */
+                                   /*      regFileFace) */); // show path
                             }
 
                             // show file line:column
