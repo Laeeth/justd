@@ -3229,8 +3229,11 @@ class Scanner(Term)
         // Output Handling
         if (browseOutput) {
             useHTML = true;
-            immutable outExt = useHTML ? "html" : "results.txt";
-            outFile = ioFile("/tmp/test." ~ outExt, "w");
+            immutable ext = useHTML ? "html" : "results.txt";
+            import std.uuid: randomUUID;
+            outFile = ioFile("/tmp/fs-" ~ randomUUID().toString() ~
+                             "." ~ ext,
+                             "w");
             popen("xdg-open " ~ outFile.name);
         } else {
             outFile = stdout;
