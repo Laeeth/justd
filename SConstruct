@@ -6,8 +6,8 @@ libraries    = ['phobos', 'pthread', 'm']
 #                 '/usr/share/dmd/src/druntime/import',
 #                 '/usr/share/dmd/src/phobos']
 
-env.Program(target = "fs",
-            source = ["fs.d"],
-            LIBS = libraries,
-            # LIBPATH = libraryPaths
+env.Program(target="fs",
+            source=["fs.d"],
+            LIBS=libraries,
+            # LIBPATH=libraryPaths
 )
