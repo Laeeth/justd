@@ -56,6 +56,7 @@ enum baseNameFace = fileFace;
 enum specialFileFace = face(Color.red, Color.black, true);
 enum regFileFace = face(Color.white, Color.black, true, false, ["b"]);
 enum symlinkFace = face(Color.cyan, Color.black, true, true, ["i"]);
+enum symlinkBrokenFace = face(Color.red, Color.black, true, true, ["i"]);
 
 enum contextFace = face(Color.green, Color.black);
 
@@ -84,86 +85,86 @@ enum ctxFaces = [face(Color.red, Color.black),
 /** Key (Hit) Faces. */
 enum keyFaces = ctxFaces.map!(a => face(a.fg, a.bg, true));
 
-void setFace(Term, Face)(ref Term term, Face face, bool colorFlag)
+void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 {
     if (colorFlag)
         term.color(face.fg | (face.bright ? Bright : 0) ,
                    face.bg);
 }
 
-/** Printed as Path. */
-struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
-/** Printed as Name. */
-struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
-
-/* TODO: Turn these into an enum for more efficient parsing. */
-/** Printed in Italic/Slanted. */
-struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
-/** Printed in Bold. */
-struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
-/** Printed in Fixed. */
-struct InFixed(T) { T arg; } auto inFixed(T)(T arg) { return InFixed!T(arg); }
-/** Printed in Code. */
-struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
-/** Printed as Emphasized. */
-struct AsEmph(T) { T arg; } auto asEmph(T)(T arg) { return AsEmph!T(arg); }
-/** Printed as Performatted. */
-struct AsPre(T) { T arg; } auto asPre(T)(T arg) { return AsPre!T(arg); }
-
-/** Printed as Hit. */
-struct AsHit(T...) { ulong ix; T args; } auto asHit(T)(ulong ix, T args) { return AsHit!T(ix, args); }
-/** Printed as Hit Context. */
-struct AsCtx(T...) { ulong ix; T args; } auto asCtx(T)(ulong ix, T args) { return AsCtx!T(ix, args); }
-
-/** Header. */
-struct Header(uint L, T...) { T args; enum level = L; }
-auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
-
-/** Unordered List. */
-struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
-/** Ordered List. */
-struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
-
-/** Table. */
-struct AsTable(T...) {
-    string border;
-    T args;
-}
-auto asTable(T...)(T args) {
-    return AsTable!T("\"1\"", args);
-}
-
-/** Table Row. */
-struct AsRow(T...) { T args; } auto asRow(T...)(T args) { return AsRow!T(args); }
-/** Table Cell. */
-struct AsCell(T...) { T args; } auto asCell(T...)(T args) { return AsCell!T(args); }
-/** Table Heading. */
-struct AsTHeading(T...) { T args; } auto asTHeading(T...)(T args) { return AsTHeading!T(args); }
-
-/* /\** Unordered List Beginner. *\/ */
-/* struct UListBegin(T...) { T args; } */
-/* auto uListBegin(T...)(T args) { return UListBegin!T(args); } */
-/* /\** Unordered List Ender. *\/ */
-/* struct UListEnd(T...) { T args; } */
-/* auto uListEnd(T...)(T args) { return UListEnd!T(args); } */
-/* /\** Ordered List Beginner. *\/ */
-/* struct OListBegin(T...) { T args; } */
-/* auto oListBegin(T...)(T args) { return OListBegin!T(args); } */
-/* /\** Ordered List Ender. *\/ */
-/* struct OListEnd(T...) { T args; } */
-/* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
-
-/** List Item. */
-struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args); }
-
-@safe pure nothrow
+@safe pure nothrow @nogc
 {
+    /** Printed as Path. */
+    struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
+    /** Printed as Name. */
+    struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
+
+    /* TODO: Turn these into an enum for more efficient parsing. */
+    /** Printed in Italic/Slanted. */
+    struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
+    /** Printed in Bold. */
+    struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
+    /** Printed in Fixed. */
+    struct InFixed(T) { T arg; } auto inFixed(T)(T arg) { return InFixed!T(arg); }
+    /** Printed in Code. */
+    struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
+    /** Printed as Emphasized. */
+    struct AsEmph(T) { T arg; } auto asEmph(T)(T arg) { return AsEmph!T(arg); }
+    /** Printed as Performatted. */
+    struct AsPre(T) { T arg; } auto asPre(T)(T arg) { return AsPre!T(arg); }
+
+    /** Printed as Hit. */
+    struct AsHit(T...) { ulong ix; T args; } auto asHit(T)(ulong ix, T args) { return AsHit!T(ix, args); }
+    /** Printed as Hit Context. */
+    struct AsCtx(T...) { ulong ix; T args; } auto asCtx(T)(ulong ix, T args) { return AsCtx!T(ix, args); }
+
+    /** Header. */
+    struct Header(uint L, T...) { T args; enum level = L; }
+    auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
+
+    /** Unordered List. */
+    struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
+    /** Ordered List. */
+    struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
+
+    /** Table. */
+    struct AsTable(T...) {
+        string border;
+        T args;
+    }
+    auto asTable(T...)(T args) {
+        return AsTable!T("\"1\"", args);
+    }
+
+    /** Table Row. */
+    struct AsRow(T...) { T args; } auto asRow(T...)(T args) { return AsRow!T(args); }
+    /** Table Cell. */
+    struct AsCell(T...) { T args; } auto asCell(T...)(T args) { return AsCell!T(args); }
+    /** Table Heading. */
+    struct AsTHeading(T...) { T args; } auto asTHeading(T...)(T args) { return AsTHeading!T(args); }
+
+    /* /\** Unordered List Beginner. *\/ */
+    /* struct UListBegin(T...) { T args; } */
+    /* auto uListBegin(T...)(T args) { return UListBegin!T(args); } */
+    /* /\** Unordered List Ender. *\/ */
+    /* struct UListEnd(T...) { T args; } */
+    /* auto uListEnd(T...)(T args) { return UListEnd!T(args); } */
+    /* /\** Ordered List Beginner. *\/ */
+    /* struct OListBegin(T...) { T args; } */
+    /* auto oListBegin(T...)(T args) { return OListBegin!T(args); } */
+    /* /\** Ordered List Ender. *\/ */
+    /* struct OListEnd(T...) { T args; } */
+    /* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
+
+    /** List Item. */
+    struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args); }
+
     const string lbr(bool useHTML) { return (useHTML ? "<br>" : ""); } // line break
 }
 
 void ppRaw(Term, Arg)(ref Term term,
                       Viz viz,
-                      Arg arg)
+                      Arg arg) @trusted
 {
     if (viz.outFile == stdout)
         term.write(arg);
@@ -174,7 +175,7 @@ void ppRaw(Term, Arg)(ref Term term,
 void ppPut(Term, Arg)(ref Term term,
                       Viz viz,
                       Face!Color face,
-                      Arg arg)
+                      Arg arg) @trusted
 {
     term.setFace(face, viz.colorFlag);
     if (viz.outFile == stdout)
@@ -190,12 +191,12 @@ struct Fazed(T)
     const Face!Color face;
     string toString() const @property @trusted pure nothrow { return to!string(text); }
 }
-auto faze(T)(T text, in Face!Color face = stdFace)
+auto faze(T)(T text, in Face!Color face = stdFace) @safe pure nothrow
 {
     return Fazed!T(text, face);
 }
 
-auto getFace(Arg)(in Arg arg)
+auto getFace(Arg)(in Arg arg) @safe pure nothrow
 {
     // pick face
     static if (__traits(hasMember, arg, "face"))
@@ -231,7 +232,7 @@ auto getFace(Arg)(in Arg arg)
 
 /** Pretty-Print Argument $(D arg) to Terminal $(D term). */
 void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
-                      Arg arg)
+                      Arg arg) @trusted
 {
     static if (isInputRange!Arg)
     {
@@ -334,7 +335,17 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     {
         auto vizArg = viz;
         vizArg.treeFlag = false;
+
+        import std.traits: isSomeString;
+        enum isString = isSomeString!(typeof(arg.arg));
+
+        static if (isString)
+            if (viz.form == VizForm.html) { ppRaw(term,viz, "<a href=\"file://" ~ arg.arg ~ "\">"); }
+
         ppArg(term, vizArg, depth + 1, arg.arg);
+
+        static if (isString)
+            if (viz.form == VizForm.html) { ppRaw(term,viz, "</a>"); }
     }
     else static if (isInstanceOf!(AsName, Arg))
     {
@@ -450,7 +461,7 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
 
 /** Pretty-Print Arguments $(D args) to Terminal $(D term). */
 void ppArgs(Term, Args...)(ref Term term, Viz viz,
-                           Args args)
+                           Args args) @trusted
 {
     foreach (arg; args)
     {
@@ -461,7 +472,7 @@ void ppArgs(Term, Args...)(ref Term term, Viz viz,
 /** Pretty-Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
 void pp(Term, Args...)(ref Term term,
                        Viz viz,
-                       Args args)
+                       Args args) @trusted
 {
     ppArgs(term,viz, args);
     if (viz.outFile == stdout)
@@ -487,7 +498,7 @@ struct Viz
 }
 
 /** Pretty-Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
-void ppln(Term, Args...)(ref Term term, Viz viz, Args args)
+void ppln(Term, Args...)(ref Term term, Viz viz, Args args) @trusted
 {
     ppArgs(term,viz, args);
     if (viz.outFile == stdout)
@@ -503,7 +514,7 @@ void ppln(Term, Args...)(ref Term term, Viz viz, Args args)
 
 /** Print End of Line to Terminal $(D term). */
 void ppendl(Term)(ref Term term,
-                  Viz viz)
+                  Viz viz) @trusted
 {
     return ppln(term,viz);
 }
