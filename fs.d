@@ -872,6 +872,15 @@ version(linux) unittest
     assert(ftags._tags[passwd] == ["Secret"]);
 }
 
+/** Symlink Target Status.
+ */
+enum SymlinkTargetStatus
+{
+    unknown,
+    present,
+    broken,
+}
+
 /** Symlink.
  */
 class Symlink : File {
@@ -899,7 +908,12 @@ class Symlink : File {
         ++parent.gstats.noSymlinks;
     }
 
-    override Face!Color face() const @property @safe pure nothrow { return symlinkFace; }
+    override Face!Color face() const @property @safe pure nothrow {
+        if (_targetStatus == SymlinkTargetStatus.broken)
+            return symlinkBrokenFace;
+        else
+            return symlinkFace;
+    }
 
     string retarget(ref DirEntry dent) @trusted
     {
@@ -940,6 +954,7 @@ class Symlink : File {
     }
 
     string _target;
+    SymlinkTargetStatus _targetStatus = SymlinkTargetStatus.unknown;
 }
 
 /** Special File (Character or Block Device).
@@ -1813,6 +1828,7 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term,
     immutable toc = Clock.currTime;
 
     ppln(term,viz,
+         header!2("Cache Write"),
          "Wrote tree cache of size ",
          data.length.Bytes64, " to ",
          asPath(cacheFile),
@@ -1840,7 +1856,9 @@ Dir loadRootDirTree(Term)(ref Term term,
             unpack(cast(ubyte[])data, rootDir); /* Dir rootDir = new Dir(cast(const(ubyte)[])data); */
         }
         immutable toc = Clock.currTime;
+
         pp(term,viz,
+           header!2("Cache Read"),
            "Read cache of size ",
            data.length.Bytes64, " from ",
            asPath(cacheFile),
@@ -3344,17 +3362,15 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                            ~asNote ~incKindsNote ~underNote);
             if (viz.form == VizForm.html) // only needed for HTML output
             {
-                ppln(term,viz,
-                     faze(title, titleFace));
+                ppln(term,viz, faze(title, titleFace));
             }
-            pp(term,viz,
-               header!1(title));
+            pp(term,viz, header!1(title));
         }
 
         if (_showSkipped) {
             pp(term,viz,
-                 "Skipping files of type\n",
-                 asUList(binFKinds.map!(a => a.asItem)));
+               header!2("Skipping files of type"),
+               asUList(binFKinds.map!(a => a.asItem)));
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
@@ -3395,6 +3411,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                            Viz viz,
                            string commaedKeysString)
     {
+        pp(term,viz, header!2("Results"));
         if (_topDirs) {
             foreach (topIx, topDir; _topDirs) {
                 scanDir(term,viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
@@ -4068,6 +4085,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         fromSymlinks ~= theSymlink;
         immutable targetPath = theSymlink.absoluteNormalizedTargetPath;
         if (targetPath.exists) {
+            theSymlink._targetStatus = SymlinkTargetStatus.present;
             if (_topDirNames.all!(a => !targetPath.startsWith(a))) { // if target path lies outside of all rootdirs
                 auto targetDent = DirEntry(targetPath);
                 auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent);
@@ -4101,6 +4119,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 }
             }
         } else {
+            theSymlink._targetStatus = SymlinkTargetStatus.broken;
+
             if (gstats.showBrokenSymlinks) {
                 _brokenSymlinks ~= theSymlink;
 
