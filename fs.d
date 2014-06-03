@@ -127,6 +127,7 @@ import std.traits: Unqual, isInstanceOf, isIterable;
 import std.allocator;
 import core.memory: GC;
 import core.exception;
+import std.functional: memoize;
 
 import assert_ex;
 import traits_ex;
@@ -1248,6 +1249,15 @@ enum isDir(T) = (is(T == Dir) || is(T == NotNull!Dir));
 enum isSymlink(T) = (is(T == Symlink) || is(T == NotNull!Symlink));
 enum isRegFile(T) = (is(T == RegFile) || is(T == NotNull!RegFile));
 enum isSpecialFile(T) = (is(T == SpecFile) || is(T == NotNull!SpecFile));
+enum isAnyFile(T) = (isFile!T ||
+                     isDir!T ||
+                     isSymlink!T ||
+                     isRegFile!T ||
+                     isSpecialFile!T);
+
+/** Return true if T is a class representing File IO. */
+enum isFileIO(T) = (isAnyFile!T ||
+                    is(T == ioFile));
 
 /** Contents Statistics of a Regular File. */
 struct CStat {
