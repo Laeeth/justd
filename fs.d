@@ -3362,15 +3362,23 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                            ~asNote ~incKindsNote ~underNote);
             if (viz.form == VizForm.html) // only needed for HTML output
             {
-                ppln(term,viz, faze(title, titleFace));
+                ppln(term,viz,
+                     faze(title, titleFace));
             }
-            pp(term,viz, header!1(title));
+
+            pp(term,viz,
+               header!1("Searching for \"", commaedKeysString, "\"",
+                        " case-", (_caseFold ? "in" : ""), "sensitively",
+                        asNote, incKindsNote,
+                        " under ", _topDirNames.map!(a => asPath(a))));
         }
 
         if (_showSkipped) {
             pp(term,viz,
                header!2("Skipping files of type"),
-               asUList(binFKinds.map!(a => a.asItem)));
+               asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
+                                                  ": ",
+                                                  asCSL(a.exts.map!(b => b.asCode))))));
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase

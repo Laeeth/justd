@@ -4,6 +4,7 @@
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
+    TODO: How should std.typecons.Tuple be pretty printed?
 */
 module pprint;
 
@@ -94,27 +95,33 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 
 @safe pure nothrow @nogc
 {
+    /** Printed as Words. */
+    struct AsWords(T...) { T args; } auto asWords(T...)(T args) { return AsWords!T(args); }
+    /** Printed as Comma-Separated List. */
+    struct AsCSL(T...) { T args; } auto asCSL(T...)(T args) { return AsCSL!T(args); }
+
     /** Printed as Path. */
     struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
     /** Printed as Name. */
     struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
 
     /* TODO: Turn these into an enum for more efficient parsing. */
-    /** Printed in Italic/Slanted. */
+    /** Printed as Italic/Slanted. */
     struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
-    /** Printed in Bold. */
+    /** Printed as Bold. */
     struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
-    /** Printed in Fixed. */
-    struct InFixed(T) { T arg; } auto inFixed(T)(T arg) { return InFixed!T(arg); }
-    /** Printed in Code. */
+    /** Printed as Code. */
     struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
     /** Printed as Emphasized. */
-    struct AsEmph(T) { T arg; } auto asEmph(T)(T arg) { return AsEmph!T(arg); }
+    struct AsEm(T) { T arg; } auto asEm(T)(T arg) { return AsEm!T(arg); }
+    /** Printed as Strong. */
+    struct AsStrong(T) { T arg; } auto asStrong(T)(T arg) { return AsStrong!T(arg); }
     /** Printed as Performatted. */
     struct AsPre(T) { T arg; } auto asPre(T)(T arg) { return AsPre!T(arg); }
 
     /** Printed as Hit. */
     struct AsHit(T...) { ulong ix; T args; } auto asHit(T)(ulong ix, T args) { return AsHit!T(ix, args); }
+
     /** Printed as Hit Context. */
     struct AsCtx(T...) { ulong ix; T args; } auto asCtx(T)(ulong ix, T args) { return AsCtx!T(ix, args); }
 
@@ -122,12 +129,16 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct Header(uint L, T...) { T args; enum level = L; }
     auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
 
-    /** Unordered List. */
+    /** Unordered List.
+        TODO: Should asUList, asOList autowrap args as AsItems when needed?
+    */
     struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
     /** Ordered List. */
     struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
 
-    /** Table. */
+    /** Table.
+        TODO: Should asTable autowrap args AsRows when needed?
+    */
     struct AsTable(T...) {
         string border;
         T args;
@@ -241,17 +252,59 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
             ppArg(term,viz, depth + 1, subArg);
         }
     }
+    else static if (isInstanceOf!(AsWords, Arg))
+    {
+        foreach (ix, subArg; arg.args)
+        {
+            static if (ix >= 1)
+                ppArg(term,viz, depth + 1, " "); // separator
+            ppArg(term,viz, depth + 1, subArg);
+        }
+    }
+    else static if (isInstanceOf!(AsCSL, Arg))
+    {
+        foreach (ix, subArg; arg.args)
+        {
+            static if (ix >= 1)
+                ppArg(term,viz, depth + 1, ","); // separator
+            static if (isInputRange!(typeof(subArg)))
+            {
+                foreach (subsubArg; subArg)
+                {
+                    ppArgs(term,viz, subsubArg, ",");
+                }
+            }
+        }
+    }
     else static if (isInstanceOf!(InBold, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<b>\n"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<b>"); }
         ppArgs(term,viz, arg.arg);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</b>\n"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</b>"); }
     }
     else static if (isInstanceOf!(InItalic, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<i>\n"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<i>"); }
         ppArgs(term,viz, arg.arg);
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "</i>\n"); }
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</i>"); }
+    }
+    else static if (isInstanceOf!(AsCode, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<code>"); }
+        ppArgs(term,viz, arg.arg);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</code>"); }
+    }
+    else static if (isInstanceOf!(AsEm, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<em>"); }
+        ppArgs(term,viz, arg.arg);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</em>"); }
+    }
+    else static if (isInstanceOf!(AsStrong, Arg))
+    {
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "<strong>"); }
+        ppArgs(term,viz, arg.arg);
+        if (viz.form == VizForm.html) { ppRaw(term,viz, "</strong>"); }
     }
     else static if (isInstanceOf!(Header, Arg))
     {
