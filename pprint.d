@@ -107,27 +107,27 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 
     /* TODO: Turn these into an enum for more efficient parsing. */
     /** Printed as Italic/Slanted. */
-    struct InItalic(T) { T arg; } auto inItalic(T)(T arg) { return InItalic!T(arg); }
-    /** Printed as Bold. */
+    struct InIt(T) { T arg; } auto inIt(T)(T arg) { return InIt!T(arg); }
+    /** Bold. */
     struct InBold(T) { T arg; } auto inBold(T)(T arg) { return InBold!T(arg); }
-    /** Printed as Code. */
+    /** Code. */
     struct AsCode(T) { T arg; } auto asCode(T)(T arg) { return AsCode!T(arg); }
-    /** Printed as Emphasized. */
+    /** Emphasized. */
     struct AsEm(T) { T arg; } auto asEm(T)(T arg) { return AsEm!T(arg); }
-    /** Printed as Strong. */
+    /** Strong. */
     struct AsStrong(T) { T arg; } auto asStrong(T)(T arg) { return AsStrong!T(arg); }
-    /** Printed as Performatted. */
+    /** Preformatted. */
     struct AsPre(T) { T arg; } auto asPre(T)(T arg) { return AsPre!T(arg); }
 
-    /** Printed as Hit. */
-    struct AsHit(T...) { ulong ix; T args; } auto asHit(T)(ulong ix, T args) { return AsHit!T(ix, args); }
+    /** Scan Hit with Color index $(D ix)). */
+    struct AsHit(T...) { uint ix; T args; } auto asHit(T)(uint ix, T args) { return AsHit!T(ix, args); }
 
-    /** Printed as Hit Context. */
-    struct AsCtx(T...) { ulong ix; T args; } auto asCtx(T)(ulong ix, T args) { return AsCtx!T(ix, args); }
+    /** Scan Hit Context with Color index $(D ix)). */
+    struct AsCtx(T...) { uint ix; T args; } auto asCtx(T)(uint ix, T args) { return AsCtx!T(ix, args); }
 
     /** Header. */
-    struct Header(uint L, T...) { T args; enum level = L; }
-    auto header(uint L, T...)(T args) { return Header!(L, T)(args); }
+    struct Header(uint Level, T...) { T args; enum level = Level; }
+    auto asH(uint Level, T...)(T args) { return Header!(Level, T)(args); }
 
     /** Unordered List.
         TODO: Should asUList, asOList autowrap args as AsItems when needed?
@@ -285,7 +285,7 @@ void ppArg(Arg)(Viz viz, int depth,
         ppArgs(viz, arg.arg);
         if (viz.form == VizForm.html) { ppRaw(viz, "</b>"); }
     }
-    else static if (isInstanceOf!(InItalic, Arg))
+    else static if (isInstanceOf!(InIt, Arg))
     {
         if (viz.form == VizForm.html) { ppRaw(viz, "<i>"); }
         ppArgs(viz, arg.arg);

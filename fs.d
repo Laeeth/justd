@@ -1826,7 +1826,7 @@ const(ubyte[]) saveRootDirTree(Viz viz,
     cacheFile.write(data);
     immutable toc = Clock.currTime;
 
-    viz.ppln(header!2("Cache Write"),
+    viz.ppln(asH!2("Cache Write"),
              "Wrote tree cache of size ",
              data.length.Bytes64, " to ",
              asPath(cacheFile),
@@ -1854,7 +1854,7 @@ Dir loadRootDirTree(Viz viz,
         }
         immutable toc = Clock.currTime;
 
-        viz.pp(header!2("Cache Read"),
+        viz.pp(asH!2("Cache Read"),
                "Read cache of size ",
                data.length.Bytes64, " from ",
                asPath(cacheFile),
@@ -3360,14 +3360,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 viz.ppln(faze(title, titleFace));
             }
 
-            viz.pp(header!1("Searching for \"", commaedKeysString, "\"",
+            viz.pp(asH!1("Searching for \"", commaedKeysString, "\"",
                             " case-", (_caseFold ? "in" : ""), "sensitively",
                             asNote, incKindsNote,
                             " under ", _topDirNames.map!(a => asPath(a))));
         }
 
         if (_showSkipped) {
-            viz.pp(header!2("Skipping files of type"),
+            viz.pp(asH!2("Skipping files of type"),
                    asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
                                                       ": ",
                                                       asCSL(a.exts.map!(b => b.asCode))))));
@@ -3410,7 +3410,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     void scanTopDirs(Viz viz,
                      string commaedKeysString)
     {
-        viz.pp(header!2("Results"));
+        viz.pp(asH!2("Results"));
         if (_topDirs) {
             foreach (topIx, topDir; _topDirs) {
                 scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
@@ -3702,7 +3702,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 ptrdiff_t offKB = -1;
                 ptrdiff_t offKE = -1;
 
-                foreach (ix, key; keys) { // TODO: Call variadic-find instead to speed things up.
+                foreach (uint ix, key; keys) { // TODO: Call variadic-find instead to speed things up.
 
                     /* Bistogram Discardal */
                     if ((!bistHits.empty) &&
@@ -4254,11 +4254,11 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         /* Duplicates */
 
         if (gstats.showNameDups) {
-            viz.pp(header!2("Name Duplicates"));
+            viz.pp(asH!2("Name Duplicates"));
             foreach (digest, dupFiles; gstats.filesByName) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (!dupFilesOk.empty) {
-                    viz.pp(header!3("Files with same name ",
+                    viz.pp(asH!3("Files with same name ",
                                     faze(dupFilesOk[0].name, fileFace)),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
@@ -4266,11 +4266,11 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         }
 
         if (gstats.showLinkDups) {
-            viz.pp(header!2("Inode Duplicates (Hardlinks)"));
+            viz.pp(asH!2("Inode Duplicates (Hardlinks)"));
             foreach (inode, dupFiles; gstats.filesByInode) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
-                    viz.pp(header!3("Files with same inode " ~ to!string(inode) ~
+                    viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
                                     " (hardlinks): "),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
@@ -4278,14 +4278,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         }
 
         if (gstats.showContentDups) {
-            viz.pp(header!2("Content Duplicates"));
+            viz.pp(asH!2("Content Duplicates"));
             foreach (digest, dupFiles; gstats.filesByContId) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
 
                     auto firstDup = dupFilesOk[0];
                     immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
-                    viz.pp(header!3(typeName ~ " with same content",
+                    viz.pp(asH!3(typeName ~ " with same content",
                                     " (", digest, ")",
                                     " of size ", firstDup.size));
 
@@ -4311,12 +4311,12 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         /* Broken Symlinks */
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty) {
-            viz.pp(header!2("Broken Symlinks "),
+            viz.pp(asH!2("Broken Symlinks "),
                    asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
         }
 
         /* Counts */
-        viz.pp(header!2("Scanned Types"),
+        viz.pp(asH!2("Scanned Types"),
                /* asUList(asItem(gstats.noScannedDirs, " Dirs, "), */
                /*         asItem(gstats.noScannedRegFiles, " Regular Files, "), */
                /*         asItem(gstats.noScannedSymlinks, " Symbolic Links, "), */
@@ -4324,23 +4324,23 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                /*         asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
                /*     ) */
                asTable(asRow(asCell(inBold("Scan Count")), asCell(inBold("File Type"))),
-                       asRow(asCell(gstats.noScannedDirs), asCell(inItalic("Dirs"))),
-                       asRow(asCell(gstats.noScannedRegFiles), asCell(inItalic("Regular Files"))),
-                       asRow(asCell(gstats.noScannedSymlinks), asCell(inItalic("Symbolic Links"))),
-                       asRow(asCell(gstats.noScannedSpecialFiles), asCell(inItalic("Special Files"))),
-                       asRow(asCell(gstats.noScannedFiles), asCell(inItalic("Files")))
+                       asRow(asCell(gstats.noScannedDirs), asCell(inIt("Dirs"))),
+                       asRow(asCell(gstats.noScannedRegFiles), asCell(inIt("Regular Files"))),
+                       asRow(asCell(gstats.noScannedSymlinks), asCell(inIt("Symbolic Links"))),
+                       asRow(asCell(gstats.noScannedSpecialFiles), asCell(inIt("Special Files"))),
+                       asRow(asCell(gstats.noScannedFiles), asCell(inIt("Files")))
                    )
             );
 
         if (gstats.densenessCount) {
-            viz.pp(header!2("Histograms"),
+            viz.pp(asH!2("Histograms"),
                    asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
                                   cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
                            asItem("Average Byte ", NGramOrder, "-Gram Denseness ",
                                   cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
         }
 
-        viz.pp(header!2("Scanned Bytes"),
+        viz.pp(asH!2("Scanned Bytes"),
                asUList(asItem("Scanned ", results.noBytesScanned),
                        asItem("Skipped ", results.noBytesSkipped),
                        asItem("Unreadable ", results.noBytesUnreadable),
