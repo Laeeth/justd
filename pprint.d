@@ -151,6 +151,11 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsRow(T...) { T args; } auto asRow(T...)(T args) { return AsRow!T(args); }
     /** Table Cell. */
     struct AsCell(T...) { T args; } auto asCell(T...)(T args) { return AsCell!T(args); }
+
+    /** Row/Column/... Span. */
+    struct Span(T...) { uint _span; T args; }
+    auto span(T...)(uint span, T args) { return span!T(span, args); }
+
     /** Table Heading. */
     struct AsTHeading(T...) { T args; } auto asTHeading(T...)(T args) { return AsTHeading!T(args); }
 
@@ -356,13 +361,25 @@ void ppArg(Term, Arg)(ref Term term, Viz viz, int depth,
     }
     else static if (isInstanceOf!(AsRow, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<tr>\n"); }
+        string spanArg;
+        static if (arg.args.length == 1 &&
+                   isInstanceOf!(Span, typeof(arg.args[0])))
+        {
+            spanArg ~= ` rowspan="` ~ to!string(arg._span) ~ `"`;
+        }
+        if (viz.form == VizForm.html) { ppRaw(term,viz,`<tr` ~ spanArg ~ `>`); }
         ppArgs(term,viz, arg.args);
         if (viz.form == VizForm.html) { ppRaw(term,viz, "</tr>\n"); }
     }
     else static if (isInstanceOf!(AsCell, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(term,viz, "<td>"); }
+        string spanArg;
+        static if (arg.args.length == 1 &&
+                   isInstanceOf!(Span, typeof(arg.args[0])))
+        {
+            spanArg ~= ` colspan="` ~ to!string(arg._span) ~ `"`;
+        }
+        if (viz.form == VizForm.html) { ppRaw(term,viz,`<td` ~ spanArg ~ `>`); }
         ppArgs(term,viz, arg.args);
         if (viz.form == VizForm.html) { ppRaw(term,viz, "</td>\n"); }
     }
