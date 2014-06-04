@@ -2848,27 +2848,29 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
 
-        binFKinds ~= new FKind("MySQL table definition file", ["sql", "sqlite", "sqlite3"], [], x"FE01", 0, [], [],
+        // SQLite
+        auto extSQLite = ["sql", "sqlite", "sqlite3"];
+        binFKinds ~= new FKind("MySQL table definition file", [], extSQLite, x"FE01", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL MyISAM index file", ["sql", "sqlite", "sqlite3"], [], x"FEFE07", 0, [], [],
+        binFKinds ~= new FKind("MySQL MyISAM index file", [], extSQLite, x"FEFE07", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL MyISAM compressed data file", ["sql", "sqlite", "sqlite3"], [], x"FEFE08", 0, [], [],
+        binFKinds ~= new FKind("MySQL MyISAM compressed data file", [], extSQLite, x"FEFE08", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL Maria index file", ["sql", "sqlite", "sqlite3"], [], x"FFFFFF", 0, [], [],
+        binFKinds ~= new FKind("MySQL Maria index file", [], extSQLite, x"FFFFFF", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL Maria compressed data file", ["sql", "sqlite", "sqlite3"], [], x"FFFFFF", 0, [], [],
+        binFKinds ~= new FKind("MySQL Maria compressed data file", [], extSQLite, x"FFFFFF", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("SQLite format 3", ["sql", "sqlite", "sqlite3"], [], "SQLite format 3", 0, [], [],
+        binFKinds ~= new FKind("SQLite format 3", [], extSQLite , "SQLite format 3", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents); // TODO: Why is this detected at 49:th try?
