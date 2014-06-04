@@ -252,7 +252,7 @@ void ppArg(Arg)(Viz viz, int depth,
     {
         foreach (subArg; arg)
         {
-            ppArg(viz, depth + 1, subArg);
+            viz.ppArg(depth + 1, subArg);
         }
     }
     else static if (isInstanceOf!(AsWords, Arg))
@@ -260,8 +260,8 @@ void ppArg(Arg)(Viz viz, int depth,
         foreach (ix, subArg; arg.args)
         {
             static if (ix >= 1)
-                ppArg(viz, depth + 1, " "); // separator
-            ppArg(viz, depth + 1, subArg);
+                viz.ppArg(depth + 1, " "); // separator
+            viz.ppArg(depth + 1, subArg);
         }
     }
     else static if (isInstanceOf!(AsCSL, Arg))
@@ -269,53 +269,52 @@ void ppArg(Arg)(Viz viz, int depth,
         foreach (ix, subArg; arg.args)
         {
             static if (ix >= 1)
-                ppArg(viz, depth + 1, ","); // separator
+                viz.ppArg(depth + 1, ","); // separator
             static if (isInputRange!(typeof(subArg)))
             {
                 foreach (subsubArg; subArg)
                 {
-                    ppArgs(viz, subsubArg, ",");
+                    viz.ppArgs(subsubArg, ",");
                 }
             }
         }
     }
     else static if (isInstanceOf!(InBold, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<b>"); }
-        ppArgs(viz, arg.arg);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</b>"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<b>"); }
+        viz.ppArgs(arg.arg);
+        if (viz.form == VizForm.html) { viz.ppRaw("</b>"); }
     }
     else static if (isInstanceOf!(InIt, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<i>"); }
-        ppArgs(viz, arg.arg);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</i>"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<i>"); }
+        viz.ppArgs(arg.arg);
+        if (viz.form == VizForm.html) { viz.ppRaw("</i>"); }
     }
     else static if (isInstanceOf!(AsCode, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<code>"); }
-        ppArgs(viz, arg.arg);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</code>"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<code>"); }
+        viz.ppArgs(arg.arg);
+        if (viz.form == VizForm.html) { viz.ppRaw("</code>"); }
     }
     else static if (isInstanceOf!(AsEm, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<em>"); }
-        ppArgs(viz, arg.arg);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</em>"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<em>"); }
+        viz.ppArgs(arg.arg);
+        if (viz.form == VizForm.html) { viz.ppRaw("</em>"); }
     }
     else static if (isInstanceOf!(AsStrong, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<strong>"); }
-        ppArgs(viz, arg.arg);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</strong>"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<strong>"); }
+        viz.ppArgs(arg.arg);
+        if (viz.form == VizForm.html) { viz.ppRaw("</strong>"); }
     }
     else static if (isInstanceOf!(Header, Arg))
     {
         if (viz.form == VizForm.html) {
-            ppArgs(viz,
-                   "<h" ~ to!string(arg.level) ~ ">",
-                   arg.args,
-                   "</h" ~ to!string(arg.level) ~ ">\n");
+            viz.ppArgs("<h" ~ to!string(arg.level) ~ ">",
+                       arg.args,
+                       "</h" ~ to!string(arg.level) ~ ">\n");
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
@@ -326,36 +325,35 @@ void ppArg(Arg)(Viz viz, int depth,
                 tag ~= "=";
             }
             // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            ppArgs(viz,
-                   "\n", tag, " ", arg.args, " ", tag, "\n");
+            viz.ppArgs("\n", tag, " ", arg.args, " ", tag, "\n");
         }
     }
     else static if (isInstanceOf!(AsUList, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<ul>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\\begin{enumerate}\n"); }
-        ppArgs(viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</ul>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\\end{enumerate}\n"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<ul>\n"); }
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\\begin{enumerate}\n"); }
+        viz.ppArgs(arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</ul>\n"); }
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\\end{enumerate}\n"); }
     }
     else static if (isInstanceOf!(AsOList, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<ol>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\\begin{itemize}\n"); }
-        ppArgs(viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</ol>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\\end{itemize}\n"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<ol>\n"); }
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\\begin{itemize}\n"); }
+        viz.ppArgs(arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</ol>\n"); }
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\\end{itemize}\n"); }
     }
     else static if (isInstanceOf!(AsTable, Arg))
     {
         if (viz.form == VizForm.html) {
             const border = (arg.border ? " border=" ~ arg.border : "");
-            ppRaw(viz, "<table" ~ border ~ ">\n");
+            viz.ppRaw("<table" ~ border ~ ">\n");
         }
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\\begin{tabular}\n"); }
-        ppArgs(viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</table>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\\end{tabular}\n"); }
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\\begin{tabular}\n"); }
+        viz.ppArgs(arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</table>\n"); }
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\\end{tabular}\n"); }
     }
     else static if (isInstanceOf!(AsRow, Arg))
     {
@@ -365,9 +363,9 @@ void ppArg(Arg)(Viz viz, int depth,
         {
             spanArg ~= ` rowspan="` ~ to!string(arg._span) ~ `"`;
         }
-        if (viz.form == VizForm.html) { ppRaw(viz,`<tr` ~ spanArg ~ `>`); }
-        ppArgs(viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</tr>\n"); }
+        if (viz.form == VizForm.html) { viz.ppRaw(`<tr` ~ spanArg ~ `>`); }
+        viz.ppArgs(arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</tr>\n"); }
     }
     else static if (isInstanceOf!(AsCell, Arg))
     {
@@ -377,27 +375,27 @@ void ppArg(Arg)(Viz viz, int depth,
         {
             spanArg ~= ` colspan="` ~ to!string(arg._span) ~ `"`;
         }
-        if (viz.form == VizForm.html) { ppRaw(viz,`<td` ~ spanArg ~ `>`); }
-        ppArgs(viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</td>\n"); }
+        if (viz.form == VizForm.html) { viz.ppRaw(`<td` ~ spanArg ~ `>`); }
+        viz.ppArgs(arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</td>\n"); }
     }
     else static if (isInstanceOf!(AsTHeading, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<th>\n"); }
-        ppArgs(viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</th>\n"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<th>\n"); }
+        viz.ppArgs(arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</th>\n"); }
     }
     else static if (isInstanceOf!(AsItem, Arg))
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<li>"); }
-        else if (viz.form == VizForm.textAsciiDoc) { ppRaw(viz, " - "); } // if inside ordered list use . instead of -
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\\item "); }
-        else if (viz.form == VizForm.textAsciiDocUTF8) { ppRaw(viz, " • "); }
-        ppArgs(viz, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</li>\n"); }
-        else if (viz.form == VizForm.latex) { ppRaw(viz, "\n"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<li>"); }
+        else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(" - "); } // if inside ordered list use . instead of -
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\\item "); }
+        else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(" • "); }
+        viz.ppArgs(arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</li>\n"); }
+        else if (viz.form == VizForm.latex) { viz.ppRaw("\n"); }
         else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8) { ppRaw(viz, "\n"); }
+                 viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw("\n"); }
     }
     else static if (isInstanceOf!(AsPath, Arg))
     {
@@ -408,12 +406,12 @@ void ppArg(Arg)(Viz viz, int depth,
         enum isString = isSomeString!(typeof(arg.arg));
 
         static if (isString)
-            if (viz.form == VizForm.html) { ppRaw(viz, "<a href=\"file://" ~ arg.arg ~ "\">"); }
+            if (viz.form == VizForm.html) { viz.ppRaw("<a href=\"file://" ~ arg.arg ~ "\">"); }
 
         ppArg(vizArg, depth + 1, arg.arg);
 
         static if (isString)
-            if (viz.form == VizForm.html) { ppRaw(viz, "</a>"); }
+            if (viz.form == VizForm.html) { viz.ppRaw("</a>"); }
     }
     else static if (isInstanceOf!(AsName, Arg))
     {
@@ -424,20 +422,20 @@ void ppArg(Arg)(Viz viz, int depth,
     else static if (isInstanceOf!(AsHit, Arg))
     {
         const ixs = to!string(arg.ix);
-        if (viz.form == VizForm.html) { ppRaw(viz, "<hit" ~ ixs ~ ">"); }
-        ppArg(viz, depth + 1, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</hit" ~ ixs ~ ">"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<hit" ~ ixs ~ ">"); }
+        viz.ppArg(depth + 1, arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</hit" ~ ixs ~ ">"); }
     }
     else static if (isInstanceOf!(AsCtx, Arg))
     {
         const ixs = to!string(arg.ix);
-        if (viz.form == VizForm.html) { ppRaw(viz, "<hit_context>"); }
-        ppArg(viz, depth + 1, arg.args);
-        if (viz.form == VizForm.html) { ppRaw(viz, "</hit_context>"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<hit_context>"); }
+        viz.ppArg(depth + 1, arg.args);
+        if (viz.form == VizForm.html) { viz.ppRaw("</hit_context>"); }
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
-        if (viz.form == VizForm.html) { ppRaw(viz, "<a href=\"file://" ~ arg.path ~ "\">"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("<a href=\"file://" ~ arg.path ~ "\">"); }
 
         if (!viz.treeFlag)
         {
@@ -445,12 +443,12 @@ void ppArg(Arg)(Viz viz, int depth,
             size_t i = 0;
             foreach (parent; arg.parents)
             {
-                ppRaw(viz, dirSeparator[0]);
-                if (viz.form == VizForm.html) { ppRaw(viz, "<b>"); }
-                ppPut(viz, dirFace, parent.name);
-                if (viz.form == VizForm.html) { ppRaw(viz, "</b>"); }
+                viz.ppRaw(dirSeparator[0]);
+                if (viz.form == VizForm.html) { viz.ppRaw("<b>"); }
+                viz.ppPut(dirFace, parent.name);
+                if (viz.form == VizForm.html) { viz.ppRaw("</b>"); }
             }
-            ppRaw(viz, dirSeparator[0]);
+            viz.ppRaw(dirSeparator[0]);
         }
 
         // write name
@@ -465,19 +463,19 @@ void ppArg(Arg)(Viz viz, int depth,
 
         if (viz.form == VizForm.html)
         {
-            static      if (isSymlink!Arg) { ppRaw(viz, "<i>"); }
-            else static if (isDir!Arg) { ppRaw(viz, "<b>"); }
+            static      if (isSymlink!Arg) { viz.ppRaw("<i>"); }
+            else static if (isDir!Arg) { viz.ppRaw("<b>"); }
         }
 
-        ppPut(viz, arg.getFace(), name);
+        viz.ppPut(arg.getFace(), name);
 
         if (viz.form == VizForm.html)
         {
-            static      if (isSymlink!Arg) { ppRaw(viz, "</i>"); }
-            else static if (isDir!Arg) { ppRaw(viz, "</b>"); }
+            static      if (isSymlink!Arg) { viz.ppRaw("</i>"); }
+            else static if (isDir!Arg) { viz.ppRaw("</b>"); }
         }
 
-        if (viz.form == VizForm.html) { ppRaw(viz, "</a>"); }
+        if (viz.form == VizForm.html) { viz.ppRaw("</a>"); }
     }
     else
     {
@@ -533,7 +531,7 @@ void ppArgs(Args...)(Viz viz,
 {
     foreach (arg; args)
     {
-        ppArg(viz, 0, arg);
+        viz.ppArg(0, arg);
     }
 }
 
@@ -541,7 +539,7 @@ void ppArgs(Args...)(Viz viz,
 void pp(Args...)(Viz viz,
                  Args args) @trusted
 {
-    ppArgs(viz, args);
+    viz.ppArgs(args);
     if (viz.outFile == stdout)
     {
         (*viz.term).flush();
@@ -567,10 +565,10 @@ struct Viz
     Terminal* term;
 }
 
-/** Pretty-Print Arguments $(D args) to Terminal $(D term) including Line Termination. */
+/** Pretty-Print Arguments $(D args) including final line termination. */
 void ppln(Args...)(Viz viz, Args args) @trusted
 {
-    ppArgs(viz, args);
+    viz.ppArgs(args);
     if (viz.outFile == stdout)
     {
         (*viz.term).writeln(lbr(viz.form == VizForm.html));
@@ -582,8 +580,17 @@ void ppln(Args...)(Viz viz, Args args) @trusted
     }
 }
 
+/** Pretty-Print Arguments $(D args) each including a final line termination. */
+void pplns(Args...)(Viz viz, Args args) @trusted
+{
+    foreach (arg; args)
+    {
+        viz.ppln(args);
+    }
+}
+
 /** Print End of Line to Terminal $(D term). */
 void ppendl(Viz viz) @trusted
 {
-    return ppln(viz);
+    return viz.ppln();
 }
