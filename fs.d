@@ -1221,7 +1221,7 @@ class RegFile : File
     }
 
     /** Returns: Read-Only Contents of $(D this) Regular File. */
-    // } catch (InvalidMemoryOperationError) { ppln(term, outFile, useHTML, "Failed to mmap ", dent.name); }
+    // } catch (InvalidMemoryOperationError) { viz.ppln(outFile, useHTML, "Failed to mmap ", dent.name); }
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
     immutable(ubyte[]) readOnlyContents(string file = __FILE__, int line = __LINE__)() @trusted
     {
@@ -1236,7 +1236,7 @@ class RegFile : File
     }
 
     /** Returns: Read-Writable Contents of $(D this) Regular File. */
-    // } catch (InvalidMemoryOperationError) { ppln(term, outFile, useHTML, "Failed to mmap ", dent.name); }
+    // } catch (InvalidMemoryOperationError) { viz.ppln(outFile, useHTML, "Failed to mmap ", dent.name); }
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
     ubyte[] readWriteableContents() @trusted
     {
@@ -1808,9 +1808,8 @@ Bytes64 treeSizeMemoized(NotNull!File file, Bytes64[File] cache) @trusted /* not
 /** Save File System Tree Cache under Directory $(D rootDir).
     Returns: Serialized Byte Array.
 */
-const(ubyte[]) saveRootDirTree(Term)(ref Term term,
-                                     Viz viz,
-                                     Dir rootDir, string cacheFile) @trusted
+const(ubyte[]) saveRootDirTree(Viz viz,
+                               Dir rootDir, string cacheFile) @trusted
 {
     immutable tic = Clock.currTime;
     version(msgpack) {
@@ -1827,13 +1826,12 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term,
     cacheFile.write(data);
     immutable toc = Clock.currTime;
 
-    ppln(term,viz,
-         header!2("Cache Write"),
-         "Wrote tree cache of size ",
-         data.length.Bytes64, " to ",
-         asPath(cacheFile),
-         " in ",
-         shortDurationString(toc - tic));
+    viz.ppln(header!2("Cache Write"),
+             "Wrote tree cache of size ",
+             data.length.Bytes64, " to ",
+             asPath(cacheFile),
+             " in ",
+             shortDurationString(toc - tic));
 
     return data;
 }
@@ -1841,9 +1839,8 @@ const(ubyte[]) saveRootDirTree(Term)(ref Term term,
 /** Load File System Tree Cache from $(D cacheFile).
     Returns: Root Directory of Loaded Tree.
 */
-Dir loadRootDirTree(Term)(ref Term term,
-                          Viz viz,
-                          string cacheFile, GStats gstats) @trusted
+Dir loadRootDirTree(Viz viz,
+                    string cacheFile, GStats gstats) @trusted
 {
     immutable tic = Clock.currTime;
 
@@ -1857,25 +1854,24 @@ Dir loadRootDirTree(Term)(ref Term term,
         }
         immutable toc = Clock.currTime;
 
-        pp(term,viz,
-           header!2("Cache Read"),
-           "Read cache of size ",
-           data.length.Bytes64, " from ",
-           asPath(cacheFile),
-           " in ",
-           shortDurationString(toc - tic), " containing",
-           asUList(asItem(gstats.noDirs, " Dirs,"),
-                   asItem(gstats.noRegFiles, " Regular Files,"),
-                   asItem(gstats.noSymlinks, " Symbolic Links,"),
-                   asItem(gstats.noSpecialFiles, " Special Files,"),
-                   asItem("totalling ", gstats.noFiles + 1, " Files")));
+        viz.pp(header!2("Cache Read"),
+               "Read cache of size ",
+               data.length.Bytes64, " from ",
+               asPath(cacheFile),
+               " in ",
+               shortDurationString(toc - tic), " containing",
+               asUList(asItem(gstats.noDirs, " Dirs,"),
+                       asItem(gstats.noRegFiles, " Regular Files,"),
+                       asItem(gstats.noSymlinks, " Symbolic Links,"),
+                       asItem(gstats.noSpecialFiles, " Special Files,"),
+                       asItem("totalling ", gstats.noFiles + 1, " Files")));
         assert(gstats.noDirs +
                gstats.noRegFiles +
                gstats.noSymlinks +
                gstats.noSpecialFiles == gstats.noFiles + 1);
         return rootDir;
     } catch (FileException) {
-        ppln(term,viz, "Failed to read cache from ", cacheFile);
+        viz.ppln("Failed to read cache from ", cacheFile);
         return null;
     }
 }
@@ -3273,23 +3269,22 @@ class Scanner(Term)
 
         auto viz = Viz(outFile, showTree,
                        useHTML ? VizForm.html : VizForm.textAsciiDocUTF8,
-                       colorFlag);
+                       colorFlag,
+                       &term);
 
         if (_useNGrams &&
             (!keys.empty) &&
             keysXGramsUnion.empty) {
             _useNGrams = false;
-            ppln(term,viz,
-                 "Keys must be at least of length " ~
-                 to!string(NGramOrder + 1) ~
-                 " in order for " ~
-                 keysXGrams[0].typeName ~
-                 " to be calculated");
+            viz.ppln("Keys must be at least of length " ~
+                     to!string(NGramOrder + 1) ~
+                     " in order for " ~
+                     keysXGrams[0].typeName ~
+                     " to be calculated");
         }
 
         if (useHTML) {
-            pp(term,viz,
-               "<!DOCTYPE html>
+            viz.pp("<!DOCTYPE html>
 <html>
 <head>
 <meta charset=\"UTF-8\"/>
@@ -3310,7 +3305,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 ");
         }
 
-        // ppln(term,viz, "<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
+        // viz.ppln("<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
 
         if (includedTypes) {
             foreach (lang; includedTypes.splitter(",")) {
@@ -3362,23 +3357,20 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                            ~asNote ~incKindsNote ~underNote);
             if (viz.form == VizForm.html) // only needed for HTML output
             {
-                ppln(term,viz,
-                     faze(title, titleFace));
+                viz.ppln(faze(title, titleFace));
             }
 
-            pp(term,viz,
-               header!1("Searching for \"", commaedKeysString, "\"",
-                        " case-", (_caseFold ? "in" : ""), "sensitively",
-                        asNote, incKindsNote,
-                        " under ", _topDirNames.map!(a => asPath(a))));
+            viz.pp(header!1("Searching for \"", commaedKeysString, "\"",
+                            " case-", (_caseFold ? "in" : ""), "sensitively",
+                            asNote, incKindsNote,
+                            " under ", _topDirNames.map!(a => asPath(a))));
         }
 
         if (_showSkipped) {
-            pp(term,viz,
-               header!2("Skipping files of type"),
-               asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
-                                                  ": ",
-                                                  asCSL(a.exts.map!(b => b.asCode))))));
+            viz.pp(header!2("Skipping files of type"),
+                   asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
+                                                      ": ",
+                                                      asCSL(a.exts.map!(b => b.asCode))))));
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
@@ -3391,7 +3383,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         // Setup root directory
         if (!_recache) {
             GC.disable;
-            _rootDir = loadRootDirTree(term,viz, _cacheFile, gstats);
+            _rootDir = loadRootDirTree(viz, _cacheFile, gstats);
             GC.enable;
         }
         if (!_rootDir) { // if first time
@@ -3404,25 +3396,24 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         _currTime = Clock.currTime();
 
         GC.disable;
-        scanTopDirs(term,viz, commaedKeysString);
+        scanTopDirs(viz, commaedKeysString);
         GC.enable;
 
         GC.disable;
-        saveRootDirTree(term,viz, _rootDir, _cacheFile);
+        saveRootDirTree(viz, _rootDir, _cacheFile);
         GC.enable;
 
         // Print statistics
-        showStats(term, viz);
+        showStats(viz);
     }
 
-    void scanTopDirs(Term)(ref Term term,
-                           Viz viz,
-                           string commaedKeysString)
+    void scanTopDirs(Viz viz,
+                     string commaedKeysString)
     {
-        pp(term,viz, header!2("Results"));
+        viz.pp(header!2("Results"));
         if (_topDirs) {
             foreach (topIx, topDir; _topDirs) {
-                scanDir(term,viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
+                scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                 if (ctrlC) {
                     auto restDirs = _topDirs[topIx + 1..$];
                     if (!restDirs.empty) {
@@ -3436,27 +3427,25 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             if (keys && _hitsCountTotal == 0) { // if keys given but no hit found
                 auto keysString = (keys.length >= 2 ? "s" : "") ~ " \"" ~ commaedKeysString;
                 if (_keyAsAcronym)  {
-                    ppln(term,viz,
-                         ("No acronym matches for key" ~ keysString ~ `"` ~
-                          (keyAsSymbol ? " as symbol" : "") ~
-                          " found in files of type"));
+                    viz.ppln(("No acronym matches for key" ~ keysString ~ `"` ~
+                              (keyAsSymbol ? " as symbol" : "") ~
+                              " found in files of type"));
                 } else if (!_keyAsExact) {
-                    ppln(term,viz,
-                         ("No exact matches for key" ~ keysString ~ `"` ~
-                          (keyAsSymbol ? " as symbol" : "") ~
-                          " found" ~ incKindsNote ~
-                          ". Relaxing scan to" ~ (keyAsSymbol ? " symbol" : "") ~ " acronym match."));
+                    viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
+                              (keyAsSymbol ? " as symbol" : "") ~
+                              " found" ~ incKindsNote ~
+                              ". Relaxing scan to" ~ (keyAsSymbol ? " symbol" : "") ~ " acronym match."));
                     _keyAsAcronym = true;
 
                     foreach (topDir; _topDirs) {
-                        scanDir(term,viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
+                        scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                     }
                 }
             }
 
             if (useHTML) {
-                ppln(term,viz, "</body>");
-                ppln(term,viz, "</html>");
+                viz.ppln("</body>");
+                viz.ppln("</html>");
             }
         }
 
@@ -3525,7 +3514,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
     Results results;
 
-    void handleError(F)(ref Term term, Viz viz,
+    void handleError(F)(Viz viz,
                         NotNull!F file, bool isDir, size_t subIndex) {
         auto dent = DirEntry(file.path);
         immutable stat_t stat = dent.statBuf();
@@ -3536,19 +3525,16 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 if (showTree) {
                     auto parentDir = file.parent;
                     immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                    pp(term,viz,
-                       "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                    viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                 }
-                ppln(term,viz,
-                     file,
-                     ":  ", isDir ? "Directory" : "File",
-                     faze(msg, warnFace));
+                viz.ppln(file,
+                         ":  ", isDir ? "Directory" : "File",
+                         faze(msg, warnFace));
             }
         }
     }
 
-    void printSkipped(ref Term term,
-                      Viz viz,
+    void printSkipped(Viz viz,
                       NotNull!RegFile regfile,
                       in string ext, size_t subIndex,
                       in NotNull!FKind kind, KindHit kindhit,
@@ -3558,15 +3544,13 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         if (_showSkipped) {
             if (showTree) {
                 immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                pp(term,viz,
-                   "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
             }
-            ppln(term,viz, regfile, ": Skipped ", kind, " file", skipCause);
+            viz.ppln(regfile, ": Skipped ", kind, " file", skipCause);
         }
     }
 
-    KindHit isBinary(ref Term term,
-                     Viz viz,
+    KindHit isBinary(Viz viz,
                      NotNull!RegFile regfile,
                      in string ext, size_t subIndex) {
         auto hit = KindHit.none;
@@ -3578,7 +3562,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             if (regfile._cstat.kindId in binFKindsById) {
                 const kind = enforceNotNull(binFKindsById[regfile._cstat.kindId]);
                 hit = KindHit.cached;
-                printSkipped(term,viz, regfile, ext, subIndex, kind, hit,
+                printSkipped(viz, regfile, ext, subIndex, kind, hit,
                              " using cached KindId");
             } else {
                 hit = KindHit.none;
@@ -3592,7 +3576,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 auto nnKind = enforceNotNull(kind);
                 hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
                 if (hit) {
-                    printSkipped(term,viz, regfile, ext, subIndex, nnKind, hit,
+                    printSkipped(viz, regfile, ext, subIndex, nnKind, hit,
                                  " (" ~ ext ~ ") at " ~ nthString(kindIndex + 1) ~ " extension try");
                     break;
                 }
@@ -3607,12 +3591,11 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                     if (_showSkipped)  {
                         if (showTree) {
                             immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                            pp(term,viz, "│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                            viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                         }
 
-                        ppln(term,viz,
-                             regfile, ": Skipped ", kind, " file at ",
-                             nthString(kindIndex + 1), " blind try");
+                        viz.ppln(regfile, ": Skipped ", kind, " file at ",
+                                 nthString(kindIndex + 1), " blind try");
                     }
                     break;
                 }
@@ -3679,8 +3662,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
     /** Search for Keys $(D keys) in Source $(D src).
      */
-    size_t scanForKeys(Source, Keys)(ref Term term,
-                                     Viz viz,
+    size_t scanForKeys(Source, Keys)(Viz viz,
                                      NotNull!Dir topDir,
                                      NotNull!File theFile,
                                      NotNull!Dir parentDir,
@@ -3747,9 +3729,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
                     if (offKB >= 0) { // if hit
                         if (!showTree && ctx == ScanContext.fileName) {
-                            pp(term,viz,
-                               parentDir,
-                               dirSeparator);
+                            viz.pp(parentDir, dirSeparator);
                         }
 
                         // Check Context
@@ -3762,36 +3742,32 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                         if (ctx == ScanContext.fileContent &&
                             !anyHit) { // if this is first hit
                             if (showTree) {
-                                pp(term,viz, "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
+                                viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
                             } else {
                                 foreach (fromSymlink; fromSymlinks)
                                 {
-                                    pp(term,viz,
-                                       fromSymlink,
-                                       " modified ",
-                                       faze(shortDurationString(_currTime - fromSymlink.timeLastModified),
-                                            timeFace),
-                                       " ago",
-                                       " -> ");
+                                    viz.pp(fromSymlink,
+                                           " modified ",
+                                           faze(shortDurationString(_currTime - fromSymlink.timeLastModified),
+                                                timeFace),
+                                           " ago",
+                                           " -> ");
                                 }
 
                                 // show file path/name
-                                pp(term,viz,
-                                   asPath(displayedFileName)
-                                   /* faze(asPath(useHTML, theFile.path, displayedFileName, false), */
-                                   /*      regFileFace) */); // show path
+                                viz.pp(asPath(displayedFileName)
+                                       /* faze(asPath(useHTML, theFile.path, displayedFileName, false), */
+                                       /*      regFileFace) */); // show path
                             }
 
                             // show file line:column
-                            pp(term,viz,
-                               faze(":" ~ to!string(nL+1) ~ ":" ~ to!string(offKB+1) ~ ":",
-                                    contextFace));
+                            viz.pp(faze(":" ~ to!string(nL+1) ~ ":" ~ to!string(offKB+1) ~ ":",
+                                        contextFace));
                         }
                         anyHit = true; // at least hit
 
                         // show content prefix
-                        pp(term,viz,
-                           faze(to!string(rest[0..offKB]), thisFace));
+                        viz.pp(faze(to!string(rest[0..offKB]), thisFace));
 
                         // show hit part
                         if (!acronymOffsets.empty) {
@@ -3800,14 +3776,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                                 if (aIx >= 1) {
                                     immutable prevOff = acronymOffsets[aIx-1];
                                     if (prevOff + 1 < currOff) { // at least one letter in between
-                                        pp(term,viz, asCtx(ix, to!string(rest[prevOff + 1 .. currOff])));
+                                        viz.pp(asCtx(ix, to!string(rest[prevOff + 1 .. currOff])));
                                     }
                                 }
                                 // hit letter
-                                pp(term,viz, asHit(ix, to!string(rest[currOff])));
+                                viz.pp(asHit(ix, to!string(rest[currOff])));
                             }
                         } else {
-                            pp(term,viz, asHit(ix, to!string(rest[offKB..offKE])));
+                            viz.pp(asHit(ix, to!string(rest[offKB..offKE])));
                         }
 
                         rest = rest[offKE..$]; // move forward in line
@@ -3826,8 +3802,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             // finalize line
             if (anyHit)  {
                 // show final context suffix
-                ppln(term,viz,
-                     faze(rest, thisFace));
+                viz.ppln(faze(rest, thisFace));
             }
             nL++;
         }
@@ -3847,8 +3822,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         //             immutable offEOL = (cntEOL == -1 ? // if no hit
         //                                 src.length :   // end of file
         //                                 offHit + cntEOL); // normal case
-        //             pp(term,viz, faze(asPath(useHTML, dent.name), pathFace));
-        //             ppln(term,viz, ":", rowHit + 1,
+        //             viz.pp(faze(asPath(useHTML, dent.name), pathFace));
+        //             viz.ppln(":", rowHit + 1,
         //                                                                               ":", colHit + 1,
         //                                                                               ":", cast(string)src[offBOL..offEOL]);
         //         }
@@ -3863,18 +3838,18 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         // case 1:
         //     immutable hit1 = src.find(keys[0]);
         //     if (!hit1.empty) {
-        //         ppln(term,viz, asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
+        //         viz.ppln(asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
         //     }
         //     break;
         // // case 2:
         // //     immutable hit2 = src.find(keys[0], keys[1]); // find two keys
-        // //     if (!hit2[0].empty) { ppln(term,viz, asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
-        // //     if (!hit2[1].empty) { ppln(term,viz, asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
+        // //     if (!hit2[0].empty) { viz.ppln(asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
+        // //     if (!hit2[1].empty) { viz.ppln(asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
         // //     break;
         // // case 3:
         // //     immutable hit3 = src.find(keys[0], keys[1], keys[2]); // find two keys
         // //     if (!hit3.empty) {
-        // //         ppln(term,viz, asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
+        // //         viz.ppln(asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
         // //     }
         // //     break;
         // }
@@ -3882,8 +3857,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     }
 
     /** Search for Keys $(D keys) in Regular File $(D theRegFile). */
-    void scanRegFile(ref Term term,
-                     Viz viz,
+    void scanRegFile(Viz viz,
                      NotNull!Dir topDir,
                      NotNull!RegFile theRegFile,
                      NotNull!Dir parentDir,
@@ -3898,7 +3872,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
              _scanContext == ScanContext.fileName ||
              _scanContext == ScanContext.regularFileName) &&
             !keys.empty) {
-            immutable hitCountInName = scanForKeys(term, viz,
+            immutable hitCountInName = scanForKeys(viz,
                                                    topDir, cast(NotNull!File)theRegFile, parentDir,
                                                    fromSymlinks,
                                                    theRegFile.name, keys, [], ScanContext.fileName);
@@ -3967,7 +3941,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                     allXGramsMiss = keysXGramUnionMatch == 0;
                 }
 
-                immutable binFlag = isBinary(term,viz, theRegFile, ext, subIndex);
+                immutable binFlag = isBinary(viz, theRegFile, ext, subIndex);
 
                 if (binFlag || noBistMatch || allXGramsMiss) // or no hits possible. TODO: Maybe more efficient to do histogram discardal first
                 {
@@ -4030,7 +4004,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                                 /*     ", deepDenseness:", deepDenseness); */
                             }
 
-                            theRegFile._cstat.hitCount = scanForKeys(term, viz,
+                            theRegFile._cstat.hitCount = scanForKeys(viz,
                                                                      topDir, cast(NotNull!File)theRegFile, parentDir,
                                                                      fromSymlinks,
                                                                      src, keys, bistHits,
@@ -4040,9 +4014,9 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 }
 
             } catch (FileException) {
-                handleError(term,viz, theRegFile, false, subIndex);
+                handleError(viz, theRegFile, false, subIndex);
             } catch (ErrnoException) {
-                handleError(term,viz, theRegFile, false, subIndex);
+                handleError(viz, theRegFile, false, subIndex);
             }
             theRegFile.freeContents;
         }
@@ -4050,8 +4024,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
     /** Scan Symlink $(D symlink) at $(D parentDir) for $(D keys)
         Put results in $(D results). */
-    void scanSymlink(ref Term term,
-                     Viz viz,
+    void scanSymlink(Viz viz,
                      NotNull!Dir topDir,
                      NotNull!Symlink theSymlink,
                      NotNull!Dir parentDir,
@@ -4062,11 +4035,10 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         if (!fromSymlinks.find(theSymlink).empty) {
             if (gstats.showSymlinkCycles) {
                 import std.range: back;
-                ppln(term,viz,
-                     "Cycle of symbolic links: ",
-                     asPath(fromSymlinks),
-                     " -> ",
-                     fromSymlinks.back.target);
+                viz.ppln("Cycle of symbolic links: ",
+                         asPath(fromSymlinks),
+                         " -> ",
+                         fromSymlinks.back.target);
             }
             return;
         }
@@ -4076,7 +4048,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
              _scanContext == ScanContext.fileName ||
              _scanContext == ScanContext.symlinkName) &&
             !keys.empty) {
-            scanForKeys(term, viz,
+            scanForKeys(viz,
                         topDir, cast(NotNull!File)theSymlink, enforceNotNull(theSymlink.parent),
                         fromSymlinks,
                         theSymlink.name, keys, [], ScanContext.fileName);
@@ -4099,31 +4071,30 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent);
 
                 if (showTree) {
-                    ppln(term,viz,
-                         "│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ",
-                         theSymlink,
-                         " modified ",
-                         faze(shortDurationString(_currTime - theSymlink.timeLastModified),
-                              timeFace),
-                         " ago", " -> ",
-                         asPath(targetFile),
-                         faze(" outside of " ~ (_topDirNames.length == 1 ? "tree " : "all trees "),
-                              infoFace),
-                         asPath(_topDirs),
-                         faze(" is followed", infoFace));
+                    viz.ppln("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ",
+                             theSymlink,
+                             " modified ",
+                             faze(shortDurationString(_currTime - theSymlink.timeLastModified),
+                                  timeFace),
+                             " ago", " -> ",
+                             asPath(targetFile),
+                             faze(" outside of " ~ (_topDirNames.length == 1 ? "tree " : "all trees "),
+                                  infoFace),
+                             asPath(_topDirs),
+                             faze(" is followed", infoFace));
                 }
 
                 ++gstats.noScannedSymlinks;
                 ++gstats.noScannedFiles;
 
                 if      (auto targetRegFile = cast(RegFile)targetFile) {
-                    scanRegFile(term,viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
+                    scanRegFile(viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
                 }
                 else if (auto targetDir = cast(Dir)targetFile) {
-                    scanDir(term,viz, topDir, assumeNotNull(targetDir), keys, fromSymlinks);
+                    scanDir(viz, topDir, assumeNotNull(targetDir), keys, fromSymlinks);
                 }
                 else if (auto targetSymlink = cast(Symlink)targetFile) { // target is a Symlink
-                    scanSymlink(term,viz, topDir, assumeNotNull(targetSymlink), enforceNotNull(targetSymlink.parent), keys, fromSymlinks);
+                    scanSymlink(viz, topDir, assumeNotNull(targetSymlink), enforceNotNull(targetSymlink.parent), keys, fromSymlinks);
                 }
             }
         } else {
@@ -4135,26 +4106,24 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 foreach (ix, fromSymlink; fromSymlinks) {
                     if (showTree && ix == 0) {
                         immutable intro = "├";
-                        pp(term,viz,
-                           "│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ",
-                            theSymlink);
+                        viz.pp("│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ",
+                               theSymlink);
                     }
                     else {
-                        pp(term,viz, fromSymlink);
+                        viz.pp(fromSymlink);
                     }
-                    pp(term,viz, " -> ");
+                    viz.pp(" -> ");
                 }
 
-                ppln(term,viz,
-                   faze(theSymlink.target, errorFace),
-                   faze(" is missing", warnFace));
+                viz.ppln(faze(theSymlink.target, errorFace),
+                         faze(" is missing", warnFace));
             }
         }
         fromSymlinks.popBackN(1);
     }
 
     /** Scan Directory $(D parentDir) for $(D keys). */
-    void scanDir(ref Term term, Viz viz,
+    void scanDir(Viz viz,
                  NotNull!Dir topDir,
                  NotNull!Dir theDir,
                  in string[] keys,
@@ -4167,7 +4136,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
              _scanContext == ScanContext.fileName ||
              _scanContext == ScanContext.dirName) &&
             !keys.empty) {
-            scanForKeys(term, viz,
+            scanForKeys(viz,
                         topDir,
                         cast(NotNull!File)theDir,
                         enforceNotNull(theDir.parent),
@@ -4180,22 +4149,21 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             if (showTree) {
                 immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
 
-                pp(term,viz,
-                   "│  ".repeat(theDir.depth).join("") ~ intro ~
-                   "─ ", theDir, " modified ",
-                   faze(shortDurationString(_currTime -
-                                            theDir.timeLastModified),
-                        timeFace),
-                   " ago");
+                viz.pp("│  ".repeat(theDir.depth).join("") ~ intro ~
+                       "─ ", theDir, " modified ",
+                       faze(shortDurationString(_currTime -
+                                                theDir.timeLastModified),
+                            timeFace),
+                       " ago");
 
                 if (gstats.showUsage) {
-                    pp(term,viz, " of Tree-Size ", theDir.treeSize);
+                    viz.pp(" of Tree-Size ", theDir.treeSize);
                 }
 
                 if (gstats.showSHA1) {
-                    pp(term,viz, " with Tree-Content-Id ", theDir.treeContId);
+                    viz.pp(" with Tree-Content-Id ", theDir.treeContId);
                 }
-                ppendl(term, viz);
+                viz.ppendl();
             }
 
             ++gstats.noScannedDirs;
@@ -4204,7 +4172,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             auto subsSorted = theDir.subsSorted(subsSorting);
             foreach (key, sub; subsSorted) {
                 if (auto regfile = cast(RegFile)sub) {
-                    scanRegFile(term,viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
+                    scanRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
                 }
                 else if (auto subDir = cast(Dir)sub) {
                     if (maxDepth == -1 || // if either all levels or
@@ -4214,40 +4182,38 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                             if (_showSkipped) {
                                 if (showTree) {
                                     immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
-                                    pp(term,viz,
-                                       "│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
+                                    viz.pp("│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
                                 }
 
-                                pp(term,viz,
-                                   subDir,
-                                   " modified ",
-                                   faze(shortDurationString(_currTime -
-                                                            subDir.timeLastModified),
-                                        timeFace),
-                                   " ago",
-                                   faze(": Skipped Directory of type ", infoFace),
-                                   skippedDirKindsMap[sub.name].kindName);
+                                viz.pp(subDir,
+                                       " modified ",
+                                       faze(shortDurationString(_currTime -
+                                                                subDir.timeLastModified),
+                                            timeFace),
+                                       " ago",
+                                       faze(": Skipped Directory of type ", infoFace),
+                                       skippedDirKindsMap[sub.name].kindName);
                             }
                         } else {
-                            scanDir(term,viz, topDir, assumeNotNull(subDir), keys, fromSymlinks, maxDepth >= 0 ? --maxDepth : maxDepth);
+                            scanDir(viz, topDir, assumeNotNull(subDir), keys, fromSymlinks, maxDepth >= 0 ? --maxDepth : maxDepth);
                         }
                     }
                 }
                 else if (auto subSymlink = cast(Symlink)sub) {
-                    scanSymlink(term,viz, topDir, assumeNotNull(subSymlink), theDir, keys, fromSymlinks);
+                    scanSymlink(viz, topDir, assumeNotNull(subSymlink), theDir, keys, fromSymlinks);
                 }
                 else {
-                    if (showTree) { ppln(term,viz); }
+                    if (showTree) { viz.ppln(); }
                 }
                 ++subIndex;
 
                 if (ctrlC) {
-                    ppln(term,viz, "Ctrl-C pressed: Aborting scan of ", theDir);
+                    viz.ppln("Ctrl-C pressed: Aborting scan of ", theDir);
                     break;
                 }
             }
         } catch (FileException) {
-            handleError(term,viz, theDir, true, 0);
+            handleError(viz, theDir, true, 0);
         }
     }
 
@@ -4258,7 +4224,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     // Filter out $(D files) that lie under any of the directories $(D dirPaths).
     F[] filterUnderAnyOfPaths(F)(F[] files,
                                  string[] dirPaths,
-                                 FKind[] incKinds) {
+                                 FKind[] incKinds)
+    {
         import std.algorithm: any;
         import std.array: array;
         auto dupFilesUnderAnyTopDirName = (files
@@ -4282,48 +4249,45 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     }
 
     /** Show Statistics. */
-    void showStats(ref Term term, Viz viz)
+    void showStats(Viz viz)
     {
         /* Duplicates */
 
         if (gstats.showNameDups) {
-            pp(term,viz, header!2("Name Duplicates"));
+            viz.pp(header!2("Name Duplicates"));
             foreach (digest, dupFiles; gstats.filesByName) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (!dupFilesOk.empty) {
-                    pp(term,viz,
-                       header!3("Files with same name ",
-                                faze(dupFilesOk[0].name, fileFace)),
-                       asUList(dupFilesOk.map!(x => x.asPath.asItem)));
+                    viz.pp(header!3("Files with same name ",
+                                    faze(dupFilesOk[0].name, fileFace)),
+                           asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
         }
 
         if (gstats.showLinkDups) {
-            pp(term,viz, header!2("Inode Duplicates (Hardlinks)"));
+            viz.pp(header!2("Inode Duplicates (Hardlinks)"));
             foreach (inode, dupFiles; gstats.filesByInode) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
-                    pp(term,viz,
-                       header!3("Files with same inode " ~ to!string(inode) ~
-                                " (hardlinks): "),
-                       asUList(dupFilesOk.map!(x => x.asPath.asItem)));
+                    viz.pp(header!3("Files with same inode " ~ to!string(inode) ~
+                                    " (hardlinks): "),
+                           asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
         }
 
         if (gstats.showContentDups) {
-            pp(term,viz, header!2("Content Duplicates"));
+            viz.pp(header!2("Content Duplicates"));
             foreach (digest, dupFiles; gstats.filesByContId) {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) {
 
                     auto firstDup = dupFilesOk[0];
                     immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
-                    pp(term,viz,
-                       header!3(typeName ~ " with same content",
-                                " (", digest, ")",
-                                " of size ", firstDup.size));
+                    viz.pp(header!3(typeName ~ " with same content",
+                                    " (", digest, ")",
+                                    " of size ", firstDup.size));
 
                     // content. TODO: Functionize
                     auto dupRegFile = cast(RegFile)firstDup;
@@ -4331,17 +4295,15 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                     {
                         if (dupRegFile._cstat.kindId)
                         {
-                            pp(term,viz,
-                               " is ",
-                               gstats.allKindsById[dupRegFile._cstat.kindId]);
+                            viz.pp(" is ",
+                                   gstats.allKindsById[dupRegFile._cstat.kindId]);
                         }
-                        pp(term,viz,
-                           " is ",
-                           (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "ASCII" : ""
+                        viz.pp(" is ",
+                               (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "ASCII" : ""
                             );
                     }
 
-                    pp(term,viz, asUList(dupFilesOk.map!(x => x.asPath.asItem)));
+                    viz.pp(asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
         }
@@ -4349,47 +4311,43 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         /* Broken Symlinks */
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty) {
-            pp(term,viz,
-               header!2("Broken Symlinks "),
-               asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
+            viz.pp(header!2("Broken Symlinks "),
+                   asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
         }
 
         /* Counts */
-        pp(term,viz,
-           header!2("Scanned Types"),
-           /* asUList(asItem(gstats.noScannedDirs, " Dirs, "), */
-           /*         asItem(gstats.noScannedRegFiles, " Regular Files, "), */
-           /*         asItem(gstats.noScannedSymlinks, " Symbolic Links, "), */
-           /*         asItem(gstats.noScannedSpecialFiles, " Special Files, "), */
-           /*         asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
-           /*     ) */
-           asTable(asRow(asCell(inBold("Scan Count")), asCell(inBold("File Type"))),
-                   asRow(asCell(gstats.noScannedDirs), asCell(inItalic("Dirs"))),
-                   asRow(asCell(gstats.noScannedRegFiles), asCell(inItalic("Regular Files"))),
-                   asRow(asCell(gstats.noScannedSymlinks), asCell(inItalic("Symbolic Links"))),
-                   asRow(asCell(gstats.noScannedSpecialFiles), asCell(inItalic("Special Files"))),
-                   asRow(asCell(gstats.noScannedFiles), asCell(inItalic("Files")))
-               )
+        viz.pp(header!2("Scanned Types"),
+               /* asUList(asItem(gstats.noScannedDirs, " Dirs, "), */
+               /*         asItem(gstats.noScannedRegFiles, " Regular Files, "), */
+               /*         asItem(gstats.noScannedSymlinks, " Symbolic Links, "), */
+               /*         asItem(gstats.noScannedSpecialFiles, " Special Files, "), */
+               /*         asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
+               /*     ) */
+               asTable(asRow(asCell(inBold("Scan Count")), asCell(inBold("File Type"))),
+                       asRow(asCell(gstats.noScannedDirs), asCell(inItalic("Dirs"))),
+                       asRow(asCell(gstats.noScannedRegFiles), asCell(inItalic("Regular Files"))),
+                       asRow(asCell(gstats.noScannedSymlinks), asCell(inItalic("Symbolic Links"))),
+                       asRow(asCell(gstats.noScannedSpecialFiles), asCell(inItalic("Special Files"))),
+                       asRow(asCell(gstats.noScannedFiles), asCell(inItalic("Files")))
+                   )
             );
 
         if (gstats.densenessCount) {
-            pp(term,viz,
-               header!2("Histograms"),
-               asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
-                              cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
-                       asItem("Average Byte ", NGramOrder, "-Gram Denseness ",
-                              cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
+            viz.pp(header!2("Histograms"),
+                   asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
+                                  cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
+                           asItem("Average Byte ", NGramOrder, "-Gram Denseness ",
+                                  cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
         }
 
-        pp(term,viz,
-           header!2("Scanned Bytes"),
-           asUList(asItem("Scanned ", results.noBytesScanned),
-                   asItem("Skipped ", results.noBytesSkipped),
-                   asItem("Unreadable ", results.noBytesUnreadable),
-                   asItem("Total Contents ", results.noBytesTotalContents),
-                   asItem("Total ", results.noBytesTotal),
-                   asItem("Total number of hits ", results.numTotalHits),
-                   asItem("Number of Files with hits ", results.numFilesWithHits)));
+        viz.pp(header!2("Scanned Bytes"),
+               asUList(asItem("Scanned ", results.noBytesScanned),
+                       asItem("Skipped ", results.noBytesSkipped),
+                       asItem("Unreadable ", results.noBytesUnreadable),
+                       asItem("Total Contents ", results.noBytesTotalContents),
+                       asItem("Total ", results.noBytesTotal),
+                       asItem("Total number of hits ", results.numTotalHits),
+                       asItem("Number of Files with hits ", results.numFilesWithHits)));
     }
 }
 
@@ -4414,7 +4372,7 @@ void main(string[] args)
     auto term = Terminal(ConsoleOutputType.linear);
 
     // term.setTitle("Basic I/O");
-    // auto input = RealTimeConsoleInput(term,viz, &term,
+    // auto input = RealTimeConsoleInput(viz, &term,
     //                                   ConsoleInputFlags.raw |
     //                                   ConsoleInputFlags.mouse |
     //                                   ConsoleInputFlags.paste);
