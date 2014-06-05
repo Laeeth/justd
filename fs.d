@@ -2313,10 +2313,16 @@ class Scanner(Term)
             "return", "static", "union", "while",
             ];
 
-        auto operatorsC = [
+        /* See also: https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B */
+        auto operatorsCBasic = [
             "+", "-", "*", "/", "%" // Arithmetic (binary)
             "++", "--", // Postfix and Prefix (unary)
-            "=", "+=", "-=", "*=", "/=", "%=", // Assignment Arithmetic (binary)
+
+            // Assignment Arithmetic (binary)
+            "=", "+=", "-=", "*=", "/=", "%="
+            "&=", "|=", "^=",
+            "<<=", ">>=",
+
             "==", ">", "<", "!=", ">=", "<=", // Relational (binary)
             "&&", "||",                       // Logical (binary)
             "!",                              // Logical (unary)
@@ -2325,6 +2331,23 @@ class Scanner(Term)
             ",",                              // Other (binary)
             "sizeof",                         // Other (unary)
             ];
+
+        /* See also: https://en.wikipedia.org/wiki/Iso646.h */
+        auto operatorsC_ISO646 = [
+            "and",              // Same as &&
+            "and_eq",           // Same as &=
+            "bitand",           // Same as &
+            "bitor",           // Same as |
+            "compl",           // Same as ~
+            "not",           // Same as !
+            "not_eq",           // Same as !=
+            "or",           // Same as ||
+            "or_eq",           // Same as |=
+            "xor",           // Same as ^
+            "xor_eq",           // Same as ^=
+            ];
+
+        auto operatorsC = operatorsCBasic ~ operatorsC_ISO646;
 
         auto kindC = new FKind("C", [], ["c", "h"], [], 0, [],
                                keywordsC,
