@@ -1890,8 +1890,11 @@ Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames)
     return topDirs;
 }
 
-/** (Cached) Lookup of Directory $(D dirpath). */
-File getFile(NotNull!Dir rootDir, string filePath, ref DirEntry dent) @trusted
+/** (Cached) Lookup of Directory $(D dirpath).
+    Reuses Directory Entry $(D dent) when possible.
+ */
+File getFile(NotNull!Dir rootDir, string filePath,
+             ref DirEntry dent) @trusted
 {
     if (dent.isDir) {
         return getDir(rootDir, filePath);
