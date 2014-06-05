@@ -7,7 +7,7 @@
     See also: http://forum.dlang.org/thread/jbyixfbuefvdlttnyclu@forum.dlang.org#post-mailman.2199.1353742037.5162.digitalmars-d-learn:40puremagic.com
 */
 module traits_ex;
-import std.traits: isArray, isAssignable;
+import std.traits: isArray, isAssignable, ParameterTypeTuple;
 import std.range: ElementType;
 
 /** Returns: true iff $(D ptr) is handled by the garbage collector (GC). */
@@ -139,9 +139,6 @@ unittest {
 }
 
 enum arityMin0(alias fun) = __traits(compiles, fun());
-
-/** Get Number of Arguments to fun. */
-enum Arity(alias fun) = ParameterTypeTuple!fun.length;
 
 /** Check if Type $(D A) is an Instance of Template $(D B).
     See also: http://forum.dlang.org/thread/mailman.2901.1316118301.14074.digitalmars-d-learn@puremagic.com#post-zzdpfhsgfdgpszdbgbbt:40forum.dlang.org

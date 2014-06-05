@@ -9,7 +9,7 @@ module algorithm_ex;
 
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
-import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint;
+import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity;
 import std.range: ElementType, isInputRange, isBidirectionalRange;
 import dbg;
 import traits_ex: isStruct, isClass, allSame;
@@ -890,11 +890,11 @@ unittest
 void dotimes(uint n, lazy void expression) { while (n--) expression(); }
 alias loop = dotimes;
 
-void dotimes1(alias action, N)(N n) if (isCallable!action &&
-                                        isIntegral!N &&
-                                        Arity!action <= 1)
+void times(alias action, N)(N n) if (isCallable!action &&
+                                     isIntegral!N &&
+                                     arity!action <= 1)
 {
-    enum A = Arity!action;
+    enum A = arity!action;
     static if (A == 1 &&
                isIntegral!(ParameterTypeTuple!action[0]))
         foreach (i; 0 .. n)
@@ -903,6 +903,15 @@ void dotimes1(alias action, N)(N n) if (isCallable!action &&
         foreach (i; 0 .. n)
             action();
 }
+
+unittest
+{
+    enum n = 10;
+    int sum = 0;
+    10.times!({ sum++; });
+    assert(sum == n);
+}
+
 
 /** Execute Expression $(D exp) $(I inline) the same way $(D n) times. */
 void static_dotimes(uint n)(lazy void expression) { // TOREVIEW: Should we use delegate instead?
