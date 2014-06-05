@@ -854,12 +854,15 @@ class FileTags
 version(linux) unittest
 {
     auto ftags = new FileTags();
+
     GStats gstats = new GStats();
+
     auto root = assumeNotNull(new Dir(cast(Dir)null, gstats));
     auto etc = getDir(root, "/etc");
     assert(etc.path == "/etc");
+
     auto dent = DirEntry("/etc/passwd");
-    auto passwd = getFile(root, "/etc/passwd", dent);
+    auto passwd = getFile(root, "/etc/passwd", dent.isDir);
     assert(passwd.path == "/etc/passwd");
     assert(passwd.parent == etc);
     assert(etc.sub("passwd") == passwd);
@@ -1890,13 +1893,13 @@ Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames)
     return topDirs;
 }
 
-/** (Cached) Lookup of Directory $(D dirpath).
-    Reuses Directory Entry $(D dent) when possible.
+/** (Cached) Lookup of File $(D filePath).
  */
 File getFile(NotNull!Dir rootDir, string filePath,
-             ref DirEntry dent) @trusted
+             bool isDir = false,
+             bool tolerant = false) @trusted
 {
-    if (dent.isDir) {
+    if (isDir) {
         return getDir(rootDir, filePath);
     } else {
         if (auto parentDir = getDir(rootDir, filePath.dirName)) {
@@ -3366,9 +3369,9 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             }
 
             viz.pp(asH!1("Searching for \"", commaedKeysString, "\"",
-                            " case-", (_caseFold ? "in" : ""), "sensitively",
-                            asNote, incKindsNote,
-                            " under ", _topDirNames.map!(a => asPath(a))));
+                         " case-", (_caseFold ? "in" : ""), "sensitively",
+                         asNote, incKindsNote,
+                         " under ", _topDirNames.map!(a => asPath(a))));
         }
 
         if (_showSkipped) {
@@ -4073,7 +4076,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             theSymlink._targetStatus = SymlinkTargetStatus.present;
             if (_topDirNames.all!(a => !targetPath.startsWith(a))) { // if target path lies outside of all rootdirs
                 auto targetDent = DirEntry(targetPath);
-                auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent);
+                auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent.isDir);
 
                 if (showTree) {
                     viz.ppln("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ",
