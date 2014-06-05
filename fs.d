@@ -1852,7 +1852,8 @@ class Dir : File
             immutable noPreviousSubs = _subs.length == 0;
             size_t subs_length; unpacker.unpack(subs_length); // TODO: Functionize to unpacker.unpack!size_t()
 
-            ForwardDifferenceCode!(long[]) diffsLastModified, diffsLastAccessed;
+            ForwardDifferenceCode!(long[]) diffsLastModified,
+                diffsLastAccessed;
             if (subs_length >= 1)
             {
                 unpacker.unpack(diffsLastModified, diffsLastAccessed);
@@ -2368,16 +2369,26 @@ class Scanner(Term)
                                       "@interface", "@end",
                                       "@implementation", "@end",
                                       "@protoco", "@end", "@class" ];
+
         auto keywordsObjectiveC = keywordsC ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C", [], ["m", "h"], [], 0, [],
                                keywordsObjectiveC,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+
         auto keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C++", [], ["mm", "h"], [], 0, [],
                                keywordsObjectiveCxx,
                                [Delim("#")],
+                               defaultStringDelims,
+                               FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+
+        auto keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
+                              "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while"];
+        srcFKinds ~= new FKind("Swift", [], ["swift"], [], 0, [],
+                               keywordsSwift,
+                               cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
@@ -3674,27 +3685,36 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 }
             }
 
-            // Scan for acronym key match
-            if (keys && _hitsCountTotal == 0)  // if keys given but no hit found
-            {
-                auto keysString = (keys.length >= 2 ? "s" : "") ~ " \"" ~ commaedKeysString;
-                if (_keyAsAcronym)
-                {
-                    viz.ppln(("No acronym matches for key" ~ keysString ~ `"` ~
-                              (keyAsSymbol ? " as symbol" : "") ~
-                              " found in files of type"));
-                }
-                else if (!_keyAsExact)
-                {
-                    viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
-                              (keyAsSymbol ? " as symbol" : "") ~
-                              " found" ~ incKindsNote ~
-                              ". Relaxing scan to" ~ (keyAsSymbol ? " symbol" : "") ~ " acronym match."));
-                    _keyAsAcronym = true;
+            viz.pp(asH!2("Summary"));
 
-                    foreach (topDir; _topDirs)
+            if ((gstats.noScannedFiles - gstats.noScannedDirs) == 0)
+            {
+                viz.ppln("No files with any content found");
+            }
+            else
+            {
+                // Scan for acronym key match
+                if (keys && _hitsCountTotal == 0)  // if keys given but no hit found
+                {
+                    auto keysString = (keys.length >= 2 ? "s" : "") ~ " \"" ~ commaedKeysString;
+                    if (_keyAsAcronym)
                     {
-                        scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
+                        viz.ppln(("No acronym matches for key" ~ keysString ~ `"` ~
+                                  (keyAsSymbol ? " as symbol" : "") ~
+                                  " found in files of type"));
+                    }
+                    else if (!_keyAsExact)
+                    {
+                        viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
+                                  (keyAsSymbol ? " as symbol" : "") ~
+                                  " found" ~ incKindsNote ~
+                                  ". Relaxing scan to" ~ (keyAsSymbol ? " symbol" : "") ~ " acronym match."));
+                        _keyAsAcronym = true;
+
+                        foreach (topDir; _topDirs)
+                        {
+                            scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
+                        }
                     }
                 }
             }
