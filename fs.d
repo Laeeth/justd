@@ -2172,6 +2172,44 @@ enum KeyStrictness
     standard = eitherExactOrAcronym,
 }
 
+/** Operator Associativity */
+enum OpAssoc { none,
+               lr, // Left-to-Right
+               rl, // Right-to-Left
+}
+
+/** Operator Arity */
+enum OpArity
+{
+    unknown,
+    unary, // 1
+    binary, // 2
+    ternary, // 3
+}
+
+/** Language Operator */
+struct Op
+{
+    this(string op,
+         OpArity arity = OpArity.unknown,
+         OpAssoc assoc = OpAssoc.none,
+         byte prec = -1,
+         string doc = [])
+    {
+        this.op = op;
+        this.arity = arity;
+        this.assoc = assoc;
+        this.prec = prec;
+        this.doc = doc;
+    }
+    string op; // Operator
+    string doc; // Documentation
+    OpAssoc assoc; // Associativity
+    ubyte prec; // Precedence
+    OpArity arity; // Arity
+    bool overloadable; // Overloadable
+}
+
 /** File System Scanner. */
 class Scanner(Term)
 {
@@ -2316,7 +2354,7 @@ class Scanner(Term)
         /* See also: https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B */
         auto operatorsCBasic = [
             "+", "-", "*", "/", "%" // Arithmetic (binary)
-            "++", "--", // Postfix and Prefix (unary)
+            "++", "--", // Postfix and Prefix (unary), precedence=2, associativity=Left-to-right
 
             // Assignment Arithmetic (binary)
             "=", "+=", "-=", "*=", "/=", "%="
@@ -2330,21 +2368,25 @@ class Scanner(Term)
             "~",                              // Bitwise (unary)
             ",",                              // Other (binary)
             "sizeof",                         // Other (unary)
+
+            "->", // Element selection through pointer (binary), precedence=2, associativity=Left-to-right
+            ".", // Element selection by reference (binary), precedence=2, associativity=Left-to-right
+
             ];
 
         /* See also: https://en.wikipedia.org/wiki/Iso646.h */
         auto operatorsC_ISO646 = [
-            "and",              // Same as &&
-            "and_eq",           // Same as &=
-            "bitand",           // Same as &
-            "bitor",           // Same as |
-            "compl",           // Same as ~
-            "not",           // Same as !
-            "not_eq",           // Same as !=
-            "or",           // Same as ||
-            "or_eq",           // Same as |=
-            "xor",           // Same as ^
-            "xor_eq",           // Same as ^=
+            "and",    // Same as &&
+            "and_eq", // Same as &=
+            "bitand", // Same as &
+            "bitor",  // Same as |
+            "compl",  // Same as ~
+            "not",    // Same as !
+            "not_eq", // Same as !=
+            "or",     // Same as ||
+            "or_eq",  // Same as |=
+            "xor",    // Same as ^
+            "xor_eq", // Same as ^=
             ];
 
         auto operatorsC = operatorsCBasic ~ operatorsC_ISO646;
@@ -2357,9 +2399,6 @@ class Scanner(Term)
         srcFKinds ~= kindC;
         kindC.operations ~= tuple(FileOp.checkSyntax, "gcc -x c -fsyntax-only -c");
         kindC.operators = operatorsC;
-
-        auto operatorsCxx = operatorsC ~ [
-            ];
 
         auto keywordsCxx = keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
                                         "bool", "explicit", "new", "static_cast", "typeid",
@@ -2377,6 +2416,27 @@ class Scanner(Term)
                                         // needed by C++.
                                         "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
                                         "and_eq", "bitor", "not", "or", "xor", ];
+
+        auto operatorsCxx = operatorsC ~ [
+            "->*",
+            ".*",
+            "::",               // precedence=1, associativity=one
+            "typeid",
+            "alignofl",
+            "new",
+            "delete",
+            "delete[]",
+            "noexcept",
+
+            "dynamic_cast",     // precedence=2, associativity=Left-to-right
+            "reinterpret_cast", // precedence=2, associativity=Left-to-right
+            "static_cast",      // precedence=2, associativity=Left-to-right
+            "const_cast"        // precedence=2, associativity=Left-to-right
+
+            "throw",
+            "catch"
+            ];
+
         keywordsCxx = keywordsCxx.uniq.array;
         auto kindCxx = new FKind("C++", [], ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"], [], 0, [],
                                  keywordsCxx,
