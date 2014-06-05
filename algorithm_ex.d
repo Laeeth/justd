@@ -895,11 +895,10 @@ void times(alias action, N)(N n) if (isCallable!action &&
                                      isIntegral!N &&
                                      arity!action <= 1)
 {
-    enum A = arity!action;
-    static if (A == 1 &&
-               isIntegral!(ParameterTypeTuple!action[0]))
+    static if (arity!action == 1 && // if one argument and
+               isIntegral!(ParameterTypeTuple!action[0])) // its an integer
         foreach (i; 0 .. n)
-            action(i);
+            action(i); // use it as action input
     else
         foreach (i; 0 .. n)
             action();
