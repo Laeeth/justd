@@ -890,6 +890,7 @@ unittest
 void dotimes(uint n, lazy void expression) { while (n--) expression(); }
 alias loop = dotimes;
 
+/** Execute Expression $(D action) the same way $(D n) times. */
 void times(alias action, N)(N n) if (isCallable!action &&
                                      isIntegral!N &&
                                      arity!action <= 1)
