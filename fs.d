@@ -536,6 +536,8 @@ class FKind
     RegFile[] hitFiles;     // Files of this kind.
 
     string[] keywords; // Keywords
+    string[] builtins; // Builtin Functions
+    string[] operators; // Language Operators
 
     /* TODO: Move this to CompLang class */
     Delim[] strings; // String syntax.
@@ -543,7 +545,7 @@ class FKind
 
     bool machineGenerated;
 
-    Tuple!(FileOp, ShCmd)[] ops; // Operation and Corresponding Shell Command
+    Tuple!(FileOp, ShCmd)[] operations; // Operation and Corresponding Shell Command
 }
 
 /** Match $(D kind) with full filename $(D full). */
@@ -2303,18 +2305,38 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
 
-        auto keywordsC = [ "auto", "const", "double", "float", "int", "short", "struct",
-                           "unsigned", "break", "continue", "else", "for", "long", "signed",
-                           "switch", "void", "case", "default", "enum", "goto", "register",
-                           "sizeof", "typedef", "volatile", "char", "do", "extern", "if",
-                           "return", "static", "union", "while", ];
+        auto keywordsC = [
+            "auto", "const", "double", "float", "int", "short", "struct",
+            "unsigned", "break", "continue", "else", "for", "long", "signed",
+            "switch", "void", "case", "default", "enum", "goto", "register",
+            "sizeof", "typedef", "volatile", "char", "do", "extern", "if",
+            "return", "static", "union", "while",
+            ];
+
+        auto operatorsC = [
+            "+", "-", "*", "/", "%" // Arithmetic (binary)
+            "++", "--", // Postfix and Prefix (unary)
+            "=", "+=", "-=", "*=", "/=", "%=", // Assignment Arithmetic (binary)
+            "==", ">", "<", "!=", ">=", "<=", // Relational (binary)
+            "&&", "||",                       // Logical (binary)
+            "!",                              // Logical (unary)
+            "&", "|", "^", "<<", ">>",        // Bitwise (binary)
+            "~",                              // Bitwise (unary)
+            ",",                              // Other (binary)
+            "sizeof",                         // Other (unary)
+            ];
+
         auto kindC = new FKind("C", [], ["c", "h"], [], 0, [],
                                keywordsC,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         srcFKinds ~= kindC;
-        kindC.ops ~= tuple(FileOp.checkSyntax, "gcc -x c -fsyntax-only -c");
+        kindC.operations ~= tuple(FileOp.checkSyntax, "gcc -x c -fsyntax-only -c");
+        kindC.operators = operatorsC;
+
+        auto operatorsCxx = operatorsC ~ [
+            ];
 
         auto keywordsCxx = keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
                                         "bool", "explicit", "new", "static_cast", "typeid",
@@ -2338,7 +2360,8 @@ class Scanner(Term)
                                  cCommentDelims,
                                  defaultStringDelims,
                                  FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
-        kindCxx.ops ~= tuple(FileOp.checkSyntax, "gcc -x c++ -fsyntax-only -c");
+        kindCxx.operations ~= tuple(FileOp.checkSyntax, "gcc -x c++ -fsyntax-only -c");
+        kindCxx.operators = operatorsCxx;
         srcFKinds ~= kindCxx;
         auto keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
                                             "char16_t", "char32_t",
@@ -2385,12 +2408,18 @@ class Scanner(Term)
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
         auto keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
-                              "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while"];
-        srcFKinds ~= new FKind("Swift", [], ["swift"], [], 0, [],
-                               keywordsSwift,
-                               cCommentDelims,
-                               defaultStringDelims,
-                               FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+                              "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while",
+                              "mutating", "extension"];
+        auto operatorsOverflowSwift = operatorsC ~ ["&+", "&-", "&*", "&/", "&%"];
+        auto builtinsSwift = ["print", "println"];
+        auto kindSwift = new FKind("Swift", [], ["swift"], [], 0, [],
+                                   keywordsSwift,
+                                   cCommentDelims,
+                                   defaultStringDelims,
+                                   FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+        kindSwift.builtins = builtinsSwift;
+        kindSwift.operators = operatorsOverflowSwift;
+        srcFKinds ~= kindSwift;
 
         auto keywordsCSharp = ["if"]; // TODO: Add keywords
         srcFKinds ~= new FKind("C#", [], ["cs"], [], 0, [], keywordsCSharp,
@@ -2440,7 +2469,7 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.sourceCode,
                                FileKindDetection.equalsNameOrContents);
-        kindD.ops ~= tuple(FileOp.checkSyntax, "gdc -fsyntax-only");
+        kindD.operations ~= tuple(FileOp.checkSyntax, "gdc -fsyntax-only");
         srcFKinds ~= kindD;
 
         auto keywordsFortran77 = ["if", "else"];
@@ -2449,7 +2478,7 @@ class Scanner(Term)
                                     [Delim("^C")], // TODO: Need beginning of line instead ^. seq(bol(), alt(lit('C'), lit('c'))); // TODO: Add chars chs("cC");
                                     defaultStringDelims,
                                     FileContent.sourceCode);
-        kindFortan.ops ~= tuple(FileOp.checkSyntax, "gcc -x fortran -fsyntax-only");
+        kindFortan.operations ~= tuple(FileOp.checkSyntax, "gcc -x fortran -fsyntax-only");
         srcFKinds ~= kindFortan;
 
         // Ada
@@ -2610,7 +2639,7 @@ class Scanner(Term)
                                   defaultStringDelims,
                                   FileContent.sourceCode);
         srcFKinds ~= kindJava;
-        kindJava.ops ~= tuple(FileOp.byteCompile, "javac");
+        kindJava.operations ~= tuple(FileOp.byteCompile, "javac");
 
         srcFKinds ~= new FKind("Groovy", [], ["groovy", "gtmpl", "gpp", "grunit"], [], 0, [], [],
                                cCommentDelims,
@@ -2672,7 +2701,7 @@ class Scanner(Term)
                                     defaultStringDelims,
                                     FileContent.sourceCode);
         srcFKinds ~= kindOctave;
-        kindOctave.ops ~= tuple(FileOp.byteCompile, "octave");
+        kindOctave.operations ~= tuple(FileOp.byteCompile, "octave");
 
         srcFKinds ~= new FKind("Julia", [], ["jl"], [], 0, [], [],
                                [Delim("#")],
@@ -2694,8 +2723,8 @@ class Scanner(Term)
                                    [Delim(";")],
                                    defaultStringDelims,
                                    FileContent.sourceCode);
-        kindElisp.ops ~= tuple(FileOp.byteCompile, "emacs -batch -f batch-byte-compile");
-        kindElisp.ops ~= tuple(FileOp.byteCompile, "emacs --script");
+        kindElisp.operations ~= tuple(FileOp.byteCompile, "emacs -batch -f batch-byte-compile");
+        kindElisp.operations ~= tuple(FileOp.byteCompile, "emacs --script");
         /* kindELisp.moduleName = "(provide 'MODULE_NAME)"; */
         /* kindELisp.moduleImport = "(require 'MODULE_NAME)"; */
         srcFKinds ~= kindElisp;
