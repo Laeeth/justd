@@ -187,17 +187,22 @@ class SignalCaughtException : Exception
 void signalHandler(int signo)
 {
     import core.atomic: atomicOp;
-    if (signo == 2) { core.atomic.atomicOp!"+="(ctrlC, 1); }
+    if (signo == 2)
+    {
+        core.atomic.atomicOp!"+="(ctrlC, 1);
+    }
     // throw new SignalCaughtException(signo);
 }
 
 alias signalHandler_t = void function(int);
 extern (C) signalHandler_t signal(int signal, signalHandler_t handler);
 
-version(msgpack) {
+version(msgpack)
+{
     import msgpack;
 }
-version(cerealed) {
+version(cerealed)
+{
     /* import cerealed.cerealiser; */
     /* import cerealed.decerealiser; */
     /* import cerealed.cereal; */
@@ -210,10 +215,14 @@ string shortDurationString(in Duration dur) @safe pure
 {
     import std.conv: to;
     immutable weeks = dur.weeks();
-    if (weeks) {
-        if (weeks < 52) {
+    if (weeks)
+    {
+        if (weeks < 52)
+        {
             return to!string(weeks) ~ " week" ~ (weeks >= 2 ? "s" : "");
-        } else {
+        }
+        else
+        {
             immutable years = weeks / 52;
             immutable weeks_rest = weeks % 52;
             return to!string(years) ~ " year" ~ (years >= 2 ? "s" : "") ~
@@ -250,7 +259,8 @@ string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
     string doc = "";
     /* return joiner(x, separator); */
     /* debug dln(typeof(x).stringof); */
-    foreach (ix, name; x) {
+    foreach (ix, name; x)
+    {
         if (ix >= 1) { doc ~= separator; }
         doc ~= name;
     }
@@ -372,11 +382,13 @@ alias ShCmd = string;
  */
 struct Delim
 {
-    this(string intro)  {
+    this(string intro)
+    {
         this.intro = intro;
         this.finish = finish.init;
     }
-    this(string intro, string finish)  {
+    this(string intro, string finish)
+    {
         this.intro = intro;
         this.finish = finish;
     }
@@ -420,16 +432,22 @@ class FKind
         // Basename
         import std.traits: isArray;
         import std.range: ElementType;
-        static if (is(T == string)) {
+        static if (is(T == string))
+        {
             this.baseNaming = lit(baseNaming_);
-        } else static if (isArrayOf!(T, string)) {
+        }
+        else static if (isArrayOf!(T, string))
+        {
             // TODO: Move to a factory function strs(x)
             auto alt_ = alt();
-            foreach (ext; baseNaming_) { // add each string as an alternative
+            foreach (ext; baseNaming_)  // add each string as an alternative
+            {
                 alt_.alts ~= lit(ext);
             }
             this.baseNaming = alt_;
-        } else static if (is(T == Patt)) {
+        }
+        else static if (is(T == Patt))
+        {
             this.baseNaming = baseNaming_;
         }
 
@@ -458,10 +476,13 @@ class FKind
 
         if ((content_ == FileContent.sourceCode ||
              content_ == FileContent.scriptCode) &&
-            detection_ == FileKindDetection.equalsWhatsGiven) {
+            detection_ == FileKindDetection.equalsWhatsGiven)
+        {
             // relax matching of sourcecode to only need name until we have complete parsers
             this.detection = FileKindDetection.equalsName;
-        } else {
+        }
+        else
+        {
             this.detection = detection_;
         }
 
@@ -482,7 +503,8 @@ class FKind
         out(result) { assert(!result.empty); }
     body
     {
-        if (_behaviourDigest.empty) { // if not yet defined
+        if (_behaviourDigest.empty) // if not yet defined
+        {
             ubyte[] bytes;
             if (const magicLit = cast(Lit)magicData)
                 bytes = msgpack.pack(exts, magicLit.bytes, magicOffset, refPattern, keywords, content, detection);
@@ -581,23 +603,27 @@ KindHit ofKind(NotNull!RegFile regfile,
 
     if (regfile._cstat.kindId.defined &&
         (regfile._cstat.kindId in allKindsById) && // if kind is known
-        allKindsById[regfile._cstat.kindId] is kind) { // if cached kind equals
+        allKindsById[regfile._cstat.kindId] is kind)  // if cached kind equals
+    {
         /* dln(regfile.path, " cached kind detected as ", kind.kindName); */
         return KindHit.cached;
     }
 
-    if (kind.superKind) {
+    if (kind.superKind)
+    {
         immutable baseHit = regfile.ofKind(ext,
                                            enforceNotNull(kind.superKind),
                                            collectTypeHits,
                                            allKindsById);
-        if (!baseHit) {
+        if (!baseHit)
+        {
             return baseHit;
         }
     }
 
     bool hit = false;
-    final switch (kind.detection) {
+    final switch (kind.detection)
+    {
     case FileKindDetection.equalsName:
         hit = kind.matchName(regfile.name, 0, ext);
         break;
@@ -623,8 +649,10 @@ KindHit ofKind(NotNull!RegFile regfile,
                  kind.matchContents(regfile.readOnlyContents, regfile))));
         break;
     }
-    if (hit) {
-        if (collectTypeHits) {
+    if (hit)
+    {
+        if (collectTypeHits)
+        {
             kind.hitFiles ~= regfile;
         }
         regfile._cstat.kindId = kind.behaviorId;       // store reference in File
@@ -638,21 +666,25 @@ KindHit ofKind(NotNull!RegFile regfile,
 class DirKind
 {
     this(string fn,
-         string kn) {
+         string kn)
+    {
         this.fileName = fn;
         this.kindName = kn;
     }
 
     version(msgpack)
     {
-        this(Unpacker)(ref Unpacker unpacker) {
+        this(Unpacker)(ref Unpacker unpacker)
+        {
             fromMsgpack(msgpack.Unpacker(unpacker));
         }
-        void toMsgpack(Packer)(ref Packer packer) const {
+        void toMsgpack(Packer)(ref Packer packer) const
+        {
             packer.beginArray(this.tupleof.length);
             packer.pack(this.tupleof);
         }
-        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) {
+        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
+        {
             unpacker.beginArray();
             unpacker.unpack(this.tupleof);
         }
@@ -676,12 +708,15 @@ import std.datetime: SysTime, Interval;
  */
 class File
 {
-    this(Dir parent) { this.parent = parent;
+    this(Dir parent)
+    {
+        this.parent = parent;
         if (parent) { ++parent.gstats.noFiles; }
     }
     this(string name, Dir parent, Bytes64 size,
          SysTime timeLastModified,
-         SysTime timeLastAccessed) {
+         SysTime timeLastAccessed)
+    {
         this.name = name;
         this.parent = parent;
         this.size = size;
@@ -712,7 +747,8 @@ class File
         bool flag = false;
         if (dent.size != this.size || // size has changes
             (dent.timeLastModified != this.timeLastModified) // if current modtime has changed or
-            ) {
+            )
+        {
             makeObselete();
             this.timeLastModified = dent.timeLastModified; // use new time
             this.size = dent.size; // use new time
@@ -736,7 +772,9 @@ class File
         auto curr = parent; // current parent
         size_t pathLength = 1 + name.length; // returned path length
         Dir[] parents; // collected parents
-        while (curr !is null && !curr.isRoot) {
+        while (curr !is null &&
+               !curr.isRoot)
+        {
             pathLength += 1;
             pathLength += curr.name.length;
             parents ~= curr;
@@ -747,7 +785,8 @@ class File
         auto path_ = new char[pathLength];
         size_t i = 0; // index to path_
         import std.range: retro;
-        foreach (currParent_; parents.retro) {
+        foreach (currParent_; parents.retro)
+        {
             immutable parentName = currParent_.name;
             path_[i++] = dirSeparator[0];
             path_[i .. i + parentName.length] = parentName[];
@@ -765,19 +804,25 @@ class File
     */
     string pathRecursive() @property @trusted pure
     {
-        if (parent) {
-            static if (true) {
+        if (parent)
+        {
+            static if (true)
+            {
                 import std.path: dirSeparator;
                 // NOTE: This is more efficient than buildPath(parent.path,
                 // name) because we can guarantee things about parent.path and
                 // name
                 immutable parentPath = parent.isRoot ? "" : parent.pathRecursive;
                 return parentPath ~ dirSeparator ~ name;
-            } else {
+            }
+            else
+            {
                 import std.path: buildPath;
                 return buildPath(parent.pathRecursive, name);
             }
-        } else {
+        }
+        else
+        {
             return "/";  // assume root folder with beginning slash
         }
     }
@@ -803,7 +848,8 @@ class File
     {
         auto curr = dir; // current parent
         Dir[] parents; // collected parents
-        while (curr !is null && !curr.isRoot) {
+        while (curr !is null && !curr.isRoot)
+        {
             parents ~= curr;
             curr = curr.parent;
         }
@@ -826,19 +872,23 @@ class FileTags
 {
     FileTags addTag(File file, in string tag) @safe pure /* nothrow */
     {
-        if (file in _tags) {
-            if (_tags[file].find(tag).empty) {
+        if (file in _tags)
+        {
+            if (_tags[file].find(tag).empty)
+            {
                 _tags[file] ~= tag; // add it
             }
         }
-        else {
+        else
+        {
             _tags[file] = [tag];
         }
         return this;
     }
     FileTags removeTag(File file, string tag) @safe pure
     {
-        if (file in _tags) {
+        if (file in _tags)
+        {
             import std.algorithm: remove;
             _tags[file] = _tags[file].remove!(a => a == tag);
         }
@@ -886,32 +936,40 @@ enum SymlinkTargetStatus
 
 /** Symlink.
  */
-class Symlink : File {
-    this(NotNull!Dir parent) {
+class Symlink : File
+{
+    this(NotNull!Dir parent)
+    {
         super(parent);
         ++parent.gstats.noSymlinks;
     }
-    this(ref DirEntry dent, NotNull!Dir parent) {
+    this(ref DirEntry dent, NotNull!Dir parent)
+    {
         Bytes64 sizeBytes;
         SysTime modified, accessed;
         bool ok = true;
-        try {
+        try
+        {
             sizeBytes = dent.size.Bytes64;
             modified = dent.timeLastModified;
             accessed = dent.timeLastAccessed;
-        } catch (Exception) {
+        }
+        catch (Exception)
+        {
             ok = false;
         }
         // const attrs = getLinkAttributes(dent.name); // attributes of target file
         // super(dent.name.baseName, parent, 0.Bytes64, cast(SysTime)0, cast(SysTime)0);
         super(dent.name.baseName, parent, sizeBytes, modified, accessed);
-        if (ok) {
+        if (ok)
+        {
             this.retarget(dent); // trigger lazy load
         }
         ++parent.gstats.noSymlinks;
     }
 
-    override Face!Color face() const @property @safe pure nothrow {
+    override Face!Color face() const @property @safe pure nothrow
+    {
         if (_targetStatus == SymlinkTargetStatus.broken)
             return symlinkBrokenFace;
         else
@@ -925,8 +983,10 @@ class Symlink : File {
     }
 
     /** Cached/Memoized/Lazy Lookup for target. */
-    string target() @property @trusted {
-        if (!_target) {         // if target not yet read
+    string target() @property @trusted
+    {
+        if (!_target)         // if target not yet read
+        {
             auto targetDent = DirEntry(path);
             return retarget(targetDent); // read it
         }
@@ -939,16 +999,20 @@ class Symlink : File {
         return target.absolutePath(path.dirName).buildNormalizedPath;
     }
 
-    version(msgpack) {
+    version(msgpack)
+    {
         /** Construct from msgpack $(D unpacker).  */
-        this(Unpacker)(ref Unpacker unpacker) {
+        this(Unpacker)(ref Unpacker unpacker)
+        {
             fromMsgpack(msgpack.Unpacker(unpacker));
         }
-        void toMsgpack(Packer)(ref Packer packer) const {
+        void toMsgpack(Packer)(ref Packer packer) const
+        {
             /* writeln("Entering File.toMsgpack ", name); */
             packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime);
         }
-        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) {
+        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
+        {
             unpacker.unpack(name, size);
             long stdTime;
             unpacker.unpack(stdTime); timeLastModified = SysTime(stdTime); // TODO: Functionize
@@ -962,28 +1026,35 @@ class Symlink : File {
 
 /** Special File (Character or Block Device).
  */
-class SpecFile : File {
-    this(NotNull!Dir parent) {
+class SpecFile : File
+{
+    this(NotNull!Dir parent)
+    {
         super(parent);
         ++parent.gstats.noSpecialFiles;
     }
-    this(ref DirEntry dent, NotNull!Dir parent) {
+    this(ref DirEntry dent, NotNull!Dir parent)
+    {
         super(dent.name.baseName, parent, 0.Bytes64, cast(SysTime)0, cast(SysTime)0);
         ++parent.gstats.noSpecialFiles;
     }
 
     override Face!Color face() const @property @safe pure nothrow { return specialFileFace; }
 
-    version(msgpack) {
+    version(msgpack)
+    {
         /** Construct from msgpack $(D unpacker).  */
-        this(Unpacker)(ref Unpacker unpacker) {
+        this(Unpacker)(ref Unpacker unpacker)
+        {
             fromMsgpack(msgpack.Unpacker(unpacker));
         }
-        void toMsgpack(Packer)(ref Packer packer) const {
+        void toMsgpack(Packer)(ref Packer packer) const
+        {
             /* writeln("Entering File.toMsgpack ", name); */
             packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime);
         }
-        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) {
+        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
+        {
             unpacker.unpack(name, size);
             long stdTime;
             unpacker.unpack(stdTime); timeLastModified = SysTime(stdTime); // TODO: Functionize
@@ -1004,15 +1075,18 @@ enum BitStatus
  */
 class RegFile : File
 {
-    this(NotNull!Dir parent) {
+    this(NotNull!Dir parent)
+    {
         super(parent);
         ++parent.gstats.noRegFiles;
     }
-    this(ref DirEntry dent, NotNull!Dir parent) {
+    this(ref DirEntry dent, NotNull!Dir parent)
+    {
         this(dent.name.baseName, parent, dent.size.Bytes64,
              dent.timeLastModified, dent.timeLastAccessed);
     }
-    this(string name, NotNull!Dir parent, Bytes64 size, SysTime timeLastModified, SysTime timeLastAccessed) {
+    this(string name, NotNull!Dir parent, Bytes64 size, SysTime timeLastModified, SysTime timeLastAccessed)
+    {
         super(name, parent, size, timeLastModified, timeLastAccessed);
         ++parent.gstats.noRegFiles;
     }
@@ -1030,7 +1104,8 @@ class RegFile : File
         @property pure out(result) { assert(!result.empty); } // must have be defined
     body
     {
-        if (_cstat._contId.empty) { // if not yet defined
+        if (_cstat._contId.empty) // if not yet defined
+        {
             _cstat._contId = src.sha1Of;
             filesByContId[_cstat._contId] ~= this;
             debug dln("Got SHA1 of " ~ path);
@@ -1041,7 +1116,8 @@ class RegFile : File
     /** Returns: Cached/Memoized Binary Histogram of $(D this) $(D File). */
     auto ref bistogram8() @property @safe // ref needed here!
     {
-        if (_cstat.bist.empty) {
+        if (_cstat.bist.empty)
+        {
             /* debug dln(this.path, " Recalculating bistogram8."); */
             _cstat.bist.put(readOnlyContents); // memoized calculated
         }
@@ -1051,7 +1127,8 @@ class RegFile : File
     /** Returns: Cached/Memoized XGram of $(D this) $(D File). */
     auto ref xgram() @property @safe // ref needed here!
     {
-        if (_cstat.xgram.empty) {
+        if (_cstat.xgram.empty)
+        {
             _cstat.xgram.put(readOnlyContents); // memoized calculated
             /* debug dln(this.path, " Recalculated xgram. empty:", _cstat.xgram.empty); */
         }
@@ -1061,7 +1138,8 @@ class RegFile : File
     /** Returns: Cached/Memoized XGram Deep Denseness of $(D this) $(D File). */
     auto ref xgramDeepDenseness() @property @safe
     {
-        if (!_cstat._xgramDeepDenseness) {
+        if (!_cstat._xgramDeepDenseness)
+        {
             _cstat._xgramDeepDenseness = xgram.denseness(-1).numerator;
             /* debug dln(this.path, " Recalculating xgramDeepDenseness to ", _cstat._xgramDeepDenseness); */
         }
@@ -1086,15 +1164,19 @@ class RegFile : File
 
         bool isASCII = true;
 
-        if (doSHA1 || doBist || doBitStatus) {
+        if (doSHA1 || doBist || doBitStatus)
+        {
             import std.range: chunks;
-            foreach (chunk; readOnlyContents.chunks(chunkSize)) {
+            foreach (chunk; readOnlyContents.chunks(chunkSize))
+            {
                 if (doSHA1) { sha1.put(chunk); }
                 if (doBist) { _cstat.bist.put(chunk); }
-                if (doBitStatus) {
+                if (doBitStatus)
+                {
                     /* TODO: This can be parallelized using 64-bit wording!
                      * Write automatic parallelizing library for this? */
-                    foreach (elt; chunk) {
+                    foreach (elt; chunk)
+                    {
                         import bitop_ex: bt;
                         isASCII = isASCII && !elt.bt(7); // ASCII has no topmost bit set
                     }
@@ -1102,11 +1184,13 @@ class RegFile : File
             }
         }
 
-        if (doBitStatus) {
+        if (doBitStatus)
+        {
             _cstat.bitStatus = isASCII ? BitStatus.bits7 : BitStatus.bits8;
         }
 
-        if (doSHA1) {
+        if (doSHA1)
+        {
             _cstat._contId = sha1.finish();
             filesByContId[_cstat._contId] ~= cast(NotNull!File)assumeNotNull(this);
         }
@@ -1116,7 +1200,8 @@ class RegFile : File
     void clearCStat(File[][SHA1Digest] filesByContId) @safe nothrow
     {
         // SHA1-digest
-        if (_cstat._contId in filesByContId) {
+        if (_cstat._contId in filesByContId)
+        {
             auto dups = filesByContId[_cstat._contId];
             import std.algorithm: remove;
             immutable n = dups.length;
@@ -1135,7 +1220,8 @@ class RegFile : File
     version(msgpack)
     {
         /** Construct from msgpack $(D unpacker).  */
-        this(Unpacker)(ref Unpacker unpacker) {
+        this(Unpacker)(ref Unpacker unpacker)
+        {
             fromMsgpack(msgpack.Unpacker(unpacker));
         }
 
@@ -1159,7 +1245,8 @@ class RegFile : File
             // XGram
             immutable xgramFlag = !_cstat.xgram.empty;
             packer.pack(xgramFlag);
-            if (xgramFlag) {
+            if (xgramFlag)
+            {
                 /* debug dln("packing xgram. empty:", _cstat.xgram.empty); */
                 packer.pack(_cstat.xgram,
                             _cstat._xgramDeepDenseness);
@@ -1185,24 +1272,28 @@ class RegFile : File
 
             // CStat: TODO: Group
             unpacker.unpack(_cstat.kindId); // FKind
-            if (!(_cstat.kindId in parent.gstats.allKindsById)) {
+            if (!(_cstat.kindId in parent.gstats.allKindsById))
+            {
                 // kind database has changed since kindId was written to disk
                 _cstat.kindId.reset; // forget it
             }
             unpacker.unpack(_cstat._contId); // Digest
-            if (_cstat._contId.defined) {
+            if (_cstat._contId.defined)
+            {
                 parent.gstats.filesByContId[_cstat._contId] ~= cast(NotNull!File)this;
             }
 
             // Bist
             bool bistFlag; unpacker.unpack(bistFlag);
-            if (bistFlag) {
+            if (bistFlag)
+            {
                 unpacker.unpack(_cstat.bist);
             }
 
             // XGram
             bool xgramFlag; unpacker.unpack(xgramFlag);
-            if (xgramFlag) {
+            if (xgramFlag)
+            {
                 /* if (_cstat.xgram == null) { */
                 /*     _cstat.xgram = cast(XGram*)core.stdc.stdlib.malloc(XGram.sizeof); */
                 /* } */
@@ -1228,10 +1319,12 @@ class RegFile : File
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
     immutable(ubyte[]) readOnlyContents(string file = __FILE__, int line = __LINE__)() @trusted
     {
-        if (!_mmfile) {
+        if (!_mmfile)
+        {
             _mmfile = new MmFile(this.path, MmFile.Mode.read,
                                  mmfile_size, null, pageSize());
-            if (parent.gstats.showMMaps) {
+            if (parent.gstats.showMMaps)
+            {
                 writeln("Mapped ", path, " of size ", size);
             }
         }
@@ -1243,7 +1336,8 @@ class RegFile : File
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
     ubyte[] readWriteableContents() @trusted
     {
-        if (!_mmfile) {
+        if (!_mmfile)
+        {
             _mmfile = new MmFile(this.path, MmFile.Mode.readWrite,
                                  mmfile_size, null, pageSize());
         }
@@ -1251,7 +1345,8 @@ class RegFile : File
     }
 
     /** If needed Free Allocated Contents of $(D this) Regular File. */
-    bool freeContents() {
+    bool freeContents()
+    {
         if (_mmfile) { delete _mmfile; _mmfile = null; return true; }
         else { return false; }
     }
@@ -1386,11 +1481,14 @@ struct Results
     Bytes64 noBytesUnreadable; // Number of bytes unreadable.
 }
 
-version(cerealed) {
-    void grain(T)(ref Cereal cereal, ref SysTime systime) {
+version(cerealed)
+{
+    void grain(T)(ref Cereal cereal, ref SysTime systime)
+    {
         auto stdTime = systime.stdTime;
         cereal.grain(stdTime);
-        if (stdTime != 0) {
+        if (stdTime != 0)
+        {
             systime = SysTime(stdTime);
         }
     }
@@ -1460,7 +1558,8 @@ class Dir : File
 
     override Bytes64 treeSize() @property @trusted /* @safe pure nothrow */
     {
-        if (_treeSize.untouched) {
+        if (_treeSize.untouched)
+        {
             _treeSize = this.size + reduce!"a+b"(0.Bytes64,
                                                  _subs.byValue.map!"a.treeSize"); // recurse!
         }
@@ -1470,7 +1569,8 @@ class Dir : File
     /** Returns: Contents Id of $(D this). */
     override const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */
     {
-        if (_treeContId.untouched) {
+        if (_treeContId.untouched)
+        {
             _treeContId = reduce!"a ^ b"(SHA1Digest.init,
                                          _subs.byValue.map!"a.treeContId"); // recurse!
             gstats.filesByContId[_treeContId] ~= cast(NotNull!File)this;
@@ -1485,8 +1585,10 @@ class Dir : File
     GStats gstats(GStats gstats) @property @safe pure /* nothrow */ {
         return this._gstats = gstats;
     }
-    GStats gstats() @property @safe pure nothrow {
-        if (!_gstats && this.parent) {
+    GStats gstats() @property @safe pure nothrow
+    {
+        if (!_gstats && this.parent)
+        {
             _gstats = this.parent.gstats();
         }
         return _gstats;
@@ -1495,7 +1597,8 @@ class Dir : File
     /** Returns: Depth of Depth from File System root to this File. */
     override int depth() @property @safe pure nothrow
     {
-        if (_depth ==- 1) {
+        if (_depth ==- 1)
+        {
             _depth = parent ? parent.depth + 1 : 0; // memoized depth
         }
         return _depth;
@@ -1504,7 +1607,8 @@ class Dir : File
     /** Append Tree Statistics. */
     void addTreeStatsFromSub(F)(NotNull!F subFile, ref DirEntry subDent)
     {
-        if (subDent.isFile) {
+        if (subDent.isFile)
+        {
             /* _treeSize += subDent.size.Bytes64; */
             // dln("Updating ", _treeSize, " of ", path);
 
@@ -1525,15 +1629,19 @@ class Dir : File
     void updateStats(F)(NotNull!F subFile, ref DirEntry subDent, bool isRegFile)
     {
         auto localGStats = gstats();
-        if (localGStats) {
-            if (localGStats.showNameDups) {
+        if (localGStats)
+        {
+            if (localGStats.showNameDups)
+            {
                 localGStats.filesByName[subFile.name] ~= cast(NotNull!File)subFile;
             }
             if (localGStats.showLinkDups &&
-                isRegFile) {
+                isRegFile)
+            {
                 import core.sys.posix.sys.stat;
                 immutable stat_t stat = subDent.statBuf();
-                if (stat.st_nlink >= 2) {
+                if (stat.st_nlink >= 2)
+                {
                     localGStats.filesByInode[stat.st_ino] ~= cast(NotNull!File)subFile;
                 }
             }
@@ -1547,7 +1655,8 @@ class Dir : File
     {
         import std.range: empty;
         if (!_obseleteDir && // already loaded
-            !force) {        // and not forced reload
+            !force)          // and not forced reload
+        {
             return false;    // signal already scanned
         }
 
@@ -1559,23 +1668,34 @@ class Dir : File
 
         import std.file: dirEntries, SpanMode;
         auto entries = dirEntries(path, SpanMode.shallow, false); // false: skip symlinks
-        foreach (dent; entries) {
+        foreach (dent; entries)
+        {
             immutable basename = dent.name.baseName;
             File sub = null;
-            if (basename in oldSubs) {
+            if (basename in oldSubs)
+            {
                 sub = oldSubs[basename]; // reuse from previous cache
-            } else {
+            }
+            else
+            {
                 bool isRegFile = false;
-                if (dent.isSymlink) {
+                if (dent.isSymlink)
+                {
                     sub = new Symlink(dent, assumeNotNull(this));
-                } else if (dent.isDir) {
+                }
+                else if (dent.isDir)
+                {
                     sub = new Dir(dent, this, gstats);
-                } else if (dent.isFile) {
+                }
+                else if (dent.isFile)
+                {
                     // TODO: Delay construction of and specific files such as
                     // CFile, ELFFile, after FKind-recognition has been made.
                     sub = new RegFile(dent, assumeNotNull(this));
                     isRegFile = true;
-                } else {
+                }
+                else
+                {
                     sub = new SpecFile(dent, assumeNotNull(this));
                 }
                 updateStats(enforceNotNull(sub), dent, isRegFile);
@@ -1595,11 +1715,13 @@ class Dir : File
     /* TODO: Can we get make this const to the outside world perhaps using inout? */
     ref File[string] subs() @property { load(); return _subs; }
 
-    File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property {
+    File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property
+    {
         load();
         auto ssubs = _subs.values;
         /* TODO: Use radix sort to speed things up. */
-        final switch (sorted) {
+        final switch (sorted)
+        {
             /* case DirSorting.onTimeCreated: */
             /*     break; */
         case DirSorting.onTimeLastModified:
@@ -1620,29 +1742,36 @@ class Dir : File
         return ssubs;
     }
 
-    File sub(Name)(Name sub_name) {
+    File sub(Name)(Name sub_name)
+    {
         load();
         return (sub_name in _subs) ? _subs[sub_name] : null;
     }
-    File sub(File sub) {
+    File sub(File sub)
+    {
         load();
         return (sub.path in _subs) != null ? sub : null;
     }
 
-    version(cerealed) {
-        void accept(Cereal cereal) {
+    version(cerealed)
+    {
+        void accept(Cereal cereal)
+        {
             auto stdTime = timeLastModified.stdTime;
             cereal.grain(name, size, stdTime);
             timeLastModified = SysTime(stdTime);
         }
     }
-    version(msgpack) {
+    version(msgpack)
+    {
         /** Construct from msgpack $(D unpacker).  */
-        this(Unpacker)(ref Unpacker unpacker) {
+        this(Unpacker)(ref Unpacker unpacker)
+        {
             fromMsgpack(msgpack.Unpacker(unpacker));
         }
 
-        void toMsgpack(Packer)(ref Packer packer) const {
+        void toMsgpack(Packer)(ref Packer packer) const
+        {
             /* writeln("Entering Dir.toMsgpack ", this.name); */
             packer.pack(name, size,
                         timeLastModified.stdTime,
@@ -1655,8 +1784,8 @@ class Dir : File
              * File */
             packer.pack(_subs.length);
 
-            if (_subs.length >= 1) {
-
+            if (_subs.length >= 1)
+            {
                 auto diffsLastModified = _subs.byValue.map!"a.timeLastModified.stdTime".encodeForwardDifference;
                 auto diffsLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime".encodeForwardDifference;
                 /* auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime"; */
@@ -1671,20 +1800,30 @@ class Dir : File
                 /* debug dln(name, " accessed: ", timesLastAccessed.array.pack.length); */
             }
 
-            foreach (sub; _subs) {
-                if        (const regfile = cast(RegFile)sub) {
+            foreach (sub; _subs)
+            {
+                if        (const regfile = cast(RegFile)sub)
+                {
                     packer.pack("RegFile");
                     regfile.toMsgpack(packer);
-                } else if (const dir = cast(Dir)sub) {
+                }
+                else if (const dir = cast(Dir)sub)
+                {
                     packer.pack("Dir");
                     dir.toMsgpack(packer);
-                } else if (const symlink = cast(Symlink)sub) {
+                }
+                else if (const symlink = cast(Symlink)sub)
+                {
                     packer.pack("Symlink");
                     symlink.toMsgpack(packer);
-                } else if (const special = cast(SpecFile)sub) {
+                }
+                else if (const special = cast(SpecFile)sub)
+                {
                     packer.pack("SpecFile");
                     special.toMsgpack(packer);
-                } else {
+                }
+                else
+                {
                     immutable subClassName = sub.classinfo.name;
                     assert(false, "Unknown sub File class " ~ subClassName); // TODO: Exception
                 }
@@ -1714,16 +1853,20 @@ class Dir : File
             size_t subs_length; unpacker.unpack(subs_length); // TODO: Functionize to unpacker.unpack!size_t()
 
             ForwardDifferenceCode!(long[]) diffsLastModified, diffsLastAccessed;
-            if (subs_length >= 1) {
+            if (subs_length >= 1)
+            {
                 unpacker.unpack(diffsLastModified, diffsLastAccessed);
                 /* auto x = diffsLastModified.decodeForwardDifference; */
             }
 
-            foreach (ix; 0..subs_length) { // repeat for subs_length times
+            foreach (ix; 0..subs_length) // repeat for subs_length times
+            {
                 string subClassName; unpacker.unpack(subClassName); // TODO: Functionize
                 File sub = null;
-                try {
-                    switch (subClassName) {
+                try
+                {
+                    switch (subClassName)
+                    {
                     default:
                         assert(false, "Unknown File parent class " ~ subClassName); // TODO: Exception
                     case "Dir":
@@ -1751,7 +1894,8 @@ class Dir : File
                         break;
                     }
                     if (noPreviousSubs ||
-                        !(sub.name in _subs)) {
+                        !(sub.name in _subs))
+                    {
                         _subs[sub.name] = sub;
                     }
                     /* dln("Unpacked Dir sub ", sub.path, " of type ", subClassName); */
@@ -1795,11 +1939,16 @@ class Dir : File
 Bytes64 treeSizeMemoized(NotNull!File file, Bytes64[File] cache) @trusted /* nothrow */
 {
     typeof(return) sum = file.size;
-    if (auto dir = cast(Dir)file) {
-        if (file in cache) {
+    if (auto dir = cast(Dir)file)
+    {
+        if (file in cache)
+        {
             sum = cache[file];
-        } else {
-            foreach (sub; dir.subs.byValue) {
+        }
+        else
+        {
+            foreach (sub; dir.subs.byValue)
+            {
                 sum += treeSizeMemoized(assumeNotNull(sub), cache);
             }
             cache[file] = sum;
@@ -1815,15 +1964,19 @@ const(ubyte[]) saveRootDirTree(Viz viz,
                                Dir rootDir, string cacheFile) @trusted
 {
     immutable tic = Clock.currTime;
-    version(msgpack) {
+    version(msgpack)
+    {
         const data = rootDir.pack();
         import std.file: write;
     }
-    else version(cerealed) {
-            auto enc = new Cerealiser(); // encoder
-            enc ~= rootDir;
-            auto data = enc.bytes;
-        } else {
+    else version(cerealed)
+         {
+             auto enc = new Cerealiser(); // encoder
+             enc ~= rootDir;
+             auto data = enc.bytes;
+         }
+    else
+    {
         ubyte[] data;
     }
     cacheFile.write(data);
@@ -1848,11 +2001,13 @@ Dir loadRootDirTree(Viz viz,
     immutable tic = Clock.currTime;
 
     import std.file: read;
-    try {
+    try
+    {
         const data = read(cacheFile);
 
         auto rootDir = new Dir(cast(Dir)null, gstats);
-        version(msgpack) {
+        version(msgpack)
+        {
             unpack(cast(ubyte[])data, rootDir); /* Dir rootDir = new Dir(cast(const(ubyte)[])data); */
         }
         immutable toc = Clock.currTime;
@@ -1873,7 +2028,9 @@ Dir loadRootDirTree(Viz viz,
                gstats.noSymlinks +
                gstats.noSpecialFiles == gstats.noFiles + 1);
         return rootDir;
-    } catch (FileException) {
+    }
+    catch (FileException)
+    {
         viz.ppln("Failed to read cache from ", cacheFile);
         return null;
     }
@@ -1882,11 +2039,16 @@ Dir loadRootDirTree(Viz viz,
 Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames)
 {
     Dir[] topDirs;
-    foreach (topName; topDirNames) {
+    foreach (topName; topDirNames)
+    {
         Dir topDir = getDir(rootDir, topName);
-        if (!topDir) {
+
+        if (!topDir)
+        {
             dln("Directory " ~ topName ~ " is missing");
-        } else {
+        }
+        else
+        {
             topDirs ~= topDir;
         }
     }
@@ -1899,12 +2061,18 @@ File getFile(NotNull!Dir rootDir, string filePath,
              bool isDir = false,
              bool tolerant = false) @trusted
 {
-    if (isDir) {
+    if (isDir)
+    {
         return getDir(rootDir, filePath);
-    } else {
-        if (auto parentDir = getDir(rootDir, filePath.dirName)) {
+    }
+    else
+    {
+        if (auto parentDir = getDir(rootDir, filePath.dirName))
+        {
             return parentDir.sub(filePath.baseName);
-        } else {
+        }
+        else
+        {
             dln("File path " ~ filePath ~ " doesn't exist");
         }
     }
@@ -1925,24 +2093,34 @@ body
 
     import std.range: drop;
     import std.path: pathSplitter;
-    foreach (part; dirPath.pathSplitter().drop(1)) { // all but first
+    foreach (part; dirPath.pathSplitter().drop(1)) // all but first
+    {
         auto sub = currDir.sub(part);
-        if        (auto subDir = cast(Dir)sub) {
+        if        (auto subDir = cast(Dir)sub)
+        {
             currDir = subDir;
-        } else if (auto subSymlink = cast(Symlink)sub) {
+        }
+        else if (auto subSymlink = cast(Symlink)sub)
+        {
             auto subDent = DirEntry(subSymlink.absoluteNormalizedTargetPath);
-            if (subDent.isDir) {
-                if (followedSymlinks.find(subSymlink)) {
+            if (subDent.isDir)
+            {
+                if (followedSymlinks.find(subSymlink))
+                {
                     dln("Infinite recursion in ", subSymlink);
                     return null;
                 }
                 followedSymlinks ~= subSymlink;
                 currDir = getDir(rootDir, subSymlink.absoluteNormalizedTargetPath, subDent, followedSymlinks); // TODO: Check for infinite recursion
-            } else {
+            }
+            else
+            {
                 dln("Loaded path " ~ dirPath ~ " is not a directory");
                 return null;
             }
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
@@ -1953,10 +2131,13 @@ body
 Dir getDir(NotNull!Dir rootDir, string dirPath) @trusted
 {
     Symlink[] followedSymlinks;
-    try {
+    try
+    {
         auto dirDent = DirEntry(dirPath);
         return getDir(rootDir, dirPath, dirDent, followedSymlinks);
-    } catch (FileException) {
+    }
+    catch (FileException)
+    {
         dln("Exception getting Dir");
         return null;
     }
@@ -1969,10 +2150,13 @@ enum ulong mmfile_size = 0; // 100*1024
 
 auto pageSize() @trusted
 {
-    version(linux ) {
+    version(linux)
+    {
         import core.sys.posix.sys.shm: __getpagesize;
         return __getpagesize();
-    } else {
+    }
+    else
+    {
         return 4096;
     }
 }
@@ -1988,7 +2172,8 @@ enum KeyStrictness
 /** File System Scanner. */
 class Scanner(Term)
 {
-    this(string[] args, ref Term term) {
+    this(string[] args, ref Term term)
+    {
         _scanChunkSize = 32*pageSize();
         loadDirKinds();
         loadFileKinds();
@@ -2007,7 +2192,8 @@ class Scanner(Term)
 
     import core.sys.posix.sys.mman;
     import core.sys.posix.pwd: passwd, getpwuid_r;
-    version(linux) {
+    version(linux)
+    {
         // import core.sys.linux.sys.inotify;
         import core.sys.linux.sys.xattr;
     }
@@ -2026,7 +2212,8 @@ class Scanner(Term)
     // Directories
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
-    void loadDirKinds() {
+    void loadDirKinds()
+    {
         skippedDirKinds ~= new DirKind(".git",  "Git");
         skippedDirKinds ~= new DirKind(".svn",  "Subversion(Svn)");
         skippedDirKinds ~= new DirKind(".bzr",  "Mercurial (Bzr)");
@@ -2045,7 +2232,8 @@ class Scanner(Term)
         skippedDirKinds ~= new DirKind(".deps",  "Dependencies");
         skippedDirKinds ~= new DirKind(".backups",  "Backups");
         skippedDirKinds ~= new DirKind(".autom4te.cache",  "Automake Cache");
-        foreach (k; skippedDirKinds) {
+        foreach (k; skippedDirKinds)
+        {
             skippedDirKindsMap[k.fileName] = k;
         }
         skippedDirKindsMap.rehash;
@@ -2063,7 +2251,8 @@ class Scanner(Term)
     FKind[] incKinds; // FKind of file to include in search.
     FKind[][string] incKindsByName;
 
-    void loadFileKinds() {
+    void loadFileKinds()
+    {
         srcFKinds ~= new FKind("Makefile", ["GNUmakefile", "Makefile", "makefile"],
                                ["mk", "mak", "makefile", "make", "gnumakefile"], [], 0, [], [],
                                [Delim("#")],
@@ -2541,15 +2730,18 @@ class Scanner(Term)
 
         // Index Source Kinds by File extension
         FKind[][string] extSrcKinds;
-        foreach (k; srcFKinds) {
-            foreach (ext; k.exts) {
+        foreach (k; srcFKinds)
+        {
+            foreach (ext; k.exts)
+            {
                 extSrcKinds[ext] ~= k;
             }
         }
         extSrcKinds.rehash;
 
         // Index Source Kinds by kindName
-        foreach (k; srcFKinds) {
+        foreach (k; srcFKinds)
+        {
             srcFKindsByName[k.kindName] = k;
         }
         srcFKindsByName.rehash;
@@ -2933,18 +3125,23 @@ class Scanner(Term)
                                FileContent.binary, FileKindDetection.equalsName);
 
         // By Extension
-        foreach (kind; binFKinds) {
-            foreach (ext; kind.exts) {
+        foreach (kind; binFKinds)
+        {
+            foreach (ext; kind.exts)
+            {
                 binFKindsByExt[ext] ~= kind;
             }
         }
         binFKindsByExt.rehash;
 
         // By Magic
-        foreach (kind; binFKinds) {
+        foreach (kind; binFKinds)
+        {
             if (kind.magicOffset == 0 && // only if zero-offset for now
-                kind.magicData) {
-                if (const magicLit = cast(Lit)kind.magicData) {
+                kind.magicData)
+            {
+                if (const magicLit = cast(Lit)kind.magicData)
+                {
                     binFKindsByMagic[magicLit.bytes][magicLit.bytes.length] ~= kind;
                     binFKindsMagicLengths ~= magicLit.bytes.length; // add it
                 }
@@ -2954,13 +3151,15 @@ class Scanner(Term)
         binFKindsMagicLengths.sort; // and sort
         binFKindsByMagic.rehash;
 
-        foreach (kind; binFKinds) {
+        foreach (kind; binFKinds)
+        {
             binFKindsById[kind.behaviorId] = kind;
         }
         binFKindsById.rehash;
 
         import std.range: chain;
-        foreach (kind; chain(srcFKinds, binFKinds)) {
+        foreach (kind; chain(srcFKinds, binFKinds))
+        {
             gstats.allKindsById[kind.behaviorId] = kind;
         }
         gstats.allKindsById.rehash;
@@ -2983,7 +3182,8 @@ class Scanner(Term)
     // See also: https://en.wikipedia.org/wiki/Character_entity_reference#Character_entity_references_in_HTML
     string[256] lutLatin1ToHTML;
 
-    void loadXML() {
+    void loadXML()
+    {
         lutLatin1ToXML['"'] = "&quot";
         lutLatin1ToXML['.'] = "&amp";
         lutLatin1ToXML['\''] = "&apos";
@@ -3148,7 +3348,8 @@ class Scanner(Term)
 
     string incKindsNote;
 
-    void prepare(string[] args, ref Term term) {
+    void prepare(string[] args, ref Term term)
+    {
         bool helpPrinted = getoptEx("FS --- File System Scanning Utility in D.\n" ~
                                     "Usage: fs { --switches } [KEY]...\n" ~
                                     "Note that scanning for multiple KEYs is possible.\nIf so hits are highlighted in different colors!\n" ~
@@ -3222,7 +3423,8 @@ class Scanner(Term)
                                     delegate() { writeln("Per Nordlöw"); }
             );
 
-        if (gstats.showAnyDups) {
+        if (gstats.showAnyDups)
+        {
             gstats.showNameDups = true;
             gstats.showLinkDups = true;
             gstats.showContentDups = true;
@@ -3232,24 +3434,33 @@ class Scanner(Term)
 
         _cacheFile = std.path.expandTilde(_cacheFile);
 
-        if (_topDirNames.empty) {
+        if (_topDirNames.empty)
+        {
             _topDirNames = ["."];
         }
-        if (_topDirNames == ["."]) {
+        if (_topDirNames == ["."])
+        {
             _pathFormat = PathFormat.relative;
-        } else {
+        }
+        else
+        {
             _pathFormat = PathFormat.absolute;
         }
-        foreach (ref topName; _topDirNames) {
-            if (topName ==  ".") {
+        foreach (ref topName; _topDirNames)
+        {
+            if (topName ==  ".")
+            {
                 topName = topName.absolutePath.buildNormalizedPath;
-            } else {
+            }
+            else
+            {
                 topName = topName.expandTilde.buildNormalizedPath;
             }
         }
 
         // Output Handling
-        if (browseOutput) {
+        if (browseOutput)
+        {
             useHTML = true;
             immutable ext = useHTML ? "html" : "results.txt";
             import std.uuid: randomUUID;
@@ -3257,14 +3468,18 @@ class Scanner(Term)
                              "." ~ ext,
                              "w");
             popen("xdg-open " ~ outFile.name);
-        } else {
+        }
+        else
+        {
             outFile = stdout;
         }
 
         auto cwd = getcwd();
 
-        foreach (arg; args[1..$]) {
-            if (!arg.startsWith("-")) { // if argument not a flag
+        foreach (arg; args[1..$])
+        {
+            if (!arg.startsWith("-")) // if argument not a flag
+            {
                 keys ~= arg;
             }
         }
@@ -3282,7 +3497,8 @@ class Scanner(Term)
 
         if (_useNGrams &&
             (!keys.empty) &&
-            keysXGramsUnion.empty) {
+            keysXGramsUnion.empty)
+        {
             _useNGrams = false;
             viz.ppln("Keys must be at least of length " ~
                      to!string(NGramOrder + 1) ~
@@ -3291,7 +3507,8 @@ class Scanner(Term)
                      " to be calculated");
         }
 
-        if (useHTML) {
+        if (useHTML)
+        {
             viz.pp("<!DOCTYPE html>
 <html>
 <head>
@@ -3315,23 +3532,34 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         // viz.ppln("<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
 
-        if (includedTypes) {
-            foreach (lang; includedTypes.splitter(",")) {
-                if (lang in srcFKindsByName) {
+        if (includedTypes)
+        {
+            foreach (lang; includedTypes.splitter(","))
+            {
+                if (lang in srcFKindsByName)
+                {
                     incKinds ~= srcFKindsByName[lang];
-                } else if (lang.toLower in srcFKindsByName) {
+                }
+                else if (lang.toLower in srcFKindsByName)
+                {
                     incKinds ~= srcFKindsByName[lang.toLower];
-                } else if (lang.toUpper in srcFKindsByName) {
+                }
+                else if (lang.toUpper in srcFKindsByName)
+                {
                     incKinds ~= srcFKindsByName[lang.toUpper];
-                } else {
+                }
+                else
+                {
                     writeln("warning: Language ", lang, " not registered. Defaulting to all file types.");
                 }
             }
         }
 
         // Maps extension string to Included FileKinds
-        foreach (kind; incKinds) {
-            foreach (ext; kind.exts) {
+        foreach (kind; incKinds)
+        {
+            foreach (ext; kind.exts)
+            {
                 incKindsByName[ext] ~= kind;
             }
             gstats.incKindsById[kind.behaviorId] = kind;
@@ -3343,20 +3571,28 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         auto commaedKeys = keys.joiner(",");
         const keysPluralExt = keys.length >= 2 ? "s" : "";
         string commaedKeysString = to!string(commaedKeys);
-        if (keys) {
+        if (keys)
+        {
             incKindsNote = " in " ~ (incKinds ? incKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
             immutable underNote = " under \"" ~ (_topDirNames.reduce!"a ~ ',' ~ b") ~ "\"";
             const exactNote = _keyAsExact ? "exact " : "";
             string asNote;
-            if (_keyAsAcronym) {
+            if (_keyAsAcronym)
+            {
                 asNote = (" as " ~ exactNote ~
                           (keyAsWord ? "word" : "symbol") ~
                           " acronym" ~ keysPluralExt);
-            } else if (keyAsSymbol) {
+            }
+            else if (keyAsSymbol)
+            {
                 asNote = " as " ~ exactNote ~ "symbol" ~ keysPluralExt;
-            } else if (keyAsWord) {
+            }
+            else if (keyAsWord)
+            {
                 asNote = " as " ~ exactNote ~ "word" ~ keysPluralExt;
-            } else {
+            }
+            else
+            {
                 asNote = "";
             }
 
@@ -3374,7 +3610,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                          " under ", _topDirNames.map!(a => asPath(a))));
         }
 
-        if (_showSkipped) {
+        if (_showSkipped)
+        {
             viz.pp(asH!2("Skipping files of type"),
                    asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
                                                       ": ",
@@ -3389,12 +3626,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         _gid = getgid();
 
         // Setup root directory
-        if (!_recache) {
+        if (!_recache)
+        {
             GC.disable;
             _rootDir = loadRootDirTree(viz, _cacheFile, gstats);
             GC.enable;
         }
-        if (!_rootDir) { // if first time
+        if (!_rootDir) // if first time
+        {
             _rootDir = new Dir("/", gstats); // filesystem root directory. TODO: Make this uncopyable?
         }
 
@@ -3419,12 +3658,16 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                      string commaedKeysString)
     {
         viz.pp(asH!2("Results"));
-        if (_topDirs) {
-            foreach (topIx, topDir; _topDirs) {
+        if (_topDirs)
+        {
+            foreach (topIx, topDir; _topDirs)
+            {
                 scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
-                if (ctrlC) {
+                if (ctrlC)
+                {
                     auto restDirs = _topDirs[topIx + 1..$];
-                    if (!restDirs.empty) {
+                    if (!restDirs.empty)
+                    {
                         debug dln("Ctrl-C pressed: Skipping search of " ~ to!string(restDirs));
                         break;
                     }
@@ -3432,26 +3675,32 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             }
 
             // Scan for acronym key match
-            if (keys && _hitsCountTotal == 0) { // if keys given but no hit found
+            if (keys && _hitsCountTotal == 0)  // if keys given but no hit found
+            {
                 auto keysString = (keys.length >= 2 ? "s" : "") ~ " \"" ~ commaedKeysString;
-                if (_keyAsAcronym)  {
+                if (_keyAsAcronym)
+                {
                     viz.ppln(("No acronym matches for key" ~ keysString ~ `"` ~
                               (keyAsSymbol ? " as symbol" : "") ~
                               " found in files of type"));
-                } else if (!_keyAsExact) {
+                }
+                else if (!_keyAsExact)
+                {
                     viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
                               (keyAsSymbol ? " as symbol" : "") ~
                               " found" ~ incKindsNote ~
                               ". Relaxing scan to" ~ (keyAsSymbol ? " symbol" : "") ~ " acronym match."));
                     _keyAsAcronym = true;
 
-                    foreach (topDir; _topDirs) {
+                    foreach (topDir; _topDirs)
+                    {
                         scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                     }
                 }
             }
 
-            if (useHTML) {
+            if (useHTML)
+            {
                 viz.ppln("</body>");
                 viz.ppln("</html>");
             }
@@ -3463,16 +3712,20 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                gstats.noScannedSpecialFiles == gstats.noScannedFiles);
     }
 
-    version(linux) {
-        @trusted bool readable(in stat_t stat, uid_t uid, gid_t gid, ref string msg) {
+    version(linux)
+    {
+        @trusted bool readable(in stat_t stat, uid_t uid, gid_t gid, ref string msg)
+        {
             immutable mode = stat.st_mode;
             immutable ok = ((stat.st_uid == uid) && (mode & S_IRUSR) ||
                             (stat.st_gid == gid) && (mode & S_IRGRP) ||
                             (mode & S_IROTH));
-            if (!ok) {
+            if (!ok)
+            {
                 msg = " is not readable by you, but only by";
                 bool can = false; // someone can access
-                if (mode & S_IRUSR) {
+                if (mode & S_IRUSR)
+                {
                     can = true;
                     msg ~= " user id " ~ to!string(stat.st_uid);
 
@@ -3482,11 +3735,13 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                     immutable size_t bufsize = 16384;
                     char* buf = cast(char*)core.stdc.stdlib.malloc(bufsize);
                     getpwuid_r(stat.st_uid, &pw, buf, bufsize, &pw_ret);
-                    if (pw_ret != null) {
+                    if (pw_ret != null)
+                    {
                         string userName;
                         {
                             size_t n = 0;
-                            while (pw.pw_name[n] != 0) {
+                            while (pw.pw_name[n] != 0)
+                            {
                                 userName ~= pw.pw_name[n];
                                 n++;
                             }
@@ -3496,7 +3751,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                         // string realName;
                         // {
                         //     size_t n = 0;
-                        //     while (pw.pw_gecos[n] != 0) {
+                        //     while (pw.pw_gecos[n] != 0)
+                        //     {
                         //         realName ~= pw.pw_gecos[n];
                         //         n++;
                         //     }
@@ -3505,14 +3761,17 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                     core.stdc.stdlib.free(buf);
 
                 }
-                if (mode & S_IRGRP) {
+                if (mode & S_IRGRP)
+                {
                     can = true;
-                    if (msg != "") {
+                    if (msg != "")
+                    {
                         msg ~= " or";
                     }
                     msg ~= " group id " ~ to!string(stat.st_gid);
                 }
-                if (!can) {
+                if (!can)
+                {
                     msg ~= " root";
                 }
             }
@@ -3523,14 +3782,18 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     Results results;
 
     void handleError(F)(Viz viz,
-                        NotNull!F file, bool isDir, size_t subIndex) {
+                        NotNull!F file, bool isDir, size_t subIndex)
+    {
         auto dent = DirEntry(file.path);
         immutable stat_t stat = dent.statBuf();
         string msg;
-        if (!readable(stat, _uid, _gid, msg)) {
+        if (!readable(stat, _uid, _gid, msg))
+        {
             results.noBytesUnreadable += dent.size;
-            if (_showSkipped) {
-                if (showTree) {
+            if (_showSkipped)
+            {
+                if (showTree)
+                {
                     auto parentDir = file.parent;
                     immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                     viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
@@ -3549,8 +3812,10 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                       in string skipCause)
     {
         auto parentDir = regfile.parent;
-        if (_showSkipped) {
-            if (showTree) {
+        if (_showSkipped)
+        {
+            if (showTree)
+            {
                 immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                 viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
             }
@@ -3560,30 +3825,39 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
     KindHit isBinary(Viz viz,
                      NotNull!RegFile regfile,
-                     in string ext, size_t subIndex) {
+                     in string ext, size_t subIndex)
+    {
         auto hit = KindHit.none;
 
         auto parentDir = regfile.parent;
 
         // First Try with kindId as try
-        if (regfile._cstat.kindId.defined) { // kindId is already defined and uptodate
-            if (regfile._cstat.kindId in binFKindsById) {
+        if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
+        {
+            if (regfile._cstat.kindId in binFKindsById)
+            {
                 const kind = enforceNotNull(binFKindsById[regfile._cstat.kindId]);
                 hit = KindHit.cached;
                 printSkipped(viz, regfile, ext, subIndex, kind, hit,
                              " using cached KindId");
-            } else {
+            }
+            else
+            {
                 hit = KindHit.none;
             }
             return hit;
         }
 
         // First Try with extension lookup as guess
-        if (!ext.empty && ext in binFKindsByExt) {
-            foreach (kindIndex, kind; binFKindsByExt[ext]) {
+        if (!ext.empty &&
+            ext in binFKindsByExt)
+        {
+            foreach (kindIndex, kind; binFKindsByExt[ext])
+            {
                 auto nnKind = enforceNotNull(kind);
                 hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
-                if (hit) {
+                if (hit)
+                {
                     printSkipped(viz, regfile, ext, subIndex, nnKind, hit,
                                  " (" ~ ext ~ ") at " ~ nthString(kindIndex + 1) ~ " extension try");
                     break;
@@ -3591,17 +3865,21 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             }
         }
 
-        if (!hit) { // If still no hit
-            foreach (kindIndex, kind; binFKinds) { // Iterate each kind
+        if (!hit)               // If still no hit
+        {
+            foreach (kindIndex, kind; binFKinds) // Iterate each kind
+            {
                 auto nnKind = enforceNotNull(kind);
                 hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
-                if (hit) {
-                    if (_showSkipped)  {
-                        if (showTree) {
+                if (hit)
+                {
+                    if (_showSkipped)
+                    {
+                        if (showTree)
+                        {
                             immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                             viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                         }
-
                         viz.ppln(regfile, ": Skipped ", kind, " file at ",
                                  nthString(kindIndex + 1), " blind try");
                     }
@@ -3629,8 +3907,10 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         // Try cached kind first
         // First Try with kindId as try
-        if (regfile._cstat.kindId.defined) { // kindId is already defined and uptodate
-            if (regfile._cstat.kindId in gstats.incKindsById) {
+        if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
+        {
+            if (regfile._cstat.kindId in gstats.incKindsById)
+            {
                 hitKind = gstats.incKindsById[regfile._cstat.kindId];
                 kindHit = KindHit.cached;
                 return kindHit;
@@ -3639,12 +3919,15 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         // Try with hash table first
         if (!ext.empty && // if file has extension and
-            ext in incKindsByName) { // and extensions may match specified included files
+            ext in incKindsByName) // and extensions may match specified included files
+        {
             auto possibleKinds = incKindsByName[ext];
-            foreach (kind; possibleKinds) {
+            foreach (kind; possibleKinds)
+            {
                 auto nnKind = enforceNotNull(kind);
                 immutable hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
-                if (hit) {
+                if (hit)
+                {
                     hitKind = nnKind;
                     kindHit = hit;
                     break;
@@ -3652,12 +3935,15 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             }
         }
 
-        if (!hitKind) { // if no hit yet
+        if (!hitKind) // if no hit yet
+        {
             // blindly try the rest
-            foreach (kind; incKinds) {
+            foreach (kind; incKinds)
+            {
                 auto nnKind = enforceNotNull(kind);
                 immutable hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
-                if (hit) {
+                if (hit)
+                {
                     hitKind = nnKind;
                     kindHit = hit;
                     break;
@@ -3685,8 +3971,10 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         import std.ascii: newline;
 
         auto thisFace = stdFace;
-        if (colorFlag) {
-            if (ScanContext.fileName) {
+        if (colorFlag)
+        {
+            if (ScanContext.fileName)
+            {
                 thisFace = fileFace;
             }
         }
@@ -3698,60 +3986,75 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                                        theFile.path);
 
         size_t nL = 0; // line counter
-        foreach (line; src.splitter(cast(immutable ubyte[])newline)) {
+        foreach (line; src.splitter(cast(immutable ubyte[])newline))
+        {
             auto rest = cast(string)line; // rest of line as a string
 
             bool anyHit = false; // will become true if any hit on current line
             // Hit search loop
-            while (!rest.empty) {
+            while (!rest.empty)
+            {
                 // Find any key
 
                 /* TODO: Convert these to a range. */
                 ptrdiff_t offKB = -1;
                 ptrdiff_t offKE = -1;
 
-                foreach (uint ix, key; keys) { // TODO: Call variadic-find instead to speed things up.
+                foreach (uint ix, key; keys) // TODO: Call variadic-find instead to speed things up.
+                {
 
                     /* Bistogram Discardal */
                     if ((!bistHits.empty) &&
-                        !bistHits[ix]) { // if neither exact nor acronym match possible
+                        !bistHits[ix]) // if neither exact nor acronym match possible
+                    {
                         continue; // try next key
                     }
 
                     /* dln("key:", key, " line:", line); */
                     ptrdiff_t[] acronymOffsets;
-                    if (_keyAsAcronym) { // acronym search
+                    if (_keyAsAcronym) // acronym search
+                    {
                         auto hit = (cast(immutable ubyte[])rest).findAcronymAt(key,
                                                                                keyAsSymbol ? FindContext.inSymbol : FindContext.inWord);
-                        if (!hit[0].empty) {
+                        if (!hit[0].empty)
+                        {
                             acronymOffsets = hit[1];
                             offKB = hit[1][0];
                             offKE = hit[1][$-1] + 1;
                         }
-                    } else { // normal search
+                    }
+                    else
+                    { // normal search
                         import std.string: indexOf;
                         offKB = rest.indexOf(key,
                                              _caseFold ? CaseSensitive.no : CaseSensitive.yes); // hit begin offset
                         offKE = offKB + key.length; // hit end offset
                     }
 
-                    if (offKB >= 0) { // if hit
-                        if (!showTree && ctx == ScanContext.fileName) {
+                    if (offKB >= 0) // if hit
+                    {
+                        if (!showTree && ctx == ScanContext.fileName)
+                        {
                             viz.pp(parentDir, dirSeparator);
                         }
 
                         // Check Context
                         if ((keyAsSymbol && !isSymbolASCII(rest, offKB, offKE)) ||
-                            (keyAsWord   && !isWordASCII  (rest, offKB, offKE))) {
+                            (keyAsWord   && !isWordASCII  (rest, offKB, offKE)))
+                        {
                             rest = rest[offKE..$]; // move forward in line
                             continue;
                         }
 
                         if (ctx == ScanContext.fileContent &&
-                            !anyHit) { // if this is first hit
-                            if (showTree) {
+                            !anyHit) // if this is first hit
+                        {
+                            if (showTree)
+                            {
                                 viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
-                            } else {
+                            }
+                            else
+                            {
                                 foreach (fromSymlink; fromSymlinks)
                                 {
                                     viz.pp(fromSymlink,
@@ -3778,19 +4081,25 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                         viz.pp(faze(to!string(rest[0..offKB]), thisFace));
 
                         // show hit part
-                        if (!acronymOffsets.empty) {
-                            foreach (aIx, currOff; acronymOffsets) { // TODO: Reuse std.algorithm: zip or lockstep? Or create a new kind say named conv.
+                        if (!acronymOffsets.empty)
+                        {
+                            foreach (aIx, currOff; acronymOffsets) // TODO: Reuse std.algorithm: zip or lockstep? Or create a new kind say named conv.
+                            {
                                 // context before
-                                if (aIx >= 1) {
+                                if (aIx >= 1)
+                                {
                                     immutable prevOff = acronymOffsets[aIx-1];
-                                    if (prevOff + 1 < currOff) { // at least one letter in between
+                                    if (prevOff + 1 < currOff) // at least one letter in between
+                                    {
                                         viz.pp(asCtx(ix, to!string(rest[prevOff + 1 .. currOff])));
                                     }
                                 }
                                 // hit letter
                                 viz.pp(asHit(ix, to!string(rest[currOff])));
                             }
-                        } else {
+                        }
+                        else
+                        {
                             viz.pp(asHit(ix, to!string(rest[offKB..offKE])));
                         }
 
@@ -3808,7 +4117,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             }
 
             // finalize line
-            if (anyHit)  {
+            if (anyHit)
+            {
                 // show final context suffix
                 viz.ppln(faze(rest, thisFace));
             }
@@ -3816,12 +4126,15 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         }
 
         // Previous solution
-        // version(none) {
+        // version(none)
+        // {
         //     ptrdiff_t offHit = 0;
-        //     foreach(ix, key; keys) {
+        //     foreach(ix, key; keys)
+        //     {
         //         scope immutable hit1 = src.find(key); // single key hit
         //         offHit = hit1.ptr - src.ptr;
-        //         if (!hit1.empty) {
+        //         if (!hit1.empty)
+        //         {
         //             scope immutable src0 = src[0..offHit]; // src beforce hi
         //             immutable rowHit = count(src0, newline);
         //             immutable colHit = src0.retro.countUntil(newline); // count backwards till beginning of rowHit
@@ -3838,14 +4151,16 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         //     }
         // }
 
-        // switch (keys.length) {
+        // switch (keys.length)
+        // {
         // default:
         //     break;
         // case 0:
         //     break;
         // case 1:
         //     immutable hit1 = src.find(keys[0]);
-        //     if (!hit1.empty) {
+        //     if (!hit1.empty)
+        //     {
         //         viz.ppln(asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
         //     }
         //     break;
@@ -3856,7 +4171,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         // //     break;
         // // case 3:
         // //     immutable hit3 = src.find(keys[0], keys[1], keys[2]); // find two keys
-        // //     if (!hit3.empty) {
+        // //     if (!hit3.empty)
+        //        {
         // //         viz.ppln(asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
         // //     }
         // //     break;
@@ -3871,7 +4187,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                      NotNull!Dir parentDir,
                      in string[] keys,
                      ref Symlink[] fromSymlinks,
-                     size_t subIndex) {
+                     size_t subIndex)
+    {
         results.noBytesTotal += theRegFile.size;
         results.noBytesTotalContents += theRegFile.size;
 
@@ -3879,7 +4196,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         if ((_scanContext == ScanContext.all ||
              _scanContext == ScanContext.fileName ||
              _scanContext == ScanContext.regularFileName) &&
-            !keys.empty) {
+            !keys.empty)
+        {
             immutable hitCountInName = scanForKeys(viz,
                                                    topDir, cast(NotNull!File)theRegFile, parentDir,
                                                    fromSymlinks,
@@ -3891,11 +4209,13 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
              _scanContext == ScanContext.fileContent) &&
             (gstats.showContentDups ||
              !keys.empty) &&
-            theRegFile.size != 0) {        // non-empty file
+            theRegFile.size != 0)        // non-empty file
+        {
             // immutable upTo = size_t.max;
 
             // TODO: Flag for readText
-            try {
+            try
+            {
 
                 ++gstats.noScannedRegFiles;
                 ++gstats.noScannedFiles;
@@ -3905,7 +4225,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 // Check included kinds first because they are fast.
                 KindHit incKindHit = isIncludedKind(theRegFile, ext, incKinds);
                 if (!incKinds.empty && // TODO: Do we really need this one?
-                    !incKindHit) {
+                    !incKindHit)
+                {
                     return;
                 }
 
@@ -3927,7 +4248,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 // Match Bist of Keys with BistX of File
                 bool[] bistHits;
                 bool noBistMatch = false;
-                if (doBist) {
+                if (doBist)
+                {
                     const theHist = theRegFile.bistogram8;
                     auto hitsHist = keysBists.map!(a =>
                                                    ((a.value() & theHist.value()) ==
@@ -3939,7 +4261,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 /* foreach (hit; bistHits) { if (!hit) { debug dln("Assert key " ~ keys[kix] ~ " not in file " ~ theRegFile.path); } ++kix; } */
 
                 bool allXGramsMiss = false;
-                if (doNGram) {
+                if (doNGram)
+                {
                     ulong keysXGramUnionMatch = keysXGramsUnion.matchDenser(theRegFile.xgram);
                     debug dln(theRegFile.path,
                               " sized ", theRegFile.size, " : ",
@@ -3954,8 +4277,9 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 if (binFlag || noBistMatch || allXGramsMiss) // or no hits possible. TODO: Maybe more efficient to do histogram discardal first
                 {
                     results.noBytesSkipped += theRegFile.size;
-                } else {
-
+                }
+                else
+                {
                     // Search if not Binary
 
                     // If Source file is ok
@@ -3963,14 +4287,19 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
                     results.noBytesScanned += theRegFile.size;
 
-                    if (keys) {
+                    if (keys)
+                    {
                         // Fast discardal of files with no match
                         bool fastOk = true;
                         if (!_caseFold) { // if no relaxation of search
-                            if (_keyAsAcronym) { // if no relaxation of search
+                            if (_keyAsAcronym) // if no relaxation of search
+                            {
                                 /* TODO: Reuse findAcronym in algorith_ex. */
-                            } else { // if no relaxation of search
-                                switch (keys.length) {
+                            }
+                            else // if no relaxation of search
+                            {
+                                switch (keys.length)
+                                {
                                 default: break;
                                 case 1: immutable hit1 = src.find(keys[0]); fastOk = !hit1.empty; break;
                                     // case 2: immutable hit2 = src.find(keys[0], keys[1]); fastOk = !hit2[0].empty; break;
@@ -3983,11 +4312,13 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
                         // TODO: Continue search from hit1, hit2 etc.
 
-                        if (fastOk) {
+                        if (fastOk)
+                        {
                             foreach (tag; addTags) gstats.ftags.addTag(theRegFile, tag);
                             foreach (tag; removeTags) gstats.ftags.removeTag(theRegFile, tag);
 
-                            if (theRegFile.size >= 8192) {
+                            if (theRegFile.size >= 8192)
+                            {
                                 /* if (theRegFile.xgram == null) { */
                                 /*     theRegFile.xgram = cast(XGram*)core.stdc.stdlib.malloc(XGram.sizeof); */
                                 /* } */
@@ -4021,9 +4352,13 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                     }
                 }
 
-            } catch (FileException) {
+            }
+            catch (FileException)
+            {
                 handleError(viz, theRegFile, false, subIndex);
-            } catch (ErrnoException) {
+            }
+            catch (ErrnoException)
+            {
                 handleError(viz, theRegFile, false, subIndex);
             }
             theRegFile.freeContents;
@@ -4040,8 +4375,10 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                      ref Symlink[] fromSymlinks)
     {
         // check for symlink cycles
-        if (!fromSymlinks.find(theSymlink).empty) {
-            if (gstats.showSymlinkCycles) {
+        if (!fromSymlinks.find(theSymlink).empty)
+        {
+            if (gstats.showSymlinkCycles)
+            {
                 import std.range: back;
                 viz.ppln("Cycle of symbolic links: ",
                          asPath(fromSymlinks),
@@ -4055,7 +4392,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         if ((_scanContext == ScanContext.all ||
              _scanContext == ScanContext.fileName ||
              _scanContext == ScanContext.symlinkName) &&
-            !keys.empty) {
+            !keys.empty)
+        {
             scanForKeys(viz,
                         topDir, cast(NotNull!File)theSymlink, enforceNotNull(theSymlink.parent),
                         fromSymlinks,
@@ -4064,7 +4402,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         // try {
         //     results.noBytesTotal += dent.size;
-        // } catch (Exception) {
+        // } catch (Exception)
+        //   {
         //     dln("Could not get size of ",  dir.name);
         // }
         if (gstats.followSymlinks == SymlinkFollowContext.none) { return; }
@@ -4072,13 +4411,15 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         import std.range: popBackN;
         fromSymlinks ~= theSymlink;
         immutable targetPath = theSymlink.absoluteNormalizedTargetPath;
-        if (targetPath.exists) {
+        if (targetPath.exists)
+        {
             theSymlink._targetStatus = SymlinkTargetStatus.present;
             if (_topDirNames.all!(a => !targetPath.startsWith(a))) { // if target path lies outside of all rootdirs
                 auto targetDent = DirEntry(targetPath);
                 auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent.isDir);
 
-                if (showTree) {
+                if (showTree)
+                {
                     viz.ppln("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ",
                              theSymlink,
                              " modified ",
@@ -4095,29 +4436,41 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 ++gstats.noScannedSymlinks;
                 ++gstats.noScannedFiles;
 
-                if      (auto targetRegFile = cast(RegFile)targetFile) {
+                if      (auto targetRegFile = cast(RegFile)targetFile)
+                {
                     scanRegFile(viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
                 }
-                else if (auto targetDir = cast(Dir)targetFile) {
+                else if (auto targetDir = cast(Dir)targetFile)
+                {
                     scanDir(viz, topDir, assumeNotNull(targetDir), keys, fromSymlinks);
                 }
-                else if (auto targetSymlink = cast(Symlink)targetFile) { // target is a Symlink
-                    scanSymlink(viz, topDir, assumeNotNull(targetSymlink), enforceNotNull(targetSymlink.parent), keys, fromSymlinks);
+                else if (auto targetSymlink = cast(Symlink)targetFile) // target is a Symlink
+                {
+                    scanSymlink(viz, topDir,
+                                assumeNotNull(targetSymlink),
+                                enforceNotNull(targetSymlink.parent),
+                                keys, fromSymlinks);
                 }
             }
-        } else {
+        }
+        else
+        {
             theSymlink._targetStatus = SymlinkTargetStatus.broken;
 
-            if (gstats.showBrokenSymlinks) {
+            if (gstats.showBrokenSymlinks)
+            {
                 _brokenSymlinks ~= theSymlink;
 
-                foreach (ix, fromSymlink; fromSymlinks) {
-                    if (showTree && ix == 0) {
+                foreach (ix, fromSymlink; fromSymlinks)
+                {
+                    if (showTree && ix == 0)
+                    {
                         immutable intro = "├";
                         viz.pp("│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ",
                                theSymlink);
                     }
-                    else {
+                    else
+                    {
                         viz.pp(fromSymlink);
                     }
                     viz.pp(" -> ");
@@ -4136,14 +4489,16 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                  NotNull!Dir theDir,
                  in string[] keys,
                  Symlink[] fromSymlinks = [],
-                 int maxDepth = -1) {
+                 int maxDepth = -1)
+    {
         if (theDir.isRoot)  { results.reset(); }
 
         // Scan name
         if ((_scanContext == ScanContext.all ||
              _scanContext == ScanContext.fileName ||
              _scanContext == ScanContext.dirName) &&
-            !keys.empty) {
+            !keys.empty)
+        {
             scanForKeys(viz,
                         topDir,
                         cast(NotNull!File)theDir,
@@ -4152,9 +4507,11 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                         theDir.name, keys, [], ScanContext.fileName);
         }
 
-        try {
+        try
+        {
             size_t subIndex = 0;
-            if (showTree) {
+            if (showTree)
+            {
                 immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
 
                 viz.pp("│  ".repeat(theDir.depth).join("") ~ intro ~
@@ -4164,11 +4521,13 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                             timeFace),
                        " ago");
 
-                if (gstats.showUsage) {
+                if (gstats.showUsage)
+                {
                     viz.pp(" of Tree-Size ", theDir.treeSize);
                 }
 
-                if (gstats.showSHA1) {
+                if (gstats.showSHA1)
+                {
                     viz.pp(" with Tree-Content-Id ", theDir.treeContId);
                 }
                 viz.ppendl();
@@ -4178,17 +4537,23 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             ++gstats.noScannedFiles;
 
             auto subsSorted = theDir.subsSorted(subsSorting);
-            foreach (key, sub; subsSorted) {
-                if (auto regfile = cast(RegFile)sub) {
+            foreach (key, sub; subsSorted)
+            {
+                if (auto regfile = cast(RegFile)sub)
+                {
                     scanRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
                 }
-                else if (auto subDir = cast(Dir)sub) {
+                else if (auto subDir = cast(Dir)sub)
+                {
                     if (maxDepth == -1 || // if either all levels or
                         maxDepth >= 1) { // levels left
                         // Version Control System Directories
-                        if (sub.name in skippedDirKindsMap)  {
-                            if (_showSkipped) {
-                                if (showTree) {
+                        if (sub.name in skippedDirKindsMap)
+                        {
+                            if (_showSkipped)
+                            {
+                                if (showTree)
+                                {
                                     immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
                                     viz.pp("│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
                                 }
@@ -4202,25 +4567,32 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                                        faze(": Skipped Directory of type ", infoFace),
                                        skippedDirKindsMap[sub.name].kindName);
                             }
-                        } else {
+                        }
+                        else
+                        {
                             scanDir(viz, topDir, assumeNotNull(subDir), keys, fromSymlinks, maxDepth >= 0 ? --maxDepth : maxDepth);
                         }
                     }
                 }
-                else if (auto subSymlink = cast(Symlink)sub) {
+                else if (auto subSymlink = cast(Symlink)sub)
+                {
                     scanSymlink(viz, topDir, assumeNotNull(subSymlink), theDir, keys, fromSymlinks);
                 }
-                else {
+                else
+                {
                     if (showTree) { viz.ppln(); }
                 }
                 ++subIndex;
 
-                if (ctrlC) {
+                if (ctrlC)
+                {
                     viz.ppln("Ctrl-C pressed: Aborting scan of ", theDir);
                     break;
                 }
             }
-        } catch (FileException) {
+        }
+        catch (FileException)
+        {
             handleError(viz, theDir, true, 0);
         }
     }
@@ -4243,7 +4615,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                                            .array // evaluate to array to get .length below
             );
         F[] hits;
-        final switch (duplicatesContext) {
+        final switch (duplicatesContext)
+        {
         case DuplicatesContext.internal:
             if (dupFilesUnderAnyTopDirName.length >= 2)
                 hits = dupFilesUnderAnyTopDirName;
@@ -4261,11 +4634,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     {
         /* Duplicates */
 
-        if (gstats.showNameDups) {
+        if (gstats.showNameDups)
+        {
             viz.pp(asH!2("Name Duplicates"));
-            foreach (digest, dupFiles; gstats.filesByName) {
+            foreach (digest, dupFiles; gstats.filesByName)
+            {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
-                if (!dupFilesOk.empty) {
+                if (!dupFilesOk.empty)
+                {
                     viz.pp(asH!3("Files with same name ",
                                     faze(dupFilesOk[0].name, fileFace)),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
@@ -4273,11 +4649,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             }
         }
 
-        if (gstats.showLinkDups) {
+        if (gstats.showLinkDups)
+        {
             viz.pp(asH!2("Inode Duplicates (Hardlinks)"));
-            foreach (inode, dupFiles; gstats.filesByInode) {
+            foreach (inode, dupFiles; gstats.filesByInode)
+            {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
-                if (dupFilesOk.length >= 2) {
+                if (dupFilesOk.length >= 2)
+                {
                     viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
                                     " (hardlinks): "),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
@@ -4285,11 +4664,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             }
         }
 
-        if (gstats.showContentDups) {
+        if (gstats.showContentDups)
+        {
             viz.pp(asH!2("Content Duplicates"));
-            foreach (digest, dupFiles; gstats.filesByContId) {
+            foreach (digest, dupFiles; gstats.filesByContId)
+            {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
-                if (dupFilesOk.length >= 2) {
+                if (dupFilesOk.length >= 2)
+                {
 
                     auto firstDup = dupFilesOk[0];
                     immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
@@ -4318,7 +4700,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         /* Broken Symlinks */
         if (gstats.showBrokenSymlinks &&
-            !_brokenSymlinks.empty) {
+            !_brokenSymlinks.empty)
+        {
             viz.pp(asH!2("Broken Symlinks "),
                    asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
         }
@@ -4340,7 +4723,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                    )
             );
 
-        if (gstats.densenessCount) {
+        if (gstats.densenessCount)
+        {
             viz.pp(asH!2("Histograms"),
                    asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
                                   cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
@@ -4367,7 +4751,8 @@ Scanner!Term scanner(Term)(string[] args, ref Term term)
 void main(string[] args)
 {
     // Register the SIGINT signal with the signalHandler function call:
-    version(linux) {
+    version(linux)
+    {
         signal(SIGABRT, &signalHandler);
         signal(SIGTERM, &signalHandler);
         signal(SIGQUIT, &signalHandler);
