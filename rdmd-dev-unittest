@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+exec rdmd -g -gs -debug -unittest $* 2>&1 | ddemangle
