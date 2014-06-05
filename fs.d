@@ -209,7 +209,7 @@ version(cerealed) {
 string shortDurationString(in Duration dur) @safe pure
 {
     import std.conv: to;
-    immutable weeks = dur.getOnly!"weeks";
+    immutable weeks = dur.weeks();
     if (weeks) {
         if (weeks < 52) {
             return to!string(weeks) ~ " week" ~ (weeks >= 2 ? "s" : "");
@@ -221,10 +221,10 @@ string shortDurationString(in Duration dur) @safe pure
                 to!string(weeks_rest) ~ " week" ~ (weeks_rest >= 2 ? "s" : "");
         }
     }
-    immutable days = dur.getOnly!"days";       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
-    immutable hours = dur.getOnly!"hours";     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
-    immutable minutes = dur.getOnly!"minutes"; if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
-    immutable seconds = dur.getOnly!"seconds"; if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
+    immutable days = dur.days();       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
+    immutable hours = dur.hours();     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
+    immutable minutes = dur.minutes(); if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
+    immutable seconds = dur.seconds(); if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
     immutable frac = dur.fracSec;
     immutable msecs = frac.msecs; if (msecs) return to!string(msecs) ~ " millisecond" ~ (msecs >= 2 ? "s" : "");
     immutable usecs = frac.usecs; if (usecs) return to!string(usecs) ~ " microsecond" ~ (msecs >= 2 ? "s" : "");
