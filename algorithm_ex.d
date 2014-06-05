@@ -890,10 +890,26 @@ unittest
 void dotimes(uint n, lazy void expression) { while (n--) expression(); }
 alias loop = dotimes;
 
+void dotimes1(alias action, N)(N n) if (isCallable!action &&
+                                        isIntegral!N &&
+                                        Arity!action <= 1)
+{
+    enum A = Arity!action;
+    static if (A == 1 &&
+               isIntegral!(ParameterTypeTuple!action[0]))
+        foreach (i; 0 .. n)
+            action(i);
+    else
+        foreach (i; 0 .. n)
+            action();
+}
+
 /** Execute Expression $(D exp) $(I inline) the same way $(D n) times. */
 void static_dotimes(uint n)(lazy void expression) { // TOREVIEW: Should we use delegate instead?
     foreach (i; siota(0, n)) expression();
 }
+
+// ==============================================================================================
 
 private string genNaryFun(string fun, V...)() @safe pure
 {

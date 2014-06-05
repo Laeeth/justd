@@ -140,6 +140,9 @@ unittest {
 
 enum arityMin0(alias fun) = __traits(compiles, fun());
 
+/** Get Number of Arguments to fun. */
+enum Arity(alias fun) = ParameterTypeTuple!fun.length;
+
 /** Check if Type $(D A) is an Instance of Template $(D B).
     See also: http://forum.dlang.org/thread/mailman.2901.1316118301.14074.digitalmars-d-learn@puremagic.com#post-zzdpfhsgfdgpszdbgbbt:40forum.dlang.org
     Deprecated by: http://dlang.org/phobos/std_traits.html#isInstanceOf
