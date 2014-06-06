@@ -537,7 +537,7 @@ class FKind
 
     string[] keywords; // Keywords
     string[] builtins; // Builtin Functions
-    string[] operators; // Language Operators
+    Op[] operators; // Language Operators
 
     /* TODO: Move this to CompLang class */
     Delim[] strings; // String syntax.
@@ -2177,16 +2177,15 @@ enum OpAssoc { none,
                lr, // Left-to-Right
                rl, // Right-to-Left
 }
-
 /** Operator Arity */
 enum OpArity
 {
     unknown,
-    unary, // 1
+    unaryPostfix, // 1
+    unaryPrefix, // 1
     binary, // 2
     ternary, // 3
 }
-
 /** Language Operator */
 struct Op
 {
@@ -2194,16 +2193,16 @@ struct Op
          OpArity arity = OpArity.unknown,
          OpAssoc assoc = OpAssoc.none,
          byte prec = -1,
-         string doc = [])
+         string desc = [])
     {
         this.op = op;
         this.arity = arity;
         this.assoc = assoc;
         this.prec = prec;
-        this.doc = doc;
+        this.desc = desc;
     }
-    string op; // Operator
-    string doc; // Documentation
+    string op; // Operator. TODO: Optimize this storage using a value type?
+    string desc; // Description
     OpAssoc assoc; // Associativity
     ubyte prec; // Precedence
     OpArity arity; // Arity
@@ -2353,24 +2352,55 @@ class Scanner(Term)
 
         /* See also: https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B */
         auto operatorsCBasic = [
-            "+", "-", "*", "/", "%" // Arithmetic (binary)
-            "++", "--", // Postfix and Prefix (unary), precedence=2, associativity=Left-to-right
+            Op("+", OpArity.binary),
+            Op("-", OpArity.binary),
+            Op("*", OpArity.binary),
+            Op("/", OpArity.binary),
+            Op("%", OpArity.binary), // Arithmetic
+
+            Op("++", OpArity.unaryPrefix),
+            Op("--", OpArity.unaryPrefix), // precedence=2, associativity=Left-to-right
+
+            Op("++", OpArity.unaryPostfix),
+            Op("--", OpArity.unaryPostfix), // precedence=2, associativity=Left-to-right
 
             // Assignment Arithmetic (binary)
-            "=", "+=", "-=", "*=", "/=", "%="
-            "&=", "|=", "^=",
-            "<<=", ">>=",
+            Op("=", OpArity.binary),
+            Op("+=", OpArity.binary),
+            Op("-=", OpArity.binary),
+            Op("*=", OpArity.binary),
+            Op("/=", OpArity.binary),
+            Op("%=", OpArity.binary),
+            Op("&=", OpArity.binary),
+            Op("|=", OpArity.binary),
+            Op("^=", OpArity.binary),
+            Op("<<=", OpArity.binary),
+            Op(">>=", OpArity.binary),
 
-            "==", ">", "<", "!=", ">=", "<=", // Relational (binary)
-            "&&", "||",                       // Logical (binary)
-            "!",                              // Logical (unary)
-            "&", "|", "^", "<<", ">>",        // Bitwise (binary)
-            "~",                              // Bitwise (unary)
-            ",",                              // Other (binary)
-            "sizeof",                         // Other (unary)
+            Op("==", OpArity.binary),
+            Op(">", OpArity.binary),
+            Op("<", OpArity.binary),
+            Op("!=", OpArity.binary),
+            Op(">=", OpArity.binary),
+            Op("<=", OpArity.binary), // Relational
 
-            "->", // Element selection through pointer (binary), precedence=2, associativity=Left-to-right
-            ".", // Element selection by reference (binary), precedence=2, associativity=Left-to-right
+            Op("&&", OpArity.binary),
+            Op("||", OpArity.binary), // Logical
+
+            Op("!", OpArity.unaryPrefix), // Logical
+
+            Op("&", OpArity.binary),
+            Op("|", OpArity.binary),
+            Op("^", OpArity.binary),
+            Op("<<", OpArity.binary),
+            Op(">>", OpArity.binary), // Bitwise (binary)
+
+            Op("~", OpArity.unaryPrefix),      // Bitwise
+            Op(",", OpArity.binary),           // Other
+            Op("sizeof", OpArity.unaryPrefix), // Other
+
+            Op("->", OpArity.binary), // Element selection through pointer (binary, OpArity.binary), precedence=2, associativity=Left-to-right
+            Op(".", OpArity.binary), // Element selection by reference (binary), precedence=2, associativity=Left-to-right
 
             ];
 
