@@ -355,6 +355,8 @@ enum DuplicatesContext
 /** File Operation Type Code. */
 enum FileOp
 {
+    none,
+
     checkSyntax,
     lint = checkSyntax,
 
@@ -375,7 +377,7 @@ enum DirOp
 
 /** Shell Command.
  */
-alias ShCmd = string;
+alias ShCmd = string; // Just simply a string for now.
 
 /** Pair of Delimiters.
     Used to desribe for example comment and string delimiter syntax.
@@ -2172,12 +2174,13 @@ enum KeyStrictness
     standard = eitherExactOrAcronym,
 }
 
-/** Operator Associativity */
+/** Language Operator Associativity. */
 enum OpAssoc { none,
                lr, // Left-to-Right
                rl, // Right-to-Left
 }
-/** Operator Arity */
+
+/** Language Operator Arity. */
 enum OpArity
 {
     unknown,
@@ -2186,7 +2189,8 @@ enum OpArity
     binary, // 2-arguments
     ternary, // 3-arguments
 }
-/** Language Operator */
+
+/** Language Operator. */
 struct Op
 {
     this(string op,
@@ -2200,6 +2204,12 @@ struct Op
         this.assoc = assoc;
         this.prec = prec;
         this.desc = desc;
+    }
+    /** Make $(D this) an alias of $(D opOrig). */
+    Op aliasOf(string opOrig)
+    {
+        // TODO: set relation in map from op to opOrig
+        return this;
     }
     string op; // Operator. TODO: Optimize this storage using a value type?
     string desc; // Description
@@ -2406,19 +2416,19 @@ class Scanner(Term)
 
         /* See also: https://en.wikipedia.org/wiki/Iso646.h */
         auto operatorsC_ISO646 = [
-            Op("and", OpArity.binary),        // TODO: setAlias &&
-            Op("or", OpArity.binary),         // TODO: setAlias ||
-            Op("and_eq", OpArity.binary),     // TODO: setAlias &=
+            Op("and", OpArity.binary).aliasOf("&&"),
+            Op("or", OpArity.binary).aliasOf("||"),
+            Op("and_eq", OpArity.binary).aliasOf("&="),
 
-            Op("bitand", OpArity.binary),     // TODO: setAlias &
-            Op("bitor", OpArity.binary),      // TODO: setAlias |
+            Op("bitand", OpArity.binary).aliasOf("&"),
+            Op("bitor", OpArity.binary).aliasOf("|"),
 
-            Op("compl", OpArity.unaryPrefix), // TODO: setAlias ~
-            Op("not", OpArity.unaryPrefix),   // TODO: setAlias !
-            Op("not_eq", OpArity.binary),     // TODO: setAlias !=
-            Op("or_eq", OpArity.binary),      // TODO: setAlias |=
-            Op("xor", OpArity.binary),        // TODO: setAlias ^
-            Op("xor_eq", OpArity.binary),     // TODO: setAlias ^=
+            Op("compl", OpArity.unaryPrefix).aliasOf("~"),
+            Op("not", OpArity.unaryPrefix).aliasOf("!"),
+            Op("not_eq", OpArity.binary).aliasOf("!="),
+            Op("or_eq", OpArity.binary).aliasOf("|="),
+            Op("xor", OpArity.binary).aliasOf("^"),
+            Op("xor_eq", OpArity.binary).aliasOf("^="),
             ];
 
         auto operatorsC = operatorsCBasic ~ operatorsC_ISO646;
@@ -3486,6 +3496,8 @@ class Scanner(Term)
 
         bool _useNGrams = false;
 
+        FileOp _fileOp = FileOp.none;
+
         Dir[] _topDirs;
         Dir _rootDir;
 
@@ -3570,10 +3582,16 @@ class Scanner(Term)
                                     "cache-file|F", "\tFile System Tree Cache File" ~ defaultDoc(_cacheFile), &_cacheFile,
                                     "recache", "\tSkip initial load of cache from disk" ~ defaultDoc(_recache), &_recache,
 
+                                    "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FileOp, &_fileOp,
+
                                     "use-ngrams", "\tUse NGrams to cache statistics and thereby speed up search" ~ defaultDoc(_useNGrams), &_useNGrams,
 
                                     "html|H", "\tFormat output as HTML" ~ defaultDoc(useHTML), &useHTML,
-                                    "browse|B", "\tFormat output as HTML to a temporary file" ~ defaultDoc(_cacheFile) ~ " and open it with default Web browser" ~ defaultDoc(browseOutput), &browseOutput,
+                                    "browse|B", ("\tFormat output as HTML to a temporary file" ~
+                                                 defaultDoc(_cacheFile) ~
+                                                 " and open it with default Web browser" ~
+                                                 defaultDoc(browseOutput)), &browseOutput,
+
                                     "author", "\tPrint name of\n"~"\tthe author",
                                     delegate() { writeln("Per Nordlöw"); }
             );
