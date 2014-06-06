@@ -2181,10 +2181,10 @@ enum OpAssoc { none,
 enum OpArity
 {
     unknown,
-    unaryPostfix, // 1
-    unaryPrefix, // 1
-    binary, // 2
-    ternary, // 3
+    unaryPostfix, // 1-arguments
+    unaryPrefix, // 1-arguments
+    binary, // 2-arguments
+    ternary, // 3-arguments
 }
 /** Language Operator */
 struct Op
@@ -2406,17 +2406,19 @@ class Scanner(Term)
 
         /* See also: https://en.wikipedia.org/wiki/Iso646.h */
         auto operatorsC_ISO646 = [
-            "and",    // Same as &&
-            "and_eq", // Same as &=
-            "bitand", // Same as &
-            "bitor",  // Same as |
-            "compl",  // Same as ~
-            "not",    // Same as !
-            "not_eq", // Same as !=
-            "or",     // Same as ||
-            "or_eq",  // Same as |=
-            "xor",    // Same as ^
-            "xor_eq", // Same as ^=
+            Op("and", OpArity.binary),        // TODO: setAlias &&
+            Op("or", OpArity.binary),         // TODO: setAlias ||
+            Op("and_eq", OpArity.binary),     // TODO: setAlias &=
+
+            Op("bitand", OpArity.binary),     // TODO: setAlias &
+            Op("bitor", OpArity.binary),      // TODO: setAlias |
+
+            Op("compl", OpArity.unaryPrefix), // TODO: setAlias ~
+            Op("not", OpArity.unaryPrefix),   // TODO: setAlias !
+            Op("not_eq", OpArity.binary),     // TODO: setAlias !=
+            Op("or_eq", OpArity.binary),      // TODO: setAlias |=
+            Op("xor", OpArity.binary),        // TODO: setAlias ^
+            Op("xor_eq", OpArity.binary),     // TODO: setAlias ^=
             ];
 
         auto operatorsC = operatorsCBasic ~ operatorsC_ISO646;
@@ -2448,23 +2450,23 @@ class Scanner(Term)
                                         "and_eq", "bitor", "not", "or", "xor", ];
 
         auto operatorsCxx = operatorsC ~ [
-            "->*",
-            ".*",
-            "::",               // precedence=1, associativity=one
-            "typeid",
-            "alignofl",
-            "new",
-            "delete",
-            "delete[]",
-            "noexcept",
+            Op("->*", OpArity.binary),
+            Op(".*", OpArity.binary),
+            Op("::", OpArity.binary),             // precedence=1, associativity=one
+            Op("typeid", OpArity.unaryPrefix),
+            Op("alignof", OpArity.unaryPrefix),
+            Op("new", OpArity.unaryPrefix),
+            Op("delete", OpArity.unaryPrefix),
+            Op("delete[]", OpArity.unaryPrefix),
+            Op("noexcept", OpArity.unaryPrefix),
 
-            "dynamic_cast",     // precedence=2, associativity=Left-to-right
-            "reinterpret_cast", // precedence=2, associativity=Left-to-right
-            "static_cast",      // precedence=2, associativity=Left-to-right
-            "const_cast"        // precedence=2, associativity=Left-to-right
+            Op("dynamic_cast", OpArity.unaryPrefix),   // precedence=2, associativity=Left-to-right
+            Op("reinterpret_cast", OpArity.unaryPrefix), // precedence=2, associativity=Left-to-right
+            Op("static_cast", OpArity.unaryPrefix),        // precedence=2, associativity=Left-to-right
+            Op("const_cast", OpArity.unaryPrefix), // precedence=2, associativity=Left-to-right
 
-            "throw",
-            "catch"
+            Op("throw", OpArity.unaryPrefix),
+            Op("catch", OpArity.unaryPrefix)
             ];
 
         keywordsCxx = keywordsCxx.uniq.array;
@@ -2523,7 +2525,7 @@ class Scanner(Term)
         auto keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
                               "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while",
                               "mutating", "extension"];
-        auto operatorsOverflowSwift = operatorsC ~ ["&+", "&-", "&*", "&/", "&%"];
+        auto operatorsOverflowSwift = operatorsC ~ [Op("&+"), Op("&-"), Op("&*"), Op("&/"), Op("&%")];
         auto builtinsSwift = ["print", "println"];
         auto kindSwift = new FKind("Swift", [], ["swift"], [], 0, [],
                                    keywordsSwift,
