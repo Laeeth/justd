@@ -1,4 +1,4 @@
-#!/usr/bin/env rdmd-release
+#!/usr/bin/env rdmd-dev
 
 /**
    File Scanning Engine.
@@ -90,6 +90,7 @@
    TODO: Create array of (OFFSET, LENGTH) and this in FKind Pattern factory
    function.  Then for source file extra slice at (OFFSET, LENGTH) and use as
    input into hash-table from magic (if its a Lit-pattern to)
+
    TODO: Verify that "f.tar.z" gets tuple extensions tuple("tar", "z")
    TODO: Verify that "libc.so.1.2.3" gets tuple extensions tuple("so", "1", "2", "3") and "so" extensions should the be tried
    TODO: Cache Symbols larger than three characters in a global hash from symbol to path
@@ -99,9 +100,6 @@
    TODO: Splitting into keys should not split arguments such as "a b"
 
    TODO: Use binFKindsByMagic and binFKindsMagicLengths
-
-   TODO: Sort Access and Modification times of subs in a Dir and msgpack them
-   differentially as two arrays. Use http://rosettacode.org/wiki/Forward_difference#D
 
    TODO: Perhaps use http://www.chartjs.org/ to visualize stuff
 
@@ -240,15 +238,6 @@ string shortDurationString(in Duration dur) @safe pure
     immutable nsecs = frac.nsecs; return to!string(nsecs) ~ " nanosecond" ~ (msecs >= 2 ? "s" : "");
 }
 
-/** Returns: Default Documentation String for value $(D a) of for Type $(D T). */
-string defaultDoc(T)(in T a) @safe pure
-{
-    import std.conv: to;
-    return (" (type:" ~ T.stringof ~
-            ", default:" ~ to!string(a) ~
-            ").") ;
-}
-
 /** Returns: Documentation String for Enumeration Type $(D EnumType). */
 string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
 {
@@ -265,6 +254,15 @@ string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
         doc ~= name;
     }
     return doc;
+}
+
+/** Returns: Default Documentation String for value $(D a) of for Type $(D T). */
+string defaultDoc(T)(in T a) @safe pure
+{
+    import std.conv: to;
+    return (" (type:" ~ T.stringof ~
+            ", default:" ~ to!string(a) ~
+            ").") ;
 }
 
 /** File Content Type Code. */
@@ -2176,8 +2174,8 @@ enum KeyStrictness
 
 /** Language Operator Associativity. */
 enum OpAssoc { none,
-               lr, // Left-to-Right
-               rl, // Right-to-Left
+               LR, // Left-to-Right
+               RL, // Right-to-Left
 }
 
 /** Language Operator Arity. */
@@ -2362,73 +2360,78 @@ class Scanner(Term)
 
         /* See also: https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B */
         auto operatorsCBasic = [
-            Op("+", OpArity.binary),
-            Op("-", OpArity.binary),
-            Op("*", OpArity.binary),
-            Op("/", OpArity.binary),
-            Op("%", OpArity.binary), // Arithmetic
+            // Arithmetic
+            Op("+", OpArity.binary, OpAssoc.LR, 6, "Add"),
+            Op("-", OpArity.binary, OpAssoc.LR, 6, "Subtract"),
+            Op("*", OpArity.binary, OpAssoc.LR, 5, "Multiply"),
+            Op("/", OpArity.binary, OpAssoc.LR, 5, "Divide"),
+            Op("%", OpArity.binary, OpAssoc.LR, 5, "Remainder/Moduls"),
 
-            Op("++", OpArity.unaryPrefix),
-            Op("--", OpArity.unaryPrefix), // precedence=2, associativity=Left-to-right
+            Op("++", OpArity.unaryPostfix, OpAssoc.LR, 2, "Post-Increment"),
+            Op("--", OpArity.unaryPostfix, OpAssoc.LR, 2, "Post-Decrement"),
 
-            Op("++", OpArity.unaryPostfix),
-            Op("--", OpArity.unaryPostfix), // precedence=2, associativity=Left-to-right
+            Op("++", OpArity.unaryPrefix, OpAssoc.RL, 3, "Pre-Increment"),
+            Op("--", OpArity.unaryPrefix, OpAssoc.RL, 3, "Pre-Decrement"),
 
             // Assignment Arithmetic (binary)
-            Op("=", OpArity.binary),
-            Op("+=", OpArity.binary),
-            Op("-=", OpArity.binary),
-            Op("*=", OpArity.binary),
-            Op("/=", OpArity.binary),
-            Op("%=", OpArity.binary),
-            Op("&=", OpArity.binary),
-            Op("|=", OpArity.binary),
-            Op("^=", OpArity.binary),
-            Op("<<=", OpArity.binary),
-            Op(">>=", OpArity.binary),
+            Op("=", OpArity.binary, OpAssoc.RL, 16, "Assign"),
+            Op("+=", OpArity.binary, OpAssoc.RL, 16),
+            Op("-=", OpArity.binary, OpAssoc.RL, 16),
+            Op("*=", OpArity.binary, OpAssoc.RL, 16),
+            Op("/=", OpArity.binary, OpAssoc.RL, 16),
+            Op("%=", OpArity.binary, OpAssoc.RL, 16),
 
-            Op("==", OpArity.binary),
-            Op(">", OpArity.binary),
-            Op("<", OpArity.binary),
-            Op("!=", OpArity.binary),
-            Op(">=", OpArity.binary),
-            Op("<=", OpArity.binary), // Relational
+            Op("&=", OpArity.binary, OpAssoc.RL, 16),
+            Op("|=", OpArity.binary, OpAssoc.RL, 16),
 
-            Op("&&", OpArity.binary),
-            Op("||", OpArity.binary), // Logical
+            Op("^=", OpArity.binary, OpAssoc.RL, 16),
+            Op("<<=", OpArity.binary, OpAssoc.RL, 16),
+            Op(">>=", OpArity.binary, OpAssoc.RL, 16),
 
-            Op("!", OpArity.unaryPrefix), // Logical
+            Op("==", OpArity.binary, OpAssoc.LR, 9, "Equal to"),
+            Op("!=", OpArity.binary, OpAssoc.LR, 9, "Not equal to"),
 
-            Op("&", OpArity.binary),
-            Op("|", OpArity.binary),
-            Op("^", OpArity.binary),
-            Op("<<", OpArity.binary),
-            Op(">>", OpArity.binary), // Bitwise (binary)
+            Op("<", OpArity.binary, OpAssoc.LR, 8, "Less than"),
+            Op(">", OpArity.binary, OpAssoc.LR, 8, "Greater than"),
+            Op("<=", OpArity.binary, OpAssoc.LR, 8, "Less than or equal to"),
+            Op(">=", OpArity.binary, OpAssoc.LR, 8, "Greater than or equal to"),
 
-            Op("~", OpArity.unaryPrefix),      // Bitwise
-            Op(",", OpArity.binary),           // Other
-            Op("sizeof", OpArity.unaryPrefix), // Other
+            Op("&&", OpArity.binary, OpAssoc.LR, 13, "Logical AND"), // TODO: Convert to math in smallcaps AND
+            Op("||", OpArity.binary, OpAssoc.LR, 14, "Logical OR"), // TODO: Convert to math in smallcaps OR
 
-            Op("->", OpArity.binary), // Element selection through pointer (binary, OpArity.binary), precedence=2, associativity=Left-to-right
-            Op(".", OpArity.binary), // Element selection by reference (binary), precedence=2, associativity=Left-to-right
+            Op("!", OpArity.unaryPrefix, OpAssoc.LR, 3, "Logical NOT"), // TODO: Convert to math in smallcaps AND
+
+            Op("&", OpArity.binary, OpAssoc.LR, 10, "Bitwise AND"),
+            Op("^", OpArity.binary, OpAssoc.LR, 11, "Bitwise XOR (exclusive or)"),
+            Op("|", OpArity.binary, OpAssoc.LR, 12, "Bitwise OR"),
+
+            Op("<<", OpArity.binary, OpAssoc.LR, 7, "Bitwise left shift"),
+            Op(">>", OpArity.binary, OpAssoc.LR, 7, "Bitwise right shift"),
+
+            Op("~", OpArity.unaryPrefix, OpAssoc.LR, 3, "Bitwise NOT (One's Complement)"),
+            Op(",", OpArity.binary, OpAssoc.LR, 18, "Comma"),
+            Op("sizeof", OpArity.unaryPrefix, OpAssoc.LR, 3, "Size-of"),
+
+            Op("->", OpArity.binary, OpAssoc.LR, 2, "Element selection through pointer"),
+            Op(".", OpArity.binary, OpAssoc.LR, 2, "Element selection by reference"),
 
             ];
 
         /* See also: https://en.wikipedia.org/wiki/Iso646.h */
         auto operatorsC_ISO646 = [
-            Op("and", OpArity.binary).aliasOf("&&"),
-            Op("or", OpArity.binary).aliasOf("||"),
-            Op("and_eq", OpArity.binary).aliasOf("&="),
+            OpAlias("and", "&&"),
+            OpAlias("or", "||"),
+            OpAlias("and_eq", "&="),
 
-            Op("bitand", OpArity.binary).aliasOf("&"),
-            Op("bitor", OpArity.binary).aliasOf("|"),
+            OpAlias("bitand", "&"),
+            OpAlias("bitor", "|"),
 
-            Op("compl", OpArity.unaryPrefix).aliasOf("~"),
-            Op("not", OpArity.unaryPrefix).aliasOf("!"),
-            Op("not_eq", OpArity.binary).aliasOf("!="),
-            Op("or_eq", OpArity.binary).aliasOf("|="),
-            Op("xor", OpArity.binary).aliasOf("^"),
-            Op("xor_eq", OpArity.binary).aliasOf("^="),
+            OpAlias("compl", "~"),
+            OpAlias("not", "!"),
+            OpAlias("not_eq", "!="),
+            OpAlias("or_eq", "|="),
+            OpAlias("xor", "^"),
+            OpAliasx("xor_eq", "^="),
             ];
 
         auto operatorsC = operatorsCBasic ~ operatorsC_ISO646;
@@ -3566,9 +3569,9 @@ class Scanner(Term)
 
                                     "mmaps", "\tShow when files are memory mapped (mmaped)" ~ defaultDoc(gstats.showMMaps), &gstats.showMMaps,
 
-                                    "follow-symlinks|f", "\tFollow symbolic linkes" ~ defaultDoc(gstats.followSymlinks), &gstats.followSymlinks,
+                                    "follow-symlinks|f", "\tFollow symbolic links" ~ defaultDoc(gstats.followSymlinks), &gstats.followSymlinks,
                                     "broken-symlinks|l", "\tDetect & Show broken symbolic links (target is non-existing file) " ~ defaultDoc(gstats.showBrokenSymlinks), &gstats.showBrokenSymlinks,
-                                    "show-symlink-cycles|l", "\tDetect & Show symbolic links cycles " ~ defaultDoc(gstats.showSymlinkCycles), &gstats.showSymlinkCycles,
+                                    "show-symlink-cycles|l", "\tDetect & Show symbolic links cycles" ~ defaultDoc(gstats.showSymlinkCycles), &gstats.showSymlinkCycles,
 
                                     "add-tag", "\tAdd tag string(s) to matching files" ~ defaultDoc(addTags), &addTags,
                                     "remove-tag", "\tAdd tag string(s) to matching files" ~ defaultDoc(removeTags), &removeTags,
