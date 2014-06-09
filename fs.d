@@ -16,6 +16,10 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
+   TODO: Parse and Sort GCC/Clang Compiler Messages on WARN_TYPE FILE:LINE:COL:MSG[WARN_TYPE] and use Collapsable HTML Widgets:
+         http://api.jquerymobile.com/collapsible/
+         when presenting them
+
    TODO: Prevent rescans of duplicates
 
    TODO: Maybe make use of https://github.com/Abscissa/scriptlike
@@ -2456,7 +2460,7 @@ class Scanner(Term)
             Op("&&", OpArity.binary, OpAssoc.LR, 13, "Logical AND"), // TODO: Convert to math in smallcaps AND
             Op("||", OpArity.binary, OpAssoc.LR, 14, "Logical OR"), // TODO: Convert to math in smallcaps OR
 
-            Op("!", OpArity.unaryPrefix, OpAssoc.LR, 3, "Logical NOT"), // TODO: Convert to math in smallcaps AND
+            Op("!", OpArity.unaryPrefix, OpAssoc.LR, 3, "Logical NOT"), // TODO: Convert to math in smallcaps NOT
 
             Op("&", OpArity.binary, OpAssoc.LR, 10, "Bitwise AND"),
             Op("^", OpArity.binary, OpAssoc.LR, 11, "Bitwise XOR (exclusive or)"),
@@ -2644,60 +2648,66 @@ class Scanner(Term)
 
         auto opersD = [
             // Arithmetic
-            Op("+", OpArity.binary, OpAssoc.LR, 6, "Add"),
-            Op("-", OpArity.binary, OpAssoc.LR, 6, "Subtract"),
-            Op("*", OpArity.binary, OpAssoc.LR, 5, "Multiply"),
-            Op("/", OpArity.binary, OpAssoc.LR, 5, "Divide"),
-            Op("%", OpArity.binary, OpAssoc.LR, 5, "Remainder/Moduls"),
+            Op("+", OpArity.binary, OpAssoc.LR, 10*2, "Add"),
+            Op("-", OpArity.binary, OpAssoc.LR, 10*2, "Subtract"),
+            Op("~", OpArity.binary, OpAssoc.LR, 10*2, "Concatenate"),
 
-            Op("++", OpArity.unaryPostfix, OpAssoc.LR, 2, "Suffix increment"),
-            Op("--", OpArity.unaryPostfix, OpAssoc.LR, 2, "Suffix decrement"),
+            Op("*", OpArity.binary, OpAssoc.LR, 11*2, "Multiply"),
+            Op("/", OpArity.binary, OpAssoc.LR, 11*2, "Divide"),
+            Op("%", OpArity.binary, OpAssoc.LR, 11*2, "Remainder/Moduls"),
 
-            Op("++", OpArity.unaryPrefix, OpAssoc.RL, 3, "Prefix increment"),
-            Op("--", OpArity.unaryPrefix, OpAssoc.RL, 3, "Prefix decrement"),
+            Op("++", OpArity.unaryPostfix, OpAssoc.LR, cast(int)(14.5*2), "Suffix increment"),
+            Op("--", OpArity.unaryPostfix, OpAssoc.LR, cast(int)(14.5*2), "Suffix decrement"),
+
+            Op("^^", OpArity.binary, OpAssoc.RL, 13*2, "Power"),
+
+            Op("++", OpArity.unaryPrefix, OpAssoc.RL, 12*2, "Prefix increment"),
+            Op("--", OpArity.unaryPrefix, OpAssoc.RL, 12*2, "Prefix decrement"),
+            Op("&", OpArity.unaryPrefix, OpAssoc.RL, 12*2, "Address off"),
+            Op("*", OpArity.unaryPrefix, OpAssoc.RL, 12*2, "Pointer Dereference"),
+            Op("+", OpArity.unaryPrefix, OpAssoc.RL, 12*2, "Unary Plus"),
+            Op("-", OpArity.unaryPrefix, OpAssoc.RL, 12*2, "Unary Minus"),
+            Op("!", OpArity.unaryPrefix, OpAssoc.RL, 12*2, "Logical NOT"), // TODO: Convert to math in smallcaps NOT
+            Op("~", OpArity.unaryPrefix, OpAssoc.LR, 12*2, "Bitwise NOT (One's Complement)"),
+
+            // Bit shift
+            Op("<<", OpArity.binary, OpAssoc.LR, 9*2, "Bitwise left shift"),
+            Op(">>", OpArity.binary, OpAssoc.LR, 9*2, "Bitwise right shift"),
+
+            // Comparison
+            Op("==", OpArity.binary, OpAssoc.LR, 6*2, "Equal to"),
+            Op("!=", OpArity.binary, OpAssoc.LR, 6*2, "Not equal to"),
+            Op("<", OpArity.binary, OpAssoc.LR, 6*2, "Less than"),
+            Op(">", OpArity.binary, OpAssoc.LR, 6*2, "Greater than"),
+            Op("<=", OpArity.binary, OpAssoc.LR, 6*2, "Less than or equal to"),
+            Op(">=", OpArity.binary, OpAssoc.LR, 6*2, "Greater than or equal to"),
+            Op("in", OpArity.binary, OpAssoc.LR, 6*2, "In"),
+            Op("!in", OpArity.binary, OpAssoc.LR, 6*2, "Not In"),
+            Op("is", OpArity.binary, OpAssoc.LR, 6*2, "Is"),
+            Op("!is", OpArity.binary, OpAssoc.LR, 6*2, "Not Is"),
+
+            Op("&", OpArity.binary, OpAssoc.LR, 8*2, "Bitwise AND"),
+            Op("^", OpArity.binary, OpAssoc.LR, 7*2, "Bitwise XOR (exclusive or)"),
+            Op("|", OpArity.binary, OpAssoc.LR, 6*2, "Bitwise OR"),
+
+            Op("&&", OpArity.binary, OpAssoc.LR, 5*2, "Logical AND"), // TODO: Convert to math in smallcaps AND
+            Op("||", OpArity.binary, OpAssoc.LR, 4*2, "Logical OR"), // TODO: Convert to math in smallcaps OR
 
             // Assignment Arithmetic (binary)
-            Op("=", OpArity.binary, OpAssoc.RL, 16, "Assign"),
-            Op("+=", OpArity.binary, OpAssoc.RL, 16, "Assignment by sum"),
-            Op("-=", OpArity.binary, OpAssoc.RL, 16, "Assignment by difference"),
-            Op("*=", OpArity.binary, OpAssoc.RL, 16, "Assignment by product"),
-            Op("/=", OpArity.binary, OpAssoc.RL, 16, "Assignment by quotient"),
-            Op("%=", OpArity.binary, OpAssoc.RL, 16, "Assignment by remainder"),
+            Op("=", OpArity.binary, OpAssoc.RL, 2*2, "Assign"),
+            Op("+=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by sum"),
+            Op("-=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by difference"),
+            Op("*=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by product"),
+            Op("/=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by quotient"),
+            Op("%=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by remainder"),
+            Op("&=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by bitwise AND"),
+            Op("|=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by bitwise OR"),
+            Op("^=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by bitwise XOR"),
+            Op("<<=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by bitwise left shift"),
+            Op(">>=", OpArity.binary, OpAssoc.RL, 2*2, "Assignment by bitwise right shift"),
 
-            Op("&=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise AND"),
-            Op("|=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise OR"),
-
-            Op("^=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise XOR"),
-            Op("<<=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise left shift"),
-            Op(">>=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise right shift"),
-
-            Op("==", OpArity.binary, OpAssoc.LR, 9, "Equal to"),
-            Op("!=", OpArity.binary, OpAssoc.LR, 9, "Not equal to"),
-
-            Op("<", OpArity.binary, OpAssoc.LR, 8, "Less than"),
-            Op(">", OpArity.binary, OpAssoc.LR, 8, "Greater than"),
-            Op("<=", OpArity.binary, OpAssoc.LR, 8, "Less than or equal to"),
-            Op(">=", OpArity.binary, OpAssoc.LR, 8, "Greater than or equal to"),
-
-            Op("&&", OpArity.binary, OpAssoc.LR, 13, "Logical AND"), // TODO: Convert to math in smallcaps AND
-            Op("||", OpArity.binary, OpAssoc.LR, 14, "Logical OR"), // TODO: Convert to math in smallcaps OR
-
-            Op("!", OpArity.unaryPrefix, OpAssoc.LR, 3, "Logical NOT"), // TODO: Convert to math in smallcaps AND
-
-            Op("&", OpArity.binary, OpAssoc.LR, 10, "Bitwise AND"),
-            Op("^", OpArity.binary, OpAssoc.LR, 11, "Bitwise XOR (exclusive or)"),
-            Op("|", OpArity.binary, OpAssoc.LR, 12, "Bitwise OR"),
-
-            Op("<<", OpArity.binary, OpAssoc.LR, 7, "Bitwise left shift"),
-            Op(">>", OpArity.binary, OpAssoc.LR, 7, "Bitwise right shift"),
-
-            Op("~", OpArity.unaryPrefix, OpAssoc.LR, 3, "Bitwise NOT (One's Complement)"),
-            Op(",", OpArity.binary, OpAssoc.LR, 18, "Comma"),
-            Op("sizeof", OpArity.unaryPrefix, OpAssoc.LR, 3, "Size-of"),
-
-            Op("->", OpArity.binary, OpAssoc.LR, 2, "Element selection through pointer"),
-            Op(".", OpArity.binary, OpAssoc.LR, 2, "Element selection by reference"),
-
+            Op(",", OpArity.binary, OpAssoc.LR, 1*2, "Comma"),
+            Op("..", OpArity.binary, OpAssoc.LR, cast(int)(0*2), "Range separator"),
             ];
 
         const interpretersForD = ["rdmd",
