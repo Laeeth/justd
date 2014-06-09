@@ -140,7 +140,7 @@ import sregex;
 import english;
 import bitset;
 import dbg;
-/* import backtrace.backtrace; */
+import backtrace.backtrace;
 import tempfs;
 import rational: Rational;
 import ngram;
@@ -3636,7 +3636,7 @@ class Scanner(Term)
             outFile = ioFile("/tmp/fs-" ~ randomUUID().toString() ~
                              "." ~ ext,
                              "w");
-            popen("xdg-open " ~ outFile.name);
+            popen("firefox -new-tab " ~ outFile.name);
         }
         else
         {
@@ -4938,7 +4938,7 @@ void main(string[] args)
     }
 
     import std.stdio: stderr;
-    /* backtrace.backtrace.install(stderr); */
+    backtrace.backtrace.install(stderr);
 
     auto term = Terminal(ConsoleOutputType.linear);
 
