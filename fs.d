@@ -1735,8 +1735,9 @@ class Dir : File
                 }
                 updateStats(enforceNotNull(sub), dent, isRegFile);
             }
-            addTreeStatsFromSub(enforceNotNull(sub), dent);
-            _subs[basename] = sub;
+            auto nnsub = enforceNotNull(sub);
+            addTreeStatsFromSub(nnsub, dent);
+            _subs[basename] = nnsub;
         }
         _subs.rehash;           // optimize hash for faster lookups
 
@@ -1748,9 +1749,9 @@ class Dir : File
     alias sync = reload;
 
     /* TODO: Can we get make this const to the outside world perhaps using inout? */
-    ref File[string] subs() @property { load(); return _subs; }
+    ref NotNull!File[string] subs() @property { load(); return _subs; }
 
-    File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property
+    NotNull!File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property
     {
         load();
         auto ssubs = _subs.values;
@@ -1932,7 +1933,7 @@ class Dir : File
                     if (noPreviousSubs ||
                         !(sub.name in _subs))
                     {
-                        _subs[sub.name] = sub;
+                        _subs[sub.name] = enforceNotNull(sub);
                     }
                     /* dln("Unpacked Dir sub ", sub.path, " of type ", subClassName); */
                 } catch (FileException) { // this may be a too generic exception
@@ -1955,7 +1956,7 @@ class Dir : File
         _obseleteDir = false;
     }
 
-    private File[string] _subs; // Directory contents
+    private NotNull!File[string] _subs; // Directory contents
     DirKind kind;               // Kind of this directory
     uint64_t hitCount = 0;
     private int _depth = -1;            // Memoized Depth
@@ -1985,7 +1986,7 @@ Bytes64 treeSizeMemoized(NotNull!File file, Bytes64[File] cache) @trusted /* not
         {
             foreach (sub; dir.subs.byValue)
             {
-                sum += treeSizeMemoized(assumeNotNull(sub), cache);
+                sum += treeSizeMemoized(sub, cache);
             }
             cache[file] = sum;
         }
