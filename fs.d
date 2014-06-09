@@ -3678,7 +3678,7 @@ class Scanner(Term)
 
         if (useHTML)
         {
-            viz.pp("<!DOCTYPE html>
+            viz.ppRaw("<!DOCTYPE html>
 <html>
 <head>
 <meta charset=\"UTF-8\"/>
@@ -3879,8 +3879,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
             if (useHTML)
             {
-                viz.ppln("</body>");
-                viz.ppln("</html>");
+                viz.ppRaw("</body>\n");
+                viz.ppRaw("</html>");
             }
         }
 

@@ -9,12 +9,11 @@
 module pprint;
 
 import std.range: isInputRange;
-import std.traits: isInstanceOf;
+import std.traits: isInstanceOf, isSomeChar;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
 import std.range: map;
-import std.array: appender, Appender;
 
 import arsd.terminal;
 
@@ -140,20 +139,41 @@ void initTables()
     convLatin1ToXML[0xFF] = "&yuml"; // yuml	ÿ	U+00FF (255)	HTML 2.0	HTMLlat1	ISOlat1	Latin small letter y with diaeresis
 }
 
-version(none)
+string encodeHTML(Char)(Char c) @safe pure if (isSomeChar!Char)
 {
-    string toHTML(in string src,
-                  ref in string[256] lut) @safe pure
-    {
-        return (src.map!(a => lut[a].length ? lut[a] : "" ~ cast(ubyte)a).reduce!((a, b) => a ~ b));
-    }
+    if      (c == '&')  return "&amp;"; // ampersand
+    else if (c == '<')  return "&lt;"; // less than
+    else if (c == '>')  return "&gt;"; // greater than
+    else if (c == '\"') return "&quot;"; // double quote
+//		else if (c == '\'')
+//			return ("&#39;"); // if you are in an attribute, it might be important to encode for the same reason as double quotes
+    // FIXME: should I encode apostrophes too? as &#39;... I could also do space but if your html is so bad that it doesn't
+    // quote attributes at all, maybe you deserve the xss. Encoding spaces will make everything really ugly so meh
+    // idk about apostrophes though. Might be worth it, might not.
+    else if (0 < c && c < 128)
+        return to!string(cast(char)c);
+    else
+        return "&#" ~ to!string(cast(int)c) ~ ";";
 }
 
-/* Copied from arsd.dom */
-string htmlEntitiesEncode(string data,
-                          Appender!string os = appender!string())
+static if (__VERSION__ >= 2066L)
 {
-    static if (__VERSION__ < 2066L)
+    /** Copied from arsd.dom */
+    auto encodeHTML(string data) @safe pure
+    {
+        import std.utf: byDchar;
+        import std.algorithm: joiner;
+        return data.byDchar.map!encodeHTML.joiner("");
+        //pragma(msg, typeof(ret));
+    }
+}
+else
+{
+    import std.array: appender, Appender;
+
+    /** Copied from arsd.dom */
+    string encodeHTML(string data,
+                      Appender!string os = appender!string()) pure
     {
         bool skip = true;
         // NOTE: this extra loop may be deprecated by byCodeunit, byChar, byWchar
@@ -172,45 +192,30 @@ string htmlEntitiesEncode(string data,
                 break;
             }
         }
+
         if (skip)
         {
             os.put(data);
             return data;
         }
+
+        auto start = os.data.length;
+
+        os.reserve(data.length + 64); // grab some extra space for the encoded entities
+
+        foreach (dchar ch; data)
+        {
+            os.put(ch.encodeHTML);
+        }
+
+        return os.data[start .. $];
     }
+}
 
-    auto start = os.data.length;
-
-    os.reserve(data.length + 64); // grab some extra space for the encoded entities
-
-    static if (__VERSION__ >= 2066L) // See also: http://forum.dlang.org/thread/csoftsmrorvqyzirwirs@forum.dlang.org#post-rmjpewvxidmfpboeidsc:40forum.dlang.org
-    {
-        import std.utf: byDchar;
-        auto dFixed = data.byDchar;
-    }
-    else
-    {
-        auto dFixed = d;
-    }
-
-    foreach (dchar d; dFixed)
-    {
-        if      (d == '&')  os.put("&amp;");
-        else if (d == '<')  os.put("&lt;");
-        else if (d == '>')  os.put("&gt;");
-        else if (d == '\"') os.put("&quot;");
-//		else if (d == '\'')
-//			os.put("&#39;"); // if you are in an attribute, it might be important to encode for the same reason as double quotes
-        // FIXME: should I encode apostrophes too? as &#39;... I could also do space but if your html is so bad that it doesn't
-        // quote attributes at all, maybe you deserve the xss. Encoding spaces will make everything really ugly so meh
-        // idk about apostrophes though. Might be worth it, might not.
-        else if (d < 128 && d > 0)
-            os.put(d);
-        else
-            os.put("&#" ~ to!string(cast(int) d) ~ ";");
-    }
-
-    return os.data[start .. $];
+unittest
+{
+    import dbg;
+    dln(`<!-- --><script>/* */</script>`.encodeHTML);
 }
 
 /* TODO: These deps needs to be removed somehow */
@@ -374,27 +379,40 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     const string lbr(bool useHTML) { return (useHTML ? "<br>" : ""); } // line break
 }
 
+/** Put $(D arg) to $(D viz) without any conversion nor coloring. */
 void ppRaw(Arg)(Viz viz,
                 Arg arg) @trusted
 {
     if (viz.outFile == stdout)
         (*viz.term).write(arg);
     else
-        if (viz.form == VizForm.html)
-            viz.outFile.write(arg.htmlEntitiesEncode);
-        else
-            viz.outFile.write(arg);
+        viz.outFile.write(arg);
 }
 
+/** Put $(D arg) to $(D viz) possibly with conversion. */
+void ppPut(Arg)(Viz viz,
+                Arg arg) @trusted
+{
+    if (viz.outFile == stdout)
+    {
+        (*viz.term).write(arg);
+    }
+    else
+    {
+        if (viz.form == VizForm.html)
+            viz.outFile.write(arg.encodeHTML);
+        else
+            viz.outFile.write(arg);
+    }
+}
+
+/** Put $(D arg) to $(D viz) possibly with conversion. */
 void ppPut(Arg)(Viz viz,
                 Face!Color face,
                 Arg arg) @trusted
 {
     (*viz.term).setFace(face, viz.colorFlag);
-    if (viz.outFile == stdout)
-        (*viz.term).write(arg);
-    else
-        viz.outFile.write(arg);
+    viz.ppPut(arg);
 }
 
 /** Fazed (Rich) Text. */
@@ -444,14 +462,14 @@ auto getFace(Arg)(in Arg arg) @safe pure nothrow
 }
 
 /** Pretty-Print Argument $(D arg) to Terminal $(D term). */
-void ppArg(Arg)(Viz viz, int depth,
-                Arg arg) @trusted
+void pp1(Arg)(Viz viz, int depth,
+              Arg arg) @trusted
 {
     static if (isInputRange!Arg)
     {
         foreach (subArg; arg)
         {
-            viz.ppArg(depth + 1, subArg);
+            viz.pp1(depth + 1, subArg);
         }
     }
     else static if (isInstanceOf!(AsWords, Arg))
@@ -459,8 +477,8 @@ void ppArg(Arg)(Viz viz, int depth,
         foreach (ix, subArg; arg.args)
         {
             static if (ix >= 1)
-                viz.ppArg(depth + 1, " "); // separator
-            viz.ppArg(depth + 1, subArg);
+                viz.pp1(depth + 1, " "); // separator
+            viz.pp1(depth + 1, subArg);
         }
     }
     else static if (isInstanceOf!(AsCSL, Arg))
@@ -468,12 +486,12 @@ void ppArg(Arg)(Viz viz, int depth,
         foreach (ix, subArg; arg.args)
         {
             static if (ix >= 1)
-                viz.ppArg(depth + 1, ","); // separator
+                viz.pp1(depth + 1, ","); // separator
             static if (isInputRange!(typeof(subArg)))
             {
                 foreach (subsubArg; subArg)
                 {
-                    viz.ppArgs(subsubArg, ",");
+                    viz.ppN(subsubArg, ",");
                 }
             }
         }
@@ -481,39 +499,40 @@ void ppArg(Arg)(Viz viz, int depth,
     else static if (isInstanceOf!(InBold, Arg))
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<b>"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</b>"); }
     }
     else static if (isInstanceOf!(InIt, Arg))
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<i>"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</i>"); }
     }
     else static if (isInstanceOf!(AsCode, Arg))
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<code>"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</code>"); }
     }
     else static if (isInstanceOf!(AsEm, Arg))
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<em>"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</em>"); }
     }
     else static if (isInstanceOf!(AsStrong, Arg))
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<strong>"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</strong>"); }
     }
     else static if (isInstanceOf!(Header, Arg))
     {
         if (viz.form == VizForm.html) {
-            viz.ppArgs("<h" ~ to!string(arg.level) ~ ">",
-                       arg.args,
-                       "</h" ~ to!string(arg.level) ~ ">\n");
+            const level_ = to!string(arg.level);
+            viz.ppRaw("<h" ~ level_ ~ ">");
+            viz.ppN(arg.args);
+            viz.ppRaw("</h" ~ level_ ~ ">\n");
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
@@ -524,14 +543,14 @@ void ppArg(Arg)(Viz viz, int depth,
                 tag ~= "=";
             }
             // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            viz.ppArgs("\n", tag, " ", arg.args, " ", tag, "\n");
+            viz.ppN("\n", tag, " ", arg.args, " ", tag, "\n");
         }
     }
     else static if (isInstanceOf!(AsUList, Arg))
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<ul>\n"); }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\begin{enumerate}\n"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</ul>\n"); }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\end{enumerate}\n"); }
     }
@@ -539,7 +558,7 @@ void ppArg(Arg)(Viz viz, int depth,
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<ol>\n"); }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\begin{itemize}\n"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</ol>\n"); }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\end{itemize}\n"); }
     }
@@ -550,7 +569,7 @@ void ppArg(Arg)(Viz viz, int depth,
             viz.ppRaw("<table" ~ border ~ ">\n");
         }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\begin{tabular}\n"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</table>\n"); }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\end{tabular}\n"); }
     }
@@ -563,7 +582,7 @@ void ppArg(Arg)(Viz viz, int depth,
             spanArg ~= ` rowspan="` ~ to!string(arg._span) ~ `"`;
         }
         if (viz.form == VizForm.html) { viz.ppRaw(`<tr` ~ spanArg ~ `>`); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</tr>\n"); }
     }
     else static if (isInstanceOf!(AsCell, Arg))
@@ -575,13 +594,13 @@ void ppArg(Arg)(Viz viz, int depth,
             spanArg ~= ` colspan="` ~ to!string(arg._span) ~ `"`;
         }
         if (viz.form == VizForm.html) { viz.ppRaw(`<td` ~ spanArg ~ `>`); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</td>\n"); }
     }
     else static if (isInstanceOf!(AsTHeading, Arg))
     {
         if (viz.form == VizForm.html) { viz.ppRaw("<th>\n"); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</th>\n"); }
     }
     else static if (isInstanceOf!(AsItem, Arg))
@@ -590,7 +609,7 @@ void ppArg(Arg)(Viz viz, int depth,
         else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(" - "); } // if inside ordered list use . instead of -
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\item "); }
         else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(" • "); }
-        viz.ppArgs(arg.args);
+        viz.ppN(arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</li>\n"); }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\n"); }
         else if (viz.form == VizForm.textAsciiDoc ||
@@ -607,7 +626,7 @@ void ppArg(Arg)(Viz viz, int depth,
         static if (isString)
             if (viz.form == VizForm.html) { viz.ppRaw("<a href=\"file://" ~ arg.arg ~ "\">"); }
 
-        ppArg(vizArg, depth + 1, arg.arg);
+        pp1(vizArg, depth + 1, arg.arg);
 
         static if (isString)
             if (viz.form == VizForm.html) { viz.ppRaw("</a>"); }
@@ -616,37 +635,41 @@ void ppArg(Arg)(Viz viz, int depth,
     {
         auto vizArg = viz;
         vizArg.treeFlag = true;
-        ppArg(term, vizArg, depth + 1, arg.arg);
+        pp1(term, vizArg, depth + 1, arg.arg);
     }
     else static if (isInstanceOf!(AsHit, Arg))
     {
         const ixs = to!string(arg.ix);
         if (viz.form == VizForm.html) { viz.ppRaw("<hit" ~ ixs ~ ">"); }
-        viz.ppArg(depth + 1, arg.args);
+        viz.pp1(depth + 1, arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</hit" ~ ixs ~ ">"); }
     }
     else static if (isInstanceOf!(AsCtx, Arg))
     {
         const ixs = to!string(arg.ix);
         if (viz.form == VizForm.html) { viz.ppRaw("<hit_context>"); }
-        viz.ppArg(depth + 1, arg.args);
+        viz.pp1(depth + 1, arg.args);
         if (viz.form == VizForm.html) { viz.ppRaw("</hit_context>"); }
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
-        if (viz.form == VizForm.html) { viz.ppRaw("<a href=\"file://" ~ arg.path ~ "\">"); }
+        if (viz.form == VizForm.html) {
+            viz.ppRaw("<a href=\"file://");
+            viz.ppPut(arg.path);
+            viz.ppRaw("\">");
+        }
 
         if (!viz.treeFlag)
         {
             // write parent path
             foreach (parent; arg.parents)
             {
-                viz.ppRaw(dirSeparator);
+                viz.ppPut(dirSeparator);
                 if (viz.form == VizForm.html) { viz.ppRaw("<b>"); }
                 viz.ppPut(dirFace, parent.name);
                 if (viz.form == VizForm.html) { viz.ppRaw("</b>"); }
             }
-            viz.ppRaw(dirSeparator);
+            viz.ppPut(dirSeparator);
         }
 
         // write name
@@ -707,7 +730,7 @@ void ppArg(Arg)(Viz viz, int depth,
         }
         else
         {
-            viz.outFile.write(arg_string);
+            viz.ppPut(arg.getFace(), arg_string);
         }
 
         static if (__traits(hasMember, arg, "face") &&
@@ -724,12 +747,12 @@ void ppArg(Arg)(Viz viz, int depth,
 }
 
 /** Pretty-Print Arguments $(D args) to Terminal $(D term). */
-void ppArgs(Args...)(Viz viz,
+void ppN(Args...)(Viz viz,
                      Args args) @trusted
 {
     foreach (arg; args)
     {
-        viz.ppArg(0, arg);
+        viz.pp1(0, arg);
     }
 }
 
@@ -737,7 +760,7 @@ void ppArgs(Args...)(Viz viz,
 void pp(Args...)(Viz viz,
                  Args args) @trusted
 {
-    viz.ppArgs(args);
+    viz.ppN(args);
     if (viz.outFile == stdout)
     {
         (*viz.term).flush();
@@ -766,7 +789,7 @@ struct Viz
 /** Pretty-Print Arguments $(D args) including final line termination. */
 void ppln(Args...)(Viz viz, Args args) @trusted
 {
-    viz.ppArgs(args);
+    viz.ppN(args);
     if (viz.outFile == stdout)
     {
         (*viz.term).writeln(lbr(viz.form == VizForm.html));
