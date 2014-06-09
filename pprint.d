@@ -400,7 +400,11 @@ void ppPut(Arg)(Viz viz,
     else
     {
         if (viz.form == VizForm.html)
+        {
+            /* import dbg:dln; */
+            /* dln(arg.encodeHTML); */
             viz.outFile.write(arg.encodeHTML);
+        }
         else
             viz.outFile.write(arg);
     }
@@ -624,12 +628,17 @@ void pp1(Arg)(Viz viz, int depth,
         enum isString = isSomeString!(typeof(arg.arg));
 
         static if (isString)
-            if (viz.form == VizForm.html) { viz.ppRaw("<a href=\"file://" ~ arg.arg ~ "\">"); }
+            if (viz.form == VizForm.html)
+            {
+                viz.ppRaw("<a href=\"file://" ~ arg.arg ~ "\">");
+            }
 
         pp1(vizArg, depth + 1, arg.arg);
 
         static if (isString)
-            if (viz.form == VizForm.html) { viz.ppRaw("</a>"); }
+            if (viz.form == VizForm.html) {
+                viz.ppRaw("</a>");
+            }
     }
     else static if (isInstanceOf!(AsName, Arg))
     {
@@ -730,6 +739,8 @@ void pp1(Arg)(Viz viz, int depth,
         }
         else
         {
+            import dbg: dln;
+            /* dln(arg_string); */
             viz.ppPut(arg.getFace(), arg_string);
         }
 

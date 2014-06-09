@@ -16,6 +16,8 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
+   BUG: Stacktrace: fs.d --color -d /etc --exact if --browse --duplicates -k
+
    TODO: Parse and Sort GCC/Clang Compiler Messages on WARN_TYPE FILE:LINE:COL:MSG[WARN_TYPE] and use Collapsable HTML Widgets:
          http://api.jquerymobile.com/collapsible/
          when presenting them
@@ -4306,6 +4308,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             if (anyHit)
             {
                 // show final context suffix
+                writeln(typeof(rest).stringof, ",", cast(ubyte[])rest);
                 viz.ppln(faze(rest, thisFace));
             }
             nL++;
