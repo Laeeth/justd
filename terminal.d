@@ -1,1 +1,0 @@
-arsd/terminal.d
