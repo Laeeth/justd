@@ -4244,9 +4244,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                                 }
 
                                 // show file path/name
-                                viz.pp(asPath(displayedFileName)
-                                       /* faze(asPath(useHTML, theFile.path, displayedFileName, false), */
-                                       /*      regFileFace) */); // show path
+                                viz.pp(asPath(displayedFileName)); // show path
                             }
 
                             // show file line:column
