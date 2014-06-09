@@ -537,7 +537,7 @@ class FKind
 
     string[] keywords; // Keywords
     string[] builtins; // Builtin Functions
-    Op[] operators; // Language Operators
+    Op[] opers; // Language Opers
 
     /* TODO: Move this to CompLang class */
     Delim[] strings; // String syntax.
@@ -2217,6 +2217,18 @@ struct Op
     bool overloadable; // Overloadable
 }
 
+/** Language Operator Alias. */
+struct OpAlias
+{
+    this(string op, string opOrigin)
+    {
+        this.op = op;
+        this.opOrigin = opOrigin;
+    }
+    string op;
+    string opOrigin;
+}
+
 /** File System Scanner. */
 class Scanner(Term)
 {
@@ -2359,7 +2371,7 @@ class Scanner(Term)
             ];
 
         /* See also: https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B */
-        auto operatorsCBasic = [
+        auto opersCBasic = [
             // Arithmetic
             Op("+", OpArity.binary, OpAssoc.LR, 6, "Add"),
             Op("-", OpArity.binary, OpAssoc.LR, 6, "Subtract"),
@@ -2367,26 +2379,29 @@ class Scanner(Term)
             Op("/", OpArity.binary, OpAssoc.LR, 5, "Divide"),
             Op("%", OpArity.binary, OpAssoc.LR, 5, "Remainder/Moduls"),
 
-            Op("++", OpArity.unaryPostfix, OpAssoc.LR, 2, "Post-Increment"),
-            Op("--", OpArity.unaryPostfix, OpAssoc.LR, 2, "Post-Decrement"),
+            Op("+", OpArity.unaryPrefix, OpAssoc.RL, 3, "Unary plus"),
+            Op("-", OpArity.unaryPrefix, OpAssoc.RL, 3, "Unary minus"),
 
-            Op("++", OpArity.unaryPrefix, OpAssoc.RL, 3, "Pre-Increment"),
-            Op("--", OpArity.unaryPrefix, OpAssoc.RL, 3, "Pre-Decrement"),
+            Op("++", OpArity.unaryPostfix, OpAssoc.LR, 2, "Suffix increment"),
+            Op("--", OpArity.unaryPostfix, OpAssoc.LR, 2, "Suffix decrement"),
+
+            Op("++", OpArity.unaryPrefix, OpAssoc.RL, 3, "Prefix increment"),
+            Op("--", OpArity.unaryPrefix, OpAssoc.RL, 3, "Prefix decrement"),
 
             // Assignment Arithmetic (binary)
             Op("=", OpArity.binary, OpAssoc.RL, 16, "Assign"),
-            Op("+=", OpArity.binary, OpAssoc.RL, 16),
-            Op("-=", OpArity.binary, OpAssoc.RL, 16),
-            Op("*=", OpArity.binary, OpAssoc.RL, 16),
-            Op("/=", OpArity.binary, OpAssoc.RL, 16),
-            Op("%=", OpArity.binary, OpAssoc.RL, 16),
+            Op("+=", OpArity.binary, OpAssoc.RL, 16, "Assignment by sum"),
+            Op("-=", OpArity.binary, OpAssoc.RL, 16, "Assignment by difference"),
+            Op("*=", OpArity.binary, OpAssoc.RL, 16, "Assignment by product"),
+            Op("/=", OpArity.binary, OpAssoc.RL, 16, "Assignment by quotient"),
+            Op("%=", OpArity.binary, OpAssoc.RL, 16, "Assignment by remainder"),
 
-            Op("&=", OpArity.binary, OpAssoc.RL, 16),
-            Op("|=", OpArity.binary, OpAssoc.RL, 16),
+            Op("&=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise AND"),
+            Op("|=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise OR"),
 
-            Op("^=", OpArity.binary, OpAssoc.RL, 16),
-            Op("<<=", OpArity.binary, OpAssoc.RL, 16),
-            Op(">>=", OpArity.binary, OpAssoc.RL, 16),
+            Op("^=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise XOR"),
+            Op("<<=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise left shift"),
+            Op(">>=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise right shift"),
 
             Op("==", OpArity.binary, OpAssoc.LR, 9, "Equal to"),
             Op("!=", OpArity.binary, OpAssoc.LR, 9, "Not equal to"),
@@ -2418,7 +2433,7 @@ class Scanner(Term)
             ];
 
         /* See also: https://en.wikipedia.org/wiki/Iso646.h */
-        auto operatorsC_ISO646 = [
+        auto opersC_ISO646 = [
             OpAlias("and", "&&"),
             OpAlias("or", "||"),
             OpAlias("and_eq", "&="),
@@ -2431,10 +2446,10 @@ class Scanner(Term)
             OpAlias("not_eq", "!="),
             OpAlias("or_eq", "|="),
             OpAlias("xor", "^"),
-            OpAliasx("xor_eq", "^="),
+            OpAlias("xor_eq", "^="),
             ];
 
-        auto operatorsC = operatorsCBasic ~ operatorsC_ISO646;
+        auto opersC = opersCBasic /* ~ opersC_ISO646 */;
 
         auto kindC = new FKind("C", [], ["c", "h"], [], 0, [],
                                keywordsC,
@@ -2443,7 +2458,7 @@ class Scanner(Term)
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         srcFKinds ~= kindC;
         kindC.operations ~= tuple(FileOp.checkSyntax, "gcc -x c -fsyntax-only -c");
-        kindC.operators = operatorsC;
+        kindC.opers = opersC;
 
         auto keywordsCxx = keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
                                         "bool", "explicit", "new", "static_cast", "typeid",
@@ -2462,24 +2477,24 @@ class Scanner(Term)
                                         "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
                                         "and_eq", "bitor", "not", "or", "xor", ];
 
-        auto operatorsCxx = operatorsC ~ [
-            Op("->*", OpArity.binary),
-            Op(".*", OpArity.binary),
-            Op("::", OpArity.binary),             // precedence=1, associativity=one
-            Op("typeid", OpArity.unaryPrefix),
-            Op("alignof", OpArity.unaryPrefix),
-            Op("new", OpArity.unaryPrefix),
-            Op("delete", OpArity.unaryPrefix),
-            Op("delete[]", OpArity.unaryPrefix),
-            Op("noexcept", OpArity.unaryPrefix),
+        auto opersCxx = opersC ~ [
+            Op("->*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
+            Op(".*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
+            Op("::", OpArity.binary, OpAssoc.none, 1, "Scope resolution"),
+            Op("typeid", OpArity.unaryPrefix, OpAssoc.LR, 2, "Run-time type information (RTTI))"),
+            //Op("alignof", OpArity.unaryPrefix, OpAssoc.LR, _, _),
+            Op("new", OpArity.unaryPrefix, OpAssoc.RL, 3, "Dynamic memory allocation"),
+            Op("delete", OpArity.unaryPrefix, OpAssoc.RL, 3, "Dynamic memory deallocation"),
+            Op("delete[]", OpArity.unaryPrefix, OpAssoc.RL, 3, "Dynamic memory deallocation"),
+            /* Op("noexcept", OpArity.unaryPrefix, OpAssoc.none, _, _), */
 
-            Op("dynamic_cast", OpArity.unaryPrefix),   // precedence=2, associativity=Left-to-right
-            Op("reinterpret_cast", OpArity.unaryPrefix), // precedence=2, associativity=Left-to-right
-            Op("static_cast", OpArity.unaryPrefix),        // precedence=2, associativity=Left-to-right
-            Op("const_cast", OpArity.unaryPrefix), // precedence=2, associativity=Left-to-right
+            Op("dynamic_cast", OpArity.unaryPrefix, OpAssoc.LR, 2, "Type cast"),
+            Op("reinterpret_cast", OpArity.unaryPrefix, OpAssoc.LR, 2, "Type cast"),
+            Op("static_cast", OpArity.unaryPrefix, OpAssoc.LR, 2, "Type cast"),
+            Op("const_cast", OpArity.unaryPrefix, OpAssoc.LR, 2, "Type cast"),
 
-            Op("throw", OpArity.unaryPrefix),
-            Op("catch", OpArity.unaryPrefix)
+            Op("throw", OpArity.unaryPrefix, OpAssoc.LR, 17, "Throw operator"),
+            /* Op("catch", OpArity.unaryPrefix, OpAssoc.LR, _, _) */
             ];
 
         keywordsCxx = keywordsCxx.uniq.array;
@@ -2489,7 +2504,7 @@ class Scanner(Term)
                                  defaultStringDelims,
                                  FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         kindCxx.operations ~= tuple(FileOp.checkSyntax, "gcc -x c++ -fsyntax-only -c");
-        kindCxx.operators = operatorsCxx;
+        kindCxx.opers = opersCxx;
         srcFKinds ~= kindCxx;
         auto keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
                                             "char16_t", "char32_t",
@@ -2538,7 +2553,7 @@ class Scanner(Term)
         auto keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
                               "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while",
                               "mutating", "extension"];
-        auto operatorsOverflowSwift = operatorsC ~ [Op("&+"), Op("&-"), Op("&*"), Op("&/"), Op("&%")];
+        auto opersOverflowSwift = opersC ~ [Op("&+"), Op("&-"), Op("&*"), Op("&/"), Op("&%")];
         auto builtinsSwift = ["print", "println"];
         auto kindSwift = new FKind("Swift", [], ["swift"], [], 0, [],
                                    keywordsSwift,
@@ -2546,7 +2561,7 @@ class Scanner(Term)
                                    defaultStringDelims,
                                    FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         kindSwift.builtins = builtinsSwift;
-        kindSwift.operators = operatorsOverflowSwift;
+        kindSwift.opers = opersOverflowSwift;
         srcFKinds ~= kindSwift;
 
         auto keywordsCSharp = ["if"]; // TODO: Add keywords
@@ -2583,7 +2598,65 @@ class Scanner(Term)
                            "unsigned", "break", "continue", "else", "for", "long",
                            "switch", "void", "case", "default", "enum", "goto",
                            "sizeof", "typedef", "volatile", "char", "do", "extern", "if",
+
                            "return", "static", "union", "while", "class", "immutable", "import"];
+        auto opersD = [
+            // Arithmetic
+            Op("+", OpArity.binary, OpAssoc.LR, 6, "Add"),
+            Op("-", OpArity.binary, OpAssoc.LR, 6, "Subtract"),
+            Op("*", OpArity.binary, OpAssoc.LR, 5, "Multiply"),
+            Op("/", OpArity.binary, OpAssoc.LR, 5, "Divide"),
+            Op("%", OpArity.binary, OpAssoc.LR, 5, "Remainder/Moduls"),
+
+            Op("++", OpArity.unaryPostfix, OpAssoc.LR, 2, "Suffix increment"),
+            Op("--", OpArity.unaryPostfix, OpAssoc.LR, 2, "Suffix decrement"),
+
+            Op("++", OpArity.unaryPrefix, OpAssoc.RL, 3, "Prefix increment"),
+            Op("--", OpArity.unaryPrefix, OpAssoc.RL, 3, "Prefix decrement"),
+
+            // Assignment Arithmetic (binary)
+            Op("=", OpArity.binary, OpAssoc.RL, 16, "Assign"),
+            Op("+=", OpArity.binary, OpAssoc.RL, 16, "Assignment by sum"),
+            Op("-=", OpArity.binary, OpAssoc.RL, 16, "Assignment by difference"),
+            Op("*=", OpArity.binary, OpAssoc.RL, 16, "Assignment by product"),
+            Op("/=", OpArity.binary, OpAssoc.RL, 16, "Assignment by quotient"),
+            Op("%=", OpArity.binary, OpAssoc.RL, 16, "Assignment by remainder"),
+
+            Op("&=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise AND"),
+            Op("|=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise OR"),
+
+            Op("^=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise XOR"),
+            Op("<<=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise left shift"),
+            Op(">>=", OpArity.binary, OpAssoc.RL, 16, "Assignment by bitwise right shift"),
+
+            Op("==", OpArity.binary, OpAssoc.LR, 9, "Equal to"),
+            Op("!=", OpArity.binary, OpAssoc.LR, 9, "Not equal to"),
+
+            Op("<", OpArity.binary, OpAssoc.LR, 8, "Less than"),
+            Op(">", OpArity.binary, OpAssoc.LR, 8, "Greater than"),
+            Op("<=", OpArity.binary, OpAssoc.LR, 8, "Less than or equal to"),
+            Op(">=", OpArity.binary, OpAssoc.LR, 8, "Greater than or equal to"),
+
+            Op("&&", OpArity.binary, OpAssoc.LR, 13, "Logical AND"), // TODO: Convert to math in smallcaps AND
+            Op("||", OpArity.binary, OpAssoc.LR, 14, "Logical OR"), // TODO: Convert to math in smallcaps OR
+
+            Op("!", OpArity.unaryPrefix, OpAssoc.LR, 3, "Logical NOT"), // TODO: Convert to math in smallcaps AND
+
+            Op("&", OpArity.binary, OpAssoc.LR, 10, "Bitwise AND"),
+            Op("^", OpArity.binary, OpAssoc.LR, 11, "Bitwise XOR (exclusive or)"),
+            Op("|", OpArity.binary, OpAssoc.LR, 12, "Bitwise OR"),
+
+            Op("<<", OpArity.binary, OpAssoc.LR, 7, "Bitwise left shift"),
+            Op(">>", OpArity.binary, OpAssoc.LR, 7, "Bitwise right shift"),
+
+            Op("~", OpArity.unaryPrefix, OpAssoc.LR, 3, "Bitwise NOT (One's Complement)"),
+            Op(",", OpArity.binary, OpAssoc.LR, 18, "Comma"),
+            Op("sizeof", OpArity.unaryPrefix, OpAssoc.LR, 3, "Size-of"),
+
+            Op("->", OpArity.binary, OpAssoc.LR, 2, "Element selection through pointer"),
+            Op(".", OpArity.binary, OpAssoc.LR, 2, "Element selection by reference"),
+
+            ];
 
         const interpretersForD = ["rdmd",
                                   "gdmd"];
