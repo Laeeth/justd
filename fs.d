@@ -1283,7 +1283,7 @@ class RegFile : File
                 _cstat.kindId.reset; // forget it
             }
             unpacker.unpack(_cstat._contId); // Digest
-            if (_cstat._contId.defined)
+            if (_cstat._contId)
             {
                 parent.gstats.filesByContId[_cstat._contId] ~= cast(NotNull!File)this;
             }
@@ -1574,7 +1574,7 @@ class Dir : File
     /** Returns: Contents Id of $(D this). */
     override const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */
     {
-        if (_treeContId.untouched)
+        if (!_treeContId)
         {
             _treeContId = reduce!"a ^ b"(SHA1Digest.init,
                                          _subs.byValue.map!"a.treeContId"); // recurse!
@@ -4931,7 +4931,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             foreach (digest, dupFiles; gstats.filesByContId)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
-                if (dupFilesOk.length >= 2)
+                if (dupFilesOk.length >= 2) // non-empty file/directory
                 {
 
                     auto firstDup = dupFilesOk[0];

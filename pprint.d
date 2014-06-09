@@ -440,21 +440,20 @@ void ppArg(Arg)(Viz viz, int depth,
         if (!viz.treeFlag)
         {
             // write parent path
-            size_t i = 0;
             foreach (parent; arg.parents)
             {
-                viz.ppRaw(dirSeparator[0]);
+                viz.ppRaw(dirSeparator);
                 if (viz.form == VizForm.html) { viz.ppRaw("<b>"); }
                 viz.ppPut(dirFace, parent.name);
                 if (viz.form == VizForm.html) { viz.ppRaw("</b>"); }
             }
-            viz.ppRaw(dirSeparator[0]);
+            viz.ppRaw(dirSeparator);
         }
 
         // write name
         static if (__traits(hasMember, arg, "isRoot")) // TODO: Use isDir = Dir or NonNull!Dir
         {
-            immutable name = arg.isRoot ? dirSeparator : arg.name;
+            immutable name = arg.isRoot ? dirSeparator : arg.name ~ dirSeparator;
         }
         else
         {
