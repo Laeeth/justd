@@ -2103,13 +2103,22 @@ File getFile(NotNull!Dir rootDir, string filePath,
     }
     else
     {
-        if (auto parentDir = getDir(rootDir, filePath.dirName))
+        auto parentDir = getDir(rootDir, filePath.dirName);
+        if (parentDir)
         {
-            return parentDir.sub(filePath.baseName);
+            auto hit = parentDir.sub(filePath.baseName);
+            if (hit)
+                return hit;
+            else
+            {
+                dln("File path " ~ filePath ~ " doesn't exist. TODO: Query user to instead find it under "
+                    ~ parentDir.path);
+                parentDir.find(filePath.baseName);
+            }
         }
         else
         {
-            dln("File path " ~ filePath ~ " doesn't exist");
+            dln("Directory " ~ parentDir.path ~ " doesn't exist");
         }
     }
     return null;
