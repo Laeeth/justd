@@ -1112,8 +1112,8 @@ alias Pair(T) = Tuple!(T, T);
   \item Unrefer pointers but
   \item \emph{Not} null-initialize nor do arithmetic on them
   \item \emph{Not} do any memory recast dribblings =>
-  \item No byteorder problems =>
-  \item Architecture Independence
+  % \item No byteorder problems =>
+  % \item Architecture Independence
   \item Cannot do unsafe \texttt{cast}.
   \end{itemize}
 \end{frame}
@@ -1124,6 +1124,7 @@ alias Pair(T) = Tuple!(T, T);
   \item ABI Compatible with C through \texttt{extern}
   \item No Surprises when porting: C constructs that compiles in D should
     behave the same as in C
+  \item @safeness of templated functions are automatically deduced by compiler
   \end{itemize}
 \end{frame}
 
