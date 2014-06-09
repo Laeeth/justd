@@ -507,10 +507,13 @@ class FKind
         {
             ubyte[] bytes;
             if (const magicLit = cast(Lit)magicData)
+            {
                 bytes = msgpack.pack(exts, magicLit.bytes, magicOffset, refPattern, keywords, content, detection);
+            }
             else
+            {
                 dln("warning: Handle magicData of type ", kindName);
-                bytes = msgpack.pack(exts, cast(ubyte[])[], magicOffset, refPattern, keywords, content, detection);
+            }
             _behaviourDigest = bytes.sha1Of;
         }
         return _behaviourDigest;
@@ -2598,8 +2601,8 @@ class Scanner(Term)
                            "unsigned", "break", "continue", "else", "for", "long",
                            "switch", "void", "case", "default", "enum", "goto",
                            "sizeof", "typedef", "volatile", "char", "do", "extern", "if",
-
                            "return", "static", "union", "while", "class", "immutable", "import"];
+
         auto opersD = [
             // Arithmetic
             Op("+", OpArity.binary, OpAssoc.LR, 6, "Add"),
