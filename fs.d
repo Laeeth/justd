@@ -1585,6 +1585,7 @@ class Dir : File
 
     override Face!Color face() const @property @safe pure nothrow { return dirFace; }
 
+    /** Return true if $(D this) is a file system root directory. */
     bool isRoot() @property @safe const pure nothrow { return !parent; }
 
     GStats gstats(GStats gstats) @property @safe pure /* nothrow */ {
@@ -1607,6 +1608,35 @@ class Dir : File
             _depth = parent ? parent.depth + 1 : 0; // memoized depth
         }
         return _depth;
+    }
+
+    /** Scan $(D this) recursively for a non-diretory file with basename $(D name).
+        TODO: Reuse range based algorithm this.tree(depthFirst|breadFirst)
+     */
+    File find(string name) @property
+    {
+        auto subs_ = subs();
+        if (name in subs_)
+        {
+            auto hit = subs_[name];
+            Dir hitDir = cast(Dir)hit;
+            if (!hitDir) // if not a directory
+                return hit;
+        }
+        else
+        {
+            foreach (sub; subs_)
+            {
+                Dir subDir = cast(Dir)sub;
+                if (subDir)
+                {
+                    auto hit = subDir.find(name);
+                    if (hit) // if not a directory
+                        return hit;
+                }
+            }
+        }
+        return null;
     }
 
     /** Append Tree Statistics. */
