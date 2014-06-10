@@ -2797,21 +2797,29 @@ class Scanner(Term)
 
         // Scripting
 
-        srcFKinds ~= new FKind("Python", [], ["py"], [], 0, "#!/usr/bin/python", keywordsPython,
+        srcFKinds ~= new FKind("Python", [], ["py"],
+                               shebangLine(lit("python")), 0,
+                               [],
+                               keywordsPython,
                                [Delim("#")], // TODO: Support multi-line triple-double quote strings
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Ruby", [], ["rb", "rhtml", "rjs", "rxml", "erb", "rake", "spec", ], [], 0, "#!/usr/bin/ruby", [],
+        srcFKinds ~= new FKind("Ruby", [], ["rb", "rhtml", "rjs", "rxml", "erb", "rake", "spec", ],
+                               shebangLine(lit("ruby")), 0,
+                               [], [],
                                [Delim("#"), Delim("=begin", "=end")],
                                defaultStringDelims,
                                FileContent.scriptCode);
 
         srcFKinds ~= new FKind("Scala", [], ["scala", ],
-                               [], 0, "#!/usr/bin/scala", [],
+                               shebangLine(lit("scala")), 0,
+                               [], [],
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Scheme", [], ["scm", "ss"], [], 0, [], [],
+        srcFKinds ~= new FKind("Scheme", [], ["scm", "ss"],
+                               [], 0,
+                               [], [],
                                [Delim(";")],
                                defaultStringDelims,
                                FileContent.scriptCode);
@@ -2822,12 +2830,14 @@ class Scanner(Term)
                                FileContent.sourceCode);
 
         srcFKinds ~= new FKind("Perl", [], ["pl", "pm", "pm6", "pod", "t", "psgi", ],
-                               [], 0, "#!/usr/bin/perl", [],
+                               shebangLine(lit("perl")), 0,
+                               [], [],
                                [Delim("#")],
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("PHP", [], ["php", "phpt", "php3", "php4", "php5", "phtml", ],
-                               [], 0, "#!/usr/bin/php", [],
+                               shebangLine(lit("php")), 0,
+                               [], [],
                                [Delim("#")] ~ cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
@@ -2836,15 +2846,21 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("Shell", [], ["sh"], [], 0, "#!/usr/bin/sh", [],
+        srcFKinds ~= new FKind("Shell", [], ["sh"],
+                               shebangLine(lit("sh")), 0,
+                               [], [],
                                [Delim("#")],
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Bash", [], ["bash"], [], 0, "#!/usr/bin/bash", [],
+        srcFKinds ~= new FKind("Bash", [], ["bash"],
+                               shebangLine(lit("bash")), 0,
+                               [], [],
                                [Delim("#")],
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Zsh", [], ["zsh"], [], 0, "#!/usr/bin/zsh", [],
+        srcFKinds ~= new FKind("Zsh", [], ["zsh"],
+                               shebangLine(lit("zsh")), 0,
+                               [], [],
                                [Delim("#")],
                                defaultStringDelims,
                                FileContent.scriptCode);
