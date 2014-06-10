@@ -419,6 +419,8 @@ void pp1(Arg)(ref Viz viz, int depth,
                     arg.args.length == 1 &&
                     isInputRange!(typeof(arg.args[0])))
     {
+        bool capitalizeHeadings = true;
+
         /* See also: http://forum.dlang.org/thread/wjksldfpkpenoskvhsqa@forum.dlang.org#post-jwfildowqrbwtamywsmy:40forum.dlang.org */
         // table header
         import std.range: front;
@@ -437,17 +439,18 @@ void pp1(Arg)(ref Viz viz, int depth,
 
             // member names header. TODO: Functionize
             if (viz.form == VizForm.HTML) { viz.ppRaw("<tr>"); }
-            foreach (ix, member; first.tupleof) // TODO: Functionize this loop
+            foreach (ix, member; first.tupleof)
             {
-                import std.stdio: writeln;
-                enum name = __traits(identifier, Front.tupleof[ix]);
-                viz.pplnTagN("td", name.inIt.inBold);
+                enum idName = __traits(identifier, Front.tupleof[ix]);
+                import std.string: capitalize;
+                viz.pplnTagN("td",
+                             (capitalizeHeadings ? idName.capitalize : idName).inIt.inBold);
             }
             if (viz.form == VizForm.HTML) { viz.ppRaw("</tr>"); }
 
             // member types header. TODO: Functionize
             if (viz.form == VizForm.HTML) { viz.ppRaw("<tr>"); }
-            foreach (member; first.tupleof) // TODO: Functionize this loop
+            foreach (member; first.tupleof)
             {
                 alias Memb = Unqual!(typeof(member));
                 const type_string = Memb.stringof;
@@ -618,7 +621,6 @@ void pp1(Arg)(ref Viz viz, int depth,
     }
     else
     {
-        // pick path
         static if (__traits(hasMember, arg, "path"))
         {
             pragma(msg, "Member arg has a path property!");
@@ -648,8 +650,6 @@ void pp1(Arg)(ref Viz viz, int depth,
         }
         else
         {
-            import dbg: dln;
-            /* dln(arg_string); */
             viz.ppPut(arg.getFace(), arg_string);
         }
 
