@@ -3688,7 +3688,7 @@ class Scanner(Term)
         keysXGramsUnion = reduce!"a + b"(typeof(keysXGrams.front).init, keysXGrams);
 
         auto viz = Viz(outFile, showTree,
-                       useHTML ? VizForm.html : VizForm.textAsciiDocUTF8,
+                       useHTML ? VizForm.HTML : VizForm.textAsciiDocUTF8,
                        colorFlag,
                        &term);
 
@@ -3796,7 +3796,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             const title = ("Searching for \"" ~ commaedKeysString ~ "\"" ~
                            " case-" ~ (_caseFold ? "in" : "") ~"sensitively"
                            ~asNote ~incKindsNote ~underNote);
-            if (viz.form == VizForm.html) // only needed for HTML output
+            if (viz.form == VizForm.HTML) // only needed for HTML output
             {
                 viz.ppln(faze(title, titleFace));
             }
