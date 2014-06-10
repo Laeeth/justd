@@ -252,8 +252,6 @@ string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
     /* auto subsSortingNames = EnumMembers!EnumType; */
     auto x = (__traits(allMembers, EnumType));
     string doc = "";
-    /* return joiner(x, separator); */
-    /* debug dln(typeof(x).stringof); */
     foreach (ix, name; x)
     {
         if (ix >= 1) { doc ~= separator; }
@@ -4324,7 +4322,6 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             if (anyHit)
             {
                 // show final context suffix
-                writeln(typeof(rest).stringof, ",", cast(ubyte[])rest);
                 viz.ppln(faze(rest, thisFace));
             }
             nL++;
