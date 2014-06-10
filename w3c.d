@@ -4,6 +4,85 @@ module w3c;
 
 import std.traits: isSomeChar;
 
+string encodeHTML(Char)(Char c) @safe pure if (isSomeChar!Char)
+{
+    import std.conv: to;
+    if      (c == '&')  return "&amp;"; // ampersand
+    else if (c == '<')  return "&lt;"; // less than
+    else if (c == '>')  return "&gt;"; // greater than
+    else if (c == '\"') return "&quot;"; // double quote
+//		else if (c == '\'')
+//			return ("&#39;"); // if you are in an attribute, it might be important to encode for the same reason as double quotes
+    // FIXME: should I encode apostrophes too? as &#39;... I could also do space but if your html is so bad that it doesn't
+    // quote attributes at all, maybe you deserve the xss. Encoding spaces will make everything really ugly so meh
+    // idk about apostrophes though. Might be worth it, might not.
+    else if (0 < c && c < 128)
+        return to!string(cast(char)c);
+    else
+        return "&#" ~ to!string(cast(int)c) ~ ";";
+}
+
+static if (__VERSION__ >= 2066L)
+{
+    /** Copied from arsd.dom */
+    auto encodeHTML(string data) @safe pure
+    {
+        import std.utf: byDchar;
+        import std.algorithm: joiner, map;
+        return data.byDchar.map!encodeHTML.joiner("");
+    }
+}
+else
+{
+    import std.array: appender, Appender;
+
+    /** Copied from arsd.dom */
+    string encodeHTML(string data,
+                      Appender!string os = appender!string()) pure
+    {
+        bool skip = true;
+        // NOTE: this extra loop may be deprecated by byCodeunit, byChar, byWchar
+        // and byDchar available in DMD 2.066
+        foreach (char c; data)
+        {
+            // non ASCII chars are always higher than 127 in utf8;
+            // we'd better go to the full decoder if we see it.
+            if (c == '<' ||
+                c == '>' ||
+                c == '"' ||
+                c == '&' ||
+                cast(uint) c > 127)
+            {
+                skip = false; // there's actual work to be done
+                break;
+            }
+        }
+
+        if (skip)
+        {
+            os.put(data);
+            return data;
+        }
+
+        auto start = os.data.length;
+
+        os.reserve(data.length + 64); // grab some extra space for the encoded entities
+
+        foreach (dchar ch; data)
+        {
+            os.put(ch.encodeHTML);
+        }
+
+        return os.data[start .. $];
+    }
+}
+
+unittest
+{
+    import std.stdio;
+    writeln(`<!-- --><script>/* */</script>`.encodeHTML);
+}
+
 // See also: https://en.wikipedia.org/wiki/Character_entity_reference#Predefined_entities_in_XML
 __gshared string[256] convLatin1ToXML;
 // See also: https://en.wikipedia.org/wiki/Character_entity_reference#Character_entity_references_in_HTML
@@ -124,83 +203,4 @@ void initTables()
     convLatin1ToXML[0xFD] = "&yacute"; // yacute	ý	U+00FD (253)	HTML 2.0	HTMLlat1	ISOlat1	Latin small letter y with acute accent
     convLatin1ToXML[0xFE] = "&thorn"; // thorn	þ	U+00FE (254)	HTML 2.0	HTMLlat1	ISOlat1	Latin small letter thorn
     convLatin1ToXML[0xFF] = "&yuml"; // yuml	ÿ	U+00FF (255)	HTML 2.0	HTMLlat1	ISOlat1	Latin small letter y with diaeresis
-}
-
-string encodeHTML(Char)(Char c) @safe pure if (isSomeChar!Char)
-{
-    import std.conv: to;
-    if      (c == '&')  return "&amp;"; // ampersand
-    else if (c == '<')  return "&lt;"; // less than
-    else if (c == '>')  return "&gt;"; // greater than
-    else if (c == '\"') return "&quot;"; // double quote
-//		else if (c == '\'')
-//			return ("&#39;"); // if you are in an attribute, it might be important to encode for the same reason as double quotes
-    // FIXME: should I encode apostrophes too? as &#39;... I could also do space but if your html is so bad that it doesn't
-    // quote attributes at all, maybe you deserve the xss. Encoding spaces will make everything really ugly so meh
-    // idk about apostrophes though. Might be worth it, might not.
-    else if (0 < c && c < 128)
-        return to!string(cast(char)c);
-    else
-        return "&#" ~ to!string(cast(int)c) ~ ";";
-}
-
-static if (__VERSION__ >= 2066L)
-{
-    /** Copied from arsd.dom */
-    auto encodeHTML(string data) @safe pure
-    {
-        import std.utf: byDchar;
-        import std.algorithm: joiner, map;
-        return data.byDchar.map!encodeHTML.joiner("");
-    }
-}
-else
-{
-    import std.array: appender, Appender;
-
-    /** Copied from arsd.dom */
-    string encodeHTML(string data,
-                      Appender!string os = appender!string()) pure
-    {
-        bool skip = true;
-        // NOTE: this extra loop may be deprecated by byCodeunit, byChar, byWchar
-        // and byDchar available in DMD 2.066
-        foreach (char c; data)
-        {
-            // non ASCII chars are always higher than 127 in utf8;
-            // we'd better go to the full decoder if we see it.
-            if (c == '<' ||
-                c == '>' ||
-                c == '"' ||
-                c == '&' ||
-                cast(uint) c > 127)
-            {
-                skip = false; // there's actual work to be done
-                break;
-            }
-        }
-
-        if (skip)
-        {
-            os.put(data);
-            return data;
-        }
-
-        auto start = os.data.length;
-
-        os.reserve(data.length + 64); // grab some extra space for the encoded entities
-
-        foreach (dchar ch; data)
-        {
-            os.put(ch.encodeHTML);
-        }
-
-        return os.data[start .. $];
-    }
-}
-
-unittest
-{
-    import dbg;
-    dln(`<!-- --><script>/* */</script>`.encodeHTML);
 }
