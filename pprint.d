@@ -142,7 +142,8 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Table.
         TODO: Should asTable autowrap args AsRows when needed?
     */
-    struct AsTable(T...) {
+    struct AsTable(T...)
+    {
         string border;
         T args;
     }
@@ -181,7 +182,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
 void ppRaw(Arg)(ref Viz viz,
-                Arg arg) @trusted
+                Arg arg) @trusted if (isSomeString!Arg)
 {
     if (viz.outFile == stdout)
         (*viz.term).write(arg);
@@ -191,20 +192,14 @@ void ppRaw(Arg)(ref Viz viz,
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
 void ppPut(Arg)(ref Viz viz,
-                Arg arg) @trusted
+                Arg arg) @trusted if (isSomeString!Arg)
 {
     if (viz.outFile == stdout)
-    {
         (*viz.term).write(arg);
-    }
     else
     {
         if (viz.form == VizForm.html)
-        {
-            /* import dbg:dln; */
-            /* dln(arg.encodeHTML); */
             viz.outFile.write(arg.encodeHTML);
-        }
         else
             viz.outFile.write(arg);
     }
@@ -213,7 +208,7 @@ void ppPut(Arg)(ref Viz viz,
 /** Put $(D arg) to $(D viz) possibly with conversion. */
 void ppPut(Arg)(ref Viz viz,
                 Face!Color face,
-                Arg arg) @trusted
+                Arg arg) @trusted if (isSomeString!Arg)
 {
     (*viz.term).setFace(face, viz.colorFlag);
     viz.ppPut(arg);
@@ -313,26 +308,11 @@ void pp1(Arg)(ref Viz viz, int depth,
             }
         }
     }
-    else static if (isInstanceOf!(InBold, Arg))
-    {
-        viz.ppTagN("b", arg.args);
-    }
-    else static if (isInstanceOf!(InIt, Arg))
-    {
-        viz.ppTagN("i", arg.args);
-    }
-    else static if (isInstanceOf!(AsCode, Arg))
-    {
-        viz.ppTagN("code", arg.args);
-    }
-    else static if (isInstanceOf!(AsEm, Arg))
-    {
-        viz.ppTagN("em", arg.args);
-    }
-    else static if (isInstanceOf!(AsStrong, Arg))
-    {
-        viz.ppTagN("strong", arg.args);
-    }
+    else static if (isInstanceOf!(InBold, Arg))   { viz.ppTagN("b", arg.args); }
+    else static if (isInstanceOf!(InIt, Arg))     { viz.ppTagN("i", arg.args); }
+    else static if (isInstanceOf!(AsCode, Arg))   { viz.ppTagN("code", arg.args); }
+    else static if (isInstanceOf!(AsEm, Arg))     { viz.ppTagN("em", arg.args); }
+    else static if (isInstanceOf!(AsStrong, Arg)) { viz.ppTagN("strong", arg.args); }
     else static if (isInstanceOf!(AsH, Arg))
     {
         if (viz.form == VizForm.html)
