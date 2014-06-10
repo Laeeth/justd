@@ -96,9 +96,9 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 
 @safe pure nothrow @nogc
 {
-    /** Printed as Words. */
+    /** Words. */
     struct AsWords(T...) { T args; } auto ref asWords(T...)(T args) { return AsWords!T(args); }
-    /** Printed as Comma-Separated List. */
+    /** Comma-Separated List. */
     struct AsCSL(T...) { T args; } auto ref asCSL(T...)(T args) { return AsCSL!T(args); }
 
     /** Printed as Path. */
@@ -278,7 +278,7 @@ void pplnTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isS
     viz.ppRaw("\n");
 }
 
-/** Pretty-Print Argument $(D arg) to Terminal $(D term). */
+/** Pretty-Print Single Argument $(D arg) to Terminal $(D term). */
 void pp1(Arg)(ref Viz viz, int depth,
               Arg arg) @trusted
 {
@@ -393,7 +393,9 @@ void pp1(Arg)(ref Viz viz, int depth,
             viz.ppRaw("<table" ~ border ~ ">\n");
         }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\begin{tabular}\n"); }
+
         viz.ppN(arg.args);
+
         if (viz.form == VizForm.html) { viz.ppRaw("</table>\n"); }
         else if (viz.form == VizForm.latex) { viz.ppRaw("\\end{tabular}\n"); }
     }
@@ -577,9 +579,9 @@ void pp1(Arg)(ref Viz viz, int depth,
     }
 }
 
-/** Pretty-Print Arguments $(D args) to Terminal $(D term). */
+/** Pretty-Print Multiple Arguments $(D args) to Terminal $(D term). */
 void ppN(Args...)(ref Viz viz,
-                     Args args) @trusted
+                  Args args) @trusted
 {
     foreach (arg; args)
     {
@@ -644,5 +646,5 @@ void pplns(Args...)(ref Viz viz, Args args) @trusted
 /** Print End of Line to Terminal $(D term). */
 void ppendl(ref Viz viz) @trusted
 {
-    return viz.ppln();
+    return viz.ppln("");
 }

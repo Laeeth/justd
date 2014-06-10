@@ -4784,7 +4784,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 }
                 else
                 {
-                    if (showTree) { viz.ppln(); }
+                    if (showTree) { viz.ppendl(); }
                 }
                 ++subIndex;
 
