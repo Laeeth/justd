@@ -141,6 +141,7 @@ void initTables()
 
 string encodeHTML(Char)(Char c) @safe pure if (isSomeChar!Char)
 {
+    import std.conv: to;
     if      (c == '&')  return "&amp;"; // ampersand
     else if (c == '<')  return "&lt;"; // less than
     else if (c == '>')  return "&gt;"; // greater than
@@ -162,9 +163,8 @@ static if (__VERSION__ >= 2066L)
     auto encodeHTML(string data) @safe pure
     {
         import std.utf: byDchar;
-        import std.algorithm: joiner;
+        import std.algorithm: joiner, map;
         return data.byDchar.map!encodeHTML.joiner("");
-        //pragma(msg, typeof(ret));
     }
 }
 else
