@@ -525,8 +525,8 @@ scoped auto a = [1,2];
   \item Compare with C/C++11/C++14’s Complexity: \texttt{T[]}, C99 VLA,
     \texttt{std::vector}, \texttt{std::array}, \texttt{std::valarray},
     \texttt{std::dynarray}, etc.
-  \item Safe by Default (Again): Bounds Checking activate (even release
-    mode). 90 \% of (browser) security holes are memory overruns.
+  \item Safe by default (even in release mode): 90 \% of (browser) security
+    holes are memory overruns.
   \end{itemize}
 \end{frame}
 
@@ -570,8 +570,8 @@ tags[13] ~= "Alice";
     \texttt{dstring} are by default \texttt{immutable} ranges. This enable for
     example
   \item ASTs to refer directly to GC:ed source string (slice) instead of a
-    heap-allocated copy =>
-  \item No heap allocation of read-only copies =>
+    heap-allocated copy
+  \item No heap allocation of read-only copies
   \item D XML-parsers fastest in the world
   \end{itemize}
 \end{frame}
@@ -749,40 +749,39 @@ void main(string[] args)
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Build Tool Builtin / Not Needed}
+\begin{frame}[fragile]{Build Tool Builtin}
   \begin{itemize}[<+->]
-  \item \textbf{\texttt{rdmd hello.d is}} all you need as long as
-    \texttt{hello.d} contains the main function. \texttt{rdmd} is a wrapper tool
-    around dmd that is include in the DMD distribution.
-  \item On UNIX you can use \textbf{“As-a-Script-Execution/Evaluation”} using
-    the ``shebang'' notation:\\Add \textbf{\textbf{\texttt{\#!/usr/bin/env
-          rdmd}}} to the beginning of your D main file (which doesn't have to
-    have .d extensions), make it executable and you can run it just as
-    \textit{it were an executable}. This will please script (Python, Ruby)
-    programmers that are used to not having to bother about a build tool.
-  \item For larger projects you can use, for instance, \textbf{SCons} the build
-    tool, which has builtin support for D.
+  \item \textbf{\texttt{rdmd hello.d}} when \texttt{hello.d} contains the
+    main function
+    % \texttt{rdmd} is a wrapper
+    % tool around dmd that is include in the DMD distribution.
+  \item UNIX ``shebang'': \textbf{“As-a-Script-Execution”} using
+    \\
+    \textbf{\textbf{\texttt{\#!/usr/bin/env rdmd}}}
+    % Add it to the beginning of your
+    % D main file (which doesn't have to have .d extensions), make it executable
+    % and you can run it just as \textit{it were an executable}. This will please
+    % script (Python, Ruby) programmers that are used to not having to bother
+    % about a build tool.
+  \item For larger projects \textbf{SCons} supports D
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Compilation Performance Facts}
   \begin{itemize}[<+->]
-  \item Carefully Designed Context-Free Non-Ambiguous Grammar makes it a
+  \item Context-Free Non-Ambiguous Grammar
   \item \emph{Single}-Pass (vs C++ 3-7 Passes) makes builds
-  \item Fastest Static Compilation in the World
-  \item At least 10 times faster than C++
-  \item A number of times faster than 2:nd place which currently is Go
-  \item Parses and Analyses Phobos (like C++ STL) on 1.21 s on my laptop. That’s 6 Mbytes
-    175k lines of code with more advanced use of generics than C++14 will have
-  \item DMD itself rebuilds on 11s (with Clang++ 3.4) on my two year old
-    laptop. Rebuild during development takes about a second!
-  \item Phobos builds and runs \emph{all} its unittest in 2 minutes 33 seconds! =>
-  \item \textbf{Super Feature}: A Github Pull Request is
-    \href{https://d.puremagic.com/test-results/pull-history.ghtml?projectid=1&repoid=1&pullid=3342}{pre-merge-compiled-and-unittested}
-    against compiler, runtime and Phobos on about 10 configurations within half
-    an hour!
-  \item Multi-threading Unittesting (\texttt{dtest}) will get additional
-    speedups when they are integrated main development.
+  \item Fastest Compiled Language
+  \item > 10x faster than C++
+  % \item Parses and Analyses Phobos (like C++ STL) on 1.21 s on my laptop. That’s 6 Mbytes
+  %   175k lines of code with more advanced use of generics than C++14 will have
+  % \item DMD itself rebuilds on 11s (with Clang++ 3.4) on my two year old
+  %   laptop. Rebuild during development takes about a second!
+  \item Phobos builds and runs all its unittests in 2 minutes!
+  \item \textbf{Quick Iterations}: A Github Pull Request is
+    \href{https://d.puremagic.com/test-results/pull-history.ghtml?projectid=1&repoid=1&pullid=3342}{checked}
+    on 10 configurations within half an hour!
+  \item Multi-threading Unittesting will give further speedups
   \end{itemize}
 \end{frame}
 
@@ -792,7 +791,7 @@ void main(string[] args)
   \item \textbf{dustmite} - Code Minimizer: Automatically isolates bug
     generating a specific error message by minimizing its parenting source
     code. Built into recent distribution of DMD.
-  \item Instant (0.5s) Syntactic and Semantic Analys for Project around 20k lines
+  \item Instant (1s) Syntactic and Semantic Analys for Project around 20k lines
   \item \textbf{Type-Rich Programming} finally becomes \emph{practically} doable
     in \emph{real} large projects, not just toy examples (such as in
     \texttt{Boost.Units}). Library error-messages can also be made
@@ -813,23 +812,20 @@ void main(string[] args)
 
 \begin{frame}[fragile]{The Big Picture}
   \begin{itemize}[<+->]
-  \item \emph{Key Conseqence} in D where everything is templates =>
-  \item \textbf{Compiler sees whole program not just single function} =>
-  \item Compiler can do better optimizations, safety checks, static analysis,
-    etc
-  \item This has previoulsy only been available in hardware languages such as
-    VHDL with huge compilation times
-  \item \textbf{Unique Feature}: Deduction of purity (\texttt{pure}) and Safety
-    (\texttt{@safe}) if compiler has the source! Purity is useful in, for
-    instance, \textbf{common sub-expression elimination}.
+  \item Fastest Parser
+  \item Templates everywhere
+  \item \textbf{Compiler sees whole program not just single function}
+  \item \textbf{Unique Feature}: \emph{Infers} of purity and Safety.
+  \item Better optimizations, safety checks, static analysis, etc
+  % \item Previously available in hw languages such as VHDL with huge compilation
+  %   times
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Safe Concurrency by default}
   \begin{itemize}[<+->]
-  \item Global Variables are defaulted to Thread-Local-Storage (\textbf{TLS}) means
-  \item No Race-Conditions by Default (contrary most other imperative languages
-    including C/C++, Java, C\#):
+  \item ``Globals'' Variables \textbf{TLS} by default
+  \item No default race-conditions
   \item Fundament: Better
     \begin{itemize}[<+->]
     \item Safe with 3 instructions than
@@ -837,9 +833,8 @@ void main(string[] args)
     \end{itemize}
   \item In PIC-code difference is unnoticeble
   \item Thread-Global must be tagged with \texttt{\_\_shared}
-  \item Compare with OSes with protected memory. Nobody accepts not having it
-    nowadays.
-  \item Threads can be treated more like \emph{isolated} processes.
+  \item Compare with OS Protected Memory
+  \item Threads become \emph{isolated} LWP
   \end{itemize}
 \end{frame}
 
@@ -935,7 +930,7 @@ void main() {
   \begin{itemize}[<+->]
   \item Static (Compile-Time) Reflection
     \begin{itemize}[<+->]
-    \item Members of \texttt{struct} and \texttt{class} via \texttt{tupleOf} can
+    \item Members of \texttt{struct} and \texttt{class} via \texttt{tupleof} can
       be iterated with \texttt{foreach} makes reflection in for example
       serialization trivial
     \item Enum-Members Names (like in Ada)
@@ -957,14 +952,15 @@ void main() {
   \item Accessibility (auto, const or immutable) using \textbf{inout} parameter
     and return qualifier and
   \item Return by Value or Reference Semantics using \textbf{auto ref}
-  \item These thanks to D strict memory model --- compiler are ware of what code
+  \item These thanks to D strict memory model --- compiler are aware of what code
   \item This reduces code bloat more than \emph{any} other \emph{imperative}
     (non Haskell-like) language
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Expressiveness: Meta-Programming}
-  Compile-Time-Function-Evaluation (CTFE), \item realized by the Combo:
+  Compile-Time-Function-Evaluation (CTFE),
+  \item realized by the Combo:
   (\texttt{pure} \& \texttt{immutable}) + \texttt{static if}, enables
   \begin{itemize}[<+->]
   \item \texttt{Safety}: Detect Errors before deployment
@@ -974,6 +970,24 @@ void main() {
     \item \texttt{Pegged} on Github replaces external parsing tools
     \item \texttt{std.regex.ctRegex} fastest in the world!
     \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{When is CTFE Triggered?}
+  CTFEable functions can be either
+  \begin{itemize}[<+->]
+  \item Evaluated at Compile-time:
+\begin{lstlisting}[frame=single]
+  static s = f();
+  enum e = f();
+\end{lstlisting}
+or
+  \item Executed at Run-time:
+\begin{lstlisting}[frame=single]
+  auto a = f();
+  const c = f();
+  immutable i = f();
+\end{lstlisting}
   \end{itemize}
 \end{frame}
 
@@ -1111,7 +1125,7 @@ alias Pair(T) = Tuple!(T, T);
   \begin{itemize}[<+->]
   \item Unrefer pointers but
   \item \emph{Not} null-initialize nor do arithmetic on them
-  \item \emph{Not} do any memory recast dribblings =>
+  \item \emph{Not} do any memory recast dribblings
   % \item No byteorder problems =>
   % \item Architecture Independence
   \item Cannot do unsafe \texttt{cast}.
@@ -1219,7 +1233,7 @@ alias Pair(T) = Tuple!(T, T);
     \fbox{\includegraphics[width=0.9\textwidth]{concert}}
   \end{figure}
   \begin{itemize}[<+->]
-  Features come together in an elegant and concise harmony =>
+  Features come together in an elegant and concise harmony
   \item Reusable Software with native performance!
   \end{itemize}
 \end{frame}
