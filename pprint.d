@@ -419,9 +419,11 @@ void pp1(Arg)(ref Viz viz, int depth,
                     arg.args.length == 1 &&
                     isInputRange!(typeof(arg.args[0])))
     {
+        /* See also: http://forum.dlang.org/thread/wjksldfpkpenoskvhsqa@forum.dlang.org#post-jwfildowqrbwtamywsmy:40forum.dlang.org */
         // table header
         import std.range: front;
-        alias Front = typeof(arg.args[0].front);
+        const first = arg.args[0].front;
+        alias Front = typeof(first);
         if (isAggregateType!Front)
         {
             /* TODO: When __traits(documentation,x)
@@ -429,22 +431,25 @@ void pp1(Arg)(ref Viz viz, int depth,
                get merged use it! */
             // viz.pplnTagN("tr", arg_.asCols); // TODO: inIt
 
-            const aggTuple = arg.args[0].front.tupleof;
+            // Use __traits(allMembers, T) instead
 
-            static if (true || is(Front == struct))
-            {
-                foreach (memb; __traits(allMembers, Front)) // TODO: Functionize this loop
-                {
-                    import std.stdio: writeln;
-                    writeln("TODO: Fix this ", memb);
-                }
-            }
+            // Can we lookup file and line of user defined types aswell?
 
-            // types header. TODO: Functionize
+            // member names header. TODO: Functionize
             if (viz.form == VizForm.HTML) { viz.ppRaw("<tr>"); }
-            foreach (memb; aggTuple) // TODO: Functionize this loop
+            foreach (ix, member; first.tupleof) // TODO: Functionize this loop
             {
-                alias Memb = Unqual!(typeof(memb));
+                import std.stdio: writeln;
+                enum name = __traits(identifier, Front.tupleof[ix]);
+                viz.pplnTagN("td", name.inIt.inBold);
+            }
+            if (viz.form == VizForm.HTML) { viz.ppRaw("</tr>"); }
+
+            // member types header. TODO: Functionize
+            if (viz.form == VizForm.HTML) { viz.ppRaw("<tr>"); }
+            foreach (member; first.tupleof) // TODO: Functionize this loop
+            {
+                alias Memb = Unqual!(typeof(member));
                 const type_string = Memb.stringof;
                 static if (is(Memb == struct))
                     const qual_string = "struct ".asKeyword;

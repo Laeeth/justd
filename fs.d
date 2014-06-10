@@ -3809,11 +3809,11 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         if (_showSkipped)
         {
-            viz.pp(asH!2("Skipping files of type"),
+            viz.pp("Skipping files of type".asH!2,
+                   binFKinds.asTable,
                    asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
                                                       ": ",
-                                                      asCSL(a.exts.map!(b => b.asCode))))),
-                   binFKinds.asTable());
+                                                      asCSL(a.exts.map!(b => b.asCode))))));
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
