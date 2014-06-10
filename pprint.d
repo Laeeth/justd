@@ -12,7 +12,7 @@
 module pprint;
 
 import std.range: isInputRange;
-import std.traits: isInstanceOf, isSomeString, isAggregateType;
+import std.traits: isInstanceOf, isSomeString, isAggregateType, Unqual;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
@@ -114,8 +114,12 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct InIt(T...) { T args; } auto inIt(T...)(T args) { return InIt!T(args); }
     /** Bold. */
     struct InBold(T...) { T args; } auto inBold(T...)(T args) { return InBold!T(args); }
+
     /** Code. */
-    struct AsCode(T...) { T args; } auto ref asCode(T...)(T args) { return AsCode!T(args); }
+    struct AsCode(T...) { T args; }
+    auto ref asCode(T...)(T args) { return AsCode!T(args); }
+    auto ref asKeyword(T...)(T args) { return AsCode!T(args); }
+
     /** Emphasized. */
     struct AsEm(T...) { T args; } auto ref asEm(T...)(T args) { return AsEm!T(args); }
     /** Strong. */
@@ -415,7 +419,42 @@ void pp1(Arg)(ref Viz viz, int depth,
                     arg.args.length == 1 &&
                     isInputRange!(typeof(arg.args[0])))
     {
-        // AsHeaderRow, asHeaderRow
+        // table header
+        import std.range: front;
+        alias Front = typeof(arg.args[0].front);
+        if (isAggregateType!Front)
+        {
+            /* TODO: When __traits(documentation,x)
+               here https://github.com/D-Programming-Language/dmd/pull/3531
+               get merged use it! */
+            // viz.pplnTagN("tr", arg_.asCols); // TODO: inIt
+
+            const aggTuple = arg.args[0].front.tupleof;
+
+            static if (true || is(Front == struct))
+            {
+                foreach (memb; __traits(allMembers, Front)) // TODO: Functionize this loop
+                {
+                    import std.stdio: writeln;
+                    writeln("TODO: Fix this ", memb);
+                }
+            }
+
+            // types header. TODO: Functionize
+            if (viz.form == VizForm.HTML) { viz.ppRaw("<tr>"); }
+            foreach (memb; aggTuple) // TODO: Functionize this loop
+            {
+                alias Memb = Unqual!(typeof(memb));
+                const type_string = Memb.stringof;
+                static if (is(Memb == struct))
+                    const qual_string = "struct ".asKeyword;
+                static if (is(Memb == class))
+                    const qual_string = "class ".asKeyword;
+                viz.pplnTagN("td", type_string.asCode.inBold);
+            }
+            if (viz.form == VizForm.HTML) { viz.ppRaw("</tr>\n"); }
+        }
+
         foreach (ix, arg_; arg.args[0])
         {
             // row index
