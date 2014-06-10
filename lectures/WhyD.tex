@@ -863,7 +863,7 @@ void main() {
 
 \begin{frame}[fragile]{Parallelism}
   \begin{itemize}[<+->]
-  \item \emph{Fibers} not Threads
+  \item Fibers and Threads
   \item Inside \texttt{std.parallelism}
   \item Task-Based Scheduling \& Stealing
   \item Builtin (no costly 3:rd part such as C++'s Intel TBB)
@@ -907,10 +907,9 @@ void main() {
   \item Exception: \textbf{nothrow}
   \item Code Access: \textbf{pure}
   \item Memory Safety: \textbf{@safe}
-  \item Memory Allocation: \textbf{@nogc}
-  \item enables better optimization and automatic algorithm parallelization than
-    current mainstream languages (C,C++,Java,C\#).
+  \item GC Heap Allocation: \textbf{@nogc}
   \end{itemize}
+  enables optimization and auto-parallelization
 \end{frame}
 
 \begin{frame}[fragile]{Flexible Memory Management System}
@@ -1270,3 +1269,8 @@ alias Pair(T) = Tuple!(T, T);
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
