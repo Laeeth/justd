@@ -61,12 +61,15 @@ class Patt {
     /** Find $(D this) in $(D haystack) at Offset $(D soff). */
     const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
         auto i = soff;
-        while (i < haystack.length) { // while bytes left at i
-            if (haystack.length - i < minLength) { // and bytes left to find pattern
+        while (i < haystack.length) // while bytes left at i
+        {
+            if (haystack.length - i < minLength)  // and bytes left to find pattern
+            {
                 return [];
             }
             const hit = atU(haystack, i);
-            if (hit != size_t.max) { // hit at i
+            if (hit != size_t.max) // hit at i
+            {
                 return haystack[i..i + hit];
             }
             i++;
@@ -89,10 +92,14 @@ class Patt {
 
 /** Literal Pattern with Cached Binary Byte Histogram.
  */
-class Lit : Patt {
+class Lit : Patt
+{
     pure:
-        this(string bytes_) { assert(!bytes_.empty); this(bytes_.representation); }
+
+    this(string bytes_) { assert(!bytes_.empty); this(bytes_.representation); }
+
     @safe:
+
     this(ubyte ch) { this._bytes ~= ch; }
     this(ubyte[] bytes_) { this._bytes = bytes_; }
     this(immutable ubyte[] bytes_) { this._bytes = bytes_.dup; }
@@ -108,6 +115,7 @@ class Lit : Patt {
     }
 
     @property nothrow:
+
     override size_t maxLength() const { return _bytes.length; }
     override bool isFixed() const { return true; }
     override bool isConstant() const { return true; }
@@ -122,8 +130,10 @@ class Lit : Patt {
     /// Get (Cached) (Binary) Histogram over single elements contained in this $(D Lit).
     SinglesHist singlesHist() nothrow {
         if (!_bytes.empty &&
-            _singlesHist.allZero)  {
-            foreach (b; _bytes) {
+            _singlesHist.allZero)
+        {
+            foreach (b; _bytes)
+            {
                 _singlesHist[b] = true;
             }
         }
@@ -165,17 +175,20 @@ unittest {
  */
 class Acronym : Patt {
     pure:
-        this(string bytes_, FindContext ctx = FindContext.inSymbol) {
+        this(string bytes_, FindContext ctx = FindContext.inSymbol)
+    {
         assert(!bytes_.empty);
         this(bytes_.representation, ctx);
     }
     @safe:
     this(ubyte ch) { this._acros ~= ch; }
-    this(ubyte[] bytes_, FindContext ctx = FindContext.inSymbol) {
+    this(ubyte[] bytes_, FindContext ctx = FindContext.inSymbol)
+    {
         this._acros = bytes_;
         this._ctx = ctx;
     }
-    this(immutable ubyte[] bytes_, FindContext ctx = FindContext.inSymbol) {
+    this(immutable ubyte[] bytes_, FindContext ctx = FindContext.inSymbol)
+    {
         this._acros = bytes_.dup;
         this._ctx = ctx;
     }
@@ -183,11 +196,13 @@ class Acronym : Patt {
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
         auto offs = new size_t[_acros.length]; // hit offsets
         size_t a = 0;         // acronym index
-        foreach(s, ub; haystack[soff..$]) { // for each element in source
+        foreach(s, ub; haystack[soff..$])  // for each element in source
+        {
             import std.ascii: isAlpha;
 
             // Check context
-            final switch (_ctx) {
+            final switch (_ctx)
+            {
             case FindContext.inWord:
             case FindContext.asWord:
                 if (!ub.isAlpha) { return size_t.max; } break;
@@ -196,10 +211,12 @@ class Acronym : Patt {
                 if (!ub.isAlpha && ub != '_') { return size_t.max; } break;
             }
 
-            if (_acros[a] == ub) {
+            if (_acros[a] == ub)
+            {
                 offs[a] = s + soff; // store hit offset
                 a++; // advance acronym
-                if (a == _acros.length) { // if complete acronym found
+                if (a == _acros.length) // if complete acronym found
+                {
                     return s + 1;             // return its length
                 }
             }
@@ -257,15 +274,23 @@ auto any(Args...)(Args args) { return new Any(args); } // maker
  */
 abstract class SPatt : Patt {
     this(Patt[] subs_) { this._subs = subs_; }
-    this(Args...)(Args subs_) {
+    this(Args...)(Args subs_)
+    {
         import std.traits: isAssignable;
-        foreach (sub; subs_) {
-            static if (isAssignable!(Patt, typeof(sub))) { // if sub is of has base-class Patt
+        foreach (sub; subs_)
+        {
+            alias Sub = typeof(sub);
+            static if (isAssignable!(Patt, typeof(sub))) // if sub is of has base-class Patt
+            {
                 _subs ~= sub;
-            } else static if (is(typeof(sub) == string) ||
-                              is(typeof(sub) == uchar)) {
-                    _subs ~= new Lit(sub);
-            } else {
+            }
+            else static if (is(Sub == string) ||
+                            is(Sub == uchar))
+            {
+                _subs ~= new Lit(sub);
+            }
+            else
+            {
                 static assert(false);
             }
             sub._parent = this;
@@ -286,13 +311,15 @@ class Seq : SPatt {
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
         assert(!elms.empty); // TODO: Move to in contract?
         const(ubyte[]) c = getConstant;
-        if (!c.empty) {
+        if (!c.empty)
+        {
             return (soff + c.length <= haystack.length &&   // if equal size and
                     c[] == haystack[soff..soff + c.length]); // equal contents
         }
         size_t sum = 0;
         size_t off = soff;
-        foreach (ix, sub; elms) { // TODO: Reuse std.algorithm instead?
+        foreach (ix, sub; elms) // TODO: Reuse std.algorithm instead?
+        {
             size_t hit = sub.atU(haystack, off);
             if (hit == size_t.max) { sum = hit; break; } // if any miss skip
             sum += hit;
@@ -340,7 +367,8 @@ class Alt : SPatt {
         assert(!alts.empty);    // TODO: Move to in contract?
         size_t hit = 0;
         size_t off = soff;
-        foreach (ix, sub; alts) { // TODO: Reuse std.algorithm instead?
+        foreach (ix, sub; alts)  // TODO: Reuse std.algorithm instead?
+        {
             hit = sub.atU(haystack[off..$]);                     // match alternative
             if (hit != size_t.max) { alt_hix = ix; break; } // if any hit were done
         }
@@ -363,7 +391,8 @@ class Alt : SPatt {
             const ubyte[] a0 = alts[0].getConstant;
             const ubyte[] a1 = alts[1].getConstant;
             if (!a0.empty &&
-                !a1.empty) {
+                !a1.empty)
+            {
                 auto hit = find(haystack[soff..$], a0, a1); // Use: second argument to return alt_hix
                 return hit[0];
             }
@@ -373,7 +402,8 @@ class Alt : SPatt {
             const ubyte[] a2 = alts[2].getConstant;
             if (!a0.empty &&
                 !a1.empty &&
-                !a2.empty) {
+                !a2.empty)
+            {
                 auto hit = find(haystack[soff..$], a0, a1, a2); // Use: second argument to return alt_hix
                 return hit[0];
             }
@@ -385,7 +415,8 @@ class Alt : SPatt {
             if (!a0.empty &&
                 !a1.empty &&
                 !a2.empty &&
-                !a3.empty) {
+                !a3.empty)
+            {
                 auto hit = find(haystack[soff..$], a0, a1, a2, a3); // Use: second argument to return alt_hix
                 return hit[0];
             }
@@ -399,7 +430,8 @@ class Alt : SPatt {
                 !a1.empty &&
                 !a2.empty &&
                 !a3.empty &&
-                !a4.empty) {
+                !a4.empty)
+            {
                 auto hit = find(haystack[soff..$], a0, a1, a2, a3, a4); // Use: second argument to return alt_hix
                 return hit[0];
             }
@@ -419,13 +451,19 @@ class Alt : SPatt {
         return (mins.allEqual &&
                 maxs.allEqual);
     }
-    override bool isConstant() const {
-        if (_subs.length == 0) {
+    override bool isConstant() const
+    {
+        if (_subs.length == 0)
+        {
             return true;
-        } else if (_subs.length == 1) {
+        }
+        else if (_subs.length == 1)
+        {
             import std.range: front;
             return _subs.front.isConstant;
-        } else {
+        }
+        else
+        {
             return false;       // TODO: Maybe handle case when _subs are different.
         }
     }
@@ -497,8 +535,10 @@ unittest {
 
 /** Abstract Singleton Super Pattern.
  */
-abstract class SPatt1 : Patt {
-    this(Patt sub) {
+abstract class SPatt1 : Patt
+{
+    this(Patt sub)
+    {
         this.sub = sub;
         sub._parent = this;
     }
@@ -544,14 +584,16 @@ class Rep : SPatt1 {
         size_t sum = 0;
         size_t off = soff;
         /* mandatory */
-        foreach (ix; 0..countReq) { // TODO: Reuse std.algorithm instead?
+        foreach (ix; 0..countReq)  // TODO: Reuse std.algorithm instead?
+        {
             size_t hit = sub.atU(haystack[off..$]);
             if (hit == size_t.max) { return hit; } // if any miss skip
             off += hit;
             sum += hit;
         }
         /* optional part */
-        foreach (ix; countReq..countReq + countOpt) { // TODO: Reuse std.algorithm instead?
+        foreach (ix; countReq..countReq + countOpt) // TODO: Reuse std.algorithm instead?
+        {
             size_t hit = sub.atU(haystack[off..$]);
             if (hit == size_t.max) { break; } // if any miss just break
             off += hit;
@@ -614,7 +656,8 @@ class Ctx : Patt {
         assert(soff <= haystack.length); // include equality because haystack might be empty and size zero
         bool ok = false;
         import std.ascii : isAlphaNum/* , newline */;
-        final switch (type) {
+        final switch (type)
+        {
             /* buffer */
         case Type.bob: ok = (soff == 0); break;
         case Type.eob: ok = (soff == haystack.length); break;
@@ -731,7 +774,8 @@ unittest {
     Example: #!/bin/env rdmd
     See also: https://en.wikipedia.org/wiki/Shebang_(Unix)
  */
-auto ref shebangLine(Patt interpreter) {
+auto ref shebangLine(Patt interpreter)
+{
     return seq(lit("#!"),
                opt(lit("/usr")),
                opt(lit("/bin/env")),
