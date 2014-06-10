@@ -2503,6 +2503,7 @@ class Scanner(Term)
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         srcFKinds ~= kindC;
         kindC.operations ~= tuple(FileOp.checkSyntax, "gcc -x c -fsyntax-only -c");
+        kindC.operations ~= tuple(FileOp.checkSyntax, "clang -x c -fsyntax-only -c");
         kindC.opers = opersC;
 
         auto keywordsCxx = keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
@@ -2549,6 +2550,7 @@ class Scanner(Term)
                                  defaultStringDelims,
                                  FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         kindCxx.operations ~= tuple(FileOp.checkSyntax, "gcc -x c++ -fsyntax-only -c");
+        kindCxx.operations ~= tuple(FileOp.checkSyntax, "clang -x c++ -fsyntax-only -c");
         kindCxx.opers = opersCxx;
         srcFKinds ~= kindCxx;
         auto keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
@@ -2722,6 +2724,7 @@ class Scanner(Term)
                                FileContent.sourceCode,
                                FileKindDetection.equalsNameOrContents);
         kindD.operations ~= tuple(FileOp.checkSyntax, "gdc -fsyntax-only");
+        kindD.operations ~= tuple(FileOp.checkSyntax, "dmd -debug -wi -c -o-"); // TODO: Include paths
         srcFKinds ~= kindD;
 
         auto keywordsFortran77 = ["if", "else"];
