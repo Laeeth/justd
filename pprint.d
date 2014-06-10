@@ -52,30 +52,30 @@ Face!Color face(Color)(Color fg, Color bg,
 }
 
 // Faces (Font/Color)
-enum stdFace = face(Color.white, Color.black);
-enum pathFace = face(Color.green, Color.black, true);
+enum stdFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black);
+enum pathFace = face(arsd.terminal.Color.green, arsd.terminal.Color.black, true);
 
-enum dirFace = face(Color.blue, Color.black, true);
-enum fileFace = face(Color.magenta, Color.black, true);
+enum dirFace = face(arsd.terminal.Color.blue, arsd.terminal.Color.black, true);
+enum fileFace = face(arsd.terminal.Color.magenta, arsd.terminal.Color.black, true);
 enum baseNameFace = fileFace;
-enum specialFileFace = face(Color.red, Color.black, true);
-enum regFileFace = face(Color.white, Color.black, true, false, ["b"]);
-enum symlinkFace = face(Color.cyan, Color.black, true, true, ["i"]);
-enum symlinkBrokenFace = face(Color.red, Color.black, true, true, ["i"]);
+enum specialFileFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, true);
+enum regFileFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, true, false, ["b"]);
+enum symlinkFace = face(arsd.terminal.Color.cyan, arsd.terminal.Color.black, true, true, ["i"]);
+enum symlinkBrokenFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, true, true, ["i"]);
 
-enum contextFace = face(Color.green, Color.black);
+enum contextFace = face(arsd.terminal.Color.green, arsd.terminal.Color.black);
 
-enum timeFace = face(Color.magenta, Color.black);
-enum digestFace = face(Color.yellow, Color.black);
-enum bytesFace = face(Color.yellow, Color.black);
+enum timeFace = face(arsd.terminal.Color.magenta, arsd.terminal.Color.black);
+enum digestFace = face(arsd.terminal.Color.yellow, arsd.terminal.Color.black);
+enum bytesFace = face(arsd.terminal.Color.yellow, arsd.terminal.Color.black);
 
-enum infoFace = face(Color.white, Color.black, true);
-enum warnFace = face(Color.yellow, Color.black);
+enum infoFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, true);
+enum warnFace = face(arsd.terminal.Color.yellow, arsd.terminal.Color.black);
 enum kindFace = warnFace;
-enum errorFace = face(Color.red, Color.black);
+enum errorFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black);
 
-enum titleFace = face(Color.white, Color.black, false, false, ["title"]);
-enum h1Face = face(Color.white, Color.black, false, false, ["h1"]);
+enum titleFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, false, false, ["title"]);
+enum h1Face = face(arsd.terminal.Color.white, arsd.terminal.Color.black, false, false, ["h1"]);
 
 // Support these as immutable
 
