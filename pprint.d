@@ -5,11 +5,14 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
     TODO: How should std.typecons.Tuple be pretty printed?
+    TODO: Add visited member to keeps track of what objects that have been visited
+    TODO: Add asGCCMessage pretty prints
+          seq($PATH, ':', $ROW, ':', $COL, ':', message, '[', $TYPE, ']'
 */
 module pprint;
 
 import std.range: isInputRange;
-import std.traits: isInstanceOf, isSomeString;
+import std.traits: isInstanceOf, isSomeString, isAggregateType;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
@@ -148,6 +151,18 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
         T args;
     }
     auto ref asTable(T...)(T args) { return AsTable!T("\"1\"", args); }
+
+    struct AsCols(T...) { T args; }
+    auto ref asCols(T...)(T args) { return AsCols!T(args); }
+
+    /** Row Numbering */
+    enum RowNr { none, offsetZero, offsetOne }
+    struct AsRows(RowNr N, T...) {
+        enum nr = N;
+        T args;
+    }
+    auto ref asRows(RowNr N,
+                    T...)(T args) { return AsRows!(N, T)(args); }
 
     /** Table Row. */
     struct AsRow(T...) { T args; } auto ref asRow(T...)(T args) { return AsRow!T(args); }
@@ -372,23 +387,60 @@ void pp1(Arg)(ref Viz viz, int depth,
             const border = (arg.border ? " border=" ~ arg.border : "");
             viz.ppRaw("<table" ~ border ~ ">\n");
         }
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\\begin{tabular}\n"); }
+        else if (viz.form == VizForm.LaTeX)
+        {
+            viz.ppRaw("\\begin{tabular}\n");
+        }
 
         static if (arg.args.length == 1 &&
-                   isInputRange!(typeof(arg[0])))
+                   isInputRange!(typeof(arg.args[0])))
         {
-            foreach (arg; args)
-            {
-                viz.pplnTagN("tr", arg); // each element in range as a row
-            }
+            viz.pp(arg.args[0].asRows!(RowNr.none));
         }
         else
         {
             viz.ppN(arg.args);
         }
 
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</table>\n"); }
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\\end{tabular}\n"); }
+        if (viz.form == VizForm.HTML)
+        {
+            viz.ppRaw("</table>\n");
+        }
+        else if (viz.form == VizForm.LaTeX)
+        {
+            viz.ppRaw("\\end{tabular}\n");
+        }
+    }
+    else static if (isInstanceOf!(AsRows, Arg) &&
+                    arg.args.length == 1 &&
+                    isInputRange!(typeof(arg.args[0])))
+    {
+        // AsHeaderRow, asHeaderRow
+        foreach (ix, arg_; arg.args[0])
+        {
+            // row index
+            static      if (arg.nr == RowNr.offsetZero)
+                viz.pplnTagN("tr", ix + 0);
+            else static if (arg.nr == RowNr.offsetOne)
+                viz.pplnTagN("tr", ix + 1);
+            // row columns
+            viz.pplnTagN("tr", arg_.asCols);
+        }
+    }
+    else static if (isInstanceOf!(AsCols, Arg))
+    {
+        if (arg.args.length == 1 &&
+            isAggregateType!(typeof(arg.args[0])))
+        {
+            foreach (arg_; arg.args[0].tupleof)
+            {
+                viz.pplnTagN("td", arg_); // each element in aggregate as a column
+            }
+        }
+        else
+        {
+            viz.pplnTagN("tr", arg.args);
+        }
     }
     else static if (isInstanceOf!(AsRow, Arg))
     {

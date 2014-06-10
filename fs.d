@@ -3812,7 +3812,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
             viz.pp(asH!2("Skipping files of type"),
                    asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
                                                       ": ",
-                                                      asCSL(a.exts.map!(b => b.asCode))))));
+                                                      asCSL(a.exts.map!(b => b.asCode))))),
+                   binFKinds.asTable());
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
