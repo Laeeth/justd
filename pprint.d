@@ -9,7 +9,7 @@
 module pprint;
 
 import std.range: isInputRange;
-import std.traits: isInstanceOf;
+import std.traits: isInstanceOf, isSomeString;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
@@ -97,14 +97,14 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 @safe pure nothrow @nogc
 {
     /** Printed as Words. */
-    struct AsWords(T...) { T args; } auto asWords(T...)(T args) { return AsWords!T(args); }
+    struct AsWords(T...) { T args; } auto ref asWords(T...)(T args) { return AsWords!T(args); }
     /** Printed as Comma-Separated List. */
-    struct AsCSL(T...) { T args; } auto asCSL(T...)(T args) { return AsCSL!T(args); }
+    struct AsCSL(T...) { T args; } auto ref asCSL(T...)(T args) { return AsCSL!T(args); }
 
     /** Printed as Path. */
-    struct AsPath(T) { T arg; } auto asPath(T)(T arg) { return AsPath!T(arg); }
+    struct AsPath(T) { T arg; } auto ref asPath(T)(T arg) { return AsPath!T(arg); }
     /** Printed as Name. */
-    struct AsName(T) { T arg; } auto asName(T)(T arg) { return AsName!T(arg); }
+    struct AsName(T) { T arg; } auto ref asName(T)(T arg) { return AsName!T(arg); }
 
     /* TODO: Turn these into an enum for more efficient parsing. */
     /** Printed as Italic/Slanted. */
@@ -112,30 +112,32 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Bold. */
     struct InBold(T...) { T args; } auto inBold(T...)(T args) { return InBold!T(args); }
     /** Code. */
-    struct AsCode(T...) { T args; } auto asCode(T...)(T args) { return AsCode!T(args); }
+    struct AsCode(T...) { T args; } auto ref asCode(T...)(T args) { return AsCode!T(args); }
     /** Emphasized. */
-    struct AsEm(T...) { T args; } auto asEm(T...)(T args) { return AsEm!T(args); }
+    struct AsEm(T...) { T args; } auto ref asEm(T...)(T args) { return AsEm!T(args); }
     /** Strong. */
-    struct AsStrong(T...) { T args; } auto asStrong(T...)(T args) { return AsStrong!T(args); }
+    struct AsStrong(T...) { T args; } auto ref asStrong(T...)(T args) { return AsStrong!T(args); }
     /** Preformatted. */
-    struct AsPre(T...) { T args; } auto asPre(T...)(T args) { return AsPre!T(args); }
+    struct AsPre(T...) { T args; } auto ref asPre(T...)(T args) { return AsPre!T(args); }
 
     /** Scan Hit with Color index $(D ix)). */
-    struct AsHit(T...) { uint ix; T args; } auto asHit(T)(uint ix, T args) { return AsHit!T(ix, args); }
+    struct AsHit(T...) { uint ix; T args; } auto ref asHit(T)(uint ix, T args) { return AsHit!T(ix, args); }
 
     /** Scan Hit Context with Color index $(D ix)). */
-    struct AsCtx(T...) { uint ix; T args; } auto asCtx(T)(uint ix, T args) { return AsCtx!T(ix, args); }
+    struct AsCtx(T...) { uint ix; T args; } auto ref asCtx(T)(uint ix, T args) { return AsCtx!T(ix, args); }
 
     /** Header. */
-    struct Header(uint Level, T...) { T args; enum level = Level; }
-    auto asH(uint Level, T...)(T args) { return Header!(Level, T)(args); }
+    struct AsH(uint Level, T...) { T args; enum level = Level; }
+    auto ref asH(uint Level, T...)(T args) { return AsH!(Level, T)(args); }
+    /** Paragraph. */
+    struct AsP(T...) { T args; } auto ref asP(T...)(T args) { return AsP!T(args); }
 
     /** Unordered List.
         TODO: Should asUList, asOList autowrap args as AsItems when needed?
     */
-    struct AsUList(T...) { T args; } auto asUList(T...)(T args) { return AsUList!T(args); }
+    struct AsUList(T...) { T args; } auto ref asUList(T...)(T args) { return AsUList!T(args); }
     /** Ordered List. */
-    struct AsOList(T...) { T args; } auto asOList(T...)(T args) { return AsOList!T(args); }
+    struct AsOList(T...) { T args; } auto ref asOList(T...)(T args) { return AsOList!T(args); }
 
     /** Table.
         TODO: Should asTable autowrap args AsRows when needed?
@@ -144,21 +146,19 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
         string border;
         T args;
     }
-    auto asTable(T...)(T args) {
-        return AsTable!T("\"1\"", args);
-    }
+    auto ref asTable(T...)(T args) { return AsTable!T("\"1\"", args); }
 
     /** Table Row. */
-    struct AsRow(T...) { T args; } auto asRow(T...)(T args) { return AsRow!T(args); }
+    struct AsRow(T...) { T args; } auto ref asRow(T...)(T args) { return AsRow!T(args); }
     /** Table Cell. */
-    struct AsCell(T...) { T args; } auto asCell(T...)(T args) { return AsCell!T(args); }
+    struct AsCell(T...) { T args; } auto ref asCell(T...)(T args) { return AsCell!T(args); }
 
     /** Row/Column/... Span. */
     struct Span(T...) { uint _span; T args; }
     auto span(T...)(uint span, T args) { return span!T(span, args); }
 
     /** Table Heading. */
-    struct AsTHeading(T...) { T args; } auto asTHeading(T...)(T args) { return AsTHeading!T(args); }
+    struct AsTHeading(T...) { T args; } auto ref asTHeading(T...)(T args) { return AsTHeading!T(args); }
 
     /* /\** Unordered List Beginner. *\/ */
     /* struct UListBegin(T...) { T args; } */
@@ -174,13 +174,13 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /* auto oListEnd(T...)(T args) { return OListEnd!T(args); } */
 
     /** List Item. */
-    struct AsItem(T...) { T args; } auto asItem(T...)(T args) { return AsItem!T(args); }
+    struct AsItem(T...) { T args; } auto ref asItem(T...)(T args) { return AsItem!T(args); }
 
     const string lbr(bool useHTML) { return (useHTML ? "<br>" : ""); } // line break
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void ppRaw(Arg)(Viz viz,
+void ppRaw(Arg)(ref Viz viz,
                 Arg arg) @trusted
 {
     if (viz.outFile == stdout)
@@ -190,7 +190,7 @@ void ppRaw(Arg)(Viz viz,
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(Arg)(Viz viz,
+void ppPut(Arg)(ref Viz viz,
                 Arg arg) @trusted
 {
     if (viz.outFile == stdout)
@@ -211,7 +211,7 @@ void ppPut(Arg)(Viz viz,
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(Arg)(Viz viz,
+void ppPut(Arg)(ref Viz viz,
                 Face!Color face,
                 Arg arg) @trusted
 {
@@ -265,8 +265,21 @@ auto getFace(Arg)(in Arg arg) @safe pure nothrow
     }
 }
 
+void ppTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSomeString!Tag)
+{
+    if (viz.form == VizForm.html) { viz.ppRaw("<" ~ tag ~ ">"); }
+    viz.ppN(args);
+    if (viz.form == VizForm.html) { viz.ppRaw("</" ~ tag ~ ">"); }
+}
+
+void pplnTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSomeString!Tag)
+{
+    viz.ppTagN(tag, args);
+    viz.ppRaw("\n");
+}
+
 /** Pretty-Print Argument $(D arg) to Terminal $(D term). */
-void pp1(Arg)(Viz viz, int depth,
+void pp1(Arg)(ref Viz viz, int depth,
               Arg arg) @trusted
 {
     static if (isInputRange!Arg)
@@ -302,41 +315,48 @@ void pp1(Arg)(Viz viz, int depth,
     }
     else static if (isInstanceOf!(InBold, Arg))
     {
-        if (viz.form == VizForm.html) { viz.ppRaw("<b>"); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.html) { viz.ppRaw("</b>"); }
+        viz.ppTagN("b", arg.args);
     }
     else static if (isInstanceOf!(InIt, Arg))
     {
-        if (viz.form == VizForm.html) { viz.ppRaw("<i>"); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.html) { viz.ppRaw("</i>"); }
+        viz.ppTagN("i", arg.args);
     }
     else static if (isInstanceOf!(AsCode, Arg))
     {
-        if (viz.form == VizForm.html) { viz.ppRaw("<code>"); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.html) { viz.ppRaw("</code>"); }
+        viz.ppTagN("code", arg.args);
     }
     else static if (isInstanceOf!(AsEm, Arg))
     {
-        if (viz.form == VizForm.html) { viz.ppRaw("<em>"); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.html) { viz.ppRaw("</em>"); }
+        viz.ppTagN("em", arg.args);
     }
     else static if (isInstanceOf!(AsStrong, Arg))
     {
-        if (viz.form == VizForm.html) { viz.ppRaw("<strong>"); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.html) { viz.ppRaw("</strong>"); }
+        viz.ppTagN("strong", arg.args);
     }
-    else static if (isInstanceOf!(Header, Arg))
+    else static if (isInstanceOf!(AsH, Arg))
+    {
+        if (viz.form == VizForm.html)
+        {
+            viz.pplnTagN("h" ~ to!string(arg.level),
+                         arg.args);
+        }
+        else if (viz.form == VizForm.textAsciiDoc ||
+                 viz.form == VizForm.textAsciiDocUTF8)
+        {
+            string tag;
+            foreach (ix; 0..arg.level)
+            {
+                tag ~= "=";
+            }
+            // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
+            viz.ppN("\n", tag, " ", arg.args, " ", tag, "\n");
+        }
+    }
+    else static if (isInstanceOf!(AsP, Arg))
     {
         if (viz.form == VizForm.html) {
             const level_ = to!string(arg.level);
-            viz.ppRaw("<h" ~ level_ ~ ">");
-            viz.ppN(arg.args);
-            viz.ppRaw("</h" ~ level_ ~ ">\n");
+            viz.pplnTagN("p", arg.args);
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
@@ -558,7 +578,7 @@ void pp1(Arg)(Viz viz, int depth,
 }
 
 /** Pretty-Print Arguments $(D args) to Terminal $(D term). */
-void ppN(Args...)(Viz viz,
+void ppN(Args...)(ref Viz viz,
                      Args args) @trusted
 {
     foreach (arg; args)
@@ -568,7 +588,7 @@ void ppN(Args...)(Viz viz,
 }
 
 /** Pretty-Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
-void pp(Args...)(Viz viz,
+void pp(Args...)(ref Viz viz,
                  Args args) @trusted
 {
     viz.ppN(args);
@@ -598,7 +618,7 @@ struct Viz
 }
 
 /** Pretty-Print Arguments $(D args) including final line termination. */
-void ppln(Args...)(Viz viz, Args args) @trusted
+void ppln(Args...)(ref Viz viz, Args args) @trusted
 {
     viz.ppN(args);
     if (viz.outFile == stdout)
@@ -613,7 +633,7 @@ void ppln(Args...)(Viz viz, Args args) @trusted
 }
 
 /** Pretty-Print Arguments $(D args) each including a final line termination. */
-void pplns(Args...)(Viz viz, Args args) @trusted
+void pplns(Args...)(ref Viz viz, Args args) @trusted
 {
     foreach (arg; args)
     {
@@ -622,7 +642,7 @@ void pplns(Args...)(Viz viz, Args args) @trusted
 }
 
 /** Print End of Line to Terminal $(D term). */
-void ppendl(Viz viz) @trusted
+void ppendl(ref Viz viz) @trusted
 {
     return viz.ppln();
 }
