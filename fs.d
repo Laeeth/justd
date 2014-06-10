@@ -146,7 +146,6 @@ import sregex;
 import english;
 import bitset;
 import dbg;
-import backtrace.backtrace;
 import tempfs;
 import rational: Rational;
 import ngram;
@@ -4945,12 +4944,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     }
 }
 
-Scanner!Term scanner(Term)(string[] args, ref Term term)
-{
-    return new Scanner!Term(args, term);
-}
-
-void main(string[] args)
+void scanner(string[] args)
 {
     // Register the SIGINT signal with the signalHandler function call:
     version(linux)
@@ -4961,19 +4955,6 @@ void main(string[] args)
         signal(SIGINT, &signalHandler);
     }
 
-    import std.stdio: stderr;
-    backtrace.backtrace.install(stderr);
-
     auto term = Terminal(ConsoleOutputType.linear);
-
-    // term.setTitle("Basic I/O");
-    // auto input = RealTimeConsoleInput(viz, &term,
-    //                                   ConsoleInputFlags.raw |
-    //                                   ConsoleInputFlags.mouse |
-    //                                   ConsoleInputFlags.paste);
-    // term.write("test some long string to see if it wraps or what because i dont really know what it is going to do so i just want to test i think it will wrap but gotta be sure lolololololololol");
-    // term.writefln("%d %d", term.cursorX, term.cursorY);
-    // term.writeln("fdsfdfsfsfdf");
-
-    auto s = scanner(args, term);
+    auto scanner = new Scanner!Terminal(args, term);
 }
