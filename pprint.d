@@ -35,30 +35,58 @@ import core.time: Duration;
 string shortDurationString(in Duration dur) @safe pure
 {
     import std.conv: to;
-    immutable weeks = dur.weeks();
-    if (weeks)
+    static if (__VERSION__ >= 2066L)
     {
-        if (weeks < 52)
+        immutable weeks = dur.total!"weeks";
+        if (weeks)
         {
-            return to!string(weeks) ~ " week" ~ (weeks >= 2 ? "s" : "");
+            if (weeks < 52)
+            {
+                return to!string(weeks) ~ " week" ~ (weeks >= 2 ? "s" : "");
+            }
+            else
+            {
+                immutable years = weeks / 52;
+                immutable weeks_rest = weeks % 52;
+                return to!string(years) ~ " year" ~ (years >= 2 ? "s" : "") ~
+                    " and " ~
+                    to!string(weeks_rest) ~ " week" ~ (weeks_rest >= 2 ? "s" : "");
+            }
         }
-        else
-        {
-            immutable years = weeks / 52;
-            immutable weeks_rest = weeks % 52;
-            return to!string(years) ~ " year" ~ (years >= 2 ? "s" : "") ~
-                " and " ~
-                to!string(weeks_rest) ~ " week" ~ (weeks_rest >= 2 ? "s" : "");
-        }
+        immutable days = dur.total!"days";       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
+        immutable hours = dur.total!"hours";     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
+        immutable minutes = dur.total!"minutes"; if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
+        immutable seconds = dur.total!"seconds"; if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
+        immutable msecs = dur.total!"msecs";     if (msecs) return to!string(msecs) ~ " millisecond" ~ (msecs >= 2 ? "s" : "");
+        immutable usecs = dur.total!"usecs";     if (usecs) return to!string(usecs) ~ " microsecond" ~ (msecs >= 2 ? "s" : "");
+        immutable nsecs = dur.total!"nsecs";     return to!string(nsecs) ~ " nanosecond" ~ (msecs >= 2 ? "s" : "");
     }
-    immutable days = dur.days();       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
-    immutable hours = dur.hours();     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
-    immutable minutes = dur.minutes(); if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
-    immutable seconds = dur.seconds(); if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
-    immutable frac = dur.fracSec;
-    immutable msecs = frac.msecs; if (msecs) return to!string(msecs) ~ " millisecond" ~ (msecs >= 2 ? "s" : "");
-    immutable usecs = frac.usecs; if (usecs) return to!string(usecs) ~ " microsecond" ~ (msecs >= 2 ? "s" : "");
-    immutable nsecs = frac.nsecs; return to!string(nsecs) ~ " nanosecond" ~ (msecs >= 2 ? "s" : "");
+    else
+    {
+        immutable weeks = dur.weeks();
+        if (weeks)
+        {
+            if (weeks < 52)
+            {
+                return to!string(weeks) ~ " week" ~ (weeks >= 2 ? "s" : "");
+            }
+            else
+            {
+                immutable years = weeks / 52;
+                immutable weeks_rest = weeks % 52;
+                return to!string(years) ~ " year" ~ (years >= 2 ? "s" : "") ~
+                    " and " ~
+                    to!string(weeks_rest) ~ " week" ~ (weeks_rest >= 2 ? "s" : "");
+            }
+        }
+        immutable days = dur.days();       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
+        immutable hours = dur.hours();     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
+        immutable minutes = dur.minutes(); if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
+        immutable seconds = dur.seconds(); if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
+        immutable msecs = dur.msecs();     if (msecs) return to!string(msecs) ~ " millisecond" ~ (msecs >= 2 ? "s" : "");
+        immutable usecs = dur.usecs();     if (usecs) return to!string(usecs) ~ " microsecond" ~ (msecs >= 2 ? "s" : "");
+        immutable nsecs = dur.nsecs();     return to!string(nsecs) ~ " nanosecond" ~ (msecs >= 2 ? "s" : "");
+    }
 }
 
 /** Returns: Documentation String for Enumeration Type $(D EnumType). */
