@@ -128,7 +128,7 @@ import std.digest.sha: sha1Of, toHexString;
 import std.range: repeat, array, empty, cycle;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf, isIterable;
-import std.allocator;
+//import std.allocator;
 import core.memory: GC;
 import core.exception;
 import std.functional: memoize;
@@ -209,63 +209,6 @@ version(cerealed)
     /* import cerealed.cerealiser; */
     /* import cerealed.decerealiser; */
     /* import cerealed.cereal; */
-}
-
-/** Returns: Duration $(D dur) in a Level-Of-Detail (LOD) string
-    representation.
-*/
-string shortDurationString(in Duration dur) @safe pure
-{
-    import std.conv: to;
-    immutable weeks = dur.weeks();
-    if (weeks)
-    {
-        if (weeks < 52)
-        {
-            return to!string(weeks) ~ " week" ~ (weeks >= 2 ? "s" : "");
-        }
-        else
-        {
-            immutable years = weeks / 52;
-            immutable weeks_rest = weeks % 52;
-            return to!string(years) ~ " year" ~ (years >= 2 ? "s" : "") ~
-                " and " ~
-                to!string(weeks_rest) ~ " week" ~ (weeks_rest >= 2 ? "s" : "");
-        }
-    }
-    immutable days = dur.days();       if (days)    return to!string(days) ~ " day" ~ (days >= 2 ? "s" : "");
-    immutable hours = dur.hours();     if (hours)   return to!string(hours) ~ " hour" ~ (hours >= 2 ? "s" : "");
-    immutable minutes = dur.minutes(); if (minutes) return to!string(minutes) ~ " minute" ~ (minutes >= 2 ? "s" : "");
-    immutable seconds = dur.seconds(); if (seconds) return to!string(seconds) ~ " second" ~ (seconds >= 2 ? "s" : "");
-    immutable frac = dur.fracSec;
-    immutable msecs = frac.msecs; if (msecs) return to!string(msecs) ~ " millisecond" ~ (msecs >= 2 ? "s" : "");
-    immutable usecs = frac.usecs; if (usecs) return to!string(usecs) ~ " microsecond" ~ (msecs >= 2 ? "s" : "");
-    immutable nsecs = frac.nsecs; return to!string(nsecs) ~ " nanosecond" ~ (msecs >= 2 ? "s" : "");
-}
-
-/** Returns: Documentation String for Enumeration Type $(D EnumType). */
-string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
-{
-    /* import std.traits: EnumMembers; */
-    /* return EnumMembers!EnumType.join(separator); */
-    /* auto subsSortingNames = EnumMembers!EnumType; */
-    auto x = (__traits(allMembers, EnumType));
-    string doc = "";
-    foreach (ix, name; x)
-    {
-        if (ix >= 1) { doc ~= separator; }
-        doc ~= name;
-    }
-    return doc;
-}
-
-/** Returns: Default Documentation String for value $(D a) of for Type $(D T). */
-string defaultDoc(T)(in T a) @safe pure
-{
-    import std.conv: to;
-    return (" (type:" ~ T.stringof ~
-            ", default:" ~ to!string(a) ~
-            ").") ;
 }
 
 /** File Content Type Code. */
