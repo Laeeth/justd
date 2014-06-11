@@ -12,7 +12,7 @@
 module pprint;
 
 import std.range: isInputRange;
-import std.traits: isInstanceOf, isSomeString, isAggregateType, Unqual;
+import std.traits: isInstanceOf, isSomeString, isAggregateType, Unqual, isArray;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
@@ -296,7 +296,17 @@ void pplnTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isS
 void pp1(Arg)(ref Viz viz, int depth,
               Arg arg) @trusted
 {
-    static if (isInputRange!Arg)
+    static if (isArray!Arg &&
+               !isSomeString!Arg)
+    {
+        foreach (ix, subArg; arg)
+        {
+            if (ix >= 1)
+                viz.ppRaw(", "); // separator
+            viz.pp1(depth + 1, subArg);
+        }
+    }
+    else static if (isInputRange!Arg)
     {
         foreach (subArg; arg)
         {
@@ -308,7 +318,7 @@ void pp1(Arg)(ref Viz viz, int depth,
         foreach (ix, subArg; arg.args)
         {
             static if (ix >= 1)
-                viz.pp1(depth + 1, " "); // separator
+                viz.ppRaw(" "); // separator
             viz.pp1(depth + 1, subArg);
         }
     }

@@ -2727,6 +2727,18 @@ class Scanner(Term)
         kindD.operations ~= tuple(FileOp.checkSyntax, "dmd -debug -wi -c -o-"); // TODO: Include paths
         srcFKinds ~= kindD;
 
+        auto kindDi = new FKind("D Interface", [], ["di"],
+                                magicForD, 0,
+                                [],
+                                keywordsD,
+                                cCommentDelims,
+                                defaultStringDelims,
+                                FileContent.sourceCode,
+                                FileKindDetection.equalsNameOrContents);
+        kindDi.operations ~= tuple(FileOp.checkSyntax, "gdc -fsyntax-only");
+        kindDi.operations ~= tuple(FileOp.checkSyntax, "dmd -debug -wi -c -o-"); // TODO: Include paths
+        srcFKinds ~= kindDi;
+
         auto keywordsFortran77 = ["if", "else"];
         // TODO: Support .h files but require it to contain some Fortran-specific or be parseable.
         auto kindFortan = new FKind("Fortran", [], ["f", "fortran", "f77", "f90", "f95", "f03", "for", "ftn", "fpp"], [], 0, [], keywordsFortran77,
@@ -3344,14 +3356,20 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.numericalData, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("Hierarchical Data Format version 4", [], ["hdf", "h4", "hdf4", "he4"], x"0E031301", 0, [], [],
-                               [], // N/A
-                               defaultStringDelims,
-                               FileContent.numericalData);
-        binFKinds ~= new FKind("Hierarchical Data Format version 5", [], ["hdf", "h5", "hdf5", "he5"], x"894844460D0A1A0A", 0, [], [],
-                               [], // N/A
-                               defaultStringDelims,
-                               FileContent.numericalData);
+        auto hdf4Kind = new FKind("HDF4", [], ["hdf", "h4", "hdf4", "he4"], x"0E031301", 0, [], [],
+                                  [], // N/A
+                                  defaultStringDelims,
+                                  FileContent.numericalData);
+        binFKinds ~= hdf4Kind;
+        hdf4Kind.description = "Hierarchical Data Format version 4";
+
+        auto hdf5Kind = new FKind("HDF5", "Hierarchical Data Format version 5", ["hdf", "h5", "hdf5", "he5"], x"894844460D0A1A0A", 0, [], [],
+                                  [], // N/A
+                                  defaultStringDelims,
+                                  FileContent.numericalData);
+        binFKinds ~= hdf5Kind;
+        hdf5Kind.description = "Hierarchical Data Format version 5";
+
         binFKinds ~= new FKind("GNU GLOBAL Database", ["GTAGS", "GRTAGS", "GPATH", "GSYMS"], [], "b1\5\0", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
@@ -3806,6 +3824,9 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                          asNote, incKindsNote,
                          " under ", _topDirNames.map!(a => asPath(a))));
         }
+
+        viz.pp("Source Kinds".asH!2,
+               srcFKinds.asTable);
 
         if (_showSkipped)
         {
