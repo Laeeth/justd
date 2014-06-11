@@ -1,9 +1,11 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Pretty Printing.
+/** Pretty Printing to AsciiDoc, HTML, LaTeX, etc.
+
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
+
     TODO: How should std.typecons.Tuple be pretty printed?
     TODO: Add visited member to keeps track of what objects that have been visited
     TODO: Add asGCCMessage pretty prints

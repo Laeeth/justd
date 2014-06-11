@@ -1,10 +1,18 @@
 #!/usr/bin/env rdmd-dev-module
 
+/** W3C (XML/HTML) Formatting.
+
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+*/
+
 module w3c;
 
 import std.traits: isSomeChar, isSomeString;
 
-string encodeHTML(C)(C c) @safe pure if (isSomeChar!C)
+/** Convert character $(D c) to HTML representation. */
+string toHTML(C)(C c) @safe pure if (isSomeChar!C)
 {
     import std.conv: to;
     if      (c == '&')  return "&amp;"; // ampersand
@@ -25,11 +33,12 @@ string encodeHTML(C)(C c) @safe pure if (isSomeChar!C)
 static if (__VERSION__ >= 2066L)
 {
     /** Copied from arsd.dom */
-    auto encodeHTML(string data) @safe pure
+    /** Convert string $(D s) to HTML representation. */
+    auto encodeHTML(string s) @safe pure
     {
         import std.utf: byDchar;
         import std.algorithm: joiner, map;
-        return data.byDchar.map!encodeHTML.joiner("");
+        return s.byDchar.map!toHTML.joiner("");
     }
 }
 else
