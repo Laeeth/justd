@@ -2,9 +2,9 @@
 
 module w3c;
 
-import std.traits: isSomeChar;
+import std.traits: isSomeChar, isSomeString;
 
-string encodeHTML(Char)(Char c) @safe pure if (isSomeChar!Char)
+string encodeHTML(C)(C c) @safe pure if (isSomeChar!C)
 {
     import std.conv: to;
     if      (c == '&')  return "&amp;"; // ampersand

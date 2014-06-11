@@ -12,7 +12,7 @@
 module pprint;
 
 import std.range: isInputRange;
-import std.traits: isInstanceOf, isSomeString, isAggregateType, Unqual, isArray;
+import std.traits: isInstanceOf, isSomeString, isSomeChar, isAggregateType, Unqual, isArray;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
@@ -287,8 +287,9 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void ppRaw(Arg)(ref Viz viz,
-                Arg arg) @trusted if (isSomeString!Arg)
+void ppRaw(T)(ref Viz viz,
+              T arg) @trusted if (isSomeString!T ||
+                                  isSomeChar!T)
 {
     if (viz.outFile == stdout)
         (*viz.term).write(arg);
@@ -297,8 +298,9 @@ void ppRaw(Arg)(ref Viz viz,
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(Arg)(ref Viz viz,
-                Arg arg) @trusted if (isSomeString!Arg)
+void ppPut(T)(ref Viz viz,
+              T arg) @trusted if (isSomeString!T ||
+                                  isSomeChar!T)
 {
     if (viz.outFile == stdout)
         (*viz.term).write(arg);
@@ -312,9 +314,10 @@ void ppPut(Arg)(ref Viz viz,
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(Arg)(ref Viz viz,
-                Face!Color face,
-                Arg arg) @trusted if (isSomeString!Arg)
+void ppPut(T)(ref Viz viz,
+              Face!Color face,
+              T arg) @trusted if (isSomeString!T ||
+                                  isSomeChar!T)
 {
     (*viz.term).setFace(face, viz.colorFlag);
     viz.ppPut(arg);
