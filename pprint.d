@@ -18,7 +18,7 @@ import std.conv: to;
 import std.path: dirSeparator;
 import std.range: map;
 
-import w3c;
+import w3c: encodeHTML;
 import arsd.terminal; // TODO: Make this optional
 
 /* TODO: These deps needs to be removed somehow */
@@ -453,12 +453,21 @@ void pp1(Arg)(ref Viz viz, int depth,
             foreach (member; first.tupleof)
             {
                 alias Memb = Unqual!(typeof(member));
-                const type_string = Memb.stringof;
-                static if (is(Memb == struct))
-                    const qual_string = "struct ".asKeyword;
-                static if (is(Memb == class))
-                    const qual_string = "class ".asKeyword;
-                viz.pplnTagN("td", type_string.asCode.inBold);
+
+                enum type_string = Memb.stringof;
+                // TODO: Why doesn't this work for builtin types:
+                // enum type_string = __traits(identifier, Memb);
+
+                static      if (is(Memb == struct))
+                    enum qual_string = "struct ";
+                else static if (is(Memb == class))
+                    enum qual_string = "class ";
+                else
+                    enum qual_string = "";
+
+                viz.pplnTagN("td",
+                             qual_string.asKeyword,
+                             type_string.asCode.inBold);
             }
             if (viz.form == VizForm.HTML) { viz.ppRaw("</tr>\n"); }
         }
