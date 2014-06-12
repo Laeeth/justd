@@ -229,11 +229,11 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 
     /* TODO: Turn these into an enum for more efficient parsing. */
     /** Printed as Italic/Slanted. */
-    struct InItalic(T...) { T args; } auto inItalic(T...)(T args) { return InItalic!T(args); }
+    struct AsItalic(T...) { T args; } auto asItalic(T...)(T args) { return AsItalic!T(args); }
     /** Bold. */
-    struct InBold(T...) { T args; } auto inBold(T...)(T args) { return InBold!T(args); }
+    struct AsBold(T...) { T args; } auto asBold(T...)(T args) { return AsBold!T(args); }
     /** Monospaced. */
-    struct InMonospaced(T...) { T args; } auto inMonospaced(T...)(T args) { return InMonospaced!T(args); }
+    struct AsMonospaced(T...) { T args; } auto asMonospaced(T...)(T args) { return AsMonospaced!T(args); }
 
     /** Code. */
     struct AsCode(T...) { T args; }
@@ -268,8 +268,12 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Header. */
     struct AsH(uint Level, T...) { T args; enum level = Level; }
     auto ref asH(uint Level, T...)(T args) { return AsH!(Level, T)(args); }
+
     /** Paragraph. */
-    struct AsP(T...) { T args; } auto ref asP(T...)(T args) { return AsP!T(args); }
+    struct AsParagraph(T...) { T args; } auto ref asParagraph(T...)(T args) { return AsParagraph!T(args); }
+
+    /** Blockquote. */
+    struct AsBlockquote(T...) { T args; } auto ref asBlockquote(T...)(T args) { return AsBlockquote!T(args); }
 
     /** Unordered List.
         TODO: Should asUList, asOList autowrap args as AsItems when needed?
@@ -331,9 +335,10 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     const string lbr(bool useHTML) { return (useHTML ? `<br>` : ``); } // line break
 
     /* HTML Aliases */
-    alias inB = inBold;
-    alias inI = inBold;
-    alias inTT = inMonospaced;
+    alias asB = asBold;
+    alias asI = asBold;
+    alias asTT = asMonospaced;
+    alias asP = asParagraph;
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
@@ -495,15 +500,15 @@ void pp1(Arg)(ref Viz viz, int depth,
             }
         }
     }
-    else static if (isInstanceOf!(InBold, Arg))
+    else static if (isInstanceOf!(AsBold, Arg))
     {
         viz.ppTagN(`b`, arg.args);
     }
-    else static if (isInstanceOf!(InItalic, Arg))
+    else static if (isInstanceOf!(AsItalic, Arg))
     {
         viz.ppTagN(`i`, arg.args);
     }
-    else static if (isInstanceOf!(InMonospaced, Arg))
+    else static if (isInstanceOf!(AsMonospaced, Arg))
     {
         if      (viz.form == VizForm.HTML)
         {
@@ -650,11 +655,28 @@ void pp1(Arg)(ref Viz viz, int depth,
             viz.ppN("\n", tag, " ", arg.args, " ", tag, "\n");
         }
     }
-    else static if (isInstanceOf!(AsP, Arg))
+    else static if (isInstanceOf!(AsParagraph, Arg))
+    {
+        if (viz.form == VizForm.HTML)
+        {
+            viz.pplnTagN(`p`, arg.args);
+        }
+        else if (viz.form == VizForm.textAsciiDoc ||
+                 viz.form == VizForm.textAsciiDocUTF8)
+        {
+            string tag;
+            foreach (ix; 0..arg.level)
+            {
+                tag ~= `=`;
+            }
+            // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
+            viz.ppN("\n", tag, ` `, arg.args, ` `, tag, "\n");
+        }
+    }
+    else static if (isInstanceOf!(AsBlockquote, Arg))
     {
         if (viz.form == VizForm.HTML) {
-            const level_ = to!string(arg.level);
-            viz.pplnTagN(`p`, arg.args);
+            viz.pplnTagN(`blockquote`, arg.args);
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
@@ -730,7 +752,7 @@ void pp1(Arg)(ref Viz viz, int depth,
             /* TODO: When __traits(documentation,x)
                here https://github.com/D-Programming-Language/dmd/pull/3531
                get merged use it! */
-            // viz.pplnTagN(`tr`, arg_.asCols); // TODO: inItalic
+            // viz.pplnTagN(`tr`, arg_.asCols); // TODO: asItalic
 
             // Use __traits(allMembers, T) instead
 
@@ -743,7 +765,7 @@ void pp1(Arg)(ref Viz viz, int depth,
                 enum idName = __traits(identifier, Front.tupleof[ix]);
                 import std.string: capitalize;
                 viz.pplnTagN(`td`,
-                             (capitalizeHeadings ? idName.capitalize : idName).inItalic.inBold);
+                             (capitalizeHeadings ? idName.capitalize : idName).asItalic.asBold);
             }
             if (viz.form == VizForm.HTML) { viz.ppRaw(`</tr>`); }
 
@@ -766,7 +788,7 @@ void pp1(Arg)(ref Viz viz, int depth,
 
                 viz.pplnTagN(`td`,
                              qual_string.asKeyword,
-                             type_string.asCode.inBold);
+                             type_string.asCode.asBold);
             }
             if (viz.form == VizForm.HTML) { viz.pplnRaw(`</tr>`); }
         }

@@ -3779,7 +3779,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         {
             viz.pp("Skipping files of type".asH!2,
                    binFKinds.asTable,
-                   asUList(binFKinds.map!(a => asItem(a.kindName.inBold,
+                   asUList(binFKinds.map!(a => asItem(a.kindName.asBold,
                                                       ": ",
                                                       asCSL(a.exts.map!(b => b.asCode))))));
         }
@@ -4887,12 +4887,12 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                /*         asItem(gstats.noScannedSpecialFiles, " Special Files, "), */
                /*         asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
                /*     ) */
-               asTable(asRow(asCell(inBold("Scan Count")), asCell(inBold("File Type"))),
-                       asRow(asCell(gstats.noScannedDirs), asCell(inIt("Dirs"))),
-                       asRow(asCell(gstats.noScannedRegFiles), asCell(inIt("Regular Files"))),
-                       asRow(asCell(gstats.noScannedSymlinks), asCell(inIt("Symbolic Links"))),
-                       asRow(asCell(gstats.noScannedSpecialFiles), asCell(inIt("Special Files"))),
-                       asRow(asCell(gstats.noScannedFiles), asCell(inIt("Files")))
+               asTable(asRow(asCell(asBold("Scan Count")), asCell(asBold("File Type"))),
+                       asRow(asCell(gstats.noScannedDirs), asCell(asItalic("Dirs"))),
+                       asRow(asCell(gstats.noScannedRegFiles), asCell(asItalic("Regular Files"))),
+                       asRow(asCell(gstats.noScannedSymlinks), asCell(asItalic("Symbolic Links"))),
+                       asRow(asCell(gstats.noScannedSpecialFiles), asCell(asItalic("Special Files"))),
+                       asRow(asCell(gstats.noScannedFiles), asCell(asItalic("Files")))
                    )
             );
 
