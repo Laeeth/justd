@@ -469,10 +469,31 @@ void pp1(Arg)(ref Viz viz, int depth,
             }
         }
     }
-    else static if (isInstanceOf!(InBold, Arg))   { viz.ppTagN(`b`, arg.args); }
-    else static if (isInstanceOf!(InIt, Arg))     { viz.ppTagN(`i`, arg.args); }
-    else static if (isInstanceOf!(AsCode, Arg))   { viz.ppTagN(`code`, arg.args); }
-    else static if (isInstanceOf!(AsEm, Arg))     { viz.ppTagN(`em`, arg.args); }
+    else static if (isInstanceOf!(InBold, Arg))
+    {
+        viz.ppTagN(`b`, arg.args);
+    }
+    else static if (isInstanceOf!(InIt, Arg))
+    {
+        viz.ppTagN(`i`, arg.args);
+    }
+    else static if (isInstanceOf!(AsCode, Arg))
+    {
+        viz.ppTagN(`code`, arg.args);
+    }
+    else static if (isInstanceOf!(AsEm, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`em`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`_`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`_`);
+        }
+    }
     else static if (isInstanceOf!(AsStrong, Arg)) {
         if      (viz.form == VizForm.HTML)
         {
