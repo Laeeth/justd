@@ -117,11 +117,13 @@ string defaultDoc(T)(in T a) @safe pure
 }
 
 /** Visual Form(at). */
-enum VizForm { textAsciiDoc,
-               textAsciiDocUTF8,
-               HTML,
-               LaTeX,
-               jiraWikiMarkup, // https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all
+enum VizForm
+{
+    textAsciiDoc,
+    textAsciiDocUTF8,
+    HTML,
+    LaTeX,
+    jiraWikiMarkup, // https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all
 }
 
 /** Visual Backend. */
