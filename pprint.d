@@ -6,6 +6,11 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
+    TODO: x.in!Bold
+    TODO: x.in!Color(1,2,3)
+    TODO: x.in!Color(x"122123")
+    TODO: x.in!"bold"
+
     TODO: How should std.typecons.Tuple be pretty printed?
     TODO: Add visited member to keeps track of what objects that have been visited
     TODO: Add asGCCMessage pretty prints
@@ -224,9 +229,11 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 
     /* TODO: Turn these into an enum for more efficient parsing. */
     /** Printed as Italic/Slanted. */
-    struct InIt(T...) { T args; } auto inIt(T...)(T args) { return InIt!T(args); }
+    struct InItalic(T...) { T args; } auto inItalic(T...)(T args) { return InItalic!T(args); }
     /** Bold. */
     struct InBold(T...) { T args; } auto inBold(T...)(T args) { return InBold!T(args); }
+    /** Monospaced. */
+    struct InMonospaced(T...) { T args; } auto inMonospaced(T...)(T args) { return InMonospaced!T(args); }
 
     /** Code. */
     struct AsCode(T...) { T args; }
@@ -234,11 +241,23 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     auto ref asKeyword(T...)(T args) { return AsCode!T(args); }
 
     /** Emphasized. */
-    struct AsEm(T...) { T args; } auto ref asEm(T...)(T args) { return AsEm!T(args); }
+    struct AsEmphasized(T...) { T args; } auto ref asEmphasized(T...)(T args) { return AsEmphasized!T(args); }
+
     /** Strong. */
     struct AsStrong(T...) { T args; } auto ref asStrong(T...)(T args) { return AsStrong!T(args); }
+    /** Citation. */
+    struct AsCitation(T...) { T args; } auto ref asCitation(T...)(T args) { return AsCitation!T(args); }
+    /** Deleted. */
+    struct AsDeleted(T...) { T args; } auto ref asDeleted(T...)(T args) { return AsDeleted!T(args); }
+    /** Inserted. */
+    struct AsInserted(T...) { T args; } auto ref asInserted(T...)(T args) { return AsInserted!T(args); }
+    /** Superscript. */
+    struct AsSuperscript(T...) { T args; } auto ref asSuperscript(T...)(T args) { return AsSuperscript!T(args); }
+    /** Subscript. */
+    struct AsSubscript(T...) { T args; } auto ref asSubscript(T...)(T args) { return AsSubscript!T(args); }
+
     /** Preformatted. */
-    struct AsPre(T...) { T args; } auto ref asPre(T...)(T args) { return AsPre!T(args); }
+    struct AsPreformatted(T...) { T args; } auto ref asPreformatted(T...)(T args) { return AsPreformatted!T(args); }
 
     /** Scan Hit with index $(D ix)). */
     struct AsHit(T...) { uint ix; T args; } auto ref asHit(T)(uint ix, T args) { return AsHit!T(ix, args); }
@@ -310,6 +329,11 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsItem(T...) { T args; } auto ref asItem(T...)(T args) { return AsItem!T(args); }
 
     const string lbr(bool useHTML) { return (useHTML ? `<br>` : ``); } // line break
+
+    /* HTML Aliases */
+    alias inB = inBold;
+    alias inI = inBold;
+    alias inTT = inMonospaced;
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
@@ -475,15 +499,28 @@ void pp1(Arg)(ref Viz viz, int depth,
     {
         viz.ppTagN(`b`, arg.args);
     }
-    else static if (isInstanceOf!(InIt, Arg))
+    else static if (isInstanceOf!(InItalic, Arg))
     {
         viz.ppTagN(`i`, arg.args);
+    }
+    else static if (isInstanceOf!(InMonospaced, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`tt`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`{{`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`}}`);
+        }
     }
     else static if (isInstanceOf!(AsCode, Arg))
     {
         viz.ppTagN(`code`, arg.args);
     }
-    else static if (isInstanceOf!(AsEm, Arg))
+    else static if (isInstanceOf!(AsEmphasized, Arg))
     {
         if      (viz.form == VizForm.HTML)
         {
@@ -506,6 +543,86 @@ void pp1(Arg)(ref Viz viz, int depth,
             viz.ppRaw(`*`);
             viz.ppN(arg.args);
             viz.ppRaw(`*`);
+        }
+    }
+    else static if (isInstanceOf!(AsCitation, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`cite`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`??`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`??`);
+        }
+    }
+    else static if (isInstanceOf!(AsDeleted, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`deleted`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`-`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`-`);
+        }
+    }
+    else static if (isInstanceOf!(AsInserted, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`inserted`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`+`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`+`);
+        }
+    }
+    else static if (isInstanceOf!(AsSuperscript, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`sup`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`^`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`^`);
+        }
+    }
+    else static if (isInstanceOf!(AsSubscript, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`sub`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`~`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`~`);
+        }
+    }
+    else static if (isInstanceOf!(AsPreformatted, Arg))
+    {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.pplnRaw(`<pre>`);
+            viz.ppN(arg.args);
+            viz.pplnRaw(`</pre>`);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.pplnRaw(`{noformat}`);
+            viz.ppN(arg.args);
+            viz.pplnRaw(`{noformat}`);
         }
     }
     else static if (isInstanceOf!(AsH, Arg))
@@ -613,7 +730,7 @@ void pp1(Arg)(ref Viz viz, int depth,
             /* TODO: When __traits(documentation,x)
                here https://github.com/D-Programming-Language/dmd/pull/3531
                get merged use it! */
-            // viz.pplnTagN(`tr`, arg_.asCols); // TODO: inIt
+            // viz.pplnTagN(`tr`, arg_.asCols); // TODO: inItalic
 
             // Use __traits(allMembers, T) instead
 
@@ -626,7 +743,7 @@ void pp1(Arg)(ref Viz viz, int depth,
                 enum idName = __traits(identifier, Front.tupleof[ix]);
                 import std.string: capitalize;
                 viz.pplnTagN(`td`,
-                             (capitalizeHeadings ? idName.capitalize : idName).inIt.inBold);
+                             (capitalizeHeadings ? idName.capitalize : idName).inItalic.inBold);
             }
             if (viz.form == VizForm.HTML) { viz.ppRaw(`</tr>`); }
 
