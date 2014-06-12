@@ -92,13 +92,13 @@ string shortDurationString(in Duration dur) @safe pure
 }
 
 /** Returns: Documentation String for Enumeration Type $(D EnumType). */
-string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
+string enumDoc(EnumType, string separator = `|`)() @safe pure nothrow
 {
     /* import std.traits: EnumMembers; */
     /* return EnumMembers!EnumType.join(separator); */
     /* auto subsSortingNames = EnumMembers!EnumType; */
     auto x = (__traits(allMembers, EnumType));
-    string doc = "";
+    string doc = ``;
     foreach (ix, name; x)
     {
         if (ix >= 1) { doc ~= separator; }
@@ -111,9 +111,9 @@ string enumDoc(EnumType, string separator = "|")() @safe pure nothrow
 string defaultDoc(T)(in T a) @safe pure
 {
     import std.conv: to;
-    return (" (type:" ~ T.stringof ~
-            ", default:" ~ to!string(a) ~
-            ").") ;
+    return (` (type:` ~ T.stringof ~
+            `, default:` ~ to!string(a) ~
+            `).`) ;
 }
 
 /** Visual Form(at). */
@@ -132,6 +132,7 @@ struct Viz
     bool treeFlag;
     VizForm form;
     bool colorFlag;
+    bool flushNewlines = true;
 
     import arsd.terminal: Terminal;
     Terminal* term;
@@ -169,9 +170,9 @@ enum dirFace = face(arsd.terminal.Color.blue, arsd.terminal.Color.black, true);
 enum fileFace = face(arsd.terminal.Color.magenta, arsd.terminal.Color.black, true);
 enum baseNameFace = fileFace;
 enum specialFileFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, true);
-enum regFileFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, true, false, ["b"]);
-enum symlinkFace = face(arsd.terminal.Color.cyan, arsd.terminal.Color.black, true, true, ["i"]);
-enum symlinkBrokenFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, true, true, ["i"]);
+enum regFileFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, true, false, [`b`]);
+enum symlinkFace = face(arsd.terminal.Color.cyan, arsd.terminal.Color.black, true, true, [`i`]);
+enum symlinkBrokenFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, true, true, [`i`]);
 
 enum contextFace = face(arsd.terminal.Color.green, arsd.terminal.Color.black);
 
@@ -184,8 +185,8 @@ enum warnFace = face(arsd.terminal.Color.yellow, arsd.terminal.Color.black);
 enum kindFace = warnFace;
 enum errorFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black);
 
-enum titleFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, false, false, ["title"]);
-enum h1Face = face(arsd.terminal.Color.white, arsd.terminal.Color.black, false, false, ["h1"]);
+enum titleFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, false, false, [`title`]);
+enum h1Face = face(arsd.terminal.Color.white, arsd.terminal.Color.black, false, false, [`h1`]);
 
 // Support these as immutable
 
@@ -264,7 +265,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
         string border;
         T args;
     }
-    auto ref asTable(T...)(T args) { return AsTable!T("\"1\"", args); }
+    auto ref asTable(T...)(T args) { return AsTable!T(`"1"`, args); }
 
     struct AsCols(T...) { T args; }
     auto ref asCols(T...)(T args) { return AsCols!T(args); }
@@ -306,7 +307,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** List Item. */
     struct AsItem(T...) { T args; } auto ref asItem(T...)(T args) { return AsItem!T(args); }
 
-    const string lbr(bool useHTML) { return (useHTML ? "<br>" : ""); } // line break
+    const string lbr(bool useHTML) { return (useHTML ? `<br>` : ``); } // line break
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
@@ -318,6 +319,24 @@ void ppRaw(T)(ref Viz viz,
         (*viz.term).write(arg);
     else
         viz.outFile.write(arg);
+}
+
+/** Put $(D arg) to $(D viz) without any conversion nor coloring. */
+void pplnRaw(T)(ref Viz viz,
+                T arg) @trusted if (isSomeString!T ||
+                                    isSomeChar!T)
+{
+    if (viz.outFile == stdout)
+        if (viz.flushNewlines)
+            (*viz.term).writeln(arg);
+        else
+            (*viz.term).write(arg, "\n");
+    else
+        if (viz.flushNewlines)
+
+            viz.outFile.writeln(arg);
+        else
+            viz.outFile.write(arg, "\n");
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
@@ -361,7 +380,7 @@ auto faze(T)(T text, in Face!Color face = stdFace) @safe pure nothrow
 auto getFace(Arg)(in Arg arg) @safe pure nothrow
 {
     // pick face
-    static if (__traits(hasMember, arg, "face"))
+    static if (__traits(hasMember, arg, `face`))
     {
         return arg.face;
     }
@@ -394,15 +413,15 @@ auto getFace(Arg)(in Arg arg) @safe pure nothrow
 
 void ppTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSomeString!Tag)
 {
-    if (viz.form == VizForm.HTML) { viz.ppRaw("<" ~ tag ~ ">"); }
+    if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
     viz.ppN(args);
-    if (viz.form == VizForm.HTML) { viz.ppRaw("</" ~ tag ~ ">"); }
+    if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
 }
 
 void pplnTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSomeString!Tag)
 {
     viz.ppTagN(tag, args);
-    viz.ppRaw("\n");
+    viz.pplnRaw(``);
 }
 
 /** Pretty-Print Single Argument $(D arg) to Terminal $(D term). */
@@ -415,7 +434,7 @@ void pp1(Arg)(ref Viz viz, int depth,
         foreach (ix, subArg; arg)
         {
             if (ix >= 1)
-                viz.ppRaw(", "); // separator
+                viz.ppRaw(`, `); // separator
             viz.pp1(depth + 1, subArg);
         }
     }
@@ -431,7 +450,7 @@ void pp1(Arg)(ref Viz viz, int depth,
         foreach (ix, subArg; arg.args)
         {
             static if (ix >= 1)
-                viz.ppRaw(" "); // separator
+                viz.ppRaw(` `); // separator
             viz.pp1(depth + 1, subArg);
         }
     }
@@ -440,27 +459,44 @@ void pp1(Arg)(ref Viz viz, int depth,
         foreach (ix, subArg; arg.args)
         {
             static if (ix >= 1)
-                viz.pp1(depth + 1, ","); // separator
+                viz.pp1(depth + 1, `,`); // separator
             static if (isInputRange!(typeof(subArg)))
             {
                 foreach (subsubArg; subArg)
                 {
-                    viz.ppN(subsubArg, ",");
+                    viz.ppN(subsubArg, `,`);
                 }
             }
         }
     }
-    else static if (isInstanceOf!(InBold, Arg))   { viz.ppTagN("b", arg.args); }
-    else static if (isInstanceOf!(InIt, Arg))     { viz.ppTagN("i", arg.args); }
-    else static if (isInstanceOf!(AsCode, Arg))   { viz.ppTagN("code", arg.args); }
-    else static if (isInstanceOf!(AsEm, Arg))     { viz.ppTagN("em", arg.args); }
-    else static if (isInstanceOf!(AsStrong, Arg)) { viz.ppTagN("strong", arg.args); }
+    else static if (isInstanceOf!(InBold, Arg))   { viz.ppTagN(`b`, arg.args); }
+    else static if (isInstanceOf!(InIt, Arg))     { viz.ppTagN(`i`, arg.args); }
+    else static if (isInstanceOf!(AsCode, Arg))   { viz.ppTagN(`code`, arg.args); }
+    else static if (isInstanceOf!(AsEm, Arg))     { viz.ppTagN(`em`, arg.args); }
+    else static if (isInstanceOf!(AsStrong, Arg)) {
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppTagN(`strong`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`*`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`*`);
+        }
+    }
     else static if (isInstanceOf!(AsH, Arg))
     {
-        if (viz.form == VizForm.HTML)
+        if      (viz.form == VizForm.HTML)
         {
-            viz.pplnTagN("h" ~ to!string(arg.level),
+            viz.pplnTagN(`h` ~ to!string(arg.level),
                          arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`h` ~ to!string(arg.level) ~ `. `);
+            viz.ppN(arg.args);
+            viz.pplnRaw(``);
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
@@ -468,7 +504,7 @@ void pp1(Arg)(ref Viz viz, int depth,
             string tag;
             foreach (ix; 0..arg.level)
             {
-                tag ~= "=";
+                tag ~= `=`;
             }
             // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
             viz.ppN("\n", tag, " ", arg.args, " ", tag, "\n");
@@ -478,7 +514,7 @@ void pp1(Arg)(ref Viz viz, int depth,
     {
         if (viz.form == VizForm.HTML) {
             const level_ = to!string(arg.level);
-            viz.pplnTagN("p", arg.args);
+            viz.pplnTagN(`p`, arg.args);
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
@@ -486,37 +522,37 @@ void pp1(Arg)(ref Viz viz, int depth,
             string tag;
             foreach (ix; 0..arg.level)
             {
-                tag ~= "=";
+                tag ~= `=`;
             }
             // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            viz.ppN("\n", tag, " ", arg.args, " ", tag, "\n");
+            viz.ppN("\n", tag, ` `, arg.args, ` `, tag, "\n");
         }
     }
     else static if (isInstanceOf!(AsUList, Arg))
     {
-        if (viz.form == VizForm.HTML) { viz.ppRaw("<ul>\n"); }
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\\begin{enumerate}\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`<ul>`); }
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{enumerate}`); }
         viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</ul>\n"); }
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\\end{enumerate}\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</ul>`); }
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{enumerate}`); }
     }
     else static if (isInstanceOf!(AsOList, Arg))
     {
-        if (viz.form == VizForm.HTML) { viz.ppRaw("<ol>\n"); }
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\\begin{itemize}\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`<ol>`); }
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{itemize}`); }
         viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</ol>\n"); }
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\\end{itemize}\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</ol>`); }
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{itemize}`); }
     }
     else static if (isInstanceOf!(AsTable, Arg))
     {
         if (viz.form == VizForm.HTML) {
-            const border = (arg.border ? " border=" ~ arg.border : "");
-            viz.ppRaw("<table" ~ border ~ ">\n");
+            const border = (arg.border ? ` border=` ~ arg.border : ``);
+            viz.pplnRaw(`<table` ~ border ~ `>`);
         }
         else if (viz.form == VizForm.LaTeX)
         {
-            viz.ppRaw("\\begin{tabular}\n");
+            viz.pplnRaw(`\begin{tabular}`);
         }
 
         static if (arg.args.length == 1 &&
@@ -531,11 +567,11 @@ void pp1(Arg)(ref Viz viz, int depth,
 
         if (viz.form == VizForm.HTML)
         {
-            viz.ppRaw("</table>\n");
+            viz.pplnRaw(`</table>`);
         }
         else if (viz.form == VizForm.LaTeX)
         {
-            viz.ppRaw("\\end{tabular}\n");
+            viz.pplnRaw(`\end{tabular}`);
         }
     }
     else static if (isInstanceOf!(AsRows, Arg) &&
@@ -554,25 +590,25 @@ void pp1(Arg)(ref Viz viz, int depth,
             /* TODO: When __traits(documentation,x)
                here https://github.com/D-Programming-Language/dmd/pull/3531
                get merged use it! */
-            // viz.pplnTagN("tr", arg_.asCols); // TODO: inIt
+            // viz.pplnTagN(`tr`, arg_.asCols); // TODO: inIt
 
             // Use __traits(allMembers, T) instead
 
             // Can we lookup file and line of user defined types aswell?
 
             // member names header. TODO: Functionize
-            if (viz.form == VizForm.HTML) { viz.ppRaw("<tr>"); }
+            if (viz.form == VizForm.HTML) { viz.ppRaw(`<tr>`); }
             foreach (ix, member; first.tupleof)
             {
                 enum idName = __traits(identifier, Front.tupleof[ix]);
                 import std.string: capitalize;
-                viz.pplnTagN("td",
+                viz.pplnTagN(`td`,
                              (capitalizeHeadings ? idName.capitalize : idName).inIt.inBold);
             }
-            if (viz.form == VizForm.HTML) { viz.ppRaw("</tr>"); }
+            if (viz.form == VizForm.HTML) { viz.ppRaw(`</tr>`); }
 
             // member types header. TODO: Functionize
-            if (viz.form == VizForm.HTML) { viz.ppRaw("<tr>"); }
+            if (viz.form == VizForm.HTML) { viz.ppRaw(`<tr>`); }
             foreach (member; first.tupleof)
             {
                 alias Memb = Unqual!(typeof(member));
@@ -582,28 +618,28 @@ void pp1(Arg)(ref Viz viz, int depth,
                 // enum type_string = __traits(identifier, Memb);
 
                 static      if (is(Memb == struct))
-                    enum qual_string = "struct ";
+                    enum qual_string = `struct `;
                 else static if (is(Memb == class))
-                    enum qual_string = "class ";
+                    enum qual_string = `class `;
                 else
-                    enum qual_string = "";
+                    enum qual_string = ``;
 
-                viz.pplnTagN("td",
+                viz.pplnTagN(`td`,
                              qual_string.asKeyword,
                              type_string.asCode.inBold);
             }
-            if (viz.form == VizForm.HTML) { viz.ppRaw("</tr>\n"); }
+            if (viz.form == VizForm.HTML) { viz.pplnRaw(`</tr>`); }
         }
 
         foreach (ix, arg_; arg.args[0])
         {
             // row index
             static      if (arg.nr == RowNr.offsetZero)
-                viz.pplnTagN("tr", ix + 0);
+                viz.pplnTagN(`tr`, ix + 0);
             else static if (arg.nr == RowNr.offsetOne)
-                viz.pplnTagN("tr", ix + 1);
+                viz.pplnTagN(`tr`, ix + 1);
             // row columns
-            viz.pplnTagN("tr", arg_.asCols);
+            viz.pplnTagN(`tr`, arg_.asCols);
         }
     }
     else static if (isInstanceOf!(AsCols, Arg))
@@ -613,12 +649,12 @@ void pp1(Arg)(ref Viz viz, int depth,
         {
             foreach (arg_; arg.args[0].tupleof)
             {
-                viz.pplnTagN("td", arg_); // each element in aggregate as a column
+                viz.pplnTagN(`td`, arg_); // each element in aggregate as a column
             }
         }
         else
         {
-            viz.pplnTagN("tr", arg.args);
+            viz.pplnTagN(`tr`, arg.args);
         }
     }
     else static if (isInstanceOf!(AsRow, Arg))
@@ -631,7 +667,7 @@ void pp1(Arg)(ref Viz viz, int depth,
         }
         if (viz.form == VizForm.HTML) { viz.ppRaw(`<tr` ~ spanArg ~ `>`); }
         viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</tr>\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</tr>`); }
     }
     else static if (isInstanceOf!(AsCell, Arg))
     {
@@ -643,25 +679,25 @@ void pp1(Arg)(ref Viz viz, int depth,
         }
         if (viz.form == VizForm.HTML) { viz.ppRaw(`<td` ~ spanArg ~ `>`); }
         viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</td>\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</td>`); }
     }
     else static if (isInstanceOf!(AsTHeading, Arg))
     {
-        if (viz.form == VizForm.HTML) { viz.ppRaw("<th>\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`<th>`); }
         viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</th>\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</th>`); }
     }
     else static if (isInstanceOf!(AsItem, Arg))
     {
-        if (viz.form == VizForm.HTML) { viz.ppRaw("<li>"); }
-        else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(" - "); } // if inside ordered list use . instead of -
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\\item "); }
-        else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(" • "); }
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`<li>`); }
+        else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(` - `); } // if inside ordered list use . instead of -
+        else if (viz.form == VizForm.LaTeX) { viz.ppRaw(`\item `); }
+        else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(` • `); }
         viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</li>\n"); }
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw("\n"); }
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</li>`); }
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(``); }
         else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw("\n"); }
+                 viz.form == VizForm.textAsciiDocUTF8) { viz.pplnRaw(``); }
     }
     else static if (isInstanceOf!(AsPath, Arg))
     {
@@ -674,14 +710,14 @@ void pp1(Arg)(ref Viz viz, int depth,
         static if (isString)
             if (viz.form == VizForm.HTML)
             {
-                viz.ppRaw("<a href=\"file://" ~ arg.arg ~ "\">");
+                viz.ppRaw(`<a href="file://` ~ arg.arg ~ `">`);
             }
 
         pp1(vizArg, depth + 1, arg.arg);
 
         static if (isString)
             if (viz.form == VizForm.HTML) {
-                viz.ppRaw("</a>");
+                viz.ppRaw(`</a>`);
             }
     }
     else static if (isInstanceOf!(AsName, Arg))
@@ -692,22 +728,23 @@ void pp1(Arg)(ref Viz viz, int depth,
     }
     else static if (isInstanceOf!(AsHit, Arg))
     {
-        if (viz.form == VizForm.HTML) { viz.ppN("<hit", arg.ix, ">"); }
+        const ixs = to!string(arg.ix);
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`<hit` ~ ixs ~ `>`); }
         viz.pp1(depth + 1, arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppN("</hit", arg.ix, ">"); }
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`</hit` ~ ixs ~ `>`); }
     }
     else static if (isInstanceOf!(AsCtx, Arg))
     {
-        if (viz.form == VizForm.HTML) { viz.ppN("<hit_context", arg.ix, ">"); }
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`<hit_context>`); }
         viz.pp1(depth + 1, arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppN("</hit_context", arg.ix, ">"); }
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`</hit_context>`); }
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
         if (viz.form == VizForm.HTML) {
-            viz.ppRaw("<a href=\"file://");
+            viz.ppRaw(`<a href="file://`);
             viz.ppPut(arg.path);
-            viz.ppRaw("\">");
+            viz.ppRaw(`">`);
         }
 
         if (!viz.treeFlag)
@@ -716,9 +753,9 @@ void pp1(Arg)(ref Viz viz, int depth,
             foreach (parent; arg.parents)
             {
                 viz.ppPut(dirSeparator);
-                if (viz.form == VizForm.HTML) { viz.ppRaw("<b>"); }
+                if (viz.form == VizForm.HTML) { viz.ppRaw(`<b>`); }
                 viz.ppPut(dirFace, parent.name);
-                if (viz.form == VizForm.HTML) { viz.ppRaw("</b>"); }
+                if (viz.form == VizForm.HTML) { viz.ppRaw(`</b>`); }
             }
             viz.ppPut(dirSeparator);
         }
@@ -735,25 +772,24 @@ void pp1(Arg)(ref Viz viz, int depth,
 
         if (viz.form == VizForm.HTML)
         {
-            static      if (isSymlink!Arg) { viz.ppRaw("<i>"); }
-            else static if (isDir!Arg) { viz.ppRaw("<b>"); }
+            static      if (isSymlink!Arg) { viz.ppRaw(`<i>`); }
+            else static if (isDir!Arg) { viz.ppRaw(`<b>`); }
         }
 
         viz.ppPut(arg.getFace(), name);
 
         if (viz.form == VizForm.HTML)
         {
-            static      if (isSymlink!Arg) { viz.ppRaw("</i>"); }
-            else static if (isDir!Arg) { viz.ppRaw("</b>"); }
+            static      if (isSymlink!Arg) { viz.ppRaw(`</i>`); }
+            else static if (isDir!Arg) { viz.ppRaw(`</b>`); }
         }
 
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</a>"); }
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`</a>`); }
     }
     else
     {
         static if (__traits(hasMember, arg, "path"))
         {
-            pragma(msg, "Member arg has a path property!");
             const arg_string = arg.path;
         }
         else
@@ -767,7 +803,7 @@ void pp1(Arg)(ref Viz viz, int depth,
             {
                 foreach (tag; arg.face.tagsHTML)
                 {
-                    viz.outFile.write("<", tag, ">");
+                    viz.outFile.write(`<`, tag, `>`);
                 }
             }
         }
@@ -789,7 +825,7 @@ void pp1(Arg)(ref Viz viz, int depth,
             {
                 foreach (tag; arg.face.tagsHTML)
                 {
-                    viz.outFile.write("</", tag, ">");
+                    viz.outFile.write(`</`, tag, `>`);
                 }
             }
         }
@@ -844,5 +880,5 @@ void pplns(Args...)(ref Viz viz, Args args) @trusted
 /** Print End of Line to Terminal $(D term). */
 void ppendl(ref Viz viz) @trusted
 {
-    return viz.ppln("");
+    return viz.ppln(``);
 }

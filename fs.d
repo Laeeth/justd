@@ -16,6 +16,9 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
+   TODO: Visualize hits using existingFileHitContext.asH!1 followed by a table:
+         ROW_NR | hit string in <code lang=LANG></code>
+
    BUG: Stacktrace: fs.d --color -d /etc --exact if --browse --duplicates -k
 
    TODO: Parse and Sort GCC/Clang Compiler Messages on WARN_TYPE FILE:LINE:COL:MSG[WARN_TYPE] and use Collapsable HTML Widgets:
@@ -3651,6 +3654,7 @@ class Scanner(Term)
         auto viz = Viz(outFile, showTree,
                        useHTML ? VizForm.HTML : VizForm.textAsciiDocUTF8,
                        colorFlag,
+                       !useHTML, // only use if HTML
                        &term);
 
         if (_useNGrams &&
