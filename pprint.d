@@ -1,6 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Pretty Printing to AsciiDoc, HTML, LaTeX, etc.
+/** Pretty Printing to AsciiDoc, HTML, LaTeX, JIRA Wikitext, etc.
 
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
@@ -116,6 +116,27 @@ string defaultDoc(T)(in T a) @safe pure
             ").") ;
 }
 
+/** Visual Form(at). */
+enum VizForm { textAsciiDoc,
+               textAsciiDocUTF8,
+               HTML,
+               LaTeX,
+               jiraWikiMarkup, // https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all
+}
+
+/** Visual Backend. */
+struct Viz
+{
+    import std.stdio: ioFile = File;
+    ioFile outFile;
+    bool treeFlag;
+    VizForm form;
+    bool colorFlag;
+
+    import arsd.terminal: Terminal;
+    Terminal* term;
+}
+
 struct Face(Color)
 {
     this(Color fg, Color bg, bool bright, bool italic, string[] tagsHTML)
@@ -216,10 +237,10 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Preformatted. */
     struct AsPre(T...) { T args; } auto ref asPre(T...)(T args) { return AsPre!T(args); }
 
-    /** Scan Hit with Color index $(D ix)). */
+    /** Scan Hit with index $(D ix)). */
     struct AsHit(T...) { uint ix; T args; } auto ref asHit(T)(uint ix, T args) { return AsHit!T(ix, args); }
 
-    /** Scan Hit Context with Color index $(D ix)). */
+    /** Scan Hit Context with index $(D ix)). */
     struct AsCtx(T...) { uint ix; T args; } auto ref asCtx(T)(uint ix, T args) { return AsCtx!T(ix, args); }
 
     /** Header. */
@@ -671,17 +692,15 @@ void pp1(Arg)(ref Viz viz, int depth,
     }
     else static if (isInstanceOf!(AsHit, Arg))
     {
-        const ixs = to!string(arg.ix);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("<hit" ~ ixs ~ ">"); }
+        if (viz.form == VizForm.HTML) { viz.ppN("<hit", arg.ix, ">"); }
         viz.pp1(depth + 1, arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</hit" ~ ixs ~ ">"); }
+        if (viz.form == VizForm.HTML) { viz.ppN("</hit", arg.ix, ">"); }
     }
     else static if (isInstanceOf!(AsCtx, Arg))
     {
-        const ixs = to!string(arg.ix);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("<hit_context>"); }
+        if (viz.form == VizForm.HTML) { viz.ppN("<hit_context", arg.ix, ">"); }
         viz.pp1(depth + 1, arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw("</hit_context>"); }
+        if (viz.form == VizForm.HTML) { viz.ppN("</hit_context", arg.ix, ">"); }
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
@@ -796,25 +815,6 @@ void pp(Args...)(ref Viz viz,
     {
         (*viz.term).flush();
     }
-}
-
-/** Visual Form(at). */
-enum VizForm { textAsciiDoc,
-               textAsciiDocUTF8,
-               HTML,
-               LaTeX }
-
-/** Visual Backend. */
-struct Viz
-{
-    import std.stdio: ioFile = File;
-    ioFile outFile;
-    bool treeFlag;
-    VizForm form;
-    bool colorFlag;
-
-    import arsd.terminal: Terminal;
-    Terminal* term;
 }
 
 /** Pretty-Print Arguments $(D args) including final line termination. */
