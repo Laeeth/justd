@@ -237,9 +237,20 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsMonospaced(T...) { T args; } auto asMonospaced(T...)(T args) { return AsMonospaced!T(args); }
 
     /** Code. */
-    struct AsCode(T...) { string language; T args; }
+    struct AsCode(T...)
+    {
+        this(T args) { this.args = args; }
+        T args;
+        string language;
+        auto ref setLanguage(string language)
+        {
+            this.language = language;
+            return this;
+        }
+    }
     auto ref asCode(T...)(T args) { return AsCode!T(args); }
-    auto ref asKeyword(T...)(T args) { return AsCode!T(args); }
+    auto ref asKeyword(T...)(T args) { return AsCode!T(args); } // Emacs: font-lock-keyword-face
+    auto ref asType(T...)(T args) { return AsCode!T(args); } // Emacs: font-lock-type-face
 
     /** Emphasized. */
     struct AsEmphasized(T...) { T args; } auto ref asEmphasized(T...)(T args) { return AsEmphasized!T(args); }
@@ -861,9 +872,10 @@ void pp1(Arg)(ref Viz viz, int depth,
             if (viz.form == VizForm.HTML) { viz.ppRaw(`<tr>`); }
             foreach (member; first.tupleof)
             {
-                alias Memb = Unqual!(typeof(member));
+                alias Memb = Unqual!(typeof(member)); // skip constness for now
 
                 enum type_string = Memb.stringof;
+
                 // TODO: Why doesn't this work for builtin types:
                 // enum type_string = __traits(identifier, Memb);
 
@@ -876,7 +888,7 @@ void pp1(Arg)(ref Viz viz, int depth,
 
                 viz.pplnTagN(`td`,
                              qual_string.asKeyword,
-                             type_string.asCode.asBold);
+                             type_string.asType);
             }
             if (viz.form == VizForm.HTML) { viz.pplnRaw(`</tr>`); }
         }
