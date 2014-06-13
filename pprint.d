@@ -366,6 +366,15 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     alias HR = horizontalRuler;
 }
 
+struct As(Attribute, Things...)
+{
+    Things things;
+}
+auto ref as(Attribute, Things...)(Things things)
+{
+    return As!(Attribute, Things)(things);
+}
+
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
 void ppRaw(T)(ref Viz viz,
               T arg) @trusted if (isSomeString!T ||
