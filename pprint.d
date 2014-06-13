@@ -129,6 +129,7 @@ enum VizForm
     HTML,
     LaTeX,
     jiraWikiMarkup, // https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all
+    Markdown,
 }
 
 /** Visual Backend. */
@@ -236,7 +237,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsMonospaced(T...) { T args; } auto asMonospaced(T...)(T args) { return AsMonospaced!T(args); }
 
     /** Code. */
-    struct AsCode(T...) { T args; }
+    struct AsCode(T...) { string language; T args; }
     auto ref asCode(T...)(T args) { return AsCode!T(args); }
     auto ref asKeyword(T...)(T args) { return AsCode!T(args); }
 
@@ -272,8 +273,11 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Paragraph. */
     struct AsParagraph(T...) { T args; } auto ref asParagraph(T...)(T args) { return AsParagraph!T(args); }
 
-    /** Blockquote. */
+    /** Multi-Paragraph Blockquote. */
     struct AsBlockquote(T...) { T args; } auto ref asBlockquote(T...)(T args) { return AsBlockquote!T(args); }
+
+    /** Single-Paragraph Blockquote. */
+    struct AsBlockquoteSP(T...) { T args; } auto ref asBlockquoteSP(T...)(T args) { return AsBlockquoteSP!T(args); }
 
     /** Unordered List.
         TODO: Should asUList, asOList autowrap args as AsItems when needed?
@@ -281,6 +285,15 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsUList(T...) { T args; } auto ref asUList(T...)(T args) { return AsUList!T(args); }
     /** Ordered List. */
     struct AsOList(T...) { T args; } auto ref asOList(T...)(T args) { return AsOList!T(args); }
+
+    /** Description. */
+    struct AsDescription(T...) { T args; } auto ref asDescription(T...)(T args) { return AsDescription!T(args); }
+
+    /** Horizontal Ruler. */
+    struct HorizontalRuler {} auto ref horizontalRuler() { return HorizontalRuler(); }
+
+    /** MDash. */
+    struct MDash {} auto ref mDash() { return MDash(); }
 
     /** Table.
         TODO: Should asTable autowrap args AsRows when needed?
@@ -339,6 +352,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     alias asI = asBold;
     alias asTT = asMonospaced;
     alias asP = asParagraph;
+    alias HR = horizontalRuler;
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
@@ -361,13 +375,13 @@ void pplnRaw(T)(ref Viz viz,
         if (viz.flushNewlines)
             (*viz.term).writeln(arg);
         else
-            (*viz.term).write(arg, "\n");
+            (*viz.term).write(arg, '\n');
     else
         if (viz.flushNewlines)
 
             viz.outFile.writeln(arg);
         else
-            viz.outFile.write(arg, "\n");
+            viz.outFile.write(arg, '\n');
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
@@ -442,7 +456,7 @@ auto getFace(Arg)(in Arg arg) @safe pure nothrow
     }
 }
 
-void ppTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSomeString!Tag)
+void ppHTMLTaggedN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSomeString!Tag)
 {
     if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
     viz.ppN(args);
@@ -451,7 +465,7 @@ void ppTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSom
 
 void pplnTagN(Tag, Args...)(ref Viz viz, in Tag tag, Args args) @trusted if (isSomeString!Tag)
 {
-    viz.ppTagN(tag, args);
+    viz.ppHTMLTaggedN(tag, args);
     viz.pplnRaw(``);
 }
 
@@ -502,17 +516,35 @@ void pp1(Arg)(ref Viz viz, int depth,
     }
     else static if (isInstanceOf!(AsBold, Arg))
     {
-        viz.ppTagN(`b`, arg.args);
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppHTMLTaggedN(`b`, arg.args);
+        }
+        else if (viz.form == VizForm.Markdown)
+        {
+            viz.ppRaw(`**`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`**`);
+        }
     }
     else static if (isInstanceOf!(AsItalic, Arg))
     {
-        viz.ppTagN(`i`, arg.args);
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppHTMLTaggedN(`i`, arg.args);
+        }
+        else if (viz.form == VizForm.Markdown)
+        {
+            viz.ppRaw(`*`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`*`);
+        }
     }
     else static if (isInstanceOf!(AsMonospaced, Arg))
     {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`tt`, arg.args);
+            viz.ppHTMLTaggedN(`tt`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -520,16 +552,31 @@ void pp1(Arg)(ref Viz viz, int depth,
             viz.ppN(arg.args);
             viz.ppRaw(`}}`);
         }
+        else if (viz.form == VizForm.Markdown)
+        {
+            viz.ppRaw('`');
+            viz.ppN(arg.args);
+            viz.ppRaw('`');
+        }
     }
     else static if (isInstanceOf!(AsCode, Arg))
     {
-        viz.ppTagN(`code`, arg.args);
+        if      (viz.form == VizForm.HTML)
+        {
+            viz.ppHTMLTaggedN(`code`, arg.args);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(arg.language ? `{code:` ~ arg.language ~ `}` : `{code}`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`{code}`);
+        }
     }
     else static if (isInstanceOf!(AsEmphasized, Arg))
     {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`em`, arg.args);
+            viz.ppHTMLTaggedN(`em`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -541,7 +588,7 @@ void pp1(Arg)(ref Viz viz, int depth,
     else static if (isInstanceOf!(AsStrong, Arg)) {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`strong`, arg.args);
+            viz.ppHTMLTaggedN(`strong`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -554,7 +601,7 @@ void pp1(Arg)(ref Viz viz, int depth,
     {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`cite`, arg.args);
+            viz.ppHTMLTaggedN(`cite`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -567,7 +614,7 @@ void pp1(Arg)(ref Viz viz, int depth,
     {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`deleted`, arg.args);
+            viz.ppHTMLTaggedN(`deleted`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -580,7 +627,7 @@ void pp1(Arg)(ref Viz viz, int depth,
     {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`inserted`, arg.args);
+            viz.ppHTMLTaggedN(`inserted`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -593,7 +640,7 @@ void pp1(Arg)(ref Viz viz, int depth,
     {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`sup`, arg.args);
+            viz.ppHTMLTaggedN(`sup`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -606,7 +653,7 @@ void pp1(Arg)(ref Viz viz, int depth,
     {
         if      (viz.form == VizForm.HTML)
         {
-            viz.ppTagN(`sub`, arg.args);
+            viz.ppHTMLTaggedN(`sub`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
@@ -652,7 +699,7 @@ void pp1(Arg)(ref Viz viz, int depth,
                 tag ~= `=`;
             }
             // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            viz.ppN("\n", tag, " ", arg.args, " ", tag, "\n");
+            viz.ppN('\n', tag, ' ', arg.args, ' ', tag, '\n');
         }
     }
     else static if (isInstanceOf!(AsParagraph, Arg))
@@ -661,6 +708,11 @@ void pp1(Arg)(ref Viz viz, int depth,
         {
             viz.pplnTagN(`p`, arg.args);
         }
+        else if (viz.form == VizForm.LaTeX)
+        {
+            viz.ppRaw(`\par `);
+            viz.pplnTagN(arg.args);
+        }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
         {
@@ -670,7 +722,7 @@ void pp1(Arg)(ref Viz viz, int depth,
                 tag ~= `=`;
             }
             // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            viz.ppN("\n", tag, ` `, arg.args, ` `, tag, "\n");
+            viz.ppN('\n', tag, ` `, arg.args, ` `, tag, '\n');
         }
     }
     else static if (isInstanceOf!(AsBlockquote, Arg))
@@ -678,16 +730,44 @@ void pp1(Arg)(ref Viz viz, int depth,
         if (viz.form == VizForm.HTML) {
             viz.pplnTagN(`blockquote`, arg.args);
         }
-        else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8)
+        else if (viz.form == VizForm.jiraWikiMarkup)
         {
-            string tag;
-            foreach (ix; 0..arg.level)
-            {
-                tag ~= `=`;
-            }
-            // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            viz.ppN("\n", tag, ` `, arg.args, ` `, tag, "\n");
+            viz.pplnRaw(`{quote}`);
+            viz.pplnRaw(arg.args);
+            viz.pplnRaw(`{quote}`);
+        }
+    }
+    else static if (isInstanceOf!(AsBlockquoteSP, Arg))
+    {
+        if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.ppRaw(`bq. `);
+            viz.ppN(arg.args);
+            viz.pplnRaw(``);
+        }
+    }
+    else static if (isInstanceOf!(HorizontalRuler, Arg))
+    {
+        if (viz.form == VizForm.HTML)
+        {
+            viz.pplnRaw(`hr`);
+        }
+        if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            viz.pplnRaw(`----`);
+        }
+    }
+    else static if (isInstanceOf!(MDash, Arg))
+    {
+        if (viz.form == VizForm.HTML)
+        {
+            viz.pplnRaw(`&mdash;`);
+        }
+        if (viz.form == VizForm.jiraWikiMarkup ||
+            viz.form == VizForm.Markdown ||
+            viz.form == VizForm.LaTeX)
+        {
+            viz.pplnRaw(`---`);
         }
     }
     else static if (isInstanceOf!(AsUList, Arg))
@@ -705,6 +785,14 @@ void pp1(Arg)(ref Viz viz, int depth,
         viz.ppN(arg.args);
         if (viz.form == VizForm.HTML) { viz.pplnRaw(`</ol>`); }
         else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{itemize}`); }
+    }
+    else static if (isInstanceOf!(AsDescription, Arg)) // if args .length == 1 && an InputRange of 2-tuples pairs
+    {
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`<dl>`); } // TODO: TERM <dt>, DEFINITION <dd>
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{description}`); } // TODO: \item[TERM] DEFINITION
+        viz.ppN(arg.args);
+        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</dl>`); }
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{description}`); }
     }
     else static if (isInstanceOf!(AsTable, Arg))
     {
@@ -809,9 +897,25 @@ void pp1(Arg)(ref Viz viz, int depth,
         if (arg.args.length == 1 &&
             isAggregateType!(typeof(arg.args[0])))
         {
-            foreach (arg_; arg.args[0].tupleof)
+            auto args0 = arg.args[0];
+            if (viz.form == VizForm.jiraWikiMarkup)
             {
-                viz.pplnTagN(`td`, arg_); // each element in aggregate as a column
+                /* if (args0.length >= 1) */
+                /* { */
+                /*     viz.ppRaw(`|`); */
+                /* } */
+            }
+            foreach (arg_; args0.tupleof)
+            {
+                if (viz.form == VizForm.HTML)
+                {
+                    viz.pplnTagN(`td`, arg_); // each element in aggregate as a column
+                }
+                else if (viz.form == VizForm.jiraWikiMarkup)
+                {
+                    /* viz.pp1(arg_); */
+                    /* viz.ppRaw(`|`); */
+                }
             }
         }
         else
@@ -845,9 +949,24 @@ void pp1(Arg)(ref Viz viz, int depth,
     }
     else static if (isInstanceOf!(AsTHeading, Arg))
     {
-        if (viz.form == VizForm.HTML) { viz.pplnRaw(`<th>`); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.pplnRaw(`</th>`); }
+        if (viz.form == VizForm.HTML)
+        {
+            viz.pplnRaw(`<th>`);
+            viz.ppN(arg.args);
+            viz.pplnRaw(`</th>`);
+        }
+        else if (viz.form == VizForm.jiraWikiMarkup)
+        {
+            if (args.length >= 1)
+            {
+                viz.ppRaw(`||`);
+            }
+            foreach (subArg; args)
+            {
+                viz.pp1(subArg);
+                viz.ppRaw(`||`);
+            }
+        }
     }
     else static if (isInstanceOf!(AsItem, Arg))
     {
@@ -855,11 +974,13 @@ void pp1(Arg)(ref Viz viz, int depth,
         else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(` - `); } // if inside ordered list use . instead of -
         else if (viz.form == VizForm.LaTeX) { viz.ppRaw(`\item `); }
         else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(` • `); }
+        else if (viz.form == VizForm.Markdown) { viz.ppRaw(`  *`); }
         viz.ppN(arg.args);
         if (viz.form == VizForm.HTML) { viz.pplnRaw(`</li>`); }
         else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(``); }
         else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8) { viz.pplnRaw(``); }
+                 viz.form == VizForm.textAsciiDocUTF8 ||
+                 viz.form == VizForm.Markdown) { viz.pplnRaw(``); }
     }
     else static if (isInstanceOf!(AsPath, Arg))
     {
@@ -1042,5 +1163,5 @@ void pplns(Args...)(ref Viz viz, Args args) @trusted
 /** Print End of Line to Terminal $(D term). */
 void ppendl(ref Viz viz) @trusted
 {
-    return viz.ppln(``);
+    viz.ppln(``);
 }
