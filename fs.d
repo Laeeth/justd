@@ -16,6 +16,8 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
+   TODO: Sort file duplicates
+
    TODO: Visualize hits using existingFileHitContext.asH!1 followed by a table:
          ROW_NR | hit string in <code lang=LANG></code>
 
@@ -1968,7 +1970,7 @@ const(ubyte[]) saveRootDirTree(Viz viz,
     cacheFile.write(data);
     immutable toc = Clock.currTime;
 
-    viz.ppln(asH!2("Cache Write"),
+    viz.ppln("Cache Write".asH!2,
              "Wrote tree cache of size ",
              data.length.Bytes64, " to ",
              asPath(cacheFile),
@@ -1998,7 +2000,7 @@ Dir loadRootDirTree(Viz viz,
         }
         immutable toc = Clock.currTime;
 
-        viz.pp(asH!2("Cache Read"),
+        viz.pp("Cache Read".asH!2,
                "Read cache of size ",
                data.length.Bytes64, " from ",
                asPath(cacheFile),
@@ -3823,7 +3825,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
     void scanTopDirs(Viz viz,
                      string commaedKeysString)
     {
-        viz.pp(asH!2("Results"));
+        viz.pp("Results".asH!2);
         if (_topDirs)
         {
             foreach (topIx, topDir; _topDirs)
@@ -3840,7 +3842,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                 }
             }
 
-            viz.pp(asH!2("Summary"));
+            viz.pp("Summary".asH!2);
 
             if ((gstats.noScannedFiles - gstats.noScannedDirs) == 0)
             {
@@ -4809,14 +4811,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         if (gstats.showNameDups)
         {
-            viz.pp(asH!2("Name Duplicates"));
+            viz.pp("Name Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByName)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (!dupFilesOk.empty)
                 {
                     viz.pp(asH!3("Files with same name ",
-                                    faze(dupFilesOk[0].name, fileFace)),
+                                 faze(dupFilesOk[0].name, fileFace)),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
@@ -4824,14 +4826,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         if (gstats.showLinkDups)
         {
-            viz.pp(asH!2("Inode Duplicates (Hardlinks)"));
+            viz.pp("Inode Duplicates (Hardlinks)".asH!2);
             foreach (inode, dupFiles; gstats.filesByInode)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2)
                 {
                     viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
-                                    " (hardlinks): "),
+                                 " (hardlinks): "),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
@@ -4839,7 +4841,7 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         if (gstats.showContentDups)
         {
-            viz.pp(asH!2("Content Duplicates"));
+            viz.pp("Content Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByContId)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
@@ -4849,8 +4851,8 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                     auto firstDup = dupFilesOk[0];
                     immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
                     viz.pp(asH!3(typeName ~ " with same content",
-                                    " (", digest, ")",
-                                    " of size ", firstDup.size));
+                                 " (", digest, ")",
+                                 " of size ", firstDup.size));
 
                     // content. TODO: Functionize
                     auto dupRegFile = cast(RegFile)firstDup;
@@ -4875,12 +4877,12 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty)
         {
-            viz.pp(asH!2("Broken Symlinks "),
+            viz.pp("Broken Symlinks ".asH!2,
                    asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
         }
 
         /* Counts */
-        viz.pp(asH!2("Scanned Types"),
+        viz.pp("Scanned Types".asH!2,
                /* asUList(asItem(gstats.noScannedDirs, " Dirs, "), */
                /*         asItem(gstats.noScannedRegFiles, " Regular Files, "), */
                /*         asItem(gstats.noScannedSymlinks, " Symbolic Links, "), */
@@ -4898,14 +4900,14 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         if (gstats.densenessCount)
         {
-            viz.pp(asH!2("Histograms"),
+            viz.pp("Histograms".asH!2,
                    asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
                                   cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
                            asItem("Average Byte ", NGramOrder, "-Gram Denseness ",
                                   cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
         }
 
-        viz.pp(asH!2("Scanned Bytes"),
+        viz.pp("Scanned Bytes".asH!2,
                asUList(asItem("Scanned ", results.noBytesScanned),
                        asItem("Skipped ", results.noBytesSkipped),
                        asItem("Unreadable ", results.noBytesUnreadable),

@@ -50,8 +50,6 @@ else
                       Appender!string os = appender!string()) pure
     {
         bool skip = true;
-        // NOTE: this extra loop may be deprecated by byCodeunit, byChar, byWchar
-        // and byDchar available in DMD 2.066
         foreach (char c; data)
         {
             // non ASCII chars are always higher than 127 in utf8;
