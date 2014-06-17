@@ -414,9 +414,7 @@ void ppPut(T)(ref Viz viz,
     else
     {
         if (viz.form == VizForm.HTML)
-        {
             viz.outFile.write(arg.encodeHTML);
-        }
         else
             viz.outFile.write(arg);
     }
