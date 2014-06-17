@@ -3821,6 +3821,12 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         // Print statistics
         showStats(viz);
+
+        if (useHTML)
+        {
+            viz.ppRaw("</body>\n");
+            viz.ppRaw("</html>");
+        }
     }
 
     void scanTopDirs(Viz viz,
@@ -3875,12 +3881,6 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
                         }
                     }
                 }
-            }
-
-            if (useHTML)
-            {
-                viz.ppRaw("</body>\n");
-                viz.ppRaw("</html>");
             }
         }
 
