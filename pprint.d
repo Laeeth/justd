@@ -931,8 +931,7 @@ void pp1(Arg)(ref Viz viz,
             {
                 enum idName = __traits(identifier, Front.tupleof[ix]);
                 import std.string: capitalize;
-                viz.pplnTaggedN(`td`,
-                             (capitalizeHeadings ? idName.capitalize : idName).asItalic.asBold);
+                viz.pplnTaggedN(`td`, (capitalizeHeadings ? idName.capitalize : idName).asItalic.asBold);
             }
             if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
 
@@ -955,8 +954,8 @@ void pp1(Arg)(ref Viz viz,
                     enum qual_string = ``;
 
                 viz.pplnTaggedN(`td`,
-                             qual_string.asKeyword,
-                             type_string.asType);
+                                qual_string.asKeyword,
+                                type_string.asType);
             }
             if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
         }
@@ -1023,7 +1022,7 @@ void pp1(Arg)(ref Viz viz,
         {
             spanArg ~= ` colspan="` ~ to!string(arg._span) ~ `"`;
         }
-        if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`td` ~ spanArg); }
+        if (viz.form == VizForm.HTML) { viz.ppTagOpen(`td` ~ spanArg); }
         viz.ppN(arg.args);
         if (viz.form == VizForm.HTML) { viz.pplnTagClose(`td`); }
     }
