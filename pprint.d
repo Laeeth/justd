@@ -415,8 +415,6 @@ void ppPut(T)(ref Viz viz,
     {
         if (viz.form == VizForm.HTML)
         {
-            import dbg;
-            dln(cast(ubyte[])arg);
             viz.outFile.write(arg.encodeHTML);
         }
         else
