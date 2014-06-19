@@ -3672,29 +3672,6 @@ class Scanner(Term)
                      " to be calculated");
         }
 
-        if (useHTML)
-        {
-            viz.ppRaw("<!DOCTYPE html>
-<html>
-<head>
-<meta charset=\"UTF-8\"/>
-<style>
-body { font: 10px Verdana, sans-serif; }
-hit0 { background-color:#f2b701; border: solid 0px grey; }
-hit1 { background-color:#e57d04; border: solid 0px grey; }
-hit2 { background-color:#dc0030; border: solid 0px grey; }
-hit3 { background-color:#b10058; border: solid 0px grey; }
-hit4 { background-color:#7c378a; border: solid 0px grey; }
-hit5 { background-color:#3465aa; border: solid 0px grey; }
-hit6 { background-color:#09a275; border: solid 0px grey; }
-hit7 { background-color:#7cb854; border: solid 0px grey; }
-hit_context { background-color:#c0c0c0; border: solid 0px grey; }
-</style>
-</head>
-<body>
-");
-        }
-
         // viz.ppln("<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
 
         if (includedTypes)
@@ -3821,12 +3798,6 @@ hit_context { background-color:#c0c0c0; border: solid 0px grey; }
 
         // Print statistics
         showStats(viz);
-
-        if (useHTML)
-        {
-            viz.ppRaw("</body>\n");
-            viz.ppRaw("</html>");
-        }
     }
 
     void scanTopDirs(Viz viz,

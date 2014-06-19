@@ -152,6 +152,57 @@ struct Viz
        This increases the readability of generated HTML code.
      */
     bool newlinedTags = true;
+
+    this(ioFile outFile,
+         Terminal* term,
+         bool treeFlag,
+         VizForm form,
+         bool colorFlag,
+         bool flushNewlines = true,
+         bool newlinedTags = true,
+        )
+    {
+        this.outFile = outFile;
+        this.term = term;
+        this.treeFlag = treeFlag;
+        this.form = form;
+        this.colorFlag = colorFlag;
+        this.flushNewlines = flushNewlines;
+        this.newlinedTags = newlinedTags;
+        if (form == VizForm.HTML)
+        {
+            ppRaw(this,
+                  `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+body { font: 10px Verdana, sans-serif; }
+hit0 { background-color:#f2b701; border: solid 0px grey; }
+hit1 { background-color:#e57d04; border: solid 0px grey; }
+hit2 { background-color:#dc0030; border: solid 0px grey; }
+hit3 { background-color:#b10058; border: solid 0px grey; }
+hit4 { background-color:#7c378a; border: solid 0px grey; }
+hit5 { background-color:#3465aa; border: solid 0px grey; }
+hit6 { background-color:#09a275; border: solid 0px grey; }
+hit7 { background-color:#7cb854; border: solid 0px grey; }
+hit_context { background-color:#c0c0c0; border: solid 0px grey; }
+</style>
+</head>
+<body>
+`);
+        }
+    }
+
+    ~this()
+    {
+        import dbg;
+        dln("dsfsd");
+        if (form == VizForm.HTML)
+        {
+            ppRaw(this, "</body>\n</html>");
+        }
+    }
 }
 
 struct Face(Color)
