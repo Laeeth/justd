@@ -17,6 +17,8 @@
     TODO: Add visited member to keeps track of what objects that have been visited
     TODO: Add asGCCMessage pretty prints
           seq($PATH, ':', $ROW, ':', $COL, ':', message, '[', $TYPE, ']'
+
+    TODO: Support VizForm.D3js
 */
 module pprint;
 
@@ -129,13 +131,14 @@ enum VizForm
     textAsciiDoc,
     textAsciiDocUTF8,
     HTML,
+    D3js,                       // See also: http://d3js.org/
     LaTeX,
-    jiraWikiMarkup, // https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all
+    jiraWikiMarkup, // See also: https://jira.atlassiana.com/secure/WikiRendererHelpAction.jspa?section=all
     Markdown,
 }
 
 /** Visual Backend. */
-struct Viz
+class Viz
 {
     import std.stdio: ioFile = File;
     import arsd.terminal: Terminal;
@@ -435,7 +438,7 @@ auto ref as(Attribute, Things...)(Things things)
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void ppRaw(T)(ref Viz viz,
+void ppRaw(T)(Viz viz,
               T arg) @trusted if (isSomeString!T ||
                                   isSomeChar!T)
 {
@@ -450,7 +453,7 @@ enum isSomeStringOrChar(T) = (is(isSomeString!T) ||
                               is(isSomeChar!T));
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void pplnRaw(T)(ref Viz viz,
+void pplnRaw(T)(Viz viz,
                 T arg) @trusted if (isSomeString!T ||
                                     isSomeChar!T)
 {
@@ -466,7 +469,7 @@ void pplnRaw(T)(ref Viz viz,
             viz.outFile.write(arg, '\n');
 }
 
-void ppTagOpen(T)(ref Viz viz,
+void ppTagOpen(T)(Viz viz,
                   T tag) @trusted if (isSomeString!T ||
                                       isSomeChar!T)
 {
@@ -474,7 +477,7 @@ void ppTagOpen(T)(ref Viz viz,
     viz.ppRaw(arg);
 }
 
-void ppTagClose(T)(ref Viz viz,
+void ppTagClose(T)(Viz viz,
                    T tag) @trusted if (isSomeString!T ||
                                        isSomeChar!T)
 {
@@ -482,7 +485,7 @@ void ppTagClose(T)(ref Viz viz,
     viz.ppRaw(arg);
 }
 
-void pplnTagOpen(T)(ref Viz viz,
+void pplnTagOpen(T)(Viz viz,
                     T tag) @trusted if (isSomeString!T ||
                                         isSomeChar!T)
 {
@@ -493,7 +496,7 @@ void pplnTagOpen(T)(ref Viz viz,
         viz.ppRaw(arg);
 }
 
-void pplnTagClose(T)(ref Viz viz,
+void pplnTagClose(T)(Viz viz,
                      T tag) @trusted if (isSomeString!T ||
                                          isSomeChar!T)
 {
@@ -505,7 +508,7 @@ void pplnTagClose(T)(ref Viz viz,
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(T)(ref Viz viz,
+void ppPut(T)(Viz viz,
               T arg) @trusted if (isSomeString!T ||
                                   isSomeChar!T)
 {
@@ -521,7 +524,7 @@ void ppPut(T)(ref Viz viz,
 }
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(T)(ref Viz viz,
+void ppPut(T)(Viz viz,
               Face!Color face,
               T arg) @trusted if (isSomeString!T ||
                                   isSomeChar!T)
@@ -577,7 +580,7 @@ auto getFace(Arg)(in Arg arg) @safe pure nothrow
     }
 }
 
-void ppTaggedN(Tag, Args...)(ref Viz viz,
+void ppTaggedN(Tag, Args...)(Viz viz,
                              in Tag tag,
                              Args args)
     @trusted if (isSomeString!Tag)
@@ -587,7 +590,7 @@ void ppTaggedN(Tag, Args...)(ref Viz viz,
     if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
 }
 
-void pplnTaggedN(Tag, Args...)(ref Viz viz,
+void pplnTaggedN(Tag, Args...)(Viz viz,
                                in Tag tag,
                                Args args)
     @trusted if (isSomeString!Tag)
@@ -598,7 +601,7 @@ void pplnTaggedN(Tag, Args...)(ref Viz viz,
 }
 
 /** Pretty-Print Single Argument $(D arg) to Terminal $(D term). */
-void pp1(Arg)(ref Viz viz,
+void pp1(Arg)(Viz viz,
               int depth,
               Arg arg)
     @trusted
@@ -1246,7 +1249,7 @@ void pp1(Arg)(ref Viz viz,
 }
 
 /** Pretty-Print Multiple Arguments $(D args) to Terminal $(D term). */
-void ppN(Args...)(ref Viz viz,
+void ppN(Args...)(Viz viz,
                   Args args) @trusted
 {
     foreach (arg; args)
@@ -1256,7 +1259,7 @@ void ppN(Args...)(ref Viz viz,
 }
 
 /** Pretty-Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
-void pp(Args...)(ref Viz viz,
+void pp(Args...)(Viz viz,
                  Args args) @trusted
 {
     viz.ppN(args);
@@ -1267,7 +1270,7 @@ void pp(Args...)(ref Viz viz,
 }
 
 /** Pretty-Print Arguments $(D args) including final line termination. */
-void ppln(Args...)(ref Viz viz,
+void ppln(Args...)(Viz viz,
                    Args args) @trusted
 {
     viz.ppN(args);
@@ -1283,7 +1286,7 @@ void ppln(Args...)(ref Viz viz,
 }
 
 /** Pretty-Print Arguments $(D args) each including a final line termination. */
-void pplns(Args...)(ref Viz viz,
+void pplns(Args...)(Viz viz,
                     Args args) @trusted
 {
     foreach (arg; args)
@@ -1293,7 +1296,7 @@ void pplns(Args...)(ref Viz viz,
 }
 
 /** Print End of Line to Terminal $(D term). */
-void ppendl(ref Viz viz) @trusted
+void ppendl(Viz viz) @trusted
 {
     viz.ppln(``);
 }

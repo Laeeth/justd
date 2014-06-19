@@ -3651,14 +3651,14 @@ class Scanner(Term)
         keysBistsUnion = reduce!"a | b"(typeof(keysBists.front).init, keysBists);
         keysXGramsUnion = reduce!"a + b"(typeof(keysXGrams.front).init, keysXGrams);
 
-        auto viz = Viz(outFile,
-                       &term,
-                       showTree,
-                       useHTML ? VizForm.HTML : VizForm.textAsciiDocUTF8,
-                       colorFlag,
-                       !useHTML, // only use if HTML
-                       true, // TODO: Only set if in debug mode
-                       );
+        auto viz = new Viz(outFile,
+                           &term,
+                           showTree,
+                           useHTML ? VizForm.HTML : VizForm.textAsciiDocUTF8,
+                           colorFlag,
+                           !useHTML, // only use if HTML
+                           true, // TODO: Only set if in debug mode
+            );
 
         if (_useNGrams &&
             (!keys.empty) &&
