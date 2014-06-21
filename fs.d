@@ -4115,6 +4115,8 @@ class Scanner(Term)
                                      in bool[] bistHits = [],
                                      ScanContext ctx = ScanContext.standard)
     {
+        bool anyFileHit = false; // will become true if any hit in this file
+
         typeof(return) hitCount = 0;
 
         import std.ascii: newline;
@@ -4139,7 +4141,7 @@ class Scanner(Term)
         {
             auto rest = cast(string)line; // rest of line as a string
 
-            bool anyHit = false; // will become true if any hit on current line
+            bool anyLineHit = false; // will become true if any hit on current line
             // Hit search loop
             while (!rest.empty)
             {
@@ -4196,33 +4198,47 @@ class Scanner(Term)
                         }
 
                         if (ctx == ScanContext.fileContent &&
-                            !anyHit) // if this is first hit
+                            !anyLineHit) // if this is first hit
                         {
                             if (showTree)
                             {
+                                if (viz.form == VizForm.HTML)
+                                {
+                                }
                                 viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
                             }
                             else
                             {
-                                foreach (fromSymlink; fromSymlinks)
+                                if (viz.form == VizForm.HTML)
                                 {
-                                    viz.pp(fromSymlink,
-                                           " modified ",
-                                           faze(shortDurationString(_currTime - fromSymlink.timeLastModified),
-                                                timeFace),
-                                           " ago",
-                                           " -> ");
+                                    if (!anyFileHit)
+                                    {
+                                        viz.pp(displayedFileName.asPath.asH!3);
+                                    }
                                 }
+                                else
+                                {
+                                    foreach (fromSymlink; fromSymlinks)
+                                    {
+                                        viz.pp(fromSymlink,
+                                               " modified ",
+                                               faze(shortDurationString(_currTime - fromSymlink.timeLastModified),
+                                                    timeFace),
+                                               " ago",
+                                               " -> ");
+                                    }
 
-                                // show file path/name
-                                viz.pp(asPath(displayedFileName)); // show path
+                                    // show file path/name
+                                    viz.pp(asPath(displayedFileName)); // show path
+                                }
                             }
 
                             // show file line:column
                             viz.pp(faze(":" ~ to!string(nL+1) ~ ":" ~ to!string(offKB+1) ~ ":",
                                         contextFace));
                         }
-                        anyHit = true; // at least hit
+                        anyLineHit = true;
+                        anyFileHit = true;
 
                         // show content prefix
                         viz.pp(faze(to!string(rest[0..offKB]), thisFace));
@@ -4264,7 +4280,7 @@ class Scanner(Term)
             }
 
             // finalize line
-            if (anyHit)
+            if (anyLineHit)
             {
                 // show final context suffix
                 viz.ppln(faze(rest, thisFace));

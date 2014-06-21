@@ -22,17 +22,17 @@
 */
 module pprint;
 
-import std.range: isInputRange;
+import std.range: isInputRange, map, repeat;
 import std.traits: isInstanceOf, isSomeString, isSomeChar, isAggregateType, Unqual, isArray;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
-import std.range: map;
 
 import w3c: encodeHTML;
 import arsd.terminal; // TODO: Make this optional
 
 /* TODO: These deps needs to be removed somehow */
+import algorithm_ex: times;
 import digest_ex: Digest;
 import csunits: Bytes;
 import fs: FKind, isSymlink, isDir;
@@ -317,6 +317,9 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Emphasized. */
     struct AsEmphasized(T...) { T args; } auto ref asEmphasized(T...)(T args) { return AsEmphasized!T(args); }
 
+    /** Strongly Emphasized. */
+    struct AsStronglyEmphasized(T...) { T args; } auto ref asStronglyEmphasized(T...)(T args) { return AsStronglyEmphasized!T(args); }
+
     /** Strong. */
     struct AsStrong(T...) { T args; } auto ref asStrong(T...)(T args) { return AsStrong!T(args); }
     /** Citation. */
@@ -340,8 +343,8 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsCtx(T...) { uint ix; T args; } auto ref asCtx(T)(uint ix, T args) { return AsCtx!T(ix, args); }
 
     /** Header. */
-    struct AsH(uint Level, T...) { T args; enum level = Level; }
-    auto ref asH(uint Level, T...)(T args) { return AsH!(Level, T)(args); }
+    struct AsHeader(uint Level, T...) { T args; enum level = Level; }
+    auto ref asHeader(uint Level, T...)(T args) { return AsHeader!(Level, T)(args); }
 
     /** Paragraph. */
     struct AsParagraph(T...) { T args; } auto ref asParagraph(T...)(T args) { return AsParagraph!T(args); }
@@ -383,7 +386,8 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
 
     /** Row Numbering */
     enum RowNr { none, offsetZero, offsetOne }
-    struct AsRows(RowNr N, T...) {
+    struct AsRows(RowNr N, T...)
+    {
         enum nr = N;
         T args;
     }
@@ -425,7 +429,12 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     alias asI = asBold;
     alias asTT = asMonospaced;
     alias asP = asParagraph;
+    alias asH = asHeader;
     alias HR = horizontalRuler;
+    alias asUL = asUList;
+    alias asOL = asOList;
+    alias asTR = asRow;
+    alias asTD = asCell;
 }
 
 struct As(Attribute, Things...)
@@ -717,8 +726,24 @@ void pp1(Arg)(Viz viz,
             viz.ppN(arg.args);
             viz.ppRaw(`_`);
         }
+        else if (viz.form == VizForm.Markdown)
+        {
+            viz.ppRaw(`_`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`_`);
+        }
     }
-    else static if (isInstanceOf!(AsStrong, Arg)) {
+    else static if (isInstanceOf!(AsStronglyEmphasized, Arg))
+    {
+        if (viz.form == VizForm.Markdown)
+        {
+            viz.ppRaw(`__`);
+            viz.ppN(arg.args);
+            viz.ppRaw(`__`);
+        }
+    }
+    else static if (isInstanceOf!(AsStrong, Arg))
+    {
         if      (viz.form == VizForm.HTML)
         {
             viz.ppTaggedN(`strong`, arg.args);
@@ -810,7 +835,7 @@ void pp1(Arg)(Viz viz,
             viz.pplnRaw(`{noformat}`);
         }
     }
-    else static if (isInstanceOf!(AsH, Arg))
+    else static if (isInstanceOf!(AsHeader, Arg))
     {
         if      (viz.form == VizForm.HTML)
         {
@@ -823,16 +848,20 @@ void pp1(Arg)(Viz viz,
             viz.ppN(arg.args);
             viz.pplnRaw(``);
         }
+        else if (viz.form == VizForm.Markdown)
+        {
+            arg.level.times!({ viz.ppRaw(`#`); });
+            viz.ppN(` `, arg.args);
+            viz.pplnRaw(``);
+        }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
         {
-            string tag;
-            foreach (ix; 0..arg.level)
-            {
-                tag ~= `=`;
-            }
-            // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            viz.ppN('\n', tag, ' ', arg.args, ' ', tag, '\n');
+            viz.ppRaw('\n');
+            arg.level.times!({ viz.ppRaw(`=`); });
+            viz.ppN(' ', arg.args, ' ');
+            arg.level.times!({ viz.ppRaw(`=`); });
+            viz.ppRaw('\n');
         }
     }
     else static if (isInstanceOf!(AsParagraph, Arg))
@@ -849,18 +878,15 @@ void pp1(Arg)(Viz viz,
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
         {
-            string tag;
-            foreach (ix; 0..arg.level)
-            {
-                tag ~= `=`;
-            }
-            // TODO: Why doesn't this work?: const tag = "=".repeat(arg.level).joiner("");
-            viz.ppN('\n', tag, ` `, arg.args, ` `, tag, '\n');
+            viz.ppRaw('\n');
+            arg.level.times!({ viz.ppRaw(`=`); });
+            viz.ppN(` `, arg.args, ` `, tag, '\n');
         }
     }
     else static if (isInstanceOf!(AsBlockquote, Arg))
     {
-        if (viz.form == VizForm.HTML) {
+        if (viz.form == VizForm.HTML)
+        {
             viz.pplnTaggedN(`blockquote`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
@@ -868,6 +894,13 @@ void pp1(Arg)(Viz viz,
             viz.pplnRaw(`{quote}`);
             viz.pplnRaw(arg.args);
             viz.pplnRaw(`{quote}`);
+        }
+        else if (viz.form == VizForm.Markdown)
+        {
+            foreach (subArg; arg.args)
+            {
+                viz.pplnRaw(`> `, subArg); // TODO: Iterate for each line in subArg
+            }
         }
     }
     else static if (isInstanceOf!(AsBlockquoteSP, Arg))
@@ -929,7 +962,8 @@ void pp1(Arg)(Viz viz,
     }
     else static if (isInstanceOf!(AsTable, Arg))
     {
-        if (viz.form == VizForm.HTML) {
+        if (viz.form == VizForm.HTML)
+        {
             const border = (arg.border ? ` border=` ~ arg.border : ``);
             viz.pplnTagOpen(`table` ~ border);
         }
@@ -1107,7 +1141,7 @@ void pp1(Arg)(Viz viz,
         else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(` - `); } // if inside ordered list use . instead of -
         else if (viz.form == VizForm.LaTeX) { viz.ppRaw(`\item `); }
         else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(` • `); }
-        else if (viz.form == VizForm.Markdown) { viz.ppRaw(`  *`); }
+        else if (viz.form == VizForm.Markdown) { viz.ppRaw(`* `); } // TODO: Alternatively +,-,*, or 1. TODO: Need counter for ordered lists
         viz.ppN(arg.args);
         if (viz.form == VizForm.HTML) { viz.pplnTagClose(`li`); }
         else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(``); }
@@ -1132,7 +1166,8 @@ void pp1(Arg)(Viz viz,
         pp1(vizArg, depth + 1, arg.arg);
 
         static if (isString)
-            if (viz.form == VizForm.HTML) {
+            if (viz.form == VizForm.HTML)
+            {
                 viz.ppTagClose(`a`);
             }
     }
@@ -1157,7 +1192,8 @@ void pp1(Arg)(Viz viz,
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
-        if (viz.form == VizForm.HTML) {
+        if (viz.form == VizForm.HTML)
+        {
             viz.ppRaw(`<a href="file://`);
             viz.ppPut(arg.path);
             viz.ppRaw(`">`);
@@ -1214,7 +1250,8 @@ void pp1(Arg)(Viz viz,
         }
 
         static if (__traits(hasMember, arg, "face") &&
-                   __traits(hasMember, arg.face, "tagsHTML")) {
+                   __traits(hasMember, arg.face, "tagsHTML"))
+        {
             if (viz.form == VizForm.HTML)
             {
                 foreach (tag; arg.face.tagsHTML)
@@ -1236,7 +1273,8 @@ void pp1(Arg)(Viz viz,
         }
 
         static if (__traits(hasMember, arg, "face") &&
-                   __traits(hasMember, arg.face, "tagsHTML")) {
+                   __traits(hasMember, arg.face, "tagsHTML"))
+        {
             if (viz.form == VizForm.HTML)
             {
                 foreach (tag; arg.face.tagsHTML)

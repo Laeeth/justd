@@ -21,7 +21,7 @@ alias writeln wrln;
 alias isOrdered = isSorted;
 
 /** Evaluate exp n times like in Lisp. */
-void dotimes(uint n, lazy void exp) { while (n--) exp(); }
+void doTimes(uint n, lazy void exp) { while (n--) exp(); }
 
 /** Sorts an Array \p a using a \em Parallel Quick Sort Algorithm.
  *

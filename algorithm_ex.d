@@ -887,8 +887,16 @@ unittest
 // ==============================================================================================
 
 /** Execute Expression $(D exp) the same way $(D n) times. */
-void dotimes(uint n, lazy void expression) { while (n--) expression(); }
-alias loop = dotimes;
+void doTimes(uint n, lazy void expression) { while (n--) expression(); }
+alias loop = doTimes;
+alias doN = doTimes;
+
+/** Execute Expression $(D exp) $(I inline) the same way $(D n) times. */
+void doTimes(uint n)(lazy void expression) { // TOREVIEW: Should we use delegate instead?
+    foreach (i; siota(0, n)) expression();
+}
+
+// ==============================================================================================
 
 /** Execute Expression $(D action) the same way $(D n) times. */
 void times(alias action, N)(N n) if (isCallable!action &&
@@ -910,12 +918,6 @@ unittest
     int sum = 0;
     10.times!({ sum++; });
     assert(sum == n);
-}
-
-
-/** Execute Expression $(D exp) $(I inline) the same way $(D n) times. */
-void static_dotimes(uint n)(lazy void expression) { // TOREVIEW: Should we use delegate instead?
-    foreach (i; siota(0, n)) expression();
 }
 
 // ==============================================================================================
