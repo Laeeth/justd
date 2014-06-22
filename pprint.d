@@ -912,7 +912,7 @@ void pp1(Arg)(Viz viz,
             viz.pplnRaw(``);
         }
     }
-    else static if (isInstanceOf!(HorizontalRuler, Arg))
+    else static if (is(HorizontalRuler == Arg))
     {
         if (viz.form == VizForm.HTML)
         {
