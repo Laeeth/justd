@@ -3752,13 +3752,13 @@ class Scanner(Term)
                          " under ", _topDirNames.map!(a => asPath(a))));
         }
 
-        viz.pp("Source Kinds".asH!2,
-               srcFKinds.asTable);
+        /* viz.pp("Source Kinds".asH!2, */
+        /*        srcFKinds.asTable); */
+        /* binFKinds.asTable, */
 
         if (_showSkipped)
         {
             viz.pp("Skipping files of type".asH!2,
-                   binFKinds.asTable,
                    asUList(binFKinds.map!(a => asItem(a.kindName.asBold,
                                                       ": ",
                                                       asCSL(a.exts.map!(b => b.asCode))))));
@@ -3968,7 +3968,10 @@ class Scanner(Term)
                 immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                 viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
             }
-            viz.ppln(regfile, ": Skipped ", kind, " file", skipCause);
+            viz.pp(horizontalRuler,
+                   asH!3(regfile,
+                         ": Skipped ", kind, " file",
+                         skipCause));
         }
     }
 
@@ -4153,7 +4156,6 @@ class Scanner(Term)
 
                 foreach (uint ix, key; keys) // TODO: Call variadic-find instead to speed things up.
                 {
-
                     /* Bistogram Discardal */
                     if ((!bistHits.empty) &&
                         !bistHits[ix]) // if neither exact nor acronym match possible
@@ -4200,21 +4202,21 @@ class Scanner(Term)
                         if (ctx == ScanContext.fileContent &&
                             !anyLineHit) // if this is first hit
                         {
-                            if (showTree)
+                            if (viz.form == VizForm.HTML)
                             {
-                                if (viz.form == VizForm.HTML)
+                                if (!anyFileHit)
                                 {
+                                    viz.pp(horizontalRuler,
+                                           displayedFileName.asPath.asH!3);
+                                    viz.ppTagOpen(`table`, `border=1`);
+                                    anyFileHit = true;
                                 }
-                                viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
                             }
                             else
                             {
-                                if (viz.form == VizForm.HTML)
+                                if (showTree)
                                 {
-                                    if (!anyFileHit)
-                                    {
-                                        viz.pp(displayedFileName.asPath.asH!3);
-                                    }
+                                    viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
                                 }
                                 else
                                 {
@@ -4227,18 +4229,27 @@ class Scanner(Term)
                                                " ago",
                                                " -> ");
                                     }
-
                                     // show file path/name
                                     viz.pp(asPath(displayedFileName)); // show path
                                 }
                             }
 
-                            // show file line:column
-                            viz.pp(faze(":" ~ to!string(nL+1) ~ ":" ~ to!string(offKB+1) ~ ":",
-                                        contextFace));
+                            // show line:column
+                            if (viz.form == VizForm.HTML)
+                            {
+                                viz.ppTagOpen("tr");
+                                viz.pp(to!string(nL+1).asCell,
+                                       to!string(offKB+1).asCell);
+                                viz.ppTagOpen("td");
+                                viz.ppTagOpen("code");
+                            }
+                            else
+                            {
+                                viz.pp(faze(":" ~ to!string(nL+1) ~ ":" ~ to!string(offKB+1) ~ ":",
+                                            contextFace));
+                            }
+                            anyLineHit = true;
                         }
-                        anyLineHit = true;
-                        anyFileHit = true;
 
                         // show content prefix
                         viz.pp(faze(to!string(rest[0..offKB]), thisFace));
@@ -4284,8 +4295,19 @@ class Scanner(Term)
             {
                 // show final context suffix
                 viz.ppln(faze(rest, thisFace));
+                if (viz.form == VizForm.HTML)
+                {
+                    viz.ppTagClose("code");
+                    viz.ppTagClose("td");
+                    viz.pplnTagClose("tr");
+                }
             }
             nL++;
+        }
+
+        if (anyFileHit)
+        {
+            viz.pplnTagClose("table");
         }
 
         // Previous solution

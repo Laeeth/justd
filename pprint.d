@@ -6,6 +6,8 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
+    TODO: Remove all restrictions on pp.*Raw.* and call them using ranges such as repeat
+
     TODO: Use "alias this" on wrapper structures and test!
 
     TODO: x.in!Bold
@@ -180,16 +182,59 @@ class Viz
 <head>
 <meta charset="UTF-8"/>
 <style>
-body { font: 10px Verdana, sans-serif; }
-hit0 { background-color:#f2b701; border: solid 0px grey; }
-hit1 { background-color:#e57d04; border: solid 0px grey; }
-hit2 { background-color:#dc0030; border: solid 0px grey; }
-hit3 { background-color:#b10058; border: solid 0px grey; }
-hit4 { background-color:#7c378a; border: solid 0px grey; }
-hit5 { background-color:#3465aa; border: solid 0px grey; }
-hit6 { background-color:#09a275; border: solid 0px grey; }
-hit7 { background-color:#7cb854; border: solid 0px grey; }
-hit_context { background-color:#c0c0c0; border: solid 0px grey; }
+
+body {
+    font: 10px Verdana, sans-serif;
+}
+hit0 {
+    background-color:#F2B701;
+    border: solid 0px grey;
+}
+hit1 {
+    background-color:#F18204;
+    border: solid 0px grey;
+}
+hit2 {
+    background-color:#F50035;
+    border: solid 0px grey;
+}
+hit3 {
+    background-color:#F5007A;
+    border: solid 0px grey;
+}
+hit4 {
+    background-color:#A449B6;
+    border: solid 0px grey;
+}
+hit5 {
+    background-color:#3A70BB;
+    border: solid 0px grey;
+}
+hit6 {
+    background-color:#0DE7A6;
+    border: solid 0px grey;
+}
+hit7 {
+    background-color:#70AD48;
+    border: solid 0px grey;
+}
+
+hit_context {
+    background-color:#c0c0c0;
+    border: solid 0px grey;
+}
+
+code {
+    background-color:#FFFFF0;
+}
+
+td, th {
+    border: 1px solid black;
+}
+table {
+    border-collapse: collapse;
+}
+
 </style>
 </head>
 <body>
@@ -447,56 +492,60 @@ auto ref as(Attribute, Things...)(Things things)
 }
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void ppRaw(T)(Viz viz,
-              T arg) @trusted if (isSomeString!T ||
-                                  isSomeChar!T)
+void ppRaw(T...)(Viz viz,
+                 T args) @trusted
 {
-    if (viz.outFile == stdout)
-        (*viz.term).write(arg);
-    else
-        viz.outFile.write(arg);
+    foreach (arg; args)
+    {
+        if (viz.outFile == stdout)
+            (*viz.term).write(arg);
+        else
+            viz.outFile.write(arg);
+    }
 }
-
-/* TODO: Use this */
-enum isSomeStringOrChar(T) = (is(isSomeString!T) ||
-                              is(isSomeChar!T));
 
 /** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void pplnRaw(T)(Viz viz,
-                T arg) @trusted if (isSomeString!T ||
-                                    isSomeChar!T)
+void pplnRaw(T...)(Viz viz,
+                   T args) @trusted
 {
-    if (viz.outFile == stdout)
-        if (viz.flushNewlines)
-            (*viz.term).writeln(arg);
+    foreach (arg; args)
+    {
+        if (viz.outFile == stdout)
+            if (viz.flushNewlines)
+                (*viz.term).writeln(arg);
+            else
+                (*viz.term).write(arg, '\n');
         else
-            (*viz.term).write(arg, '\n');
-    else
-        if (viz.flushNewlines)
-            viz.outFile.writeln(arg);
-        else
-            viz.outFile.write(arg, '\n');
+            if (viz.flushNewlines)
+                viz.outFile.writeln(arg);
+            else
+                viz.outFile.write(arg, '\n');
+    }
 }
 
-void ppTagOpen(T)(Viz viz,
-                  T tag) @trusted if (isSomeString!T ||
-                                      isSomeChar!T)
+void ppTagOpen(T, P...)(Viz viz,
+                        T tag, P params) @trusted
 {
-    immutable arg = (viz.form == VizForm.HTML) ? `<` ~ tag ~ `>` : tag;
-    viz.ppRaw(arg);
+    if (viz.form == VizForm.HTML)
+    {
+        viz.ppRaw(`<` ~ tag);
+        foreach (param; params)
+        {
+            viz.ppRaw(' ', param);
+        }
+        viz.ppRaw(`>`);
+    }
 }
 
 void ppTagClose(T)(Viz viz,
-                   T tag) @trusted if (isSomeString!T ||
-                                       isSomeChar!T)
+                   T tag) @trusted
 {
     immutable arg = (viz.form == VizForm.HTML) ? `</` ~ tag ~ `>` : tag;
     viz.ppRaw(arg);
 }
 
 void pplnTagOpen(T)(Viz viz,
-                    T tag) @trusted if (isSomeString!T ||
-                                        isSomeChar!T)
+                    T tag) @trusted
 {
     immutable arg = (viz.form == VizForm.HTML) ? `<` ~ tag ~ `>` : tag;
     if (viz.newlinedTags)
@@ -506,8 +555,7 @@ void pplnTagOpen(T)(Viz viz,
 }
 
 void pplnTagClose(T)(Viz viz,
-                     T tag) @trusted if (isSomeString!T ||
-                                         isSomeChar!T)
+                     T tag) @trusted
 {
     immutable arg = (viz.form == VizForm.HTML) ? `</` ~ tag ~ `>` : tag;
     if (viz.newlinedTags)
@@ -518,8 +566,7 @@ void pplnTagClose(T)(Viz viz,
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
 void ppPut(T)(Viz viz,
-              T arg) @trusted if (isSomeString!T ||
-                                  isSomeChar!T)
+              T arg) @trusted
 {
     if (viz.outFile == stdout)
         (*viz.term).write(arg);
@@ -535,8 +582,7 @@ void ppPut(T)(Viz viz,
 /** Put $(D arg) to $(D viz) possibly with conversion. */
 void ppPut(T)(Viz viz,
               Face!Color face,
-              T arg) @trusted if (isSomeString!T ||
-                                  isSomeChar!T)
+              T arg) @trusted
 {
     (*viz.term).setFace(face, viz.colorFlag);
     viz.ppPut(arg);
@@ -1105,7 +1151,7 @@ void pp1(Arg)(Viz viz,
     else static if (isInstanceOf!(AsCell, Arg))
     {
         string spanArg;
-        static if (arg.args.length == 1 &&
+        static if (arg.args.length >= 1 &&
                    isInstanceOf!(Span, typeof(arg.args[0])))
         {
             spanArg ~= ` colspan="` ~ to!string(arg._span) ~ `"`;
