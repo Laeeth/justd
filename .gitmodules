@@ -100,3 +100,6 @@
 [submodule "containers"]
 	path = containers
 	url = https://github.com/economicmodeling/containers.git
+[submodule "FReD"]
+	path = FReD
+	url = https://github.com/DmitryOlshansky/FReD.git
