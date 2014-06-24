@@ -682,9 +682,9 @@ class File
     Bytes64 treeSize() @property @trusted /* @safe pure nothrow */ { return size; }
 
     /** Content Digest of Tree under this Directory. */
-    const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */
+    const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
     {
-        return typeof(return).init;
+        return typeof(return).init; // default to undefined
     }
 
     Face!Color face() const @property @safe pure nothrow { return fileFace; }
@@ -1047,21 +1047,24 @@ class RegFile : File
 
     ~this() { _cstat.deallocate(false); }
 
-    /** Returns: Contents Id of $(D this). */
-    override const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */ { return _cstat._contId; }
+    /** Returns: Content Id of $(D this). */
+    override const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
+    {
+        return _cstat._contId;
+    }
 
     override Face!Color face() const @property @safe pure nothrow { return regFileFace; }
 
     /** Returns: SHA-1 of $(D this) $(D File) Contents at $(D src). */
     const(SHA1Digest) contId(inout (ubyte[]) src,
-                             File[][SHA1Digest] filesByContId)
+                             File[][SHA1Digest] filesByContentId)
         @property pure out(result) { assert(!result.empty); } // must have be defined
     body
     {
         if (_cstat._contId.empty) // if not yet defined
         {
             _cstat._contId = src.sha1Of;
-            filesByContId[_cstat._contId] ~= this;
+            filesByContentId[_cstat._contId] ~= this;
             debug dln("Got SHA1 of " ~ path);
         }
         return _cstat._contId;
@@ -1106,7 +1109,7 @@ class RegFile : File
                                 bool doSHA1,
                                 bool doBist,
                                 bool doBitStatus,
-                                NotNull!File[][SHA1Digest] filesByContId) @safe
+                                NotNull!File[][SHA1Digest] filesByContentId) @safe
     {
         if (_cstat._contId.defined) { doSHA1 = false; }
         if (!_cstat.bist.empty) { doBist = false; }
@@ -1146,17 +1149,17 @@ class RegFile : File
         if (doSHA1)
         {
             _cstat._contId = sha1.finish();
-            filesByContId[_cstat._contId] ~= cast(NotNull!File)assumeNotNull(this);
+            filesByContentId[_cstat._contId] ~= cast(NotNull!File)assumeNotNull(this);
         }
     }
 
     /** Clear/Reset Contents Statistics of $(D this) $(D File). */
-    void clearCStat(File[][SHA1Digest] filesByContId) @safe nothrow
+    void clearCStat(File[][SHA1Digest] filesByContentId) @safe nothrow
     {
         // SHA1-digest
-        if (_cstat._contId in filesByContId)
+        if (_cstat._contId in filesByContentId)
         {
-            auto dups = filesByContId[_cstat._contId];
+            auto dups = filesByContentId[_cstat._contId];
             import std.algorithm: remove;
             immutable n = dups.length;
             dups = dups.remove!(a => a is this);
@@ -1234,7 +1237,7 @@ class RegFile : File
             unpacker.unpack(_cstat._contId); // Digest
             if (_cstat._contId)
             {
-                parent.gstats.filesByContId[_cstat._contId] ~= cast(NotNull!File)this;
+                parent.gstats.filesByContentId[_cstat._contId] ~= cast(NotNull!File)this;
             }
 
             // Bist
@@ -1350,7 +1353,7 @@ struct CStat {
     }
 
     SHA1Digest kindId; // FKind Identifier/Fingerprint of this regular file.
-    SHA1Digest _contId; // Contents Identifier/Fingerprint.
+    SHA1Digest _contId; // Content Identifier/Fingerprint.
 
     /** Boolean Single Bistogram over file contents. If
         binHist0[cast(ubyte)x] is set then this file contains byte x. Consumes
@@ -1384,7 +1387,7 @@ class GStats
 {
     NotNull!File[][string] filesByName;    // Potential File Name Duplicates
     NotNull!File[][ino_t] filesByInode;    // Potential Link Duplicates
-    NotNull!File[][SHA1Digest] filesByContId; // File(s) (Duplicates) Indexed on Contents SHA1.
+    NotNull!File[][SHA1Digest] filesByContentId; // File(s) (Duplicates) Indexed on Contents SHA1.
     FileTags ftags;
     Bytes64[File] treeSizesByFile;
 
@@ -1520,16 +1523,16 @@ class Dir : File
         return _treeSize;
     }
 
-    /** Returns: Contents Id of $(D this). */
-    override const(SHA1Digest) treeContId() @property @trusted /* @safe pure nothrow */
+    /** Returns: Directory Tree Content Id of $(D this). */
+    override const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
     {
-        if (!_treeContId)
+        if (!_treeContentId)
         {
-            _treeContId = reduce!"a ^ b"(SHA1Digest.init,
-                                         _subs.byValue.map!"a.treeContId"); // recurse!
-            gstats.filesByContId[_treeContId] ~= cast(NotNull!File)this;
+            _treeContentId = reduce!"a ^ b"(SHA1Digest.init,
+                                         _subs.byValue.map!"a.treeContentId"); // recurse
+            gstats.filesByContentId[_treeContentId] ~= cast(NotNull!File)this;
         }
-        return _treeContId;
+        return _treeContentId;
     }
 
     override Face!Color face() const @property @safe pure nothrow { return dirFace; }
@@ -1916,7 +1919,7 @@ class Dir : File
     Interval!SysTime _timeModifiedInterval;
     Interval!SysTime _timeAccessedInterval;
     Bytes64 _treeSize; // Size of tree with this directory as root. Zero means undefined.
-    SHA1Digest _treeContId;
+    SHA1Digest _treeContentId;
 }
 
 /** Externally Directory Memoized Calculation of Tree Size.
@@ -4428,7 +4431,7 @@ class Scanner(Term)
                                                   gstats.showContentDups,
                                                   doBist,
                                                   doBitStatus,
-                                                  gstats.filesByContId);
+                                                  gstats.filesByContentId);
 
                 // Match Bist of Keys with BistX of File
                 bool[] bistHits;
@@ -4713,7 +4716,7 @@ class Scanner(Term)
 
                 if (gstats.showSHA1)
                 {
-                    viz.pp(" with Tree-Content-Id ", theDir.treeContId);
+                    viz.pp(" with Tree-Content-Id ", theDir.treeContentId);
                 }
                 viz.ppendl();
             }
@@ -4852,7 +4855,7 @@ class Scanner(Term)
         if (gstats.showContentDups)
         {
             viz.pp("Content Duplicates".asH!2);
-            foreach (digest, dupFiles; gstats.filesByContId)
+            foreach (digest, dupFiles; gstats.filesByContentId)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) // non-empty file/directory
@@ -4899,12 +4902,18 @@ class Scanner(Term)
                /*         asItem(gstats.noScannedSpecialFiles, " Special Files, "), */
                /*         asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
                /*     ) */
-               asTable(asRow(asCell(asBold("Scan Count")), asCell(asBold("File Type"))),
-                       asRow(asCell(gstats.noScannedDirs), asCell(asItalic("Dirs"))),
-                       asRow(asCell(gstats.noScannedRegFiles), asCell(asItalic("Regular Files"))),
-                       asRow(asCell(gstats.noScannedSymlinks), asCell(asItalic("Symbolic Links"))),
-                       asRow(asCell(gstats.noScannedSpecialFiles), asCell(asItalic("Special Files"))),
-                       asRow(asCell(gstats.noScannedFiles), asCell(asItalic("Files")))
+               asTable(asRow(asCell(asBold("Scan Count")),
+                             asCell(asBold("File Type"))),
+                       asRow(asCell(gstats.noScannedDirs),
+                             asCell(asItalic("Dirs"))),
+                       asRow(asCell(gstats.noScannedRegFiles),
+                             asCell(asItalic("Regular Files"))),
+                       asRow(asCell(gstats.noScannedSymlinks),
+                             asCell(asItalic("Symbolic Links"))),
+                       asRow(asCell(gstats.noScannedSpecialFiles),
+                             asCell(asItalic("Special Files"))),
+                       asRow(asCell(gstats.noScannedFiles),
+                             asCell(asItalic("Files")))
                    )
             );
 

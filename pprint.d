@@ -244,8 +244,6 @@ table {
 
     ~this()
     {
-        import dbg;
-        dln("dsfsd");
         if (form == VizForm.HTML)
         {
             ppRaw(this, "</body>\n</html>");
