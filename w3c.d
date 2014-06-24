@@ -12,10 +12,11 @@ module w3c;
 import std.traits: isSomeChar, isSomeString;
 
 /** Convert character $(D c) to HTML representation. */
-string toHTML(C)(C c) @safe pure if (isSomeChar!C)
+string toHTML(C)(C c, bool nbsp = true) @safe pure if (isSomeChar!C)
 {
     import std.conv: to;
-    if      (c == '&')  return "&amp;"; // ampersand
+    if      (nbsp && c == ' ') return "&nbsp;"; // non breaking space
+    else if (c == '&')  return "&amp;"; // ampersand
     else if (c == '<')  return "&lt;"; // less than
     else if (c == '>')  return "&gt;"; // greater than
     else if (c == '\"') return "&quot;"; // double quote
@@ -34,7 +35,7 @@ static if (__VERSION__ >= 2066L)
 {
     /** Copied from arsd.dom */
     /** Convert string $(D s) to HTML representation. */
-    auto encodeHTML(string s) @safe pure
+    auto encodeHTML(string s, bool nbsp = true) @safe pure
     {
         import std.utf: byDchar;
         import std.algorithm: joiner, map;
@@ -47,7 +48,8 @@ else
 
     /** Copied from arsd.dom */
     string encodeHTML(string data,
-                      Appender!string os = appender!string()) pure
+                      Appender!string os = appender!string(),
+                      bool nbsp = true) pure
     {
         bool skip = true;
         foreach (char c; data)
@@ -58,6 +60,8 @@ else
                 c == '>' ||
                 c == '"' ||
                 c == '&' ||
+                (nbsp &&
+                 c == ' ') ||
                 cast(uint) c > 127)
             {
                 skip = false; // there's actual work to be done

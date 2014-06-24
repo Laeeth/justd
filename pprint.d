@@ -564,14 +564,15 @@ void pplnTagClose(T)(Viz viz,
 
 /** Put $(D arg) to $(D viz) possibly with conversion. */
 void ppPut(T)(Viz viz,
-              T arg) @trusted
+              T arg,
+              bool nbsp = true) @trusted
 {
     if (viz.outFile == stdout)
         (*viz.term).write(arg);
     else
     {
         if (viz.form == VizForm.HTML)
-            viz.outFile.write(arg.encodeHTML);
+            viz.outFile.write(arg.encodeHTML(nbsp));
         else
             viz.outFile.write(arg);
     }
@@ -580,10 +581,11 @@ void ppPut(T)(Viz viz,
 /** Put $(D arg) to $(D viz) possibly with conversion. */
 void ppPut(T)(Viz viz,
               Face!Color face,
-              T arg) @trusted
+              T arg,
+              bool nbsp = true) @trusted
 {
     (*viz.term).setFace(face, viz.colorFlag);
-    viz.ppPut(arg);
+    viz.ppPut(arg, nbsp);
 }
 
 /** Fazed (Rich) Text. */
