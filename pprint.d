@@ -33,7 +33,7 @@ import std.path: dirSeparator;
 import w3c: encodeHTML;
 import arsd.terminal; // TODO: Make this optional
 
-/* TODO: These deps needs to be removed somehow */
+/* TODO: Move logic (toHTML) to these deps and remove these imports */
 import digest_ex: Digest;
 import csunits: Bytes;
 import fs: FKind, isSymlink, isDir;
