@@ -34,7 +34,6 @@ import w3c: encodeHTML;
 import arsd.terminal; // TODO: Make this optional
 
 /* TODO: These deps needs to be removed somehow */
-import algorithm_ex: times;
 import digest_ex: Digest;
 import csunits: Bytes;
 import fs: FKind, isSymlink, isDir;
@@ -896,17 +895,18 @@ void pp1(Arg)(Viz viz,
         }
         else if (viz.form == VizForm.Markdown)
         {
-            arg.level.times!({ viz.ppRaw(`#`); });
-            viz.ppN(` `, arg.args);
+            viz.ppN(`#`.repeat(arg.level), ` `, arg.args);
             viz.pplnRaw(``);
         }
         else if (viz.form == VizForm.textAsciiDoc ||
                  viz.form == VizForm.textAsciiDocUTF8)
         {
             viz.ppRaw('\n');
-            arg.level.times!({ viz.ppRaw(`=`); });
-            viz.ppN(' ', arg.args, ' ');
-            arg.level.times!({ viz.ppRaw(`=`); });
+            viz.ppN(`=`.repeat(arg.level),
+                    ' ',
+                    arg.args,
+                    ' ',
+                    `=`.repeat(arg.level));
             viz.ppRaw('\n');
         }
     }
@@ -925,8 +925,9 @@ void pp1(Arg)(Viz viz,
                  viz.form == VizForm.textAsciiDocUTF8)
         {
             viz.ppRaw('\n');
-            arg.level.times!({ viz.ppRaw(`=`); });
-            viz.ppN(` `, arg.args, ` `, tag, '\n');
+            viz.ppN(`=`.repeat(arg.level),
+                    ` `, arg.args,
+                    ` `, tag, '\n');
         }
     }
     else static if (isInstanceOf!(AsBlockquote, Arg))
