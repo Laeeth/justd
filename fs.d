@@ -520,7 +520,6 @@ bool matchName(in FKind kind,
                in string full, size_t six = 0,
                in string ext = null) @safe pure nothrow
 {
-    /* debug dln("kind:", kind.kindName); */
     return (kind.matchFullName(full) ||
             kind.matchExtension(ext));
 }
@@ -534,7 +533,6 @@ bool matchContents(Range)(in FKind kind,
                           in RegFile regfile) pure nothrow if (hasSlicing!Range)
 {
     const hit = kind.magicData.matchU(range, kind.magicOffset);
-    /* debug dln("kind:", kind.kindName,  ", range.length:", hit.length); */
     return (!hit.empty);
 }
 
@@ -553,13 +551,11 @@ KindHit ofKind(NotNull!RegFile regfile,
                const ref FKind[SHA1Digest] allKindsById) /* nothrow */ @safe
 {
     // Try cached first
-    /* debug dln("", kind.kindName, " ", regfile.name, " ", kind.detection); */
 
     if (regfile._cstat.kindId.defined &&
         (regfile._cstat.kindId in allKindsById) && // if kind is known
         allKindsById[regfile._cstat.kindId] is kind)  // if cached kind equals
     {
-        /* dln(regfile.path, " cached kind detected as ", kind.kindName); */
         return KindHit.cached;
     }
 
@@ -591,7 +587,6 @@ KindHit ofKind(NotNull!RegFile regfile,
         break;
     case FileKindDetection.equalsContents:
         hit = kind.matchContents(regfile.readOnlyContents, regfile);
-        /* dln("path:", regfile.path, ", kind.name: ", kind.kindName, " hit.length:", hit, " magicData.length: ", kind.magicData.length); */
         break;
     case FileKindDetection.equalsWhatsGiven:
         // something must be defined
@@ -1050,6 +1045,7 @@ class RegFile : File
     /** Returns: Content Id of $(D this). */
     override const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
     {
+        calculateCStatInChunks(parent.gstats.filesByContentId);
         return _cstat._contId;
     }
 
@@ -1075,7 +1071,6 @@ class RegFile : File
     {
         if (_cstat.bist.empty)
         {
-            /* debug dln(this.path, " Recalculating bistogram8."); */
             _cstat.bist.put(readOnlyContents); // memoized calculated
         }
         return _cstat.bist;
@@ -1087,7 +1082,6 @@ class RegFile : File
         if (_cstat.xgram.empty)
         {
             _cstat.xgram.put(readOnlyContents); // memoized calculated
-            /* debug dln(this.path, " Recalculated xgram. empty:", _cstat.xgram.empty); */
         }
         return _cstat.xgram;
     }
@@ -1098,18 +1092,17 @@ class RegFile : File
         if (!_cstat._xgramDeepDenseness)
         {
             _cstat._xgramDeepDenseness = xgram.denseness(-1).numerator;
-            /* debug dln(this.path, " Recalculating xgramDeepDenseness to ", _cstat._xgramDeepDenseness); */
         }
         return Rational!ulong(_cstat._xgramDeepDenseness,
                               _cstat.xgram.noBins);
     }
 
     /** Process File in Cache Friendly Chunks. */
-    void calculateCStatInChunks(size_t chunkSize,
-                                bool doSHA1,
-                                bool doBist,
-                                bool doBitStatus,
-                                NotNull!File[][SHA1Digest] filesByContentId) @safe
+    void calculateCStatInChunks(NotNull!File[][SHA1Digest] filesByContentId,
+                                size_t chunkSize = 32*pageSize(),
+                                bool doSHA1 = false,
+                                bool doBist = false,
+                                bool doBitStatus = false) @safe
     {
         if (_cstat._contId.defined) { doSHA1 = false; }
         if (!_cstat.bist.empty) { doBist = false; }
@@ -1395,7 +1388,8 @@ class GStats
     FKind[SHA1Digest] allKindsById;    // Index Kinds by their behaviour
 
     bool showNameDups = false;
-    bool showContentDups = false;
+    bool showTreeContentDups = false;
+    bool showFileContentDups = false;
     bool linkContentDups = false;
 
     bool showLinkDups = false;
@@ -1528,8 +1522,8 @@ class Dir : File
     {
         if (!_treeContentId)
         {
-            _treeContentId = reduce!"a ^ b"(SHA1Digest.init,
-                                         _subs.byValue.map!"a.treeContentId"); // recurse
+            _treeContentId = reduce!"a^b"(SHA1Digest.init,
+                                          subs.byValue.map!"a.treeContentId"); // recurse
             gstats.filesByContentId[_treeContentId] ~= cast(NotNull!File)this;
         }
         return _treeContentId;
@@ -3547,7 +3541,8 @@ class Scanner(Term)
 
                                     "name-duplicates|snd", "\tDetect & Show file name duplicates" ~ defaultDoc(gstats.showNameDups), &gstats.showNameDups,
                                     "hardlink-duplicates|inode-duplicates|shd", "\tDetect & Show multiple links to same inode" ~ defaultDoc(gstats.showLinkDups), &gstats.showLinkDups,
-                                    "content-duplicates|scd", "\tDetect & Show file contents duplicates" ~ defaultDoc(gstats.showContentDups), &gstats.showContentDups,
+                                    "file-content-duplicates|scd", "\tDetect & Show file contents duplicates" ~ defaultDoc(gstats.showFileContentDups), &gstats.showFileContentDups,
+                                    "tree-content-duplicates", "\tDetect & Show directory tree contents duplicates" ~ defaultDoc(gstats.showTreeContentDups), &gstats.showTreeContentDups,
                                     "duplicates|D", "\tDetect & Show file name and contents duplicates" ~ defaultDoc(gstats.showAnyDups), &gstats.showAnyDups,
                                     "duplicates-context", "\tDuplicates Detection Context. Either: " ~ enumDoc!DuplicatesContext, &duplicatesContext,
                                     "hardlink-content-duplicates", "\tConvert all content duplicates into hardlinks (common inode) if they reside on the same file system" ~ defaultDoc(gstats.linkContentDups), &gstats.linkContentDups,
@@ -3591,7 +3586,8 @@ class Scanner(Term)
         {
             gstats.showNameDups = true;
             gstats.showLinkDups = true;
-            gstats.showContentDups = true;
+            gstats.showFileContentDups = true;
+            gstats.showTreeContentDups = true;
         }
         if (helpPrinted)
             return;
@@ -4395,7 +4391,7 @@ class Scanner(Term)
         // Scan Contents
         if ((_scanContext == ScanContext.all ||
              _scanContext == ScanContext.fileContent) &&
-            (gstats.showContentDups ||
+            (gstats.showFileContentDups ||
              !keys.empty) &&
             theRegFile.size != 0)        // non-empty file
         {
@@ -4427,11 +4423,11 @@ class Scanner(Term)
                 immutable bool doBitStatus = true;
 
                 // Chunked Calculation of CStat in one pass. TODO: call async.
-                theRegFile.calculateCStatInChunks(_scanChunkSize,
-                                                  gstats.showContentDups,
+                theRegFile.calculateCStatInChunks(gstats.filesByContentId,
+                                                  _scanChunkSize,
+                                                  gstats.showFileContentDups,
                                                   doBist,
-                                                  doBitStatus,
-                                                  gstats.filesByContentId);
+                                                  doBitStatus);
 
                 // Match Bist of Keys with BistX of File
                 bool[] bistHits;
@@ -4681,6 +4677,11 @@ class Scanner(Term)
     {
         if (theDir.isRoot)  { results.reset(); }
 
+        if (gstats.showTreeContentDups)
+        {
+            theDir.treeContentId;
+        }
+
         // Scan name
         if ((_scanContext == ScanContext.all ||
              _scanContext == ScanContext.fileName ||
@@ -4727,6 +4728,7 @@ class Scanner(Term)
             auto subsSorted = theDir.subsSorted(subsSorting);
             foreach (key, sub; subsSorted)
             {
+                /* TODO: Functionize to scanFile() */
                 if (auto regfile = cast(RegFile)sub)
                 {
                     scanRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
@@ -4758,7 +4760,11 @@ class Scanner(Term)
                         }
                         else
                         {
-                            scanDir(viz, topDir, assumeNotNull(subDir), keys, fromSymlinks, maxDepth >= 0 ? --maxDepth : maxDepth);
+                            scanDir(viz, topDir,
+                                    assumeNotNull(subDir),
+                                    keys,
+                                    fromSymlinks,
+                                    maxDepth >= 0 ? --maxDepth : maxDepth);
                         }
                     }
                 }
@@ -4852,7 +4858,7 @@ class Scanner(Term)
             }
         }
 
-        if (gstats.showContentDups)
+        if (gstats.showFileContentDups)
         {
             viz.pp("Content Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByContentId)
