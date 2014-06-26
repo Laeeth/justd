@@ -443,7 +443,12 @@ auto y = x.map("a*a")}.
   \item \textbf{\texttt{repeat}}: Creates a range that consists of a single element
     repeated n times, or an infinite range repeating that element indefinitely.
   \item \textbf{\texttt{cycle}}: Creates an infinite range that repeats the given forward
-    range indefinitely. Good for implementing circular buffers.
+    range indefinitely. Look ma no types!:
+    \begin{lstlisting}[frame=single]
+import std.range;
+auto b = [1,2,3,4]; // buffer
+auto cb = b.cycle; // circular buffer
+    \end{lstlisting}
   \item \textbf{\texttt{zip}}: Given n ranges, creates a range that successively returns
     a tuple of all the first elements, a tuple of all the second elements, etc.
   \item \textbf{\texttt{lockstep}}: Iterates n ranges in lockstep, for use in a foreach
@@ -500,6 +505,7 @@ auto y = x.map("a*a")}.
     \begin{lstlisting}[frame=single]
 int[2] a;
 int[3] b;
+ubyte[\$] b = [1,2,3]; // type given, length inferred (v2.066)
 a[] = b[]; // mismatched array lengths, 2 and 3
     \end{lstlisting}
   \item \textbf{Dynamic} (GC-Heap) Run-Time Checked with \textit{Reference}-Semantics:\\
@@ -619,33 +625,42 @@ foreach(ref element; range) {}
 foreach(index, element; range) {}
       \end{lstlisting}
 
-  \item Tuple Unpacking also supported
+  \item Tuple Unpacking
       \begin{lstlisting}[frame=single]
 foreach(index, tupleElementA, tupleElementB; rangeOfTuples) {}
       \end{lstlisting}
 
-  \item To date – not a single for loop
+  \item To date – not a single classic \texttt{for} loop
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Programming Styles Overview:\\Which pill to take?}
   \begin{itemize}[<+->]
   \item \emph{Imperative (Blue)} Style (Side-Effects):\\
+
     \begin{lstlisting}[frame=single]
 foreach (elt; range) {
-    range.doSideEffect;
+    elt.doSideEffect;
 }
     \end{lstlisting}
-  \item \emph{Functional (Red)} Style:\\
+
+  \item \emph{Functional (Red)} Style (no Side-Effects):\\
     \begin{lstlisting}[frame=single]
 range.map!"a*a";
     \end{lstlisting}
-  \item \emph{Combined (Both)} Style:\\
+
+  \item \emph{Combined (Magenta)} Style:\\
   \begin{lstlisting}[frame=single]
 foreach (elt; range.map!"a*a") {
-    range.doSideEffect;
+    elt.doSideEffect;
 }
   \end{lstlisting}
+
+  \item \emph{Functional-Lambda} (White?) Style:\\
+  \begin{lstlisting}[frame=single]
+10.times!({ doSideEffect; });
+  \end{lstlisting}
+
   \end{itemize}
 \end{frame}
 
