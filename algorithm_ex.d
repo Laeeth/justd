@@ -974,10 +974,15 @@ auto zipWith(fun, StoppingPolicy, Ranges...)(StoppingPolicy sp, Ranges ranges)
     return zip(sp, ranges).map!fun;
 }
 
+/** Pair */
 alias Pair(T, U) = Tuple!(T, U);
-
 /** Instantiator for \c Pair. */
 auto pair(T, U)(in T t, in U u) { return Pair!(T, U)(t, u); }
+
+/** Triple */
+alias Triple(T, U, V) = Tuple!(T, U, V);
+/** Instantiator for \c Triple. */
+auto triple(T, U, V)(in T t, in U u, in V v) { return Triple!(T, U, V)(t, u, v); }
 
 /** Limit/Span (Min,Max) Pair.
    Todo: Decide on either Span, MinMax or Limits
