@@ -63,16 +63,19 @@ struct Digest(size_t numBytes = 20, string name = "SHA-1") {
     /** Check if digest is initialized. */
     bool opCast(T : bool)() const @safe pure nothrow { return defined; }
 
-    Digest opBinary(string op)(Digest rhs) {
-        typeof(return) tmp = void;
-        static if (op == "^" ||
-                   op == "|" ||
-                   op == "&") {
-            mixin("tmp = _bytes[] " ~ op ~ " rhs._bytes[];");
-        } else {
-            static assert(false, "Unsupported binary operator " ~ op);
+    version(none)
+    {
+        Digest opBinary(string op)(Digest rhs) {
+            typeof(return) tmp = void;
+            static if (op == "^" ||
+                       op == "|" ||
+                       op == "&") {
+                mixin("tmp = _bytes[] " ~ op ~ " rhs._bytes[];");
+            } else {
+                static assert(false, "Unsupported binary operator " ~ op);
+            }
+            return tmp;
         }
-        return tmp;
     }
 
     void toMsgpack(Packer)(ref Packer packer) const {
@@ -105,11 +108,11 @@ unittest {
     SHA1Digest a, b;
     assert(a.empty);
     assert(b.empty);
-    a[0] = 1;
-    b[0] = 1;
-    b[1] = 1;
-    const c = a^b;
-    assert(c[0] == 0);
-    assert(c[1] == 1);
-    assert(!c.empty);
+    /* a[0] = 1; */
+    /* b[0] = 1; */
+    /* b[1] = 1; */
+    /* const c = a^b; */
+    /* assert(c[0] == 0); */
+    /* assert(c[1] == 1); */
+    /* assert(!c.empty); */
 }

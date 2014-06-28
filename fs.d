@@ -1043,10 +1043,22 @@ class RegFile : File
     ~this() { _cstat.deallocate(false); }
 
     /** Returns: Content Id of $(D this). */
+    const(SHA1Digest) contentId() @property @trusted /* @safe pure nothrow */
+    {
+        if (_cstat._contentId.untouched)
+        {
+            enum doSHA1 = true;
+            calculateCStatInChunks(parent.gstats.filesByContentId,
+                                   32*pageSize(),
+                                   doSHA1);
+            freeContents(); // TODO: Call lazily only when open count is too large
+        }
+        return _cstat._contentId;
+    }
+    /** Returns: Content Id of $(D this). */
     override const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
     {
-        calculateCStatInChunks(parent.gstats.filesByContentId);
-        return _cstat._contId;
+        return contentId;
     }
 
     override Face!Color face() const @property @safe pure nothrow { return regFileFace; }
@@ -1057,13 +1069,13 @@ class RegFile : File
         @property pure out(result) { assert(!result.empty); } // must have be defined
     body
     {
-        if (_cstat._contId.empty) // if not yet defined
+        if (_cstat._contentId.empty) // if not yet defined
         {
-            _cstat._contId = src.sha1Of;
-            filesByContentId[_cstat._contId] ~= this;
+            _cstat._contentId = src.sha1Of;
+            filesByContentId[_cstat._contentId] ~= this;
             debug dln("Got SHA1 of " ~ path);
         }
-        return _cstat._contId;
+        return _cstat._contentId;
     }
 
     /** Returns: Cached/Memoized Binary Histogram of $(D this) $(D File). */
@@ -1104,7 +1116,7 @@ class RegFile : File
                                 bool doBist = false,
                                 bool doBitStatus = false) @safe
     {
-        if (_cstat._contId.defined) { doSHA1 = false; }
+        if (_cstat._contentId.defined) { doSHA1 = false; }
         if (!_cstat.bist.empty) { doBist = false; }
         if (_cstat.bitStatus != BitStatus.unknown) { doBitStatus = false; }
 
@@ -1141,8 +1153,8 @@ class RegFile : File
 
         if (doSHA1)
         {
-            _cstat._contId = sha1.finish();
-            filesByContentId[_cstat._contId] ~= cast(NotNull!File)assumeNotNull(this);
+            _cstat._contentId = sha1.finish();
+            filesByContentId[_cstat._contentId] ~= cast(NotNull!File)assumeNotNull(this);
         }
     }
 
@@ -1150,9 +1162,9 @@ class RegFile : File
     void clearCStat(File[][SHA1Digest] filesByContentId) @safe nothrow
     {
         // SHA1-digest
-        if (_cstat._contId in filesByContentId)
+        if (_cstat._contentId in filesByContentId)
         {
-            auto dups = filesByContentId[_cstat._contId];
+            auto dups = filesByContentId[_cstat._contentId];
             import std.algorithm: remove;
             immutable n = dups.length;
             dups = dups.remove!(a => a is this);
@@ -1185,7 +1197,7 @@ class RegFile : File
 
             // CStat: TODO: Group
             packer.pack(_cstat.kindId); // FKind
-            packer.pack(_cstat._contId); // Digest
+            packer.pack(_cstat._contentId); // Digest
 
             // Bist
             immutable bistFlag = !_cstat.bist.empty;
@@ -1227,10 +1239,10 @@ class RegFile : File
                 // kind database has changed since kindId was written to disk
                 _cstat.kindId.reset; // forget it
             }
-            unpacker.unpack(_cstat._contId); // Digest
-            if (_cstat._contId)
+            unpacker.unpack(_cstat._contentId); // Digest
+            if (_cstat._contentId)
             {
-                parent.gstats.filesByContentId[_cstat._contId] ~= cast(NotNull!File)this;
+                parent.gstats.filesByContentId[_cstat._contentId] ~= cast(NotNull!File)this;
             }
 
             // Bist
@@ -1326,7 +1338,7 @@ enum isFileIO(T) = (isAnyFile!T ||
 struct CStat {
     void reset() @safe nothrow {
         kindId[] = 0;
-        _contId[] = 0;
+        _contentId[] = 0;
         hitCount = 0;
         bist.reset();
         xgram.reset();
@@ -1346,7 +1358,7 @@ struct CStat {
     }
 
     SHA1Digest kindId; // FKind Identifier/Fingerprint of this regular file.
-    SHA1Digest _contId; // Content Identifier/Fingerprint.
+    SHA1Digest _contentId; // Content Identifier/Fingerprint.
 
     /** Boolean Single Bistogram over file contents. If
         binHist0[cast(ubyte)x] is set then this file contains byte x. Consumes
@@ -1524,16 +1536,6 @@ class Dir : File
         {
             _treeContentId = subs.byValue.map!"a.treeContentId".sha1Of;
             assert(_treeContentId, "Zero digest");
-            if (this.path.startsWith("/home/per/tmp/.git/objects/cc") ||
-                this.path.startsWith("/home/per/tmp/.git/objects/fb") ||
-                this.path.startsWith("/home/per/tmp/.git/objects/e2"))
-            {
-                foreach (sub; subs.byValue)
-                {
-                    dln("sub: ", sub.path, ", ", sub.treeContentId);
-                }
-                dln(path, ", ", subs.length, ", ", _treeContentId);
-            }
             gstats.filesByContentId[_treeContentId] ~= assumeNotNull(cast(File)this); // TODO: Avoid cast when DMD and NotNull is fixed
         }
         return _treeContentId;
@@ -4555,7 +4557,7 @@ class Scanner(Term)
             {
                 handleError(viz, theRegFile, false, subIndex);
             }
-            theRegFile.freeContents;
+            theRegFile.freeContents(); // TODO: Call lazily only when open count is too large
         }
     }
 
