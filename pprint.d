@@ -464,7 +464,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** List Item. */
     struct AsItem(T...) { T args; } auto ref asItem(T...)(T args) { return AsItem!T(args); }
 
-    const string lbr(bool useHTML) { return (useHTML ? `<br>` : ``); } // line break
+    string lbr(bool useHTML) { return (useHTML ? `<br>` : ``); } // line break
 
     /* HTML Aliases */
     alias asB = asBold;

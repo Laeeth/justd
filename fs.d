@@ -1520,11 +1520,15 @@ class Dir : File
     /** Returns: Directory Tree Content Id of $(D this). */
     override const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
     {
-        if (!_treeContentId)
+        if (_treeContentId.untouched)
         {
-            _treeContentId = reduce!"a^b"(SHA1Digest.init,
-                                          subs.byValue.map!"a.treeContentId"); // recurse
-            gstats.filesByContentId[_treeContentId] ~= cast(NotNull!File)this;
+            _treeContentId = subs.byValue.map!"a.treeContentId".sha1Of;
+            assert(_treeContentId, "Zero digest");
+            if (this.path.startsWith("/home/per/tmp/.git/objects/cc"))
+            {
+                dln(path, ", ", subs.length, ", ", _treeContentId);
+            }
+            gstats.filesByContentId[_treeContentId] ~= assumeNotNull(cast(File)this); // TODO: Avoid cast when DMD and NotNull is fixed
         }
         return _treeContentId;
     }
@@ -4677,12 +4681,7 @@ class Scanner(Term)
     {
         if (theDir.isRoot)  { results.reset(); }
 
-        if (gstats.showTreeContentDups)
-        {
-            theDir.treeContentId;
-        }
-
-        // Scan name
+        // scan in directory name
         if ((_scanContext == ScanContext.all ||
              _scanContext == ScanContext.fileName ||
              _scanContext == ScanContext.dirName) &&
@@ -4783,6 +4782,11 @@ class Scanner(Term)
                     viz.ppln("Ctrl-C pressed: Aborting scan of ", theDir);
                     break;
                 }
+            }
+
+            if (gstats.showTreeContentDups)
+            {
+                theDir.treeContentId; // better to put this after file scan for now
             }
         }
         catch (FileException)
