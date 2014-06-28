@@ -33,7 +33,7 @@ struct BitSet(size_t len, Block = size_t)
     /**
      * Gets the amount of bits in the $(D BitSet).
      */
-    @property static const size_t length() @safe pure nothrow { return len; }
+    @property static size_t length() @safe pure nothrow { return len; }
 
     BitSet opAssign(BitSet rhs) @safe nothrow { this._data = rhs._data; return this; }
 
