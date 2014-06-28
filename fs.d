@@ -1524,8 +1524,14 @@ class Dir : File
         {
             _treeContentId = subs.byValue.map!"a.treeContentId".sha1Of;
             assert(_treeContentId, "Zero digest");
-            if (this.path.startsWith("/home/per/tmp/.git/objects/cc"))
+            if (this.path.startsWith("/home/per/tmp/.git/objects/cc") ||
+                this.path.startsWith("/home/per/tmp/.git/objects/fb") ||
+                this.path.startsWith("/home/per/tmp/.git/objects/e2"))
             {
+                foreach (sub; subs.byValue)
+                {
+                    dln("sub: ", sub.path, ", ", sub.treeContentId);
+                }
                 dln(path, ", ", subs.length, ", ", _treeContentId);
             }
             gstats.filesByContentId[_treeContentId] ~= assumeNotNull(cast(File)this); // TODO: Avoid cast when DMD and NotNull is fixed
