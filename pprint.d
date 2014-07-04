@@ -224,7 +224,7 @@ hit_context {
 }
 
 code {
-    background-color:#FFFFF0;
+    background-color:#FFFFE0;
 }
 
 td, th {
