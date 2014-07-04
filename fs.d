@@ -1283,6 +1283,7 @@ class RegFile : File
     {
         if (!_mmfile)
         {
+            dln("entered with path: ", path);
             _mmfile = new MmFile(this.path, MmFile.Mode.read,
                                  mmfile_size, null, pageSize());
             if (parent.gstats.showMMaps)
@@ -1309,7 +1310,10 @@ class RegFile : File
     /** If needed Free Allocated Contents of $(D this) Regular File. */
     bool freeContents()
     {
-        if (_mmfile) { delete _mmfile; _mmfile = null; return true; }
+        if (_mmfile) {
+            dln("entered with path: ", path);
+            delete _mmfile; _mmfile = null; return true;
+        }
         else { return false; }
     }
 
