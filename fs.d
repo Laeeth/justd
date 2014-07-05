@@ -1398,7 +1398,9 @@ class GStats
     NotNull!File[][ino_t] filesByInode;    // Potential Link Duplicates
     NotNull!File[][SHA1Digest] filesByContentId; // File(s) (Duplicates) Indexed on Contents SHA1.
     FileTags ftags;
-    Bytes64[File] treeSizesByFile;
+
+    Bytes64[NotNull!File] treeSizesByFile; // Tree sizes.
+    size_t[NotNull!File] lineCountsByFile; // Line counts.
 
     FKind[SHA1Digest] incKindsById;    // Index Kinds by their behaviour
     FKind[SHA1Digest] allKindsById;    // Index Kinds by their behaviour
@@ -1417,6 +1419,7 @@ class GStats
     bool showMMaps = false;
     bool showUsage = false;
     bool showSHA1 = false;
+    bool showLineCounts = false;
 
     uint64_t noFiles = 0;
     uint64_t noRegFiles = 0;
@@ -3564,6 +3567,8 @@ class Scanner(Term)
                                     "hardlink-content-duplicates", "\tConvert all content duplicates into hardlinks (common inode) if they reside on the same file system" ~ defaultDoc(gstats.linkContentDups), &gstats.linkContentDups,
 
                                     "usage", "\tShow disk usage (tree size) of scanned directories" ~ defaultDoc(gstats.showUsage), &gstats.showUsage,
+                                    "count-lines", "\tShow line counts of scanned files" ~ defaultDoc(gstats.showLineCounts), &gstats.showLineCounts,
+
                                     "sha1", "\tShow SHA1 content digests" ~ defaultDoc(gstats.showSHA1), &gstats.showSHA1,
 
                                     "mmaps", "\tShow when files are memory mapped (mmaped)" ~ defaultDoc(gstats.showMMaps), &gstats.showMMaps,
@@ -4318,6 +4323,11 @@ class Scanner(Term)
                 }
             }
             nL++;
+        }
+
+        if (gstats.showLineCounts)
+        {
+            gstats.lineCountsByFile[theFile] = nL;
         }
 
         if (anyFileHit)
