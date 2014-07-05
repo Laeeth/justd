@@ -1,3 +1,5 @@
+#!/usr/bin/env rdmd-dev-module
+
 /**
  * International System of Units (SI) units and prefixes for use with
  * $(D std.units).
