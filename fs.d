@@ -242,6 +242,7 @@ enum FileContent
     media,
     sourceCode,
     scriptCode,
+    buildSystemCode,
     byteCode,
     machineCode,
     versionControl,
@@ -357,10 +358,19 @@ unittest {
     const e = Delim("#", null);
 }
 
+/* Comment Delimiters */
 enum cCommentDelims = [Delim("/*", "*/"),
                        Delim("//")];
 enum defaultCommentDelims = [Delim("#")];
-enum defaultStringDelims = [Delim("\""), Delim("'"), Delim("`")];
+
+/* String Delimiters */
+enum defaultStringDelims = [Delim("\""),
+                            Delim("'"),
+                            Delim("`")];
+enum pythonStringDelims = [Delim("\""),
+                           Delim("'"),
+                           Delim("`"),
+                           Delim(`"""`)];
 
 /** File Kind.
  */
@@ -2340,6 +2350,13 @@ class Scanner(Term)
 
     void loadFileKinds()
     {
+        binFKinds ~= new FKind("SCons", ["SConstruct", "SConscript"],
+                               ["scons"],
+                               [], 0, [], [],
+                               [Delim("#")],
+                               pythonStringDelims,
+                               FileContent.buildSystemCode, FileKindDetection.equalsNameAndContents);
+
         srcFKinds ~= new FKind("Makefile", ["GNUmakefile", "Makefile", "makefile"],
                                ["mk", "mak", "makefile", "make", "gnumakefile"], [], 0, [], [],
                                [Delim("#")],
@@ -2389,7 +2406,7 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
 
-        auto keywordsC = [
+        enum keywordsC = [
             "auto", "const", "double", "float", "int", "short", "struct",
             "unsigned", "break", "continue", "else", "for", "long", "signed",
             "switch", "void", "case", "default", "enum", "goto", "register",
@@ -2488,22 +2505,22 @@ class Scanner(Term)
         kindC.operations ~= tuple(FileOp.checkSyntax, "clang -x c -fsyntax-only -c");
         kindC.opers = opersC;
 
-        auto keywordsCxx = keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
-                                        "bool", "explicit", "new", "static_cast", "typeid",
-                                        "catch", "false", "operator", "template", "typename",
-                                        "class", "friend", "private", "this", "using",
-                                        "const_cast", "inline", "public", "throw", "virtual",
-                                        "delete", "mutable", "protected", "true", "wchar_t",
-                                        // The following are not essential when
-                                        // the standard ASCII character set is
-                                        // being used, but they have been added
-                                        // to provide more readable alternatives
-                                        // for some of the C++ operators, and
-                                        // also to facilitate programming with
-                                        // character sets that lack characters
-                                        // needed by C++.
-                                        "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
-                                        "and_eq", "bitor", "not", "or", "xor", ];
+        enum keywordsCxx = (keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
+                                         "bool", "explicit", "new", "static_cast", "typeid",
+                                         "catch", "false", "operator", "template", "typename",
+                                         "class", "friend", "private", "this", "using",
+                                         "const_cast", "inline", "public", "throw", "virtual",
+                                         "delete", "mutable", "protected", "true", "wchar_t",
+                                         // The following are not essential when
+                                         // the standard ASCII character set is
+                                         // being used, but they have been added
+                                         // to provide more readable alternatives
+                                         // for some of the C++ operators, and
+                                         // also to facilitate programming with
+                                         // character sets that lack characters
+                                         // needed by C++.
+                                         "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
+                                         "and_eq", "bitor", "not", "or", "xor", ]).uniq.array;
 
         auto opersCxx = opersC ~ [
             Op("->*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
@@ -2525,7 +2542,6 @@ class Scanner(Term)
             /* Op("catch", OpArity.unaryPrefix, OpAssoc.LR, _, _) */
             ];
 
-        keywordsCxx = keywordsCxx.uniq.array;
         auto kindCxx = new FKind("C++", [], ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"], [], 0, [],
                                  keywordsCxx,
                                  cCommentDelims,
@@ -2535,7 +2551,7 @@ class Scanner(Term)
         kindCxx.operations ~= tuple(FileOp.checkSyntax, "clang -x c++ -fsyntax-only -c");
         kindCxx.opers = opersCxx;
         srcFKinds ~= kindCxx;
-        auto keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
+        enum keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
                                             "char16_t", "char32_t",
                                             "constexpr",
                                             "decltype",
@@ -2553,7 +2569,7 @@ class Scanner(Term)
         /*                        FileContent.sourceCode, */
         /*                        FileKindDetection.equalsWhatsGiven); */
 
-        auto keywordsNewObjectiveC = ["id",
+        enum keywordsNewObjectiveC = ["id",
                                       "in",
                                       "out", // Returned by reference
                                       "inout", // Argument is used both to provide information and to get information back
@@ -2565,21 +2581,21 @@ class Scanner(Term)
                                       "@implementation", "@end",
                                       "@protoco", "@end", "@class" ];
 
-        auto keywordsObjectiveC = keywordsC ~ keywordsNewObjectiveC;
+        enum keywordsObjectiveC = keywordsC ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C", [], ["m", "h"], [], 0, [],
                                keywordsObjectiveC,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        auto keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
+        enum keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C++", [], ["mm", "h"], [], 0, [],
                                keywordsObjectiveCxx,
                                [Delim("#")],
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        auto keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
+        enum keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
                               "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while",
                               "mutating", "extension"];
         auto opersOverflowSwift = opersC ~ [Op("&+"), Op("&-"), Op("&*"), Op("&/"), Op("&%")];
@@ -2593,13 +2609,13 @@ class Scanner(Term)
         kindSwift.opers = opersOverflowSwift;
         srcFKinds ~= kindSwift;
 
-        auto keywordsCSharp = ["if"]; // TODO: Add keywords
+        enum keywordsCSharp = ["if"]; // TODO: Add keywords
         srcFKinds ~= new FKind("C#", [], ["cs"], [], 0, [], keywordsCSharp,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        auto keywordsOCaml = ["and", "as", "assert", "begin", "class",
+        enum keywordsOCaml = ["and", "as", "assert", "begin", "class",
                               "constraint", "do", "done", "downto", "else",
                               "end", "exception", "external", "false", "for",
                               "fun", "function", "functor", "if", "in",
@@ -2623,7 +2639,7 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        auto keywordsD = [ "auto", "const", "double", "float", "int", "short", "struct",
+        enum keywordsD = [ "auto", "const", "double", "float", "int", "short", "struct",
                            "unsigned", "break", "continue", "else", "for", "long",
                            "switch", "void", "case", "default", "enum", "goto",
                            "sizeof", "typedef", "volatile", "char", "do", "extern", "if",
@@ -2721,7 +2737,7 @@ class Scanner(Term)
         kindDi.operations ~= tuple(FileOp.checkSyntax, "dmd -debug -wi -c -o-"); // TODO: Include paths
         srcFKinds ~= kindDi;
 
-        auto keywordsFortran77 = ["if", "else"];
+        enum keywordsFortran77 = ["if", "else"];
         // TODO: Support .h files but require it to contain some Fortran-specific or be parseable.
         auto kindFortan = new FKind("Fortran", [], ["f", "fortran", "f77", "f90", "f95", "f03", "for", "ftn", "fpp"], [], 0, [], keywordsFortran77,
                                     [Delim("^C")], // TODO: Need beginning of line instead ^. seq(bol(), alt(lit('C'), lit('c'))); // TODO: Add chars chs("cC");
@@ -2731,17 +2747,17 @@ class Scanner(Term)
         srcFKinds ~= kindFortan;
 
         // Ada
-        auto keywordsAda83 = [ "abort", "else", "new", "return", "abs", "elsif", "not", "reverse",
+        enum keywordsAda83 = [ "abort", "else", "new", "return", "abs", "elsif", "not", "reverse",
                                "end", "null", "accept", "entry", "select", "access", "exception", "of", "separate",
                                "exit", "or", "subtype", "all", "others", "and", "for", "out", "array",
                                "function", "task", "at", "package", "terminate", "generic", "pragma", "then", "begin", "goto", "private",
                                "type", "body", "procedure", "if", "case", "in", "use", "constant", "is", "raise",
                                "range", "when", "declare", "limited", "record", "while", "delay", "loop", "rem", "with", "delta", "renames",
                                "digits", "mod", "xor", "do", ];
-        auto keywordsAda95 = keywordsAda83 ~ ["abstract", "aliased", "tagged", "protected", "until", "requeue"];
-        auto keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
-        auto keywordsAda2012 = keywordsAda2005 ~ ["some"];
-        auto extensionsAda = ["ada", "adb", "ads"];
+        enum keywordsAda95 = keywordsAda83 ~ ["abstract", "aliased", "tagged", "protected", "until", "requeue"];
+        enum keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
+        enum keywordsAda2012 = keywordsAda2005 ~ ["some"];
+        enum extensionsAda = ["ada", "adb", "ads"];
         srcFKinds ~= new FKind("Ada 82", [], extensionsAda, [], 0, [], keywordsAda83,
                                [Delim("--")],
                                defaultStringDelims,
@@ -2787,13 +2803,14 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        auto keywordsPython = ["and", "del", "for", "is", "raise", "assert", "elif", "from", "lambda", "return", "break", "else", "global", "not", "try", "class", "except", "if", "or", "while", "continue", "exec", "import", "pass", "yield", "def", "finally", "in", "print"];
+        enum keywordsPython = ["and", "del", "for", "is", "raise", "assert", "elif", "from", "lambda", "return",
+                               "break", "else", "global", "not", "try", "class", "except", "if", "or", "while",
+                               "continue", "exec", "import", "pass", "yield", "def", "finally", "in", "print"];
 
         // Scripting
 
         srcFKinds ~= new FKind("Python", [], ["py"],
-                               shebangLine(lit("python")), 0,
-                               [],
+                               shebangLine(lit("python")), 0, [],
                                keywordsPython,
                                [Delim("#")], // TODO: Support multi-line triple-double quote strings
                                defaultStringDelims,
@@ -2916,15 +2933,29 @@ class Scanner(Term)
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        immutable javascriptKeywords = ["break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with" ];
-        srcFKinds ~= new FKind("JavaScript", [], ["js"], [], 0, [], [],
+        enum keywordsJavascript = ["break", "case", "catch", "continue", "debugger", "default", "delete",
+                                   "do", "else", "finally", "for", "function", "if", "in", "instanceof",
+                                   "new", "return", "switch", "this", "throw", "try", "typeof", "var",
+                                   "void", "while", "with" ];
+        srcFKinds ~= new FKind("JavaScript", [], ["js"],
+                               [], 0, [],
+                               keywordsJavascript,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("JavaScript Object Notation", [], ["json"], [], 0, [], [],
+        srcFKinds ~= new FKind("JavaScript Object Notation",
+                               [], ["json"],
+                               [], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.sourceCode);
+
+        srcFKinds ~= new FKind("DUB",
+                               ["dub.json"], ["json"],
+                               [], 0, [], [],
+                               [], // N/A
+                               defaultStringDelims,
+                               FileContent.scriptCode);
 
         // TODO: Inherit XML
         srcFKinds ~= new FKind("JSP", [], ["jsp", "jspx", "jhtm", "jhtml"], [], 0, [], [],
@@ -3053,7 +3084,7 @@ class Scanner(Term)
 
         // Binaries
 
-        auto extsELF = ["o", "so", "ko", "os", "out", "bin", "x", "elf", "axf", "prx", "puff", "none"]; // ELF file extensions
+        enum extsELF = ["o", "so", "ko", "os", "out", "bin", "x", "elf", "axf", "prx", "puff", "none"]; // ELF file extensions
 
         auto elfKind = new FKind("ELF",
                                  [], extsELF, x"7F45 4C46", 0, [], [],
@@ -3358,7 +3389,7 @@ class Scanner(Term)
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
 
         // SQLite
-        auto extSQLite = ["sql", "sqlite", "sqlite3"];
+        enum extSQLite = ["sql", "sqlite", "sqlite3"];
         binFKinds ~= new FKind("MySQL table definition file", [], extSQLite, x"FE01", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
@@ -3412,6 +3443,7 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.cache, FileKindDetection.equalsNameAndContents);
+
         binFKinds ~= new FKind("GnuPG (GPG) key public ring", [], ["gpg"], x"9901", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
