@@ -131,7 +131,7 @@ import std.digest.sha: sha1Of, toHexString;
 import std.range: repeat, array, empty, cycle;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf, isIterable;
-//import std.allocator;
+import std.allocator;
 import core.memory: GC;
 import core.exception;
 import std.functional: memoize;
