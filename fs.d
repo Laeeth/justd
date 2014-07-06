@@ -1539,18 +1539,19 @@ class Dir : File
         if (gstats) { ++gstats.noDirs; }
     }
 
-    override Bytes64 treeSize() @property @trusted /* @safe pure nothrow */
+    override Bytes64 treeSize() @property @trusted /* @safe nothrow */
     {
         if (_treeSize.untouched)
         {
-            _treeSize = this.size + reduce!"a+b"(0.Bytes64,
-                                                 _subs.byValue.map!"a.treeSize"); // recurse!
+            _treeSize = (this.size +
+                         reduce!"a+b"(0.Bytes64,
+                                      subs.byValue.map!"a.treeSize")); // recurse!
         }
         return _treeSize;
     }
 
     /** Returns: Directory Tree Content Id of $(D this). */
-    override const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
+    override const(SHA1Digest) treeContentId() @property @trusted /* @safe nothrow */
     {
         if (_treeContentId.untouched)
         {
@@ -1569,7 +1570,7 @@ class Dir : File
     GStats gstats(GStats gstats) @property @safe pure /* nothrow */ {
         return this._gstats = gstats;
     }
-    GStats gstats() @property @safe pure nothrow
+    GStats gstats() @property @safe nothrow
     {
         if (!_gstats && this.parent)
         {
@@ -1579,7 +1580,7 @@ class Dir : File
     }
 
     /** Returns: Depth of Depth from File System root to this File. */
-    override int depth() @property @safe pure nothrow
+    override int depth() @property @safe nothrow
     {
         if (_depth ==- 1)
         {
@@ -3667,7 +3668,8 @@ class Scanner(Term)
             outFile = ioFile("/tmp/fs-" ~ randomUUID().toString() ~
                              "." ~ ext,
                              "w");
-            popen("firefox -new-tab " ~ outFile.name);
+            popen("gnome-open " ~ outFile.name);
+            // popen("firefox -new-tab " ~ outFile.name);
         }
         else
         {
@@ -4911,12 +4913,14 @@ class Scanner(Term)
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
                 if (dupFilesOk.length >= 2) // non-empty file/directory
                 {
-
                     auto firstDup = dupFilesOk[0];
-                    immutable typeName = cast(RegFile)firstDup ? "Files" : "Directories";
+                    auto firstRegFileDup = cast(RegFile)firstDup;
+                    immutable typeName = firstRegFileDup ? "Files" : "Directories";
+                    immutable thisSize = firstRegFileDup ? firstRegFileDup.size : firstDup.treeSize;
                     viz.pp(asH!3(typeName ~ " with same content",
                                  " (", digest, ")",
-                                 " of size ", firstDup.size));
+                                 " of size ",
+                                 thisSize));
 
                     // content. TODO: Functionize
                     auto dupRegFile = cast(RegFile)firstDup;
