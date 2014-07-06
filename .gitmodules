@@ -103,3 +103,6 @@
 [submodule "FReD"]
 	path = FReD
 	url = https://github.com/DmitryOlshansky/FReD.git
+[submodule "eris"]
+	path = eris
+	url = https://github.com/andersonpd/eris.git
