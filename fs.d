@@ -2291,6 +2291,7 @@ class Scanner(Term)
 
     // Directories
     DirKind[] vcDirKinds;
+    DirKind[string] vcDirKindsMap;
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
     void loadDirKinds()
@@ -2308,20 +2309,19 @@ class Scanner(Term)
         vcDirKinds ~= new DirKind("_MTN",  "Monotone");
         vcDirKinds ~= new DirKind("_darcs",  "Darcs");
         vcDirKinds ~= new DirKind("{arch}",  "Arch");
-        foreach (kind; vcDirKinds)
-        {
-            skippedDirKinds ~= kind;
-        }
+
+        foreach (kind; vcDirKinds) { skippedDirKinds ~= kind; }
+
+        foreach (kind; vcDirKinds) { vcDirKindsMap[kind.fileName] = kind; }
+        vcDirKindsMap.rehash;
 
         skippedDirKinds ~= new DirKind(".trash",  "Trash");
         skippedDirKinds ~= new DirKind(".undo",  "Undo");
         skippedDirKinds ~= new DirKind(".deps",  "Dependencies");
         skippedDirKinds ~= new DirKind(".backups",  "Backups");
         skippedDirKinds ~= new DirKind(".autom4te.cache",  "Automake Cache");
-        foreach (kind; skippedDirKinds)
-        {
-            skippedDirKindsMap[kind.fileName] = kind;
-        }
+
+        foreach (kind; skippedDirKinds) { skippedDirKindsMap[kind.fileName] = kind; }
         skippedDirKindsMap.rehash;
     }
 
