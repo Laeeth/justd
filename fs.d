@@ -16,6 +16,12 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
+   TODO: Don't scan for duplicates inside vc-dirs by default
+
+   TODO: Assert that files along duplicates path don't include symlinks
+
+   TODO: Implement FileOp.deduplicate
+
    TODO: Sort file duplicates
 
    TODO: Visualize hits using existingFileHitContext.asH!1 followed by a table:
@@ -304,8 +310,8 @@ enum FileOp
 {
     none,
 
-    checkSyntax,
-    lint = checkSyntax,
+    checkSyntax,                // Check syntax
+    lint = checkSyntax,         // Check syntax alias
 
     compile, // Compile
     byteCompile, // Byte compile
@@ -313,6 +319,8 @@ enum FileOp
 
     /* VCS Operations */
     vcStatus,
+
+    deduplicate, // Deduplicate Files using hardlinks and Dirs using Symlink
 }
 
 /** Directory Operation Type Code. */
