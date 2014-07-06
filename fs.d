@@ -2290,31 +2290,37 @@ class Scanner(Term)
     Symlink[] _brokenSymlinks;
 
     // Directories
+    DirKind[] vcDirKinds;
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
     void loadDirKinds()
     {
-        skippedDirKinds ~= new DirKind(".git",  "Git");
-        skippedDirKinds ~= new DirKind(".svn",  "Subversion(Svn)");
-        skippedDirKinds ~= new DirKind(".bzr",  "Mercurial (Bzr)");
-        skippedDirKinds ~= new DirKind("RCS",  "RCS");
-        skippedDirKinds ~= new DirKind("CVS",  "CVS");
-        skippedDirKinds ~= new DirKind("MCVS",  "MCVS");
-        skippedDirKinds ~= new DirKind("RCS",  "RCS");
-        skippedDirKinds ~= new DirKind(".hg",  "Mercurial (Hg)");
-        skippedDirKinds ~= new DirKind("SCCS",  "SCCS");
-        skippedDirKinds ~= new DirKind(".wact",  "WACT");
-        skippedDirKinds ~= new DirKind("_MTN",  "Monotone");
-        skippedDirKinds ~= new DirKind("_darcs",  "Darcs");
-        skippedDirKinds ~= new DirKind("{arch}",  "Arch");
+        vcDirKinds ~= new DirKind(".git",  "Git");
+        vcDirKinds ~= new DirKind(".svn",  "Subversion(Svn)");
+        vcDirKinds ~= new DirKind(".bzr",  "Mercurial (Bzr)");
+        vcDirKinds ~= new DirKind("RCS",  "RCS");
+        vcDirKinds ~= new DirKind("CVS",  "CVS");
+        vcDirKinds ~= new DirKind("MCVS",  "MCVS");
+        vcDirKinds ~= new DirKind("RCS",  "RCS");
+        vcDirKinds ~= new DirKind(".hg",  "Mercurial (Hg)");
+        vcDirKinds ~= new DirKind("SCCS",  "SCCS");
+        vcDirKinds ~= new DirKind(".wact",  "WACT");
+        vcDirKinds ~= new DirKind("_MTN",  "Monotone");
+        vcDirKinds ~= new DirKind("_darcs",  "Darcs");
+        vcDirKinds ~= new DirKind("{arch}",  "Arch");
+        foreach (kind; vcDirKinds)
+        {
+            skippedDirKinds ~= kind;
+        }
+
         skippedDirKinds ~= new DirKind(".trash",  "Trash");
         skippedDirKinds ~= new DirKind(".undo",  "Undo");
         skippedDirKinds ~= new DirKind(".deps",  "Dependencies");
         skippedDirKinds ~= new DirKind(".backups",  "Backups");
         skippedDirKinds ~= new DirKind(".autom4te.cache",  "Automake Cache");
-        foreach (k; skippedDirKinds)
+        foreach (kind; skippedDirKinds)
         {
-            skippedDirKindsMap[k.fileName] = k;
+            skippedDirKindsMap[kind.fileName] = kind;
         }
         skippedDirKindsMap.rehash;
     }
