@@ -10,3 +10,4 @@ tags.dscanner
 .trash
 */*.o
 .sconsign.dblite
+fdo
