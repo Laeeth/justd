@@ -1190,9 +1190,9 @@ class RegFile : File
         void toMsgpack(Packer)(ref Packer packer) const {
             /* writeln("Entering RegFile.toMsgpack ", name); */
 
-            packer.pack(this.name, this.size,
-                        this.timeLastModified.stdTime,
-                        this.timeLastAccessed.stdTime);
+            packer.pack(name, size,
+                        timeLastModified.stdTime,
+                        timeLastAccessed.stdTime);
 
             // CStat: TODO: Group
             packer.pack(_cstat.kindId); // FKind
@@ -1224,12 +1224,12 @@ class RegFile : File
         /** Unpack. */
         void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) @trusted
         {
-            unpacker.unpack(this.name, this.size); // Name, Size
+            unpacker.unpack(name, size); // Name, Size
 
             // Time
             long stdTime;
-            unpacker.unpack(stdTime); this.timeLastModified = SysTime(stdTime); // TODO: Functionize
-            unpacker.unpack(stdTime); this.timeLastAccessed = SysTime(stdTime); // TODO: Functionize
+            unpacker.unpack(stdTime); timeLastModified = SysTime(stdTime); // TODO: Functionize
+            unpacker.unpack(stdTime); timeLastAccessed = SysTime(stdTime); // TODO: Functionize
 
             // CStat: TODO: Group
             unpacker.unpack(_cstat.kindId); // FKind
@@ -1282,14 +1282,14 @@ class RegFile : File
     {
         if (_mmfile is null)
         {
-            if (mmfile_size == 0) // munmap fails for empty files
+            if (size == 0) // munmap fails for empty files
             {
                 static assert([] !is null);
                 return []; // empty file
             }
             else
             {
-                _mmfile = new MmFile(this.path, MmFile.Mode.read,
+                _mmfile = new MmFile(path, MmFile.Mode.read,
                                      mmfile_size, null, pageSize());
                 if (parent.gstats.showMMaps)
                 {
@@ -1307,7 +1307,7 @@ class RegFile : File
     {
         if (!_mmfile)
         {
-            _mmfile = new MmFile(this.path, MmFile.Mode.readWrite,
+            _mmfile = new MmFile(path, MmFile.Mode.readWrite,
                                  mmfile_size, null, pageSize());
         }
         return cast(typeof(return))_mmfile[];
