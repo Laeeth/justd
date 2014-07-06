@@ -504,7 +504,6 @@ class FKind
 bool matchFullName(in FKind kind,
                    in string full, size_t six = 0) @safe pure nothrow
 {
-    /* debug dln("kind:", kind.kindName); */
     return (kind.baseNaming &&
             !kind.baseNaming.match(full, six).empty);
 }
@@ -1055,7 +1054,8 @@ class RegFile : File
         }
         return _cstat._contentId;
     }
-    /** Returns: Content Id of $(D this). */
+
+    /** Returns: Tree Content Id of $(D this). */
     override const(SHA1Digest) treeContentId() @property @trusted /* @safe pure nothrow */
     {
         return contentId;
@@ -1073,7 +1073,6 @@ class RegFile : File
         {
             _cstat._contentId = src.sha1Of;
             filesByContentId[_cstat._contentId] ~= this;
-            debug dln("Got SHA1 of " ~ path);
         }
         return _cstat._contentId;
     }
@@ -1281,14 +1280,21 @@ class RegFile : File
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
     immutable(ubyte[]) readOnlyContents(string file = __FILE__, int line = __LINE__)() @trusted
     {
-        if (!_mmfile)
+        if (_mmfile is null)
         {
-            dln("entered with path: ", path);
-            _mmfile = new MmFile(this.path, MmFile.Mode.read,
-                                 mmfile_size, null, pageSize());
-            if (parent.gstats.showMMaps)
+            if (mmfile_size == 0) // munmap fails for empty files
             {
-                writeln("Mapped ", path, " of size ", size);
+                static assert([] !is null);
+                return []; // empty file
+            }
+            else
+            {
+                _mmfile = new MmFile(this.path, MmFile.Mode.read,
+                                     mmfile_size, null, pageSize());
+                if (parent.gstats.showMMaps)
+                {
+                    writeln("Mapped ", path, " of size ", size);
+                }
             }
         }
         return cast(typeof(return))_mmfile[];
@@ -1311,14 +1317,13 @@ class RegFile : File
     bool freeContents()
     {
         if (_mmfile) {
-            dln("entered with path: ", path);
             delete _mmfile; _mmfile = null; return true;
         }
         else { return false; }
     }
 
     import std.mmfile;
-    private MmFile _mmfile;
+    private MmFile _mmfile = null;
     private CStat _cstat;     // Statistics about the contents of this RegFile.
 }
 
