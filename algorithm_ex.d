@@ -1,10 +1,10 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Extensions to std.algorithm.
-    Copyright: Per Nordlöw 2014-.
-    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
-    Authors: $(WEB Per Nordlöw)
- */
+   /** Extensions to std.algorithm.
+       Copyright: Per Nordlöw 2014-.
+       License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+       Authors: $(WEB Per Nordlöw)
+   */
 module algorithm_ex;
 
 import std.algorithm: reduce, min, max;
@@ -45,18 +45,24 @@ alias tail = dropOne;
 */
 CommonType!T either(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
 {
-    static if (T.length == 1) {
+    static if (T.length == 1)
+    {
         return a[0];
-    } else {
+    }
+    else
+    {
         return a[0] ? a[0] : either(a[1 .. $]); // recurse
     }
 }
 /** This overload enables, when possible, lvalue return. */
 auto ref either(T...)(ref T a) @safe @nogc pure nothrow if (a.length >= 1 && allSame!T)
 {
-    static if (T.length == 1) {
+    static if (T.length == 1)
+    {
         return a[0];
-    } else {
+    }
+    else
+    {
         return a[0] ? a[0] : either(a[1 .. $]); // recurse
     }
 }
@@ -94,9 +100,12 @@ unittest {
 */
 CommonType!T every(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
 {
-    static if (T.length == 1) {
+    static if (T.length == 1)
+    {
         return a[0];
-    } else {
+    }
+    else
+    {
         return a[0] ? every(a[1 .. $]) : a[0]; // recurse
     }
 }
@@ -105,9 +114,12 @@ CommonType!T every(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
 */
 auto ref every(T...)(ref T a) @safe @nogc pure nothrow if (a.length >= 1 && allSame!T)
 {
-    static if (T.length == 1) {
+    static if (T.length == 1)
+    {
         return a[0];
-    } else {
+    }
+    else
+    {
         return a[0] ? every(a[1 .. $]) : a[0]; // recurse
     }
 }
@@ -207,22 +219,32 @@ unittest { assert([42, 42].allEqualTo(42)); }
 /** Check if all Elements of $(D x) are zero. */
 bool allZero(T, bool useStatic = true)(in T x) @safe @nogc pure nothrow // TODO: Extend to support struct's and classes's'
 {
-    static        if (isStruct!T || isClass!T) {
-        foreach (const ref elt; x.tupleof) {
+    static if (isStruct!T || isClass!T)
+    {
+        foreach (const ref elt; x.tupleof)
+        {
             if (!elt.allZero) { return false; }
         }
         return true;
-    } else static        if (useStatic && isStaticArray!T) {
-        foreach (ix; siota!(0, x.length)) {
+    }
+    else static if (useStatic && isStaticArray!T)
+    {
+        foreach (ix; siota!(0, x.length))
+        {
             if (!x[ix].allZero) { return false; } // make use of siota?
         }
         return true;
-    } else static if (isIterable!T) {
-        foreach (const ref elt; x) {
+    }
+    else static if (isIterable!T)
+    {
+        foreach (const ref elt; x)
+        {
             if (!elt.allZero) { return false; }
         }
         return true;
-    } else {
+    }
+    else
+    {
         return x == 0;
     }
 }
@@ -280,7 +302,8 @@ unittest {
 /** Returns: true iff $(D a) has a value containing meaningful information. */
 bool hasContents(T)(T a) @safe @nogc pure nothrow
 {
-    static if (isArray!T || isSomeString!T) {
+    static if (isArray!T || isSomeString!T)
+    {
         return cast(bool)a.length; // see: http://stackoverflow.com/questions/18563414/empty-string-should-implicit-convert-to-bool-true/18566334?noredirect=1#18566334
     } else {
         return cast(bool)a;
@@ -288,7 +311,7 @@ bool hasContents(T)(T a) @safe @nogc pure nothrow
 }
 
 /** Returns: true iff $(D a) is set to the default/initial value of its type $(D T).
-*/
+ */
 bool defaulted(T)(T x) @safe pure nothrow { return x == T.init; }
 alias untouched = defaulted;
 alias inited = defaulted;
@@ -311,24 +334,33 @@ unittest {
 Rational!ulong sparseness(T)(in T x, int depth = -1) @safe @nogc pure nothrow
 {
     alias R = typeof(return); // rational shorthand
-    static if (isIterable!T) {
+    static if (isIterable!T)
+    {
         import std.range: empty;
         immutable isEmpty = x.empty;
-        if (isEmpty || depth == 0) {
+        if (isEmpty || depth == 0)
+        {
             return R(isEmpty, 1);
-        } else {
+        }
+        else
+        {
             immutable nextDepth = (depth == -1 ? depth : depth - 1);
             ulong nums, denoms;
-            foreach (const ref elt; x) {
+            foreach (const ref elt; x)
+            {
                 auto sub = elt.sparseness(nextDepth);
                 nums += sub.numerator;
                 denoms += sub.denominator;
             }
             return R(nums, denoms);
         }
-    } else static if (isFloatingPoint!T) {
+    }
+    else static if (isFloatingPoint!T)
+    {
         return R(x == 0, 1); // explicit zero because T.init is nan here
-    } else {
+    }
+    else
+    {
         return R(x.defaulted, 1);
     }
 }
@@ -372,9 +404,9 @@ enum FindContext { inWord, inSymbol,
                    asWord, asSymbol }
 
 bool isSymbolASCII(string rest, ptrdiff_t off, size_t end) @safe @nogc pure nothrow
-in {
-    assert(end <= rest.length);
-} body {
+    in {
+        assert(end <= rest.length);
+    } body {
     import std.ascii: isAlphaNum;
     return ((off == 0 || // either beginning of line
              !rest[off - 1].isAlphaNum &&
@@ -394,9 +426,9 @@ unittest {
 // ==============================================================================================
 
 bool isWordASCII(string rest, ptrdiff_t off, size_t end) @safe @nogc pure nothrow
-in {
-    assert(end <= rest.length);
-} body {
+    in {
+        assert(end <= rest.length);
+    } body {
     import std.ascii: isAlphaNum;
     return ((off == 0 || // either beginning of line
              !rest[off - 1].isAlphaNum) &&
@@ -433,7 +465,8 @@ Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b", R, E)(R haystack, E 
     auto aOffs = new ptrdiff_t[needle.length]; // acronym hit offsets
 
     auto rest = haystack[haystackOffset..$];
-    while (needle.length <= rest.length) { // for each new try at finding the needle at remainding part of haystack
+    while (needle.length <= rest.length) // for each new try at finding the needle at remainding part of haystack
+    {
         /* debug dln(needle, ", ", rest); */
 
         // find first character
@@ -445,7 +478,8 @@ Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b", R, E)(R haystack, E 
         const ix0 = aOffs[0];
 
         // check context before point
-        final switch (ctx) {
+        final switch (ctx)
+        {
         case FindContext.inWord:   break; // TODO: find word characters before point and set start offset
         case FindContext.inSymbol: break; // TODO: find symbol characters before point and set start offset
         case FindContext.asWord:
@@ -456,13 +490,15 @@ Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b", R, E)(R haystack, E 
             break;
         }
 
-        while (rest) {          // while elements left in haystack
+        while (rest)            // while elements left in haystack
+        {
 
             // Check elements in between
             ptrdiff_t hit = -1;
             import std.algorithm: countUntil;
             import std.functional: binaryFun;
-            final switch (ctx) {
+            final switch (ctx)
+            {
             case FindContext.inWord:
             case FindContext.asWord:
                 hit = rest.countUntil!(x => (binaryFun!pred(x, needle[nIx])) || !x.isAlpha); break;
@@ -474,18 +510,20 @@ Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b", R, E)(R haystack, E 
 
             // Check if hit
             if (hit == rest.length || // if we searched till the end
-                rest[hit] != needle[nIx]) { // acronym letter not found
+                rest[hit] != needle[nIx]) // acronym letter not found
+            {
                 rest = haystack[aOffs[0]+1 .. $]; // try beyond hit
                 goto miss;      // no hit this time
             }
 
             aOffs[nIx++] = (rest.ptr - haystack.ptr) + hit; // store hit offset and advance acronym
-            if (nIx == needle.length) { // if complete acronym found
+            if (nIx == needle.length) // if complete acronym found
+            {
                 return tuple(haystack[aOffs[0] .. aOffs[$-1] + 1], aOffs) ; // return its length
             }
             rest = rest[hit+1 .. $]; // advance in source beyound hit
         }
-        miss:
+    miss:
         continue;
     }
     return tuple(R.init, ptrdiff_t[].init); // no hit
@@ -510,9 +548,11 @@ auto findInOrder(alias pred = "a == b",
 {
     import std.range: empty;
     auto hit = haystack; // reference
-    foreach (needle; needles) { // for every needle in order
+    foreach (needle; needles) // for every needle in order
+    {
         hit = finder!pred(hit, needle);
-        if (hit.empty) {
+        if (hit.empty)
+        {
             break;
         }
     }
@@ -529,13 +569,16 @@ inout(T[]) overlapInOrder(T)(inout(T[]) a,
                              inout(T[]) b) @trusted pure nothrow
 {
     if (a.ptr <= b.ptr &&       // if a-start lies at or before b-start
-        b.ptr < a.ptr + a.length) { // if b-start lies before b-end
+        b.ptr < a.ptr + a.length) // if b-start lies before b-end
+    {
         import std.algorithm: min, max;
         const low = max(a.ptr, b.ptr) - a.ptr;
         const n = min(b.length,
                       (b.ptr - a.ptr + 1)); // overlap length
         return a[low..low + n];
-    } else {
+    }
+    else
+    {
         return [];
     }
 }
@@ -544,11 +587,16 @@ inout(T[]) overlapInOrder(T)(inout(T[]) a,
 inout(T[]) overlap(T)(inout(T[]) a,
                       inout(T[]) b) @safe pure nothrow
 {
-    if        (inout(T[]) ab = overlapInOrder(a, b)) {
+    if (inout(T[]) ab = overlapInOrder(a, b))
+    {
         return ab;
-    } else if (inout(T[]) ba = overlapInOrder(b, a)) {
+    }
+    else if (inout(T[]) ba = overlapInOrder(b, a))
+    {
         return ba;
-    } else {
+    }
+    else
+    {
         return [];
     }
 }
@@ -576,7 +624,7 @@ unittest {
 
 /** Returns: If range is a palindrome.
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
-    */
+*/
 bool isPalindrome(R)(R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
 {
     import std.range: retro;
@@ -683,7 +731,8 @@ auto ref packBitParallelRunLengths(R)(in R x) if (isInputRange!R)
     BitArray[nBits] runs;
 
     // allocate runs
-    foreach (ref run; runs) {
+    foreach (ref run; runs)
+    {
         run.length = x.length;
     }
 
@@ -699,9 +748,11 @@ auto ref packBitParallelRunLengths(R)(in R x) if (isInputRange!R)
     size_t[nBits] counts;
 
     import bitset: BitSet;
-    foreach (eltIx, elt; x) {
+    foreach (eltIx, elt; x)
+    {
         BitSet!nBits bits;
-        foreach (bitIndex; 0..nBits) {
+        foreach (bitIndex; 0..nBits)
+        {
             import bitop_ex: getBit;
             runs[bitIndex][eltIx] = elt.getBit(bitIndex);
         }
@@ -752,16 +803,20 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
         }
 
         @property:
-        auto ref front() {
+        auto ref front()
+        {
             if (!_initialized) { popFront(); }
             return _front;
         }
-        auto ref moveFront() {
+        auto ref moveFront()
+        {
             popFront();
             return _front;
         }
-        void popFront() {
-            if (empty is false) {
+        void popFront()
+        {
+            if (empty is false)
+            {
                 _initialized = true;
                 E rf = _range.front;
                 _range.popFront();
@@ -771,7 +826,8 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
                 }
             }
         }
-        bool empty() {
+        bool empty()
+        {
             return _range.empty;
         }
     }
@@ -800,7 +856,7 @@ import traits_ex: arityMin0;
     Use for example to generate random instances of return value of fun.
 
     TODO: I believe we need arityMin, arityMax trait here
- */
+*/
 auto apply(alias fun, N)(N n) if (isCallable!fun &&
                                   arityMin0!fun &&
                                   !is(ReturnType!fun == void) &&
@@ -829,14 +885,18 @@ auto apply(alias fun, N)(N n) if (isCallable!fun &&
     See also: https://stackoverflow.com/questions/21102646/in-place-ordering-of-elements/
     See also: http://forum.dlang.org/thread/eweortsmcmibppmvtriw@forum.dlang.org#post-eweortsmcmibppmvtriw:40forum.dlang.org
 */
-void orderInPlace(T...)(ref T t) @trusted /* nothrow */ {
+void orderInPlace(T...)(ref T t) @trusted /* nothrow */
+{
     import std.algorithm: sort, swap;
-    static if (t.length == 2) {
-        if (t[0] > t[1]) {
+    static if (t.length == 2)
+    {
+        if (t[0] > t[1])
+        {
             swap(t[0], t[1]);
         }
     }
-    else {                      // generic version
+    else
+    {                           // generic version
         T[0][T.length] buffer;      // static buffer to capture elements
         foreach (idx, a; t)
             buffer[idx] = a;
@@ -864,15 +924,17 @@ unittest {
 import std.algorithm: SwapStrategy;
 
 /** Allow Static Arrays to be sorted without [].
-   See also: http://forum.dlang.org/thread/jhzurojjnlkatjdgcfhg@forum.dlang.org
-   */
+    See also: http://forum.dlang.org/thread/jhzurojjnlkatjdgcfhg@forum.dlang.org
+*/
 template sort(alias less = "a < b", SwapStrategy ss = SwapStrategy.unstable)
 {
     import std.algorithm: stdSort = sort;
-    auto sort(Arr)(ref Arr arr) if (isStaticArray!Arr) {
+    auto sort(Arr)(ref Arr arr) if (isStaticArray!Arr)
+    {
         return stdSort!(less, ss)(arr[]);
     }
-    auto sort(Range)(Range r) if (!isStaticArray!Range) {
+    auto sort(Range)(Range r) if (!isStaticArray!Range)
+    {
         return stdSort!(less, ss)(r);
     }
 }
@@ -887,12 +949,16 @@ unittest
 // ==============================================================================================
 
 /** Execute Expression $(D exp) the same way $(D n) times. */
-void doTimes(uint n, lazy void expression) { while (n--) expression(); }
+void doTimes(uint n, lazy void expression)
+{
+    while (n--) expression();
+}
 alias loop = doTimes;
 alias doN = doTimes;
 
 /** Execute Expression $(D exp) $(I inline) the same way $(D n) times. */
-void doTimes(uint n)(lazy void expression) { // TOREVIEW: Should we use delegate instead?
+void doTimes(uint n)(lazy void expression) // TOREVIEW: Should we use delegate instead?
+{
     foreach (i; siota(0, n)) expression();
 }
 
@@ -933,7 +999,8 @@ private string genNaryFun(string fun, V...)() @safe pure
 }
 template naryFun(string fun)
 {
-    auto naryFun(V...)(V values) {
+    auto naryFun(V...)(V values)
+    {
         mixin(genNaryFun!(fun, V));
     }
 }
@@ -945,10 +1012,11 @@ unittest {
 import std.typetuple : allSatisfy;
 
 /** Zip $(D ranges) together with operation $(D fun).
-   TODO: Remove when Issue 8715 is fixed providing zipWith
- */
+    TODO: Remove when Issue 8715 is fixed providing zipWith
+*/
 auto zipWith(alias fun, Ranges...)(Ranges ranges) @safe pure nothrow if (Ranges.length >= 2 &&
-									 allSatisfy!(isInputRange, Ranges)) {
+									 allSatisfy!(isInputRange, Ranges))
+{
     import std.range: zip;
     import std.algorithm: map;
     import std.functional: binaryFun;
@@ -985,9 +1053,9 @@ alias Triple(T, U, V) = Tuple!(T, U, V);
 auto triple(T, U, V)(in T t, in U u, in V v) { return Triple!(T, U, V)(t, u, v); }
 
 /** Limit/Span (Min,Max) Pair.
-   Todo: Decide on either Span, MinMax or Limits
-   See also: https://stackoverflow.com/questions/21241878/generic-span-type-in-phobos
- */
+    Todo: Decide on either Span, MinMax or Limits
+    See also: https://stackoverflow.com/questions/21241878/generic-span-type-in-phobos
+*/
 struct Limits(T)
 {
     import std.algorithm: min, max;
@@ -1065,9 +1133,9 @@ bool areColinear(T)(T a, T b) @safe pure nothrow
     Results are undefined if min_val > max_val.
 */
 auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper) @safe pure nothrow
-in {
-    assert(lower <= upper, "lower > upper");
-}
+    in {
+        assert(lower <= upper, "lower > upper");
+    }
 body {
     import std.algorithm : min, max;
     return min(max(x, lower), upper);
@@ -1089,13 +1157,15 @@ enum isIntLike(T) = is(typeof({T t = 0; t = t+t;})); // More if needed
 
 /** $(LUCKY Fibonacci) Numbers (Infinite Range).
     See also: http://forum.dlang.org/thread/dqlrfoxzsppylcgljyyf@forum.dlang.org#post-mailman.1072.1350619455.5162.digitalmars-d-learn:40puremagic.com
- */
+*/
 auto fibonacci(T = int)() if (isIntLike!T)
 {
-    struct Fibonacci {
+    struct Fibonacci
+    {
         T a, b;
         T front() { return b; }
-        void popFront() {
+        void popFront()
+        {
             T c = a+b;
             a = b;
             b = c;
@@ -1119,7 +1189,8 @@ unittest
 template expand(alias array, size_t idx = 0) if (isStaticArray!(typeof(array)))
 {
     @property ref Delay() { return array[idx]; }
-    static if (idx + 1 < array.length) {
+    static if (idx + 1 < array.length)
+    {
         alias expand = TypeTuple!(Delay, expand!(array, idx + 1));
     } else {
         alias expand = Delay;
@@ -1128,7 +1199,8 @@ template expand(alias array, size_t idx = 0) if (isStaticArray!(typeof(array)))
 
 unittest
 {
-    static void foo(int a, int b, int c) {
+    static void foo(int a, int b, int c)
+    {
         import std.stdio: writefln;
         /* writefln("a: %s, b: %s, c: %s", a, b, c); */
     }
