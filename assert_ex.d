@@ -36,3 +36,23 @@ import std.conv: to;
     version (assert) if (lhs == rhs)
         throw new AssertError("at \n" ~file~ ":" ~to!string(line)~ ":\n  lhs: " ~to!string(lhs)~ " ==\n  rhs: " ~to!string(rhs));
 }
+
+/// Returns true if the expression throws.
+@trusted bool assertThrows(T:Throwable = Exception, E)(lazy E expression,
+                                                       string msg = T.stringof,
+                                                       string file = __FILE__,
+                                                       int line = __LINE__ )
+{
+    try
+    {
+        std.exception.assertThrown!T(expression, msg, file, line);
+        return true;
+    }
+    catch (Throwable exc)
+    {
+        // FIXTHIS: unhelpful error message
+        writeln("failed at ", baseName(file), "(", line, "):",
+                " Did not throw \"", msg, "\".");
+        return false;
+    }
+}
