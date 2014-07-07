@@ -2757,24 +2757,24 @@ class Scanner(Term)
         enum keywordsAda95 = keywordsAda83 ~ ["abstract", "aliased", "tagged", "protected", "until", "requeue"];
         enum keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
         enum keywordsAda2012 = keywordsAda2005 ~ ["some"];
-        enum extensionsAda = ["ada", "adb", "ads"];
-        srcFKinds ~= new FKind("Ada 82", [], extensionsAda, [], 0, [], keywordsAda83,
+        enum extsAda = ["ada", "adb", "ads"];
+        srcFKinds ~= new FKind("Ada 82", [], extsAda, [], 0, [], keywordsAda83,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 95", [], extensionsAda, [], 0, [], keywordsAda95,
+        srcFKinds ~= new FKind("Ada 95", [], extsAda, [], 0, [], keywordsAda95,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 2005", [], extensionsAda, [], 0, [], keywordsAda2005,
+        srcFKinds ~= new FKind("Ada 2005", [], extsAda, [], 0, [], keywordsAda2005,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 2012", [], extensionsAda, [], 0, [], keywordsAda2012,
+        srcFKinds ~= new FKind("Ada 2012", [], extsAda, [], 0, [], keywordsAda2012,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada", [], extensionsAda, [], 0, [], keywordsAda2012,
+        srcFKinds ~= new FKind("Ada", [], extsAda, [], 0, [], keywordsAda2012,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
@@ -3389,28 +3389,28 @@ class Scanner(Term)
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
 
         // SQLite
-        enum extSQLite = ["sql", "sqlite", "sqlite3"];
-        binFKinds ~= new FKind("MySQL table definition file", [], extSQLite, x"FE01", 0, [], [],
+        enum extsSQLite = ["sql", "sqlite", "sqlite3"];
+        binFKinds ~= new FKind("MySQL table definition file", [], extsSQLite, x"FE01", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL MyISAM index file", [], extSQLite, x"FEFE07", 0, [], [],
+        binFKinds ~= new FKind("MySQL MyISAM index file", [], extsSQLite, x"FEFE07", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL MyISAM compressed data file", [], extSQLite, x"FEFE08", 0, [], [],
+        binFKinds ~= new FKind("MySQL MyISAM compressed data file", [], extsSQLite, x"FEFE08", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL Maria index file", [], extSQLite, x"FFFFFF", 0, [], [],
+        binFKinds ~= new FKind("MySQL Maria index file", [], extsSQLite, x"FFFFFF", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL Maria compressed data file", [], extSQLite, x"FFFFFF", 0, [], [],
+        binFKinds ~= new FKind("MySQL Maria compressed data file", [], extsSQLite, x"FFFFFF", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("SQLite format 3", [], extSQLite , "SQLite format 3", 0, [], [],
+        binFKinds ~= new FKind("SQLite format 3", [], extsSQLite , "SQLite format 3", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents); // TODO: Why is this detected at 49:th try?
