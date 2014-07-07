@@ -7,8 +7,18 @@ import gfm.opengl,
 import std.typecons,
        std.string;
 
-void main()
+import fs;
+import backtrace.backtrace;
+
+void main(string[] args)
 {
+    import std.stdio: stderr;
+    backtrace.backtrace.install(stderr);
+    if (false)
+    {
+        scanner(args);
+    }
+
     int width = 800;
     int height = 600;
 
