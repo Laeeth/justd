@@ -1242,7 +1242,8 @@ import std.traits: isAggregateType, hasMember;
 /** Generic Member Setter.
     See also: http://forum.dlang.org/thread/fdjkijrtduraaajlxxne@forum.dlang.org
 */
-auto ref T set(string member, T, U)(auto ref T a, in U value) if (isAggregateType!T && hasMember!(T, member))
+auto ref T set(string member, T, U)(auto ref T a, in U value) if (isAggregateType!T &&
+                                                                  hasMember!(T, member))
 {
     __traits(getMember, a, member) = value;
     return a;
@@ -1251,9 +1252,7 @@ auto ref T set(string member, T, U)(auto ref T a, in U value) if (isAggregateTyp
 unittest
 {
     class C { int x, y, z, w; }
-    auto c = new C()
-        .set!`x`(11)
-        .set!`w`(44);
+    auto c = new C().set!`x`(11).set!`w`(44);
     assert(c.x == 11);
     assert(c.w == 44);
 }
