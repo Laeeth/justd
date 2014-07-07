@@ -7,17 +7,46 @@ import gfm.opengl,
 import std.typecons,
        std.string;
 
+import vibe.d;
+
 import fs;
 import backtrace.backtrace;
+
+shared static this()
+{
+    auto settings = new HTTPServerSettings;
+    settings.port = 8080;
+    settings.bindAddresses = ["::1", "127.0.0.1"];
+    listenHTTP(settings, &hello);
+    logInfo("Please open http://127.0.0.1:8080/ in your browser.");
+}
+
+void hello(HTTPServerRequest req, HTTPServerResponse res)
+{
+    res.writeBody("Hello, World!");
+}
+
+void req()
+{
+    requestHTTP("http://www.google.com/",
+                (scope req) {},
+                (scope res) {
+                    logInfo("Response: %d", res.statusCode);
+                    foreach (k, v; res.headers)
+                        logInfo("Header: %s: %s", k, v);
+                });
+}
 
 void main(string[] args)
 {
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
-    if (false)
-    {
+
+    if (false) {
         scanner(args);
     }
+
+    req();
 
     int width = 800;
     int height = 600;
@@ -28,8 +57,21 @@ void main(string[] args)
     auto sdl = scoped!SDL2(log);
     auto gl  = scoped!OpenGL(log);
 
-    auto window = scoped!SDL2Window(sdl, SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+    /*
+      Flags:
+      SDL_WINDOW_FULLSCREEN, SDL_WINDOW_OPENGL,
+      SDL_WINDOW_HIDDEN,        SDL_WINDOW_BORDERLESS,
+      SDL_WINDOW_RESIZABLE,     SDL_WINDOW_MAXIMIZED,
+      SDL_WINDOW_MINIMIZED,     SDL_WINDOW_INPUT_GRABBED,
+      SDL_WINDOW_ALLOW_HIGHDPI.
+    */
+    int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
+    auto window = scoped!SDL2Window(sdl,
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    width,
+                                    height,
+                                    flags);
     gl.reload();
 
     //standard OpenGL calls
