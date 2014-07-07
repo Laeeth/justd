@@ -835,18 +835,18 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
     return ForwardDifference(r);
 }
 
-/* unittest { */
-/*     import std.stdio: writeln; */
-/*     import msgpack; */
-/*     import std.array: array; */
+unittest {
+    import std.stdio: writeln;
+    import msgpack;
+    import std.array: array;
 
-/*     auto x = [long.max, 0, 1]; */
-/*     auto y = x.forwardDifference; */
+    auto x = [long.max, 0, 1];
+    auto y = x.forwardDifference;
 
-/*     /\* writeln(y); *\/ */
-/*     /\* writeln(y.pack); *\/ */
-/*     /\* writeln(y.array.pack); *\/ */
-/* } */
+    /* writeln(y); */
+    /* writeln(y.pack); */
+    /* writeln(y.array.pack); */
+}
 
 import std.traits: isCallable, ReturnType, arity, ParameterTypeTuple;
 import traits_ex: arityMin0;
