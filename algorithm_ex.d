@@ -835,18 +835,18 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
     return ForwardDifference(r);
 }
 
-unittest {
-    import std.stdio: writeln;
-    import msgpack;
-    import std.array: array;
+/* unittest { */
+/*     import std.stdio: writeln; */
+/*     import msgpack; */
+/*     import std.array: array; */
 
-    auto x = [long.max, 0, 1];
-    auto y = x.forwardDifference;
+/*     auto x = [long.max, 0, 1]; */
+/*     auto y = x.forwardDifference; */
 
-    /* writeln(y); */
-    /* writeln(y.pack); */
-    /* writeln(y.array.pack); */
-}
+/*     /\* writeln(y); *\/ */
+/*     /\* writeln(y.pack); *\/ */
+/*     /\* writeln(y.array.pack); *\/ */
+/* } */
 
 import std.traits: isCallable, ReturnType, arity, ParameterTypeTuple;
 import traits_ex: arityMin0;
@@ -867,17 +867,17 @@ auto apply(alias fun, N)(N n) if (isCallable!fun &&
     return n.iota.map!(n => fun);
 }
 
-/* unittest { */
-/*     import std.datetime: Clock, SysTime, Duration; */
-/*     import std.algorithm: map; */
-/*     import msgpack; */
-/*     import std.array: array; */
-/*     const n = 3; */
-/*     auto times = n.apply!(Clock.currTime).array; */
-/*     dln(times); */
-/*     auto spans = times.forwardDifference; */
-/*     dln(spans); */
-/* } */
+unittest {
+    import std.datetime: Clock, SysTime, Duration;
+    import std.algorithm: map;
+    import msgpack;
+    import std.array: array;
+    const n = 3;
+    auto times = n.apply!(Clock.currTime).array;
+    dln(times);
+    auto spans = times.forwardDifference;
+    dln(spans);
+}
 
 // ==============================================================================================
 
@@ -1236,3 +1236,24 @@ alias Sink = OutputRange;
 import std.range: cycle, retro;
 import std.functional: compose;
 alias retroCycle = compose!(cycle, retro);
+
+import std.traits: isAggregateType, hasMember;
+
+/** Generic Member Setter.
+    See also: http://forum.dlang.org/thread/fdjkijrtduraaajlxxne@forum.dlang.org
+*/
+auto ref T set(string member, T, U)(auto ref T a, in U value) if (isAggregateType!T && hasMember!(T, member))
+{
+    __traits(getMember, a, member) = value;
+    return a;
+}
+
+unittest
+{
+    class C { int x, y, z, w; }
+    auto c = new C()
+        .set!`x`(11)
+        .set!`w`(44);
+    assert(c.x == 11);
+    assert(c.w == 44);
+}
