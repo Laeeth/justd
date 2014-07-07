@@ -5,5 +5,7 @@
 	"authors": ["per"],
 	"dependencies": {
 	    "gfm": "~master",
+	    "vibe-d": "~master",
 	},
+	"versions": ["VibeCustomMain"]
 }

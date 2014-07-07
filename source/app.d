@@ -30,7 +30,7 @@ void main()
 
     alias GLfloat[3] Position;
     alias GLfloat[3] Color;
-    struct Vertex 
+    struct Vertex
     {
         Position position;
         Color color;
@@ -67,7 +67,7 @@ void main()
     // create and bind the buffer used by the square indices.
     squareVS.IBO = new GLBuffer(gl, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, squareIndices[]);
     scope(exit) squareVS.IBO.close();
-    
+
     // Compiles the shaders for the square.
     auto squareProgram = scoped!GLProgram(gl,
         r"#version 110
@@ -107,18 +107,18 @@ void main()
     // Creates and binds the buffer used by the triangle vertices.
     // Please note: we will NOT use indices for the triangle
     auto triangleVBO = scoped!GLBuffer(gl, GL_ARRAY_BUFFER, GL_STATIC_DRAW, triangleVertices[]); // this buffer will hold the vertex data
-    
+
     // Compiles the shaders for the triangle.
     auto triangleProgram = scoped!GLProgram(gl,
         r"#version 110
-        
+
         varying vec4 color;
 
         #if VERTEX_SHADER
 
         attribute vec4 color_attribute;
         uniform float angle;
-        
+
         void main()
         {
             color = color_attribute;
@@ -161,10 +161,10 @@ void main()
     // Compiles the shaders for the hexagon.
     // Note: OpenGL 3 + extensions / OpenGL3.3 required for this shader.
     // Pass the color to the post-vertex and to the fragment shader.
-    auto hexProgram = scoped!GLProgram(gl, 
+    auto hexProgram = scoped!GLProgram(gl,
         format(
         r"#version %s
-       
+
         #if VERTEX_SHADER
 
         #extension GL_ARB_explicit_attrib_location : enable
@@ -172,7 +172,7 @@ void main()
         layout(location = 0) in vec4 position_attribute;
         layout(location = 1) in vec4 color_attribute;
         out vec4 out_color;
-        void main() 
+        void main()
         {
           out_color = color_attribute; //pass the color to the post-vertex and to the fragment shader
           gl_Position = vec4(0.5, 0.4, 1, 1) * position_attribute + vec4(-0.4, 0.4, 0, 0);
@@ -182,7 +182,7 @@ void main()
 
         in vec4 out_color;
         out vec4 final_color;
-        void main() 
+        void main()
         {
             final_color = out_color;
         }
@@ -201,7 +201,7 @@ void main()
     auto frameCounter = scoped!FrameCounter(sdl);
 
     /* While the program is running */
-    while(!sdl.keyboard().isPressed(SDLK_ESCAPE)) 
+    while(!sdl.keyboard().isPressed(SDLK_ESCAPE))
     {
         sdl.processEvents();
 
