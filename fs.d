@@ -1464,9 +1464,8 @@ class GStats
 
 struct Results
 {
-    Bytes64 numTotalHits; // Number of total hits.
-    Bytes64 numFilesWithHits; // Number of files with hits
-
+    size_t numTotalHits; // Number of total hits.
+    size_t numFilesWithHits; // Number of files with hits
     Bytes64 noBytesTotal; // Number of bytes total.
     Bytes64 noBytesTotalContents; // Number of contents bytes total.
     Bytes64 noBytesScanned; // Number of bytes scanned.
@@ -2308,8 +2307,8 @@ class Scanner(Term)
     void loadDirKinds()
     {
         vcDirKinds ~= new DirKind(".git",  "Git");
-        vcDirKinds ~= new DirKind(".svn",  "Subversion(Svn)");
-        vcDirKinds ~= new DirKind(".bzr",  "Mercurial (Bzr)");
+        vcDirKinds ~= new DirKind(".svn",  "Subversion (Svn)");
+        vcDirKinds ~= new DirKind(".bzr",  "Bazaar (Bzr)");
         vcDirKinds ~= new DirKind("RCS",  "RCS");
         vcDirKinds ~= new DirKind("CVS",  "CVS");
         vcDirKinds ~= new DirKind("MCVS",  "MCVS");
@@ -3835,6 +3834,10 @@ class Scanner(Term)
                    asUList(binFKinds.map!(a => asItem(a.kindName.asBold,
                                                       ": ",
                                                       asCSL(a.exts.map!(b => b.asCode))))));
+            viz.pp("Skipping directories of type".asH!2,
+                   asUList(skippedDirKinds.map!(a => asItem(a.kindName.asBold,
+                                                            ": ",
+                                                            a.fileName.asCode))));
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
