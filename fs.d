@@ -1954,7 +1954,10 @@ class Dir : File
     /* TODO: Reuse Span and span in Phobos. (Span!T).init should be (T.max, T.min) */
     Interval!SysTime _timeModifiedInterval;
     Interval!SysTime _timeAccessedInterval;
-    Bytes64 _treeSize; // Size of tree with this directory as root. Zero means undefined.
+
+    import std.typecons: Nullable;
+    Nullable!(Bytes64, Bytes64.max) _treeSize; // Size of tree with this directory as root.
+
     SHA1Digest _treeContentId;
 }
 
