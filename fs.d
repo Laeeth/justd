@@ -4963,14 +4963,14 @@ class Scanner(Term)
                             if (firstDup._cstat.kindId)
                             {
                                 viz.pp(asH!3(gstats.allKindsById[firstDup._cstat.kindId],
-                                             " with digest ", digest, " of size ", firstDup.treeSize));
+                                             "s sharing digest ", digest, " and size ", firstDup.treeSize));
                             }
                             viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
-                                         " with digest ", digest, " of size ", firstDup.treeSize));
+                                         "s sharing digest ", digest, " and size ", firstDup.treeSize));
                         }
                         else
                         {
-                            viz.pp(asH!3(typeName, " with digest ", digest, " of size ", firstDup.size));
+                            viz.pp(asH!3(typeName, "s sharing digest ", digest, " and size ", firstDup.size));
                         }
 
                         viz.pp(asUList(dupFilesOk.map!(x => x.asPath.asItem)));
