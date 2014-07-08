@@ -16,8 +16,6 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
-   TODO: Don't scan for content duplicates of empty files
-
    TODO: Don't scan for duplicates inside vc-dirs by default
 
    TODO: Assert that files along duplicates path don't include symlinks
@@ -25,6 +23,8 @@
    TODO: Implement FileOp.deduplicate
 
    TODO: Sort file duplicates
+
+   TODO: Defined generalized_specialized_two_way_relationship(kindD, kindDi)
 
    TODO: Visualize hits using existingFileHitContext.asH!1 followed by a table:
          ROW_NR | hit string in <code lang=LANG></code>
@@ -239,6 +239,11 @@ enum FileContent
     audio,
     sound = audio,
     music = audio,
+
+    modemData,
+    imageModemFax,
+    voiceModem,
+
     video,
     movie,
     media,
@@ -361,18 +366,19 @@ unittest {
 }
 
 /* Comment Delimiters */
+enum defaultCommentDelims = [Delim("#")];
 enum cCommentDelims = [Delim("/*", "*/"),
                        Delim("//")];
-enum defaultCommentDelims = [Delim("#")];
+enum dCommentDelims = [Delim("/+", "+/")] ~ cCommentDelims;
 
 /* String Delimiters */
 enum defaultStringDelims = [Delim("\""),
                             Delim("'"),
                             Delim("`")];
-enum pythonStringDelims = [Delim("\""),
+enum pythonStringDelims = [Delim(`"""`),
+                           Delim("\""),
                            Delim("'"),
-                           Delim("`"),
-                           Delim(`"""`)];
+                           Delim("`")];
 
 /** File Kind.
  */
@@ -1469,12 +1475,12 @@ class GStats
 
     void loadFileKinds()
     {
-        binFKinds ~= new FKind("SCons", ["SConstruct", "SConscript"],
+        srcFKinds ~= new FKind("SCons", ["SConstruct", "SConscript"],
                                ["scons"],
                                [], 0, [], [],
                                [Delim("#")],
                                pythonStringDelims,
-                               FileContent.buildSystemCode, FileKindDetection.equalsNameAndContents);
+                               FileContent.buildSystemCode, FileKindDetection.equalsNameAndContents); // TOOD: Inherit Python
 
         srcFKinds ~= new FKind("Makefile", ["GNUmakefile", "Makefile", "makefile"],
                                ["mk", "mak", "makefile", "make", "gnumakefile"], [], 0, [], [],
@@ -1836,7 +1842,7 @@ class GStats
                                magicForD, 0,
                                [],
                                keywordsD,
-                               cCommentDelims,
+                               dCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode,
                                FileKindDetection.equalsNameOrContents);
@@ -1848,7 +1854,7 @@ class GStats
                                 magicForD, 0,
                                 [],
                                 keywordsD,
-                                cCommentDelims,
+                                dCommentDelims,
                                 defaultStringDelims,
                                 FileContent.sourceCode,
                                 FileKindDetection.equalsNameOrContents);
@@ -1928,12 +1934,14 @@ class GStats
 
         // Scripting
 
-        srcFKinds ~= new FKind("Python", [], ["py"],
-                               shebangLine(lit("python")), 0, [],
-                               keywordsPython,
-                               [Delim("#")], // TODO: Support multi-line triple-double quote strings
-                               defaultStringDelims,
-                               FileContent.scriptCode);
+        auto kindPython = new FKind("Python", [], ["py"],
+                                    shebangLine(lit("python")), 0, [],
+                                    keywordsPython,
+                                    [Delim("#")],
+                                    pythonStringDelims,
+                                    FileContent.scriptCode);
+        srcFKinds ~= kindPython;
+
         srcFKinds ~= new FKind("Ruby", [], ["rb", "rhtml", "rjs", "rxml", "erb", "rake", "spec", ],
                                shebangLine(lit("ruby")), 0,
                                [], [],
@@ -2585,6 +2593,34 @@ class GStats
                                [], // N/A
                                [],
                                FileContent.binary, FileKindDetection.equalsName);
+
+        binFKinds ~= new FKind("Digifax-G3", [],
+                               ["g3", "G3"],
+                               "PC Research, Inc", 0, [], [],
+                               [], // N/A
+                               [],
+                               FileContent.imageModemFax, FileKindDetection.equalsContents);
+
+        binFKinds ~= new FKind("Raw Modem Data version 1", [],
+                               ["rmd1"],
+                               "RMD1", 0, [], [],
+                               [], // N/A
+                               [],
+                               FileContent.modemData, FileKindDetection.equalsContents);
+
+        binFKinds ~= new FKind("Portable voice format 1", [],
+                               ["pvf1"],
+                               "PVF1\n", 0, [], [],
+                               [], // N/A
+                               [],
+                               FileContent.voiceModem, FileKindDetection.equalsContents);
+
+        binFKinds ~= new FKind("Portable voice format 2", [],
+                               ["pvf2"],
+                               "PVF2\n", 0, [], [],
+                               [], // N/A
+                               [],
+                               FileContent.voiceModem, FileKindDetection.equalsContents);
 
         // By Extension
         foreach (kind; binFKinds)
