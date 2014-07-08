@@ -693,6 +693,8 @@ class File
         if (parent) { ++parent.gstats.noFiles; }
     }
 
+    string toEnglishString() const @property { return "Any File"; }
+
     Bytes64 treeSize() @property @trusted /* @safe pure nothrow */ { return size; }
 
     /** Content Digest of Tree under this Directory. */
@@ -952,6 +954,8 @@ class Symlink : File
             return symlinkFace;
     }
 
+    override string toEnglishString() const @property { return "Symbolic Link"; }
+
     string retarget(ref DirEntry dent) @trusted
     {
         import std.file: readLink;
@@ -1017,6 +1021,8 @@ class SpecFile : File
 
     override Face!Color face() const @property @safe pure nothrow { return specialFileFace; }
 
+    override string toEnglishString() const @property { return "Special File"; }
+
     version(msgpack)
     {
         /** Construct from msgpack $(D unpacker).  */
@@ -1068,6 +1074,8 @@ class RegFile : File
     }
 
     ~this() { _cstat.deallocate(false); }
+
+    override string toEnglishString() const @property { return "Regular File"; }
 
     /** Returns: Content Id of $(D this). */
     const(SHA1Digest) contentId() @property @trusted /* @safe pure nothrow */
@@ -2777,6 +2785,8 @@ class Dir : File
         this._gstats = gstats;
         if (gstats) { ++gstats.noDirs; }
     }
+
+    override string toEnglishString() const @property { return "Directory"; }
 
     override Bytes64 treeSize() @property @trusted /* @safe nothrow */
     {
@@ -4934,6 +4944,43 @@ class Scanner(Term)
     }
 
     /** Show Statistics. */
+    void showContentDups(Viz viz)
+    {
+        foreach (ix, kind; TypeTuple!(RegFile, Dir))
+        {
+            immutable typeName = ix == 0 ? "Regular File" : "Directory Tree";
+            viz.pp((typeName ~ " Content Duplicates").asH!2);
+            foreach (digest, dupFiles; gstats.filesByContentId)
+            {
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
+                if (dupFilesOk.length >= 2) // non-empty file/directory
+                {
+                    auto firstDup = cast(kind)dupFilesOk[0];
+                    if (firstDup)
+                    {
+                        static if (is(kind == RegFile))
+                        {
+                            if (firstDup._cstat.kindId)
+                            {
+                                viz.pp(asH!3(gstats.allKindsById[firstDup._cstat.kindId],
+                                             " with digest ", digest, " of size ", firstDup.treeSize));
+                            }
+                            viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
+                                         " with digest ", digest, " of size ", firstDup.treeSize));
+                        }
+                        else
+                        {
+                            viz.pp(asH!3(typeName, " with digest ", digest, " of size ", firstDup.size));
+                        }
+
+                        viz.pp(asUList(dupFilesOk.map!(x => x.asPath.asItem)));
+                    }
+                }
+            }
+        }
+    }
+
+    /** Show Statistics. */
     void showStats(Viz viz)
     {
         /* Duplicates */
@@ -4970,38 +5017,7 @@ class Scanner(Term)
 
         if (gstats.showFileContentDups)
         {
-            viz.pp("Content Duplicates".asH!2);
-            foreach (digest, dupFiles; gstats.filesByContentId)
-            {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
-                if (dupFilesOk.length >= 2) // non-empty file/directory
-                {
-                    auto firstDup = dupFilesOk[0];
-                    auto firstRegFileDup = cast(RegFile)firstDup;
-                    immutable typeName = firstRegFileDup ? "Files" : "Directories";
-                    immutable thisSize = firstRegFileDup ? firstRegFileDup.size : firstDup.treeSize;
-                    viz.pp(asH!3(typeName ~ " with same non-empty content",
-                                 " (", digest, ")",
-                                 " of size ",
-                                 thisSize));
-
-                    // content. TODO: Functionize
-                    auto dupRegFile = cast(RegFile)firstDup;
-                    if (dupRegFile)
-                    {
-                        if (dupRegFile._cstat.kindId)
-                        {
-                            viz.pp(" is ",
-                                   gstats.allKindsById[dupRegFile._cstat.kindId]);
-                        }
-                        viz.pp(" is ",
-                               (dupRegFile._cstat.bitStatus == BitStatus.bits7) ? "ASCII" : ""
-                            );
-                    }
-
-                    viz.pp(asUList(dupFilesOk.map!(x => x.asPath.asItem)));
-                }
-            }
+            showContentDups(viz);
         }
 
         /* Broken Symlinks */
