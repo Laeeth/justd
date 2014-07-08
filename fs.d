@@ -241,7 +241,7 @@ enum FileContent
     music = audio,
 
     modemData,
-    imageModemFax,
+    imageModemFax1BPP, // One bit per pixel
     voiceModem,
 
     video,
@@ -2594,12 +2594,16 @@ class GStats
                                [],
                                FileContent.binary, FileKindDetection.equalsName);
 
-        binFKinds ~= new FKind("Digifax-G3", [],
+        /* Fax image created in the CCITT Group 3 compressed format, which is
+         * used for digital transmission of fax data and supports 1 bit per
+         * pixel
+         */
+        binFKinds ~= new FKind("CCITT Group 3 compressed format", [], // TODO: Altenative name: Digifax-G3, G3 Fax
                                ["g3", "G3"],
                                "PC Research, Inc", 0, [], [],
                                [], // N/A
                                [],
-                               FileContent.imageModemFax, FileKindDetection.equalsContents);
+                               FileContent.imageModemFax1BPP, FileKindDetection.equalsContents);
 
         binFKinds ~= new FKind("Raw Modem Data version 1", [],
                                ["rmd1"],
