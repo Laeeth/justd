@@ -4980,7 +4980,7 @@ class Scanner(Term)
                     auto firstRegFileDup = cast(RegFile)firstDup;
                     immutable typeName = firstRegFileDup ? "Files" : "Directories";
                     immutable thisSize = firstRegFileDup ? firstRegFileDup.size : firstDup.treeSize;
-                    viz.pp(asH!3(typeName ~ " with same content",
+                    viz.pp(asH!3(typeName ~ " with same non-empty content",
                                  " (", digest, ")",
                                  " of size ",
                                  thisSize));
