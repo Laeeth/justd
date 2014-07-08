@@ -30,7 +30,7 @@ private template siotaImpl(size_t to, size_t now)
 
 // ==============================================================================================
 
-string typestringof(T)(T a) @safe @nogc pure nothrow { return T.stringof; }
+string typestringof(T)(in T a) @safe @nogc pure nothrow { return T.stringof; }
 
 import std.range: dropOne;
 alias tail = dropOne;
@@ -299,31 +299,62 @@ unittest {
 
 // ==============================================================================================
 
-/** Returns: true iff $(D a) has a value containing meaningful information. */
-bool hasContents(T)(T a) @safe @nogc pure nothrow
+import std.traits: isInstanceOf;
+import std.typecons: Nullable;
+
+/** Returns: true iff $(D a) has a value containing meaningful information.
+ */
+bool hasContents(T)(in T a) @safe @nogc pure nothrow
 {
-    static if (isArray!T || isSomeString!T)
-    {
+    static if (isInstanceOf!(Nullable, T))
+        return a.isNull;
+    else static if (isArray!T || isSomeString!T)
         return cast(bool)a.length; // see: http://stackoverflow.com/questions/18563414/empty-string-should-implicit-convert-to-bool-true/18566334?noredirect=1#18566334
-    } else {
+    else
         return cast(bool)a;
-    }
 }
 
 /** Returns: true iff $(D a) is set to the default/initial value of its type $(D T).
  */
-bool defaulted(T)(T x) @safe pure nothrow { return x == T.init; }
+bool defaulted(T)(in T a) @safe pure nothrow @nogc
+{
+    static if (isInstanceOf!(Nullable, T))
+        return a.isNull;
+    else
+        return a == T.init;
+}
 alias untouched = defaulted;
 alias inited = defaulted;
 
 import rational: Rational;
 
-/** Reset $(D a) to its default value. */
-auto ref reset(T)(ref T a) @property @trusted pure nothrow { return a = T.init; }
+/** Reset $(D a) to its default value.
+    See also: std.typecons.Nullable.nullify
+ */
+auto ref reset(T)(ref T a) @property @trusted pure nothrow
+{
+    static if (isInstanceOf!(Nullable, T))
+        a.nullify();
+    else
+        return a = T.init;
+}
 unittest {
     int x = 42;
     x.reset;
     assert(x == x.init);
+}
+
+unittest
+{
+    import std.typecons: Nullable;
+    auto n = Nullable!(size_t,
+                       size_t.max)();
+    assert(n.untouched);
+    n = 0;
+    assert(!n.untouched);
+    assert(n == 0);
+    n.reset;
+    assert(n.untouched);
 }
 
 // ==============================================================================================
@@ -394,7 +425,7 @@ unittest {
 
 // ==============================================================================================
 
-bool isSymbol(T)(T a) @safe @nogc pure nothrow
+bool isSymbol(T)(in T a) @safe @nogc pure nothrow
 {
     import std.ascii: isAlpha;
     return a.isAlpha || a == '_';
@@ -766,7 +797,7 @@ unittest {
     /* backtrace.backtrace.install(stderr); */
     const x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const xPacked = x.packBitParallelRunLengths;
-    // dln(xPacked);
+    version(print) dln(xPacked);
 }
 
 /** Compute Forward Difference of $(D range).
@@ -836,16 +867,15 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
 }
 
 unittest {
-    import std.stdio: writeln;
     import msgpack;
     import std.array: array;
 
     auto x = [long.max, 0, 1];
     auto y = x.forwardDifference;
 
-    /* writeln(y); */
-    /* writeln(y.pack); */
-    /* writeln(y.array.pack); */
+    version(print) dln(y);
+    version(print) dln(y.pack);
+    version(print) dln(y.array.pack);
 }
 
 import std.traits: isCallable, ReturnType, arity, ParameterTypeTuple;
@@ -874,9 +904,9 @@ unittest {
     import std.array: array;
     const n = 3;
     auto times = n.apply!(Clock.currTime).array;
-    dln(times);
+    version(print) dln(times);
     auto spans = times.forwardDifference;
-    dln(spans);
+    version(print) dln(spans);
 }
 
 // ==============================================================================================
@@ -1095,7 +1125,7 @@ unittest {
     x.expand(10);
     assert(x[0] == -10);
     assert(x[1] == +10);
-    /* dln(x); */
+    version(print) dln(x);
 }
 
 /* template getTypeString(T) { */
@@ -1177,7 +1207,6 @@ auto fibonacci(T = int)() if (isIntLike!T)
 
 unittest
 {
-    import dbg:dln;
     import std.range: take;
     import std.algorithm: equal;
     assert(fibonacci.take(10).equal([1, 1, 2, 3, 5, 8, 13, 21, 34, 55]));
@@ -1202,7 +1231,7 @@ unittest
     static void foo(int a, int b, int c)
     {
         import std.stdio: writefln;
-        /* writefln("a: %s, b: %s, c: %s", a, b, c); */
+        version(print) writefln("a: %s, b: %s, c: %s", a, b, c);
     }
     int[3] arr = [1, 2, 3];
     foo(expand!arr);
