@@ -1136,6 +1136,9 @@ class RegFile : File
                               _cstat.xgram.noBins);
     }
 
+    /** Returns: true if empty file (zero length). */
+    bool empty() @property const @safe { return size == 0; }
+
     /** Process File in Cache Friendly Chunks. */
     void calculateCStatInChunks(NotNull!File[][SHA1Digest] filesByContentId,
                                 size_t chunkSize = 32*pageSize(),
@@ -1143,7 +1146,7 @@ class RegFile : File
                                 bool doBist = false,
                                 bool doBitStatus = false) @safe
     {
-        if (_cstat._contentId.defined) { doSHA1 = false; }
+        if (_cstat._contentId.defined || empty) { doSHA1 = false; }
         if (!_cstat.bist.empty) { doBist = false; }
         if (_cstat.bitStatus != BitStatus.unknown) { doBitStatus = false; }
 
@@ -2791,9 +2794,12 @@ class Dir : File
     {
         if (_treeContentId.untouched)
         {
-            _treeContentId = subs.byValue.map!"a.treeContentId".sha1Of;
-            assert(_treeContentId, "Zero digest");
-            gstats.filesByContentId[_treeContentId] ~= assumeNotNull(cast(File)this); // TODO: Avoid cast when DMD and NotNull is fixed
+            _treeContentId = subs.byValue.map!"a.treeContentId".sha1Of; // TODO: join loops for calculating treeSize
+            assert(_treeContentId, "Zero tree content digest");
+            if (treeSize() != 0)
+            {
+                gstats.filesByContentId[_treeContentId] ~= assumeNotNull(cast(File)this); // TODO: Avoid cast when DMD and NotNull is fixed
+            }
         }
         return _treeContentId;
     }
