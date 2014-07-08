@@ -16,6 +16,8 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
+   TODO: Don't scan for content duplicates of empty files
+
    TODO: Don't scan for duplicates inside vc-dirs by default
 
    TODO: Assert that files along duplicates path don't include symlinks
@@ -809,8 +811,10 @@ class File
     }
 
     /** Get Parenting Dirs starting from file system root downto containing
-     * directory of $(D this). */
-    auto parents()
+        directory of $(D this).
+        Make this even more lazily evaluted.
+    */
+    auto ref parents()
     {
         auto curr = dir; // current parent
         Dir[] parents; // collected parents
@@ -823,6 +827,12 @@ class File
         return parents.retro;
     }
     alias dirs = parents;     // SCons style alias
+
+    bool underAnyDir(alias pred = "a")()
+    {
+        import std.algorithm: any;
+        return parents.any!pred;
+    }
 
     Dir parent;               // Reference to parenting directory (or null if this is a root directory)
     alias dir = parent;       // SCons style alias
@@ -1428,915 +1438,11 @@ class GStats
     FKind[SHA1Digest] incKindsById;    // Index Kinds by their behaviour
     FKind[SHA1Digest] allKindsById;    // Index Kinds by their behaviour
 
-    bool showNameDups = false;
-    bool showTreeContentDups = false;
-    bool showFileContentDups = false;
-    bool linkContentDups = false;
-
-    bool showLinkDups = false;
-    SymlinkFollowContext followSymlinks = SymlinkFollowContext.external;
-    bool showBrokenSymlinks = true;
-    bool showSymlinkCycles = true;
-
-    bool showAnyDups = false;
-    bool showMMaps = false;
-    bool showUsage = false;
-    bool showSHA1 = false;
-    bool showLineCounts = false;
-
-    uint64_t noFiles = 0;
-    uint64_t noRegFiles = 0;
-    uint64_t noSymlinks = 0;
-    uint64_t noSpecialFiles = 0;
-    uint64_t noDirs = 0;
-
-    uint64_t noScannedFiles = 0;
-    uint64_t noScannedRegFiles = 0;
-    uint64_t noScannedSymlinks = 0;
-    uint64_t noScannedSpecialFiles = 0;
-    uint64_t noScannedDirs = 0;
-
-    auto shallowDensenessSum = Rational!ulong(0, 1);
-    auto deepDensenessSum = Rational!ulong(0, 1);
-    uint64_t densenessCount = 0;
-
-}
-
-struct Results
-{
-    size_t numTotalHits; // Number of total hits.
-    size_t numFilesWithHits; // Number of files with hits
-    Bytes64 noBytesTotal; // Number of bytes total.
-    Bytes64 noBytesTotalContents; // Number of contents bytes total.
-    Bytes64 noBytesScanned; // Number of bytes scanned.
-    Bytes64 noBytesSkipped; // Number of bytes skipped.
-    Bytes64 noBytesUnreadable; // Number of bytes unreadable.
-}
-
-version(cerealed)
-{
-    void grain(T)(ref Cereal cereal, ref SysTime systime)
-    {
-        auto stdTime = systime.stdTime;
-        cereal.grain(stdTime);
-        if (stdTime != 0)
-        {
-            systime = SysTime(stdTime);
-        }
-    }
-}
-
-/** Directory Sorting Order. */
-enum DirSorting
-{
-    /* onTimeCreated, /\* Windows only. Currently stored in Linux on ext4 but no */
-    /*               * standard interface exists yet, it will probably be called */
-    /*               * xstat(). *\/ */
-    onTimeLastModified,
-    onTimeLastAccessed,
-    onSize,
-    onNothing,
-}
-
-enum BuildType
-{
-    none,    // Don't compile
-    devel,   // Compile with debug symbols
-    release, // Compile without debugs symbols and optimizations
-    standard = devel,
-}
-
-enum PathFormat
-{
-    absolute,
-    relative,
-}
-
-/** Dir.
- */
-class Dir : File
-{
-    /** Construct File System Root Directory. */
-    this(Dir parent = null, GStats gstats = null)
-    {
-        super(parent);
-        this._gstats = gstats;
-        if (gstats) { ++gstats.noDirs; }
-    }
-
-    this(string root_path, GStats gstats)
-        in { assert(root_path == "/"); assert(gstats); }
-    body
-    {
-        auto rootDent = DirEntry(root_path);
-        Dir rootParent = null;
-        this(rootDent, rootParent, gstats);
-    }
-
-    this(ref DirEntry dent, Dir parent, GStats gstats)
-        in { assert(gstats); }
-    body
-    {
-        this(dent.name.baseName, parent, dent.size.Bytes64, dent.timeLastModified, dent.timeLastAccessed, gstats);
-    }
-
-    this(string name, Dir parent, Bytes64 size, SysTime timeLastModified, SysTime timeLastAccessed,
-         GStats gstats = null)
-    {
-        super(name, parent, size, timeLastModified, timeLastAccessed);
-        this._gstats = gstats;
-        if (gstats) { ++gstats.noDirs; }
-    }
-
-    override Bytes64 treeSize() @property @trusted /* @safe nothrow */
-    {
-        if (_treeSize.untouched)
-        {
-            _treeSize = (this.size +
-                         reduce!"a+b"(0.Bytes64,
-                                      subs.byValue.map!"a.treeSize")); // recurse!
-        }
-        return _treeSize;
-    }
-
-    /** Returns: Directory Tree Content Id of $(D this). */
-    override const(SHA1Digest) treeContentId() @property @trusted /* @safe nothrow */
-    {
-        if (_treeContentId.untouched)
-        {
-            _treeContentId = subs.byValue.map!"a.treeContentId".sha1Of;
-            assert(_treeContentId, "Zero digest");
-            gstats.filesByContentId[_treeContentId] ~= assumeNotNull(cast(File)this); // TODO: Avoid cast when DMD and NotNull is fixed
-        }
-        return _treeContentId;
-    }
-
-    override Face!Color face() const @property @safe pure nothrow { return dirFace; }
-
-    /** Return true if $(D this) is a file system root directory. */
-    bool isRoot() @property @safe const pure nothrow { return !parent; }
-
-    GStats gstats(GStats gstats) @property @safe pure /* nothrow */ {
-        return this._gstats = gstats;
-    }
-    GStats gstats() @property @safe nothrow
-    {
-        if (!_gstats && this.parent)
-        {
-            _gstats = this.parent.gstats();
-        }
-        return _gstats;
-    }
-
-    /** Returns: Depth of Depth from File System root to this File. */
-    override int depth() @property @safe nothrow
-    {
-        if (_depth ==- 1)
-        {
-            _depth = parent ? parent.depth + 1 : 0; // memoized depth
-        }
-        return _depth;
-    }
-
-    /** Scan $(D this) recursively for a non-diretory file with basename $(D name).
-        TODO: Reuse range based algorithm this.tree(depthFirst|breadFirst)
-     */
-    File find(string name) @property
-    {
-        auto subs_ = subs();
-        if (name in subs_)
-        {
-            auto hit = subs_[name];
-            Dir hitDir = cast(Dir)hit;
-            if (!hitDir) // if not a directory
-                return hit;
-        }
-        else
-        {
-            foreach (sub; subs_)
-            {
-                Dir subDir = cast(Dir)sub;
-                if (subDir)
-                {
-                    auto hit = subDir.find(name);
-                    if (hit) // if not a directory
-                        return hit;
-                }
-            }
-        }
-        return null;
-    }
-
-    /** Append Tree Statistics. */
-    void addTreeStatsFromSub(F)(NotNull!F subFile, ref DirEntry subDent)
-    {
-        if (subDent.isFile)
-        {
-            /* _treeSize += subDent.size.Bytes64; */
-            // dln("Updating ", _treeSize, " of ", path);
-
-            /** TODO: Move these overloads to std.datetime */
-            auto ref min(in SysTime a, in SysTime b) @trusted pure nothrow { return (a < b ? a : b); }
-            auto ref max(in SysTime a, in SysTime b) @trusted pure nothrow { return (a > b ? a : b); }
-
-            const lastMod = subDent.timeLastModified;
-            _timeModifiedInterval = Interval!SysTime(min(lastMod, _timeModifiedInterval.begin),
-                                                     max(lastMod, _timeModifiedInterval.end));
-            const lastAcc = subDent.timeLastAccessed;
-            _timeAccessedInterval = Interval!SysTime(min(lastAcc, _timeAccessedInterval.begin),
-                                                     max(lastAcc, _timeAccessedInterval.end));
-        }
-    }
-
-    /** Update Statistics for Sub-File $(D sub) with $(D subDent) of $(D this) Dir. */
-    void updateStats(F)(NotNull!F subFile, ref DirEntry subDent, bool isRegFile)
-    {
-        auto localGStats = gstats();
-        if (localGStats)
-        {
-            if (localGStats.showNameDups)
-            {
-                localGStats.filesByName[subFile.name] ~= cast(NotNull!File)subFile;
-            }
-            if (localGStats.showLinkDups &&
-                isRegFile)
-            {
-                import core.sys.posix.sys.stat;
-                immutable stat_t stat = subDent.statBuf();
-                if (stat.st_nlink >= 2)
-                {
-                    localGStats.filesByInode[stat.st_ino] ~= cast(NotNull!File)subFile;
-                }
-            }
-        }
-    }
-
-    /** Load Contents of $(D this) Directory from Disk using DirEntries.
-        Returns: true iff Dir was updated (reread) from disk.
-    */
-    bool load(int depth = 0, bool force = false)
-    {
-        import std.range: empty;
-        if (!_obseleteDir && // already loaded
-            !force)          // and not forced reload
-        {
-            return false;    // signal already scanned
-        }
-
-        // dln("Zeroing ", _treeSize, " of ", path);
-        _treeSize.reset; // this.size;
-        auto oldSubs = _subs;
-        _subs.reset;
-        assert(_subs.length == 0); // TODO: Remove when verified
-
-        import std.file: dirEntries, SpanMode;
-        auto entries = dirEntries(path, SpanMode.shallow, false); // false: skip symlinks
-        foreach (dent; entries)
-        {
-            immutable basename = dent.name.baseName;
-            File sub = null;
-            if (basename in oldSubs)
-            {
-                sub = oldSubs[basename]; // reuse from previous cache
-            }
-            else
-            {
-                bool isRegFile = false;
-                if (dent.isSymlink)
-                {
-                    sub = new Symlink(dent, assumeNotNull(this));
-                }
-                else if (dent.isDir)
-                {
-                    sub = new Dir(dent, this, gstats);
-                }
-                else if (dent.isFile)
-                {
-                    // TODO: Delay construction of and specific files such as
-                    // CFile, ELFFile, after FKind-recognition has been made.
-                    sub = new RegFile(dent, assumeNotNull(this));
-                    isRegFile = true;
-                }
-                else
-                {
-                    sub = new SpecFile(dent, assumeNotNull(this));
-                }
-                updateStats(enforceNotNull(sub), dent, isRegFile);
-            }
-            auto nnsub = enforceNotNull(sub);
-            addTreeStatsFromSub(nnsub, dent);
-            _subs[basename] = nnsub;
-        }
-        _subs.rehash;           // optimize hash for faster lookups
-
-        _obseleteDir = false;
-        return true;
-    }
-
-    bool reload(int depth = 0) { return load(depth, true); }
-    alias sync = reload;
-
-    /* TODO: Can we get make this const to the outside world perhaps using inout? */
-    ref NotNull!File[string] subs() @property { load(); return _subs; }
-
-    NotNull!File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property
-    {
-        load();
-        auto ssubs = _subs.values;
-        /* TODO: Use radix sort to speed things up. */
-        final switch (sorted)
-        {
-            /* case DirSorting.onTimeCreated: */
-            /*     break; */
-        case DirSorting.onTimeLastModified:
-            ssubs.sort!((a, b) => (a.timeLastModified >
-                                   b.timeLastModified));
-            break;
-        case DirSorting.onTimeLastAccessed:
-            ssubs.sort!((a, b) => (a.timeLastAccessed >
-                                   b.timeLastAccessed));
-            break;
-        case DirSorting.onSize:
-            ssubs.sort!((a, b) => (a.size >
-                                   b.size));
-            break;
-        case DirSorting.onNothing:
-            break;
-        }
-        return ssubs;
-    }
-
-    File sub(Name)(Name sub_name)
-    {
-        load();
-        return (sub_name in _subs) ? _subs[sub_name] : null;
-    }
-    File sub(File sub)
-    {
-        load();
-        return (sub.path in _subs) != null ? sub : null;
-    }
-
-    version(cerealed)
-    {
-        void accept(Cereal cereal)
-        {
-            auto stdTime = timeLastModified.stdTime;
-            cereal.grain(name, size, stdTime);
-            timeLastModified = SysTime(stdTime);
-        }
-    }
-    version(msgpack)
-    {
-        /** Construct from msgpack $(D unpacker).  */
-        this(Unpacker)(ref Unpacker unpacker)
-        {
-            fromMsgpack(msgpack.Unpacker(unpacker));
-        }
-
-        void toMsgpack(Packer)(ref Packer packer) const
-        {
-            /* writeln("Entering Dir.toMsgpack ", this.name); */
-            packer.pack(name, size,
-                        timeLastModified.stdTime,
-                        timeLastAccessed.stdTime,
-                        kind);
-
-            // Contents
-            /* TODO: serialize map of polymorphic objects using
-             * packer.packArray(_subs) and type trait lookup up all child-classes of
-             * File */
-            packer.pack(_subs.length);
-
-            if (_subs.length >= 1)
-            {
-                auto diffsLastModified = _subs.byValue.map!"a.timeLastModified.stdTime".encodeForwardDifference;
-                auto diffsLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime".encodeForwardDifference;
-                /* auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime"; */
-                /* auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime"; */
-
-                packer.pack(diffsLastModified, diffsLastAccessed);
-
-                /* debug dln(this.name, " sub.length: ", _subs.length); */
-                /* debug dln(name, " modified diffs: ", diffsLastModified.pack.length); */
-                /* debug dln(name, " accessed diffs: ", diffsLastAccessed.pack.length); */
-                /* debug dln(name, " modified: ", timesLastModified.array.pack.length); */
-                /* debug dln(name, " accessed: ", timesLastAccessed.array.pack.length); */
-            }
-
-            foreach (sub; _subs)
-            {
-                if        (const regfile = cast(RegFile)sub)
-                {
-                    packer.pack("RegFile");
-                    regfile.toMsgpack(packer);
-                }
-                else if (const dir = cast(Dir)sub)
-                {
-                    packer.pack("Dir");
-                    dir.toMsgpack(packer);
-                }
-                else if (const symlink = cast(Symlink)sub)
-                {
-                    packer.pack("Symlink");
-                    symlink.toMsgpack(packer);
-                }
-                else if (const special = cast(SpecFile)sub)
-                {
-                    packer.pack("SpecFile");
-                    special.toMsgpack(packer);
-                }
-                else
-                {
-                    immutable subClassName = sub.classinfo.name;
-                    assert(false, "Unknown sub File class " ~ subClassName); // TODO: Exception
-                }
-            }
-        }
-
-        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
-        {
-            unpacker.unpack(name, size);
-
-            long stdTime;
-            unpacker.unpack(stdTime); timeLastModified = SysTime(stdTime); // TODO: Functionize
-            unpacker.unpack(stdTime); timeLastAccessed = SysTime(stdTime); // TODO: Functionize
-
-            /* dln("before:", path, " ", size, " ", timeLastModified, " ", timeLastAccessed); */
-
-            // FKind
-            if (!kind) { kind = null; }
-            unpacker.unpack(kind); /* TODO: kind = new DirKind(unpacker); */
-            /* dln("after:", path); */
-
-            _treeSize.reset; // this.size;
-
-            // Contents
-            /* TODO: unpacker.unpack(_subs); */
-            immutable noPreviousSubs = _subs.length == 0;
-            size_t subs_length; unpacker.unpack(subs_length); // TODO: Functionize to unpacker.unpack!size_t()
-
-            ForwardDifferenceCode!(long[]) diffsLastModified,
-                diffsLastAccessed;
-            if (subs_length >= 1)
-            {
-                unpacker.unpack(diffsLastModified, diffsLastAccessed);
-                /* auto x = diffsLastModified.decodeForwardDifference; */
-            }
-
-            foreach (ix; 0..subs_length) // repeat for subs_length times
-            {
-                string subClassName; unpacker.unpack(subClassName); // TODO: Functionize
-                File sub = null;
-                try
-                {
-                    switch (subClassName)
-                    {
-                    default:
-                        assert(false, "Unknown File parent class " ~ subClassName); // TODO: Exception
-                    case "Dir":
-                        auto subDir = assumeNotNull(new Dir(this, gstats));
-                        unpacker.unpack(subDir); sub = subDir;
-                        auto subDent = DirEntry(sub.path);
-                        subDir.checkObseleted(subDent); // Invalidate Statistics using fresh CStat if needed
-                        addTreeStatsFromSub(subDir, subDent);
-                        break;
-                    case "RegFile":
-                        auto subRegFile = assumeNotNull(new RegFile(assumeNotNull(this)));
-                        unpacker.unpack(subRegFile); sub = subRegFile;
-                        auto subDent = DirEntry(sub.path);
-                        subRegFile.checkObseleted(subDent); // Invalidate Statistics using fresh CStat if needed
-                        updateStats(subRegFile, subDent, true);
-                        addTreeStatsFromSub(subRegFile, subDent);
-                        break;
-                    case "Symlink":
-                        auto subSymlink = assumeNotNull(new Symlink(assumeNotNull(this)));
-                        unpacker.unpack(subSymlink); sub = subSymlink;
-                        break;
-                    case "SpecFile":
-                        auto SpecFile = assumeNotNull(new SpecFile(assumeNotNull(this)));
-                        unpacker.unpack(SpecFile); sub = SpecFile;
-                        break;
-                    }
-                    if (noPreviousSubs ||
-                        !(sub.name in _subs))
-                    {
-                        _subs[sub.name] = enforceNotNull(sub);
-                    }
-                    /* dln("Unpacked Dir sub ", sub.path, " of type ", subClassName); */
-                } catch (FileException) { // this may be a too generic exception
-                    /* dln(sub.path, " is not accessible anymore"); */
-                }
-            }
-
-        }
-    }
-
-    override void makeObselete() @trusted
-    {
-        _obseleteDir = true;
-        _treeSize.reset;
-        _timeModifiedInterval.reset;
-        _timeAccessedInterval.reset;
-    }
-    override void makeUnObselete() @safe
-    {
-        _obseleteDir = false;
-    }
-
-    private NotNull!File[string] _subs; // Directory contents
-    DirKind kind;               // Kind of this directory
-    uint64_t hitCount = 0;
-    private int _depth = -1;            // Memoized Depth
-    private bool _obseleteDir = true;  // Flags that this is obselete
-    GStats _gstats = null;
-
-    /* TODO: Reuse Span and span in Phobos. (Span!T).init should be (T.max, T.min) */
-    Interval!SysTime _timeModifiedInterval;
-    Interval!SysTime _timeAccessedInterval;
-
-    import std.typecons: Nullable;
-    Nullable!(Bytes64, Bytes64.max) _treeSize; // Size of tree with this directory as root.
-
-    SHA1Digest _treeContentId;
-}
-
-/** Externally Directory Memoized Calculation of Tree Size.
-    Is it possible to make get any of @safe pure nothrow?
- */
-Bytes64 treeSizeMemoized(NotNull!File file, Bytes64[File] cache) @trusted /* nothrow */
-{
-    typeof(return) sum = file.size;
-    if (auto dir = cast(Dir)file)
-    {
-        if (file in cache)
-        {
-            sum = cache[file];
-        }
-        else
-        {
-            foreach (sub; dir.subs.byValue)
-            {
-                sum += treeSizeMemoized(sub, cache);
-            }
-            cache[file] = sum;
-        }
-    }
-    return sum;
-}
-
-/** Save File System Tree Cache under Directory $(D rootDir).
-    Returns: Serialized Byte Array.
-*/
-const(ubyte[]) saveRootDirTree(Viz viz,
-                               Dir rootDir, string cacheFile) @trusted
-{
-    immutable tic = Clock.currTime;
-    version(msgpack)
-    {
-        const data = rootDir.pack();
-        import std.file: write;
-    }
-    else version(cerealed)
-         {
-             auto enc = new Cerealiser(); // encoder
-             enc ~= rootDir;
-             auto data = enc.bytes;
-         }
-    else
-    {
-        ubyte[] data;
-    }
-    cacheFile.write(data);
-    immutable toc = Clock.currTime;
-
-    viz.ppln("Cache Write".asH!2,
-             "Wrote tree cache of size ",
-             data.length.Bytes64, " to ",
-             asPath(cacheFile),
-             " in ",
-             shortDurationString(toc - tic));
-
-    return data;
-}
-
-/** Load File System Tree Cache from $(D cacheFile).
-    Returns: Root Directory of Loaded Tree.
-*/
-Dir loadRootDirTree(Viz viz,
-                    string cacheFile, GStats gstats) @trusted
-{
-    immutable tic = Clock.currTime;
-
-    import std.file: read;
-    try
-    {
-        const data = read(cacheFile);
-
-        auto rootDir = new Dir(cast(Dir)null, gstats);
-        version(msgpack)
-        {
-            unpack(cast(ubyte[])data, rootDir); /* Dir rootDir = new Dir(cast(const(ubyte)[])data); */
-        }
-        immutable toc = Clock.currTime;
-
-        viz.pp("Cache Read".asH!2,
-               "Read cache of size ",
-               data.length.Bytes64, " from ",
-               asPath(cacheFile),
-               " in ",
-               shortDurationString(toc - tic), " containing",
-               asUList(asItem(gstats.noDirs, " Dirs,"),
-                       asItem(gstats.noRegFiles, " Regular Files,"),
-                       asItem(gstats.noSymlinks, " Symbolic Links,"),
-                       asItem(gstats.noSpecialFiles, " Special Files,"),
-                       asItem("totalling ", gstats.noFiles + 1, " Files")));
-        assert(gstats.noDirs +
-               gstats.noRegFiles +
-               gstats.noSymlinks +
-               gstats.noSpecialFiles == gstats.noFiles + 1);
-        return rootDir;
-    }
-    catch (FileException)
-    {
-        viz.ppln("Failed to read cache from ", cacheFile);
-        return null;
-    }
-}
-
-Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames)
-{
-    Dir[] topDirs;
-    foreach (topName; topDirNames)
-    {
-        Dir topDir = getDir(rootDir, topName);
-
-        if (!topDir)
-        {
-            dln("Directory " ~ topName ~ " is missing");
-        }
-        else
-        {
-            topDirs ~= topDir;
-        }
-    }
-    return topDirs;
-}
-
-/** (Cached) Lookup of File $(D filePath).
- */
-File getFile(NotNull!Dir rootDir, string filePath,
-             bool isDir = false,
-             bool tolerant = false) @trusted
-{
-    if (isDir)
-    {
-        return getDir(rootDir, filePath);
-    }
-    else
-    {
-        auto parentDir = getDir(rootDir, filePath.dirName);
-        if (parentDir)
-        {
-            auto hit = parentDir.sub(filePath.baseName);
-            if (hit)
-                return hit;
-            else
-            {
-                dln("File path " ~ filePath ~ " doesn't exist. TODO: Query user to instead find it under "
-                    ~ parentDir.path);
-                parentDir.find(filePath.baseName);
-            }
-        }
-        else
-        {
-            dln("Directory " ~ parentDir.path ~ " doesn't exist");
-        }
-    }
-    return null;
-}
-
-/** (Cached) Lookup of Directory $(D dirpath).
-    Returns: Dir if present under rootDir, null otherwise.
-    TODO: Make use of dent
-*/
-import std.path: isRooted;
-Dir getDir(NotNull!Dir rootDir, string dirPath, ref DirEntry dent,
-           ref Symlink[] followedSymlinks) @trusted
-    in { assert(dirPath.isRooted); }
-body
-{
-    Dir currDir = rootDir;
-
-    import std.range: drop;
-    import std.path: pathSplitter;
-    foreach (part; dirPath.pathSplitter().drop(1)) // all but first
-    {
-        auto sub = currDir.sub(part);
-        if        (auto subDir = cast(Dir)sub)
-        {
-            currDir = subDir;
-        }
-        else if (auto subSymlink = cast(Symlink)sub)
-        {
-            auto subDent = DirEntry(subSymlink.absoluteNormalizedTargetPath);
-            if (subDent.isDir)
-            {
-                if (followedSymlinks.find(subSymlink))
-                {
-                    dln("Infinite recursion in ", subSymlink);
-                    return null;
-                }
-                followedSymlinks ~= subSymlink;
-                currDir = getDir(rootDir, subSymlink.absoluteNormalizedTargetPath, subDent, followedSymlinks); // TODO: Check for infinite recursion
-            }
-            else
-            {
-                dln("Loaded path " ~ dirPath ~ " is not a directory");
-                return null;
-            }
-        }
-        else
-        {
-            return null;
-        }
-    }
-    return currDir;
-}
-
-/** (Cached) Lookup of Directory $(D dirPath). */
-Dir getDir(NotNull!Dir rootDir, string dirPath) @trusted
-{
-    Symlink[] followedSymlinks;
-    try
-    {
-        auto dirDent = DirEntry(dirPath);
-        return getDir(rootDir, dirPath, dirDent, followedSymlinks);
-    }
-    catch (FileException)
-    {
-        dln("Exception getting Dir");
-        return null;
-    }
-}
-unittest {
-    /* auto tmp = tempfile("/tmp/fsfile"); */
-}
-
-enum ulong mmfile_size = 0; // 100*1024
-
-auto pageSize() @trusted
-{
-    version(linux)
-    {
-        import core.sys.posix.sys.shm: __getpagesize;
-        return __getpagesize();
-    }
-    else
-    {
-        return 4096;
-    }
-}
-
-enum KeyStrictness
-{
-    exact,
-    acronym,
-    eitherExactOrAcronym,
-    standard = eitherExactOrAcronym,
-}
-
-/** Language Operator Associativity. */
-enum OpAssoc { none,
-               LR, // Left-to-Right
-               RL, // Right-to-Left
-}
-
-/** Language Operator Arity. */
-enum OpArity
-{
-    unknown,
-    unaryPostfix, // 1-arguments
-    unaryPrefix, // 1-arguments
-    binary, // 2-arguments
-    ternary, // 3-arguments
-}
-
-/** Language Operator. */
-struct Op
-{
-    this(string op,
-         OpArity arity = OpArity.unknown,
-         OpAssoc assoc = OpAssoc.none,
-         byte prec = -1,
-         string desc = [])
-    {
-        this.op = op;
-        this.arity = arity;
-        this.assoc = assoc;
-        this.prec = prec;
-        this.desc = desc;
-    }
-    /** Make $(D this) an alias of $(D opOrig). */
-    Op aliasOf(string opOrig)
-    {
-        // TODO: set relation in map from op to opOrig
-        return this;
-    }
-    string op; // Operator. TODO: Optimize this storage using a value type?
-    string desc; // Description
-    OpAssoc assoc; // Associativity
-    ubyte prec; // Precedence
-    OpArity arity; // Arity
-    bool overloadable; // Overloadable
-}
-
-/** Language Operator Alias. */
-struct OpAlias
-{
-    this(string op, string opOrigin)
-    {
-        this.op = op;
-        this.opOrigin = opOrigin;
-    }
-    string op;
-    string opOrigin;
-}
-
-/** File System Scanner. */
-class Scanner(Term)
-{
-    this(string[] args, ref Term term)
-    {
-        _scanChunkSize = 32*pageSize();
-        loadDirKinds();
-        loadFileKinds();
-        prepare(args, term);
-    }
-
-    SysTime _currTime;
-    import std.getopt;
-    import std.string: toLower, toUpper, startsWith, CaseSensitive;
-    import std.mmfile;
-    import std.stdio: writeln, stdout, stderr, stdin, popen;
-    import std.algorithm: find, count, countUntil, min, splitter;
-    import std.range: join;
-    import std.conv: to;
-
-    import core.sys.posix.sys.mman;
-    import core.sys.posix.pwd: passwd, getpwuid_r;
-    version(linux)
-    {
-        // import core.sys.linux.sys.inotify;
-        import core.sys.linux.sys.xattr;
-    }
-    import core.sys.posix.unistd: getuid, getgid;
-    import std.file: read, FileException, exists, getcwd;
-    import std.path: extension, buildNormalizedPath, expandTilde, absolutePath;
-    import std.range: retro;
-    import std.exception: ErrnoException;
-    import core.sys.posix.sys.stat: stat_t, S_IRUSR, S_IRGRP, S_IROTH;
-    import std.string: chompPrefix;
-
-    uint64_t _hitsCountTotal = 0;
-
-    Symlink[] _brokenSymlinks;
-
     // Directories
     DirKind[] vcDirKinds;
     DirKind[string] vcDirKindsMap;
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
-    void loadDirKinds()
-    {
-        vcDirKinds ~= new DirKind(".git",  "Git");
-        vcDirKinds ~= new DirKind(".svn",  "Subversion (Svn)");
-        vcDirKinds ~= new DirKind(".bzr",  "Bazaar (Bzr)");
-        vcDirKinds ~= new DirKind("RCS",  "RCS");
-        vcDirKinds ~= new DirKind("CVS",  "CVS");
-        vcDirKinds ~= new DirKind("MCVS",  "MCVS");
-        vcDirKinds ~= new DirKind("RCS",  "RCS");
-        vcDirKinds ~= new DirKind(".hg",  "Mercurial (Hg)");
-        vcDirKinds ~= new DirKind("SCCS",  "SCCS");
-        vcDirKinds ~= new DirKind(".wact",  "WACT");
-        vcDirKinds ~= new DirKind("_MTN",  "Monotone");
-        vcDirKinds ~= new DirKind("_darcs",  "Darcs");
-        vcDirKinds ~= new DirKind("{arch}",  "Arch");
-
-        foreach (kind; vcDirKinds) { skippedDirKinds ~= kind; }
-
-        foreach (kind; vcDirKinds) { vcDirKindsMap[kind.fileName] = kind; }
-        vcDirKindsMap.rehash;
-
-        skippedDirKinds ~= new DirKind(".trash",  "Trash");
-        skippedDirKinds ~= new DirKind(".undo",  "Undo");
-        skippedDirKinds ~= new DirKind(".deps",  "Dependencies");
-        skippedDirKinds ~= new DirKind(".backups",  "Backups");
-        skippedDirKinds ~= new DirKind(".autom4te.cache",  "Automake Cache");
-
-        foreach (kind; skippedDirKinds) { skippedDirKindsMap[kind.fileName] = kind; }
-        skippedDirKindsMap.rehash;
-    }
 
     FKind[] srcFKinds; // Source Kinds
     FKind[string] srcFKindsByName;
@@ -3238,9 +2344,9 @@ class Scanner(Term)
 
         // Au
         auto auKind = new FKind("Au", [], ["au", "snd"], ".snd", 0, [], [],
-                               [], // N/A
-                               defaultStringDelims,
-                               FileContent.audio, FileKindDetection.equalsNameAndContents);
+                                [], // N/A
+                                defaultStringDelims,
+                                FileContent.audio, FileKindDetection.equalsNameAndContents);
         auKind.wikiURL = "https://en.wikipedia.org/wiki/Au_file_format";
         binFKinds ~= auKind;
 
@@ -3293,7 +2399,7 @@ class Scanner(Term)
                                [], // N/A
                                defaultStringDelims,
                                FileContent.spellCheckWordList,
-                             FileKindDetection.equalsNameAndContents);
+                               FileKindDetection.equalsNameAndContents);
 
         binFKinds ~= new FKind("LZW-Compressed", [], ["z", "tar.z"], x"1F9D", 0, [], [],
                                [], // N/A
@@ -3505,15 +2611,924 @@ class Scanner(Term)
         import std.range: chain;
         foreach (kind; chain(srcFKinds, binFKinds))
         {
-            gstats.allKindsById[kind.behaviorId] = kind;
+            allKindsById[kind.behaviorId] = kind;
         }
-        gstats.allKindsById.rehash;
+        allKindsById.rehash;
 
     }
 
     // Code
 
     // Interpret Command Line
+    void loadDirKinds()
+    {
+        vcDirKinds ~= new DirKind(".git",  "Git");
+        vcDirKinds ~= new DirKind(".svn",  "Subversion (Svn)");
+        vcDirKinds ~= new DirKind(".bzr",  "Bazaar (Bzr)");
+        vcDirKinds ~= new DirKind("RCS",  "RCS");
+        vcDirKinds ~= new DirKind("CVS",  "CVS");
+        vcDirKinds ~= new DirKind("MCVS",  "MCVS");
+        vcDirKinds ~= new DirKind("RCS",  "RCS");
+        vcDirKinds ~= new DirKind(".hg",  "Mercurial (Hg)");
+        vcDirKinds ~= new DirKind("SCCS",  "SCCS");
+        vcDirKinds ~= new DirKind(".wact",  "WACT");
+        vcDirKinds ~= new DirKind("_MTN",  "Monotone");
+        vcDirKinds ~= new DirKind("_darcs",  "Darcs");
+        vcDirKinds ~= new DirKind("{arch}",  "Arch");
+
+        skippedDirKinds ~= vcDirKinds;
+
+        DirKind[string] vcDirKindsMap_;
+        foreach (kind; vcDirKinds)
+        {
+            vcDirKindsMap[kind.fileName] = kind;
+        }
+        vcDirKindsMap.rehash;
+
+        skippedDirKinds ~= new DirKind(".trash",  "Trash");
+        skippedDirKinds ~= new DirKind(".undo",  "Undo");
+        skippedDirKinds ~= new DirKind(".deps",  "Dependencies");
+        skippedDirKinds ~= new DirKind(".backups",  "Backups");
+        skippedDirKinds ~= new DirKind(".autom4te.cache",  "Automake Cache");
+
+        foreach (kind; skippedDirKinds) { skippedDirKindsMap[kind.fileName] = kind; }
+        skippedDirKindsMap.rehash;
+    }
+
+    bool showNameDups = false;
+    bool showTreeContentDups = false;
+    bool showFileContentDups = false;
+    bool linkContentDups = false;
+
+    bool showLinkDups = false;
+    SymlinkFollowContext followSymlinks = SymlinkFollowContext.external;
+    bool showBrokenSymlinks = true;
+    bool showSymlinkCycles = true;
+
+    bool showAnyDups = false;
+    bool showMMaps = false;
+    bool showUsage = false;
+    bool showSHA1 = false;
+    bool showLineCounts = false;
+
+    uint64_t noFiles = 0;
+    uint64_t noRegFiles = 0;
+    uint64_t noSymlinks = 0;
+    uint64_t noSpecialFiles = 0;
+    uint64_t noDirs = 0;
+
+    uint64_t noScannedFiles = 0;
+    uint64_t noScannedRegFiles = 0;
+    uint64_t noScannedSymlinks = 0;
+    uint64_t noScannedSpecialFiles = 0;
+    uint64_t noScannedDirs = 0;
+
+    auto shallowDensenessSum = Rational!ulong(0, 1);
+    auto deepDensenessSum = Rational!ulong(0, 1);
+    uint64_t densenessCount = 0;
+
+}
+
+struct Results
+{
+    size_t numTotalHits; // Number of total hits.
+    size_t numFilesWithHits; // Number of files with hits
+    Bytes64 noBytesTotal; // Number of bytes total.
+    Bytes64 noBytesTotalContents; // Number of contents bytes total.
+    Bytes64 noBytesScanned; // Number of bytes scanned.
+    Bytes64 noBytesSkipped; // Number of bytes skipped.
+    Bytes64 noBytesUnreadable; // Number of bytes unreadable.
+}
+
+version(cerealed)
+{
+    void grain(T)(ref Cereal cereal, ref SysTime systime)
+    {
+        auto stdTime = systime.stdTime;
+        cereal.grain(stdTime);
+        if (stdTime != 0)
+        {
+            systime = SysTime(stdTime);
+        }
+    }
+}
+
+/** Directory Sorting Order. */
+enum DirSorting
+{
+    /* onTimeCreated, /\* Windows only. Currently stored in Linux on ext4 but no */
+    /*               * standard interface exists yet, it will probably be called */
+    /*               * xstat(). *\/ */
+    onTimeLastModified,
+    onTimeLastAccessed,
+    onSize,
+    onNothing,
+}
+
+enum BuildType
+{
+    none,    // Don't compile
+    devel,   // Compile with debug symbols
+    release, // Compile without debugs symbols and optimizations
+    standard = devel,
+}
+
+enum PathFormat
+{
+    absolute,
+    relative,
+}
+
+/** Dir.
+ */
+class Dir : File
+{
+    /** Construct File System Root Directory. */
+    this(Dir parent = null, GStats gstats = null)
+    {
+        super(parent);
+        this._gstats = gstats;
+        if (gstats) { ++gstats.noDirs; }
+    }
+
+    this(string root_path, GStats gstats)
+        in { assert(root_path == "/"); assert(gstats); }
+    body
+    {
+        auto rootDent = DirEntry(root_path);
+        Dir rootParent = null;
+        this(rootDent, rootParent, gstats);
+    }
+
+    this(ref DirEntry dent, Dir parent, GStats gstats)
+        in { assert(gstats); }
+    body
+    {
+        this(dent.name.baseName, parent, dent.size.Bytes64, dent.timeLastModified, dent.timeLastAccessed, gstats);
+    }
+
+    this(string name, Dir parent, Bytes64 size, SysTime timeLastModified, SysTime timeLastAccessed,
+         GStats gstats = null)
+    {
+        super(name, parent, size, timeLastModified, timeLastAccessed);
+        this._gstats = gstats;
+        if (gstats) { ++gstats.noDirs; }
+    }
+
+    override Bytes64 treeSize() @property @trusted /* @safe nothrow */
+    {
+        if (_treeSize.untouched)
+        {
+            _treeSize = (this.size +
+                         reduce!"a+b"(0.Bytes64,
+                                      subs.byValue.map!"a.treeSize")); // recurse!
+        }
+        return _treeSize.get.bytes;
+    }
+
+    /** Returns: Directory Tree Content Id of $(D this). */
+    override const(SHA1Digest) treeContentId() @property @trusted /* @safe nothrow */
+    {
+        if (_treeContentId.untouched)
+        {
+            _treeContentId = subs.byValue.map!"a.treeContentId".sha1Of;
+            assert(_treeContentId, "Zero digest");
+            gstats.filesByContentId[_treeContentId] ~= assumeNotNull(cast(File)this); // TODO: Avoid cast when DMD and NotNull is fixed
+        }
+        return _treeContentId;
+    }
+
+    override Face!Color face() const @property @safe pure nothrow { return dirFace; }
+
+    /** Return true if $(D this) is a file system root directory. */
+    bool isRoot() @property @safe const pure nothrow { return !parent; }
+
+    GStats gstats(GStats gstats) @property @safe pure /* nothrow */ {
+        return this._gstats = gstats;
+    }
+    GStats gstats() @property @safe nothrow
+    {
+        if (!_gstats && this.parent)
+        {
+            _gstats = this.parent.gstats();
+        }
+        return _gstats;
+    }
+
+    /** Returns: Depth of Depth from File System root to this File. */
+    override int depth() @property @safe nothrow
+    {
+        if (_depth ==- 1)
+        {
+            _depth = parent ? parent.depth + 1 : 0; // memoized depth
+        }
+        return _depth;
+    }
+
+    /** Scan $(D this) recursively for a non-diretory file with basename $(D name).
+        TODO: Reuse range based algorithm this.tree(depthFirst|breadFirst)
+     */
+    File find(string name) @property
+    {
+        auto subs_ = subs();
+        if (name in subs_)
+        {
+            auto hit = subs_[name];
+            Dir hitDir = cast(Dir)hit;
+            if (!hitDir) // if not a directory
+                return hit;
+        }
+        else
+        {
+            foreach (sub; subs_)
+            {
+                Dir subDir = cast(Dir)sub;
+                if (subDir)
+                {
+                    auto hit = subDir.find(name);
+                    if (hit) // if not a directory
+                        return hit;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Append Tree Statistics. */
+    void addTreeStatsFromSub(F)(NotNull!F subFile, ref DirEntry subDent)
+    {
+        if (subDent.isFile)
+        {
+            /* _treeSize += subDent.size.Bytes64; */
+            // dln("Updating ", _treeSize, " of ", path);
+
+            /** TODO: Move these overloads to std.datetime */
+            auto ref min(in SysTime a, in SysTime b) @trusted pure nothrow { return (a < b ? a : b); }
+            auto ref max(in SysTime a, in SysTime b) @trusted pure nothrow { return (a > b ? a : b); }
+
+            const lastMod = subDent.timeLastModified;
+            _timeModifiedInterval = Interval!SysTime(min(lastMod, _timeModifiedInterval.begin),
+                                                     max(lastMod, _timeModifiedInterval.end));
+            const lastAcc = subDent.timeLastAccessed;
+            _timeAccessedInterval = Interval!SysTime(min(lastAcc, _timeAccessedInterval.begin),
+                                                     max(lastAcc, _timeAccessedInterval.end));
+        }
+    }
+
+    /** Update Statistics for Sub-File $(D sub) with $(D subDent) of $(D this) Dir. */
+    void updateStats(F)(NotNull!F subFile, ref DirEntry subDent, bool isRegFile)
+    {
+        auto lGS = gstats();
+        if (lGS)
+        {
+            if (lGS.showNameDups/*  && */
+                /* !subFile.underAnyDir!(a => a.name in lGS.skippedDirKindsMap) */)
+            {
+                lGS.filesByName[subFile.name] ~= cast(NotNull!File)subFile;
+            }
+            if (lGS.showLinkDups &&
+                isRegFile)
+            {
+                import core.sys.posix.sys.stat;
+                immutable stat_t stat = subDent.statBuf();
+                if (stat.st_nlink >= 2)
+                {
+                    lGS.filesByInode[stat.st_ino] ~= cast(NotNull!File)subFile;
+                }
+            }
+        }
+    }
+
+    /** Load Contents of $(D this) Directory from Disk using DirEntries.
+        Returns: true iff Dir was updated (reread) from disk.
+    */
+    bool load(int depth = 0, bool force = false)
+    {
+        import std.range: empty;
+        if (!_obseleteDir && // already loaded
+            !force)          // and not forced reload
+        {
+            return false;    // signal already scanned
+        }
+
+        // dln("Zeroing ", _treeSize, " of ", path);
+        _treeSize.reset; // this.size;
+        auto oldSubs = _subs;
+        _subs.reset;
+        assert(_subs.length == 0); // TODO: Remove when verified
+
+        import std.file: dirEntries, SpanMode;
+        auto entries = dirEntries(path, SpanMode.shallow, false); // false: skip symlinks
+        foreach (dent; entries)
+        {
+            immutable basename = dent.name.baseName;
+            File sub = null;
+            if (basename in oldSubs)
+            {
+                sub = oldSubs[basename]; // reuse from previous cache
+            }
+            else
+            {
+                bool isRegFile = false;
+                if (dent.isSymlink)
+                {
+                    sub = new Symlink(dent, assumeNotNull(this));
+                }
+                else if (dent.isDir)
+                {
+                    sub = new Dir(dent, this, gstats);
+                }
+                else if (dent.isFile)
+                {
+                    // TODO: Delay construction of and specific files such as
+                    // CFile, ELFFile, after FKind-recognition has been made.
+                    sub = new RegFile(dent, assumeNotNull(this));
+                    isRegFile = true;
+                }
+                else
+                {
+                    sub = new SpecFile(dent, assumeNotNull(this));
+                }
+                updateStats(enforceNotNull(sub), dent, isRegFile);
+            }
+            auto nnsub = enforceNotNull(sub);
+            addTreeStatsFromSub(nnsub, dent);
+            _subs[basename] = nnsub;
+        }
+        _subs.rehash;           // optimize hash for faster lookups
+
+        _obseleteDir = false;
+        return true;
+    }
+
+    bool reload(int depth = 0) { return load(depth, true); }
+    alias sync = reload;
+
+    /* TODO: Can we get make this const to the outside world perhaps using inout? */
+    ref NotNull!File[string] subs() @property { load(); return _subs; }
+
+    NotNull!File[] subsSorted(DirSorting sorted = DirSorting.onTimeLastModified) @property
+    {
+        load();
+        auto ssubs = _subs.values;
+        /* TODO: Use radix sort to speed things up. */
+        final switch (sorted)
+        {
+            /* case DirSorting.onTimeCreated: */
+            /*     break; */
+        case DirSorting.onTimeLastModified:
+            ssubs.sort!((a, b) => (a.timeLastModified >
+                                   b.timeLastModified));
+            break;
+        case DirSorting.onTimeLastAccessed:
+            ssubs.sort!((a, b) => (a.timeLastAccessed >
+                                   b.timeLastAccessed));
+            break;
+        case DirSorting.onSize:
+            ssubs.sort!((a, b) => (a.size >
+                                   b.size));
+            break;
+        case DirSorting.onNothing:
+            break;
+        }
+        return ssubs;
+    }
+
+    File sub(Name)(Name sub_name)
+    {
+        load();
+        return (sub_name in _subs) ? _subs[sub_name] : null;
+    }
+    File sub(File sub)
+    {
+        load();
+        return (sub.path in _subs) != null ? sub : null;
+    }
+
+    version(cerealed)
+    {
+        void accept(Cereal cereal)
+        {
+            auto stdTime = timeLastModified.stdTime;
+            cereal.grain(name, size, stdTime);
+            timeLastModified = SysTime(stdTime);
+        }
+    }
+    version(msgpack)
+    {
+        /** Construct from msgpack $(D unpacker).  */
+        this(Unpacker)(ref Unpacker unpacker)
+        {
+            fromMsgpack(msgpack.Unpacker(unpacker));
+        }
+
+        void toMsgpack(Packer)(ref Packer packer) const
+        {
+            /* writeln("Entering Dir.toMsgpack ", this.name); */
+            packer.pack(name, size,
+                        timeLastModified.stdTime,
+                        timeLastAccessed.stdTime,
+                        kind);
+
+            // Contents
+            /* TODO: serialize map of polymorphic objects using
+             * packer.packArray(_subs) and type trait lookup up all child-classes of
+             * File */
+            packer.pack(_subs.length);
+
+            if (_subs.length >= 1)
+            {
+                auto diffsLastModified = _subs.byValue.map!"a.timeLastModified.stdTime".encodeForwardDifference;
+                auto diffsLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime".encodeForwardDifference;
+                /* auto timesLastModified = _subs.byValue.map!"a.timeLastModified.stdTime"; */
+                /* auto timesLastAccessed = _subs.byValue.map!"a.timeLastAccessed.stdTime"; */
+
+                packer.pack(diffsLastModified, diffsLastAccessed);
+
+                /* debug dln(this.name, " sub.length: ", _subs.length); */
+                /* debug dln(name, " modified diffs: ", diffsLastModified.pack.length); */
+                /* debug dln(name, " accessed diffs: ", diffsLastAccessed.pack.length); */
+                /* debug dln(name, " modified: ", timesLastModified.array.pack.length); */
+                /* debug dln(name, " accessed: ", timesLastAccessed.array.pack.length); */
+            }
+
+            foreach (sub; _subs)
+            {
+                if        (const regfile = cast(RegFile)sub)
+                {
+                    packer.pack("RegFile");
+                    regfile.toMsgpack(packer);
+                }
+                else if (const dir = cast(Dir)sub)
+                {
+                    packer.pack("Dir");
+                    dir.toMsgpack(packer);
+                }
+                else if (const symlink = cast(Symlink)sub)
+                {
+                    packer.pack("Symlink");
+                    symlink.toMsgpack(packer);
+                }
+                else if (const special = cast(SpecFile)sub)
+                {
+                    packer.pack("SpecFile");
+                    special.toMsgpack(packer);
+                }
+                else
+                {
+                    immutable subClassName = sub.classinfo.name;
+                    assert(false, "Unknown sub File class " ~ subClassName); // TODO: Exception
+                }
+            }
+        }
+
+        void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
+        {
+            unpacker.unpack(name, size);
+
+            long stdTime;
+            unpacker.unpack(stdTime); timeLastModified = SysTime(stdTime); // TODO: Functionize
+            unpacker.unpack(stdTime); timeLastAccessed = SysTime(stdTime); // TODO: Functionize
+
+            /* dln("before:", path, " ", size, " ", timeLastModified, " ", timeLastAccessed); */
+
+            // FKind
+            if (!kind) { kind = null; }
+            unpacker.unpack(kind); /* TODO: kind = new DirKind(unpacker); */
+            /* dln("after:", path); */
+
+            _treeSize.reset; // this.size;
+
+            // Contents
+            /* TODO: unpacker.unpack(_subs); */
+            immutable noPreviousSubs = _subs.length == 0;
+            size_t subs_length; unpacker.unpack(subs_length); // TODO: Functionize to unpacker.unpack!size_t()
+
+            ForwardDifferenceCode!(long[]) diffsLastModified,
+                diffsLastAccessed;
+            if (subs_length >= 1)
+            {
+                unpacker.unpack(diffsLastModified, diffsLastAccessed);
+                /* auto x = diffsLastModified.decodeForwardDifference; */
+            }
+
+            foreach (ix; 0..subs_length) // repeat for subs_length times
+            {
+                string subClassName; unpacker.unpack(subClassName); // TODO: Functionize
+                File sub = null;
+                try
+                {
+                    switch (subClassName)
+                    {
+                    default:
+                        assert(false, "Unknown File parent class " ~ subClassName); // TODO: Exception
+                    case "Dir":
+                        auto subDir = assumeNotNull(new Dir(this, gstats));
+                        unpacker.unpack(subDir); sub = subDir;
+                        auto subDent = DirEntry(sub.path);
+                        subDir.checkObseleted(subDent); // Invalidate Statistics using fresh CStat if needed
+                        addTreeStatsFromSub(subDir, subDent);
+                        break;
+                    case "RegFile":
+                        auto subRegFile = assumeNotNull(new RegFile(assumeNotNull(this)));
+                        unpacker.unpack(subRegFile); sub = subRegFile;
+                        auto subDent = DirEntry(sub.path);
+                        subRegFile.checkObseleted(subDent); // Invalidate Statistics using fresh CStat if needed
+                        updateStats(subRegFile, subDent, true);
+                        addTreeStatsFromSub(subRegFile, subDent);
+                        break;
+                    case "Symlink":
+                        auto subSymlink = assumeNotNull(new Symlink(assumeNotNull(this)));
+                        unpacker.unpack(subSymlink); sub = subSymlink;
+                        break;
+                    case "SpecFile":
+                        auto SpecFile = assumeNotNull(new SpecFile(assumeNotNull(this)));
+                        unpacker.unpack(SpecFile); sub = SpecFile;
+                        break;
+                    }
+                    if (noPreviousSubs ||
+                        !(sub.name in _subs))
+                    {
+                        _subs[sub.name] = enforceNotNull(sub);
+                    }
+                    /* dln("Unpacked Dir sub ", sub.path, " of type ", subClassName); */
+                } catch (FileException) { // this may be a too generic exception
+                    /* dln(sub.path, " is not accessible anymore"); */
+                }
+            }
+
+        }
+    }
+
+    override void makeObselete() @trusted
+    {
+        _obseleteDir = true;
+        _treeSize.reset;
+        _timeModifiedInterval.reset;
+        _timeAccessedInterval.reset;
+    }
+    override void makeUnObselete() @safe
+    {
+        _obseleteDir = false;
+    }
+
+    private NotNull!File[string] _subs; // Directory contents
+    DirKind kind;               // Kind of this directory
+    uint64_t hitCount = 0;
+    private int _depth = -1;            // Memoized Depth
+    private bool _obseleteDir = true;  // Flags that this is obselete
+    GStats _gstats = null;
+
+    /* TODO: Reuse Span and span in Phobos. (Span!T).init should be (T.max, T.min) */
+    Interval!SysTime _timeModifiedInterval;
+    Interval!SysTime _timeAccessedInterval;
+
+    Nullable!(size_t, size_t.max) _treeSize; // Size of tree with this directory as root.
+    /* TODO: Make this work instead: */
+    /* import std.typecons: Nullable; */
+    /* Nullable!(Bytes64, Bytes64.max) _treeSize; // Size of tree with this directory as root. */
+
+    SHA1Digest _treeContentId;
+}
+
+/** Externally Directory Memoized Calculation of Tree Size.
+    Is it possible to make get any of @safe pure nothrow?
+ */
+Bytes64 treeSizeMemoized(NotNull!File file, Bytes64[File] cache) @trusted /* nothrow */
+{
+    typeof(return) sum = file.size;
+    if (auto dir = cast(Dir)file)
+    {
+        if (file in cache)
+        {
+            sum = cache[file];
+        }
+        else
+        {
+            foreach (sub; dir.subs.byValue)
+            {
+                sum += treeSizeMemoized(sub, cache);
+            }
+            cache[file] = sum;
+        }
+    }
+    return sum;
+}
+
+/** Save File System Tree Cache under Directory $(D rootDir).
+    Returns: Serialized Byte Array.
+*/
+const(ubyte[]) saveRootDirTree(Viz viz,
+                               Dir rootDir, string cacheFile) @trusted
+{
+    immutable tic = Clock.currTime;
+    version(msgpack)
+    {
+        const data = rootDir.pack();
+        import std.file: write;
+    }
+    else version(cerealed)
+         {
+             auto enc = new Cerealiser(); // encoder
+             enc ~= rootDir;
+             auto data = enc.bytes;
+         }
+    else
+    {
+        ubyte[] data;
+    }
+    cacheFile.write(data);
+    immutable toc = Clock.currTime;
+
+    viz.ppln("Cache Write".asH!2,
+             "Wrote tree cache of size ",
+             data.length.Bytes64, " to ",
+             asPath(cacheFile),
+             " in ",
+             shortDurationString(toc - tic));
+
+    return data;
+}
+
+/** Load File System Tree Cache from $(D cacheFile).
+    Returns: Root Directory of Loaded Tree.
+*/
+Dir loadRootDirTree(Viz viz,
+                    string cacheFile, GStats gstats) @trusted
+{
+    immutable tic = Clock.currTime;
+
+    import std.file: read;
+    try
+    {
+        const data = read(cacheFile);
+
+        auto rootDir = new Dir(cast(Dir)null, gstats);
+        version(msgpack)
+        {
+            unpack(cast(ubyte[])data, rootDir); /* Dir rootDir = new Dir(cast(const(ubyte)[])data); */
+        }
+        immutable toc = Clock.currTime;
+
+        viz.pp("Cache Read".asH!2,
+               "Read cache of size ",
+               data.length.Bytes64, " from ",
+               asPath(cacheFile),
+               " in ",
+               shortDurationString(toc - tic), " containing",
+               asUList(asItem(gstats.noDirs, " Dirs,"),
+                       asItem(gstats.noRegFiles, " Regular Files,"),
+                       asItem(gstats.noSymlinks, " Symbolic Links,"),
+                       asItem(gstats.noSpecialFiles, " Special Files,"),
+                       asItem("totalling ", gstats.noFiles + 1, " Files")));
+        assert(gstats.noDirs +
+               gstats.noRegFiles +
+               gstats.noSymlinks +
+               gstats.noSpecialFiles == gstats.noFiles + 1);
+        return rootDir;
+    }
+    catch (FileException)
+    {
+        viz.ppln("Failed to read cache from ", cacheFile);
+        return null;
+    }
+}
+
+Dir[] getDirs(NotNull!Dir rootDir, string[] topDirNames)
+{
+    Dir[] topDirs;
+    foreach (topName; topDirNames)
+    {
+        Dir topDir = getDir(rootDir, topName);
+
+        if (!topDir)
+        {
+            dln("Directory " ~ topName ~ " is missing");
+        }
+        else
+        {
+            topDirs ~= topDir;
+        }
+    }
+    return topDirs;
+}
+
+/** (Cached) Lookup of File $(D filePath).
+ */
+File getFile(NotNull!Dir rootDir, string filePath,
+             bool isDir = false,
+             bool tolerant = false) @trusted
+{
+    if (isDir)
+    {
+        return getDir(rootDir, filePath);
+    }
+    else
+    {
+        auto parentDir = getDir(rootDir, filePath.dirName);
+        if (parentDir)
+        {
+            auto hit = parentDir.sub(filePath.baseName);
+            if (hit)
+                return hit;
+            else
+            {
+                dln("File path " ~ filePath ~ " doesn't exist. TODO: Query user to instead find it under "
+                    ~ parentDir.path);
+                parentDir.find(filePath.baseName);
+            }
+        }
+        else
+        {
+            dln("Directory " ~ parentDir.path ~ " doesn't exist");
+        }
+    }
+    return null;
+}
+
+/** (Cached) Lookup of Directory $(D dirpath).
+    Returns: Dir if present under rootDir, null otherwise.
+    TODO: Make use of dent
+*/
+import std.path: isRooted;
+Dir getDir(NotNull!Dir rootDir, string dirPath, ref DirEntry dent,
+           ref Symlink[] followedSymlinks) @trusted
+    in { assert(dirPath.isRooted); }
+body
+{
+    Dir currDir = rootDir;
+
+    import std.range: drop;
+    import std.path: pathSplitter;
+    foreach (part; dirPath.pathSplitter().drop(1)) // all but first
+    {
+        auto sub = currDir.sub(part);
+        if        (auto subDir = cast(Dir)sub)
+        {
+            currDir = subDir;
+        }
+        else if (auto subSymlink = cast(Symlink)sub)
+        {
+            auto subDent = DirEntry(subSymlink.absoluteNormalizedTargetPath);
+            if (subDent.isDir)
+            {
+                if (followedSymlinks.find(subSymlink))
+                {
+                    dln("Infinite recursion in ", subSymlink);
+                    return null;
+                }
+                followedSymlinks ~= subSymlink;
+                currDir = getDir(rootDir, subSymlink.absoluteNormalizedTargetPath, subDent, followedSymlinks); // TODO: Check for infinite recursion
+            }
+            else
+            {
+                dln("Loaded path " ~ dirPath ~ " is not a directory");
+                return null;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+    return currDir;
+}
+
+/** (Cached) Lookup of Directory $(D dirPath). */
+Dir getDir(NotNull!Dir rootDir, string dirPath) @trusted
+{
+    Symlink[] followedSymlinks;
+    try
+    {
+        auto dirDent = DirEntry(dirPath);
+        return getDir(rootDir, dirPath, dirDent, followedSymlinks);
+    }
+    catch (FileException)
+    {
+        dln("Exception getting Dir");
+        return null;
+    }
+}
+unittest {
+    /* auto tmp = tempfile("/tmp/fsfile"); */
+}
+
+enum ulong mmfile_size = 0; // 100*1024
+
+auto pageSize() @trusted
+{
+    version(linux)
+    {
+        import core.sys.posix.sys.shm: __getpagesize;
+        return __getpagesize();
+    }
+    else
+    {
+        return 4096;
+    }
+}
+
+enum KeyStrictness
+{
+    exact,
+    acronym,
+    eitherExactOrAcronym,
+    standard = eitherExactOrAcronym,
+}
+
+/** Language Operator Associativity. */
+enum OpAssoc { none,
+               LR, // Left-to-Right
+               RL, // Right-to-Left
+}
+
+/** Language Operator Arity. */
+enum OpArity
+{
+    unknown,
+    unaryPostfix, // 1-arguments
+    unaryPrefix, // 1-arguments
+    binary, // 2-arguments
+    ternary, // 3-arguments
+}
+
+/** Language Operator. */
+struct Op
+{
+    this(string op,
+         OpArity arity = OpArity.unknown,
+         OpAssoc assoc = OpAssoc.none,
+         byte prec = -1,
+         string desc = [])
+    {
+        this.op = op;
+        this.arity = arity;
+        this.assoc = assoc;
+        this.prec = prec;
+        this.desc = desc;
+    }
+    /** Make $(D this) an alias of $(D opOrig). */
+    Op aliasOf(string opOrig)
+    {
+        // TODO: set relation in map from op to opOrig
+        return this;
+    }
+    string op; // Operator. TODO: Optimize this storage using a value type?
+    string desc; // Description
+    OpAssoc assoc; // Associativity
+    ubyte prec; // Precedence
+    OpArity arity; // Arity
+    bool overloadable; // Overloadable
+}
+
+/** Language Operator Alias. */
+struct OpAlias
+{
+    this(string op, string opOrigin)
+    {
+        this.op = op;
+        this.opOrigin = opOrigin;
+    }
+    string op;
+    string opOrigin;
+}
+
+/** File System Scanner. */
+class Scanner(Term)
+{
+    this(string[] args, ref Term term)
+    {
+        prepare(args, term);
+    }
+
+    SysTime _currTime;
+    import std.getopt;
+    import std.string: toLower, toUpper, startsWith, CaseSensitive;
+    import std.mmfile;
+    import std.stdio: writeln, stdout, stderr, stdin, popen;
+    import std.algorithm: find, count, countUntil, min, splitter;
+    import std.range: join;
+    import std.conv: to;
+
+    import core.sys.posix.sys.mman;
+    import core.sys.posix.pwd: passwd, getpwuid_r;
+    version(linux)
+    {
+        // import core.sys.linux.sys.inotify;
+        import core.sys.linux.sys.xattr;
+    }
+    import core.sys.posix.unistd: getuid, getgid;
+    import std.file: read, FileException, exists, getcwd;
+    import std.path: extension, buildNormalizedPath, expandTilde, absolutePath;
+    import std.range: retro;
+    import std.exception: ErrnoException;
+    import core.sys.posix.sys.stat: stat_t, S_IRUSR, S_IRGRP, S_IROTH;
+    import std.string: chompPrefix;
+
+    uint64_t _hitsCountTotal = 0;
+
+    Symlink[] _brokenSymlinks;
+
     bool _beVerbose = false;
     bool _caseFold = false;
     bool _showSkipped = false;
@@ -3575,6 +3590,10 @@ class Scanner(Term)
 
     void prepare(string[] args, ref Term term)
     {
+        _scanChunkSize = 32*pageSize();
+        gstats.loadFileKinds();
+        gstats.loadDirKinds;
+
         bool helpPrinted = getoptEx("FS --- File System Scanning Utility in D.\n" ~
                                     "Usage: fs { --switches } [KEY]...\n" ~
                                     "Note that scanning for multiple KEYs is possible.\nIf so hits are highlighted in different colors!\n" ~
@@ -3753,17 +3772,17 @@ class Scanner(Term)
         {
             foreach (lang; includedTypes.splitter(","))
             {
-                if (lang in srcFKindsByName)
+                if (lang in gstats.srcFKindsByName)
                 {
-                    incKinds ~= srcFKindsByName[lang];
+                    gstats.incKinds ~= gstats.srcFKindsByName[lang];
                 }
-                else if (lang.toLower in srcFKindsByName)
+                else if (lang.toLower in gstats.srcFKindsByName)
                 {
-                    incKinds ~= srcFKindsByName[lang.toLower];
+                    gstats.incKinds ~= gstats.srcFKindsByName[lang.toLower];
                 }
-                else if (lang.toUpper in srcFKindsByName)
+                else if (lang.toUpper in gstats.srcFKindsByName)
                 {
-                    incKinds ~= srcFKindsByName[lang.toUpper];
+                    gstats.incKinds ~= gstats.srcFKindsByName[lang.toUpper];
                 }
                 else
                 {
@@ -3773,15 +3792,15 @@ class Scanner(Term)
         }
 
         // Maps extension string to Included FileKinds
-        foreach (kind; incKinds)
+        foreach (kind; gstats.incKinds)
         {
             foreach (ext; kind.exts)
             {
-                incKindsByName[ext] ~= kind;
+                gstats.incKindsByName[ext] ~= kind;
             }
             gstats.incKindsById[kind.behaviorId] = kind;
         }
-        incKindsByName.rehash;
+        gstats.incKindsByName.rehash;
         gstats.incKindsById.rehash;
 
         // Keys
@@ -3790,7 +3809,8 @@ class Scanner(Term)
         string commaedKeysString = to!string(commaedKeys);
         if (keys)
         {
-            incKindsNote = " in " ~ (incKinds ? incKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
+            incKindsNote = " in " ~ (gstats.incKinds ?
+                                     gstats.incKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
             immutable underNote = " under \"" ~ (_topDirNames.reduce!"a ~ ',' ~ b") ~ "\"";
             const exactNote = _keyAsExact ? "exact " : "";
             string asNote;
@@ -3834,13 +3854,13 @@ class Scanner(Term)
         if (_showSkipped)
         {
             viz.pp("Skipping files of type".asH!2,
-                   asUList(binFKinds.map!(a => asItem(a.kindName.asBold,
-                                                      ": ",
-                                                      asCSL(a.exts.map!(b => b.asCode))))));
+                   asUList(gstats.binFKinds.map!(a => asItem(a.kindName.asBold,
+                                                             ": ",
+                                                             asCSL(a.exts.map!(b => b.asCode))))));
             viz.pp("Skipping directories of type".asH!2,
-                   asUList(skippedDirKinds.map!(a => asItem(a.kindName.asBold,
-                                                            ": ",
-                                                            a.fileName.asCode))));
+                   asUList(gstats.skippedDirKinds.map!(a => asItem(a.kindName.asBold,
+                                                                   ": ",
+                                                                   a.fileName.asCode))));
         }
 
         // if (key && key == key.toLower()) { // if search key is all lowercase
@@ -4065,9 +4085,9 @@ class Scanner(Term)
         // First Try with kindId as try
         if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
-            if (regfile._cstat.kindId in binFKindsById)
+            if (regfile._cstat.kindId in gstats.binFKindsById)
             {
-                const kind = enforceNotNull(binFKindsById[regfile._cstat.kindId]);
+                const kind = enforceNotNull(gstats.binFKindsById[regfile._cstat.kindId]);
                 hit = KindHit.cached;
                 printSkipped(viz, regfile, ext, subIndex, kind, hit,
                              " using cached KindId");
@@ -4081,9 +4101,9 @@ class Scanner(Term)
 
         // First Try with extension lookup as guess
         if (!ext.empty &&
-            ext in binFKindsByExt)
+            ext in gstats.binFKindsByExt)
         {
-            foreach (kindIndex, kind; binFKindsByExt[ext])
+            foreach (kindIndex, kind; gstats.binFKindsByExt[ext])
             {
                 auto nnKind = enforceNotNull(kind);
                 hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
@@ -4098,7 +4118,7 @@ class Scanner(Term)
 
         if (!hit)               // If still no hit
         {
-            foreach (kindIndex, kind; binFKinds) // Iterate each kind
+            foreach (kindIndex, kind; gstats.binFKinds) // Iterate each kind
             {
                 auto nnKind = enforceNotNull(kind);
                 hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
@@ -4150,9 +4170,9 @@ class Scanner(Term)
 
         // Try with hash table first
         if (!ext.empty && // if file has extension and
-            ext in incKindsByName) // and extensions may match specified included files
+            ext in gstats.incKindsByName) // and extensions may match specified included files
         {
-            auto possibleKinds = incKindsByName[ext];
+            auto possibleKinds = gstats.incKindsByName[ext];
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
@@ -4492,8 +4512,8 @@ class Scanner(Term)
                 immutable ext = theRegFile.name.extension.chompPrefix("."); // extension sans dot
 
                 // Check included kinds first because they are fast.
-                KindHit incKindHit = isIncludedKind(theRegFile, ext, incKinds);
-                if (!incKinds.empty && // TODO: Do we really need this one?
+                KindHit incKindHit = isIncludedKind(theRegFile, ext, gstats.incKinds);
+                if (!gstats.incKinds.empty && // TODO: Do we really need this one?
                     !incKindHit)
                 {
                     return;
@@ -4817,8 +4837,7 @@ class Scanner(Term)
                 {
                     if (maxDepth == -1 || // if either all levels or
                         maxDepth >= 1) { // levels left
-                        // Version Control System Directories
-                        if (sub.name in skippedDirKindsMap)
+                        if (sub.name in gstats.skippedDirKindsMap) // if sub should be skipped
                         {
                             if (_showSkipped)
                             {
@@ -4835,7 +4854,7 @@ class Scanner(Term)
                                             timeFace),
                                        " ago",
                                        faze(": Skipped Directory of type ", infoFace),
-                                       skippedDirKindsMap[sub.name].kindName);
+                                       gstats.skippedDirKindsMap[sub.name].kindName);
                             }
                         }
                         else
@@ -4878,7 +4897,7 @@ class Scanner(Term)
 
     /* isIncludedKind(cast(NotNull!File)dupFile, */
     /*                dupFile.name.extension.chompPrefix("."), */
-    /*                incKinds) */
+    /*                gstats.incKinds) */
 
     // Filter out $(D files) that lie under any of the directories $(D dirPaths).
     F[] filterUnderAnyOfPaths(F)(F[] files,
@@ -4918,7 +4937,7 @@ class Scanner(Term)
             viz.pp("Name Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByName)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
                 if (!dupFilesOk.empty)
                 {
                     viz.pp(asH!3("Files with same name ",
@@ -4933,7 +4952,7 @@ class Scanner(Term)
             viz.pp("Inode Duplicates (Hardlinks)".asH!2);
             foreach (inode, dupFiles; gstats.filesByInode)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
                 if (dupFilesOk.length >= 2)
                 {
                     viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
@@ -4948,7 +4967,7 @@ class Scanner(Term)
             viz.pp("Content Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByContentId)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, incKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
                 if (dupFilesOk.length >= 2) // non-empty file/directory
                 {
                     auto firstDup = dupFilesOk[0];
