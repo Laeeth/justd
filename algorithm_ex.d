@@ -10,7 +10,7 @@ module algorithm_ex;
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
 import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity;
-import std.range: ElementType, isInputRange, isBidirectionalRange;
+import std.range: ElementType, isInputRange, isBidirectionalRange, isRandomAccessRange;
 import dbg;
 import traits_ex: isStruct, isClass, allSame;
 
@@ -981,6 +981,33 @@ unittest
     int[]  b = [ 4, 2, 1, 6, 3 ];
     sort(a);
     sort(b);
+}
+
+/** Stable Variant of Quick Sort.
+    See also: http://forum.dlang.org/thread/gjuvmrypvxeebvztszpr@forum.dlang.org
+*/
+auto ref stableSort(T)(T a) pure if (isRandomAccessRange!T)
+{
+    if (a.length >= 2)
+    {
+        import std.algorithm: partition3, sort;
+        auto parts = partition3(a, a[$ / 2]); // mid element as pivot
+        parts[0].sort;
+        parts[2].sort;
+    }
+    return a;
+}
+
+unittest
+{
+    import random_ex: randInPlace;
+    const n = 2^^16;
+    auto a = new int[n];
+    a.randInPlace;
+    auto b = a.dup;
+    a[].stableSort;
+    b[].sort;
+    assert(a == b);
 }
 
 // ==============================================================================================
