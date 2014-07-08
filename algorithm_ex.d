@@ -483,11 +483,15 @@ import std.string: CaseSensitive;
 // Parameterize on isAlpha and isSymbol.
 
 /** Find $(D needle) as Word or Symbol Acronym at $(D haystackOffset) in $(D haystack).
+    TODO: Make it compatible (specialized) for InputRange or BidirectionalRange.
  */
-Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b", R, E)(R haystack, E needle,
-                                                                  FindContext ctx = FindContext.inWord,
-                                                                  CaseSensitive cs = CaseSensitive.yes,
-                                                                  size_t haystackOffset = 0) @safe pure
+Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b",
+                                     R,
+                                     E)(R haystack,
+                                        E needle,
+                                        FindContext ctx = FindContext.inWord,
+                                        CaseSensitive cs = CaseSensitive.yes,
+                                        size_t haystackOffset = 0) @safe pure
 {
     import std.ascii: isAlpha;
     import std.algorithm: find;
@@ -575,7 +579,10 @@ import std.algorithm: find;
 
 /** Find $(D needles) In Order in $(D haystack). */
 auto findInOrder(alias pred = "a == b",
-                 alias finder = find, R, E...)(R haystack, E needles) @trusted pure nothrow
+                 alias finder = find,
+                 R,
+                 E...)(R haystack,
+                       E needles) @trusted pure nothrow
 {
     import std.range: empty;
     auto hit = haystack; // reference
