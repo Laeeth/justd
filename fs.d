@@ -16,13 +16,15 @@
    ~/cognia/fs.d -d /etc --color alpha
    ---
 
+   TODO: Lexers should be loosely coupled to FKinds instead of Files
+   TODO: Generic Token[] and specific CToken[], CxxToken[]
+
    TODO: Don't scan for duplicates inside vc-dirs by default
 
    TODO: Assert that files along duplicates path don't include symlinks
 
    TODO: Implement FileOp.deduplicate
-
-   TODO: Sort file duplicates
+   TODO: Prevent rescans of duplicates
 
    TODO: Defined generalized_specialized_two_way_relationship(kindD, kindDi)
 
@@ -32,8 +34,6 @@
    TODO: Parse and Sort GCC/Clang Compiler Messages on WARN_TYPE FILE:LINE:COL:MSG[WARN_TYPE] and use Collapsable HTML Widgets:
          http://api.jquerymobile.com/collapsible/
          when presenting them
-
-   TODO: Prevent rescans of duplicates
 
    TODO: Maybe make use of https://github.com/Abscissa/scriptlike
 
@@ -83,14 +83,10 @@
    TODO: Add ASCII kind: Requires optional stream analyzer member of FKind in
    replacement for magicData. ASCIIFile
 
-   TODO: Search for CFile and add peg parsing of C files
-
    TODO: Defined NotAnyKind(binaryKinds) and cache it
 
    TODO: Create PkZipFile() in Dir.load() when FKind "pkZip Archive" is found.
    Use std.zip.ZipArchive(void[] from mmfile)
-
-   TODO: Parse using Pegged and cache ASTs.
 
    TODO: Scan Subversion Dirs with http://pastebin.com/6ZzPvpBj
 
@@ -1667,7 +1663,8 @@ class GStats
             /* Op("catch", OpArity.unaryPrefix, OpAssoc.LR, _, _) */
             ];
 
-        auto kindCxx = new FKind("C++", [], ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"], [], 0, [],
+        enum extsCxx = ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"];
+        auto kindCxx = new FKind("C++", [], extsCxx, [], 0, [],
                                  keywordsCxx,
                                  cCommentDelims,
                                  defaultStringDelims,
