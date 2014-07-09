@@ -663,7 +663,7 @@ unittest {
 /** Returns: If range is a palindrome.
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
 */
-bool isPalindrome(R)(R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
+bool isPalindrome(R)(in R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
 {
     import std.range: retro;
     import std.algorithm: equal;
@@ -986,7 +986,7 @@ unittest
 /** Stable Variant of Quick Sort.
     See also: http://forum.dlang.org/thread/gjuvmrypvxeebvztszpr@forum.dlang.org
 */
-auto ref stableSort(T)(T a) pure if (isRandomAccessRange!T)
+auto ref stableSort(T)(auto ref T a) pure if (isRandomAccessRange!T)
 {
     if (a.length >= 2)
     {
