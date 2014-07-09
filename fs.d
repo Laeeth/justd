@@ -356,10 +356,6 @@ struct Delim
     string intro;
     string finish; // Defaults to end of line if not defined.
 }
-unittest {
-    const d = Delim("#", []);
-    const e = Delim("#", null);
-}
 
 /* Comment Delimiters */
 enum defaultCommentDelims = [Delim("#")];
@@ -1385,8 +1381,10 @@ enum isFileIO(T) = (isAnyFile!T ||
                     is(T == ioFile));
 
 /** Contents Statistics of a Regular File. */
-struct CStat {
-    void reset() @safe nothrow {
+struct CStat
+{
+    void reset() @safe nothrow
+    {
         kindId[] = 0;
         _contentId[] = 0;
         hitCount = 0;
@@ -1396,7 +1394,8 @@ struct CStat {
         deallocate();
     }
 
-    void deallocate(bool nullify = true) @trusted nothrow {
+    void deallocate(bool nullify = true) @trusted nothrow
+    {
         kindId[] = 0;
         /* if (xgram != null) { */
         /*     import core.stdc.stdlib; */
@@ -1474,28 +1473,28 @@ class GStats
         srcFKinds ~= new FKind("SCons", ["SConstruct", "SConscript"],
                                ["scons"],
                                [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                pythonStringDelims,
                                FileContent.buildSystemCode, FileKindDetection.equalsNameAndContents); // TOOD: Inherit Python
 
         srcFKinds ~= new FKind("Makefile", ["GNUmakefile", "Makefile", "makefile"],
                                ["mk", "mak", "makefile", "make", "gnumakefile"], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsName);
         srcFKinds ~= new FKind("Automakefile", ["Makefile.am", "makefile.am"],
                                ["am"], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
         srcFKinds ~= new FKind("Autoconffile", ["configure.ac", "configure.in"],
                                [], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
         srcFKinds ~= new FKind("Doxygen", ["Doxyfile"],
                                ["doxygen"], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
 
@@ -1514,7 +1513,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsContents); // TODO: markup text
         srcFKinds ~= new FKind("YAML", [], ["yaml", "yml"], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.text); // TODO: markup text
         srcFKinds ~= new FKind("CSS", [], ["css"], [], 0, [], [],
@@ -1523,7 +1522,7 @@ class GStats
                                FileContent.text, FileKindDetection.equalsContents);
 
         srcFKinds ~= new FKind("Audacity Project", [], ["aup"], [], 0, "<?xml", [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
 
@@ -1713,7 +1712,7 @@ class GStats
         enum keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C++", [], ["mm", "h"], [], 0, [],
                                keywordsObjectiveCxx,
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
@@ -1952,7 +1951,7 @@ class GStats
         auto kindPython = new FKind("Python", [], ["py"],
                                     shebangLine(lit("python")), 0, [],
                                     keywordsPython,
-                                    [Delim("#")],
+                                    defaultCommentDelims,
                                     pythonStringDelims,
                                     FileContent.scriptCode);
         srcFKinds ~= kindPython;
@@ -1985,36 +1984,36 @@ class GStats
         srcFKinds ~= new FKind("Perl", [], ["pl", "pm", "pm6", "pod", "t", "psgi", ],
                                shebangLine(lit("perl")), 0,
                                [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("PHP", [], ["php", "phpt", "php3", "php4", "php5", "phtml", ],
                                shebangLine(lit("php")), 0,
                                [], [],
-                               [Delim("#")] ~ cCommentDelims,
+                               defaultCommentDelims ~ cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("Plone", [], ["pt", "cpt", "metadata", "cpy", "py", ], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
 
         srcFKinds ~= new FKind("Shell", [], ["sh"],
                                shebangLine(lit("sh")), 0,
                                [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("Bash", [], ["bash"],
                                shebangLine(lit("bash")), 0,
                                [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("Zsh", [], ["zsh"],
                                shebangLine(lit("zsh")), 0,
                                [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
 
@@ -2024,7 +2023,7 @@ class GStats
                                FileContent.scriptCode);
 
         srcFKinds ~= new FKind("TCL", [], ["tcl", "itcl", "itk", ], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("Tex", [], ["tex", "cls", "sty", ], [], 0, [], [],
@@ -2032,7 +2031,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("TT", [], ["tt", "tt2", "ttml", ], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
         srcFKinds ~= new FKind("Viz Basic", [], ["bas", "cls", "frm", "ctl", "vb", "resx", ], [], 0, [], [],
@@ -2142,7 +2141,7 @@ class GStats
         kindOctave.operations ~= tuple(FileOp.byteCompile, "octave");
 
         srcFKinds ~= new FKind("Julia", [], ["jl"], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode); // ((:execute "julia") (:evaluate "julia -e"))
 
@@ -2177,7 +2176,7 @@ class GStats
                                FileContent.sourceCode);
 
         srcFKinds ~= new FKind("CMake", [], ["cmake"], [], 0, [], [],
-                               [Delim("#")],
+                               defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
 
