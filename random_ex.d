@@ -21,17 +21,18 @@ auto ref randInPlace(T)(ref T x,
 
 /** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
 auto ref randInPlace(T)(ref T x,
-                        T low = 0/* T.min_normal */,
-                        T high = 1/* T.max */) @trusted /* nothrow */ if (isFloatingPoint!T)
+                        T low = 0 /* T.min_normal */,
+                        T high = 1 /* T.max */) @trusted /* nothrow */ if (isFloatingPoint!T)
 {
     return x = uniform(low, high);
 }
 
 /** Generate Random Contents in $(D range).
  */
-auto ref randInPlace(R)(R range) @safe /* nothrow */ if (isIterable!R)
+auto ref randInPlace(R)(auto ref R range) @safe /* nothrow */ if (isIterable!R)
 {
-    foreach (ref elt; range) {
+    foreach (ref elt; range)
+    {
         import std.range: ElementType;
         static if (isInputRange!(ElementType!R))
             elt[].randInPlace;
@@ -39,6 +40,17 @@ auto ref randInPlace(R)(R range) @safe /* nothrow */ if (isIterable!R)
             elt.randInPlace;
     }
     return range;
+}
+
+alias randomize = randInPlace;
+
+unittest
+{
+    int[64] x;
+    auto y = x;
+    x.randInPlace;
+    y.randInPlace;
+    assert(y != x);
 }
 
 /** Get Random Instance of Type $(D T).
