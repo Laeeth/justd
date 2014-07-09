@@ -20,18 +20,18 @@ void debug_writeln(string file = __FILE__, uint line = __LINE__, string fun = __
     import std.stdio: writeln;
     writeln(file, ":",line, ":",fun, ":debug: ", t);
 }
-alias debug_writeln dln;
+alias dln = debug_writeln;
 
 void debug_writefln(string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__, T...)(T t)
 {
     import std.stdio: writefln;
     writefln(file, ":",line, ":",fun, ":debug: ", t);
 }
-alias debug_writefln dfln;
+alias dfln = debug_writefln;
 
 void debug_variableln(alias T, string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__)()
 {
     import std.stdio: writeln;
     writeln(file, ":",line, ":",fun, ":debug: ", T.stringof, ":", T);
 }
-alias debug_variableln dvr;
+alias dvr = debug_variableln;
