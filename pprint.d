@@ -660,6 +660,32 @@ void pp1(Arg)(Viz viz,
               Arg arg)
     @trusted
 {
+    static if (__traits(hasMember, arg, "toHTML"))
+    {
+        if (viz.form == VizForm.HTML)
+        {
+            viz.ppRaw(arg.toHTML);
+            return;
+        }
+    }
+    else static if (__traits(hasMember, arg, "toMathML"))
+    {
+        if (viz.form == VizForm.HTML)
+        {
+            // TODO: Check for MathML support on backend
+            viz.ppRaw(arg.toMathML);
+            return;
+        }
+    }
+    else static if (__traits(hasMember, arg, "toLaTeX"))
+    {
+        if (viz.form == VizForm.LaTeX)
+        {
+            viz.ppRaw(arg.toLaTeX);
+            return;
+        }
+    }
+
     static if (isArray!Arg &&
                !isSomeString!Arg)
     {
