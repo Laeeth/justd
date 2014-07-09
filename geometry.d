@@ -37,7 +37,8 @@ module geometry;
 
 // version = unittestAllInstances;
 
-version(NoReciprocalMul) {
+version(NoReciprocalMul)
+{
     private enum rmul = false;
 } else {
     private enum rmul = true;
@@ -124,15 +125,19 @@ in {
     import std.string;
     import std.conv;
     string code;
-    if (!aliasName.length) {
+    if (!aliasName.length)
+    {
         aliasName = templateName.toLower;
     }
-    foreach (n; minDimension .. maxDimension + 1) {
-        foreach (et; elementTypes) { // for each elementtype
+    foreach (n; minDimension .. maxDimension + 1)
+    {
+        foreach (et; elementTypes) // for each elementtype
+        {
             immutable prefix = ("alias " ~ templateName ~ "!("~et~", " ~
                                 to!string(n) ~ ") " ~ aliasName ~ "" ~
                                 to!string(n));
-            if (et == "float") {
+            if (et == "float")
+            {
                 code ~= (prefix ~ ";\n"); // GLSL-style prefix-less single precision
             }
             code ~= (prefix ~ et[0] ~ ";\n");
@@ -153,12 +158,15 @@ auto sqrtx(T)(T x)
 // ==============================================================================================
 
 /// $(D D)-Dimensional Point with Coordinate Type (Precision) $(D E).
-struct Point (E, uint D) if (isNumeric!E && D >= 1)
+struct Point(E,
+             uint D) if (isNumeric!E && D >= 1)
 {
     alias type = E;
 
-    this(T...)(T args) {
-        foreach (ix, arg; args) {
+    this(T...)(T args)
+    {
+        foreach (ix, arg; args)
+        {
             _point[ix] = arg;
         }
     }
@@ -176,9 +184,11 @@ struct Point (E, uint D) if (isNumeric!E && D >= 1)
 
     /** Points +/- Vector => Point */
     auto opBinary(string op, F)(Vector!(F, D) r) const if ((op == "+") ||
-                                                           (op == "-")) {
+                                                           (op == "-"))
+    {
         Point!(CommonType!(E, F), D) y;
-        foreach (i; siota!(0, D)) {
+        foreach (i; siota!(0, D))
+        {
             y._point[i] = mixin("_point[i]" ~ op ~ "r._vector[i]");
         }
         return y;
@@ -205,8 +215,10 @@ struct Vector(E, uint D,
     // Construct from vector.
     this(V)(V vec) if (isVector!V &&
                        // TOREVIEW: is(T.E : E) &&
-                       (V.dimension >= dimension)) {
-        foreach (i; siota!(0, D)) {
+                       (V.dimension >= dimension))
+    {
+        foreach (i; siota!(0, D))
+        {
             _vector[i] = vec._vector[i];
         }
     }
@@ -230,13 +242,16 @@ struct Vector(E, uint D,
   <mo>(</mo>
   <mtable>";
 
-        if (orient == Orient.row) {
+        if (orient == Orient.row)
+        {
             str ~=  "
     <mtr>";
         }
 
-        foreach (i; siota!(0, D)) {
-            final switch (orient) {
+        foreach (i; siota!(0, D))
+        {
+            final switch (orient)
+            {
             case Orient.column:
                 str ~= "
     <mtr>
@@ -254,7 +269,8 @@ struct Vector(E, uint D,
             }
         }
 
-        if (orient == Orient.row) {
+        if (orient == Orient.row)
+        {
             str ~=  "
     </mtr>";
         }
@@ -295,23 +311,31 @@ struct Vector(E, uint D,
     /** Returns: Reference to Internal Vector Element. */
     ref inout(E) opIndex(uint i) inout { return _vector[i]; }
 
-    bool opEquals(S)(const S scalar) const if (isAssignable!(E, S)) { // TOREVIEW: Use isNotEquable instead
-        foreach (i; siota!(0, D)) {
-            if (_vector[i] != scalar) {
+    bool opEquals(S)(const S scalar) const if (isAssignable!(E, S)) // TOREVIEW: Use isNotEquable instead
+    {
+        foreach (i; siota!(0, D))
+        {
+            if (_vector[i] != scalar)
+            {
                 return false;
             }
         }
         return true;
     }
-    bool opEquals(F)(const F vec) const if (isVector!F && dimension == F.dimension) { // TOREVIEW: Use isEquable instead?
+    bool opEquals(F)(const F vec) const if (isVector!F && dimension == F.dimension) // TOREVIEW: Use isEquable instead?
+    {
         return _vector == vec._vector;
     }
-    bool opEquals(F)(const(F)[] array) const if (isAssignable!(E, F) && !isArray!F && !isVector!F) { // TOREVIEW: Use isNotEquable instead?
-        if (array.length != dimension) {
+    bool opEquals(F)(const(F)[] array) const if (isAssignable!(E, F) && !isArray!F && !isVector!F) // TOREVIEW: Use isNotEquable instead?
+    {
+        if (array.length != dimension)
+        {
             return false;
         }
-        foreach (i; siota!(0, D)) {
-            if (_vector[i] != array[i]) {
+        foreach (i; siota!(0, D))
+        {
+            if (_vector[i] != array[i])
+            {
                 return false;
             }
         }
@@ -323,24 +347,38 @@ struct Vector(E, uint D,
     enum isCompatibleVector(T) = is(typeof(isCompatibleVectorImpl(T.init)));
     enum isCompatibleMatrix(T) = is(typeof(isCompatibleMatrixImpl(T.init)));
 
-    private void construct(uint i)() {
-        static assert(i == D, "Not enough arguments passed to constructor"); }
-    private void construct(uint i, T, Tail...)(T head, Tail tail) {
-        static        if (i >= D) {
+    private void construct(uint i)()
+    {
+        static assert(i == D, "Not enough arguments passed to constructor");
+    }
+    private void construct(uint i, T, Tail...)(T head, Tail tail)
+    {
+        static        if (i >= D)
+        {
             static assert(false, "Too many arguments passed to constructor");
-        } else static if (is(T : E)) {
+        }
+        else static if (is(T : E))
+        {
             _vector[i] = head;
             construct!(i + 1)(tail);
-        } else static if (isDynamicArray!T) {
+        }
+        else static if (isDynamicArray!T)
+        {
             static assert((Tail.length == 0) && (i == 0), "Dynamic array can not be passed together with other arguments");
             _vector[] = head[];
-        } else static if (isStaticArray!T) {
+        }
+        else static if (isStaticArray!T)
+        {
             _vector[i .. i + T.length] = head[];
             construct!(i + T.length)(tail);
-        } else static if (isCompatibleVector!T) {
+        }
+        else static if (isCompatibleVector!T)
+        {
             _vector[i .. i + T.dimension] = head._vector[];
             construct!(i + T.dimension)(tail);
-        } else {
+        }
+        else
+        {
             static assert(false, "Vector constructor argument must be of type " ~ E.stringof ~ " or Vector, not " ~ T.stringof);
         }
     }
@@ -364,18 +402,22 @@ struct Vector(E, uint D,
 
     ref inout(Vector) opUnary(string op : "+")() inout { return this; }
 
-    Vector   opUnary(string op : "-")() const if (isSigned!(E)) {
+    Vector   opUnary(string op : "-")() const if (isSigned!(E))
+    {
         Vector y;
-        foreach (i; siota!(0, D)) {
+        foreach (i; siota!(0, D))
+        {
             y._vector[i] = - _vector[i];
         }
         return y;
     }
 
     auto opBinary(string op, F)(Vector!(F, D) r) const if ((op == "+") ||
-                                                           (op == "-")) {
+                                                           (op == "-"))
+    {
         Vector!(CommonType!(E, F), D) y;
-        foreach (i; siota!(0, D)) {
+        foreach (i; siota!(0, D))
+        {
             y._vector[i] = mixin("_vector[i]" ~ op ~ "r._vector[i]");
         }
         return y;
@@ -383,7 +425,8 @@ struct Vector(E, uint D,
 
     Vector opBinary(string op : "*", F)(F r) const {
         Vector!(CommonType!(E, F), D) y;
-        foreach (i; siota!(0, dimension)) {
+        foreach (i; siota!(0, dimension))
+        {
             y._vector[i] = _vector[i] * r;
         }
         return y;
@@ -392,22 +435,30 @@ struct Vector(E, uint D,
     Vector!(CommonType!(E, F), D) opBinary(string op : "*", F)(Vector!(F, D) r) const {
         // MATLAB-style Product Behaviour
         static if (orient == Orient.column &&
-                   r.orient == Orient.row) {
+                   r.orient == Orient.row)
+        {
             return outer(this, r);
-        } else static if (orient == Orient.row &&
-                          r.orient == Orient.column) {
+        }
+        else static if (orient == Orient.row &&
+                        r.orient == Orient.column)
+        {
             return dot(this, r);
-        } else {
+        }
+        else
+        {
             static assert(false, "Incompatible vector dimensions.");
         }
     }
 
     /** Multiply this Vector with Matrix. */
-    Vector!(E, T.rows) opBinary(string op : "*", T)(T inp) const if (isCompatibleMatrix!T && (T.cols == dimension)) {
+    Vector!(E, T.rows) opBinary(string op : "*", T)(T inp) const if (isCompatibleMatrix!T && (T.cols == dimension))
+    {
         Vector!(E, T.rows) ret;
         ret.clear(0);
-        foreach (c; siota!(0, T.cols)) {
-            foreach (r; siota!(0, T.rows)) {
+        foreach (c; siota!(0, T.cols))
+        {
+            foreach (r; siota!(0, T.rows))
+            {
                 ret._vector[r] += _vector[c] * inp.at(r,c);
             }
         }
@@ -415,13 +466,16 @@ struct Vector(E, uint D,
     }
 
     /** Multiply this Vector with Matrix. */
-    auto opBinaryRight(string op, T)(T inp) const if (!isVector!T && !isMatrix!T && !isQuaternion!T) {
+    auto opBinaryRight(string op, T)(T inp) const if (!isVector!T && !isMatrix!T && !isQuaternion!T)
+    {
         return this.opBinary!(op)(inp);
     }
 
     /** TODO: Suitable Restrictions on F. */
-    void opOpAssign(string op, F)(F r) /* if ((op == "+") || (op == "-") || (op == "*") || (op == "%") || (op == "/") || (op == "^^")) */ {
-        foreach (i; siota!(0, dimension)) {
+    void opOpAssign(string op, F)(F r) /* if ((op == "+") || (op == "-") || (op == "*") || (op == "%") || (op == "/") || (op == "^^")) */
+    {
+        foreach (i; siota!(0, dimension))
+        {
             mixin("_vector[i]" ~ op ~ "= r;");
         }
     }
@@ -432,17 +486,23 @@ struct Vector(E, uint D,
         v2 /= 5; assert(v2[] == [5, 45]);
     }
 
-    void opOpAssign(string op)(Vector r) if ((op == "+") || (op == "-")) {
-        foreach (i; siota!(0, dimension)) {
+    void opOpAssign(string op)(Vector r) if ((op == "+") || (op == "-"))
+    {
+        foreach (i; siota!(0, dimension))
+        {
             mixin("_vector[i]" ~ op ~ "= r._vector[i];");
         }
     }
 
     /// Returns: Non-Rooted $(D N) - Norm of $(D x).
-    @safe pure nothrow auto nrnNorm(uint N)() const if (isNumeric!E && N >= 1) {
-        static if (isFloatingPoint!E) {
+    @safe pure nothrow auto nrnNorm(uint N)() const if (isNumeric!E && N >= 1)
+    {
+        static if (isFloatingPoint!E)
+        {
             real y = 0;                 // TOREVIEW: Use maximum precision for now
-        } else {
+        }
+        else
+        {
             E y = 0;                // TOREVIEW: Use other precision for now
         }
         foreach (i; siota!(0, D)) { y += _vector[i] ^^ N; }
@@ -450,43 +510,55 @@ struct Vector(E, uint D,
     }
 
     /// Returns: Squared Magnitude of x.
-    @property @safe pure nothrow real magnitudeSquared()() const if (isNumeric!E) {
-        static if (normalizedFlag) {
+    @property @safe pure nothrow real magnitudeSquared()() const if (isNumeric!E)
+    {
+        static if (normalizedFlag)
+        {
             return 1;
-        } else {
+        }
+        else
+        {
             return nrnNorm!2;
         }
     }
     /// Returns: Magnitude of x.
-    @property @safe pure nothrow real magnitude()() const if (isNumeric!E) {
-        static if (normalizedFlag) {
+    @property @safe pure nothrow real magnitude()() const if (isNumeric!E)
+    {
+        static if (normalizedFlag)
+        {
             return 1;
-        } else {
+        }
+        else
+        {
             return sqrt(magnitudeSquared);
         }
     }
 
     static if (isIntegral!E &&
-               isFloatingPoint!E) {
-
+               isFloatingPoint!E)
+    {
         /// Normalize $(D this).
         void normalize() {
-            if (this != 0) {         // zero vector have zero magnitude
+            if (this != 0)         // zero vector have zero magnitude
+            {
                 immutable m = this.magnitude;
-                foreach (i; siota!(0, D)) {
+                foreach (i; siota!(0, D))
+                {
                     _vector[i] /= m;
                 }
             }
         }
 
         /// Returns: normalizedFlag Copy of this Vector.
-        @property pure Vector normalized() const {
+        @property pure Vector normalized() const
+        {
             Vector y = this;
             y.normalize();
             return y;
         }
         unittest {
-            static if (D == 2 && !normalizedFlag) {
+            static if (D == 2 && !normalizedFlag)
+            {
                 assert(Vector(3, 4).magnitude == 5);
             }
             assert(Vector(0).normalized == 0);
@@ -499,18 +571,28 @@ struct Vector(E, uint D,
     }
 
     /// Coordinate Character c to Index
-    template coordToIndex(char c) {
-        static if ((c == 'x')) {
+    template coordToIndex(char c)
+    {
+        static if ((c == 'x'))
+        {
             enum coordToIndex = 0;
-        } else static if ((c == 'y')) {
+        }
+        else static if ((c == 'y'))
+        {
             enum coordToIndex = 1;
-        } else static if ((c == 'z')) {
+        }
+        else static if ((c == 'z'))
+        {
             static assert(D >= 3, "The " ~ c ~ " property is only available on vectors with a third dimension.");
             enum coordToIndex = 2;
-        } else static if ((c == 'w')) {
+        }
+        else static if ((c == 'w'))
+        {
             static assert(D >= 4, "The " ~ c ~ " property is only available on vectors with a fourth dimension.");
             enum coordToIndex = 3;
-        } else {
+        }
+        else
+        {
             static assert(false, "Accepted coordinates are x, s, r, u, y, g, t, v, z, p, b, w, q and a not " ~ c ~ ".");
         }
     }
@@ -527,27 +609,35 @@ struct Vector(E, uint D,
     static if (D >= 3) { alias z = get_!'z'; }
     static if (D >= 4) { alias w = get_!'w'; }
 
-    static if (isNumeric!E) {
+    static if (isNumeric!E)
+    {
         /* Need these conversions when E is for instance ubyte.
            See this commit: https://github.com/Dav1dde/gl3n/commit/2504003df4f8a091e58a3d041831dc2522377f95 */
         enum E0 = 0.to!E;
         enum E1 = 1.to!E;
-        static if (dimension == 2) {
+        static if (dimension == 2)
+        {
             enum Vector e1 = Vector(E1, E0); /// canonical basis for Euclidian space
             enum Vector e2 = Vector(E0, E1); /// ditto
-        } else static if (dimension == 3) {
+        }
+        else static if (dimension == 3)
+        {
             enum Vector e1 = Vector(E1, E0, E0); /// canonical basis for Euclidian space
             enum Vector e2 = Vector(E0, E1, E0); /// ditto
             enum Vector e3 = Vector(E0, E0, E1); /// ditto
-        } else static if (dimension == 4) {
+        }
+        else static if (dimension == 4)
+        {
             enum Vector e1 = Vector(E1, E0, E0, E0); /// canonical basis for Euclidian space
             enum Vector e2 = Vector(E0, E1, E0, E0); /// ditto
             enum Vector e3 = Vector(E0, E0, E1, E0); /// ditto
             enum Vector e4 = Vector(E0, E0, E0, E1); /// ditto
         }
     }
-    unittest {
-        static if (isNumeric!E) {
+    unittest
+    {
+        static if (isNumeric!E)
+        {
             assert(vec2.e1[] == [1, 0]);
             assert(vec2.e2[] == [0, 1]);
 
@@ -593,15 +683,18 @@ unittest {
     assert((vec2(1, 3)*2.5f)[] == [2.5f, 7.5f]);
 }
 
-@safe pure nothrow auto transpose(E, uint D, bool normalizedFlag)(in Vector!(E, D, normalizedFlag, Orient.column) a) {
+@safe pure nothrow auto transpose(E, uint D, bool normalizedFlag)(in Vector!(E, D, normalizedFlag, Orient.column) a)
+{
     return Vector!(E, D, normalizedFlag, Orient.row)(a);
 }
 alias T = transpose; // C++ Armadillo naming convention.
 
 @safe pure nothrow auto elementwiseLessThanOrEqual(Ta, Tb, uint D)(Vector!(Ta, D) a,
-                                                                   Vector!(Tb, D) b) {
+                                                                   Vector!(Tb, D) b)
+{
     Vector!(bool, D) c = void;
-    foreach (i; siota!(0, D)) {
+    foreach (i; siota!(0, D))
+    {
         c[i] = a[i] <= b[i];
     }
     return c;
@@ -615,9 +708,11 @@ unittest {
 @safe pure nothrow T dotProduct(T, U)(in T a, in U b) if (isVector!T &&
                                                           isVector!U &&
                                                           (T.dimension ==
-                                                           U.dimension)) {
+                                                           U.dimension))
+{
     T c = void;
-    foreach (i; siota!(0, T.dimension)) {
+    foreach (i; siota!(0, T.dimension))
+    {
         c[i] = a[i] * b[i];
     }
     return c;
@@ -627,10 +722,13 @@ alias dot = dotProduct;
 /// Returns: Outer-Product of Two Vectors $(D a) and $(D b).
 @safe pure nothrow auto outerProduct(Ta, Tb, uint Da, uint Db)(in Vector!(Ta, Da) a,
                                                                in Vector!(Tb, Db) b) if (Da >= 1,
-                                                                                         Db >= 1) {
+                                                                                         Db >= 1)
+{
     Matrix!(CommonType!(Ta, Tb), Da, Db) y = void;
-    foreach (r; siota!(0, Da)) {
-        foreach (c; siota!(0, Db)) {
+    foreach (r; siota!(0, Da))
+    {
+        foreach (c; siota!(0, Db))
+        {
             y.at(r,c) = a[r] * b[c];
         }
     }
@@ -640,7 +738,8 @@ alias outer = outerProduct;
 
 /// Returns: Vector/Cross-Product of two 3-Dimensional Vectors.
 @safe pure nothrow T cross(T)(in T a, in T b) if (isVector!T &&
-                                                  T.dimension == 3) { /// isVector!T &&
+                                                  T.dimension == 3) /// isVector!T &&
+{
     return T(a.y * b.z - b.y * a.z,
              a.z * b.x - b.z * a.x,
              a.x * b.y - b.x * a.y);
@@ -651,7 +750,8 @@ alias outer = outerProduct;
                                        in U b) if ((isVector!T && // either both vectors
                                                     isVector!U) ||
                                                    (isPoint!T && // or both points
-                                                    isPoint!U)) {
+                                                    isPoint!U))
+{
     return (a - b).magnitude;
 }
 
@@ -688,11 +788,14 @@ struct Matrix(E,
     static const uint cols = cols_; /// Number of columns
 
     /// Matrix $(RED row-major) in memory.
-    static if (layout == Layout.rowMajor) {
+    static if (layout == Layout.rowMajor)
+    {
         private mT[cols][rows] _matrix; // In C it would be mt[rows][cols], D does it like this: (mt[cols])[rows]
         @safe nothrow ref inout(mT) opCall(uint row, uint col) inout { return _matrix[row][col]; }
         @safe nothrow ref inout(mT)     at(uint row, uint col) inout { return _matrix[row][col]; }
-    } else {
+    }
+    else
+    {
         private mT[rows][cols] _matrix; // In C it would be mt[cols][rows], D does it like this: (mt[rows])[cols]
         @safe nothrow ref inout(mT) opCall(uint row, uint col) inout { return _matrix[col][row]; }
         @safe nothrow ref inout(mT) at    (uint row, uint col) inout { return _matrix[col][row]; }
@@ -714,8 +817,10 @@ struct Matrix(E,
     @property @trusted string toString() { return format("%s", _matrix); }
     @property @trusted string toLaTeX() const {
         string s;
-        foreach (r; siota!(0, rows)) {
-            foreach (c; siota!(0, cols)) {
+        foreach (r; siota!(0, rows))
+        {
+            foreach (c; siota!(0, cols))
+            {
                 s ~= to!string(at(r, c)) ;
                 if (c != cols - 1) { s ~= " & "; } // if not last column
             }
@@ -729,10 +834,12 @@ struct Matrix(E,
   <mo>(</mo>
   <mtable>";
 
-        foreach (r; siota!(0, rows)) {
+        foreach (r; siota!(0, rows))
+        {
             str ~=  "
     <mtr>";
-            foreach (c; siota!(0, cols)) {
+            foreach (c; siota!(0, cols))
+            {
                 str ~= "
       <mtd>
         <mn>" ~ to!string(at(r, c)) ~ "</mn>
@@ -759,9 +866,11 @@ struct Matrix(E,
                            format(fmtr, reduce!(min)(_matrix[])).length) - 1;
 
         string[] outer_parts;
-        foreach (mT[] row; _matrix) {
+        foreach (mT[] row; _matrix)
+        {
             string[] inner_parts;
-            foreach (mT col; row) {
+            foreach (mT col; row)
+            {
                 inner_parts ~= rightJustify(format(fmtr, col), rjust);
             }
             outer_parts ~= " [" ~ join(inner_parts, ", ") ~ "]";
@@ -772,8 +881,7 @@ struct Matrix(E,
     alias toPrettyString = asPrettyString; /// ditto
 
     @safe pure nothrow:
-    static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(mT, r, c) m) {
-    }
+    static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(mT, r, c) m) {}
 
     enum isCompatibleMatrix(T) = is(typeof(isCompatibleMatrixImpl(T.init)));
 
@@ -781,25 +889,37 @@ struct Matrix(E,
 
     enum isCompatibleVector(T) = is(typeof(isCompatibleVectorImpl(T.init)));
 
-    private void construct(uint i, T, Tail...)(T head, Tail tail) {
-        static if (i >= rows*cols) {
+    private void construct(uint i, T, Tail...)(T head, Tail tail)
+    {
+        static if (i >= rows*cols)
+        {
             static assert(false, "Too many arguments passed to constructor");
-        } else static if (is(T : mT)) {
+        }
+        else static if (is(T : mT))
+        {
             _matrix[i / cols][i % cols] = head;
             construct!(i + 1)(tail);
-        } else static if (is(T == Vector!(mT, cols))) {
-            static if (i % cols == 0) {
+        }
+        else static if (is(T == Vector!(mT, cols)))
+        {
+            static if (i % cols == 0)
+            {
                 _matrix[i / cols] = head._vector;
                 construct!(i + T.dimension)(tail);
-            } else {
+            }
+            else
+            {
                 static assert(false, "Can't convert Vector into the matrix. Maybe it doesn't align to the columns correctly or dimension doesn't fit");
             }
-        } else {
+        }
+        else
+        {
             static assert(false, "Matrix constructor argument must be of type " ~ mT.stringof ~ " or Vector, not " ~ T.stringof);
         }
     }
 
-    private void construct(uint i)() { // terminate
+    private void construct(uint i)()  // terminate
+    {
         static assert(i == rows*cols, "Not enough arguments passed to constructor");
     }
 
@@ -816,18 +936,23 @@ struct Matrix(E,
     /// mat4 m4 = mat4.identity; // just an identity matrix
     /// mat3 m3_3 = mat3(m4); // mat3 m3_3 = mat3.identity
     /// ---
-    this(Args...)(Args args) {
+    this(Args...)(Args args)
+    {
         construct!(0)(args);
     }
 
-    this(T)(T mat) if (isMatrix!T && (T.cols >= cols) && (T.rows >= rows)) {
+    this(T)(T mat) if (isMatrix!T && (T.cols >= cols) && (T.rows >= rows))
+    {
         _matrix[] = mat._matrix[];
     }
 
-    this(T)(T mat) if (isMatrix!T && (T.cols < cols) && (T.rows < rows)) {
+    this(T)(T mat) if (isMatrix!T && (T.cols < cols) && (T.rows < rows))
+    {
         makeIdentity();
-        foreach (r; siota!(0, T.rows)) {
-            foreach (c; siota!(0, T.cols)) {
+        foreach (r; siota!(0, T.rows))
+        {
+            foreach (c; siota!(0, T.cols))
+            {
                 at(r, c) = mat.at(r, c);
             }
         }
@@ -847,30 +972,38 @@ struct Matrix(E,
     }
 
     /// Sets all values of the matrix to value (each column in each row will contain this value).
-    void clear(mT value) {
-        foreach (r; siota!(0, rows)) {
-            foreach (c; siota!(0, cols)) {
+    void clear(mT value)
+    {
+        foreach (r; siota!(0, rows))
+        {
+            foreach (c; siota!(0, cols))
+            {
                 at(r,c) = value;
             }
         }
     }
 
-    static if (rows == cols) {
+    static if (rows == cols)
+    {
 
         /// Makes the current matrix an identity matrix.
-        void makeIdentity() {
+        void makeIdentity()
+        {
             clear(0);
-            foreach (r; siota!(0, rows)) {
+            foreach (r; siota!(0, rows))
+            {
                 at(r,r) = 1;
             }
         }
 
         /// Returns: Identity Matrix.
-        static @property Matrix identity() {
+        static @property Matrix identity()
+        {
             Matrix ret;
             ret.clear(0);
 
-            foreach (r; siota!(0, rows)) {
+            foreach (r; siota!(0, rows))
+            {
                 ret.at(r,r) = 1;
             }
 
@@ -915,10 +1048,13 @@ struct Matrix(E,
     }
 
     /// Returns a transposed copy of the matrix.
-    @property Matrix!(mT, cols, rows) transposed() const {
+    @property Matrix!(mT, cols, rows) transposed() const
+    {
         typeof(return) ret;
-        foreach (r; siota!(0, rows)) {
-            foreach (c; siota!(0, cols)) {
+        foreach (r; siota!(0, rows))
+        {
+            foreach (c; siota!(0, cols))
+            {
                 ret.at(c,r) = at(r,c);
             }
         }
@@ -997,17 +1133,21 @@ struct Box(E, uint D) if (D >= 1)
     @safe nothrow:
 
     /// Constructs a Box enclosing $(D points).
-    pure static Box fromPoints(in Vector!(E,D)[] points) {
+    pure static Box fromPoints(in Vector!(E,D)[] points)
+    {
         Box y;
-        foreach (p; points) {
+        foreach (p; points)
+        {
             y.expand(p);
         }
         return y;
     }
 
     /// Expands the Box, so that $(I v) is part of the Box.
-    auto ref expand(Vector!(E,D) v) {
-        foreach (i; siota!(0, D)) {
+    auto ref expand(Vector!(E,D) v)
+    {
+        foreach (i; siota!(0, D))
+        {
             if (min[i] > v[i]) min[i] = v[i];
             if (max[i] < v[i]) max[i] = v[i];
         }
@@ -1034,7 +1174,8 @@ struct Box(E, uint D) if (D >= 1)
     /** Returns: Area */
     @property auto sidesProduct() const pure {
         real y = 1;
-        foreach (side; this.sides) {
+        foreach (side; this.sides)
+        {
             y *= side;
         }
         return y;
@@ -1049,7 +1190,8 @@ struct Box(E, uint D) if (D >= 1)
     Vector!(E,D) max;           /// High.
 
     /** Either an element in min or max is nan or min <= max. */
-    invariant() {
+    invariant()
+    {
         // assert(any!"a==a.nan"(min),
         //                  all!"a || a == a.nan"(elementwiseLessThanOrEqual(min, max)[]));
     }
@@ -1086,15 +1228,19 @@ struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2)
 
     /// Constructs the plane, from either four scalars of type $(I E)
     /// or from a 3-dimensional vector (= normal) and a scalar.
-    static if (D == 2) {
-        this(E a, E b, E distance) {
+    static if (D == 2)
+    {
+        this(E a, E b, E distance)
+        {
             this.normal.x = a;
             this.normal.y = b;
             this.distance = distance;
         }
     }
-    static if (D == 3) {
-        this(E a, E b, E c, E distance) {
+    else static if (D == 3)
+    {
+        this(E a, E b, E c, E distance)
+        {
             this.normal.x = a;
             this.normal.y = b;
             this.normal.z = c;
@@ -1102,7 +1248,8 @@ struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2)
         }
     }
 
-    this(N normal, E distance) {
+    this(N normal, E distance)
+    {
         this.normal = normal;
         this.distance = distance;
     }
@@ -1121,7 +1268,8 @@ struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2)
     /* } */
 
     /// Normalizes the plane inplace.
-    void normalize() {
+    void normalize()
+    {
         immutable E det = cast(E)1 / normal.magnitude;
         normal *= det;
         distance *= det;
@@ -1185,10 +1333,12 @@ struct Sphere(E, uint D) if (isNumeric!E && D >= 2)
     @property:
 
     E diameter() const { return 2*radius; }
-    static      if (D == 2) {
+    static if (D == 2)
+    {
         auto area()   const { return PI * radius^^2; }
     }
-    else static if (D == 3) {
+    else static if (D == 3)
+    {
         auto area()   const { return 4*PI*radius^^2; }
         auto volume() const { return 4*PI*radius^^3/3; }
     }
