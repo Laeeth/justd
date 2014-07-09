@@ -677,9 +677,13 @@ enum Layout { columnMajor, rowMajor }; // Matrix Storage Major Dimension.
 ///  rows_ = rows of the matrix
 ///  cols_ = columns of the matrix
 ///  layout = matrix layout
-struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if ((rows_ >= 1) && (cols_ >= 1))
+struct Matrix(E,
+              uint rows_,
+              uint cols_,
+              Layout layout = Layout.rowMajor) if (rows_ >= 1 &&
+                                                   cols_ >= 1)
 {
-    alias mT = type; /// Internal type of the _matrix
+    alias mT = E; /// Internal type of the _matrix
     static const uint rows = rows_; /// Number of rows
     static const uint cols = cols_; /// Number of columns
 
@@ -834,7 +838,7 @@ struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if 
     /// Returns true if all values are not nan and finite, otherwise false.
     @property bool ok() const
     {
-        static if (isFloatingPoint!type)
+        static if (isFloatingPoint!E)
             foreach (row; _matrix)
                 foreach (col; row)
                     if (isNaN(col) || isInfinity(col))
