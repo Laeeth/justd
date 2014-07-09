@@ -271,12 +271,12 @@ struct Vector(E, uint D,
     @safe pure nothrow:
 
     /// Returns: true if all values are not nan and finite, otherwise false.
-    @property bool ok() const {
-        foreach (v; _vector) {
-            if (isNaN(v) || isInfinity(v)) {
-                return false;
-            }
-        }
+    @property bool ok() const
+    {
+        static if (isFloatingPoint!E)
+            foreach (v; _vector)
+                if (isNaN(v) || isInfinity(v))
+                    return false;
         return true;
     }
     // NOTE: Disabled this because I want same behaviour as MATLAB: bool opCast(T : bool)() const { return ok; }
@@ -832,14 +832,13 @@ struct Matrix(type, uint rows_, uint cols_, Layout layout = Layout.rowMajor) if 
     this()(mT value) { clear(value); }
 
     /// Returns true if all values are not nan and finite, otherwise false.
-    @property bool ok() const {
-        foreach (row; _matrix) {
-            foreach (col; row) {
-                if (isNaN(col) || isInfinity(col)) {
-                    return false;
-                }
-            }
-        }
+    @property bool ok() const
+    {
+        static if (isFloatingPoint!type)
+            foreach (row; _matrix)
+                foreach (col; row)
+                    if (isNaN(col) || isInfinity(col))
+                        return false;
         return true;
     }
 
