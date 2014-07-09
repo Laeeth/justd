@@ -27,19 +27,19 @@ auto ref randInPlace(T)(ref T x,
     return x = uniform(low, high);
 }
 
-/** Generate Random Contents in $(D range).
+/** Generate Random Contents in $(D x).
  */
-auto ref randInPlace(R)(auto ref R range) @safe /* nothrow */ if (isIterable!R)
+auto ref randInPlace(T)(auto ref T x) @safe /* nothrow */ if (isIterable!T)
 {
-    foreach (ref elt; range)
+    foreach (ref elt; x)
     {
         import std.range: ElementType;
-        static if (isInputRange!(ElementType!R))
+        static if (isInputRange!(ElementType!T))
             elt[].randInPlace;
         else
             elt.randInPlace;
     }
-    return range;
+    return x;
 }
 
 alias randomize = randInPlace;
