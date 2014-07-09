@@ -21,11 +21,11 @@ import traits_ex: isStruct, isClass, allSame;
 /** Static Iota.
     TODO: Make use of staticIota when it gets available in Phobos.
 */
-template siota(size_t from, size_t to) { alias siotaImpl!(to-1, from) siota; }
+template siota(size_t from, size_t to) { alias siota = siotaImpl!(to-1, from); }
 private template siotaImpl(size_t to, size_t now)
 {
-    static if (now >= to) { alias TypeTuple!(now) siotaImpl; }
-    else                  { alias TypeTuple!(now, siotaImpl!(to, now+1)) siotaImpl; }
+    static if (now >= to) { alias siotaImpl = TypeTuple!(now); }
+    else                  { alias siotaImpl = TypeTuple!(now, siotaImpl!(to, now+1)); }
 }
 
 // ==============================================================================================
@@ -490,7 +490,7 @@ Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b",
                                      E)(R haystack,
                                         E needle,
                                         FindContext ctx = FindContext.inWord,
-                                        CaseSensitive cs = CaseSensitive.yes,
+                                        CaseSensitive cs = CaseSensitive.yes, // TODO: Use this
                                         size_t haystackOffset = 0) @safe pure
 {
     import std.ascii: isAlpha;
@@ -639,8 +639,8 @@ inout(T[]) overlap(T)(inout(T[]) a,
     }
 }
 unittest {
-    auto x = [-11111, 11, 22, 333333];
-    auto y = [-22222, 441, 555, 66];
+    auto x = [-11_111, 11, 22, 333_333];
+    auto y = [-22_222, 441, 555, 66];
 
     assert(!overlap(x, y));
     assert(!overlap(y, x));
@@ -648,7 +648,6 @@ unittest {
     auto x01 = x[0..1];
     auto x12 = x[1..2];
     auto x23 = x[2..3];
-    auto x34 = x[3..4];
 
     // sub-ranges should overlap completely
     assert(overlap(x, x12) == x12);
@@ -783,12 +782,12 @@ auto ref packBitParallelRunLengths(R)(in R x) if (isInputRange!R)
     /*     return y; */
     /* } */
 
-    size_t[nBits] counts;
+    /* size_t[nBits] counts; */
 
     import bitset: BitSet;
     foreach (eltIx, elt; x)
     {
-        BitSet!nBits bits;
+        /* BitSet!nBits bits; */
         foreach (bitIndex; 0..nBits)
         {
             import bitop_ex: getBit;
@@ -992,8 +991,8 @@ auto ref stableSort(T)(auto ref T a) pure if (isRandomAccessRange!T)
     {
         import std.algorithm: partition3, sort;
         auto parts = partition3(a, a[$ / 2]); // mid element as pivot
-        parts[0].sort;
-        parts[2].sort;
+        parts[0].sort();
+        parts[2].sort();
     }
     return a;
 }
@@ -1069,7 +1068,7 @@ template naryFun(string fun)
     }
 }
 unittest {
-    alias naryFun!"a + b + c" test;
+    alias test = naryFun!"a + b + c";
     assert(test(1, 2, 3) == 6);
 }
 
@@ -1251,12 +1250,12 @@ unittest
 */
 template expand(alias array, size_t idx = 0) if (isStaticArray!(typeof(array)))
 {
-    @property ref Delay() { return array[idx]; }
+    @property ref delay() { return array[idx]; }
     static if (idx + 1 < array.length)
     {
-        alias expand = TypeTuple!(Delay, expand!(array, idx + 1));
+        alias expand = TypeTuple!(delay, expand!(array, idx + 1));
     } else {
-        alias expand = Delay;
+        alias expand = delay;
     }
 }
 
