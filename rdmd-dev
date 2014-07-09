@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+# See also: http://forum.dlang.org/thread/qvznmjdmdvkyyrkhbkgy@forum.dlang.org
+
 exec rdmd -L--export-dynamic -color=on -g -gs -debug $* 2>&1 | ddemangle
