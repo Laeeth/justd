@@ -198,7 +198,6 @@ unittest
 
     alias EU = EnumUnion!(E0, E1, E2);
     EU eu;
-    version(none) auto x = eu.fortytwo;
     static assert(is(EU.OriginalType == uint));
 
     version(print)
@@ -206,7 +205,6 @@ unittest
             writefln("E123.%s: %d", e, e);
 
     auto e0 = E0.max;
-    auto e1 = E1.max;
 
     eu = e0;                    // checked at compile-time
     assert(eu == E0.max);
