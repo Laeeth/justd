@@ -12,7 +12,7 @@ import std.stdio, std.algorithm;
 /** Prefix Multipliers.
     See also: http://searchstorage.techtarget.com/definition/Kilo-mega-giga-tera-peta-and-all-that
 */
-enum prefixMultipliers
+enum PrefixMultipliers
 {
     yocto = -24, // y
     zepto = -21, // z
@@ -122,7 +122,6 @@ unittest
     immutable b = bytes(1);
     immutable c = a + b;
     assert(c == 2);
-    immutable d = a;
     assert(1.bytes == 1);
 }
 
