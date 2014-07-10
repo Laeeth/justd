@@ -38,9 +38,11 @@ template ChainEnum(E...) if (E.length >= 2 &&
     mixin({
             string r = "enum ChainEnum { ";
             string[string] names;   // lookup: enumName[memberName]
-            foreach (T; E) {
+            foreach (T; E)
+            {
                 import std.range: join;
-                foreach (m; __traits(allMembers, T)) {
+                foreach (m; __traits(allMembers, T))
+                {
                     assert(m !in names,
                            "Enumerator " ~ T.stringof ~"."~m ~
                            " collides with " ~ names[m] ~"."~m);
@@ -76,8 +78,10 @@ template UnionEnum(E...) if (E.length >= 2 &&
             alias O = CommonOriginalType!E;
             string[string] names;   // lookup: enumName[memberName]
             string[O] values;
-            foreach (ix, T; E) {
-                foreach (m; EnumMembers!T) { // foreach member
+            foreach (ix, T; E)
+            {
+                foreach (m; EnumMembers!T) // foreach member
+                {
                     // name
                     enum n = to!string(m);
                     assert(n !in names,
@@ -113,12 +117,16 @@ struct EnumUnion(E...)
 
     @safe pure nothrow:
 
-    static if (E.length >= 1) {
+    static if (E.length >= 1)
+    {
         void opAssign(E[0] e) { _value = cast(U)e; }
-        E[0] opCast(T : E[0])() const {
+        E[0] opCast(T : E[0])() const
+        {
             bool match = false;
-            foreach (m; EnumMembers!(E[0])) {
-                if (m == _value) {
+            foreach (m; EnumMembers!(E[0]))
+            {
+                if (m == _value)
+                {
                     match = true;
                 }
             }
@@ -127,12 +135,16 @@ struct EnumUnion(E...)
             return cast(E[0])_value;
         }
     }
-    static if (E.length >= 2) {
+    static if (E.length >= 2)
+    {
         void opAssign(E[1] e) { _value = cast(U)e; }
-        E[1] opCast(T : E[1])() const {
+        E[1] opCast(T : E[1])() const
+        {
             bool match = false;
-            foreach (m; EnumMembers!(E[1])) {
-                if (m == _value) {
+            foreach (m; EnumMembers!(E[1]))
+            {
+                if (m == _value)
+                {
                     match = true;
                 }
             }
@@ -153,18 +165,24 @@ struct EnumUnion(E...)
     /* TODO: Why doesn't the following mixin templates have an effect? */
     version(linux)
     {
-        mixin template genOpAssign(uint i) {
+        mixin template genOpAssign(uint i)
+        {
             static if (i == 0)
                 auto fortytwo() { return 42; }
-            void opAssign(E[i] e) {
+            void opAssign(E[i] e)
+            {
                 _value = cast(U)e;
             }
         }
-        mixin template genOpCast(uint i) {
-            E[i] opCast(T : E[i])() const {
+        mixin template genOpCast(uint i)
+        {
+            E[i] opCast(T : E[i])() const
+            {
                 bool match = false;
-                foreach (m; EnumMembers!(E[i])) {
-                    if (m == _value) {
+                foreach (m; EnumMembers!(E[i]))
+                {
+                    if (m == _value)
+                    {
                         match = true;
                     }
                 }
