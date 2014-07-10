@@ -18,7 +18,7 @@ bool getoptEx(T...)(string helphdr, ref string[] args, T opts)
     assert(args.length,
             "Invalid arguments string passed: program name missing");
 
-    string helpMsg = GetoptHelp(opts); // extract all help strings
+    string helpMsg = getoptHelp(opts); // extract all help strings
     bool helpPrinted = false; // state tells if called with "--help"
     void printHelp()
     {
@@ -56,21 +56,21 @@ private template GetoptEx(TList...)
     }
 }
 
-private string GetoptHelp(T...)(T opts)
+private string getoptHelp(T...)(T opts)
 {
     static if (opts.length)
     {
         static if (is(typeof(opts[0]) : config))
         {
             // it's a configuration flag, skip it
-            return GetoptHelp(opts[1 .. $]);
+            return getoptHelp(opts[1 .. $]);
         }
         else
         {
             // it's an option string
             string option  = to!(string)(opts[0]);
             string help    = to!(string)(opts[1]);
-            return("--" ~ option ~ "\n" ~ help ~ "\n" ~ GetoptHelp(opts[3 .. $]));
+            return("--" ~ option ~ "\n" ~ help ~ "\n" ~ getoptHelp(opts[3 .. $]));
         }
     }
     else

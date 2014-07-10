@@ -202,7 +202,7 @@ unittest {
     assert(point(1, 2) - vector(1, 2) == point(0, 0));
 }
 
-enum Orient { column, row }; // Vector Orientation.
+enum Orient { column, row } // Vector Orientation.
 
 /** $(D D)-Dimensional Vector with Coordinate/Element Type (Precision) $(D E).
     See also: http://physics.stackexchange.com/questions/16850/is-0-0-0-an-undefined-vector

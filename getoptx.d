@@ -12,7 +12,7 @@ alias Tuple!(bool, "help", Option[], "options") GetOptRslt;
 
 GetOptRslt getoptX(T...)(ref string[] args, T opts)
 {
-    Option[] helpMsg = GetoptHelp(opts); // extract all help strings
+    Option[] helpMsg = getoptHelp(opts); // extract all help strings
 
     bool helpPrinted = false; // state tells if called with "--help"
 
@@ -48,14 +48,14 @@ private template GetoptEx(TList...)
 
 alias Tuple!(string, "optShort", string, "optLong", string, "help") Option;
 
-private Option[] GetoptHelp(T...)(T opts)
+private Option[] getoptHelp(T...)(T opts)
 {
     static if (opts.length)
     {
         static if (is(typeof(opts[0]) : config))
         {
             // it's a configuration flag, skip it
-            return GetoptHelp(opts[1 .. $]);
+            return getoptHelp(opts[1 .. $]);
         }
         else
         {
@@ -75,7 +75,7 @@ private Option[] GetoptHelp(T...)(T opts)
 			}
 			ret.help = opts[1];
 
-            return([ret]~GetoptHelp(opts[3 .. $]) );
+            return([ret]~getoptHelp(opts[3 .. $]) );
         }
     }
     else

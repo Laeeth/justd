@@ -9,8 +9,8 @@ module algorithm_ex;
 
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
-import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity;
-import std.range: ElementType, isInputRange, isBidirectionalRange, isRandomAccessRange;
+import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString;
+import std.range: ElementType, isInputRange, isBidirectionalRange, isRandomAccessRange, hasSlicing;
 import dbg;
 import traits_ex: isStruct, isClass, allSame;
 
@@ -1317,4 +1317,90 @@ unittest
     auto c = new C().set!`x`(11).set!`w`(44);
     assert(c.x == 11);
     assert(c.w == 44);
+}
+
+// ==============================================================================================
+
+/** Slicer.
+    Enhanced version of std.algorithm.splitter.
+    http://forum.dlang.org/thread/qjbmfeukiqvribmdylkl@forum.dlang.org?page=1
+    http://dlang.org/library/std/algorithm/splitter.html.
+*/
+auto slicer(alias isTerminator, Range)(Range input) /* if (((isRandomAccessRange!Range && */
+                                                    /*       hasSlicing!Range) || */
+                                                    /*      isSomeString!Range) && */
+                                                    /*     is(typeof(unaryFun!isTerminator(input.front)))) */
+{
+    import std.functional: unaryFun;
+    return SlicerResult!(unaryFun!isTerminator, Range)(input);
+}
+
+private struct SlicerResult(alias isTerminator, Range)
+{
+    //alias notTerminator = not!isTerminator;
+
+    private Range _input;
+    private size_t _end = 0;
+
+    private void findTerminator()
+    {
+        auto r = _input.save.find!(not!isTerminator).find!isTerminator();
+        _end = _input.length - r.length;
+    }
+
+    this(Range input)
+    {
+        _input = input;
+        if (_input.empty)
+            _end = size_t.max;
+        else
+            findTerminator();
+    }
+
+    import std.range: isInfinite;
+
+    static if (isInfinite!Range)
+    {
+        enum bool empty = false;  // Propagate infiniteness.
+    }
+    else
+    {
+        @property bool empty()
+        {
+            return _end == size_t.max;
+        }
+    }
+
+    @property auto front()
+    {
+        return _input[0 .. _end];
+    }
+
+    void popFront()
+    {
+        _input = _input[_end .. _input.length];
+        if (_input.empty)
+        {
+            _end = size_t.max;
+            return;
+        }
+        findTerminator();
+    }
+
+    @property typeof(this) save()
+    {
+        auto ret = this;
+        ret._input = _input.save;
+        return ret;
+    }
+}
+
+unittest
+{
+    import std.string: isUpper;
+    "SomeGreatVariableName"  .slicer!isUpper.writeln();
+    "someGGGreatVariableName".slicer!isUpper.writeln();
+    "".slicer!isUpper.writeln();
+    "a".slicer!isUpper.writeln();
+    "A".slicer!isUpper.writeln();
 }
