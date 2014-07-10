@@ -13,7 +13,8 @@ module digest_ex;
     See also: http://stackoverflow.com/questions/1902340/can-a-sha-1-hash-be-all-zeroes
     See also: http://stackoverflow.com/questions/20179287/sha1-indexed-hash-table-in-d
 */
-struct Digest(size_t numBytes = 20, string name = "SHA-1") {
+struct Digest(size_t numBytes = 20, string name = "SHA-1")
+{
     static assert(hash_t.sizeof == 4 ||
                   hash_t.sizeof == 8,
                   ("Unsupported size of hash_t " ~ to!string(hash_t.sizeof)));
@@ -65,33 +66,43 @@ struct Digest(size_t numBytes = 20, string name = "SHA-1") {
 
     version(none)
     {
-        Digest opBinary(string op)(Digest rhs) {
+        Digest opBinary(string op)(Digest rhs)
+        {
             typeof(return) tmp = void;
             static if (op == "^" ||
                        op == "|" ||
-                       op == "&") {
+                       op == "&")
+            {
                 mixin("tmp = _bytes[] " ~ op ~ " rhs._bytes[];");
-            } else {
+            }
+            else
+            {
                 static assert(false, "Unsupported binary operator " ~ op);
             }
             return tmp;
         }
     }
 
-    void toMsgpack(Packer)(ref Packer packer) const {
+    void toMsgpack(Packer)(ref Packer packer) const
+    {
         immutable bool definedFlag = defined;
         packer.pack(definedFlag);
-        if (definedFlag) {
+        if (definedFlag)
+        {
             packer.pack(_bytes); // no header
         }
     }
 
-    void fromMsgpack(Unpacker)(auto ref Unpacker unpacker) {
+    void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
+    {
         bool definedFlag = void;
         unpacker.unpack(definedFlag);
-        if (definedFlag) {
+        if (definedFlag)
+        {
             unpacker.unpack(_bytes); // no header
-        } else {
+        }
+        else
+        {
             _bytes[] = 0; // zero it!
         }
     }
