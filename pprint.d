@@ -664,8 +664,7 @@ void pp1(Arg)(Viz viz,
     {
         if (viz.form == VizForm.HTML)
         {
-            viz.ppRaw(arg.toHTML);
-            return;
+            return viz.ppRaw(arg.toHTML);
         }
     }
     else static if (__traits(hasMember, arg, "toMathML"))
@@ -673,16 +672,14 @@ void pp1(Arg)(Viz viz,
         if (viz.form == VizForm.HTML)
         {
             // TODO: Check for MathML support on backend
-            viz.ppRaw(arg.toMathML);
-            return;
+            return viz.ppRaw(arg.toMathML);
         }
     }
     else static if (__traits(hasMember, arg, "toLaTeX"))
     {
         if (viz.form == VizForm.LaTeX)
         {
-            viz.ppRaw(arg.toLaTeX);
-            return;
+            return viz.ppRaw(arg.toLaTeX);
         }
     }
 
