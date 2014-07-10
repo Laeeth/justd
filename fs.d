@@ -3792,7 +3792,7 @@ class Scanner(Term)
                              "." ~ ext,
                              "w");
             popen("gnome-open " ~ outFile.name);
-            // popen("firefox -new-tab " ~ outFile.name);
+            //popen("firefox -new-tab " ~ outFile.name);
         }
         else
         {
