@@ -5017,7 +5017,7 @@ class Scanner(Term)
                             if (firstDup._cstat.kindId)
                             {
                                 viz.pp(asH!3(gstats.allKindsById[firstDup._cstat.kindId],
-                                             "s sharing digest ", digest, " and size ", firstDup.treeSize));
+                                             " files sharing digest ", digest, " and size ", firstDup.treeSize));
                             }
                             viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
                                          "s sharing digest ", digest, " and size ", firstDup.treeSize));
