@@ -11,6 +11,13 @@ import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticA
 import std.range: isInputRange, ElementType, hasAssignableElements, isBoolean;
 import std.random: uniform;
 
+version = print;
+
+version(print)
+{
+    import dbg;
+}
+
 /* nothrow: */
 
 /** Generate Random Contents. */
@@ -94,6 +101,44 @@ unittest
     testStatic!int;
     testStatic!float;
 }
+
+/** Generate Random Contents in members of $(D x).
+ */
+auto ref randInPlace(T)(ref T x) @safe if (is(T == struct))
+{
+    x.tupleof.randInPlace;
+    return x;
+}
+
+unittest
+{
+    struct T { ubyte a, b; }
+    T[64] x;
+    auto y = x;
+    x.randInPlace;
+    version(print) dln(x);
+    y.randInPlace;
+    assert(y != x);
+}
+
+/** Generate Random Contents in members of $(D x).
+ */
+auto ref randInPlace(T)(T x) @safe if (is(T == class))
+{
+    x.tupleof.randInPlace;
+    return x;
+}
+
+/* unittest */
+/* { */
+/*     class T { ubyte a, b; } */
+/*     auto x = new T[64]; */
+/*     auto y = x.dup; */
+/*     x.randInPlace; */
+/*     version(print) dln(x); */
+/*     y.randInPlace; */
+/*     assert(y != x); */
+/* } */
 
 alias randomize = randInPlace;
 
