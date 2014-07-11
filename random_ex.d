@@ -7,8 +7,8 @@
  */
 module random_ex;
 
-import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable;
-import std.range: isInputRange, ElementType;
+import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray;
+import std.range: isInputRange, ElementType, hasAssignableElements;
 import std.random: uniform;
 
 /** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
@@ -29,7 +29,31 @@ auto ref randInPlace(T)(ref T x,
 
 /** Generate Random Contents in $(D x).
  */
-auto ref randInPlace(T)(auto ref T x) @safe /* nothrow */ if (isIterable!T)
+auto ref randInPlace(R)(R x) @safe if (hasAssignableElements!R)
+{
+    foreach (ref elt; x)
+    {
+        import std.range: ElementType;
+        static if (isInputRange!(ElementType!R))
+            elt[].randInPlace;
+        else
+            elt.randInPlace;
+    }
+    return x;
+}
+
+unittest
+{
+    auto x = new int[64];
+    auto y = x.dup;
+    x.randInPlace;
+    y.randInPlace;
+    assert(y != x);
+}
+
+/** Generate Random Contents in $(D x).
+ */
+auto ref randInPlace(T)(ref T x) @safe /* nothrow */ if (isStaticArray!T)
 {
     foreach (ref elt; x)
     {
@@ -42,8 +66,6 @@ auto ref randInPlace(T)(auto ref T x) @safe /* nothrow */ if (isIterable!T)
     return x;
 }
 
-alias randomize = randInPlace;
-
 unittest
 {
     int[64] x;
@@ -52,6 +74,8 @@ unittest
     y.randInPlace;
     assert(y != x);
 }
+
+alias randomize = randInPlace;
 
 /** Get Random Instance of Type $(D T).
  */
