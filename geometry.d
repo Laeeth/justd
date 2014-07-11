@@ -159,6 +159,32 @@ struct Point(E,
     static const uint dimension = D; /// Get dimensionality.
 
     @property @trusted string toString() const { return "Point:" ~ to!string(point_); }
+    /** Returns: LaTeX Encoding of Vector. http://www.thestudentroom.co.uk/wiki/LaTex#Matrices_and_Vectors */
+    @property @trusted string toMathML() const
+    {
+        // opening
+        string str = `<math><mrow>
+  <mo>(</mo>
+  <mtable>`;
+
+        foreach (i; siota!(0, D))
+        {
+            str ~= `
+    <mtr>
+      <mtd>
+        <mn>` ~ to!string(point_[i]) ~ `</mn>
+      </mtd>
+    </mtr>`;
+        }
+
+        // closing
+        str ~= `
+  </mtable>
+  <mo>)</mo>
+</mrow></math>
+`;
+        return str;
+    }
 
     @safe pure nothrow:
 
@@ -861,7 +887,8 @@ struct Matrix(E,
     }
 
     /// Returns: The current matrix_ as pretty formatted string.
-    @property string asPrettyString() @trusted {
+    @property string toPrettyString() @trusted
+    {
         string fmtr = "%s";
 
         size_t rjust = max(format(fmtr, reduce!(max)(matrix_[])).length,
@@ -880,7 +907,6 @@ struct Matrix(E,
 
         return "[" ~ join(outer_parts, "\n")[1..$] ~ "]";
     }
-    alias toPrettyString = asPrettyString; /// ditto
 
     @safe pure nothrow:
     static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(E, r, c) m) {}
