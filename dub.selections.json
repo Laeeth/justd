@@ -2,16 +2,17 @@
 	"fileVersion": 1,
 	"versions": {
 		"logger": "0.1.0",
+		"ae-graphics": "0.0.2",
 		"vibe-d": "~master",
 		"libevent": "~master",
-		"derelict-util": "1.0.1",
+		"derelict-util": "1.0.2",
 		"derelict-assimp3": "1.0.0",
 		"openssl": "~master",
 		"libev": "~master",
 		"gfm": "~master",
 		"derelict-fi": "1.0.0",
-		"derelict-sdl2": "1.2.1",
+		"derelict-sdl2": "1.2.3",
 		"derelict-enet": "1.3.10",
-		"derelict-gl3": "1.0.2"
+		"derelict-gl3": "1.0.3"
 	}
 }
