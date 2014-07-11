@@ -7,7 +7,7 @@
     See also: http://forum.dlang.org/thread/jbyixfbuefvdlttnyclu@forum.dlang.org#post-mailman.2199.1353742037.5162.digitalmars-d-learn:40puremagic.com
 */
 module traits_ex;
-import std.traits: isArray, isAssignable, ParameterTypeTuple;
+import std.traits: isArray, isAssignable, ParameterTypeTuple, isStaticArray, isDynamicArray, isSomeString;
 import std.range: ElementType;
 
 /** Returns: true iff $(D ptr) is handled by the garbage collector (GC). */
@@ -166,3 +166,6 @@ version (unittest) {
 enum isComparable(T, U) = is(typeof({ return T.init <  U.init; }));
 enum isEquable   (T, U) = is(typeof({ return T.init == U.init; }));
 enum isNotEquable(T, U) = is(typeof({ return T.init != U.init; }));
+
+enum isValueType(T) = isStaticArray!T || isStruct!T;
+enum isReferenceType(T) = isDynamicArray!T || isSomeString!T;

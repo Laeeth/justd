@@ -25,7 +25,7 @@
 module pprint;
 
 import std.range: isInputRange, map, repeat;
-import std.traits: isInstanceOf, isSomeString, isSomeChar, isAggregateType, Unqual, isArray;
+import std.traits: isInstanceOf, isSomeString, isSomeChar, isAggregateType, Unqual, isArray, isIterable;
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
@@ -686,12 +686,14 @@ void pp1(Arg)(Viz viz,
     static if (isArray!Arg &&
                !isSomeString!Arg)
     {
+        viz.ppRaw(`[`);
         foreach (ix, subArg; arg)
         {
             if (ix >= 1)
-                viz.ppRaw(`, `); // separator
+                viz.ppRaw(`,`); // separator
             viz.pp1(depth + 1, subArg);
         }
+        viz.ppRaw(`]`);
     }
     else static if (isInputRange!Arg)
     {
@@ -1043,7 +1045,7 @@ void pp1(Arg)(Viz viz,
         }
 
         static if (arg.args.length == 1 &&
-                   isInputRange!(typeof(arg.args[0])))
+                   isIterable!(typeof(arg.args[0])))
         {
             viz.pp(arg.args[0].asRows!(RowNr.none));
         }
@@ -1063,7 +1065,7 @@ void pp1(Arg)(Viz viz,
     }
     else static if (isInstanceOf!(AsRows, Arg) &&
                     arg.args.length == 1 &&
-                    isInputRange!(typeof(arg.args[0])))
+                    isIterable!(typeof(arg.args[0])))
     {
         bool capitalizeHeadings = true;
 

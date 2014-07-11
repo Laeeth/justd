@@ -159,6 +159,8 @@ import ngram;
 import notnull;
 import pprint;
 import elf;
+import geometry;
+import random_ex;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
@@ -3792,7 +3794,7 @@ class Scanner(Term)
                              "." ~ ext,
                              "w");
             popen("gnome-open " ~ outFile.name);
-            //popen("firefox -new-tab " ~ outFile.name);
+            popen("firefox -new-tab " ~ outFile.name);
         }
         else
         {
@@ -3917,8 +3919,8 @@ class Scanner(Term)
                          " under ", _topDirNames.map!(a => asPath(a))));
         }
 
-        /* viz.pp("Source Kinds".asH!2, */
-        /*        srcFKinds.asTable); */
+        viz.pp("Source Kinds".asH!2,
+               gstats.srcFKinds.asTable);
         /* binFKinds.asTable, */
 
         if (_showSkipped)
@@ -5122,6 +5124,38 @@ class Scanner(Term)
                        asItem("Total ", results.noBytesTotal),
                        asItem("Total number of hits ", results.numTotalHits),
                        asItem("Number of Files with hits ", results.numFilesWithHits)));
+
+        viz.pp("Some Math".asH!2);
+
+        {
+            struct Stat
+            {
+                point2r point;
+                vec2r velocity;
+            }
+
+            alias Stats3 = Stat[3];
+
+            auto stats = new Stat[3];
+
+            /* viz.ppln("A Row Vector: ", */
+            /*          Randomize!(Vector!(float, 3, false, Orient.row))); */
+            /* viz.ppln("A Column Vector: ", */
+            /*          Randomize!(Vector!(float, 3, false, Orient.column))); */
+            /* viz.ppln("Some Column Vectors: ", */
+            /*          Randomize!(Vector!(float, 3, false, Orient.column)[3])); */
+            /* viz.ppln("Some Row Vectors: ", */
+            /*          Randomize!(Vector!(float, 3, false, Orient.row)[3])); */
+            /* viz.ppln("Some Column Vectors: ", */
+            /*          Randomize!(Vector!(float, 3, false, Orient.row)[3]).asTable); */
+
+            viz.ppln("Some Stats: ",
+                     stats.randomize.asTable);
+            viz.ppln("Some Stats: ",
+                     Randomize!Stats3.asTable);
+        }
+
+
     }
 }
 

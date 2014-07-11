@@ -10,13 +10,7 @@ module random_ex;
 import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray;
 import std.range: isInputRange, ElementType, hasAssignableElements, isBoolean;
 import std.random: uniform;
-
-/* version = print; */
-
-version(print)
-{
-    import dbg;
-}
+import traits_ex: isValueType;
 
 version(unittest) private enum testLength = 64;
 
@@ -76,8 +70,6 @@ unittest
         auto y = x.dup;
         x.randInPlace;
         y.randInPlace;
-        version(print) dln(x);
-        version(print) dln(y);
         assert(y != x);
     }
     testDynamic!bool;
@@ -128,7 +120,6 @@ unittest
     T[testLength] x;
     auto y = x;
     x.randInPlace;
-    version(print) dln(x);
     y.randInPlace;
     assert(y != x);
 }
@@ -166,17 +157,18 @@ alias randomize = randInPlace;
  */
 T randomInstanceOf(T)() @safe
 {
-    T x = void;      // don't initialize because randInPlace fills in everything
+    static if (isValueType!T)
+        T x = void;      // don't initialize because randInPlace fills in everything
+    else
+        T x;
     return x.randInPlace;
 }
-
-alias randOf = randomInstanceOf;
+alias Randomize = randomInstanceOf; // TODO: Is it ok to make this uppercase?
 
 /* void test(T, size_t length)() */
 /* { */
 /*     T[length] x; */
 /*     x.randInPlace; */
-/*     version(print) dln(x); */
 /* } */
 
 /* unittest */

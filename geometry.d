@@ -179,7 +179,9 @@ struct Point(E,
         return y;
     }
 }
-mixin(makeInstanceAliases("Point"));
+mixin(makeInstanceAliases("Point", "point", 2,3, ["int", "float", "double", "real"]));
+
+/** Instantiator. */
 auto point(T...)(T args) if (!is(CommonType!(T) == void)) { return Point!(CommonType!T, args.length)(args); }
 
 unittest {
@@ -216,22 +218,22 @@ struct Vector(E, uint D,
 
     static const uint dimension = D; /// Get dimensionality.
 
-    @property @safe pure nothrow string toOrientationString() const { return orient == Orient.column ? "Column" : "Row"; }
-    @property @safe pure nothrow string joinString() const { return orient == Orient.column ? " \\\\ " : " & "; }
+    @property @safe pure nothrow string toOrientationString() const { return orient == Orient.column ? `Column` : `Row`; }
+    @property @safe pure nothrow string joinString() const { return orient == Orient.column ? ` \\ ` : ` & `; }
     @property @trusted string toString() const { return toOrientationString ~ "Vector:" ~ to!string(vector_); }
     /** Returns: LaTeX Encoding of Vector. http://www.thestudentroom.co.uk/wiki/LaTex#Matrices_and_Vectors */
-    @property @trusted string toLaTeX() const { return "\\begin{pmatrix} " ~ map!(to!string)(vector_[]).join(joinString) ~ " \\end{pmatrix}" ; }
+    @property @trusted string toLaTeX() const { return `\begin{pmatrix} ` ~ map!(to!string)(vector_[]).join(joinString) ~ ` \end{pmatrix}` ; }
     @property @trusted string toMathML() const
     {
         // opening
-        string str = "<math><mrow>
+        string str = `<math><mrow>
   <mo>(</mo>
-  <mtable>";
+  <mtable>`;
 
         if (orient == Orient.row)
         {
-            str ~=  "
-    <mtr>";
+            str ~=  `
+    <mtr>`;
         }
 
         foreach (i; siota!(0, D))
@@ -239,34 +241,34 @@ struct Vector(E, uint D,
             final switch (orient)
             {
             case Orient.column:
-                str ~= "
+                str ~= `
     <mtr>
       <mtd>
-        <mn>" ~ to!string(vector_[i]) ~ "</mn>
+        <mn>` ~ to!string(vector_[i]) ~ `</mn>
       </mtd>
-    </mtr>";
+    </mtr>`;
                 break;
             case Orient.row:
-                str ~= "
+                str ~= `
       <mtd>
-        <mn>" ~ to!string(vector_[i]) ~ "</mn>
-      </mtd>";
+        <mn>` ~ to!string(vector_[i]) ~ `</mn>
+      </mtd>`;
                 break;
             }
         }
 
         if (orient == Orient.row)
         {
-            str ~=  "
-    </mtr>";
+            str ~=  `
+    </mtr>`;
         }
 
         // closing
-        str ~= "
+        str ~= `
   </mtable>
   <mo>)</mo>
 </mrow></math>
-";
+`;
         return str;
     }
 
@@ -648,7 +650,11 @@ struct Vector(E, uint D,
         //                                   +Vector!(E,D)(-2)); }
     }
 }
-auto vector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length)(args); }
+auto rowVector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length)(args); }
+auto columnVector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length, false, Orient.column)(args); }
+alias colVector = columnVector;
+
+alias vector = rowVector; // TODO: Should rowVector or columnVector be default?
 
 mixin(makeInstanceAliases("Vector", "vec", 2,4, ["ubyte", "int", "float", "double", "real", "bool"]));
 
@@ -817,40 +823,40 @@ struct Matrix(E,
             foreach (c; siota!(0, cols))
             {
                 s ~= to!string(at(r, c)) ;
-                if (c != cols - 1) { s ~= " & "; } // if not last column
+                if (c != cols - 1) { s ~= ` & `; } // if not last column
             }
-            if (r != rows - 1) { s ~= " \\\\ "; } // if not last row
+            if (r != rows - 1) { s ~= ` \\ `; } // if not last row
         }
-        return "\\begin{pmatrix} " ~ s ~ " \\end{pmatrix}" ;
+        return `\begin{pmatrix} ` ~ s ~ ` \end{pmatrix}`;
     }
     @property @trusted string toMathML() const
     {
         // opening
-        string str = "<math><mrow>
+        string str = `<math><mrow>
   <mo>(</mo>
-  <mtable>";
+  <mtable>`;
 
         foreach (r; siota!(0, rows))
         {
-            str ~=  "
-    <mtr>";
+            str ~=  `
+    <mtr>`;
             foreach (c; siota!(0, cols))
             {
-                str ~= "
+                str ~= `
       <mtd>
-        <mn>" ~ to!string(at(r, c)) ~ "</mn>
-      </mtd>";
+        <mn>` ~ to!string(at(r, c)) ~ `</mn>
+      </mtd>`;
             }
-            str ~=  "
-    </mtr>";
+            str ~=  `
+    </mtr>`;
         }
 
         // closing
-        str ~= "
+        str ~= `
   </mtable>
   <mo>)</mo>
 </mrow></math>
-";
+`;
         return str;
     }
 
@@ -1401,12 +1407,4 @@ unittest
         wln("LaTeX:\n", m.toLaTeX);
         wln("MathML:\n", m.toMathML);
     }
-}
-
-unittest
-{
-    import random_ex;
-    mat4[2] x;
-    x.randInPlace;
-    version(print) wln(x);
 }
