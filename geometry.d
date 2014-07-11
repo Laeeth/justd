@@ -62,29 +62,7 @@ alias wln = writeln;
 import dbg;
 import rational: Rational;
 import algorithm_ex: siota, clamp;
-
-// TODO: Propose to add these to Phobos?
-
-/** See also: http://forum.dlang.org/thread/bug-6384-3@http.d.puremagic.com/issues/
-    See also: http://forum.dlang.org/thread/jrqiiicmtpenzokfxvlz@forum.dlang.org */
-enum isOpBinary(T, string op, U) = is(typeof(mixin("T.init" ~ op ~ "U.init")));
-
-enum isComparable(T) = is(typeof({ return T.init <  T.init; }));
-enum isEquable   (T) = is(typeof({ return T.init == T.init; }));
-enum isNotEquable(T) = is(typeof({ return T.init != T.init; }));
-version (unittest) {
-    static assert(isComparable!int);
-    static assert(isComparable!string);
-    static assert(!isComparable!creal);
-    static struct Foo {}
-    static assert(!isComparable!Foo);
-    static struct Bar { bool opCmp(Bar) { return true; } }
-    static assert(isComparable!Bar);
-}
-
-enum isComparable(T, U) = is(typeof({ return T.init <  U.init; }));
-enum isEquable   (T, U) = is(typeof({ return T.init == U.init; }));
-enum isNotEquable(T, U) = is(typeof({ return T.init != U.init; }));
+import traits_ex: isOpBinary, isComparable, isEquable, isNotEquable;
 
 /* TODO: This doesn't seem that elegant. */
 
