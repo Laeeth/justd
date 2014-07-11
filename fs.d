@@ -5130,6 +5130,7 @@ class Scanner(Term)
         {
             struct Stat
             {
+                particle2f particle;
                 point2r point;
                 vec2r velocity;
                 vec2r acceleration;
@@ -5140,20 +5141,23 @@ class Scanner(Term)
             auto stats = new Stat[3];
 
             /* viz.ppln("A Row Vector: ", */
-            /*          Randomize!(Vector!(float, 3, false, Orient.row))); */
+            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row))); */
             /* viz.ppln("A Column Vector: ", */
-            /*          Randomize!(Vector!(float, 3, false, Orient.column))); */
+            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.column))); */
             /* viz.ppln("Some Column Vectors: ", */
-            /*          Randomize!(Vector!(float, 3, false, Orient.column)[3])); */
+            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.column)[3])); */
             /* viz.ppln("Some Row Vectors: ", */
-            /*          Randomize!(Vector!(float, 3, false, Orient.row)[3])); */
+            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row)[3])); */
             /* viz.ppln("Some Column Vectors: ", */
-            /*          Randomize!(Vector!(float, 3, false, Orient.row)[3]).asTable); */
+            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row)[3]).asTable); */
 
             viz.ppln("Some Stats: ",
-                     stats.randomize.asTable);
+                     randomInstanceOf!particle2f.asTableNr0);
+
             viz.ppln("Some Stats: ",
-                     Randomize!Stats3.asTable);
+                     stats.randomize.asTableNr0);
+            viz.ppln("Some Stats: ",
+                     randomInstanceOf!Stats3.asTableNr0);
         }
 
 

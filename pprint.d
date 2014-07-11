@@ -413,28 +413,36 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** MDash. */
     struct MDash {} auto ref mDash() { return MDash(); }
 
+    enum RowNr { none, offsetZero, offsetOne }
+
     /** Table.
         TODO: Should asTable autowrap args AsRows when needed?
     */
     struct AsTable(T...)
     {
         string border;
+        RowNr rowNr;
         T args;
     }
-    auto ref asTable(T...)(T args) { return AsTable!T(`"1"`, args); }
+    auto ref asTable(T...)(T args) { return AsTable!T(`"1"`, RowNr.none, args); }
+    auto ref asTableNr0(T...)(T args) { return AsTable!T(`"1"`, RowNr.offsetZero, args); }
+    auto ref asTableNr1(T...)(T args) { return AsTable!T(`"1"`, RowNr.offsetOne, args); }
 
-    struct AsCols(T...) { T args; }
-    auto ref asCols(T...)(T args) { return AsCols!T(args); }
+    struct AsCols(T...)
+    {
+        RowNr rowNr;
+        size_t rowIx;
+        T args;
+    }
+    auto ref asCols(T...)(T args) { return AsCols!T(RowNr.none, 0, args); }
 
     /** Row Numbering */
-    enum RowNr { none, offsetZero, offsetOne }
-    struct AsRows(RowNr N, T...)
+    struct AsRows(T...)
     {
-        enum nr = N;
+        RowNr rowNr;
         T args;
     }
-    auto ref asRows(RowNr N,
-                    T...)(T args) { return AsRows!(N, T)(args); }
+    auto ref asRows(T...)(T args) { return AsRows!(T)(RowNr.none, args); }
 
     /** Table Row. */
     struct AsRow(T...) { T args; } auto ref asRow(T...)(T args) { return AsRow!T(args); }
@@ -775,6 +783,8 @@ void pp1(Arg)(Viz viz,
     {
         if      (viz.form == VizForm.HTML)
         {
+            /* TODO: Use arg.language member to highlight using fs tokenizers
+             * which must be moved out of fs. */
             viz.ppTaggedN(`code`, arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
@@ -1047,7 +1057,9 @@ void pp1(Arg)(Viz viz,
         static if (arg.args.length == 1 &&
                    isIterable!(typeof(arg.args[0])))
         {
-            viz.pp(arg.args[0].asRows!(RowNr.none));
+            auto rows = arg.args[0].asRows;
+            rows.rowNr = arg.rowNr;
+            viz.pp(rows);
         }
         else
         {
@@ -1079,7 +1091,7 @@ void pp1(Arg)(Viz viz,
             /* TODO: When __traits(documentation,x)
                here https://github.com/D-Programming-Language/dmd/pull/3531
                get merged use it! */
-            // viz.pplnTaggedN(`tr`, arg_.asCols); // TODO: asItalic
+            // viz.pplnTaggedN(`tr`, subArg.asCols); // TODO: asItalic
 
             // Use __traits(allMembers, T) instead
 
@@ -1087,6 +1099,12 @@ void pp1(Arg)(Viz viz,
 
             // member names header. TODO: Functionize
             if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); }
+
+            if      (arg.rowNr == RowNr.offsetZero)
+                viz.pplnTaggedN(`td`, "Offset");
+            else if (arg.rowNr == RowNr.offsetOne)
+                viz.pplnTaggedN(`td`, "Offset");
+
             foreach (ix, member; first.tupleof)
             {
                 enum idName = __traits(identifier, Front.tupleof[ix]);
@@ -1097,6 +1115,12 @@ void pp1(Arg)(Viz viz,
 
             // member types header. TODO: Functionize
             if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); }
+
+            if      (arg.rowNr == RowNr.offsetZero)
+                viz.pplnTaggedN(`td`, "");
+            else if (arg.rowNr == RowNr.offsetOne)
+                viz.pplnTaggedN(`td`, "");
+
             foreach (member; first.tupleof)
             {
                 alias Memb = Unqual!(typeof(member)); // skip constness for now
@@ -1120,15 +1144,12 @@ void pp1(Arg)(Viz viz,
             if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
         }
 
-        foreach (ix, arg_; arg.args[0])
+        foreach (ix, subArg; arg.args[0]) // for each table row
         {
-            // row index
-            static      if (arg.nr == RowNr.offsetZero)
-                viz.pplnTaggedN(`tr`, ix + 0);
-            else static if (arg.nr == RowNr.offsetOne)
-                viz.pplnTaggedN(`tr`, ix + 1);
-            // row columns
-            viz.pplnTaggedN(`tr`, arg_.asCols);
+            auto cols = subArg.asCols;
+            cols.rowNr = arg.rowNr;
+            cols.rowIx = ix;
+            viz.pplnTaggedN(`tr`, cols); // print columns
         }
     }
     else static if (isInstanceOf!(AsCols, Arg))
@@ -1144,15 +1165,19 @@ void pp1(Arg)(Viz viz,
                 /*     viz.ppRaw(`|`); */
                 /* } */
             }
-            foreach (arg_; args0.tupleof)
+            if      (arg.rowNr == RowNr.offsetZero)
+                viz.pplnTaggedN(`td`, arg.rowIx + 0);
+            else if (arg.rowNr == RowNr.offsetOne)
+                viz.pplnTaggedN(`td`, arg.rowIx + 1);
+            foreach (subArg; args0.tupleof) // for each table column
             {
                 if (viz.form == VizForm.HTML)
                 {
-                    viz.pplnTaggedN(`td`, arg_); // each element in aggregate as a column
+                    viz.pplnTaggedN(`td`, subArg); // each element in aggregate as a column
                 }
                 else if (viz.form == VizForm.jiraWikiMarkup)
                 {
-                    /* viz.pp1(arg_); */
+                    /* viz.pp1(subArg); */
                     /* viz.ppRaw(`|`); */
                 }
             }

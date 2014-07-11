@@ -253,7 +253,7 @@ struct Vector(E, uint D,
     {
         // opening
         string str = `<math><mrow>
-  <mo>(</mo>
+  <mo>⟨</mo>
   <mtable>`;
 
         if (orient == Orient.row)
@@ -292,7 +292,7 @@ struct Vector(E, uint D,
         // closing
         str ~= `
   </mtable>
-  <mo>)</mo>
+  <mo>⟩</mo>
 </mrow></math>
 `;
         return str;
@@ -1132,13 +1132,13 @@ struct Particle(E, uint D,
                 bool normalizedVelocityFlag = false) if (D >= 1)
 {
     Point!(E, D) position;          // Position.
-    Vector!(E, D, normalizedVelocityFlag) velocity;
+    Vector!(E, D, normalizedVelocityFlag) velocity; // Velocity.
     E mass;                         // Mass.
     unittest {
         // version(print) wln(Particle());
     }
 }
-mixin(makeInstanceAliases("Particle","particle", 2,4, defaultElementTypes));
+mixin(makeInstanceAliases("Particle", "particle", 2,4, ["float", "double", "real"]));
 
 // ==============================================================================================
 

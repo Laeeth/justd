@@ -163,7 +163,6 @@ T randomInstanceOf(T)() @safe
         T x;
     return x.randInPlace;
 }
-alias Randomize = randomInstanceOf; // TODO: Is it ok to make this uppercase?
 
 /* void test(T, size_t length)() */
 /* { */
