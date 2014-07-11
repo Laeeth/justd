@@ -3793,7 +3793,7 @@ class Scanner(Term)
             outFile = ioFile("/tmp/fs-" ~ randomUUID().toString() ~
                              "." ~ ext,
                              "w");
-            popen("gnome-open " ~ outFile.name);
+            /* popen("gnome-open " ~ outFile.name); */
             popen("firefox -new-tab " ~ outFile.name);
         }
         else
