@@ -79,11 +79,13 @@ alias randomize = randInPlace;
 
 /** Get Random Instance of Type $(D T).
  */
-T randGet(T)() @safe
+T randomInstanceOf(T)() @safe
 {
     T x = void;      // don't initialize because randInPlace fills in everything
     return x.randInPlace;
 }
+
+alias randOf = randomInstanceOf;
 
 void test(T, size_t length)()
 {
