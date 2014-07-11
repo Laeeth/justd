@@ -5132,6 +5132,7 @@ class Scanner(Term)
             {
                 point2r point;
                 vec2r velocity;
+                vec2r acceleration;
             }
 
             alias Stats3 = Stat[3];
