@@ -81,7 +81,7 @@ alias randomize = randInPlace;
  */
 T randGet(T)() @safe
 {
-    T x;
+    T x = void;      // don't initialize because randInPlace fills in everything
     return x.randInPlace;
 }
 
