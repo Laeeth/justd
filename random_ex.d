@@ -42,17 +42,17 @@ auto ref randInPlace(E)(ref E x) @trusted if (isFloatingPoint!E)
 }
 
 /** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
-auto ref rrandInPlace(E)(ref E x,
-                         E low = E.min,
-                         E high = E.max) @trusted if (isIntegral!E)
+auto ref randInPlace(E)(ref E x,
+                        E low = E.min,
+                        E high = E.max) @trusted if (isIntegral!E)
 {
     return x = uniform(low, high);    // BUG: Never assigns the value E.max
 }
 
 /** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
-auto ref rrandInPlace(E)(ref E x,
-                         E low = 0 /* E.min_normal */,
-                         E high = 1 /* E.max */) @trusted if (isFloatingPoint!E)
+auto ref randInPlace(E)(ref E x,
+                        E low = 0 /* E.min_normal */,
+                        E high = 1 /* E.max */) @trusted if (isFloatingPoint!E)
 {
     return x = uniform(low, high);
 }
