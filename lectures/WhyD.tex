@@ -489,6 +489,16 @@ auto cb = b.cycle; // circular buffer
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Safer and Easier Class Polymorphism}
+  \begin{itemize}[<+->]
+  \item \emph{All} members functions by default virtual
+  \item No \texttt{virtual} keyword needed
+  \item Overriding must be explicit through \texttt{override}
+  \item Member qualifier \texttt{final} makes them non-virtual
+  \item Final members can't be overridden in sub-classes
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{Basic Needs Builtin}
   \begin{itemize}[<+->]
   \item Strings: \texttt{string}
@@ -1060,13 +1070,12 @@ alias goodName = badName; // potentially many overloads
 \begin{frame}[fragile]{Easy, Flexible \& Safe Module System}
   \begin{itemize}[<+->]
   \item Hijack-Safe
-  \item Imports automatically use scope (like C++’s \texttt{using namespace})
-  \item Often No need to qualify symbols like Python \texttt{os.path.join()} as
-    default
+  \item Imports automatically ``used'' (like C++’s \texttt{using namespace})
+  \item No \emph{need} to qualify symbols like in Python's \texttt{os.path.join()}
   \item Because of advanced type system overloads very seldom collide
   \item This is not possible in dynamic languages like Python and Ruby
-  \item When they do uniquify with scope
-  \item Scoped Imports á lá Python supported in functions, structs, etc.
+  \item When they \emph{do} collide uniquify with scope
+  \item Scoped Imports
   \item Cyclic Imports (Dependencies) just works, compared to C/C++,
     Python.
   \item This makes it trivial to break out classes and functions into new
@@ -1105,7 +1114,7 @@ alias Pair(T) = Tuple!(T, T);
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{Unique Feature: Type-Safe Command Line Argument Parsing}
+\begin{frame}[fragile]{Type-Safe Command Line Argument Parsing}
   \begin{itemize}[<+->]
   \item Type-Aware Builtin (\texttt{std.getopt})
   \item Just define typed variable and give it as reference into a type aware
