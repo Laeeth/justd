@@ -29,7 +29,7 @@ auto ref randInPlace(T)(ref T x,
 
 /** Generate Random Contents in $(D x).
  */
-auto ref randInPlace(R)(R x) @safe if (hasAssignableElements!R)
+auto ref randInPlace(R)(R x) @safe /* nothrow */ if (hasAssignableElements!R)
 {
     foreach (ref elt; x)
     {
