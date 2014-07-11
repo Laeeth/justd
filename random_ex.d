@@ -63,11 +63,7 @@ auto ref randInPlace(R)(R x) @safe if (hasAssignableElements!R)
 {
     foreach (ref e; x)
     {
-        import std.range: ElementType;
-        static if (isInputRange!(ElementType!R))
-            e[].randInPlace;
-        else
-            e.randInPlace;
+        e.randInPlace;
     }
     return x;
 }
@@ -95,11 +91,7 @@ auto ref randInPlace(T)(ref T x) @safe if (isStaticArray!T)
 {
     foreach (ref e; x)
     {
-        import std.range: ElementType;
-        static if (isInputRange!(ElementType!T))
-            e[].randInPlace;
-        else
-            e.randInPlace;
+        e.randInPlace;
     }
     return x;
 }
@@ -158,8 +150,8 @@ unittest
     {
         class T { E a, b; }
         auto x = new T;
-        x.randInPlace;
         auto y = new T;
+        x.randInPlace;
         y.randInPlace;
         assert(y != x);
     }

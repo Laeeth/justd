@@ -1395,6 +1395,7 @@ private struct SlicerResult(alias isTerminator, Range)
     }
 }
 
+version(none)
 unittest
 {
     import std.string: isUpper;

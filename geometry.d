@@ -37,6 +37,8 @@ module geometry;
 
 // version = unittestAllInstances;
 
+version = print;
+
 version(NoReciprocalMul)
 {
     private enum rmul = false;
@@ -676,10 +678,13 @@ unittest {
     assert(any!"a"(vec2b(false, true)[]));
     assert(any!"a"(vec2b(true, false)[]));
     assert(!any!"a"(vec2b(false, false)[]));
-    wln(vec2f(2, 3));
-    wln(transpose(vec2f(11, 22)));
-    wln(vec2f(11, 22).toLaTeX);
-    wln(vec2f(11, 22).T.toLaTeX);
+    version(print)
+    {
+        wln(vec2f(2, 3));
+        wln(transpose(vec2f(11, 22)));
+        wln(vec2f(11, 22).toLaTeX);
+        wln(vec2f(11, 22).T.toLaTeX);
+    }
     assert((vec2(1, 3)*2.5f)[] == [2.5f, 7.5f]);
 }
 
@@ -1107,7 +1112,7 @@ struct Particle(E, uint D,
     Vector!(E, D, normalizedVelocityFlag) velocity;
     E mass;                         // Mass.
     unittest {
-        // wln(Particle());
+        // version(print) wln(Particle());
     }
 }
 mixin(makeInstanceAliases("Particle","particle", 2,4, defaultElementTypes));
@@ -1350,7 +1355,7 @@ auto sphere(C, R)(C center, R radius) { return Sphere!(C.type, C.dimension)(cent
 // }
 
 unittest {
-    wln(sphere(point(1, 2), 1));
+    version(print) wln(sphere(point(1, 2), 1));
 }
 
 /**
@@ -1377,28 +1382,40 @@ bool intersects(T)(Circle!T circle, Rect!T rect)
     return (cornerDistance_sq <= circle.r^^2);
 }
 
-unittest {
-    wln(box2f(vec2f(1, 2),
-              vec2f(3, 3)));
-    wln([12, 3, 3]);
+unittest
+{
+    version(print)
+    {
+        wln(box2f(vec2f(1, 2),
+                  vec2f(3, 3)));
+        wln([12, 3, 3]);
 
-    wln(sort(vec2f(2, 3)[]));
-    wln(vec2f(2, 3));
+        wln(sort(vec2f(2, 3)[]));
+        wln(vec2f(2, 3));
 
-    wln(vec2f(2, 3));
-    wln(vec2f(2, 3));
+        wln(vec2f(2, 3));
+        wln(vec2f(2, 3));
 
-    wln(vec3f(2, 3, 4));
+        wln(vec3f(2, 3, 4));
 
-    wln(box2f(vec2f(1, 2),
-              vec2f(3, 4)));
+        wln(box2f(vec2f(1, 2),
+                  vec2f(3, 4)));
 
-    wln(vec2i(2, 3));
-    wln(vec3i(2, 3, 4));
-    wln( + vec3i(2, 3, 4));
-    writeln("vec2i:\n", vec2i(2, 3).toMathML);
+        wln(vec2i(2, 3));
+        wln(vec3i(2, 3, 4));
+        wln( + vec3i(2, 3, 4));
+        wln("vec2i:\n", vec2i(2, 3).toMathML);
 
-    auto m = mat2(1, 2, 3, 4);
-    writeln("LaTeX:\n", m.toLaTeX);
-    writeln("MathML:\n", m.toMathML);
+        auto m = mat2(1, 2, 3, 4);
+        wln("LaTeX:\n", m.toLaTeX);
+        wln("MathML:\n", m.toMathML);
+    }
+}
+
+unittest
+{
+    import random_ex;
+    auto x = new vec2f[2];
+    x.randInPlace;
+    version(print) wln(x);
 }
