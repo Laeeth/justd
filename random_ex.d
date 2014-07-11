@@ -8,28 +8,36 @@
 module random_ex;
 
 import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray;
-import std.range: isInputRange, ElementType, hasAssignableElements;
+import std.range: isInputRange, ElementType, hasAssignableElements, isBoolean;
 import std.random: uniform;
 
-/** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
-auto ref randInPlace(T)(ref T x,
-                        T low = T.min,
-                        T high = T.max) @trusted /* nothrow */ if (isIntegral!T)
+/* nothrow: */
+
+/** Generate Random Contents. */
+auto ref randInPlace(E)(ref E x) @trusted if (isBoolean!E)
 {
-    return x = uniform(low, high);
+    return x = cast(bool)uniform(0, 2);
 }
 
 /** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
-auto ref randInPlace(T)(ref T x,
-                        T low = 0 /* T.min_normal */,
-                        T high = 1 /* T.max */) @trusted /* nothrow */ if (isFloatingPoint!T)
+auto ref randInPlace(E)(ref E x,
+                        E low = E.min,
+                        E high = E.max) @trusted if (isIntegral!E)
+{
+    return x = uniform(low, high);    // BUG: Never assigns the value E.max
+}
+
+/** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
+auto ref randInPlace(E)(ref E x,
+                        E low = 0 /* E.min_normal */,
+                        E high = 1 /* E.max */) @trusted if (isFloatingPoint!E)
 {
     return x = uniform(low, high);
 }
 
 /** Generate Random Contents in $(D x).
  */
-auto ref randInPlace(R)(R x) @safe /* nothrow */ if (hasAssignableElements!R)
+auto ref randInPlace(R)(R x) @safe if (hasAssignableElements!R)
 {
     foreach (ref elt; x)
     {
@@ -44,16 +52,22 @@ auto ref randInPlace(R)(R x) @safe /* nothrow */ if (hasAssignableElements!R)
 
 unittest
 {
-    auto x = new int[64];
-    auto y = x.dup;
-    x.randInPlace;
-    y.randInPlace;
-    assert(y != x);
+    void testDynamic(T)()
+    {
+        auto x = new T[64];
+        auto y = x.dup;
+        x.randInPlace;
+        y.randInPlace;
+        assert(y != x);
+    }
+    testDynamic!bool;
+    testDynamic!int;
+    testDynamic!float;
 }
 
 /** Generate Random Contents in $(D x).
  */
-auto ref randInPlace(T)(ref T x) @safe /* nothrow */ if (isStaticArray!T)
+auto ref randInPlace(T)(ref T x) @safe if (isStaticArray!T)
 {
     foreach (ref elt; x)
     {
@@ -68,11 +82,17 @@ auto ref randInPlace(T)(ref T x) @safe /* nothrow */ if (isStaticArray!T)
 
 unittest
 {
-    int[64] x;
-    auto y = x;
-    x.randInPlace;
-    y.randInPlace;
-    assert(y != x);
+    void testStatic(T)()
+    {
+        T[64] x;
+        auto y = x;
+        x.randInPlace;
+        y.randInPlace;
+        assert(y != x);
+    }
+    testStatic!bool;
+    testStatic!int;
+    testStatic!float;
 }
 
 alias randomize = randInPlace;
