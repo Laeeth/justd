@@ -221,9 +221,10 @@ struct Vector(E, uint D,
     @property @trusted string toString() const { return toOrientationString ~ "Vector:" ~ to!string(vector_); }
     /** Returns: LaTeX Encoding of Vector. http://www.thestudentroom.co.uk/wiki/LaTex#Matrices_and_Vectors */
     @property @trusted string toLaTeX() const { return "\\begin{pmatrix} " ~ map!(to!string)(vector_[]).join(joinString) ~ " \\end{pmatrix}" ; }
-    @property @trusted string toMathML() const {
+    @property @trusted string toMathML() const
+    {
         // opening
-        string str = "<mrow>
+        string str = "<math><mrow>
   <mo>(</mo>
   <mtable>";
 
@@ -264,7 +265,7 @@ struct Vector(E, uint D,
         str ~= "
   </mtable>
   <mo>)</mo>
-</mrow>
+</mrow></math>
 ";
         return str;
     }
@@ -650,6 +651,8 @@ struct Vector(E, uint D,
 auto vector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length)(args); }
 
 mixin(makeInstanceAliases("Vector", "vec", 2,4, ["ubyte", "int", "float", "double", "real", "bool"]));
+
+/* normalized vector aliases */
 alias nvec2f = Vector!(float, 2, true);
 alias nvec3f = Vector!(float, 3, true);
 alias nvec4f = Vector!(float, 4, true);
@@ -820,9 +823,10 @@ struct Matrix(E,
         }
         return "\\begin{pmatrix} " ~ s ~ " \\end{pmatrix}" ;
     }
-    @property @trusted string toMathML() const {
+    @property @trusted string toMathML() const
+    {
         // opening
-        string str = "<mrow>
+        string str = "<math><mrow>
   <mo>(</mo>
   <mtable>";
 
@@ -845,7 +849,7 @@ struct Matrix(E,
         str ~= "
   </mtable>
   <mo>)</mo>
-</mrow>
+</mrow></math>
 ";
         return str;
     }
