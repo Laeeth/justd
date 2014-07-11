@@ -169,20 +169,23 @@ struct Point(E,
     {
         foreach (ix, arg; args)
         {
-            _point[ix] = arg;
+            point_[ix] = arg;
         }
     }
-    private E[D] _point;             /// Element data.
+    /** Element data.
+        TODO: Can this be private and still allow algorithms such as $(D randInPlace) to modify this??
+    */
+    E[D] point_;
     static const uint dimension = D; /// Get dimensionality.
 
-    @property @trusted string toString() const { return "Point:" ~ to!string(_point); }
+    @property @trusted string toString() const { return "Point:" ~ to!string(point_); }
 
     @safe pure nothrow:
 
     /** Returns: Area 0 */
     @property auto area() const { return 0; }
 
-    auto opSlice() { return _point[]; }
+    auto ref opSlice() { return point_[]; }
 
     /** Points +/- Vector => Point */
     auto opBinary(string op, F)(Vector!(F, D) r) const if ((op == "+") ||
@@ -191,7 +194,7 @@ struct Point(E,
         Point!(CommonType!(E, F), D) y;
         foreach (i; siota!(0, D))
         {
-            y._point[i] = mixin("_point[i]" ~ op ~ "r._vector[i]");
+            y.point_[i] = mixin("point_[i]" ~ op ~ "r.vector_[i]");
         }
         return y;
     }
@@ -221,7 +224,7 @@ struct Vector(E, uint D,
     {
         foreach (i; siota!(0, D))
         {
-            _vector[i] = vec._vector[i];
+            vector_[i] = vec.vector_[i];
         }
     }
 
@@ -235,9 +238,9 @@ struct Vector(E, uint D,
 
     @property @safe pure nothrow string toOrientationString() const { return orient == Orient.column ? "Column" : "Row"; }
     @property @safe pure nothrow string joinString() const { return orient == Orient.column ? " \\\\ " : " & "; }
-    @property @trusted string toString() const { return toOrientationString ~ "Vector:" ~ to!string(_vector); }
+    @property @trusted string toString() const { return toOrientationString ~ "Vector:" ~ to!string(vector_); }
     /** Returns: LaTeX Encoding of Vector. http://www.thestudentroom.co.uk/wiki/LaTex#Matrices_and_Vectors */
-    @property @trusted string toLaTeX() const { return "\\begin{pmatrix} " ~ map!(to!string)(_vector[]).join(joinString) ~ " \\end{pmatrix}" ; }
+    @property @trusted string toLaTeX() const { return "\\begin{pmatrix} " ~ map!(to!string)(vector_[]).join(joinString) ~ " \\end{pmatrix}" ; }
     @property @trusted string toMathML() const {
         // opening
         string str = "<mrow>
@@ -258,14 +261,14 @@ struct Vector(E, uint D,
                 str ~= "
     <mtr>
       <mtd>
-        <mn>" ~ to!string(_vector[i]) ~ "</mn>
+        <mn>" ~ to!string(vector_[i]) ~ "</mn>
       </mtd>
     </mtr>";
                 break;
             case Orient.row:
                 str ~= "
       <mtd>
-        <mn>" ~ to!string(_vector[i]) ~ "</mn>
+        <mn>" ~ to!string(vector_[i]) ~ "</mn>
       </mtd>";
                 break;
             }
@@ -292,32 +295,32 @@ struct Vector(E, uint D,
     @property bool ok() const
     {
         static if (isFloatingPoint!E)
-            foreach (v; _vector)
+            foreach (v; vector_)
                 if (isNaN(v) || isInfinity(v))
                     return false;
         return true;
     }
     // NOTE: Disabled this because I want same behaviour as MATLAB: bool opCast(T : bool)() const { return ok; }
-    bool opCast(T : bool)() const { return all!"a" (_vector[]) ; }
+    bool opCast(T : bool)() const { return all!"a" (vector_[]) ; }
 
     /// Returns: Pointer to the coordinates.
-    @property auto value_ptr() { return _vector.ptr; }
+    @property auto value_ptr() { return vector_.ptr; }
 
     /// Sets all values to $(D value).
-    void clear(E value) { foreach (i; siota!(0, D)) { _vector[i] = value; } }
+    void clear(E value) { foreach (i; siota!(0, D)) { vector_[i] = value; } }
 
     /** Returns: Whole Internal Array of E. */
-    auto opSlice() { return _vector[]; }
+    auto ref opSlice() { return vector_[]; }
     /** Returns: Slice of Internal Array of E. */
-    auto opSlice(uint off, uint len) { return _vector[off..len]; }
+    auto ref opSlice(uint off, uint len) { return vector_[off..len]; }
     /** Returns: Reference to Internal Vector Element. */
-    ref inout(E) opIndex(uint i) inout { return _vector[i]; }
+    ref inout(E) opIndex(uint i) inout { return vector_[i]; }
 
     bool opEquals(S)(const S scalar) const if (isAssignable!(E, S)) // TOREVIEW: Use isNotEquable instead
     {
         foreach (i; siota!(0, D))
         {
-            if (_vector[i] != scalar)
+            if (vector_[i] != scalar)
             {
                 return false;
             }
@@ -326,7 +329,7 @@ struct Vector(E, uint D,
     }
     bool opEquals(F)(const F vec) const if (isVector!F && dimension == F.dimension) // TOREVIEW: Use isEquable instead?
     {
-        return _vector == vec._vector;
+        return vector_ == vec.vector_;
     }
     bool opEquals(F)(const(F)[] array) const if (isAssignable!(E, F) && !isArray!F && !isVector!F) // TOREVIEW: Use isNotEquable instead?
     {
@@ -336,7 +339,7 @@ struct Vector(E, uint D,
         }
         foreach (i; siota!(0, D))
         {
-            if (_vector[i] != array[i])
+            if (vector_[i] != array[i])
             {
                 return false;
             }
@@ -361,22 +364,22 @@ struct Vector(E, uint D,
         }
         else static if (is(T : E))
         {
-            _vector[i] = head;
+            vector_[i] = head;
             construct!(i + 1)(tail);
         }
         else static if (isDynamicArray!T)
         {
             static assert((Tail.length == 0) && (i == 0), "Dynamic array can not be passed together with other arguments");
-            _vector[] = head[];
+            vector_[] = head[];
         }
         else static if (isStaticArray!T)
         {
-            _vector[i .. i + T.length] = head[];
+            vector_[i .. i + T.length] = head[];
             construct!(i + T.length)(tail);
         }
         else static if (isCompatibleVector!T)
         {
-            _vector[i .. i + T.dimension] = head._vector[];
+            vector_[i .. i + T.dimension] = head.vector_[];
             construct!(i + T.dimension)(tail);
         }
         else
@@ -387,7 +390,7 @@ struct Vector(E, uint D,
 
     // private void dispatchImpl(int i, string s, int size)(ref E[size] result) const {
     //     static if (s.length > 0) {
-    //         result[i] = _vector[coordToIndex!(s[0])];
+    //         result[i] = vector_[coordToIndex!(s[0])];
     //         dispatchImpl!(i + 1, s[1..$])(result);
     //     }
     // }
@@ -398,7 +401,7 @@ struct Vector(E, uint D,
     //     E[s.length] ret;
     //     dispatchImpl!(0, s)(ret);
     //     Vector!(E, s.length) ret_vec;
-    //     ret_vec._vector = ret;
+    //     ret_vec.vector_ = ret;
     //     return ret_vec;
     // }
 
@@ -409,7 +412,7 @@ struct Vector(E, uint D,
         Vector y;
         foreach (i; siota!(0, D))
         {
-            y._vector[i] = - _vector[i];
+            y.vector_[i] = - vector_[i];
         }
         return y;
     }
@@ -420,7 +423,7 @@ struct Vector(E, uint D,
         Vector!(CommonType!(E, F), D) y;
         foreach (i; siota!(0, D))
         {
-            y._vector[i] = mixin("_vector[i]" ~ op ~ "r._vector[i]");
+            y.vector_[i] = mixin("vector_[i]" ~ op ~ "r.vector_[i]");
         }
         return y;
     }
@@ -429,7 +432,7 @@ struct Vector(E, uint D,
         Vector!(CommonType!(E, F), D) y;
         foreach (i; siota!(0, dimension))
         {
-            y._vector[i] = _vector[i] * r;
+            y.vector_[i] = vector_[i] * r;
         }
         return y;
     }
@@ -461,7 +464,7 @@ struct Vector(E, uint D,
         {
             foreach (r; siota!(0, T.rows))
             {
-                ret._vector[r] += _vector[c] * inp.at(r,c);
+                ret.vector_[r] += vector_[c] * inp.at(r,c);
             }
         }
         return ret;
@@ -478,7 +481,7 @@ struct Vector(E, uint D,
     {
         foreach (i; siota!(0, dimension))
         {
-            mixin("_vector[i]" ~ op ~ "= r;");
+            mixin("vector_[i]" ~ op ~ "= r;");
         }
     }
     unittest {
@@ -492,7 +495,7 @@ struct Vector(E, uint D,
     {
         foreach (i; siota!(0, dimension))
         {
-            mixin("_vector[i]" ~ op ~ "= r._vector[i];");
+            mixin("vector_[i]" ~ op ~ "= r.vector_[i];");
         }
     }
 
@@ -507,7 +510,7 @@ struct Vector(E, uint D,
         {
             E y = 0;                // TOREVIEW: Use other precision for now
         }
-        foreach (i; siota!(0, D)) { y += _vector[i] ^^ N; }
+        foreach (i; siota!(0, D)) { y += vector_[i] ^^ N; }
         return y;
     }
 
@@ -546,7 +549,7 @@ struct Vector(E, uint D,
                 immutable m = this.magnitude;
                 foreach (i; siota!(0, D))
                 {
-                    _vector[i] /= m;
+                    vector_[i] /= m;
                 }
             }
         }
@@ -569,7 +572,7 @@ struct Vector(E, uint D,
 
     /// Returns: Vector Index at Character Coordinate $(D coord).
     private @property ref inout(E) get_(char coord)() inout {
-        return _vector[coordToIndex!coord];
+        return vector_[coordToIndex!coord];
     }
 
     /// Coordinate Character c to Index
@@ -600,11 +603,11 @@ struct Vector(E, uint D,
     }
 
     /// Updates the vector with the values from other.
-    void update(Vector!(E, D) other) { _vector = other._vector; }
+    void update(Vector!(E, D) other) { vector_ = other.vector_; }
 
-    static if (D == 2) { void set(E x, E y) { _vector[0] = x; _vector[1] = y; } }
-    else static if (D == 3) { void set(E x, E y, E z) { _vector[0] = x; _vector[1] = y; _vector[2] = z; } }
-    else static if (D == 4) { void set(E x, E y, E z, E w) { _vector[0] = x; _vector[1] = y; _vector[2] = z; _vector[3] = w; } }
+    static if (D == 2) { void set(E x, E y) { vector_[0] = x; vector_[1] = y; } }
+    else static if (D == 3) { void set(E x, E y, E z) { vector_[0] = x; vector_[1] = y; vector_[2] = z; } }
+    else static if (D == 4) { void set(E x, E y, E z, E w) { vector_[0] = x; vector_[1] = y; vector_[2] = z; vector_[3] = w; } }
 
     static if (D >= 1) { alias x = get_!'x'; }
     static if (D >= 2) { alias y = get_!'y'; }
@@ -654,7 +657,10 @@ struct Vector(E, uint D,
         }
     }
 
-    private E[D] _vector;            /// Element data.
+    /** Element data.
+        TODO: Can this be private and still allow algorithms such as $(D randInPlace) to modify this??
+    */
+    E[D] vector_;
 
     unittest {
         // static if (isSigned!(E)) { assert(-Vector!(E,D)(+2),
@@ -788,38 +794,39 @@ struct Matrix(E,
               Layout layout = Layout.rowMajor) if (rows_ >= 1 &&
                                                    cols_ >= 1)
 {
-    alias mT = E; /// Internal type of the _matrix
+    alias mT = E; /// Internal type of the matrix_
     static const uint rows = rows_; /// Number of rows
     static const uint cols = cols_; /// Number of columns
 
-    /// Matrix $(RED row-major) in memory.
+    /** Matrix $(RED row-major) in memory.
+        TODO: Can this be private and still allow algorithms such as $(D randInPlace) to modify this??
+     */
     static if (layout == Layout.rowMajor)
     {
-        private mT[cols][rows] _matrix; // In C it would be mt[rows][cols], D does it like this: (mt[cols])[rows]
-        @safe nothrow ref inout(mT) opCall(uint row, uint col) inout { return _matrix[row][col]; }
-        @safe nothrow ref inout(mT)     at(uint row, uint col) inout { return _matrix[row][col]; }
+        E[cols][rows] matrix_; // In C it would be mt[rows][cols], D does it like this: (mt[cols])[rows]
+        @safe nothrow ref inout(E) opCall(uint row, uint col) inout { return matrix_[row][col]; }
+        @safe nothrow ref inout(E)     at(uint row, uint col) inout { return matrix_[row][col]; }
     }
     else
     {
-        private mT[rows][cols] _matrix; // In C it would be mt[cols][rows], D does it like this: (mt[rows])[cols]
-        @safe nothrow ref inout(mT) opCall(uint row, uint col) inout { return _matrix[col][row]; }
-        @safe nothrow ref inout(mT) at    (uint row, uint col) inout { return _matrix[col][row]; }
+        E[rows][cols] matrix_; // In C it would be mt[cols][rows], D does it like this: (mt[rows])[cols]
+        @safe nothrow ref inout(E) opCall(uint row, uint col) inout { return matrix_[col][row]; }
+        @safe nothrow ref inout(E) at    (uint row, uint col) inout { return matrix_[col][row]; }
     }
-    alias _matrix this;
-
+    alias matrix_ this;
 
     /// Returns: The pointer to the stored values as OpenGL requires it.
-    /// Note this will return a pointer to a $(RED row-major) _matrix,
+    /// Note this will return a pointer to a $(RED row-major) matrix_,
     /// $(RED this means you've to set the transpose argument to GL_TRUE when passing it to OpenGL).
     /// Examples:
     /// ---
     /// // 3rd argument = GL_TRUE
     /// glUniformMatrix4fv(programs.main.model, 1, GL_TRUE, mat4.translation(-0.5f, -0.5f, 1.0f).value_ptr);
     /// ---
-    @property auto value_ptr() { return _matrix[0].ptr; }
+    @property auto value_ptr() { return matrix_[0].ptr; }
 
-    /// Returns: The current _matrix formatted as flat string.
-    @property @trusted string toString() { return format("%s", _matrix); }
+    /// Returns: The current matrix_ formatted as flat string.
+    @property @trusted string toString() { return format("%s", matrix_); }
     @property @trusted string toLaTeX() const {
         string s;
         foreach (r; siota!(0, rows))
@@ -863,18 +870,18 @@ struct Matrix(E,
         return str;
     }
 
-    /// Returns: The current _matrix as pretty formatted string.
+    /// Returns: The current matrix_ as pretty formatted string.
     @property string asPrettyString() @trusted {
         string fmtr = "%s";
 
-        size_t rjust = max(format(fmtr, reduce!(max)(_matrix[])).length,
-                           format(fmtr, reduce!(min)(_matrix[])).length) - 1;
+        size_t rjust = max(format(fmtr, reduce!(max)(matrix_[])).length,
+                           format(fmtr, reduce!(min)(matrix_[])).length) - 1;
 
         string[] outer_parts;
-        foreach (mT[] row; _matrix)
+        foreach (E[] row; matrix_)
         {
             string[] inner_parts;
-            foreach (mT col; row)
+            foreach (E col; row)
             {
                 inner_parts ~= rightJustify(format(fmtr, col), rjust);
             }
@@ -886,11 +893,11 @@ struct Matrix(E,
     alias toPrettyString = asPrettyString; /// ditto
 
     @safe pure nothrow:
-    static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(mT, r, c) m) {}
+    static void isCompatibleMatrixImpl(uint r, uint c)(Matrix!(E, r, c) m) {}
 
     enum isCompatibleMatrix(T) = is(typeof(isCompatibleMatrixImpl(T.init)));
 
-    static void isCompatibleVectorImpl(uint d)(Vector!(mT, d) vec) {}
+    static void isCompatibleVectorImpl(uint d)(Vector!(E, d) vec) {}
 
     enum isCompatibleVector(T) = is(typeof(isCompatibleVectorImpl(T.init)));
 
@@ -900,16 +907,16 @@ struct Matrix(E,
         {
             static assert(false, "Too many arguments passed to constructor");
         }
-        else static if (is(T : mT))
+        else static if (is(T : E))
         {
-            _matrix[i / cols][i % cols] = head;
+            matrix_[i / cols][i % cols] = head;
             construct!(i + 1)(tail);
         }
-        else static if (is(T == Vector!(mT, cols)))
+        else static if (is(T == Vector!(E, cols)))
         {
             static if (i % cols == 0)
             {
-                _matrix[i / cols] = head._vector;
+                matrix_[i / cols] = head.vector_;
                 construct!(i + T.dimension)(tail);
             }
             else
@@ -919,7 +926,7 @@ struct Matrix(E,
         }
         else
         {
-            static assert(false, "Matrix constructor argument must be of type " ~ mT.stringof ~ " or Vector, not " ~ T.stringof);
+            static assert(false, "Matrix constructor argument must be of type " ~ E.stringof ~ " or Vector, not " ~ T.stringof);
         }
     }
 
@@ -948,7 +955,7 @@ struct Matrix(E,
 
     this(T)(T mat) if (isMatrix!T && (T.cols >= cols) && (T.rows >= rows))
     {
-        _matrix[] = mat._matrix[];
+        matrix_[] = mat.matrix_[];
     }
 
     this(T)(T mat) if (isMatrix!T && (T.cols < cols) && (T.rows < rows))
@@ -963,13 +970,13 @@ struct Matrix(E,
         }
     }
 
-    this()(mT value) { clear(value); }
+    this()(E value) { clear(value); }
 
     /// Returns true if all values are not nan and finite, otherwise false.
     @property bool ok() const
     {
         static if (isFloatingPoint!E)
-            foreach (row; _matrix)
+            foreach (row; matrix_)
                 foreach (col; row)
                     if (isNaN(col) || isInfinity(col))
                         return false;
@@ -977,7 +984,7 @@ struct Matrix(E,
     }
 
     /// Sets all values of the matrix to value (each column in each row will contain this value).
-    void clear(mT value)
+    void clear(E value)
     {
         foreach (r; siota!(0, rows))
         {
@@ -1016,44 +1023,44 @@ struct Matrix(E,
         }
 
         /// Transpose Current Matrix.
-        void transpose() { _matrix = transposed()._matrix; }
+        void transpose() { matrix_ = transposed().matrix_; }
         alias T = transpose; // C++ Armadillo naming convention.
 
         unittest {
             mat2 m2 = mat2(1.0f);
             m2.transpose();
-            assert(m2._matrix == mat2(1.0f)._matrix);
+            assert(m2.matrix_ == mat2(1.0f).matrix_);
             m2.makeIdentity();
-            assert(m2._matrix == [[1.0f, 0.0f],
+            assert(m2.matrix_ == [[1.0f, 0.0f],
                                   [0.0f, 1.0f]]);
             m2.transpose();
-            assert(m2._matrix == [[1.0f, 0.0f],
+            assert(m2.matrix_ == [[1.0f, 0.0f],
                                   [0.0f, 1.0f]]);
-            assert(m2._matrix == m2.identity._matrix);
+            assert(m2.matrix_ == m2.identity.matrix_);
 
             mat3 m3 = mat3(1.1f, 1.2f, 1.3f,
                            2.1f, 2.2f, 2.3f,
                            3.1f, 3.2f, 3.3f);
             m3.transpose();
-            assert(m3._matrix == [[1.1f, 2.1f, 3.1f],
+            assert(m3.matrix_ == [[1.1f, 2.1f, 3.1f],
                                   [1.2f, 2.2f, 3.2f],
                                   [1.3f, 2.3f, 3.3f]]);
 
             mat4 m4 = mat4(2.0f);
             m4.transpose();
-            assert(m4._matrix == mat4(2.0f)._matrix);
+            assert(m4.matrix_ == mat4(2.0f).matrix_);
             m4.makeIdentity();
-            assert(m4._matrix == [[1.0f, 0.0f, 0.0f, 0.0f],
+            assert(m4.matrix_ == [[1.0f, 0.0f, 0.0f, 0.0f],
                                   [0.0f, 1.0f, 0.0f, 0.0f],
                                   [0.0f, 0.0f, 1.0f, 0.0f],
                                   [0.0f, 0.0f, 0.0f, 1.0f]]);
-            assert(m4._matrix == m4.identity._matrix);
+            assert(m4.matrix_ == m4.identity.matrix_);
         }
 
     }
 
     /// Returns a transposed copy of the matrix.
-    @property Matrix!(mT, cols, rows) transposed() const
+    @property Matrix!(E, cols, rows) transposed() const
     {
         typeof(return) ret;
         foreach (r; siota!(0, rows))
@@ -1415,7 +1422,7 @@ unittest
 unittest
 {
     import random_ex;
-    auto x = new vec2f[2];
+    mat4[2] x;
     x.randInPlace;
     version(print) wln(x);
 }
