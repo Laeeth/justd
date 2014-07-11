@@ -86,6 +86,8 @@ enum isComparable(T, U) = is(typeof({ return T.init <  U.init; }));
 enum isEquable   (T, U) = is(typeof({ return T.init == U.init; }));
 enum isNotEquable(T, U) = is(typeof({ return T.init != U.init; }));
 
+/* TODO: This doesn't seem that elegant. */
+
 enum isVector(E)     = is(typeof(isVectorImpl(E.init)));
 enum isPoint(E)      = is(typeof(isPointImpl(E.init)));
 enum isMatrix(E)     = is(typeof(isMatrixImpl(E.init)));
