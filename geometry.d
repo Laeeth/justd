@@ -859,7 +859,7 @@ struct Matrix(E,
     {
         // opening
         string str = `<math><mrow>
-  <mo>(</mo>
+  <mo>❲</mo>
   <mtable>`;
 
         foreach (r; siota!(0, rows))
@@ -880,7 +880,7 @@ struct Matrix(E,
         // closing
         str ~= `
   </mtable>
-  <mo>)</mo>
+  <mo>❳</mo>
 </mrow></math>
 `;
         return str;
@@ -1092,6 +1092,8 @@ struct Matrix(E,
 }
 alias mat2i = Matrix!(int, 2, 2);
 alias mat2 = Matrix!(float, 2, 2);
+alias mat2d = Matrix!(real, 2, 2);
+alias mat2r = Matrix!(real, 2, 2);
 alias mat3 = Matrix!(float, 3, 3);
 alias mat34 = Matrix!(float, 3, 4);
 alias mat4 = Matrix!(float, 4, 4);

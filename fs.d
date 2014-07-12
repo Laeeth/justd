@@ -5134,6 +5134,7 @@ class Scanner(Term)
                 point2r point;
                 vec2r velocity;
                 vec2r acceleration;
+                mat2 rotation;
             }
 
             alias Stats3 = Stat[3];
