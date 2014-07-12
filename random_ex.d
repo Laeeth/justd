@@ -1,17 +1,23 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Extensions to std.random.
+/** Generate Randomized Instances.
+
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
+
     TODO: Tags as nothrow when std.random gets there.
+
+    TODO: How to handle possibly null reference (class, dynamic types) types?
+    Answer relates to how to randomize empty/null variable length structures
+    (arrays, strings, etc).
+    - Maybe some kind of length randomization?
  */
 module random_ex;
 
-import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray;
+import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray, hasIndirections;
 import std.range: isInputRange, ElementType, hasAssignableElements, isBoolean;
 import std.random: uniform;
-import traits_ex: isValueType;
 
 version(unittest) private enum testLength = 64;
 
@@ -154,31 +160,14 @@ unittest
 
 alias randomize = randInPlace;
 
-/** Get Randomized Instance of Type $(D T).
+/** Get New Randomized Instance of Type $(D T).
  */
 T randomInstanceOf(T)() @safe
 {
-    static if (isValueType!T)
-        T x = void;      // don't initialize because randInPlace fills in everything
-    else
+    // TODO: recursively only void-initialize parts of T that are POD
+    static if (hasIndirections!T)
         T x;
+    else
+        T x = void; // don't initialize because randInPlace fills in everything safely
     return x.randInPlace;
 }
-
-/* void test(T, size_t length)() */
-/* { */
-/*     T[length] x; */
-/*     x.randInPlace; */
-/* } */
-
-/* unittest */
-/* { */
-/*     enum testLength = 3; */
-/*     test!(byte, testLength); */
-/*     test!(byte[2], testLength); */
-/*     test!(byte[2][2], testLength); */
-/*     test!(short, testLength); */
-/*     test!(int, testLength); */
-/*     test!(long, testLength); */
-/*     test!(double, testLength); */
-/* } */

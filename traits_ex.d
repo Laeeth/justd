@@ -168,4 +168,7 @@ enum isEquable   (T, U) = is(typeof({ return T.init == U.init; }));
 enum isNotEquable(T, U) = is(typeof({ return T.init != U.init; }));
 
 enum isValueType(T) = isStaticArray!T || isStruct!T;
+/* See also: http://forum.dlang.org/thread/hsfkgcmkjgvrfuyjoujj@forum.dlang.org#post-hsfkgcmkjgvrfuyjoujj:40forum.dlang.org */
 enum isReferenceType(T) = isDynamicArray!T || isSomeString!T;
+
+enum hasValueSemantics(T) = !hasIndirections!T;
