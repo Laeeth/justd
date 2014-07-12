@@ -153,7 +153,7 @@ unittest
 
 alias randomize = randInPlace;
 
-/** Get Random Instance of Type $(D T).
+/** Get Randomized Instance of Type $(D T).
  */
 T randomInstanceOf(T)() @safe
 {
