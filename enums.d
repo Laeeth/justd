@@ -153,6 +153,11 @@ struct EnumUnion(E...)
             return cast(E[1])_value;
         }
     }
+
+    /* TODO: Use (static) foreach here when it becomes available. */
+    /* foreach (ix, E0; E) */
+    /* { */
+    /* } */
     static if (E.length >= 3) void opAssign(E[2] e) { _value = cast(U)e; }
     static if (E.length >= 4) void opAssign(E[3] e) { _value = cast(U)e; }
     static if (E.length >= 5) void opAssign(E[4] e) { _value = cast(U)e; }
