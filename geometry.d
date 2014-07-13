@@ -1149,7 +1149,7 @@ struct ForcedParticle(E, uint D,
     Point!(E, D) position;          // Position.
     Vector!(E, D, normalizedVelocityFlag) velocity; // Velocity.
     E mass;                         // Mass.
-    E force;                        // Force.
+    Vector!(E, D) force;            // Force.
     // Acceleration.
     @property auto acceleration() const { return force/mass; }
 }
