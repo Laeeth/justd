@@ -29,19 +29,6 @@ auto ref randInPlace(E)(ref E x) @trusted if (isBoolean!E)
     return x = cast(bool)uniform(0, 2);
 }
 
-/** Generate Random Contents in $(D x). */
-auto ref randInPlace(E)(ref E x) @trusted if (isIntegral!E)
-{
-    return x = uniform(E.min, E.max);    // BUG: Never assigns the value E.max
-}
-
-/** Generate Random Contents in $(D x). */
-auto ref randInPlace(E)(ref E x) @trusted if (isFloatingPoint!E)
-{
-    return x = uniform(cast(E)0,
-                       cast(E)1);
-}
-
 /** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = E.min,
@@ -164,10 +151,12 @@ alias randomize = randInPlace;
  */
 T randomInstanceOf(T)() @safe
 {
-    // TODO: recursively only void-initialize parts of T that are POD
+    /* TODO: recursively only void-initialize parts of T that are POD, not
+     reference types */
     static if (hasIndirections!T)
         T x;
     else
-        T x = void; // don't initialize because randInPlace fills in everything safely
+        /* don't init - randInPlace below fills in everything safely */
+        T x = void;
     return x.randInPlace;
 }
