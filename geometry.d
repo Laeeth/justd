@@ -1139,6 +1139,21 @@ struct Particle(E, uint D,
 }
 mixin(makeInstanceAliases("Particle", "particle", 2,4, ["float", "double", "real"]));
 
+/** $(D D)-Dimensional Particle with Coordinate Position and
+    Direction/Velocity/Force Type (Precision) $(D E).
+    F = m*a; where F is force, m is mass, a is acceleration.
+*/
+struct ForcedParticle(E, uint D,
+                      bool normalizedVelocityFlag = false) if (D >= 1)
+{
+    Point!(E, D) position;          // Position.
+    Vector!(E, D, normalizedVelocityFlag) velocity; // Velocity.
+    E mass;                         // Mass.
+    E force;                        // Force.
+    // Acceleration.
+    @property auto acceleration() const { return force/mass; }
+}
+
 // ==============================================================================================
 
 /** $(D D)-Dimensional Axis-Aligned (Hyper) Box.
