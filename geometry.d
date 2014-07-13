@@ -1136,9 +1136,6 @@ struct Particle(E, uint D,
     Point!(E, D) position;          // Position.
     Vector!(E, D, normalizedVelocityFlag) velocity; // Velocity.
     E mass;                         // Mass.
-    unittest {
-        // version(print) wln(Particle());
-    }
 }
 mixin(makeInstanceAliases("Particle", "particle", 2,4, ["float", "double", "real"]));
 
