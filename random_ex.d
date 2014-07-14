@@ -145,8 +145,6 @@ unittest
     testClass!float;
 }
 
-alias randomize = randInPlace;
-
 /** Get New Randomized Instance of Type $(D T).
  */
 T randomInstanceOf(T)() @safe
@@ -160,3 +158,6 @@ T randomInstanceOf(T)() @safe
         T x = void;
     return x.randInPlace;
 }
+
+alias randomize = randInPlace;
+alias randomized = randomInstanceOf;
