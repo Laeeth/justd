@@ -25,13 +25,13 @@ version(unittest) private enum testLength = 64;
 
 /* nothrow: */
 
-/** Generate Random Contents. */
+/** Randomize Contents of $(D x). */
 auto ref randInPlace(E)(ref E x) @trusted if (isBoolean!E)
 {
     return x = cast(bool)uniform(0, 2);
 }
 
-/** Generate Random Contents, optionally in $(D x) in range [$(D low), $(D high)]. */
+/** Randomize Contents of $(D x), optionally in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = E.min,
                         E high = E.max) @trusted if (isIntegral!E)
@@ -39,7 +39,7 @@ auto ref randInPlace(E)(ref E x,
     return x = uniform(low, high);    // BUG: Never assigns the value E.max
 }
 
-/** Generate Random Contents, optionally in $(D x) in range [$(D low), $(D high)]. */
+/** Randomize Contents of $(D x), optional in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = 0 /* E.min_normal */,
                         E high = 1 /* E.max */) @trusted if (isFloatingPoint!E)
@@ -47,15 +47,54 @@ auto ref randInPlace(E)(ref E x,
     return x = uniform(low, high);
 }
 
-/** Generate Random Contents in $(D x). */
-version(none)
+/** Generate Random Contents of $(D x).
+    See also: http://forum.dlang.org/thread/emlgflxpgecxsqweauhc@forum.dlang.org
+ */
+auto ref randInPlace(ref dchar x) @trusted
 {
-    auto ref randInPlace(S)(S x) @trusted if (isSomeString!S)
+    auto ui = uniform(0,
+                      0xD800 +
+                      (0x110000 - 0xE000) - 2 // minus two for U+FFFE and U+FFFF
+        );
+    if (ui < 0xD800)
     {
+        return x = ui;
+    }
+    else
+    {
+        ui -= 0xD800;
+        ui += 0xE000;
+
+        // skip undefined
+        if (ui < 0xFFFE)
+            return x = ui;
+        else
+            ui += 2;
+
+        assert(ui < 0x110000);
+        return x = ui;
     }
 }
 
-/** Generate Random Contents in $(D x).
+unittest
+{
+    import dbg;
+    dln(randomized!dchar);
+    dstring d = "alphaalphaalphaalphaalphaalphaalphaalphaalphaalpha";
+    dln(d.randomize);
+}
+
+/** Randomize Contents of $(D x). */
+auto ref randInPlace(dstring x) @trusted
+{
+    dstring y;
+    foreach (ix, e; x)
+        y ~= randomized!dchar;
+    x = y;
+    return y;
+}
+
+/** Randomize Contents of $(D x).
  */
 auto ref randInPlace(R)(R x) @safe if (hasAssignableElements!R)
 {
@@ -81,7 +120,7 @@ unittest
     testDynamic!float;
 }
 
-/** Generate Random Contents in $(D x).
+/** Randomize Contents of $(D x).
  */
 auto ref randInPlace(T)(ref T x) @safe if (isStaticArray!T)
 {
@@ -110,7 +149,7 @@ unittest
     testStatic!E;
 }
 
-/** Generate Random Contents in members of $(D x).
+/** Randomize Contents of members of $(D x).
  */
 auto ref randInPlace(T)(ref T x) @safe if (is(T == struct))
 {
@@ -131,7 +170,7 @@ unittest
     assert(y != x);
 }
 
-/** Generate Random Contents in members of $(D x).
+/** Randomize Contents of members of $(D x).
  */
 auto ref randInPlace(T)(T x) @safe if (is(T == class))
 {
