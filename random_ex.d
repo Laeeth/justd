@@ -88,8 +88,8 @@ unittest
 auto ref randInPlace(dstring x) @trusted
 {
     dstring y;
-    foreach (ix, e; x)
-        y ~= randomized!dchar;
+    foreach (ix; 0..x.length)
+        y ~= randomized!dchar; // TODO: Optimize?
     x = y;
     return y;
 }
