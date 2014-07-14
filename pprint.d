@@ -422,11 +422,14 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     {
         string border;
         RowNr rowNr;
+        bool treeFlag;
         T args;
     }
-    auto ref asTable(T...)(T args) { return AsTable!T(`"1"`, RowNr.none, args); }
-    auto ref asTableNr0(T...)(T args) { return AsTable!T(`"1"`, RowNr.offsetZero, args); }
-    auto ref asTableNr1(T...)(T args) { return AsTable!T(`"1"`, RowNr.offsetOne, args); }
+    auto ref asTable(T...)(T args) { return AsTable!T(`"1"`, RowNr.none, false, args); }
+    auto ref asTableTree(T...)(T args) { return AsTable!T(`"1"`, RowNr.none, true, args); }
+    alias asTablesTable = asTableTree;
+    auto ref asTableNr0(T...)(T args) { return AsTable!T(`"1"`, RowNr.offsetZero, false, args); }
+    auto ref asTableNr1(T...)(T args) { return AsTable!T(`"1"`, RowNr.offsetOne, false, args); }
 
     struct AsCols(T...)
     {
