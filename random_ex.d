@@ -8,6 +8,7 @@
 
     See also: http://forum.dlang.org/thread/byonwfghdqgcirdjyboh@forum.dlang.org
 
+    TODO: Tags as @safe when std.random gets there.
     TODO: Tags as nothrow when std.random gets there.
 
     TODO: How to handle possibly null reference (class, dynamic types) types?
