@@ -17,7 +17,7 @@
  */
 module random_ex;
 
-import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray, hasIndirections;
+import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray, hasIndirections, isSomeString;
 import std.range: isInputRange, ElementType, hasAssignableElements, isBoolean;
 import std.random: uniform;
 
@@ -52,7 +52,6 @@ version(none)
 {
     auto ref randInPlace(S)(S x) @trusted if (isSomeString!S)
     {
-        return x = uniform(low, high);
     }
 }
 
