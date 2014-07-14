@@ -10,7 +10,6 @@
 
     TODO: Tags as @safe when std.random gets there.
     TODO: Tags as nothrow when std.random gets there.
-
     TODO: How to handle possibly null reference (class, dynamic types) types?
     Answer relates to how to randomize empty/null variable length structures
     (arrays, strings, etc).
