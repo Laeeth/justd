@@ -31,7 +31,7 @@ auto ref randInPlace(E)(ref E x) @trusted if (isBoolean!E)
     return x = cast(bool)uniform(0, 2);
 }
 
-/** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
+/** Generate Random Contents, optionally in $(D x) in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = E.min,
                         E high = E.max) @trusted if (isIntegral!E)
@@ -39,12 +39,21 @@ auto ref randInPlace(E)(ref E x,
     return x = uniform(low, high);    // BUG: Never assigns the value E.max
 }
 
-/** Generate Random Contents in $(D x) in range [$(D low), $(D high)]. */
+/** Generate Random Contents, optionally in $(D x) in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = 0 /* E.min_normal */,
                         E high = 1 /* E.max */) @trusted if (isFloatingPoint!E)
 {
     return x = uniform(low, high);
+}
+
+/** Generate Random Contents in $(D x). */
+version(none)
+{
+    auto ref randInPlace(S)(S x) @trusted if (isSomeString!S)
+    {
+        return x = uniform(low, high);
+    }
 }
 
 /** Generate Random Contents in $(D x).
@@ -96,7 +105,10 @@ unittest
     }
     testStatic!bool;
     testStatic!int;
-    testStatic!float;
+    testStatic!real;
+    enum E { a, b, c, d, e, f, g, h,
+             i, j, k, l, m, n, o, p }
+    testStatic!E;
 }
 
 /** Generate Random Contents in members of $(D x).
