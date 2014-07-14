@@ -6,6 +6,8 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
+    See also: http://forum.dlang.org/thread/byonwfghdqgcirdjyboh@forum.dlang.org
+
     TODO: Tags as nothrow when std.random gets there.
 
     TODO: How to handle possibly null reference (class, dynamic types) types?
