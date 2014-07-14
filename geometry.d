@@ -159,7 +159,6 @@ struct Point(E,
     static const uint dimension = D; /// Get dimensionality.
 
     @property @trusted string toString() const { return "Point:" ~ to!string(point_); }
-    /** Returns: LaTeX Encoding of Vector. http://www.thestudentroom.co.uk/wiki/LaTex#Matrices_and_Vectors */
     @property @trusted string toMathML() const
     {
         // opening
