@@ -161,6 +161,7 @@ import pprint;
 import elf;
 import geometry;
 import random_ex;
+import mathml;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
@@ -5135,6 +5136,7 @@ class Scanner(Term)
                 vec2r velocity;
                 vec2r acceleration;
                 mat2 rotation;
+                Rational!uint quote;
             }
 
             alias Stats3 = Stat[3];

@@ -38,6 +38,7 @@ import digest_ex: Digest;
 import csunits: Bytes;
 import fs: FKind, isSymlink, isDir;
 import notnull: NotNull;
+import mathml;
 
 import core.time: Duration;
 
