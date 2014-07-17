@@ -1195,23 +1195,25 @@ bool areColinear(T)(T a, T b) @safe pure nothrow
 /** Returns: min(max(x, min_val), max_val),
     Results are undefined if min_val > max_val.
 */
-auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper) @safe pure nothrow
-    in {
-        assert(lower <= upper, "lower > upper");
+static if (__VERSION__ < 2066)
+{
+    auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper) @safe pure nothrow
+        in {
+            assert(lower <= upper, "lower > upper");
+        }
+    body
+    {
+        import std.algorithm : min, max;
+        return min(max(x, lower), upper);
     }
-body {
-    import std.algorithm : min, max;
-    return min(max(x, lower), upper);
-}
 
-alias saturate = clamp;
-
-unittest {
-    assert((-1).clamp(0, 2) == 0);
-    assert(0.clamp(0, 2) == 0);
-    assert(1.clamp(0, 2) == 1);
-    assert(2.clamp(0, 2) == 2);
-    assert(3.clamp(0, 2) == 2);
+    unittest {
+        assert((-1).clamp(0, 2) == 0);
+        assert(0.clamp(0, 2) == 0);
+        assert(1.clamp(0, 2) == 1);
+        assert(2.clamp(0, 2) == 2);
+        assert(3.clamp(0, 2) == 2);
+    }
 }
 
 // ==============================================================================================
