@@ -61,7 +61,7 @@ import assert_ex;
 alias wln = writeln;
 import dbg;
 import rational: Rational;
-import algorithm_ex: siota, clamp;
+import algorithm_ex: siota;
 import traits_ex: isOpBinary, isComparable, isEquable, isNotEquable;
 
 /* TODO: This doesn't seem that elegant. */
