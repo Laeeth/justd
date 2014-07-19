@@ -695,6 +695,9 @@ void pp1(Arg)(Viz viz,
         }
     }
 
+    /* TODO: Check if any member has mmber toMathML if so call it otherwise call
+     * toString. */
+
     static if (isArray!Arg &&
                !isSomeString!Arg)
     {
