@@ -152,7 +152,8 @@ unittest {
 
 // ==============================================================================================
 
-import algorithm_ex: clamp;
+static if (__VERSION__ < 2066) import algorithm_ex: clamp;
+else import std.algorithm: clamp;
 
 /** Smoothstep from $(D edge0) to $(D edge1) at $(D x).
     Returns: 0.0 if x <= edge0 and 1.0 if x >= edge1 and performs smooth
