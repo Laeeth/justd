@@ -169,10 +169,10 @@ auto minmaxElement(alias F = min, alias G = max, R)(in R range)
     @safe pure nothrow if (isInputRange!R)
 {
     import std.typecons: tuple;
-    return reduce!(F, G)(tuple(ElementType!R.max,
-                               ElementType!R.min), range);
+    return reduce!(F, G)(tuple(Unqual!(ElementType!R).max,
+                               Unqual!(ElementType!R).min), range);
 }
-/* unittest { assert([1, 2, 3].minmaxElement == tuple(1, 3)); } */
+unittest { assert([1, 2, 3].minmaxElement == tuple(1, 3)); }
 
 // ==============================================================================================
 
