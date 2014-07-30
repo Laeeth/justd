@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-exec rdmd -L--export-dynamic -color=on -g -gs -debug -unittest --main $* 2>&1 | ddemangle
+if type ddemangle &> /dev/null; then
+    exec rdmd -L--export-dynamic -color=on -g -gs -debug -unittest --main $* 2>&1 | ddemangle
+else
+    exec rdmd -L--export-dynamic -color=on -g -gs -debug -unittest --main $* 2>&1
+fi
