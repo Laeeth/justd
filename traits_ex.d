@@ -138,8 +138,6 @@ unittest {
     mixin Chainable;
 }
 
-enum arityMin0(alias fun) = __traits(compiles, fun());
-
 /** Check if Type $(D A) is an Instance of Template $(D B).
     See also: http://forum.dlang.org/thread/mailman.2901.1316118301.14074.digitalmars-d-learn@puremagic.com#post-zzdpfhsgfdgpszdbgbbt:40forum.dlang.org
     Deprecated by: http://dlang.org/phobos/std_traits.html#isInstanceOf
@@ -172,3 +170,14 @@ enum isValueType(T) = isStaticArray!T || isStruct!T;
 enum isReferenceType(T) = isDynamicArray!T || isSomeString!T;
 
 enum hasValueSemantics(T) = !hasIndirections!T;
+
+enum arityMin0(alias fun) = __traits(compiles, fun());
+
+template isCallableWith(alias fun, T)
+{
+    enum bool isCallable = is(typeof(fun(T.init))) || is(typeof(T.init.fun));
+}
+unittest {
+    auto sqr(T)(T x) { return x*x; }
+    auto y = isCallableWith!(sqr, int);
+}
