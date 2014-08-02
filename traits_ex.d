@@ -173,11 +173,13 @@ enum hasValueSemantics(T) = !hasIndirections!T;
 
 enum arityMin0(alias fun) = __traits(compiles, fun());
 
+/* TODO: Make it variadic. */
 template isCallableWith(alias fun, T)
 {
-    enum bool isCallable = is(typeof(fun(T.init))) || is(typeof(T.init.fun));
+    enum bool isCallableWith = is(typeof(fun(T.init))) || is(typeof(T.init.fun));
 }
 unittest {
     auto sqr(T)(T x) { return x*x; }
-    auto y = isCallableWith!(sqr, int);
+    assert(isCallableWith!(sqr, int));
+    assert(!isCallableWith!(sqr, string));
 }
