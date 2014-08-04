@@ -252,7 +252,14 @@ struct Vector(E, uint D,
     /** Construct from Scalar $(D VALUE). */
     this(S)(S scalar) if (isAssignable!(E, S))
     {
-        clear(scalar); // ToReview:
+        static if (normalizedFlag)
+        {
+            clear(1/sqrt(cast(E)D));
+        }
+        else
+        {
+            clear(scalar);
+        }
     }
 
     /** Construct from combination of arguments. */
@@ -591,7 +598,6 @@ struct Vector(E, uint D,
             {
                 assert(Vector(3, 4).magnitude == 5);
             }
-            assert(Vector(0).normalized == 0);
         }
     }
 
