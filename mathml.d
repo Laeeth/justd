@@ -16,7 +16,7 @@ enum HAlign { left, center, right }
    Returns: MathML Representation of $(D x).
    See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/mfrac
  */
-string toMathML(T)(ref Rational!T x,
+string toMathML(T)(Rational!T x,
                    bool bevelled = false,
                    HAlign numalign = HAlign.center,
                    HAlign denomalign = HAlign.center,
@@ -26,10 +26,10 @@ string toMathML(T)(ref Rational!T x,
             (bevelled ? ` bevelled="true"` : ``) ~
             (numalign != HAlign.center ? ` numalign="` ~ to!string(numalign) ~ `"` : ``) ~
             (denomalign != HAlign.center ? ` denomalign="` ~ to!string(denomalign) ~ `"` : ``) ~
-            `> <mi> `
-            ~ to!string(x.numerator) ~ ` </mi> <mi> ` ~
+            `><mi>`
+            ~ to!string(x.numerator) ~ `</mi><mi>` ~
             to!string(x.denominator) ~
-            ` </mi> </mfrac>`);
+            `</mi></mfrac>`);
 }
 
 unittest {

@@ -53,7 +53,7 @@ version(unittest)
 }
 
 /** Randomize Contents of $(D x). */
-auto ref randInPlace(E)(ref Rational!E x) @trusted if (isIntegral!E)
+auto ref randInPlace(Rational, E)(ref Rational!E x) @trusted if (isIntegral!E)
 {
     return x = rational(uniform(E.min, E.max),
                         uniform(1, E.max));
@@ -62,7 +62,7 @@ auto ref randInPlace(E)(ref Rational!E x) @trusted if (isIntegral!E)
 unittest
 {
     Rational!int x;
-    x.randInPlace!int;
+    x.randInPlace;
     import dbg;
     dln(x);
 }

@@ -151,6 +151,7 @@ enum isOpBinary(T, string op, U) = is(typeof(mixin("T.init" ~ op ~ "U.init")));
 enum isComparable(T) = is(typeof({ return T.init <  T.init; }));
 enum isEquable   (T) = is(typeof({ return T.init == T.init; }));
 enum isNotEquable(T) = is(typeof({ return T.init != T.init; }));
+
 version (unittest) {
     static assert(isComparable!int);
     static assert(isComparable!string);
@@ -173,13 +174,31 @@ enum hasValueSemantics(T) = !hasIndirections!T;
 
 enum arityMin0(alias fun) = __traits(compiles, fun());
 
-/* TODO: Make it variadic. */
+/* TODO: Unite into a variadic.
+   See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
+*/
 template isCallableWith(alias fun, T)
 {
-    enum bool isCallableWith = is(typeof(fun(T.init))) || is(typeof(T.init.fun));
+    enum bool isCallableWith = (is(typeof(fun(T.init))) ||
+                                is(typeof(T.init.fun))); // TODO: Are both these needed?
 }
 unittest {
     auto sqr(T)(T x) { return x*x; }
     assert(isCallableWith!(sqr, int));
     assert(!isCallableWith!(sqr, string));
+}
+
+/* TODO: Unite into a variadic.
+   See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
+ */
+template isCallableWith(alias fun, T, U)
+{
+    enum bool isCallableWith = (is(typeof(fun(T.init,
+                                              U.init))) ||
+                                is(typeof(T.init.fun(U)))); // TODO: Are both these needed?
+}
+unittest {
+    auto sqr2(T)(T x, T y) { return x*x + y*y; }
+    assert(isCallableWith!(sqr2, int, int));
+    assert(!isCallableWith!(sqr2, int, string));
 }

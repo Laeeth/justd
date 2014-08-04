@@ -31,6 +31,8 @@
 
    See: https://www.google.se/search?q=point+plus+vector
    See: http://mosra.cz/blog/article.php?a=22-introducing-magnum-a-multiplatform-2d-3d-graphics-engine
+
+   TODO: Remove need to use [] in x[] == y[]
 */
 
 module geometry;
@@ -229,6 +231,18 @@ struct Vector(E, uint D,
                        // TOREVIEW: is(T.E : E) &&
                        (V.dimension >= dimension))
     {
+        static if (normalizedFlag)
+        {
+            if (vec.normalized)
+            {
+                immutable vec_norm = vec.magnitude;
+                foreach (i; siota!(0, D))
+                {
+                    vector_[i] = vec.vector_[i] / vec_norm;
+                }
+                return;
+            }
+        }
         foreach (i; siota!(0, D))
         {
             vector_[i] = vec.vector_[i];
@@ -236,7 +250,10 @@ struct Vector(E, uint D,
     }
 
     /** Construct from Scalar $(D VALUE). */
-    this(S)(S scalar) if (isAssignable!(E, S)) { clear(scalar); } // ToReview:
+    this(S)(S scalar) if (isAssignable!(E, S))
+    {
+        clear(scalar); // ToReview:
+    }
 
     /** Construct from combination of arguments. */
     this(Args...)(Args args) { construct!(0)(args); }
@@ -525,7 +542,7 @@ struct Vector(E, uint D,
     /// Returns: Squared Magnitude of x.
     @property @safe pure nothrow real magnitudeSquared()() const if (isNumeric!E)
     {
-        static if (normalizedFlag)
+        static if (normalizedFlag) // cannot use normalized() here (yet)
         {
             return 1;
         }
@@ -537,7 +554,7 @@ struct Vector(E, uint D,
     /// Returns: Magnitude of x.
     @property @safe pure nothrow real magnitude()() const if (isNumeric!E)
     {
-        static if (normalizedFlag)
+        static if (normalizedFlag) // cannot use normalized() here (yet)
         {
             return 1;
         }
@@ -546,9 +563,9 @@ struct Vector(E, uint D,
             return sqrt(magnitudeSquared);
         }
     }
+    alias norm = magnitude;
 
-    static if (isIntegral!E &&
-               isFloatingPoint!E)
+    static if (isFloatingPoint!E)
     {
         /// Normalize $(D this).
         void normalize() {
@@ -674,6 +691,17 @@ struct Vector(E, uint D,
         // static if (isSigned!(E)) { assert(-Vector!(E,D)(+2),
         //                                   +Vector!(E,D)(-2)); }
     }
+
+    auto ref randInPlace() @trusted
+    {
+        static if (normalizedFlag) // cannot use normalized() here (yet)
+        {
+        }
+        else
+        {
+        }
+    }
+
 }
 auto rowVector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length)(args); }
 auto columnVector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length, false, Orient.column)(args); }
@@ -706,9 +734,15 @@ unittest {
         wln(vec2f(11, 22).T.toLaTeX);
     }
     assert((vec2(1, 3)*2.5f)[] == [2.5f, 7.5f]);
+
+    nvec2f v = vec2f(3, 4);
+    assert(v[] == nvec2f(0.6, 0.8)[]);
 }
 
-@safe pure nothrow auto transpose(E, uint D, bool normalizedFlag)(in Vector!(E, D, normalizedFlag, Orient.column) a)
+@safe pure nothrow auto transpose(E, uint D, bool normalizedFlag)(in Vector!(E,
+                                                                  D,
+                                                                  normalizedFlag,
+                                                                  Orient.column) a)
 {
     return Vector!(E, D, normalizedFlag, Orient.row)(a);
 }

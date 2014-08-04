@@ -40,6 +40,21 @@ import fs: FKind, isSymlink, isDir;
 import notnull: NotNull;
 import mathml;
 
+import traits_ex: isCallableWith;
+
+import rational;
+
+@property @trusted string ppMathML(T)(Viz viz,
+                                      Rational!T arg) const
+{
+    viz.ppTagOpen(`math`);
+    viz.ppTagOpen(`mfrac`);
+    viz.ppTaggedN(`mi`, arg.numerator);
+    viz.ppTaggedN(`mi`, arg.denominator);
+    viz.ppTagClose(`mfrac`);
+    viz.ppTagClose(`math`);
+}
+
 import core.time: Duration;
 
 /** Returns: Duration $(D dur) in a Level-Of-Detail (LOD) string
@@ -651,6 +666,7 @@ void ppTaggedN(Tag, Args...)(Viz viz,
                              Args args)
     @trusted if (isSomeString!Tag)
 {
+    import dbg;
     if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
     viz.ppN(args);
     if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
@@ -672,14 +688,22 @@ void pp1(Arg)(Viz viz,
               Arg arg)
     @trusted
 {
-    static if (__traits(hasMember, arg, "toHTML"))
+    static if (is(typeof(arg.toHTML)))
     {
         if (viz.form == VizForm.HTML)
         {
             return viz.ppRaw(arg.toHTML);
         }
     }
-    else static if (__traits(hasMember, arg, "toMathML"))
+    else static if (is(typeof(viz.ppMathML(arg))))
+    {
+        if (viz.form == VizForm.HTML)
+        {
+            // TODO: Check for MathML support on backend
+            return viz.ppRaw(viz.ppMathML(arg));
+        }
+    }
+    else static if (is(typeof(arg.toMathML)))
     {
         if (viz.form == VizForm.HTML)
         {
@@ -687,7 +711,7 @@ void pp1(Arg)(Viz viz,
             return viz.ppRaw(arg.toMathML);
         }
     }
-    else static if (__traits(hasMember, arg, "toLaTeX"))
+    else static if (is(typeof(arg.toLaTeX)))
     {
         if (viz.form == VizForm.LaTeX)
         {
