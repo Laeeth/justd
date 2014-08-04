@@ -209,7 +209,10 @@ struct Point(E,
 mixin(makeInstanceAliases("Point", "point", 2,3, ["int", "float", "double", "real"]));
 
 /** Instantiator. */
-auto point(T...)(T args) if (!is(CommonType!(T) == void)) { return Point!(CommonType!T, args.length)(args); }
+auto point(T...)(T args) if (!is(CommonType!(T) == void))
+{
+    return Point!(CommonType!T, args.length)(args);
+}
 
 unittest {
     assert(point(1, 2) + vector(1, 2) == point(2, 4));

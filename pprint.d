@@ -44,8 +44,9 @@ import traits_ex: isCallableWith;
 
 import rational;
 
-@property @trusted string ppMathML(T)(Viz viz,
-                                      Rational!T arg) const
+// TODO: Check for MathML support on backend
+@property @trusted void ppMathML(T)(Viz viz,
+                                    Rational!T arg)
 {
     viz.ppTagOpen(`math`);
     viz.ppTagOpen(`mfrac`);
@@ -53,6 +54,12 @@ import rational;
     viz.ppTaggedN(`mi`, arg.denominator);
     viz.ppTagClose(`mfrac`);
     viz.ppTagClose(`math`);
+}
+
+unittest
+{
+    Viz viz;
+    viz.ppMathML(rational(1, 3));
 }
 
 import core.time: Duration;
@@ -699,8 +706,7 @@ void pp1(Arg)(Viz viz,
     {
         if (viz.form == VizForm.HTML)
         {
-            // TODO: Check for MathML support on backend
-            return viz.ppRaw(viz.ppMathML(arg));
+            return viz.ppMathML(arg);
         }
     }
     else static if (is(typeof(arg.toMathML)))
