@@ -47,6 +47,26 @@ auto ref randInPlace(E)(ref E x,
     return x = uniform(low, high);
 }
 
+version(unittest)
+{
+    import rational: Rational, rational;
+}
+
+/** Randomize Contents of $(D x). */
+auto ref randInPlace(E)(ref Rational!E x) @trusted if (isIntegral!E)
+{
+    return x = rational(uniform(E.min, E.max),
+                        uniform(1, E.max));
+}
+
+unittest
+{
+    Rational!int x;
+    x.randInPlace!int;
+    import dbg;
+    dln(x);
+}
+
 /** Generate Random Contents of $(D x).
     See also: http://forum.dlang.org/thread/emlgflxpgecxsqweauhc@forum.dlang.org
  */
