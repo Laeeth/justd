@@ -5136,7 +5136,8 @@ class Scanner(Term)
                 vec2r velocity;
                 vec2r acceleration;
                 mat2 rotation;
-                Rational!uint quote;
+                Rational!uint ratInt;
+                Vector!(Rational!uint, 2) ratIntVec;
             }
 
             alias Stats3 = Stat[3];
@@ -5157,6 +5158,7 @@ class Scanner(Term)
             viz.ppln("Some Stats: ",
                      randomInstanceOf!particle2f.asTableNr0);
 
+            randomize(stats);
             viz.ppln("Some Stats: ",
                      stats.randomize.asTableNr0);
             viz.ppln("Some Stats: ",
