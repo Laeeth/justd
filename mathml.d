@@ -8,9 +8,17 @@
 module mathml;
 
 import rational: Rational;
+import std.traits: isScalarType;
 
 /** Horizontal Alignment. */
 enum HAlign { left, center, right }
+
+/* Generic case. */
+string toMathML(T)(T x) @trusted /* pure */ if (isScalarType!T)
+{
+    import std.conv: to;
+    return to!string(x);
+}
 
 /**
    Returns: MathML Representation of $(D x).
@@ -20,7 +28,8 @@ string toMathML(T)(Rational!T x,
                    bool bevelled = false,
                    HAlign numalign = HAlign.center,
                    HAlign denomalign = HAlign.center,
-                   string href = null) @safe pure {
+                   string href = null) @safe pure
+{
     import std.conv: to;
     return (`<mfrac` ~
             (bevelled ? ` bevelled="true"` : ``) ~

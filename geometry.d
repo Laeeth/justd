@@ -173,7 +173,7 @@ struct Point(E,
             str ~= `
     <mtr>
       <mtd>
-        <mn>` ~ to!string(point_[i]) ~ `</mn>
+        <mn>` ~ point_[i].toMathML ~ `</mn>
       </mtd>
     </mtr>`;
         }
@@ -296,14 +296,14 @@ struct Vector(E, uint D,
                 str ~= `
     <mtr>
       <mtd>
-        <mn>` ~ to!string(vector_[i]) ~ `</mn>
+        <mn>` ~ vector_[i].toMathML ~ `</mn>
       </mtd>
     </mtr>`;
                 break;
             case Orient.row:
                 str ~= `
       <mtd>
-        <mn>` ~ to!string(vector_[i]) ~ `</mn>
+        <mn>` ~ vector_[i].toMathML ~ `</mn>
       </mtd>`;
                 break;
             }
@@ -912,7 +912,7 @@ struct Matrix(E,
             {
                 str ~= `
       <mtd>
-        <mn>` ~ to!string(at(r, c)) ~ `</mn>
+        <mn>` ~ at(r, c).toMathML ~ `</mn>
       </mtd>`;
             }
             str ~=  `
