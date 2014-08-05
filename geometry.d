@@ -226,7 +226,9 @@ enum Orient { column, row } // Vector Orientation.
 */
 struct Vector(E, uint D,
               bool normalizedFlag = false, // set to true for UnitVectors
-              Orient orient = Orient.column) if (D >= 1)
+              Orient orient = Orient.column) if (D >= 1 &&
+                                                 (!normalizedFlag ||
+                                                  isFloatingPoint!E)) // only normalize fp for now
 {
 
     // Construct from vector.
@@ -322,6 +324,16 @@ struct Vector(E, uint D,
 </mrow></math>
 `;
         return str;
+    }
+
+    auto ref randInPlace() @trusted
+    {
+        import random_ex: randInPlace;
+        vector_.randInPlace;
+        static if (normalizedFlag && isFloatingPoint!E) // cannot use normalized() here (yet)
+        {
+            normalize(); // TODO: Turn this into D data restriction instead?
+        }
     }
 
     @safe pure nothrow:
@@ -535,7 +547,7 @@ struct Vector(E, uint D,
     }
 
     /// Returns: Non-Rooted $(D N) - Norm of $(D x).
-    @safe pure nothrow auto nrnNorm(uint N)() const if (isNumeric!E && N >= 1)
+    auto nrnNorm(uint N)() const if (isNumeric!E && N >= 1)
     {
         static if (isFloatingPoint!E)
         {
@@ -550,7 +562,7 @@ struct Vector(E, uint D,
     }
 
     /// Returns: Squared Magnitude of x.
-    @property @safe pure nothrow real magnitudeSquared()() const if (isNumeric!E)
+    @property real magnitudeSquared()() const if (isNumeric!E)
     {
         static if (normalizedFlag) // cannot use normalized() here (yet)
         {
@@ -562,7 +574,7 @@ struct Vector(E, uint D,
         }
     }
     /// Returns: Magnitude of x.
-    @property @safe pure nothrow real magnitude()() const if (isNumeric!E)
+    @property real magnitude()() const if (isNumeric!E)
     {
         static if (normalizedFlag) // cannot use normalized() here (yet)
         {
@@ -699,16 +711,6 @@ struct Vector(E, uint D,
     unittest {
         // static if (isSigned!(E)) { assert(-Vector!(E,D)(+2),
         //                                   +Vector!(E,D)(-2)); }
-    }
-
-    auto ref randInPlace() @trusted
-    {
-        static if (normalizedFlag) // cannot use normalized() here (yet)
-        {
-        }
-        else
-        {
-        }
     }
 
 }
