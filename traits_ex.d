@@ -177,11 +177,8 @@ enum arityMin0(alias fun) = __traits(compiles, fun());
 /* TODO: Unite into a variadic.
    See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
 */
-template isCallableWith(alias fun, T)
-{
-    enum bool isCallableWith = (is(typeof(fun(T.init))) ||
-                                is(typeof(T.init.fun))); // TODO: Are both these needed?
-}
+enum isCallableWith(alias fun, T) = (is(typeof(fun(T.init))) ||
+                                     is(typeof(T.init.fun))); // TODO: Are both these needed?
 unittest {
     auto sqr(T)(T x) { return x*x; }
     assert(isCallableWith!(sqr, int));
@@ -191,12 +188,9 @@ unittest {
 /* TODO: Unite into a variadic.
    See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
  */
-template isCallableWith(alias fun, T, U)
-{
-    enum bool isCallableWith = (is(typeof(fun(T.init,
-                                              U.init))) ||
-                                is(typeof(T.init.fun(U)))); // TODO: Are both these needed?
-}
+enum isCallableWith(alias fun, T, U) = (is(typeof(fun(T.init,
+                                                      U.init))) ||
+                                        is(typeof(T.init.fun(U)))); // TODO: Are both these needed?
 unittest {
     auto sqr2(T)(T x, T y) { return x*x + y*y; }
     assert(isCallableWith!(sqr2, int, int));
