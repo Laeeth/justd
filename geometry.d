@@ -272,8 +272,11 @@ struct Vector(E, uint D,
 
     static const uint dimension = D; /// Get dimensionality.
 
-    @property @safe pure nothrow string toOrientationString() const { return orient == Orient.column ? `Column` : `Row`; }
-    @property @safe pure nothrow string joinString() const { return orient == Orient.column ? ` \\ ` : ` & `; }
+    @safe pure nothrow const
+    {
+        @property string toOrientationString() { return orient == Orient.column ? `Column` : `Row`; }
+        @property string joinString() { return orient == Orient.column ? ` \\ ` : ` & `; }
+    }
     @property @trusted string toString() const { return toOrientationString ~ "Vector:" ~ to!string(vector_); }
     /** Returns: LaTeX Encoding of Vector. http://www.thestudentroom.co.uk/wiki/LaTex#Matrices_and_Vectors */
     @property @trusted string toLaTeX() const { return `\begin{pmatrix} ` ~ map!(to!string)(vector_[]).join(joinString) ~ ` \end{pmatrix}` ; }
