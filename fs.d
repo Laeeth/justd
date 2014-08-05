@@ -5137,7 +5137,7 @@ class Scanner(Term)
                 vec2r acceleration;
                 mat2 rotation;
                 Rational!uint ratInt;
-                Vector!(Rational!uint, 2) ratIntVec;
+                Vector!(Rational!int, 4) ratIntVec;
             }
 
             alias Stats3 = Stat[3];

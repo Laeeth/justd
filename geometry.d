@@ -1057,7 +1057,6 @@ struct Matrix(E,
 
     static if (rows == cols)
     {
-
         /// Makes the current matrix an identity matrix.
         void makeIdentity()
         {
@@ -1081,6 +1080,7 @@ struct Matrix(E,
 
             return ret;
         }
+        alias id = identity;    // shorthand
 
         /// Transpose Current Matrix.
         void transpose() { matrix_ = transposed().matrix_; }

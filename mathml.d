@@ -31,14 +31,14 @@ string toMathML(T)(Rational!T x,
                    string href = null) @safe pure
 {
     import std.conv: to;
-    return (`<mfrac` ~
+    return (`<math><mfrac` ~
             (bevelled ? ` bevelled="true"` : ``) ~
             (numalign != HAlign.center ? ` numalign="` ~ to!string(numalign) ~ `"` : ``) ~
             (denomalign != HAlign.center ? ` denomalign="` ~ to!string(denomalign) ~ `"` : ``) ~
             `><mi>`
             ~ to!string(x.numerator) ~ `</mi><mi>` ~
             to!string(x.denominator) ~
-            `</mi></mfrac>`);
+            `</mi></mfrac></math>`);
 }
 
 unittest {
