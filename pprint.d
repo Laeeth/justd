@@ -56,12 +56,6 @@ import rational;
     viz.ppTagClose(`math`);
 }
 
-unittest
-{
-    Viz viz;
-    viz.ppMathML(rational(1, 3));
-}
-
 import core.time: Duration;
 
 /** Returns: Duration $(D dur) in a Level-Of-Detail (LOD) string
@@ -445,7 +439,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     {
         string border;
         RowNr rowNr;
-        bool treeFlag;
+        bool recurseFlag;
         T args;
     }
     auto ref asTable(T...)(T args) { return AsTable!T(`"1"`, RowNr.none, false, args); }
@@ -458,17 +452,19 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     {
         RowNr rowNr;
         size_t rowIx;
+        bool recurseFlag;
         T args;
     }
-    auto ref asCols(T...)(T args) { return AsCols!T(RowNr.none, 0, args); }
+    auto ref asCols(T...)(T args) { return AsCols!T(RowNr.none, 0, false, args); }
 
-    /** Row Numbering */
+    /** Numbered Rows */
     struct AsRows(T...)
     {
         RowNr rowNr;
+        bool recurseFlag;
         T args;
     }
-    auto ref asRows(T...)(T args) { return AsRows!(T)(RowNr.none, args); }
+    auto ref asRows(T...)(T args) { return AsRows!(T)(RowNr.none, false, args); }
 
     /** Table Row. */
     struct AsRow(T...) { T args; } auto ref asRow(T...)(T args) { return AsRow!T(args); }
@@ -1095,6 +1091,7 @@ void pp1(Arg)(Viz viz,
                    isIterable!(typeof(arg.args[0])))
         {
             auto rows = arg.args[0].asRows;
+            rows.recurseFlag = arg.recurseFlag; // propagate
             rows.rowNr = arg.rowNr;
             viz.pp(rows);
         }
@@ -1114,16 +1111,17 @@ void pp1(Arg)(Viz viz,
     }
     else static if (isInstanceOf!(AsRows, Arg) &&
                     arg.args.length == 1 &&
-                    isIterable!(typeof(arg.args[0])))
+                    isArray!(typeof(arg.args[0]))) // if single array
     {
         bool capitalizeHeadings = true;
 
         /* See also: http://forum.dlang.org/thread/wjksldfpkpenoskvhsqa@forum.dlang.org#post-jwfildowqrbwtamywsmy:40forum.dlang.org */
-        // table header
+
+        // use aggregate members as header
         import std.range: front;
         const first = arg.args[0].front;
         alias Front = typeof(first);
-        if (isAggregateType!Front)
+        static if (isAggregateType!Front)
         {
             /* TODO: When __traits(documentation,x)
                here https://github.com/D-Programming-Language/dmd/pull/3531
@@ -1184,6 +1182,7 @@ void pp1(Arg)(Viz viz,
         foreach (ix, subArg; arg.args[0]) // for each table row
         {
             auto cols = subArg.asCols;
+            cols.recurseFlag = arg.recurseFlag; // propagate
             cols.rowNr = arg.rowNr;
             cols.rowIx = ix;
             viz.pplnTaggedN(`tr`, cols); // print columns

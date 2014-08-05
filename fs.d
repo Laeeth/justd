@@ -5160,9 +5160,9 @@ class Scanner(Term)
 
             randomize(stats);
             viz.ppln("Some Stats: ",
-                     stats.randomize.asTableNr0);
+                     stats.randomize.asTableTree);
             viz.ppln("Some Stats: ",
-                     randomInstanceOf!Stats3.asTableNr0);
+                     randomInstanceOf!Stats3.asTableTree);
         }
 
 
