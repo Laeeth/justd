@@ -10,7 +10,7 @@ import std.typecons,
 import vibe.d;
 
 import fs;
-import backtrace.backtrace;
+/* import backtrace.backtrace; */
 
 shared static this()
 {
@@ -37,16 +37,16 @@ void req()
                 });
 }
 
-void main(string[] args)
+void otherMain(immutable string[] args)
 {
-    import std.stdio: stderr;
-    backtrace.backtrace.install(stderr);
+    /* import std.stdio: stderr; */
+    /* backtrace.backtrace.install(stderr); */
 
     if (false) {
-        scanner(args);
+        scanner(args.dup);
     }
 
-    req();
+    /* req(); */
 
     int width = 800;
     int height = 600;
@@ -87,7 +87,6 @@ void main(string[] args)
         Position position;
         Color color;
     }
-
 
     Vertex[8] hexFanVertices = [{[   0,   0, 0], [1, 1, 1]},
                                 {[   0,   1, 0], [0, 1, 0]},
@@ -288,4 +287,18 @@ void main(string[] args)
         window.setTitle("Test: a green hexagon, a blue rectangle, a yellow transparent triangle");
         window.swapBuffers();
     }
+}
+
+void smallMain()
+{
+    import std.stdio;
+    writeln("sdfdf");
+}
+
+void main(string[] args)
+{
+    import std.concurrency: spawn;
+    auto smallMainTid = spawn(&smallMain);
+    auto otherMainTid = spawn(&otherMain, args.idup);
+    runEventLoop();
 }

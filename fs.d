@@ -568,7 +568,7 @@ KindHit ofKind(NotNull!RegFile regfile,
                in string ext,
                NotNull!FKind kind,
                bool collectTypeHits,
-               const ref FKind[SHA1Digest] allKindsById) /* nothrow */ @safe
+               const ref FKind[SHA1Digest] allKindsById) /* nothrow */ @trusted
 {
     // Try cached first
 
@@ -620,6 +620,19 @@ KindHit ofKind(NotNull!RegFile regfile,
     }
     if (hit)
     {
+        if (kind.kindName == "ELF")
+        {
+            bool flag64 = true;
+            if (flag64)
+            {
+                writeln("xx");
+                auto elf_ = new elf.ELF64(regfile._mmfile);
+            }
+            else
+            {
+                auto elf_ = new elf.ELF32(regfile._mmfile);
+            }
+        }
         if (collectTypeHits)
         {
             kind.hitFiles ~= regfile;
