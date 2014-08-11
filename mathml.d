@@ -23,6 +23,8 @@ string toMathML(T)(T x) @trusted /** pure */ if (isScalarType!T &&
 
 /** Floating-Point Case.
     See also: http://forum.dlang.org/thread/awkynfizwqjnbilgddbh@forum.dlang.org#post-awkynfizwqjnbilgddbh:40forum.dlang.org
+    See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/mn
+    See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/msup
 */
 string toMathML(T)(T x) @trusted /** pure */ if (isFloatingPoint!T)
 {
