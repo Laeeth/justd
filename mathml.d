@@ -38,18 +38,13 @@ string toMathML(T)(T x) @trusted /** pure */ if (isFloatingPoint!T)
                 `<mn mathsize="80%">` ~ parts[2] ~ `</mn>`
                 `</msup>` ~
                 `</math>`);
+    /* NOTE: This doesn't work in Firefox. */
     /* return (`<math>` ~ parts[0] ~ `&middot;` ~ */
     /*         `<apply><power/>` ~ */
     /*         `<ci>10</ci>` ~ */
     /*         `<cn>` ~ parts[2] ~ `</cn>` */
     /*         `</apply>` ~ */
     /*         `</math>`); */
-}
-
-unittest
-{
-    import dbg;
-    dln(1.2e10.toMathML);
 }
 
 /**
