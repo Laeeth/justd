@@ -35,7 +35,7 @@ string toMathML(T)(T x) @trusted /** pure */ if (isFloatingPoint!T)
         return (`<math>` ~ parts[0] ~ `&middot;` ~
                 `<msup>` ~
                 `<mn>10</mn>` ~
-                `<mn mathsize="small">` ~ parts[2] ~ `</mn>`
+                `<mn mathsize="80%">` ~ parts[2] ~ `</mn>`
                 `</msup>` ~
                 `</math>`);
     /* return (`<math>` ~ parts[0] ~ `&middot;` ~ */
