@@ -33,11 +33,17 @@ string toMathML(T)(T x) @trusted /** pure */ if (isFloatingPoint!T)
         return parts[0];
     else
         return (`<math>` ~ parts[0] ~ `&middot;` ~
-                `<apply><power/>` ~
-                `<ci>10</ci>` ~
-                `<cn>` ~ parts[2] ~ `</cn>`
-                `</apply>` ~
+                `<msup>` ~
+                `<mn>10</mn>` ~
+                `<mn mathsize="small">` ~ parts[2] ~ `</mn>`
+                `</msup>` ~
                 `</math>`);
+    /* return (`<math>` ~ parts[0] ~ `&middot;` ~ */
+    /*         `<apply><power/>` ~ */
+    /*         `<ci>10</ci>` ~ */
+    /*         `<cn>` ~ parts[2] ~ `</cn>` */
+    /*         `</apply>` ~ */
+    /*         `</math>`); */
 }
 
 unittest
