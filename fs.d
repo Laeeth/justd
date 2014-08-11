@@ -5169,6 +5169,9 @@ class Scanner(Term)
             /* viz.ppln("Some Column Vectors: ", */
             /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row)[3]).asTable); */
 
+            viz.ppln("A number: ",
+                     1.2e10);
+
             viz.ppln("Some Stats: ",
                      randomInstanceOf!particle2f.asTableNr0);
 

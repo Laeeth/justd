@@ -8,7 +8,7 @@
 module mathml;
 
 import rational: Rational;
-import std.traits: isScalarType;
+import std.traits: isScalarType, isFloatingPoint;
 
 /** Horizontal Alignment. */
 enum HAlign { left, center, right }
@@ -29,7 +29,21 @@ string toMathML(T)(T x) @trusted /** pure */ if (isFloatingPoint!T)
     import std.conv: to;
     import std.algorithm: findSplit; //
     immutable parts = to!string(x).findSplit("e");
-    return parts[0] ~ "*10^" ~ parts[1]; // TODO: Fix
+    if (parts[2].length == 0)
+        return parts[0];
+    else
+        return (`<math>` ~ parts[0] ~ `&middot;` ~
+                `<apply><power/>` ~
+                `<ci>10</ci>` ~
+                `<cn>` ~ parts[2] ~ `</cn>`
+                `</apply>` ~
+                `</math>`);
+}
+
+unittest
+{
+    import dbg;
+    dln(1.2e10.toMathML);
 }
 
 /**
