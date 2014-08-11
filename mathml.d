@@ -13,11 +13,23 @@ import std.traits: isScalarType;
 /** Horizontal Alignment. */
 enum HAlign { left, center, right }
 
-/* Generic case. */
-string toMathML(T)(T x) @trusted /* pure */ if (isScalarType!T)
+/** Generic case. */
+string toMathML(T)(T x) @trusted /** pure */ if (isScalarType!T &&
+                                                 !isFloatingPoint!T)
 {
     import std.conv: to;
     return to!string(x);
+}
+
+/** Floating-Point Case.
+    See also: http://forum.dlang.org/thread/awkynfizwqjnbilgddbh@forum.dlang.org#post-awkynfizwqjnbilgddbh:40forum.dlang.org
+*/
+string toMathML(T)(T x) @trusted /** pure */ if (isFloatingPoint!T)
+{
+    import std.conv: to;
+    import std.algorithm: findSplit; //
+    immutable parts = to!string(x).findSplit("e");
+    return parts[0] ~ "*10^" ~ parts[1]; // TODO: Fix
 }
 
 /**
@@ -45,7 +57,7 @@ unittest {
     alias Q = Rational;
     import dbg: dln;
     auto x = Q!ulong(11, 22);
-    /* dln(x.toMathML); */
-    /* dln(x.toMathML(true)); */
-    /* dln(x.toMathML(true, HAlign.left, HAlign.left)); */
+    /** dln(x.toMathML); */
+    /** dln(x.toMathML(true)); */
+    /** dln(x.toMathML(true, HAlign.left, HAlign.left)); */
 }

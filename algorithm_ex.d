@@ -1407,3 +1407,19 @@ unittest
     "a".slicer!isUpper.writeln();
     "A".slicer!isUpper.writeln();
 }
+
+
+/* Check if $(D part) is part of $(D whole).
+  See also: http://forum.dlang.org/thread/ls9dbk$jkq$1@digitalmars.com
+  TODO: Standardize name and remove alises.
+  TODO: Use partOf if generalized to InputRange.
+ */
+bool sliceOf(T)(in T[] part,
+                in T[] whole)
+{
+    return (whole.ptr <= part.ptr &&
+            part.ptr + part.length <=
+            whole.ptr + whole.length);
+}
+alias contain = sliceOf;
+alias partOf = sliceOf;

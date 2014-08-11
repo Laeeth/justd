@@ -625,8 +625,9 @@ KindHit ofKind(NotNull!RegFile regfile,
             bool flag64 = true;
             if (flag64)
             {
-                writeln("xx");
                 auto elf_ = new elf.ELF64(regfile._mmfile);
+                const x = elf_.getSymbolsStringTable;
+                /* writefln("%-(%s\n%)", x.strings); */
             }
             else
             {
