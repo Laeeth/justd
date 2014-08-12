@@ -663,6 +663,7 @@ unittest {
 }
 
 /** Helper for overlap().
+    Copied from std.array with simplified return expression.
  */
 bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
 {
