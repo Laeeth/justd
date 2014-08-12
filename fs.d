@@ -564,7 +564,7 @@ enum KindHit
 }
 
 /** Scan $(D regfile) for ELF Symbols.
-    TODO: Store and cache stuff in gstats.symbolsELF
+    TODO: Index and cache stuff in gstats.symbolsELF
     TODO: Support GCC C++ here https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
  */
 void scanELF(NotNull!RegFile regfile)
@@ -5191,8 +5191,8 @@ class Scanner(Term)
                 vec2r acceleration;
                 mat2 rotation;
                 Rational!uint ratInt;
-                Vector!(Rational!int, 3) ratIntVec;
-                Point!(Rational!int, 3) ratIntPoint;
+                Vector!(Rational!int, 4) ratIntVec;
+                Point!(Rational!int, 4) ratIntPoint;
             }
 
             alias Stats3 = Stat[3];
