@@ -662,6 +662,19 @@ unittest {
     assert(overlap(x23, x) == x23);
 }
 
+/** Helper for overlap().
+ */
+bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
+{
+    alias U = inout(T);
+    static U* max(U* a, U* b) nothrow { return a > b ? a : b; }
+    static U* min(U* a, U* b) nothrow { return a < b ? a : b; }
+
+    auto b = max(r1.ptr, r2.ptr);
+    auto e = min(r1.ptr + r1.length, r2.ptr + r2.length);
+    return b < e;
+}
+
 /** Returns: If range is a palindrome.
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
 */
