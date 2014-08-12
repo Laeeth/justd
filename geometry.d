@@ -50,7 +50,7 @@ version(NoReciprocalMul)
 
 import core.simd;
 import std.stdio: writeln;
-import std.math: sqrt, isNaN, isInfinity, PI, sin, cos;
+import std.math: sqrt, isNaN, isInfinity, PI, sin, cos, acos;
 import std.conv: to;
 import std.traits: isSomeString, isIntegral, isFloatingPoint, isNumeric, isSigned, isStaticArray, isDynamicArray, isImplicitlyConvertible, isAssignable, isArray, CommonType;
 import std.string: format, rightJustify;
@@ -339,9 +339,21 @@ struct Vector(E, uint D,
         {
             static if (D == 2)  // randomize on unit circle
             {
-                immutable angle = uniform(0, 2*PI);
+                alias P = real; // precision
+                immutable angle = uniform(0, 2*cast(P)PI);
                 vector_[0] = scaling*sin(angle);
                 vector_[1] = scaling*cos(angle);
+            }
+            static if (D == 3)  // randomize on unit sphere: See also: http://mathworld.wolfram.com/SpherePointPicking.html
+            {
+                alias P = real; // precision
+                immutable u = uniform(0, cast(P)1);
+                immutable v = uniform(0, cast(P)1);
+                immutable theta = 2*PI*u;
+                immutable phi = acos(2*v-1);
+                vector_[0] = scaling*cos(theta)*sin(phi);
+                vector_[1] = scaling*sin(theta)*sin(phi);
+                vector_[2] = scaling*cos(phi);
             }
             else
             {
