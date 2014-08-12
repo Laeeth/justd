@@ -626,8 +626,23 @@ KindHit ofKind(NotNull!RegFile regfile,
             if (flag64)
             {
                 auto elf_ = new elf.ELF64(regfile._mmfile);
-                auto x = elf_.getSymbolsStringTable;
-                writefln("%-(%s\n%)", x.strings);
+                try
+                {
+                    auto x = elf_.getSymbolsStringTable;
+                    import core.demangle: demangle;
+                    foreach (sym; x.strings)
+                    {
+                        auto symAsD = sym.demangle;
+                        if (symAsD != sym)
+                            writeln("D: ", symAsD);
+                        else
+                            writeln("?: ", sym);
+                    }
+                }
+                catch (ELFException e)
+                {
+                    /* ignored */
+                }
             }
             else
             {
