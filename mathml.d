@@ -25,12 +25,12 @@ string toMathML(T)(T x) @trusted /** pure */ if (isScalarType!T &&
     See also: http://forum.dlang.org/thread/awkynfizwqjnbilgddbh@forum.dlang.org#post-awkynfizwqjnbilgddbh:40forum.dlang.org
     See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/mn
     See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/msup
-*/
+ */
 string toMathML(T)(T x) @trusted /** pure */ if (isFloatingPoint!T)
 {
     import std.conv: to;
     import std.algorithm: findSplit; //
-    immutable parts = to!string(x).findSplit("e");
+    immutable parts = to!string(x).findSplit("e"); // TODO: Use std.bitmanip.FloatRep instead
     if (parts[2].length == 0)
         return parts[0];
     else
