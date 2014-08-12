@@ -565,6 +565,7 @@ enum KindHit
 
 /** Scan $(D regfile) for ELF Symbols.
     TODO: Store and cache stuff in gstats.symbolsELF
+    TODO: Support GCC C++ here https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
  */
 void scanELF(NotNull!RegFile regfile)
 {
