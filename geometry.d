@@ -50,13 +50,14 @@ version(NoReciprocalMul)
 
 import core.simd;
 import std.stdio: writeln;
-import std.math: sqrt, isNaN, isInfinity, PI;
+import std.math: sqrt, isNaN, isInfinity, PI, sin, cos;
 import std.conv: to;
 import std.traits: isSomeString, isIntegral, isFloatingPoint, isNumeric, isSigned, isStaticArray, isDynamicArray, isImplicitlyConvertible, isAssignable, isArray, CommonType;
 import std.string: format, rightJustify;
 import std.array: join;
 import std.typecons: TypeTuple;
 import std.algorithm;
+import std.random: uniform;
 
 import mathml;
 import assert_ex;
@@ -330,13 +331,28 @@ struct Vector(E, uint D,
         return str;
     }
 
-    auto ref randInPlace() @trusted
+    auto ref randInPlace(E scaling = cast(E)1) @trusted
     {
         import random_ex: randInPlace;
-        vector_.randInPlace;
-        static if (normalizedFlag && isFloatingPoint!E) // cannot use normalized() here (yet)
+        static if (normalizedFlag &&
+                   isFloatingPoint!E) // cannot use normalized() here (yet)
         {
-            normalize(); // TODO: Turn this into D data restriction instead?
+            static if (D == 2)
+            {
+                // randomize on unit circle
+                immutable angle = uniform(0, 2*PI);
+                vector_[0] = scaling*sin(angle);
+                vector_[1] = scaling*cos(angle);
+            }
+            else
+            {
+                vector_.randInPlace;
+                normalize(); // TODO: Turn this into D data restriction instead?
+            }
+        }
+        else
+        {
+            vector_.randInPlace;
         }
     }
 
