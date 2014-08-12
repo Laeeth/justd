@@ -337,9 +337,8 @@ struct Vector(E, uint D,
         static if (normalizedFlag &&
                    isFloatingPoint!E) // cannot use normalized() here (yet)
         {
-            static if (D == 2)
+            static if (D == 2)  // randomize on unit circle
             {
-                // randomize on unit circle
                 immutable angle = uniform(0, 2*PI);
                 vector_[0] = scaling*sin(angle);
                 vector_[1] = scaling*cos(angle);
