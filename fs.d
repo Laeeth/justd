@@ -563,12 +563,65 @@ enum KindHit
     uncached = 2, // Uncached (fresh) hit.
 }
 
+/** Scan $(D regfile) for ELF Symbols.
+    TODO: Store and cache stuff in gstats.symbolsELF
+ */
+void scanELF(NotNull!RegFile regfile)
+{
+    bool flag64 = true;
+    if (flag64)
+    {
+        auto elf_ = new elf.ELF64(regfile._mmfile);
+        try
+        {
+            auto x = elf_.getSymbolsStringTable;
+            import core.demangle: demangle;
+            foreach (sym; x.strings)
+            {
+                auto symAsD = sym.demangle;
+                if (symAsD != sym)
+                    writeln("D: ", symAsD);
+                else
+                    writeln("?: ", sym);
+            }
+        }
+        catch (ELFException e)
+        {
+            /* ignored */
+        }
+    }
+    else
+    {
+        auto elf_ = new elf.ELF32(regfile._mmfile);
+    }
+}
+
 /** Returns: true if file with extension $(D ext) is of type $(D kind). */
 KindHit ofKind(NotNull!RegFile regfile,
                in string ext,
                NotNull!FKind kind,
                bool collectTypeHits,
                const ref FKind[SHA1Digest] allKindsById) /* nothrow */ @trusted
+{
+    immutable hit = regfile.ofKind1(ext,
+                                    kind,
+                                    collectTypeHits,
+                                    allKindsById);
+    if (hit &&
+        kind.kindName == "ELF")
+    {
+        /* TODO: Make this symbol interface available */
+        regfile.scanELF();
+    }
+    return hit;
+}
+
+/** Helper for ofKind. */
+KindHit ofKind1(NotNull!RegFile regfile,
+                in string ext,
+                NotNull!FKind kind,
+                bool collectTypeHits,
+                const ref FKind[SHA1Digest] allKindsById) /* nothrow */ @trusted
 {
     // Try cached first
 
@@ -620,35 +673,6 @@ KindHit ofKind(NotNull!RegFile regfile,
     }
     if (hit)
     {
-        if (kind.kindName == "ELF")
-        {
-            bool flag64 = true;
-            if (flag64)
-            {
-                auto elf_ = new elf.ELF64(regfile._mmfile);
-                try
-                {
-                    auto x = elf_.getSymbolsStringTable;
-                    import core.demangle: demangle;
-                    foreach (sym; x.strings)
-                    {
-                        auto symAsD = sym.demangle;
-                        if (symAsD != sym)
-                            writeln("D: ", symAsD);
-                        else
-                            writeln("?: ", sym);
-                    }
-                }
-                catch (ELFException e)
-                {
-                    /* ignored */
-                }
-            }
-            else
-            {
-                auto elf_ = new elf.ELF32(regfile._mmfile);
-            }
-        }
         if (collectTypeHits)
         {
             kind.hitFiles ~= regfile;
