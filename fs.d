@@ -127,7 +127,7 @@ import std.stdio: ioFile = File, stdout;
 import std.typecons: Tuple, tuple;
 import std.algorithm: find, map, filter, reduce, max, min, uniq, all, joiner;
 import std.string: representation;
-import std.stdio: write, writeln;
+import std.stdio: write, writeln, writefln;
 import std.path: baseName, dirName, isAbsolute, dirSeparator;
 import std.datetime;
 import std.file: FileException;
@@ -626,8 +626,8 @@ KindHit ofKind(NotNull!RegFile regfile,
             if (flag64)
             {
                 auto elf_ = new elf.ELF64(regfile._mmfile);
-                const x = elf_.getSymbolsStringTable;
-                /* writefln("%-(%s\n%)", x.strings); */
+                auto x = elf_.getSymbolsStringTable;
+                writefln("%-(%s\n%)", x.strings);
             }
             else
             {
@@ -5151,7 +5151,8 @@ class Scanner(Term)
                 vec2r acceleration;
                 mat2 rotation;
                 Rational!uint ratInt;
-                Vector!(Rational!int, 4) ratIntVec;
+                Vector!(Rational!int, 3) ratIntVec;
+                Point!(Rational!int, 3) ratIntPoint;
             }
 
             alias Stats3 = Stat[3];
@@ -5178,8 +5179,16 @@ class Scanner(Term)
             randomize(stats);
             viz.ppln("Some Stats: ",
                      stats.randomize.asTableTree);
-            viz.ppln("Some Stats: ",
-                     randomInstanceOf!Stats3.asTableTree);
+
+            {
+                auto x = randomInstanceOf!Stats3;
+                foreach (ref e; x)
+                {
+                    e.velocity *= 1e9;
+                }
+                viz.ppln("Some Stats: ",
+                         x.asTableTree);
+            }
         }
 
 

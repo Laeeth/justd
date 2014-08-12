@@ -143,7 +143,8 @@ auto sqrtx(T)(T x)
 
 /// $(D D)-Dimensional Point with Coordinate Type (Precision) $(D E).
 struct Point(E,
-             uint D) if (isNumeric!E && D >= 1)
+             uint D) if (/* isNumeric!E && */
+                         D >= 1)
 {
     alias type = E;
 
