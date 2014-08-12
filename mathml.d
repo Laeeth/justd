@@ -7,7 +7,7 @@
 */
 module mathml;
 
-import rational: Rational;
+import rational: Rational; // TODO: Can we turn this dep into a duck type dep?
 import std.traits: isScalarType, isFloatingPoint;
 
 /** Horizontal Alignment. */
@@ -45,7 +45,7 @@ string toMathML(T)(T x,
                 `<mn mathsize="80%">` ~ exponent ~ `</mn>`
                 `</msup>` ~
                 `</math>`);
-        /* NOTE: This doesn't work in Firefox. */
+        /* NOTE: This doesn't work in Firefox. Why? */
         /* return (`<math>` ~ parts[0] ~ `&middot;` ~ */
         /*         `<apply><power/>` ~ */
         /*         `<ci>10</ci>` ~ */

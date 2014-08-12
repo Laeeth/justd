@@ -136,9 +136,11 @@ import std.range: repeat, array, empty, cycle;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf, isIterable;
 import std.allocator;
+import std.functional: memoize;
+import std.complex: Complex;
+
 import core.memory: GC;
 import core.exception;
-import std.functional: memoize;
 
 import assert_ex;
 import traits_ex;
@@ -5192,8 +5194,12 @@ class Scanner(Term)
                 mat2 rotation;
                 Rational!uint ratInt;
                 Vector!(Rational!int, 4) ratIntVec;
+                Vector!(float, 2, true) normFloatVec2;
+                Vector!(float, 3, true) normFloatVec3;
                 Point!(Rational!int, 4) ratIntPoint;
             }
+
+            /* Vector!(Complex!float, 4) complexVec; */
 
             alias Stats3 = Stat[3];
 
