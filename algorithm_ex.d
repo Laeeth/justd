@@ -602,7 +602,8 @@ unittest {
     assert("b a".findInOrder("a", "b").empty);
 }
 
-/** Returns: Slice Overlap of $(D a) and $(D b) in order given by arguments. */
+/** Returns: Slice Overlap of $(D a) and $(D b) in order given by arguments.
+ */
 inout(T[]) overlapInOrder(T)(inout(T[]) a,
                              inout(T[]) b) @trusted pure nothrow
 {
@@ -621,7 +622,9 @@ inout(T[]) overlapInOrder(T)(inout(T[]) a,
     }
 }
 
-/** Returns: Slice Overlap of $(D a) and $(D b) in any order. */
+/** Returns: Slice Overlap of $(D a) and $(D b) in any order.
+    Deprecated by: std.array.overlap
+ */
 inout(T[]) overlap(T)(inout(T[]) a,
                       inout(T[]) b) @safe pure nothrow
 {
