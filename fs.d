@@ -591,15 +591,15 @@ void scanELF(NotNull!RegFile regfile)
         {
             foreach (sym; sst.strings)
             {
-                auto demangleFlag = true;
-                if (demangleFlag)
-                {
-                    auto symAsD = sym.demangle; // try to demangle it as a D symbol
-                    if (symAsD is sym) // if no change
-                        writeln("?: ", sym);
-                    else
-                        writeln("D: ", symAsD);
-                }
+                auto symAsD = sym.demangle;
+                if (symAsD != sym)
+                    writeln("D: ", symAsD);
+                else
+                    writeln("?: ", sym);
+                /* if (symAsD is sym) // if no change */
+                /*     writeln("?: ", sym); */
+                /* else */
+                /*     writeln("D: ", symAsD); */
             }
         }
     }
