@@ -207,7 +207,8 @@ unittest { int[] x; assert(x.allEqual); }
 
     Possible alternatives or aliases: allElementsEqualTo
 */
-bool allEqualTo(R, E)(R range, E element) @safe pure nothrow if (isInputRange!R)
+bool allEqualTo(R, E)(R range, E element) @safe pure nothrow if (isInputRange!R &&
+                                                                 is(ElementType!R == E))
 {
     import std.algorithm: all;
     return range.all!(a => a == element);
@@ -1438,5 +1439,31 @@ bool sliceOf(T)(in T[] part,
             part.ptr + part.length <=
             whole.ptr + whole.length);
 }
-alias contain = sliceOf;
+alias containedIn = sliceOf;
 alias partOf = sliceOf;
+alias coveredBy = sliceOf;
+alias includedIn = sliceOf;
+
+/* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
+auto dropWhile(R, E)(R range, E element) if (isInputRange!R &&
+                                             is(ElementType!Range == E))
+{
+    import std.algorithm: find;
+    return range.find(a => a != element);
+}
+alias dropIf = dropWhile;
+
+/* unittest */
+/* { */
+/*     auto x = "abc"; */
+/*     dln(x.dropWhile('a')); */
+/* } */
+
+/* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
+auto takeWhile(R, E)(R range, E element) if (isInputRange!R &&
+                                             is(ElementType!Range == E))
+{
+    import std.algorithm: until;
+    return range.until(a => a != element);
+}
+alias takeIf = takeWhile;
