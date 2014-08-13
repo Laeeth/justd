@@ -574,6 +574,7 @@ void scanELF(NotNull!RegFile regfile)
     import elfdoc: sectionNameExplanations;
     /* TODO: Iterate all sections and print their sectionNames[section] */
     bool flag64 = true;
+    import core.demangle: demangle;
     if (flag64)
     {
         auto elf_ = new elf.ELF64(regfile._mmfile);
@@ -581,21 +582,24 @@ void scanELF(NotNull!RegFile regfile)
         {
             if (section.name.length)
             {
-                auto syms = StringTable(section);
-                writeln("ELF Section named ", section.name, " with symbols ", syms);
+                /* auto sst = section.StringTable; */
+                //writeln("ELF Section named ", section.name);
             }
         }
         auto sst = elf_.getSymbolsStringTable;
         if (!sst.isNull)
         {
-            import core.demangle: demangle;
             foreach (sym; sst.strings)
             {
-                auto symAsD = sym.demangle;
-                if (symAsD != sym)
-                    writeln("D: ", symAsD);
-                else
-                    writeln("?: ", sym);
+                auto demangleFlag = true;
+                if (demangleFlag)
+                {
+                    auto symAsD = sym.demangle; // try to demangle it as a D symbol
+                    if (symAsD is sym) // if no change
+                        writeln("?: ", sym);
+                    else
+                        writeln("D: ", symAsD);
+                }
             }
         }
     }
