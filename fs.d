@@ -581,8 +581,8 @@ void scanELF(NotNull!RegFile regfile)
         {
             if (section.name.length)
             {
-                writeln("ELF Section named ", section.name);
-                // const syms = section.strings;
+                auto syms = StringTable(section);
+                writeln("ELF Section named ", section.name, " with symbols ", syms);
             }
         }
         auto sst = elf_.getSymbolsStringTable;

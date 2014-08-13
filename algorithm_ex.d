@@ -1446,22 +1446,19 @@ alias includedIn = sliceOf;
 
 /* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
 auto dropWhile(R, E)(R range, E element) if (isInputRange!R &&
-                                             is(ElementType!Range == E))
+                                             is(ElementType!R == E))
 {
     import std.algorithm: find;
     return range.find(a => a != element);
 }
 alias dropIf = dropWhile;
 
-/* unittest */
-/* { */
-/*     auto x = "abc"; */
-/*     dln(x.dropWhile('a')); */
-/* } */
+/* unittest { assert([1, 2, 3].dropWhile(1) == [2, 3]); } */
+/* unittest { assert("abc".dropWhile('a') == "bc"); } */
 
 /* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
 auto takeWhile(R, E)(R range, E element) if (isInputRange!R &&
-                                             is(ElementType!Range == E))
+                                             is(ElementType!R == E))
 {
     import std.algorithm: until;
     return range.until(a => a != element);
