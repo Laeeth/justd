@@ -1428,9 +1428,9 @@ unittest
 
 
 /* Check if $(D part) is part of $(D whole).
-  See also: http://forum.dlang.org/thread/ls9dbk$jkq$1@digitalmars.com
-  TODO: Standardize name and remove alises.
-  TODO: Use partOf if generalized to InputRange.
+   See also: http://forum.dlang.org/thread/ls9dbk$jkq$1@digitalmars.com
+   TODO: Standardize name and remove alises.
+   TODO: Use partOf if generalized to InputRange.
  */
 bool sliceOf(T)(in T[] part,
                 in T[] whole)
