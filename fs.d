@@ -571,29 +571,32 @@ enum KindHit
  */
 void scanELF(NotNull!RegFile regfile)
 {
+    import elfdoc: sectionNameExplanations;
+    /* TODO: Iterate all sections and print their sectionNames[section] */
     bool flag64 = true;
     if (flag64)
     {
         auto elf_ = new elf.ELF64(regfile._mmfile);
-        try
+        foreach (section; elf_.sections)
         {
-            auto x = elf_.getSymbolsStringTable;
-            if (!x.isNull)
+            if (section.name.length)
             {
-                import core.demangle: demangle;
-                foreach (sym; x.strings)
-                {
-                    auto symAsD = sym.demangle;
-                    if (symAsD != sym)
-                        writeln("D: ", symAsD);
-                    else
-                        writeln("?: ", sym);
-                }
+                writeln("ELF Section named ", section.name);
+                // const syms = section.strings;
             }
         }
-        catch (ELFException e)
+        auto sst = elf_.getSymbolsStringTable;
+        if (!sst.isNull)
         {
-            /* ignored */
+            import core.demangle: demangle;
+            foreach (sym; sst.strings)
+            {
+                auto symAsD = sym.demangle;
+                if (symAsD != sym)
+                    writeln("D: ", symAsD);
+                else
+                    writeln("?: ", sym);
+            }
         }
     }
     else
