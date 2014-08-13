@@ -1,7 +1,7 @@
 module elfdoc;
 
 /* See also: http://forum.dlang.org/thread/owhfdwrpfuiehzpiuqux@forum.dlang.org#post-mailman.1520.1346443034.31962.digitalmars-d-learn:40puremagic.com */
-static string[string] sectionNames = [
+static string[string] sectionNameExplanations = [
     /* Special Sections */
     ".bss" : "Holds data that contributes to the program's memory image. The program may treat this data as uninitialized. However, the system shall initialize this data with zeroes when the program begins to run. The section occupies no file space, as indicated by the section type, SHT_NOBITS",
     ".comment" : "This section holds version control information.",
