@@ -1521,8 +1521,9 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    assert("aa1bb".findSplit!(a => a.isDigit) ==
-           tuple("aa", "1", "bb"));
+    assert("aa1bb".findSplit!(a => a.isDigit) == tuple("aa", "1", "bb"));
+    assert("aa1".findSplit!(a => a.isDigit) == tuple("aa", "1", ""));
+    assert("1bb".findSplit!(a => a.isDigit) == tuple("", "1", "bb"));
 }
 
 /** Simpler Variant of Phobos' findSplitBefore. */
@@ -1563,8 +1564,8 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    assert("11ab".findSplitBefore!(a => !a.isDigit) ==
-           tuple("11", "ab"));
+    assert("11ab".findSplitBefore!(a => !a.isDigit) == tuple("11", "ab"));
+    assert("ab".findSplitBefore!(a => !a.isDigit) == tuple("", "ab"));
 }
 
 auto findSplitAfter(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
@@ -1610,6 +1611,6 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    assert("aa1bb".findSplitAfter!(a => a.isDigit) ==
-           tuple("aa1", "bb"));
+    assert("aa1bb".findSplitAfter!(a => a.isDigit) == tuple("aa1", "bb"));
+    assert("aa1".findSplitAfter!(a => a.isDigit) == tuple("aa1", ""));
 }
