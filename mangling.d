@@ -93,7 +93,7 @@ Tuple!(Lang, string) demangleELF(in string sym,
         }
 
         if (!separator)
-            separator = "::";
+            separator = "::"; // default C++ separator
 
         const qid = to!string(ids.joiner(separator)); // qualified id
         if (!rest.empty)
