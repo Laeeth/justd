@@ -1449,7 +1449,7 @@ auto dropWhile(R, E)(R range, E element) if (isInputRange!R &&
                                              is(ElementType!R == E))
 {
     import std.algorithm: find;
-    return range.find(a => a != element);
+    return range.find!(a => a != element);
 }
 alias dropIf = dropWhile;
 
@@ -1461,6 +1461,6 @@ auto takeWhile(R, E)(R range, E element) if (isInputRange!R &&
                                              is(ElementType!R == E))
 {
     import std.algorithm: until;
-    return range.until(a => a != element);
+    return range.until!(a => a != element);
 }
 alias takeIf = takeWhile;
