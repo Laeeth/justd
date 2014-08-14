@@ -1521,10 +1521,8 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    auto x = "aa1bb".findSplit!(a => a.isDigit);
-    assert(equal(x[0], "aa"));
-    assert(equal(x[1], "1"));
-    assert(equal(x[2], "bb"));
+    assert("aa1bb".findSplit!(a => a.isDigit) ==
+           tuple("aa", "1", "bb"));
 }
 
 /** Simpler Variant of Phobos' findSplitBefore. */
@@ -1565,7 +1563,53 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    auto x = "11ab".findSplitBefore!(a => !a.isDigit);
-    assert(equal(x[0], "11"));
-    assert(equal(x[1], "ab"));
+    assert("11ab".findSplitBefore!(a => !a.isDigit) ==
+           tuple("11", "ab"));
+}
+
+auto findSplitAfter(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+{
+    static if (isSomeString!R1 || isRandomAccessRange!R1)
+    {
+        auto balance = find!pred(haystack);
+        immutable pos = balance.empty ? 0 : haystack.length - balance.length + 1;
+        return tuple(haystack[0 .. pos], haystack[pos .. haystack.length]);
+    }
+    else
+    {
+        static assert(false, "How to implement this?");
+        /* auto original = haystack.save; */
+        /* auto h = haystack.save; */
+        /* size_t pos1, pos2; */
+        /* while (!n.empty) */
+        /* { */
+        /*     if (h.empty) */
+        /*     { */
+        /*         // Failed search */
+        /*         return tuple(takeExactly(original, 0), original); */
+        /*     } */
+        /*     if (binaryFun!pred(h.front, n.front)) */
+        /*     { */
+        /*         h.popFront(); */
+        /*         n.popFront(); */
+        /*         ++pos2; */
+        /*     } */
+        /*     else */
+        /*     { */
+        /*         haystack.popFront(); */
+        /*         n = needle.save; */
+        /*         h = haystack.save; */
+        /*         pos2 = ++pos1; */
+        /*     } */
+        /* } */
+        /* return tuple(takeExactly(original, pos2), h); */
+    }
+}
+
+unittest
+{
+    import std.algorithm: equal;
+    import std.ascii: isDigit;
+    assert("aa1bb".findSplitAfter!(a => a.isDigit) ==
+           tuple("aa1", "bb"));
 }
