@@ -41,7 +41,8 @@ import std.typecons: tuple, Tuple;
     See also: https://en.wikipedia.org/wiki/Name_mangling
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 */
-Tuple!(Lang, string) demangleELF(in string sym) /* @safe pure nothrow @nogc */
+Tuple!(Lang, string) demangleELF(in string sym,
+                                 string separator = null) /* @safe pure nothrow @nogc */
 {
     import std.algorithm: startsWith, findSplitAfter;
     const cxxHit = sym.findSplitAfter("_ZN"); // split into C++ prefix and rest
@@ -79,15 +80,26 @@ Tuple!(Lang, string) demangleELF(in string sym) /* @safe pure nothrow @nogc */
             }
             else
             {
-                writeln("Incomplete parsing");
-                break;
+                version(unittest)
+                {
+                    assert(false, "Incomplete parsing");
+                }
+                else
+                {
+                    writeln("Incomplete parsing");
+                    break;
+                }
             }
         }
-        writeln("ids: ", ids.joiner("."));
+
+        if (!separator)
+            separator = "::";
+
+        const qid = to!string(ids.joiner(separator)); // qualified id
         if (!rest.empty)
             writeln("rest: ", rest);
 
-        return tuple(Lang.cxx, cxxHit[1]);
+        return tuple(Lang.cxx, qid);
     }
     else
     {
@@ -104,7 +116,5 @@ Tuple!(Lang, string) demangleELF(in string sym) /* @safe pure nothrow @nogc */
 unittest
 {
     auto x = "_ZN9wikipedia7article6formatE".demangleELF();
-    import std.stdio;
-    writeln(x);
     assert(x == tuple(Lang.cxx, "wikipedia::article::format"));
 }
