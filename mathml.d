@@ -31,7 +31,7 @@ string toMathML(T)(T x,
 {
     import std.conv: to;
     import std.algorithm: findSplit;
-    immutable parts = to!string(x).findSplit("e"); // TODO: Use std.bitmanip.FloatRep instead
+    const parts = to!string(x).findSplit("e"); // TODO: Use std.bitmanip.FloatRep instead
     if (parts[2].length >= 1)
     {
         const mantissa = parts[0];
