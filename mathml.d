@@ -30,7 +30,7 @@ string toMathML(T)(T x,
                    bool forceExponentPlusSign = false) @trusted /** pure */ if (isFloatingPoint!T)
 {
     import std.conv: to;
-    import std.algorithm: findSplit; //
+    import std.algorithm: findSplit;
     immutable parts = to!string(x).findSplit("e"); // TODO: Use std.bitmanip.FloatRep instead
     if (parts[2].length >= 1)
     {
