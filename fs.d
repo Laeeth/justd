@@ -569,7 +569,8 @@ enum KindHit
     TODO: Index and cache stuff in gstats.symbolsELF
     TODO: Support GCC C++ here https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
  */
-void scanELF(NotNull!RegFile regfile)
+void scanELF(NotNull!RegFile regfile,
+             bool doDemangle = true)
 {
     import elfdoc: sectionNameExplanations;
     /* TODO: Iterate all sections and print their sectionNames[section] */
@@ -591,11 +592,18 @@ void scanELF(NotNull!RegFile regfile)
         {
             foreach (sym; sst.strings)
             {
-                auto symAsD = sym.demangle;
-                if (symAsD != sym)
-                    writeln("D: ", symAsD);
+                if (doDemangle)
+                {
+                    const symAsD = sym.demangle;
+                    if (symAsD != sym)
+                        writeln("D: ", symAsD);
+                    else
+                        writeln("?: ", sym);
+                }
                 else
+                {
                     writeln("?: ", sym);
+                }
                 /* if (symAsD is sym) // if no change */
                 /*     writeln("?: ", sym); */
                 /* else */
@@ -3710,6 +3718,8 @@ class Scanner(Term)
 
         FileOp _fileOp = FileOp.none;
 
+        bool demangleELF = true;
+
         Dir[] _topDirs;
         Dir _rootDir;
 
@@ -3802,6 +3812,8 @@ class Scanner(Term)
                                     "recache", "\tSkip initial load of cache from disk" ~ defaultDoc(_recache), &_recache,
 
                                     "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FileOp, &_fileOp,
+
+                                    "demangle-elf", "\tDemangle ELF files.", &demangleELF,
 
                                     "use-ngrams", "\tUse NGrams to cache statistics and thereby speed up search" ~ defaultDoc(_useNGrams), &_useNGrams,
 
