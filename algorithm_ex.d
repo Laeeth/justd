@@ -10,7 +10,7 @@ module algorithm_ex;
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
 import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString;
-import std.range: ElementType, isInputRange, isBidirectionalRange, isRandomAccessRange, hasSlicing;
+import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing;
 import dbg;
 import traits_ex: isStruct, isClass, allSame;
 
@@ -1477,4 +1477,24 @@ unittest
     import std.algorithm: equal;
     equal([1, 1, 2, 3].takeWhile(1),
           [1, 1]);
+}
+
+/** Variant of std.algorithm.findSplitBefore which is very useful when parsing.
+    TODO: Add to Phobos.
+ */
+auto findSplitBefore(alias condition, R)(R range) if (isForwardRange!R)
+{
+    import std.algorithm: until;
+    auto hit = range.until!condition;
+    auto rest = "";
+    return tuple(hit, rest);
+}
+
+unittest
+{
+    import std.algorithm: equal;
+    import std.ascii: isDigit;
+    auto x = "11ab".findSplitBefore!(a => !a.isDigit);
+    assert(equal(x[0], "11"));
+    /* assert(equal(x[1], "ab")); */
 }
