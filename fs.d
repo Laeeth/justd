@@ -164,6 +164,7 @@ import elf;
 import geometry;
 import random_ex;
 import mathml;
+import mangling;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
@@ -576,7 +577,6 @@ void scanELF(NotNull!RegFile regfile,
     import elfdoc: sectionNameExplanations;
     /* TODO: Iterate all sections and print their sectionNameExplanations[section] */
     bool flag64 = true;
-    import core.demangle: demangle;
     if (flag64)
     {
         auto elf_ = new elf.ELF64(regfile._mmfile);
@@ -591,24 +591,17 @@ void scanELF(NotNull!RegFile regfile,
         auto sst = elf_.getSymbolsStringTable;
         if (!sst.isNull)
         {
-            foreach (sym; sst.strings)
+            foreach (const sym; sst.strings)
             {
                 if (doDemangle)
                 {
-                    const symAsD = sym.demangle;
-                    if (symAsD != sym)
-                        writeln("D: ", symAsD);
-                    else
-                        writeln("?: ", sym);
+                    const hit = sym.demangleELF;
+                    writeln(hit[0], ": ", hit[1]);
                 }
                 else
                 {
                     writeln("?: ", sym);
                 }
-                /* if (symAsD is sym) // if no change */
-                /*     writeln("?: ", sym); */
-                /* else */
-                /*     writeln("D: ", symAsD); */
             }
         }
     }
