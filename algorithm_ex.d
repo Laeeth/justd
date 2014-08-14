@@ -1479,15 +1479,38 @@ unittest
           [1, 1]);
 }
 
-/** Variant of std.algorithm.findSplitBefore which is very useful when parsing.
-    TODO: Add to Phobos.
- */
-auto findSplitBefore(alias condition, R)(R range) if (isForwardRange!R)
+/** Simpler Variant of Phobos' findSplitBefore. */
+auto findSplitBefore(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
 {
-    import std.algorithm: until;
-    auto hit = range.until!condition;
-    auto rest = "";
-    return tuple(hit, rest);
+    static if (isSomeString!R1 ||
+               sRandomAccessRange!R1)
+    {
+        auto balance = haystack.find!pred;
+        immutable pos = haystack.length - balance.length;
+        return tuple(haystack[0 .. pos],
+                     haystack[pos .. haystack.length]);
+    }
+    else
+    {
+        auto original = haystack.save;
+        auto h = haystack.save;
+        size_t pos;
+        while (!h.empty)
+        {
+            if (unaryFun!pred(h.front))
+            {
+                h.popFront();
+            }
+            else
+            {
+                haystack.popFront();
+                h = haystack.save;
+                ++pos;
+            }
+        }
+        return tuple(takeExactly(original, pos),
+                     haystack);
+    }
 }
 
 unittest
@@ -1496,5 +1519,5 @@ unittest
     import std.ascii: isDigit;
     auto x = "11ab".findSplitBefore!(a => !a.isDigit);
     assert(equal(x[0], "11"));
-    /* assert(equal(x[1], "ab")); */
+    assert(equal(x[1], "ab"));
 }
