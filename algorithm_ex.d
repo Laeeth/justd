@@ -10,7 +10,7 @@ module algorithm_ex;
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
 import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString;
-import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing;
+import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing, empty;
 import dbg;
 import traits_ex: isStruct, isClass, allSame;
 
@@ -1479,13 +1479,61 @@ unittest
           [1, 1]);
 }
 
+/** Simpler Variant of Phobos' findSplit. */
+auto findSplit(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+{
+    static if (isSomeString!R1 ||
+               isRandomAccessRange!R1)
+    {
+        auto balance = find!pred(haystack);
+        immutable pos1 = haystack.length - balance.length;
+        immutable pos2 = balance.empty ? pos1 : pos1 + 1;
+        return tuple(haystack[0 .. pos1],
+                     haystack[pos1 .. pos2],
+                     haystack[pos2 .. haystack.length]);
+    }
+    else
+    {
+        auto original = haystack.save;
+        auto h = haystack.save;
+        size_t pos1, pos2;
+        while (!h.empty)
+        {
+            if (unaryFun!pred(h.front))
+            {
+                h.popFront();
+                ++pos2;
+            }
+            else
+            {
+                haystack.popFront();
+                h = haystack.save;
+                pos2 = ++pos1;
+            }
+        }
+        return tuple(takeExactly(original, pos1),
+                     takeExactly(haystack, pos2 - pos1),
+                     h);
+    }
+}
+
+unittest
+{
+    import std.algorithm: equal;
+    import std.ascii: isDigit;
+    auto x = "aa1bb".findSplit!(a => a.isDigit);
+    assert(equal(x[0], "aa"));
+    assert(equal(x[1], "1"));
+    assert(equal(x[2], "bb"));
+}
+
 /** Simpler Variant of Phobos' findSplitBefore. */
 auto findSplitBefore(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
 {
     static if (isSomeString!R1 ||
                sRandomAccessRange!R1)
     {
-        auto balance = haystack.find!pred;
+        auto balance = find!pred(haystack);
         immutable pos = haystack.length - balance.length;
         return tuple(haystack[0 .. pos],
                      haystack[pos .. haystack.length]);
