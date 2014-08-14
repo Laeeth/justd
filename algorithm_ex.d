@@ -1451,7 +1451,9 @@ auto dropWhile(R, E)(R range, E element) if (isInputRange!R &&
     import std.algorithm: find;
     return range.find!(a => a != element);
 }
-alias dropIf = dropWhile;
+alias dropAllOf = dropWhile;
+alias stripFront = dropWhile;
+alias lstrip = dropWhile;       // Python style
 
 unittest
 {
@@ -1468,4 +1470,11 @@ auto takeWhile(R, E)(R range, E element) if (isInputRange!R &&
     import std.algorithm: until;
     return range.until!(a => a != element);
 }
-alias takeIf = takeWhile;
+alias takeAllOf = takeWhile;
+
+unittest
+{
+    import std.algorithm: equal;
+    equal([1, 1, 2, 3].takeWhile(1),
+          [1, 1]);
+}
