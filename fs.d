@@ -568,12 +568,13 @@ enum KindHit
 /** Scan $(D regfile) for ELF Symbols.
     TODO: Index and cache stuff in gstats.symbolsELF
     TODO: Support GCC C++ here https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
+    TODO: Format this using asTable: Language | Symbol
  */
 void scanELF(NotNull!RegFile regfile,
              bool doDemangle = true)
 {
     import elfdoc: sectionNameExplanations;
-    /* TODO: Iterate all sections and print their sectionNames[section] */
+    /* TODO: Iterate all sections and print their sectionNameExplanations[section] */
     bool flag64 = true;
     import core.demangle: demangle;
     if (flag64)
