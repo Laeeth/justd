@@ -1479,8 +1479,8 @@ unittest
           [1, 1]);
 }
 
-/** Simpler Variant of Phobos' findSplit. */
-auto findSplit(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+/** Simpler Variant of Phobos' split. */
+auto split(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
 {
     static if (isSomeString!R1 ||
                isRandomAccessRange!R1)
@@ -1521,13 +1521,13 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    assert("aa1bb".findSplit!(a => a.isDigit) == tuple("aa", "1", "bb"));
-    assert("aa1".findSplit!(a => a.isDigit) == tuple("aa", "1", ""));
-    assert("1bb".findSplit!(a => a.isDigit) == tuple("", "1", "bb"));
+    assert("aa1bb".split!(a => a.isDigit) == tuple("aa", "1", "bb"));
+    assert("aa1".split!(a => a.isDigit) == tuple("aa", "1", ""));
+    assert("1bb".split!(a => a.isDigit) == tuple("", "1", "bb"));
 }
 
-/** Simpler Variant of Phobos' findSplitBefore. */
-auto findSplitBefore(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+/** Simpler Variant of Phobos' splitBefore. */
+auto splitBefore(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
 {
     static if (isSomeString!R1 ||
                sRandomAccessRange!R1)
@@ -1564,11 +1564,11 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    assert("11ab".findSplitBefore!(a => !a.isDigit) == tuple("11", "ab"));
-    assert("ab".findSplitBefore!(a => !a.isDigit) == tuple("", "ab"));
+    assert("11ab".splitBefore!(a => !a.isDigit) == tuple("11", "ab"));
+    assert("ab".splitBefore!(a => !a.isDigit) == tuple("", "ab"));
 }
 
-auto findSplitAfter(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+auto splitAfter(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
 {
     static if (isSomeString!R1 || isRandomAccessRange!R1)
     {
@@ -1611,6 +1611,6 @@ unittest
 {
     import std.algorithm: equal;
     import std.ascii: isDigit;
-    assert("aa1bb".findSplitAfter!(a => a.isDigit) == tuple("aa1", "bb"));
-    assert("aa1".findSplitAfter!(a => a.isDigit) == tuple("aa1", ""));
+    assert("aa1bb".splitAfter!(a => a.isDigit) == tuple("aa1", "bb"));
+    assert("aa1".splitAfter!(a => a.isDigit) == tuple("aa1", ""));
 }

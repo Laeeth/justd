@@ -54,7 +54,7 @@ Tuple!(Lang, string) demangleELF(in string sym,
     if (!cxxHit[0].empty) // C++
     {
         string rest = cxxHit[1];
-        import algorithm_ex: findSplit, findSplitBefore;
+        import algorithm_ex: split, splitBefore;
         import std.algorithm: joiner;
         import std.conv: to;
         import std.ascii: isDigit;
@@ -62,28 +62,25 @@ Tuple!(Lang, string) demangleELF(in string sym,
         import std.stdio;
         import std.range: take, drop;
 
-        while (true)
+        // symbols
+        while (!rest.empty &&
+               rest[0] != 'E')
         {
-            const split = rest.findSplitBefore!(a => !a.isDigit);
-            const digits = split[0];
-            rest = split[1];
+            const match = rest.splitBefore!(a => !a.isDigit);
+            const digits = match[0];
             if (!digits.empty)     // digit prefix
             {
+                rest = match[1];
                 const num = to!int(digits);
                 const id = rest[0..num]; // identifier, rest.take(num)
                 rest = rest[num..$]; // rest.drop(num);
                 ids ~= id;
             }
-            else if (rest.startsWith("E")) // end finalizer
-            {
-                rest = rest[1..$];
-                break;          // ok to quit
-            }
-            else
+            else if (rest[0] != 'E') // end finalizer
             {
                 version(unittest)
                 {
-                    assert(false, "Incomplete parsing");
+                    assert(false, "Incomplete parsing at " ~ rest);
                 }
                 else
                 {
@@ -93,10 +90,79 @@ Tuple!(Lang, string) demangleELF(in string sym,
             }
         }
 
+        if (rest.startsWith("E"))
+        {
+            rest = rest[1..$];
+        }
+
+        // optional function arguments
+        int argCount = 0;
+        char[] args;
+        if ((!rest.empty)) // if optional function arguments exist
+        {
+            args ~= `(`;
+            bool isRef = false;
+            while (!rest.empty)
+            {
+                string type;
+                switch (rest[0])
+                {
+                case 'v':       // void
+                    rest = rest[1..$];
+                    type = "void";
+                    if (isRef) { isRef = false; type ~= "&"; }
+                    break;
+                case 'R':       // reference
+                    rest = rest[1..$];
+                    isRef = true;
+                    break;
+                case 'S': // standard namespace: std::
+                    rest = rest[1..$];
+                    type ~= "std::";
+                    switch (rest[0])
+                    {
+                    case 't': rest = rest[1..$]; type ~= "ostream"; break;
+
+                    case 'a': rest = rest[1..$]; type ~= "allocator"; break;
+                    case 'b': rest = rest[1..$]; type ~= "basic_string"; break;
+                    case 's':
+                        rest = rest[1..$];
+                        type ~= "basic_string<char, std::char_traits<char>, std::allocator<char> >";
+                        break;
+
+                    case 'i': rest = rest[1..$]; type ~= "istream"; break;
+                    case 'o': rest = rest[1..$]; type ~= "ostream"; break;
+                    case 'd': rest = rest[1..$]; type ~= "iostream"; break;
+
+                    default:
+                        /* writeln("Cannot handle C++ standard prefix character: '", rest[0], "'"); */
+                        rest = rest[1..$];
+                        break;
+                    }
+                    if (isRef) { isRef = false; type ~= "&"; }
+                    break;
+                default:
+                    /* writeln("Cannot handle character: '", rest[0], "'"); */
+                    rest = rest[1..$];
+                    break;
+                }
+                if (type)
+                {
+                    if (argCount >= 1)
+                    {
+                        args ~= ',';
+                    }
+                    args ~= type;
+                    argCount += 1;
+                }
+            }
+            args ~= `)`;
+        }
+
         if (!separator)
             separator = "::"; // default C++ separator
 
-        const qid = to!string(ids.joiner(separator)); // qualified id
+        const qid = to!string(ids.joiner(separator)) ~ to!string(args); // qualified id
         if (!rest.empty)
             writeln("rest: ", rest);
 
@@ -116,6 +182,11 @@ Tuple!(Lang, string) demangleELF(in string sym,
 
 unittest
 {
-    auto x = "_ZN9wikipedia7article6formatE".demangleELF();
-    assert(x == tuple(Lang.cxx, "wikipedia::article::format"));
+    import assert_ex;
+    assertEqual("_ZN9wikipedia7article8print_toERSo".demangleELF,
+                tuple(Lang.cxx, "wikipedia::article::print_to(std::ostream&)"));
+    assertEqual("_ZN9wikipedia7article6formatEv".demangleELF,
+                tuple(Lang.cxx, "wikipedia::article::format(void)"));
+    assertEqual("_ZN9wikipedia7article6formatE".demangleELF,
+                tuple(Lang.cxx, "wikipedia::article::format"));
 }
