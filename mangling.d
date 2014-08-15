@@ -40,6 +40,7 @@ import std.typecons: tuple, Tuple;
 /** Demangle Symbol $(D sym) and Detect Language.
     See also: https://en.wikipedia.org/wiki/Name_mangling
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling
 */
 Tuple!(Lang, string) demangleELF(in string sym,
                                  string separator = null) /* @safe pure nothrow @nogc */
