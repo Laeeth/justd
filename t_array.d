@@ -4,45 +4,50 @@ import std.stdio, std.algorithm, std.range;
 
 int main(string[] args)
 {
+    alias wln = writeln;
+
     auto x = cast(int[])[];
 
     auto x2 = new int(3);
 
-    writeln(x.sizeof);
+    wln(x.sizeof);
 
     if (x) {
-        writeln("Here!");
+        wln("Here!");
     } else {
-        writeln("There!");
+        wln("There!");
     }
 
     int xx[2];
     auto xc = xx;
     xc[0] = 1;
-    writeln(xx);
-    writeln(xc);
+    wln(xx);
+    wln(xc);
     int[2] xx_;
 
     auto hit = x.find(1);
     if (hit) {
-        writeln("Hit: ", hit);
+        wln("Hit: ", hit);
     } else {
-        writeln("No hit");
+        wln("No hit");
     }
     int[2] z;                   // arrays are zero initialized
 
-    writeln(z);
+    wln(z);
 
     assert([].ptr == null);
     assert("ab"[$..$] == []);
     auto p = "ab"[$..$].ptr;
-    writeln(p);
+    wln(p);
     assert(p != null);
 
     auto w = [1, 2];
     assert(w[0..0]);
     assert(w[$..$]);
     assert(![]);
+
+    auto s = [1, 2, 3];
+    wln(s.stripLeft(1));
 
     return 0;
 }
