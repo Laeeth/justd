@@ -443,7 +443,12 @@ Tuple!(Lang, string) demangleSymbol(string whole,
         if (!separator)
             separator = `::`; // default C++ separator
 
-        const qid = to!string(ids.joiner(separator)) ~ `(` ~ to!string(argTypes) ~ `)`; // qualified id
+        auto qid = to!string(ids.joiner(separator)); // qualified id
+        if (!argTypes.empty)
+        {
+            qid ~= `(` ~ to!string(argTypes) ~ `)`;
+        }
+
         if (!rest.empty)
             dln(`rest: `, rest);
 
