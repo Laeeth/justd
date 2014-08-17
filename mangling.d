@@ -353,10 +353,10 @@ string decodeCxxSourceName(ref string rest)
     string id;
     const match = rest.splitBefore!(a => !a.isDigit);
     const digits = match[0];
+    rest = match[1];
     if (!digits.empty)     // digit prefix
     {
-        const num = to!int(digits);
-        rest = match[1];
+        const num = digits.to!uint;
         id = rest[0..num]; // identifier, rest.take(num)
         rest = rest[num..$]; // rest.drop(num);
     }
@@ -403,12 +403,13 @@ Tuple!(Lang, string) demangleSymbol(string whole,
                (!hasTerminator ||
                 rest[0] != 'E'))
         {
+            /* TODO: Use decodeCxxSourceName */
             const match = rest.splitBefore!(a => !a.isDigit);
             const digits = match[0];
+            rest = match[1];
             if (!digits.empty)     // digit prefix
             {
-                rest = match[1];
-                const num = to!int(digits);
+                const num = digits.to!uint;
                 const id = rest[0..num]; // identifier, rest.take(num)
                 rest = rest[num..$]; // rest.drop(num);
                 ids ~= id;
