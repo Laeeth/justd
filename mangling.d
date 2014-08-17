@@ -371,6 +371,11 @@ string decodeCxxSourceName(ref string rest)
 Tuple!(Lang, string) demangleSymbol(string whole,
                                     string separator = null) /* @safe pure nothrow @nogc */
 {
+    if (whole.empty)
+    {
+        return tuple(Lang.unknown, whole);
+    }
+
     if (!whole.startsWith(`_`))
     {
         return tuple(Lang.c, whole); // assume C
