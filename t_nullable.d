@@ -12,4 +12,5 @@ void main(string args[])
     n = 0;
     dln(n);
     dln(n.untouched);
+    auto m = Nullable!(size_t)();
 }
