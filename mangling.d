@@ -18,11 +18,11 @@ string toTag(Lang lang)
 {
     final switch (lang)
     {
-    case Lang.unknown: return "?";
-    case Lang.c: return "C";
-    case Lang.cxx: return "C++";
-    case Lang.d: return "D";
-    case Lang.java: return "Java";
+    case Lang.unknown: return `?`;
+    case Lang.c: return `C`;
+    case Lang.cxx: return `C++`;
+    case Lang.d: return `D`;
+    case Lang.java: return `Java`;
     }
 }
 
@@ -46,10 +46,11 @@ import dbg;
 Tuple!(Lang, string) demangleELF(in string sym,
                                  string separator = null) /* @safe pure nothrow @nogc */
 {
-    import std.algorithm: startsWith, findSplitAfter;
-    const cxxHit = sym.findSplitAfter("_ZN"); // split into C++ prefix and rest
-
+    import std.algorithm: startsWith, findSplitAfter, skipOver;
     import std.range: empty;
+
+    const cxxHit = sym.findSplitAfter(`_Z`); // split into C++ prefix and rest
+
     if (!cxxHit[0].empty) // C++
     {
         string[] ids; // TODO: Turn this into a range that is returned
@@ -62,9 +63,14 @@ Tuple!(Lang, string) demangleELF(in string sym,
         import std.stdio;
         import std.range: take, drop;
 
+        if (rest.skipOver('N'))
+        {
+            // TODO: What differs _ZN from _Z?
+        }
+
         // symbols (function or variable name)
         while (!rest.empty &&
-               rest[0] != 'E')
+               rest[0] != 'E') // TODO: functionize
         {
             const match = rest.splitBefore!(a => !a.isDigit);
             const digits = match[0];
@@ -146,7 +152,7 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 case `cv`: ids ~= `operator (<type>)`; break; // type-cast: TODO: Decode type
                 case `li`: ids ~= `operator "" <source-name>`; break;
                 case `v `: ids ~= `operator <digit> <source-name>`; break;
-                default: dln("Handle last ", op, " of whole ", sym);
+                default: dln(`Handle last `, op, ` of whole `, sym);
                 }
                 rest = rest[2..$];
             }
@@ -154,20 +160,17 @@ Tuple!(Lang, string) demangleELF(in string sym,
             {
                 version(unittest)
                 {
-                    assert(false, "Incomplete parsing at " ~ rest);
+                    assert(false, `Incomplete parsing at ` ~ rest);
                 }
                 else
                 {
-                    dln("Incomplete parsing");
+                    dln(`Incomplete parsing`);
                     break;
                 }
             }
         }
 
-        if (rest.startsWith("E"))
-        {
-            rest = rest[1..$];
-        }
+        rest.skipOver('E');
 
         // optional function arguments
         int argCount = 0;
@@ -191,8 +194,8 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 switch (rest[0])
                 {
                     // builtin types: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
-                case 'v': rest = rest[1..$]; type = "void"; break;
-                case 'w': rest = rest[1..$]; type = "wchar_t"; break;
+                case 'v': rest = rest[1..$]; type = `void`; break;
+                case 'w': rest = rest[1..$]; type = `wchar_t`; break;
 
                     // <CV-qualifiers>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.CV-qualifiers
                 case 'r': rest = rest[1..$]; isRestrict = true; break;
@@ -205,30 +208,30 @@ Tuple!(Lang, string) demangleELF(in string sym,
 
                 case 'S': // standard namespace: std::
                     rest = rest[1..$];
-                    type ~= "std::";
+                    type ~= `std::`;
                     switch (rest[0])
                     {
-                    case 't': rest = rest[1..$]; type ~= "ostream"; break;
+                    case 't': rest = rest[1..$]; type ~= `ostream`; break;
 
-                    case 'a': rest = rest[1..$]; type ~= "allocator"; break;
-                    case 'b': rest = rest[1..$]; type ~= "basic_string"; break;
+                    case 'a': rest = rest[1..$]; type ~= `allocator`; break;
+                    case 'b': rest = rest[1..$]; type ~= `basic_string`; break;
                     case 's':
                         rest = rest[1..$];
-                        type ~= "basic_string<char, std::char_traits<char>, std::allocator<char> >";
+                        type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
                         break;
 
-                    case 'i': rest = rest[1..$]; type ~= "istream"; break;
-                    case 'o': rest = rest[1..$]; type ~= "ostream"; break;
-                    case 'd': rest = rest[1..$]; type ~= "iostream"; break;
+                    case 'i': rest = rest[1..$]; type ~= `istream`; break;
+                    case 'o': rest = rest[1..$]; type ~= `ostream`; break;
+                    case 'd': rest = rest[1..$]; type ~= `iostream`; break;
 
                     default:
-                        /* dln("Cannot handle C++ standard prefix character: '", rest[0], "'"); */
+                        /* dln(`Cannot handle C++ standard prefix character: '`, rest[0], `'`); */
                         rest = rest[1..$];
                         break;
                     }
                     break;
                 default:
-                    /* dln("Cannot handle character: '", rest[0], "'"); */
+                    /* dln(`Cannot handle character: '`, rest[0], `'`, ` in "`, rest, `"`); */
                     rest = rest[1..$];
                     break;
                 }
@@ -240,12 +243,12 @@ Tuple!(Lang, string) demangleELF(in string sym,
                         args ~= ',';
                     }
 
-                    if (isRestrict) { isRestrict = false; type = "restrict " ~ type; } // C99
-                    if (isVolatile) { isVolatile = false; type = "volatile " ~ type; }
-                    if (isConst) { isConst = false; type = "const " ~ type; }
+                    if (isRestrict) { isRestrict = false; type = `restrict ` ~ type; } // C99
+                    if (isVolatile) { isVolatile = false; type = `volatile ` ~ type; }
+                    if (isConst) { isConst = false; type = `const ` ~ type; }
 
-                    if (isRef) { isRef = false; type ~= "&"; }
-                    if (isRVRef) { isRVRef = false; type ~= "&&"; }
+                    if (isRef) { isRef = false; type ~= `&`; }
+                    if (isRVRef) { isRVRef = false; type ~= `&&`; }
 
                     args ~= type;
                     argCount += 1;
@@ -255,11 +258,11 @@ Tuple!(Lang, string) demangleELF(in string sym,
         }
 
         if (!separator)
-            separator = "::"; // default C++ separator
+            separator = `::`; // default C++ separator
 
         const qid = to!string(ids.joiner(separator)) ~ to!string(args); // qualified id
         if (!rest.empty)
-            dln("rest: ", rest);
+            dln(`rest: `, rest);
 
         return tuple(Lang.cxx, qid);
     }
@@ -278,12 +281,12 @@ Tuple!(Lang, string) demangleELF(in string sym,
 unittest
 {
     import assert_ex;
-    assertEqual("_ZN9wikipedia7article8print_toERSo".demangleELF,
-                tuple(Lang.cxx, "wikipedia::article::print_to(std::ostream&)"));
-    assertEqual("_ZN9wikipedia7article8print_toEOSo".demangleELF,
-                tuple(Lang.cxx, "wikipedia::article::print_to(std::ostream&&)"));
-    assertEqual("_ZN9wikipedia7article6formatEv".demangleELF,
-                tuple(Lang.cxx, "wikipedia::article::format(void)"));
-    assertEqual("_ZN9wikipedia7article6formatE".demangleELF,
-                tuple(Lang.cxx, "wikipedia::article::format"));
+    assertEqual(`_ZN9wikipedia7article8print_toERSo`.demangleELF,
+                tuple(Lang.cxx, `wikipedia::article::print_to(std::ostream&)`));
+    assertEqual(`_ZN9wikipedia7article8print_toEOSo`.demangleELF,
+                tuple(Lang.cxx, `wikipedia::article::print_to(std::ostream&&)`));
+    assertEqual(`_ZN9wikipedia7article6formatEv`.demangleELF,
+                tuple(Lang.cxx, `wikipedia::article::format(void)`));
+    assertEqual(`_ZN9wikipedia7article6formatE`.demangleELF,
+                tuple(Lang.cxx, `wikipedia::article::format`));
 }
