@@ -99,7 +99,7 @@ string decodeCxxType(ref string rest)
     bool isPointer = false;
 
     /* TODO: Order of these may vary. */
-    const cvq = decodeCxxCVQualifiers(rest);
+    const cvq = rest.decodeCxxCVQualifiers;
     switch (rest[0])
     {
         case 'P': rest = rest[1..$]; isPointer = true; break;
@@ -478,9 +478,6 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
-    /* assertEqual(`_ZStL19piecewise_construct`.demangleSymbol, */
-    /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
-
     assertEqual(`_ZN9wikipedia7article8print_toERSo`.demangleSymbol,
                 tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&)`));
 
@@ -492,4 +489,13 @@ unittest
 
     assertEqual(`_ZN9wikipedia7article6formatE`.demangleSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format`));
+
+    assertEqual(`_ZSt5state`.demangleSymbol,
+                tuple(Lang.cxx, `::std::state`));
+
+    assertEqual(`_ZNSt3_In4wardE`.demangleSymbol,
+                tuple(Lang.cxx, `::std::_In::ward`));
+
+    /* assertEqual(`_ZStL19piecewise_construct`.demangleSymbol, */
+    /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
 }
