@@ -61,11 +61,11 @@ Tuple!(Lang, string) demangleELF(in string sym,
         import std.ascii: isDigit;
         import std.array: array;
         import std.stdio;
-        import std.range: take, drop;
+        import std.range: take, drop, front;
 
-        if (rest.skipOver('N'))
+        if (rest.skipOver('N') || // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
+            rest.skipOver('L'))
         {
-            // TODO: What differs _ZN from _Z?
         }
 
         // symbols (function or variable name)
@@ -152,7 +152,7 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 case `cv`: ids ~= `operator (<type>)`; break; // type-cast: TODO: Decode type
                 case `li`: ids ~= `operator "" <source-name>`; break;
                 case `v `: ids ~= `operator <digit> <source-name>`; break;
-                default: dln(`Handle last `, op, ` of whole `, sym);
+                default: dln(`Handle rest `, rest, ` of whole `, sym);
                 }
                 rest = rest[2..$];
             }
@@ -228,18 +228,18 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 case 'D':
                     rest = rest[1..$];
                     assert(!rest.empty); // need one more
-                    final switch(rest[0])
+                    switch(rest[0])
                     {
-                        /* TODO: */
-                        /* ::= d # IEEE 754r decimal floating point (64 bits) */
-                        /* ::= e # IEEE 754r decimal floating point (128 bits) */
-                        /* ::= f # IEEE 754r decimal floating point (32 bits) */
-                        /* ::= h # IEEE 754r half-precision floating point (16 bits) */
-                        /* ::= i # char32_t */
-                        /* ::= s # char16_t */
-                        /* ::= a # auto */
-                        /* ::= c # decltype(auto) */
-                        /* ::= n # std::nullptr_t (i.e., decltype(nullptr)) */
+                    case 'd': rest = rest[1..$]; type = "IEEE 754r decimal floating point (64 bits)"; break;
+                    case 'e': rest = rest[1..$]; type = "IEEE 754r decimal floating point (128 bits)"; break;
+                    case 'f': rest = rest[1..$]; type = "IEEE 754r decimal floating point (32 bits)"; break;
+                    case 'h': rest = rest[1..$]; type = "IEEE 754r half-precision floating point (16 bits)"; break;
+                    case 'i': rest = rest[1..$]; type = "char32_t"; break;
+                    case 's': rest = rest[1..$]; type = "char16_t"; break;
+                    case 'a': rest = rest[1..$]; type = "auto"; break;
+                    case 'c': rest = rest[1..$]; type = "decltype(auto)"; break;
+                    case 'n': rest = rest[1..$]; type = "std::nullptr_t"; break; // (i.e., decltype(nullptr))
+                    default: dln(`Handle rest `, rest, ` of whole `, sym);
                     }
                     break;
 
