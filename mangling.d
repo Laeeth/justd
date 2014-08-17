@@ -36,6 +36,7 @@ unittest
 }
 
 import std.typecons: tuple, Tuple;
+import dbg;
 
 /** Demangle Symbol $(D sym) and Detect Language.
     See also: https://en.wikipedia.org/wiki/Name_mangling
@@ -48,11 +49,10 @@ Tuple!(Lang, string) demangleELF(in string sym,
     import std.algorithm: startsWith, findSplitAfter;
     const cxxHit = sym.findSplitAfter("_ZN"); // split into C++ prefix and rest
 
-    string[] ids; // TODO: Turn this into a range that is returned
-
     import std.range: empty;
     if (!cxxHit[0].empty) // C++
     {
+        string[] ids; // TODO: Turn this into a range that is returned
         string rest = cxxHit[1];
         import algorithm_ex: split, splitBefore;
         import std.algorithm: joiner;
@@ -62,7 +62,7 @@ Tuple!(Lang, string) demangleELF(in string sym,
         import std.stdio;
         import std.range: take, drop;
 
-        // symbols
+        // symbols (function or variable name)
         while (!rest.empty &&
                rest[0] != 'E')
         {
@@ -76,7 +76,81 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 rest = rest[num..$]; // rest.drop(num);
                 ids ~= id;
             }
-            else if (rest[0] != 'E') // end finalizer
+            else if (rest.length >= 2)
+            {
+                // https://mentorembedded.github.io/cxx-abi/abi.html#mangling-operator
+                const op = rest[0..2]; // operator code
+                switch (op)
+                {
+                case `nw`: ids ~= `operator new`; break;
+                case `na`: ids ~= `operator new[]`; break;
+                case `dl`: ids ~= `operator delete`; break;
+                case `da`: ids ~= `operator delete[]`; break;
+                case `ps`: ids ~= `operator +`; break; // unary plus
+                case `ng`: ids ~= `operator -`; break; // unary minus
+
+                case `ad`: ids ~= `operator &`; break; // address of
+                case `de`: ids ~= `operator *`; break; // dereference
+
+                case `co`: ids ~= `operator ~`; break; // bitwise complement
+                case `pl`: ids ~= `operator +`; break; // plus
+                case `mi`: ids ~= `operator -`; break; // minus
+
+                case `ml`: ids ~= `operator *`; break; // multiplication
+                case `dv`: ids ~= `operator /`; break; // division
+                case `rm`: ids ~= `operator %`; break; // remainder
+
+                case `an`: ids ~= `operator &`; break; // bitwise and
+                case `or`: ids ~= `operator |`; break; // bitwise of
+
+                case `eo`: ids ~= `operator ^`; break;
+                case `aS`: ids ~= `operator =`; break;
+
+                case `pL`: ids ~= `operator +=`; break;
+                case `mI`: ids ~= `operator -=`; break;
+                case `mL`: ids ~= `operator *=`; break;
+                case `dV`: ids ~= `operator /=`; break;
+                case `rM`: ids ~= `operator %=`; break;
+
+                case `aN`: ids ~= `operator &=`; break;
+                case `oR`: ids ~= `operator |=`; break;
+                case `eO`: ids ~= `operator ^=`; break;
+
+                case `ls`: ids ~= `operator <<`; break;
+                case `rs`: ids ~= `operator >>`; break;
+                case `lS`: ids ~= `operator <<=`; break;
+                case `rS`: ids ~= `operator >>=`; break;
+
+                case `eq`: ids ~= `operator ==`; break;
+                case `ne`: ids ~= `operator !=`; break;
+                case `lt`: ids ~= `operator <`; break;
+                case `gt`: ids ~= `operator >`; break;
+                case `le`: ids ~= `operator <=`; break;
+                case `ge`: ids ~= `operator >=`; break;
+
+                case `nt`: ids ~= `operator !`; break;
+                case `aa`: ids ~= `operator &&`; break;
+                case `oo`: ids ~= `operator ||`; break;
+
+                case `pp`: ids ~= `operator ++`; break; // (postfix in <expression> context)
+                case `mm`: ids ~= `operator --`; break; // (postfix in <expression> context)
+
+                case `cm`: ids ~= `operator ,`; break;
+
+                case `pm`: ids ~= `operator ->*`; break;
+                case `pt`: ids ~= `operator ->`; break;
+
+                case `cl`: ids ~= `operator ()`; break;
+                case `ix`: ids ~= `operator []`; break;
+                case `qu`: ids ~= `operator ?`; break;
+                case `cv`: ids ~= `operator (<type>)`; break; // type-cast: TODO: Decode type
+                case `li`: ids ~= `operator "" <source-name>`; break;
+                case `v `: ids ~= `operator <digit> <source-name>`; break;
+                default: dln("Handle last ", op, " of whole ", sym);
+                }
+                rest = rest[2..$];
+            }
+            else
             {
                 version(unittest)
                 {
@@ -84,7 +158,7 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 }
                 else
                 {
-                    writeln("Incomplete parsing");
+                    dln("Incomplete parsing");
                     break;
                 }
             }
@@ -101,21 +175,34 @@ Tuple!(Lang, string) demangleELF(in string sym,
         if ((!rest.empty)) // if optional function arguments exist
         {
             args ~= `(`;
-            bool isRef = false;
+
+            // <ref-qualifier>
+            bool isRef = false;      // & ref-qualifier
+            bool isRVRef = false;    // && ref-qualifier
+
+            // <CV-qualifiers>
+            bool isRestrict = false; // restrict
+            bool isConst = false; // const
+            bool isVolatile = false; // volatile
+
             while (!rest.empty)
             {
                 string type;
                 switch (rest[0])
                 {
-                case 'v':       // void
-                    rest = rest[1..$];
-                    type = "void";
-                    if (isRef) { isRef = false; type ~= "&"; }
-                    break;
-                case 'R':       // reference
-                    rest = rest[1..$];
-                    isRef = true;
-                    break;
+                    // builtin types: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
+                case 'v': rest = rest[1..$]; type = "void"; break;
+                case 'w': rest = rest[1..$]; type = "wchar_t"; break;
+
+                    // <CV-qualifiers>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.CV-qualifiers
+                case 'r': rest = rest[1..$]; isRestrict = true; break;
+                case 'V': rest = rest[1..$]; isVolatile = true; break;
+                case 'K': rest = rest[1..$]; isConst = true; break;
+
+                    // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
+                case 'R': rest = rest[1..$]; isRef = true; break;
+                case 'O': rest = rest[1..$]; isRVRef = true; break;
+
                 case 'S': // standard namespace: std::
                     rest = rest[1..$];
                     type ~= "std::";
@@ -135,23 +222,31 @@ Tuple!(Lang, string) demangleELF(in string sym,
                     case 'd': rest = rest[1..$]; type ~= "iostream"; break;
 
                     default:
-                        /* writeln("Cannot handle C++ standard prefix character: '", rest[0], "'"); */
+                        /* dln("Cannot handle C++ standard prefix character: '", rest[0], "'"); */
                         rest = rest[1..$];
                         break;
                     }
-                    if (isRef) { isRef = false; type ~= "&"; }
                     break;
                 default:
-                    /* writeln("Cannot handle character: '", rest[0], "'"); */
+                    /* dln("Cannot handle character: '", rest[0], "'"); */
                     rest = rest[1..$];
                     break;
                 }
+
                 if (type)
                 {
                     if (argCount >= 1)
                     {
                         args ~= ',';
                     }
+
+                    if (isRestrict) { isRestrict = false; type = "restrict " ~ type; } // C99
+                    if (isVolatile) { isVolatile = false; type = "volatile " ~ type; }
+                    if (isConst) { isConst = false; type = "const " ~ type; }
+
+                    if (isRef) { isRef = false; type ~= "&"; }
+                    if (isRVRef) { isRVRef = false; type ~= "&&"; }
+
                     args ~= type;
                     argCount += 1;
                 }
@@ -164,7 +259,7 @@ Tuple!(Lang, string) demangleELF(in string sym,
 
         const qid = to!string(ids.joiner(separator)) ~ to!string(args); // qualified id
         if (!rest.empty)
-            writeln("rest: ", rest);
+            dln("rest: ", rest);
 
         return tuple(Lang.cxx, qid);
     }
@@ -185,6 +280,8 @@ unittest
     import assert_ex;
     assertEqual("_ZN9wikipedia7article8print_toERSo".demangleELF,
                 tuple(Lang.cxx, "wikipedia::article::print_to(std::ostream&)"));
+    assertEqual("_ZN9wikipedia7article8print_toEOSo".demangleELF,
+                tuple(Lang.cxx, "wikipedia::article::print_to(std::ostream&&)"));
     assertEqual("_ZN9wikipedia7article6formatEv".demangleELF,
                 tuple(Lang.cxx, "wikipedia::article::format(void)"));
     assertEqual("_ZN9wikipedia7article6formatE".demangleELF,
