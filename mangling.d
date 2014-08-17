@@ -193,9 +193,58 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 string type;
                 switch (rest[0])
                 {
-                    // builtin types: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
+                    // <builtin-type>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
                 case 'v': rest = rest[1..$]; type = `void`; break;
                 case 'w': rest = rest[1..$]; type = `wchar_t`; break;
+
+                case 'b': rest = rest[1..$]; type = `bool`; break;
+
+                case 'c': rest = rest[1..$]; type = `char`; break;
+                case 'a': rest = rest[1..$]; type = `signed char`; break;
+                case 'h': rest = rest[1..$]; type = `unsigned char`; break;
+
+                case 's': rest = rest[1..$]; type = `short`; break;
+                case 't': rest = rest[1..$]; type = `unsigned short`; break;
+
+                case 'i': rest = rest[1..$]; type = `int`; break;
+                case 'j': rest = rest[1..$]; type = `unsigned int`; break;
+
+                case 'l': rest = rest[1..$]; type = `long`; break;
+                case 'm': rest = rest[1..$]; type = `unsigned long`; break;
+
+                case 'x': rest = rest[1..$]; type = `long long`; break;  // __int64
+                case 'y': rest = rest[1..$]; type = `unsigned long long`; break; // __int64
+
+                case 'n': rest = rest[1..$]; type = `__int128`; break;
+                case 'o': rest = rest[1..$]; type = `unsigned __int128`; break;
+
+                case 'f': rest = rest[1..$]; type = `float`; break;
+                case 'd': rest = rest[1..$]; type = `double`; break;
+                case 'e': rest = rest[1..$]; type = `long double`; break; // __float80
+                case 'g': rest = rest[1..$]; type = `__float128`; break;
+
+                case 'z': rest = rest[1..$]; type = `...`; break; // ellipsis
+
+                case 'D':
+                    rest = rest[1..$];
+                    assert(!rest.empty); // need one more
+                    final switch(rest[0])
+                    {
+                        /* TODO: */
+                        /* ::= d # IEEE 754r decimal floating point (64 bits) */
+                        /* ::= e # IEEE 754r decimal floating point (128 bits) */
+                        /* ::= f # IEEE 754r decimal floating point (32 bits) */
+                        /* ::= h # IEEE 754r half-precision floating point (16 bits) */
+                        /* ::= i # char32_t */
+                        /* ::= s # char16_t */
+                        /* ::= a # auto */
+                        /* ::= c # decltype(auto) */
+                        /* ::= n # std::nullptr_t (i.e., decltype(nullptr)) */
+                    }
+                    break;
+
+                    /* TODO: */
+                    /* ::= u <source-name>	# vendor extended type */
 
                     // <CV-qualifiers>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.CV-qualifiers
                 case 'r': rest = rest[1..$]; isRestrict = true; break;
