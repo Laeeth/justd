@@ -3,6 +3,8 @@
 /** Executable Symbol Name Mangling and Demangling. */
 module mangling;
 
+import std.range: empty;
+
 /** Mangled Language. */
 enum Lang
 {
@@ -18,11 +20,11 @@ string toTag(Lang lang)
 {
     final switch (lang)
     {
-    case Lang.unknown: return `?`;
-    case Lang.c: return `C`;
-    case Lang.cxx: return `C++`;
-    case Lang.d: return `D`;
-    case Lang.java: return `Java`;
+        case Lang.unknown: return `?`;
+        case Lang.c: return `C`;
+        case Lang.cxx: return `C++`;
+        case Lang.d: return `D`;
+        case Lang.java: return `Java`;
     }
 }
 
@@ -35,19 +37,214 @@ unittest
     assert(toTag(Lang.java) == `Java`);
 }
 
-import std.typecons: tuple, Tuple;
+import std.typecons: tuple, Tuple, Nullable;
 import dbg;
+
+/** Instantiator for $(D Nullable).
+    TODO: Add to Phobos.
+*/
+Nullable!T nullable(T)(T a)
+{
+    return typeof(return)(a);
+}
+
+/** Instantiator for $(D Nullable).
+    TODO: Add to Phobos.
+ */
+Nullable!T nullable(T nullValue, T)(T a, T nullValue)
+{
+    return Nullable!nullValue(a);
+}
+
+version(none) unittest
+{
+    auto x = nullable!(int.max)(3);
+}
+
+/** Decode C++ Type at $(D sym).
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
+*/
+string decodeCxxType(ref string sym)
+{
+    const biType = sym.decodeCxxBuiltinType;
+    if (!biType.isNull) { return biType.get; } // digest if match
+
+    const funType = sym.decodeCxxFunctionType;
+    if (!funType.isNull) { return funType.get; } // digest if match
+
+    assert(false, "Unmatched encoding at " ~ sym);
+}
+
+/** Try to Decode C++ Operator at $(D rest).
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-operator
+*/
+Nullable!string decodeCxxOperator(ref string rest)
+{
+    typeof(return) type;
+    enum n = 2;
+    if (rest.length < n) { return type; }
+    switch (rest[0..n])
+    {
+        case `nw`: type = `operator new`; break;
+        case `na`: type = `operator new[]`; break;
+        case `dl`: type = `operator delete`; break;
+        case `da`: type = `operator delete[]`; break;
+        case `ps`: type = `operator +`; break; // unary plus
+        case `ng`: type = `operator -`; break; // unary minus
+
+        case `ad`: type = `operator &`; break; // address of
+        case `de`: type = `operator *`; break; // dereference
+
+        case `co`: type = `operator ~`; break; // bitwise complement
+        case `pl`: type = `operator +`; break; // plus
+        case `mi`: type = `operator -`; break; // minus
+
+        case `ml`: type = `operator *`; break; // multiplication
+        case `dv`: type = `operator /`; break; // division
+        case `rm`: type = `operator %`; break; // remainder
+
+        case `an`: type = `operator &`; break; // bitwise and
+        case `or`: type = `operator |`; break; // bitwise of
+
+        case `eo`: type = `operator ^`; break;
+        case `aS`: type = `operator =`; break;
+
+        case `pL`: type = `operator +=`; break;
+        case `mI`: type = `operator -=`; break;
+        case `mL`: type = `operator *=`; break;
+        case `dV`: type = `operator /=`; break;
+        case `rM`: type = `operator %=`; break;
+
+        case `aN`: type = `operator &=`; break;
+        case `oR`: type = `operator |=`; break;
+        case `eO`: type = `operator ^=`; break;
+
+        case `ls`: type = `operator <<`; break;
+        case `rs`: type = `operator >>`; break;
+        case `lS`: type = `operator <<=`; break;
+        case `rS`: type = `operator >>=`; break;
+
+        case `eq`: type = `operator ==`; break;
+        case `ne`: type = `operator !=`; break;
+        case `lt`: type = `operator <`; break;
+        case `gt`: type = `operator >`; break;
+        case `le`: type = `operator <=`; break;
+        case `ge`: type = `operator >=`; break;
+
+        case `nt`: type = `operator !`; break;
+        case `aa`: type = `operator &&`; break;
+        case `oo`: type = `operator ||`; break;
+
+        case `pp`: type = `operator ++`; break; // (postfix in <expression> context)
+        case `mm`: type = `operator --`; break; // (postfix in <expression> context)
+
+        case `cm`: type = `operator ,`; break;
+
+        case `pm`: type = `operator ->*`; break;
+        case `pt`: type = `operator ->`; break;
+
+        case `cl`: type = `operator ()`; break;
+        case `ix`: type = `operator []`; break;
+        case `qu`: type = `operator ?`; break;
+        case `cv`: type = `operator (<type>)`; break; // type-cast: TODO: Decode type
+        case `li`: type = `operator "" <source-name>`; break;
+            // TODO: case `v `: type = `operator <digit> <source-name>`; break;
+        default:
+            dln(`TODO: Handle `, rest);
+    }
+    if (!type.isNull) { rest = rest[n..$]; } // digest if match
+    return type;
+}
+
+/** Try to Decode C++ Builtin Type at $(D sym).
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
+*/
+Nullable!string decodeCxxBuiltinType(ref string rest)
+{
+    typeof(return) type;
+    enum n = 1;
+    if (rest.length < n) { return type; }
+    switch (rest[0])
+    {
+        case 'v': rest = rest[1..$]; type = `void`; break;
+        case 'w': rest = rest[1..$]; type = `wchar_t`; break;
+
+        case 'b': rest = rest[1..$]; type = `bool`; break;
+
+        case 'c': rest = rest[1..$]; type = `char`; break;
+        case 'a': rest = rest[1..$]; type = `signed char`; break;
+        case 'h': rest = rest[1..$]; type = `unsigned char`; break;
+
+        case 's': rest = rest[1..$]; type = `short`; break;
+        case 't': rest = rest[1..$]; type = `unsigned short`; break;
+
+        case 'i': rest = rest[1..$]; type = `int`; break;
+        case 'j': rest = rest[1..$]; type = `unsigned int`; break;
+
+        case 'l': rest = rest[1..$]; type = `long`; break;
+        case 'm': rest = rest[1..$]; type = `unsigned long`; break;
+
+        case 'x': rest = rest[1..$]; type = `long long`; break;  // __int64
+        case 'y': rest = rest[1..$]; type = `unsigned long long`; break; // __int64
+
+        case 'n': rest = rest[1..$]; type = `__int128`; break;
+        case 'o': rest = rest[1..$]; type = `unsigned __int128`; break;
+
+        case 'f': rest = rest[1..$]; type = `float`; break;
+        case 'd': rest = rest[1..$]; type = `double`; break;
+        case 'e': rest = rest[1..$]; type = `long double`; break; // __float80
+        case 'g': rest = rest[1..$]; type = `__float128`; break;
+
+        case 'z': rest = rest[1..$]; type = `...`; break; // ellipsis
+
+        case 'D':
+            rest = rest[1..$];
+            assert(!rest.empty); // need one more
+            switch (rest[0])
+            {
+                case 'd': rest = rest[1..$]; type = `IEEE 754r decimal floating point (64 bits)`; break;
+                case 'e': rest = rest[1..$]; type = `IEEE 754r decimal floating point (128 bits)`; break;
+                case 'f': rest = rest[1..$]; type = `IEEE 754r decimal floating point (32 bits)`; break;
+                case 'h': rest = rest[1..$]; type = `IEEE 754r half-precision floating point (16 bits)`; break;
+                case 'i': rest = rest[1..$]; type = `char32_t`; break;
+                case 's': rest = rest[1..$]; type = `char16_t`; break;
+                case 'a': rest = rest[1..$]; type = `auto`; break;
+                case 'c': rest = rest[1..$]; type = `decltype(auto)`; break;
+                case 'n': rest = rest[1..$]; type = `std::nullptr_t`; break; // (i.e., decltype(nullptr))
+                default: dln(`TODO: Handle `, rest);
+            }
+            break;
+
+            /* TODO: */
+            /* ::= u <source-name>	# vendor extended type */
+
+        default:
+            dln(`TODO: Handle `, rest);
+            break;
+    }
+
+    return type;
+}
+
+/** Try to Decode C++ Function Type at $(D rest).
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.function-type
+*/
+Nullable!string decodeCxxFunctionType(ref string rest)
+{
+    typeof(return) type;
+    dln("TODO");
+    return type;
+}
 
 /** Demangle Symbol $(D sym) and Detect Language.
     See also: https://en.wikipedia.org/wiki/Name_mangling
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 */
-Tuple!(Lang, string) demangleELF(in string sym,
-                                 string separator = null) /* @safe pure nothrow @nogc */
+Tuple!(Lang, string) demangleSymbol(in string sym,
+                                    string separator = null) /* @safe pure nothrow @nogc */
 {
     import std.algorithm: startsWith, findSplitAfter, skipOver;
-    import std.range: empty;
 
     const cxxHit = sym.findSplitAfter(`_Z`); // split into C++ prefix and rest
 
@@ -55,6 +252,8 @@ Tuple!(Lang, string) demangleELF(in string sym,
     {
         string[] ids; // TODO: Turn this into a range that is returned
         string rest = cxxHit[1];
+        bool hasTerminator = false;
+
         import algorithm_ex: split, splitBefore;
         import std.algorithm: joiner;
         import std.conv: to;
@@ -63,14 +262,19 @@ Tuple!(Lang, string) demangleELF(in string sym,
         import std.stdio;
         import std.range: take, drop, front;
 
-        if (rest.skipOver('N') || // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
-            rest.skipOver('L'))
+        if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
         {
+            hasTerminator = true;
+        }
+        else if (rest.skipOver('L'))
+        {
+            hasTerminator = false;
         }
 
         // symbols (function or variable name)
         while (!rest.empty &&
-               rest[0] != 'E') // TODO: functionize
+               (!hasTerminator ||
+                rest[0] != 'E'))
         {
             const match = rest.splitBefore!(a => !a.isDigit);
             const digits = match[0];
@@ -81,96 +285,27 @@ Tuple!(Lang, string) demangleELF(in string sym,
                 const id = rest[0..num]; // identifier, rest.take(num)
                 rest = rest[num..$]; // rest.drop(num);
                 ids ~= id;
+                continue;
             }
-            else if (rest.length >= 2)
+
+            const op = rest.decodeCxxOperator;
+            if (!op.isNull) { continue; }
+
+            version(unittest)
             {
-                // https://mentorembedded.github.io/cxx-abi/abi.html#mangling-operator
-                const op = rest[0..2]; // operator code
-                switch (op)
-                {
-                case `nw`: ids ~= `operator new`; break;
-                case `na`: ids ~= `operator new[]`; break;
-                case `dl`: ids ~= `operator delete`; break;
-                case `da`: ids ~= `operator delete[]`; break;
-                case `ps`: ids ~= `operator +`; break; // unary plus
-                case `ng`: ids ~= `operator -`; break; // unary minus
-
-                case `ad`: ids ~= `operator &`; break; // address of
-                case `de`: ids ~= `operator *`; break; // dereference
-
-                case `co`: ids ~= `operator ~`; break; // bitwise complement
-                case `pl`: ids ~= `operator +`; break; // plus
-                case `mi`: ids ~= `operator -`; break; // minus
-
-                case `ml`: ids ~= `operator *`; break; // multiplication
-                case `dv`: ids ~= `operator /`; break; // division
-                case `rm`: ids ~= `operator %`; break; // remainder
-
-                case `an`: ids ~= `operator &`; break; // bitwise and
-                case `or`: ids ~= `operator |`; break; // bitwise of
-
-                case `eo`: ids ~= `operator ^`; break;
-                case `aS`: ids ~= `operator =`; break;
-
-                case `pL`: ids ~= `operator +=`; break;
-                case `mI`: ids ~= `operator -=`; break;
-                case `mL`: ids ~= `operator *=`; break;
-                case `dV`: ids ~= `operator /=`; break;
-                case `rM`: ids ~= `operator %=`; break;
-
-                case `aN`: ids ~= `operator &=`; break;
-                case `oR`: ids ~= `operator |=`; break;
-                case `eO`: ids ~= `operator ^=`; break;
-
-                case `ls`: ids ~= `operator <<`; break;
-                case `rs`: ids ~= `operator >>`; break;
-                case `lS`: ids ~= `operator <<=`; break;
-                case `rS`: ids ~= `operator >>=`; break;
-
-                case `eq`: ids ~= `operator ==`; break;
-                case `ne`: ids ~= `operator !=`; break;
-                case `lt`: ids ~= `operator <`; break;
-                case `gt`: ids ~= `operator >`; break;
-                case `le`: ids ~= `operator <=`; break;
-                case `ge`: ids ~= `operator >=`; break;
-
-                case `nt`: ids ~= `operator !`; break;
-                case `aa`: ids ~= `operator &&`; break;
-                case `oo`: ids ~= `operator ||`; break;
-
-                case `pp`: ids ~= `operator ++`; break; // (postfix in <expression> context)
-                case `mm`: ids ~= `operator --`; break; // (postfix in <expression> context)
-
-                case `cm`: ids ~= `operator ,`; break;
-
-                case `pm`: ids ~= `operator ->*`; break;
-                case `pt`: ids ~= `operator ->`; break;
-
-                case `cl`: ids ~= `operator ()`; break;
-                case `ix`: ids ~= `operator []`; break;
-                case `qu`: ids ~= `operator ?`; break;
-                case `cv`: ids ~= `operator (<type>)`; break; // type-cast: TODO: Decode type
-                case `li`: ids ~= `operator "" <source-name>`; break;
-                case `v `: ids ~= `operator <digit> <source-name>`; break;
-                default: dln(`Handle rest `, rest, ` of whole `, sym);
-                }
-                rest = rest[2..$];
+                assert(false, `Incomplete parsing at ` ~ rest);
             }
             else
             {
-                version(unittest)
-                {
-                    assert(false, `Incomplete parsing at ` ~ rest);
-                }
-                else
-                {
-                    dln(`Incomplete parsing`);
-                    break;
-                }
+                dln(`Incomplete parsing`);
+                break;
             }
         }
 
-        rest.skipOver('E');
+        if (hasTerminator)
+        {
+            rest.skipOver('E');
+        }
 
         // optional function arguments
         int argCount = 0;
@@ -190,99 +325,47 @@ Tuple!(Lang, string) demangleELF(in string sym,
 
             while (!rest.empty)
             {
-                string type;
+                auto type = rest.decodeCxxBuiltinType;
+
                 switch (rest[0])
                 {
-                    // <builtin-type>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
-                case 'v': rest = rest[1..$]; type = `void`; break;
-                case 'w': rest = rest[1..$]; type = `wchar_t`; break;
-
-                case 'b': rest = rest[1..$]; type = `bool`; break;
-
-                case 'c': rest = rest[1..$]; type = `char`; break;
-                case 'a': rest = rest[1..$]; type = `signed char`; break;
-                case 'h': rest = rest[1..$]; type = `unsigned char`; break;
-
-                case 's': rest = rest[1..$]; type = `short`; break;
-                case 't': rest = rest[1..$]; type = `unsigned short`; break;
-
-                case 'i': rest = rest[1..$]; type = `int`; break;
-                case 'j': rest = rest[1..$]; type = `unsigned int`; break;
-
-                case 'l': rest = rest[1..$]; type = `long`; break;
-                case 'm': rest = rest[1..$]; type = `unsigned long`; break;
-
-                case 'x': rest = rest[1..$]; type = `long long`; break;  // __int64
-                case 'y': rest = rest[1..$]; type = `unsigned long long`; break; // __int64
-
-                case 'n': rest = rest[1..$]; type = `__int128`; break;
-                case 'o': rest = rest[1..$]; type = `unsigned __int128`; break;
-
-                case 'f': rest = rest[1..$]; type = `float`; break;
-                case 'd': rest = rest[1..$]; type = `double`; break;
-                case 'e': rest = rest[1..$]; type = `long double`; break; // __float80
-                case 'g': rest = rest[1..$]; type = `__float128`; break;
-
-                case 'z': rest = rest[1..$]; type = `...`; break; // ellipsis
-
-                case 'D':
-                    rest = rest[1..$];
-                    assert(!rest.empty); // need one more
-                    switch(rest[0])
-                    {
-                    case 'd': rest = rest[1..$]; type = "IEEE 754r decimal floating point (64 bits)"; break;
-                    case 'e': rest = rest[1..$]; type = "IEEE 754r decimal floating point (128 bits)"; break;
-                    case 'f': rest = rest[1..$]; type = "IEEE 754r decimal floating point (32 bits)"; break;
-                    case 'h': rest = rest[1..$]; type = "IEEE 754r half-precision floating point (16 bits)"; break;
-                    case 'i': rest = rest[1..$]; type = "char32_t"; break;
-                    case 's': rest = rest[1..$]; type = "char16_t"; break;
-                    case 'a': rest = rest[1..$]; type = "auto"; break;
-                    case 'c': rest = rest[1..$]; type = "decltype(auto)"; break;
-                    case 'n': rest = rest[1..$]; type = "std::nullptr_t"; break; // (i.e., decltype(nullptr))
-                    default: dln(`Handle rest `, rest, ` of whole `, sym);
-                    }
-                    break;
-
-                    /* TODO: */
-                    /* ::= u <source-name>	# vendor extended type */
-
                     // <CV-qualifiers>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.CV-qualifiers
-                case 'r': rest = rest[1..$]; isRestrict = true; break;
-                case 'V': rest = rest[1..$]; isVolatile = true; break;
-                case 'K': rest = rest[1..$]; isConst = true; break;
+                    case 'r': rest = rest[1..$]; isRestrict = true; break;
+                    case 'V': rest = rest[1..$]; isVolatile = true; break;
+                    case 'K': rest = rest[1..$]; isConst = true; break;
 
-                    // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
-                case 'R': rest = rest[1..$]; isRef = true; break;
-                case 'O': rest = rest[1..$]; isRVRef = true; break;
+                        // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
+                    case 'R': rest = rest[1..$]; isRef = true; break;
+                    case 'O': rest = rest[1..$]; isRVRef = true; break;
 
-                case 'S': // standard namespace: std::
-                    rest = rest[1..$];
-                    type ~= `std::`;
-                    switch (rest[0])
-                    {
-                    case 't': rest = rest[1..$]; type ~= `ostream`; break;
-
-                    case 'a': rest = rest[1..$]; type ~= `allocator`; break;
-                    case 'b': rest = rest[1..$]; type ~= `basic_string`; break;
-                    case 's':
+                    case 'S': // standard namespace: std::
                         rest = rest[1..$];
-                        type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
+                        type ~= `std::`;
+                        switch (rest[0])
+                        {
+                            case 't': rest = rest[1..$]; type ~= `ostream`; break;
+
+                            case 'a': rest = rest[1..$]; type ~= `allocator`; break;
+                            case 'b': rest = rest[1..$]; type ~= `basic_string`; break;
+                            case 's':
+                                rest = rest[1..$];
+                                type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
+                                break;
+
+                            case 'i': rest = rest[1..$]; type ~= `istream`; break;
+                            case 'o': rest = rest[1..$]; type ~= `ostream`; break;
+                            case 'd': rest = rest[1..$]; type ~= `iostream`; break;
+
+                            default:
+                                /* dln(`Cannot handle C++ standard prefix character: '`, rest[0], `'`); */
+                                rest = rest[1..$];
+                                break;
+                        }
                         break;
-
-                    case 'i': rest = rest[1..$]; type ~= `istream`; break;
-                    case 'o': rest = rest[1..$]; type ~= `ostream`; break;
-                    case 'd': rest = rest[1..$]; type ~= `iostream`; break;
-
                     default:
-                        /* dln(`Cannot handle C++ standard prefix character: '`, rest[0], `'`); */
+                        /* dln(`Cannot handle character: '`, rest[0], `'`, ` in "`, rest, `"`); */
                         rest = rest[1..$];
                         break;
-                    }
-                    break;
-                default:
-                    /* dln(`Cannot handle character: '`, rest[0], `'`, ` in "`, rest, `"`); */
-                    rest = rest[1..$];
-                    break;
                 }
 
                 if (type)
@@ -330,14 +413,16 @@ Tuple!(Lang, string) demangleELF(in string sym,
 unittest
 {
     import assert_ex;
-    assertEqual(`_ZN9wikipedia7article8print_toERSo`.demangleELF,
+
+    assertEqual(`_ZStL19piecewise_construct`.demangleSymbol,
+                tuple(Lang.cxx, `std::piecewise_construct`));
+
+    assertEqual(`_ZN9wikipedia7article8print_toERSo`.demangleSymbol,
                 tuple(Lang.cxx, `wikipedia::article::print_to(std::ostream&)`));
-    assertEqual(`_ZN9wikipedia7article8print_toEOSo`.demangleELF,
+    assertEqual(`_ZN9wikipedia7article8print_toEOSo`.demangleSymbol,
                 tuple(Lang.cxx, `wikipedia::article::print_to(std::ostream&&)`));
-    assertEqual(`_ZN9wikipedia7article6formatEv`.demangleELF,
+    assertEqual(`_ZN9wikipedia7article6formatEv`.demangleSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
-    assertEqual(`_ZN9wikipedia7article6formatE`.demangleELF,
+    assertEqual(`_ZN9wikipedia7article6formatE`.demangleSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format`));
-    /* assertEqual(`StL19piecewise_construct`.demangleELF, */
-    /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
 }
