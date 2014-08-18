@@ -365,8 +365,8 @@ Tuple!(Lang, string) demangleSymbol(string whole,
         return tuple(Lang.c, whole); // assume C
     }
 
+    // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name
     const cxxHit = whole.findSplitAfter(`_Z`); // split into C++ prefix and rest
-
     if (!cxxHit[0].empty) // C++
     {
         string[] ids; // TODO: Turn this into a range that is returned
@@ -465,11 +465,11 @@ unittest
     assertEqual(`_ZN9wikipedia7article6formatE`.demangleSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
-    /* assertEqual(`_ZSt5state`.demangleSymbol, */
-    /*             tuple(Lang.cxx, `::std::state`)); */
+    assertEqual(`_ZSt5state`.demangleSymbol,
+                tuple(Lang.cxx, `::std::state`));
 
-    /* assertEqual(`_ZNSt3_In4wardE`.demangleSymbol, */
-    /*             tuple(Lang.cxx, `::std::_In::ward`)); */
+    assertEqual(`_ZNSt3_In4wardE`.demangleSymbol,
+                tuple(Lang.cxx, `::std::_In::ward`));
 
     /* assertEqual(`_ZStL19piecewise_construct`.demangleSymbol, */
     /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
