@@ -1,13 +1,23 @@
 #!/usr/bin/env rdmd-dev
 
-void otherMain()
+import std.stdio;
+import std.concurrency: spawn;
+
+alias T = string[];
+
+void useConstArgs(const T x)
 {
-    import std.stdio;
-    writeln("hello world!");
+    writeln("x: ", x);
 }
 
-void main(string[] args)
+void useArgs(T x)
 {
-    import std.concurrency: spawn;
-    auto otherMainTid = spawn(&otherMain);
+    writeln("x: ", x);
+}
+
+void main(T args)
+{
+    useArgs(args); // ok to call in same thread
+    auto fId = spawn(&useConstArgs, args.idup); // Compile-Time Error: "Aliases to mutable thread-local data not allowed."
+    auto fId = spawn(&useArgs, args); // Compile-Time Error: "Aliases to mutable thread-local data not allowed."
 }
