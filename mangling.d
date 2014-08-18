@@ -352,8 +352,8 @@ Nullable!string decodeCxxSourceName(ref string rest)
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 */
-Tuple!(Lang, string) demangleSymbol(string whole,
-                                    string separator = null) /* @safe pure nothrow @nogc */
+Tuple!(Lang, string) decodeSymbol(string whole,
+                                  string separator = null) /* @safe pure nothrow @nogc */
 {
     if (whole.empty)
     {
@@ -453,24 +453,24 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
-    assertEqual(`_ZN9wikipedia7article8print_toERSo`.demangleSymbol,
+    assertEqual(`_ZN9wikipedia7article8print_toERSo`.decodeSymbol,
                 tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&)`));
 
-    assertEqual(`_ZN9wikipedia7article8print_toEOSo`.demangleSymbol,
+    assertEqual(`_ZN9wikipedia7article8print_toEOSo`.decodeSymbol,
                 tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&&)`));
 
-    assertEqual(`_ZN9wikipedia7article6formatEv`.demangleSymbol,
+    assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
 
-    assertEqual(`_ZN9wikipedia7article6formatE`.demangleSymbol,
+    assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
-    assertEqual(`_ZSt5state`.demangleSymbol,
+    assertEqual(`_ZSt5state`.decodeSymbol,
                 tuple(Lang.cxx, `::std::state`));
 
-    assertEqual(`_ZNSt3_In4wardE`.demangleSymbol,
+    assertEqual(`_ZNSt3_In4wardE`.decodeSymbol,
                 tuple(Lang.cxx, `::std::_In::ward`));
 
-    /* assertEqual(`_ZStL19piecewise_construct`.demangleSymbol, */
+    /* assertEqual(`_ZStL19piecewise_construct`.decodeSymbol, */
     /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
 }

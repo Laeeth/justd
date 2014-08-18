@@ -595,7 +595,7 @@ void scanELF(NotNull!RegFile regfile,
             {
                 if (doDemangle)
                 {
-                    const hit = sym.demangleSymbol;
+                    const hit = sym.decodeSymbol;
                     writeln(hit[0].toTag(), ": ", hit[1]);
                 }
                 else

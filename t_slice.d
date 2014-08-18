@@ -1,6 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
-/* import std.stdio, std.algorithm, std.range, std.array; */
+import std.stdio, std.algorithm, std.range, std.array;
 
 void main(string[] args)
 {
@@ -24,4 +24,6 @@ void main(string[] args)
     auto z2 = x[0 .. $*2];
 
     auto w = l.ptr[0 .. l.length];
+
+    writeln(w);
 }
