@@ -2,7 +2,7 @@ module typecons_ex;
 
 // TODO: Add to Phobos and refer to http://forum.dlang.org/thread/lzyqywovlmdseqgqfvun@forum.dlang.org#post-ibvkvjwexdafpgtsamut:40forum.dlang.org
 
-import std.typecons: Nullable;
+import std.typecons: Nullable, NullableRef;
 
 /** Instantiator for $(D Nullable).
  */
@@ -27,4 +27,19 @@ unittest
 {
     auto x = 3.nullable!(int.max);
     assert(is (typeof(x) == Nullable!(int, int.max)));
+}
+
+/** Instantiator for $(D NullableRef).
+ */
+auto nullableRef(T)(T* a) @safe pure nothrow
+{
+    return NullableRef!T(a);
+}
+unittest
+{
+    auto x = 42.5;
+    auto xr = nullableRef(&x);
+    assert(!xr.isNull);
+    xr.nullify;
+    assert(xr.isNull);
 }
