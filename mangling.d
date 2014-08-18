@@ -1,9 +1,12 @@
 #!/usr/bin/env rdmd-dev
 
+/** ELF Symbol Name (De)Mangling. */
+module mangling;
+
 // TODO: Test and use Nullable!(null)(string) to save space.
 
-/** Executable Symbol Name Mangling and Demangling. */
-module mangling;
+// TODO: Use my Wrapper Hit!(null)(string) which implicitly converts .init to
+// false to enable elegant if (hit = decodeSomethingMaybe)
 
 import std.range: empty;
 
