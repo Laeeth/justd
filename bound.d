@@ -16,12 +16,19 @@
     - and add intelligent warnings/errors when assignment and implicit cast is
     not allowed showing the range of the expression/inferred variable.
 
+    TODO: Implicit conversions to unbounded integers?
+    Not in https://bitbucket.org/davidstone/bounded_integer.
+    const sb127 = saturated!byte(127);
+    const byte b = sb127; // TODO: this shouldn't compile if this is banned
+
     TODO: Add static asserts using template-arguments?
     TODO: Do we need a specific underflow?
     TODO: Add this module to std.numeric
 
     TODO: Merge with limited
+
     See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
+    See also: https://bitbucket.org/davidstone/bounded_integer
 
     TODO: Is this a good idea to use?:
     import std.typecons;
@@ -455,8 +462,13 @@ unittest {
 
 unittest {
     const sb127 = saturated!byte(127);
-    assert(!__traits(compiles,
-                     { const sb128 = saturated!byte(128); }), "This should fail");
-    assert(!__traits(compiles,
-                     { saturated!byte bb = 127; }), "This should fail");
+    static assert(!__traits(compiles, { const sb128 = saturated!byte(128); }), "This should fail");
+    static assert(!__traits(compiles, { saturated!byte bb = 127; }), "This should fail");
+}
+
+unittest {
+    const sb127 = saturated!byte(127);
+    int sh128 = saturated!short(128);
+    static assert(__traits(compiles, { sh128 = sb127; }));
+    static assert(!__traits(compiles, { sh127 = sb128; }));
 }
