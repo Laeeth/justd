@@ -902,7 +902,8 @@ class File
     bool underAnyDir(alias pred = "a")()
     {
         import std.algorithm: any;
-        return parents.any!pred;
+        import std.functional: unaryFun;
+        return parents.any!(unaryFun!pred);
     }
 
     Dir parent;               // Reference to parenting directory (or null if this is a root directory)
