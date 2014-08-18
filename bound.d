@@ -462,8 +462,8 @@ unittest {
 
 unittest {
     const sb127 = saturated!byte(127);
-    static assert(!__traits(compiles, { const sb128 = saturated!byte(128); }), "This should fail");
-    static assert(!__traits(compiles, { saturated!byte bb = 127; }), "This should fail");
+    static assert(!__traits(compiles, { const sb128 = saturated!byte(128); }));
+    static assert(!__traits(compiles, { saturated!byte bb = 127; }));
 }
 
 unittest {
