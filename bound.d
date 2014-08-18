@@ -404,31 +404,31 @@ unittest
     /* test print */
     auto x = bound!(0, 1)(1);
     x += 1;
-    wln(bound!(0, 1)(1));
-    wln(bound!(-1, 0)(0));
-    wln(bound!(-129, 0)(0));
+    version(print) wln(bound!(0, 1)(1));
+    version(print) wln(bound!(-1, 0)(0));
+    version(print) wln(bound!(-129, 0)(0));
 
-    // wln(bound!(0, 256)( - 1)); // Should give compiler error!
+    // version(print) wln(bound!(0, 256)( - 1)); // Should give compiler error!
 
-    wln(bound!(0, 2)(1));
+    version(print) wln(bound!(0, 2)(1));
 
-    wln(bound!(0.0f, 2.0f)()); // nan float
-    wln(bound!(0.0f, 2.0f)(1.0f)); // float
-    wln(bound!(0.0f, 2.0f)(1.0)); // float
+    version(print) wln(bound!(0.0f, 2.0f)()); // nan float
+    version(print) wln(bound!(0.0f, 2.0f)(1.0f)); // float
+    version(print) wln(bound!(0.0f, 2.0f)(1.0)); // float
 
-    wln(bound!(0.0, 2.0)());  // nan double
-    wln(bound!(0.0, 2.0)(1.0));  // double
-    wln(bound!(0.0, 2.0)(1.0f)); // double
+    version(print) wln(bound!(0.0, 2.0)());  // nan double
+    version(print) wln(bound!(0.0, 2.0)(1.0));  // double
+    version(print) wln(bound!(0.0, 2.0)(1.0f)); // double
 
-    wln(bound!(0.0f, 2.0)(1.0)); // double
-    wln(bound!(0.0, 2.0f)(1.0)); // double
+    version(print) wln(bound!(0.0f, 2.0)(1.0)); // double
+    version(print) wln(bound!(0.0, 2.0f)(1.0)); // double
 
-    wln(bound!(0, 0x100 - 1)(0x100 - 1));
-    wln(bound!(0, 0x100    )(0x100    ));
-    wln(bound!(0, 0x10000 - 1)(0x10000 - 1));
-    wln(bound!(0, 0x10000    )(0x10000    ));
-    wln(bound!(0, 0x100000000 - 1)(0x100000000 - 1));
-    wln(bound!(0, 0x100000000    )(0x100000000    ));
+    version(print) wln(bound!(0, 0x100 - 1)(0x100 - 1));
+    version(print) wln(bound!(0, 0x100    )(0x100    ));
+    version(print) wln(bound!(0, 0x10000 - 1)(0x10000 - 1));
+    version(print) wln(bound!(0, 0x10000    )(0x10000    ));
+    version(print) wln(bound!(0, 0x100000000 - 1)(0x100000000 - 1));
+    version(print) wln(bound!(0, 0x100000000    )(0x100000000    ));
 }
 
 /** Return $(D x) with Automatic Packed Saturation. */
@@ -444,23 +444,6 @@ auto ref optional(T, bool packed = true)(inout T x) // TODO: inout may be irrele
 }
 
 unittest {
-    import std.stdio: wln = writeln;
-
-    const ub = saturated!ubyte(11);
-    wln(ub);
-    assert(ub.sizeof == 1);
-
-    const i = saturated!int(11);
-    assert(i.sizeof == 4);
-
-    const l = saturated!long(11);
-    assert(l.sizeof == 8);
-
-    immutable im = 255;
-    const u = saturated!ubyte(im);
-}
-
-unittest {
     const sb127 = saturated!byte(127);
     static assert(!__traits(compiles, { const sb128 = saturated!byte(128); }));
     static assert(!__traits(compiles, { saturated!byte bb = 127; }));
@@ -471,4 +454,21 @@ unittest {
     int sh128 = saturated!short(128);
     static assert(__traits(compiles, { sh128 = sb127; }));
     static assert(!__traits(compiles, { sh127 = sb128; }));
+}
+
+unittest {
+    version(print) import std.stdio: wln = writeln;
+
+    const ub = saturated!ubyte(11);
+    version(print) wln(ub);
+    assert(ub.sizeof == 1);
+
+    const i = saturated!int(11);
+    assert(i.sizeof == 4);
+
+    const l = saturated!long(11);
+    assert(l.sizeof == 8);
+
+    immutable im = 255;
+    const u = saturated!ubyte(im);
 }
