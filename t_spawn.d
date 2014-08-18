@@ -18,6 +18,7 @@ void useArgs(T x)
 void main(T args)
 {
     useArgs(args); // ok to call in same thread
-    auto fId = spawn(&useConstArgs, args.idup); // Compile-Time Error: "Aliases to mutable thread-local data not allowed."
-    auto fId = spawn(&useArgs, args); // Compile-Time Error: "Aliases to mutable thread-local data not allowed."
+    auto f1 = spawn(&useConstArgs, args.idup); // Compile-Time Error: "Aliases to mutable thread-local data not allowed."
+    auto f2 = spawn(&useArgs, args.idup); // Compile-Time Error: "Aliases to mutable thread-local data not allowed."
+    auto f3 = spawn(&useArgs, args); // Compile-Time Error: "Aliases to mutable thread-local data not allowed."
 }
