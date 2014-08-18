@@ -6,15 +6,20 @@
 module mangling;
 
 import std.range: empty;
+
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
-import std.typecons: tuple, Tuple, Nullable;
-import dbg;
 import algorithm_ex: split, splitBefore;
+
+import std.typecons: tuple, Tuple, Nullable;
+import typecons_ex: nullable;
+
 import std.conv: to;
 import std.ascii: isDigit;
 import std.array: array;
 import std.stdio;
 import std.range: take, drop, front;
+
+import dbg;
 
 /** Mangled Language. */
 enum Lang
@@ -46,27 +51,6 @@ unittest
     assert(toTag(Lang.cxx) == `C++`);
     assert(toTag(Lang.d) == `D`);
     assert(toTag(Lang.java) == `Java`);
-}
-
-/** Instantiator for $(D Nullable).
-    TODO: Add to Phobos.
-*/
-Nullable!T nullable(T)(T a)
-{
-    return typeof(return)(a);
-}
-
-/** Instantiator for $(D Nullable).
-    TODO: Add to Phobos.
- */
-Nullable!T nullable(T nullValue, T)(T a, T nullValue)
-{
-    return Nullable!nullValue(a);
-}
-
-version(none) unittest
-{
-    auto x = nullable!(int.max)(3);
 }
 
 /** Decode Unqualified C++ Type at $(D rest).
