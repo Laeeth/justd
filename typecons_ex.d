@@ -5,9 +5,9 @@ import std.typecons: Nullable;
 /** Instantiator for $(D Nullable).
     TODO: Add to Phobos and refer to http://forum.dlang.org/thread/lzyqywovlmdseqgqfvun@forum.dlang.org#post-ibvkvjwexdafpgtsamut:40forum.dlang.org
 */
-Nullable!T nullable(T)(T a)
+auto nullable(T)(T a)
 {
-    return typeof(return)(a);
+    return Nullable!T(a);
 }
 unittest
 {
