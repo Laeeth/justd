@@ -1,6 +1,6 @@
 #!/usr/bin/env rdmd-dev
 
-// TODO: Use Nullable!(null)(string) to save space.
+// TODO: Test and use Nullable!(null)(string) to save space.
 
 /** Executable Symbol Name Mangling and Demangling. */
 module mangling;
@@ -31,7 +31,6 @@ enum Lang
     java,                       // Java
 }
 
-/** TODO: How do I make this ? */
 string toTag(Lang lang)
 {
     final switch (lang)
@@ -357,7 +356,7 @@ Tuple!(Lang, string) demangleSymbol(string whole,
 {
     if (whole.empty)
     {
-        return tuple(Lang.unknown, whole);
+        return tuple(Lang.init, whole);
     }
 
     if (!whole.startsWith(`_`))

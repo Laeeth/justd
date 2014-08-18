@@ -1,6 +1,16 @@
 module typecons_ex;
 
 // TODO: Add to Phobos and refer to http://forum.dlang.org/thread/lzyqywovlmdseqgqfvun@forum.dlang.org#post-ibvkvjwexdafpgtsamut:40forum.dlang.org
+// TODO: Better with?:
+/* inout(Nullable!T) nullable(T)(inout T a) */
+/* { */
+/*     return typeof(return)(a); */
+/* } */
+/* inout(Nullable!(T, nullValue)) nullable(alias nullValue, T)(inout T value) */
+/* if (is (typeof(nullValue) == T)) */
+/* { */
+/*     return typeof(return)(value); */
+/* } */
 
 import std.typecons: Nullable, NullableRef;
 
