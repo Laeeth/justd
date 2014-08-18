@@ -324,7 +324,12 @@ way simpler and more flexible
     \item Lazy/Delayed Evaluated means
     \item Return Calculation instead of Value
     \item Also called Higher-Order Range Pattern
-    \item In Haskell and Mathematics this is called a Monad
+    \item Compare with Monad
+    \item Example:
+      \begin{lstlisting}[frame=single]
+        writeln(x,y,z); // no allocation
+        writeln(x~y~z); // heap allocates
+      \end{lstlisting}
     \item Concept easily confused with \emph{value} ranges such as Ada's
       \emph{Range Types}
     \end{itemize}
