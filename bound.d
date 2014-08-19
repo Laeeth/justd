@@ -628,11 +628,11 @@ unittest
 /* { */
 /*     if (x >= 0) */
 /*     { */
-/*         return x.bound!(0, 1); */
+/*         return x.bound!(0, 2); */
 /*     } */
 /*     else */
 /*     { */
-/*         return x.bound!(0, 2); */
+/*         return x.bound!(0, 1); */
 /*     } */
 /* } */
 
