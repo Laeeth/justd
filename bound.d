@@ -531,8 +531,6 @@ auto abs(T,
          intmax_t low = intmax_t.min,
          intmax_t high = intmax_t.max)(Bound!(T, intmax_t, low, high) a)
 {
-    import std.math: abs;
-    import std.algorithm: max;
     static if (low >= 0 && high >= 0) // all positive
     {
         enum lowA = low;
@@ -545,6 +543,7 @@ auto abs(T,
     }
     else static if (low < 0 && high >= 0) // negative and positive
     {
+        import std.algorithm: max;
         enum lowA = 0;
         enum highA = max(-low, high);
     }
@@ -552,6 +551,7 @@ auto abs(T,
     {
         static assert("This shouldn't happen!");
     }
+    import std.math: abs;
     return abs(a.value).bound!(lowA, highA);
 }
 
