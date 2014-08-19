@@ -115,7 +115,8 @@ struct Bound(V,
     static assert(low < high,
                   "Requirement not fulfilled: low < high, low = " ~
                   to!string(low) ~ " and high = " ~ to!string(high));
-    static if (optional) {
+    static if (optional)
+    {
         static assert(high + 1 == V.max,
                       "high + 1 cannot equal V.max");
     }
@@ -134,17 +135,38 @@ struct Bound(V,
     /** Constructor Magic. */
     alias _value this;
 
-    /** Construct.
-        Move templated restriction into a static assert for better user feedback?
-     */
-    /* this(U, */
-    /*      C = intmax_t, */
-    /*      C low_ = U.min, */
-    /*      C high_ = U.max)(Bound!(U, C, low_, high_) x) if (low <= low_ && */
-    /*                                                        high_ >= high) */
-    /* { */
-    /*     this._value = x._value; */
-    /* } */
+    /** Construct from Integral $(D V) $(D a). */
+    static if (isIntegral!V)
+    {
+        this(V a)
+        {
+            static if (isUnsigned!V)
+            {
+                static assert(1UL << (8*V.sizeof) > high - low,
+                              "Unsigned value type " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]");
+            }
+            else
+            {
+                static assert(low <= V.min && V.max <= high,
+                              "Unsigned value type " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]");
+            }
+            this._value = a;
+        }
+    }
+
+    /** Construct from $(D Bound) value $(D a). */
+    this(U,
+         C,
+         C lowRHS,
+         C highRHS)(Bound!(U, C, lowRHS, highRHS) a) if (low <= lowRHS &&
+                                                         highRHS >= high)
+    {
+        /* TODO: Use this instead of template constraint? */
+        /* static assert(low <= lowRHS && */
+        /*               highRHS >= high, */
+        /*               "Bounds of rhs isn't a subset of lhs."); */
+        this._value = a._value;
+    }
 
     inout auto ref value() @property @safe pure inout nothrow { return _value; }
 
