@@ -13,15 +13,10 @@
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
 
+    TODO: Make this work wln(bound!(256, 257)(256));
+
     TODO: Implement overload for conditional operator p ? x1 : x2
     TODO: Implement variadic min, max, abs by looking at bounder_integer
-
-    TODO: Make this work:
-    wln(bound!(256,
-         C = U,
-         C low_ = C.min,
-         C high_ = C.ma257)(256));
-    wln(bound!(256, 257)(257));
 
     TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
     - Integer: +,-,*,^^,/
@@ -246,13 +241,15 @@ struct Bound(T,
             {
                 import traits_ex: isEven;
                 if (_value >= 0 ||
-                    rhs._value >= 0 && rhs._value.isEven) // always positive if exponent is even
+                    rhs._value >= 0 &&
+                    rhs._value.isEven) // always positive if exponent is even
                 {
                     enum min_ = min^^U.min;
                     enum max_ = max^^U.max;
                 }
                 else
                 {
+                    /* TODO: What to do here? */
                     enum min_ = max^^U.max;
                     enum max_ = min^^U.min;
                 }
@@ -302,20 +299,21 @@ struct Bound(T,
 }
 
 /** Instantiator for \c Bound.
+    Bounds $(D low) and $(D high) infer type of internal _value.
  * \see http://stackoverflow.com/questions/17502664/instantiator-function-for-bound-template-doesnt-compile
  */
-template bound(alias min,
-               alias max,
+template bound(alias low,
+               alias high,
                bool optional = false,
                bool exceptional = true,
-               bool packed = true) if (!is(CommonType!(typeof(min),
-                                                       typeof(max)) == void))
+               bool packed = true) if (!is(CommonType!(typeof(low),
+                                                       typeof(high)) == void))
 {
-    enum span = max - min;
+    enum span = high - low;
     alias SpanType = typeof(span);
 
-    alias LowType = typeof(min);
-    alias HighType = typeof(max);
+    alias LowType = typeof(low);
+    alias HighType = typeof(high);
 
     static if (isIntegral!LowType &&
                isIntegral!HighType)
@@ -325,7 +323,7 @@ template bound(alias min,
     else static if (isFloatingPoint!LowType &&
                     isFloatingPoint!HighType)
     {
-        alias C = real;
+        alias C = real; // TODO: This may give incorrect results because of round-off errors.
     }
     else
     {
@@ -338,34 +336,50 @@ template bound(alias min,
     static if (isIntegral!(LowType) &&
                isIntegral!(HighType))
     {
-        static if (min >= 0) {
+        static if (low >= 0) {
             static if (packed) {
-                static      if (span <= 0xff)               { auto bound(ubyte  value = 0) { return Bound!(ubyte,  C, min, max, optional, exceptional)(value); } }
-                else static if (span <= 0xffff)             { auto bound(ushort value = 0) { return Bound!(ushort, C, min, max, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffff)         { auto bound(uint   value = 0) { return Bound!(uint,   C, min, max, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffffffffffff) { auto bound(ulong  value = 0) { return Bound!(ulong,  C, min, max, optional, exceptional)(value); } }
+                static      if (span <= 0xff)               { auto bound(ubyte  value = 0) { return Bound!(ubyte,  C, low, high, optional, exceptional)(value); } }
+                else static if (span <= 0xffff)             { auto bound(ushort value = 0) { return Bound!(ushort, C, low, high, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffff)         { auto bound(uint   value = 0) { return Bound!(uint,   C, low, high, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffffffffffff) { auto bound(ulong  value = 0) { return Bound!(ulong,  C, low, high, optional, exceptional)(value); } }
                 else {
-                    auto bound(CommonType!(LowType, HighType) value) { return Bound!(typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                    auto bound(CommonType!(LowType, HighType) value)
+                    {
+                        return Bound!(typeof(value), typeof(value), low, high, optional, exceptional)(value); // TODO: Functionize this
+                    }
                 }
             } else {
-                auto bound(CommonType!(LowType, HighType) value) { return Bound!(typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                auto bound(CommonType!(LowType, HighType) value) { return Bound!(typeof(value), low, high, optional, exceptional)(value); } // TODO: Functionize this
             }
         } else {         // negative
             static if (packed) {
-                static      if (min >= -0x80               && max <= 0x7f)               { auto bound(byte  value = 0) { return Bound!(byte,  C, min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x8000             && max <= 0x7fff)             { auto bound(short value = 0) { return Bound!(short, C, min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x80000000         && max <= 0x7fffffff)         { auto bound(int   value = 0) { return Bound!(int,   C, min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x8000000000000000 && max <= 0x7fffffffffffffff) { auto bound(long  value = 0) { return Bound!(long,  C, min, max, optional, exceptional)(value); } }
+                static      if (low >= -0x80               && high <= 0x7f)               { auto bound(byte  value = 0) { return Bound!(byte,  C, low, high, optional, exceptional)(value); } }
+                else static if (low >= -0x8000             && high <= 0x7fff)             { auto bound(short value = 0) { return Bound!(short, C, low, high, optional, exceptional)(value); } }
+                else static if (low >= -0x80000000         && high <= 0x7fffffff)         { auto bound(int   value = 0) { return Bound!(int,   C, low, high, optional, exceptional)(value); } }
+                else static if (low >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { auto bound(long  value = 0) { return Bound!(long,  C, low, high, optional, exceptional)(value); } }
                 else {
-                    auto bound(C value = C.init) { return Bound!(typeof(value), typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                    auto bound(C value = C.init)
+                    {
+                        return Bound!(typeof(value), typeof(value), typeof(value), low, high, optional, exceptional)(value); // TODO: Functionize this
+                    }
                 }
             } else {
-                auto bound(C value = C.init) { return Bound!(typeof(value), typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                auto bound(C value = C.init)
+                {
+                    return Bound!(typeof(value), typeof(value), typeof(value), low, high, optional, exceptional)(value); // TODO: Functionize this
+                }
             }
         }
-    } else static if (isFloatingPoint!C) {
-        auto bound(C value = C.init) { return Bound!(typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
-    } else {
+    }
+    else static if (isFloatingPoint!C)
+    {
+        auto bound(C value = C.init)
+        {
+            return Bound!(typeof(value), typeof(value), low, high, optional, exceptional)(value); // TODO: Functionize this
+        }
+    }
+    else
+    {
         static assert(false, "Cannot handle type");
     }
 }
@@ -383,34 +397,32 @@ unittest
     /*     bound!(0, 10)(3)); */
 
     // infer unsigned types
-    assert(bound!(0, 0x1)(0x1).type.stringof == "ubyte");
-    assert(bound!(0, 0xff)(0xff).type.stringof == "ubyte");
+    static assert(bound!(0, 0x1)(0x1).type.stringof == "ubyte");
+    static assert(bound!(0, 0xff)(0xff).type.stringof == "ubyte");
 
-    // assert(bound!(256, 257)(256).type.stringof == "ubyte");
+    // static assert(bound!(256, 257)(256).type.stringof == "ubyte");
 
-    assert(bound!(0, 0x100)(0x100).type.stringof == "ushort"); // step over the line
-    assert(bound!(0, 0xffff)(0xffff).type.stringof == "ushort");
+    static assert(bound!(0, 0x100)(0x100).type.stringof == "ushort"); // step over the line
+    static assert(bound!(0, 0xffff)(0xffff).type.stringof == "ushort");
 
-    assert(bound!(0, 0x10000)(0x10000).type.stringof == "uint"); // step over the line
-    assert(bound!(0, 0xffffffff)(0xffffffff).type.stringof == "uint");
+    static assert(bound!(0, 0x10000)(0x10000).type.stringof == "uint"); // step over the line
+    static assert(bound!(0, 0xffffffff)(0xffffffff).type.stringof == "uint");
 
-    assert(bound!(0, 0x100000000)(0x100000000).type.stringof == "ulong"); // step over the line
-    assert(bound!(0, 0x100000000)(0x100000000).type.stringof == "ulong");
+    static assert(bound!(0, 0x100000000)(0x100000000).type.stringof == "ulong"); // step over the line
+    static assert(bound!(0, 0x100000000)(0x100000000).type.stringof == "ulong");
 
     // default construction
-    assert(bound!(0, 0x100000000).type.stringof == "ulong");
+    static assert(bound!(0, 0x100000000).type.stringof == "ulong");
 
     // infer signed types
-    assert(bound!(-1, 0)(0).type.stringof == "byte");
-    assert(bound!(-0x80, 0x7f)(0).type.stringof == "byte");
-    assert(bound!(-0x8000, 0x7fff)(0).type.stringof == "short");
-    // import assert_ex: assertEqual;
-    // assertEqual(bound!(-0x80000000, 0x7fffffff)(0).type.stringof, "int");
+    static assert(bound!(-1, 0)(0).type.stringof == "byte");
+    static assert(bound!(-0x80, 0x7f)(0).type.stringof == "byte");
+    static assert(bound!(-0x8000, 0x7fff)(0).type.stringof == "short");
+    /* assert(bound!(-0x80000000, 0x7fffffff)(0).type.stringof == "int"); */
     // assert(bound!(-0x8000000000000000, 0x7fffffffffffffff)(0).type.stringof == "long");
 
-    assert(bound!(0.0, 10.0)(1.0) ==
-           Bound!(float, float, 0.0, 10.0)(1.0)
-        );
+    static assert(is(typeof(bound!(0.0, 10.0)(1.0)) ==
+                     Bound!(real, real, 0.0, 10.0)));
 
     Bound!(int, int, int.min, int.max) a;
 
