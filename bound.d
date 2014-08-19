@@ -340,10 +340,10 @@ template bound(alias min,
     {
         static if (min >= 0) {
             static if (packed) {
-                static      if (span <= 0xff)               { auto bound(ubyte  value = 0) { return Bound!(ubyte,  C, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffff)             { auto bound(ushort value = 0) { return Bound!(ushort, C, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffff)         { auto bound(uint   value = 0) { return Bound!(uint,   C, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffffffffffff) { auto bound(ulong  value = 0) { return Bound!(ulong,  C, 0, span, optional, exceptional)(value); } }
+                static      if (span <= 0xff)               { auto bound(ubyte  value = 0) { return Bound!(ubyte,  C, min, max, optional, exceptional)(value); } }
+                else static if (span <= 0xffff)             { auto bound(ushort value = 0) { return Bound!(ushort, C, min, max, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffff)         { auto bound(uint   value = 0) { return Bound!(uint,   C, min, max, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffffffffffff) { auto bound(ulong  value = 0) { return Bound!(ulong,  C, min, max, optional, exceptional)(value); } }
                 else {
                     auto bound(CommonType!(LowType, HighType) value) { return Bound!(typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
                 }
@@ -557,13 +557,9 @@ auto abs(T,
 
 unittest
 {
-    static assert(is(typeof(abs(0.bound!(-3, 3))) ==
-                     Bound!(ubyte, long, 0L, 3L)));
-    /* static assert(is(typeof(abs(0.bound!(1, 3))) == */
-    /*                  Bound!(ubyte, long, 1L, 3L))); */
-    /* wln(abs(0.bound!(-3,  0))); */
-    /* wln(abs(0.bound!( 0,  0))); */
-    /* wln(abs(0.bound!( 0,  3))); */
-    /* wln(abs(0.bound!( 1,  3))); */
-    /* wln(abs(0.bound!(-3,  3))); */
+    static assert(is(typeof(abs(0.bound!(-3, +3))) == Bound!(ubyte, long, 0L, 3L)));
+    static assert(is(typeof(abs(0.bound!(-3, -1))) == Bound!(ubyte, long, 1L, 3L)));
+    static assert(is(typeof(abs(0.bound!(-3, +0))) == Bound!(ubyte, long, 0L, 3L)));
+    static assert(is(typeof(abs(0.bound!(+0, +3))) == Bound!(ubyte, long, 0L, 3L)));
+    static assert(is(typeof(abs(0.bound!(+1, +3))) == Bound!(ubyte, long, 1L, 3L)));
 }
