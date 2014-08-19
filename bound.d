@@ -1,6 +1,8 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Bounded Arithmetic Wrapper Type, similar to Ada Range Types.
+/** Bounded Arithmetic Wrapper Type, similar to Ada Range Types but with
+    auto-expension of value ranges which is more flexible and useful for
+    detecting compile-time range index overflows.
 
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
@@ -11,8 +13,14 @@
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
 
+    TODO: Implement overload for conditional operator p ? x1 : x2
+    TODO: Implement variadic min, max, abs by looking at bounder_integer
+
     TODO: Make this work:
-    wln(bound!(256, 257)(256));
+    wln(bound!(256,
+         C = U,
+         C low_ = C.min,
+         C high_ = C.ma257)(256));
     wln(bound!(256, 257)(257));
 
     TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
@@ -36,7 +44,7 @@
     import std.typecons;
     mixin Proxy!_t;             // Limited acts as T (almost).
     invariant() {
-    enforce(_t >= lower && _t <= upper);
+    enforce(_t >= low && _t <= high);
     wln("fdsf");
 
     TODO: If these things take to long to evaluted at compile-time maybe we need
@@ -78,8 +86,11 @@ module bound;
 
 import std.conv: to;
 import std.traits: CommonType, isIntegral, isUnsigned, isFloatingPoint;
+import std.stdint: intmax_t;
 
 version = print;
+
+version(print) import std.stdio: wln = writeln;
 
 // import std.exception;
 // class BoundUnderflowException : Exception {
@@ -92,7 +103,7 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
-/** Value of Type $(D T) bound inside Inclusive Range [lower, upper].
+/** Value of Type $(D T) bound inside Inclusive Range [low, high].
 
     If $(D optional) is true this stores one extra undefined state (similar to Haskell's Maybe).
 
@@ -100,45 +111,55 @@ class BoundOverflowException : Exception
     $(D BoundOverflowException), otherwise truncation plus warnings will issued.
 */
 struct Bound(T,
-             B = T, // bounds type
-             B lower = B.min,
-             B upper = B.max,
+             B = intmax_t, // bounds type: TODO: Use intmax_t only when T isIntegral and real when T isFloatingPoint
+             B low = B.min,
+             B high = B.max,
              bool optional = false,
              bool exceptional = true)
 {
     /* Requirements */
-    static assert(lower < upper,
-                  "Requirement not fulfilled: lower < upper, lower = " ~
-                  to!string(lower) ~ " and upper = " ~ to!string(upper));
+    static assert(low < high,
+                  "Requirement not fulfilled: low < high, low = " ~
+                  to!string(low) ~ " and high = " ~ to!string(high));
     static if (optional) {
-        static assert(upper + 1 == T.max,
-                      "upper + 1 cannot equal T.max");
+        static assert(high + 1 == T.max,
+                      "high + 1 cannot equal T.max");
     }
 
-    alias T type;    /** Nice type property. */
+    alias type = T;    /** Nice type property. */
 
     /** Return true if this is a signed integer. */
-    static bool isSigned() { return lower < 0; }
-    /** Get Lower Inclusive Bound. */
-    static auto min() @property @safe pure nothrow { return lower; }
-    alias low = min;
-    /** Get Upper Inclusive Bound. */
-    static auto max() @property @safe pure nothrow { return optional ? upper - 1 : upper; }
-    alias high = max;
+    static bool isSigned() { return low < 0; }
+
+    /** Get Low Inclusive Bound. */
+    static auto min() @property @safe pure nothrow { return low; }
+
+    /** Get High Inclusive Bound. */
+    static auto max() @property @safe pure nothrow { return optional ? high - 1 : high; }
 
     /** Constructor Magic. */
     alias _value this;
 
+    /** TODO: Enable and make work. */
+    version(none)
+    this(U,
+         C = U,
+         C low_ = C.min,
+         C high_ = C.max)(Bound!(U, C, low_, high_) x) if (low <= low_ && high_ >= high)
+    {
+        this._value = x._value;
+    }
+
     inout auto ref value() @property @safe pure inout nothrow { return _value; }
 
-    @property string toString(bool colorize = false) const @trusted
+    @property string toString() const @trusted
     {
         return (to!string(_value) ~
                 " ∈ [" ~ to!string(min) ~
                 ", " ~ to!string(max) ~
                 "]" ~
                 " ⟒ " ~
-                T.stringof); // TODO: Use colorize flag
+                T.stringof);
     }
 
     /** Check if this value is defined. */
@@ -290,35 +311,51 @@ template bound(alias min,
                bool packed = true) if (!is(CommonType!(typeof(min),
                                                        typeof(max)) == void))
 {
-    alias typeof(min) MinType;
-    alias typeof(max) MaxType;
-
-    alias C = CommonType!(MinType, MaxType);
-
     enum span = max - min;
-    alias typeof(span) span_t;
+    alias SpanType = typeof(span);
 
-    static if (isIntegral!(MinType) &&
-               isIntegral!(MaxType))
+    alias LowType = typeof(min);
+    alias HighType = typeof(max);
+
+    static if (isIntegral!LowType &&
+               isIntegral!HighType)
+    {
+        alias C = intmax_t;
+    }
+    else static if (isFloatingPoint!LowType &&
+                    isFloatingPoint!HighType)
+    {
+        alias C = real;
+    }
+    else
+    {
+        alias C = CommonType!(LowType, HighType); // TODO: Should this be allowed?
+        static assert(false,
+                      "Cannot mix Integral type " ~ LowType.stringof ~
+                      " with FloatingPoint type" ~ HighType.stringof);
+    }
+
+    static if (isIntegral!(LowType) &&
+               isIntegral!(HighType))
     {
         static if (min >= 0) {
             static if (packed) {
-                static      if (span <= 0xff)               { auto bound(ubyte value = 0)  { return Bound!(ubyte,  C, 0, span, optional, exceptional)(value); } }
+                static      if (span <= 0xff)               { auto bound(ubyte  value = 0) { return Bound!(ubyte,  C, 0, span, optional, exceptional)(value); } }
                 else static if (span <= 0xffff)             { auto bound(ushort value = 0) { return Bound!(ushort, C, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffff)         { auto bound(uint value = 0)   { return Bound!(uint,   C, 0, span, optional, exceptional)(value); } }
-                else static if (span <= 0xffffffffffffffff) { auto bound(ulong value = 0)  { return Bound!(ulong,  C, 0, span, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffff)         { auto bound(uint   value = 0) { return Bound!(uint,   C, 0, span, optional, exceptional)(value); } }
+                else static if (span <= 0xffffffffffffffff) { auto bound(ulong  value = 0) { return Bound!(ulong,  C, 0, span, optional, exceptional)(value); } }
                 else {
-                    auto bound(CommonType!(MinType, MaxType) value) { return Bound!(typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                    auto bound(CommonType!(LowType, HighType) value) { return Bound!(typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
                 }
             } else {
-                auto bound(CommonType!(MinType, MaxType) value) { return Bound!(typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
+                auto bound(CommonType!(LowType, HighType) value) { return Bound!(typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
             }
         } else {         // negative
             static if (packed) {
-                static      if (min >= -0x80               && max <= 0x7f)               { auto bound(byte value = 0)  { return Bound!(byte,  byte,  min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x8000             && max <= 0x7fff)             { auto bound(short value = 0) { return Bound!(short, short, min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x80000000         && max <= 0x7fffffff)         { auto bound(int value = 0)   { return Bound!(int,   int,   min, max, optional, exceptional)(value); } }
-                else static if (min >= -0x8000000000000000 && max <= 0x7fffffffffffffff) { auto bound(long value = 0)  { return Bound!(long,  long,  min, max, optional, exceptional)(value); } }
+                static      if (min >= -0x80               && max <= 0x7f)               { auto bound(byte  value = 0) { return Bound!(byte,  C, min, max, optional, exceptional)(value); } }
+                else static if (min >= -0x8000             && max <= 0x7fff)             { auto bound(short value = 0) { return Bound!(short, C, min, max, optional, exceptional)(value); } }
+                else static if (min >= -0x80000000         && max <= 0x7fffffff)         { auto bound(int   value = 0) { return Bound!(int,   C, min, max, optional, exceptional)(value); } }
+                else static if (min >= -0x8000000000000000 && max <= 0x7fffffffffffffff) { auto bound(long  value = 0) { return Bound!(long,  C, min, max, optional, exceptional)(value); } }
                 else {
                     auto bound(C value = C.init) { return Bound!(typeof(value), typeof(value), typeof(value), min, max, optional, exceptional)(value); } // TODO: Functionize this
                 }
@@ -375,7 +412,6 @@ unittest
            Bound!(float, float, 0.0, 10.0)(1.0)
         );
 
-    Bound!(int) afull; // int with full bound range
     Bound!(int, int, int.min, int.max) a;
 
     a = int.max;
@@ -457,8 +493,6 @@ unittest {
 }
 
 unittest {
-    version(print) import std.stdio: wln = writeln;
-
     const ub = saturated!ubyte(11);
     version(print) wln(ub);
     assert(ub.sizeof == 1);
@@ -468,7 +502,68 @@ unittest {
 
     const l = saturated!long(11);
     assert(l.sizeof == 8);
+}
 
-    immutable im = 255;
-    const u = saturated!ubyte(im);
+/** Calculate Minimum.
+    TODO: variadic.
+*/
+version(none)
+{
+    auto min(T1, intmax_t low1 = T1.min, intmax_t high1 = T1.min,
+             T2, intmax_t low2 = T2.min, intmax_t high2 = T2.min)(Bound!(T1, intmax_t, low1, high1) a1,
+                                                                  Bound!(T2, intmax_t, low2, high1) a2)
+    {
+        import std.algorithm: min;
+        return min(a1 + a2).bound!(min(low1, low2),
+                                   min(high1, high2));
+    }
+
+    unittest
+    {
+        auto a = 11.bound!(0, 17);
+        auto b = 11.bound!(0, 22);
+        auto abMax = min(a, b);
+    }
+}
+
+/** Calculate Absolute Value of $(D a). */
+auto abs(T,
+         intmax_t low = intmax_t.min,
+         intmax_t high = intmax_t.max)(Bound!(T, intmax_t, low, high) a)
+{
+    import std.math: abs;
+    import std.algorithm: max;
+    static if (low >= 0 && high >= 0) // all positive
+    {
+        enum lowA = low;
+        enum highA = high;
+    }
+    else static if (low < 0 && high < 0) // all negative
+    {
+        enum lowA = -high;
+        enum highA = -low;
+    }
+    else static if (low < 0 && high >= 0) // negative and positive
+    {
+        enum lowA = 0;
+        enum highA = max(-low, high);
+    }
+    else
+    {
+        static assert("This shouldn't happen!");
+    }
+    return abs(a.value).bound!(lowA, highA);
+}
+
+unittest
+{
+    static assert(is(typeof(abs(0.bound!(-3, 3))) ==
+                     Bound!(ubyte, long, 0L, 3L)));
+    /* static assert(is(typeof(abs(0.bound!(1, 3))) == */
+    /*                  Bound!(ubyte, long, 1L, 3L))); */
+    /* wln(abs(0.bound!(-3,  0))); */
+    /* wln(abs(0.bound!( 0,  0))); */
+    /* wln(abs(0.bound!( 0,  3))); */
+    /* wln(abs(0.bound!( 1,  3))); */
+    /* wln(abs(0.bound!(-3,  3))); */
 }
