@@ -71,7 +71,7 @@
 module bound;
 
 import std.conv: to;
-import std.traits: CommonType, isIntegral, isUnsigned, isFloatingPoint;
+import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint;
 import std.stdint: intmax_t;
 
 version = print;
@@ -123,9 +123,6 @@ struct Bound(V,
 
     alias type = V;    /** Nice type property. */
 
-    /** Return true if this is a signed integer. */
-    static bool isSigned() { return low < 0; }
-
     /** Get Low Inclusive Bound. */
     static auto min() @property @safe pure nothrow { return low; }
 
@@ -142,14 +139,27 @@ struct Bound(V,
         {
             static if (isUnsigned!V)
             {
-                static assert(1UL << (8*V.sizeof) > high - low,
-                              "Unsigned value type " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]");
+                static assert(V.max >= high - low,
+                              "Unsigned value type V = " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]");
+            }
+            else static if (isSigned!V)
+            {
+                static assert(V.min <= low && high <= V.max,
+                              "Unsigned value type V = " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]");
             }
             else
             {
-                static assert(low <= V.min && V.max <= high,
-                              "Unsigned value type " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]");
+                static assert(false, "Handle value type V = " ~ V.stringof);
             }
+            this._value = a;
+        }
+    }
+    else static if (isFloatingPoint!V &&
+                    isFloatingPoint!B &&
+                    V.sizeof >= B.sizeof) // internal value must fit bounds
+    {
+        this (V a)
+        {
             this._value = a;
         }
     }
@@ -157,9 +167,9 @@ struct Bound(V,
     /** Construct from $(D Bound) value $(D a). */
     this(U,
          C,
-         C lowRHS,
-         C highRHS)(Bound!(U, C, lowRHS, highRHS) a) if (low <= lowRHS &&
-                                                         highRHS >= high)
+         alias lowRHS,
+         alias highRHS)(Bound!(U, C, lowRHS, highRHS) a) if (low <= lowRHS &&
+                                                             highRHS >= high)
     {
         /* TODO: Use this instead of template constraint? */
         /* static assert(low <= lowRHS && */
@@ -606,6 +616,8 @@ unittest
     auto x02 = 0.bound!(0, 2);
     static assert( __traits(compiles, { x02 = x01; })); // ok within range
     /* static assert(!__traits(compiles, { x01 = x02; })); // should fail */
+    typeof(x02) x02_ = x01; // ok within range
+    typeof(x01) x01_ = x02; // should fail
 }
 
 /** TODO: Can D do better than C++ here?
