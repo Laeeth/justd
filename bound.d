@@ -14,40 +14,31 @@
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
 
     TODO: Make this work wln(bound!(256, 257)(256));
-
     TODO: Implement overload for conditional operator p ? x1 : x2
     TODO: Implement variadic min, max, abs by looking at bounder_integer
-
     TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
-    - Integer: +,-,*,^^,/
-    - FloatingPoint: +,-,*,/,^^,sqrt,
-    - and add intelligent warnings/errors when assignment and implicit cast is
-    not allowed showing the range of the expression/inferred variable.
+          - Integer: +,-,*,^^,/
+          - FloatingPoint: +,-,*,/,^^,sqrt,
 
     TODO: Implicit conversions to unbounded integers?
     Not in https://bitbucket.org/davidstone/bounded_integer.
     const sb127 = saturated!byte(127);
     const byte b = sb127; // TODO: this shouldn't compile if this is banned
-
     TODO: Add static asserts using template-arguments?
     TODO: Do we need a specific underflow?
     TODO: Add this module to std.numeric
-
     TODO: Merge with limited
-
     TODO: Is this a good idea to use?:
     import std.typecons;
     mixin Proxy!_t;             // Limited acts as T (almost).
     invariant() {
     enforce(_t >= low && _t <= high);
     wln("fdsf");
-
     TODO: If these things take to long to evaluted at compile-time maybe we need
     to build it into the language for example using a new syntax either using
     - integer(range:low..high, step:1)
     - int(range:low..high, step:1)
     - num(range:low..high, step:1)
-
     TODO: Use
     T saveOp(string op, T)(T x, T y) pure @save @nogc if(isIntegral!T
     && (op=="+" || op=="-" || op=="<<" || op=="*"))
@@ -323,7 +314,8 @@ template bound(alias low,
     else static if (isFloatingPoint!LowType &&
                     isFloatingPoint!HighType)
     {
-        alias C = real; // TODO: This may give incorrect results because of round-off errors.
+        alias C = real; // TODO: This may give incorrect results because of
+                        // round-off errors. One to fix is to adjust to max(value,low)  or min(value,high) if typeof(_value) != real
     }
     else
     {
