@@ -3,8 +3,21 @@
 import std.stdio: wln = writeln;
 import std.string;
 
-int main(string[] args)
+void main(string[] args)
 {
     alias z = toStringz;
-    wln(typeof("a".z).stringof);
+    wln(typeof("a".toStringz).stringof);
+    /* wln(typeof("a".z).stringof); */
+    if ([])
+    {
+        wln("[] => true");
+    }
+    if (false)
+    {
+        wln("[] => true");
+    }
+    if ("")
+    {
+        wln(`"" => true`);
+    }
 }
