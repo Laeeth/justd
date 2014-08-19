@@ -30,7 +30,7 @@
     TODO: Merge with limited
     TODO: Is this a good idea to use?:
     import std.typecons;
-    mixin Proxy!_t;             // Limited acts as T (almost).
+    mixin Proxy!_t;             // Limited acts as V (almost).
     invariant() {
     enforce(_t >= low && _t <= high);
     wln("fdsf");
@@ -40,11 +40,11 @@
     - int(range:low..high, step:1)
     - num(range:low..high, step:1)
     TODO: Use
-    T saveOp(string op, T)(T x, T y) pure @save @nogc if(isIntegral!T
+    V saveOp(string op, V)(V x, V y) pure @save @nogc if(isIntegral!V
     && (op=="+" || op=="-" || op=="<<" || op=="*"))
     {
     mixin("x "~op~"= y");
-    static if(isSigned!T)
+    static if(isSigned!V)
     {
     static if(op == "*")
     {
@@ -54,12 +54,12 @@
     {
     asm naked { jno opok; }
     }
-    x = T.min;
+    x = V.min;
     }
     else // unsigned
     {
     asm naked { jnc opok; }
-    x = T.max;
+    x = V.max;
     }
     opok:
     return x;
@@ -78,6 +78,14 @@ version = print;
 
 version(print) import std.stdio: wln = writeln;
 
+enum Policy
+{
+    clamped,
+    overflowed,
+    throwed,
+    modulo
+}
+
 // import std.exception;
 // class BoundUnderflowException : Exception {
 //     this(string msg) { super(msg); }
@@ -89,17 +97,17 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
-/** Value of Type $(D T) bound inside Inclusive Range [low, high].
+/** Value of Type $(D V) bound inside Inclusive Range [low, high].
 
     If $(D optional) is true this stores one extra undefined state (similar to Haskell's Maybe).
 
     If $(D exceptional) is true range errors will throw a
     $(D BoundOverflowException), otherwise truncation plus warnings will issued.
 */
-struct Bound(T,
-             B = intmax_t, // bounds type: TODO: Use intmax_t only when T isIntegral and real when T isFloatingPoint
-             B low = B.min,
-             B high = B.max,
+struct Bound(V,
+             B = intmax_t, // bounds type: TODO: Use intmax_t only when V isIntegral and real when V isFloatingPoint
+             B low = V.min,
+             B high = V.max,
              bool optional = false,
              bool exceptional = true)
 {
@@ -108,11 +116,11 @@ struct Bound(T,
                   "Requirement not fulfilled: low < high, low = " ~
                   to!string(low) ~ " and high = " ~ to!string(high));
     static if (optional) {
-        static assert(high + 1 == T.max,
-                      "high + 1 cannot equal T.max");
+        static assert(high + 1 == V.max,
+                      "high + 1 cannot equal V.max");
     }
 
-    alias type = T;    /** Nice type property. */
+    alias type = V;    /** Nice type property. */
 
     /** Return true if this is a signed integer. */
     static bool isSigned() { return low < 0; }
@@ -126,15 +134,17 @@ struct Bound(T,
     /** Constructor Magic. */
     alias _value this;
 
-    /** TODO: Enable and make work. */
-    version(none)
-    this(U,
-         C = U,
-         C low_ = C.min,
-         C high_ = C.max)(Bound!(U, C, low_, high_) x) if (low <= low_ && high_ >= high)
-    {
-        this._value = x._value;
-    }
+    /** Construct.
+        Move templated restriction into a static assert for better user feedback?
+     */
+    /* this(U, */
+    /*      C = intmax_t, */
+    /*      C low_ = U.min, */
+    /*      C high_ = U.max)(Bound!(U, C, low_, high_) x) if (low <= low_ && */
+    /*                                                        high_ >= high) */
+    /* { */
+    /*     this._value = x._value; */
+    /* } */
 
     inout auto ref value() @property @safe pure inout nothrow { return _value; }
 
@@ -145,11 +155,11 @@ struct Bound(T,
                 ", " ~ to!string(max) ~
                 "]" ~
                 " ⟒ " ~
-                T.stringof);
+                V.stringof);
     }
 
     /** Check if this value is defined. */
-    bool defined() @property @safe const pure nothrow { return optional ? _value != T.max : true; }
+    bool defined() @property @safe const pure nothrow { return optional ? _value != V.max : true; }
 
     static string check() @trusted pure
     {
@@ -186,7 +196,7 @@ struct Bound(T,
         }
         else static if (op == "-")
         {
-            Bound!(T, -cast(int)T.max, -cast(int)T.min) tmp = void; // TODO: Needs fix
+            Bound!(V, -cast(int)V.max, -cast(int)V.min) tmp = void; // TODO: Needs fix
         }
         mixin("tmp._value = " ~ op ~ "_value " ~ ";");
         mixin(check());
@@ -197,7 +207,7 @@ struct Bound(T,
                   string file = __FILE__,
                   int line = __LINE__)(U rhs)
     {
-        alias TU = CommonType!(T, U.type);
+        alias TU = CommonType!(V, U.type);
         static if (is(U == Bound))
         {
             // do value range propagation
@@ -263,7 +273,7 @@ struct Bound(T,
         }
         else
         {
-            CommonType!(T, U) tmp = void;
+            CommonType!(V, U) tmp = void;
         }
         mixin("const tmp = _value " ~ op ~ "rhs;");
         mixin(check());
@@ -272,21 +282,21 @@ struct Bound(T,
 
     auto opOpAssign(string op, U, string file = __FILE__, int line = __LINE__)(U rhs)
     {
-        CommonType!(T, U) tmp = void;
+        CommonType!(V, U) tmp = void;
         mixin("tmp = _value " ~ op ~ "rhs;");
         mixin(check());
-        _value = cast(T)tmp;
+        _value = cast(V)tmp;
         return _value;
     }
 
     auto opAssign(U)(U tmp, string file = __FILE__, int line = __LINE__)
     {
         mixin(check());
-        _value = cast(T)tmp;
+        _value = cast(V)tmp;
         return _value;
     }
 
-    private T _value;                      ///< Payload.
+    private V _value;                      ///< Payload.
 }
 
 /** Instantiator for \c Bound.
@@ -472,15 +482,15 @@ unittest
 }
 
 /** Return $(D x) with Automatic Packed Saturation. */
-auto ref saturated(T, bool packed = true)(inout T x) // TODO: inout may be irrelevant here
+auto ref saturated(V, bool packed = true)(inout V x) // TODO: inout may be irrelevant here
 {
-    return bound!(T.min, T.max, false, packed)(x);
+    return bound!(V.min, V.max, false, packed)(x);
 }
 
 /** Return $(D x) with Automatic Packed Saturation. */
-auto ref optional(T, bool packed = true)(inout T x) // TODO: inout may be irrelevant here
+auto ref optional(V, bool packed = true)(inout V x) // TODO: inout may be irrelevant here
 {
-    return bound!(T.min, T.max, false, packed)(x);
+    return bound!(V.min, V.max, false, packed)(x);
 }
 
 unittest {
@@ -531,9 +541,9 @@ version(none)
 }
 
 /** Calculate Absolute Value of $(D a). */
-auto abs(T,
-         intmax_t low = intmax_t.min,
-         intmax_t high = intmax_t.max)(Bound!(T, intmax_t, low, high) a)
+auto abs(V,
+         intmax_t low,
+         intmax_t high)(Bound!(V, intmax_t, low, high) a)
 {
     static if (low >= 0 && high >= 0) // all positive
     {
@@ -556,7 +566,7 @@ auto abs(T,
         static assert("This shouldn't happen!");
     }
     import std.math: abs;
-    return abs(a.value).bound!(lowA, highA);
+    return a.value.abs.bound!(lowA, highA);
 }
 
 unittest
@@ -567,3 +577,32 @@ unittest
     static assert(is(typeof(abs(0.bound!(+0, +3))) == Bound!(ubyte, long, 0L, 3L)));
     static assert(is(typeof(abs(0.bound!(+1, +3))) == Bound!(ubyte, long, 1L, 3L)));
 }
+
+unittest
+{
+    auto x01 = 0.bound!(0, 1);
+    auto x02 = 0.bound!(0, 2);
+    static assert( __traits(compiles, { x02 = x01; })); // ok within range
+    /* static assert(!__traits(compiles, { x01 = x02; })); // should fail */
+}
+
+/** TODO: Can D do better than C++ here?
+    Does this automatically deduce to CommonType and if so do we need to declare it?
+    Or does it suffice to constructors?
+ */
+/* auto doIt(ubyte x) */
+/* { */
+/*     if (x >= 0) */
+/*     { */
+/*         return x.bound!(0, 1); */
+/*     } */
+/*     else */
+/*     { */
+/*         return x.bound!(0, 2); */
+/*     } */
+/* } */
+
+/* unittest */
+/* { */
+/*     auto x = 0.doIt; */
+/* } */
