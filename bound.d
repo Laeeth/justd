@@ -168,8 +168,11 @@ unittest
     static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(0, 0); }));
     static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(1, 0); }));
 
-    // high < 0
+    // low < 0
     static assert(is(InclusiveBoundsType!(-1, 0, true, true) == byte));
+    static assert(is(InclusiveBoundsType!(-1, 0, true, false) == ubyte));
+    static assert(is(InclusiveBoundsType!(-0xff, 0, true, false) == ubyte));
+    static assert(is(InclusiveBoundsType!(-0xff, 1, true, false) == ushort));
 
     static assert(is(InclusiveBoundsType!(byte.min, byte.max, true, true) == byte));
     static assert(is(InclusiveBoundsType!(byte.min, byte.max + 1, true, true) == short));
