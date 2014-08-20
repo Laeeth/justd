@@ -1,0 +1,248 @@
+\documentclass[xcolor=dvipsnames]{article}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage{textpos}
+\usepackage{color}
+\usepackage{hyperref}
+
+\title{D TODO}
+\maketitle
+
+\begin{document}
+
+\section{Emacs and FlyCheck}
+
+\begin{itemize}
+\item Highlight q{} in slanted
+\item If no errors hide \texttt{*Flycheck errors*} buffer
+\item Save should restart current compilation (potentially killing existing).
+\item If number of errors change then buffer should be resized using the same
+  logic as before.
+\end{itemize}
+
+\section{Compiler Diagnostics}
+\begin{itemize}
+\item Detect and warn about duplicate calculations of pure functions (constant
+  folding) by adding a SHA1-hash table for all expressions.
+\item Better message for mutation of AA members in class constructors or
+  functions called from class constructors.
+
+\item Better message for unguarded AA indexing as
+\begin{lstlisting}[frame=single]
+auto x= aa[key];
+\end{lstlisting}
+instead of
+\begin{lstlisting}[frame=single]
+if (key in aa)
+    auto x = aa[key];
+\end{lstlisting}
+
+\item Better message for:
+\texttt{variable x cannot be read at compile time, use if instead static if (x)}
+
+\item Better diagnostics for
+\begin{lstlisting}[frame=single]
+auto v = [1,2].ptr[0..\$];
+\end{lstlisting}
+which currently errors as:
+\begin{lstlisting}[frame=single]
+Error: undefined identifier __dollar
+\end{lstlisting}
+
+\end{itemize}
+
+\section{Compiler Error Handling}
+\begin{itemize}
+\item Detect duplicates: \texttt{version(print) version(print)}
+\end{itemize}
+
+\section{Language}
+
+\begin{itemize}
+
+\item UFCS-syntax for template instantiations.
+\begin{lstlisting}[frame=single]
+foo!(T,U)
+\end{lstlisting}
+
+should equal
+
+\begin{lstlisting}[frame=single]
+T.!foo!U
+\end{lstlisting}
+
+or
+
+\begin{lstlisting}[frame=single]
+T!.foo!U
+\end{lstlisting}
+
+\item Turn \texttt{FloatRep} and \texttt{DoubleRep} into either properties or
+  template overloads.
+
+\item The cast here should not be necessary:
+\begin{lstlisting}[frame=single]
+bool x = cast(bool)uniform(0, 2);
+\end{lstlisting}
+
+\item Message Passing should move References types if possible (if builtin class
+  property r.isUnique returns true) otherwise it copies it using x.dup:
+  http://forum.dlang.org/thread/gsvoayxonqyyjlcgfrvs@forum.dlang.org
+
+\item Does D optimize expressions such as
+\begin{lstlisting}[frame=single]
+string_name == "alpha"
+\end{lstlisting}
+into only comparing 5 elements?
+
+\item Add keyword for spawning threads/fibers: go f(x); instead of current
+  spawn(&f, x); similar to Go. See: https://gobyexample.com/goroutines.
+\item Perhaps
+\item - sync f(x);
+\item - async f(x);
+\item are good alternatives.
+
+\item Fix better colorization of DDOC CSS templates
+
+\end{itemize}
+
+\begin{itemize}
+
+\item debug-tip: debug writeln inside pure function
+
+\item This segfaults:
+\begin{lstlisting}[frame=single]
+unittest {
+  const x = [1];
+  assert(x[] + x[]);
+}
+\end{lstlisting}
+but this gives a clean error
+\begin{lstlisting}[frame=single]
+unittest {
+  const x = [1];
+  auto y = x[] + x[];
+}
+\end{lstlisting}
+
+\item Add Syntax for accessing Template Parameters from Instantiations
+\item Copy Rusts Syntax Suger for Pattern matching and Integer Literals such 10i32
+\item Only unittest used parts of imported modules. This requires logic that
+  figures which unittest that depend on a given function (which is imported).
+\item Behaviour of class\_name?.member:
+\item null or member.init?
+\item When class\_name is null?
+\item Just, maybe
+\item @nullable
+\item Elisp-Style Operators Logical or: Use Operator ??
+\item Units:
+\item Seems best: http://forum.dlang.org/thread/io1vgo\$1fnc\$1@digitalmars.com
+\item
+  \texttt{http://forum.dlang.org/thread/mailman.1208.1360603449.22503.digitalmars-d@puremagic.com}
+\item \texttt{https://github.com/Arlen/phobos/blob/std\_units/std/units.d}
+\item \texttt{https://github.com/klickverbot/phobos/blob/units/std/units.d}
+\item \texttt{http://forum.dlang.org/thread/ifo2m5\$19ru\$1@digitalmars.com}
+\item Implement “get context at point in file” in DMD similar to what libclang
+  does.
+\item Add function qualifier attribute @portable ensuring that fundamental
+  behaviour will be portable across different target platforms. For example
+  function doesn't use
+\item range and pointer casts from bytes to shorts etc.
+\item unions with
+\item std.algorithm.reduce should guess its unit argument based on fun and
+  CommonType of input arguments according:
+\item +, -: 0
+\item *: 1
+\item Forgetting [] should give better error messages in case such as:
+\item ubyte[20] d; assert(d[].allZeros());
+\item Stack-trace for failed unittests or debuggable
+\item Better feedback for unmatched template predicates:
+\item /home/per/Work/justd/geometry.d(553): Error: template instance
+  geometry.Vector!(double, 0) does not match template declaration Vector(E, uint
+  D, bool normalizedFlag = false, Orient orient = Orient.column) if (D >= 1)
+\item should instead say something like:
+\item template parameter D doesn’t fullfil predicate (D >= 1)
+\item Accidentically assigning function templates to a variable may give a bit
+  cryptic error message: auto x = baseName;
+\item User-defined class File together with import std.stdio : File gives no
+  intelligent error message.
+\item Binary Serialization: Add overloads for to!ubyte[] in std.conv!?
+\item Add Warning Flag about Constructor Arguments that shadow struct/class
+  members.
+\item Improve compiler context feedback for incorrect code in mixins by printing
+  the contents of the mixin together with showing were in the mixin the problem
+  occurred.
+\item Make "Foreach Restrictions" at http://dlang.org/statement.html error in
+  compiler
+\item Why doesn’t != work for types such as in:
+\item if (!is(CommonType!(typeof(min), typeof(max)) == void))
+\item Better Error Message for: member function templates with missing extra ()
+\item @property pure @safe nothrow real magnitudeSquared() const if
+  (isNumeric!E) { … }
+\item should be
+\item @property pure @safe nothrow real magnitudeSquared()() const if
+  (isNumeric!E) { … }
+\item DMD is obscure: semicolon expected following function declaration
+\item When Comparing Constants String-literals warn about duplicates
+\item if-else-if conditions and
+\item switch cases
+\item Error About Duplicate Conditions if-else-if-chains or switches. May
+  require CTFE.
+\item Builtin Memoization of Code Generation and Evaluation of Unit Tests and
+  Perhaps Also pure functions (Killer App!)
+\item Typesafe Use of Index and Slicing using only Unsigned Index Concept:
+\item Unsigned
+\item Signed
+\item Offset:
+\item ptr\_t a.ptr
+\item Length, Direction
+\item ptrdiff\_t d = a.ptr - b.ptr;
+\item Point
+\item Vector
+\item Persistent CTFE Memoization: Requires Compiler + Source Code Hashing
+\item Compiler Caching
+\item Could be shared of Network
+\item Write them on disk so user can see result of CTFE
+\item Extend std.functional : memoize to accept pure functions that takes an
+  immutable mmap as input. Create wrapper that converts file to immutable mmap
+  and performs memoization on the pure function.
+\item Highlight DDoc Comment Tags and Sections in Emacs for example
+\item \$(D alpha)
+\item Returns:
+\item And Overloads for single character operations on text markings
+\item b: Bold
+\item i: Italic
+\item p: Parameter
+\item etc
+\item assert and enforce should either capture arguments and their values (say a
+  and b) of expressions (say a == b) and print their string values along with
+  their values as C++ does with expression templates. Maybe we could use lazy
+  here. For ranges it could also what element it fail ed to equal on.
+\item Also: My try with assertEqual () and alikes are slower to call than assert
+  and cannot be declared safe which is need in struct-local unittests.
+\item IDEs such as Eclipse DDT should understand how mixins are expanded and
+  make these expandable in the editor
+\item /home/per/Work/cognia/bound.d(74): Error: variable Exceptional cannot be
+  read at compile time
+\item /home/per/Work/cognia/bound.d(74): while looking for match for Bound!(int,
+  -2147483648, 2147483647, Exceptional)
+\item You need to declare it as immutable.
+\item Compiler should
+\item Warn about unused imports like Ada for example. This should be easy to
+  fix.
+\item Explain why template instantiations with concept requirements doesn’t
+  fullfil their needs:
+\item For example for opIndex and length needs to be implemented for functions
+  that operate RandomAccessRanges for example retro.
+\item GCC concepts branch already does this and DMD should be at least as good
+  as explaining. If D compiler doesn’t implement it someone else will.
+\end{itemize}
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
