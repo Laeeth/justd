@@ -169,29 +169,30 @@ unittest
     // high < 0
     static assert(is(InclusiveBoundsType!(-1, 0) == byte));
 
-    static assert(is(InclusiveBoundsType!(-0x80, 0x7f) == byte));
-    static assert(is(InclusiveBoundsType!(-0x80, 0x80) == short));
+    static assert(is(InclusiveBoundsType!(byte.min, byte.max) == byte));
+    static assert(is(InclusiveBoundsType!(byte.min, byte.max + 1) == short));
 
-    static assert(is(InclusiveBoundsType!(-0x8000, 0x7fff) == short));
-    static assert(is(InclusiveBoundsType!(-0x8000, 0x8000) == int));
+    static assert(is(InclusiveBoundsType!(short.min, short.max) == short));
+    static assert(is(InclusiveBoundsType!(short.min, short.max + 1) == int));
 
     // low == 0
-    static assert(is(InclusiveBoundsType!(0, 0x1)  == ubyte));
-    static assert(is(InclusiveBoundsType!(0, 0xff) == ubyte));
+    static assert(is(InclusiveBoundsType!(0, 0x1) == ubyte));
+    static assert(is(InclusiveBoundsType!(ubyte.min, ubyte.max) == ubyte));
 
-    static assert(is(InclusiveBoundsType!(0, 0x100)  == ushort));
-    static assert(is(InclusiveBoundsType!(0, 0xffff) == ushort));
+    static assert(is(InclusiveBoundsType!(ubyte.min, ubyte.max + 1) == ushort));
+    static assert(is(InclusiveBoundsType!(ushort.min, ushort.max) == ushort));
 
-    static assert(is(InclusiveBoundsType!(0, 0x1_0000)    == uint));
-    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff) == uint));
+    static assert(is(InclusiveBoundsType!(ushort.min, ushort.max + 1) == uint));
+    static assert(is(InclusiveBoundsType!(uint.min, uint.max) == uint));
 
-    static assert(is(InclusiveBoundsType!(0, 0x1_0000_0000)        == ulong));
-    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff_ffff_ffff) == ulong));
+    static assert(is(InclusiveBoundsType!(uint.min, uint.max + 1UL) == ulong));
+    static assert(is(InclusiveBoundsType!(ulong.min, ulong.max) == ulong));
 
     // low > 0
-    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0xff) == ubyte));
-    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0x100) == ushort));
-    static assert(is(InclusiveBoundsType!(0x1_0000_0000, 0x1_0000_0000 + 0xff) == ubyte));
+    static assert(is(InclusiveBoundsType!(ubyte.max, ubyte.max + ubyte.max) == ubyte));
+    static assert(is(InclusiveBoundsType!(ubyte.max, ubyte.max + 0x100) == ushort));
+    static assert(is(InclusiveBoundsType!(uint.max + 1UL, uint.max + 1UL + ubyte.max) == ubyte));
+    static assert(!is(InclusiveBoundsType!(uint.max + 1UL, uint.max + 1UL + ubyte.max + 1) == ubyte));
 
     // floating point
     static assert(is(InclusiveBoundsType!(0.0, 10.0) == double));
