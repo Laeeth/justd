@@ -107,8 +107,9 @@ class BoundOverflowException : Exception
 */
 template InclusiveBoundsType(alias low,
                              alias high,
-                             bool packed = true) if (isNumeric!(typeof(low)) &&
-                                                     isNumeric!(typeof(high)))
+                             bool packed = true,
+                             bool signed = false) if (isNumeric!(typeof(low)) &&
+                                                      isNumeric!(typeof(high)))
 {
     static assert(low < high,
                   "Requires low < high, low = " ~
@@ -123,22 +124,8 @@ template InclusiveBoundsType(alias low,
     static if (isIntegral!(LowType) &&
                isIntegral!(HighType))
     {
-        static if (low >= 0)    // positive
-        {
-            static if (packed)
-            {
-                static      if (span <= 0xff)               { alias InclusiveBoundsType = ubyte; }
-                else static if (span <= 0xffff)             { alias InclusiveBoundsType = ushort; }
-                else static if (span <= 0xffffffff)         { alias InclusiveBoundsType = uint; }
-                else static if (span <= 0xffffffffffffffff) { alias InclusiveBoundsType = ulong; }
-                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
-            }
-            else
-            {
-                alias InclusiveBoundsType = CommonType!(LowType, HighType);
-            }
-        }
-        else                    // negative
+        static if (signed &&
+                   low < 0)    // negative
         {
             static if (packed)
             {
@@ -146,6 +133,21 @@ template InclusiveBoundsType(alias low,
                 else static if (low >= -0x8000             && high <= 0x7fff)             { alias InclusiveBoundsType = short; }
                 else static if (low >= -0x80000000         && high <= 0x7fffffff)         { alias InclusiveBoundsType = int; }
                 else static if (low >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias InclusiveBoundsType = long; }
+                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
+            }
+            else
+            {
+                alias InclusiveBoundsType = CommonType!(LowType, HighType);
+            }
+        }
+        else                    // positive
+        {
+            static if (packed)
+            {
+                static      if (span <= 0xff)               { alias InclusiveBoundsType = ubyte; }
+                else static if (span <= 0xffff)             { alias InclusiveBoundsType = ushort; }
+                else static if (span <= 0xffffffff)         { alias InclusiveBoundsType = uint; }
+                else static if (span <= 0xffffffffffffffff) { alias InclusiveBoundsType = ulong; }
                 else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
             }
             else
@@ -167,13 +169,13 @@ unittest
     static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(1, 0); }));
 
     // high < 0
-    static assert(is(InclusiveBoundsType!(-1, 0) == byte));
+    static assert(is(InclusiveBoundsType!(-1, 0, true, true) == byte));
 
-    static assert(is(InclusiveBoundsType!(byte.min, byte.max) == byte));
-    static assert(is(InclusiveBoundsType!(byte.min, byte.max + 1) == short));
+    static assert(is(InclusiveBoundsType!(byte.min, byte.max, true, true) == byte));
+    static assert(is(InclusiveBoundsType!(byte.min, byte.max + 1, true, true) == short));
 
-    static assert(is(InclusiveBoundsType!(short.min, short.max) == short));
-    static assert(is(InclusiveBoundsType!(short.min, short.max + 1) == int));
+    static assert(is(InclusiveBoundsType!(short.min, short.max, true, true) == short));
+    static assert(is(InclusiveBoundsType!(short.min, short.max + 1, true, true) == int));
 
     // low == 0
     static assert(is(InclusiveBoundsType!(0, 0x1) == ubyte));
