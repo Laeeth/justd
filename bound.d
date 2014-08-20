@@ -78,6 +78,7 @@ version = print;
 
 version(print) import std.stdio: wln = writeln;
 
+/** Boundness Policy. */
 enum Policy
 {
     clamped,
@@ -331,8 +332,96 @@ struct Bound(V,
     private V _value;                      ///< Payload.
 }
 
+/** Type that stores inclusive range [low, high].
+    If $(D packed) optimize storage for compactness otherwise for speed.
+*/
+template InclusiveBoundsType(alias low,
+                             alias high,
+                             bool packed = true)
+{
+    alias LowType = typeof(low);
+    alias HighType = typeof(high);
+
+    enum span = high - low;
+    alias SpanType = typeof(span);
+
+    static if (isIntegral!(LowType) &&
+               isIntegral!(HighType))
+    {
+        static if (low >= 0)    // positive
+        {
+            static if (packed)
+            {
+                static      if (span <= 0xff)               { alias InclusiveBoundsType = ubyte; }
+                else static if (span <= 0xffff)             { alias InclusiveBoundsType = ushort; }
+                else static if (span <= 0xffffffff)         { alias InclusiveBoundsType = uint; }
+                else static if (span <= 0xffffffffffffffff) { alias InclusiveBoundsType = ulong; }
+                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
+            }
+            else
+            {
+                alias InclusiveBoundsType = CommonType!(LowType, HighType);
+            }
+        }
+        else                    // negative
+        {
+            static if (packed)
+            {
+                static      if (low >= -0x80               && high <= 0x7f)               { alias InclusiveBoundsType = byte; }
+                else static if (low >= -0x8000             && high <= 0x7fff)             { alias InclusiveBoundsType = short; }
+                else static if (low >= -0x80000000         && high <= 0x7fffffff)         { alias InclusiveBoundsType = int; }
+                else static if (low >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias InclusiveBoundsType = long; }
+                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
+            }
+            else
+            {
+                alias InclusiveBoundsType = CommonType!(LowType, HighType);
+            }
+        }
+    }
+    else static if (isFloatingPoint!(LowType) &&
+                    isFloatingPoint!(HighType))
+    {
+        alias InclusiveBoundsType = CommonType!(LowType, HighType);
+    }
+}
+
+unittest
+{
+    // high < 0
+    static assert(is(InclusiveBoundsType!(-1, 0) == byte));
+
+    static assert(is(InclusiveBoundsType!(-0x80, 0x7f) == byte));
+    static assert(is(InclusiveBoundsType!(-0x80, 0x80) == short));
+
+    static assert(is(InclusiveBoundsType!(-0x8000, 0x7fff) == short));
+    static assert(is(InclusiveBoundsType!(-0x8000, 0x8000) == int));
+
+    // low == 0
+    static assert(is(InclusiveBoundsType!(0, 0x1)  == ubyte));
+    static assert(is(InclusiveBoundsType!(0, 0xff) == ubyte));
+
+    static assert(is(InclusiveBoundsType!(0, 0x100)  == ushort));
+    static assert(is(InclusiveBoundsType!(0, 0xffff) == ushort));
+
+    static assert(is(InclusiveBoundsType!(0, 0x1_0000)    == uint));
+    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff) == uint));
+
+    static assert(is(InclusiveBoundsType!(0, 0x1_0000_0000)        == ulong));
+    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff_ffff_ffff) == ulong));
+
+    // low > 0
+    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0xff) == ubyte));
+    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0x100) == ushort));
+    static assert(is(InclusiveBoundsType!(0x1_0000_0000, 0x1_0000_0000 + 0xff) == ubyte));
+
+    // floating point
+    static assert(is(InclusiveBoundsType!(0.0, 10.0) == double));
+}
+
 /** Instantiator for \c Bound.
     Bounds $(D low) and $(D high) infer type of internal _value.
+    If $(D packed) optimize storage for compactness otherwise for speed.
  * \see http://stackoverflow.com/questions/17502664/instantiator-function-for-bound-template-doesnt-compile
  */
 template bound(alias low,
@@ -344,7 +433,6 @@ template bound(alias low,
 {
     enum span = high - low;
     alias SpanType = typeof(span);
-
     alias LowType = typeof(low);
     alias HighType = typeof(high);
 
@@ -420,8 +508,6 @@ template bound(alias low,
 
 unittest
 {
-    import std.stdio: wln = writeln;
-
     /* TODO: Activate this: */
     /* wln("diff: ", */
     /*     bound!(10, 20)(10) - */
@@ -429,34 +515,6 @@ unittest
     /* wln("sum: ", */
     /*     bound!(0, 10)(3) + */
     /*     bound!(0, 10)(3)); */
-
-    // infer unsigned types
-    static assert(bound!(0, 0x1)(0x1).type.stringof == "ubyte");
-    static assert(bound!(0, 0xff)(0xff).type.stringof == "ubyte");
-
-    // static assert(bound!(256, 257)(256).type.stringof == "ubyte");
-
-    static assert(bound!(0, 0x100)(0x100).type.stringof == "ushort"); // step over the line
-    static assert(bound!(0, 0xffff)(0xffff).type.stringof == "ushort");
-
-    static assert(bound!(0, 0x10000)(0x10000).type.stringof == "uint"); // step over the line
-    static assert(bound!(0, 0xffffffff)(0xffffffff).type.stringof == "uint");
-
-    static assert(bound!(0, 0x100000000)(0x100000000).type.stringof == "ulong"); // step over the line
-    static assert(bound!(0, 0x100000000)(0x100000000).type.stringof == "ulong");
-
-    // default construction
-    static assert(bound!(0, 0x100000000).type.stringof == "ulong");
-
-    // infer signed types
-    static assert(bound!(-1, 0)(0).type.stringof == "byte");
-    static assert(bound!(-0x80, 0x7f)(0).type.stringof == "byte");
-    static assert(bound!(-0x8000, 0x7fff)(0).type.stringof == "short");
-    /* assert(bound!(-0x80000000, 0x7fffffff)(0).type.stringof == "int"); */
-    // assert(bound!(-0x8000000000000000, 0x7fffffffffffffff)(0).type.stringof == "long");
-
-    static assert(is(typeof(bound!(0.0, 10.0)(1.0)) ==
-                     Bound!(real, real, 0.0, 10.0)));
 
     Bound!(int, int, int.min, int.max) a;
 
@@ -513,13 +571,17 @@ unittest
     version(print) wln(bound!(0, 0x100000000    )(0x100000000    ));
 }
 
-/** Return $(D x) with Automatic Packed Saturation. */
+/** Return $(D x) with Automatic Packed Saturation.
+    If $(D packed) optimize storage for compactness otherwise for speed.
+ */
 auto ref saturated(V, bool packed = true)(inout V x) // TODO: inout may be irrelevant here
 {
     return bound!(V.min, V.max, false, packed)(x);
 }
 
-/** Return $(D x) with Automatic Packed Saturation. */
+/** Return $(D x) with Automatic Packed Saturation.
+    If $(D packed) optimize storage for compactness otherwise for speed.
+*/
 auto ref optional(V, bool packed = true)(inout V x) // TODO: inout may be irrelevant here
 {
     return bound!(V.min, V.max, false, packed)(x);
