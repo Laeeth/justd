@@ -2411,6 +2411,14 @@ class GStats
         kindPDF.description = "Portable Document Format";
         binFKinds ~= kindPDF;
 
+        auto kindMarkdownFmt = new FKind("Markdown", [], ["md", "markdown"],
+                                         [], 0,
+                                         [], [],
+                                         [], // N/A
+                                         defaultStringDelims,
+                                         FileContent.binaryCache);
+        binFKinds ~= kindMarkdownFmt;
+
         auto kindLatexPDFFmt = new FKind("LaTeX PDF Format", [], ["fmt"],
                                          cast(ubyte[])['W','2','T','X',
                                                        0x00,0x00,0x00,0x08,
