@@ -102,8 +102,9 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
-/** Type that can fit the inclusive bound [low, high].
+/** Get Type that can contain the inclusive bound [low, high].
     If $(D packed) optimize storage for compactness otherwise for speed.
+    If $(D signed) use a signed integer.
 */
 template InclusiveBoundsType(alias low,
                              alias high,
