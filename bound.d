@@ -71,7 +71,7 @@
 module bound;
 
 import std.conv: to;
-import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint;
+import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric;
 import std.stdint: intmax_t;
 
 version = print;
@@ -98,12 +98,13 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
-/** Type that stores inclusive range [low, high].
+/** Type that can fit the inclusive bound [low, high].
     If $(D packed) optimize storage for compactness otherwise for speed.
 */
 template InclusiveBoundsType(alias low,
                              alias high,
-                             bool packed = true)
+                             bool packed = true) if (isNumeric!(typeof(low)) &&
+                                                     isNumeric!(typeof(high)))
 {
     static assert(low < high,
                   "Requires low < high, low = " ~
