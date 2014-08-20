@@ -111,6 +111,8 @@ template InclusiveBoundsType(alias low,
                              bool signed = false) if (isNumeric!(typeof(low)) &&
                                                       isNumeric!(typeof(high)))
 {
+    static assert(low != high,
+                  "low == high: use an enum instead");
     static assert(low < high,
                   "Requires low < high, low = " ~
                   to!string(low) ~ " and high = " ~ to!string(high));
@@ -165,8 +167,8 @@ template InclusiveBoundsType(alias low,
 
 unittest
 {
-    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(0, 0); }));
-    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(1, 0); }));
+    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(0, 0); }));  // disallow
+    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(1, 0); })); // disallow
 
     // low < 0
     static assert(is(InclusiveBoundsType!(-1, 0, true, true) == byte));
