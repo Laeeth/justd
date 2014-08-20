@@ -98,6 +98,100 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
+/** Type that stores inclusive range [low, high].
+    If $(D packed) optimize storage for compactness otherwise for speed.
+*/
+template InclusiveBoundsType(alias low,
+                             alias high,
+                             bool packed = true)
+{
+    static assert(low < high,
+                  "Requires low < high, low = " ~
+                  to!string(low) ~ " and high = " ~ to!string(high));
+
+    alias LowType = typeof(low);
+    alias HighType = typeof(high);
+
+    enum span = high - low;
+    alias SpanType = typeof(span);
+
+    static if (isIntegral!(LowType) &&
+               isIntegral!(HighType))
+    {
+        static if (low >= 0)    // positive
+        {
+            static if (packed)
+            {
+                static      if (span <= 0xff)               { alias InclusiveBoundsType = ubyte; }
+                else static if (span <= 0xffff)             { alias InclusiveBoundsType = ushort; }
+                else static if (span <= 0xffffffff)         { alias InclusiveBoundsType = uint; }
+                else static if (span <= 0xffffffffffffffff) { alias InclusiveBoundsType = ulong; }
+                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
+            }
+            else
+            {
+                alias InclusiveBoundsType = CommonType!(LowType, HighType);
+            }
+        }
+        else                    // negative
+        {
+            static if (packed)
+            {
+                static      if (low >= -0x80               && high <= 0x7f)               { alias InclusiveBoundsType = byte; }
+                else static if (low >= -0x8000             && high <= 0x7fff)             { alias InclusiveBoundsType = short; }
+                else static if (low >= -0x80000000         && high <= 0x7fffffff)         { alias InclusiveBoundsType = int; }
+                else static if (low >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias InclusiveBoundsType = long; }
+                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
+            }
+            else
+            {
+                alias InclusiveBoundsType = CommonType!(LowType, HighType);
+            }
+        }
+    }
+    else static if (isFloatingPoint!(LowType) &&
+                    isFloatingPoint!(HighType))
+    {
+        alias InclusiveBoundsType = CommonType!(LowType, HighType);
+    }
+}
+
+unittest
+{
+    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(0, 0); }));
+    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(1, 0); }));
+
+    // high < 0
+    static assert(is(InclusiveBoundsType!(-1, 0) == byte));
+
+    static assert(is(InclusiveBoundsType!(-0x80, 0x7f) == byte));
+    static assert(is(InclusiveBoundsType!(-0x80, 0x80) == short));
+
+    static assert(is(InclusiveBoundsType!(-0x8000, 0x7fff) == short));
+    static assert(is(InclusiveBoundsType!(-0x8000, 0x8000) == int));
+
+    // low == 0
+    static assert(is(InclusiveBoundsType!(0, 0x1)  == ubyte));
+    static assert(is(InclusiveBoundsType!(0, 0xff) == ubyte));
+
+    static assert(is(InclusiveBoundsType!(0, 0x100)  == ushort));
+    static assert(is(InclusiveBoundsType!(0, 0xffff) == ushort));
+
+    static assert(is(InclusiveBoundsType!(0, 0x1_0000)    == uint));
+    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff) == uint));
+
+    static assert(is(InclusiveBoundsType!(0, 0x1_0000_0000)        == ulong));
+    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff_ffff_ffff) == ulong));
+
+    // low > 0
+    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0xff) == ubyte));
+    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0x100) == ushort));
+    static assert(is(InclusiveBoundsType!(0x1_0000_0000, 0x1_0000_0000 + 0xff) == ubyte));
+
+    // floating point
+    static assert(is(InclusiveBoundsType!(0.0, 10.0) == double));
+}
+
 /** Value of Type $(D V) bound inside Inclusive Range [low, high].
 
     If $(D optional) is true this stores one extra undefined state (similar to Haskell's Maybe).
@@ -330,93 +424,6 @@ struct Bound(V,
     }
 
     private V _value;                      ///< Payload.
-}
-
-/** Type that stores inclusive range [low, high].
-    If $(D packed) optimize storage for compactness otherwise for speed.
-*/
-template InclusiveBoundsType(alias low,
-                             alias high,
-                             bool packed = true)
-{
-    alias LowType = typeof(low);
-    alias HighType = typeof(high);
-
-    enum span = high - low;
-    alias SpanType = typeof(span);
-
-    static if (isIntegral!(LowType) &&
-               isIntegral!(HighType))
-    {
-        static if (low >= 0)    // positive
-        {
-            static if (packed)
-            {
-                static      if (span <= 0xff)               { alias InclusiveBoundsType = ubyte; }
-                else static if (span <= 0xffff)             { alias InclusiveBoundsType = ushort; }
-                else static if (span <= 0xffffffff)         { alias InclusiveBoundsType = uint; }
-                else static if (span <= 0xffffffffffffffff) { alias InclusiveBoundsType = ulong; }
-                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
-            }
-            else
-            {
-                alias InclusiveBoundsType = CommonType!(LowType, HighType);
-            }
-        }
-        else                    // negative
-        {
-            static if (packed)
-            {
-                static      if (low >= -0x80               && high <= 0x7f)               { alias InclusiveBoundsType = byte; }
-                else static if (low >= -0x8000             && high <= 0x7fff)             { alias InclusiveBoundsType = short; }
-                else static if (low >= -0x80000000         && high <= 0x7fffffff)         { alias InclusiveBoundsType = int; }
-                else static if (low >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias InclusiveBoundsType = long; }
-                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
-            }
-            else
-            {
-                alias InclusiveBoundsType = CommonType!(LowType, HighType);
-            }
-        }
-    }
-    else static if (isFloatingPoint!(LowType) &&
-                    isFloatingPoint!(HighType))
-    {
-        alias InclusiveBoundsType = CommonType!(LowType, HighType);
-    }
-}
-
-unittest
-{
-    // high < 0
-    static assert(is(InclusiveBoundsType!(-1, 0) == byte));
-
-    static assert(is(InclusiveBoundsType!(-0x80, 0x7f) == byte));
-    static assert(is(InclusiveBoundsType!(-0x80, 0x80) == short));
-
-    static assert(is(InclusiveBoundsType!(-0x8000, 0x7fff) == short));
-    static assert(is(InclusiveBoundsType!(-0x8000, 0x8000) == int));
-
-    // low == 0
-    static assert(is(InclusiveBoundsType!(0, 0x1)  == ubyte));
-    static assert(is(InclusiveBoundsType!(0, 0xff) == ubyte));
-
-    static assert(is(InclusiveBoundsType!(0, 0x100)  == ushort));
-    static assert(is(InclusiveBoundsType!(0, 0xffff) == ushort));
-
-    static assert(is(InclusiveBoundsType!(0, 0x1_0000)    == uint));
-    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff) == uint));
-
-    static assert(is(InclusiveBoundsType!(0, 0x1_0000_0000)        == ulong));
-    static assert(is(InclusiveBoundsType!(0, 0xffff_ffff_ffff_ffff) == ulong));
-
-    // low > 0
-    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0xff) == ubyte));
-    static assert(is(InclusiveBoundsType!(0xff, 0xff + 0x100) == ushort));
-    static assert(is(InclusiveBoundsType!(0x1_0000_0000, 0x1_0000_0000 + 0xff) == ubyte));
-
-    // floating point
-    static assert(is(InclusiveBoundsType!(0.0, 10.0) == double));
 }
 
 /** Instantiator for \c Bound.
