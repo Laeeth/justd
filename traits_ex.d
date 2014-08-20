@@ -174,8 +174,8 @@ enum hasValueSemantics(T) = !hasIndirections!T;
 
 enum arityMin0(alias fun) = __traits(compiles, fun());
 
-/* TODO: Unite into a variadic.
-   See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
+/** TODO: Unite into a variadic.
+    See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
 */
 enum isCallableWith(alias fun, T) = (is(typeof(fun(T.init))) ||
                                      is(typeof(T.init.fun))); // TODO: Are both these needed?
@@ -196,3 +196,11 @@ unittest {
     assert(isCallableWith!(sqr2, int, int));
     assert(!isCallableWith!(sqr2, int, string));
 }
+
+import std.traits: isInstanceOf;
+import std.range: SortedRange;
+
+/** Check if $(D T) is a Sorted Range.
+    See also: http://forum.dlang.org/thread/lt1g3q$15fe$1@digitalmars.com
+*/
+alias isSortedRange(T) = isInstanceOf!(SortedRange, T); // TODO: Or use: __traits(isSame, TemplateOf!R, SortedRange)
