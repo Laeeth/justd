@@ -490,14 +490,6 @@ template bound(alias low,
 
 unittest
 {
-    /* TODO: Activate this: */
-    /* wln("diff: ", */
-    /*     bound!(10, 20)(10) - */
-    /*     bound!(0, 10)(10)); */
-    /* wln("sum: ", */
-    /*     bound!(0, 10)(3) + */
-    /*     bound!(0, 10)(3)); */
-
     Bound!(int, int.min, int.max) a;
 
     a = int.max;
