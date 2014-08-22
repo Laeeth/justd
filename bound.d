@@ -237,41 +237,6 @@ struct Bound(V,
     /** Get High Inclusive Bound. */
     static auto max() @property @safe pure nothrow { return optional ? high - 1 : high; }
 
-    /** Constructor Magic. */
-    /* alias _value this; */
-
-    /** Construct from Integral $(D V) $(D a). */
-    /* static if (isIntegral!V) */
-    /* { */
-    /*     this(V a) */
-    /*     { */
-    /*         static if (isUnsigned!V) */
-    /*         { */
-    /*             static assert(V.max >= high - low, */
-    /*                           "Unsigned value type V = " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]"); */
-    /*         } */
-    /*         else static if (isSigned!V) */
-    /*         { */
-    /*             static assert(V.min <= low && high <= V.max, */
-    /*                           "Unsigned value type V = " ~ V.stringof ~ " doesn't fit in inclusive bounds [" ~ to!string(low) ~ "," ~ to!string(high) ~ "]"); */
-    /*         } */
-    /*         else */
-    /*         { */
-    /*             static assert(false, "Handle value type V = " ~ V.stringof); */
-    /*         } */
-    /*         this._value = a; */
-    /*     } */
-    /* } */
-    /* else static if (isFloatingPoint!V && */
-    /*                 isFloatingPoint!B && */
-    /*                 V.sizeof >= B.sizeof) // internal value must fit bounds */
-    /* { */
-    /*     this (V a) */
-    /*     { */
-    /*         this._value = a; */
-    /*     } */
-    /* } */
-
     /** Construct from unbounded value $(D rhs). */
     this(U, string file = __FILE__, int line = __LINE__)(U rhs) if (isIntegral!V && isIntegral!U ||
                                                                     isFloatingPoint!V && isFloatingPoint!U)
@@ -507,28 +472,6 @@ template bound(alias low,
     {
         return Bound!(V, low, high, optional, exceptional, packed, signed)(value);
     }
-
-    /* static if (isIntegral!LowType && */
-    /*            isIntegral!HighType) */
-    /* { */
-    /* } */
-    /* else static if (isFloatingPoint!LowType && */
-    /*                 isFloatingPoint!HighType) */
-    /* { */
-    /*     /\* TODO: This may give incorrect results because of round-off */
-    /*        errors. One to fix is to adjust to max(value,low) or min(value,high) */
-    /*        if typeof(_value) != real *\/ */
-    /*     auto bound(V)(V value) if (isFloatingPoint!V) */
-    /*     { */
-    /*         return Bound!(real, low, high, optional, exceptional, packed, signed)(value); */
-    /*     } */
-    /* } */
-    /* else */
-    /* { */
-    /*     static assert(false, */
-    /*                   "Cannot (currently) mix Integral type " ~ LowType.stringof ~ */
-    /*                   " with FloatingPoint type" ~ HighType.stringof); */
-    /* } */
 }
 
 unittest
