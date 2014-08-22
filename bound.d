@@ -641,6 +641,7 @@ unittest
     static assert(is(typeof(abs(0.bound!(-255, 255))) == Bound!(ubyte, 0, 255)));
     static assert(is(typeof(abs(0.bound!(-256, 255))) == Bound!(ushort, 0, 256)));
     static assert(is(typeof(abs(0.bound!(-255, 256))) == Bound!(ushort, 0, 256)));
+    static assert(is(typeof(abs(0.bound!(10000, 10000+255))) == Bound!(ubyte, 10000, 10000+255)));
 }
 
 unittest
