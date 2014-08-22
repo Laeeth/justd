@@ -664,28 +664,28 @@ auto abs(V,
 {
     static if (low >= 0 && high >= 0) // all positive
     {
-        enum lowA = low;
-        enum highA = high;
+        enum low_ = low;
+        enum high_ = high;
     }
     else static if (low < 0 && high < 0) // all negative
     {
-        enum lowA = -high;
-        enum highA = -low;
+        enum low_ = -high;
+        enum high_ = -low;
     }
     else static if (low < 0 && high >= 0) // negative and positive
     {
         import std.algorithm: max;
-        enum lowA = 0;
-        enum highA = max(-low, high);
+        enum low_ = 0;
+        enum high_ = max(-low, high);
     }
     else
     {
         static assert("This shouldn't happen!");
     }
     import std.math: abs;
-    return Bound!(BoundsType!(lowA, highA),
-                  lowA, highA,
-                  optional, exceptional, packed, signed)(a.value.abs - lowA);
+    return Bound!(BoundsType!(low_, high_),
+                  low_, high_,
+                  optional, exceptional, packed, signed)(a.value.abs - low_);
 }
 
 unittest
