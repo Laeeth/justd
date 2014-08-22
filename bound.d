@@ -655,7 +655,12 @@ version(none)
 /** Calculate Absolute Value of $(D a). */
 auto abs(V,
          alias low,
-         alias high)(Bound!(V, low, high) a)
+         alias high,
+         bool optional = false,
+         bool exceptional = true,
+         bool packed = true,
+         bool signed = false)(Bound!(V, low, high,
+                                     optional, exceptional, packed, signed) a)
 {
     static if (low >= 0 && high >= 0) // all positive
     {
@@ -678,7 +683,9 @@ auto abs(V,
         static assert("This shouldn't happen!");
     }
     import std.math: abs;
-    return Bound!(BoundsType!(lowA, highA), lowA, highA)(a.value.abs - lowA);
+    return Bound!(BoundsType!(lowA, highA),
+                  lowA, highA,
+                  optional, exceptional, packed, signed)(a.value.abs - lowA);
 }
 
 unittest
@@ -705,19 +712,22 @@ unittest
     Does this automatically deduce to CommonType and if so do we need to declare it?
     Or does it suffice to constructors?
  */
-/* auto doIt(ubyte x) */
-/* { */
-/*     if (x >= 0) */
-/*     { */
-/*         return x.bound!(0, 2); */
-/*     } */
-/*     else */
-/*     { */
-/*         return x.bound!(0, 1); */
-/*     } */
-/* } */
+version(none)
+{
+    auto doIt(ubyte x)
+    {
+        if (x >= 0)
+        {
+            return x.bound!(0, 2);
+        }
+        else
+        {
+            return x.bound!(0, 1);
+        }
+    }
 
-/* unittest */
-/* { */
-/*     auto x = 0.doIt; */
-/* } */
+    unittest
+    {
+        auto x = 0.doIt;
+    }
+}
