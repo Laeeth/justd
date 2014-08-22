@@ -106,11 +106,11 @@ class BoundOverflowException : Exception
     If $(D packed) optimize storage for compactness otherwise for speed.
     If $(D signed) use a signed integer.
 */
-template InclusiveBoundsType(alias low,
-                             alias high,
-                             bool packed = true,
-                             bool signed = false) if (isNumeric!(typeof(low)) &&
-                                                      isNumeric!(typeof(high)))
+template BoundsType(alias low,
+                    alias high,
+                    bool packed = true,
+                    bool signed = false) if (isNumeric!(typeof(low)) &&
+                                             isNumeric!(typeof(high)))
 {
     static assert(low != high,
                   "low == high: use an enum instead");
@@ -132,78 +132,78 @@ template InclusiveBoundsType(alias low,
         {
             static if (packed)
             {
-                static      if (low >= -0x80               && high <= 0x7f)               { alias InclusiveBoundsType = byte; }
-                else static if (low >= -0x8000             && high <= 0x7fff)             { alias InclusiveBoundsType = short; }
-                else static if (low >= -0x80000000         && high <= 0x7fffffff)         { alias InclusiveBoundsType = int; }
-                else static if (low >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias InclusiveBoundsType = long; }
-                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
+                static      if (low >= -0x80               && high <= 0x7f)               { alias BoundsType = byte; }
+                else static if (low >= -0x8000             && high <= 0x7fff)             { alias BoundsType = short; }
+                else static if (low >= -0x80000000         && high <= 0x7fffffff)         { alias BoundsType = int; }
+                else static if (low >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias BoundsType = long; }
+                else { alias BoundsType = CommonType!(LowType, HighType); }
             }
             else
             {
-                alias InclusiveBoundsType = CommonType!(LowType, HighType);
+                alias BoundsType = CommonType!(LowType, HighType);
             }
         }
         else                    // positive
         {
             static if (packed)
             {
-                static      if (span <= 0xff)               { alias InclusiveBoundsType = ubyte; }
-                else static if (span <= 0xffff)             { alias InclusiveBoundsType = ushort; }
-                else static if (span <= 0xffffffff)         { alias InclusiveBoundsType = uint; }
-                else static if (span <= 0xffffffffffffffff) { alias InclusiveBoundsType = ulong; }
-                else { alias InclusiveBoundsType = CommonType!(LowType, HighType); }
+                static      if (span <= 0xff)               { alias BoundsType = ubyte; }
+                else static if (span <= 0xffff)             { alias BoundsType = ushort; }
+                else static if (span <= 0xffffffff)         { alias BoundsType = uint; }
+                else static if (span <= 0xffffffffffffffff) { alias BoundsType = ulong; }
+                else { alias BoundsType = CommonType!(LowType, HighType); }
             }
             else
             {
-                alias InclusiveBoundsType = CommonType!(LowType, HighType);
+                alias BoundsType = CommonType!(LowType, HighType);
             }
         }
     }
     else static if (isFloatingPoint!(LowType) &&
                     isFloatingPoint!(HighType))
     {
-        alias InclusiveBoundsType = CommonType!(LowType, HighType);
+        alias BoundsType = CommonType!(LowType, HighType);
     }
 }
 
 unittest
 {
-    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(0, 0); }));  // disallow
-    static assert(!__traits(compiles, { alias IBT = InclusiveBoundsType!(1, 0); })); // disallow
+    static assert(!__traits(compiles, { alias IBT = BoundsType!(0, 0); }));  // disallow
+    static assert(!__traits(compiles, { alias IBT = BoundsType!(1, 0); })); // disallow
 
     // low < 0
-    static assert(is(InclusiveBoundsType!(-1, 0, true, true) == byte));
-    static assert(is(InclusiveBoundsType!(-1, 0, true, false) == ubyte));
-    static assert(is(InclusiveBoundsType!(-0xff, 0, true, false) == ubyte));
-    static assert(is(InclusiveBoundsType!(-0xff, 1, true, false) == ushort));
+    static assert(is(BoundsType!(-1, 0, true, true) == byte));
+    static assert(is(BoundsType!(-1, 0, true, false) == ubyte));
+    static assert(is(BoundsType!(-0xff, 0, true, false) == ubyte));
+    static assert(is(BoundsType!(-0xff, 1, true, false) == ushort));
 
-    static assert(is(InclusiveBoundsType!(byte.min, byte.max, true, true) == byte));
-    static assert(is(InclusiveBoundsType!(byte.min, byte.max + 1, true, true) == short));
+    static assert(is(BoundsType!(byte.min, byte.max, true, true) == byte));
+    static assert(is(BoundsType!(byte.min, byte.max + 1, true, true) == short));
 
-    static assert(is(InclusiveBoundsType!(short.min, short.max, true, true) == short));
-    static assert(is(InclusiveBoundsType!(short.min, short.max + 1, true, true) == int));
+    static assert(is(BoundsType!(short.min, short.max, true, true) == short));
+    static assert(is(BoundsType!(short.min, short.max + 1, true, true) == int));
 
     // low == 0
-    static assert(is(InclusiveBoundsType!(0, 0x1) == ubyte));
-    static assert(is(InclusiveBoundsType!(ubyte.min, ubyte.max) == ubyte));
+    static assert(is(BoundsType!(0, 0x1) == ubyte));
+    static assert(is(BoundsType!(ubyte.min, ubyte.max) == ubyte));
 
-    static assert(is(InclusiveBoundsType!(ubyte.min, ubyte.max + 1) == ushort));
-    static assert(is(InclusiveBoundsType!(ushort.min, ushort.max) == ushort));
+    static assert(is(BoundsType!(ubyte.min, ubyte.max + 1) == ushort));
+    static assert(is(BoundsType!(ushort.min, ushort.max) == ushort));
 
-    static assert(is(InclusiveBoundsType!(ushort.min, ushort.max + 1) == uint));
-    static assert(is(InclusiveBoundsType!(uint.min, uint.max) == uint));
+    static assert(is(BoundsType!(ushort.min, ushort.max + 1) == uint));
+    static assert(is(BoundsType!(uint.min, uint.max) == uint));
 
-    static assert(is(InclusiveBoundsType!(uint.min, uint.max + 1UL) == ulong));
-    static assert(is(InclusiveBoundsType!(ulong.min, ulong.max) == ulong));
+    static assert(is(BoundsType!(uint.min, uint.max + 1UL) == ulong));
+    static assert(is(BoundsType!(ulong.min, ulong.max) == ulong));
 
     // low > 0
-    static assert(is(InclusiveBoundsType!(ubyte.max, ubyte.max + ubyte.max) == ubyte));
-    static assert(is(InclusiveBoundsType!(ubyte.max, ubyte.max + 0x100) == ushort));
-    static assert(is(InclusiveBoundsType!(uint.max + 1UL, uint.max + 1UL + ubyte.max) == ubyte));
-    static assert(!is(InclusiveBoundsType!(uint.max + 1UL, uint.max + 1UL + ubyte.max + 1) == ubyte));
+    static assert(is(BoundsType!(ubyte.max, ubyte.max + ubyte.max) == ubyte));
+    static assert(is(BoundsType!(ubyte.max, ubyte.max + 0x100) == ushort));
+    static assert(is(BoundsType!(uint.max + 1UL, uint.max + 1UL + ubyte.max) == ubyte));
+    static assert(!is(BoundsType!(uint.max + 1UL, uint.max + 1UL + ubyte.max + 1) == ubyte));
 
     // floating point
-    static assert(is(InclusiveBoundsType!(0.0, 10.0) == double));
+    static assert(is(BoundsType!(0.0, 10.0) == double));
 }
 
 /** Value of Type $(D V) bound inside Inclusive Range [low, high].
@@ -238,7 +238,7 @@ struct Bound(V,
     static auto max() @property @safe pure nothrow { return optional ? high - 1 : high; }
 
     /** Constructor Magic. */
-    alias _value this;
+    /* alias _value this; */
 
     /** Construct from Integral $(D V) $(D a). */
     /* static if (isIntegral!V) */
@@ -272,29 +272,57 @@ struct Bound(V,
     /*     } */
     /* } */
 
-    this (V a)
+    /** Construct from unbounded value $(D rhs). */
+    this(U, string file = __FILE__, int line = __LINE__)(U rhs) if (isIntegral!V && isIntegral!U ||
+                                                                    isFloatingPoint!V && isFloatingPoint!U)
     {
-        this._value = a;
+        checkAssign!(U, file, line)(rhs);
+        this._value = cast(V)(rhs - low);
+    }
+    /** Assigne from unbounded value $(D rhs). */
+    auto opAssign(U, string file = __FILE__, int line = __LINE__)(U rhs) if (isIntegral!V && isIntegral!U ||
+                                                                             isFloatingPoint!V && isFloatingPoint!U)
+    {
+        checkAssign!(U, file, line)(rhs);
+        _value = rhs - low;
+        return this;
     }
 
-    /** Construct from $(D Bound) value $(D a). */
-    this(C,
-         alias lowRHS,
-         alias highRHS)(Bound!(C, lowRHS, highRHS) a) if (low <= lowRHS &&
-                                                          highRHS >= high)
+    /** Construct from $(D Bound) value $(D rhs). */
+    this(U,
+         alias low_,
+         alias high_)(Bound!(U, low_, high_,
+                             optional, exceptional, packed, signed) rhs) if (low <= low_ && high_ <= high)
     {
-        /* TODO: Use this instead of template constraint? */
-        /* static assert(low <= lowRHS && */
-        /*               highRHS >= high, */
-        /*               "Bounds of rhs isn't a subset of lhs."); */
-        this._value = a._value;
+        // verified at compile-time
+        this._value = rhs._value + (high - high_);
+    }
+    /** Assign from $(D Bound) value $(D rhs). */
+    auto opAssign(U,
+                  alias low_,
+                  alias high_)(Bound!(U, low_, high_,
+                                      optional, exceptional, packed, signed) rhs) if (low <= low_ && high_ <= high &&
+                                                                                      !is(CommonType!(T, U) == void))
+    {
+        // verified at compile-time
+        this._value = rhs._value + (high - high_);
+        return this;
     }
 
-    inout auto ref value() @property @safe pure inout nothrow { return _value; }
+    auto opOpAssign(string op, U, string file = __FILE__, int line = __LINE__)(U rhs) if (!is(CommonType!(T, U) == void))
+    {
+        CommonType!(V, U) tmp = void;
+        mixin("tmp = _value " ~ op ~ "rhs;");
+        mixin(check());
+        _value = cast(V)tmp;
+        return this;
+    }
+
+    inout auto ref value() @property @safe pure inout nothrow { return _value + this.min; }
 
     @property string toString() const @trusted
     {
-        return (to!string(_value) ~
+        return (to!string(this.value) ~
                 " ∈ [" ~ to!string(min) ~
                 ", " ~ to!string(max) ~
                 "]" ~
@@ -303,8 +331,9 @@ struct Bound(V,
     }
 
     /** Check if this value is defined. */
-    bool defined() @property @safe const pure nothrow { return optional ? _value != V.max : true; }
+    bool defined() @property @safe const pure nothrow { return optional ? this.value != V.max : true; }
 
+    /** Check that last operation was a success. */
     static string check() @trusted pure
     {
         return q{
@@ -332,6 +361,24 @@ struct Bound(V,
         };
     }
 
+    /** Check that assignment from $(D rhs) is ok. */
+    void checkAssign(U, string file = __FILE__, int line = __LINE__)(U rhs)
+    {
+        if (rhs < min) goto overflow;
+        if (rhs > max) goto overflow;
+        goto ok;
+    overflow:
+        immutable oMsg = "Overflow at " ~ file ~ ":" ~ to!string(line) ~
+            " (payload: " ~ to!string(rhs) ~ ")";
+        if (exceptional) {
+            throw new BoundOverflowException(oMsg);
+        } else {
+            import std.stdio: wln = writeln;
+            wln(oMsg);
+        }
+    ok: ;
+    }
+
     auto opUnary(string op, string file = __FILE__, int line = __LINE__)()
     {
         static      if (op == "+")
@@ -345,12 +392,12 @@ struct Bound(V,
         }
         mixin("tmp._value = " ~ op ~ "_value " ~ ";");
         mixin(check());
-        return tmp;
+        return this;
     }
 
     auto opBinary(string op, U,
                   string file = __FILE__,
-                  int line = __LINE__)(U rhs)
+                  int line = __LINE__)(U rhs) if (!is(CommonType!(T, U) == void))
     {
         alias TU = CommonType!(V, U.type);
         static if (is(U == Bound))
@@ -422,23 +469,7 @@ struct Bound(V,
         }
         mixin("const tmp = _value " ~ op ~ "rhs;");
         mixin(check());
-        return tmp;
-    }
-
-    auto opOpAssign(string op, U, string file = __FILE__, int line = __LINE__)(U rhs)
-    {
-        CommonType!(V, U) tmp = void;
-        mixin("tmp = _value " ~ op ~ "rhs;");
-        mixin(check());
-        _value = cast(V)tmp;
-        return _value;
-    }
-
-    auto opAssign(U)(U tmp, string file = __FILE__, int line = __LINE__)
-    {
-        mixin(check());
-        _value = cast(V)tmp;
-        return _value;
+        return this;
     }
 
     private V _value;                      ///< Payload.
@@ -464,7 +495,7 @@ template bound(alias low,
     alias LowType = typeof(low);
     alias HighType = typeof(high);
 
-    alias V = InclusiveBoundsType!(low, high, packed, signed); // ValueType
+    alias V = BoundsType!(low, high, packed, signed); // ValueType
     alias C = CommonType!(typeof(low),
                           typeof(high));
 
@@ -505,12 +536,10 @@ unittest
     Bound!(int, int.min, int.max) a;
 
     a = int.max;
-    assert(a == int.max);
     assert(a.value == int.max);
 
     Bound!(int, int.min, int.max) b;
     b = int.min;
-    assert(b == int.min);
     assert(b.value == int.min);
 
     import std.stdio: writefln;
@@ -518,7 +547,7 @@ unittest
     writefln("%s", a);          // %s means that a is cast using \c toString()
 
     a -= 5;
-    assert(a == int.max - 5);
+    assert(a.value == int.max - 5);
     writefln("%s", a);          // should work
 
     a += 5;
@@ -584,6 +613,7 @@ unittest {
 unittest {
     const sb127 = saturated!byte(127);
     auto sh128 = saturated!short(128);
+    sh128 = sb127;
     static assert(__traits(compiles, { sh128 = sb127; }));
     static assert(!__traits(compiles, { sh127 = sb128; }));
 }
@@ -623,8 +653,9 @@ version(none)
 }
 
 /** Calculate Absolute Value of $(D a). */
-auto abs(intmax_t low,
-         intmax_t high)(Bound!(intmax_t, low, high) a)
+auto abs(V,
+         alias low,
+         alias high)(Bound!(V, low, high) a)
 {
     static if (low >= 0 && high >= 0) // all positive
     {
@@ -647,26 +678,24 @@ auto abs(intmax_t low,
         static assert("This shouldn't happen!");
     }
     import std.math: abs;
-    return a.value.abs.bound!(lowA, highA);
+    return Bound!(BoundsType!(lowA, highA), lowA, highA)(a.value.abs - lowA);
 }
 
-/* unittest */
-/* { */
-/*     static assert(is(typeof(abs(0.bound!(-3, +3))) == Bound!(long, 0L, 3L))); */
-/*     static assert(is(typeof(abs(0.bound!(-3, -1))) == Bound!(long, 1L, 3L))); */
-/*     static assert(is(typeof(abs(0.bound!(-3, +0))) == Bound!(long, 0L, 3L))); */
-/*     static assert(is(typeof(abs(0.bound!(+0, +3))) == Bound!(long, 0L, 3L))); */
-/*     static assert(is(typeof(abs(0.bound!(+1, +3))) == Bound!(long, 1L, 3L))); */
-/* } */
+unittest
+{
+    static assert(is(typeof(abs(0.bound!(-3, +3))) == Bound!(ubyte, 0, 3)));
+    static assert(is(typeof(abs(0.bound!(-3, -1))) == Bound!(ubyte, 1, 3)));
+    static assert(is(typeof(abs(0.bound!(-3, +0))) == Bound!(ubyte, 0, 3)));
+    static assert(is(typeof(abs(0.bound!(+0, +3))) == Bound!(ubyte, 0, 3)));
+    static assert(is(typeof(abs(0.bound!(+1, +3))) == Bound!(ubyte, 1, 3)));
+}
 
 unittest
 {
     auto x01 = 0.bound!(0, 1);
     auto x02 = 0.bound!(0, 2);
     static assert( __traits(compiles, { x02 = x01; })); // ok within range
-    /* static assert(!__traits(compiles, { x01 = x02; })); // should fail */
-    typeof(x02) x02_ = x01; // ok within range
-    typeof(x01) x01_ = x02; // should fail
+    static assert(!__traits(compiles, { x01 = x02; })); // should fail
 }
 
 /** TODO: Can D do better than C++ here?
