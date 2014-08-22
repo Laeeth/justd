@@ -577,10 +577,12 @@ void scanELF(NotNull!RegFile regfile,
     import elfdoc: sectionNameExplanations;
     /* TODO: Iterate all sections and print their sectionNameExplanations[section] */
     bool flag64 = true;
+    bool showSymbols = false;
+
     if (flag64)
     {
-        auto elf_ = new elf.ELF64(regfile._mmfile);
-        foreach (section; elf_.sections)
+        auto elf64 = new elf.ELF64(regfile._mmfile);
+        foreach (section; elf64.sections)
         {
             if (section.name.length)
             {
@@ -588,19 +590,49 @@ void scanELF(NotNull!RegFile regfile,
                 //writeln("ELF Section named ", section.name);
             }
         }
-        auto sst = elf_.getSymbolsStringTable;
+
+        auto sts = elf64.getSection(".symtab"); // or ".dynsym"
+        if (!sts.isNull)
+        {
+            writeln(regfile.path, ": ELF Section ", ".symtab");
+            /* writeln("ELF Section doc ", sectionNameExplanations[".symtab"]); */
+
+            if (showSymbols)
+            {
+                SymbolTable symtab = SymbolTable(sts);
+                foreach (sym; symtab.symbols) // you can add filters here
+                {
+                    if (doDemangle)
+                    {
+                        const name = sym.name;
+                        const hit = name.decodeSymbol;
+                        writeln(hit[0].toTag(), ": ", hit[1]);
+                    }
+                    else
+                    {
+                        writeln("?: ", sym.name);
+                    }
+                }
+            }
+        }
+
+        auto sst = elf64.getSymbolsStringTable;
         if (!sst.isNull)
         {
-            foreach (const sym; sst.strings)
+            writeln(regfile.path, ": ELF Section ", ".strtab");
+            if (showSymbols)
             {
-                if (doDemangle)
+                foreach (const sym; sst.strings)
                 {
-                    const hit = sym.decodeSymbol;
-                    writeln(hit[0].toTag(), ": ", hit[1]);
-                }
-                else
-                {
-                    writeln("?: ", sym);
+                    if (doDemangle)
+                    {
+                        const hit = sym.decodeSymbol;
+                        writeln(hit[0].toTag(), ": ", hit[1]);
+                    }
+                    else
+                    {
+                        writeln("?: ", sym);
+                    }
                 }
             }
         }
