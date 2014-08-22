@@ -9,6 +9,7 @@
     Authors: $(WEB Per Nordlöw)
 
     TODO: Make use of __traits(valueRange) at lionello:if-else-range when merged to DMD.
+          This removes in some more cases needs for bounds checking.
           - See: https://github.com/lionello/dmd/compare/if-else-range
           - See: http://forum.dlang.org/thread/lnrc8l$1254$1@digitalmars.com
 
@@ -17,9 +18,7 @@
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
 
-    TODO: Make this work wln(bound!(256, 257)(256));
     TODO: Implement overload for conditional operator p ? x1 : x2
-    TODO: Implement variadic min, max, abs by looking at bounder_integer
     TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
           - Integer: +,-,*,^^,/
           - FloatingPoint: +,-,*,/,^^,sqrt,
