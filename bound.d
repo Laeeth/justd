@@ -576,23 +576,49 @@ unittest {
 /** Calculate Minimum.
     TODO: variadic.
 */
-version(none)
+auto min(V1, alias low1, alias high1,
+         V2, alias low2, alias high2,
+         bool optional = false,
+         bool exceptional = true,
+         bool packed = true,
+         bool signed = false)(Bound!(V1, low1, high1,
+                                     optional, exceptional, packed, signed) a1,
+                              Bound!(V2, low2, high2,
+                                     optional, exceptional, packed, signed) a2)
 {
-    auto min(T1, intmax_t low1 = T1.min, intmax_t high1 = T1.min,
-             T2, intmax_t low2 = T2.min, intmax_t high2 = T2.min)(Bound!(intmax_t, low1, high1) a1,
-                                                                  Bound!(intmax_t, low2, high1) a2)
-    {
-        import std.algorithm: min;
-        return min(a1 + a2).bound!(min(low1, low2),
-                                   min(high1, high2));
-    }
+    import std.algorithm: min;
+    enum lowMin = min(low1, low2);
+    enum highMin = min(high1, high2);
+    return (cast(BoundsType!(lowMin, highMin))min(a1.value, a2.value)).bound!(lowMin, highMin);
+}
 
-    unittest
-    {
-        auto a = 11.bound!(0, 17);
-        auto b = 11.bound!(0, 22);
-        auto abMax = min(a, b);
-    }
+/** Calculate Maximum.
+    TODO: variadic.
+*/
+auto max(V1, alias low1, alias high1,
+         V2, alias low2, alias high2,
+         bool optional = false,
+         bool exceptional = true,
+         bool packed = true,
+         bool signed = false)(Bound!(V1, low1, high1,
+                                     optional, exceptional, packed, signed) a1,
+                              Bound!(V2, low2, high2,
+                                     optional, exceptional, packed, signed) a2)
+{
+    import std.algorithm: max;
+    enum lowMax = max(low1, low2);
+    enum highMax = max(high1, high2);
+    return (cast(BoundsType!(lowMax, highMax))max(a1.value, a2.value)).bound!(lowMax, highMax);
+}
+
+unittest
+{
+    auto a = 11.bound!(0, 17);
+    auto b = 11.bound!(5, 22);
+    auto abMin = min(a, b);
+    static assert(is(typeof(abMin) == Bound!(ubyte, 0, 17)));
+    auto abMax = max(a, b);
+    static assert(is(typeof(abMax) == Bound!(ubyte, 5, 22)));
 }
 
 /** Calculate Absolute Value of $(D a). */
