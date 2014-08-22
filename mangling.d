@@ -86,7 +86,7 @@ string decodeCxxType(ref string rest)
 
     /* TODO: Order of these may vary. */
     const cvq = rest.decodeCxxCVQualifiers;
-    switch (rest[0])
+    switch (rest[0]) // TODO: Check for !rest.empty
     {
         case 'P': rest = rest[1..$]; isPointer = true; break;
             // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
