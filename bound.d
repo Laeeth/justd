@@ -76,6 +76,7 @@ module bound;
 import std.conv: to;
 import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric;
 import std.stdint: intmax_t;
+import std.exception: assertThrown;
 
 version = print;
 
@@ -475,6 +476,18 @@ template bound(alias low,
 
 unittest
 {
+    // verify construction overflows
+    assertThrown(2.bound!(0, 1));
+    assertThrown(255.bound!(0, 1));
+    assertThrown(256.bound!(0, 1));
+
+    // verify assignment overflows
+    auto b1 = 1.bound!(0, 1);
+    assertThrown(b1 = 2);
+    assertThrown(b1 = -1);
+    assertThrown(b1 = 256);
+    assertThrown(b1 = -255);
+
     Bound!(int, int.min, int.max) a;
 
     a = int.max;
@@ -495,7 +508,6 @@ unittest
     a += 5;
     writefln("%s", a);          // should workd
 
-    import std.exception: assertThrown;
     assertThrown(a += 5);
 
     /* test print */
@@ -666,7 +678,7 @@ unittest
     static assert(is(typeof(abs(0.bound!(-255, 255))) == Bound!(ubyte, 0, 255)));
     static assert(is(typeof(abs(0.bound!(-256, 255))) == Bound!(ushort, 0, 256)));
     static assert(is(typeof(abs(0.bound!(-255, 256))) == Bound!(ushort, 0, 256)));
-    static assert(is(typeof(abs(0.bound!(10000, 10000+255))) == Bound!(ubyte, 10000, 10000+255)));
+    static assert(is(typeof(abs(10000.bound!(10000, 10000+255))) == Bound!(ubyte, 10000, 10000+255)));
 }
 
 unittest
