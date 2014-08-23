@@ -104,11 +104,16 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
+/** Check if the value of $(D expr) is known at compile-time.
+    See also: http://forum.dlang.org/thread/owlwzvidwwpsrelpkbok@forum.dlang.org
+*/
 enum isCTEable(alias expr) = __traits(compiles, { enum id = expr; });
 
+enum isCTNumeric(alias expr) = (isNumeric!(typeof(expr)) &&
+                                isCTEable!expr);
+
 /* TODO: Is there a already a Phobos trait or builtin property for this? */
-template PackedNumericType(alias expr) if (isNumeric!(typeof(expr)) &&
-                                           isCTEable!expr)
+template PackedNumericType(alias expr) if (isCTNumeric!expr)
 {
     alias Type = typeof(expr);
     static if (isIntegral!Type)
@@ -119,7 +124,7 @@ template PackedNumericType(alias expr) if (isNumeric!(typeof(expr)) &&
             else static if (expr >= -0x8000             && high <= 0x7fff)             { alias PackedNumericType = short; }
             else static if (expr >= -0x80000000         && high <= 0x7fffffff)         { alias PackedNumericType = int; }
             else static if (expr >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias PackedNumericType = long; }
-            else { alias PackedNumericType = CommonType!(LowType, HighType); }
+            else { alias PackedNumericType = Type; }
         }
         else                    // positive
         {
@@ -127,13 +132,12 @@ template PackedNumericType(alias expr) if (isNumeric!(typeof(expr)) &&
             else static if (expr <= 0xffff)             { alias PackedNumericType = ushort; }
             else static if (expr <= 0xffffffff)         { alias PackedNumericType = uint; }
             else static if (expr <= 0xffffffffffffffff) { alias PackedNumericType = ulong; }
-            else { alias PackedNumericType = CommonType!(LowType, HighType); }
+            else { alias PackedNumericType = Type; }
         }
     }
-    else static if (isFloatingPoint!(LowType) &&
-                    isFloatingPoint!(HighType))
+    else static if (isFloatingPoint!Type)
     {
-        alias PackedNumericType = CommonType!(LowType, HighType);
+        alias PackedNumericType = Type;
     }
 }
 
@@ -482,8 +486,7 @@ struct Bound(V,
 /** Instantiate \c Bound from a single expression $(D expr).
     Makes it easier to add free-contants to existing Bounded variables.
     */
-template bound(alias value) if (isNumeric!(typeof(value)) &&
-                                isCTEable!value)
+template bound(alias value) if (isCTNumeric!value)
 {
     const bound = Bound!(PackedNumericType!value, value, value)(value);
 }
@@ -493,6 +496,8 @@ unittest
     int x = 13;
     static assert(!__traits(compiles, { auto y = bound!x; }));
     static assert(is(typeof(bound!13) == const Bound!(ubyte, 13, 13)));
+    static assert(is(typeof(bound!13.0) == const Bound!(double, 13.0, 13.0)));
+    static assert(is(typeof(bound!13.0L) == const Bound!(real, 13.0L, 13.0L)));
 }
 
 /** Instantiator for \c Bound.
