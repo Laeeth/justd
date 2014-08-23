@@ -479,7 +479,8 @@ class FKind
         if (_behaviourDigest.empty) // if not yet defined
         {
             ubyte[] bytes;
-            if (const magicLit = cast(Lit)magicData)
+            const magicLit = cast(Lit)magicData;
+            if (magicLit)
             {
                 bytes = msgpack.pack(exts, magicLit.bytes, magicOffset, refPattern, keywords, content, detection);
             }
