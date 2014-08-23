@@ -524,12 +524,15 @@ template bound(alias low,
 
 unittest
 {
-    // verify construction overflows
+    // static underflow
+    static assert(!__traits(compiles, { auto x = -1.bound!(0, 1); }));
+
+    // dynamic overflows
     assertThrown(2.bound!(0, 1));
     assertThrown(255.bound!(0, 1));
     assertThrown(256.bound!(0, 1));
 
-    // verify assignment overflows
+    // dynamic assignment overflows
     auto b1 = 1.bound!(0, 1);
     assertThrown(b1 = 2);
     assertThrown(b1 = -1);
@@ -561,31 +564,6 @@ unittest
     /* test print */
     auto x = bound!(0, 1)(1);
     x += 1;
-    version(print) wln(bound!(0, 1)(1));
-    version(print) wln(bound!(-1, 0)(0));
-    version(print) wln(bound!(-129, 0)(0));
-
-    // version(print) wln(bound!(0, 256)( - 1)); // Should give compiler error!
-
-    version(print) wln(bound!(0, 2)());
-
-    version(print) wln(bound!(0.0f, 2.0f)()); // nan float
-    version(print) wln(bound!(0.0f, 2.0f)(1.0f)); // float
-    version(print) wln(bound!(0.0f, 2.0f)(1.0)); // float
-
-    version(print) wln(bound!(0.0, 2.0)());  // nan double
-    version(print) wln(bound!(0.0, 2.0)(1.0));  // double
-    version(print) wln(bound!(0.0, 2.0)(1.0f)); // double
-
-    version(print) wln(bound!(0.0f, 2.0)(1.0)); // double
-    version(print) wln(bound!(0.0, 2.0f)(1.0)); // double
-
-    version(print) wln(bound!(0, 0x100 - 1)(0x100 - 1));
-    version(print) wln(bound!(0, 0x100    )(0x100    ));
-    version(print) wln(bound!(0, 0x10000 - 1)(0x10000 - 1));
-    version(print) wln(bound!(0, 0x10000    )(0x10000    ));
-    version(print) wln(bound!(0, 0x100000000 - 1)(0x100000000 - 1));
-    version(print) wln(bound!(0, 0x100000000    )(0x100000000    ));
 }
 
 unittest
@@ -627,7 +605,6 @@ unittest {
 
 unittest {
     const ub = saturated!ubyte(11);
-    version(print) wln(ub);
     assert(ub.sizeof == 1);
 
     const i = saturated!int(11);
