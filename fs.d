@@ -579,67 +579,71 @@ void scanELF(NotNull!RegFile regfile,
     bool flag64 = true;
     bool showSymbols = false;
 
+    ELF elfAny;                 // either ELF32 or ELF64 context
+
     if (flag64)
     {
-        auto elf64 = new elf.ELF64(regfile._mmfile);
-        foreach (section; elf64.sections)
+        elfAny = new elf.ELF64(regfile._mmfile);
+        elfAny = elfAny;
+    }
+    else
+    {
+        elfAny = new elf.ELF32(regfile._mmfile);
+    }
+
+    foreach (section; elfAny.sections)
+    {
+        if (section.name.length)
         {
-            if (section.name.length)
-            {
-                /* auto sst = section.StringTable; */
-                //writeln("ELF Section named ", section.name);
-            }
+            /* auto sst = section.StringTable; */
+            //writeln("ELF Section named ", section.name);
         }
+    }
 
-        auto sts = elf64.getSection(".symtab"); // or ".dynsym"
-        if (!sts.isNull)
+    auto sts = elfAny.getSection(".symtab"); // or ".dynsym"
+    if (!sts.isNull)
+    {
+        writeln(regfile.path, ": ELF Section ", ".symtab");
+        /* writeln("ELF Section doc ", sectionNameExplanations[".symtab"]); */
+
+        if (showSymbols)
         {
-            writeln(regfile.path, ": ELF Section ", ".symtab");
-            /* writeln("ELF Section doc ", sectionNameExplanations[".symtab"]); */
-
-            if (showSymbols)
+            SymbolTable symtab = SymbolTable(sts);
+            foreach (sym; symtab.symbols) // you can add filters here
             {
-                SymbolTable symtab = SymbolTable(sts);
-                foreach (sym; symtab.symbols) // you can add filters here
+                if (doDemangle)
                 {
-                    if (doDemangle)
-                    {
-                        const name = sym.name;
-                        const hit = name.decodeSymbol;
-                        writeln(hit[0].toTag(), ": ", hit[1]);
-                    }
-                    else
-                    {
-                        writeln("?: ", sym.name);
-                    }
+                    const name = sym.name;
+                    const hit = name.decodeSymbol;
+                    writeln(hit[0].toTag(), ": ", hit[1]);
                 }
-            }
-        }
-
-        auto sst = elf64.getSymbolsStringTable;
-        if (!sst.isNull)
-        {
-            writeln(regfile.path, ": ELF Section ", ".strtab");
-            if (showSymbols)
-            {
-                foreach (const sym; sst.strings)
+                else
                 {
-                    if (doDemangle)
-                    {
-                        const hit = sym.decodeSymbol;
-                        writeln(hit[0].toTag(), ": ", hit[1]);
-                    }
-                    else
-                    {
-                        writeln("?: ", sym);
-                    }
+                    writeln("?: ", sym.name);
                 }
             }
         }
     }
-    else
+
+    auto sst = elfAny.getSymbolsStringTable;
+    if (!sst.isNull)
     {
-        auto elf_ = new elf.ELF32(regfile._mmfile);
+        writeln(regfile.path, ": ELF Section ", ".strtab");
+        if (showSymbols)
+        {
+            foreach (const sym; sst.strings)
+            {
+                if (doDemangle)
+                {
+                    const hit = sym.decodeSymbol;
+                    writeln(hit[0].toTag(), ": ", hit[1]);
+                }
+                else
+                {
+                    writeln("?: ", sym);
+                }
+            }
+        }
     }
 }
 
