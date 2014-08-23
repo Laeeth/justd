@@ -588,6 +588,11 @@ unittest
     version(print) wln(bound!(0, 0x100000000    )(0x100000000    ));
 }
 
+unittest
+{
+    /* static assert(is(typeof(bound!13 + bound!14) == const Bound!(ubyte, 27, 27))); */
+}
+
 /** Return $(D x) with Automatic Packed Saturation.
     If $(D packed) optimize storage for compactness otherwise for speed.
  */
