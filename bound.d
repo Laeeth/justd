@@ -23,6 +23,8 @@
           - Integer: +,-,*,^^,/
           - FloatingPoint: +,-,*,/,^^,sqrt,
 
+    TODO: Support char, wchar and dchar as elementtypes isSomeChar
+
     TODO: Implicit conversions to unbounded integers?
     Not in https://bitbucket.org/davidstone/bounded_integer.
     const sb127 = saturated!byte(127);
@@ -102,6 +104,39 @@ class BoundOverflowException : Exception
     this(string msg) { super(msg); }
 }
 
+enum isCTEable(alias expr) = __traits(compiles, { enum id = expr; });
+
+/* TODO: Is there a already a Phobos trait or builtin property for this? */
+template PackedNumericType(alias expr) if (isNumeric!(typeof(expr)) &&
+                                           isCTEable!expr)
+{
+    alias Type = typeof(expr);
+    static if (isIntegral!Type)
+    {
+        static if (expr < 0)
+        {
+            static      if (expr >= -0x80               && high <= 0x7f)               { alias PackedNumericType = byte; }
+            else static if (expr >= -0x8000             && high <= 0x7fff)             { alias PackedNumericType = short; }
+            else static if (expr >= -0x80000000         && high <= 0x7fffffff)         { alias PackedNumericType = int; }
+            else static if (expr >= -0x8000000000000000 && high <= 0x7fffffffffffffff) { alias PackedNumericType = long; }
+            else { alias PackedNumericType = CommonType!(LowType, HighType); }
+        }
+        else                    // positive
+        {
+            static      if (expr <= 0xff)               { alias PackedNumericType = ubyte; }
+            else static if (expr <= 0xffff)             { alias PackedNumericType = ushort; }
+            else static if (expr <= 0xffffffff)         { alias PackedNumericType = uint; }
+            else static if (expr <= 0xffffffffffffffff) { alias PackedNumericType = ulong; }
+            else { alias PackedNumericType = CommonType!(LowType, HighType); }
+        }
+    }
+    else static if (isFloatingPoint!(LowType) &&
+                    isFloatingPoint!(HighType))
+    {
+        alias PackedNumericType = CommonType!(LowType, HighType);
+    }
+}
+
 /** Get Type that can contain the inclusive bound [low, high].
     If $(D packed) optimize storage for compactness otherwise for speed.
     If $(D signed) use a signed integer.
@@ -124,8 +159,8 @@ template BoundsType(alias low,
     enum span = high - low;
     alias SpanType = typeof(span);
 
-    static if (isIntegral!(LowType) &&
-               isIntegral!(HighType))
+    static if (isIntegral!LowType &&
+               isIntegral!HighType)
     {
         static if (signed &&
                    low < 0)    // negative
@@ -159,8 +194,8 @@ template BoundsType(alias low,
             }
         }
     }
-    else static if (isFloatingPoint!(LowType) &&
-                    isFloatingPoint!(HighType))
+    else static if (isFloatingPoint!LowType &&
+                    isFloatingPoint!HighType)
     {
         alias BoundsType = CommonType!(LowType, HighType);
     }
@@ -222,7 +257,7 @@ struct Bound(V,
              bool signed = false)
 {
     /* Requirements */
-    static assert(low < high,
+    static assert(low <= high,
                   "Requirement not fulfilled: low < high, low = " ~
                   to!string(low) ~ " and high = " ~ to!string(high));
     static if (optional)
@@ -444,7 +479,21 @@ struct Bound(V,
     private V _value;                      ///< Payload.
 }
 
-// enum matchingBounds(alias low, alias high) = (!is(CommonType!(typeof(low), typeof(high)) == void));
+/** Instantiate \c Bound from a single expression $(D expr).
+    Makes it easier to add free-contants to existing Bounded variables.
+    */
+template bound(alias value) if (isNumeric!(typeof(value)) &&
+                                isCTEable!value)
+{
+    const bound = Bound!(PackedNumericType!value, value, value)(value);
+}
+
+unittest
+{
+    int x = 13;
+    static assert(!__traits(compiles, { auto y = bound!x; }));
+    static assert(is(typeof(bound!13) == const Bound!(ubyte, 13, 13)));
+}
 
 /** Instantiator for \c Bound.
     Bounds $(D low) and $(D high) infer type of internal _value.
@@ -456,14 +505,9 @@ template bound(alias low,
                bool optional = false,
                bool exceptional = true,
                bool packed = true,
-               bool signed = false) if (!is(CommonType!(typeof(low),
-                                                        typeof(high)) == void))
+               bool signed = false) if (isNumeric!(typeof(low)) &&
+                                        isNumeric!(typeof(high)))
 {
-    enum span = high - low;
-    alias SpanType = typeof(span);
-    alias LowType = typeof(low);
-    alias HighType = typeof(high);
-
     alias V = BoundsType!(low, high, packed, signed); // ValueType
     alias C = CommonType!(typeof(low),
                           typeof(high));
