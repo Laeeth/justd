@@ -204,3 +204,69 @@ import std.range: SortedRange;
     See also: http://forum.dlang.org/thread/lt1g3q$15fe$1@digitalmars.com
 */
 alias isSortedRange(T) = isInstanceOf!(SortedRange, T); // TODO: Or use: __traits(isSame, TemplateOf!R, SortedRange)
+
+/** Check if Function $(D expr) is callable at compile-time.
+    See also: http://forum.dlang.org/thread/owlwzvidwwpsrelpkbok@forum.dlang.org
+*/
+template isCTFEable(alias fun)
+{
+    template isCTFEable_aux(alias T)
+    {
+        enum isCTFEable_aux = T;
+    }
+    enum isCTFEable = __traits(compiles, isCTFEable_aux!(fun()));
+}
+
+template isCTFEable2(fun...)
+{
+    enum isCTFEable2 = true;
+}
+
+unittest
+{
+    int fun1() { return 1; }
+    auto fun1_N()
+    {
+        import std.array;
+//would return Error: gc_malloc cannot be interpreted at compile time,
+        /* because it has no available source code due to a bug */
+            return [1].array;
+    }
+    int fun2(int x)
+    {
+        return 1;
+    }
+    auto fun2_N(int x){
+        import std.array;
+//same as fun1_N
+        return [1].array;
+    }
+
+    int a1;
+    enum a2=0;
+
+    static assert(!isCTFEable!(()=>a1));
+    static assert(isCTFEable!(()=>a2));
+
+    static assert(isCTFEable!fun1);
+    /* static assert(!isCTFEable!fun1_N); */
+
+    static assert(isCTFEable!(()=>fun2(0)));
+    /* static assert(!isCTFEable!(()=>fun2_N(0))); */
+//NOTE:an alternate syntax which could be implemented would be: static
+    /* assert(!isCTFEable!(fun2_N,0)); */
+}
+
+/** Check if the value of $(D expr) is known at compile-time.
+    See also: http://forum.dlang.org/thread/owlwzvidwwpsrelpkbok@forum.dlang.org
+*/
+enum isCTEable(alias expr) = __traits(compiles, { enum id = expr; });
+
+unittest
+{
+    static assert(isCTEable!11);
+    enum x = 11;
+    static assert(isCTEable!x);
+    auto y = 11;
+    static assert(!isCTEable!y);
+}
