@@ -238,15 +238,19 @@ struct Bound(V,
     static auto max() @property @safe pure nothrow { return optional ? high - 1 : high; }
 
     /** Construct from unbounded value $(D rhs). */
-    this(U, string file = __FILE__, int line = __LINE__)(U rhs) if (isIntegral!V && isIntegral!U ||
-                                                                    isFloatingPoint!V && isFloatingPoint!U)
+    this(U, string file = __FILE__, int line = __LINE__)(U rhs) if ((isIntegral!V &&
+                                                                     isIntegral!U) ||
+                                                                    (isFloatingPoint!V &&
+                                                                     isFloatingPoint!U))
     {
         checkAssign!(U, file, line)(rhs);
         this._value = cast(V)(rhs - low);
     }
     /** Assigne from unbounded value $(D rhs). */
-    auto opAssign(U, string file = __FILE__, int line = __LINE__)(U rhs) if (isIntegral!V && isIntegral!U ||
-                                                                             isFloatingPoint!V && isFloatingPoint!U)
+    auto opAssign(U, string file = __FILE__, int line = __LINE__)(U rhs) if ((isIntegral!V &&
+                                                                              isIntegral!U) ||
+                                                                             (isFloatingPoint!V &&
+                                                                              isFloatingPoint!U))
     {
         checkAssign!(U, file, line)(rhs);
         _value = rhs - low;
@@ -399,8 +403,8 @@ struct Bound(V,
             {
                 import traits_ex: isEven;
                 if (_value >= 0 ||
-                    rhs._value >= 0 &&
-                    rhs._value.isEven) // always positive if exponent is even
+                    (rhs._value >= 0 &&
+                     rhs._value.isEven)) // always positive if exponent is even
                 {
                     enum min_ = min^^U.min;
                     enum max_ = max^^U.max;
@@ -678,7 +682,7 @@ unittest
     static assert(is(typeof(abs(0.bound!(-255, 255))) == Bound!(ubyte, 0, 255)));
     static assert(is(typeof(abs(0.bound!(-256, 255))) == Bound!(ushort, 0, 256)));
     static assert(is(typeof(abs(0.bound!(-255, 256))) == Bound!(ushort, 0, 256)));
-    static assert(is(typeof(abs(10000.bound!(10000, 10000+255))) == Bound!(ubyte, 10000, 10000+255)));
+    static assert(is(typeof(abs(10_000.bound!(10_000, 10_000+255))) == Bound!(ubyte, 10_000, 10_000+255)));
 }
 
 unittest
