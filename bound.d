@@ -8,11 +8,6 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    TODO: Make use of __traits(valueRange) at lionello:if-else-range when merged to DMD.
-          This removes in some more cases needs for bounds checking.
-          - See: https://github.com/lionello/dmd/compare/if-else-range
-          - See: http://forum.dlang.org/thread/lnrc8l$1254$1@digitalmars.com
-
     See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
     See also: https://bitbucket.org/davidstone/bounded_integer
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
