@@ -71,7 +71,7 @@
 module bound;
 
 import std.conv: to;
-import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric;
+import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric, isSomeChar, isScalarType;
 import std.stdint: intmax_t;
 import std.exception: assertThrown;
 
@@ -104,11 +104,15 @@ class BoundOverflowException : Exception
 */
 enum isCTEable(alias expr) = __traits(compiles, { enum id = expr; });
 
-enum isCTNumeric(alias expr) = (isNumeric!(typeof(expr)) &&
-                                isCTEable!expr);
+/** Check if type $(D T) can wrapped in a $(D Bounded).
+ */
+enum isBoundable(T) = isScalarType!T;
+
+enum isCTBoundable(alias expr) = (isBoundable!(typeof(expr)) &&
+                                  isCTEable!expr);
 
 /* TODO: Is there a already a Phobos trait or builtin property for this? */
-template PackedNumericType(alias expr) if (isCTNumeric!expr)
+template PackedNumericType(alias expr) if (isCTBoundable!expr)
 {
     alias Type = typeof(expr);
     static if (isIntegral!Type)
@@ -143,8 +147,8 @@ template PackedNumericType(alias expr) if (isCTNumeric!expr)
 template BoundsType(alias low,
                     alias high,
                     bool packed = true,
-                    bool signed = false) if (isNumeric!(typeof(low)) &&
-                                             isNumeric!(typeof(high)))
+                    bool signed = false) if (isCTBoundable!(low) &&
+                                             isCTBoundable!(high))
 {
     static assert(low != high,
                   "low == high: use an enum instead");
@@ -481,7 +485,7 @@ struct Bound(V,
 /** Instantiate \c Bound from a single expression $(D expr).
     Makes it easier to add free-contants to existing Bounded variables.
     */
-template bound(alias value) if (isCTNumeric!value)
+template bound(alias value) if (isCTBoundable!value)
 {
     const bound = Bound!(PackedNumericType!value, value, value)(value);
 }
@@ -505,8 +509,8 @@ template bound(alias low,
                bool optional = false,
                bool exceptional = true,
                bool packed = true,
-               bool signed = false) if (isNumeric!(typeof(low)) &&
-                                        isNumeric!(typeof(high)))
+               bool signed = false) if (isCTBoundable!(low) &&
+                                        isCTBoundable!(high))
 {
     alias V = BoundsType!(low, high, packed, signed); // ValueType
     alias C = CommonType!(typeof(low),
@@ -520,6 +524,11 @@ template bound(alias low,
     {
         return Bound!(V, low, high, optional, exceptional, packed, signed)(value);
     }
+}
+
+unittest
+{
+    /* auto x = bound!('a', 'b'); */
 }
 
 unittest
@@ -572,7 +581,7 @@ unittest
 
 unittest
 {
-    /* static assert(is(typeof(bound!13 + bound!14) == const Bound!(ubyte, 27, 27))); */
+    /* TODO: static assert(is(typeof(bound!13 + bound!14) == const Bound!(ubyte, 27, 27))); */
 }
 
 /** Return $(D x) with Automatic Packed Saturation.
@@ -593,13 +602,15 @@ auto ref optional(V, bool packed = true)(V x) // TODO: inout may be irrelevant h
     return bound!(V.min, V.max, true, false, packed)(x);
 }
 
-unittest {
+unittest
+{
     const sb127 = saturated!byte(127);
     static assert(!__traits(compiles, { const sb128 = saturated!byte(128); }));
     static assert(!__traits(compiles, { saturated!byte bb = 127; }));
 }
 
-unittest {
+unittest
+{
     const sb127 = saturated!byte(127);
     auto sh128 = saturated!short(128);
     sh128 = sb127;
@@ -607,7 +618,8 @@ unittest {
     static assert(!__traits(compiles, { sh127 = sb128; }));
 }
 
-unittest {
+unittest
+{
     const ub = saturated!ubyte(11);
     assert(ub.sizeof == 1);
 
