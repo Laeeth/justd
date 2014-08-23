@@ -384,10 +384,10 @@ class FKind
 {
     this(T, MagicData, RefPattern)(string kindName_,
                                    T baseNaming_,
-                                   string[] typExts_,
+                                   const string[] typExts_,
                                    MagicData magicData, size_t magicOffset = 0,
                                    RefPattern refPattern_ = RefPattern.init,
-                                   string[] keywords_ = [],
+                                   const string[] keywords_ = [],
 
                                    Delim[] strings_ = [],
 
@@ -501,7 +501,7 @@ class FKind
     FKind[] subKinds;   // Inherited pattern. For example ELF => ELF core file
     Patt baseNaming;    // Pattern that matches typical file basenames of this Kind. May be null.
 
-    string[] exts;      // Typical Extensions.
+    const string[] exts;      // Typical Extensions.
     Patt magicData;     // Magic Data.
     size_t magicOffset; // Magit Offset.
     ubyte[] refPattern; // Reference pattern.
@@ -512,7 +512,7 @@ class FKind
     private SHA1Digest _behaviourDigest;
     RegFile[] hitFiles;     // Files of this kind.
 
-    string[] keywords; // Keywords
+    const string[] keywords; // Keywords
     string[] builtins; // Builtin Functions
     Op[] opers; // Language Opers
 
@@ -1635,7 +1635,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
 
-        enum keywordsC = [
+        static immutable keywordsC = [
             "auto", "const", "double", "float", "int", "short", "struct",
             "unsigned", "break", "continue", "else", "for", "long", "signed",
             "switch", "void", "case", "default", "enum", "goto", "register",
@@ -1734,22 +1734,22 @@ class GStats
         kindC.operations ~= tuple(FileOp.checkSyntax, "clang -x c -fsyntax-only -c");
         kindC.opers = opersC;
 
-        enum keywordsCxx = (keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
-                                         "bool", "explicit", "new", "static_cast", "typeid",
-                                         "catch", "false", "operator", "template", "typename",
-                                         "class", "friend", "private", "this", "using",
-                                         "const_cast", "inline", "public", "throw", "virtual",
-                                         "delete", "mutable", "protected", "true", "wchar_t",
-                                         // The following are not essential when
-                                         // the standard ASCII character set is
-                                         // being used, but they have been added
-                                         // to provide more readable alternatives
-                                         // for some of the C++ operators, and
-                                         // also to facilitate programming with
-                                         // character sets that lack characters
-                                         // needed by C++.
-                                         "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
-                                         "and_eq", "bitor", "not", "or", "xor", ]).uniq.array;
+        static immutable keywordsCxx = (keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
+                                                     "bool", "explicit", "new", "static_cast", "typeid",
+                                                     "catch", "false", "operator", "template", "typename",
+                                                     "class", "friend", "private", "this", "using",
+                                                     "const_cast", "inline", "public", "throw", "virtual",
+                                                     "delete", "mutable", "protected", "true", "wchar_t",
+                                                     // The following are not essential when
+                                                     // the standard ASCII character set is
+                                                     // being used, but they have been added
+                                                     // to provide more readable alternatives
+                                                     // for some of the C++ operators, and
+                                                     // also to facilitate programming with
+                                                     // character sets that lack characters
+                                                     // needed by C++.
+                                                     "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
+                                                     "and_eq", "bitor", "not", "or", "xor", ]).uniq.array;
 
         auto opersCxx = opersC ~ [
             Op("->*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
@@ -1771,7 +1771,7 @@ class GStats
             /* Op("catch", OpArity.unaryPrefix, OpAssoc.LR, _, _) */
             ];
 
-        enum extsCxx = ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"];
+        static immutable extsCxx = ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"];
         auto kindCxx = new FKind("C++", [], extsCxx, [], 0, [],
                                  keywordsCxx,
                                  cCommentDelims,
@@ -1781,7 +1781,7 @@ class GStats
         kindCxx.operations ~= tuple(FileOp.checkSyntax, "clang -x c++ -fsyntax-only -c");
         kindCxx.opers = opersCxx;
         srcFKinds ~= kindCxx;
-        enum keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
+        static immutable keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
                                             "char16_t", "char32_t",
                                             "constexpr",
                                             "decltype",
@@ -1799,7 +1799,7 @@ class GStats
         /*                        FileContent.sourceCode, */
         /*                        FileKindDetection.equalsWhatsGiven); */
 
-        enum keywordsNewObjectiveC = ["id",
+        static immutable keywordsNewObjectiveC = ["id",
                                       "in",
                                       "out", // Returned by reference
                                       "inout", // Argument is used both to provide information and to get information back
@@ -1811,21 +1811,21 @@ class GStats
                                       "@implementation", "@end",
                                       "@protoco", "@end", "@class" ];
 
-        enum keywordsObjectiveC = keywordsC ~ keywordsNewObjectiveC;
+        static immutable keywordsObjectiveC = keywordsC ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C", [], ["m", "h"], [], 0, [],
                                keywordsObjectiveC,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        enum keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
+        static immutable keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C++", [], ["mm", "h"], [], 0, [],
                                keywordsObjectiveCxx,
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        enum keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
+        static immutable keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
                               "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while",
                               "mutating", "extension"];
         auto opersOverflowSwift = opersC ~ [Op("&+"), Op("&-"), Op("&*"), Op("&/"), Op("&%")];
@@ -1839,13 +1839,13 @@ class GStats
         kindSwift.opers = opersOverflowSwift;
         srcFKinds ~= kindSwift;
 
-        enum keywordsCSharp = ["if"]; // TODO: Add keywords
+        static immutable keywordsCSharp = ["if"]; // TODO: Add keywords
         srcFKinds ~= new FKind("C#", [], ["cs"], [], 0, [], keywordsCSharp,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        enum keywordsOCaml = ["and", "as", "assert", "begin", "class",
+        static immutable keywordsOCaml = ["and", "as", "assert", "begin", "class",
                               "constraint", "do", "done", "downto", "else",
                               "end", "exception", "external", "false", "for",
                               "fun", "function", "functor", "if", "in",
@@ -1938,7 +1938,7 @@ class GStats
         auto magicForD = shebangLine(alt(lit("rdmd"),
                                          lit("gdmd")));
 
-        enum keywordsD = [`@property`, `@safe`, `@trusted`, `@system`, `@disable`, `abstract`, `alias`, `align`, `asm`, `assert`, `auto`, `body`, `bool`, `break`, `byte`, `case`, `cast`, `catch`,
+        static immutable keywordsD = [`@property`, `@safe`, `@trusted`, `@system`, `@disable`, `abstract`, `alias`, `align`, `asm`, `assert`, `auto`, `body`, `bool`, `break`, `byte`, `case`, `cast`, `catch`,
                           `cdouble`, `cent`, `cfloat`, `char`, `class`, `const`, `continue`, `creal`, `dchar`, `debug`, `default`, `delegate`, `delete`, `deprecated`,
                           `do`, `double`, `else`, `enum`, `export`, `extern`, `false`, `final`, `finally`, `float`, `for`, `foreach`, `foreach_reverse`,
                           `function`, `goto`, `idouble`, `if`, `ifloat`, `immutable`, `import`, `in`, `inout`, `int`, `interface`, `invariant`, `ireal`,
@@ -1985,7 +1985,7 @@ class GStats
         kindDi.operations ~= tuple(FileOp.checkSyntax, "dmd -debug -wi -c -o-"); // TODO: Include paths
         srcFKinds ~= kindDi;
 
-        enum keywordsFortran77 = ["if", "else"];
+        static immutable keywordsFortran77 = ["if", "else"];
         // TODO: Support .h files but require it to contain some Fortran-specific or be parseable.
         auto kindFortan = new FKind("Fortran", [], ["f", "fortran", "f77", "f90", "f95", "f03", "for", "ftn", "fpp"], [], 0, [], keywordsFortran77,
                                     [Delim("^C")], // TODO: Need beginning of line instead ^. seq(bol(), alt(lit('C'), lit('c'))); // TODO: Add chars chs("cC");
@@ -1995,17 +1995,17 @@ class GStats
         srcFKinds ~= kindFortan;
 
         // Ada
-        enum keywordsAda83 = [ "abort", "else", "new", "return", "abs", "elsif", "not", "reverse",
+        static immutable keywordsAda83 = [ "abort", "else", "new", "return", "abs", "elsif", "not", "reverse",
                                "end", "null", "accept", "entry", "select", "access", "exception", "of", "separate",
                                "exit", "or", "subtype", "all", "others", "and", "for", "out", "array",
                                "function", "task", "at", "package", "terminate", "generic", "pragma", "then", "begin", "goto", "private",
                                "type", "body", "procedure", "if", "case", "in", "use", "constant", "is", "raise",
                                "range", "when", "declare", "limited", "record", "while", "delay", "loop", "rem", "with", "delta", "renames",
                                "digits", "mod", "xor", "do", ];
-        enum keywordsAda95 = keywordsAda83 ~ ["abstract", "aliased", "tagged", "protected", "until", "requeue"];
-        enum keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
-        enum keywordsAda2012 = keywordsAda2005 ~ ["some"];
-        enum extsAda = ["ada", "adb", "ads"];
+        static immutable keywordsAda95 = keywordsAda83 ~ ["abstract", "aliased", "tagged", "protected", "until", "requeue"];
+        static immutable keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
+        static immutable keywordsAda2012 = keywordsAda2005 ~ ["some"];
+        static immutable extsAda = ["ada", "adb", "ads"];
         srcFKinds ~= new FKind("Ada 82", [], extsAda, [], 0, [], keywordsAda83,
                                [Delim("--")],
                                defaultStringDelims,
@@ -2051,7 +2051,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        enum keywordsPython = ["and", "del", "for", "is", "raise", "assert", "elif", "from", "lambda", "return",
+        static immutable keywordsPython = ["and", "del", "for", "is", "raise", "assert", "elif", "from", "lambda", "return",
                                "break", "else", "global", "not", "try", "class", "except", "if", "or", "while",
                                "continue", "exec", "import", "pass", "yield", "def", "finally", "in", "print"];
 
@@ -2183,7 +2183,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        enum keywordsJavascript = ["break", "case", "catch", "continue", "debugger", "default", "delete",
+        static immutable keywordsJavascript = ["break", "case", "catch", "continue", "debugger", "default", "delete",
                                    "do", "else", "finally", "for", "function", "if", "in", "instanceof",
                                    "new", "return", "switch", "this", "throw", "try", "typeof", "var",
                                    "void", "while", "with" ];
@@ -2334,7 +2334,7 @@ class GStats
 
         // Binaries
 
-        enum extsELF = ["o", "so", "ko", "os", "out", "bin", "x", "elf", "axf", "prx", "puff", "none"]; // ELF file extensions
+        static immutable extsELF = ["o", "so", "ko", "os", "out", "bin", "x", "elf", "axf", "prx", "puff", "none"]; // ELF file extensions
 
         auto elfKind = new FKind("ELF",
                                  [], extsELF, x"7F45 4C46", 0, [], [],
@@ -2655,7 +2655,7 @@ class GStats
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
 
         // SQLite
-        enum extsSQLite = ["sql", "sqlite", "sqlite3"];
+        static immutable extsSQLite = ["sql", "sqlite", "sqlite3"];
         binFKinds ~= new FKind("MySQL table definition file", [], extsSQLite, x"FE01", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
