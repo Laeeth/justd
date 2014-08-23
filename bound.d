@@ -527,6 +527,10 @@ unittest
     // static underflow
     static assert(!__traits(compiles, { auto x = -1.bound!(0, 1); }));
 
+    // dynamic underflow
+    int m1 = -1;
+    assertThrown(m1.bound!(0, 1));
+
     // dynamic overflows
     assertThrown(2.bound!(0, 1));
     assertThrown(255.bound!(0, 1));
