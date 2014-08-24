@@ -21,37 +21,7 @@ import std.array: array;
 import std.stdio;
 
 import dbg;
-
-/** Mangled Language. */
-enum Lang
-{
-    unknown,                    // Unknown: ?
-    c,                          // C
-    cxx,                        // C++
-    d,                          // D
-    java,                       // Java
-}
-
-string toTag(Lang lang)
-{
-    final switch (lang)
-    {
-        case Lang.unknown: return `?`;
-        case Lang.c: return `C`;
-        case Lang.cxx: return `C++`;
-        case Lang.d: return `D`;
-        case Lang.java: return `Java`;
-    }
-}
-
-unittest
-{
-    assert(toTag(Lang.init) == `?`);
-    assert(toTag(Lang.c) == `C`);
-    assert(toTag(Lang.cxx) == `C++`);
-    assert(toTag(Lang.d) == `D`);
-    assert(toTag(Lang.java) == `Java`);
-}
+import languages;
 
 /** Decode Unqualified C++ Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
@@ -466,12 +436,12 @@ unittest
     assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
-    /* assertEqual(`_ZSt5state`.decodeSymbol, */
-    /*             tuple(Lang.cxx, `::std::state`)); */
+    assertEqual(`_ZSt5state`.decodeSymbol,
+                tuple(Lang.cxx, `::std::state`));
 
-    /* assertEqual(`_ZNSt3_In4wardE`.decodeSymbol, */
-    /*             tuple(Lang.cxx, `::std::_In::ward`)); */
+    assertEqual(`_ZNSt3_In4wardE`.decodeSymbol,
+                tuple(Lang.cxx, `::std::_In::ward`));
 
-    /* assertEqual(`_ZStL19piecewise_construct`.decodeSymbol, */
-    /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
+    assertEqual(`_ZStL19piecewise_construct`.decodeSymbol,
+                tuple(Lang.cxx, `std::piecewise_construct`));
 }

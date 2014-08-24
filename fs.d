@@ -165,6 +165,7 @@ import geometry;
 import random_ex;
 import mathml;
 import mangling;
+import languages;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
@@ -1782,14 +1783,14 @@ class GStats
         kindCxx.opers = opersCxx;
         srcFKinds ~= kindCxx;
         static immutable keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
-                                            "char16_t", "char32_t",
-                                            "constexpr",
-                                            "decltype",
-                                            "override", "final",
-                                            "noexcept", "nullptr",
-                                            "auto",
-                                            "thread_local",
-                                            "static_assert", ];
+                                                        "char16_t", "char32_t",
+                                                        "constexpr",
+                                                        "decltype",
+                                                        "override", "final",
+                                                        "noexcept", "nullptr",
+                                                        "auto",
+                                                        "thread_local",
+                                                        "static_assert", ];
         // TODO: Define as subkind
         /* srcFKinds ~= new FKind("C++11", [], ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"], [], 0, [], */
         /*                        keywordsCxx11, */
@@ -1800,16 +1801,16 @@ class GStats
         /*                        FileKindDetection.equalsWhatsGiven); */
 
         static immutable keywordsNewObjectiveC = ["id",
-                                      "in",
-                                      "out", // Returned by reference
-                                      "inout", // Argument is used both to provide information and to get information back
-                                      "bycopy",
-                                      "byref", "oneway", "self",
-                                      "super", "@interface", "@end",
-                                      "@implementation", "@end",
-                                      "@interface", "@end",
-                                      "@implementation", "@end",
-                                      "@protoco", "@end", "@class" ];
+                                                  "in",
+                                                  "out", // Returned by reference
+                                                  "inout", // Argument is used both to provide information and to get information back
+                                                  "bycopy",
+                                                  "byref", "oneway", "self",
+                                                  "super", "@interface", "@end",
+                                                  "@implementation", "@end",
+                                                  "@interface", "@end",
+                                                  "@implementation", "@end",
+                                                  "@protoco", "@end", "@class" ];
 
         static immutable keywordsObjectiveC = keywordsC ~ keywordsNewObjectiveC;
         srcFKinds ~= new FKind("Objective-C", [], ["m", "h"], [], 0, [],
