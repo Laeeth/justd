@@ -8,6 +8,7 @@
 
     See also: http://forum.dlang.org/thread/byonwfghdqgcirdjyboh@forum.dlang.org
 
+    TODO: Can these be tagged with @nogc? Currently std.random.uniform may allocate.
     TODO: Tags as @safe when std.random gets there.
     TODO: Tags as nothrow when std.random gets there.
     TODO: How to handle possibly null reference (class, dynamic types) types?
@@ -26,7 +27,7 @@ version(unittest) private enum testLength = 64;
 /* nothrow: */
 
 /** Randomize Contents of $(D x). */
-auto ref randInPlace(E)(ref E x) @trusted @nogc if (isBoolean!E)
+auto ref randInPlace(E)(ref E x) @trusted if (isBoolean!E)
 {
     return x = cast(bool)uniform(0, 2);
 }
@@ -34,7 +35,7 @@ auto ref randInPlace(E)(ref E x) @trusted @nogc if (isBoolean!E)
 /** Randomize Contents of $(D x), optionally in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = E.min,
-                        E high = E.max) @trusted @nogc if (isIntegral!E)
+                        E high = E.max) @trusted if (isIntegral!E)
 {
     return x = uniform(low, high);    // BUG: Never assigns the value E.max
 }
@@ -42,7 +43,7 @@ auto ref randInPlace(E)(ref E x,
 /** Randomize Contents of $(D x), optional in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = 0 /* E.min_normal */,
-                        E high = 1 /* E.max */) @trusted @nogc if (isFloatingPoint!E)
+                        E high = 1 /* E.max */) @trusted if (isFloatingPoint!E)
 {
     return x = uniform(low, high);
 }
@@ -53,7 +54,7 @@ version(unittest)
 }
 
 /** Randomize Contents of $(D x). */
-auto ref randInPlace(Rational, E)(ref Rational!E x) @trusted @nogc if (isIntegral!E)
+auto ref randInPlace(Rational, E)(ref Rational!E x) @trusted if (isIntegral!E)
 {
     return x = rational(uniform(E.min, E.max),
                         uniform(1, E.max));
@@ -113,7 +114,7 @@ auto ref randInPlace(dstring x) @trusted
 
 /** Randomize Contents of $(D x).
  */
-auto ref randInPlace(R)(R x) @safe @nogc if (hasAssignableElements!R)
+auto ref randInPlace(R)(R x) @safe if (hasAssignableElements!R)
 {
     foreach (ref e; x)
     {
@@ -139,7 +140,7 @@ unittest
 
 /** Randomize Contents of $(D x).
  */
-auto ref randInPlace(T)(ref T x) @safe @nogc if (isStaticArray!T)
+auto ref randInPlace(T)(ref T x) @safe if (isStaticArray!T)
 {
     foreach (ref e; x)
     {
@@ -168,7 +169,7 @@ unittest
 
 /** Randomize Contents of members of $(D x).
  */
-auto ref randInPlace(T)(ref T x) @safe @nogc if (is(T == struct))
+auto ref randInPlace(T)(ref T x) @safe if (is(T == struct))
 {
     foreach (ref e; x.tupleof)
     {
@@ -189,7 +190,7 @@ unittest
 
 /** Randomize Contents of members of $(D x).
  */
-auto ref randInPlace(T)(T x) @safe @nogc if (is(T == class))
+auto ref randInPlace(T)(T x) @safe if (is(T == class))
 {
     foreach (ref e; x.tupleof)
     {
