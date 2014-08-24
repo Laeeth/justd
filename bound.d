@@ -12,7 +12,7 @@
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
     See also: http://dlang.org/operatoroverloading.html
 
-    TODO: Test with geometry.Vector
+    TODO: Test with geometry.Vector or geometry.Point
 
     TODO: Make stuff @safe pure @nogc and in some case nothrow
 
@@ -73,6 +73,7 @@ import std.conv: to;
 import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric, isSomeChar, isScalarType, isBoolean;
 import std.stdint: intmax_t;
 import std.exception: assertThrown;
+import assert_ex;
 
 version = print;
 
@@ -308,6 +309,11 @@ struct Bound(V,
         checkAssign!(U, file, line)(rhs);
         _value = rhs - low;
         return this;
+    }
+
+    bool opEquals(U)(U rhs) const
+    {
+        return value() == rhs;
     }
 
     /** Construct from $(D Bound) value $(D rhs). */
@@ -629,12 +635,13 @@ unittest
         const shift = T.max;
         auto x = saturated!T(shift);
         static assert(x.sizeof == T.sizeof);
-        /* x -= shift + 1; assert(x == 0); */
-        /* x += shift + 1; assert(x == 0); */
+        x -= shift; assertEqual(x, T.min);
+        x += shift; assertEqual(x, T.max);
+        x -= shift + 1; assertEqual(x, T.min);
+        x += shift + 1; assertEqual(x, T.max);
     }
 
-    foreach (T; TypeTuple!(byte, short, int, long,
-                           ubyte, ushort, uint, ulong))
+    foreach (T; TypeTuple!(ubyte, ushort, uint, ulong))
     {
         saturatedTest!T();
     }
@@ -681,7 +688,7 @@ auto max(V1, alias low1, alias high1,
     return (cast(BoundsType!(lowMax,
                              highMax))max(a1.value,
                                           a2.value)).bound!(lowMax,
-                                                            xhighMax);
+                                                            highMax);
 }
 
 unittest
