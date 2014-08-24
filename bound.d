@@ -108,18 +108,18 @@ enum isBoundable(T) = isScalarType!T;
 enum areBoundable(T, U) = (isBoundable!T &&
                            isBoundable!U);
 
-/** Check if Expression $(D expr) is a compile-time expression with a Boundable type.
+/** Check if Expression $(D expr) is a CT-expression that can be used as a Bound.
  */
-enum isCTBoundable(alias expr) = (isBoundable!(typeof(expr)) &&
-                                  isCTEable!expr);
+enum isCTBound(alias expr) = (isBoundable!(typeof(expr)) &&
+                              isCTEable!expr);
 
 /** TODO: Use this. */
-enum areCTBoundable(alias low, alias high) = (isCTBoundable!low &&
-                                              isCTBoundable!high &&
+enum areCTBoundable(alias low, alias high) = (isCTBound!low &&
+                                              isCTBound!high &&
                                               low < high);
 
 /* TODO: Is there a already a Phobos trait or builtin property for this? */
-template PackedNumericType(alias expr) if (isCTBoundable!expr)
+template PackedNumericType(alias expr) if (isCTBound!expr)
 {
     alias Type = typeof(expr);
     static if (isIntegral!Type)
@@ -154,8 +154,8 @@ template PackedNumericType(alias expr) if (isCTBoundable!expr)
 template BoundsType(alias low,
                     alias high,
                     bool packed = true,
-                    bool signed = false) if (isCTBoundable!low &&
-                                             isCTBoundable!high)
+                    bool signed = false) if (isCTBound!low &&
+                                             isCTBound!high)
 {
     static assert(low != high,
                   "low == high: use an enum instead");
@@ -512,7 +512,7 @@ struct Bound(V,
 /** Instantiate \c Bound from a single expression $(D expr).
     Makes it easier to add free-contants to existing Bounded variables.
     */
-template bound(alias value) if (isCTBoundable!value)
+template bound(alias value) if (isCTBound!value)
 {
     const bound = Bound!(PackedNumericType!value, value, value)(value);
 }
@@ -536,8 +536,8 @@ template bound(alias low,
                bool optional = false,
                bool exceptional = true,
                bool packed = true,
-               bool signed = false) if (isCTBoundable!low &&
-                                        isCTBoundable!high)
+               bool signed = false) if (isCTBound!low &&
+                                        isCTBound!high)
 {
     alias V = BoundsType!(low, high, packed, signed); // ValueType
     alias C = CommonType!(typeof(low),
