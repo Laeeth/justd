@@ -113,6 +113,11 @@ enum areBoundable(T, U) = (isBoundable!T &&
 enum isCTBoundable(alias expr) = (isBoundable!(typeof(expr)) &&
                                   isCTEable!expr);
 
+/** TODO: Use this. */
+enum areCTBoundable(alias low, alias high) = (isCTBoundable!low &&
+                                              isCTBoundable!high &&
+                                              low < high);
+
 /* TODO: Is there a already a Phobos trait or builtin property for this? */
 template PackedNumericType(alias expr) if (isCTBoundable!expr)
 {
