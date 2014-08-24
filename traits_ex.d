@@ -162,9 +162,9 @@ version (unittest) {
     static assert(isComparable!Bar);
 }
 
-enum isComparable(T, U) = is(typeof({ return T.init <  U.init; }));
-enum isEquable   (T, U) = is(typeof({ return T.init == U.init; }));
-enum isNotEquable(T, U) = is(typeof({ return T.init != U.init; }));
+enum areComparable(T, U) = is(typeof({ return T.init <  U.init; }));
+enum areEquable   (T, U) = is(typeof({ return T.init == U.init; }));
+enum areNotEquable(T, U) = is(typeof({ return T.init != U.init; }));
 
 enum isValueType(T) = isStaticArray!T || isStruct!T;
 /* See also: http://forum.dlang.org/thread/hsfkgcmkjgvrfuyjoujj@forum.dlang.org#post-hsfkgcmkjgvrfuyjoujj:40forum.dlang.org */
