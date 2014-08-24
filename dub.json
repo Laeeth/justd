@@ -1,8 +1,8 @@
 {
     "name": "fdo",
     "description": "A File Scanning Application.",
-    "copyright": "Copyright © 2014, per",
-    "authors": ["per"],
+    "copyright": "Copyright © 2014, Per Nordlöw",
+    "authors": ["Per Nordlöw"],
     "dependencies": {
 	"gfm": "~master",
 	"vibe-d": "~master",
