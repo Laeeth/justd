@@ -12,6 +12,8 @@
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
     See also: http://dlang.org/operatoroverloading.html
 
+    TODO: Test with geometry.Vector
+
     TODO: Make stuff @safe pure @nogc and in some case nothrow
 
     TODO: Implement overload for conditional operator p ? x1 : x2
