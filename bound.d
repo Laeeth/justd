@@ -74,6 +74,7 @@ import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint
 import std.stdint: intmax_t;
 import std.exception: assertThrown;
 import assert_ex;
+import traits_ex: areComparable;
 
 version = print;
 
@@ -311,7 +312,7 @@ struct Bound(V,
         return this;
     }
 
-    bool opEquals(U)(U rhs) const
+    bool opEquals(U)(U rhs) const if (areComparable!(V, U))
     {
         return value() == rhs;
     }
