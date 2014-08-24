@@ -64,7 +64,7 @@ alias wln = writeln;
 import dbg;
 import rational: Rational;
 import algorithm_ex: siota;
-import traits_ex: isOpBinary, isComparable, isEquable, isNotEquable;
+import traits_ex: isOpBinary, isComparable, isEquable, isNotEquable, areComparable, areEquable, areNotEquable;
 
 /* TODO: This doesn't seem that elegant. */
 
