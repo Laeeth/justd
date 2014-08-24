@@ -1,4 +1,4 @@
-CTAGS = ctags
+CTAGS = ~/Work/ctags/ctags
 ECTAGS_LANGS = Make,C,C++,D,Pascal,Sh,Ada,Lisp,Go,Protobuf
 TAGS_FILES = *.d */*.d Makefile $(shell find ~/opt/x86_64-unknown-linux-gnu/dmd -type f -iname '*.d')
 
@@ -9,8 +9,9 @@ deps:
 	sudo apt-get update;
 	sudo apt-get dist-upgrade;
 	bld_SDL2_all;
-tags: $(TAGS_FILES)
+ctags: $(TAGS_FILES) Makefile
 	@$(CTAGS) --sort=yes --links=no --excmd=number --languages=$(ECTAGS_LANGS) --extra=+f --file-scope=yes --fields=afikmsSt --totals=yes $(TAGS_FILES)
+tags: ctags
 clean:
 	$(RM) tags TAGS
 	$(RM) *.o *.11.core
