@@ -654,7 +654,10 @@ auto min(V1, alias low1, alias high1,
     import std.algorithm: min;
     enum lowMin = min(low1, low2);
     enum highMin = min(high1, high2);
-    return (cast(BoundsType!(lowMin, highMin))min(a1.value, a2.value)).bound!(lowMin, highMin);
+    return (cast(BoundsType!(lowMin,
+                             highMin))min(a1.value,
+                                          a2.value)).bound!(lowMin,
+                                                            highMin);
 }
 
 /** Calculate Maximum.
@@ -673,7 +676,10 @@ auto max(V1, alias low1, alias high1,
     import std.algorithm: max;
     enum lowMax = max(low1, low2);
     enum highMax = max(high1, high2);
-    return (cast(BoundsType!(lowMax, highMax))max(a1.value, a2.value)).bound!(lowMax, highMax);
+    return (cast(BoundsType!(lowMax,
+                             highMax))max(a1.value,
+                                          a2.value)).bound!(lowMax,
+                                                            xhighMax);
 }
 
 unittest
