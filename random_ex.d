@@ -63,8 +63,6 @@ unittest
 {
     Rational!int x;
     x.randInPlace;
-    import dbg;
-    dln(x);
 }
 
 /** Generate Random Contents of $(D x).
@@ -99,9 +97,9 @@ auto ref randInPlace(ref dchar x) @trusted
 unittest
 {
     import dbg;
-    dln(randomized!dchar);
+    auto x = randomized!dchar;
     dstring d = "alphaalphaalphaalphaalphaalphaalphaalphaalphaalpha";
-    dln(d.randomize);
+    auto r = d.randomize;
 }
 
 /** Randomize Contents of $(D x). */
