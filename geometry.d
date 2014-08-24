@@ -60,7 +60,6 @@ import std.algorithm;
 import std.random: uniform;
 
 import mathml;
-import assert_ex;
 alias wln = writeln;
 import dbg;
 import rational: Rational;
