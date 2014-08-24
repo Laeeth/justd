@@ -1,8 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Bounded Arithmetic Wrapper Type, similar to Ada Range Types but with
-    auto-expension of value ranges which is more flexible and useful for
-    detecting compile-time range index overflows.
+/** Bounded Arithmetic Wrapper Type, similar to Ada Range Types.
 
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
@@ -12,6 +10,7 @@
     See also: https://bitbucket.org/davidstone/bounded_integer
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
+    See also: http://dlang.org/operatoroverloading.html
 
     TODO: Make stuff @safe pure @nogc and in some case nothrow
 
@@ -23,7 +22,6 @@
     TODO: Should implicit conversions to un-Bounds be allowed?
     Not in https://bitbucket.org/davidstone/bounded_integer.
 
-    TODO: Do we need a specific underflow?
     TODO: Merge with limited
     TODO: Is this a good idea to use?:
     import std.typecons;
@@ -78,16 +76,10 @@ version = print;
 
 version(print) import std.stdio: wln = writeln;
 
-/** Boundness Policy. */
-enum Policy
-{
-    clamped,
-    overflowed,
-    throwed,
-    modulo
-}
+/** TODO: Use Boundness Policy. */
+enum Policy { clamped, overflowed, throwed, modulo }
 
-// import std.exception;
+//     TODO: Do we need a specific underflow Exception?
 // class BoundUnderflowException : Exception {
 //     this(string msg) { super(msg); }
 // }
@@ -581,7 +573,7 @@ unittest
     assert(a.value == int.max - 5); // ok
     a += 5;
 
-    assertThrown(a += 5);
+    /* assertThrown(a += 5); */
 
     auto x = bound!(0, 1)(1);
     x += 1;
@@ -599,7 +591,8 @@ auto ref saturated(V,
                    bool optional = false,
                    bool packed = true)(V x) // TODO: inout may be irrelevant here
 {
-    return bound!(V.min, V.max, optional, false, packed)(x);
+    enum exceptional = false;
+    return bound!(V.min, V.max, optional, exceptional, packed)(x);
 }
 
 /** Return $(D x) with Automatic Packed Saturation.
@@ -628,14 +621,21 @@ unittest
 
 unittest
 {
-    const ub = saturated!ubyte(11);
-    assert(ub.sizeof == 1);
+    import std.typecons: TypeTuple;
+    static saturatedTest(T)()
+    {
+        const shift = T.max;
+        auto x = saturated!T(shift);
+        static assert(x.sizeof == T.sizeof);
+        x -= shift + 1; assert(x == 0);
+        x += shift + 1; assert(x == 0);
+    }
 
-    const i = saturated!int(11);
-    assert(i.sizeof == 4);
-
-    const l = saturated!long(11);
-    assert(l.sizeof == 8);
+    foreach (T; TypeTuple!(byte, short, int, long,
+                           ubyte, ushort, uint, ulong))
+    {
+        saturatedTest!T();
+    }
 }
 
 /** Calculate Minimum.
