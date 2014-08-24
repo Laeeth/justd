@@ -39,6 +39,7 @@ import csunits: Bytes;
 import fs: FKind, isSymlink, isDir;
 import notnull: NotNull;
 import mathml;
+import languages;
 
 import traits_ex: isCallableWith;
 
@@ -357,21 +358,41 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Monospaced. */
     struct AsMonospaced(T...) { T args; } auto asMonospaced(T...)(T args) { return AsMonospaced!T(args); }
 
+    enum Usage { definition, reference }
+
     /** Code. */
-    struct AsCode(T...)
+    struct AsCode(Lang lang_ = Lang.unknown, T...)
     {
         this(T args) { this.args = args; }
         T args;
+        static lang = lang_;
         string language;
+        Usage usage;
         auto ref setLanguage(string language)
         {
             this.language = language;
             return this;
         }
     }
-    auto ref asCode(T...)(T args) { return AsCode!T(args); }
-    auto ref asKeyword(T...)(T args) { return AsCode!T(args); } // Emacs: font-lock-keyword-face
-    auto ref asType(T...)(T args) { return AsCode!T(args); } // Emacs: font-lock-type-face
+    auto ref asCode(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
+    auto ref asKeyword(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-keyword-face
+    auto ref asType(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-type-face
+    auto ref asConstant(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-constant-face
+    auto ref asVariable(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-variable-name-face
+    auto ref asComment(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-comment-face
+    auto ref asFunction(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-function-name-face
+    auto ref asConstructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // constuctor
+    auto ref asDestructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // destructor
+    auto ref asBuiltin(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-builtin-name-face
+    auto ref asTemplate(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-builtin-name-face
+    auto ref asOperator(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-operator-face
+    auto ref asMacro(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
+    auto ref asAlias(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
+    auto ref asEnumeration(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
+    auto ref asEnumerator(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
+    alias asCtor = asConstructor;
+    alias asDtor = asDestructor;
+    alias asEnum = asEnumeration;
 
     /** Emphasized. */
     struct AsEmphasized(T...) { T args; } auto ref asEmphasized(T...)(T args) { return AsEmphasized!T(args); }
