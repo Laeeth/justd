@@ -98,7 +98,7 @@ unittest
 {
     auto x = randomized!dchar;
     dstring d = "alphaalphaalphaalphaalphaalphaalphaalphaalphaalpha";
-    auto r = d.randomize;
+    auto r = d.randomize; // TODO: Use Phobos function to check if string is legally coded.
 }
 
 /** Randomize Contents of $(D x). */
