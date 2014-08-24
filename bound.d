@@ -13,20 +13,17 @@
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
 
+    TODO: Make stuff @safe pure @nogc and in some case nothrow
+
     TODO: Implement overload for conditional operator p ? x1 : x2
     TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
           - Integer: +,-,*,^^,/
           - FloatingPoint: +,-,*,/,^^,sqrt,
 
-    TODO: Support char, wchar and dchar as elementtypes isSomeChar
-
-    TODO: Implicit conversions to unbounded integers?
+    TODO: Should implicit conversions to un-Bounds be allowed?
     Not in https://bitbucket.org/davidstone/bounded_integer.
-    const sb127 = saturated!byte(127);
-    const byte b = sb127; // TODO: this shouldn't compile if this is banned
-    TODO: Add static asserts using template-arguments?
+
     TODO: Do we need a specific underflow?
-    TODO: Add this module to std.numeric
     TODO: Merge with limited
     TODO: Is this a good idea to use?:
     import std.typecons;
@@ -34,11 +31,13 @@
     invariant() {
     enforce(_t >= low && _t <= high);
     wln("fdsf");
+
     TODO: If these things take to long to evaluted at compile-time maybe we need
     to build it into the language for example using a new syntax either using
     - integer(range:low..high, step:1)
     - int(range:low..high, step:1)
     - num(range:low..high, step:1)
+
     TODO: Use
     V saveOp(string op, V)(V x, V y) pure @save @nogc if(isIntegral!V
     && (op=="+" || op=="-" || op=="<<" || op=="*"))
@@ -71,7 +70,7 @@
 module bound;
 
 import std.conv: to;
-import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric, isSomeChar, isScalarType;
+import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric, isSomeChar, isScalarType, isBoolean;
 import std.stdint: intmax_t;
 import std.exception: assertThrown;
 
@@ -104,10 +103,17 @@ class BoundOverflowException : Exception
 */
 enum isCTEable(alias expr) = __traits(compiles, { enum id = expr; });
 
-/** Check if type $(D T) can wrapped in a $(D Bounded).
+/** Check if Type $(D T) can wrapped in a $(D Bounded).
  */
 enum isBoundable(T) = isScalarType!T;
 
+/** Check if Types $(D T) and $(D U) can wrapped in a $(D Bounded).
+ */
+enum areBoundable(T, U) = (isBoundable!T &&
+                           isBoundable!U);
+
+/** Check if Expression $(D expr) is a compile-time expression with a Boundable type.
+ */
 enum isCTBoundable(alias expr) = (isBoundable!(typeof(expr)) &&
                                   isCTEable!expr);
 
@@ -134,7 +140,7 @@ template PackedNumericType(alias expr) if (isCTBoundable!expr)
             else { alias PackedNumericType = Type; }
         }
     }
-    else static if (isFloatingPoint!Type)
+    else // no special handling for Boolean, FloatingPoint, SomeChar for now
     {
         alias PackedNumericType = Type;
     }
@@ -147,8 +153,8 @@ template PackedNumericType(alias expr) if (isCTBoundable!expr)
 template BoundsType(alias low,
                     alias high,
                     bool packed = true,
-                    bool signed = false) if (isCTBoundable!(low) &&
-                                             isCTBoundable!(high))
+                    bool signed = false) if (isCTBoundable!low &&
+                                             isCTBoundable!high)
 {
     static assert(low != high,
                   "low == high: use an enum instead");
@@ -202,12 +208,33 @@ template BoundsType(alias low,
     {
         alias BoundsType = CommonType!(LowType, HighType);
     }
+    else static if (isSomeChar!LowType &&
+                    isSomeChar!HighType)
+    {
+        alias BoundsType = CommonType!(LowType, HighType);
+    }
+    else static if (isBoolean!LowType &&
+                    isBoolean!HighType)
+    {
+        alias BoundsType = CommonType!(LowType, HighType);
+    }
+    else
+    {
+        static assert(false, "Cannot construct a bound using types " ~ LowType.stringof ~ " and " ~ HighType.stringof);
+    }
 }
 
 unittest
 {
+    assertThrown(('a'.bound!(false, true)));
+    assertThrown((false.bound!('a', 'z')));
+    //wln(false.bound!('a', 'z')); // TODO: Should this give compile-time error?
+
     static assert(!__traits(compiles, { alias IBT = BoundsType!(0, 0); }));  // disallow
     static assert(!__traits(compiles, { alias IBT = BoundsType!(1, 0); })); // disallow
+
+    static assert(is(typeof(false.bound!(false, true)) == Bound!(bool, false, true)));
+    static assert(is(typeof('p'.bound!('a', 'z')) == Bound!(char, 'a', 'z')));
 
     // low < 0
     static assert(is(BoundsType!(-1, 0, true, true) == byte));
@@ -276,19 +303,13 @@ struct Bound(V,
     static auto max() @property @safe pure nothrow { return optional ? high - 1 : high; }
 
     /** Construct from unbounded value $(D rhs). */
-    this(U, string file = __FILE__, int line = __LINE__)(U rhs) if ((isIntegral!V &&
-                                                                     isIntegral!U) ||
-                                                                    (isFloatingPoint!V &&
-                                                                     isFloatingPoint!U))
+    this(U, string file = __FILE__, int line = __LINE__)(U rhs) if (areBoundable!(V, U))
     {
         checkAssign!(U, file, line)(rhs);
         this._value = cast(V)(rhs - low);
     }
     /** Assigne from unbounded value $(D rhs). */
-    auto opAssign(U, string file = __FILE__, int line = __LINE__)(U rhs) if ((isIntegral!V &&
-                                                                              isIntegral!U) ||
-                                                                             (isFloatingPoint!V &&
-                                                                              isFloatingPoint!U))
+    auto opAssign(U, string file = __FILE__, int line = __LINE__)(U rhs) if (areBoundable!(V, U))
     {
         checkAssign!(U, file, line)(rhs);
         _value = rhs - low;
@@ -509,8 +530,8 @@ template bound(alias low,
                bool optional = false,
                bool exceptional = true,
                bool packed = true,
-               bool signed = false) if (isCTBoundable!(low) &&
-                                        isCTBoundable!(high))
+               bool signed = false) if (isCTBoundable!low &&
+                                        isCTBoundable!high)
 {
     alias V = BoundsType!(low, high, packed, signed); // ValueType
     alias C = CommonType!(typeof(low),
@@ -524,11 +545,6 @@ template bound(alias low,
     {
         return Bound!(V, low, high, optional, exceptional, packed, signed)(value);
     }
-}
-
-unittest
-{
-    /* auto x = bound!('a', 'b'); */
 }
 
 unittest
@@ -561,20 +577,12 @@ unittest
     b = int.min;
     assert(b.value == int.min);
 
-    import std.stdio: writefln;
-
-    writefln("%s", a);          // %s means that a is cast using \c toString()
-
     a -= 5;
-    assert(a.value == int.max - 5);
-    writefln("%s", a);          // should work
-
+    assert(a.value == int.max - 5); // ok
     a += 5;
-    writefln("%s", a);          // should workd
 
     assertThrown(a += 5);
 
-    /* test print */
     auto x = bound!(0, 1)(1);
     x += 1;
 }
