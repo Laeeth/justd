@@ -2882,6 +2882,17 @@ class GStats
     auto deepDensenessSum = Rational!ulong(0, 1);
     uint64_t densenessCount = 0;
 
+    FileOp fileOp = FileOp.none;
+
+    bool keyAsWord;
+    bool keyAsSymbol;
+
+    bool showTree = false;
+
+    bool useHTML = false;
+    bool browseOutput = false;
+    bool collectTypeHits = false;
+    bool colorFlag = false;
 }
 
 struct Results
@@ -3737,26 +3748,17 @@ class Scanner(Term)
     string[] addTags;
     string[] removeTags;
 
-    private {
-
-        bool useHTML = false;
-        bool browseOutput = false;
-        bool collectTypeHits = false;
-        bool colorFlag = false;
-
+    private
+    {
         GStats gstats = new GStats();
 
         ScanContext _scanContext = ScanContext.standard;
-        bool keyAsWord;
-        bool keyAsSymbol;
 
         KeyStrictness keyStrictness = KeyStrictness.standard;
         bool _keyAsAcronym = false;
         bool _keyAsExact = false;
 
         int _scanDepth = -1;
-
-        bool showTree = false;
 
         DirSorting subsSorting = DirSorting.onTimeLastModified;
         BuildType buildType = BuildType.none;
@@ -3768,8 +3770,6 @@ class Scanner(Term)
         bool _recache = false;
 
         bool _useNGrams = false;
-
-        FileOp _fileOp = FileOp.none;
 
         bool demangleELF = true;
 
@@ -3816,9 +3816,9 @@ class Scanner(Term)
 
                                     "verbose|v", "\tVerbose",  &_beVerbose,
 
-                                    "color|C", "\tColorize Output" ~ defaultDoc(colorFlag),  &colorFlag,
+                                    "color|C", "\tColorize Output" ~ defaultDoc(gstats.colorFlag),  &gstats.colorFlag,
                                     "types|T", "\tComma separated list (CSV) of file types/kinds to scan" ~ defaultDoc(includedTypes), &includedTypes,
-                                    "group-types|G", "\tCollect and group file types found" ~ defaultDoc(collectTypeHits), &collectTypeHits,
+                                    "group-types|G", "\tCollect and group file types found" ~ defaultDoc(gstats.collectTypeHits), &gstats.collectTypeHits,
 
                                     "i", "\tCase-Fold, Case-Insensitive" ~ defaultDoc(_caseFold), &_caseFold,
                                     "k", "\tShow Skipped Directories and Files" ~ defaultDoc(_showSkipped), &_showSkipped,
@@ -3828,8 +3828,8 @@ class Scanner(Term)
                                     // Contexts
                                     "context|x", "\tComma Separated List of Contexts. Either: " ~ enumDoc!ScanContext, &_scanContext,
 
-                                    "word|w", "\tSearch for key as a complete Word (A Letter followed by more Letters and Digits)." ~ defaultDoc(keyAsWord), &keyAsWord,
-                                    "symbol|ident|id|s", "\tSearch for key as a complete Symbol (Identifier)" ~ defaultDoc(keyAsSymbol), &keyAsSymbol,
+                                    "word|w", "\tSearch for key as a complete Word (A Letter followed by more Letters and Digits)." ~ defaultDoc(gstats.keyAsWord), &gstats.keyAsWord,
+                                    "symbol|ident|id|s", "\tSearch for key as a complete Symbol (Identifier)" ~ defaultDoc(gstats.keyAsSymbol), &gstats.keyAsSymbol,
                                     "acronym|a", "\tSearch for key as an acronym (relaxed)" ~ defaultDoc(_keyAsAcronym), &_keyAsAcronym,
                                     "exact", "\tSearch for key only with exact match (strict)" ~ defaultDoc(_keyAsExact), &_keyAsExact,
 
@@ -3855,7 +3855,7 @@ class Scanner(Term)
                                     "add-tag", "\tAdd tag string(s) to matching files" ~ defaultDoc(addTags), &addTags,
                                     "remove-tag", "\tAdd tag string(s) to matching files" ~ defaultDoc(removeTags), &removeTags,
 
-                                    "tree|W", "\tShow Scanned Tree and Followed Symbolic Links" ~ defaultDoc(showTree), &showTree,
+                                    "tree|W", "\tShow Scanned Tree and Followed Symbolic Links" ~ defaultDoc(gstats.showTree), &gstats.showTree,
                                     "sort|S", "\tDirectory contents sorting order. Either: " ~ enumDoc!DirSorting, &subsSorting,
                                     "build", "\tBuild Source Code. Either: " ~ enumDoc!BuildType, &buildType,
 
@@ -3864,17 +3864,17 @@ class Scanner(Term)
                                     "cache-file|F", "\tFile System Tree Cache File" ~ defaultDoc(_cacheFile), &_cacheFile,
                                     "recache", "\tSkip initial load of cache from disk" ~ defaultDoc(_recache), &_recache,
 
-                                    "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FileOp, &_fileOp,
+                                    "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FileOp, &gstats.fileOp,
 
                                     "demangle-elf", "\tDemangle ELF files.", &demangleELF,
 
                                     "use-ngrams", "\tUse NGrams to cache statistics and thereby speed up search" ~ defaultDoc(_useNGrams), &_useNGrams,
 
-                                    "html|H", "\tFormat output as HTML" ~ defaultDoc(useHTML), &useHTML,
+                                    "html|H", "\tFormat output as HTML" ~ defaultDoc(gstats.useHTML), &gstats.useHTML,
                                     "browse|B", ("\tFormat output as HTML to a temporary file" ~
                                                  defaultDoc(_cacheFile) ~
                                                  " and open it with default Web browser" ~
-                                                 defaultDoc(browseOutput)), &browseOutput,
+                                                 defaultDoc(gstats.browseOutput)), &gstats.browseOutput,
 
                                     "author", "\tPrint name of\n"~"\tthe author",
                                     delegate() { writeln("Per Nordlöw"); }
@@ -3917,10 +3917,10 @@ class Scanner(Term)
         }
 
         // Output Handling
-        if (browseOutput)
+        if (gstats.browseOutput)
         {
-            useHTML = true;
-            immutable ext = useHTML ? "html" : "results.txt";
+            gstats.useHTML = true;
+            immutable ext = gstats.useHTML ? "html" : "results.txt";
             import std.uuid: randomUUID;
             outFile = ioFile("/tmp/fs-" ~ randomUUID().toString() ~
                              "." ~ ext,
@@ -3951,10 +3951,10 @@ class Scanner(Term)
 
         auto viz = new Viz(outFile,
                            &term,
-                           showTree,
-                           useHTML ? VizForm.HTML : VizForm.textAsciiDocUTF8,
-                           colorFlag,
-                           !useHTML, // only use if HTML
+                           gstats.showTree,
+                           gstats.useHTML ? VizForm.HTML : VizForm.textAsciiDocUTF8,
+                           gstats.colorFlag,
+                           !gstats.useHTML, // only use if HTML
                            true, // TODO: Only set if in debug mode
             );
 
@@ -4021,14 +4021,14 @@ class Scanner(Term)
             if (_keyAsAcronym)
             {
                 asNote = (" as " ~ exactNote ~
-                          (keyAsWord ? "word" : "symbol") ~
+                          (gstats.keyAsWord ? "word" : "symbol") ~
                           " acronym" ~ keysPluralExt);
             }
-            else if (keyAsSymbol)
+            else if (gstats.keyAsSymbol)
             {
                 asNote = " as " ~ exactNote ~ "symbol" ~ keysPluralExt;
             }
-            else if (keyAsWord)
+            else if (gstats.keyAsWord)
             {
                 asNote = " as " ~ exactNote ~ "word" ~ keysPluralExt;
             }
@@ -4138,15 +4138,15 @@ class Scanner(Term)
                     if (_keyAsAcronym)
                     {
                         viz.ppln(("No acronym matches for key" ~ keysString ~ `"` ~
-                                  (keyAsSymbol ? " as symbol" : "") ~
+                                  (gstats.keyAsSymbol ? " as symbol" : "") ~
                                   " found in files of type"));
                     }
                     else if (!_keyAsExact)
                     {
                         viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
-                                  (keyAsSymbol ? " as symbol" : "") ~
+                                  (gstats.keyAsSymbol ? " as symbol" : "") ~
                                   " found" ~ incKindsNote ~
-                                  ". Relaxing scan to" ~ (keyAsSymbol ? " symbol" : "") ~ " acronym match."));
+                                  ". Relaxing scan to" ~ (gstats.keyAsSymbol ? " symbol" : "") ~ " acronym match."));
                         _keyAsAcronym = true;
 
                         foreach (topDir; _topDirs)
@@ -4244,7 +4244,7 @@ class Scanner(Term)
             results.noBytesUnreadable += dent.size;
             if (_showSkipped)
             {
-                if (showTree)
+                if (gstats.showTree)
                 {
                     auto parentDir = file.parent;
                     immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
@@ -4266,7 +4266,7 @@ class Scanner(Term)
         auto parentDir = regfile.parent;
         if (_showSkipped)
         {
-            if (showTree)
+            if (gstats.showTree)
             {
                 immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                 viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
@@ -4310,7 +4310,7 @@ class Scanner(Term)
             foreach (kindIndex, kind; gstats.binFKindsByExt[ext])
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
+                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
                 if (hit)
                 {
                     printSkipped(viz, regfile, ext, subIndex, nnKind, hit,
@@ -4325,12 +4325,12 @@ class Scanner(Term)
             foreach (kindIndex, kind; gstats.binFKinds) // Iterate each kind
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
+                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
                 if (hit)
                 {
                     if (_showSkipped)
                     {
-                        if (showTree)
+                        if (gstats.showTree)
                         {
                             immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                             viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
@@ -4380,7 +4380,7 @@ class Scanner(Term)
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
+                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4396,7 +4396,7 @@ class Scanner(Term)
             foreach (kind; incKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, collectTypeHits, gstats.allKindsById);
+                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4428,7 +4428,7 @@ class Scanner(Term)
         import std.ascii: newline;
 
         auto thisFace = stdFace;
-        if (colorFlag)
+        if (gstats.colorFlag)
         {
             if (ScanContext.fileName)
             {
@@ -4471,7 +4471,7 @@ class Scanner(Term)
                     if (_keyAsAcronym) // acronym search
                     {
                         auto hit = (cast(immutable ubyte[])rest).findAcronymAt(key,
-                                                                               keyAsSymbol ? FindContext.inSymbol : FindContext.inWord);
+                                                                               gstats.keyAsSymbol ? FindContext.inSymbol : FindContext.inWord);
                         if (!hit[0].empty)
                         {
                             acronymOffsets = hit[1];
@@ -4489,14 +4489,14 @@ class Scanner(Term)
 
                     if (offKB >= 0) // if hit
                     {
-                        if (!showTree && ctx == ScanContext.fileName)
+                        if (!gstats.showTree && ctx == ScanContext.fileName)
                         {
                             viz.pp(parentDir, dirSeparator);
                         }
 
                         // Check Context
-                        if ((keyAsSymbol && !isSymbolASCII(rest, offKB, offKE)) ||
-                            (keyAsWord   && !isWordASCII  (rest, offKB, offKE)))
+                        if ((gstats.keyAsSymbol && !isSymbolASCII(rest, offKB, offKE)) ||
+                            (gstats.keyAsWord   && !isWordASCII  (rest, offKB, offKE)))
                         {
                             rest = rest[offKE..$]; // move forward in line
                             continue;
@@ -4517,7 +4517,7 @@ class Scanner(Term)
                             }
                             else
                             {
-                                if (showTree)
+                                if (gstats.showTree)
                                 {
                                     viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ");
                                 }
@@ -4636,7 +4636,7 @@ class Scanner(Term)
         //             immutable offEOL = (cntEOL == -1 ? // if no hit
         //                                 src.length :   // end of file
         //                                 offHit + cntEOL); // normal case
-        //             viz.pp(faze(asPath(useHTML, dent.name), pathFace));
+        //             viz.pp(faze(asPath(gstats.useHTML, dent.name), pathFace));
         //             viz.ppln(":", rowHit + 1,
         //                                                                               ":", colHit + 1,
         //                                                                               ":", cast(string)src[offBOL..offEOL]);
@@ -4654,23 +4654,41 @@ class Scanner(Term)
         //     immutable hit1 = src.find(keys[0]);
         //     if (!hit1.empty)
         //     {
-        //         viz.ppln(asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
+        //         viz.ppln(asPath(gstats.useHTML, dent.name[2..$]), ":1: HIT offset: ", hit1.length);
         //     }
         //     break;
         // // case 2:
         // //     immutable hit2 = src.find(keys[0], keys[1]); // find two keys
-        // //     if (!hit2[0].empty) { viz.ppln(asPath(useHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
-        // //     if (!hit2[1].empty) { viz.ppln(asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
+        // //     if (!hit2[0].empty) { viz.ppln(asPath(gstats.useHTML, dent.name[2..$]), ":1: HIT offset: ", hit2[0].length); }
+        // //     if (!hit2[1].empty) { viz.ppln(asPath(gstats.useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit2[1].length); }
         // //     break;
         // // case 3:
         // //     immutable hit3 = src.find(keys[0], keys[1], keys[2]); // find two keys
         // //     if (!hit3.empty)
         //        {
-        // //         viz.ppln(asPath(useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
+        // //         viz.ppln(asPath(gstats.useHTML, dent.name[2..$]) , ":1: HIT offset: ", hit1.length);
         // //     }
         // //     break;
         // }
         return hitCount;
+    }
+
+    /** Process Regular File $(D theRegFile). */
+    void processRegFile(Viz viz,
+                        NotNull!Dir topDir,
+                        NotNull!RegFile theRegFile,
+                        NotNull!Dir parentDir,
+                        in string[] keys,
+                        ref Symlink[] fromSymlinks,
+                        size_t subIndex)
+    {
+        scanRegFile(viz,
+                    topDir,
+                    theRegFile,
+                    parentDir,
+                    keys,
+                    fromSymlinks,
+                    subIndex);
     }
 
     /** Search for Keys $(D keys) in Regular File $(D theRegFile). */
@@ -4727,7 +4745,7 @@ class Scanner(Term)
                 enum minFileSize = 256; // minimum size of file for discardal.
                 immutable bool doBist = theRegFile.size > minFileSize;
                 immutable bool doNGram = (_useNGrams &&
-                                          (!keyAsSymbol) &&
+                                          (!gstats.keyAsSymbol) &&
                                           theRegFile.size > minFileSize);
                 immutable bool doBitStatus = true;
 
@@ -4911,7 +4929,7 @@ class Scanner(Term)
                 auto targetDent = DirEntry(targetPath);
                 auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent.isDir);
 
-                if (showTree)
+                if (gstats.showTree)
                 {
                     viz.ppln("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ",
                              theSymlink,
@@ -4931,7 +4949,7 @@ class Scanner(Term)
 
                 if      (auto targetRegFile = cast(RegFile)targetFile)
                 {
-                    scanRegFile(viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
+                    processRegFile(viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
                 }
                 else if (auto targetDir = cast(Dir)targetFile)
                 {
@@ -4956,7 +4974,7 @@ class Scanner(Term)
 
                 foreach (ix, fromSymlink; fromSymlinks)
                 {
-                    if (showTree && ix == 0)
+                    if (gstats.showTree && ix == 0)
                     {
                         immutable intro = "├";
                         viz.pp("│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ",
@@ -5003,7 +5021,7 @@ class Scanner(Term)
         try
         {
             size_t subIndex = 0;
-            if (showTree)
+            if (gstats.showTree)
             {
                 immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
 
@@ -5035,7 +5053,7 @@ class Scanner(Term)
                 /* TODO: Functionize to scanFile() */
                 if (auto regfile = cast(RegFile)sub)
                 {
-                    scanRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
+                    processRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
                 }
                 else if (auto subDir = cast(Dir)sub)
                 {
@@ -5045,7 +5063,7 @@ class Scanner(Term)
                         {
                             if (_showSkipped)
                             {
-                                if (showTree)
+                                if (gstats.showTree)
                                 {
                                     immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
                                     viz.pp("│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
@@ -5077,7 +5095,7 @@ class Scanner(Term)
                 }
                 else
                 {
-                    if (showTree) { viz.ppendl(); }
+                    if (gstats.showTree) { viz.ppendl(); }
                 }
                 ++subIndex;
 
