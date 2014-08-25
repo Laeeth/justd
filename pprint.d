@@ -358,20 +358,15 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     /** Monospaced. */
     struct AsMonospaced(T...) { T args; } auto asMonospaced(T...)(T args) { return AsMonospaced!T(args); }
 
-    enum Usage { definition, reference }
-    enum CodeTokenId { unknown, keyword, type, constant, comment,
-                       variableName, functionName, builtinName, templateName, macroName, aliasName,
-                       enumeration, enumerator,
-                       constructor, destructors, operator }
-
     /** Code. */
-    struct AsCode(Lang lang_ = Lang.unknown, T...)
+    struct AsCode(TokenId token = TokenId.unknown,
+                  Lang lang_ = Lang.unknown, T...)
     {
         this(T args) { this.args = args; }
         T args;
         static lang = lang_;
         string language;
-        CodeTokenId tokenId;
+        TokenId tokenId;
         Usage usage;
         auto ref setLanguage(string language)
         {
@@ -379,22 +374,24 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
             return this;
         }
     }
-    auto ref asCode(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
-    auto ref asKeyword(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-keyword-face
-    auto ref asType(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-type-face
-    auto ref asConstant(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-constant-face
-    auto ref asVariable(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-variable-name-face
-    auto ref asComment(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-comment-face
-    auto ref asFunction(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-function-name-face
-    auto ref asConstructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // constuctor
-    auto ref asDestructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // destructor
-    auto ref asBuiltin(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-builtin-name-face
-    auto ref asTemplate(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-builtin-name-face
-    auto ref asOperator(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); } // Emacs: font-lock-operator-face
-    auto ref asMacro(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
-    auto ref asAlias(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
-    auto ref asEnumeration(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
-    auto ref asEnumerator(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(lang_, T)(args); }
+
+    /* Instantiators */
+    auto ref asCode(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.unknown, lang_, T)(args); }
+    auto ref asKeyword(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.keyword, lang_, T)(args); } // Emacs: font-lock-keyword-face
+    auto ref asType(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.type, lang_, T)(args); } // Emacs: font-lock-type-face
+    auto ref asConstant(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.constant, lang_, T)(args); } // Emacs: font-lock-constant-face
+    auto ref asVariable(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.variableName, lang_, T)(args); } // Emacs: font-lock-variable-name-face
+    auto ref asComment(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.comment, lang_, T)(args); } // Emacs: font-lock-comment-face
+    auto ref asFunction(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.functionName, lang_, T)(args); } // Emacs: font-lock-function-name-face
+    auto ref asConstructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.constructor, lang_, T)(args); } // constuctor
+    auto ref asDestructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.destructor, lang_, T)(args); } // destructor
+    auto ref asBuiltin(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.builtinName, lang_, T)(args); } // Emacs: font-lock-builtin-name-face
+    auto ref asTemplate(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.templateName, lang_, T)(args); } // Emacs: font-lock-builtin-name-face
+    auto ref asOperator(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.operator, lang_, T)(args); } // Emacs: font-lock-operator-face
+    auto ref asMacro(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.macroName, lang_, T)(args); }
+    auto ref asAlias(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.aliasName, lang_, T)(args); }
+    auto ref asEnumeration(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.enumeration, lang_, T)(args); }
+    auto ref asEnumerator(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.enumerator, lang_, T)(args); }
     alias asCtor = asConstructor;
     alias asDtor = asDestructor;
     alias asEnum = asEnumeration;

@@ -56,3 +56,11 @@ enum MarkupLang
     HTML,
     MathML
 }
+
+enum Usage { definition, reference }
+
+enum TokenId { unknown,
+               keyword, type, constant, comment,
+               variableName, functionName, builtinName, templateName, macroName, aliasName,
+               enumeration, enumerator,
+               constructor, destructors, operator }
