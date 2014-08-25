@@ -2850,6 +2850,9 @@ class GStats
         skippedDirKindsMap.rehash;
     }
 
+    ScanContext scanContext = ScanContext.standard;
+    KeyStrictness keyStrictness = KeyStrictness.standard;
+
     bool showNameDups = false;
     bool showTreeContentDups = false;
     bool showFileContentDups = false;
@@ -2884,8 +2887,10 @@ class GStats
 
     FileOp fileOp = FileOp.none;
 
-    bool keyAsWord;
-    bool keyAsSymbol;
+    bool keyAsWord = false;
+    bool keyAsSymbol = false;
+    bool keyAsAcronym = false;
+    bool keyAsExact = false;
 
     bool showTree = false;
 
@@ -2893,6 +2898,23 @@ class GStats
     bool browseOutput = false;
     bool collectTypeHits = false;
     bool colorFlag = false;
+
+    int scanDepth = -1;
+
+    bool demangleELF = true;
+
+    bool recache = false;
+
+    bool useNGrams = false;
+
+    PathFormat pathFormat = PathFormat.relative;
+
+    DirSorting subsSorting = DirSorting.onTimeLastModified;
+    BuildType buildType = BuildType.none;
+    DuplicatesContext duplicatesContext = DuplicatesContext.internal;
+
+    Dir[] topDirs;
+    Dir rootDir;
 }
 
 struct Results
@@ -3752,29 +3774,7 @@ class Scanner(Term)
     {
         GStats gstats = new GStats();
 
-        ScanContext _scanContext = ScanContext.standard;
-
-        KeyStrictness keyStrictness = KeyStrictness.standard;
-        bool _keyAsAcronym = false;
-        bool _keyAsExact = false;
-
-        int _scanDepth = -1;
-
-        DirSorting subsSorting = DirSorting.onTimeLastModified;
-        BuildType buildType = BuildType.none;
-        DuplicatesContext duplicatesContext = DuplicatesContext.internal;
-
-        PathFormat _pathFormat = PathFormat.relative;
-
         string _cacheFile = "~/.cache/fs-root.msgpack";
-        bool _recache = false;
-
-        bool _useNGrams = false;
-
-        bool demangleELF = true;
-
-        Dir[] _topDirs;
-        Dir _rootDir;
 
         uid_t _uid;
         gid_t _gid;
@@ -3823,22 +3823,22 @@ class Scanner(Term)
                                     "i", "\tCase-Fold, Case-Insensitive" ~ defaultDoc(_caseFold), &_caseFold,
                                     "k", "\tShow Skipped Directories and Files" ~ defaultDoc(_showSkipped), &_showSkipped,
                                     "d", "\tRoot Directory(s) of tree(s) to scan, defaulted to current directory" ~ defaultDoc(_topDirNames), &_topDirNames,
-                                    "depth", "\tDepth of tree to scan, defaulted to unlimited (-1) depth" ~ defaultDoc(_scanDepth), &_scanDepth,
+                                    "depth", "\tDepth of tree to scan, defaulted to unlimited (-1) depth" ~ defaultDoc(gstats.scanDepth), &gstats.scanDepth,
 
                                     // Contexts
-                                    "context|x", "\tComma Separated List of Contexts. Either: " ~ enumDoc!ScanContext, &_scanContext,
+                                    "context|x", "\tComma Separated List of Contexts. Either: " ~ enumDoc!ScanContext, &gstats.scanContext,
 
                                     "word|w", "\tSearch for key as a complete Word (A Letter followed by more Letters and Digits)." ~ defaultDoc(gstats.keyAsWord), &gstats.keyAsWord,
                                     "symbol|ident|id|s", "\tSearch for key as a complete Symbol (Identifier)" ~ defaultDoc(gstats.keyAsSymbol), &gstats.keyAsSymbol,
-                                    "acronym|a", "\tSearch for key as an acronym (relaxed)" ~ defaultDoc(_keyAsAcronym), &_keyAsAcronym,
-                                    "exact", "\tSearch for key only with exact match (strict)" ~ defaultDoc(_keyAsExact), &_keyAsExact,
+                                    "acronym|a", "\tSearch for key as an acronym (relaxed)" ~ defaultDoc(gstats.keyAsAcronym), &gstats.keyAsAcronym,
+                                    "exact", "\tSearch for key only with exact match (strict)" ~ defaultDoc(gstats.keyAsExact), &gstats.keyAsExact,
 
                                     "name-duplicates|snd", "\tDetect & Show file name duplicates" ~ defaultDoc(gstats.showNameDups), &gstats.showNameDups,
                                     "hardlink-duplicates|inode-duplicates|shd", "\tDetect & Show multiple links to same inode" ~ defaultDoc(gstats.showLinkDups), &gstats.showLinkDups,
                                     "file-content-duplicates|scd", "\tDetect & Show file contents duplicates" ~ defaultDoc(gstats.showFileContentDups), &gstats.showFileContentDups,
                                     "tree-content-duplicates", "\tDetect & Show directory tree contents duplicates" ~ defaultDoc(gstats.showTreeContentDups), &gstats.showTreeContentDups,
                                     "duplicates|D", "\tDetect & Show file name and contents duplicates" ~ defaultDoc(gstats.showAnyDups), &gstats.showAnyDups,
-                                    "duplicates-context", "\tDuplicates Detection Context. Either: " ~ enumDoc!DuplicatesContext, &duplicatesContext,
+                                    "duplicates-context", "\tDuplicates Detection Context. Either: " ~ enumDoc!DuplicatesContext, &gstats.duplicatesContext,
                                     "hardlink-content-duplicates", "\tConvert all content duplicates into hardlinks (common inode) if they reside on the same file system" ~ defaultDoc(gstats.linkContentDups), &gstats.linkContentDups,
 
                                     "usage", "\tShow disk usage (tree size) of scanned directories" ~ defaultDoc(gstats.showUsage), &gstats.showUsage,
@@ -3856,19 +3856,19 @@ class Scanner(Term)
                                     "remove-tag", "\tAdd tag string(s) to matching files" ~ defaultDoc(removeTags), &removeTags,
 
                                     "tree|W", "\tShow Scanned Tree and Followed Symbolic Links" ~ defaultDoc(gstats.showTree), &gstats.showTree,
-                                    "sort|S", "\tDirectory contents sorting order. Either: " ~ enumDoc!DirSorting, &subsSorting,
-                                    "build", "\tBuild Source Code. Either: " ~ enumDoc!BuildType, &buildType,
+                                    "sort|S", "\tDirectory contents sorting order. Either: " ~ enumDoc!DirSorting, &gstats.subsSorting,
+                                    "build", "\tBuild Source Code. Either: " ~ enumDoc!BuildType, &gstats.buildType,
 
-                                    "path-format", "\tFormat of paths. Either: " ~ enumDoc!PathFormat ~ "." ~ defaultDoc(_pathFormat), &_pathFormat,
+                                    "path-format", "\tFormat of paths. Either: " ~ enumDoc!PathFormat ~ "." ~ defaultDoc(gstats.pathFormat), &gstats.pathFormat,
 
                                     "cache-file|F", "\tFile System Tree Cache File" ~ defaultDoc(_cacheFile), &_cacheFile,
-                                    "recache", "\tSkip initial load of cache from disk" ~ defaultDoc(_recache), &_recache,
+                                    "gstats.recache", "\tSkip initial load of cache from disk" ~ defaultDoc(gstats.recache), &gstats.recache,
 
                                     "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FileOp, &gstats.fileOp,
 
-                                    "demangle-elf", "\tDemangle ELF files.", &demangleELF,
+                                    "demangle-elf", "\tDemangle ELF files.", &gstats.demangleELF,
 
-                                    "use-ngrams", "\tUse NGrams to cache statistics and thereby speed up search" ~ defaultDoc(_useNGrams), &_useNGrams,
+                                    "use-ngrams", "\tUse NGrams to cache statistics and thereby speed up search" ~ defaultDoc(gstats.useNGrams), &gstats.useNGrams,
 
                                     "html|H", "\tFormat output as HTML" ~ defaultDoc(gstats.useHTML), &gstats.useHTML,
                                     "browse|B", ("\tFormat output as HTML to a temporary file" ~
@@ -3898,11 +3898,11 @@ class Scanner(Term)
         }
         if (_topDirNames == ["."])
         {
-            _pathFormat = PathFormat.relative;
+            gstats.pathFormat = PathFormat.relative;
         }
         else
         {
-            _pathFormat = PathFormat.absolute;
+            gstats.pathFormat = PathFormat.absolute;
         }
         foreach (ref topName; _topDirNames)
         {
@@ -3958,11 +3958,11 @@ class Scanner(Term)
                            true, // TODO: Only set if in debug mode
             );
 
-        if (_useNGrams &&
+        if (gstats.useNGrams &&
             (!keys.empty) &&
             keysXGramsUnion.empty)
         {
-            _useNGrams = false;
+            gstats.useNGrams = false;
             viz.ppln("Keys must be at least of length " ~
                      to!string(NGramOrder + 1) ~
                      " in order for " ~
@@ -4016,9 +4016,9 @@ class Scanner(Term)
             incKindsNote = " in " ~ (gstats.incKinds ?
                                      gstats.incKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
             immutable underNote = " under \"" ~ (_topDirNames.reduce!"a ~ ',' ~ b") ~ "\"";
-            const exactNote = _keyAsExact ? "exact " : "";
+            const exactNote = gstats.keyAsExact ? "exact " : "";
             string asNote;
-            if (_keyAsAcronym)
+            if (gstats.keyAsAcronym)
             {
                 asNote = (" as " ~ exactNote ~
                           (gstats.keyAsWord ? "word" : "symbol") ~
@@ -4075,19 +4075,19 @@ class Scanner(Term)
         _gid = getgid();
 
         // Setup root directory
-        if (!_recache)
+        if (!gstats.recache)
         {
             GC.disable;
-            _rootDir = loadRootDirTree(viz, _cacheFile, gstats);
+            gstats.rootDir = loadRootDirTree(viz, _cacheFile, gstats);
             GC.enable;
         }
-        if (!_rootDir) // if first time
+        if (!gstats.rootDir) // if first time
         {
-            _rootDir = new Dir("/", gstats); // filesystem root directory. TODO: Make this uncopyable?
+            gstats.rootDir = new Dir("/", gstats); // filesystem root directory. TODO: Make this uncopyable?
         }
 
         // Scan for exact key match
-        _topDirs = getDirs(enforceNotNull(_rootDir), _topDirNames);
+        gstats.topDirs = getDirs(enforceNotNull(gstats.rootDir), _topDirNames);
 
         _currTime = Clock.currTime();
 
@@ -4096,7 +4096,7 @@ class Scanner(Term)
         GC.enable;
 
         GC.disable;
-        saveRootDirTree(viz, _rootDir, _cacheFile);
+        saveRootDirTree(viz, gstats.rootDir, _cacheFile);
         GC.enable;
 
         // Print statistics
@@ -4107,14 +4107,14 @@ class Scanner(Term)
                      string commaedKeysString)
     {
         viz.pp("Results".asH!2);
-        if (_topDirs)
+        if (gstats.topDirs)
         {
-            foreach (topIx, topDir; _topDirs)
+            foreach (topIx, topDir; gstats.topDirs)
             {
                 scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                 if (ctrlC)
                 {
-                    auto restDirs = _topDirs[topIx + 1..$];
+                    auto restDirs = gstats.topDirs[topIx + 1..$];
                     if (!restDirs.empty)
                     {
                         debug dln("Ctrl-C pressed: Skipping search of " ~ to!string(restDirs));
@@ -4135,21 +4135,21 @@ class Scanner(Term)
                 if (keys && _hitsCountTotal == 0)  // if keys given but no hit found
                 {
                     auto keysString = (keys.length >= 2 ? "s" : "") ~ " \"" ~ commaedKeysString;
-                    if (_keyAsAcronym)
+                    if (gstats.keyAsAcronym)
                     {
                         viz.ppln(("No acronym matches for key" ~ keysString ~ `"` ~
                                   (gstats.keyAsSymbol ? " as symbol" : "") ~
                                   " found in files of type"));
                     }
-                    else if (!_keyAsExact)
+                    else if (!gstats.keyAsExact)
                     {
                         viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
                                   (gstats.keyAsSymbol ? " as symbol" : "") ~
                                   " found" ~ incKindsNote ~
                                   ". Relaxing scan to" ~ (gstats.keyAsSymbol ? " symbol" : "") ~ " acronym match."));
-                        _keyAsAcronym = true;
+                        gstats.keyAsAcronym = true;
 
-                        foreach (topDir; _topDirs)
+                        foreach (topDir; gstats.topDirs)
                         {
                             scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                         }
@@ -4437,8 +4437,8 @@ class Scanner(Term)
         }
 
         // GNU Grep-Compatible File Name/Path Formatting
-        immutable displayedFileName = ((_pathFormat == PathFormat.relative &&
-                                        _topDirs.length == 1) ?
+        immutable displayedFileName = ((gstats.pathFormat == PathFormat.relative &&
+                                        gstats.topDirs.length == 1) ?
                                        "./" ~ theFile.name :
                                        theFile.path);
 
@@ -4468,7 +4468,7 @@ class Scanner(Term)
 
                     /* dln("key:", key, " line:", line); */
                     ptrdiff_t[] acronymOffsets;
-                    if (_keyAsAcronym) // acronym search
+                    if (gstats.keyAsAcronym) // acronym search
                     {
                         auto hit = (cast(immutable ubyte[])rest).findAcronymAt(key,
                                                                                gstats.keyAsSymbol ? FindContext.inSymbol : FindContext.inWord);
@@ -4704,9 +4704,9 @@ class Scanner(Term)
         results.noBytesTotalContents += theRegFile.size;
 
         // Scan name
-        if ((_scanContext == ScanContext.all ||
-             _scanContext == ScanContext.fileName ||
-             _scanContext == ScanContext.regularFileName) &&
+        if ((gstats.scanContext == ScanContext.all ||
+             gstats.scanContext == ScanContext.fileName ||
+             gstats.scanContext == ScanContext.regularFileName) &&
             !keys.empty)
         {
             immutable hitCountInName = scanForKeys(viz,
@@ -4716,8 +4716,8 @@ class Scanner(Term)
         }
 
         // Scan Contents
-        if ((_scanContext == ScanContext.all ||
-             _scanContext == ScanContext.fileContent) &&
+        if ((gstats.scanContext == ScanContext.all ||
+             gstats.scanContext == ScanContext.fileContent) &&
             (gstats.showFileContentDups ||
              !keys.empty) &&
             theRegFile.size != 0)        // non-empty file
@@ -4744,7 +4744,7 @@ class Scanner(Term)
                 // Super-Fast Key-File Bistogram Discardal. TODO: Trim scale factor to optimal value.
                 enum minFileSize = 256; // minimum size of file for discardal.
                 immutable bool doBist = theRegFile.size > minFileSize;
-                immutable bool doNGram = (_useNGrams &&
+                immutable bool doNGram = (gstats.useNGrams &&
                                           (!gstats.keyAsSymbol) &&
                                           theRegFile.size > minFileSize);
                 immutable bool doBitStatus = true;
@@ -4803,7 +4803,7 @@ class Scanner(Term)
                         // Fast discardal of files with no match
                         bool fastOk = true;
                         if (!_caseFold) { // if no relaxation of search
-                            if (_keyAsAcronym) // if no relaxation of search
+                            if (gstats.keyAsAcronym) // if no relaxation of search
                             {
                                 /* TODO: Reuse findAcronym in algorith_ex. */
                             }
@@ -4900,9 +4900,9 @@ class Scanner(Term)
         }
 
         // Scan name
-        if ((_scanContext == ScanContext.all ||
-             _scanContext == ScanContext.fileName ||
-             _scanContext == ScanContext.symlinkName) &&
+        if ((gstats.scanContext == ScanContext.all ||
+             gstats.scanContext == ScanContext.fileName ||
+             gstats.scanContext == ScanContext.symlinkName) &&
             !keys.empty)
         {
             scanForKeys(viz,
@@ -4927,7 +4927,7 @@ class Scanner(Term)
             theSymlink._targetStatus = SymlinkTargetStatus.present;
             if (_topDirNames.all!(a => !targetPath.startsWith(a))) { // if target path lies outside of all rootdirs
                 auto targetDent = DirEntry(targetPath);
-                auto targetFile = getFile(enforceNotNull(_rootDir), targetPath, targetDent.isDir);
+                auto targetFile = getFile(enforceNotNull(gstats.rootDir), targetPath, targetDent.isDir);
 
                 if (gstats.showTree)
                 {
@@ -4940,7 +4940,7 @@ class Scanner(Term)
                              asPath(targetFile),
                              faze(" outside of " ~ (_topDirNames.length == 1 ? "tree " : "all trees "),
                                   infoFace),
-                             asPath(_topDirs),
+                             asPath(gstats.topDirs),
                              faze(" is followed", infoFace));
                 }
 
@@ -5005,9 +5005,9 @@ class Scanner(Term)
         if (theDir.isRoot)  { results.reset(); }
 
         // scan in directory name
-        if ((_scanContext == ScanContext.all ||
-             _scanContext == ScanContext.fileName ||
-             _scanContext == ScanContext.dirName) &&
+        if ((gstats.scanContext == ScanContext.all ||
+             gstats.scanContext == ScanContext.fileName ||
+             gstats.scanContext == ScanContext.dirName) &&
             !keys.empty)
         {
             scanForKeys(viz,
@@ -5047,7 +5047,7 @@ class Scanner(Term)
             ++gstats.noScannedDirs;
             ++gstats.noScannedFiles;
 
-            auto subsSorted = theDir.subsSorted(subsSorting);
+            auto subsSorted = theDir.subsSorted(gstats.subsSorting);
             foreach (key, sub; subsSorted)
             {
                 /* TODO: Functionize to scanFile() */
@@ -5135,7 +5135,7 @@ class Scanner(Term)
                                            .array // evaluate to array to get .length below
             );
         F[] hits;
-        final switch (duplicatesContext)
+        final switch (gstats.duplicatesContext)
         {
         case DuplicatesContext.internal:
             if (dupFilesUnderAnyTopDirName.length >= 2)
