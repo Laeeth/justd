@@ -14,20 +14,23 @@ import std.traits: isScalarType, isFloatingPoint;
 enum HAlign { left, center, right }
 
 /** Generic case. */
-string toMathML(T)(T x) @trusted /** pure */ if (isScalarType!T &&
+string toMathML(T)(T x) @trusted /* pure nothrow */ if (isScalarType!T &&
                                                  !isFloatingPoint!T)
 {
     import std.conv: to;
     return to!string(x);
 }
 
+enum MLang { HTML, MathML };
+
 /** Floating-Point Case.
     See also: http://forum.dlang.org/thread/awkynfizwqjnbilgddbh@forum.dlang.org#post-awkynfizwqjnbilgddbh:40forum.dlang.org
     See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/mn
     See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/msup
  */
-string toMathML(T)(T x,
-                   bool forceExponentPlusSign = false) @trusted /** pure */ if (isFloatingPoint!T)
+string toML(T)(T x,
+               bool forceExponentPlusSign = false,
+               MLang mlang = MLang.HTML) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
     import std.conv: to;
     import std.algorithm: findSplit;
@@ -39,12 +42,16 @@ string toMathML(T)(T x,
                            parts[2][0] == '+') ? // if leading plus
                           parts[2][1..$] : // skip plus
                           parts[2]); // otherwise whole
-        return (`<math>` ~ mantissa ~ `&middot;` ~
-                `<msup>` ~
-                `<mn>10</mn>` ~
-                `<mn mathsize="80%">` ~ exponent ~ `</mn>`
-                `</msup>` ~
-                `</math>`);
+        final switch (mlang)
+        {
+            case MLang.HTML: return (mantissa ~ `&middot;` ~ `10` ~ `<msup">` ~ exponent ~ `</msup>`);
+            case MLang.MathML: return (`<math>` ~ mantissa ~ `&middot;` ~
+                                       `<msup>` ~
+                                       `<mn>10</mn>` ~
+                                       `<mn mathsize="80%">` ~ exponent ~ `</mn>`
+                                       `</msup>` ~
+                                       `</math>`);
+        }
         /* NOTE: This doesn't work in Firefox. Why? */
         /* return (`<math>` ~ parts[0] ~ `&middot;` ~ */
         /*         `<apply><power/>` ~ */
@@ -57,6 +64,18 @@ string toMathML(T)(T x,
     {
         return parts[0];
     }
+}
+
+auto toMathML(T)(T x,
+                 bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
+{
+    return toML(x, forceExponentPlusSign, MLang.HTML);
+}
+
+auto toHTML(T)(T x,
+               bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
+{
+    return toML(x, forceExponentPlusSign, MLang.MathML);
 }
 
 /**
