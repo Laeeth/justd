@@ -4704,13 +4704,13 @@ class Scanner(Term)
             if (!hit.empty)
             {
                 const fileOp = hit.front;
-                const cmd = fileOp[1];
+                const cmd = fileOp[1]; // command string
                 import std.range: chain;
                 import std.process: spawnProcess;
                 import std.algorithm: splitter;
                 dln("TODO: Performing operation ", to!string(cmd),
                     " on ", theRegFile.path,
-                    " by calling it using ", );
+                    " by calling it using ", cmd);
                 auto pid = spawnProcess(cmd.splitter(" ").array ~ [theRegFile.path]);
             }
         }
