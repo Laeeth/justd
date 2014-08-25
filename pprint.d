@@ -359,6 +359,10 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsMonospaced(T...) { T args; } auto asMonospaced(T...)(T args) { return AsMonospaced!T(args); }
 
     enum Usage { definition, reference }
+    enum CodeTokenId { unknown, keyword, type, constant, comment,
+                       variableName, functionName, builtinName, templateName, macroName, aliasName,
+                       enumeration, enumerator,
+                       constructor, destructors, operator }
 
     /** Code. */
     struct AsCode(Lang lang_ = Lang.unknown, T...)
@@ -367,6 +371,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
         T args;
         static lang = lang_;
         string language;
+        CodeTokenId tokenId;
         Usage usage;
         auto ref setLanguage(string language)
         {
