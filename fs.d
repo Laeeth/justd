@@ -328,6 +328,8 @@ enum FileOp
     byteCompile, // Byte compile
     run, // Run (Execute)
 
+    preprocess, // Preprocess C/C++/Objective-C (using cpp)
+
     /* VCS Operations */
     vcStatus,
 
@@ -1733,6 +1735,7 @@ class GStats
         srcFKinds ~= kindC;
         kindC.operations ~= tuple(FileOp.checkSyntax, "gcc -x c -fsyntax-only -c");
         kindC.operations ~= tuple(FileOp.checkSyntax, "clang -x c -fsyntax-only -c");
+        kindC.operations ~= tuple(FileOp.preprocess, "cpp");
         kindC.opers = opersC;
 
         static immutable keywordsCxx = (keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
@@ -1780,6 +1783,7 @@ class GStats
                                  FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         kindCxx.operations ~= tuple(FileOp.checkSyntax, "gcc -x c++ -fsyntax-only -c");
         kindCxx.operations ~= tuple(FileOp.checkSyntax, "clang -x c++ -fsyntax-only -c");
+        kindCxx.operations ~= tuple(FileOp.preprocess, "cpp");
         kindCxx.opers = opersCxx;
         srcFKinds ~= kindCxx;
         static immutable keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
