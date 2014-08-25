@@ -48,3 +48,11 @@ Lang language(string name)
         default:     return Lang.unknown;
     }
 }
+
+/** Markup Language */
+enum MarkupLang
+{
+    unknown,                    // Unknown: ?
+    HTML,
+    MathML
+}

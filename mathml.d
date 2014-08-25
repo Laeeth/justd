@@ -9,6 +9,7 @@ module mathml;
 
 import rational: Rational; // TODO: Can we turn this dep into a duck type dep?
 import std.traits: isScalarType, isFloatingPoint;
+import languages: MarkupLang;
 
 /** Horizontal Alignment. */
 enum HAlign { left, center, right }
@@ -21,16 +22,14 @@ string toMathML(T)(T x) @trusted /* pure nothrow */ if (isScalarType!T &&
     return to!string(x);
 }
 
-enum MLang { HTML, MathML };
-
-/** Return x in $(D MLang) format.
+/** Return x in $(D MarkupLang) format.
     See also: http://forum.dlang.org/thread/awkynfizwqjnbilgddbh@forum.dlang.org#post-awkynfizwqjnbilgddbh:40forum.dlang.org
     See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/mn
     See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/msup
  */
 string toML(T)(T x,
                bool forceExponentPlusSign = false,
-               MLang mlang = MLang.HTML) @trusted /* pure nothrow */ if (isFloatingPoint!T)
+               MarkupLang mlang = MarkupLang.HTML) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
     import std.conv: to;
     import std.algorithm: findSplit;
@@ -44,13 +43,16 @@ string toML(T)(T x,
                           parts[2]); // otherwise whole
         final switch (mlang)
         {
-            case MLang.HTML: return (mantissa ~ `&middot;` ~ `10` ~ `<msup">` ~ exponent ~ `</msup>`);
-            case MLang.MathML: return (`<math>` ~ mantissa ~ `&middot;` ~
-                                       `<msup>` ~
-                                       `<mn>10</mn>` ~
-                                       `<mn mathsize="80%">` ~ exponent ~ `</mn>`
-                                       `</msup>` ~
-                                       `</math>`);
+            case MarkupLang.HTML:
+            case MarkupLang.unknown:
+                return (mantissa ~ `&middot;` ~ `10` ~ `<msup">` ~ exponent ~ `</msup>`);
+            case MarkupLang.MathML:
+                return (`<math>` ~ mantissa ~ `&middot;` ~
+                        `<msup>` ~
+                        `<mn>10</mn>` ~
+                        `<mn mathsize="80%">` ~ exponent ~ `</mn>`
+                        `</msup>` ~
+                        `</math>`);
         }
         /* NOTE: This doesn't work in Firefox. Why? */
         /* return (`<math>` ~ parts[0] ~ `&middot;` ~ */
@@ -69,13 +71,13 @@ string toML(T)(T x,
 auto toMathML(T)(T x,
                  bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, forceExponentPlusSign, MLang.HTML);
+    return toML(x, forceExponentPlusSign, MarkupLang.HTML);
 }
 
 auto toHTML(T)(T x,
                bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, forceExponentPlusSign, MLang.MathML);
+    return toML(x, forceExponentPlusSign, MarkupLang.MathML);
 }
 
 /**
