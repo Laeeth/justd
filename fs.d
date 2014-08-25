@@ -3726,6 +3726,12 @@ struct OpAlias
     string opOrigin;
 }
 
+FKind tryLookupKindIn(RegFile regFile,
+                      FKind[SHA1Digest] kindsById)
+{
+    return kindsById[regFile._cstat.kindId];
+}
+
 /** File System Scanner. */
 class Scanner(Term)
 {
@@ -4680,7 +4686,8 @@ class Scanner(Term)
                         NotNull!Dir parentDir,
                         in string[] keys,
                         ref Symlink[] fromSymlinks,
-                        size_t subIndex)
+                        size_t subIndex,
+                        GStats gstats)
     {
         scanRegFile(viz,
                     topDir,
@@ -4689,6 +4696,24 @@ class Scanner(Term)
                     keys,
                     fromSymlinks,
                     subIndex);
+        // check if theRegFile has fileOp registered
+        const kind = theRegFile.tryLookupKindIn(gstats.allKindsById);
+        if (kind)
+        {
+            const hit = kind.operations.find!(a => a[0] == gstats.fileOp);
+            if (!hit.empty)
+            {
+                const fileOp = hit.front;
+                const cmd = fileOp[1];
+                import std.range: chain;
+                import std.process: spawnProcess;
+                import std.algorithm: splitter;
+                dln("TODO: Performing operation ", to!string(cmd),
+                    " on ", theRegFile.path,
+                    " by calling it using ", );
+                auto pid = spawnProcess(cmd.splitter(" ").array ~ [theRegFile.path]);
+            }
+        }
     }
 
     /** Search for Keys $(D keys) in Regular File $(D theRegFile). */
@@ -4949,7 +4974,7 @@ class Scanner(Term)
 
                 if      (auto targetRegFile = cast(RegFile)targetFile)
                 {
-                    processRegFile(viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0);
+                    processRegFile(viz, topDir, assumeNotNull(targetRegFile), parentDir, keys, fromSymlinks, 0, gstats);
                 }
                 else if (auto targetDir = cast(Dir)targetFile)
                 {
@@ -5053,7 +5078,7 @@ class Scanner(Term)
                 /* TODO: Functionize to scanFile() */
                 if (auto regfile = cast(RegFile)sub)
                 {
-                    processRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex);
+                    processRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex, gstats);
                 }
                 else if (auto subDir = cast(Dir)sub)
                 {
