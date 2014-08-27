@@ -7,6 +7,16 @@
 \usepackage{color}
 \usepackage{hyperref}
 
+\lstset{language=D}          % Set your language (you can change the language for each code-block optionally)
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{language=D,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{blue}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  commentstyle=\color{brown}\ttfamily,
+  morecomment=[l][\color{magenta}]{\#}
+}
+
 \title{D TODO}
 \maketitle
 
@@ -27,13 +37,17 @@
 
 \item Mismatched function calls parameters and unmatched template predicates such as
 
+\begin{lstlisting}[frame=single]
 /home/per/Work/justd/geometry.d(553): Error: template instance
   geometry.Vector!(double, 0) does not match template declaration Vector(E, uint
   D, bool normalizedFlag = false, Orient orient = Orient.column) if (D >= 1)
+\end{lstlisting}
 
 should only mention the subset of parameters and types that doesn't match such as
 
+\begin{lstlisting}[frame=single]
 template parameter D doesn’t fullfil predicate (D >= 1)
+\end{lstlisting}
 
 \item Detect and warn about duplicate calculations of pure functions (constant
   folding) by adding a SHA1-hash table for all expressions.
