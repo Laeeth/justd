@@ -175,10 +175,6 @@ unittest
     testStatic!E;
 }
 
-import std.stdio;
-
-// version = show;
-
 /** Fast Randomize Contents of $(D x) of Array Type $(D A).
     Randomizes in U-blocks.
  */
@@ -194,21 +190,16 @@ auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
 
     // front unaligned bytes
     auto p = cast(size_t)x.ptr;
-    version(show) writeln("p: ", p);
     immutable size_t mask = n - 1;
-    version(show) writeln("umask: ", mask);
     immutable r = p & mask;
-    version(show) writeln("r: ", r);
     size_t k = 0; // block start offset
     if (r)
     {
         import std.algorithm: min;
         k = min(x.length, n - r); // at first aligned B-block
-        version(show) writeln("k: ", k);
         foreach (i, ref e; x[0..k])
         {
             e.randInPlace;
-            version(show) writeln("i: ", i, ", x: ", x);
         }
     }
 
@@ -218,7 +209,6 @@ auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
     foreach (ref b; 0..blockCount) // for each block index
     {
         xp[b].randInPlace;
-        version(show) writeln("b: ", b, ", x: ", x);
     }
 
     // front unaligned bytes
@@ -226,7 +216,6 @@ auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
     foreach (i, ref e; x[l..$])
     {
         e.randInPlace;
-        version(show) writeln("i: ", i, ", x: ", x);
     }
 }
 
