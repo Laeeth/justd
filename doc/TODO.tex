@@ -24,6 +24,17 @@
 
 \section{Compiler Diagnostics}
 \begin{itemize}
+
+\item Mismatched function calls parameters and unmatched template predicates such as
+
+/home/per/Work/justd/geometry.d(553): Error: template instance
+  geometry.Vector!(double, 0) does not match template declaration Vector(E, uint
+  D, bool normalizedFlag = false, Orient orient = Orient.column) if (D >= 1)
+
+should only mention the subset of parameters and types that doesn't match such as
+
+template parameter D doesn’t fullfil predicate (D >= 1)
+
 \item Detect and warn about duplicate calculations of pure functions (constant
   folding) by adding a SHA1-hash table for all expressions.
 \item Better message for mutation of AA members in class constructors or
@@ -149,26 +160,28 @@ unittest {
 \item Add function qualifier attribute @portable ensuring that fundamental
   behaviour will be portable across different target platforms. For example
   function doesn't use
+
 \item range and pointer casts from bytes to shorts etc.
 \item unions with
+
 \item std.algorithm.reduce should guess its unit argument based on fun and
   CommonType of input arguments according:
-\item +, -: 0
-\item *: 1
+ +, -: 0
+ *: 1
+
 \item Forgetting [] should give better error messages in case such as:
-\item ubyte[20] d; assert(d[].allZeros());
+  ubyte[20] d; assert(d[].allZeros());
+
 \item Stack-trace for failed unittests or debuggable
-\item Better feedback for unmatched template predicates:
-\item /home/per/Work/justd/geometry.d(553): Error: template instance
-  geometry.Vector!(double, 0) does not match template declaration Vector(E, uint
-  D, bool normalizedFlag = false, Orient orient = Orient.column) if (D >= 1)
-\item should instead say something like:
-\item template parameter D doesn’t fullfil predicate (D >= 1)
+
 \item Accidentically assigning function templates to a variable may give a bit
   cryptic error message: auto x = baseName;
+
 \item User-defined class File together with import std.stdio : File gives no
   intelligent error message.
+
 \item Binary Serialization: Add overloads for to!ubyte[] in std.conv!?
+
 \item Add Warning Flag about Constructor Arguments that shadow struct/class
   members.
 \item Improve compiler context feedback for incorrect code in mixins by printing
