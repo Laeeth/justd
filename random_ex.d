@@ -179,17 +179,18 @@ import std.stdio;
 
 // version = show;
 
-/** Fast Randomize Contents of $(D x)
+/** Fast Randomize Contents of $(D x) of Array Type $(D A).
     Randomizes in U-blocks.
  */
-auto ref randInPlaceBlockwise(U = size_t, T)(ref T x)
-    @trusted if (isArray!T &&
-                 (is(U == size_t) ||
-                  is(U == ulong) ||
-                  is(U == uint) ||
-                  is(U == ushort)))
+auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
+    @trusted if (isArray!A &&
+                 /* (is(isIntegral!(ElementType!A))) && */
+                 (ElementType!A).sizeof < B.sizeof)
 {
-    enum n = U.sizeof;
+    /* static assert(is(isIntegral!(ElementType!A)), "ElementType of A must Integral."); */
+    static assert((ElementType!A).sizeof < B.sizeof, "ElementType of A must Integral.");
+
+    enum n = B.sizeof;
 
     // front unaligned bytes
     auto p = cast(size_t)x.ptr;
@@ -202,7 +203,7 @@ auto ref randInPlaceBlockwise(U = size_t, T)(ref T x)
     if (r)
     {
         import std.algorithm: min;
-        k = min(x.length, n - r); // at first aligned U-block
+        k = min(x.length, n - r); // at first aligned B-block
         version(show) writeln("k: ", k);
         foreach (i, ref e; x[0..k])
         {
@@ -211,8 +212,8 @@ auto ref randInPlaceBlockwise(U = size_t, T)(ref T x)
         }
     }
 
-    // mid U blocks
-    auto xp = cast(U*)(x.ptr + k);
+    // mid B blocks
+    auto xp = cast(B*)(x.ptr + k);
     immutable blockCount = (x.length - k) / n;
     foreach (ref b; 0..blockCount) // for each block index
     {
@@ -231,23 +232,31 @@ auto ref randInPlaceBlockwise(U = size_t, T)(ref T x)
 
 unittest
 {
-    enum n = 256;
-
-    alias U = size_t;
-
-    // dynamic array
-    for (size_t i = 0; i < n; i++)
+    static void test(B = size_t, T)()
     {
-        ubyte[] da = new ubyte[i];
-        da.randInPlaceBlockwise!U;
-        size_t j = randomInstanceOf!(typeof(i))(0, n/2);
-        da.randInPlaceBlockwise!U;
+        enum n = 1024;
+
+        // dynamic array
+        for (size_t i = 0; i < n; i++)
+        {
+            T[] da = new T[i];
+            da.randInPlaceBlockwise!B;
+            size_t j = randomInstanceOf!(typeof(i))(0, n/2);
+            da.randInPlaceBlockwise!B;
+        }
+
+        // static array
+        T[n] sa;
+        auto sa2 = sa[1..$];
+        sa2.randInPlaceBlockwise!B;
     }
 
-    // static arrayx
-    ubyte[n] sa;
-    auto sa2 = sa[1..$];
-    sa2.randInPlaceBlockwise!U;
+    import std.typecons: TypeTuple;
+    foreach (T; TypeTuple!(byte, short, int,
+                           ubyte, ushort, uint))
+    {
+        test!(size_t, T);
+    }
 }
 
 /** Randomize Contents of members of $(D x).
