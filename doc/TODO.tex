@@ -1,4 +1,5 @@
-\documentclass[xcolor=dvipsnames]{article}
+\documentclass[xcolor=dvipsnames, twocolumn]{article}
+\usepackage[a4paper]{geometry}
 \usepackage{listings}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -6,6 +7,8 @@
 \usepackage{textpos}
 \usepackage{color}
 \usepackage{hyperref}
+\usepackage{fullpage}
+% \usepackage{showframe}
 
 \lstset{language=D}          % Set your language (you can change the language for each code-block optionally)
 \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
@@ -122,8 +125,16 @@ string_name == "alpha"
 \end{lstlisting}
 into only comparing 5 elements?
 
-\item Add keyword for spawning threads/fibers: go f(x); instead of current
-  spawn(&f, x); similar to Go. See: https://gobyexample.com/goroutines.
+\item Add keyword for spawning threads/fibers:
+\begin{lstlisting}[frame=single]
+go f(x);
+\end{lstlisting}
+instead of current
+\begin{lstlisting}[frame=single]
+spawn(&f, x);
+\end{lstlisting}
+similar to Go. See: https://gobyexample.com/goroutines.
+
 \item Perhaps
 \item - sync f(x);
 \item - async f(x);
