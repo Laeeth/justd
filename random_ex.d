@@ -179,12 +179,12 @@ unittest
     Randomizes in U-blocks.
  */
 auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
-    @trusted if (isArray!A &&
-                 /* (is(isIntegral!(ElementType!A))) && */
-                 (ElementType!A).sizeof < B.sizeof)
+    @trusted if (isArray!A/*  && */
+                 /* (isIntegral!(ElementType!A)) && */
+                 /* (ElementType!A).sizeof < B.sizeof */)
 {
-    /* static assert(is(isIntegral!(ElementType!A)), "ElementType of A must Integral."); */
-    static assert((ElementType!A).sizeof < B.sizeof, "ElementType of A must Integral.");
+    static assert(isIntegral!(ElementType!A));
+    static assert((ElementType!A).sizeof < B.sizeof);
 
     enum n = B.sizeof;
 
