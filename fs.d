@@ -3868,7 +3868,7 @@ class Scanner(Term)
                                     "path-format", "\tFormat of paths. Either: " ~ enumDoc!PathFormat ~ "." ~ defaultDoc(gstats.pathFormat), &gstats.pathFormat,
 
                                     "cache-file|F", "\tFile System Tree Cache File" ~ defaultDoc(_cacheFile), &_cacheFile,
-                                    "gstats.recache", "\tSkip initial load of cache from disk" ~ defaultDoc(gstats.recache), &gstats.recache,
+                                    "recache", "\tSkip initial load of cache from disk" ~ defaultDoc(gstats.recache), &gstats.recache,
 
                                     "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FileOp, &gstats.fileOp,
 
