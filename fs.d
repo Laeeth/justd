@@ -3729,7 +3729,15 @@ struct OpAlias
 FKind tryLookupKindIn(RegFile regFile,
                       FKind[SHA1Digest] kindsById)
 {
-    return kindsById[regFile._cstat.kindId];
+    immutable id = regFile._cstat.kindId;
+    if (id in kindsById)
+    {
+        return kindsById[id];
+    }
+    else
+    {
+        return null;
+    }
 }
 
 /** File System Scanner. */
