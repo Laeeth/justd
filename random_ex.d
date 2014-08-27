@@ -27,7 +27,8 @@ version(unittest) private enum testLength = 64;
 /* nothrow: */
 
 /** Randomize Contents of $(D x). */
-auto ref randInPlace(E)(ref E x) @trusted if (isBoolean!E)
+auto ref randInPlace(E)(ref E x)
+    @trusted if (isBoolean!E)
 {
     return x = cast(bool)uniform(0, 2);
 }
@@ -35,7 +36,8 @@ auto ref randInPlace(E)(ref E x) @trusted if (isBoolean!E)
 /** Randomize Contents of $(D x), optionally in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = E.min,
-                        E high = E.max) @trusted if (isIntegral!E)
+                        E high = E.max)
+    @trusted if (isIntegral!E)
 {
     return x = uniform(low, high);    // BUG: Never assigns the value E.max
 }
@@ -43,7 +45,8 @@ auto ref randInPlace(E)(ref E x,
 /** Randomize Contents of $(D x), optional in range [$(D low), $(D high)]. */
 auto ref randInPlace(E)(ref E x,
                         E low = 0 /* E.min_normal */,
-                        E high = 1 /* E.max */) @trusted if (isFloatingPoint!E)
+                        E high = 1 /* E.max */)
+    @trusted if (isFloatingPoint!E)
 {
     return x = uniform(low, high);
 }
@@ -54,7 +57,8 @@ version(unittest)
 }
 
 /** Randomize Contents of $(D x). */
-auto ref randInPlace(Rational, E)(ref Rational!E x) @trusted if (isIntegral!E)
+auto ref randInPlace(Rational, E)(ref Rational!E x)
+    @trusted if (isIntegral!E)
 {
     return x = rational(uniform(E.min, E.max),
                         uniform(1, E.max));
@@ -69,7 +73,8 @@ unittest
 /** Generate Random Contents of $(D x).
     See also: http://forum.dlang.org/thread/emlgflxpgecxsqweauhc@forum.dlang.org
  */
-auto ref randInPlace(ref dchar x) @trusted
+auto ref randInPlace(ref dchar x)
+    @trusted
 {
     auto ui = uniform(0,
                       0xD800 +
@@ -103,7 +108,8 @@ unittest
 }
 
 /** Randomize Contents of $(D x). */
-auto ref randInPlace(dstring x) @trusted
+auto ref randInPlace(dstring x)
+    @trusted
 {
     dstring y;
     foreach (ix; 0..x.length)
@@ -114,7 +120,8 @@ auto ref randInPlace(dstring x) @trusted
 
 /** Randomize Contents of $(D x).
  */
-auto ref randInPlace(R)(R x) @safe if (hasAssignableElements!R)
+auto ref randInPlace(R)(R x)
+    @safe if (hasAssignableElements!R)
 {
     foreach (ref e; x)
     {
@@ -140,7 +147,8 @@ unittest
 
 /** Randomize Contents of $(D x).
  */
-auto ref randInPlace(T)(ref T x) @trusted if (isStaticArray!T)
+auto ref randInPlace(T)(ref T x)
+    @trusted if (isStaticArray!T)
 {
     foreach (ref e; x)
     {
@@ -167,69 +175,83 @@ unittest
     testStatic!E;
 }
 
-/** Fast Randomize Contents of $(D x).
+import std.stdio;
+
+// version = show;
+
+/** Fast Randomize Contents of $(D x)
+    Randomizes in U-blocks.
  */
-auto ref randInPlaceFast(U = ulong, T)(ref T x) @trusted if (isArray!T)
+auto ref randInPlaceBlockwise(U = size_t, T)(ref T x)
+    @trusted if (isArray!T &&
+                 (is(U == size_t) ||
+                  is(U == ulong) ||
+                  is(U == uint) ||
+                  is(U == ushort)))
 {
     enum n = U.sizeof;
 
-    import std.algorithm: min;
-
     // front unaligned bytes
     auto p = cast(size_t)x.ptr;
-    dln("p: ", p);
+    version(show) writeln("p: ", p);
     immutable size_t mask = n - 1;
-    dln("umask: ", mask);
-    immutable uint r = p & mask;
-    dln("r: ", r);
+    version(show) writeln("umask: ", mask);
+    immutable r = p & mask;
+    version(show) writeln("r: ", r);
     size_t k = 0; // block start offset
     if (r)
     {
+        import std.algorithm: min;
         k = min(x.length, n - r); // at first aligned U-block
-        dln("k: ", k);
-        foreach (ix, ref e; x[0..k])
+        version(show) writeln("k: ", k);
+        foreach (i, ref e; x[0..k])
         {
-            dln(x);
             e.randInPlace;
+            version(show) writeln("i: ", i, ", x: ", x);
         }
     }
 
     // mid U blocks
-    auto xp = cast(U*)x.ptr;
+    auto xp = cast(U*)(x.ptr + k);
     immutable blockCount = (x.length - k) / n;
-    foreach (ref i; 0..n)
+    foreach (ref b; 0..blockCount) // for each block index
     {
-        xp[i].randInPlace;
+        xp[b].randInPlace;
+        version(show) writeln("b: ", b, ", x: ", x);
     }
 
     // front unaligned bytes
     immutable l = x.length - k;
-    foreach (ref e; x[l..$])
+    foreach (i, ref e; x[l..$])
     {
         e.randInPlace;
+        version(show) writeln("i: ", i, ", x: ", x);
     }
 }
 
-import dbg;
-
 unittest
 {
-    enum n = 31;
+    enum n = 256;
+
+    alias U = size_t;
 
     // dynamic array
-    ubyte[] da = new ubyte[n];
-    da.randInPlaceFast!ulong;
-    dln(da[1..$]);
+    for (size_t i = 0; i < n; i++)
+    {
+        ubyte[] da = new ubyte[i];
+        da.randInPlaceBlockwise!U;
+    }
 
     // static arrayx
     ubyte[n] sa;
-    sa.randInPlaceFast!ulong;
-    dln(sa);
+    auto sa2 = sa[1..$];
+    sa2.randInPlaceBlockwise!U;
 }
 
 /** Randomize Contents of members of $(D x).
  */
-auto ref randInPlace(T)(ref T x) @safe if (is(T == struct))
+auto ref randInPlace(T)(ref T x)
+    @safe if (is(T == struct))
 {
     foreach (ref e; x.tupleof)
     {
@@ -250,7 +272,8 @@ unittest
 
 /** Randomize Contents of members of $(D x).
  */
-auto ref randInPlace(T)(T x) @safe if (is(T == class))
+auto ref randInPlace(T)(T x)
+    @safe if (is(T == class))
 {
     foreach (ref e; x.tupleof)
     {
@@ -277,7 +300,8 @@ unittest
 
 /** Get New Randomized Instance of Type $(D T).
  */
-T randomInstanceOf(T)() @safe
+T randomInstanceOf(T)()
+    @safe
 {
     /* TODO: recursively only void-initialize parts of T that are POD, not
      reference types */
