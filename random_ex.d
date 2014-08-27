@@ -175,20 +175,19 @@ unittest
     testStatic!E;
 }
 
-/** Fast Randomize Contents of $(D x) of Array Type $(D A).
-    Randomizes in U-blocks.
+/** Blockwise Randomize Contents of $(D x) of Array Type $(D A).
+    Randomizes in array blocks of type $(D B).
  */
 auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
-    @trusted if (isArray!A/*  && */
-                 /* (isIntegral!(ElementType!A)) && */
-                 /* (ElementType!A).sizeof < B.sizeof */)
+    @trusted if (isArray!A &&
+                 isIntegral!(ElementType!A))
 {
-    static assert(isIntegral!(ElementType!A));
     static assert((ElementType!A).sizeof < B.sizeof);
 
     enum n = B.sizeof;
+    immutable m = x.length;
 
-    // front unaligned bytes
+    // beginning unaligned bytes
     auto p = cast(size_t)x.ptr;
     immutable size_t mask = n - 1;
     immutable r = p & mask;
@@ -196,23 +195,23 @@ auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
     if (r)
     {
         import std.algorithm: min;
-        k = min(x.length, n - r); // at first aligned B-block
+        k = min(m, n - r); // at first aligned B-block
         foreach (i, ref e; x[0..k])
         {
             e.randInPlace;
         }
     }
 
-    // mid B blocks
+    // mid blocks of type B
     auto xp = cast(B*)(x.ptr + k);
-    immutable blockCount = (x.length - k) / n;
+    immutable blockCount = (m - k) / n;
     foreach (ref b; 0..blockCount) // for each block index
     {
         xp[b].randInPlace;
     }
 
-    // front unaligned bytes
-    immutable l = x.length - k;
+    // ending unaligned bytes
+    immutable l = m - k;
     foreach (i, ref e; x[l..$])
     {
         e.randInPlace;
