@@ -13,7 +13,6 @@
 
    Example:
    ---
-   ~/cognia/fs.d -d /etc --color alpha
    ---
 
    TODO: Lexers should be loosely coupled to FKinds instead of Files
@@ -3814,16 +3813,18 @@ class Scanner(Term)
                                     "Usage: fs { --switches } [KEY]...\n" ~
                                     "Note that scanning for multiple KEYs is possible.\nIf so hits are highlighted in different colors!\n" ~
                                     "Sample calls: \n" ~
-                                    "  fs.d --color -d /etc -s --tree --usage -l --duplicates stallman\n"
-                                    "  fs.d --color -d /etc -d /var --acronym sttccc\n"
-                                    "  fs.d --color -d /etc -d /var --acronym dktp\n"
-                                    "  fs.d --color -d /etc -d /var --acronym tms sttc prc dtp xsr\n" ~
-                                    "  fs.d --color -d /etc min max delta\n" ~
-                                    "  fs.d --color -d /etc if elif return len --duplicates --sort=onSize\n" ~
-                                    "  fs.d --color -k -d /bin alpha\n" ~
-                                    "  fs.d --color -d /lib -k linus" ~
-                                    "  fs.d --color -d /etc --symbol alpha beta gamma delta" ~
-                                    "  fs.d --color -d /var/spool/postfix/dev ",
+                                    "  fdo.d --color -d /etc -s --tree --usage -l --duplicates stallman\n"
+                                    "  fdo.d --color -d /etc -d /var --acronym sttccc\n"
+                                    "  fdo.d --color -d /etc -d /var --acronym dktp\n"
+                                    "  fdo.d --color -d /etc -d /var --acronym tms sttc prc dtp xsr\n" ~
+                                    "  fdo.d --color -d /etc min max delta\n" ~
+                                    "  fdo.d --color -d /etc if elif return len --duplicates --sort=onSize\n" ~
+                                    "  fdo.d --color -k -d /bin alpha\n" ~
+                                    "  fdo.d --color -d /lib -k linus" ~
+                                    "  fdo.d --color -d /etc --symbol alpha beta gamma delta" ~
+                                    "  fdo.d --color -d /var/spool/postfix/dev " ~
+                                    "  fdo.d --color -d /etc alpha" ~
+                                    "  fdo.d --color -d ~/Work/dmd  --browse xyz --duplicates --do=preprocess",
 
                                     args,
                                     std.getopt.config.caseInsensitive,
@@ -4704,10 +4705,11 @@ class Scanner(Term)
                     keys,
                     fromSymlinks,
                     subIndex);
-        // check if theRegFile has fileOp registered
         const kind = theRegFile.tryLookupKindIn(gstats.allKindsById);
         if (kind)
         {
+            dln("xxx: ", kind);
+
             const hit = kind.operations.find!(a => a[0] == gstats.fileOp);
             if (!hit.empty)
             {
