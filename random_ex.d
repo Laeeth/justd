@@ -18,7 +18,7 @@
  */
 module random_ex;
 
-import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray, hasIndirections, isSomeString;
+import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray, isArray, hasIndirections, isSomeString;
 import std.range: isInputRange, ElementType, hasAssignableElements, isBoolean;
 import std.random: uniform;
 
@@ -140,7 +140,7 @@ unittest
 
 /** Randomize Contents of $(D x).
  */
-auto ref randInPlace(T)(ref T x) @safe if (isStaticArray!T)
+auto ref randInPlace(T)(ref T x) @trusted if (isStaticArray!T)
 {
     foreach (ref e; x)
     {
@@ -165,6 +165,66 @@ unittest
     enum E { a, b, c, d, e, f, g, h,
              i, j, k, l, m, n, o, p }
     testStatic!E;
+}
+
+/** Fast Randomize Contents of $(D x).
+ */
+auto ref randInPlaceFast(U = ulong, T)(ref T x) @trusted if (isArray!T)
+{
+    enum n = U.sizeof;
+
+    import std.algorithm: min;
+
+    // front unaligned bytes
+    auto p = cast(size_t)x.ptr;
+    dln("p: ", p);
+    immutable size_t mask = n - 1;
+    dln("umask: ", mask);
+    immutable uint r = p & mask;
+    dln("r: ", r);
+    size_t k = 0; // block start offset
+    if (r)
+    {
+        k = min(x.length, n - r); // at first aligned U-block
+        dln("k: ", k);
+        foreach (ix, ref e; x[0..k])
+        {
+            dln(x);
+            e.randInPlace;
+        }
+    }
+
+    // mid U blocks
+    auto xp = cast(U*)x.ptr;
+    immutable blockCount = (x.length - k) / n;
+    foreach (ref i; 0..n)
+    {
+        xp[i].randInPlace;
+    }
+
+    // front unaligned bytes
+    immutable l = x.length - k;
+    foreach (ref e; x[l..$])
+    {
+        e.randInPlace;
+    }
+}
+
+import dbg;
+
+unittest
+{
+    enum n = 31;
+
+    // dynamic array
+    ubyte[] da = new ubyte[n];
+    da.randInPlaceFast!ulong;
+    dln(da[1..$]);
+
+    // static arrayx
+    ubyte[n] sa;
+    sa.randInPlaceFast!ulong;
+    dln(sa);
 }
 
 /** Randomize Contents of members of $(D x).
