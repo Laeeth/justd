@@ -40,7 +40,7 @@ alias tail = dropOne;
 /** Returns: First Argument (element of $(D a)) whose implicit conversion to
     bool is true.
 
-    Similar to behaviour of Lisps (or a...).
+    Similar to behaviour of Lisp's (or a...) and Python's a or ....
     TODO: Is inout Conversion!T the correct return value?
 */
 CommonType!T either(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
@@ -95,7 +95,7 @@ unittest {
 // ==============================================================================================
 
 /** Returns: Last Argument if all arguments implicitly bool-convert to true.
-    Similar to behaviour of Lisps (and a...).
+    Similar to behaviour of Lisp's (and a...) and Python's a and ....
     TODO: Is inout Conversion!T the correct return value?
 */
 CommonType!T every(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
