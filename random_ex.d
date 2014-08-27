@@ -18,7 +18,7 @@
  */
 module random_ex;
 
-import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray, isArray, hasIndirections, isSomeString;
+import std.traits: isIntegral, isFloatingPoint, isNumeric, isIterable, isStaticArray, isArray, hasIndirections, isSomeString, isScalarType;
 import std.range: isInputRange, ElementType, hasAssignableElements, isBoolean;
 import std.random: uniform;
 
@@ -240,6 +240,8 @@ unittest
     {
         ubyte[] da = new ubyte[i];
         da.randInPlaceBlockwise!U;
+        size_t j = randomInstanceOf!(typeof(i))(0, n/2);
+        da.randInPlaceBlockwise!U;
     }
 
     // static arrayx
@@ -311,6 +313,22 @@ T randomInstanceOf(T)()
         /* don't init - randInPlace below fills in everything safely */
         T x = void;
     return x.randInPlace;
+}
+
+/** Get New Randomized Instance of Type $(D T).
+ */
+T randomInstanceOf(T)(T low = T.min,
+                      T high = T.max)
+    @safe if (isNumeric!T)
+{
+    /* TODO: recursively only void-initialize parts of T that are POD, not
+       reference types */
+    static if (hasIndirections!T)
+        T x;
+    else
+        /* don't init - randInPlace below fills in everything safely */
+        T x = void;
+    return x.randInPlace(low, high);
 }
 
 alias randomize = randInPlace;
