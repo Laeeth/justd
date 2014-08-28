@@ -4306,6 +4306,7 @@ class Scanner(Term)
         }
     }
 
+    // TODO: Parameterize binFKinds so it can be reused on srcFKinds.
     KindHit isBinary(Viz viz,
                      NotNull!RegFile regfile,
                      in string ext, size_t subIndex)
