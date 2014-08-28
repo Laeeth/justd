@@ -15,6 +15,13 @@
    ---
    ---
 
+   TODO: Parameterize binFKinds so it can be reused on srcFKinds.
+         Make it a member of some class FKindSet.
+         Add all variants of binFKinds and srcFKinds to this FKindSet.
+         - Use binFKindsByMagic and
+         - binFKindsMagicLengths
+         - Integrate with file's magic database
+
    TODO: Lexers should be loosely coupled to FKinds instead of Files
    TODO: Generic Token[] and specific CToken[], CxxToken[]
 
@@ -110,8 +117,6 @@
    TODO: Benchmark horspool.d and perhaps use instead of std.find
 
    TODO: Splitting into keys should not split arguments such as "a b"
-
-   TODO: Use binFKindsByMagic and binFKindsMagicLengths
 
    TODO: Perhaps use http://www.chartjs.org/ to visualize stuff
 
@@ -4306,7 +4311,6 @@ class Scanner(Term)
         }
     }
 
-    // TODO: Parameterize binFKinds so it can be reused on srcFKinds.
     KindHit isBinary(Viz viz,
                      NotNull!RegFile regfile,
                      in string ext, size_t subIndex)
