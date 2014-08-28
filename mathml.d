@@ -29,6 +29,7 @@ string toMathML(T)(T x) @trusted /* pure nothrow */ if (isScalarType!T &&
  */
 string toML(T)(T x,
                bool usePowPlus = false,
+               bool useLeadZeros = false,
                MarkupLang mlang = MarkupLang.HTML) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
     import std.conv: to;
@@ -36,21 +37,30 @@ string toML(T)(T x,
     const parts = to!string(x).findSplit("e"); // TODO: Use std.bitmanip.FloatRep instead
     if (parts[2].length >= 1)
     {
-        const mantissa = parts[0];
-        const exponent = ((!usePowPlus &&
-                           parts[2][0] == '+') ? // if leading plus
-                          parts[2][1..$] : // skip plus
-                          parts[2]); // otherwise whole
+        // mantissa
+        const mant = parts[0];
+
+        // TODO: These format fixes for the exponent are not needed if we use
+        // std.bitmanip.FloatRep instead
+
+        // exponent
+        auto exp = ((!usePowPlus &&
+                      parts[2][0] == '+') ? // if leading plus
+                     parts[2][1..$] : // skip plus
+                     parts[2]); // otherwise whole
+        import algorithm_ex: dropWhile;
+        auto zexp = useLeadZeros ? exp : exp.dropWhile('0');
+
         final switch (mlang)
         {
             case MarkupLang.HTML:
             case MarkupLang.unknown:
-                return (mantissa ~ `&middot;` ~ `10` ~ `<msup>` ~ exponent ~ `</msup>`);
+                return (mant ~ `&middot;` ~ `10` ~ `<msup>` ~ zexp ~ `</msup>`);
             case MarkupLang.MathML:
-                return (`<math>` ~ mantissa ~ `&middot;` ~
+                return (`<math>` ~ mant ~ `&middot;` ~
                         `<msup>` ~
                         `<mn>10</mn>` ~
-                        `<mn mathsize="80%">` ~ exponent ~ `</mn>`
+                        `<mn mathsize="80%">` ~ zexp ~ `</mn>`
                         `</msup>` ~
                         `</math>`);
         }
@@ -68,14 +78,14 @@ string toML(T)(T x,
     }
 }
 
-auto toMathML(T)(T x, bool usePowPlus = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
+auto toMathML(T)(T x, bool usePowPlus = false, bool useLeadZeros = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, usePowPlus, MarkupLang.MathML);
+    return toML(x, usePowPlus, useLeadZeros, MarkupLang.MathML);
 }
 
-auto toHTML(T)(T x, bool usePowPlus = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
+auto toHTML(T)(T x, bool usePowPlus = false, bool useLeadZeros = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, usePowPlus, MarkupLang.HTML);
+    return toML(x, usePowPlus, useLeadZeros, MarkupLang.HTML);
 }
 
 /**

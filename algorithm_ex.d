@@ -10,9 +10,10 @@ module algorithm_ex;
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
 import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString;
-import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing, empty;
+import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing, empty, front;
 import dbg;
 import traits_ex: isStruct, isClass, allSame;
+import std.functional: unaryFun, binaryFun;
 
 /* version = print; */
 
@@ -532,7 +533,6 @@ Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b",
             // Check elements in between
             ptrdiff_t hit = -1;
             import std.algorithm: countUntil;
-            import std.functional: binaryFun;
             final switch (ctx)
             {
             case FindContext.inWord:
@@ -1100,7 +1100,6 @@ auto zipWith(alias fun, Ranges...)(Ranges ranges) @safe pure nothrow if (Ranges.
 {
     import std.range: zip;
     import std.algorithm: map;
-    import std.functional: binaryFun;
     static if (ranges.length < 2)
         static assert(false, "Need at least 2 range arguments.");
     else static if (ranges.length == 2)
@@ -1445,11 +1444,12 @@ alias coveredBy = sliceOf;
 alias includedIn = sliceOf;
 
 /* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
-auto dropWhile(R, E)(R range, E element) if (isInputRange!R &&
-                                             is(ElementType!R == E))
+auto dropWhile(alias pred = "a == b", R, E)(R range, E element) if (isInputRange!R &&
+                                                                    is (typeof(binaryFun!pred(range.front, element)) : bool))
 {
     import std.algorithm: find;
-    return range.find!(a => a != element);
+    alias predFun = binaryFun!pred;
+    return range.find!(a => !predFun(a, element));
 }
 alias dropAllOf = dropWhile;
 alias stripFront = dropWhile;
@@ -1460,23 +1460,24 @@ unittest
     assert([1, 2, 3].dropWhile(1) == [2, 3]);
     assert([1, 1, 1, 2, 3].dropWhile(1) == [2, 3]);
     assert([1, 2, 3].dropWhile(2) == [1, 2, 3]);
-    assert("aabc".dropWhile(cast(dchar)'a') == "bc");
+    assert("aabc".dropWhile('a') == "bc"); // TODO: Remove restriction on cast to dchar
 }
 
 /* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
-auto takeWhile(R, E)(R range, E element) if (isInputRange!R &&
-                                             is(ElementType!R == E))
+auto takeWhile(alias pred = "a == b", R, E)(R range, E element) if (isInputRange!R &&
+                                                                    is (typeof(binaryFun!pred(range.front, element)) : bool))
 {
     import std.algorithm: until;
-    return range.until!(a => a != element);
+    alias predFun = binaryFun!pred;
+    return range.until!(a => !predFun(a, element));
 }
 alias takeAllOf = takeWhile;
 
 unittest
 {
     import std.algorithm: equal;
-    equal([1, 1, 2, 3].takeWhile(1),
-          [1, 1]);
+    assert(equal([1, 1, 2, 3].takeWhile(1),
+                 [1, 1]));
 }
 
 /** Simpler Variant of Phobos' split. */

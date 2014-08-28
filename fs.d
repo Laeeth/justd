@@ -4387,15 +4387,7 @@ class Scanner(Term)
 
     size_t _scanChunkSize;
 
-    KindHit isSelectedFKind(NotNull!RegFile regfile,
-                            FKind[] selFKinds) @safe /* nothrow */
-    {
-        return isSelectedFKind(regfile, regfile.realExtension, selFKinds);
-    }
-
-    KindHit isSelectedFKind(NotNull!RegFile regfile,
-                            in string ext,
-                            FKind[] selFKinds) @safe /* nothrow */
+    KindHit isSelectedFKind(NotNull!RegFile regfile) @safe /* nothrow */
     {
         typeof(return) kindHit = KindHit.none;
         FKind hitKind;
@@ -4411,6 +4403,8 @@ class Scanner(Term)
                 return kindHit;
             }
         }
+
+        immutable ext = regfile.realExtension;
 
         // Try with hash table first
         if (!ext.empty && // if file has extension and
@@ -4433,7 +4427,7 @@ class Scanner(Term)
         if (!hitKind) // if no hit yet
         {
             // blindly try the rest
-            foreach (kind; selFKinds)
+            foreach (kind; gstats.selFKinds)
             {
                 auto nnKind = enforceNotNull(kind);
                 immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
@@ -4731,29 +4725,28 @@ class Scanner(Term)
                     fromSymlinks,
                     subIndex);
 
-        // TODO: Reuse isSelectedFKind
-        const ext = theRegFile.realExtension;
+        // check for operations
+        // TODO: Reuse isSelectedFKind instead of this
+        immutable ext = theRegFile.realExtension;
         if (ext in gstats.selFKindsByExt)
         {
             auto matchingFKinds = gstats.selFKindsByExt[ext];
             dln(matchingFKinds);
-        }
-
-        const kind = theRegFile.tryLookupKindIn(gstats.allFKindsById);
-        if (kind)
-        {
-            const hit = kind.operations.find!(a => a[0] == gstats.fileOp);
-            if (!hit.empty)
+            foreach(kind; matchingFKinds)
             {
-                const fileOp = hit.front;
-                const cmd = fileOp[1]; // command string
-                import std.range: chain;
-                import std.process: spawnProcess;
-                import std.algorithm: splitter;
-                dln("TODO: Performing operation ", to!string(cmd),
-                    " on ", theRegFile.path,
-                    " by calling it using ", cmd);
-                auto pid = spawnProcess(cmd.splitter(" ").array ~ [theRegFile.path]);
+                const hit = kind.operations.find!(a => a[0] == gstats.fileOp);
+                if (!hit.empty)
+                {
+                    const fileOp = hit.front;
+                    const cmd = fileOp[1]; // command string
+                    import std.range: chain;
+                    import std.process: spawnProcess;
+                    import std.algorithm: splitter;
+                    dln("TODO: Performing operation ", to!string(cmd),
+                        " on ", theRegFile.path,
+                        " by calling it using ", cmd);
+                    auto pid = spawnProcess(cmd.splitter(" ").array ~ [theRegFile.path]);
+                }
             }
         }
     }
@@ -4801,7 +4794,7 @@ class Scanner(Term)
                 immutable ext = theRegFile.realExtension; // extension sans dot
 
                 // Check included kinds first because they are fast.
-                KindHit incKindHit = isSelectedFKind(theRegFile, ext, gstats.selFKinds);
+                KindHit incKindHit = isSelectedFKind(theRegFile);
                 if (!gstats.selFKinds.empty && // TODO: Do we really need this one?
                     !incKindHit)
                 {
@@ -5183,10 +5176,6 @@ class Scanner(Term)
             handleError(viz, theDir, true, 0);
         }
     }
-
-    /* isSelectedFKind(cast(NotNull!File)dupFile, */
-    /*                dupFile.realExtension, */
-    /*                gstats.selFKinds) */
 
     // Filter out $(D files) that lie under any of the directories $(D dirPaths).
     F[] filterUnderAnyOfPaths(F)(F[] files,
