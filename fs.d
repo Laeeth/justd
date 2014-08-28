@@ -130,9 +130,9 @@ version = msgpack; // Use msgpack serialization
 import std.stdio: ioFile = File, stdout;
 import std.typecons: Tuple, tuple;
 import std.algorithm: find, map, filter, reduce, max, min, uniq, all, joiner;
-import std.string: representation;
+import std.string: representation, chompPrefix;
 import std.stdio: write, writeln, writefln;
-import std.path: baseName, dirName, isAbsolute, dirSeparator;
+import std.path: baseName, dirName, isAbsolute, dirSeparator, extension, buildNormalizedPath, expandTilde, absolutePath;
 import std.datetime;
 import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
@@ -661,12 +661,12 @@ KindHit ofKind(NotNull!RegFile regfile,
                in string ext,
                NotNull!FKind kind,
                bool collectTypeHits,
-               const ref FKind[SHA1Digest] allKindsById) /* nothrow */ @trusted
+               const ref FKind[SHA1Digest] allFKindsById) /* nothrow */ @trusted
 {
     immutable hit = regfile.ofKind1(ext,
                                     kind,
                                     collectTypeHits,
-                                    allKindsById);
+                                    allFKindsById);
     if (hit &&
         kind.kindName == "ELF")
     {
@@ -681,13 +681,13 @@ KindHit ofKind1(NotNull!RegFile regfile,
                 in string ext,
                 NotNull!FKind kind,
                 bool collectTypeHits,
-                const ref FKind[SHA1Digest] allKindsById) /* nothrow */ @trusted
+                const ref FKind[SHA1Digest] allFKindsById) /* nothrow */ @trusted
 {
     // Try cached first
 
     if (regfile._cstat.kindId.defined &&
-        (regfile._cstat.kindId in allKindsById) && // if kind is known
-        allKindsById[regfile._cstat.kindId] is kind)  // if cached kind equals
+        (regfile._cstat.kindId in allFKindsById) && // if kind is known
+        allFKindsById[regfile._cstat.kindId] is kind)  // if cached kind equals
     {
         return KindHit.cached;
     }
@@ -697,7 +697,7 @@ KindHit ofKind1(NotNull!RegFile regfile,
         immutable baseHit = regfile.ofKind(ext,
                                            enforceNotNull(kind.superKind),
                                            collectTypeHits,
-                                           allKindsById);
+                                           allFKindsById);
         if (!baseHit)
         {
             return baseHit;
@@ -806,6 +806,10 @@ class File
         this.timeLastAccessed = timeLastAccessed;
         if (parent) { ++parent.gstats.noFiles; }
     }
+
+    // The Real Extension without leading dot.
+    string realExtension() @safe pure nothrow const { return name.extension.chompPrefix("."); }
+    alias ext = realExtension; // shorthand
 
     string toEnglishString() const @property { return "Any File"; }
 
@@ -1387,7 +1391,7 @@ class RegFile : File
 
             // CStat: TODO: Group
             unpacker.unpack(_cstat.kindId); // FKind
-            if (!(_cstat.kindId in parent.gstats.allKindsById))
+            if (!(_cstat.kindId in parent.gstats.allFKindsById))
             {
                 // kind database has changed since kindId was written to disk
                 _cstat.kindId.reset; // forget it
@@ -1572,7 +1576,7 @@ class GStats
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
 
-    // Source File Kinds
+    // Source Code File Kinds
     FKind[] srcFKinds; // TODO: Needed when we have hash-tables below?
     FKind[string] srcFKindsByName;
     FKind[][string] srcFKindsByExt; // Maps extension string to array of FKinds
@@ -1584,13 +1588,14 @@ class GStats
     FKind[SHA1Digest] binFKindsById;    // Index Kinds by their behaviour
     size_t[] binFKindsMagicLengths; // List of Magic lengths
 
-    // Include Kinds
-    FKind[] selKinds;  // TODO: Needed when we have hash-tables below?
-    FKind[][string] selKindsByName;
-    FKind[SHA1Digest] selKindsById;    // Index Kinds by their behaviour
+    // (User) Selected File Kinds
+    FKind[] selFKinds;  // TODO: Needed when we have hash-tables below?
+    FKind[][string] selFKindsByExt;
+    FKind[SHA1Digest] selFKindsById;    // Index Kinds by their behaviour
 
     // All File Kinds
-    FKind[SHA1Digest] allKindsById;    // Index Kinds by their behaviour
+    FKind[SHA1Digest] allFKindsById;    // Index Kinds by their behaviour
+    FKind[][string] allFKindsByExt;    // Index Kinds by their behaviour
 
     void loadFileKinds()
     {
@@ -2823,10 +2828,14 @@ class GStats
         import std.range: chain;
         foreach (kind; chain(srcFKinds, binFKinds))
         {
-            allKindsById[kind.behaviorId] = kind;
+            allFKindsById[kind.behaviorId] = kind;
+            foreach (ext; kind.exts)
+            {
+                allFKindsByExt[ext] ~= kind;
+            }
         }
-        allKindsById.rehash;
-
+        allFKindsById.rehash;
+        allFKindsByExt.rehash;
     }
 
     // Code
@@ -3783,11 +3792,9 @@ class Scanner(Term)
     }
     import core.sys.posix.unistd: getuid, getgid;
     import std.file: read, FileException, exists, getcwd;
-    import std.path: extension, buildNormalizedPath, expandTilde, absolutePath;
     import std.range: retro;
     import std.exception: ErrnoException;
     import core.sys.posix.sys.stat: stat_t, S_IRUSR, S_IRGRP, S_IROTH;
-    import std.string: chompPrefix;
 
     uint64_t _hitsCountTotal = 0;
 
@@ -3796,7 +3803,7 @@ class Scanner(Term)
     bool _beVerbose = false;
     bool _caseFold = false;
     bool _showSkipped = false;
-    string selKindNames;
+    string selFKindNames;
     string[] _topDirNames;
     string[] addTags;
     string[] removeTags;
@@ -3819,7 +3826,7 @@ class Scanner(Term)
     Bist keysBistsUnion;
     XGram keysXGramsUnion;
 
-    string selKindsNote;
+    string selFKindsNote;
 
     void prepare(string[] args, ref Term term)
     {
@@ -3850,7 +3857,7 @@ class Scanner(Term)
                                     "verbose|v", "\tVerbose",  &_beVerbose,
 
                                     "color|C", "\tColorize Output" ~ defaultDoc(gstats.colorFlag),  &gstats.colorFlag,
-                                    "types|T", "\tComma separated list (CSV) of file types/kinds to scan" ~ defaultDoc(selKindNames), &selKindNames,
+                                    "types|T", "\tComma separated list (CSV) of file types/kinds to scan" ~ defaultDoc(selFKindNames), &selFKindNames,
                                     "group-types|G", "\tCollect and group file types found" ~ defaultDoc(gstats.collectTypeHits), &gstats.collectTypeHits,
 
                                     "i", "\tCase-Fold, Case-Insensitive" ~ defaultDoc(_caseFold), &_caseFold,
@@ -4005,21 +4012,21 @@ class Scanner(Term)
 
         // viz.ppln("<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
 
-        if (selKindNames)
+        if (selFKindNames)
         {
-            foreach (lang; selKindNames.splitter(","))
+            foreach (lang; selFKindNames.splitter(","))
             {
                 if      (lang         in gstats.srcFKindsByName) // try exact match
                 {
-                    gstats.selKinds ~= gstats.srcFKindsByName[lang];
+                    gstats.selFKinds ~= gstats.srcFKindsByName[lang];
                 }
                 else if (lang.toLower in gstats.srcFKindsByName) // else try all in lower case
                 {
-                    gstats.selKinds ~= gstats.srcFKindsByName[lang.toLower];
+                    gstats.selFKinds ~= gstats.srcFKindsByName[lang.toLower];
                 }
                 else if (lang.toUpper in gstats.srcFKindsByName) // else try all in upper case
                 {
-                    gstats.selKinds ~= gstats.srcFKindsByName[lang.toUpper];
+                    gstats.selFKinds ~= gstats.srcFKindsByName[lang.toUpper];
                 }
                 else
                 {
@@ -4029,16 +4036,16 @@ class Scanner(Term)
         }
 
         // Maps extension string to Included FKinds
-        foreach (kind; gstats.selKinds)
+        foreach (kind; gstats.selFKinds)
         {
             foreach (ext; kind.exts)
             {
-                gstats.selKindsByName[ext] ~= kind;
+                gstats.selFKindsByExt[ext] ~= kind;
             }
-            gstats.selKindsById[kind.behaviorId] = kind;
+            gstats.selFKindsById[kind.behaviorId] = kind;
         }
-        gstats.selKindsByName.rehash;
-        gstats.selKindsById.rehash;
+        gstats.selFKindsByExt.rehash;
+        gstats.selFKindsById.rehash;
 
         // Keys
         auto commaedKeys = keys.joiner(",");
@@ -4046,8 +4053,8 @@ class Scanner(Term)
         string commaedKeysString = to!string(commaedKeys);
         if (keys)
         {
-            selKindsNote = " in " ~ (gstats.selKinds ?
-                                     gstats.selKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
+            selFKindsNote = " in " ~ (gstats.selFKinds ?
+                                     gstats.selFKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
             immutable underNote = " under \"" ~ (_topDirNames.reduce!"a ~ ',' ~ b") ~ "\"";
             const exactNote = gstats.keyAsExact ? "exact " : "";
             string asNote;
@@ -4072,7 +4079,7 @@ class Scanner(Term)
 
             const title = ("Searching for \"" ~ commaedKeysString ~ "\"" ~
                            " case-" ~ (_caseFold ? "in" : "") ~"sensitively"
-                           ~asNote ~selKindsNote ~underNote);
+                           ~asNote ~selFKindsNote ~underNote);
             if (viz.form == VizForm.HTML) // only needed for HTML output
             {
                 viz.ppln(faze(title, titleFace));
@@ -4080,7 +4087,7 @@ class Scanner(Term)
 
             viz.pp(asH!1("Searching for \"", commaedKeysString, "\"",
                          " case-", (_caseFold ? "in" : ""), "sensitively",
-                         asNote, selKindsNote,
+                         asNote, selFKindsNote,
                          " under ", _topDirNames.map!(a => asPath(a))));
         }
 
@@ -4178,7 +4185,7 @@ class Scanner(Term)
                     {
                         viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
                                   (gstats.keyAsSymbol ? " as symbol" : "") ~
-                                  " found" ~ selKindsNote ~
+                                  " found" ~ selFKindsNote ~
                                   ". Relaxing scan to" ~ (gstats.keyAsSymbol ? " symbol" : "") ~ " acronym match."));
                         gstats.keyAsAcronym = true;
 
@@ -4343,7 +4350,7 @@ class Scanner(Term)
             foreach (kindIndex, kind; gstats.binFKindsByExt[ext])
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
+                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
                 if (hit)
                 {
                     printSkipped(viz, regfile, ext, subIndex, nnKind, hit,
@@ -4358,7 +4365,7 @@ class Scanner(Term)
             foreach (kindIndex, kind; gstats.binFKinds) // Iterate each kind
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
+                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
                 if (hit)
                 {
                     if (_showSkipped)
@@ -4380,15 +4387,15 @@ class Scanner(Term)
 
     size_t _scanChunkSize;
 
-    KindHit isIncludedKind(NotNull!RegFile regfile,
-                           FKind[] selKinds) @safe /* nothrow */
+    KindHit isSelectedFKind(NotNull!RegFile regfile,
+                            FKind[] selFKinds) @safe /* nothrow */
     {
-        return isIncludedKind(regfile, regfile.name.extension.chompPrefix("."), selKinds);
+        return isSelectedFKind(regfile, regfile.realExtension, selFKinds);
     }
 
-    KindHit isIncludedKind(NotNull!RegFile regfile,
-                           in string ext,
-                           FKind[] selKinds) @safe /* nothrow */
+    KindHit isSelectedFKind(NotNull!RegFile regfile,
+                            in string ext,
+                            FKind[] selFKinds) @safe /* nothrow */
     {
         typeof(return) kindHit = KindHit.none;
         FKind hitKind;
@@ -4397,9 +4404,9 @@ class Scanner(Term)
         // First Try with kindId as try
         if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
-            if (regfile._cstat.kindId in gstats.selKindsById)
+            if (regfile._cstat.kindId in gstats.selFKindsById)
             {
-                hitKind = gstats.selKindsById[regfile._cstat.kindId];
+                hitKind = gstats.selFKindsById[regfile._cstat.kindId];
                 kindHit = KindHit.cached;
                 return kindHit;
             }
@@ -4407,13 +4414,13 @@ class Scanner(Term)
 
         // Try with hash table first
         if (!ext.empty && // if file has extension and
-            ext in gstats.selKindsByName) // and extensions may match specified included files
+            ext in gstats.selFKindsByExt) // and extensions may match specified included files
         {
-            auto possibleKinds = gstats.selKindsByName[ext];
+            auto possibleKinds = gstats.selFKindsByExt[ext];
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
+                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4426,10 +4433,10 @@ class Scanner(Term)
         if (!hitKind) // if no hit yet
         {
             // blindly try the rest
-            foreach (kind; selKinds)
+            foreach (kind; selFKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
+                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4723,7 +4730,16 @@ class Scanner(Term)
                     keys,
                     fromSymlinks,
                     subIndex);
-        const kind = theRegFile.tryLookupKindIn(gstats.allKindsById);
+
+        // TODO: Reuse isSelectedFKind
+        const ext = theRegFile.realExtension;
+        if (ext in gstats.selFKindsByExt)
+        {
+            auto matchingFKinds = gstats.selFKindsByExt[ext];
+            dln(matchingFKinds);
+        }
+
+        const kind = theRegFile.tryLookupKindIn(gstats.allFKindsById);
         if (kind)
         {
             const hit = kind.operations.find!(a => a[0] == gstats.fileOp);
@@ -4782,11 +4798,11 @@ class Scanner(Term)
                 ++gstats.noScannedRegFiles;
                 ++gstats.noScannedFiles;
 
-                immutable ext = theRegFile.name.extension.chompPrefix("."); // extension sans dot
+                immutable ext = theRegFile.realExtension; // extension sans dot
 
                 // Check included kinds first because they are fast.
-                KindHit incKindHit = isIncludedKind(theRegFile, ext, gstats.selKinds);
-                if (!gstats.selKinds.empty && // TODO: Do we really need this one?
+                KindHit incKindHit = isSelectedFKind(theRegFile, ext, gstats.selFKinds);
+                if (!gstats.selFKinds.empty && // TODO: Do we really need this one?
                     !incKindHit)
                 {
                     return;
@@ -5168,14 +5184,14 @@ class Scanner(Term)
         }
     }
 
-    /* isIncludedKind(cast(NotNull!File)dupFile, */
-    /*                dupFile.name.extension.chompPrefix("."), */
-    /*                gstats.selKinds) */
+    /* isSelectedFKind(cast(NotNull!File)dupFile, */
+    /*                dupFile.realExtension, */
+    /*                gstats.selFKinds) */
 
     // Filter out $(D files) that lie under any of the directories $(D dirPaths).
     F[] filterUnderAnyOfPaths(F)(F[] files,
                                  string[] dirPaths,
-                                 FKind[] selKinds)
+                                 FKind[] selFKinds)
     {
         import std.algorithm: any;
         import std.array: array;
@@ -5209,7 +5225,7 @@ class Scanner(Term)
             viz.pp((typeName ~ " Content Duplicates").asH!2);
             foreach (digest, dupFiles; gstats.filesByContentId)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selFKinds);
                 if (dupFilesOk.length >= 2) // non-empty file/directory
                 {
                     auto firstDup = cast(kind)dupFilesOk[0];
@@ -5219,7 +5235,7 @@ class Scanner(Term)
                         {
                             if (firstDup._cstat.kindId)
                             {
-                                viz.pp(asH!3(gstats.allKindsById[firstDup._cstat.kindId],
+                                viz.pp(asH!3(gstats.allFKindsById[firstDup._cstat.kindId],
                                              " files sharing digest ", digest, " and size ", firstDup.treeSize));
                             }
                             viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
@@ -5247,7 +5263,7 @@ class Scanner(Term)
             viz.pp("Name Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByName)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selFKinds);
                 if (!dupFilesOk.empty)
                 {
                     viz.pp(asH!3("Files with same name ",
@@ -5262,7 +5278,7 @@ class Scanner(Term)
             viz.pp("Inode Duplicates (Hardlinks)".asH!2);
             foreach (inode, dupFiles; gstats.filesByInode)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selFKinds);
                 if (dupFilesOk.length >= 2)
                 {
                     viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
