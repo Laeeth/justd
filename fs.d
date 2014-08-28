@@ -328,6 +328,7 @@ enum FileOp
     run, // Run (Execute)
 
     preprocess, // Preprocess C/C++/Objective-C (using cpp)
+    cpp = preprocess,
 
     /* VCS Operations */
     vcStatus,
@@ -1558,26 +1559,33 @@ class GStats
     Bytes64[NotNull!File] treeSizesByFile; // Tree sizes.
     size_t[NotNull!File] lineCountsByFile; // Line counts.
 
-    FKind[SHA1Digest] incKindsById;    // Index Kinds by their behaviour
-    FKind[SHA1Digest] allKindsById;    // Index Kinds by their behaviour
-
-    // Directories
+    // VCS Directories
     DirKind[] vcDirKinds;
     DirKind[string] vcDirKindsMap;
+
+    // Skipped Directories
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
 
-    FKind[] srcFKinds; // Source Kinds
+    // Source File Kinds
+    FKind[] srcFKinds; // TODO: Needed when we have hash-tables below?
     FKind[string] srcFKindsByName;
+    FKind[][string] srcFKindsByExt; // Maps extension string to array of FKinds
 
-    FKind[] binFKinds;
-    FKind[][string] binFKindsByExt;    // Maps extension string to Binary FileKinds
-    FKind[][size_t][immutable ubyte[]] binFKindsByMagic; // length => zero-offset magic byte array to Binary FileKinds
+    // Binary File Kinds
+    FKind[] binFKinds;  // TODO: Needed when we have hash-tables below?
+    FKind[][string] binFKindsByExt;    // Maps extension string to Binary FKinds
+    FKind[][size_t][immutable ubyte[]] binFKindsByMagic; // length => zero-offset magic byte array to Binary FKinds
     FKind[SHA1Digest] binFKindsById;    // Index Kinds by their behaviour
     size_t[] binFKindsMagicLengths; // List of Magic lengths
 
-    FKind[] incKinds; // FKind of file to include in search.
-    FKind[][string] incKindsByName;
+    // Include Kinds
+    FKind[] selKinds;  // TODO: Needed when we have hash-tables below?
+    FKind[][string] selKindsByName;
+    FKind[SHA1Digest] selKindsById;    // Index Kinds by their behaviour
+
+    // All File Kinds
+    FKind[SHA1Digest] allKindsById;    // Index Kinds by their behaviour
 
     void loadFileKinds()
     {
@@ -2320,21 +2328,26 @@ class GStats
 
         // Index Source Kinds by File extension
         FKind[][string] extSrcKinds;
-        foreach (k; srcFKinds)
+        foreach (kind; srcFKinds)
         {
-            foreach (ext; k.exts)
+            foreach (ext; kind.exts)
             {
-                extSrcKinds[ext] ~= k;
+                extSrcKinds[ext] ~= kind;
             }
         }
         extSrcKinds.rehash;
 
-        // Index Source Kinds by kindName
-        foreach (k; srcFKinds)
+        // Index Source Kinds by kindName and extension
+        foreach (kind; srcFKinds)
         {
-            srcFKindsByName[k.kindName] = k;
+            srcFKindsByName[kind.kindName] = kind;
+            foreach (ext; kind.exts)
+            {
+                srcFKindsByExt[ext] ~= kind;
+            }
         }
         srcFKindsByName.rehash;
+        srcFKindsByExt.rehash;
 
         // Binaries
 
@@ -3778,7 +3791,7 @@ class Scanner(Term)
     bool _beVerbose = false;
     bool _caseFold = false;
     bool _showSkipped = false;
-    string includedTypes;
+    string selKindNames;
     string[] _topDirNames;
     string[] addTags;
     string[] removeTags;
@@ -3801,7 +3814,7 @@ class Scanner(Term)
     Bist keysBistsUnion;
     XGram keysXGramsUnion;
 
-    string incKindsNote;
+    string selKindsNote;
 
     void prepare(string[] args, ref Term term)
     {
@@ -3832,7 +3845,7 @@ class Scanner(Term)
                                     "verbose|v", "\tVerbose",  &_beVerbose,
 
                                     "color|C", "\tColorize Output" ~ defaultDoc(gstats.colorFlag),  &gstats.colorFlag,
-                                    "types|T", "\tComma separated list (CSV) of file types/kinds to scan" ~ defaultDoc(includedTypes), &includedTypes,
+                                    "types|T", "\tComma separated list (CSV) of file types/kinds to scan" ~ defaultDoc(selKindNames), &selKindNames,
                                     "group-types|G", "\tCollect and group file types found" ~ defaultDoc(gstats.collectTypeHits), &gstats.collectTypeHits,
 
                                     "i", "\tCase-Fold, Case-Insensitive" ~ defaultDoc(_caseFold), &_caseFold,
@@ -3987,21 +4000,21 @@ class Scanner(Term)
 
         // viz.ppln("<meta http-equiv=\"refresh\" content=\"1\"/>"); // refresh every second
 
-        if (includedTypes)
+        if (selKindNames)
         {
-            foreach (lang; includedTypes.splitter(","))
+            foreach (lang; selKindNames.splitter(","))
             {
-                if (lang in gstats.srcFKindsByName)
+                if      (lang         in gstats.srcFKindsByName) // try exact match
                 {
-                    gstats.incKinds ~= gstats.srcFKindsByName[lang];
+                    gstats.selKinds ~= gstats.srcFKindsByName[lang];
                 }
-                else if (lang.toLower in gstats.srcFKindsByName)
+                else if (lang.toLower in gstats.srcFKindsByName) // else try all in lower case
                 {
-                    gstats.incKinds ~= gstats.srcFKindsByName[lang.toLower];
+                    gstats.selKinds ~= gstats.srcFKindsByName[lang.toLower];
                 }
-                else if (lang.toUpper in gstats.srcFKindsByName)
+                else if (lang.toUpper in gstats.srcFKindsByName) // else try all in upper case
                 {
-                    gstats.incKinds ~= gstats.srcFKindsByName[lang.toUpper];
+                    gstats.selKinds ~= gstats.srcFKindsByName[lang.toUpper];
                 }
                 else
                 {
@@ -4010,17 +4023,17 @@ class Scanner(Term)
             }
         }
 
-        // Maps extension string to Included FileKinds
-        foreach (kind; gstats.incKinds)
+        // Maps extension string to Included FKinds
+        foreach (kind; gstats.selKinds)
         {
             foreach (ext; kind.exts)
             {
-                gstats.incKindsByName[ext] ~= kind;
+                gstats.selKindsByName[ext] ~= kind;
             }
-            gstats.incKindsById[kind.behaviorId] = kind;
+            gstats.selKindsById[kind.behaviorId] = kind;
         }
-        gstats.incKindsByName.rehash;
-        gstats.incKindsById.rehash;
+        gstats.selKindsByName.rehash;
+        gstats.selKindsById.rehash;
 
         // Keys
         auto commaedKeys = keys.joiner(",");
@@ -4028,8 +4041,8 @@ class Scanner(Term)
         string commaedKeysString = to!string(commaedKeys);
         if (keys)
         {
-            incKindsNote = " in " ~ (gstats.incKinds ?
-                                     gstats.incKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
+            selKindsNote = " in " ~ (gstats.selKinds ?
+                                     gstats.selKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
             immutable underNote = " under \"" ~ (_topDirNames.reduce!"a ~ ',' ~ b") ~ "\"";
             const exactNote = gstats.keyAsExact ? "exact " : "";
             string asNote;
@@ -4054,7 +4067,7 @@ class Scanner(Term)
 
             const title = ("Searching for \"" ~ commaedKeysString ~ "\"" ~
                            " case-" ~ (_caseFold ? "in" : "") ~"sensitively"
-                           ~asNote ~incKindsNote ~underNote);
+                           ~asNote ~selKindsNote ~underNote);
             if (viz.form == VizForm.HTML) // only needed for HTML output
             {
                 viz.ppln(faze(title, titleFace));
@@ -4062,7 +4075,7 @@ class Scanner(Term)
 
             viz.pp(asH!1("Searching for \"", commaedKeysString, "\"",
                          " case-", (_caseFold ? "in" : ""), "sensitively",
-                         asNote, incKindsNote,
+                         asNote, selKindsNote,
                          " under ", _topDirNames.map!(a => asPath(a))));
         }
 
@@ -4160,7 +4173,7 @@ class Scanner(Term)
                     {
                         viz.ppln(("No exact matches for key" ~ keysString ~ `"` ~
                                   (gstats.keyAsSymbol ? " as symbol" : "") ~
-                                  " found" ~ incKindsNote ~
+                                  " found" ~ selKindsNote ~
                                   ". Relaxing scan to" ~ (gstats.keyAsSymbol ? " symbol" : "") ~ " acronym match."));
                         gstats.keyAsAcronym = true;
 
@@ -4363,14 +4376,14 @@ class Scanner(Term)
     size_t _scanChunkSize;
 
     KindHit isIncludedKind(NotNull!RegFile regfile,
-                           FKind[] incKinds) @safe /* nothrow */
+                           FKind[] selKinds) @safe /* nothrow */
     {
-        return isIncludedKind(regfile, regfile.name.extension.chompPrefix("."), incKinds);
+        return isIncludedKind(regfile, regfile.name.extension.chompPrefix("."), selKinds);
     }
 
     KindHit isIncludedKind(NotNull!RegFile regfile,
                            in string ext,
-                           FKind[] incKinds) @safe /* nothrow */
+                           FKind[] selKinds) @safe /* nothrow */
     {
         typeof(return) kindHit = KindHit.none;
         FKind hitKind;
@@ -4379,9 +4392,9 @@ class Scanner(Term)
         // First Try with kindId as try
         if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
-            if (regfile._cstat.kindId in gstats.incKindsById)
+            if (regfile._cstat.kindId in gstats.selKindsById)
             {
-                hitKind = gstats.incKindsById[regfile._cstat.kindId];
+                hitKind = gstats.selKindsById[regfile._cstat.kindId];
                 kindHit = KindHit.cached;
                 return kindHit;
             }
@@ -4389,9 +4402,9 @@ class Scanner(Term)
 
         // Try with hash table first
         if (!ext.empty && // if file has extension and
-            ext in gstats.incKindsByName) // and extensions may match specified included files
+            ext in gstats.selKindsByName) // and extensions may match specified included files
         {
-            auto possibleKinds = gstats.incKindsByName[ext];
+            auto possibleKinds = gstats.selKindsByName[ext];
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
@@ -4408,7 +4421,7 @@ class Scanner(Term)
         if (!hitKind) // if no hit yet
         {
             // blindly try the rest
-            foreach (kind; incKinds)
+            foreach (kind; selKinds)
             {
                 auto nnKind = enforceNotNull(kind);
                 immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allKindsById);
@@ -4708,8 +4721,6 @@ class Scanner(Term)
         const kind = theRegFile.tryLookupKindIn(gstats.allKindsById);
         if (kind)
         {
-            dln("xxx: ", kind);
-
             const hit = kind.operations.find!(a => a[0] == gstats.fileOp);
             if (!hit.empty)
             {
@@ -4769,8 +4780,8 @@ class Scanner(Term)
                 immutable ext = theRegFile.name.extension.chompPrefix("."); // extension sans dot
 
                 // Check included kinds first because they are fast.
-                KindHit incKindHit = isIncludedKind(theRegFile, ext, gstats.incKinds);
-                if (!gstats.incKinds.empty && // TODO: Do we really need this one?
+                KindHit incKindHit = isIncludedKind(theRegFile, ext, gstats.selKinds);
+                if (!gstats.selKinds.empty && // TODO: Do we really need this one?
                     !incKindHit)
                 {
                     return;
@@ -5154,12 +5165,12 @@ class Scanner(Term)
 
     /* isIncludedKind(cast(NotNull!File)dupFile, */
     /*                dupFile.name.extension.chompPrefix("."), */
-    /*                gstats.incKinds) */
+    /*                gstats.selKinds) */
 
     // Filter out $(D files) that lie under any of the directories $(D dirPaths).
     F[] filterUnderAnyOfPaths(F)(F[] files,
                                  string[] dirPaths,
-                                 FKind[] incKinds)
+                                 FKind[] selKinds)
     {
         import std.algorithm: any;
         import std.array: array;
@@ -5193,7 +5204,7 @@ class Scanner(Term)
             viz.pp((typeName ~ " Content Duplicates").asH!2);
             foreach (digest, dupFiles; gstats.filesByContentId)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selKinds);
                 if (dupFilesOk.length >= 2) // non-empty file/directory
                 {
                     auto firstDup = cast(kind)dupFilesOk[0];
@@ -5231,7 +5242,7 @@ class Scanner(Term)
             viz.pp("Name Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByName)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selKinds);
                 if (!dupFilesOk.empty)
                 {
                     viz.pp(asH!3("Files with same name ",
@@ -5246,7 +5257,7 @@ class Scanner(Term)
             viz.pp("Inode Duplicates (Hardlinks)".asH!2);
             foreach (inode, dupFiles; gstats.filesByInode)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.incKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selKinds);
                 if (dupFilesOk.length >= 2)
                 {
                     viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
