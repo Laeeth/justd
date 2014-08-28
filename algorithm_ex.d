@@ -1460,7 +1460,7 @@ unittest
     assert([1, 2, 3].dropWhile(1) == [2, 3]);
     assert([1, 1, 1, 2, 3].dropWhile(1) == [2, 3]);
     assert([1, 2, 3].dropWhile(2) == [1, 2, 3]);
-    assert("abc".dropWhile(cast(dchar)'a') == "bc");
+    assert("aabc".dropWhile(cast(dchar)'a') == "bc");
 }
 
 /* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
