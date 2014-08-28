@@ -45,7 +45,7 @@ string toML(T)(T x,
         {
             case MarkupLang.HTML:
             case MarkupLang.unknown:
-                return (mantissa ~ `&middot;` ~ `10` ~ `<msup">` ~ exponent ~ `</msup>`);
+                return (mantissa ~ `&middot;` ~ `10` ~ `<msup>` ~ exponent ~ `</msup>`);
             case MarkupLang.MathML:
                 return (`<math>` ~ mantissa ~ `&middot;` ~
                         `<msup>` ~
