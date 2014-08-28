@@ -28,7 +28,7 @@ string toMathML(T)(T x) @trusted /* pure nothrow */ if (isScalarType!T &&
     See also: https://developer.mozilla.org/en-US/docs/Web/MathML/Element/msup
  */
 string toML(T)(T x,
-               bool forceExponentPlusSign = false,
+               bool usePowPlus = false,
                MarkupLang mlang = MarkupLang.HTML) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
     import std.conv: to;
@@ -37,7 +37,7 @@ string toML(T)(T x,
     if (parts[2].length >= 1)
     {
         const mantissa = parts[0];
-        const exponent = ((!forceExponentPlusSign &&
+        const exponent = ((!usePowPlus &&
                            parts[2][0] == '+') ? // if leading plus
                           parts[2][1..$] : // skip plus
                           parts[2]); // otherwise whole
@@ -68,16 +68,14 @@ string toML(T)(T x,
     }
 }
 
-auto toMathML(T)(T x,
-                 bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
+auto toMathML(T)(T x, bool usePowPlus = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, forceExponentPlusSign, MarkupLang.MathML);
+    return toML(x, usePowPlus, MarkupLang.MathML);
 }
 
-auto toHTML(T)(T x,
-               bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
+auto toHTML(T)(T x, bool usePowPlus = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, forceExponentPlusSign, MarkupLang.HTML);
+    return toML(x, usePowPlus, MarkupLang.HTML);
 }
 
 /**
