@@ -71,13 +71,13 @@ string toML(T)(T x,
 auto toMathML(T)(T x,
                  bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, forceExponentPlusSign, MarkupLang.HTML);
+    return toML(x, forceExponentPlusSign, MarkupLang.MathML);
 }
 
 auto toHTML(T)(T x,
                bool forceExponentPlusSign = false) @trusted /* pure nothrow */ if (isFloatingPoint!T)
 {
-    return toML(x, forceExponentPlusSign, MarkupLang.MathML);
+    return toML(x, forceExponentPlusSign, MarkupLang.HTML);
 }
 
 /**
