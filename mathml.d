@@ -16,7 +16,7 @@ enum HAlign { left, center, right }
 
 /** Generic case. */
 string toMathML(T)(T x) @trusted /* pure nothrow */ if (isScalarType!T &&
-                                                 !isFloatingPoint!T)
+                                                        !isFloatingPoint!T)
 {
     import std.conv: to;
     return to!string(x);
