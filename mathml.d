@@ -53,8 +53,8 @@ string toML(T)(T x,
 
         final switch (mlang)
         {
-            case MarkupLang.HTML:
             case MarkupLang.unknown:
+            case MarkupLang.HTML:
                 return (mant ~ `&middot;` ~ `10` ~ `<msup>` ~ zexp ~ `</msup>`);
             case MarkupLang.MathML:
                 return (`<math>` ~ mant ~ `&middot;` ~

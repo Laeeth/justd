@@ -714,21 +714,14 @@ void pp1(Arg)(Viz viz,
               Arg arg)
     @trusted
 {
-    static if (is(typeof(arg.toHTML)))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            return viz.ppRaw(arg.toHTML);
-        }
-    }
-    else static if (is(typeof(viz.ppMathML(arg))))
+    static if (is(typeof(viz.ppMathML(arg))))
     {
         if (viz.form == VizForm.HTML)
         {
             return viz.ppMathML(arg);
         }
     }
-    else static if (is(typeof(arg.toMathML)))
+    static if (is(typeof(arg.toMathML)))
     {
         if (viz.form == VizForm.HTML)
         {
@@ -736,7 +729,14 @@ void pp1(Arg)(Viz viz,
             return viz.ppRaw(arg.toMathML);
         }
     }
-    else static if (is(typeof(arg.toLaTeX)))
+    static if (is(typeof(arg.toHTML)))
+    {
+        if (viz.form == VizForm.HTML)
+        {
+            return viz.ppRaw(arg.toHTML);
+        }
+    }
+    static if (is(typeof(arg.toLaTeX)))
     {
         if (viz.form == VizForm.LaTeX)
         {
