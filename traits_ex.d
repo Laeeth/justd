@@ -34,6 +34,7 @@ unittest {
 
 import std.functional: unaryFun, binaryFun;
 
+/* TODO: Do we need use of unaryFun and binaryFun here? */
 alias isEven = unaryFun!(a => (a & 1) == 0); // Limit to Integers?
 alias isOdd = unaryFun!(a => (a & 1) == 1); // Limit to Integers?
 alias lessThan = binaryFun!((a, b) => a < b);
@@ -222,8 +223,7 @@ template isCTFEable2(fun...)
     enum isCTFEable2 = true;
 }
 
-unittest
-{
+unittest {
     int fun1() { return 1; }
     auto fun1_N()
     {
