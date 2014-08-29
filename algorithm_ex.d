@@ -935,40 +935,6 @@ unittest {
     version(print) dln(spans);
 }
 
-import std.traits: functionAttributes, FunctionAttribute, isCallable, ParameterTypeTuple;
-
-/** Check if $(D fun) is a pure function. */
-enum bool isPure(alias fun) = (isCallable!fun &&
-                               (functionAttributes!fun &
-                                FunctionAttribute.pure_));
-
-unittest
-{
-    auto foo(int x) { return x; }
-    /* static assert(isPure!foo); */
-}
-
-/** Check if $(D fun) is a function purely callable with arguments T. */
-enum bool isPurelyCallable(alias fun, T...) = (isCallable!(fun) &&
-                                               (functionAttributes!fun &
-                                                FunctionAttribute.pure_)
-                                               is(T == ParameterTypeTuple!fun));
-
-unittest
-{
-    auto foo(int x) { return x; }
-    /* static assert(isPurelyCallable!(foo, int)); */
-}
-
-/** Persistently Call Function $(D fun) with arguments $(D args).
-    All files
-*/
-auto persistentlyMemoizedCall(alias fun, T...)(T args) if (isPure!fun &&
-                                                           isCallable!(fun, args))
-{
-    return fun(args);
-}
-
 // ==============================================================================================
 
 /** In Place Ordering (in Sorted Order) of all Elements $(D t).
