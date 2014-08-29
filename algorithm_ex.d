@@ -902,6 +902,8 @@ unittest {
     version(print) dln(y.array.pack);
 }
 
+// ==============================================================================================
+
 import std.traits: isCallable, ReturnType, arity, ParameterTypeTuple;
 import traits_ex: arityMin0;
 
@@ -931,6 +933,40 @@ unittest {
     version(print) dln(times);
     auto spans = times.forwardDifference;
     version(print) dln(spans);
+}
+
+import std.traits: functionAttributes, FunctionAttribute, isCallable, ParameterTypeTuple;
+
+/** Check if $(D fun) is a pure function. */
+enum bool isPure(alias fun) = (isCallable!fun &&
+                               (functionAttributes!fun &
+                                FunctionAttribute.pure_));
+
+unittest
+{
+    auto foo(int x) { return x; }
+    /* static assert(isPure!foo); */
+}
+
+/** Check if $(D fun) is a function purely callable with arguments T. */
+enum bool isPurelyCallable(alias fun, T...) = (isCallable!(fun) &&
+                                               (functionAttributes!fun &
+                                                FunctionAttribute.pure_)
+                                               is(T == ParameterTypeTuple!fun));
+
+unittest
+{
+    auto foo(int x) { return x; }
+    /* static assert(isPurelyCallable!(foo, int)); */
+}
+
+/** Persistently Call Function $(D fun) with arguments $(D args).
+    All files
+*/
+auto persistentlyMemoizedCall(alias fun, T...)(T args) if (isPure!fun &&
+                                                           isCallable!(fun, args))
+{
+    return fun(args);
 }
 
 // ==============================================================================================
