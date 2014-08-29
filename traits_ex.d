@@ -262,11 +262,43 @@ unittest
 */
 enum isCTEable(alias expr) = __traits(compiles, { enum id = expr; });
 
-unittest
-{
+unittest {
     static assert(isCTEable!11);
     enum x = 11;
     static assert(isCTEable!x);
     auto y = 11;
     static assert(!isCTEable!y);
+}
+
+import std.traits: functionAttributes, FunctionAttribute, isCallable, ParameterTypeTuple;
+
+/** Check if $(D fun) is a pure function. */
+enum bool isPure(alias fun) = (isCallable!fun &&
+                               (functionAttributes!fun &
+                                FunctionAttribute.pure_));
+
+/** Check if $(D fun) is a function purely callable with arguments T. */
+enum bool isPurelyCallableWith(alias fun, T...) = (isPure!fun &&
+                                                   is(T == ParameterTypeTuple!fun));
+
+unittest {
+    int foo(int x) @safe pure nothrow { return x; }
+    static assert(isPure!foo);
+    static assert(isPurelyCallableWith!(foo, int));
+}
+
+/** Persistently Call Function $(D fun) with arguments $(D args).
+
+    Use msgpack.
+
+    Extend std.functional : memoize to accept pure functions that takes an
+    immutable mmap as input. Create wrapper that converts file to immutable mmap
+    and performs memoization on the pure function.
+
+*/
+auto persistentlyMemoizedCall(alias fun, T...)(T args) if (isPure!fun &&
+                                                           isCallable!(fun, args))
+{
+    import std.functional: memoize;
+    return fun(args);
 }
