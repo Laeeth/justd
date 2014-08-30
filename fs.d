@@ -2966,11 +2966,8 @@ class GStats
                                [],
                                FileContent.voiceModem, FileKindDetection.equalsContents);
 
-        foreach (kind; chain(txtFKinds.byIndex,
-                             binFKinds.byIndex))
-        {
-            allFKinds ~= kind;
-        }
+        allFKinds.byIndex = chain(txtFKinds.byIndex,
+                                  binFKinds.byIndex).array;
 
         txtFKinds.rehash;
         binFKinds.rehash;
@@ -4464,8 +4461,6 @@ class Scanner(Term)
     {
         auto hit = KindHit.none;
 
-        auto parentDir = regFile.parent;
-
         // First Try with kindId as try
         if (regFile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
@@ -4513,6 +4508,7 @@ class Scanner(Term)
                     {
                         if (gstats.showTree)
                         {
+                            auto parentDir = regFile.parent;
                             immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                             viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                         }
