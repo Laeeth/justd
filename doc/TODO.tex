@@ -85,9 +85,18 @@ Error: undefined identifier __dollar
 \end{itemize}
 
 \section{Compiler Error Handling}
+
 \begin{itemize}
 \item Detect duplicates: \texttt{version(print) version(print)}
 \end{itemize}
+
+\section{Compiler Inference}
+
+\item Infer guarded AA-indexing expressions such as
+\begin{lstlisting}[frame=single]
+if (key in aa) { f(aa[key]); }
+\end{lstlisting}
+to nothrow.
 
 \section{Language}
 
