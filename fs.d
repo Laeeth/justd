@@ -726,7 +726,7 @@ Tuple!(KindHit, FKind, size_t) ofAnyKindIn(NotNull!RegFile regFile,
     {
         foreach (kindIndex, kind; kinds.byExt[ext])
         {
-            auto hit = regFile.ofKind(ext, kind.enforceNotNull, collectTypeHits, kinds);
+            auto hit = regFile.ofKind(kind.enforceNotNull, collectTypeHits, kinds);
             if (hit)
             {
                 return tuple(hit, kind, kindIndex);
@@ -737,7 +737,7 @@ Tuple!(KindHit, FKind, size_t) ofAnyKindIn(NotNull!RegFile regFile,
     // try all
     foreach (kindIndex, kind; kinds.byIndex) // Iterate each kind
     {
-        auto hit = regFile.ofKind(ext, kind.enforceNotNull, collectTypeHits, kinds);
+        auto hit = regFile.ofKind(kind.enforceNotNull, collectTypeHits, kinds);
         if (hit)
         {
             return tuple(hit, kind, kindIndex);
@@ -752,13 +752,11 @@ Tuple!(KindHit, FKind, size_t) ofAnyKindIn(NotNull!RegFile regFile,
 
 /** Returns: true if file with extension $(D ext) is of type $(D kind). */
 KindHit ofKind(NotNull!RegFile regFile,
-               in string ext,
                NotNull!FKind kind,
                bool collectTypeHits,
                FKinds allFKinds) /* nothrow */ @trusted
 {
-    immutable hit = regFile.ofKind1(ext,
-                                    kind,
+    immutable hit = regFile.ofKind1(kind,
                                     collectTypeHits,
                                     allFKinds);
     if (hit &&
@@ -772,7 +770,6 @@ KindHit ofKind(NotNull!RegFile regFile,
 
 /** Helper for ofKind. */
 KindHit ofKind1(NotNull!RegFile regFile,
-                in string ext,
                 NotNull!FKind kind,
                 bool collectTypeHits,
                 FKinds allFKinds) /* nothrow */ @trusted
@@ -786,10 +783,11 @@ KindHit ofKind1(NotNull!RegFile regFile,
         return KindHit.cached;
     }
 
+    immutable ext = regFile.realExtension;
+
     if (kind.superKind)
     {
-        immutable baseHit = regFile.ofKind(ext,
-                                           enforceNotNull(kind.superKind),
+        immutable baseHit = regFile.ofKind(enforceNotNull(kind.superKind),
                                            collectTypeHits,
                                            allFKinds);
         if (!baseHit)
@@ -4529,7 +4527,7 @@ class Scanner(Term)
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
+                immutable hit = regFile.ofKind(nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4545,7 +4543,7 @@ class Scanner(Term)
             foreach (kind; gstats.selFKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
+                immutable hit = regFile.ofKind(nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     hitKind = nnKind;
