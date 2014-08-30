@@ -1671,11 +1671,7 @@ class GStats
     NotNull!FKinds txtFKinds = new FKinds; // Textual
     NotNull!FKinds binFKinds = new FKinds; // Binary (Non-Textual)
     NotNull!FKinds allFKinds = new FKinds; // All
-
-    // (User) Selected File Kinds
-    FKind[] selFKinds;  // TODO: Needed when we have hash-tables below?
-    FKind[][string] selFKindsByExt;
-    FKind[SHA1Digest] selFKindsById;    // Index Kinds by their behaviour
+    NotNull!FKinds selFKinds = new FKinds; // User selected
 
     void loadFileKinds()
     {
@@ -4210,22 +4206,19 @@ class Scanner(Term)
                 }
                 else
                 {
-                    writeln("warning: Language ", lang, " not registered. Defaulting to all file types.");
+                    writeln("warning: Language ", lang, " not registered");
                 }
             }
-        }
-
-        // Maps extension string to Included FKinds
-        foreach (kind; gstats.selFKinds)
-        {
-            foreach (ext; kind.exts)
+            if (gstats.selFKinds.byIndex.empty)
             {
-                gstats.selFKindsByExt[ext] ~= kind;
+                writeln("warning: None of the languages ", to!string(selFKindNames), " are registered. Defaulting to all file types.");
+                gstats.selFKinds = gstats.allFKinds;
             }
-            gstats.selFKindsById[kind.behaviorId] = kind;
+            else
+            {
+                gstats.selFKinds.rehash;
+            }
         }
-        gstats.selFKindsByExt.rehash;
-        gstats.selFKindsById.rehash;
 
         // Keys
         auto commaedKeys = keys.joiner(",");
@@ -4234,7 +4227,7 @@ class Scanner(Term)
         if (keys)
         {
             selFKindsNote = " in " ~ (gstats.selFKinds ?
-                                     gstats.selFKinds.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
+                                     gstats.selFKinds.byIndex.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
             immutable underNote = " under \"" ~ (_topDirNames.reduce!"a ~ ',' ~ b") ~ "\"";
             const exactNote = gstats.keyAsExact ? "exact " : "";
             string asNote;
@@ -4509,9 +4502,9 @@ class Scanner(Term)
         // First Try with kindId as try
         if (regFile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
-            if (regFile._cstat.kindId in gstats.selFKindsById)
+            if (regFile._cstat.kindId in gstats.selFKinds.byId)
             {
-                hitKind = gstats.selFKindsById[regFile._cstat.kindId];
+                hitKind = gstats.selFKinds.byId[regFile._cstat.kindId];
                 kindHit = KindHit.cached;
                 return kindHit;
             }
@@ -4521,9 +4514,9 @@ class Scanner(Term)
 
         // Try with hash table first
         if (!ext.empty && // if file has extension and
-            ext in gstats.selFKindsByExt) // and extensions may match specified included files
+            ext in gstats.selFKinds.byExt) // and extensions may match specified included files
         {
-            auto possibleKinds = gstats.selFKindsByExt[ext];
+            auto possibleKinds = gstats.selFKinds.byExt[ext];
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
@@ -4540,7 +4533,7 @@ class Scanner(Term)
         if (!hitKind) // if no hit yet
         {
             // blindly try the rest
-            foreach (kind; gstats.selFKinds)
+            foreach (kind; gstats.selFKinds.byIndex)
             {
                 auto nnKind = enforceNotNull(kind);
                 immutable hit = regFile.ofKind(nnKind, gstats.collectTypeHits, gstats.allFKinds);
@@ -4841,9 +4834,9 @@ class Scanner(Term)
         // check for operations
         // TODO: Reuse isSelectedFKind instead of this
         immutable ext = theRegFile.realExtension;
-        if (ext in gstats.selFKindsByExt)
+        if (ext in gstats.selFKinds.byExt)
         {
-            auto matchingFKinds = gstats.selFKindsByExt[ext];
+            auto matchingFKinds = gstats.selFKinds.byExt[ext];
             dln(matchingFKinds);
             foreach(kind; matchingFKinds)
             {
@@ -4905,7 +4898,7 @@ class Scanner(Term)
 
                 // Check included kinds first because they are fast.
                 KindHit incKindHit = isSelectedFKind(theRegFile);
-                if (!gstats.selFKinds.empty && // TODO: Do we really need this one?
+                if (!gstats.selFKinds.byIndex.empty && // TODO: Do we really need this one?
                     !incKindHit)
                 {
                     return;
@@ -5321,8 +5314,7 @@ class Scanner(Term)
 
     // Filter out $(D files) that lie under any of the directories $(D dirPaths).
     F[] filterUnderAnyOfPaths(F)(F[] files,
-                                 string[] dirPaths,
-                                 FKind[] selFKinds)
+                                 string[] dirPaths)
     {
         import std.algorithm: any;
         import std.array: array;
@@ -5356,7 +5348,7 @@ class Scanner(Term)
             viz.pp((typeName ~ " Content Duplicates").asH!2);
             foreach (digest, dupFiles; gstats.filesByContentId)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selFKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames);
                 if (dupFilesOk.length >= 2) // non-empty file/directory
                 {
                     auto firstDup = cast(kind)dupFilesOk[0];
@@ -5394,7 +5386,7 @@ class Scanner(Term)
             viz.pp("Name Duplicates".asH!2);
             foreach (digest, dupFiles; gstats.filesByName)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selFKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames);
                 if (!dupFilesOk.empty)
                 {
                     viz.pp(asH!3("Files with same name ",
@@ -5409,7 +5401,7 @@ class Scanner(Term)
             viz.pp("Inode Duplicates (Hardlinks)".asH!2);
             foreach (inode, dupFiles; gstats.filesByInode)
             {
-                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames, gstats.selFKinds);
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames);
                 if (dupFilesOk.length >= 2)
                 {
                     viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
