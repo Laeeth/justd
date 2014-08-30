@@ -610,7 +610,7 @@ import std.range: hasSlicing;
     Returns: true iff match. */
 bool matchContents(Range)(in FKind kind,
                           in Range range,
-                          in RegFile regfile) pure nothrow if (hasSlicing!Range)
+                          in RegFile regFile) pure nothrow if (hasSlicing!Range)
 {
     const hit = kind.magicData.matchU(range, kind.magicOffset);
     return (!hit.empty);
@@ -623,12 +623,12 @@ enum KindHit
     uncached = 2, // Uncached (fresh) hit.
 }
 
-/** Scan $(D regfile) for ELF Symbols.
+/** Scan $(D regFile) for ELF Symbols.
     TODO: Index and cache stuff in gstats.symbolsELF
     TODO: Support GCC C++ here https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
     TODO: Format this using asTable: Language | Symbol
  */
-void scanELF(NotNull!RegFile regfile,
+void scanELF(NotNull!RegFile regFile,
              bool doDemangle = true)
 {
     import elfdoc: sectionNameExplanations;
@@ -640,12 +640,12 @@ void scanELF(NotNull!RegFile regfile,
 
     if (flag64)
     {
-        elfAny = new elf.ELF64(regfile._mmfile);
+        elfAny = new elf.ELF64(regFile._mmfile);
         elfAny = elfAny;
     }
     else
     {
-        elfAny = new elf.ELF32(regfile._mmfile);
+        elfAny = new elf.ELF32(regFile._mmfile);
     }
 
     foreach (section; elfAny.sections)
@@ -660,7 +660,7 @@ void scanELF(NotNull!RegFile regfile,
     auto sts = elfAny.getSection(".symtab"); // or ".dynsym"
     if (!sts.isNull)
     {
-        writeln(regfile.path, ": ELF Section ", ".symtab");
+        writeln(regFile.path, ": ELF Section ", ".symtab");
         /* writeln("ELF Section doc ", sectionNameExplanations[".symtab"]); */
 
         if (showSymbols)
@@ -685,7 +685,7 @@ void scanELF(NotNull!RegFile regfile,
     auto sst = elfAny.getSymbolsStringTable;
     if (!sst.isNull)
     {
-        writeln(regfile.path, ": ELF Section ", ".strtab");
+        writeln(regFile.path, ": ELF Section ", ".strtab");
         if (showSymbols)
         {
             foreach (const sym; sst.strings)
@@ -705,13 +705,13 @@ void scanELF(NotNull!RegFile regfile,
 }
 
 /** Returns: true if file with extension $(D ext) is of type $(D kind). */
-KindHit ofKind(NotNull!RegFile regfile,
+KindHit ofKind(NotNull!RegFile regFile,
                in string ext,
                NotNull!FKind kind,
                bool collectTypeHits,
                FKinds allFKinds) /* nothrow */ @trusted
 {
-    immutable hit = regfile.ofKind1(ext,
+    immutable hit = regFile.ofKind1(ext,
                                     kind,
                                     collectTypeHits,
                                     allFKinds);
@@ -719,13 +719,13 @@ KindHit ofKind(NotNull!RegFile regfile,
         kind.kindName == "ELF")
     {
         /* TODO: Make this symbol interface available */
-        regfile.scanELF();
+        regFile.scanELF();
     }
     return hit;
 }
 
 /** Helper for ofKind. */
-KindHit ofKind1(NotNull!RegFile regfile,
+KindHit ofKind1(NotNull!RegFile regFile,
                 in string ext,
                 NotNull!FKind kind,
                 bool collectTypeHits,
@@ -733,16 +733,16 @@ KindHit ofKind1(NotNull!RegFile regfile,
 {
     // Try cached first
 
-    if (regfile._cstat.kindId.defined &&
-        (regfile._cstat.kindId in allFKinds.byId) && // if kind is known
-        allFKinds.byId[regfile._cstat.kindId] is kind)  // if cached kind equals
+    if (regFile._cstat.kindId.defined &&
+        (regFile._cstat.kindId in allFKinds.byId) && // if kind is known
+        allFKinds.byId[regFile._cstat.kindId] is kind)  // if cached kind equals
     {
         return KindHit.cached;
     }
 
     if (kind.superKind)
     {
-        immutable baseHit = regfile.ofKind(ext,
+        immutable baseHit = regFile.ofKind(ext,
                                            enforceNotNull(kind.superKind),
                                            collectTypeHits,
                                            allFKinds);
@@ -756,36 +756,36 @@ KindHit ofKind1(NotNull!RegFile regfile,
     final switch (kind.detection)
     {
     case FileKindDetection.equalsName:
-        hit = kind.matchName(regfile.name, 0, ext);
+        hit = kind.matchName(regFile.name, 0, ext);
         break;
     case FileKindDetection.equalsNameAndContents:
-        hit = (kind.matchName(regfile.name, 0, ext) &&
-               kind.matchContents(regfile.readOnlyContents, regfile));
+        hit = (kind.matchName(regFile.name, 0, ext) &&
+               kind.matchContents(regFile.readOnlyContents, regFile));
         break;
     case FileKindDetection.equalsNameOrContents:
-        hit = (kind.matchName(regfile.name, 0, ext) ||
-               kind.matchContents(regfile.readOnlyContents, regfile));
+        hit = (kind.matchName(regFile.name, 0, ext) ||
+               kind.matchContents(regFile.readOnlyContents, regFile));
         break;
     case FileKindDetection.equalsContents:
-        hit = kind.matchContents(regfile.readOnlyContents, regfile);
+        hit = kind.matchContents(regFile.readOnlyContents, regFile);
         break;
     case FileKindDetection.equalsWhatsGiven:
         // something must be defined
         assert(is(kind.baseNaming) ||
                !kind.exts.empty ||
                !(kind.magicData is null));
-        hit = ((kind.matchName(regfile.name, 0, ext) &&
+        hit = ((kind.matchName(regFile.name, 0, ext) &&
                 (kind.magicData is null ||
-                 kind.matchContents(regfile.readOnlyContents, regfile))));
+                 kind.matchContents(regFile.readOnlyContents, regFile))));
         break;
     }
     if (hit)
     {
         if (collectTypeHits)
         {
-            kind.hitFiles ~= regfile;
+            kind.hitFiles ~= regFile;
         }
-        regfile._cstat.kindId = kind.behaviorId;       // store reference in File
+        regFile._cstat.kindId = kind.behaviorId;       // store reference in File
     }
 
     return hit ? KindHit.uncached : KindHit.none;
@@ -1808,167 +1808,6 @@ class GStats
                                                      "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
                                                      "and_eq", "bitor", "not", "or", "xor", ]).uniq.array;
 
-        /* See also: http://msdn.microsoft.com/en-us/library/2e6a4at9.aspx */
-        static immutable opersCxxMicrosoft = ["__alignof"];
-
-        /* See also: http://msdn.microsoft.com/en-us/library/2e6a4at9.aspx */
-        static immutable keywordsCxxMicrosoft = (keywordsCxx ~ [/* __abstract 2 */
-                                                                "__asm",
-                                                                "__assume",
-                                                                "__based",
-                                                                /* __box 2 */
-                                                                "__cdecl",
-                                                                "__declspec",
-                                                                /* __delegate 2 */
-                                                                "__event",
-                                                                "__except",
-                                                                "__fastcall",
-                                                                "__finally",
-                                                                "__forceinline",
-                                                                /* __gc 2 */
-                                                                /* __hook 3 */
-                                                                "__identifier",
-                                                                "__if_exists",
-                                                                "__if_not_exists",
-                                                                "__inline",
-                                                                "__int16",
-                                                                "__int32",
-                                                                "__int64",
-                                                                "__int8",
-                                                                "__interface",
-                                                                "__leave",
-                                                                "__m128",
-                                                                "__m128d",
-                                                                "__m128i",
-                                                                "__m64",
-                                                                "__multiple_inheritance",
-                                                                /* __nogc 2 */
-                                                                "__noop",
-                                                                /* __pin 2 */
-                                                                /* __property 2 */
-                                                                "__raise",
-                                                                /* __sealed 2 */
-                                                                "__single_inheritance",
-                                                                "__stdcall",
-                                                                "__super",
-                                                                "__thiscall",
-                                                                "__try",
-                                                                "__except",
-                                                                "__finally",
-                                                                /* __try_cast 2 */
-                                                                "__unaligned",
-                                                                /* __unhook 3 */
-                                                                "__uuidof",
-                                                                /* __value 2 */
-                                                                "__virtual_inheritance",
-                                                                "__w64",
-                                                                "__wchar_t",
-                                                                "wchar_t",
-                                                                "abstract",
-                                                                "array",
-                                                                "auto",
-                                                                "bool",
-                                                                "break",
-                                                                "case",
-                                                                "catch",
-                                                                "char",
-                                                                "class",
-                                                                "const",
-                                                                "const_cast",
-                                                                "continue",
-                                                                "decltype",
-                                                                "default",
-                                                                "delegate",
-                                                                "delete",
-                                                                /* deprecated 1 */
-                                                                /* dllexport 1 */
-                                                                /* dllimport 1 */
-                                                                "do",
-                                                                "double",
-                                                                "dynamic_cast",
-                                                                "else",
-                                                                "enum",
-                                                                "enum class"
-                                                                "enum struct"
-                                                                "event",
-                                                                "explicit",
-                                                                "extern",
-                                                                "false",
-                                                                "finally",
-                                                                "float",
-                                                                "for",
-                                                                "for each",
-                                                                "in",
-                                                                "friend",
-                                                                "friend_as",
-                                                                "gcnew",
-                                                                "generic",
-                                                                "goto",
-                                                                "if",
-                                                                "initonly",
-                                                                "inline",
-                                                                "int",
-                                                                "interface class",
-                                                                "interface struct",
-                                                                "interior_ptr",
-                                                                "literal",
-                                                                "long",
-                                                                "mutable",
-                                                                /* naked 1 */
-                                                                "namespace",
-                                                                "new",
-                                                                "new",
-                                                                /* noinline 1 */
-                                                                /* noreturn 1 */
-                                                                /* nothrow 1 */
-                                                                /* novtable 1 */
-                                                                "nullptr",
-                                                                "operator",
-                                                                "private",
-                                                                "property",
-                                                                /* property 1 */
-                                                                "protected",
-                                                                "public",
-                                                                "ref class",
-                                                                "ref struct",
-                                                                "register",
-                                                                "reinterpret_cast",
-                                                                "return",
-                                                                "safecast",
-                                                                "sealed",
-                                                                /* selectany 1 */
-                                                                "short",
-                                                                "signed",
-                                                                "sizeof",
-                                                                "static",
-                                                                "static_assert",
-                                                                "static_cast",
-                                                                "struct",
-                                                                "switch",
-                                                                "template",
-                                                                "this",
-                                                                /* thread 1 */
-                                                                "throw",
-                                                                "true",
-                                                                "try",
-                                                                "typedef",
-                                                                "typeid",
-                                                                "typeid",
-                                                                "typename",
-                                                                "union",
-                                                                "unsigned",
-                                                                "using" /* declaration */,
-                                                                "using" /* directive */,
-                                                                /* uuid 1 */
-                                                                "value class",
-                                                                "value struct",
-                                                                "virtual",
-                                                                "void",
-                                                                "volatile",
-                                                                "while"]).uniq.array;
-
-        static immutable xattrCxxMicrosoft = [];
-
         auto opersCxx = opersC ~ [
             Op("->*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
             Op(".*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
@@ -2017,6 +1856,167 @@ class GStats
         /*                        defaultStringDelims, */
         /*                        FileContent.sourceCode, */
         /*                        FileKindDetection.equalsWhatsGiven); */
+
+        /* See also: http://msdn.microsoft.com/en-us/library/2e6a4at9.aspx */
+        static immutable opersCxxMicrosoft = ["__alignof"];
+
+        /* See also: http://msdn.microsoft.com/en-us/library/2e6a4at9.aspx */
+        static immutable keywordsCxxMicrosoft = (keywordsCxx ~ [/* __abstract 2 */
+                                                     "__asm",
+                                                     "__assume",
+                                                     "__based",
+                                                     /* __box 2 */
+                                                     "__cdecl",
+                                                     "__declspec",
+                                                     /* __delegate 2 */
+                                                     "__event",
+                                                     "__except",
+                                                     "__fastcall",
+                                                     "__finally",
+                                                     "__forceinline",
+                                                     /* __gc 2 */
+                                                     /* __hook 3 */
+                                                     "__identifier",
+                                                     "__if_exists",
+                                                     "__if_not_exists",
+                                                     "__inline",
+                                                     "__int16",
+                                                     "__int32",
+                                                     "__int64",
+                                                     "__int8",
+                                                     "__interface",
+                                                     "__leave",
+                                                     "__m128",
+                                                     "__m128d",
+                                                     "__m128i",
+                                                     "__m64",
+                                                     "__multiple_inheritance",
+                                                     /* __nogc 2 */
+                                                     "__noop",
+                                                     /* __pin 2 */
+                                                     /* __property 2 */
+                                                     "__raise",
+                                                     /* __sealed 2 */
+                                                     "__single_inheritance",
+                                                     "__stdcall",
+                                                     "__super",
+                                                     "__thiscall",
+                                                     "__try",
+                                                     "__except",
+                                                     "__finally",
+                                                     /* __try_cast 2 */
+                                                     "__unaligned",
+                                                     /* __unhook 3 */
+                                                     "__uuidof",
+                                                     /* __value 2 */
+                                                     "__virtual_inheritance",
+                                                     "__w64",
+                                                     "__wchar_t",
+                                                     "wchar_t",
+                                                     "abstract",
+                                                     "array",
+                                                     "auto",
+                                                     "bool",
+                                                     "break",
+                                                     "case",
+                                                     "catch",
+                                                     "char",
+                                                     "class",
+                                                     "const",
+                                                     "const_cast",
+                                                     "continue",
+                                                     "decltype",
+                                                     "default",
+                                                     "delegate",
+                                                     "delete",
+                                                     /* deprecated 1 */
+                                                     /* dllexport 1 */
+                                                     /* dllimport 1 */
+                                                     "do",
+                                                     "double",
+                                                     "dynamic_cast",
+                                                     "else",
+                                                     "enum",
+                                                     "enum class"
+                                                     "enum struct"
+                                                     "event",
+                                                     "explicit",
+                                                     "extern",
+                                                     "false",
+                                                     "finally",
+                                                     "float",
+                                                     "for",
+                                                     "for each",
+                                                     "in",
+                                                     "friend",
+                                                     "friend_as",
+                                                     "gcnew",
+                                                     "generic",
+                                                     "goto",
+                                                     "if",
+                                                     "initonly",
+                                                     "inline",
+                                                     "int",
+                                                     "interface class",
+                                                     "interface struct",
+                                                     "interior_ptr",
+                                                     "literal",
+                                                     "long",
+                                                     "mutable",
+                                                     /* naked 1 */
+                                                     "namespace",
+                                                     "new",
+                                                     "new",
+                                                     /* noinline 1 */
+                                                     /* noreturn 1 */
+                                                     /* nothrow 1 */
+                                                     /* novtable 1 */
+                                                     "nullptr",
+                                                     "operator",
+                                                     "private",
+                                                     "property",
+                                                     /* property 1 */
+                                                     "protected",
+                                                     "public",
+                                                     "ref class",
+                                                     "ref struct",
+                                                     "register",
+                                                     "reinterpret_cast",
+                                                     "return",
+                                                     "safecast",
+                                                     "sealed",
+                                                     /* selectany 1 */
+                                                     "short",
+                                                     "signed",
+                                                     "sizeof",
+                                                     "static",
+                                                     "static_assert",
+                                                     "static_cast",
+                                                     "struct",
+                                                     "switch",
+                                                     "template",
+                                                     "this",
+                                                     /* thread 1 */
+                                                     "throw",
+                                                     "true",
+                                                     "try",
+                                                     "typedef",
+                                                     "typeid",
+                                                     "typeid",
+                                                     "typename",
+                                                     "union",
+                                                     "unsigned",
+                                                     "using" /* declaration */,
+                                                     "using" /* directive */,
+                                                     /* uuid 1 */
+                                                     "value class",
+                                                     "value struct",
+                                                     "virtual",
+                                                     "void",
+                                                     "volatile",
+                                                     "while"]).uniq.array;
+
+        static immutable xattrCxxMicrosoft = [];
 
         static immutable keywordsNewObjectiveC = ["id",
                                                   "in",
@@ -3452,10 +3452,10 @@ class Dir : File
 
             foreach (sub; _subs)
             {
-                if        (const regfile = cast(RegFile)sub)
+                if        (const regFile = cast(RegFile)sub)
                 {
                     packer.pack("RegFile");
-                    regfile.toMsgpack(packer);
+                    regFile.toMsgpack(packer);
                 }
                 else if (const dir = cast(Dir)sub)
                 {
@@ -4437,12 +4437,12 @@ class Scanner(Term)
     }
 
     void printSkipped(Viz viz,
-                      NotNull!RegFile regfile,
-                      in string ext, size_t subIndex,
+                      NotNull!RegFile regFile,
+                      size_t subIndex,
                       in NotNull!FKind kind, KindHit kindhit,
                       in string skipCause)
     {
-        auto parentDir = regfile.parent;
+        auto parentDir = regFile.parent;
         if (_showSkipped)
         {
             if (gstats.showTree)
@@ -4451,28 +4451,29 @@ class Scanner(Term)
                 viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
             }
             viz.pp(horizontalRuler,
-                   asH!3(regfile,
+                   asH!3(regFile,
                          ": Skipped ", kind, " file",
                          skipCause));
         }
     }
 
-    KindHit isBinary(Viz viz,
-                     NotNull!RegFile regfile,
-                     in string ext, size_t subIndex)
+    KindHit ofKinds(Viz viz,
+                    NotNull!RegFile regFile,
+                    size_t subIndex,
+                    FKinds kinds)
     {
         auto hit = KindHit.none;
 
-        auto parentDir = regfile.parent;
+        auto parentDir = regFile.parent;
 
         // First Try with kindId as try
-        if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
+        if (regFile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
-            if (regfile._cstat.kindId in gstats.binFKinds.byId)
+            if (regFile._cstat.kindId in kinds.byId)
             {
-                const kind = enforceNotNull(gstats.binFKinds.byId[regfile._cstat.kindId]);
+                const kind = enforceNotNull(kinds.byId[regFile._cstat.kindId]);
                 hit = KindHit.cached;
-                printSkipped(viz, regfile, ext, subIndex, kind, hit,
+                printSkipped(viz, regFile, subIndex, kind, hit,
                              " using cached KindId");
             }
             else
@@ -4483,16 +4484,17 @@ class Scanner(Term)
         }
 
         // First Try with extension lookup as guess
+        immutable ext = regFile.realExtension; // extension sans dot
         if (!ext.empty &&
-            ext in gstats.binFKinds.byExt)
+            ext in kinds.byExt)
         {
-            foreach (kindIndex, kind; gstats.binFKinds.byExt[ext])
+            foreach (kindIndex, kind; kinds.byExt[ext])
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
+                hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
-                    printSkipped(viz, regfile, ext, subIndex, nnKind, hit,
+                    printSkipped(viz, regFile, subIndex, nnKind, hit,
                                  " (" ~ ext ~ ") at " ~ nthString(kindIndex + 1) ~ " extension try");
                     break;
                 }
@@ -4501,10 +4503,10 @@ class Scanner(Term)
 
         if (!hit)               // If still no hit
         {
-            foreach (kindIndex, kind; gstats.binFKinds.byIndex) // Iterate each kind
+            foreach (kindIndex, kind; kinds.byIndex) // Iterate each kind
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
+                hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     if (_showSkipped)
@@ -4514,7 +4516,7 @@ class Scanner(Term)
                             immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
                             viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
                         }
-                        viz.ppln(regfile, ": Skipped ", kind, " file at ",
+                        viz.ppln(regFile, ": Skipped ", kind, " file at ",
                                  nthString(kindIndex + 1), " blind try");
                     }
                     break;
@@ -4526,24 +4528,24 @@ class Scanner(Term)
 
     size_t _scanChunkSize;
 
-    KindHit isSelectedFKind(NotNull!RegFile regfile) @safe /* nothrow */
+    KindHit isSelectedFKind(NotNull!RegFile regFile) @safe /* nothrow */
     {
         typeof(return) kindHit = KindHit.none;
         FKind hitKind;
 
         // Try cached kind first
         // First Try with kindId as try
-        if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
+        if (regFile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
-            if (regfile._cstat.kindId in gstats.selFKindsById)
+            if (regFile._cstat.kindId in gstats.selFKindsById)
             {
-                hitKind = gstats.selFKindsById[regfile._cstat.kindId];
+                hitKind = gstats.selFKindsById[regFile._cstat.kindId];
                 kindHit = KindHit.cached;
                 return kindHit;
             }
         }
 
-        immutable ext = regfile.realExtension;
+        immutable ext = regFile.realExtension;
 
         // Try with hash table first
         if (!ext.empty && // if file has extension and
@@ -4553,7 +4555,7 @@ class Scanner(Term)
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
+                immutable hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4569,7 +4571,7 @@ class Scanner(Term)
             foreach (kind; gstats.selFKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
+                immutable hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4929,8 +4931,6 @@ class Scanner(Term)
                 ++gstats.noScannedRegFiles;
                 ++gstats.noScannedFiles;
 
-                immutable ext = theRegFile.realExtension; // extension sans dot
-
                 // Check included kinds first because they are fast.
                 KindHit incKindHit = isSelectedFKind(theRegFile);
                 if (!gstats.selFKinds.empty && // TODO: Do we really need this one?
@@ -4981,7 +4981,7 @@ class Scanner(Term)
                     allXGramsMiss = keysXGramUnionMatch == 0;
                 }
 
-                immutable binFlag = isBinary(viz, theRegFile, ext, subIndex);
+                immutable binFlag = ofKinds(viz, theRegFile, subIndex, gstats.binFKinds);
 
                 if (binFlag || noBistMatch || allXGramsMiss) // or no hits possible. TODO: Maybe more efficient to do histogram discardal first
                 {
@@ -5249,9 +5249,9 @@ class Scanner(Term)
             foreach (key, sub; subsSorted)
             {
                 /* TODO: Functionize to scanFile() */
-                if (auto regfile = cast(RegFile)sub)
+                if (auto regFile = cast(RegFile)sub)
                 {
-                    processRegFile(viz, topDir, assumeNotNull(regfile), theDir, keys, fromSymlinks, subIndex, gstats);
+                    processRegFile(viz, topDir, assumeNotNull(regFile), theDir, keys, fromSymlinks, subIndex, gstats);
                 }
                 else if (auto subDir = cast(Dir)sub)
                 {
