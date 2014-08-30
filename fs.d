@@ -524,7 +524,7 @@ class FKind
     Tuple!(FOp, ShCmd)[] operations; // Operation and Corresponding Shell Command
 }
 
-/** Set of File Kinds. */
+/** Set of File Kinds with Internal Hashing. */
 class FKinds
 {
     FKinds add(FKind kind)
@@ -546,10 +546,10 @@ class FKinds
                 this.magicLengths ~= magicLit.bytes.length; // add it
             }
         }
-        return prepare();
+        return rehash();
     }
 
-    FKinds prepare()
+    FKinds rehash()
     {
         this.magicLengths = this.magicLengths.uniq.array; // remove duplicates
         this.magicLengths.sort; // and sort
