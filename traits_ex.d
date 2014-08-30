@@ -16,6 +16,7 @@ bool isGCPointer(void* ptr){
     return !!GC.addrOf(ptr);
 }
 alias inGC = isGCPointer;
+alias isGCed = isGCPointer;
 
 /** Returns: true iff all types T are the same. */
 template allSame(T...) {
@@ -289,7 +290,10 @@ unittest {
 
 /** Persistently Call Function $(D fun) with arguments $(D args).
 
-    Use msgpack.
+    Hash Id Build-Timestamp (Code-Id because we currently have stable way of hashing-algorithms) is Constructed from Data Structure:
+    - Hierarchically Mangled Unqual!typeof(instance)
+    - Use msgpack in combination with sha1Of or only sha1Of (with extended
+    overloads for sha1Of) if available.
 
     Extend std.functional : memoize to accept pure functions that takes an
     immutable mmap as input. Create wrapper that converts file to immutable mmap
