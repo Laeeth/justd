@@ -1808,6 +1808,167 @@ class GStats
                                                      "and", "bitand", "compl", "not_eq", "or_eq", "xor_eq",
                                                      "and_eq", "bitor", "not", "or", "xor", ]).uniq.array;
 
+        /* See also: http://msdn.microsoft.com/en-us/library/2e6a4at9.aspx */
+        static immutable opersCxxMicrosoft = ["__alignof"];
+
+        /* See also: http://msdn.microsoft.com/en-us/library/2e6a4at9.aspx */
+        static immutable keywordsCxxMicrosoft = (keywordsCxx ~ [/* __abstract 2 */
+                                                                "__asm",
+                                                                "__assume",
+                                                                "__based",
+                                                                /* __box 2 */
+                                                                "__cdecl",
+                                                                "__declspec",
+                                                                /* __delegate 2 */
+                                                                "__event",
+                                                                "__except",
+                                                                "__fastcall",
+                                                                "__finally",
+                                                                "__forceinline",
+                                                                /* __gc 2 */
+                                                                /* __hook 3 */
+                                                                "__identifier",
+                                                                "__if_exists",
+                                                                "__if_not_exists",
+                                                                "__inline",
+                                                                "__int16",
+                                                                "__int32",
+                                                                "__int64",
+                                                                "__int8",
+                                                                "__interface",
+                                                                "__leave",
+                                                                "__m128",
+                                                                "__m128d",
+                                                                "__m128i",
+                                                                "__m64",
+                                                                "__multiple_inheritance",
+                                                                /* __nogc 2 */
+                                                                "__noop",
+                                                                /* __pin 2 */
+                                                                /* __property 2 */
+                                                                "__raise",
+                                                                /* __sealed 2 */
+                                                                "__single_inheritance",
+                                                                "__stdcall",
+                                                                "__super",
+                                                                "__thiscall",
+                                                                "__try",
+                                                                "__except",
+                                                                "__finally",
+                                                                /* __try_cast 2 */
+                                                                "__unaligned",
+                                                                /* __unhook 3 */
+                                                                "__uuidof",
+                                                                /* __value 2 */
+                                                                "__virtual_inheritance",
+                                                                "__w64",
+                                                                "__wchar_t",
+                                                                "wchar_t",
+                                                                "abstract",
+                                                                "array",
+                                                                "auto",
+                                                                "bool",
+                                                                "break",
+                                                                "case",
+                                                                "catch",
+                                                                "char",
+                                                                "class",
+                                                                "const",
+                                                                "const_cast",
+                                                                "continue",
+                                                                "decltype",
+                                                                "default",
+                                                                "delegate",
+                                                                "delete",
+                                                                /* deprecated 1 */
+                                                                /* dllexport 1 */
+                                                                /* dllimport 1 */
+                                                                "do",
+                                                                "double",
+                                                                "dynamic_cast",
+                                                                "else",
+                                                                "enum",
+                                                                "enum class"
+                                                                "enum struct"
+                                                                "event",
+                                                                "explicit",
+                                                                "extern",
+                                                                "false",
+                                                                "finally",
+                                                                "float",
+                                                                "for",
+                                                                "for each",
+                                                                "in",
+                                                                "friend",
+                                                                "friend_as",
+                                                                "gcnew",
+                                                                "generic",
+                                                                "goto",
+                                                                "if",
+                                                                "initonly",
+                                                                "inline",
+                                                                "int",
+                                                                "interface class",
+                                                                "interface struct",
+                                                                "interior_ptr",
+                                                                "literal",
+                                                                "long",
+                                                                "mutable",
+                                                                /* naked 1 */
+                                                                "namespace",
+                                                                "new",
+                                                                "new",
+                                                                /* noinline 1 */
+                                                                /* noreturn 1 */
+                                                                /* nothrow 1 */
+                                                                /* novtable 1 */
+                                                                "nullptr",
+                                                                "operator",
+                                                                "private",
+                                                                "property",
+                                                                /* property 1 */
+                                                                "protected",
+                                                                "public",
+                                                                "ref class",
+                                                                "ref struct",
+                                                                "register",
+                                                                "reinterpret_cast",
+                                                                "return",
+                                                                "safecast",
+                                                                "sealed",
+                                                                /* selectany 1 */
+                                                                "short",
+                                                                "signed",
+                                                                "sizeof",
+                                                                "static",
+                                                                "static_assert",
+                                                                "static_cast",
+                                                                "struct",
+                                                                "switch",
+                                                                "template",
+                                                                "this",
+                                                                /* thread 1 */
+                                                                "throw",
+                                                                "true",
+                                                                "try",
+                                                                "typedef",
+                                                                "typeid",
+                                                                "typeid",
+                                                                "typename",
+                                                                "union",
+                                                                "unsigned",
+                                                                "using" /* declaration */,
+                                                                "using" /* directive */,
+                                                                /* uuid 1 */
+                                                                "value class",
+                                                                "value struct",
+                                                                "virtual",
+                                                                "void",
+                                                                "volatile",
+                                                                "while"]).uniq.array;
+
+        static immutable xattrCxxMicrosoft = [];
+
         auto opersCxx = opersC ~ [
             Op("->*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
             Op(".*", OpArity.binary, OpAssoc.LR, 4, "Pointer to member"),
@@ -2805,7 +2966,8 @@ class GStats
                                [],
                                FileContent.voiceModem, FileKindDetection.equalsContents);
 
-        foreach (kind; chain(txtFKinds.byIndex, binFKinds.byIndex))
+        foreach (kind; chain(txtFKinds.byIndex,
+                             binFKinds.byIndex))
         {
             allFKinds ~= kind;
         }
@@ -4126,12 +4288,12 @@ class Scanner(Term)
         viz.pp("Results".asH!2);
         if (gstats.topDirs)
         {
-            foreach (topIx, topDir; gstats.topDirs)
+            foreach (topIndex, topDir; gstats.topDirs)
             {
                 scanDir(viz, assumeNotNull(topDir), assumeNotNull(topDir), keys);
                 if (ctrlC)
                 {
-                    auto restDirs = gstats.topDirs[topIx + 1..$];
+                    auto restDirs = gstats.topDirs[topIndex + 1..$];
                     if (!restDirs.empty)
                     {
                         debug dln("Ctrl-C pressed: Skipping search of " ~ to!string(restDirs));
@@ -4571,12 +4733,12 @@ class Scanner(Term)
                         // show hit part
                         if (!acronymOffsets.empty)
                         {
-                            foreach (aIx, currOff; acronymOffsets) // TODO: Reuse std.algorithm: zip or lockstep? Or create a new kind say named conv.
+                            foreach (aIndex, currOff; acronymOffsets) // TODO: Reuse std.algorithm: zip or lockstep? Or create a new kind say named conv.
                             {
                                 // context before
-                                if (aIx >= 1)
+                                if (aIndex >= 1)
                                 {
-                                    immutable prevOff = acronymOffsets[aIx-1];
+                                    immutable prevOff = acronymOffsets[aIndex-1];
                                     if (prevOff + 1 < currOff) // at least one letter in between
                                     {
                                         viz.pp(asCtx(ix, to!string(rest[prevOff + 1 .. currOff])));
