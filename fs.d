@@ -331,12 +331,14 @@ enum FOp
     compile, // Compile
     byteCompile, // Byte compile
     run, // Run (Execute)
+    execute = run,
 
     preprocess, // Preprocess C/C++/Objective-C (using cpp)
     cpp = preprocess,
 
     /* VCS Operations */
     vcStatus,
+    vcs = vcStatus,
 
     deduplicate, // Deduplicate Files using hardlinks and Dirs using Symlink
 }
