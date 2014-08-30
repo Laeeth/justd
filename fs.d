@@ -29,7 +29,7 @@
 
    TODO: Assert that files along duplicates path don't include symlinks
 
-   TODO: Implement FileOp.deduplicate
+   TODO: Implement FOp.deduplicate
    TODO: Prevent rescans of duplicates
 
    TODO: Defined generalized_specialized_two_way_relationship(kindD, kindDi)
@@ -321,7 +321,7 @@ enum DuplicatesContext
 }
 
 /** File Operation Type Code. */
-enum FileOp
+enum FOp
 {
     none,
 
@@ -530,7 +530,7 @@ class FKind
 
     bool machineGenerated;
 
-    Tuple!(FileOp, ShCmd)[] operations; // Operation and Corresponding Shell Command
+    Tuple!(FOp, ShCmd)[] operations; // Operation and Corresponding Shell Command
 }
 
 /** Match $(D kind) with full filename $(D full). */
@@ -1750,9 +1750,9 @@ class GStats
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         srcFKinds ~= kindC;
-        kindC.operations ~= tuple(FileOp.checkSyntax, `gcc -x c -fsyntax-only -c`);
-        kindC.operations ~= tuple(FileOp.checkSyntax, `clang -x c -fsyntax-only -c`);
-        kindC.operations ~= tuple(FileOp.preprocess, `cpp`);
+        kindC.operations ~= tuple(FOp.checkSyntax, `gcc -x c -fsyntax-only -c`);
+        kindC.operations ~= tuple(FOp.checkSyntax, `clang -x c -fsyntax-only -c`);
+        kindC.operations ~= tuple(FOp.preprocess, `cpp`);
         kindC.opers = opersC;
 
         static immutable keywordsCxx = (keywordsC ~ ["asm", "dynamic_cast", "namespace", "reinterpret_cast", "try",
@@ -1798,9 +1798,9 @@ class GStats
                                  cCommentDelims,
                                  defaultStringDelims,
                                  FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
-        kindCxx.operations ~= tuple(FileOp.checkSyntax, `gcc -x c++ -fsyntax-only -c`);
-        kindCxx.operations ~= tuple(FileOp.checkSyntax, `clang -x c++ -fsyntax-only -c`);
-        kindCxx.operations ~= tuple(FileOp.preprocess, `cpp`);
+        kindCxx.operations ~= tuple(FOp.checkSyntax, `gcc -x c++ -fsyntax-only -c`);
+        kindCxx.operations ~= tuple(FOp.checkSyntax, `clang -x c++ -fsyntax-only -c`);
+        kindCxx.operations ~= tuple(FOp.preprocess, `cpp`);
         kindCxx.opers = opersCxx;
         srcFKinds ~= kindCxx;
         static immutable keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
@@ -1991,8 +1991,8 @@ class GStats
                                defaultStringDelims,
                                FileContent.sourceCode,
                                FileKindDetection.equalsNameOrContents);
-        kindD.operations ~= tuple(FileOp.checkSyntax, `gdc -fsyntax-only`);
-        kindD.operations ~= tuple(FileOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO: Include paths
+        kindD.operations ~= tuple(FOp.checkSyntax, `gdc -fsyntax-only`);
+        kindD.operations ~= tuple(FOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO: Include paths
         srcFKinds ~= kindD;
 
         auto kindDi = new FKind("D Interface", [], ["di"],
@@ -2003,8 +2003,8 @@ class GStats
                                 defaultStringDelims,
                                 FileContent.sourceCode,
                                 FileKindDetection.equalsNameOrContents);
-        kindDi.operations ~= tuple(FileOp.checkSyntax, `gdc -fsyntax-only`);
-        kindDi.operations ~= tuple(FileOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO: Include paths
+        kindDi.operations ~= tuple(FOp.checkSyntax, `gdc -fsyntax-only`);
+        kindDi.operations ~= tuple(FOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO: Include paths
         srcFKinds ~= kindDi;
 
         static immutable keywordsFortran77 = ["if", "else"];
@@ -2013,7 +2013,7 @@ class GStats
                                     [Delim("^C")], // TODO: Need beginning of line instead ^. seq(bol(), alt(lit('C'), lit('c'))); // TODO: Add chars chs("cC");
                                     defaultStringDelims,
                                     FileContent.sourceCode);
-        kindFortan.operations ~= tuple(FileOp.checkSyntax, `gcc -x fortran -fsyntax-only`);
+        kindFortan.operations ~= tuple(FOp.checkSyntax, `gcc -x fortran -fsyntax-only`);
         srcFKinds ~= kindFortan;
 
         // Ada
@@ -2193,7 +2193,7 @@ class GStats
                                   defaultStringDelims,
                                   FileContent.sourceCode);
         srcFKinds ~= kindJava;
-        kindJava.operations ~= tuple(FileOp.byteCompile, `javac`);
+        kindJava.operations ~= tuple(FOp.byteCompile, `javac`);
 
         srcFKinds ~= new FKind("Groovy", [], ["groovy", "gtmpl", "gpp", "grunit"], [], 0, [], [],
                                cCommentDelims,
@@ -2269,7 +2269,7 @@ class GStats
                                     defaultStringDelims,
                                     FileContent.sourceCode);
         srcFKinds ~= kindOctave;
-        kindOctave.operations ~= tuple(FileOp.byteCompile, `octave`);
+        kindOctave.operations ~= tuple(FOp.byteCompile, `octave`);
 
         srcFKinds ~= new FKind("Julia", [], ["jl"], [], 0, [], [],
                                defaultCommentDelims,
@@ -2291,8 +2291,8 @@ class GStats
                                    [Delim(";")],
                                    defaultStringDelims,
                                    FileContent.sourceCode);
-        kindElisp.operations ~= tuple(FileOp.byteCompile, `emacs -batch -f batch-byte-compile`);
-        kindElisp.operations ~= tuple(FileOp.byteCompile, `emacs --script`);
+        kindElisp.operations ~= tuple(FOp.byteCompile, `emacs -batch -f batch-byte-compile`);
+        kindElisp.operations ~= tuple(FOp.byteCompile, `emacs --script`);
         /* kindELisp.moduleName = "(provide 'MODULE_NAME)"; */
         /* kindELisp.moduleImport = "(require 'MODULE_NAME)"; */
         srcFKinds ~= kindElisp;
@@ -2911,7 +2911,7 @@ class GStats
     auto deepDensenessSum = Rational!ulong(0, 1);
     uint64_t densenessCount = 0;
 
-    FileOp fileOp = FileOp.none;
+    FOp fOp = FOp.none;
 
     bool keyAsWord = false;
     bool keyAsSymbol = false;
@@ -3904,7 +3904,7 @@ class Scanner(Term)
                                     "cache-file|F", "\tFile System Tree Cache File" ~ defaultDoc(_cacheFile), &_cacheFile,
                                     "recache", "\tSkip initial load of cache from disk" ~ defaultDoc(gstats.recache), &gstats.recache,
 
-                                    "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FileOp, &gstats.fileOp,
+                                    "do", "\tOperation to perform on matching files. Either: " ~ enumDoc!FOp, &gstats.fOp,
 
                                     "demangle-elf", "\tDemangle ELF files.", &gstats.demangleELF,
 
@@ -4734,11 +4734,11 @@ class Scanner(Term)
             dln(matchingFKinds);
             foreach(kind; matchingFKinds)
             {
-                const hit = kind.operations.find!(a => a[0] == gstats.fileOp);
+                const hit = kind.operations.find!(a => a[0] == gstats.fOp);
                 if (!hit.empty)
                 {
-                    const fileOp = hit.front;
-                    const cmd = fileOp[1]; // command string
+                    const fOp = hit.front;
+                    const cmd = fOp[1]; // command string
                     import std.range: chain;
                     import std.process: spawnProcess;
                     import std.algorithm: splitter;
