@@ -85,7 +85,7 @@
 
    TODO: Scan Subversion Dirs with http://pastebin.com/6ZzPvpBj
 
-   TODO: Change order (binFlag || allBHist8Miss) and benchmark
+   TODO: Change order (binHit || allBHist8Miss) and benchmark
 
    TODO: Display modification/access times as:
    See: http://forum.dlang.org/thread/k7afq6$2832$1@digitalmars.com
@@ -702,6 +702,52 @@ void scanELF(NotNull!RegFile regFile,
             }
         }
     }
+}
+
+Tuple!(KindHit, FKind, size_t) ofAnyKindIn(NotNull!RegFile regFile,
+                                           FKinds kinds,
+                                           bool collectTypeHits)
+{
+    // using kindId
+    if (regFile._cstat.kindId.defined) // kindId is already defined and uptodate
+    {
+        if (regFile._cstat.kindId in kinds.byId)
+        {
+            return tuple(KindHit.cached,
+                         kinds.byId[regFile._cstat.kindId],
+                         0UL);
+        }
+    }
+
+    // using extension
+    immutable ext = regFile.realExtension; // extension sans dot
+    if (!ext.empty &&
+        ext in kinds.byExt)
+    {
+        foreach (kindIndex, kind; kinds.byExt[ext])
+        {
+            auto hit = regFile.ofKind(ext, kind.enforceNotNull, collectTypeHits, kinds);
+            if (hit)
+            {
+                return tuple(hit, kind, kindIndex);
+            }
+        }
+    }
+
+    // try all
+    foreach (kindIndex, kind; kinds.byIndex) // Iterate each kind
+    {
+        auto hit = regFile.ofKind(ext, kind.enforceNotNull, collectTypeHits, kinds);
+        if (hit)
+        {
+            return tuple(hit, kind, kindIndex);
+        }
+    }
+
+    // no hit
+    return tuple(KindHit.none,
+                 FKind.init,
+                 0UL);
 }
 
 /** Returns: true if file with extension $(D ext) is of type $(D kind). */
@@ -4454,74 +4500,6 @@ class Scanner(Term)
         }
     }
 
-    KindHit ofKinds(Viz viz,
-                    NotNull!RegFile regFile,
-                    size_t subIndex,
-                    FKinds kinds)
-    {
-        auto hit = KindHit.none;
-
-        // First Try with kindId as try
-        if (regFile._cstat.kindId.defined) // kindId is already defined and uptodate
-        {
-            if (regFile._cstat.kindId in kinds.byId)
-            {
-                const kind = enforceNotNull(kinds.byId[regFile._cstat.kindId]);
-                hit = KindHit.cached;
-                printSkipped(viz, regFile, subIndex, kind, hit,
-                             " using cached KindId");
-            }
-            else
-            {
-                hit = KindHit.none;
-            }
-            return hit;
-        }
-
-        // First Try with extension lookup as guess
-        immutable ext = regFile.realExtension; // extension sans dot
-        if (!ext.empty &&
-            ext in kinds.byExt)
-        {
-            foreach (kindIndex, kind; kinds.byExt[ext])
-            {
-                auto nnKind = enforceNotNull(kind);
-                hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
-                if (hit)
-                {
-                    printSkipped(viz, regFile, subIndex, nnKind, hit,
-                                 " (" ~ ext ~ ") at " ~ nthString(kindIndex + 1) ~ " extension try");
-                    break;
-                }
-            }
-        }
-
-        if (!hit)               // If still no hit
-        {
-            foreach (kindIndex, kind; kinds.byIndex) // Iterate each kind
-            {
-                auto nnKind = enforceNotNull(kind);
-                hit = regFile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
-                if (hit)
-                {
-                    if (_showSkipped)
-                    {
-                        if (gstats.showTree)
-                        {
-                            auto parentDir = regFile.parent;
-                            immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                            viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
-                        }
-                        viz.ppln(regFile, ": Skipped ", kind, " file at ",
-                                 nthString(kindIndex + 1), " blind try");
-                    }
-                    break;
-                }
-            }
-        }
-        return hit;
-    }
-
     size_t _scanChunkSize;
 
     KindHit isSelectedFKind(NotNull!RegFile regFile) @safe /* nothrow */
@@ -4977,9 +4955,41 @@ class Scanner(Term)
                     allXGramsMiss = keysXGramUnionMatch == 0;
                 }
 
-                immutable binFlag = ofKinds(viz, theRegFile, subIndex, gstats.binFKinds);
+                auto binHit = theRegFile.ofAnyKindIn(gstats.binFKinds,
+                                                     gstats.collectTypeHits);
+                const binKindHit = binHit[0];
+                if (binKindHit)
+                {
+                    const nnKind = binHit[1].enforceNotNull;
+                    const kindIndex = binHit[2];
+                    if (_showSkipped)
+                    {
+                        if (gstats.showTree)
+                        {
+                            immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
+                            viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                        }
+                        viz.ppln(theRegFile, ": Skipped ", nnKind, " file at ",
+                                 nthString(kindIndex + 1), " blind try");
+                    }
+                    final switch (binKindHit)
+                    {
+                        case KindHit.none:
+                            break;
+                        case KindHit.cached:
+                            printSkipped(viz, theRegFile, subIndex, nnKind, binKindHit,
+                                         " using cached KindId");
+                            break;
+                        case KindHit.uncached:
+                            printSkipped(viz, theRegFile, subIndex, nnKind, binKindHit,
+                                         " at " ~ nthString(kindIndex + 1) ~ " extension try");
+                            break;
+                    }
+                }
 
-                if (binFlag || noBistMatch || allXGramsMiss) // or no hits possible. TODO: Maybe more efficient to do histogram discardal first
+                if (binKindHit != KindHit.none ||
+                    noBistMatch ||
+                    allXGramsMiss) // or no hits possible. TODO: Maybe more efficient to do histogram discardal first
                 {
                     results.noBytesSkipped += theRegFile.size;
                 }
