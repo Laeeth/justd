@@ -44,7 +44,7 @@
 
    TODO: Support multi-line keys
 
-   TODO: Use hash-lookup in extSrcKinds for faster guessing of source file
+   TODO: Use hash-lookup in txtFKinds.byExt for faster guessing of source file
    kind. Merge it with binary kind lookup. And check FileContent member of
    kind to instead determine if it should be scanned or not.
    Sub-Task: Case-Insensitive Matching of extensions if
@@ -125,7 +125,7 @@ import std.path: baseName, dirName, isAbsolute, dirSeparator, extension, buildNo
 import std.datetime;
 import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
-import std.range: repeat, array, empty, cycle;
+import std.range: repeat, array, empty, cycle, chain;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf, isIterable;
 import std.allocator;
@@ -709,12 +709,12 @@ KindHit ofKind(NotNull!RegFile regfile,
                in string ext,
                NotNull!FKind kind,
                bool collectTypeHits,
-               const ref FKind[SHA1Digest] allFKindsById) /* nothrow */ @trusted
+               FKinds allFKinds) /* nothrow */ @trusted
 {
     immutable hit = regfile.ofKind1(ext,
                                     kind,
                                     collectTypeHits,
-                                    allFKindsById);
+                                    allFKinds);
     if (hit &&
         kind.kindName == "ELF")
     {
@@ -729,13 +729,13 @@ KindHit ofKind1(NotNull!RegFile regfile,
                 in string ext,
                 NotNull!FKind kind,
                 bool collectTypeHits,
-                const ref FKind[SHA1Digest] allFKindsById) /* nothrow */ @trusted
+                FKinds allFKinds) /* nothrow */ @trusted
 {
     // Try cached first
 
     if (regfile._cstat.kindId.defined &&
-        (regfile._cstat.kindId in allFKindsById) && // if kind is known
-        allFKindsById[regfile._cstat.kindId] is kind)  // if cached kind equals
+        (regfile._cstat.kindId in allFKinds.byId) && // if kind is known
+        allFKinds.byId[regfile._cstat.kindId] is kind)  // if cached kind equals
     {
         return KindHit.cached;
     }
@@ -745,7 +745,7 @@ KindHit ofKind1(NotNull!RegFile regfile,
         immutable baseHit = regfile.ofKind(ext,
                                            enforceNotNull(kind.superKind),
                                            collectTypeHits,
-                                           allFKindsById);
+                                           allFKinds);
         if (!baseHit)
         {
             return baseHit;
@@ -1439,7 +1439,7 @@ class RegFile : File
 
             // CStat: TODO: Group
             unpacker.unpack(_cstat.kindId); // FKind
-            if (!(_cstat.kindId in parent.gstats.allFKindsById))
+            if (!(_cstat.kindId in parent.gstats.allFKinds.byId))
             {
                 // kind database has changed since kindId was written to disk
                 _cstat.kindId.reset; // forget it
@@ -1624,82 +1624,69 @@ class GStats
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
 
-    // Source Code File Kinds
-    FKind[] srcFKinds; // TODO: Needed when we have hash-tables below?
-    FKind[string] srcFKindsByName;
-    FKind[][string] srcFKindsByExt; // Maps extension string to array of FKinds
-
-    // Binary File Kinds
-    FKinds binFKinds_;
-    FKind[] binFKinds;  // TODO: Needed when we have hash-tables below?
-    FKind[][string] binFKindsByExt;    // Maps extension string to Binary FKinds
-    FKind[][size_t][immutable ubyte[]] binFKindsByMagic; // length => zero-offset magic byte array to Binary FKinds
-    size_t[] binFKindsMagicLengths; // List of magic lengths to try as index in binFKindsByMagic
-    FKind[SHA1Digest] binFKindsById;    // Index Kinds by their behaviour
+    NotNull!FKinds txtFKinds = new FKinds; // Textual
+    NotNull!FKinds binFKinds = new FKinds; // Binary (Non-Textual)
+    NotNull!FKinds allFKinds = new FKinds; // All
 
     // (User) Selected File Kinds
     FKind[] selFKinds;  // TODO: Needed when we have hash-tables below?
     FKind[][string] selFKindsByExt;
     FKind[SHA1Digest] selFKindsById;    // Index Kinds by their behaviour
 
-    // All File Kinds
-    FKind[SHA1Digest] allFKindsById;    // Index Kinds by their behaviour
-    FKind[][string] allFKindsByExt;    // Index Kinds by their behaviour
-
     void loadFileKinds()
     {
-        srcFKinds ~= new FKind("SCons", ["SConstruct", "SConscript"],
+        txtFKinds ~= new FKind("SCons", ["SConstruct", "SConscript"],
                                ["scons"],
                                [], 0, [], [],
                                defaultCommentDelims,
                                pythonStringDelims,
                                FileContent.buildSystemCode, FileKindDetection.equalsNameAndContents); // TOOD: Inherit Python
 
-        srcFKinds ~= new FKind("Makefile", ["GNUmakefile", "Makefile", "makefile"],
+        txtFKinds ~= new FKind("Makefile", ["GNUmakefile", "Makefile", "makefile"],
                                ["mk", "mak", "makefile", "make", "gnumakefile"], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsName);
-        srcFKinds ~= new FKind("Automakefile", ["Makefile.am", "makefile.am"],
+        txtFKinds ~= new FKind("Automakefile", ["Makefile.am", "makefile.am"],
                                ["am"], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Autoconffile", ["configure.ac", "configure.in"],
+        txtFKinds ~= new FKind("Autoconffile", ["configure.ac", "configure.in"],
                                [], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Doxygen", ["Doxyfile"],
+        txtFKinds ~= new FKind("Doxygen", ["Doxyfile"],
                                ["doxygen"], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        srcFKinds ~= new FKind("Rake", ["Rakefile"],// TODO: inherit Ruby
+        txtFKinds ~= new FKind("Rake", ["Rakefile"],// TODO: inherit Ruby
                                ["mk", "makefile", "make", "gnumakefile"], [], 0, [], [],
                                [Delim("#"), Delim("=begin", "=end")],
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsName);
 
-        srcFKinds ~= new FKind("HTML", [], ["htm", "html", "shtml", "xhtml"], [], 0, [], [],
+        txtFKinds ~= new FKind("HTML", [], ["htm", "html", "shtml", "xhtml"], [], 0, [], [],
                                [Delim("<!--", "-->")],
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsContents); // markup text
-        srcFKinds ~= new FKind("XML", [], ["xml", "dtd", "xsl", "xslt", "ent", ], [], 0, "<?xml", [],
+        txtFKinds ~= new FKind("XML", [], ["xml", "dtd", "xsl", "xslt", "ent", ], [], 0, "<?xml", [],
                                [Delim("<!--", "-->")],
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsContents); // TODO: markup text
-        srcFKinds ~= new FKind("YAML", [], ["yaml", "yml"], [], 0, [], [],
+        txtFKinds ~= new FKind("YAML", [], ["yaml", "yml"], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.text); // TODO: markup text
-        srcFKinds ~= new FKind("CSS", [], ["css"], [], 0, [], [],
+        txtFKinds ~= new FKind("CSS", [], ["css"], [], 0, [], [],
                                [Delim("/*", "*/")],
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsContents);
 
-        srcFKinds ~= new FKind("Audacity Project", [], ["aup"], [], 0, "<?xml", [],
+        txtFKinds ~= new FKind("Audacity Project", [], ["aup"], [], 0, "<?xml", [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
@@ -1798,7 +1785,7 @@ class GStats
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
-        srcFKinds ~= kindC;
+        txtFKinds ~= kindC;
         kindC.operations ~= tuple(FOp.checkSyntax, `gcc -x c -fsyntax-only -c`);
         kindC.operations ~= tuple(FOp.checkSyntax, `clang -x c -fsyntax-only -c`);
         kindC.operations ~= tuple(FOp.preprocess, `cpp`);
@@ -1851,7 +1838,7 @@ class GStats
         kindCxx.operations ~= tuple(FOp.checkSyntax, `clang -x c++ -fsyntax-only -c`);
         kindCxx.operations ~= tuple(FOp.preprocess, `cpp`);
         kindCxx.opers = opersCxx;
-        srcFKinds ~= kindCxx;
+        txtFKinds ~= kindCxx;
         static immutable keywordsCxx11 = keywordsCxx ~ ["alignas", "alignof",
                                                         "char16_t", "char32_t",
                                                         "constexpr",
@@ -1862,7 +1849,7 @@ class GStats
                                                         "thread_local",
                                                         "static_assert", ];
         // TODO: Define as subkind
-        /* srcFKinds ~= new FKind("C++11", [], ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"], [], 0, [], */
+        /* txtFKinds ~= new FKind("C++11", [], ["cpp", "hpp", "cxx", "hxx", "c++", "h++", "C", "H"], [], 0, [], */
         /*                        keywordsCxx11, */
         /*                        [Delim("/\*", "*\/"), */
         /*                         Delim("//")], */
@@ -1883,14 +1870,14 @@ class GStats
                                                   "@protoco", "@end", "@class" ];
 
         static immutable keywordsObjectiveC = keywordsC ~ keywordsNewObjectiveC;
-        srcFKinds ~= new FKind("Objective-C", [], ["m", "h"], [], 0, [],
+        txtFKinds ~= new FKind("Objective-C", [], ["m", "h"], [], 0, [],
                                keywordsObjectiveC,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
         static immutable keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
-        srcFKinds ~= new FKind("Objective-C++", [], ["mm", "h"], [], 0, [],
+        txtFKinds ~= new FKind("Objective-C++", [], ["mm", "h"], [], 0, [],
                                keywordsObjectiveCxx,
                                defaultCommentDelims,
                                defaultStringDelims,
@@ -1908,10 +1895,10 @@ class GStats
                                    FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
         kindSwift.builtins = builtinsSwift;
         kindSwift.opers = opersOverflowSwift;
-        srcFKinds ~= kindSwift;
+        txtFKinds ~= kindSwift;
 
         static immutable keywordsCSharp = ["if"]; // TODO: Add keywords
-        srcFKinds ~= new FKind("C#", [], ["cs"], [], 0, [], keywordsCSharp,
+        txtFKinds ~= new FKind("C#", [], ["cs"], [], 0, [], keywordsCSharp,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
@@ -1928,12 +1915,12 @@ class GStats
                               "true", "try", "type",
                               "val", "val!", "virtual",
                               "when", "while", "with"];
-        srcFKinds ~= new FKind("OCaml", [], ["ocaml"], [], 0, [], keywordsOCaml,
+        txtFKinds ~= new FKind("OCaml", [], ["ocaml"], [], 0, [], keywordsOCaml,
                                [Delim("(*", "*)")],
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
 
-        srcFKinds ~= new FKind("Parrot", [], ["pir", "pasm", "pmc", "ops", "pod", "pg", "tg", ], [], 0, [], keywordsOCaml,
+        txtFKinds ~= new FKind("Parrot", [], ["pir", "pasm", "pmc", "ops", "pod", "pg", "tg", ], [], 0, [], keywordsOCaml,
                                [Delim("#"),
                                 Delim("^=", // TODO: Needs beginning of line instead of ^
                                       "=cut")],
@@ -2042,7 +2029,7 @@ class GStats
                                FileKindDetection.equalsNameOrContents);
         kindD.operations ~= tuple(FOp.checkSyntax, `gdc -fsyntax-only`);
         kindD.operations ~= tuple(FOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO: Include paths
-        srcFKinds ~= kindD;
+        txtFKinds ~= kindD;
 
         auto kindDi = new FKind("D Interface", [], ["di"],
                                 magicForD, 0,
@@ -2054,7 +2041,7 @@ class GStats
                                 FileKindDetection.equalsNameOrContents);
         kindDi.operations ~= tuple(FOp.checkSyntax, `gdc -fsyntax-only`);
         kindDi.operations ~= tuple(FOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO: Include paths
-        srcFKinds ~= kindDi;
+        txtFKinds ~= kindDi;
 
         static immutable keywordsFortran77 = ["if", "else"];
         // TODO: Support .h files but require it to contain some Fortran-specific or be parseable.
@@ -2063,7 +2050,7 @@ class GStats
                                     defaultStringDelims,
                                     FileContent.sourceCode);
         kindFortan.operations ~= tuple(FOp.checkSyntax, `gcc -x fortran -fsyntax-only`);
-        srcFKinds ~= kindFortan;
+        txtFKinds ~= kindFortan;
 
         // Ada
         static immutable keywordsAda83 = [ "abort", "else", "new", "return", "abs", "elsif", "not", "reverse",
@@ -2077,23 +2064,23 @@ class GStats
         static immutable keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
         static immutable keywordsAda2012 = keywordsAda2005 ~ ["some"];
         static immutable extsAda = ["ada", "adb", "ads"];
-        srcFKinds ~= new FKind("Ada 82", [], extsAda, [], 0, [], keywordsAda83,
+        txtFKinds ~= new FKind("Ada 82", [], extsAda, [], 0, [], keywordsAda83,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 95", [], extsAda, [], 0, [], keywordsAda95,
+        txtFKinds ~= new FKind("Ada 95", [], extsAda, [], 0, [], keywordsAda95,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 2005", [], extsAda, [], 0, [], keywordsAda2005,
+        txtFKinds ~= new FKind("Ada 2005", [], extsAda, [], 0, [], keywordsAda2005,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada 2012", [], extsAda, [], 0, [], keywordsAda2012,
+        txtFKinds ~= new FKind("Ada 2012", [], extsAda, [], 0, [], keywordsAda2012,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Ada", [], extsAda, [], 0, [], keywordsAda2012,
+        txtFKinds ~= new FKind("Ada", [], extsAda, [], 0, [], keywordsAda2012,
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.sourceCode);
@@ -2103,21 +2090,21 @@ class GStats
                                  defaultStringDelims,
                                  FileContent.fingerprint); // TODO: Parse version following magic tag?
         aliKind.machineGenerated = true;
-        srcFKinds ~= aliKind;
+        txtFKinds ~= aliKind;
 
-        srcFKinds ~= new FKind("Pascal", [], ["pas", "pascal"], [], 0, [], [],
+        txtFKinds ~= new FKind("Pascal", [], ["pas", "pascal"], [], 0, [], [],
                                [Delim("(*", "*)"),// Old-Style
                                 Delim("{", "}"),// Turbo Pascal
                                 Delim("//")],// Delphi
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsContents);
-        srcFKinds ~= new FKind("Delphi", [], ["pas", "int", "dfm", "nfm", "dof", "dpk", "dproj", "groupproj", "bdsgroup", "bdsproj"],
+        txtFKinds ~= new FKind("Delphi", [], ["pas", "int", "dfm", "nfm", "dof", "dpk", "dproj", "groupproj", "bdsgroup", "bdsproj"],
                                [], 0, [], [],
                                [Delim("//")],
                                defaultStringDelims,
                                FileContent.sourceCode, FileKindDetection.equalsContents);
 
-        srcFKinds ~= new FKind("Objective-C", [], ["m"], [], 0, [], [],
+        txtFKinds ~= new FKind("Objective-C", [], ["m"], [], 0, [], [],
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
@@ -2134,105 +2121,105 @@ class GStats
                                     defaultCommentDelims,
                                     pythonStringDelims,
                                     FileContent.scriptCode);
-        srcFKinds ~= kindPython;
+        txtFKinds ~= kindPython;
 
-        srcFKinds ~= new FKind("Ruby", [], ["rb", "rhtml", "rjs", "rxml", "erb", "rake", "spec", ],
+        txtFKinds ~= new FKind("Ruby", [], ["rb", "rhtml", "rjs", "rxml", "erb", "rake", "spec", ],
                                shebangLine(lit("ruby")), 0,
                                [], [],
                                [Delim("#"), Delim("=begin", "=end")],
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("Scala", [], ["scala", ],
+        txtFKinds ~= new FKind("Scala", [], ["scala", ],
                                shebangLine(lit("scala")), 0,
                                [], [],
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Scheme", [], ["scm", "ss"],
+        txtFKinds ~= new FKind("Scheme", [], ["scm", "ss"],
                                [], 0,
                                [], [],
                                [Delim(";")],
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("Smalltalk", [], ["st"], [], 0, [], [],
+        txtFKinds ~= new FKind("Smalltalk", [], ["st"], [], 0, [], [],
                                [Delim("\"", "\"")],
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        srcFKinds ~= new FKind("Perl", [], ["pl", "pm", "pm6", "pod", "t", "psgi", ],
+        txtFKinds ~= new FKind("Perl", [], ["pl", "pm", "pm6", "pod", "t", "psgi", ],
                                shebangLine(lit("perl")), 0,
                                [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("PHP", [], ["php", "phpt", "php3", "php4", "php5", "phtml", ],
+        txtFKinds ~= new FKind("PHP", [], ["php", "phpt", "php3", "php4", "php5", "phtml", ],
                                shebangLine(lit("php")), 0,
                                [], [],
                                defaultCommentDelims ~ cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Plone", [], ["pt", "cpt", "metadata", "cpy", "py", ], [], 0, [], [],
+        txtFKinds ~= new FKind("Plone", [], ["pt", "cpt", "metadata", "cpy", "py", ], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("Shell", [], ["sh"],
+        txtFKinds ~= new FKind("Shell", [], ["sh"],
                                shebangLine(lit("sh")), 0,
                                [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Bash", [], ["bash"],
+        txtFKinds ~= new FKind("Bash", [], ["bash"],
                                shebangLine(lit("bash")), 0,
                                [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Zsh", [], ["zsh"],
+        txtFKinds ~= new FKind("Zsh", [], ["zsh"],
                                shebangLine(lit("zsh")), 0,
                                [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("Batch", [], ["bat", "cmd"], [], 0, [], [],
+        txtFKinds ~= new FKind("Batch", [], ["bat", "cmd"], [], 0, [], [],
                                [Delim("REM")],
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("TCL", [], ["tcl", "itcl", "itk", ], [], 0, [], [],
+        txtFKinds ~= new FKind("TCL", [], ["tcl", "itcl", "itk", ], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Tex", [], ["tex", "cls", "sty", ], [], 0, [], [],
+        txtFKinds ~= new FKind("Tex", [], ["tex", "cls", "sty", ], [], 0, [], [],
                                [Delim("%")],
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("TT", [], ["tt", "tt2", "ttml", ], [], 0, [], [],
+        txtFKinds ~= new FKind("TT", [], ["tt", "tt2", "ttml", ], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Viz Basic", [], ["bas", "cls", "frm", "ctl", "vb", "resx", ], [], 0, [], [],
+        txtFKinds ~= new FKind("Viz Basic", [], ["bas", "cls", "frm", "ctl", "vb", "resx", ], [], 0, [], [],
                                [Delim("'")],
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("Verilog", [], ["v", "vh", "sv"], [], 0, [], [],
+        txtFKinds ~= new FKind("Verilog", [], ["v", "vh", "sv"], [], 0, [], [],
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("VHDL", [], ["vhd", "vhdl"], [], 0, [], [],
+        txtFKinds ~= new FKind("VHDL", [], ["vhd", "vhdl"], [], 0, [], [],
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("Clojure", [], ["clj"], [], 0, [], [],
+        txtFKinds ~= new FKind("Clojure", [], ["clj"], [], 0, [], [],
                                [Delim(";")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Go", [], ["go"], [], 0, [], [],
+        txtFKinds ~= new FKind("Go", [], ["go"], [], 0, [], [],
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
@@ -2241,14 +2228,14 @@ class GStats
                                   cCommentDelims,
                                   defaultStringDelims,
                                   FileContent.sourceCode);
-        srcFKinds ~= kindJava;
+        txtFKinds ~= kindJava;
         kindJava.operations ~= tuple(FOp.byteCompile, `javac`);
 
-        srcFKinds ~= new FKind("Groovy", [], ["groovy", "gtmpl", "gpp", "grunit"], [], 0, [], [],
+        txtFKinds ~= new FKind("Groovy", [], ["groovy", "gtmpl", "gpp", "grunit"], [], 0, [], [],
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("Haskell", [], ["hs", "lhs"], [], 0, [], [],
+        txtFKinds ~= new FKind("Haskell", [], ["hs", "lhs"], [], 0, [], [],
                                [Delim("--}"),
                                 Delim("{-", "-}")],
                                defaultStringDelims,
@@ -2258,20 +2245,20 @@ class GStats
                                    "do", "else", "finally", "for", "function", "if", "in", "instanceof",
                                    "new", "return", "switch", "this", "throw", "try", "typeof", "var",
                                    "void", "while", "with" ];
-        srcFKinds ~= new FKind("JavaScript", [], ["js"],
+        txtFKinds ~= new FKind("JavaScript", [], ["js"],
                                [], 0, [],
                                keywordsJavascript,
                                cCommentDelims,
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("JavaScript Object Notation",
+        txtFKinds ~= new FKind("JavaScript Object Notation",
                                [], ["json"],
                                [], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        srcFKinds ~= new FKind("DUB",
+        txtFKinds ~= new FKind("DUB",
                                ["dub.json"], ["json"],
                                [], 0, [], [],
                                [], // N/A
@@ -2279,34 +2266,34 @@ class GStats
                                FileContent.scriptCode);
 
         // TODO: Inherit XML
-        srcFKinds ~= new FKind("JSP", [], ["jsp", "jspx", "jhtm", "jhtml"], [], 0, [], [],
+        txtFKinds ~= new FKind("JSP", [], ["jsp", "jspx", "jhtm", "jhtml"], [], 0, [], [],
                                [Delim("<!--", "--%>"), // XML
                                 Delim("<%--", "--%>")],
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("ActionScript", [], ["as", "mxml"], [], 0, [], [],
+        txtFKinds ~= new FKind("ActionScript", [], ["as", "mxml"], [], 0, [], [],
                                cCommentDelims, // N/A
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("LUA", [], ["lua"], [], 0, [], [],
+        txtFKinds ~= new FKind("LUA", [], ["lua"], [], 0, [], [],
                                [Delim("--")],
                                defaultStringDelims,
                                FileContent.scriptCode);
-        srcFKinds ~= new FKind("Mason", [], ["mas", "mhtml", "mpl", "mtxt"], [], 0, [], [],
+        txtFKinds ~= new FKind("Mason", [], ["mas", "mhtml", "mpl", "mtxt"], [], 0, [], [],
                                [], // TODO: Need sregex
                                defaultStringDelims,
                                FileContent.scriptCode);
 
-        srcFKinds ~= new FKind("CFMX", [], ["cfc", "cfm", "cfml"], [], 0, [], [],
+        txtFKinds ~= new FKind("CFMX", [], ["cfc", "cfm", "cfml"], [], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.scriptCode);
 
         // Numerical Computing
 
-        srcFKinds ~= new FKind("Matlab", [], ["m"], [], 0, [], [],
+        txtFKinds ~= new FKind("Matlab", [], ["m"], [], 0, [], [],
                                [Delim("%{", "}%"), // TODO: Prio 1
                                 Delim("%")], // TODO: Prio 2
                                defaultStringDelims,
@@ -2317,15 +2304,15 @@ class GStats
                                      Delim("#")],
                                     defaultStringDelims,
                                     FileContent.sourceCode);
-        srcFKinds ~= kindOctave;
+        txtFKinds ~= kindOctave;
         kindOctave.operations ~= tuple(FOp.byteCompile, `octave`);
 
-        srcFKinds ~= new FKind("Julia", [], ["jl"], [], 0, [], [],
+        txtFKinds ~= new FKind("Julia", [], ["jl"], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode); // ((:execute "julia") (:evaluate "julia -e"))
 
-        srcFKinds ~= new FKind("Erlang", [], ["erl", "hrl"], [], 0, [], [],
+        txtFKinds ~= new FKind("Erlang", [], ["erl", "hrl"], [], 0, [], [],
                                [Delim("%")],
                                defaultStringDelims,
                                FileContent.sourceCode);
@@ -2344,33 +2331,33 @@ class GStats
         kindElisp.operations ~= tuple(FOp.byteCompile, `emacs --script`);
         /* kindELisp.moduleName = "(provide 'MODULE_NAME)"; */
         /* kindELisp.moduleImport = "(require 'MODULE_NAME)"; */
-        srcFKinds ~= kindElisp;
+        txtFKinds ~= kindElisp;
 
-        srcFKinds ~= new FKind("Lisp", [], ["lisp", "lsp"], [], 0, [], [],
+        txtFKinds ~= new FKind("Lisp", [], ["lisp", "lsp"], [], 0, [], [],
                                [Delim(";")],
                                defaultStringDelims,
                                FileContent.sourceCode);
-        srcFKinds ~= new FKind("PostScript", [], ["ps", "postscript"], [], 0, "%!", [],
+        txtFKinds ~= new FKind("PostScript", [], ["ps", "postscript"], [], 0, "%!", [],
                                [Delim("%")],
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        srcFKinds ~= new FKind("CMake", [], ["cmake"], [], 0, [], [],
+        txtFKinds ~= new FKind("CMake", [], ["cmake"], [], 0, [], [],
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode);
 
         // http://stackoverflow.com/questions/277521/how-to-identify-the-file-content-as-ascii-or-binary
-        srcFKinds ~= new FKind("Pure ASCII", [], ["ascii", "txt", "text", "README", "INSTALL"], [], 0, [], [],
+        txtFKinds ~= new FKind("Pure ASCII", [], ["ascii", "txt", "text", "README", "INSTALL"], [], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.textASCII); // NOTE: Extend with matcher where all bytes are in either: 9–13 or 32–126
-        srcFKinds ~= new FKind("8-Bit Text", [], ["ascii", "txt", "text", "README", "INSTALL"], [], 0, [], [],
+        txtFKinds ~= new FKind("8-Bit Text", [], ["ascii", "txt", "text", "README", "INSTALL"], [], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.text8Bit); // NOTE: Extend with matcher where all bytes are in either: 9–13 or 32–126 or 128–255
 
-        srcFKinds ~= new FKind("Assembler", [], ["asm", "s"], [], 0, [], [],
+        txtFKinds ~= new FKind("Assembler", [], ["asm", "s"], [], 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.sourceCode);
@@ -2382,31 +2369,8 @@ class GStats
                                   [], // N/A
                                   defaultStringDelims,
                                   FileContent.text);
-        srcFKinds ~= diffKind;
+        txtFKinds ~= diffKind;
         diffKind.wikiURL = "https://en.wikipedia.org/wiki/Diff";
-
-        // Index Source Kinds by File extension
-        FKind[][string] extSrcKinds;
-        foreach (kind; srcFKinds)
-        {
-            foreach (ext; kind.exts)
-            {
-                extSrcKinds[ext] ~= kind;
-            }
-        }
-        extSrcKinds.rehash;
-
-        // Index Source Kinds by kindName and extension
-        foreach (kind; srcFKinds)
-        {
-            srcFKindsByName[kind.kindName] = kind;
-            foreach (ext; kind.exts)
-            {
-                srcFKindsByExt[ext] ~= kind;
-            }
-        }
-        srcFKindsByName.rehash;
-        srcFKindsByExt.rehash;
 
         // Binaries
 
@@ -2841,50 +2805,14 @@ class GStats
                                [],
                                FileContent.voiceModem, FileKindDetection.equalsContents);
 
-        // By Extension
-        foreach (kind; binFKinds)
+        foreach (kind; chain(txtFKinds.byIndex, binFKinds.byIndex))
         {
-            foreach (ext; kind.exts)
-            {
-                binFKindsByExt[ext] ~= kind;
-            }
+            allFKinds ~= kind;
         }
-        binFKindsByExt.rehash;
 
-        // By Magic
-        foreach (kind; binFKinds)
-        {
-            if (kind.magicOffset == 0 && // only if zero-offset for now
-                kind.magicData)
-            {
-                if (const magicLit = cast(Lit)kind.magicData)
-                {
-                    binFKindsByMagic[magicLit.bytes][magicLit.bytes.length] ~= kind;
-                    binFKindsMagicLengths ~= magicLit.bytes.length; // add it
-                }
-            }
-        }
-        binFKindsMagicLengths = binFKindsMagicLengths.uniq.array; // remove duplicates
-        binFKindsMagicLengths.sort; // and sort
-        binFKindsByMagic.rehash;
-
-        foreach (kind; binFKinds)
-        {
-            binFKindsById[kind.behaviorId] = kind;
-        }
-        binFKindsById.rehash;
-
-        import std.range: chain;
-        foreach (kind; chain(srcFKinds, binFKinds))
-        {
-            allFKindsById[kind.behaviorId] = kind;
-            foreach (ext; kind.exts)
-            {
-                allFKindsByExt[ext] ~= kind;
-            }
-        }
-        allFKindsById.rehash;
-        allFKindsByExt.rehash;
+        txtFKinds.rehash;
+        binFKinds.rehash;
+        allFKinds.rehash;
     }
 
     // Code
@@ -4065,17 +3993,17 @@ class Scanner(Term)
         {
             foreach (lang; selFKindNames.splitter(","))
             {
-                if      (lang         in gstats.srcFKindsByName) // try exact match
+                if      (lang         in gstats.txtFKinds.byName) // try exact match
                 {
-                    gstats.selFKinds ~= gstats.srcFKindsByName[lang];
+                    gstats.selFKinds ~= gstats.txtFKinds.byName[lang];
                 }
-                else if (lang.toLower in gstats.srcFKindsByName) // else try all in lower case
+                else if (lang.toLower in gstats.txtFKinds.byName) // else try all in lower case
                 {
-                    gstats.selFKinds ~= gstats.srcFKindsByName[lang.toLower];
+                    gstats.selFKinds ~= gstats.txtFKinds.byName[lang.toLower];
                 }
-                else if (lang.toUpper in gstats.srcFKindsByName) // else try all in upper case
+                else if (lang.toUpper in gstats.txtFKinds.byName) // else try all in upper case
                 {
-                    gstats.selFKinds ~= gstats.srcFKindsByName[lang.toUpper];
+                    gstats.selFKinds ~= gstats.txtFKinds.byName[lang.toUpper];
                 }
                 else
                 {
@@ -4141,15 +4069,15 @@ class Scanner(Term)
         }
 
         viz.pp("Source Kinds".asH!2,
-               gstats.srcFKinds.asTable);
+               gstats.txtFKinds.byIndex.asTable);
         /* binFKinds.asTable, */
 
         if (_showSkipped)
         {
             viz.pp("Skipping files of type".asH!2,
-                   asUList(gstats.binFKinds.map!(a => asItem(a.kindName.asBold,
-                                                             ": ",
-                                                             asCSL(a.exts.map!(b => b.asCode))))));
+                   asUList(gstats.binFKinds.byIndex.map!(a => asItem(a.kindName.asBold,
+                                                                     ": ",
+                                                                     asCSL(a.exts.map!(b => b.asCode))))));
             viz.pp("Skipping directories of type".asH!2,
                    asUList(gstats.skippedDirKinds.map!(a => asItem(a.kindName.asBold,
                                                                    ": ",
@@ -4378,9 +4306,9 @@ class Scanner(Term)
         // First Try with kindId as try
         if (regfile._cstat.kindId.defined) // kindId is already defined and uptodate
         {
-            if (regfile._cstat.kindId in gstats.binFKindsById)
+            if (regfile._cstat.kindId in gstats.binFKinds.byId)
             {
-                const kind = enforceNotNull(gstats.binFKindsById[regfile._cstat.kindId]);
+                const kind = enforceNotNull(gstats.binFKinds.byId[regfile._cstat.kindId]);
                 hit = KindHit.cached;
                 printSkipped(viz, regfile, ext, subIndex, kind, hit,
                              " using cached KindId");
@@ -4394,12 +4322,12 @@ class Scanner(Term)
 
         // First Try with extension lookup as guess
         if (!ext.empty &&
-            ext in gstats.binFKindsByExt)
+            ext in gstats.binFKinds.byExt)
         {
-            foreach (kindIndex, kind; gstats.binFKindsByExt[ext])
+            foreach (kindIndex, kind; gstats.binFKinds.byExt[ext])
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
+                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     printSkipped(viz, regfile, ext, subIndex, nnKind, hit,
@@ -4411,10 +4339,10 @@ class Scanner(Term)
 
         if (!hit)               // If still no hit
         {
-            foreach (kindIndex, kind; gstats.binFKinds) // Iterate each kind
+            foreach (kindIndex, kind; gstats.binFKinds.byIndex) // Iterate each kind
             {
                 auto nnKind = enforceNotNull(kind);
-                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
+                hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     if (_showSkipped)
@@ -4463,7 +4391,7 @@ class Scanner(Term)
             foreach (kind; possibleKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
+                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4479,7 +4407,7 @@ class Scanner(Term)
             foreach (kind; gstats.selFKinds)
             {
                 auto nnKind = enforceNotNull(kind);
-                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKindsById);
+                immutable hit = regfile.ofKind(ext, nnKind, gstats.collectTypeHits, gstats.allFKinds);
                 if (hit)
                 {
                     hitKind = nnKind;
@@ -4788,7 +4716,6 @@ class Scanner(Term)
                 {
                     const fOp = hit.front;
                     const cmd = fOp[1]; // command string
-                    import std.range: chain;
                     import std.process: spawnProcess;
                     import std.algorithm: splitter;
                     dln("TODO: Performing operation ", to!string(cmd),
@@ -5273,7 +5200,7 @@ class Scanner(Term)
                         {
                             if (firstDup._cstat.kindId)
                             {
-                                viz.pp(asH!3(gstats.allFKindsById[firstDup._cstat.kindId],
+                                viz.pp(asH!3(gstats.allFKinds.byId[firstDup._cstat.kindId],
                                              " files sharing digest ", digest, " and size ", firstDup.treeSize));
                             }
                             viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
