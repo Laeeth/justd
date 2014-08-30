@@ -469,9 +469,8 @@ class FKind
     /** Returns: Id Unique to matching behaviour of $(D this) FKind. If match
         behaviour of $(D this) FKind changes returned id will change.
         value is memoized.
-        TODO: Make pure when msgpack.pack is made pure.
     */
-    auto ref const(SHA1Digest) behaviorId() @property @safe pure
+    auto ref const(SHA1Digest) behaviorId() @property @safe pure nothrow
         out(result) { assert(!result.empty); }
     body
     {
