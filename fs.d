@@ -11,17 +11,6 @@
    See also: http://ridiculousfish.com/blog/posts/old-age-and-treachery.html
    See also: http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
 
-   Example:
-   ---
-   ---
-
-   TODO: Parameterize binFKinds so it can be reused on srcFKinds.
-         Make it a member of some class FKindSet.
-         Add all variants of binFKinds and srcFKinds to this FKindSet.
-         - Use binFKindsByMagic and
-         - binFKindsMagicLengths
-         - Integrate with file's magic database
-
    TODO: Lexers should be loosely coupled to FKinds instead of Files
    TODO: Generic Token[] and specific CToken[], CxxToken[]
 
@@ -394,7 +383,7 @@ class FKind
 {
     this(T, MagicData, RefPattern)(string kindName_,
                                    T baseNaming_,
-                                   const string[] typExts_,
+                                   const string[] exts_,
                                    MagicData magicData, size_t magicOffset = 0,
                                    RefPattern refPattern_ = RefPattern.init,
                                    const string[] keywords_ = [],
@@ -434,7 +423,7 @@ class FKind
             this.baseNaming = baseNaming_;
         }
 
-        this.exts = typExts_;
+        this.exts = exts_;
 
         import std.traits: isAssignable;
         static      if (is(MagicData == ubyte[])) { this.magicData = lit(magicData) ; }
@@ -533,6 +522,56 @@ class FKind
     bool machineGenerated;
 
     Tuple!(FOp, ShCmd)[] operations; // Operation and Corresponding Shell Command
+}
+
+/** Set of File Kinds. */
+class FKinds
+{
+    FKinds add(FKind kind)
+    {
+        this.byIndex ~= kind;
+        // update slaves
+        byName[kind.kindName] = kind;
+        foreach (const ext; kind.exts)
+        {
+            byExt[ext] ~= kind;
+        }
+        this.byId[kind.behaviorId] = kind;
+        if (kind.magicOffset == 0 && // only if zero-offset for now
+            kind.magicData)
+        {
+            if (const magicLit = cast(Lit)kind.magicData)
+            {
+                this.byMagic[magicLit.bytes][magicLit.bytes.length] ~= kind;
+                this.magicLengths ~= magicLit.bytes.length; // add it
+            }
+        }
+        return prepare();
+    }
+
+    FKinds prepare()
+    {
+        this.magicLengths = this.magicLengths.uniq.array; // remove duplicates
+        this.magicLengths.sort; // and sort
+        this.byName.rehash;
+        this.byExt.rehash;
+        this.byMagic.rehash;
+        this.byId.rehash;
+        return this;
+    }
+
+    FKind[] byIndex;
+private:
+    /* TODO: These are "slaves" under byIndex and should not be modifiable outside
+     of this class but their FKind's can mutable.
+     */
+    FKind[string] byName; // Index by unique name string
+    FKind[][string] byExt; // Index by possibly non-unique extension string
+
+    FKind[][size_t][immutable ubyte[]] byMagic; // length => zero-offset magic byte array to Binary FKinds
+    size_t[] magicLengths; // List of magic lengths to try as index in byMagic
+
+    FKind[SHA1Digest] byId;    // Index Kinds by their behaviour
 }
 
 /** Match $(D kind) with full filename $(D full). */
@@ -1587,8 +1626,8 @@ class GStats
     FKind[] binFKinds;  // TODO: Needed when we have hash-tables below?
     FKind[][string] binFKindsByExt;    // Maps extension string to Binary FKinds
     FKind[][size_t][immutable ubyte[]] binFKindsByMagic; // length => zero-offset magic byte array to Binary FKinds
+    size_t[] binFKindsMagicLengths; // List of magic lengths to try as index in binFKindsByMagic
     FKind[SHA1Digest] binFKindsById;    // Index Kinds by their behaviour
-    size_t[] binFKindsMagicLengths; // List of Magic lengths
 
     // (User) Selected File Kinds
     FKind[] selFKinds;  // TODO: Needed when we have hash-tables below?
