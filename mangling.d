@@ -4,8 +4,10 @@
 module mangling;
 
 // TODO: Test and use Nullable!(null)(string) to save space.
+
 // TODO: Use my Wrapper Hit!(null)(string) which implicitly converts .init to
-// false to enable elegant if (hit = decodeSomethingMaybe)
+// false to enable elegant if (hit = decodeSomethingMaybe). See how Nullable
+// does it and change implicit conversion to boo behaviour.
 
 import std.range: empty, popFront, popFrontExactly, take, drop, front;
 
