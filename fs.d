@@ -4439,8 +4439,8 @@ class Scanner(Term)
     void printSkipped(Viz viz,
                       NotNull!RegFile regFile,
                       size_t subIndex,
-                      in NotNull!FKind kind, KindHit kindhit,
-                      in string skipCause)
+                      const NotNull!FKind kind, KindHit kindhit,
+                      const string skipCause)
     {
         auto parentDir = regFile.parent;
         if (_showSkipped)
