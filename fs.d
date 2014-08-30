@@ -471,7 +471,7 @@ class FKind
         value is memoized.
         TODO: Make pure when msgpack.pack is made pure.
     */
-    auto ref const(SHA1Digest) behaviorId() @property @safe
+    auto ref const(SHA1Digest) behaviorId() @property @safe pure
         out(result) { assert(!result.empty); }
     body
     {
@@ -485,7 +485,7 @@ class FKind
             }
             else
             {
-                dln("warning: Handle magicData of type ", kindName);
+                //dln("warning: Handle magicData of type ", kindName);
             }
             _behaviourDigest = bytes.sha1Of;
         }
@@ -527,14 +527,19 @@ class FKind
 /** Set of File Kinds with Internal Hashing. */
 class FKinds
 {
-    FKinds add(FKind kind)
+    void opOpAssign(string op)(FKind kind) @safe pure if (op == "~")
     {
-        this.byIndex ~= kind;
-        // update slaves
-        byName[kind.kindName] = kind;
+        mixin("this.byIndex " ~ op ~ "= kind;");
+        //this.byIndex ~= kind;
+        this.update(kind);
+    }
+
+    FKinds update(FKind kind) @safe pure
+    {
+        this.byName[kind.kindName] = kind;
         foreach (const ext; kind.exts)
         {
-            byExt[ext] ~= kind;
+            this.byExt[ext] ~= kind;
         }
         this.byId[kind.behaviorId] = kind;
         if (kind.magicOffset == 0 && // only if zero-offset for now
@@ -546,11 +551,13 @@ class FKinds
                 this.magicLengths ~= magicLit.bytes.length; // add it
             }
         }
-        return rehash();
+        return this.rehash;
     }
 
-    FKinds rehash()
+    FKinds rehash() @trusted pure
+
     {
+        // TODO: why is rehash unsafe?
         this.magicLengths = this.magicLengths.uniq.array; // remove duplicates
         this.magicLengths.sort; // and sort
         this.byName.rehash;
@@ -568,7 +575,7 @@ private:
     FKind[string] byName; // Index by unique name string
     FKind[][string] byExt; // Index by possibly non-unique extension string
 
-    FKind[][size_t][immutable ubyte[]] byMagic; // length => zero-offset magic byte array to Binary FKinds
+    FKind[][size_t][immutable ubyte[]] byMagic; // length => zero-offset magic byte array to Binary FKind[]
     size_t[] magicLengths; // List of magic lengths to try as index in byMagic
 
     FKind[SHA1Digest] byId;    // Index Kinds by their behaviour
@@ -1623,6 +1630,7 @@ class GStats
     FKind[][string] srcFKindsByExt; // Maps extension string to array of FKinds
 
     // Binary File Kinds
+    FKinds binFKinds_;
     FKind[] binFKinds;  // TODO: Needed when we have hash-tables below?
     FKind[][string] binFKindsByExt;    // Maps extension string to Binary FKinds
     FKind[][size_t][immutable ubyte[]] binFKindsByMagic; // length => zero-offset magic byte array to Binary FKinds
