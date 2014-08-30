@@ -519,7 +519,7 @@ class FKind
     Delim[] strings; // String syntax.
     Delim[] comments; // Comment syntax.
 
-    bool machineGenerated;
+    bool machineGenerated; // True if this is a machine generated file.
 
     Tuple!(FOp, ShCmd)[] operations; // Operation and Corresponding Shell Command
 }
