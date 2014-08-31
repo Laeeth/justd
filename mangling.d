@@ -80,8 +80,7 @@ string decodeCxxType(ref string rest)
                    rest.decodeCxxClassEnumType(),
                    rest.decodeCxxArrayType(),
                    rest.decodeCxxPointerToMemberType(),
-                   rest.decodeCxxTemplateParam(),
-                   rest.decodeCxxTemplateTemplateParamAndTemplateArgs(),
+                   rest.decodeCxxTemplateTemplateParamAndArgs(),
                    rest.decodeCxxDecltype(),
                    rest.decodeCxxSubstitution());
 
@@ -121,13 +120,86 @@ string decodeCxxClassEnumType(ref string rest)
     return type;
 }
 
+string decodeCxxExpression(ref string rest)
+{
+    string expr = null;
+    assert(false, "TODO");
+}
+
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.array-type */
 string decodeCxxArrayType(ref string rest)
 {
     string type = null;
     if (rest.skipOver('A'))
     {
-        return;
+        if (const num = rest.decodeCxxNumber())
+        {
+            assert(rest.skipOver('_'));
+            type = rest.decodeCxxType() ~ `[]` ~ num ~ `[]`;
+        }
+        else
+        {
+            const dimensionExpression = rest.decodeCxxExpression();
+            assert(rest.skipOver('_'));
+            type = rest.decodeCxxType() ~ `[]` ~ dimensionExpression ~ `[]`;
+        }
+    }
+    return type;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.pointer-to-member-type */
+string decodeCxxPointerToMemberType(ref string rest)
+{
+    string type = null;
+    if (rest.skipOver('M'))
+    {
+        type = (rest.decodeCxxType() ~ // <class type>
+                rest.decodeCxxType() // <mmeber type>
+            );
+    }
+    return type;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-param */
+string decodeCxxTemplateParam(ref string rest)
+{
+    string param = null;
+    if (rest.skipOver('T'))
+    {
+        if (rest.skipOver('_'))
+        {
+            param = `first template parameter`;
+        }
+        else
+        {
+            param = rest.decodeCxxNumber();
+            assert(rest.skipOver('_'));
+        }
+    }
+    return param;
+}
+
+string decodeCxxTemplateTemplateParamAndArgs(ref string rest)
+{
+    string value = null;
+    if (const param = either(rest.decodeCxxTemplateParam(),
+                             rest.decodeCxxSubstitution()))
+    {
+        const args = rest.decodeCxxTemplateArgs();
+        value = param ~ args;
+    }
+    return value;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.decltype */
+string decodeCxxDecltype(ref string rest)
+{
+    string type = null;
+    if (rest.skipOver("Dt") ||
+        rest.skipOver("DT"))
+    {
+        type = rest.decodeCxxExpression();
+        assert(rest.skipOver('E'));
     }
     return type;
 }
@@ -544,13 +616,17 @@ string decodeCxxUnscopedTemplateNameAndArgs(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.number */
-string decodeCxxNNInt(ref string rest)
+string decodeCxxNumber(ref string rest)
 {
-    // TODO: Functionize this pattern into one call which forwards rest and
-    // returns everything before first hit.
+    string number;
+    const prefix = rest.skipOver('n'); // optional prefix
     auto split = rest.splitBefore!(a => !a.isDigit());
-    rest = split[1];
-    return split[0];
+    if (prefix || !split[0].empty) // if complete match
+    {
+        rest = split[1];
+        number = split[0];
+    }
+    return number;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.discriminator */
@@ -560,14 +636,13 @@ int decodeCxxDescriminator(ref string rest)
     {
         if (rest.skipOver('_'))            // number >= 10
         {
-            rest.skipOver('n'); // optional prefix
-            rest.decodeCxxNNInt();
-            assert(rest.skipOver('n')); // suffix
+            const number = rest.decodeCxxNumber();
+            assert(rest.skipOver('_')); // suffix
         }
         else                    // number < 10
         {
             rest.skipOver('n'); // optional prefix
-            auto cnt = cast(int)(rest[0] - '0'); // single digit
+            const number = cast(int)(rest[0] - '0'); // single digit
         }
     }
     return -1;
