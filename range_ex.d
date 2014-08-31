@@ -6,7 +6,9 @@
 
 module range_ex;
 
-/** See also: http://forum.dlang.org/thread/ltpaqk$2dav$1@digitalmars.com */
+/** Ring Buffer Container.
+    See also: http://forum.dlang.org/thread/ltpaqk$2dav$1@digitalmars.com
+ */
 struct RingBuffer(T)
 {
     private T[] _data;
