@@ -554,25 +554,26 @@ scoped auto a = [1,2];
 
 \begin{frame}[fragile]{Pragmatic Array Slice Semantics}
   Eventhough this, at first sight, seem inconsisent this is \emph{really} what
-  we want.
+  we want in pattern (regexp) matching algorithms.
   \begin{itemize}[<+->]
 
   \item Pointer part decide ``\textbf{null}ness'' and Bool Conversion
     \begin{lstlisting}[frame=single]
-assert([].ptr == null);
-assert("ab"[$..$].ptr != null);
-assert(![]);
-assert(!null);
+static assert([].ptr != null);
+static assert("ab"[$..$].ptr == null);
+static assert(![]);
+static assert(!null);
     \end{lstlisting}
-
-  \item Zero-length slices
+  \item Zero-length slices are not null
     \begin{lstlisting}[frame=single]
-assert("ab"[0..0] == []);
-assert("ab"[$..$] == []);
-assert("ab"[$..$] == null);
-assert("ab"[0..0] == "ab"[$..$]);
-assert("ab"[0..0]); // contextual hit (BOL)
-assert("ab"[$..$]); // contextual hit (EOL)
+static assert("ab"[0..0] == []);
+static assert("ab"[$..$] == []);
+static assert("ab"[$..$] !is null);
+static assert("ab"[$..$] == null);
+static assert("ab"[0..0] == "ab"[$..$]);
+static assert("ab"[0..0]); // contextual hit (BOL)
+static assert("a\nb"[2..2]); // contextual hit (beginning of second line)
+static assert("ab"[$..$]); // contextual hit (EOL)
     \end{lstlisting}
 
   \end{itemize}
