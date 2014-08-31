@@ -111,7 +111,9 @@ void calculateLCS(T)(in T[] xs, in T[] ys,
         import std.algorithm: canFind;
         if (ys.canFind(xs[0]))
             xs_in_lcs[idx] = true;
-    } else {
+    }
+    else
+    {
         immutable mid = nx / 2;
         const xb = xs[0.. mid];
         const xe = xs[mid .. $];
@@ -126,9 +128,8 @@ void calculateLCS(T)(in T[] xs, in T[] ys,
         import std.range: iota;
         import std.algorithm: minPos;
         import std.typecons: tuple;
-        immutable k = iota(ny + 1)
-                      .minPos!((i, j) => tuple(ll_b[i] + ll_e[ny - i]) >
-                                         tuple(ll_b[j] + ll_e[ny - j]))[0];
+        immutable k = iota(ny + 1).minPos!((i, j) => tuple(ll_b[i] + ll_e[ny - i]) >
+                                           tuple(ll_b[j] + ll_e[ny - j]))[0];
 
         calculateLCS(xb, ys[0 .. k], xs_in_lcs, idx);
         calculateLCS(xe, ys[k .. $], xs_in_lcs, idx + mid);
@@ -154,12 +155,32 @@ string lcs(in string s1,
 
 unittest
 {
-    auto x = "thisisatest";
-    auto y = "testing123testing";
-    auto z = "tsitest";
+    immutable x = "thisisatest";
+    immutable y = "testing123testing";
+    immutable z = "tsitest";
     assert(z == lcsR(x, y));
     assert(z == lcsDP(x, y));
     assert(z == lcs(x, y));
     assert("" == lcs("", ""));
     assert("" == lcs(null, null));
+}
+
+unittest
+{
+    immutable x = [1, 2, 3];
+    immutable y = [4, 5, 6];
+    immutable z = [];
+    assert(z == lcsR(x, y));
+    assert(z == lcsDP(x, y));
+    assert(z == lcs(x, y));
+}
+
+unittest
+{
+    immutable x = [1, 2, 3];
+    immutable y = [2, 3, 4];
+    immutable z = [2, 3];
+    assert(z == lcsR(x, y));
+    assert(z == lcsDP(x, y));
+    assert(z == lcs(x, y));
 }
