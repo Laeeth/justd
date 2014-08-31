@@ -8,21 +8,15 @@
 module mangling;
 
 import std.range: empty, popFront, popFrontExactly, take, drop, front;
-
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
-import algorithm_ex: split, splitBefore;
-
 import std.typecons: tuple, Tuple;
-
 import std.conv: to;
 import std.ascii: isDigit;
 import std.array: array;
 import std.stdio;
-
 import dbg;
 import languages;
-
-import algorithm_ex: either;
+import algorithm_ex: either, split, splitBefore;
 
 /** Decode Unqualified C++ Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
@@ -322,108 +316,118 @@ string decodeCxxSourceName(ref string rest)
     return id;
 }
 
+/* Decode C++ Symbol.
+
+   See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.encoding
+ */
+Tuple!(Lang, string) decodeCxxSymbol(string rest,
+                                     string separator = null) /* @safe pure nothrow @nogc */
+{
+    string[] ids; // TODO: Turn this into a range that is returned
+    bool hasTerminator = false;
+
+    if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
+    {
+        hasTerminator = true;
+    }
+    else if (rest.skipOver('L'))
+    {
+        hasTerminator = false;
+    }
+
+    // symbols (function or variable name)
+    while (!rest.empty &&
+           (!hasTerminator ||
+            rest[0] != 'E'))
+    {
+        if (const sourceName = rest.decodeCxxSourceName)
+        {
+            ids ~= sourceName;
+            continue;
+        }
+
+        if (const op = rest.decodeCxxOperator)
+        {
+            ids ~= op;
+            continue;
+        }
+
+        version(unittest)
+        {
+            assert(false, `Incomplete parsing at ` ~ rest);
+        }
+        else
+        {
+            dln(`Incomplete parsing`);
+            break;
+        }
+    }
+
+    if (hasTerminator)
+    {
+        rest.skipOver('E');
+    }
+
+    // optional function arguments
+    int argCount = 0;
+    char[] argTypes; // argument types
+    while (!rest.empty) // while optional function arguments exist
+    {
+        const argType = rest.decodeCxxType;
+        if (argCount >= 1) { argTypes ~= `, `; }
+        argTypes ~= argType;
+        argCount += 1;
+    }
+
+    if (!separator)
+        separator = `::`; // default C++ separator
+
+    auto qid = to!string(ids.joiner(separator)); // qualified id
+    if (!argTypes.empty)
+    {
+        qid ~= `(` ~ to!string(argTypes) ~ `)`;
+    }
+
+    if (!rest.empty)
+        dln(`rest: `, rest);
+
+    return tuple(Lang.cxx, qid);
+}
+
+
 /** Demangle Symbol $(D rest) and Detect Language.
     See also: https://en.wikipedia.org/wiki/Name_mangling
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 */
-Tuple!(Lang, string) decodeSymbol(string whole,
+Tuple!(Lang, string) decodeSymbol(string rest,
                                   string separator = null) /* @safe pure nothrow @nogc */
 {
-    if (whole.empty)
+    if (rest.empty)
     {
-        return tuple(Lang.init, whole);
+        return tuple(Lang.init, rest);
     }
 
-    if (!whole.startsWith(`_`))
+    if (!rest.startsWith(`_`))
     {
-        return tuple(Lang.c, whole); // assume C
+        return tuple(Lang.c, rest); // assume C
     }
 
     // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name
-    const cxxHit = whole.findSplitAfter(`_Z`); // split into C++ prefix and rest
+    const cxxHit = rest.findSplitAfter(`_Z`); // split into C++ prefix and rest
     if (!cxxHit[0].empty) // C++
     {
-        string[] ids; // TODO: Turn this into a range that is returned
-        string rest = cxxHit[1];
-        bool hasTerminator = false;
-
-        if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
-        {
-            hasTerminator = true;
-        }
-        else if (rest.skipOver('L'))
-        {
-            hasTerminator = false;
-        }
-
-        // symbols (function or variable name)
-        while (!rest.empty &&
-               (!hasTerminator ||
-                rest[0] != 'E'))
-        {
-            if (const sourceName = rest.decodeCxxSourceName)
-            {
-                ids ~= sourceName;
-                continue;
-            }
-
-            if (const op = rest.decodeCxxOperator)
-            {
-                ids ~= op;
-                continue;
-            }
-
-            version(unittest)
-            {
-                assert(false, `Incomplete parsing at ` ~ rest);
-            }
-            else
-            {
-                dln(`Incomplete parsing`);
-                break;
-            }
-        }
-
-        if (hasTerminator)
-        {
-            rest.skipOver('E');
-        }
-
-        // optional function arguments
-        int argCount = 0;
-        char[] argTypes; // argument types
-        while (!rest.empty) // while optional function arguments exist
-        {
-            const argType = rest.decodeCxxType;
-            if (argCount >= 1) { argTypes ~= `, `; }
-            argTypes ~= argType;
-            argCount += 1;
-        }
-
-        if (!separator)
-            separator = `::`; // default C++ separator
-
-        auto qid = to!string(ids.joiner(separator)); // qualified id
-        if (!argTypes.empty)
-        {
-            qid ~= `(` ~ to!string(argTypes) ~ `)`;
-        }
-
-        if (!rest.empty)
-            dln(`rest: `, rest);
-
-        return tuple(Lang.cxx, qid);
+        return decodeCxxSymbol(cxxHit[1], separator);
     }
     else
     {
         import core.demangle: demangle;
-        const symAsD = whole.demangle;
+        const symAsD = rest.demangle;
         import std.conv: to;
-        if (symAsD != whole) // TODO: Why doesn't (symAsD is whole) work here?
+        if (symAsD != rest) // TODO: Why doesn't (symAsD is rest) work here?
             return tuple(Lang.d, to!string(symAsD));
         else
-            return tuple(Lang.init, whole);
+            return tuple(Lang.init, rest);
     }
 }
 
@@ -446,8 +450,8 @@ unittest
     assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol,
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
-    /* assertEqual(`_ZSt5state`.decodeSymbol, */
-    /*             tuple(Lang.cxx, `::std::state`)); */
+    assertEqual(`_ZSt5state`.decodeSymbol,
+                tuple(Lang.cxx, `::std::state`));
 
     /* assertEqual(`_ZNSt3_In4wardE`.decodeSymbol, */
     /*             tuple(Lang.cxx, `::std::_In::ward`)); */
