@@ -3689,7 +3689,7 @@ const(ubyte[]) saveRootDirTree(Viz viz,
     viz.ppln("Cache Write".asH!2,
              "Wrote tree cache of size ",
              data.length.Bytes64, " to ",
-             asPath(cacheFile),
+             cacheFile.asPath,
              " in ",
              shortDurationString(toc - tic));
 
@@ -3719,7 +3719,7 @@ Dir loadRootDirTree(Viz viz,
         viz.pp("Cache Read".asH!2,
                "Read cache of size ",
                data.length.Bytes64, " from ",
-               asPath(cacheFile),
+               cacheFile.asPath,
                " in ",
                shortDurationString(toc - tic), " containing",
                asUList(asItem(gstats.noDirs, " Dirs,"),
@@ -4272,7 +4272,7 @@ class Scanner(Term)
             viz.pp(asH!1("Searching for \"", commaedKeysString, "\"",
                          " case-", (_caseFold ? "in" : ""), "sensitively",
                          asNote, selFKindsNote,
-                         " under ", _topDirNames.map!(a => asPath(a))));
+                         " under ", _topDirNames.map!(a => a.asPath)));
         }
 
         viz.pp("Source Kinds".asH!2,
@@ -4684,7 +4684,7 @@ class Scanner(Term)
                                                " -> ");
                                     }
                                     // show file path/name
-                                    viz.pp(asPath(displayedFileName)); // show path
+                                    viz.pp(displayedFileName.asPath); // show path
                                 }
                             }
 
@@ -5098,7 +5098,7 @@ class Scanner(Term)
             {
                 import std.range: back;
                 viz.ppln("Cycle of symbolic links: ",
-                         asPath(fromSymlinks),
+                         fromSymlinks.asPath,
                          " -> ",
                          fromSymlinks.back.target);
             }
@@ -5143,10 +5143,10 @@ class Scanner(Term)
                              faze(shortDurationString(_currTime - theSymlink.timeLastModified),
                                   timeFace),
                              " ago", " -> ",
-                             asPath(targetFile),
+                             targetFile.asPath,
                              faze(" outside of " ~ (_topDirNames.length == 1 ? "tree " : "all trees "),
                                   infoFace),
-                             asPath(gstats.topDirs),
+                             gstats.topDirs.asPath,
                              faze(" is followed", infoFace));
                 }
 
