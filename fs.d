@@ -774,7 +774,6 @@ KindHit ofKind1(NotNull!RegFile regFile,
                 FKinds allFKinds) /* nothrow */ @trusted
 {
     // Try cached first
-
     if (regFile._cstat.kindId.defined &&
         (regFile._cstat.kindId in allFKinds.byId) && // if kind is known
         allFKinds.byId[regFile._cstat.kindId] is kind)  // if cached kind equals
@@ -1482,9 +1481,10 @@ class RegFile : File
 
             // CStat: TODO: Group
             unpacker.unpack(_cstat.kindId); // FKind
-            if (!(_cstat.kindId in parent.gstats.allFKinds.byId))
+            if (_cstat.kindId.defined &&
+                _cstat.kindId !in parent.gstats.allFKinds.byId)
             {
-                // kind database has changed since kindId was written to disk
+                dln("kindId ", _cstat.kindId, " not found for ", path, ", FKinds length ", parent.gstats.allFKinds.byIndex.length);
                 _cstat.kindId.reset; // forget it
             }
             unpacker.unpack(_cstat._contentId); // Digest
@@ -5357,8 +5357,16 @@ class Scanner(Term)
                         {
                             if (firstDup._cstat.kindId)
                             {
-                                viz.pp(asH!3(gstats.allFKinds.byId[firstDup._cstat.kindId],
-                                             " files sharing digest ", digest, " and size ", firstDup.treeSize));
+                                if (firstDup._cstat.kindId in gstats.allFKinds.byId)
+                                {
+                                    viz.pp(asH!3(gstats.allFKinds.byId[firstDup._cstat.kindId],
+                                                 " files sharing digest ", digest, " and size ", firstDup.treeSize));
+                                }
+                                else
+                                {
+                                    dln(firstDup.path ~ " kind Id " ~ to!string(firstDup._cstat.kindId) ~
+                                        " could not be found in allFKinds.byId");
+                                }
                             }
                             viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
                                          "s sharing digest ", digest, " and size ", firstDup.treeSize));
