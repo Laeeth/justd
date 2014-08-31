@@ -206,12 +206,19 @@ unittest
 {
     import std.algorithm: levenshteinDistance, levenshteinDistanceAndPath;
     import std.stdio: writeln;
+    import random_ex: randInPlaceBlockwise;
 
-    size_t n = 10_000;
-    auto x = new int[n];
-    auto y = new int[n];
+    alias T = int;
+    size_t n = 3_000;
+    auto x = new T[n];
+    auto y = new T[n];
 
-    void bLCS() { assert(lcs(x, y).length == n); }
+    assert(lcs(x, y).length == n);
+
+    x.randInPlaceBlockwise;
+    y.randInPlaceBlockwise;
+
+    void bLCS() { const d = lcs(x, y); }
     void bLD() { const d = levenshteinDistance(x, y); }
     void bLDAP() { const dp = levenshteinDistanceAndPath(x, y); }
 
