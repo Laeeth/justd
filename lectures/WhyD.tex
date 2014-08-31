@@ -529,6 +529,7 @@ int[2] a;
 auto b = [1,2,3];
 a[] = b[]; // lengths don't match for array copy, 2 = 3
     \end{lstlisting}
+    GC-escapeable from function calls makes use easy and robust.
   \item Dynamic \textbf{Scoped} (Heap):\\
     \begin{lstlisting}[frame=single]
 scoped auto a = [1,2];
