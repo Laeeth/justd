@@ -12,10 +12,11 @@ import std.algorithm: empty, max;
 import std.algorithm: reverse;
 import std.traits: Unqual;
 
-/** Longest Common Subsequence (LCS)
+/** Longest Common Subsequence (LCS).
     See also: http://rosettacode.org/wiki/Longest_common_subsequence#Recursive_version
 */
-T[] lcsR(T)(in T[] a, in T[] b) @safe pure nothrow
+T[] lcsR(T)(in T[] a,
+            in T[] b) @safe pure nothrow
 {
     if (a.empty || b.empty)
     {
@@ -32,10 +33,11 @@ T[] lcsR(T)(in T[] a, in T[] b) @safe pure nothrow
 }
 
 /** Longest Common Subsequence (LCS).
-    Faster dynamic programming version.
+    Faster Dynamic Programming Version.
     http://rosettacode.org/wiki/Longest_common_subsequence#Faster_dynamic_programming_version
 */
-T[] lcsDP(T)(in T[] a, in T[] b) @safe pure /* nothrow */
+T[] lcsDP(T)(in T[] a,
+             in T[] b) @safe pure /* nothrow */
 {
     auto L = new uint[][](a.length + 1, b.length + 1);
 
@@ -70,12 +72,9 @@ T[] lcsDP(T)(in T[] a, in T[] b) @safe pure /* nothrow */
     return result;
 }
 
-/** Longest Common Subsequence (LCS) using Hirschberg.
-    Faster dynamic programming version.
-    http://rosettacode.org/wiki/Longest_common_subsequence#Hirschberg_algorithm_version
-*/
-
-uint[] lensLCS(R)(R xs, R ys) pure nothrow @safe
+/** Get LCS Lengths. */
+uint[] lcsLengths(R)(R xs,
+                     R ys) pure nothrow @safe
 {
     auto prev = new typeof(return)(1 + ys.length);
     auto curr = new typeof(return)(1 + ys.length);
@@ -95,10 +94,10 @@ uint[] lensLCS(R)(R xs, R ys) pure nothrow @safe
     return curr;
 }
 
-void calculateLCS(T)(in T[] xs, in T[] ys,
-                     bool[] xs_in_lcs,
-                     in size_t idx = 0)
-    pure nothrow @safe
+void lcsDo(T)(in T[] xs,
+              in T[] ys,
+              bool[] xsInLCS,
+              in size_t idx = 0) pure nothrow @safe
 {
     immutable nx = xs.length;
     immutable ny = ys.length;
@@ -110,18 +109,18 @@ void calculateLCS(T)(in T[] xs, in T[] ys,
     {
         import std.algorithm: canFind;
         if (ys.canFind(xs[0]))
-            xs_in_lcs[idx] = true;
+            xsInLCS[idx] = true;
     }
     else
     {
         immutable mid = nx / 2;
         const xb = xs[0.. mid];
         const xe = xs[mid .. $];
-        immutable ll_b = lensLCS(xb, ys);
+        immutable ll_b = lcsLengths(xb, ys);
 
         import std.range: retro;
-        const ll_e = lensLCS(xe.retro,
-                             ys.retro); // retro is slow with dmd.
+        const ll_e = lcsLengths(xe.retro,
+                                ys.retro); // retro is slow with DMD
 
         //immutable k = iota(ny + 1)
         //              .reduce!(max!(j => ll_b[j] + ll_e[ny - j]));
@@ -131,26 +130,36 @@ void calculateLCS(T)(in T[] xs, in T[] ys,
         immutable k = iota(ny + 1).minPos!((i, j) => tuple(ll_b[i] + ll_e[ny - i]) >
                                            tuple(ll_b[j] + ll_e[ny - j]))[0];
 
-        calculateLCS(xb, ys[0 .. k], xs_in_lcs, idx);
-        calculateLCS(xe, ys[k .. $], xs_in_lcs, idx + mid);
+        lcsDo(xb, ys[0 .. k], xsInLCS, idx);
+        lcsDo(xe, ys[k .. $], xsInLCS, idx + mid);
     }
 }
 
-const(T)[] lcs(T)(in T[] xs, in T[] ys) pure /*nothrow*/ @safe
+
+/** Longest Common Subsequence (LCS) using Hirschberg.
+    Linear-Space Faster Dynamic Programming Version.
+
+    To speed up this code on DMD remove the memory allocations from $(D lcsLengths), and
+    do not use the $(D retro) range (replace it with $(D foreach_reverse))
+
+    http://rosettacode.org/wiki/Longest_common_subsequence#Hirschberg_algorithm_version
+*/
+const(T)[] lcs(T)(in T[] xs,
+                  in T[] ys) pure /*nothrow*/ @safe
 {
-    auto xs_in_lcs = new bool[xs.length];
-    calculateLCS(xs, ys, xs_in_lcs);
+    auto xsInLCS = new bool[xs.length];
+    lcsDo(xs, ys, xsInLCS);
     import std.range: zip, filter, map;
     import std.array: array;
-    return zip(xs, xs_in_lcs).filter!q{ a[1] }.map!q{ a[0] }.array; // Not nothrow.
+    return zip(xs, xsInLCS).filter!q{ a[1] }.map!q{ a[0] }.array; // Not nothrow.
 }
 
-string lcs(in string s1,
-           in string s2) pure /*nothrow*/ @safe
+string lcs(in string a,
+           in string b) pure /*nothrow*/ @safe
 {
     import std.string: representation, assumeUTF;
-    return lcs(s1.representation,
-               s2.representation).assumeUTF;
+    return lcs(a.representation,
+               b.representation).assumeUTF;
 }
 
 unittest
@@ -183,4 +192,12 @@ unittest
     assert(z == lcsR(x, y));
     assert(z == lcsDP(x, y));
     assert(z == lcs(x, y));
+}
+
+unittest
+{
+    size_t n = 1_000;
+    auto x = new int[n];
+    auto y = new int[n];
+    assert(lcs(x, y).length == n);
 }
