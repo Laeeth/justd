@@ -44,15 +44,16 @@ alias tail = dropOne;
     Similar to behaviour of Lisp's (or a...) and Python's a or ....
     TODO: Is inout Conversion!T the correct return value?
 */
-CommonType!T either(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
+CommonType!T either(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.length >= 1)
 {
     static if (T.length == 1)
     {
-        return a[0];
+        return a[0]();
     }
     else
     {
-        return a[0] ? a[0] : either(a[1 .. $]); // recurse
+        auto a0 = a[0]();
+        return a0 ? a0 : either(a[1 .. $]); // recurse
     }
 }
 /** This overload enables, when possible, lvalue return. */
