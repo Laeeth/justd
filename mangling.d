@@ -1,14 +1,12 @@
 #!/usr/bin/env rdmd-dev
 
-/** ELF Symbol Name (De)Mangling. */
+/** ELF Symbol Name (De)Mangling.
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+    TODO: Remove use of Nullable and use null string return for no hit.
+ */
 module mangling;
-
-// TODO: Test and use Nullable!(null)(string) to save space.
-
-// TODO: Use my Wrapper Hit!(null)(string) which implicitly converts .init to
-// false to enable elegant if (hit = decodeSomethingMaybe). See how Nullable
-// does it and change implicit conversion to boo behaviour;
-// bool opCast(T : bool)() const @safe pure nothrow { return (_match !is null && !_match.empty); }
 
 import std.range: empty, popFront, popFrontExactly, take, drop, front;
 
