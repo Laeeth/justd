@@ -1,9 +1,13 @@
 #!/usr/bin/env rdmd-dev
 
 /** Longest Common Subsequence, typically used as a base for writing diff/compare algorithms.
+
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
+
+    See also: https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+    See also: https://en.wikipedia.org/wiki/Diff
 */
 
 module lcs;
@@ -34,7 +38,7 @@ T[] lcsR(T)(in T[] a,
 
 /** Longest Common Subsequence (LCS).
     Faster Dynamic Programming Version.
-    http://rosettacode.org/wiki/Longest_common_subsequence#Faster_dynamic_programming_version
+    See also: http://rosettacode.org/wiki/Longest_common_subsequence#Faster_dynamic_programming_version
 */
 T[] lcsDP(T)(in T[] a,
              in T[] b) @safe pure /* nothrow */
@@ -142,7 +146,8 @@ void lcsDo(T)(in T[] xs,
     To speed up this code on DMD remove the memory allocations from $(D lcsLengths), and
     do not use the $(D retro) range (replace it with $(D foreach_reverse))
 
-    http://rosettacode.org/wiki/Longest_common_subsequence#Hirschberg_algorithm_version
+    See also: https://en.wikipedia.org/wiki/Hirschberg%27s_algorithm
+    See also: http://rosettacode.org/wiki/Longest_common_subsequence#Hirschberg_algorithm_version
 */
 const(T)[] lcs(T)(in T[] xs,
                   in T[] ys) pure /*nothrow*/ @safe
