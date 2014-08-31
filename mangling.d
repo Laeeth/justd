@@ -13,8 +13,7 @@ import std.range: empty, popFront, popFrontExactly, take, drop, front;
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
 import algorithm_ex: split, splitBefore;
 
-import std.typecons: tuple, Tuple, Nullable;
-import typecons_ex: nullable;
+import std.typecons: tuple, Tuple;
 
 import std.conv: to;
 import std.ascii: isDigit;
@@ -78,7 +77,7 @@ string decodeCxxType(ref string rest)
         default: break;
     }
 
-    string type;
+    string type = null;
 
     // prefix qualifiers
     if (cvq.isRestrict) { type ~= `restrict `; } // C99
@@ -100,7 +99,7 @@ string decodeCxxType(ref string rest)
 */
 string decodeCxxOperator(ref string rest)
 {
-    typeof(return) type = null;
+    string type = null;
     enum n = 2;
     if (rest.length < n) { return type; }
     switch (rest[0..n])
@@ -180,7 +179,7 @@ string decodeCxxOperator(ref string rest)
 */
 string decodeCxxBuiltinType(ref string rest)
 {
-    typeof(return) type = null;
+    string type = null;
     enum n = 1;
     if (rest.length < n) { return type; }
     switch (rest[0])
@@ -247,11 +246,11 @@ string decodeCxxBuiltinType(ref string rest)
 /** Decode C++ Substitution Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.substitution
 */
-Nullable!string decodeCxxSubstitution(ref string rest)
+string decodeCxxSubstitution(ref string rest)
 {
     if (rest.startsWith('S'))
     {
-        string type;
+        string type = null;
         rest.popFront;
         type ~= `::std::`;
         switch (rest[0])
@@ -271,20 +270,17 @@ Nullable!string decodeCxxSubstitution(ref string rest)
                 rest.popFront;
                 break;
         }
-        return nullable(type);
+        return type;
     }
-    else
-    {
-        return typeof(return)();
-    }
+    return null;
 }
 
 /** Try to Decode C++ Function Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.function-type
 */
-Nullable!string decodeCxxFunctionType(ref string rest)
+string decodeCxxFunctionType(ref string rest)
 {
-    typeof(return) type;
+    string type = null;
     dln("TODO");
     return type;
 }
@@ -311,9 +307,9 @@ CXXCVQualifiers decodeCxxCVQualifiers(ref string rest)
 /** Decode Identifier <source-name>.
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.source-name
 */
-Nullable!string decodeCxxSourceName(ref string rest)
+string decodeCxxSourceName(ref string rest)
 {
-    typeof(return) id;
+    string id = null;
     const match = rest.splitBefore!(a => !a.isDigit);
     const digits = match[0];
     rest = match[1];
