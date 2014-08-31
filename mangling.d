@@ -7,7 +7,8 @@ module mangling;
 
 // TODO: Use my Wrapper Hit!(null)(string) which implicitly converts .init to
 // false to enable elegant if (hit = decodeSomethingMaybe). See how Nullable
-// does it and change implicit conversion to boo behaviour.
+// does it and change implicit conversion to boo behaviour;
+// bool opCast(T : bool)() const @safe pure nothrow { return (_match !is null && !_match.empty); }
 
 import std.range: empty, popFront, popFrontExactly, take, drop, front;
 
