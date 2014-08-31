@@ -558,9 +558,12 @@ class FKinds
         return this;
     }
 
-    FKinds rehash() @trusted pure
+    /** Rehash Internal AAs.
+        TODO: Change to @safe when https://github.com/D-Programming-Language/druntime/pull/942 has been merged
+        TODO: Change to nothrow when uniq becomes nothrow.
+    */
+    FKinds rehash() @trusted pure /* nothrow */
     {
-        // TODO: why is rehash unsafe?
         this.magicLengths = this.magicLengths.uniq.array.sort; // remove duplicates
         this.byName.rehash;
         this.byExt.rehash;
