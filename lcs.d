@@ -143,6 +143,9 @@ void lcsDo(T)(in T[] xs,
 /** Longest Common Subsequence (LCS) using Hirschberg.
     Linear-Space Faster Dynamic Programming Version.
 
+    Time Complexity: O(m*n)
+    Space Complexity: O(min(m,n))
+
     To speed up this code on DMD remove the memory allocations from $(D lcsLengths), and
     do not use the $(D retro) range (replace it with $(D foreach_reverse))
 
@@ -201,8 +204,23 @@ unittest
 
 unittest
 {
-    size_t n = 1_000;
+    import std.algorithm: levenshteinDistance, levenshteinDistanceAndPath;
+    import std.stdio: writeln;
+
+    size_t n = 10_000;
     auto x = new int[n];
     auto y = new int[n];
-    assert(lcs(x, y).length == n);
+
+    void bLCS() { assert(lcs(x, y).length == n); }
+    void bLD() { const d = levenshteinDistance(x, y); }
+    void bLDAP() { const dp = levenshteinDistanceAndPath(x, y); }
+
+    import std.datetime: benchmark;
+    import std.algorithm: map;
+    import std.array: array;
+
+    auto r = benchmark!(bLCS, bLD, bLDAP)(1);
+    auto q = r.array.map!(a => a.msecs);
+
+    writeln(q, " milliseconds");
 }
