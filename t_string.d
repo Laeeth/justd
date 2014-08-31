@@ -21,4 +21,7 @@ void main(string[] args)
     static assert("ab"[0..0]); // contextual hit (BOL)
     static assert("a\nb"[2..2]); // contextual hit (beginning of second line)
     static assert("ab"[$..$]); // contextual hit (EOL)
+
+    static assert("ab" ~ null == "ab");
+    static assert("ab" ~ [] == "ab");
 }
