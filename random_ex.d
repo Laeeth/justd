@@ -112,7 +112,7 @@ auto ref randInPlace(dstring x)
     @trusted
 {
     dstring y;
-    foreach (ix; 0..x.length)
+    foreach (ix; 0 .. x.length)
         y ~= randomized!dchar; // TODO: How to do this in a better way?
     x = y;
     return y;
@@ -182,37 +182,37 @@ auto ref randInPlaceBlockwise(B = size_t, A)(ref A x)
     @trusted if (isArray!A &&
                  isIntegral!(ElementType!A))
 {
-    static assert((ElementType!A).sizeof < B.sizeof);
+    alias E = ElementType!A;
+    static assert(E.sizeof < B.sizeof);
+    enum mult = B.sizeof / E.sizeof; // block multiplicity
 
-    enum n = B.sizeof;
-    immutable m = x.length;
+    immutable n = x.length;
 
     // beginning unaligned bytes
     auto p = cast(size_t)x.ptr;
-    immutable size_t mask = n - 1;
-    immutable r = p & mask;
-    size_t k = 0; // block start offset
+    immutable size_t mask = B.sizeof - 1;
+    immutable r = (p & mask) / E.sizeof; // element-offset from B-aligned address before x
+    size_t k = 0; // E-index to first B-block
     if (r)
     {
         import std.algorithm: min;
-        k = min(m, n - r); // at first aligned B-block
-        foreach (i, ref e; x[0..k])
+        k = min(n, mult - r); // at first aligned B-block
+        foreach (i, ref e; x[0 .. k])
         {
             e.randInPlace;
         }
     }
 
     // mid blocks of type B
-    auto xp = cast(B*)(x.ptr + k);
-    immutable blockCount = (m - k) / n;
-    foreach (ref b; 0..blockCount) // for each block index
+    auto bp = cast(B*)(x.ptr + k); // block pointer
+    immutable nB = (n - k) / mult; // number of B-blocks
+    foreach (ref b; 0 .. nB) // for each block index
     {
-        xp[b].randInPlace;
+        bp[b].randInPlace;
     }
 
     // ending unaligned bytes
-    immutable l = m - k;
-    foreach (i, ref e; x[l..$])
+    foreach (i, ref e; x[k + nB*mult .. $])
     {
         e.randInPlace;
     }
@@ -235,7 +235,7 @@ unittest
 
         // static array
         T[n] sa;
-        auto sa2 = sa[1..$];
+        auto sa2 = sa[1 .. $];
         sa2.randInPlaceBlockwise!B;
     }
 
