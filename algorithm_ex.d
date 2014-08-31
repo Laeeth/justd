@@ -100,7 +100,9 @@ unittest {
 
 // ==============================================================================================
 
-/** Returns: Last Argument if all arguments implicitly bool-convert to true.
+/** Returns: Last Argument if all arguments implicitly bool-convert to true
+    otherwise CommonType!T.init.
+
     Similar to behaviour of Lisp's (and a...) and Python's a and ....
     TODO: Is inout Conversion!T the correct return value?
 */
@@ -113,7 +115,7 @@ CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.le
     }
     else
     {
-        return a0 ? every(a[1 .. $]) : a0; // recurse
+        return a0 ? every(a[1 .. $]) : CommonType!T.init; // recurse
     }
 }
 /** This overload enables, when possible, lvalue return.
