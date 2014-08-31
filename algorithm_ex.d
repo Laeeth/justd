@@ -42,6 +42,10 @@ alias tail = dropOne;
     bool is true.
 
     Similar to behaviour of Lisp's (or a...) and Python's a or ....
+
+    TODO: Why can't we make this lazy version @nogc and nothrow. This shouldn't
+    be a problem, though, since qualifiers are inferred for templated functions.
+
     TODO: Is inout Conversion!T the correct return value?
 */
 CommonType!T either(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.length >= 1)
@@ -52,7 +56,7 @@ CommonType!T either(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.l
     }
     else
     {
-        auto a0 = a[0]();
+        auto a0 = a[0](); // evaluate only once
         return a0 ? a0 : either(a[1 .. $]); // recurse
     }
 }
