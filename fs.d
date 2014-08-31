@@ -5372,7 +5372,7 @@ class Scanner(Term)
                                 if (firstDup._cstat.kindId in gstats.allFKinds.byId)
                                 {
                                     viz.pp(asH!3(gstats.allFKinds.byId[firstDup._cstat.kindId],
-                                                 " files sharing digest ", digest, " and size ", firstDup.treeSize));
+                                                 " files sharing digest ", digest, " of size ", firstDup.treeSize));
                                 }
                                 else
                                 {
@@ -5381,11 +5381,11 @@ class Scanner(Term)
                                 }
                             }
                             viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
-                                         "s sharing digest ", digest, " and size ", firstDup.treeSize));
+                                         "s sharing digest ", digest, " of size ", firstDup.treeSize));
                         }
                         else
                         {
-                            viz.pp(asH!3(typeName, "s sharing digest ", digest, " and size ", firstDup.size));
+                            viz.pp(asH!3(typeName, "s sharing digest ", digest, " of size ", firstDup.size));
                         }
 
                         viz.pp(asUList(dupFilesOk.map!(x => x.asPath.asItem)));
