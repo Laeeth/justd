@@ -303,6 +303,7 @@ enum specialFileFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, 
 enum regFileFace = face(arsd.terminal.Color.white, arsd.terminal.Color.black, true, false, [`b`]);
 enum symlinkFace = face(arsd.terminal.Color.cyan, arsd.terminal.Color.black, true, true, [`i`]);
 enum symlinkBrokenFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, true, true, [`i`]);
+enum missingSymlinkTargetFace = face(arsd.terminal.Color.red, arsd.terminal.Color.black, false, true, [`i`]);
 
 enum contextFace = face(arsd.terminal.Color.green, arsd.terminal.Color.black);
 

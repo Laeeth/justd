@@ -5193,7 +5193,7 @@ class Scanner(Term)
                     viz.pp(" -> ");
                 }
 
-                viz.ppln(faze(theSymlink.target, symlinkBrokenFace),
+                viz.ppln(faze(theSymlink.target, missingSymlinkTargetFace),
                          faze(" is missing", warnFace));
             }
         }
