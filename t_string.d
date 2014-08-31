@@ -4,6 +4,10 @@ import std.stdio, std.algorithm, std.range, std.array;
 
 void main(string[] args)
 {
+    static assert(string.init is null);
+    static assert(!string.init);
+    static assert([].init is null);
+
     static assert([].ptr != null);
     static assert("ab"[$..$].ptr == null);
     static assert(![]);
