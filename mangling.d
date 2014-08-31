@@ -62,7 +62,7 @@ string decodeCxxType(ref string rest)
         case 'C': rest.popFront(); isComplexPair = true; break;
         case 'G': rest.popFront(); isImaginary = true; break;
         case 'U': rest.popFront();
-            const sourceName = rest.decodeCxxSourceName();
+            const sourceName = rest.decodeCxxSourceName() ~ rest.decodeCxxType();
             dln("Handle vendor extended type qualifier <source-name>", rest);
             break;
         default: break;
@@ -73,15 +73,62 @@ string decodeCxxType(ref string rest)
     // prefix qualifiers
     if (cvq.isRestrict) { type ~= `restrict `; } // C99
     if (cvq.isVolatile) { type ~= `volatile `; }
-    if (cvq.isConst) { type ~= `const `; }
+    if (cvq.isConst)    { type ~= `const `; }
 
-    type ~= rest.decodeCxxUnqualifiedType();
+    type ~= either(rest.decodeCxxBuiltinType(),
+                   rest.decodeCxxFunctionType(),
+                   rest.decodeCxxClassEnumType(),
+                   rest.decodeCxxArrayType(),
+                   rest.decodeCxxPointerToMemberType(),
+                   rest.decodeCxxTemplateParam(),
+                   rest.decodeCxxTemplateTemplateParamAndTemplateArgs(),
+                   rest.decodeCxxDecltype(),
+                   rest.decodeCxxSubstitution());
 
     // suffix qualifiers
     if (isRef) { type ~= `&`; }
     if (isRVRef) { type ~= `&&`; }
     if (isPointer) { type = type ~ `*`; }
 
+    return type;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.class-enum-type */
+string decodeCxxClassEnumType(ref string rest)
+{
+    string type = null;
+    string prefix = null;
+    enum n = 2;
+    if (rest.length >= n)
+    {
+        switch (rest[0..n])
+        {
+            case `Ts`: prefix = `struct `; break;
+            case `Tu`: prefix = `union `; break;
+            case `Te`: prefix = `enum `; break;
+            default: break;
+        }
+    }
+    const name = rest.decodeCxxName();
+    if (name)
+    {
+        type = prefix ~ name;
+    }
+    else
+    {
+        assert(!prefix); // if we faile to decode name prefix should not have existed either
+    }
+    return type;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.array-type */
+string decodeCxxArrayType(ref string rest)
+{
+    string type = null;
+    if (rest.skipOver('A'))
+    {
+        return;
+    }
     return type;
 }
 
@@ -296,8 +343,7 @@ string decodeCxxSubstitution(ref string rest)
 string decodeCxxFunctionType(ref string rest)
 {
     string type = null;
-    dln("TODO");
-    return type;
+    return;
 }
 
 struct CXXCVQualifiers
