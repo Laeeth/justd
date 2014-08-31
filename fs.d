@@ -529,11 +529,16 @@ class FKinds
     void opOpAssign(string op)(FKind kind) @safe pure if (op == "~")
     {
         mixin("this.byIndex " ~ op ~ "= kind;");
-        //this.byIndex ~= kind;
-        this.update(kind);
+        this.register(kind);
+    }
+    void opOpAssign(string op)(FKinds kinds) @safe pure if (op == "~")
+    {
+        mixin("this.byIndex " ~ op ~ "= kinds.byIndex;");
+        foreach (kind; kinds.byIndex)
+            this.register(kind);
     }
 
-    FKinds update(FKind kind) @safe pure
+    FKinds register(FKind kind) @safe pure
     {
         this.byName[kind.kindName] = kind;
         foreach (const ext; kind.exts)
@@ -550,15 +555,13 @@ class FKinds
                 this.magicLengths ~= magicLit.bytes.length; // add it
             }
         }
-        return this.rehash;
+        return this;
     }
 
     FKinds rehash() @trusted pure
-
     {
         // TODO: why is rehash unsafe?
-        this.magicLengths = this.magicLengths.uniq.array; // remove duplicates
-        this.magicLengths.sort; // and sort
+        this.magicLengths = this.magicLengths.uniq.array.sort; // remove duplicates
         this.byName.rehash;
         this.byExt.rehash;
         this.byMagic.rehash;
@@ -1484,7 +1487,8 @@ class RegFile : File
             if (_cstat.kindId.defined &&
                 _cstat.kindId !in parent.gstats.allFKinds.byId)
             {
-                dln("kindId ", _cstat.kindId, " not found for ", path, ", FKinds length ", parent.gstats.allFKinds.byIndex.length);
+                dln("warning: kindId ", _cstat.kindId, " not found for ",
+                    path, ", FKinds length ", parent.gstats.allFKinds.byIndex.length);
                 _cstat.kindId.reset; // forget it
             }
             unpacker.unpack(_cstat._contentId); // Digest
@@ -2579,7 +2583,7 @@ class GStats
         auto elfKind = new FKind("ELF",
                                  [], extsELF, x"7F45 4C46", 0, [], [],
                                  [], // N/A
-                                 defaultStringDelims,
+                                 [], // N/A
                                  FileContent.machineCode,
                                  FileKindDetection.equalsContents);
         elfKind.wikiURL = "https://en.wikipedia.org/wiki/Executable_and_Linkable_Format";
@@ -2596,17 +2600,17 @@ class GStats
         // Executables
         binFKinds ~= new FKind("Mach-O", [], ["o"], x"CEFA EDFE", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.machineCode, FileKindDetection.equalsContents);
         binFKinds ~= new FKind("modules.symbols.bin", [], ["bin"],
                                cast(ubyte[])[0xB0, 0x07, 0xF4, 0x57, 0x00, 0x02, 0x00, 0x01, 0x20], 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.binaryUnknown, FileKindDetection.equalsContents);
 
         auto kindCOFF = new FKind("COFF/i386/32", [], ["o"], x"4C01", 0, [], [],
                                   [], // N/A
-                                  defaultStringDelims,
+                                  [], // N/A
                                   FileContent.machineCode, FileKindDetection.equalsContents);
         kindCOFF.description = "Common Object File Format";
         binFKinds ~= kindCOFF;
@@ -2615,14 +2619,14 @@ class GStats
                                     "PE\0\0", 0x60, // And ("MZ") at offset 0x0
                                     [], [],
                                     [], // N/A
-                                    defaultStringDelims,
+                                    [], // N/A
                                     FileContent.machineCode, FileKindDetection.equalsContents);
         kindPECOFF.description = "COFF Portable Executable";
         binFKinds ~= kindPECOFF;
 
         auto kindDOSMZ = new FKind("DOS-MZ", [], ["exe", "dll"], "MZ", 0, [], [],
                                    [], // N/A
-                                   defaultStringDelims,
+                                   [], // N/A
                                    FileContent.machineCode);
         kindDOSMZ.description = "MS-DOS, OS/2 or MS Windows executable";
         binFKinds ~= kindDOSMZ;
@@ -2630,41 +2634,41 @@ class GStats
         // Caches
         binFKinds ~= new FKind("ld.so.cache", [], ["cache"], "ld.so-", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.binaryCache);
 
         // Profile Data
         binFKinds ~= new FKind("perf benchmark data", [], ["data"], "PERFILE2h", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.performanceBenchmark);
 
         // Images
         binFKinds ~= new FKind("GIF87a", [], ["gif"], "GIF87a", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.image);
         binFKinds ~= new FKind("GIF89a", [], ["gif"], "GIF89a", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.image);
         auto extJPEG = ["jpeg", "jpg", "j2k", "jpeg2000"];
         binFKinds ~= new FKind("JPEG", [], extJPEG, x"FFD8", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.image); // TODO: Support ends with [0xFF, 0xD9]
         binFKinds ~= new FKind("JPEG/JFIF", [], extJPEG, x"FFD8", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.image); // TODO: Support ends with ['J','F','I','F', 0x00]
         binFKinds ~= new FKind("JPEG/Exif", [], extJPEG, x"FFD8", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.image); // TODO: Support contains ['E','x','i','f', 0x00] followed by metadata
 
         binFKinds ~= new FKind("Pack200-Compressed Java Bytes Code", [], ["class"], x"CAFEBABE", 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.machineCode);
 
         binFKinds ~= new FKind("JRun Server Application", [], ["jsa"],
@@ -2672,18 +2676,18 @@ class GStats
                                              0x01,0x00,0x00,0x00,
                                              0x00,0x00,0x20,0x00], 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.machineCode);
 
         binFKinds ~= new FKind("PNG", [], ["png"],
                                cast(ubyte[])[137, 80, 78, 71, 13, 10, 26, 10], 0, [], [],
                                [], // N/A
-                               defaultStringDelims,
+                               [], // N/A
                                FileContent.image);
 
         auto kindPDF = new FKind("PDF", [], ["pdf"], "%PDF", 0, [], [],
                                  [], // N/A
-                                 defaultStringDelims,
+                                 [], // N/A
                                  FileContent.document);
         kindPDF.description = "Portable Document Format";
         binFKinds ~= kindPDF;
@@ -3005,8 +3009,16 @@ class GStats
                                [],
                                FileContent.voiceModem, FileKindDetection.equalsContents);
 
-        allFKinds.byIndex = chain(txtFKinds.byIndex,
-                                  binFKinds.byIndex).array;
+        allFKinds ~= txtFKinds;
+        allFKinds ~= binFKinds;
+
+        assert(allFKinds.byIndex.length ==
+               (txtFKinds.byIndex.length +
+                binFKinds.byIndex.length));
+
+        assert(allFKinds.byId.length ==
+               (txtFKinds.byId.length +
+                binFKinds.byId.length));
 
         txtFKinds.rehash;
         binFKinds.rehash;
@@ -4211,7 +4223,7 @@ class Scanner(Term)
             if (gstats.selFKinds.byIndex.empty)
             {
                 writeln("warning: None of the languages ", to!string(selFKindNames), " are registered. Defaulting to all file types.");
-                gstats.selFKinds = gstats.allFKinds;
+                gstats.selFKinds = gstats.allFKinds; // just reuse allFKinds
             }
             else
             {
