@@ -4,6 +4,8 @@
     Copyright: Per Nordlöw 2014-.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html
+    TODO: Search for pattern "X> <Y" and assure that they all use allOrNothingInSequence(X, Y).
  */
 module mangling;
 
@@ -18,27 +20,23 @@ import dbg;
 import languages;
 import algorithm_ex: either, split, splitBefore;
 
+/** Like skipOver but return string instead of bool.
+
+    Bool-conversion of returned value gives same result as rest.skipOver(lit).
+ */
+string skipLiteral(T)(ref string rest, T lit)
+{
+    return rest.skipOver(lit) ? "" : null;
+}
+
 /** Decode Unqualified C++ Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
 */
 string decodeCxxUnqualifiedType(ref string rest)
 {
-    return either(rest.decodeCxxBuiltinType,
-                  rest.decodeCxxSubstitution,
-                  rest.decodeCxxFunctionType);
-    /* if (const biType = rest.decodeCxxBuiltinType) */
-    /* { */
-    /*     return biType; */
-    /* } */
-    /* else if (const substType = rest.decodeCxxSubstitution) */
-    /* { */
-    /*     return substType; */
-    /* } */
-    /* else if (const funType = rest.decodeCxxFunctionType) */
-    /* { */
-    /*     return funType.get; */
-    /* } */
-    /* assert(false, "Handle " ~ rest); */
+    return either(rest.decodeCxxBuiltinType(),
+                  rest.decodeCxxSubstitution(),
+                  rest.decodeCxxFunctionType());
 }
 
 /** Decode C++ Type at $(D rest).
@@ -54,17 +52,17 @@ string decodeCxxType(ref string rest)
     bool isPointer = false;
 
     /* TODO: Order of these may vary. */
-    const cvq = rest.decodeCxxCVQualifiers;
+    const cvq = rest.decodeCxxCVQualifiers();
     switch (rest[0]) // TODO: Check for !rest.empty
     {
-        case 'P': rest.popFront; isPointer = true; break;
+        case 'P': rest.popFront(); isPointer = true; break;
             // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
-        case 'R': rest.popFront; isRef = true; break;
-        case 'O': rest.popFront; isRVRef = true; break;
-        case 'C': rest.popFront; isComplexPair = true; break;
-        case 'G': rest.popFront; isImaginary = true; break;
-        case 'U': rest.popFront;
-            const sourceName = rest.decodeCxxSourceName;
+        case 'R': rest.popFront(); isRef = true; break;
+        case 'O': rest.popFront(); isRVRef = true; break;
+        case 'C': rest.popFront(); isComplexPair = true; break;
+        case 'G': rest.popFront(); isImaginary = true; break;
+        case 'U': rest.popFront();
+            const sourceName = rest.decodeCxxSourceName();
             dln("Handle vendor extended type qualifier <source-name>", rest);
             break;
         default: break;
@@ -77,7 +75,7 @@ string decodeCxxType(ref string rest)
     if (cvq.isVolatile) { type ~= `volatile `; }
     if (cvq.isConst) { type ~= `const `; }
 
-    type ~= rest.decodeCxxUnqualifiedType;
+    type ~= rest.decodeCxxUnqualifiedType();
 
     // suffix qualifiers
     if (isRef) { type ~= `&`; }
@@ -87,84 +85,108 @@ string decodeCxxType(ref string rest)
     return type;
 }
 
+string decodeCxxDigit(ref string rest)
+{
+    auto digit = rest[0..1];
+    rest.popFront();
+    return digit;
+}
+
 /** Try to Decode C++ Operator at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-operator
 */
-string decodeCxxOperator(ref string rest)
+string decodeCxxOperatorName(ref string rest)
 {
-    string type = null;
-    enum n = 2;
-    if (rest.length < n) { return type; }
-    switch (rest[0..n])
+    if (rest.skipOver('v'))     // vendor extended operator
     {
-        case `nw`: type = `operator new`; break;
-        case `na`: type = `operator new[]`; break;
-        case `dl`: type = `operator delete`; break;
-        case `da`: type = `operator delete[]`; break;
-        case `ps`: type = `operator +`; break; // unary plus
-        case `ng`: type = `operator -`; break; // unary minus
+        return (rest.decodeCxxDigit() ~
+                rest.decodeCxxSourceName());
+    }
 
-        case `ad`: type = `operator &`; break; // address of
-        case `de`: type = `operator *`; break; // dereference
+    string op = null;
+    enum n = 2;
+    const code = rest[0..n];
+    switch (code)
+    {
+        case `nw`: op = `operator new`; break;
+        case `na`: op = `operator new[]`; break;
+        case `dl`: op = `operator delete`; break;
+        case `da`: op = `operator delete[]`; break;
+        case `ps`: op = `operator +`; break; // unary plus
+        case `ng`: op = `operator -`; break; // unary minus
 
-        case `co`: type = `operator ~`; break; // bitwise complement
-        case `pl`: type = `operator +`; break; // plus
-        case `mi`: type = `operator -`; break; // minus
+        case `ad`: op = `operator &`; break; // address of
+        case `de`: op = `operator *`; break; // dereference
 
-        case `ml`: type = `operator *`; break; // multiplication
-        case `dv`: type = `operator /`; break; // division
-        case `rm`: type = `operator %`; break; // remainder
+        case `co`: op = `operator ~`; break; // bitwise complement
+        case `pl`: op = `operator +`; break; // plus
+        case `mi`: op = `operator -`; break; // minus
 
-        case `an`: type = `operator &`; break; // bitwise and
-        case `or`: type = `operator |`; break; // bitwise of
+        case `ml`: op = `operator *`; break; // multiplication
+        case `dv`: op = `operator /`; break; // division
+        case `rm`: op = `operator %`; break; // remainder
 
-        case `eo`: type = `operator ^`; break;
-        case `aS`: type = `operator =`; break;
+        case `an`: op = `operator &`; break; // bitwise and
+        case `or`: op = `operator |`; break; // bitwise of
 
-        case `pL`: type = `operator +=`; break;
-        case `mI`: type = `operator -=`; break;
-        case `mL`: type = `operator *=`; break;
-        case `dV`: type = `operator /=`; break;
-        case `rM`: type = `operator %=`; break;
+        case `eo`: op = `operator ^`; break;
+        case `aS`: op = `operator =`; break;
 
-        case `aN`: type = `operator &=`; break;
-        case `oR`: type = `operator |=`; break;
-        case `eO`: type = `operator ^=`; break;
+        case `pL`: op = `operator +=`; break;
+        case `mI`: op = `operator -=`; break;
+        case `mL`: op = `operator *=`; break;
+        case `dV`: op = `operator /=`; break;
+        case `rM`: op = `operator %=`; break;
 
-        case `ls`: type = `operator <<`; break;
-        case `rs`: type = `operator >>`; break;
-        case `lS`: type = `operator <<=`; break;
-        case `rS`: type = `operator >>=`; break;
+        case `aN`: op = `operator &=`; break;
+        case `oR`: op = `operator |=`; break;
+        case `eO`: op = `operator ^=`; break;
 
-        case `eq`: type = `operator ==`; break;
-        case `ne`: type = `operator !=`; break;
-        case `lt`: type = `operator <`; break;
-        case `gt`: type = `operator >`; break;
-        case `le`: type = `operator <=`; break;
-        case `ge`: type = `operator >=`; break;
+        case `ls`: op = `operator <<`; break;
+        case `rs`: op = `operator >>`; break;
+        case `lS`: op = `operator <<=`; break;
+        case `rS`: op = `operator >>=`; break;
 
-        case `nt`: type = `operator !`; break;
-        case `aa`: type = `operator &&`; break;
-        case `oo`: type = `operator ||`; break;
+        case `eq`: op = `operator ==`; break;
+        case `ne`: op = `operator !=`; break;
+        case `lt`: op = `operator <`; break;
+        case `gt`: op = `operator >`; break;
+        case `le`: op = `operator <=`; break;
+        case `ge`: op = `operator >=`; break;
 
-        case `pp`: type = `operator ++`; break; // (postfix in <expression> context)
-        case `mm`: type = `operator --`; break; // (postfix in <expression> context)
+        case `nt`: op = `operator !`; break;
+        case `aa`: op = `operator &&`; break;
+        case `oo`: op = `operator ||`; break;
 
-        case `cm`: type = `operator ,`; break;
+        case `pp`: op = `operator ++`; break; // (postfix in <expression> context)
+        case `mm`: op = `operator --`; break; // (postfix in <expression> context)
 
-        case `pm`: type = `operator ->*`; break;
-        case `pt`: type = `operator ->`; break;
+        case `cm`: op = `operator ,`; break;
 
-        case `cl`: type = `operator ()`; break;
-        case `ix`: type = `operator []`; break;
-        case `qu`: type = `operator ?`; break;
-        case `cv`: type = `operator (<type>)`; break; // type-cast: TODO: Decode type
-        case `li`: type = `operator "" <source-name>`; break;
-            // TODO: case `v `: type = `operator <digit> <source-name>`; break;
+        case `pm`: op = `operator ->*`; break;
+        case `pt`: op = `operator ->`; break;
+
+        case `cl`: op = `operator ()`; break;
+        case `ix`: op = `operator []`; break;
+        case `qu`: op = `operator ?`; break;
+        case `cv`: op = `(cast)`; break;
+        case `li`: op = `operator""`; break;
         default: break;
     }
-    if (type !is null) { rest.popFrontExactly(n); } // digest if match
-    return type;
+
+    if (op)
+    {
+        rest.popFrontExactly(n); // digest it
+    }
+
+    switch (code)
+    {
+        case `cv`: op = "(" ~ rest.decodeCxxType() ~ ")"; break;
+        case `li`: op = (`operator ""` ~ rest.decodeCxxSourceName()); break;
+        default: break;
+    }
+
+    return op;
 }
 
 /** Try to Decode C++ Builtin Type at $(D rest).
@@ -177,51 +199,51 @@ string decodeCxxBuiltinType(ref string rest)
     if (rest.length < n) { return type; }
     switch (rest[0])
     {
-        case 'v': rest.popFront; type = `void`; break;
-        case 'w': rest.popFront; type = `wchar_t`; break;
+        case 'v': rest.popFront(); type = `void`; break;
+        case 'w': rest.popFront(); type = `wchar_t`; break;
 
-        case 'b': rest.popFront; type = `bool`; break;
+        case 'b': rest.popFront(); type = `bool`; break;
 
-        case 'c': rest.popFront; type = `char`; break;
-        case 'a': rest.popFront; type = `signed char`; break;
-        case 'h': rest.popFront; type = `unsigned char`; break;
+        case 'c': rest.popFront(); type = `char`; break;
+        case 'a': rest.popFront(); type = `signed char`; break;
+        case 'h': rest.popFront(); type = `unsigned char`; break;
 
-        case 's': rest.popFront; type = `short`; break;
-        case 't': rest.popFront; type = `unsigned short`; break;
+        case 's': rest.popFront(); type = `short`; break;
+        case 't': rest.popFront(); type = `unsigned short`; break;
 
-        case 'i': rest.popFront; type = `int`; break;
-        case 'j': rest.popFront; type = `unsigned int`; break;
+        case 'i': rest.popFront(); type = `int`; break;
+        case 'j': rest.popFront(); type = `unsigned int`; break;
 
-        case 'l': rest.popFront; type = `long`; break;
-        case 'm': rest.popFront; type = `unsigned long`; break;
+        case 'l': rest.popFront(); type = `long`; break;
+        case 'm': rest.popFront(); type = `unsigned long`; break;
 
-        case 'x': rest.popFront; type = `long long`; break;  // __int64
-        case 'y': rest.popFront; type = `unsigned long long`; break; // __int64
+        case 'x': rest.popFront(); type = `long long`; break;  // __int64
+        case 'y': rest.popFront(); type = `unsigned long long`; break; // __int64
 
-        case 'n': rest.popFront; type = `__int128`; break;
-        case 'o': rest.popFront; type = `unsigned __int128`; break;
+        case 'n': rest.popFront(); type = `__int128`; break;
+        case 'o': rest.popFront(); type = `unsigned __int128`; break;
 
-        case 'f': rest.popFront; type = `float`; break;
-        case 'd': rest.popFront; type = `double`; break;
-        case 'e': rest.popFront; type = `long double`; break; // __float80
-        case 'g': rest.popFront; type = `__float128`; break;
+        case 'f': rest.popFront(); type = `float`; break;
+        case 'd': rest.popFront(); type = `double`; break;
+        case 'e': rest.popFront(); type = `long double`; break; // __float80
+        case 'g': rest.popFront(); type = `__float128`; break;
 
-        case 'z': rest.popFront; type = `...`; break; // ellipsis
+        case 'z': rest.popFront(); type = `...`; break; // ellipsis
 
         case 'D':
-            rest.popFront;
+            rest.popFront();
             assert(!rest.empty); // need one more
             switch (rest[0])
             {
-                case 'd': rest.popFront; type = `IEEE 754r decimal floating point (64 bits)`; break;
-                case 'e': rest.popFront; type = `IEEE 754r decimal floating point (128 bits)`; break;
-                case 'f': rest.popFront; type = `IEEE 754r decimal floating point (32 bits)`; break;
-                case 'h': rest.popFront; type = `IEEE 754r half-precision floating point (16 bits)`; break;
-                case 'i': rest.popFront; type = `char32_t`; break;
-                case 's': rest.popFront; type = `char16_t`; break;
-                case 'a': rest.popFront; type = `auto`; break;
-                case 'c': rest.popFront; type = `decltype(auto)`; break;
-                case 'n': rest.popFront; type = `std::nullptr_t`; break; // (i.e., decltype(nullptr))
+                case 'd': rest.popFront(); type = `IEEE 754r decimal floating point (64 bits)`; break;
+                case 'e': rest.popFront(); type = `IEEE 754r decimal floating point (128 bits)`; break;
+                case 'f': rest.popFront(); type = `IEEE 754r decimal floating point (32 bits)`; break;
+                case 'h': rest.popFront(); type = `IEEE 754r half-precision floating point (16 bits)`; break;
+                case 'i': rest.popFront(); type = `char32_t`; break;
+                case 's': rest.popFront(); type = `char16_t`; break;
+                case 'a': rest.popFront(); type = `auto`; break;
+                case 'c': rest.popFront(); type = `decltype(auto)`; break;
+                case 'n': rest.popFront(); type = `std::nullptr_t`; break; // (i.e., decltype(nullptr))
                 default: dln(`TODO: Handle `, rest);
             }
             break;
@@ -244,23 +266,23 @@ string decodeCxxSubstitution(ref string rest)
     if (rest.startsWith('S'))
     {
         string type = null;
-        rest.popFront;
+        rest.popFront();
         type ~= `::std::`;
         switch (rest[0])
         {
-            case 't': rest.popFront; type ~= `ostream`; break;
-            case 'a': rest.popFront; type ~= `allocator`; break;
-            case 'b': rest.popFront; type ~= `basic_string`; break;
+            case 't': rest.popFront(); type ~= `ostream`; break;
+            case 'a': rest.popFront(); type ~= `allocator`; break;
+            case 'b': rest.popFront(); type ~= `basic_string`; break;
             case 's':
-                rest.popFront;
+                rest.popFront();
                 type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
                 break;
-            case 'i': rest.popFront; type ~= `istream`; break;
-            case 'o': rest.popFront; type ~= `ostream`; break;
-            case 'd': rest.popFront; type ~= `iostream`; break;
+            case 'i': rest.popFront(); type ~= `istream`; break;
+            case 'o': rest.popFront(); type ~= `ostream`; break;
+            case 'd': rest.popFront(); type ~= `iostream`; break;
             default:
                 dln(`Cannot handle C++ standard prefix character: '`, rest[0], `'`);
-                rest.popFront;
+                rest.popFront();
                 break;
         }
         return type;
@@ -290,11 +312,37 @@ struct CXXCVQualifiers
 */
 CXXCVQualifiers decodeCxxCVQualifiers(ref string rest)
 {
-    CXXCVQualifiers cvq;
-    if (rest.startsWith('r')) { rest.popFront; cvq.isRestrict = true; }
-    if (rest.startsWith('V')) { rest.popFront; cvq.isVolatile = true; }
-    if (rest.startsWith('K')) { rest.popFront; cvq.isConst = true; }
+    typeof(return) cvq;
+    if (rest.skipOver('r')) { cvq.isRestrict = true; }
+    if (rest.skipOver('V')) { cvq.isVolatile = true; }
+    if (rest.skipOver('K')) { cvq.isConst = true; }
     return cvq;
+}
+
+enum CxxRefQualifier
+{
+    none,
+    normalRef,
+    rvalueRef
+}
+
+/** Decode <ref-qualifier>
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
+*/
+CxxRefQualifier decodeCxxRefQualifier(ref string rest)
+{
+    if (rest.skipOver('R'))
+    {
+        return CxxRefQualifier.normalRef;
+    }
+    else if (rest.skipOver('O'))
+    {
+        return CxxRefQualifier.rvalueRef;
+    }
+    else
+    {
+        return CxxRefQualifier.none;
+    }
 }
 
 /** Decode Identifier <source-name>.
@@ -316,82 +364,281 @@ string decodeCxxSourceName(ref string rest)
     return id;
 }
 
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
+   Note: Second alternative
+   <template-prefix> <template-args>
+   in
+   <nested-name>
+   is redundant as it is included in <prefix> and is skipped here.
+ */
+string decodeCxxNestedName(ref string rest)
+{
+    if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
+    {
+        const cvQualifiers = rest.decodeCxxCVQualifiers();
+        const refQualifier = rest.decodeCxxRefQualifier();
+        auto ret = (rest.decodeCxxPrefix() ~
+                    rest.decodeCxxUnqualifiedName() ~
+                    rest.skipLiteral('E'));
+        return ret;
+    }
+    return null;
+}
+
+/** TODO: Use this
+    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ctor-dtor-name
+ */
+enum CtorDtorName
+{
+    completeObjectConstructor,
+    baseObjectConstructor,
+    completeObjectAllocatingConstructor,
+    deletingDestructor,
+    completeObjectDestructor,
+    baseObjectDestructor
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ctor-dtor-name */
+string decodeCxxCtorDtorName(ref string rest)
+{
+    string name;
+    enum n = 2;
+    const code = rest[0..n];
+    switch (code)
+    {
+        case `C1`: name = `complete object constructor`; break;
+        case `C2`: name = `base object constructor`; break;
+        case `C3`: name = `complete object allocating constructor`; break;
+        case `D0`: name = `deleting destructor`; break;
+        case `D1`: name = `complete object destructor`; break;
+        case `D2`: name = `base object destructor`; break;
+        default: break;
+    }
+    if (name)
+    {
+        rest.popFrontExactly(n);
+    }
+    return name;
+}
+
+/** https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unqualified-name */
+string decodeCxxUnqualifiedName(ref string rest)
+{
+    return either(rest.decodeCxxOperatorName(),
+                  rest.decodeCxxSourceName(),
+                  rest.decodeCxxCtorDtorName(),
+                  rest.decodeCxxUnnamedTypeName());
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-prefix */
+string decodeCxxTemplatePrefix(ref string rest)
+{
+    return;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-args */
+string decodeCxxTemplateArgs(ref string rest)
+{
+    return;
+}
+
+string decodeCxxTemplatePrefixAndArgs(ref string rest)
+{
+    return rest.allOrNothingInSequence(rest.decodeCxxTemplatePrefix(),
+                                       rest.decodeCxxTemplateArgs());
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.prefix */
+string decodeCxxPrefix(ref string rest)
+{
+    typeof(return) prefix;
+    while (!rest.empty) // NOTE: Turned self-recursion into iteration
+    {
+        if (const unqualifiedName = rest.decodeCxxUnqualifiedName())
+        {
+            prefix ~= unqualifiedName;
+            continue;
+        }
+        else if (const unqualifiedName = rest.decodeCxxTemplatePrefixAndArgs())
+        {
+            continue;
+        }
+        else if (const templateParam = rest.decodeCxxTemplateParam())
+        {
+            continue;
+        }
+        else if (const decltype = rest.decodeCxxDecltype())
+        {
+            continue;
+        }
+        else if (const subst = rest.decodeCxxSubstitution())
+        {
+            continue;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return prefix;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-name */
+string decodeCxxUnscopedName(ref string rest)
+{
+    const prefix = rest.skipOver("St") ? "::std::" : null;
+    return prefix ~ rest.decodeCxxUnqualifiedName();
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-template-name */
+string decodeCxxUnscopedTemplateNameAndArgs(ref string rest)
+{
+    return (rest.decodeCxxUnscopedTemplateName() ~
+            rest.decodeCxxUnscopedTemplateArgs());
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.number */
+string decodeCxxNNInt(ref string rest)
+{
+    // TODO: Functionize this pattern into one call which forwards rest and
+    // returns everything before first hit.
+    auto split = rest.splitBefore!(a => !a.isDigit());
+    rest = split[1];
+    return split[0];
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.discriminator */
+int decodeCxxDescriminator(ref string rest)
+{
+    if (rest.skipOver('_'))
+    {
+        if (rest.skipOver('_'))            // number >= 10
+        {
+            rest.skipOver('n'); // optional prefix
+            rest.decodeCxxNNInt();
+            assert(rest.skipOver('n')); // suffix
+        }
+        else                    // number < 10
+        {
+            rest.skipOver('n'); // optional prefix
+            auto cnt = cast(int)(rest[0] - '0'); // single digit
+        }
+    }
+    return -1;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.local-name */
+string decodeCxxLocalName(ref string rest)
+{
+    if (rest.skipOver('Z'))
+    {
+        auto hit = rest.decodeCxxSymbol();
+        rest.skipOver('E');
+        return (either(rest.skipLiteral('s'), // NOTE: Literal first here to speed up parsing
+                       rest.decodeCxxName()) ~
+                to!string(rest.decodeCxxDescriminator())); // TODO: Optional
+    }
+    return null;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.name */
+string decodeCxxName(ref string rest)
+{
+    return either(rest.decodeCxxNestedName(),
+                  rest.decodeCxxUnscopedName(),
+                  rest.decodeCxxUnscopedTemplateNameAndArgs(),
+                  rest.decodeCxxLocalName());
+}
+
 /* Decode C++ Symbol.
 
    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.encoding
  */
-Tuple!(Lang, string) decodeCxxSymbol(string rest,
-                                     string separator = null) /* @safe pure nothrow @nogc */
+string decodeCxxSymbol(ref string rest,
+                       string separator = null) /* @safe pure nothrow @nogc */
 {
-    string[] ids; // TODO: Turn this into a range that is returned
-    bool hasTerminator = false;
-
-    if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
+    if (const name = rest.decodeCxxName())
     {
-        hasTerminator = true;
+        return name ~ rest.decodeCxxBareFunctionType();
     }
-    else if (rest.skipOver('L'))
+    else
     {
-        hasTerminator = false;
+        return rest.decodeCxxSpecialName();
     }
 
-    // symbols (function or variable name)
-    while (!rest.empty &&
-           (!hasTerminator ||
-            rest[0] != 'E'))
+    version(none)
     {
-        if (const sourceName = rest.decodeCxxSourceName)
+
+        string[] ids; // TODO: Turn this into a range that is returned
+        bool hasTerminator = false;
+
+        if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
         {
-            ids ~= sourceName;
-            continue;
+            hasTerminator = true;
+        }
+        else if (rest.skipOver('L'))
+        {
+            hasTerminator = false;
         }
 
-        if (const op = rest.decodeCxxOperator)
+        // symbols (function or variable name)
+        while (!rest.empty &&
+               (!hasTerminator ||
+                rest[0] != 'E'))
         {
-            ids ~= op;
-            continue;
+            if (const sourceName = rest.decodeCxxSourceName())
+            {
+                ids ~= sourceName;
+                continue;
+            }
+
+            if (const op = rest.decodeCxxOperator())
+            {
+                ids ~= op;
+                continue;
+            }
+
+            version(unittest)
+            {
+                assert(false, `Incomplete parsing at ` ~ rest);
+            }
+            else
+            {
+                dln(`Incomplete parsing`);
+                break;
+            }
         }
 
-        version(unittest)
+        if (hasTerminator)
         {
-            assert(false, `Incomplete parsing at ` ~ rest);
+            rest.skipOver('E');
         }
-        else
+
+        // optional function arguments
+        int argCount = 0;
+        char[] argTypes; // argument types
+        while (!rest.empty) // while optional function arguments exist
         {
-            dln(`Incomplete parsing`);
-            break;
+            const argType = rest.decodeCxxType();
+            if (argCount >= 1) { argTypes ~= `, `; }
+            argTypes ~= argType;
+            argCount += 1;
         }
+
+        if (!separator)
+            separator = `::`; // default C++ separator
+
+        auto qid = to!string(ids.joiner(separator)); // qualified id
+        if (!argTypes.empty)
+        {
+            qid ~= `(` ~ to!string(argTypes) ~ `)`;
+        }
+
+        if (!rest.empty)
+            dln(`rest: `, rest);
+
+        return qid;
     }
-
-    if (hasTerminator)
-    {
-        rest.skipOver('E');
-    }
-
-    // optional function arguments
-    int argCount = 0;
-    char[] argTypes; // argument types
-    while (!rest.empty) // while optional function arguments exist
-    {
-        const argType = rest.decodeCxxType;
-        if (argCount >= 1) { argTypes ~= `, `; }
-        argTypes ~= argType;
-        argCount += 1;
-    }
-
-    if (!separator)
-        separator = `::`; // default C++ separator
-
-    auto qid = to!string(ids.joiner(separator)); // qualified id
-    if (!argTypes.empty)
-    {
-        qid ~= `(` ~ to!string(argTypes) ~ `)`;
-    }
-
-    if (!rest.empty)
-        dln(`rest: `, rest);
-
-    return tuple(Lang.cxx, qid);
 }
 
 
@@ -417,7 +664,7 @@ Tuple!(Lang, string) decodeSymbol(string rest,
     const cxxHit = rest.findSplitAfter(`_Z`); // split into C++ prefix and rest
     if (!cxxHit[0].empty) // C++
     {
-        return decodeCxxSymbol(cxxHit[1], separator);
+        return tuple(Lang.cxx, decodeCxxSymbol(cxxHit[1], separator));
     }
     else
     {
@@ -438,24 +685,24 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
-    assertEqual(`_ZN9wikipedia7article8print_toERSo`.decodeSymbol,
+    assertEqual(`_ZN9wikipedia7article8print_toERSo`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&)`));
 
-    assertEqual(`_ZN9wikipedia7article8print_toEOSo`.decodeSymbol,
+    assertEqual(`_ZN9wikipedia7article8print_toEOSo`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&&)`));
 
-    assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol,
+    assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
 
-    assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol,
+    assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
-    assertEqual(`_ZSt5state`.decodeSymbol,
+    assertEqual(`_ZSt5state`.decodeSymbol(),
                 tuple(Lang.cxx, `::std::state`));
 
-    /* assertEqual(`_ZNSt3_In4wardE`.decodeSymbol, */
+    /* assertEqual(`_ZNSt3_In4wardE`.decodeSymbol(), */
     /*             tuple(Lang.cxx, `::std::_In::ward`)); */
 
-    /* assertEqual(`_ZStL19piecewise_construct`.decodeSymbol, */
+    /* assertEqual(`_ZStL19piecewise_construct`.decodeSymbol(), */
     /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
 }
