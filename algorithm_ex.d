@@ -50,13 +50,13 @@ alias tail = dropOne;
 */
 CommonType!T either(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.length >= 1)
 {
+    auto a0 = a[0]();           // evaluate only once
     static if (T.length == 1)
     {
-        return a[0]();
+        return a0;
     }
     else
     {
-        auto a0 = a[0](); // evaluate only once
         return a0 ? a0 : either(a[1 .. $]); // recurse
     }
 }
@@ -104,15 +104,16 @@ unittest {
     Similar to behaviour of Lisp's (and a...) and Python's a and ....
     TODO: Is inout Conversion!T the correct return value?
 */
-CommonType!T every(T...)(T a) @safe @nogc pure nothrow if (a.length >= 1)
+CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.length >= 1)
 {
+    auto a0 = a[0]();           // evaluate only once
     static if (T.length == 1)
     {
-        return a[0];
+        return a0;
     }
     else
     {
-        return a[0] ? every(a[1 .. $]) : a[0]; // recurse
+        return a0 ? every(a[1 .. $]) : a0; // recurse
     }
 }
 /** This overload enables, when possible, lvalue return.
