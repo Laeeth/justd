@@ -21,16 +21,30 @@ import std.stdio;
 import dbg;
 import languages;
 import algorithm_ex: either, every, tryEvery, split, splitBefore, findPopBefore, findPopAfter;
+import std.functional : unaryFun, binaryFun;
 
 version = show;
 
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
-
     Bool-conversion of returned value gives same result as rest.skipOver(lit).
  */
 string skipLiteral(T)(ref string rest, T lit)
 {
-    return rest.skipOver(lit) ? "" : null;
+    return rest.skipOverSafe(lit) ? "" : null;
+}
+
+/** Safe Variant of $(D skipOver). */
+bool skipOverSafe(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2)
+    @safe pure if (is(typeof(binaryFun!pred(r1.front, r2.front))))
+{
+    return r1.length >= r2.length && skipOver!pred(r1, r2); // TODO: Can we prevent usage of .length?
+}
+
+/** Safe Variant of $(D skipOver). */
+bool skipOverSafe(alias pred = "a == b", R, E)(ref R r, E e)
+    @safe pure if (is(typeof(binaryFun!pred(r.front, e))))
+{
+    return r.length >= 1 && skipOver!pred(r, e); // TODO: Can we prevent usage of .length?
 }
 
 /** Decode Unqualified C++ Type at $(D rest).
@@ -50,7 +64,12 @@ string decodeCxxUnqualifiedType(ref string rest)
 string decodeCxxType(ref string rest)
 {
     version(show) dln("rest: ", rest);
-    const packExpansion = rest.skipOver(`Dp`); // (C++11)
+
+    typeof(return) type;
+
+    if (rest.empty) { return type; }
+
+    const packExpansion = rest.skipOverSafe(`Dp`); // (C++11)
 
     // <ref-qualifier>)
     bool isRef = false;      // & ref-qualifier
@@ -61,7 +80,10 @@ string decodeCxxType(ref string rest)
 
     /* TODO: Order of these may vary. */
     const cvQ = rest.decodeCxxCVQualifiers();
-    switch (rest[0]) // TODO: Check for !rest.empty
+
+    if (rest.empty) { return type; }
+
+    switch (rest[0])
     {
         case 'P': rest.popFront(); isPointer = true; break;
             // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
@@ -75,8 +97,6 @@ string decodeCxxType(ref string rest)
             break;
         default: break;
     }
-
-    string type;
 
     // prefix qualifiers
     if (cvQ.isRestrict) { type ~= `restrict `; } // C99
@@ -145,17 +165,17 @@ string decodeCxxArrayType(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string type;
-    if (rest.skipOver('A'))
+    if (rest.skipOverSafe('A'))
     {
         if (const num = rest.decodeCxxNumber())
         {
-            assert(rest.skipOver('_'));
+            assert(rest.skipOverSafe('_'));
             type = rest.decodeCxxType() ~ `[]` ~ num ~ `[]`;
         }
         else
         {
             const dimensionExpression = rest.decodeCxxExpression();
-            assert(rest.skipOver('_'));
+            assert(rest.skipOverSafe('_'));
             type = rest.decodeCxxType() ~ `[]` ~ dimensionExpression ~ `[]`;
         }
     }
@@ -167,7 +187,7 @@ string decodeCxxPointerToMemberType(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string type;
-    if (rest.skipOver('M'))
+    if (rest.skipOverSafe('M'))
     {
         type = (rest.decodeCxxType() ~ // <class type>
                 rest.decodeCxxType() // <mmeber type>
@@ -181,16 +201,16 @@ string decodeCxxTemplateParam(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string param;
-    if (rest.skipOver('T'))
+    if (rest.skipOverSafe('T'))
     {
-        if (rest.skipOver('_'))
+        if (rest.skipOverSafe('_'))
         {
             param = `first template parameter`;
         }
         else
         {
             param = rest.decodeCxxNumber();
-            assert(rest.skipOver('_'));
+            assert(rest.skipOverSafe('_'));
         }
     }
     return param;
@@ -214,11 +234,11 @@ string decodeCxxDecltype(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string type;
-    if (rest.skipOver(`Dt`) ||
-        rest.skipOver(`DT`))
+    if (rest.skipOverSafe(`Dt`) ||
+        rest.skipOverSafe(`DT`))
     {
         type = rest.decodeCxxExpression();
-        assert(rest.skipOver('E'));
+        assert(rest.skipOverSafe('E'));
     }
     return type;
 }
@@ -237,7 +257,10 @@ string decodeCxxDigit(ref string rest)
 string decodeCxxOperatorName(ref string rest)
 {
     version(show) dln("rest: ", rest);
-    if (rest.skipOver('v'))     // vendor extended operator
+
+    if (rest.empty) { return typeof(return).init; }
+
+    if (rest.skipOverSafe('v'))     // vendor extended operator
     {
         return (rest.decodeCxxDigit() ~
                 rest.decodeCxxSourceName());
@@ -245,6 +268,7 @@ string decodeCxxOperatorName(ref string rest)
 
     string op;
     enum n = 2;
+    if (rest.length < n) { return typeof(return).init; }
     const code = rest[0..n];
     switch (code)
     {
@@ -441,10 +465,10 @@ string decodeCxxFunctionType(ref string rest)
     auto restLookAhead = rest; // needed for lookahead parsing of CV-qualifiers
     const cvQ = restLookAhead.decodeCxxCVQualifiers();
     string type;
-    if (restLookAhead.skipOver('F'))
+    if (restLookAhead.skipOverSafe('F'))
     {
         rest = restLookAhead; // we have found it
-        rest.skipOver('Y'); // optional
+        rest.skipOverSafe('Y'); // optional
         type = rest.decodeCxxBareFunctionType().to!string;
         const refQ = rest.decodeCxxRefQualifier();
         type ~= refQ.to!string;
@@ -498,9 +522,9 @@ CXXCVQualifiers decodeCxxCVQualifiers(ref string rest)
 {
     version(show) dln("rest: ", rest);
     typeof(return) cvQ;
-    if (rest.skipOver('r')) { cvQ.isRestrict = true; }
-    if (rest.skipOver('V')) { cvQ.isVolatile = true; }
-    if (rest.skipOver('K')) { cvQ.isConst = true; }
+    if (rest.skipOverSafe('r')) { cvQ.isRestrict = true; }
+    if (rest.skipOverSafe('V')) { cvQ.isVolatile = true; }
+    if (rest.skipOverSafe('K')) { cvQ.isConst = true; }
     return cvQ;
 }
 
@@ -527,11 +551,11 @@ string toString(CxxRefQualifier refQ) @safe pure nothrow
 CxxRefQualifier decodeCxxRefQualifier(ref string rest)
 {
     version(show) dln("rest: ", rest);
-    if (rest.skipOver('R'))
+    if (rest.skipOverSafe('R'))
     {
         return CxxRefQualifier.normalRef;
     }
-    else if (rest.skipOver('O'))
+    else if (rest.skipOverSafe('O'))
     {
         return CxxRefQualifier.rvalueRef;
     }
@@ -548,6 +572,8 @@ string decodeCxxSourceName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string id;
+    const sign = rest.skipOverSafe('n'); // if negative number
+    assert(!sign);
     const match = rest.splitBefore!(a => !a.isDigit);
     const digits = match[0];
     rest = match[1];
@@ -571,15 +597,15 @@ string decodeCxxSourceName(ref string rest)
 string decodeCxxNestedName(ref string rest)
 {
     version(show) dln("rest: ", rest);
-    if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
+    if (rest.skipOverSafe('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
     {
         const cvQ = rest.decodeCxxCVQualifiers();
         const refQ = rest.decodeCxxRefQualifier();
         auto ret = (rest.decodeCxxPrefix() ~
                     rest.decodeCxxUnqualifiedName() ~
                     cvQ.to!string ~
-                    refQ.to!string ~
-                    rest.skipLiteral('E'));
+                    refQ.to!string);
+        assert(rest.skipOverSafe('E'));
         return ret;
     }
     return null;
@@ -604,8 +630,8 @@ string decodeCxxCtorDtorName(ref string rest)
     version(show) dln("rest: ", rest);
     string name;
     enum n = 2;
-    const code = rest[0..n];
-    switch (code)
+    if (rest.length < n) { return typeof(return).init; }
+    switch (rest[0..n])
     {
         case `C1`: name = `complete object constructor`; break;
         case `C2`: name = `base object constructor`; break;
@@ -637,10 +663,10 @@ string decodeCxxUnnamedTypeName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string type;
-    if (rest.skipOver(`Ut`))
+    if (rest.skipOverSafe(`Ut`))
     {
         type = rest.decodeCxxNumber();
-        assert(rest.skipOver('_'));
+        assert(rest.skipOverSafe('_'));
     }
     return type;
 }
@@ -661,7 +687,7 @@ string[] decodeCxxTemplateArgs(ref string rest)
 {
     version(show) dln("rest: ", rest);
     typeof(return) args;
-    if (rest.skipOver('I'))
+    if (rest.skipOverSafe('I'))
     {
         args ~= rest.decodeCxxTemplateArg();
         while (true)
@@ -676,10 +702,7 @@ string[] decodeCxxTemplateArgs(ref string rest)
                 break;
             }
         }
-        assert(rest.skipOver('E'));
-    }
-    else
-    {
+        assert(rest.skipOverSafe('E'));
     }
     return args;
 }
@@ -689,7 +712,7 @@ string decodeCxxMangledName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string name;
-    if (rest.skipOver(`_Z`))
+    if (rest.skipOverSafe(`_Z`))
     {
         return rest.decodeCxxEncoding();
     }
@@ -701,7 +724,7 @@ string decodeCxxExprPrimary(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string expr;
-    if (rest.skipOver('L'))
+    if (rest.skipOverSafe('L'))
     {
         expr = rest.decodeCxxMangledName();
         if (!expr)
@@ -710,9 +733,9 @@ string decodeCxxExprPrimary(ref string rest)
             // TODO: Howto demangle <float>?
             // TODO: Howto demangle <float> _ <float> E
             expr = rest.decodeCxxType(); // <string>, <nullptr>, <pointer> type
-            bool pointerType = rest.skipOver('0'); // null pointer template argument
+            bool pointerType = rest.skipOverSafe('0'); // null pointer template argument
         }
-        assert(rest.skipOver('E'));
+        assert(rest.skipOverSafe('E'));
     }
     return expr;
 }
@@ -722,12 +745,12 @@ string decodeCxxTemplateArg(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string arg;
-    if (rest.skipOver('X'))
+    if (rest.skipOverSafe('X'))
     {
         arg = rest.decodeCxxExpression();
-        assert(rest.skipOver('E'));
+        assert(rest.skipOverSafe('E'));
     }
-    else if (rest.skipOver('J'))
+    else if (rest.skipOverSafe('J'))
     {
         string[] args;
         while (true)
@@ -743,7 +766,7 @@ string decodeCxxTemplateArg(ref string rest)
             }
         }
         arg = args.joiner(`, `).to!string;
-        assert(rest.skipOver('E'));
+        assert(rest.skipOverSafe('E'));
     }
     else
     {
@@ -810,7 +833,7 @@ string decodeCxxUnscopedName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     auto restBackup = rest;
-    const prefix = rest.skipOver(`St`) ? "::std::" : null;
+    const prefix = rest.skipOverSafe(`St`) ? "::std::" : null;
     if (const name = rest.decodeCxxUnqualifiedName())
     {
         return prefix ~ name;
@@ -850,7 +873,7 @@ string decodeCxxNumber(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string number;
-    const prefix = rest.skipOver('n'); // optional prefix
+    const prefix = rest.skipOverSafe('n'); // optional prefix
     auto split = rest.splitBefore!(a => !a.isDigit());
     if (prefix || !split[0].empty) // if complete match
     {
@@ -864,16 +887,16 @@ string decodeCxxNumber(ref string rest)
 int decodeCxxDescriminator(ref string rest)
 {
     version(show) dln("rest: ", rest);
-    if (rest.skipOver('_'))
+    if (rest.skipOverSafe('_'))
     {
-        if (rest.skipOver('_'))            // number >= 10
+        if (rest.skipOverSafe('_'))            // number >= 10
         {
             const number = rest.decodeCxxNumber();
-            assert(rest.skipOver('_')); // suffix
+            assert(rest.skipOverSafe('_')); // suffix
         }
         else                    // number < 10
         {
-            rest.skipOver('n'); // optional prefix
+            rest.skipOverSafe('n'); // optional prefix
             const number = cast(int)(rest[0] - '0'); // single digit
         }
     }
@@ -881,18 +904,19 @@ int decodeCxxDescriminator(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.local-name */
-string decodeCxxLocalName(ref string rest)
+T decodeCxxLocalName(T)(ref T rest)
 {
     version(show) dln("rest: ", rest);
-    if (rest.skipOver('Z'))
+    if (rest.skipOverSafe('Z'))
     {
-        auto hit = rest.decodeCxxEncoding();
-        rest.skipOver('E');
-        return (either(rest.skipLiteral('s'), // NOTE: Literal first here to speed up parsing
+        const encoding = rest.decodeCxxEncoding();
+        rest.skipOverSafe('E');
+        return (encoding ~
+                either(rest.skipLiteral('s'), // NOTE: Literal first here to speed up parsing
                        rest.decodeCxxName()) ~
-                rest.decodeCxxDescriminator().to!string); // TODO: Optional
+                rest.decodeCxxDescriminator().to!T); // TODO: Optional
     }
-    return null;
+    return T.init;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.name */
@@ -915,7 +939,7 @@ string decodeCxxVOffset(ref string rest)
 {
     version(show) dln("rest: ", rest);
     auto offset = rest.decodeCxxNumber();
-    assert(rest.skipOver('_'));
+    assert(rest.skipOverSafe('_'));
     return offset ~ rest.decodeCxxNumber();
 }
 
@@ -924,15 +948,15 @@ string decodeCxxCallOffset(ref string rest)
 {
     version(show) dln("rest: ", rest);
     typeof(return) offset;
-    if (rest.skipOver('h'))
+    if (rest.skipOverSafe('h'))
     {
         offset = rest.decodeCxxNVOffset();
-        assert(rest.skipOver('_'));
+        assert(rest.skipOverSafe('_'));
     }
-    else if (rest.skipOver('v'))
+    else if (rest.skipOverSafe('v'))
     {
         offset = rest.decodeCxxVOffset();
-        assert(rest.skipOver('_'));
+        assert(rest.skipOverSafe('_'));
     }
     return offset;
 }
@@ -942,7 +966,7 @@ string decodeCxxSpecialName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     typeof(return) name;
-    if (rest.skipOver('S'))
+    if (rest.skipOverSafe('S'))
     {
         const type = rest.front();
         final switch (type)
@@ -955,13 +979,13 @@ string decodeCxxSpecialName(ref string rest)
         rest.popFront(); // TODO: Can we integrate this into front()?
         name ~= rest.decodeCxxType();
     }
-    else if (rest.skipOver(`GV`))
+    else if (rest.skipOverSafe(`GV`))
     {
         name = rest.decodeCxxName();
     }
-    else if (rest.skipOver('T'))
+    else if (rest.skipOverSafe('T'))
     {
-        if (rest.skipOver('c'))
+        if (rest.skipOverSafe('c'))
         {
             name = rest.tryEvery(rest.decodeCxxCallOffset(),
                                  rest.decodeCxxCallOffset(),
@@ -994,7 +1018,6 @@ string decodeCxxEncoding(ref string rest,
     }
 }
 
-
 /** Demangle Symbol $(D rest) and Detect Language.
     See also: https://en.wikipedia.org/wiki/Name_mangling
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling
@@ -1015,11 +1038,11 @@ Tuple!(Lang, string) decodeSymbol(string rest,
     }
 
     // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name
-    auto cxxHit = rest.findSplitAfter(`_Z`); // split into C++ prefix and rest
-    if (!cxxHit[0].empty) // C++
+    if (rest.startsWith(`_Z`))
     {
+        rest.popFront();
         return tuple(Lang.cxx,
-                     cxxHit[1].decodeCxxEncoding(separator));
+                     rest.decodeCxxLocalName());
     }
     else
     {
