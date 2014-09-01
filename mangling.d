@@ -68,7 +68,7 @@ string decodeCxxType(ref string rest)
         default: break;
     }
 
-    string type = null;
+    string type;
 
     // prefix qualifiers
     if (cvQ.isRestrict) { type ~= `restrict `; } // C99
@@ -95,8 +95,8 @@ string decodeCxxType(ref string rest)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.class-enum-type */
 string decodeCxxClassEnumType(ref string rest)
 {
-    string type = null;
-    string prefix = null;
+    string type;
+    string prefix;
     enum n = 2;
     if (rest.length >= n)
     {
@@ -126,14 +126,14 @@ string decodeCxxClassEnumType(ref string rest)
 
 string decodeCxxExpression(ref string rest)
 {
-    string expr = null;
+    string exp;
     assert(false, "TODO");
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.array-type */
 string decodeCxxArrayType(ref string rest)
 {
-    string type = null;
+    string type;
     if (rest.skipOver('A'))
     {
         if (const num = rest.decodeCxxNumber())
@@ -154,7 +154,7 @@ string decodeCxxArrayType(ref string rest)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.pointer-to-member-type */
 string decodeCxxPointerToMemberType(ref string rest)
 {
-    string type = null;
+    string type;
     if (rest.skipOver('M'))
     {
         type = (rest.decodeCxxType() ~ // <class type>
@@ -167,7 +167,7 @@ string decodeCxxPointerToMemberType(ref string rest)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-param */
 string decodeCxxTemplateParam(ref string rest)
 {
-    string param = null;
+    string param;
     if (rest.skipOver('T'))
     {
         if (rest.skipOver('_'))
@@ -185,7 +185,7 @@ string decodeCxxTemplateParam(ref string rest)
 
 string decodeCxxTemplateTemplateParamAndArgs(ref string rest)
 {
-    string value = null;
+    string value;
     if (const param = either(rest.decodeCxxTemplateParam(),
                              rest.decodeCxxSubstitution()))
     {
@@ -198,7 +198,7 @@ string decodeCxxTemplateTemplateParamAndArgs(ref string rest)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.decltype */
 string decodeCxxDecltype(ref string rest)
 {
-    string type = null;
+    string type;
     if (rest.skipOver("Dt") ||
         rest.skipOver("DT"))
     {
@@ -226,7 +226,7 @@ string decodeCxxOperatorName(ref string rest)
                 rest.decodeCxxSourceName());
     }
 
-    string op = null;
+    string op;
     enum n = 2;
     const code = rest[0..n];
     switch (code)
@@ -317,7 +317,7 @@ string decodeCxxOperatorName(ref string rest)
 */
 string decodeCxxBuiltinType(ref string rest)
 {
-    string type = null;
+    string type;
     enum n = 1;
     if (rest.length < n) { return type; }
     switch (rest[0])
@@ -388,7 +388,7 @@ string decodeCxxSubstitution(ref string rest)
 {
     if (rest.startsWith('S'))
     {
-        string type = null;
+        string type;
         rest.popFront();
         type ~= `::std::`;
         switch (rest[0])
@@ -420,7 +420,7 @@ string decodeCxxFunctionType(ref string rest)
 {
     auto restLookAhead = rest; // needed for lookahead parsing of CV-qualifiers
     const cvQ = restLookAhead.decodeCxxCVQualifiers();
-    string type = null;
+    string type;
     if (restLookAhead.skipOver('F'))
     {
         rest = restLookAhead; // we have found it
@@ -523,7 +523,7 @@ CxxRefQualifier decodeCxxRefQualifier(ref string rest)
 */
 string decodeCxxSourceName(ref string rest)
 {
-    string id = null;
+    string id;
     const match = rest.splitBefore!(a => !a.isDigit);
     const digits = match[0];
     rest = match[1];
@@ -603,6 +603,18 @@ string decodeCxxUnqualifiedName(ref string rest)
                   rest.decodeCxxSourceName(),
                   rest.decodeCxxCtorDtorName(),
                   rest.decodeCxxUnnamedTypeName());
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unnamed-type-name */
+string decodeCxxUnnamedTypeName(ref string rest)
+{
+    string type;
+    if (rest.skipOver(`Ut`))
+    {
+        type = rest.decodeCxxNumber();
+        assert(rest.skipOver('_'));
+    }
+    return type;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-prefix */
