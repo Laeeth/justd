@@ -1,5 +1,6 @@
 #!/usr/bin/env rdmd
 
-void main(string args[]) {
-    assert(false, "Failed to assert");
+void main(string args[])
+{
+    assert(true, "Failed to assert");
 }
