@@ -7,15 +7,15 @@
    */
 module algorithm_ex;
 
+/* version = print; */
+
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
 import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString;
 import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing, empty, front;
-import dbg;
 import traits_ex: isStruct, isClass, allSame;
 import std.functional: unaryFun, binaryFun;
-
-/* version = print; */
+version(print) import dbg;
 
 // ==============================================================================================
 
@@ -1624,4 +1624,82 @@ unittest
     import std.ascii: isDigit;
     assert("aa1bb".splitAfter!(a => a.isDigit) == tuple("aa1", "bb"));
     assert("aa1".splitAfter!(a => a.isDigit) == tuple("aa1", ""));
+}
+
+import dbg;
+
+/** Variant of $(D findSplitBefore) that destructively pops everthing up to, not
+    including, $(D needle) from $(D haystack).
+*/
+auto findPopBefore(alias pred = "a == b", R1, R2)(ref R1 haystack,
+                                                  R2 needle) if (isForwardRange!R1 &&
+                                                                 isForwardRange!R2)
+{
+    import std.algorithm: findSplitBefore;
+    auto split = findSplitBefore!pred(haystack, needle);
+    if (split[0].empty) // TODO: If which case are empty and what return value should they lead to?
+    {
+        return R1.init;
+    }
+    else
+    {
+        haystack = split[1];
+        return split[0];
+    }
+}
+
+unittest
+{
+    auto haystack = "xy";
+    auto needle = "z";
+    auto pop = haystack.findPopBefore(needle);
+}
+
+unittest
+{
+    auto haystack = "xyz";
+    auto needle = "y";
+    auto pop = haystack.findPopBefore(needle);
+    assert(pop == "x");
+    assert(haystack == "yz");
+}
+
+/** Variant of $(D findSplitAfter) that destructively pops everthing up to,
+    including, $(D needle) from $(D haystack).
+*/
+auto findPopAfter(alias pred = "a == b", R1, R2)(ref R1 haystack,
+                                                 R2 needle) if (isForwardRange!R1 &&
+                                                                isForwardRange!R2)
+{
+    import std.algorithm: findSplitAfter;
+    auto split = findSplitAfter!pred(haystack, needle);
+    if (split[0].empty)
+    {
+        return R1.init;
+    }
+    else
+    {
+        haystack = split[1];
+        return split[0];
+    }
+}
+
+unittest
+{
+    auto source = "xyz";
+    auto haystack = source;
+    auto needle = "y";
+    auto pop = haystack.findPopAfter(needle);
+    assert(pop == "xy");
+    assert(haystack == "z");
+}
+
+unittest
+{
+    auto source = "xy";
+    auto haystack = source;
+    auto needle = "z";
+    auto pop = haystack.findPopAfter(needle);
+    assert(pop is null);
+    assert(haystack == source);
 }
