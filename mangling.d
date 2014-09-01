@@ -34,9 +34,9 @@ CommonType!T[] tryEvery(T...)(ref string whole,
     bool all = true;
     alias R = typeof(return);
     R results;
-    foreach (ref e; parts)
+    foreach (ref part; parts)
     {
-        const result = e(); // execute delegate parts
+        const result = part(); // execute delegate parts
         if (result)
         {
             results ~= result;
