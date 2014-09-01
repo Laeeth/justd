@@ -5,7 +5,9 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
     See also: https://mentorembedded.github.io/cxx-abi/abi.html
-    TODO: Search for pattern "X> <Y" and assure that they all use allOrNothingInSequence(X, Y).
+
+    TODO: Search for pattern "X> <Y" and assure that they all use
+    return rest.decodeAllOrNothingInSequence(X, Y).
  */
 module mangling;
 
@@ -19,6 +21,31 @@ import std.stdio;
 import dbg;
 import languages;
 import algorithm_ex: either, split, splitBefore, findPopBefore, findPopAfter;
+
+/** Call whole.part on all parts.
+    If all returns implicitly convert to bool join them and return them.
+    Otherwise restore whole and return null.
+*/
+string[] doAllOrNoneInSequence(T...)(ref string whole,
+                                     ref T parts)
+{
+    const wholeBackup = whole;
+    foreach (part; parts)
+    {
+        part(); // execute delegate parts
+    }
+    const all = every(parts); // join parts
+    if (all)
+    {
+        whole = all;
+        return all.joiner;
+    }
+    else
+    {
+        whole = wholeBackup; // restore if any failed
+        return typeof(return).init;
+    }
+}
 
 /** Like skipOver but return string instead of bool.
 
