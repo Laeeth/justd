@@ -423,7 +423,7 @@ unittest
 // ==============================================================================================
 
 /** Returns: Number of Default-Initialized (Zero) Elements in $(D x) at
-    recursion depth $(D depth).
+    recursion depth $(D depth) defaulting infinite depth (-1).
 */
 Rational!ulong sparseness(T)(in T x, int depth = -1) @safe @nogc pure nothrow
 {
@@ -474,10 +474,11 @@ unittest {
     assert(null.sparseness == 1);
 }
 
-/** Returns: Number of Non-Zero Elements in $(D range). */
-auto denseness(T)(in T x, int recurseDepth = -1) @safe @nogc pure nothrow
+/** Returns: Number of Non-Zero Elements in $(D range) at recursion depth $(D
+    depth) defaulting infinite depth (-1). */
+auto denseness(T)(in T x, int depth = -1) @safe @nogc pure nothrow
 {
-    return 1 - x.sparseness(recurseDepth);
+    return 1 - x.sparseness(depth);
 }
 unittest {
     immutable float[3] f = [1, 2, 3];
