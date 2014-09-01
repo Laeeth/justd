@@ -49,5 +49,10 @@ int main(string[] args)
     auto s = [1, 2, 3];
     wln(s.stripLeft(1));
 
+    int[] ns;
+    assert(!ns);
+    assert(s[0..0]);
+    assert(s[$..$]);
+
     return 0;
 }
