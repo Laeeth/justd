@@ -1626,8 +1626,6 @@ unittest
     assert("aa1".splitAfter!(a => a.isDigit) == tuple("aa1", ""));
 }
 
-import dbg;
-
 /** Variant of $(D findSplitBefore) that destructively pops everthing up to, not
     including, $(D needle) from $(D haystack).
 */
@@ -1635,11 +1633,15 @@ auto findPopBefore(alias pred = "a == b", R1, R2)(ref R1 haystack,
                                                   R2 needle) if (isForwardRange!R1 &&
                                                                  isForwardRange!R2)
 {
+    if (haystack.empty || needle.empty)
+    {
+        return R1.init; // TODO: correct?
+    }
     import std.algorithm: findSplitBefore;
     auto split = findSplitBefore!pred(haystack, needle);
     if (split[0].empty) // TODO: If which case are empty and what return value should they lead to?
     {
-        return R1.init;
+        return R1.init; // TODO: correct?
     }
     else
     {
@@ -1671,11 +1673,15 @@ auto findPopAfter(alias pred = "a == b", R1, R2)(ref R1 haystack,
                                                  R2 needle) if (isForwardRange!R1 &&
                                                                 isForwardRange!R2)
 {
+    if (haystack.empty || needle.empty)
+    {
+        return R1.init; // TODO: correct?
+    }
     import std.algorithm: findSplitAfter;
     auto split = findSplitAfter!pred(haystack, needle);
     if (split[0].empty)
     {
-        return R1.init;
+        return R1.init; // TODO: correct?
     }
     else
     {
