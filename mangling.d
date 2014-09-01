@@ -20,43 +20,7 @@ import std.array: array;
 import std.stdio;
 import dbg;
 import languages;
-import algorithm_ex: either, split, splitBefore, findPopBefore, findPopAfter;
-import std.traits: CommonType;
-
-/** Evaluate all parts.
-    If all returns implicitly convert to bool join them and return them.
-    Otherwise restore whole and return null.
-*/
-CommonType!T[] tryEvery(T...)(ref string whole,
-                              lazy T parts)
-{
-    const wholeBackup = whole;
-    bool all = true;
-    alias R = typeof(return);
-    R results;
-    foreach (ref part; parts)
-    {
-        const result = part(); // execute delegate parts
-        if (result)
-        {
-            results ~= result;
-        }
-        else
-        {
-            break;
-            all = false;
-        }
-    }
-    if (all)
-    {
-        return results;        // ok that whole has been changed in caller scope
-    }
-    else
-    {
-        whole = wholeBackup; // restore whole in caller scope if any failed
-        return R.init;
-    }
-}
+import algorithm_ex: either, every, tryEvery, split, splitBefore, findPopBefore, findPopAfter;
 
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
 
@@ -227,8 +191,8 @@ string decodeCxxTemplateTemplateParamAndArgs(ref string rest)
     if (const param = either(rest.decodeCxxTemplateParam(),
                              rest.decodeCxxSubstitution()))
     {
-        const args = rest.decodeCxxTemplateArgs();
-        value = param ~ args;
+        auto args = rest.decodeCxxTemplateArgs();
+        value = param ~ args.joiner(`, `).to!string;
     }
     return value;
 }
@@ -237,8 +201,8 @@ string decodeCxxTemplateTemplateParamAndArgs(ref string rest)
 string decodeCxxDecltype(ref string rest)
 {
     string type;
-    if (rest.skipOver("Dt") ||
-        rest.skipOver("DT"))
+    if (rest.skipOver(`Dt`) ||
+        rest.skipOver(`DT`))
     {
         type = rest.decodeCxxExpression();
         assert(rest.skipOver('E'));
@@ -463,9 +427,9 @@ string decodeCxxFunctionType(ref string rest)
     {
         rest = restLookAhead; // we have found it
         rest.skipOver('Y'); // optional
-        type = to!string(rest.decodeCxxBareFunctionType());
+        type = rest.decodeCxxBareFunctionType().to!string;
         const refQ = rest.decodeCxxRefQualifier();
-        type ~= to!string(refQ);
+        type ~= refQ.to!string;
 
     }
     return type;
@@ -477,7 +441,7 @@ struct CxxBareFunctionType
     string[] paramTypes;
     string toString() @safe pure
     {
-        return retType ~ `(` ~ to!string(paramTypes.joiner(`, `)) ~ `)`;
+        return retType ~ `(` ~ paramTypes.joiner(`, `).to!string ~ `)`;
     }
 }
 
@@ -590,8 +554,8 @@ string decodeCxxNestedName(ref string rest)
         const refQ = rest.decodeCxxRefQualifier();
         auto ret = (rest.decodeCxxPrefix() ~
                     rest.decodeCxxUnqualifiedName() ~
-                    to!string(cvQ) ~
-                    to!string(refQ) ~
+                    cvQ.to!string ~
+                    refQ.to!string ~
                     rest.skipLiteral('E'));
         return ret;
     }
@@ -692,13 +656,33 @@ string[] decodeCxxTemplateArgs(ref string rest)
     return args;
 }
 
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name */
+string decodeCxxMangledName(ref string rest)
+{
+    string name;
+    if (rest.skipOver(`_Z`))
+    {
+        return rest.decodeCxxEncoding();
+    }
+    return name;
+}
+
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.expr-primary */
 string decodeCxxExprPrimary(ref string rest)
 {
     string expr;
     if (rest.skipOver('L'))
     {
-        return;
+        expr = rest.decodeCxxMangledName();
+        if (!expr)
+        {
+            auto number = rest.decodeCxxNumber();
+            // TODO: Howto demangle <float>?
+            // TODO: Howto demangle <float> _ <float> E
+            expr = rest.decodeCxxType(); // <string>, <nullptr>, <pointer> type
+            bool pointerType = rest.skipOver('0'); // null pointer template argument
+        }
+        assert(rest.skipOver('E'));
     }
     return expr;
 }
@@ -727,7 +711,7 @@ string decodeCxxTemplateArg(ref string rest)
                 break;
             }
         }
-        arg = to!string(args.joiner(`, `));
+        arg = args.joiner(`, `).to!string;
         assert(rest.skipOver('E'));
     }
     else
@@ -740,8 +724,17 @@ string decodeCxxTemplateArg(ref string rest)
 
 string decodeCxxTemplatePrefixAndArgs(ref string rest)
 {
-    return rest.allOrNothingInSequence(rest.decodeCxxTemplatePrefix(),
-                                       rest.decodeCxxTemplateArgs());
+    auto restBackup = rest;
+    if (const prefix = rest.decodeCxxTemplatePrefix())
+    {
+        auto args = rest.decodeCxxTemplateArgs();
+        if (args)
+        {
+            return prefix ~ args.joiner(`, `).to!string;
+        }
+    }
+    rest = restBackup; // restore upon failure
+    return typeof(return).init;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.prefix */
@@ -782,15 +775,38 @@ string decodeCxxPrefix(ref string rest)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-name */
 string decodeCxxUnscopedName(ref string rest)
 {
-    const prefix = rest.skipOver("St") ? "::std::" : null;
-    return prefix ~ rest.decodeCxxUnqualifiedName();
+    auto restBackup = rest;
+    const prefix = rest.skipOver(`St`) ? "::std::" : null;
+    if (const name = rest.decodeCxxUnqualifiedName())
+    {
+        return prefix ~ name;
+    }
+    else
+    {
+        rest = restBackup; // restore
+        return typeof(return).init;
+    }
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-template-name */
+string decodeCxxUnscopedTemplateName(ref string rest)
+{
+    return either(rest.decodeCxxSubstitution(), // faster backtracking with substitution
+                  rest.decodeCxxUnscopedName());
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-template-name */
 string decodeCxxUnscopedTemplateNameAndArgs(ref string rest)
 {
-    return (rest.decodeCxxUnscopedTemplateName() ~
-            rest.decodeCxxUnscopedTemplateArgs());
+    auto restBackup = rest;
+    if (const name = rest.decodeCxxUnscopedTemplateName())
+    {
+        if (auto args = rest.decodeCxxTemplateArgs())
+        {
+            return name ~ args.joiner(`, `).to!string;
+        }
+    }
+    return typeof(return).init;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.number */
@@ -831,11 +847,11 @@ string decodeCxxLocalName(ref string rest)
 {
     if (rest.skipOver('Z'))
     {
-        auto hit = rest.decodeCxxSymbol();
+        auto hit = rest.decodeCxxEncoding();
         rest.skipOver('E');
         return (either(rest.skipLiteral('s'), // NOTE: Literal first here to speed up parsing
                        rest.decodeCxxName()) ~
-                to!string(rest.decodeCxxDescriminator())); // TODO: Optional
+                rest.decodeCxxDescriminator().to!string); // TODO: Optional
     }
     return null;
 }
@@ -849,94 +865,87 @@ string decodeCxxName(ref string rest)
                   rest.decodeCxxLocalName());
 }
 
-/* Decode C++ Symbol.
+string decodeCxxNVOffset(ref string rest)
+{
+    return rest.decodeCxxNumber();
+}
 
+string decodeCxxVOffset(ref string rest)
+{
+    auto offset = rest.decodeCxxNumber();
+    assert(rest.skipOver('_'));
+    return offset ~ rest.decodeCxxNumber();
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.call-offset */
+string decodeCxxCallOffset(ref string rest)
+{
+    typeof(return) offset;
+    if (rest.skipOver('h'))
+    {
+        offset = rest.decodeCxxNVOffset();
+        assert(rest.skipOver('_'));
+    }
+    else if (rest.skipOver('v'))
+    {
+        offset = rest.decodeCxxVOffset();
+        assert(rest.skipOver('_'));
+    }
+    return offset;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.special-name */
+string decodeCxxSpecialName(ref string rest)
+{
+    typeof(return) name;
+    if (rest.skipOver('S'))
+    {
+        const type = rest.front();
+        final switch (type)
+        {
+            case 'V': name = "virtual table: "; break;
+            case 'T': name = "VTT structure: "; break;
+            case 'I': name = "typeinfo structure: "; break;
+            case 'S': name = "typeinfo name (null-terminated byte string): "; break;
+        }
+        rest.popFront(); // TODO: Can we integrate this into front()?
+        name ~= rest.decodeCxxType();
+    }
+    else if (rest.skipOver(`GV`))
+    {
+        name = rest.decodeCxxName();
+    }
+    else if (rest.skipOver('T'))
+    {
+        if (rest.skipOver('c'))
+        {
+            name = rest.tryEvery(rest.decodeCxxCallOffset(),
+                                 rest.decodeCxxCallOffset(),
+                                 rest.decodeCxxEncoding()).joiner(` `).to!string;
+        }
+        else
+        {
+            name = rest.tryEvery(rest.decodeCxxCallOffset(),
+                                 rest.decodeCxxEncoding()).joiner(` `).to!string;
+        }
+    }
+    return name;
+}
+
+/* Decode C++ Symbol.
    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.encoding
  */
-string decodeCxxSymbol(ref string rest,
-                       string separator = null) /* @safe pure nothrow @nogc */
+string decodeCxxEncoding(ref string rest,
+                         string separator = null) /* @safe pure nothrow @nogc */
 {
-    if (const name = rest.decodeCxxName())
+    if (const name = rest.decodeCxxSpecialName())
     {
-        return name ~ rest.decodeCxxBareFunctionType();
+        return name;
     }
     else
     {
-        return rest.decodeCxxSpecialName();
-    }
-
-    version(none)
-    {
-
-        string[] ids; // TODO: Turn this into a range that is returned
-        bool hasTerminator = false;
-
-        if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
-        {
-            hasTerminator = true;
-        }
-        else if (rest.skipOver('L'))
-        {
-            hasTerminator = false;
-        }
-
-        // symbols (function or variable name)
-        while (!rest.empty &&
-               (!hasTerminator ||
-                rest[0] != 'E'))
-        {
-            if (const sourceName = rest.decodeCxxSourceName())
-            {
-                ids ~= sourceName;
-                continue;
-            }
-
-            if (const op = rest.decodeCxxOperator())
-            {
-                ids ~= op;
-                continue;
-            }
-
-            version(unittest)
-            {
-                assert(false, `Incomplete parsing at ` ~ rest);
-            }
-            else
-            {
-                dln(`Incomplete parsing`);
-                break;
-            }
-        }
-
-        if (hasTerminator)
-        {
-            rest.skipOver('E');
-        }
-
-        // optional function arguments
-        int argCount = 0;
-        char[] argTypes; // argument types
-        while (!rest.empty) // while optional function arguments exist
-        {
-            const argType = rest.decodeCxxType();
-            if (argCount >= 1) { argTypes ~= `, `; }
-            argTypes ~= argType;
-            argCount += 1;
-        }
-
-        if (!separator)
-            separator = `::`; // default C++ separator
-
-        auto qid = to!string(ids.joiner(separator)); // qualified id
-        if (!argTypes.empty)
-        {
-            qid ~= `(` ~ to!string(argTypes) ~ `)`;
-        }
-
-        if (!rest.empty)
-            dln(`rest: `, rest);
-
-        return qid;
+        return (rest.decodeCxxName() ~
+                rest.decodeCxxBareFunctionType().to!string);
     }
 }
 
@@ -960,10 +969,11 @@ Tuple!(Lang, string) decodeSymbol(string rest,
     }
 
     // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name
-    const cxxHit = rest.findSplitAfter(`_Z`); // split into C++ prefix and rest
+    auto cxxHit = rest.findSplitAfter(`_Z`); // split into C++ prefix and rest
     if (!cxxHit[0].empty) // C++
     {
-        return tuple(Lang.cxx, decodeCxxSymbol(cxxHit[1], separator));
+        return tuple(Lang.cxx,
+                     cxxHit[1].decodeCxxEncoding(separator));
     }
     else
     {
@@ -971,7 +981,7 @@ Tuple!(Lang, string) decodeSymbol(string rest,
         const symAsD = rest.demangle;
         import std.conv: to;
         if (symAsD != rest) // TODO: Why doesn't (symAsD is rest) work here?
-            return tuple(Lang.d, to!string(symAsD));
+            return tuple(Lang.d, symAsD.to!string);
         else
             return tuple(Lang.init, rest);
     }
