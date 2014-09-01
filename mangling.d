@@ -6,6 +6,8 @@
     Authors: $(WEB Per Nordlöw)
     See also: https://mentorembedded.github.io/cxx-abi/abi.html
 
+    TODO: Only check for emptyness after potential modifications of rest.
+
     TODO: Search for pattern "X> <Y" and assure that they all use
     return rest.tryEvery(X, Y).
  */
@@ -25,14 +27,6 @@ import std.functional : unaryFun, binaryFun;
 
 version = show;
 
-/** Like $(D skipOver) but return $(D string) instead of $(D bool).
-    Bool-conversion of returned value gives same result as rest.skipOver(lit).
- */
-string skipLiteral(T)(ref string rest, T lit)
-{
-    return rest.skipOverSafe(lit) ? "" : null;
-}
-
 /** Safe Variant of $(D skipOver). */
 bool skipOverSafe(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2)
     @safe pure if (is(typeof(binaryFun!pred(r1.front, r2.front))))
@@ -40,11 +34,25 @@ bool skipOverSafe(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2)
     return r1.length >= r2.length && skipOver!pred(r1, r2); // TODO: Can we prevent usage of .length?
 }
 
+unittest
+{
+    auto s1 = "Hello world";
+    assert(!skipOverSafe(s1, "Ha"));
+}
+
 /** Safe Variant of $(D skipOver). */
 bool skipOverSafe(alias pred = "a == b", R, E)(ref R r, E e)
     @safe pure if (is(typeof(binaryFun!pred(r.front, e))))
 {
     return r.length >= 1 && skipOver!pred(r, e); // TODO: Can we prevent usage of .length?
+}
+
+/** Like $(D skipOver) but return $(D string) instead of $(D bool).
+    Bool-conversion of returned value gives same result as rest.skipOver(lit).
+*/
+string skipLiteral(T)(ref string rest, T lit)
+{
+    return rest.skipOverSafe(lit) ? "" : null;
 }
 
 /** Decode Unqualified C++ Type at $(D rest).
@@ -66,8 +74,6 @@ string decodeCxxType(ref string rest)
     version(show) dln("rest: ", rest);
 
     typeof(return) type;
-
-    if (rest.empty) { return type; }
 
     const packExpansion = rest.skipOverSafe(`Dp`); // (C++11)
 
@@ -257,8 +263,6 @@ string decodeCxxDigit(ref string rest)
 string decodeCxxOperatorName(ref string rest)
 {
     version(show) dln("rest: ", rest);
-
-    if (rest.empty) { return typeof(return).init; }
 
     if (rest.skipOverSafe('v'))     // vendor extended operator
     {
