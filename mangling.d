@@ -52,7 +52,7 @@ string decodeCxxType(ref string rest)
     bool isPointer = false;
 
     /* TODO: Order of these may vary. */
-    const cvq = rest.decodeCxxCVQualifiers();
+    const cvQ = rest.decodeCxxCVQualifiers();
     switch (rest[0]) // TODO: Check for !rest.empty
     {
         case 'P': rest.popFront(); isPointer = true; break;
@@ -71,9 +71,9 @@ string decodeCxxType(ref string rest)
     string type = null;
 
     // prefix qualifiers
-    if (cvq.isRestrict) { type ~= `restrict `; } // C99
-    if (cvq.isVolatile) { type ~= `volatile `; }
-    if (cvq.isConst)    { type ~= `const `; }
+    if (cvQ.isRestrict) { type ~= `restrict `; } // C99
+    if (cvQ.isVolatile) { type ~= `volatile `; }
+    if (cvQ.isConst)    { type ~= `const `; }
 
     type ~= either(rest.decodeCxxBuiltinType(),
                    rest.decodeCxxFunctionType(),
@@ -106,6 +106,10 @@ string decodeCxxClassEnumType(ref string rest)
             case `Tu`: prefix = `union `; break;
             case `Te`: prefix = `enum `; break;
             default: break;
+        }
+        if (prefix)
+        {
+            rest.popFrontExactly(n);
         }
     }
     const name = rest.decodeCxxName();
@@ -414,8 +418,19 @@ string decodeCxxSubstitution(ref string rest)
 */
 string decodeCxxFunctionType(ref string rest)
 {
+    auto restLookAhead = rest; // needed for lookahead parsing of CV-qualifiers
+    const cvQ = restLookAhead.decodeCxxCVQualifiers();
     string type = null;
-    return;
+    if (restLookAhead.skipOver('F'))
+    {
+        rest = restLookAhead; // we have found it
+        rest.skipOver('Y'); // optional
+        type = rest.decodeCxxBareFunctionType();
+        const refQ = rest.decodeCxxRefQualifier();
+        type ~= to!string(refQ);
+
+    }
+    return type;
 }
 
 struct CXXCVQualifiers
@@ -430,11 +445,11 @@ struct CXXCVQualifiers
 */
 CXXCVQualifiers decodeCxxCVQualifiers(ref string rest)
 {
-    typeof(return) cvq;
-    if (rest.skipOver('r')) { cvq.isRestrict = true; }
-    if (rest.skipOver('V')) { cvq.isVolatile = true; }
-    if (rest.skipOver('K')) { cvq.isConst = true; }
-    return cvq;
+    typeof(return) cvQ;
+    if (rest.skipOver('r')) { cvQ.isRestrict = true; }
+    if (rest.skipOver('V')) { cvQ.isVolatile = true; }
+    if (rest.skipOver('K')) { cvQ.isConst = true; }
+    return cvQ;
 }
 
 enum CxxRefQualifier
@@ -442,6 +457,16 @@ enum CxxRefQualifier
     none,
     normalRef,
     rvalueRef
+}
+
+string toString(CxxRefQualifier refQ) @safe pure nothrow
+{
+    final switch (refQ)
+    {
+        case CxxRefQualifier.none: return "";
+        case CxxRefQualifier.normalRef: return "&";
+        case CxxRefQualifier.rvalueRef: return "&&";
+    }
 }
 
 /** Decode <ref-qualifier>
@@ -493,10 +518,12 @@ string decodeCxxNestedName(ref string rest)
 {
     if (rest.skipOver('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
     {
-        const cvQualifiers = rest.decodeCxxCVQualifiers();
-        const refQualifier = rest.decodeCxxRefQualifier();
+        const cvQ = rest.decodeCxxCVQualifiers();
+        const refQ = rest.decodeCxxRefQualifier();
         auto ret = (rest.decodeCxxPrefix() ~
                     rest.decodeCxxUnqualifiedName() ~
+                    to!string(cvQ) ~
+                    to!string(refQ) ~
                     rest.skipLiteral('E'));
         return ret;
     }
