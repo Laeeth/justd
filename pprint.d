@@ -251,6 +251,9 @@ td, th {
 table {
     border-collapse: collapse;
 }
+tr:nth-child(even) {
+    background-color: #000000;
+}
 
 </style>
 </head>
