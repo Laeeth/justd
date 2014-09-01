@@ -1701,5 +1701,6 @@ unittest
     auto needle = "z";
     auto pop = haystack.findPopAfter(needle);
     assert(pop is null);
+    assert(!pop);
     assert(haystack == source);
 }
