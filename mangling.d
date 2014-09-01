@@ -27,14 +27,14 @@ import std.traits: CommonType;
     If all returns implicitly convert to bool join them and return them.
     Otherwise restore whole and return null.
 */
-string[] tryEvery(T...)(ref string whole,
-                        lazy T parts)
+CommonType!T[] tryEvery(T...)(ref string whole,
+                              lazy T parts)
 {
     const wholeBackup = whole;
     bool all = true;
-    alias R = CommonType!T;
+    alias R = typeof(return);
     R[] results;
-    foreach (part; parts)
+    foreach (ref part; parts)
     {
         const result = part(); // execute delegate parts
         if (result)
