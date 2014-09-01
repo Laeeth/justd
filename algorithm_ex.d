@@ -106,7 +106,7 @@ unittest {
     Similar to behaviour of Lisp's (and a...) and Python's a and ....
     TODO: Is inout Conversion!T the correct return value?
 */
-CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.length >= 1)
+CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (T.length >= 1)
 {
     auto a0 = a[0]();           // evaluate only once
     static if (T.length == 1)
@@ -121,7 +121,7 @@ CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.le
 /** This overload enables, when possible, lvalue return.
     TODO: Only last argument needs to be an l-value.
 */
-auto ref every(T...)(ref T a) @safe @nogc pure nothrow if (a.length >= 1 && allSame!T)
+auto ref every(T...)(ref T a) @safe @nogc pure nothrow if (T.length >= 1 && allSame!T)
 {
     static if (T.length == 1)
     {
@@ -151,6 +151,59 @@ unittest {
     every(x, y) = 3;
     assert(x == 1);
     assert(y == 3);
+}
+
+/** Evaluate all parts.
+    If all returns implicitly convert to bool join them and return them.
+    Otherwise restore whole and return null.
+*/
+CommonType!T[] tryEvery(T...)(ref string whole,
+                              lazy T parts) if (T.length >= 1)
+{
+    const wholeBackup = whole;
+    bool all = true;
+    alias R = typeof(return);
+    R results;
+    foreach (result; parts) // evaluate each part
+    {
+        if (result)
+        {
+            results ~= result;
+        }
+        else
+        {
+            all = false;
+            break;
+        }
+    }
+    if (all)
+    {
+        return results;        // ok that whole has been changed in caller scope
+    }
+    else
+    {
+        whole = wholeBackup; // restore whole in caller scope if any failed
+        return R.init;
+    }
+}
+
+unittest
+{
+    auto whole = "xyz";
+    import std.algorithm: skipOver;
+
+    assert(whole.tryEvery(whole.skipOver('x'),
+                          whole.skipOver('z')) == []); // failing match
+    assert(whole == "xyz"); // should restore whole
+
+    assert(whole.tryEvery(whole.skipOver('x'),
+                          whole.skipOver('y'),
+                          whole.skipOver('w')) == []); // failing match
+    assert(whole == "xyz"); // should restore whole
+
+    assert(whole.tryEvery(whole.skipOver('x'),
+                          whole.skipOver('y')) == [true, true]); // successful match
+    assert(whole == "z"); // should digest matching part
 }
 
 // ==============================================================================================
