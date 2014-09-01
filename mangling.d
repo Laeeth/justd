@@ -617,16 +617,87 @@ string decodeCxxUnnamedTypeName(ref string rest)
     return type;
 }
 
-/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-prefix */
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-prefix
+ */
 string decodeCxxTemplatePrefix(ref string rest)
 {
-    return;
+    // NOTE: Removed <prefix> because of recursion
+    return either(rest.decodeCxxUnqualifiedName(),
+                  rest.decodeCxxTemplateParam(),
+                  rest.decodeCxxSubstitution());
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-args */
-string decodeCxxTemplateArgs(ref string rest)
+string[] decodeCxxTemplateArgs(ref string rest)
 {
-    return;
+    typeof(return) args;
+    if (rest.skipOver('I'))
+    {
+        args ~= rest.decodeCxxTemplateArg();
+        while (true)
+        {
+            auto arg = rest.decodeCxxTemplateArg();
+            if (arg)
+            {
+                args ~= arg;
+            }
+            else
+            {
+                break;
+            }
+        }
+        assert(rest.skipOver('E'));
+    }
+    else
+    {
+    }
+    return args;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.expr-primary */
+string decodeCxxExprPrimary(ref string rest)
+{
+    string expr;
+    if (rest.skipOver('L'))
+    {
+        return;
+    }
+    return expr;
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-arg */
+string decodeCxxTemplateArg(ref string rest)
+{
+    string arg;
+    if (rest.skipOver('X'))
+    {
+        arg = rest.decodeCxxExpression();
+        assert(rest.skipOver('E'));
+    }
+    else if (rest.skipOver('J'))
+    {
+        string[] args;
+        while (true)
+        {
+            const subArg = rest.decodeCxxTemplateArg();
+            if (subArg)
+            {
+                args ~= subArg;
+            }
+            else
+            {
+                break;
+            }
+        }
+        arg = to!string(args.joiner(`, `));
+        assert(rest.skipOver('E'));
+    }
+    else
+    {
+        arg = either(rest.decodeCxxExprPrimary(),
+                     rest.decodeCxxType());
+    }
+    return arg;
 }
 
 string decodeCxxTemplatePrefixAndArgs(ref string rest)
