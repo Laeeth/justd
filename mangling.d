@@ -58,7 +58,7 @@ CommonType!T[] tryEvery(T...)(ref string whole,
     }
 }
 
-/** Like skipOver but return string instead of bool.
+/** Like $(D skipOver) but return $(D string) instead of $(D bool).
 
     Bool-conversion of returned value gives same result as rest.skipOver(lit).
  */
