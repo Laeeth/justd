@@ -153,7 +153,7 @@ unittest {
     assert(y == 3);
 }
 
-/** Evaluate all $(D parts) possibly digesting whole.
+/** Evaluate all $(D parts) possibly digesting $(D whole).
     If all values of $(D parts) implicitly convert to bool true return the
     values as an array, otherwise restore whole and return null.
 */
