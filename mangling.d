@@ -18,7 +18,7 @@ import std.array: array;
 import std.stdio;
 import dbg;
 import languages;
-import algorithm_ex: either, split, splitBefore;
+import algorithm_ex: either, split, splitBefore, findPopBefore, findPopAfter;
 
 /** Like skipOver but return string instead of bool.
 
@@ -425,12 +425,42 @@ string decodeCxxFunctionType(ref string rest)
     {
         rest = restLookAhead; // we have found it
         rest.skipOver('Y'); // optional
-        type = rest.decodeCxxBareFunctionType();
+        type = to!string(rest.decodeCxxBareFunctionType());
         const refQ = rest.decodeCxxRefQualifier();
         type ~= to!string(refQ);
 
     }
     return type;
+}
+
+struct CxxBareFunctionType
+{
+    string retType;
+    string[] paramTypes;
+    string toString() @safe pure
+    {
+        return retType ~ `(` ~ to!string(paramTypes.joiner(`, `)) ~ `)`;
+    }
+}
+
+/** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.bare-function-type */
+CxxBareFunctionType decodeCxxBareFunctionType(ref string rest)
+{
+    typeof(return) funType;
+    funType.retType = rest.decodeCxxType();
+    while (true)
+    {
+        auto type = rest.decodeCxxType();
+        if (type)
+        {
+            funType.paramTypes ~= type;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return funType;
 }
 
 struct CXXCVQualifiers
