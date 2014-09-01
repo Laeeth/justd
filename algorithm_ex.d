@@ -153,14 +153,14 @@ unittest {
     assert(y == 3);
 }
 
-/** Evaluate all parts.
-    If all returns implicitly convert to bool join them and return them.
-    Otherwise restore whole and return null.
+/** Evaluate all $(D parts) possibly digesting whole.
+    If all values of $(D parts) implicitly convert to bool true return the
+    values as an array, otherwise restore whole and return null.
 */
-CommonType!T[] tryEvery(T...)(ref string whole,
-                              lazy T parts) if (T.length >= 1)
+CommonType!T[] tryEvery(S, T...)(ref S whole,
+                                 lazy T parts) if (T.length >= 1)
 {
-    const wholeBackup = whole;
+    auto wholeBackup = whole;
     bool all = true;
     alias R = typeof(return);
     R results;
