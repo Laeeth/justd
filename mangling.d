@@ -7,7 +7,7 @@
     See also: https://mentorembedded.github.io/cxx-abi/abi.html
 
     TODO: Search for pattern "X> <Y" and assure that they all use
-    return rest.decodeAllOrNothingInSequence(X, Y).
+    return rest.tryEvery(X, Y).
  */
 module mangling;
 
@@ -21,29 +21,41 @@ import std.stdio;
 import dbg;
 import languages;
 import algorithm_ex: either, split, splitBefore, findPopBefore, findPopAfter;
+import std.traits: CommonType;
 
 /** Call whole.part on all parts.
     If all returns implicitly convert to bool join them and return them.
     Otherwise restore whole and return null.
 */
-string[] doAllOrNoneInSequence(T...)(ref string whole,
-                                     ref T parts)
+string[] tryEvery(T...)(ref string whole,
+                        lazy T parts)
 {
     const wholeBackup = whole;
+    bool all = true;
+    alias R = CommonType!T;
+    R[] results;
     foreach (part; parts)
     {
-        part(); // execute delegate parts
+        const result = part(); // execute delegate parts
+        if (result)
+        {
+            results ~= result;
+        }
+        else
+        {
+            break;
+            all = false;
+        }
     }
-    const all = every(parts); // join parts
     if (all)
     {
-        whole = all;
-        return all.joiner;
+        // whole has been changed in caller and that's ok
+        return results;
     }
     else
     {
         whole = wholeBackup; // restore if any failed
-        return typeof(return).init;
+        return R[].init;
     }
 }
 
