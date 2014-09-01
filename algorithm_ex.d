@@ -489,7 +489,9 @@ unittest {
 
 // ==============================================================================================
 
-bool isSymbol(T)(in T a) @safe @nogc pure nothrow
+/** Return true if $(D a) is a C-style Identifier symbol character. */
+bool isSymbol(T)(in T a)
+    @safe @nogc pure nothrow
 {
     import std.ascii: isAlpha;
     return a.isAlpha || a == '_';
@@ -498,10 +500,14 @@ bool isSymbol(T)(in T a) @safe @nogc pure nothrow
 enum FindContext { inWord, inSymbol,
                    asWord, asSymbol }
 
-bool isSymbolASCII(string rest, ptrdiff_t off, size_t end) @safe @nogc pure nothrow
-    in {
-        assert(end <= rest.length);
-    } body {
+bool isSymbolASCII(string rest, ptrdiff_t off, size_t end)
+    @safe @nogc pure nothrow
+in
+{
+    assert(end <= rest.length);
+}
+body
+{
     import std.ascii: isAlphaNum;
     return ((off == 0 || // either beginning of line
              !rest[off - 1].isAlphaNum &&
@@ -510,7 +516,8 @@ bool isSymbolASCII(string rest, ptrdiff_t off, size_t end) @safe @nogc pure noth
              !rest[end].isAlphaNum &&
              rest[end] != '_'));
 }
-unittest {
+unittest
+{
     assert(isSymbolASCII("alpha", 0, 5));
     assert(isSymbolASCII(" alpha ", 1, 6));
     assert(!isSymbolASCII("driver", 0, 5));
