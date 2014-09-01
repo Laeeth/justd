@@ -23,7 +23,7 @@ import languages;
 import algorithm_ex: either, split, splitBefore, findPopBefore, findPopAfter;
 import std.traits: CommonType;
 
-/** Call whole.part on all parts.
+/** Evaluate all parts.
     If all returns implicitly convert to bool join them and return them.
     Otherwise restore whole and return null.
 */
@@ -33,10 +33,10 @@ CommonType!T[] tryEvery(T...)(ref string whole,
     const wholeBackup = whole;
     bool all = true;
     alias R = typeof(return);
-    R[] results;
-    foreach (ref part; parts)
+    R results;
+    foreach (ref e; parts)
     {
-        const result = part(); // execute delegate parts
+        const result = e(); // execute delegate parts
         if (result)
         {
             results ~= result;
@@ -49,13 +49,12 @@ CommonType!T[] tryEvery(T...)(ref string whole,
     }
     if (all)
     {
-        // whole has been changed in caller and that's ok
-        return results;
+        return results;        // ok that whole has been changed in caller scope
     }
     else
     {
-        whole = wholeBackup; // restore if any failed
-        return R[].init;
+        whole = wholeBackup; // restore whole in caller scope if any failed
+        return R.init;
     }
 }
 
