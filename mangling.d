@@ -1117,6 +1117,9 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
+    assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(),
+                tuple(Lang.cxx, `parse_arch`));
+
     assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
