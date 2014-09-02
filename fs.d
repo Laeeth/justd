@@ -232,6 +232,7 @@ enum FileContent
     database,
     tagsDatabase,
     image,
+    imageIcon,
     audio,
     sound = audio,
     music = audio,
@@ -2687,6 +2688,15 @@ class GStats
                                [], // N/A
                                [], // N/A
                                FileContent.image);
+
+        auto icnsKind = new FKind("Apple Icon Image", [], ["icns"],
+                                  "icns", 0, [], [],
+                                  [], // N/A
+                                  [], // N/A
+                                  FileContent.imageIcon);
+        icnsKind.wikiURL = "https://en.wikipedia.org/wiki/Executable_and_Linkable_Format";
+        binFKinds ~= icnsKind;
+        // TODO: read with http://icns.sourceforge.net/
 
         auto kindPDF = new FKind("PDF", [], ["pdf"], "%PDF", 0, [], [],
                                  [], // N/A
