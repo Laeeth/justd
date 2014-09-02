@@ -52,6 +52,12 @@ should only mention the subset of parameters and types that doesn't match such a
 template parameter D doesn’t fullfil predicate (D >= 1)
 \end{lstlisting}
 
+Further, forgetting to include std.functional: binaryFun before doing
+\begin{lstlisting}[frame=single]
+if (is(typeof(binaryFun!pred(r1.front, r2.front))))
+\end{lstlisting}
+also gives no hints and can be very deceiving.
+
 \item Detect and warn about duplicate calculations of pure functions (constant
   folding) by adding a SHA1-hash table for all expressions.
 \item Better message for mutation of AA members in class constructors or
