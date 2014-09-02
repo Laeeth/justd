@@ -18,6 +18,7 @@
           See: http://forum.dlang.org/thread/edaduxaxmihvzkoudeqa@forum.dlang.org#post-edaduxaxmihvzkoudeqa:40forum.dlang.org
           See: http://code.dlang.org/packages/backtrace-d
 
+    TODO: What role does _ZL have? See localFlag for details.
  */
 module mangling;
 
@@ -442,29 +443,46 @@ string decodeCxxBuiltinType(ref string rest)
 string decodeCxxSubstitution(ref string rest, string stdPrefix = `::std::`)
 {
     version(show) dln("rest: ", rest);
-    if (rest.startsWith('S'))
+    string type;
+    if (rest.skipOverSafe('S'))
     {
-        rest.popFront();
-        string type = stdPrefix;
-        switch (rest[0])
+        if (rest.front >= '_') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
-            case 't': rest.popFront(); type ~= `ostream`; break;
-            case 'a': rest.popFront(); type ~= `allocator`; break;
-            case 'b': rest.popFront(); type ~= `basic_string`; break;
-            case 's': rest.popFront();
-                type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
-                break;
-            case 'i': rest.popFront(); type ~= `istream`; break;
-            case 'o': rest.popFront(); type ~= `ostream`; break;
-            case 'd': rest.popFront(); type ~= `iostream`; break;
-            default:
-                dln(`Cannot handle C++ standard prefix character: '`, rest[0], `'`);
-                rest.popFront();
-                break;
+            type = "${PREVIOUS}";
+            rest.popFront();
         }
-        return type;
+        else if (rest.front >= '0' &&
+                 rest.front <= '9' ||
+                 rest.front >= 'A' &&
+                 rest.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
+        {
+            type = "${PREVIOUS}" ~ rest.front.to!string;
+            rest.popFront();
+            assert(rest.skipOverSafe('_'));
+        }
+        else
+        {
+            type = stdPrefix;
+            switch (rest.front)
+            {
+                case 't': rest.popFront(); type ~= `ostream`; break;
+                case 'a': rest.popFront(); type ~= `allocator`; break;
+                case 'b': rest.popFront(); type ~= `basic_string`; break;
+                case 's': rest.popFront();
+                    type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
+                    break;
+                case 'i': rest.popFront(); type ~= `istream`; break;
+                case 'o': rest.popFront(); type ~= `ostream`; break;
+                case 'd': rest.popFront(); type ~= `iostream`; break;
+
+                default:
+                    dln(`Cannot handle C++ standard prefix character: '`, rest.front, `'`);
+                    rest.popFront();
+                    break;
+            }
+        }
     }
-    return null;
+    return type;
 }
 
 /** Try to Decode C++ Function Type at $(D rest).
@@ -952,7 +970,7 @@ string decodeCxxDescriminator(ref string rest)
              the popped element. What is best out of:
              - General: rest.takeOne().to!string
              - Arrays only: rest[0..1]
-             - Needs cast: rest.front()
+             - Needs cast: rest.front
              and are we in need of a combined variant of front() and popFront()
              say takeFront() that may fail and requires a cast.
              */
@@ -1032,8 +1050,7 @@ string decodeCxxSpecialName(ref string rest)
     typeof(return) name;
     if (rest.skipOverSafe('S'))
     {
-        const type = rest.front();
-        switch (type)
+        switch (rest.moveFront)
         {
             case 'V': name = "virtual table: "; break;
             case 'T': name = "VTT structure: "; break;
@@ -1043,7 +1060,6 @@ string decodeCxxSpecialName(ref string rest)
                 rest = restBackup; // restore
                 return name;
         }
-        rest.popFront(); // TODO: Can we integrate this into front()?
         name ~= rest.decodeCxxType();
     }
     else if (rest.skipOver(`GV`))
@@ -1074,6 +1090,7 @@ string decodeCxxEncoding(ref string rest,
                          string scopeSeparator = null) /* @safe pure nothrow @nogc */
 {
     version(show) dln("rest: ", rest);
+    const localFlag = rest.skipOverSafe('L'); // TODO: What role does the L have in symbols starting with _ZL have?
     if (const name = rest.decodeCxxSpecialName())
     {
         return name;
@@ -1106,9 +1123,8 @@ Tuple!(Lang, string) decodeSymbol(string rest,
     }
 
     // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name
-    if (rest.startsWith(`_Z`))
+    if (rest.skipOver(`_Z`))
     {
-        rest.popFront();
         return tuple(Lang.cxx,
                      rest.decodeCxxEncoding());
     }
@@ -1131,6 +1147,12 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
+    assertEqual(`_Z1hi`.decodeSymbol(),
+                tuple(Lang.cxx, `h(int)`));
+
+    assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(),
+                tuple(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`));
+
     assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
@@ -1145,7 +1167,4 @@ unittest
 
     assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
-
-    /* assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(), */
-    /*             tuple(Lang.cxx, `parse_arch`)); */
 }
