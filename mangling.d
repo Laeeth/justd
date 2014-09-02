@@ -15,7 +15,7 @@
  */
 module mangling;
 
-import std.range: empty, popFront, popFrontExactly, take, drop, front;
+import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne;
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
 import std.typecons: tuple, Tuple;
 import std.conv: to;
@@ -904,23 +904,33 @@ string decodeCxxNumber(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.discriminator */
-int decodeCxxDescriminator(ref string rest)
+string decodeCxxDescriminator(ref string rest)
 {
     version(show) dln("rest: ", rest);
+    string descriminator;
     if (rest.skipOverSafe('_'))
     {
         if (rest.skipOverSafe('_'))            // number >= 10
         {
-            const number = rest.decodeCxxNumber();
+            descriminator = rest.decodeCxxNumber();
             assert(rest.skipOverSafe('_')); // suffix
         }
         else                    // number < 10
         {
             rest.skipOverSafe('n'); // optional prefix
-            const number = cast(int)(rest[0] - '0'); // single digit
+            /* TODO: Merge these two into a variant of popFront() that returns
+             the popped element. What is best out of:
+             - General: rest.takeOne().to!string
+             - Arrays only: rest[0..1]
+             - Needs cast: rest.front()
+             and are we in need of a combined variant of front() and popFront()
+             say takeFront() that may fail and requires a cast.
+             */
+            descriminator = rest[0..1]; // single digit
+            rest.popFront();
         }
     }
-    return -1;
+    return descriminator;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.local-name */
