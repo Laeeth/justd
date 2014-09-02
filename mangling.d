@@ -31,10 +31,17 @@ version = show;
 
 /** Safe Variant of $(D skipOver).
     Merge this into Phobos. */
-bool skipOverSafe(alias pred = "a == b", R, E)(ref R r, E e)
-    @safe pure if (is(typeof(binaryFun!pred(r.front, e))))
+static if (__VERSION__ >= 2068)
 {
-    return (!r.empty) && skipOver!pred(r, e);
+    alias skipOverSafe = skipOver;
+}
+else
+{
+    bool skipOverSafe(alias pred = "a == b", R, E)(ref R r, E e)
+        @safe pure if (is(typeof(binaryFun!pred(r.front, e))))
+    {
+        return (!r.empty) && skipOver!pred(r, e);
+    }
 }
 
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
@@ -472,11 +479,16 @@ string decodeCxxFunctionType(ref string rest)
 
 struct CxxBareFunctionType
 {
-    string retType;
-    string[] paramTypes;
+    string returnType; // return type
+    string[] parameterTypes; // parameter types
     string toString() @safe pure
     {
-        return retType ~ `(` ~ paramTypes.joiner(`, `).to!string ~ `)`;
+        string value = returnType;
+        if (!parameterTypes.empty)
+        {
+            value ~= `(` ~ parameterTypes.joiner(`, `).to!string ~ `)`;
+        }
+        return value;
     }
 }
 
@@ -485,13 +497,13 @@ CxxBareFunctionType decodeCxxBareFunctionType(ref string rest)
 {
     version(show) dln("rest: ", rest);
     typeof(return) funType;
-    funType.retType = rest.decodeCxxType();
+    funType.returnType = rest.decodeCxxType();
     while (!rest.empty)
     {
         auto type = rest.decodeCxxType();
         if (type)
         {
-            funType.paramTypes ~= type;
+            funType.parameterTypes ~= type;
         }
         else
         {
