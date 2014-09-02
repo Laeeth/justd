@@ -21,7 +21,7 @@
  */
 module mangling;
 
-import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne;
+import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront;
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
 import std.typecons: tuple, Tuple;
 import std.conv: to;
@@ -956,8 +956,9 @@ string decodeCxxDescriminator(ref string rest)
              and are we in need of a combined variant of front() and popFront()
              say takeFront() that may fail and requires a cast.
              */
-            descriminator = rest[0..1]; // single digit
-            rest.popFront();
+            /* descriminator = rest[0..1]; // single digit */
+            /* rest.popFront(); */
+            descriminator = rest.moveFront.to!string;
         }
     }
     return descriminator;
@@ -1109,7 +1110,7 @@ Tuple!(Lang, string) decodeSymbol(string rest,
     {
         rest.popFront();
         return tuple(Lang.cxx,
-                     rest.decodeCxxLocalName());
+                     rest.decodeCxxEncoding());
     }
     else
     {
@@ -1130,9 +1131,6 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
-    assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(),
-                tuple(Lang.cxx, `parse_arch`));
-
     assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format`));
 
@@ -1147,4 +1145,7 @@ unittest
 
     assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
+
+    /* assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(), */
+    /*             tuple(Lang.cxx, `parse_arch`)); */
 }
