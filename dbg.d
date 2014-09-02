@@ -18,20 +18,20 @@ debug auto trustedPureDebugCall(alias fn, A...) (A args) pure
 void debug_writeln(string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__, T...)(T t)
 {
     import std.stdio: writeln;
-    writeln(file, ":",line, ":",fun, ":debug: ", t);
+    writeln(file, ":",line, ":"/* , ": in ",fun */, " debug: ", t);
 }
 alias dln = debug_writeln;
 
 void debug_writefln(string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__, T...)(T t)
 {
     import std.stdio: writefln;
-    writefln(file, ":",line, ":",fun, ":debug: ", t);
+    writefln(file, ":",line, ":"/* , ": in ",fun */, " debug: ", t);
 }
 alias dfln = debug_writefln;
 
 void debug_variableln(alias T, string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__)()
 {
     import std.stdio: writeln;
-    writeln(file, ":",line, ":",fun, ":debug: ", T.stringof, ":", T);
+    writeln(file, ":",line, ":" /* , ": in ",fun */, "  debug: ", T.stringof, ":", T);
 }
 alias dvr = debug_variableln;
