@@ -11,7 +11,13 @@
     TODO: Search for pattern "X> <Y" and assure that they all use
     return rest.tryEvery(X, Y).
 
-    TODO: Replace calls to decode ~ decode with separate decodes or a sequence call.
+    TODO: 1. Replace calls to decode ~ decode with separate decodes
+    TODO: 2 : Replace calls to decode ~ decode with a sequence call.
+
+    TODO: Detect recursion:
+          See: http://forum.dlang.org/thread/edaduxaxmihvzkoudeqa@forum.dlang.org#post-edaduxaxmihvzkoudeqa:40forum.dlang.org
+          See: http://code.dlang.org/packages/backtrace-d
+
  */
 module mangling;
 
@@ -31,8 +37,14 @@ version = show;
 
 /** Safe Variant of $(D skipOver).
     Merge this into Phobos. */
-static if (__VERSION__ >= 2068)
+static if (__VERSION__ >= 2067)
 {
+    unittest
+    {
+        auto s = "";
+        assert(!s.skipOver('a'));
+        assert(!s.skipOver("a"));
+    }
     alias skipOverSafe = skipOver;
 }
 else
