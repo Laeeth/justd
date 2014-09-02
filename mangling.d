@@ -461,7 +461,7 @@ string decodeCxxFunctionType(ref string rest)
         rest.skipOverSafe('Y'); // optional
         type = rest.decodeCxxBareFunctionType().to!string;
         const refQ = rest.decodeCxxRefQualifier();
-        type ~= refQ.to!string;
+        type ~= refQ.toString;
 
     }
     return type;
@@ -610,7 +610,7 @@ string decodeCxxNestedName(ref string rest)
         auto ret = (cvQ.to!string ~
                     rest.decodeCxxPrefix() ~
                     rest.decodeCxxUnqualifiedName() ~
-                    refQ.to!string);
+                    refQ.toString);
         assert(rest.skipOverSafe('E'));
         return ret;
     }
