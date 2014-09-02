@@ -27,24 +27,12 @@ import std.functional : unaryFun, binaryFun;
 
 version = show;
 
-/** Safe Variant of $(D skipOver). */
-bool skipOverSafe(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2)
-    @safe pure if (is(typeof(binaryFun!pred(r1.front, r2.front))))
-{
-    return r1.length >= r2.length && skipOver!pred(r1, r2); // TODO: Can we prevent usage of .length?
-}
-
-unittest
-{
-    auto s1 = "Hello world";
-    assert(!skipOverSafe(s1, "Ha"));
-}
-
-/** Safe Variant of $(D skipOver). */
+/** Safe Variant of $(D skipOver).
+    Merge this into Phobos. */
 bool skipOverSafe(alias pred = "a == b", R, E)(ref R r, E e)
     @safe pure if (is(typeof(binaryFun!pred(r.front, e))))
 {
-    return r.length >= 1 && skipOver!pred(r, e); // TODO: Can we prevent usage of .length?
+    return (!r.empty) && skipOver!pred(r, e);
 }
 
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
@@ -75,7 +63,7 @@ string decodeCxxType(ref string rest)
 
     typeof(return) type;
 
-    const packExpansion = rest.skipOverSafe(`Dp`); // (C++11)
+    const packExpansion = rest.skipOver(`Dp`); // (C++11)
 
     // <ref-qualifier>)
     bool isRef = false;      // & ref-qualifier
@@ -238,8 +226,8 @@ string decodeCxxDecltype(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string type;
-    if (rest.skipOverSafe(`Dt`) ||
-        rest.skipOverSafe(`DT`))
+    if (rest.skipOver(`Dt`) ||
+        rest.skipOver(`DT`))
     {
         type = rest.decodeCxxExpression();
         assert(rest.skipOverSafe('E'));
@@ -681,7 +669,7 @@ string decodeCxxUnnamedTypeName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string type;
-    if (rest.skipOverSafe(`Ut`))
+    if (rest.skipOver(`Ut`))
     {
         type = rest.decodeCxxNumber();
         assert(rest.skipOverSafe('_'));
@@ -730,7 +718,7 @@ string decodeCxxMangledName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     string name;
-    if (rest.skipOverSafe(`_Z`))
+    if (rest.skipOver(`_Z`))
     {
         return rest.decodeCxxEncoding();
     }
@@ -855,7 +843,7 @@ string decodeCxxUnscopedName(ref string rest)
 {
     version(show) dln("rest: ", rest);
     auto restBackup = rest;
-    const prefix = rest.skipOverSafe(`St`) ? "::std::" : null;
+    const prefix = rest.skipOver(`St`) ? "::std::" : null;
     if (const name = rest.decodeCxxUnqualifiedName())
     {
         return prefix ~ name;
@@ -1001,7 +989,7 @@ string decodeCxxSpecialName(ref string rest)
         rest.popFront(); // TODO: Can we integrate this into front()?
         name ~= rest.decodeCxxType();
     }
-    else if (rest.skipOverSafe(`GV`))
+    else if (rest.skipOver(`GV`))
     {
         name = rest.decodeCxxName();
     }
