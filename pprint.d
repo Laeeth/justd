@@ -252,7 +252,7 @@ table {
     border-collapse: collapse;
 }
 tr:nth-child(even) {
-    background-color: #000000;
+    background-color: #E8E8E8;
 }
 
 </style>
