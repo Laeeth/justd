@@ -10,6 +10,8 @@
 
     TODO: Search for pattern "X> <Y" and assure that they all use
     return rest.tryEvery(X, Y).
+
+    TODO: Replace calls to decode ~ decode with separate decodes or a sequence call.
  */
 module mangling;
 
@@ -86,7 +88,8 @@ string decodeCxxType(ref string rest)
         case 'C': rest.popFront(); isComplexPair = true; break;
         case 'G': rest.popFront(); isImaginary = true; break;
         case 'U': rest.popFront();
-            const sourceName = rest.decodeCxxSourceName() ~ rest.decodeCxxType();
+            const sourceName = rest.decodeCxxSourceName();
+            type = sourceName ~ rest.decodeCxxType();
             dln("Handle vendor extended type qualifier <source-name>", rest);
             break;
         default: break;
@@ -181,9 +184,9 @@ string decodeCxxPointerToMemberType(ref string rest)
     string type;
     if (rest.skipOverSafe('M'))
     {
-        type = (rest.decodeCxxType() ~ // <class type>
-                rest.decodeCxxType() // <mmeber type>
-            );
+        const classType = rest.decodeCxxType(); // <class type>
+        const memberType = rest.decodeCxxType(); // <mmeber type>
+        type = classType ~ memberType;
     }
     return type;
 }
@@ -252,8 +255,9 @@ string decodeCxxOperatorName(ref string rest)
 
     if (rest.skipOverSafe('v'))     // vendor extended operator
     {
-        return (rest.decodeCxxDigit() ~
-                rest.decodeCxxSourceName());
+        const digit = rest.decodeCxxDigit();
+        const sourceName = rest.decodeCxxSourceName();
+        return digit ~ sourceName;
     }
 
     string op;
@@ -335,7 +339,7 @@ string decodeCxxOperatorName(ref string rest)
 
     switch (code)
     {
-        case `cv`: op = "(" ~ rest.decodeCxxType() ~ ")"; break;
+        case `cv`: op = '(' ~ rest.decodeCxxType() ~ ')'; break;
         case `li`: op = (`operator ""` ~ rest.decodeCxxSourceName()); break;
         default: break;
     }
@@ -416,21 +420,19 @@ string decodeCxxBuiltinType(ref string rest)
 /** Decode C++ Substitution Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.substitution
 */
-string decodeCxxSubstitution(ref string rest)
+string decodeCxxSubstitution(ref string rest, string stdPrefix = `::std::`)
 {
     version(show) dln("rest: ", rest);
     if (rest.startsWith('S'))
     {
-        string type;
         rest.popFront();
-        type ~= `::std::`;
+        string type = stdPrefix;
         switch (rest[0])
         {
             case 't': rest.popFront(); type ~= `ostream`; break;
             case 'a': rest.popFront(); type ~= `allocator`; break;
             case 'b': rest.popFront(); type ~= `basic_string`; break;
-            case 's':
-                rest.popFront();
+            case 's': rest.popFront();
                 type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
                 break;
             case 'i': rest.popFront(); type ~= `istream`; break;
@@ -441,6 +443,7 @@ string decodeCxxSubstitution(ref string rest)
                 rest.popFront();
                 break;
         }
+        dln(type);
         return type;
     }
     return null;
@@ -461,7 +464,7 @@ string decodeCxxFunctionType(ref string rest)
         rest.skipOverSafe('Y'); // optional
         type = rest.decodeCxxBareFunctionType().to!string;
         const refQ = rest.decodeCxxRefQualifier();
-        type ~= refQ.toString;
+        type ~= refQ.toCxxString;
 
     }
     return type;
@@ -541,7 +544,7 @@ enum CxxRefQualifier
     rvalueRef
 }
 
-string toString(CxxRefQualifier refQ) @safe pure nothrow
+string toCxxString(CxxRefQualifier refQ) @safe pure nothrow
 {
     final switch (refQ)
     {
@@ -607,11 +610,13 @@ string decodeCxxNestedName(ref string rest)
     {
         const cvQ = rest.decodeCxxCVQualifiers();
         const refQ = rest.decodeCxxRefQualifier();
-        auto ret = (cvQ.to!string ~
-                    rest.decodeCxxPrefix() ~
-                    rest.decodeCxxUnqualifiedName() ~
-                    refQ.toString);
+        const prefix = rest.decodeCxxPrefix();
+        const name = rest.decodeCxxUnqualifiedName();
         assert(rest.skipOverSafe('E'));
+        auto ret = (cvQ.to!string ~
+                    prefix ~
+                    name ~
+                    refQ.toCxxString);
         return ret;
     }
     return null;
@@ -799,7 +804,7 @@ string decodeCxxTemplatePrefixAndArgs(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.prefix */
-string decodeCxxPrefix(ref string rest)
+string decodeCxxPrefix(ref string rest, string scopeSeparator = "::")
 {
     version(show) dln("rest: ", rest);
     typeof(return) prefix;
@@ -807,7 +812,11 @@ string decodeCxxPrefix(ref string rest)
     {
         if (const name = rest.decodeCxxUnqualifiedName())
         {
-            prefix = name ~ "::" ~ prefix;
+            if (i >= 1)
+            {
+                prefix ~= scopeSeparator;
+            }
+            prefix ~= name;
             continue;
         }
         else if (const name = rest.decodeCxxTemplatePrefixAndArgs())
@@ -867,15 +876,16 @@ string decodeCxxUnscopedTemplateName(ref string rest)
 string decodeCxxUnscopedTemplateNameAndArgs(ref string rest)
 {
     version(show) dln("rest: ", rest);
-    auto restBackup = rest;
+    string nameAndArgs;
     if (const name = rest.decodeCxxUnscopedTemplateName())
     {
+        nameAndArgs = name;
         if (auto args = rest.decodeCxxTemplateArgs())
         {
-            return name ~ args.joiner(`, `).to!string;
+            nameAndArgs ~= args.joiner(`, `).to!string;
         }
     }
-    return typeof(return).init;
+    return nameAndArgs;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.number */
@@ -921,10 +931,12 @@ T decodeCxxLocalName(T)(ref T rest)
     {
         const encoding = rest.decodeCxxEncoding();
         rest.skipOverSafe('E');
+        const entityNameMaybe = either(rest.skipLiteral('s'), // NOTE: Literal first to speed up
+                                       rest.decodeCxxName());
+        const discriminator = rest.decodeCxxDescriminator(); // optional
         return (encoding ~
-                either(rest.skipLiteral('s'), // NOTE: Literal first here to speed up parsing
-                       rest.decodeCxxName()) ~
-                rest.decodeCxxDescriminator().to!T); // TODO: Optional
+                entityNameMaybe ~
+                discriminator.to!T); // TODO: Optional
     }
     return T.init;
 }
@@ -935,8 +947,8 @@ string decodeCxxName(ref string rest)
     version(show) dln("rest: ", rest);
     return either(rest.decodeCxxNestedName(),
                   rest.decodeCxxUnscopedName(),
-                  rest.decodeCxxUnscopedTemplateNameAndArgs(),
-                  rest.decodeCxxLocalName());
+                  rest.decodeCxxLocalName(), // TODO: order flipped
+                  rest.decodeCxxUnscopedTemplateNameAndArgs()); // NOTE: order flipped
 }
 
 string decodeCxxNVOffset(ref string rest)
@@ -1014,7 +1026,7 @@ string decodeCxxSpecialName(ref string rest)
    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.encoding
  */
 string decodeCxxEncoding(ref string rest,
-                         string separator = null) /* @safe pure nothrow @nogc */
+                         string scopeSeparator = null) /* @safe pure nothrow @nogc */
 {
     version(show) dln("rest: ", rest);
     if (const name = rest.decodeCxxSpecialName())
@@ -1034,7 +1046,7 @@ string decodeCxxEncoding(ref string rest,
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 */
 Tuple!(Lang, string) decodeSymbol(string rest,
-                                  string separator = null) /* @safe pure nothrow @nogc */
+                                  string scopeSeparator = null) /* @safe pure nothrow @nogc */
 {
     version(show) dln("rest: ", rest);
     if (rest.empty)
