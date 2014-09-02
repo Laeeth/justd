@@ -6,7 +6,7 @@
     Authors: $(WEB Per Nordlöw)
     See also: https://mentorembedded.github.io/cxx-abi/abi.html
 
-    TODO: Only check for emptyness after potential modifications of rest.
+    TODO: Only check for emptyness before any optionals.
 
     TODO: Search for pattern "X> <Y" and assure that they all use
     return rest.tryEvery(X, Y).
@@ -105,9 +105,7 @@ string decodeCxxType(ref string rest)
     }
 
     // prefix qualifiers
-    if (cvQ.isRestrict) { type ~= `restrict `; } // C99
-    if (cvQ.isVolatile) { type ~= `volatile `; }
-    if (cvQ.isConst)    { type ~= `const `; }
+    type ~= cvQ.to!string;
 
     type ~= either(rest.decodeCxxBuiltinType(),
                    rest.decodeCxxFunctionType(),
@@ -497,7 +495,7 @@ CxxBareFunctionType decodeCxxBareFunctionType(ref string rest)
     version(show) dln("rest: ", rest);
     typeof(return) funType;
     funType.retType = rest.decodeCxxType();
-    while (true)
+    while (!rest.empty)
     {
         auto type = rest.decodeCxxType();
         if (type)
@@ -517,6 +515,22 @@ struct CXXCVQualifiers
     bool isRestrict; // (C99)
     bool isVolatile; // volatile
     bool isConst; // const
+
+    auto opCast(T : bool)()
+    {
+        return (isRestrict ||
+                isVolatile ||
+                isConst);
+    }
+
+    string toString() @safe pure nothrow const
+    {
+        string value;
+        if (isRestrict) value ~= `restrict `;
+        if (isVolatile) value ~= `volatile `;
+        if (isConst)    value ~= `const `;
+        return value;
+    }
 }
 
 /** Decode <CV-qualifiers>
@@ -528,7 +542,7 @@ CXXCVQualifiers decodeCxxCVQualifiers(ref string rest)
     typeof(return) cvQ;
     if (rest.skipOverSafe('r')) { cvQ.isRestrict = true; }
     if (rest.skipOverSafe('V')) { cvQ.isVolatile = true; }
-    if (rest.skipOverSafe('K')) { cvQ.isConst = true; }
+    if (rest.skipOverSafe('K')) { cvQ.isConst    = true; }
     return cvQ;
 }
 
@@ -605,9 +619,9 @@ string decodeCxxNestedName(ref string rest)
     {
         const cvQ = rest.decodeCxxCVQualifiers();
         const refQ = rest.decodeCxxRefQualifier();
-        auto ret = (rest.decodeCxxPrefix() ~
+        auto ret = (cvQ.to!string ~
+                    rest.decodeCxxPrefix() ~
                     rest.decodeCxxUnqualifiedName() ~
-                    cvQ.to!string ~
                     refQ.to!string);
         assert(rest.skipOverSafe('E'));
         return ret;
@@ -694,7 +708,7 @@ string[] decodeCxxTemplateArgs(ref string rest)
     if (rest.skipOverSafe('I'))
     {
         args ~= rest.decodeCxxTemplateArg();
-        while (true)
+        while (!rest.empty)
         {
             auto arg = rest.decodeCxxTemplateArg();
             if (arg)
@@ -757,7 +771,7 @@ string decodeCxxTemplateArg(ref string rest)
     else if (rest.skipOverSafe('J'))
     {
         string[] args;
-        while (true)
+        while (!rest.empty)
         {
             const subArg = rest.decodeCxxTemplateArg();
             if (subArg)
@@ -801,27 +815,31 @@ string decodeCxxPrefix(ref string rest)
 {
     version(show) dln("rest: ", rest);
     typeof(return) prefix;
-    while (!rest.empty) // NOTE: Turned self-recursion into iteration
+    for (size_t i = 0; !rest.empty; ++i) // NOTE: Turned self-recursion into iteration
     {
-        if (const unqualifiedName = rest.decodeCxxUnqualifiedName())
+        if (const name = rest.decodeCxxUnqualifiedName())
         {
-            prefix ~= unqualifiedName;
+            prefix = name ~ "::" ~ prefix;
             continue;
         }
-        else if (const unqualifiedName = rest.decodeCxxTemplatePrefixAndArgs())
+        else if (const name = rest.decodeCxxTemplatePrefixAndArgs())
         {
+            prefix ~= name;
             continue;
         }
         else if (const templateParam = rest.decodeCxxTemplateParam())
         {
+            prefix ~= templateParam;
             continue;
         }
         else if (const decltype = rest.decodeCxxDecltype())
         {
+            prefix ~= decltype;
             continue;
         }
         else if (const subst = rest.decodeCxxSubstitution())
         {
+            prefix ~= subst;
             continue;
         }
         else
