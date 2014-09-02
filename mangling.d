@@ -573,6 +573,7 @@ enum CxxRefQualifier
     rvalueRef
 }
 
+/* See also: http://forum.dlang.org/thread/cvhapzsrhjdnpkdspavg@forum.dlang.org#post-cvhapzsrhjdnpkdspavg:40forum.dlang.org */
 string toCxxString(CxxRefQualifier refQ) @safe pure nothrow
 {
     final switch (refQ)
