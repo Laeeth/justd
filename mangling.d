@@ -478,14 +478,13 @@ string decodeCxxFunctionType(ref string rest)
 
 struct CxxBareFunctionType
 {
-    string returnType; // return type
-    string[] parameterTypes; // parameter types
+    string[] types; // optional return and parameter types
     string toString() @safe pure
     {
-        string value = returnType;
-        if (!parameterTypes.empty)
+        string value;
+        if (!types.empty)
         {
-            value ~= `(` ~ parameterTypes.joiner(`, `).to!string ~ `)`;
+            value = `(` ~ types.joiner(`, `).to!string ~ `)`;
         }
         return value;
     }
@@ -495,21 +494,28 @@ struct CxxBareFunctionType
 CxxBareFunctionType decodeCxxBareFunctionType(ref string rest)
 {
     version(show) dln("rest: ", rest);
-    typeof(return) funType;
-    funType.returnType = rest.decodeCxxType();
+    typeof(return) bareFunctionType;
+
+    /* TODO: This behaviour may not follow grammar. */
+    if (const firstType = rest.decodeCxxType())
+    {
+        bareFunctionType.types ~= firstType;
+    }
+
     while (!rest.empty)
     {
         auto type = rest.decodeCxxType();
         if (type)
         {
-            funType.parameterTypes ~= type;
+            bareFunctionType.types ~= type;
         }
         else
         {
             break;
         }
     }
-    return funType;
+
+    return bareFunctionType;
 }
 
 struct CXXCVQualifiers
@@ -1008,16 +1014,20 @@ string decodeCxxCallOffset(ref string rest)
 string decodeCxxSpecialName(ref string rest)
 {
     version(show) dln("rest: ", rest);
+    auto restBackup = rest;
     typeof(return) name;
     if (rest.skipOverSafe('S'))
     {
         const type = rest.front();
-        final switch (type)
+        switch (type)
         {
             case 'V': name = "virtual table: "; break;
             case 'T': name = "VTT structure: "; break;
             case 'I': name = "typeinfo structure: "; break;
             case 'S': name = "typeinfo name (null-terminated byte string): "; break;
+            default:
+                rest = restBackup; // restore
+                return name;
         }
         rest.popFront(); // TODO: Can we integrate this into front()?
         name ~= rest.decodeCxxType();
@@ -1056,8 +1066,9 @@ string decodeCxxEncoding(ref string rest,
     }
     else
     {
-        return (rest.decodeCxxName() ~
-                rest.decodeCxxBareFunctionType().to!string);
+        const name = rest.decodeCxxName();
+        auto type = rest.decodeCxxBareFunctionType();
+        return name ~ type.to!string;
     }
 }
 
@@ -1106,6 +1117,12 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
+    assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol(),
+                tuple(Lang.cxx, `wikipedia::article::format`));
+
+    assertEqual(`_ZSt5state`.decodeSymbol(),
+                tuple(Lang.cxx, `::std::state`));
+
     assertEqual(`_ZN9wikipedia7article8print_toERSo`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&)`));
 
@@ -1114,16 +1131,4 @@ unittest
 
     assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
-
-    assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol(),
-                tuple(Lang.cxx, `wikipedia::article::format`));
-
-    /* assertEqual(`_ZSt5state`.decodeSymbol(), */
-    /*             tuple(Lang.cxx, `::std::state`)); */
-
-    /* assertEqual(`_ZNSt3_In4wardE`.decodeSymbol(), */
-    /*             tuple(Lang.cxx, `::std::_In::ward`)); */
-
-    /* assertEqual(`_ZStL19piecewise_construct`.decodeSymbol(), */
-    /*             tuple(Lang.cxx, `std::piecewise_construct`)); */
 }
