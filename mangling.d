@@ -27,7 +27,7 @@ import languages;
 import algorithm_ex: either, every, tryEvery, split, splitBefore, findPopBefore, findPopAfter;
 import std.functional : unaryFun, binaryFun;
 
-/* version = show; */
+version = show;
 
 /** Safe Variant of $(D skipOver).
     Merge this into Phobos. */

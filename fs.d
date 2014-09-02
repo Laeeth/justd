@@ -639,7 +639,7 @@ void scanELF(NotNull!RegFile regFile,
     import elfdoc: sectionNameExplanations;
     /* TODO: Iterate all sections and print their sectionNameExplanations[section] */
     bool flag64 = true;
-    bool showSymbols = false;
+    bool showSymbols = true;
 
     ELF elfAny;                 // either ELF32 or ELF64 context
 
