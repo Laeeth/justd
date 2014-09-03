@@ -10,6 +10,10 @@ import std.typecons,
 import vibe.d;
 
 import fs;
+
+import std.stdio;
+import std.concurrency: spawn;
+
 /* import backtrace.backtrace; */
 
 shared static this()
@@ -37,7 +41,7 @@ void req()
                 });
 }
 
-void otherMain(immutable string[] args)
+void gfmMain(immutable string[] args)
 {
     /* import std.stdio: stderr; */
     /* backtrace.backtrace.install(stderr); */
@@ -97,10 +101,7 @@ void otherMain(immutable string[] args)
                                 {[-0.5, 0.5, 0], [0, 1, 0]},
                                 {[   0,   1, 0], [0, 1, 0]}     ];
 
-
-    //
     // SQUARE
-    //
 
     Vertex[4] squareVertices = [ { [0, 0, 0], [1, 1, 1] },
                                  { [1, 0, 0], [0, 1, 1] },
@@ -145,11 +146,7 @@ void otherMain(immutable string[] args)
     squareVS.addLegacy(VertexAttribute.Role.POSITION, GL_FLOAT, 3);
     squareVS.addLegacy(VertexAttribute.Role.COLOR, GL_FLOAT, 3);
 
-
-
-    //
     // TRIANGLE
-    //
 
     Vertex[3] triangleVertices = [ { [-0.5, -0.5, 0], [1, 0.5, 0] },
                                    { [ 0.5, -0.5, 0], [0.5, 1, 0] },
@@ -198,11 +195,7 @@ void otherMain(immutable string[] args)
     triangleVS.addLegacy(VertexAttribute.Role.POSITION, GL_FLOAT, 3);
     triangleVS.addGeneric(GL_FLOAT, 3, "color_attribute");
 
-
-
-    //
     // HEXAGON
-    //
 
     auto hexVS = scoped!VertexSpecification(gl);
     // create and bind the buffer used by the hexagon vertices.
@@ -291,14 +284,16 @@ void otherMain(immutable string[] args)
 
 void smallMain()
 {
-    import std.stdio;
-    writeln("sdfdf");
+    writeln("Entered ", __FUNCTION__);
+    // assert(false);
+    writeln("Exiting ", __FUNCTION__);
 }
 
 void main(string[] args)
 {
-    import std.concurrency: spawn;
+    writeln("Entered ", __FUNCTION__);
     auto smallMainTid = spawn(&smallMain);
-    auto otherMainTid = spawn(&otherMain, args.idup);
+    auto otherMainTid = spawn(&gfmMain, args.idup);
     runEventLoop();
+    writeln("Exiting ", __FUNCTION__);
 }
