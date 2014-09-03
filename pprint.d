@@ -251,9 +251,10 @@ td, th {
 table {
     border-collapse: collapse;
 }
-tr:nth-child(even) {
-    background-color: #E8E8E8;
-}
+tr:nth-child(even) { background-color: #EBEBEB; }
+tr:nth-child(3n+0) { background: #FFF0F0; }
+tr:nth-child(3n+1) { background: #F0FFF0; }
+tr:nth-child(3n+2) { background: #F0F0FF; }
 
 </style>
 </head>
