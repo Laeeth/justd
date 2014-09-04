@@ -29,12 +29,16 @@ import std.conv: to;
 import std.ascii: isDigit;
 import std.array: array;
 import std.stdio;
-import dbg;
-import languages;
-import algorithm_ex: either, every, tryEvery, split, splitBefore, findPopBefore, findPopAfter;
 import std.functional : unaryFun, binaryFun;
 
+import algorithm_ex: either, every, tryEvery, split, splitBefore, findPopBefore, findPopAfter;
+import languages;
+
 version = show;
+version(show)
+{
+    import dbg;
+}
 
 /** Safe Variant of $(D skipOver).
     Merge this into Phobos. */
