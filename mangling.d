@@ -22,7 +22,7 @@
  */
 module mangling;
 
-import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront, repeat;
+import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront, repeat, isInputRange;
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
 import std.typecons: tuple, Tuple;
 import std.conv: to;
@@ -60,7 +60,7 @@ else
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
     Bool-conversion of returned value gives same result as rest.skipOver(lit).
 */
-string skipLiteral(T)(ref string rest, T lit)
+string skipLiteral(R, E)(ref R rest, E lit) if (isInputRange!R)
 {
     return rest.skipOverSafe(lit) ? "" : null;
 }
@@ -68,7 +68,7 @@ string skipLiteral(T)(ref string rest, T lit)
 /** Decode Unqualified C++ Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
 */
-string decodeCxxUnqualifiedType(ref string rest)
+R decodeCxxUnqualifiedType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     return either(rest.decodeCxxBuiltinType(),
@@ -79,7 +79,7 @@ string decodeCxxUnqualifiedType(ref string rest)
 /** Decode C++ Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
 */
-string decodeCxxType(ref string rest)
+R decodeCxxType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
 
@@ -136,7 +136,7 @@ string decodeCxxType(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.class-enum-type */
-string decodeCxxClassEnumType(ref string rest)
+string decodeCxxClassEnumType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string type;
@@ -163,12 +163,12 @@ string decodeCxxClassEnumType(ref string rest)
     }
     else
     {
-        assert(!prefix); // if we faile to decode name prefix should not have existed either
+        assert(!prefix); // if we failed to decode name prefix should not have existed either
     }
     return type;
 }
 
-string decodeCxxExpression(ref string rest)
+string decodeCxxExpression(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string exp;
@@ -176,7 +176,7 @@ string decodeCxxExpression(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.array-type */
-string decodeCxxArrayType(ref string rest)
+string decodeCxxArrayType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string type;
@@ -198,7 +198,7 @@ string decodeCxxArrayType(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.pointer-to-member-type */
-string decodeCxxPointerToMemberType(ref string rest)
+string decodeCxxPointerToMemberType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string type;
@@ -212,7 +212,7 @@ string decodeCxxPointerToMemberType(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-param */
-string decodeCxxTemplateParam(ref string rest)
+string decodeCxxTemplateParam(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string param;
@@ -231,7 +231,7 @@ string decodeCxxTemplateParam(ref string rest)
     return param;
 }
 
-string decodeCxxTemplateTemplateParamAndArgs(ref string rest)
+string decodeCxxTemplateTemplateParamAndArgs(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string value;
@@ -245,7 +245,7 @@ string decodeCxxTemplateTemplateParamAndArgs(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.decltype */
-string decodeCxxDecltype(ref string rest)
+string decodeCxxDecltype(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string type;
@@ -258,7 +258,7 @@ string decodeCxxDecltype(ref string rest)
     return type;
 }
 
-string decodeCxxDigit(ref string rest)
+string decodeCxxDigit(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     auto digit = rest[0..1];
@@ -269,7 +269,7 @@ string decodeCxxDigit(ref string rest)
 /** Try to Decode C++ Operator at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-operator
 */
-string decodeCxxOperatorName(ref string rest)
+string decodeCxxOperatorName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
 
@@ -370,7 +370,7 @@ string decodeCxxOperatorName(ref string rest)
 /** Try to Decode C++ Builtin Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
 */
-string decodeCxxBuiltinType(ref string rest)
+string decodeCxxBuiltinType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string type;
@@ -440,7 +440,7 @@ string decodeCxxBuiltinType(ref string rest)
 /** Decode C++ Substitution Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.substitution
 */
-string decodeCxxSubstitution(ref string rest, string stdPrefix = `::std::`)
+string decodeCxxSubstitution(R)(ref R rest, string stdPrefix = `::std::`) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string type;
@@ -488,7 +488,7 @@ string decodeCxxSubstitution(ref string rest, string stdPrefix = `::std::`)
 /** Try to Decode C++ Function Type at $(D rest).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.function-type
 */
-string decodeCxxFunctionType(ref string rest)
+string decodeCxxFunctionType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     auto restLookAhead = rest; // needed for lookahead parsing of CV-qualifiers
@@ -521,7 +521,7 @@ struct CxxBareFunctionType
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.bare-function-type */
-CxxBareFunctionType decodeCxxBareFunctionType(ref string rest)
+CxxBareFunctionType decodeCxxBareFunctionType(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     typeof(return) bareFunctionType;
@@ -574,7 +574,7 @@ struct CXXCVQualifiers
 /** Decode <CV-qualifiers>
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.CV-qualifiers
 */
-CXXCVQualifiers decodeCxxCVQualifiers(ref string rest)
+CXXCVQualifiers decodeCxxCVQualifiers(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     typeof(return) cvQ;
@@ -605,7 +605,7 @@ string toCxxString(CxxRefQualifier refQ) @safe pure nothrow
 /** Decode <ref-qualifier>
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
 */
-CxxRefQualifier decodeCxxRefQualifier(ref string rest)
+CxxRefQualifier decodeCxxRefQualifier(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     if (rest.skipOverSafe('R'))
@@ -625,7 +625,7 @@ CxxRefQualifier decodeCxxRefQualifier(ref string rest)
 /** Decode Identifier <source-name>.
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.source-name
 */
-string decodeCxxSourceName(ref string rest)
+string decodeCxxSourceName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string id;
@@ -651,7 +651,7 @@ string decodeCxxSourceName(ref string rest)
    <nested-name>
    is redundant as it is included in <prefix> and is skipped here.
  */
-string decodeCxxNestedName(ref string rest)
+string decodeCxxNestedName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     if (rest.skipOverSafe('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
@@ -684,7 +684,7 @@ enum CtorDtorName
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ctor-dtor-name */
-string decodeCxxCtorDtorName(ref string rest)
+string decodeCxxCtorDtorName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string name;
@@ -708,7 +708,7 @@ string decodeCxxCtorDtorName(ref string rest)
 }
 
 /** https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unqualified-name */
-string decodeCxxUnqualifiedName(ref string rest)
+string decodeCxxUnqualifiedName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     return either(rest.decodeCxxOperatorName(),
@@ -718,7 +718,7 @@ string decodeCxxUnqualifiedName(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unnamed-type-name */
-string decodeCxxUnnamedTypeName(ref string rest)
+string decodeCxxUnnamedTypeName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string type;
@@ -732,7 +732,7 @@ string decodeCxxUnnamedTypeName(ref string rest)
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-prefix
  */
-string decodeCxxTemplatePrefix(ref string rest)
+string decodeCxxTemplatePrefix(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     // NOTE: Removed <prefix> because of recursion
@@ -742,7 +742,7 @@ string decodeCxxTemplatePrefix(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-args */
-string[] decodeCxxTemplateArgs(ref string rest)
+string[] decodeCxxTemplateArgs(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     typeof(return) args;
@@ -767,7 +767,7 @@ string[] decodeCxxTemplateArgs(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name */
-string decodeCxxMangledName(ref string rest)
+string decodeCxxMangledName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string name;
@@ -779,7 +779,7 @@ string decodeCxxMangledName(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.expr-primary */
-string decodeCxxExprPrimary(ref string rest)
+string decodeCxxExprPrimary(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string expr;
@@ -800,7 +800,7 @@ string decodeCxxExprPrimary(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-arg */
-string decodeCxxTemplateArg(ref string rest)
+string decodeCxxTemplateArg(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string arg;
@@ -835,7 +835,7 @@ string decodeCxxTemplateArg(ref string rest)
     return arg;
 }
 
-string decodeCxxTemplatePrefixAndArgs(ref string rest)
+string decodeCxxTemplatePrefixAndArgs(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     auto restBackup = rest;
@@ -896,7 +896,7 @@ string decodeCxxPrefix(ref string rest, string scopeSeparator = "::")
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-name */
-string decodeCxxUnscopedName(ref string rest)
+string decodeCxxUnscopedName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     auto restBackup = rest;
@@ -913,7 +913,7 @@ string decodeCxxUnscopedName(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-template-name */
-string decodeCxxUnscopedTemplateName(ref string rest)
+string decodeCxxUnscopedTemplateName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     return either(rest.decodeCxxSubstitution(), // faster backtracking with substitution
@@ -921,7 +921,7 @@ string decodeCxxUnscopedTemplateName(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-template-name */
-string decodeCxxUnscopedTemplateNameAndArgs(ref string rest)
+string decodeCxxUnscopedTemplateNameAndArgs(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string nameAndArgs;
@@ -937,7 +937,7 @@ string decodeCxxUnscopedTemplateNameAndArgs(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.number */
-string decodeCxxNumber(ref string rest)
+string decodeCxxNumber(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string number;
@@ -952,7 +952,7 @@ string decodeCxxNumber(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.discriminator */
-string decodeCxxDescriminator(ref string rest)
+string decodeCxxDescriminator(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     string descriminator;
@@ -1001,7 +1001,7 @@ T decodeCxxLocalName(T)(ref T rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.name */
-string decodeCxxName(ref string rest)
+string decodeCxxName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     return either(rest.decodeCxxNestedName(),
@@ -1010,13 +1010,13 @@ string decodeCxxName(ref string rest)
                   rest.decodeCxxUnscopedTemplateNameAndArgs()); // NOTE: order flipped
 }
 
-string decodeCxxNVOffset(ref string rest)
+string decodeCxxNVOffset(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     return rest.decodeCxxNumber();
 }
 
-string decodeCxxVOffset(ref string rest)
+string decodeCxxVOffset(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     auto offset = rest.decodeCxxNumber();
@@ -1025,7 +1025,7 @@ string decodeCxxVOffset(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.call-offset */
-string decodeCxxCallOffset(ref string rest)
+string decodeCxxCallOffset(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     typeof(return) offset;
@@ -1043,7 +1043,7 @@ string decodeCxxCallOffset(ref string rest)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.special-name */
-string decodeCxxSpecialName(ref string rest)
+string decodeCxxSpecialName(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     auto restBackup = rest;
