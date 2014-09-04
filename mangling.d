@@ -91,7 +91,7 @@ R decodeCxxType(R)(ref R rest) if (isInputRange!R)
 
     // <ref-qualifier>)
     bool isRef = false;      // & ref-qualifier
-    bool isRVRef = false;    // && ref-qualifier (C++11)
+    bool isRvalueRef = false;    // && ref-qualifier (C++11)
     bool isComplexPair = false;    // complex pair (C 2000)
     bool isImaginary = false;    // imaginary (C 2000)
     int pointerCount = 0;
@@ -99,23 +99,32 @@ R decodeCxxType(R)(ref R rest) if (isInputRange!R)
     /* TODO: Order of these may vary. */
     const cvQ = rest.decodeCxxCVQualifiers();
 
-    if (rest.empty) { return type; }
-
-    switch (rest[0])
+    while (!rest.empty)
     {
-        case 'P': rest.popFront(); pointerCount++; break;
-            // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
-        case 'R': rest.popFront(); isRef = true; break;
-        case 'O': rest.popFront(); isRVRef = true; break;
-        case 'C': rest.popFront(); isComplexPair = true; break;
-        case 'G': rest.popFront(); isImaginary = true; break;
-        case 'U': rest.popFront();
-            const sourceName = rest.decodeCxxSourceName();
-            type = sourceName ~ rest.decodeCxxType();
-            dln("Handle vendor extended type qualifier <source-name>", rest);
+        auto miss = false;
+        switch (rest[0])
+        {
+            case 'P': rest.popFront(); pointerCount++; break;
+                // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
+            case 'R': rest.popFront(); isRef = true; break;
+            case 'O': rest.popFront(); isRvalueRef = true; break;
+            case 'C': rest.popFront(); isComplexPair = true; break;
+            case 'G': rest.popFront(); isImaginary = true; break;
+            case 'U': rest.popFront();
+                const sourceName = rest.decodeCxxSourceName();
+                type = sourceName ~ rest.decodeCxxType();
+                dln("Handle vendor extended type qualifier <source-name>", rest);
+                break;
+            default: miss = true; break;
+        }
+        if (miss)
+        {
             break;
-        default: break;
+        }
     }
+    assert(!(isRef && isRvalueRef));
+
+    if (rest.empty) { return type; }
 
     // prefix qualifiers
     type ~= cvQ.to!R;
@@ -130,9 +139,9 @@ R decodeCxxType(R)(ref R rest) if (isInputRange!R)
                    rest.decodeCxxSubstitution());
 
     // suffix qualifiers
-    if (isRef) { type ~= `&`; }
-    if (isRVRef) { type ~= `&&`; }
     type ~= '*'.repeat(pointerCount).array; // type ~= "*".replicate(pointerCount);
+    if (isRef) { type ~= `&`; }
+    if (isRvalueRef) { type ~= `&&`; }
 
     return type;
 }
@@ -548,7 +557,7 @@ CxxBareFunctionType!R decodeCxxBareFunctionType(R)(ref R rest) if (isInputRange!
     return bareFunctionType;
 }
 
-struct CXXCVQualifiers(R) if (isInputRange!R)
+struct CXXCVQualifiers
 {
     bool isRestrict; // (C99)
     bool isVolatile; // volatile
@@ -561,9 +570,9 @@ struct CXXCVQualifiers(R) if (isInputRange!R)
                 isConst);
     }
 
-    R toString() @safe pure nothrow const
+    string toString() @safe pure nothrow const
     {
-        R value;
+        typeof(return) value;
         if (isRestrict) value ~= `restrict `;
         if (isVolatile) value ~= `volatile `;
         if (isConst)    value ~= `const `;
@@ -574,7 +583,7 @@ struct CXXCVQualifiers(R) if (isInputRange!R)
 /** Decode <CV-qualifiers>
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.CV-qualifiers
 */
-CXXCVQualifiers!R decodeCxxCVQualifiers(R)(ref R rest) if (isInputRange!R)
+CXXCVQualifiers decodeCxxCVQualifiers(R)(ref R rest) if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     typeof(return) cvQ;
@@ -1109,7 +1118,7 @@ R decodeCxxEncoding(R)(ref R rest,
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 */
 Tuple!(Lang, R) decodeSymbol(R)(R rest,
-                                     R scopeSeparator = null) /* @safe pure nothrow @nogc */ if (isInputRange!R)
+                                R scopeSeparator = null) /* @safe pure nothrow @nogc */ if (isInputRange!R)
 {
     version(show) dln("rest: ", rest);
     if (rest.empty)
@@ -1165,6 +1174,12 @@ unittest
     assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
 
-    /* assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(), */
-    /*             tuple(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
+    assertEqual(`_ZL8next_argRPPc`.decodeSymbol(),
+                tuple(Lang.cxx, `next_arg(char**&)`));
+
+    /* assertEqual(`_ZZL8next_argRPPcE4keys`.decodeSymbol(), */
+    /*             tuple(Lang.cxx, `next_arg(char**&)::keys`)); */
+
+    assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(),
+                tuple(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`));
 }
