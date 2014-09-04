@@ -2588,7 +2588,7 @@ class GStats
         static immutable extsELF = ["o", "so", "ko", "os", "out", "bin", "x", "elf", "axf", "prx", "puff", "none"]; // ELF file extensions
 
         auto elfKind = new FKind("ELF",
-                                 [], extsELF, x"7F45 4C46", 0, [], [],
+                                 [], extsELF, x"7F 45 4C 46", 0, [], [],
                                  [], // N/A
                                  [], // N/A
                                  FileContent.machineCode,
@@ -2605,7 +2605,7 @@ class GStats
         /* elfKind.subKinds ~= elfKind; */
 
         // Executables
-        binFKinds ~= new FKind("Mach-O", [], ["o"], x"CEFA EDFE", 0, [], [],
+        binFKinds ~= new FKind("Mach-O", [], ["o"], x"CE FA ED FE", 0, [], [],
                                [], // N/A
                                [], // N/A
                                FileContent.machineCode, FileKindDetection.equalsContents);
@@ -2615,7 +2615,7 @@ class GStats
                                [], // N/A
                                FileContent.binaryUnknown, FileKindDetection.equalsContents);
 
-        auto kindCOFF = new FKind("COFF/i386/32", [], ["o"], x"4C01", 0, [], [],
+        auto kindCOFF = new FKind("COFF/i386/32", [], ["o"], x"4C 01", 0, [], [],
                                   [], // N/A
                                   [], // N/A
                                   FileContent.machineCode, FileKindDetection.equalsContents);
@@ -2660,20 +2660,20 @@ class GStats
                                [], // N/A
                                FileContent.image);
         auto extJPEG = ["jpeg", "jpg", "j2k", "jpeg2000"];
-        binFKinds ~= new FKind("JPEG", [], extJPEG, x"FFD8", 0, [], [],
+        binFKinds ~= new FKind("JPEG", [], extJPEG, x"FF D8", 0, [], [],
                                [], // N/A
                                [], // N/A
                                FileContent.image); // TODO: Support ends with [0xFF, 0xD9]
-        binFKinds ~= new FKind("JPEG/JFIF", [], extJPEG, x"FFD8", 0, [], [],
+        binFKinds ~= new FKind("JPEG/JFIF", [], extJPEG, x"FF D8", 0, [], [],
                                [], // N/A
                                [], // N/A
                                FileContent.image); // TODO: Support ends with ['J','F','I','F', 0x00]
-        binFKinds ~= new FKind("JPEG/Exif", [], extJPEG, x"FFD8", 0, [], [],
+        binFKinds ~= new FKind("JPEG/Exif", [], extJPEG, x"FF D8", 0, [], [],
                                [], // N/A
                                [], // N/A
                                FileContent.image); // TODO: Support contains ['E','x','i','f', 0x00] followed by metadata
 
-        binFKinds ~= new FKind("Pack200-Compressed Java Bytes Code", [], ["class"], x"CAFEBABE", 0, [], [],
+        binFKinds ~= new FKind("Pack200-Compressed Java Bytes Code", [], ["class"], x"CA FE BA BE", 0, [], [],
                                [], // N/A
                                [], // N/A
                                FileContent.machineCode);
@@ -2734,14 +2734,14 @@ class GStats
                                          FileContent.binaryCache);
         binFKinds ~= kindLatexPDFFmt;
 
-        binFKinds ~= new FKind("Microsoft Office Document", [], ["doc", "docx", "xls", "ppt"], x"D0CF11E0", 0, [], [],
+        binFKinds ~= new FKind("Microsoft Office Document", [], ["doc", "docx", "xls", "ppt"], x"D0 CF 11 E0", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.document);
 
         // Fonts
 
-        auto kindTTF = new FKind("TrueType Font", [], ["ttf"], x"0001000000", 0, [], [],
+        auto kindTTF = new FKind("TrueType Font", [], ["ttf"], x"00 01 00 00 00", 0, [], [],
                                  [], // N/A
                                  defaultStringDelims,
                                  FileContent.font);
@@ -2819,11 +2819,11 @@ class GStats
                                FileContent.spellCheckWordList,
                                FileKindDetection.equalsNameAndContents);
 
-        binFKinds ~= new FKind("LZW-Compressed", [], ["z", "tar.z"], x"1F9D", 0, [], [],
+        binFKinds ~= new FKind("LZW-Compressed", [], ["z", "tar.z"], x"1F 9D", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.compressed);
-        binFKinds ~= new FKind("LZH-Compressed", [], ["z", "tar.z"], x"1FA0", 0, [], [],
+        binFKinds ~= new FKind("LZH-Compressed", [], ["z", "tar.z"], x"1F A0", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.compressed);
@@ -2863,25 +2863,25 @@ class GStats
                                [], // N/A
                                defaultStringDelims,
                                FileContent.byteCode, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("Python Bytes Code", [], ["pyc"], x"0D0A", 2, [], [],
+        binFKinds ~= new FKind("Python Bytes Code", [], ["pyc"], x"0D 0A", 2, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.byteCode, FileKindDetection.equalsNameAndContents); // TODO: Handle versions at src[0..2]
 
-        binFKinds ~= new FKind("Zshell Wordcode", [], ["zwc"], x"07060504", 0, [], [],
+        binFKinds ~= new FKind("Zshell Wordcode", [], ["zwc"], x"07 06 05 04", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.byteCode);
 
-        binFKinds ~= new FKind("Java Bytes Code", [], ["class"], x"CAFEBABE", 0, [], [],
+        binFKinds ~= new FKind("Java Bytes Code", [], ["class"], x"CA FE BA BE", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.byteCode, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("Java KeyStore", [], [], x"FEEDFEED", 0, [], [],
+        binFKinds ~= new FKind("Java KeyStore", [], [], x"FE ED FE ED", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.binaryUnknown, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("Java JCE KeyStore", [], [], x"CECECECE", 0, [], [],
+        binFKinds ~= new FKind("Java JCE KeyStore", [], [], x"CE CE CE CE", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.binaryUnknown, FileKindDetection.equalsContents);
@@ -2895,19 +2895,26 @@ class GStats
                                [], // N/A
                                defaultStringDelims,
                                FileContent.numericalData, FileKindDetection.equalsContents);
-        auto hdf4Kind = new FKind("HDF4", [], ["hdf", "h4", "hdf4", "he4"], x"0E031301", 0, [], [],
+
+        auto hdf4Kind = new FKind("HDF4", [], ["hdf", "h4", "hdf4", "he4"], x"0E 03 13 01", 0, [], [],
                                   [], // N/A
                                   defaultStringDelims,
                                   FileContent.numericalData);
         binFKinds ~= hdf4Kind;
         hdf4Kind.description = "Hierarchical Data Format version 4";
 
-        auto hdf5Kind = new FKind("HDF5", "Hierarchical Data Format version 5", ["hdf", "h5", "hdf5", "he5"], x"894844460D0A1A0A", 0, [], [],
+        auto hdf5Kind = new FKind("HDF5", "Hierarchical Data Format version 5", ["hdf", "h5", "hdf5", "he5"], x"89 48 44 46 0D 0A 1A 0A", 0, [], [],
                                   [], // N/A
                                   defaultStringDelims,
                                   FileContent.numericalData);
         binFKinds ~= hdf5Kind;
         hdf5Kind.description = "Hierarchical Data Format version 5";
+
+        auto numpyKind = new FKind("NUMPY", "NUMPY", ["npy", "numpy"], x"93 4E 55 4D 50 59", 0, [], [],
+                                  [], // N/A
+                                  defaultStringDelims,
+                                  FileContent.numericalData);
+        binFKinds ~= numpyKind;
 
         binFKinds ~= new FKind("GNU GLOBAL Database", ["GTAGS", "GRTAGS", "GPATH", "GSYMS"], [], "b1\5\0", 0, [], [],
                                [], // N/A
@@ -2916,23 +2923,23 @@ class GStats
 
         // SQLite
         static immutable extsSQLite = ["sql", "sqlite", "sqlite3"];
-        binFKinds ~= new FKind("MySQL table definition file", [], extsSQLite, x"FE01", 0, [], [],
+        binFKinds ~= new FKind("MySQL table definition file", [], extsSQLite, x"FE 01", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL MyISAM index file", [], extsSQLite, x"FEFE07", 0, [], [],
+        binFKinds ~= new FKind("MySQL MyISAM index file", [], extsSQLite, x"FE FE 07", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL MyISAM compressed data file", [], extsSQLite, x"FEFE08", 0, [], [],
+        binFKinds ~= new FKind("MySQL MyISAM compressed data file", [], extsSQLite, x"FE FE 08", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL Maria index file", [], extsSQLite, x"FFFFFF", 0, [], [],
+        binFKinds ~= new FKind("MySQL Maria index file", [], extsSQLite, x"FF FF FF", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
-        binFKinds ~= new FKind("MySQL Maria compressed data file", [], extsSQLite, x"FFFFFF", 0, [], [],
+        binFKinds ~= new FKind("MySQL Maria compressed data file", [], extsSQLite, x"FF FF FF", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.tagsDatabase, FileKindDetection.equalsContents);
@@ -2965,16 +2972,16 @@ class GStats
                                defaultStringDelims,
                                FileContent.database, FileKindDetection.equalsName); // TODO: Add check for binary contents and that some parenting directory is named "firmware"
 
-        binFKinds ~= new FKind("sconsign", [], ["sconsign", "sconsign.dblite", "dblite"], x"7d710128", 0, [], [],
+        binFKinds ~= new FKind("sconsign", [], ["sconsign", "sconsign.dblite", "dblite"], x"7d 71 01 28", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.cache, FileKindDetection.equalsNameAndContents);
 
-        binFKinds ~= new FKind("GnuPG (GPG) key public ring", [], ["gpg"], x"9901", 0, [], [],
+        binFKinds ~= new FKind("GnuPG (GPG) key public ring", [], ["gpg"], x"99 01", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.binary, FileKindDetection.equalsNameOrContents);
-        binFKinds ~= new FKind("GnuPG (GPG) encrypted data", [], [], x"8502", 0, [], [],
+        binFKinds ~= new FKind("GnuPG (GPG) encrypted data", [], [], x"85 02", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.binary, FileKindDetection.equalsContents);
