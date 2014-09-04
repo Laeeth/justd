@@ -22,7 +22,7 @@
  */
 module mangling;
 
-import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront;
+import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront, repeat;
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
 import std.typecons: tuple, Tuple;
 import std.conv: to;
@@ -92,7 +92,7 @@ string decodeCxxType(ref string rest)
     bool isRVRef = false;    // && ref-qualifier (C++11)
     bool isComplexPair = false;    // complex pair (C 2000)
     bool isImaginary = false;    // imaginary (C 2000)
-    bool isPointer = false;
+    int pointerCount = 0;
 
     /* TODO: Order of these may vary. */
     const cvQ = rest.decodeCxxCVQualifiers();
@@ -101,7 +101,7 @@ string decodeCxxType(ref string rest)
 
     switch (rest[0])
     {
-        case 'P': rest.popFront(); isPointer = true; break;
+        case 'P': rest.popFront(); pointerCount++; break;
             // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
         case 'R': rest.popFront(); isRef = true; break;
         case 'O': rest.popFront(); isRVRef = true; break;
@@ -130,7 +130,7 @@ string decodeCxxType(ref string rest)
     // suffix qualifiers
     if (isRef) { type ~= `&`; }
     if (isRVRef) { type ~= `&&`; }
-    if (isPointer) { type = type ~ `*`; }
+    type ~= repeat('*', pointerCount).array.to!string; // TODO: Simpler way?
 
     return type;
 }
@@ -1147,11 +1147,11 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
-    assertEqual(`_Z1hi`.decodeSymbol(),
-                tuple(Lang.cxx, `h(int)`));
-
     assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(),
                 tuple(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`));
+
+    assertEqual(`_Z1hi`.decodeSymbol(),
+                tuple(Lang.cxx, `h(int)`));
 
     assertEqual(`_ZN9wikipedia7article6formatE`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format`));
