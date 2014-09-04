@@ -1381,8 +1381,8 @@ unittest
 }
 
 import std.range: InputRange, OutputRange;
-alias Source = InputRange;
-alias Sink = OutputRange;
+alias Source = InputRange; // nicer alias
+alias Sink = OutputRange; // nicer alias
 
 /* belongs to std.range */
 import std.range: cycle, retro;
