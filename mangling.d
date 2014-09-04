@@ -22,7 +22,7 @@
  */
 module mangling;
 
-import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront, repeat, isInputRange;
+import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront, repeat, replicate, isInputRange;
 import std.algorithm: startsWith, findSplitAfter, skipOver, joiner;
 import std.typecons: tuple, Tuple;
 import std.conv: to;
@@ -60,7 +60,7 @@ else
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
     Bool-conversion of returned value gives same result as rest.skipOver(lit).
 */
-R skipLiteral(R, E)(ref R rest, E lit) if (isInputRange!R)
+string skipLiteral(R, E)(ref R rest, E lit) if (isInputRange!R)
 {
     return rest.skipOverSafe(lit) ? "" : null;
 }
@@ -130,7 +130,7 @@ R decodeCxxType(R)(ref R rest) if (isInputRange!R)
     // suffix qualifiers
     if (isRef) { type ~= `&`; }
     if (isRVRef) { type ~= `&&`; }
-    type ~= repeat('*', pointerCount).array.to!R; // TODO: Simpler way?
+    type ~= '*'.repeat(pointerCount).array; // type ~= "*".replicate(pointerCount);
 
     return type;
 }
@@ -446,15 +446,13 @@ R decodeCxxSubstitution(R)(ref R rest, R stdPrefix = `::std::`) if (isInputRange
     R type;
     if (rest.skipOverSafe('S'))
     {
-        if (rest.front >= '_') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
+        if (rest.front == '_') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
             type = "${PREVIOUS}";
             rest.popFront();
         }
-        else if (rest.front >= '0' &&
-                 rest.front <= '9' ||
-                 rest.front >= 'A' &&
-                 rest.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
+        else if ('0' <= rest.front && rest.front <= '9' ||
+                 'A' <= rest.front && rest.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
             type = "${PREVIOUS}" ~ rest.front.to!R;
             rest.popFront();
@@ -1147,9 +1145,6 @@ unittest
     import assert_ex;
     backtrace.backtrace.install(stderr);
 
-    /* assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(), */
-    /*             tuple(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
-
     assertEqual(`_Z1hi`.decodeSymbol(),
                 tuple(Lang.cxx, `h(int)`));
 
@@ -1167,4 +1162,7 @@ unittest
 
     assertEqual(`_ZN9wikipedia7article6formatEv`.decodeSymbol(),
                 tuple(Lang.cxx, `wikipedia::article::format(void)`));
+
+    /* assertEqual(`_ZL10parse_archmPPKcS0_`.decodeSymbol(), */
+    /*             tuple(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
 }
