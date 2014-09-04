@@ -84,29 +84,30 @@ void gfmMain(immutable string[] args)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    alias GLfloat[3] Position;
-    alias GLfloat[3] Color;
-    struct Vertex
+    alias Position3 = GLfloat[3];
+    alias Color3 = GLfloat[3];
+
+    struct Vertex3
     {
-        Position position;
-        Color color;
+        Position3 position;
+        Color3 color;
     }
 
-    Vertex[8] hexFanVertices = [{[   0,   0, 0], [1, 1, 1]},
-                                {[   0,   1, 0], [0, 1, 0]},
-                                {[ 0.5, 0.5, 0], [0, 1, 0]},
-                                {[ 0.5,-0.5, 0], [0, 1, 0]},
-                                {[   0,  -1, 0], [0, 1, 0]},
-                                {[-0.5,-0.5, 0], [0, 1, 0]},
-                                {[-0.5, 0.5, 0], [0, 1, 0]},
-                                {[   0,   1, 0], [0, 1, 0]}     ];
+    Vertex3[8] hexFanVertices = [ { [   0,   0, 0], [1, 1, 1] },
+                                  { [   0,   1, 0], [0, 1, 0] },
+                                  { [ 0.5, 0.5, 0], [0, 1, 0] },
+                                  { [ 0.5,-0.5, 0], [0, 1, 0] },
+                                  { [   0,  -1, 0], [0, 1, 0] },
+                                  { [-0.5,-0.5, 0], [0, 1, 0] },
+                                  { [-0.5, 0.5, 0], [0, 1, 0] },
+                                  { [   0,   1, 0], [0, 1, 0] } ];
 
     // SQUARE
 
-    Vertex[4] squareVertices = [ { [0, 0, 0], [1, 1, 1] },
-                                 { [1, 0, 0], [0, 1, 1] },
-                                 { [1, 1, 0], [0, 0, 1] },
-                                 { [0, 1, 0], [.5, .5, .5] } ];
+    Vertex3[4] squareVertices = [ { [0, 0, 0], [1, 1, 1] },
+                                  { [1, 0, 0], [0, 1, 1] },
+                                  { [1, 1, 0], [0, 0, 1] },
+                                  { [0, 1, 0], [.5, .5, .5] } ];
 
     GLuint[6] squareIndices = [0, 1, 2, 0, 2, 3];
 
@@ -148,7 +149,7 @@ void gfmMain(immutable string[] args)
 
     // TRIANGLE
 
-    Vertex[3] triangleVertices = [ { [-0.5, -0.5, 0], [1, 0.5, 0] },
+    Vertex3[3] triangleVertices = [ { [-0.5, -0.5, 0], [1, 0.5, 0] },
                                    { [ 0.5, -0.5, 0], [0.5, 1, 0] },
                                    { [   0,  0.5, 0], [1, 1, 0] } ];
 
@@ -257,14 +258,19 @@ void gfmMain(immutable string[] args)
         // draw the square
         squareVS.use();         // use this VertexSpecification
         squareProgram.use();    // use the square shader program
-        glDrawElements(GL_TRIANGLES, cast(int)(squareVS.IBO.size() / uint.sizeof), GL_UNSIGNED_INT, cast(void*)0);
+        glDrawElements(GL_TRIANGLES,
+                       cast(int)(squareVS.IBO.size() / uint.sizeof),
+                       GL_UNSIGNED_INT,
+                       cast(void*)0);
         squareProgram.unuse();  // unuse this VertexSpecification
         squareVS.unuse();       // unuse the square shader program
 
         // draw the hexagon
         hexProgram.use();       // use the hexagon shader program
         hexVS.use();            // use this VertexSpecification
-        glDrawArrays(GL_TRIANGLE_FAN, 0, cast(int)(hexVS.VBO.size() / hexVS.vertexSize()));
+        glDrawArrays(GL_TRIANGLE_FAN,
+                     0,
+                     cast(int)(hexVS.VBO.size() / hexVS.vertexSize()));
         hexProgram.unuse();     // unuse th VertexSpecification
         hexVS.unuse();          // unuse the shader program
 
@@ -273,7 +279,9 @@ void gfmMain(immutable string[] args)
         triangleProgram.uniform("angle").set!float(time * 0.4);
         triangleProgram.use();
         triangleVS.use(triangleProgram);
-        glDrawArrays(GL_TRIANGLES, 0, cast(int)(triangleVBO.size() / triangleVS.vertexSize()));
+        glDrawArrays(GL_TRIANGLES,
+                     0,
+                     cast(int)(triangleVBO.size() / triangleVS.vertexSize()));
         triangleProgram.unuse();
         triangleVS.unuse();
 
