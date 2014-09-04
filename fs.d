@@ -318,6 +318,7 @@ enum FOp
     checkSyntax,                // Check syntax
     lint = checkSyntax,         // Check syntax alias
 
+    build, // Project-Wide Build
     compile, // Compile
     byteCompile, // Byte compile
     run, // Run (Execute)
@@ -2466,12 +2467,14 @@ class GStats
                                defaultStringDelims,
                                FileContent.sourceCode);
 
-        txtFKinds ~= new FKind("DUB",
-                               ["dub.json"], ["json"],
-                               [], 0, [], [],
-                               [], // N/A
-                               defaultStringDelims,
-                               FileContent.scriptCode);
+        auto dubFKind = new FKind("DUB",
+                                  ["dub.json"], ["json"],
+                                  [], 0, [], [],
+                                  [], // N/A
+                                  defaultStringDelims,
+                                  FileContent.scriptCode);
+        txtFKinds ~= dubFKind;
+        dubFKind.operations ~= tuple(FOp.build, `dub`);
 
         // TODO: Inherit XML
         txtFKinds ~= new FKind("JSP", [], ["jsp", "jspx", "jhtm", "jhtml"], [], 0, [], [],
