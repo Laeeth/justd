@@ -40,8 +40,6 @@ version(show)
     import dbg;
 }
 
-/** Safe Variant of $(D skipOver).
-    Merge this into Phobos. */
 static if (__VERSION__ >= 2067)
 {
     unittest
