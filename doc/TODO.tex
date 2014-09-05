@@ -38,6 +38,12 @@
 \section{Compiler Diagnostics}
 \begin{itemize}
 
+\item Escape Analysis (EA). Pointers to stack memory should not escape scope. This is
+  accepted in unsafe mode but not in safe. (EA) could figure out more
+  cases where this should be allowed in safe mode.
+
+See https://en.wikipedia.org/wiki/Escape_analysis
+
 \item Mismatched function calls parameters and unmatched template predicates such as
 
 \begin{lstlisting}[frame=single]
