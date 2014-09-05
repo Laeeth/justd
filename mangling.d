@@ -9,7 +9,7 @@
     TODO: Only check for emptyness before any optionals.
 
     TODO: Search for pattern "X> <Y" and assure that they all use
-    return rest.tryEvery(X, Y).
+    return r.tryEvery(X, Y).
 
     TODO: 1. Replace calls to decode ~ decode with separate decodes
     TODO: 2 : Replace calls to decode ~ decode with a sequence call.
@@ -61,47 +61,47 @@ else
 
 class CxxDemangler(R) if (isInputRange!R)
 {
-    this(R rest)
+    this(R r)
     {
-        this.rest = rest;
+        this.r = r;
     }
-    R rest;
+    R r;
     string[] ids; // ids demangled so far
 }
-auto cxxDemangler(R)(R rest) if (isInputRange!R)
+auto cxxDemangler(R)(R r) if (isInputRange!R)
 {
-    return new CxxDemangler!R(rest);
+    return new CxxDemangler!R(r);
 }
 
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
-    Bool-conversion of returned value gives same result as rest.skipOver(lit).
+    Bool-conversion of returned value gives same result as r.skipOver(lit).
 */
 string skipLiteral(R, E)(CxxDemangler!R x, E lit) if (isInputRange!R)
 {
-    return x.rest.skipOverSafe(lit) ? "" : null;
+    return x.r.skipOverSafe(lit) ? "" : null;
 }
 
-/** Decode Unqualified C++ Type at $(D rest).
+/** Decode Unqualified C++ Type at $(D r).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
 */
 R decodeCxxUnqualifiedType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     return either(x.decodeCxxBuiltinType(),
                   x.decodeCxxSubstitution(),
                   x.decodeCxxFunctionType());
 }
 
-/** Decode C++ Type at $(D rest).
+/** Decode C++ Type at $(D r).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
 */
 R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
 
     typeof(return) type;
 
-    const packExpansion = x.rest.skipOver(`Dp`); // (C++11)
+    const packExpansion = x.r.skipOver(`Dp`); // (C++11)
 
     // <ref-qualifier>)
     bool isRef = false;      // & ref-qualifier
@@ -111,9 +111,9 @@ R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
     int pointerCount = 0;
     CXXCVQualifiers cvQ;
 
-    while (!x.rest.empty)
+    while (!x.r.empty)
     {
-        if (const cvQ_ = x.rest.decodeCxxCVQualifiers())
+        if (const cvQ_ = x.r.decodeCxxCVQualifiers())
         {
             cvQ.isRestrict |= cvQ_.isRestrict;
             cvQ.isVolatile |= cvQ_.isVolatile;
@@ -123,18 +123,18 @@ R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
         else
         {
             auto miss = false;
-            switch (x.rest[0])
+            switch (x.r[0])
             {
-                case 'P': x.rest.popFront(); pointerCount++; break;
+                case 'P': x.r.popFront(); pointerCount++; break;
                     // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
-                case 'R': x.rest.popFront(); isRef = true; break;
-                case 'O': x.rest.popFront(); isRvalueRef = true; break;
-                case 'C': x.rest.popFront(); isComplexPair = true; dln("TODO: Handle complex pair (C 2000)"); break;
-                case 'G': x.rest.popFront(); isImaginary = true; dln("TODO: Handle imaginary (C 2000)"); break;
-                case 'U': x.rest.popFront();
+                case 'R': x.r.popFront(); isRef = true; break;
+                case 'O': x.r.popFront(); isRvalueRef = true; break;
+                case 'C': x.r.popFront(); isComplexPair = true; dln("TODO: Handle complex pair (C 2000)"); break;
+                case 'G': x.r.popFront(); isImaginary = true; dln("TODO: Handle imaginary (C 2000)"); break;
+                case 'U': x.r.popFront();
                     const sourceName = x.decodeCxxSourceName();
                     type = sourceName ~ x.decodeCxxType();
-                    dln("TODO: Handle vendor extended type qualifier <source-name>", x.rest);
+                    dln("TODO: Handle vendor extended type qualifier <source-name>", x.r);
                     break;
                 default: miss = true; break;
             }
@@ -146,11 +146,11 @@ R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
     }
     assert(!(isRef && isRvalueRef));
 
-    if (x.rest.empty) { return type; }
+    if (x.r.empty) { return type; }
 
-    dln("type:", type, "rest:", x.rest);
+    dln("type:", type, "r:", x.r);
 
-    dln("type:", type, "rest:", x.rest);
+    dln("type:", type, "r:", x.r);
 
     if (cvQ.isVolatile)
     {
@@ -175,14 +175,14 @@ R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
         type ~= " const";
     }
 
-    dln("type:", type, "rest:", x.rest);
+    dln("type:", type, "r:", x.r);
 
     // suffix qualifiers
     type ~= '*'.repeat(pointerCount).array; // type ~= "*".replicate(pointerCount);
     if (isRef) { type ~= `&`; }
     if (isRvalueRef) { type ~= `&&`; }
 
-    dln("type:", type, "rest:", x.rest);
+    dln("type:", type, "r:", x.r);
 
     return type;
 }
@@ -190,13 +190,13 @@ R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.class-enum-type */
 R decodeCxxClassEnumType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R type;
     R prefix;
     enum n = 2;
-    if (x.rest.length >= n)
+    if (x.r.length >= n)
     {
-        switch (x.rest[0..n])
+        switch (x.r[0..n])
         {
             case `Ts`: prefix = `struct `; break;
             case `Tu`: prefix = `union `; break;
@@ -205,7 +205,7 @@ R decodeCxxClassEnumType(R)(CxxDemangler!R x) if (isInputRange!R)
         }
         if (prefix)
         {
-            x.rest.popFrontExactly(n);
+            x.r.popFrontExactly(n);
         }
     }
     const name = x.decodeCxxName();
@@ -222,7 +222,7 @@ R decodeCxxClassEnumType(R)(CxxDemangler!R x) if (isInputRange!R)
 
 R decodeCxxExpression(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R exp;
     assert(false, "TODO");
 }
@@ -230,19 +230,19 @@ R decodeCxxExpression(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.array-type */
 R decodeCxxArrayType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R type;
-    if (x.rest.skipOverSafe('A'))
+    if (x.r.skipOverSafe('A'))
     {
         if (const num = x.decodeCxxNumber())
         {
-            assert(x.rest.skipOverSafe('_'));
+            assert(x.r.skipOverSafe('_'));
             type = x.decodeCxxType() ~ `[]` ~ num ~ `[]`;
         }
         else
         {
             const dimensionExpression = x.decodeCxxExpression();
-            assert(x.rest.skipOverSafe('_'));
+            assert(x.r.skipOverSafe('_'));
             type = x.decodeCxxType() ~ `[]` ~ dimensionExpression ~ `[]`;
         }
     }
@@ -252,9 +252,9 @@ R decodeCxxArrayType(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.pointer-to-member-type */
 R decodeCxxPointerToMemberType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R type;
-    if (x.rest.skipOverSafe('M'))
+    if (x.r.skipOverSafe('M'))
     {
         const classType = x.decodeCxxType(); // <class type>
         const memberType = x.decodeCxxType(); // <mmeber type>
@@ -266,18 +266,18 @@ R decodeCxxPointerToMemberType(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-param */
 R decodeCxxTemplateParam(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R param;
-    if (x.rest.skipOverSafe('T'))
+    if (x.r.skipOverSafe('T'))
     {
-        if (x.rest.skipOverSafe('_'))
+        if (x.r.skipOverSafe('_'))
         {
             param = `first template parameter`;
         }
         else
         {
             param = x.decodeCxxNumber();
-            assert(x.rest.skipOverSafe('_'));
+            assert(x.r.skipOverSafe('_'));
         }
     }
     return param;
@@ -285,7 +285,7 @@ R decodeCxxTemplateParam(R)(CxxDemangler!R x) if (isInputRange!R)
 
 R decodeCxxTemplateTemplateParamAndArgs(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R value;
     if (const param = either(x.decodeCxxTemplateParam(),
                              x.decodeCxxSubstitution()))
@@ -299,33 +299,33 @@ R decodeCxxTemplateTemplateParamAndArgs(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.decltype */
 R decodeCxxDecltype(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R type;
-    if (x.rest.skipOver(`Dt`) ||
-        x.rest.skipOver(`DT`))
+    if (x.r.skipOver(`Dt`) ||
+        x.r.skipOver(`DT`))
     {
         type = x.decodeCxxExpression();
-        assert(x.rest.skipOverSafe('E'));
+        assert(x.r.skipOverSafe('E'));
     }
     return type;
 }
 
 R decodeCxxDigit(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    auto digit = x.rest[0..1];
-    x.rest.popFront();
+    version(show) dln("r: ", x.r);
+    auto digit = x.r[0..1];
+    x.r.popFront();
     return digit;
 }
 
-/** Try to Decode C++ Operator at $(D rest).
+/** Try to Decode C++ Operator at $(D r).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-operator
 */
 R decodeCxxOperatorName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
 
-    if (x.rest.skipOverSafe('v'))     // vendor extended operator
+    if (x.r.skipOverSafe('v'))     // vendor extended operator
     {
         const digit = x.decodeCxxDigit();
         const sourceName = x.decodeCxxSourceName();
@@ -334,8 +334,8 @@ R decodeCxxOperatorName(R)(CxxDemangler!R x) if (isInputRange!R)
 
     R op;
     enum n = 2;
-    if (x.rest.length < n) { return typeof(return).init; }
-    const code = x.rest[0..n];
+    if (x.r.length < n) { return typeof(return).init; }
+    const code = x.r[0..n];
     switch (code)
     {
         case `nw`: op = `operator new`; break;
@@ -406,7 +406,7 @@ R decodeCxxOperatorName(R)(CxxDemangler!R x) if (isInputRange!R)
 
     if (op)
     {
-        x.rest.popFrontExactly(n); // digest it
+        x.r.popFrontExactly(n); // digest it
     }
 
     switch (code)
@@ -419,63 +419,63 @@ R decodeCxxOperatorName(R)(CxxDemangler!R x) if (isInputRange!R)
     return op;
 }
 
-/** Try to Decode C++ Builtin Type at $(D rest).
+/** Try to Decode C++ Builtin Type at $(D r).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.builtin-type
 */
 R decodeCxxBuiltinType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R type;
     enum n = 1;
-    if (x.rest.length < n) { return type; }
-    switch (x.rest[0])
+    if (x.r.length < n) { return type; }
+    switch (x.r[0])
     {
-        case 'v': x.rest.popFront(); type = `void`; break;
-        case 'w': x.rest.popFront(); type = `wchar_t`; break;
+        case 'v': x.r.popFront(); type = `void`; break;
+        case 'w': x.r.popFront(); type = `wchar_t`; break;
 
-        case 'b': x.rest.popFront(); type = `bool`; break;
+        case 'b': x.r.popFront(); type = `bool`; break;
 
-        case 'c': x.rest.popFront(); type = `char`; break;
-        case 'a': x.rest.popFront(); type = `signed char`; break;
-        case 'h': x.rest.popFront(); type = `unsigned char`; break;
+        case 'c': x.r.popFront(); type = `char`; break;
+        case 'a': x.r.popFront(); type = `signed char`; break;
+        case 'h': x.r.popFront(); type = `unsigned char`; break;
 
-        case 's': x.rest.popFront(); type = `short`; break;
-        case 't': x.rest.popFront(); type = `unsigned short`; break;
+        case 's': x.r.popFront(); type = `short`; break;
+        case 't': x.r.popFront(); type = `unsigned short`; break;
 
-        case 'i': x.rest.popFront(); type = `int`; break;
-        case 'j': x.rest.popFront(); type = `unsigned int`; break;
+        case 'i': x.r.popFront(); type = `int`; break;
+        case 'j': x.r.popFront(); type = `unsigned int`; break;
 
-        case 'l': x.rest.popFront(); type = `long`; break;
-        case 'm': x.rest.popFront(); type = `unsigned long`; break;
+        case 'l': x.r.popFront(); type = `long`; break;
+        case 'm': x.r.popFront(); type = `unsigned long`; break;
 
-        case 'x': x.rest.popFront(); type = `long long`; break;  // __int64
-        case 'y': x.rest.popFront(); type = `unsigned long long`; break; // __int64
+        case 'x': x.r.popFront(); type = `long long`; break;  // __int64
+        case 'y': x.r.popFront(); type = `unsigned long long`; break; // __int64
 
-        case 'n': x.rest.popFront(); type = `__int128`; break;
-        case 'o': x.rest.popFront(); type = `unsigned __int128`; break;
+        case 'n': x.r.popFront(); type = `__int128`; break;
+        case 'o': x.r.popFront(); type = `unsigned __int128`; break;
 
-        case 'f': x.rest.popFront(); type = `float`; break;
-        case 'd': x.rest.popFront(); type = `double`; break;
-        case 'e': x.rest.popFront(); type = `long double`; break; // __float80
-        case 'g': x.rest.popFront(); type = `__float128`; break;
+        case 'f': x.r.popFront(); type = `float`; break;
+        case 'd': x.r.popFront(); type = `double`; break;
+        case 'e': x.r.popFront(); type = `long double`; break; // __float80
+        case 'g': x.r.popFront(); type = `__float128`; break;
 
-        case 'z': x.rest.popFront(); type = `...`; break; // ellipsis
+        case 'z': x.r.popFront(); type = `...`; break; // ellipsis
 
         case 'D':
-            x.rest.popFront();
-            assert(!x.rest.empty); // need one more
-            switch (x.rest[0])
+            x.r.popFront();
+            assert(!x.r.empty); // need one more
+            switch (x.r[0])
             {
-                case 'd': x.rest.popFront(); type = `IEEE 754r decimal floating point (64 bits)`; break;
-                case 'e': x.rest.popFront(); type = `IEEE 754r decimal floating point (128 bits)`; break;
-                case 'f': x.rest.popFront(); type = `IEEE 754r decimal floating point (32 bits)`; break;
-                case 'h': x.rest.popFront(); type = `IEEE 754r half-precision floating point (16 bits)`; break;
-                case 'i': x.rest.popFront(); type = `char32_t`; break;
-                case 's': x.rest.popFront(); type = `char16_t`; break;
-                case 'a': x.rest.popFront(); type = `auto`; break;
-                case 'c': x.rest.popFront(); type = `decltype(auto)`; break;
-                case 'n': x.rest.popFront(); type = `std::nullptr_t`; break; // (i.e., decltype(nullptr))
-                default: dln(`TODO: Handle `, x.rest);
+                case 'd': x.r.popFront(); type = `IEEE 754r decimal floating point (64 bits)`; break;
+                case 'e': x.r.popFront(); type = `IEEE 754r decimal floating point (128 bits)`; break;
+                case 'f': x.r.popFront(); type = `IEEE 754r decimal floating point (32 bits)`; break;
+                case 'h': x.r.popFront(); type = `IEEE 754r half-precision floating point (16 bits)`; break;
+                case 'i': x.r.popFront(); type = `char32_t`; break;
+                case 's': x.r.popFront(); type = `char16_t`; break;
+                case 'a': x.r.popFront(); type = `auto`; break;
+                case 'c': x.r.popFront(); type = `decltype(auto)`; break;
+                case 'n': x.r.popFront(); type = `std::nullptr_t`; break; // (i.e., decltype(nullptr))
+                default: dln(`TODO: Handle `, x.r);
             }
             break;
 
@@ -489,45 +489,45 @@ R decodeCxxBuiltinType(R)(CxxDemangler!R x) if (isInputRange!R)
     return type;
 }
 
-/** Decode C++ Substitution Type at $(D rest).
+/** Decode C++ Substitution Type at $(D r).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.substitution
 */
 R decodeCxxSubstitution(R)(CxxDemangler!R x, R stdPrefix = `::std::`) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R type;
-    if (x.rest.skipOverSafe('S'))
+    if (x.r.skipOverSafe('S'))
     {
-        if (x.rest.front == '_') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
+        if (x.r.front == '_') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
             type = "${PREVIOUS}";
-            x.rest.popFront();
+            x.r.popFront();
         }
-        else if ('0' <= x.rest.front && x.rest.front <= '9' ||
-                 'A' <= x.rest.front && x.rest.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
+        else if ('0' <= x.r.front && x.r.front <= '9' ||
+                 'A' <= x.r.front && x.r.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
-            type = "${PREVIOUS}" ~ x.rest.front.to!R;
-            x.rest.popFront();
-            assert(x.rest.skipOverSafe('_'));
+            type = "${PREVIOUS}" ~ x.r.front.to!R;
+            x.r.popFront();
+            assert(x.r.skipOverSafe('_'));
         }
         else
         {
             type = stdPrefix;
-            switch (x.rest.front)
+            switch (x.r.front)
             {
-                case 't': x.rest.popFront(); type ~= `ostream`; break;
-                case 'a': x.rest.popFront(); type ~= `allocator`; break;
-                case 'b': x.rest.popFront(); type ~= `basic_string`; break;
-                case 's': x.rest.popFront();
+                case 't': x.r.popFront(); type ~= `ostream`; break;
+                case 'a': x.r.popFront(); type ~= `allocator`; break;
+                case 'b': x.r.popFront(); type ~= `basic_string`; break;
+                case 's': x.r.popFront();
                     type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
                     break;
-                case 'i': x.rest.popFront(); type ~= `istream`; break;
-                case 'o': x.rest.popFront(); type ~= `ostream`; break;
-                case 'd': x.rest.popFront(); type ~= `iostream`; break;
+                case 'i': x.r.popFront(); type ~= `istream`; break;
+                case 'o': x.r.popFront(); type ~= `ostream`; break;
+                case 'd': x.r.popFront(); type ~= `iostream`; break;
 
                 default:
-                    dln(`Cannot handle C++ standard prefix character: '`, x.rest.front, `'`);
-                    x.rest.popFront();
+                    dln(`Cannot handle C++ standard prefix character: '`, x.r.front, `'`);
+                    x.r.popFront();
                     break;
             }
         }
@@ -535,19 +535,19 @@ R decodeCxxSubstitution(R)(CxxDemangler!R x, R stdPrefix = `::std::`) if (isInpu
     return type;
 }
 
-/** Try to Decode C++ Function Type at $(D rest).
+/** Try to Decode C++ Function Type at $(D r).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.function-type
 */
 R decodeCxxFunctionType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    auto restLookAhead = x.rest; // needed for lookahead parsing of CV-qualifiers
+    version(show) dln("r: ", x.r);
+    auto restLookAhead = x.r; // needed for lookahead parsing of CV-qualifiers
     const cvQ = restLookAhead.decodeCxxCVQualifiers();
     R type;
     if (restLookAhead.skipOverSafe('F'))
     {
-        x.rest = restLookAhead; // we have found it
-        x.rest.skipOverSafe('Y'); // optional
+        x.r = restLookAhead; // we have found it
+        x.r.skipOverSafe('Y'); // optional
         type = x.decodeCxxBareFunctionType().to!R;
         const refQ = x.decodeCxxRefQualifier();
         type ~= refQ.toCxxString;
@@ -573,7 +573,7 @@ struct CxxBareFunctionType(R) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.bare-function-type */
 CxxBareFunctionType!R decodeCxxBareFunctionType(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     typeof(return) bareFunctionType;
 
     /* TODO: This behaviour may not follow grammar. */
@@ -582,7 +582,7 @@ CxxBareFunctionType!R decodeCxxBareFunctionType(R)(CxxDemangler!R x) if (isInput
         bareFunctionType.types ~= firstType;
     }
 
-    while (!x.rest.empty)
+    while (!x.r.empty)
     {
         auto type = x.decodeCxxType();
         if (type)
@@ -624,13 +624,13 @@ struct CXXCVQualifiers
 /** Decode <CV-qualifiers>
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.CV-qualifiers
 */
-CXXCVQualifiers decodeCxxCVQualifiers(R)(ref R rest) if (isInputRange!R)
+CXXCVQualifiers decodeCxxCVQualifiers(R)(ref R r) if (isInputRange!R)
 {
-    version(show) dln("rest: ", rest);
+    version(show) dln("r: ", r);
     typeof(return) cvQ;
-    if (rest.skipOverSafe('r')) { cvQ.isRestrict = true; }
-    if (rest.skipOverSafe('V')) { cvQ.isVolatile = true; }
-    if (rest.skipOverSafe('K')) { cvQ.isConst    = true; }
+    if (r.skipOverSafe('r')) { cvQ.isRestrict = true; }
+    if (r.skipOverSafe('V')) { cvQ.isVolatile = true; }
+    if (r.skipOverSafe('K')) { cvQ.isConst    = true; }
     return cvQ;
 }
 
@@ -657,12 +657,12 @@ string toCxxString(CxxRefQualifier refQ) @safe pure nothrow
 */
 CxxRefQualifier decodeCxxRefQualifier(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    if (x.rest.skipOverSafe('R'))
+    version(show) dln("r: ", x.r);
+    if (x.r.skipOverSafe('R'))
     {
         return CxxRefQualifier.normalRef;
     }
-    else if (x.rest.skipOverSafe('O'))
+    else if (x.r.skipOverSafe('O'))
     {
         return CxxRefQualifier.rvalueRef;
     }
@@ -677,19 +677,19 @@ CxxRefQualifier decodeCxxRefQualifier(R)(CxxDemangler!R x) if (isInputRange!R)
 */
 R decodeCxxSourceName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R id;
-    const sign = x.rest.skipOverSafe('n'); // if negative number
+    const sign = x.r.skipOverSafe('n'); // if negative number
     assert(!sign);
-    const match = x.rest.splitBefore!(a => !a.isDigit);
+    const match = x.r.splitBefore!(a => !a.isDigit);
     const digits = match[0];
-    x.rest = match[1];
+    x.r = match[1];
     if (!digits.empty)     // digit prefix
     {
         // TODO: Functionize these three lines
         const num = digits.to!uint;
-        id = x.rest[0..num]; // identifier, x.rest.take(num)
-        x.rest = x.rest[num..$]; // x.rest.drop(num);
+        id = x.r[0..num]; // identifier, x.r.take(num)
+        x.r = x.r[num..$]; // x.r.drop(num);
     }
     return id;
 }
@@ -703,14 +703,14 @@ R decodeCxxSourceName(R)(CxxDemangler!R x) if (isInputRange!R)
  */
 R decodeCxxNestedName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    if (x.rest.skipOverSafe('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
+    version(show) dln("r: ", x.r);
+    if (x.r.skipOverSafe('N')) // nested name: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.nested-name
     {
-        const cvQ = x.rest.decodeCxxCVQualifiers();
+        const cvQ = x.r.decodeCxxCVQualifiers();
         const refQ = x.decodeCxxRefQualifier();
         const prefix = x.decodeCxxPrefix();
         const name = x.decodeCxxUnqualifiedName();
-        assert(x.rest.skipOverSafe('E'));
+        assert(x.r.skipOverSafe('E'));
         auto ret = (cvQ.to!R ~
                     prefix ~
                     name ~
@@ -736,11 +736,11 @@ enum CtorDtorName
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ctor-dtor-name */
 R decodeCxxCtorDtorName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R name;
     enum n = 2;
-    if (x.rest.length < n) { return typeof(return).init; }
-    switch (x.rest[0..n])
+    if (x.r.length < n) { return typeof(return).init; }
+    switch (x.r[0..n])
     {
         case `C1`: name = `complete object constructor`; break;
         case `C2`: name = `base object constructor`; break;
@@ -752,7 +752,7 @@ R decodeCxxCtorDtorName(R)(CxxDemangler!R x) if (isInputRange!R)
     }
     if (name)
     {
-        x.rest.popFrontExactly(n);
+        x.r.popFrontExactly(n);
     }
     return name;
 }
@@ -760,7 +760,7 @@ R decodeCxxCtorDtorName(R)(CxxDemangler!R x) if (isInputRange!R)
 /** https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unqualified-name */
 R decodeCxxUnqualifiedName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     return either(x.decodeCxxOperatorName(),
                   x.decodeCxxSourceName(),
                   x.decodeCxxCtorDtorName(),
@@ -770,12 +770,12 @@ R decodeCxxUnqualifiedName(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unnamed-type-name */
 R decodeCxxUnnamedTypeName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R type;
-    if (x.rest.skipOver(`Ut`))
+    if (x.r.skipOver(`Ut`))
     {
         type = x.decodeCxxNumber();
-        assert(x.rest.skipOverSafe('_'));
+        assert(x.r.skipOverSafe('_'));
     }
     return type;
 }
@@ -784,7 +784,7 @@ R decodeCxxUnnamedTypeName(R)(CxxDemangler!R x) if (isInputRange!R)
  */
 R decodeCxxTemplatePrefix(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     // NOTE: Removed <prefix> because of recursion
     return either(x.decodeCxxUnqualifiedName(),
                   x.decodeCxxTemplateParam(),
@@ -794,12 +794,12 @@ R decodeCxxTemplatePrefix(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-args */
 R[] decodeCxxTemplateArgs(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     typeof(return) args;
-    if (x.rest.skipOverSafe('I'))
+    if (x.r.skipOverSafe('I'))
     {
         args ~= x.decodeCxxTemplateArg();
-        while (!x.rest.empty)
+        while (!x.r.empty)
         {
             auto arg = x.decodeCxxTemplateArg();
             if (arg)
@@ -811,7 +811,7 @@ R[] decodeCxxTemplateArgs(R)(CxxDemangler!R x) if (isInputRange!R)
                 break;
             }
         }
-        assert(x.rest.skipOverSafe('E'));
+        assert(x.r.skipOverSafe('E'));
     }
     return args;
 }
@@ -819,9 +819,9 @@ R[] decodeCxxTemplateArgs(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name */
 R decodeCxxMangledName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R name;
-    if (x.rest.skipOver(`_Z`))
+    if (x.r.skipOver(`_Z`))
     {
         return x.decodeCxxEncoding();
     }
@@ -831,9 +831,9 @@ R decodeCxxMangledName(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.expr-primary */
 R decodeCxxExprPrimary(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R expr;
-    if (x.rest.skipOverSafe('L'))
+    if (x.r.skipOverSafe('L'))
     {
         expr = x.decodeCxxMangledName();
         if (!expr)
@@ -842,9 +842,9 @@ R decodeCxxExprPrimary(R)(CxxDemangler!R x) if (isInputRange!R)
             // TODO: Howto demangle <float>?
             // TODO: Howto demangle <float> _ <float> E
             expr = x.decodeCxxType(); // <R>, <nullptr>, <pointer> type
-            bool pointerType = x.rest.skipOverSafe('0'); // null pointer template argument
+            bool pointerType = x.r.skipOverSafe('0'); // null pointer template argument
         }
-        assert(x.rest.skipOverSafe('E'));
+        assert(x.r.skipOverSafe('E'));
     }
     return expr;
 }
@@ -852,17 +852,17 @@ R decodeCxxExprPrimary(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.template-arg */
 R decodeCxxTemplateArg(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R arg;
-    if (x.rest.skipOverSafe('X'))
+    if (x.r.skipOverSafe('X'))
     {
         arg = x.decodeCxxExpression();
-        assert(x.rest.skipOverSafe('E'));
+        assert(x.r.skipOverSafe('E'));
     }
-    else if (x.rest.skipOverSafe('J'))
+    else if (x.r.skipOverSafe('J'))
     {
         R[] args;
-        while (!x.rest.empty)
+        while (!x.r.empty)
         {
             const subArg = x.decodeCxxTemplateArg();
             if (subArg)
@@ -875,7 +875,7 @@ R decodeCxxTemplateArg(R)(CxxDemangler!R x) if (isInputRange!R)
             }
         }
         arg = args.joiner(`, `).to!R;
-        assert(x.rest.skipOverSafe('E'));
+        assert(x.r.skipOverSafe('E'));
     }
     else
     {
@@ -887,8 +887,8 @@ R decodeCxxTemplateArg(R)(CxxDemangler!R x) if (isInputRange!R)
 
 R decodeCxxTemplatePrefixAndArgs(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    auto restBackup = x.rest;
+    version(show) dln("r: ", x.r);
+    auto restBackup = x.r;
     if (const prefix = x.decodeCxxTemplatePrefix())
     {
         auto args = x.decodeCxxTemplateArgs();
@@ -897,16 +897,16 @@ R decodeCxxTemplatePrefixAndArgs(R)(CxxDemangler!R x) if (isInputRange!R)
             return prefix ~ args.joiner(`, `).to!R;
         }
     }
-    x.rest = restBackup; // restore upon failure
+    x.r = restBackup; // restore upon failure
     return typeof(return).init;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.prefix */
 R decodeCxxPrefix(R)(CxxDemangler!R x, R scopeSeparator = "::") if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     typeof(return) prefix;
-    for (size_t i = 0; !x.rest.empty; ++i) // NOTE: Turned self-recursion into iteration
+    for (size_t i = 0; !x.r.empty; ++i) // NOTE: Turned self-recursion into iteration
     {
         if (const name = x.decodeCxxUnqualifiedName())
         {
@@ -948,16 +948,16 @@ R decodeCxxPrefix(R)(CxxDemangler!R x, R scopeSeparator = "::") if (isInputRange
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-name */
 R decodeCxxUnscopedName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    auto restBackup = x.rest;
-    const prefix = x.rest.skipOver(`St`) ? "::std::" : null;
+    version(show) dln("r: ", x.r);
+    auto restBackup = x.r;
+    const prefix = x.r.skipOver(`St`) ? "::std::" : null;
     if (const name = x.decodeCxxUnqualifiedName())
     {
         return prefix ~ name;
     }
     else
     {
-        x.rest = restBackup; // restore
+        x.r = restBackup; // restore
         return typeof(return).init;
     }
 }
@@ -965,7 +965,7 @@ R decodeCxxUnscopedName(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-template-name */
 R decodeCxxUnscopedTemplateName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     return either(x.decodeCxxSubstitution(), // faster backtracking with substitution
                   x.decodeCxxUnscopedName());
 }
@@ -973,7 +973,7 @@ R decodeCxxUnscopedTemplateName(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.unscoped-template-name */
 R decodeCxxUnscopedTemplateNameAndArgs(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R nameAndArgs;
     if (const name = x.decodeCxxUnscopedTemplateName())
     {
@@ -989,13 +989,13 @@ R decodeCxxUnscopedTemplateNameAndArgs(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.number */
 R decodeCxxNumber(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R number;
-    const prefix = x.rest.skipOverSafe('n'); // optional prefix
-    auto split = x.rest.splitBefore!(a => !a.isDigit());
+    const prefix = x.r.skipOverSafe('n'); // optional prefix
+    auto split = x.r.splitBefore!(a => !a.isDigit());
     if (prefix || !split[0].empty) // if complete match
     {
-        x.rest = split[1];
+        x.r = split[1];
         number = split[0];
     }
     return number;
@@ -1004,29 +1004,29 @@ R decodeCxxNumber(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.discriminator */
 R decodeCxxDescriminator(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     R descriminator;
-    if (x.rest.skipOverSafe('_'))
+    if (x.r.skipOverSafe('_'))
     {
-        if (x.rest.skipOverSafe('_'))            // number >= 10
+        if (x.r.skipOverSafe('_'))            // number >= 10
         {
             descriminator = x.decodeCxxNumber();
-            assert(x.rest.skipOverSafe('_')); // suffix
+            assert(x.r.skipOverSafe('_')); // suffix
         }
         else                    // number < 10
         {
-            x.rest.skipOverSafe('n'); // optional prefix
+            x.r.skipOverSafe('n'); // optional prefix
             /* TODO: Merge these two into a variant of popFront() that returns
              the popped element. What is best out of:
-             - General: x.rest.takeOne().to!R
-             - Arrays only: rest[0..1]
-             - Needs cast: x.rest.front
+             - General: x.r.takeOne().to!R
+             - Arrays only: r[0..1]
+             - Needs cast: x.r.front
              and are we in need of a combined variant of front() and popFront()
              say takeFront() that may fail and requires a cast.
              */
-            /* descriminator = rest[0..1]; // single digit */
-            /* x.rest.popFront(); */
-            descriminator = x.rest.moveFront.to!R;
+            /* descriminator = r[0..1]; // single digit */
+            /* x.r.popFront(); */
+            descriminator = x.r.moveFront.to!R;
         }
     }
     return descriminator;
@@ -1035,11 +1035,11 @@ R decodeCxxDescriminator(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.local-name */
 R decodeCxxLocalName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    if (x.rest.skipOverSafe('Z'))
+    version(show) dln("r: ", x.r);
+    if (x.r.skipOverSafe('Z'))
     {
         const encoding = x.decodeCxxEncoding();
-        x.rest.skipOverSafe('E');
+        x.r.skipOverSafe('E');
         const entityNameMaybe = either(x.skipLiteral('s'), // NOTE: Literal first to speed up
                                        x.decodeCxxName());
         const discriminator = x.decodeCxxDescriminator(); // optional
@@ -1053,7 +1053,7 @@ R decodeCxxLocalName(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.name */
 R decodeCxxName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     return either(x.decodeCxxNestedName(),
                   x.decodeCxxUnscopedName(),
                   x.decodeCxxLocalName(), // TODO: order flipped
@@ -1062,32 +1062,32 @@ R decodeCxxName(R)(CxxDemangler!R x) if (isInputRange!R)
 
 R decodeCxxNVOffset(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     return x.decodeCxxNumber();
 }
 
 R decodeCxxVOffset(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     auto offset = x.decodeCxxNumber();
-    assert(x.rest.skipOverSafe('_'));
+    assert(x.r.skipOverSafe('_'));
     return offset ~ x.decodeCxxNumber();
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.call-offset */
 R decodeCxxCallOffset(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
+    version(show) dln("r: ", x.r);
     typeof(return) offset;
-    if (x.rest.skipOverSafe('h'))
+    if (x.r.skipOverSafe('h'))
     {
         offset = x.decodeCxxNVOffset();
-        assert(x.rest.skipOverSafe('_'));
+        assert(x.r.skipOverSafe('_'));
     }
-    else if (x.rest.skipOverSafe('v'))
+    else if (x.r.skipOverSafe('v'))
     {
         offset = x.decodeCxxVOffset();
-        assert(x.rest.skipOverSafe('_'));
+        assert(x.r.skipOverSafe('_'));
     }
     return offset;
 }
@@ -1095,38 +1095,38 @@ R decodeCxxCallOffset(R)(CxxDemangler!R x) if (isInputRange!R)
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.special-name */
 R decodeCxxSpecialName(R)(CxxDemangler!R x) if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    auto restBackup = x.rest;
+    version(show) dln("r: ", x.r);
+    auto restBackup = x.r;
     typeof(return) name;
-    if (x.rest.skipOverSafe('S'))
+    if (x.r.skipOverSafe('S'))
     {
-        switch (x.rest.moveFront)
+        switch (x.r.moveFront)
         {
             case 'V': name = "virtual table: "; break;
             case 'T': name = "VTT structure: "; break;
             case 'I': name = "typeinfo structure: "; break;
             case 'S': name = "typeinfo name (null-terminated byte R): "; break;
             default:
-                x.rest = restBackup; // restore
+                x.r = restBackup; // restore
                 return name;
         }
         name ~= x.decodeCxxType();
     }
-    else if (x.rest.skipOver(`GV`))
+    else if (x.r.skipOver(`GV`))
     {
         name = x.decodeCxxName();
     }
-    else if (x.rest.skipOverSafe('T'))
+    else if (x.r.skipOverSafe('T'))
     {
-        if (x.rest.skipOverSafe('c'))
+        if (x.r.skipOverSafe('c'))
         {
-            name = x.rest.tryEvery(x.decodeCxxCallOffset(),
+            name = x.r.tryEvery(x.decodeCxxCallOffset(),
                                  x.decodeCxxCallOffset(),
                                  x.decodeCxxEncoding()).joiner(` `).to!R;
         }
         else
         {
-            name = x.rest.tryEvery(x.decodeCxxCallOffset(),
+            name = x.r.tryEvery(x.decodeCxxCallOffset(),
                                  x.decodeCxxEncoding()).joiner(` `).to!R;
         }
     }
@@ -1139,8 +1139,8 @@ R decodeCxxSpecialName(R)(CxxDemangler!R x) if (isInputRange!R)
 R decodeCxxEncoding(R)(CxxDemangler!R x,
                        R scopeSeparator = null) /* @safe pure nothrow @nogc */ if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    const localFlag = x.rest.skipOverSafe('L'); // TODO: What role does the L have in symbols starting with _ZL have?
+    version(show) dln("r: ", x.r);
+    const localFlag = x.r.skipOverSafe('L'); // TODO: What role does the L have in symbols starting with _ZL have?
     if (const name = x.decodeCxxSpecialName())
     {
         return name;
@@ -1153,7 +1153,7 @@ R decodeCxxEncoding(R)(CxxDemangler!R x,
     }
 }
 
-/** Demangle Symbol $(D rest) and Detect Language.
+/** Demangle Symbol $(D r) and Detect Language.
     See also: https://en.wikipedia.org/wiki/Name_mangling
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
@@ -1161,19 +1161,19 @@ R decodeCxxEncoding(R)(CxxDemangler!R x,
 Tuple!(Lang, R) decodeSymbol(R)(CxxDemangler!R x,
                                 R scopeSeparator = null) /* @safe pure nothrow @nogc */ if (isInputRange!R)
 {
-    version(show) dln("rest: ", x.rest);
-    if (x.rest.empty)
+    version(show) dln("r: ", x.r);
+    if (x.r.empty)
     {
-        return tuple(Lang.init, x.rest);
+        return tuple(Lang.init, x.r);
     }
 
-    if (!x.rest.startsWith(`_`))
+    if (!x.r.startsWith(`_`))
     {
-        return tuple(Lang.c, x.rest); // assume C
+        return tuple(Lang.c, x.r); // assume C
     }
 
     // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name
-    if (x.rest.skipOver(`_Z`))
+    if (x.r.skipOver(`_Z`))
     {
         return tuple(Lang.cxx,
                      x.decodeCxxEncoding());
@@ -1181,12 +1181,12 @@ Tuple!(Lang, R) decodeSymbol(R)(CxxDemangler!R x,
     else
     {
         import core.demangle: demangle;
-        const symAsD = x.rest.demangle;
+        const symAsD = x.r.demangle;
         import std.conv: to;
-        if (symAsD != x.rest) // TODO: Why doesn't (symAsD is rest) work here?
+        if (symAsD != x.r) // TODO: Why doesn't (symAsD is r) work here?
             return tuple(Lang.d, symAsD.to!R);
         else
-            return tuple(Lang.init, x.rest);
+            return tuple(Lang.init, x.r);
     }
 }
 
