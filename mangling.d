@@ -1040,12 +1040,19 @@ R decodeCxxLocalName(R)(CxxDemangler!R x) if (isInputRange!R)
     {
         const encoding = x.decodeCxxEncoding();
         x.r.skipOverSafe('E');
-        const entityNameMaybe = either(x.skipLiteral('s'), // NOTE: Literal first to speed up
-                                       x.decodeCxxName());
-        const discriminator = x.decodeCxxDescriminator(); // optional
-        return (encoding ~
-                entityNameMaybe ~
-                discriminator.to!R); // TODO: Optional
+        if (x.r.skipOversafe('D'))
+        {
+            assert(false, "TODO: Decode C++0x Closure Type (lambda)");
+        }
+        else
+        {
+            const entityNameMaybe = either(x.skipLiteral('s'), // NOTE: Literal first to speed up
+                                           x.decodeCxxName());
+            const discriminator = x.decodeCxxDescriminator(); // optional
+            return (encoding ~
+                    entityNameMaybe ~
+                    discriminator.to!R); // TODO: Optional
+        }
     }
     return R.init;
 }
