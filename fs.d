@@ -935,9 +935,6 @@ class File
 
     Face!Color face() const @property @safe pure nothrow { return fileFace; }
 
-    /** Returns: Depth of Depth from File System root to this File. */
-    int depth() @property @safe pure nothrow { return parent ? parent.depth + 1 : 0; }
-
     /** Check if $(D this) File has been invalidated by $(D dent).
         Returns: true iff $(D this) was obseleted.
     */
@@ -960,6 +957,26 @@ class File
 
     void makeObselete() @trusted {}
     void makeUnObselete() @safe {}
+
+    /** Returns: Depth of Depth from File System root to this File. */
+    int depth() @property @safe pure nothrow
+    {
+        return parent ? parent.depth + 1 : 0; // NOTE: this is fast because parent is memoized
+    }
+    /** NOTE: Currently not used. */
+    int depthIterative() @property @safe pure
+        out (depth) { debug assert(depth == depth); }
+    body
+    {
+        typeof(return) depth = 0;
+        auto curr = dir; // current parent
+        while (curr !is null && !curr.isRoot)
+        {
+            depth++;
+            curr = curr.parent;
+        }
+        return depth;
+    }
 
     /** Get Parenting Dirs starting from parent of $(D this) upto root.
         Make this even more lazily evaluted.
