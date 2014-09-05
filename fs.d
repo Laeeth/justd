@@ -678,7 +678,7 @@ void scanELF(NotNull!RegFile regFile,
                 if (doDemangle)
                 {
                     const name = sym.name;
-                    const hit = name.decodeSymbol;
+                    const hit = cxxDemangler(name).decodeSymbol;
                     writeln(hit[0].toTag(), ": ", hit[1]);
                 }
                 else
@@ -699,7 +699,7 @@ void scanELF(NotNull!RegFile regFile,
             {
                 if (doDemangle)
                 {
-                    const hit = sym.decodeSymbol;
+                    const hit = cxxDemangler(sym).decodeSymbol;
                     writeln(hit[0].toTag(), ": ", hit[1]);
                 }
                 else

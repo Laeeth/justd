@@ -1040,7 +1040,7 @@ R decodeCxxLocalName(R)(CxxDemangler!R x) if (isInputRange!R)
     {
         const functionEncoding = x.decodeCxxEncoding();
         x.r.skipOverSafe('E');
-        if (x.r.skipOversafe('D'))
+        if (x.r.skipOverSafe('D'))
         {
             assert(false, "TODO: Decode C++0x Closure Type (lambda)"); // see https://mentorembedded.github.io/cxx-abi/abi.html#closure-types
         }
