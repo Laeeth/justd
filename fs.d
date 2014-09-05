@@ -265,7 +265,7 @@ enum FileContent
 /** How File Kinds are detected. */
 enum FileKindDetection
 {
-    equalsParentPathDirsAndName, // Parenting path and file name must match
+    equalsParentPathDirsAndName, // Parenting path file name must match
     equalsName, // Only name must match
     equalsNameAndContents, // Both name and contents must match
     equalsNameOrContents, // Either name or contents must match
@@ -502,7 +502,7 @@ class FKind
     FKind[] subKinds;   // Inherited pattern. For example ELF => ELF core file
     Patt baseNaming;    // Pattern that matches typical file basenames of this Kind. May be null.
 
-    string[] parentPathDirs; // example ["lib", "firmware"] for "/lib/firmware"
+    string[] parentPathDirs; // example ["lib", "firmware"] for "/lib/firmware" or "../lib/firmware"
 
     const string[] exts;      // Typical Extensions.
     Patt magicData;     // Magic Data.
@@ -815,7 +815,7 @@ KindHit ofKind1(NotNull!RegFile regFile,
     final switch (kind.detection)
     {
     case FileKindDetection.equalsParentPathDirsAndName:
-        hit = (regFile.parents.map!(a => a.name).startsWith(kind.parentPathDirs) &&
+        hit = (!regFile.parents.map!(a => a.name).find(kind.parentPathDirs).empty && // I love D :)
                kind.matchName(regFile.name, 0, ext));
         break;
     case FileKindDetection.equalsName:
