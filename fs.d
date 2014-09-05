@@ -677,13 +677,13 @@ void scanELF(NotNull!RegFile regFile,
         if (showSymbols)
         {
             SymbolTable symtab = SymbolTable(sts);
+            // TODO: Use range: auto symbolsDemangled = symtab.symbols.map!(sym => demangler(sym.name).decodeSymbol);
             foreach (sym; symtab.symbols) // you can add filters here
             {
                 if (doDemangle)
                 {
-                    const name = sym.name;
-                    const hit = demangler(name).decodeSymbol;
-                    if (hit)
+                    const hit = demangler(sym.name).decodeSymbol;
+                    if (hit && hit.expr.empty)
                     {
                         writeln(hit.lang.toTag(), ": ", hit.expr);
                     }
