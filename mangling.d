@@ -68,6 +68,7 @@ class Demangler(R) if (isInputRange!R)
     }
     R r;
     string[] ids; // ids demangled so far
+    R scopeSeparator = "::";
 }
 auto demangler(R)(R r) if (isInputRange!R)
 {
@@ -897,7 +898,7 @@ R decodeCxxTemplatePrefixAndArgs(R)(Demangler!R x) if (isInputRange!R)
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.prefix */
-R decodeCxxPrefix(R)(Demangler!R x, R scopeSeparator = "::") if (isInputRange!R)
+R decodeCxxPrefix(R)(Demangler!R x) if (isInputRange!R)
 {
     version(show) dln("r: ", x.r);
     typeof(return) prefix;
@@ -907,7 +908,7 @@ R decodeCxxPrefix(R)(Demangler!R x, R scopeSeparator = "::") if (isInputRange!R)
         {
             if (i >= 1)
             {
-                prefix ~= scopeSeparator;
+                prefix ~= x.scopeSeparator;
             }
             prefix ~= name;
             continue;
@@ -1138,8 +1139,7 @@ R decodeCxxSpecialName(R)(Demangler!R x) if (isInputRange!R)
 /* Decode C++ Symbol.
    See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.encoding
  */
-R decodeCxxEncoding(R)(Demangler!R x,
-                       R scopeSeparator = null) /* @safe pure nothrow @nogc */ if (isInputRange!R)
+R decodeCxxEncoding(R)(Demangler!R x) /* @safe pure nothrow @nogc */ if (isInputRange!R)
 {
     version(show) dln("r: ", x.r);
     const localFlag = x.r.skipOverSafe('L'); // TODO: What role does the L have in symbols starting with _ZL have?
@@ -1155,29 +1155,37 @@ R decodeCxxEncoding(R)(Demangler!R x,
     }
 }
 
+/** Demangled Expression. */
+alias Expr = string;
+
+struct Demangling
+{
+    Lang lang;
+    Expr expr;
+}
+
 /** Demangle Symbol $(D r) and Detect Language.
     See also: https://en.wikipedia.org/wiki/Name_mangling
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling
     See also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 */
-Tuple!(Lang, R) decodeSymbol(R)(Demangler!R x,
-                                R scopeSeparator = null) /* @safe pure nothrow @nogc */ if (isInputRange!R)
+Demangling decodeSymbol(R)(Demangler!R x) /* @safe pure nothrow @nogc */ if (isInputRange!R)
 {
     if (x.r.empty)
     {
-        return tuple(Lang.init, x.r);
+        return Demangling(Lang.init, x.r);
     }
 
-    if (!x.r.startsWith(`_`))
+    if (!x.r.startsWith('_'))
     {
-        return tuple(Lang.c, x.r); // assume C
+        return Demangling(Lang.c, x.r); // assume C
     }
 
     // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.mangled-name
     if (x.r.skipOver(`_Z`))
     {
-        return tuple(Lang.cxx,
-                     x.decodeCxxEncoding());
+        return Demangling(Lang.cxx,
+                          x.decodeCxxEncoding());
     }
     else
     {
@@ -1185,9 +1193,9 @@ Tuple!(Lang, R) decodeSymbol(R)(Demangler!R x,
         const symAsD = x.r.demangle;
         import std.conv: to;
         if (symAsD != x.r) // TODO: Why doesn't (symAsD is r) work here?
-            return tuple(Lang.d, symAsD.to!R);
+            return Demangling(Lang.d, symAsD.to!R);
         else
-            return tuple(Lang.init, x.r);
+            return Demangling(Lang.init, x.r);
     }
 }
 
@@ -1199,32 +1207,32 @@ unittest
     backtrace.backtrace.install(stderr);
 
     assertEqual(demangler(`memcpy`).decodeSymbol(),
-                tuple(Lang.c, `memcpy`));
+                Demangling(Lang.c, `memcpy`));
 
     /* assertEqual(`_ZZL8next_argRPPcE4keys`.decodeSymbol(), */
-    /*             tuple(Lang.cxx, `next_arg(char**&)::keys`)); */
+    /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
 
     /* assertEqual(demangler(`_ZL10parse_archmPPKcS0_`).decodeSymbol(), */
-    /*             tuple(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
+    /*             Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
 
     assertEqual(demangler(`_Z1hi`).decodeSymbol(),
-                tuple(Lang.cxx, `h(int)`));
+                Demangling(Lang.cxx, `h(int)`));
 
     assertEqual(demangler(`_ZN9wikipedia7article6formatE`).decodeSymbol(),
-                tuple(Lang.cxx, `wikipedia::article::format`));
+                Demangling(Lang.cxx, `wikipedia::article::format`));
 
     assertEqual(demangler(`_ZSt5state`).decodeSymbol(),
-                tuple(Lang.cxx, `::std::state`));
+                Demangling(Lang.cxx, `::std::state`));
 
     assertEqual(demangler(`_ZN9wikipedia7article8print_toERSo`).decodeSymbol(),
-                tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&)`));
+                Demangling(Lang.cxx, `wikipedia::article::print_to(::std::ostream&)`));
 
     assertEqual(demangler(`_ZN9wikipedia7article8print_toEOSo`).decodeSymbol(),
-                tuple(Lang.cxx, `wikipedia::article::print_to(::std::ostream&&)`));
+                Demangling(Lang.cxx, `wikipedia::article::print_to(::std::ostream&&)`));
 
     assertEqual(demangler(`_ZN9wikipedia7article6formatEv`).decodeSymbol(),
-                tuple(Lang.cxx, `wikipedia::article::format(void)`));
+                Demangling(Lang.cxx, `wikipedia::article::format(void)`));
 
     assertEqual(demangler(`_ZL8next_argRPPc`).decodeSymbol(),
-                tuple(Lang.cxx, `next_arg(char**&)`));
+                Demangling(Lang.cxx, `next_arg(char**&)`));
 }
