@@ -969,10 +969,8 @@ class File
     body
     {
         typeof(return) depth = 0;
-        auto curr = dir; // current parent
-        while (curr !is null && !curr.isRoot)
+        for (auto curr = dir; curr !is null && !curr.isRoot; depth++)
         {
-            depth++;
             curr = curr.parent;
         }
         return depth;
@@ -983,12 +981,11 @@ class File
     */
     Dir[] parentsUpwards()
     {
-        auto curr = dir; // current parent
         typeof(return) parents; // collected parents
-        while (curr !is null && !curr.isRoot)
+        for (auto curr = dir; (curr !is null &&
+                               !curr.isRoot); curr = curr.parent)
         {
             parents ~= curr;
-            curr = curr.parent;
         }
         return parents;
     }
@@ -1021,16 +1018,14 @@ class File
     {
         if (!parent) { return dirSeparator; }
 
-        auto curr = parent; // current parent
         size_t pathLength = 1 + name.length; // returned path length
         Dir[] parents; // collected parents
-        while (curr !is null &&
-               !curr.isRoot)
+
+        for (auto curr = parent; (curr !is null &&
+                                  !curr.isRoot); curr = curr.parent)
         {
-            pathLength += 1;
-            pathLength += curr.name.length;
+            pathLength += 1 + curr.name.length;
             parents ~= curr;
-            curr = curr.parent;
         }
 
         // build path
