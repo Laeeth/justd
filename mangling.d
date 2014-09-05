@@ -354,63 +354,63 @@ R decodeCxxOperatorName(R)(Demangler!R x) if (isInputRange!R)
         case `na`: op = `operator new[]`; break;
         case `dl`: op = `operator delete`; break;
         case `da`: op = `operator delete[]`; break;
-        case `ps`: op = `operator +`; break; // unary plus
-        case `ng`: op = `operator -`; break; // unary minus
+        case `ps`: op = `operator+`; break; // unary plus
+        case `ng`: op = `operator-`; break; // unary minus
 
-        case `ad`: op = `operator &`; break; // address of
-        case `de`: op = `operator *`; break; // dereference
+        case `ad`: op = `operator&`; break; // address of
+        case `de`: op = `operator*`; break; // dereference
 
-        case `co`: op = `operator ~`; break; // bitwise complement
-        case `pl`: op = `operator +`; break; // plus
-        case `mi`: op = `operator -`; break; // minus
+        case `co`: op = `operator~`; break; // bitwise complement
+        case `pl`: op = `operator+`; break; // plus
+        case `mi`: op = `operator-`; break; // minus
 
-        case `ml`: op = `operator *`; break; // multiplication
-        case `dv`: op = `operator /`; break; // division
-        case `rm`: op = `operator %`; break; // remainder
+        case `ml`: op = `operator*`; break; // multiplication
+        case `dv`: op = `operator/`; break; // division
+        case `rm`: op = `operator%`; break; // remainder
 
-        case `an`: op = `operator &`; break; // bitwise and
-        case `or`: op = `operator |`; break; // bitwise of
+        case `an`: op = `operator&`; break; // bitwise and
+        case `or`: op = `operator|`; break; // bitwise of
 
-        case `eo`: op = `operator ^`; break;
-        case `aS`: op = `operator =`; break;
+        case `eo`: op = `operator^`; break;
+        case `aS`: op = `operator=`; break;
 
-        case `pL`: op = `operator +=`; break;
-        case `mI`: op = `operator -=`; break;
-        case `mL`: op = `operator *=`; break;
-        case `dV`: op = `operator /=`; break;
-        case `rM`: op = `operator %=`; break;
+        case `pL`: op = `operator+=`; break;
+        case `mI`: op = `operator-=`; break;
+        case `mL`: op = `operator*=`; break;
+        case `dV`: op = `operator/=`; break;
+        case `rM`: op = `operator%=`; break;
 
-        case `aN`: op = `operator &=`; break;
-        case `oR`: op = `operator |=`; break;
-        case `eO`: op = `operator ^=`; break;
+        case `aN`: op = `operator&=`; break;
+        case `oR`: op = `operator|=`; break;
+        case `eO`: op = `operator^=`; break;
 
-        case `ls`: op = `operator <<`; break;
-        case `rs`: op = `operator >>`; break;
-        case `lS`: op = `operator <<=`; break;
-        case `rS`: op = `operator >>=`; break;
+        case `ls`: op = `operator<<`; break;
+        case `rs`: op = `operator>>`; break;
+        case `lS`: op = `operator<<=`; break;
+        case `rS`: op = `operator>>=`; break;
 
-        case `eq`: op = `operator ==`; break;
-        case `ne`: op = `operator !=`; break;
-        case `lt`: op = `operator <`; break;
-        case `gt`: op = `operator >`; break;
-        case `le`: op = `operator <=`; break;
-        case `ge`: op = `operator >=`; break;
+        case `eq`: op = `operator==`; break;
+        case `ne`: op = `operator!=`; break;
+        case `lt`: op = `operator<`; break;
+        case `gt`: op = `operator>`; break;
+        case `le`: op = `operator<=`; break;
+        case `ge`: op = `operator>=`; break;
 
-        case `nt`: op = `operator !`; break;
-        case `aa`: op = `operator &&`; break;
-        case `oo`: op = `operator ||`; break;
+        case `nt`: op = `operator!`; break;
+        case `aa`: op = `operator&&`; break;
+        case `oo`: op = `operator||`; break;
 
-        case `pp`: op = `operator ++`; break; // (postfix in <expression> context)
-        case `mm`: op = `operator --`; break; // (postfix in <expression> context)
+        case `pp`: op = `operator++`; break; // (postfix in <expression> context)
+        case `mm`: op = `operator--`; break; // (postfix in <expression> context)
 
-        case `cm`: op = `operator ,`; break;
+        case `cm`: op = `operator,`; break;
 
-        case `pm`: op = `operator ->*`; break;
-        case `pt`: op = `operator ->`; break;
+        case `pm`: op = `operator->*`; break;
+        case `pt`: op = `operator->`; break;
 
-        case `cl`: op = `operator ()`; break;
-        case `ix`: op = `operator []`; break;
-        case `qu`: op = `operator ?`; break;
+        case `cl`: op = `operator()`; break;
+        case `ix`: op = `operator[]`; break;
+        case `qu`: op = `operator?`; break;
         case `cv`: op = `(cast)`; break;
         case `li`: op = `operator""`; break;
         default: break;
@@ -546,9 +546,7 @@ R decodeCxxSubstitution(R)(Demangler!R x, R stdPrefix = `::std::`) if (isInputRa
                 case 't': x.r.popFront(); type ~= `ostream`; break;
                 case 'a': x.r.popFront(); type ~= `allocator`; break;
                 case 'b': x.r.popFront(); type ~= `basic_string`; break;
-                case 's': x.r.popFront();
-                    type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`;
-                    break;
+                case 's': x.r.popFront(); type ~= `basic_string<char, std::char_traits<char>, std::allocator<char> >`; break;
                 case 'i': x.r.popFront(); type ~= `istream`; break;
                 case 'o': x.r.popFront(); type ~= `ostream`; break;
                 case 'd': x.r.popFront(); type ~= `iostream`; break;
@@ -779,7 +777,6 @@ R decodeCxxCtorDtorName(R)(Demangler!R x) if (isInputRange!R)
     import std.array: back;
     switch (x.r[0..n])
     {
-        // TODO: How to display these?
         case `C1`: name = x.sourceNames.back; break; // complete object constructor
         case `C2`: name = x.sourceNames.back; break; // base object constructor
         case `C3`: name = x.sourceNames.back; break; // complete object allocating constructor
@@ -1296,6 +1293,9 @@ unittest
 
     assertEqual(demangler(`_ZN5LexerC2EP6ModulePKhmmii`, true).decodeSymbol(),
                 Demangling(Lang.cxx, `Lexer::Lexer(Module*, unsigned char const*, unsigned long, unsigned long, int, int)`));
+
+    assertEqual(demangler(`_Zrm1XS_`).decodeSymbol(),
+                Demangling(Lang.cxx, `operator%(X, X)`));
 
     /* assertEqual(demangler(`_ZZL8next_argRPPcE4keys`).decodeSymbol(), */
     /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
