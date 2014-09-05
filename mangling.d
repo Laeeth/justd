@@ -71,7 +71,7 @@ private:
 }
 auto demangler(T...)(T args) if (isInputRange!(T[0]))
 {
-    return new Demangler!T(args);
+    return new Demangler!(T[0])(args);
 }
 
 /** Like $(D skipOver) but return $(D string) instead of $(D bool).
@@ -1229,8 +1229,8 @@ unittest
     assertEqual(demangler(`_ZN9wikipedia7article6formatEv`).decodeSymbol(),
                 Demangling(Lang.cxx, `wikipedia::article::format(void)`));
 
-    /* assertEqual(demangler(`_ZL8next_argRPPc`).decodeSymbol(), */
-    /*             Demangling(Lang.cxx, `next_arg(char**&)`)); */
+    assertEqual(demangler(`_ZL8next_argRPPc`).decodeSymbol(),
+                Demangling(Lang.cxx, `next_arg(char**&)`));
 
     /* assertEqual(`_ZZL8next_argRPPcE4keys`.decodeSymbol(), */
     /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
