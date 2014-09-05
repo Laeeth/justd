@@ -1204,7 +1204,7 @@ struct Demangling
     Expr expr;
     auto opCast(T : bool)() @safe pure nothrow const
     {
-        return this.expr !is null;
+        return !expr.empty;
     }
 }
 
