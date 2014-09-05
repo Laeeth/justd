@@ -1038,18 +1038,18 @@ R decodeCxxLocalName(R)(CxxDemangler!R x) if (isInputRange!R)
     version(show) dln("r: ", x.r);
     if (x.r.skipOverSafe('Z'))
     {
-        const encoding = x.decodeCxxEncoding();
+        const functionEncoding = x.decodeCxxEncoding();
         x.r.skipOverSafe('E');
         if (x.r.skipOversafe('D'))
         {
-            assert(false, "TODO: Decode C++0x Closure Type (lambda)");
+            assert(false, "TODO: Decode C++0x Closure Type (lambda)"); // see https://mentorembedded.github.io/cxx-abi/abi.html#closure-types
         }
         else
         {
             const entityNameMaybe = either(x.skipLiteral('s'), // NOTE: Literal first to speed up
                                            x.decodeCxxName());
             const discriminator = x.decodeCxxDescriminator(); // optional
-            return (encoding ~
+            return (functionEncoding ~
                     entityNameMaybe ~
                     discriminator.to!R); // TODO: Optional
         }
