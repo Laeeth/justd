@@ -70,6 +70,7 @@ class Demangler(R) if (isInputRange!R)
     bool show = false;
     bool explicitVoidParameter = false; // set to true make void parameters explicit
 private:
+    string[] sourceNames;
     CxxType[] ids; // ids demangled so far
     R scopeSeparator = "::";
 }
@@ -724,6 +725,7 @@ R decodeCxxSourceName(R)(Demangler!R x) if (isInputRange!R)
         const num = digits.to!uint;
         id = x.r[0..num]; // identifier, x.r.take(num)
         x.r = x.r[num..$]; // x.r.drop(num);
+        x.sourceNames ~= id;
     }
     return id;
 }
@@ -774,9 +776,10 @@ R decodeCxxCtorDtorName(R)(Demangler!R x) if (isInputRange!R)
     R name;
     enum n = 2;
     if (x.r.length < n) { return typeof(return).init; }
+    import std.array: back;
     switch (x.r[0..n])
     {
-        case `C1`: name = `complete object constructor`; break;
+        case `C1`: name = x.sourceNames.back; break; // complete object constructor
         case `C2`: name = `base object constructor`; break;
         case `C3`: name = `complete object allocating constructor`; break;
         case `D0`: name = `deleting destructor`; break;
@@ -1263,6 +1266,9 @@ unittest
     assertEqual(demangler(`_ZN3Foo3BarEv`).decodeSymbol(),
                 Demangling(Lang.cxx, `Foo::Bar()`));
 
+    assertEqual(demangler(`_ZN3FooC1Ev`).decodeSymbol(),
+                Demangling(Lang.cxx, `Foo::Foo()`));
+
     assertEqual(demangler(`_ZN9wikipedia7article6formatE`).decodeSymbol(),
                 Demangling(Lang.cxx, `wikipedia::article::format`));
 
@@ -1287,11 +1293,11 @@ unittest
     assertEqual(demangler(`_ZL10parse_archmPPKcS0_`, true).decodeSymbol(),
                 Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`));
 
-    /* assertEqual(demangler(`_ZN12ExpStatement9scopeCodeEP5ScopePP9StatementS4_S4`).decodeSymbol(), */
-    /*             Demangling(Lang.cxx, `ExpStatement::scopeCode(Scope*, Statement**, Statement**, Statement**)`)); */
-
     /* assertEqual(demangler(`_ZZL8next_argRPPcE4keys`).decodeSymbol(), */
     /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
+
+    /* assertEqual(demangler(`_ZN12ExpStatement9scopeCodeEP5ScopePP9StatementS4_S4`).decodeSymbol(), */
+    /*             Demangling(Lang.cxx, `ExpStatement::scopeCode(Scope*, Statement**, Statement**, Statement**)`)); */
 
     /* assertEqual(demangler(`_ZZ8genCmainP5ScopeE9cmaincode`).decodeSymbol(), */
     /*             Demangling(Lang.cxx, `genCmain(Scope*)::cmaincode`)); */
