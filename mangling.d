@@ -1163,7 +1163,6 @@ R decodeCxxEncoding(R)(Demangler!R x,
 Tuple!(Lang, R) decodeSymbol(R)(Demangler!R x,
                                 R scopeSeparator = null) /* @safe pure nothrow @nogc */ if (isInputRange!R)
 {
-    version(show) dln("r: ", x.r);
     if (x.r.empty)
     {
         return tuple(Lang.init, x.r);
