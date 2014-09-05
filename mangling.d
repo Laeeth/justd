@@ -779,12 +779,13 @@ R decodeCxxCtorDtorName(R)(Demangler!R x) if (isInputRange!R)
     import std.array: back;
     switch (x.r[0..n])
     {
+        // TODO: How to display these?
         case `C1`: name = x.sourceNames.back; break; // complete object constructor
-        case `C2`: name = `base object constructor`; break;
-        case `C3`: name = `complete object allocating constructor`; break;
-        case `D0`: name = `deleting destructor`; break;
-        case `D1`: name = `complete object destructor`; break;
-        case `D2`: name = `base object destructor`; break;
+        case `C2`: name = x.sourceNames.back; break; // base object constructor
+        case `C3`: name = x.sourceNames.back; break; // complete object allocating constructor
+        case `D0`: name = '~' ~ x.sourceNames.back; break; // deleting destructor
+        case `D1`: name = '~' ~ x.sourceNames.back; break; // complete object destructor
+        case `D2`: name = '~' ~ x.sourceNames.back; break; // base object destructor
         default: break;
     }
     if (name)
@@ -1292,6 +1293,9 @@ unittest
 
     assertEqual(demangler(`_ZL10parse_archmPPKcS0_`, true).decodeSymbol(),
                 Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`));
+
+    assertEqual(demangler(`_ZN5LexerC2EP6ModulePKhmmii`, true).decodeSymbol(),
+                Demangling(Lang.cxx, `Lexer::Lexer(Module*, unsigned char const*, unsigned long, unsigned long, int, int)`));
 
     /* assertEqual(demangler(`_ZZL8next_argRPPcE4keys`).decodeSymbol(), */
     /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
