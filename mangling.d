@@ -1,4 +1,4 @@
-#!/usr/bin/env rdmd-dev
+#!/usr/bin/env rdmd-dev-module
 
 /** ELF Symbol Name (De)Mangling.
     Copyright: Per Nordlöw 2014-.
@@ -17,6 +17,20 @@
     TODO: Detect recursion:
           See: http://forum.dlang.org/thread/edaduxaxmihvzkoudeqa@forum.dlang.org#post-edaduxaxmihvzkoudeqa:40forum.dlang.org
           See: http://code.dlang.org/packages/backtrace-d
+
+    TODO: More tests
+
+    | Mangled Name  | The Demangler | abi::__cxa_demangle()
+    |---------------|---------------|-----------------------
+    | _Z1fv         | f()           | f()
+    | _Z1fi         | f()           | f(int)
+    | _Z3foo3bar    | foo()         | foo(bar)
+    | _Z1fIiEvi     | f<>()         | void f<int>(int)
+    | _ZN1N1fE      | N::f          | N::f
+    | _ZN3Foo3BarEv | Foo::Bar()    | Foo::Bar()
+    | _Zrm1XS_"     | operator%()   | operator%(X, X)
+    | _ZN3FooC1Ev   | Foo::Foo()    | Foo::Foo()
+    | _Z1fSs        | f()           | f(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)
 
     TODO: What role does _ZL have? See localFlag for details.
  */
@@ -58,13 +72,16 @@ else
 /** Demangler. */
 class Demangler(R) if (isInputRange!R)
 {
-    this(R r, bool show = false)
+    this(R r,
+         bool explicitVoidParameter = false,
+         bool show = false)
     {
         this.r = r;
         this.show = show;
     }
     R r;
     bool show = false;
+    bool explicitVoidParameter = false; // set to true make void parameters explicit
 private:
     CxxType[] ids; // ids demangled so far
     R scopeSeparator = "::";
@@ -512,9 +529,16 @@ R decodeCxxSubstitution(R)(Demangler!R x, R stdPrefix = `::std::`) if (isInputRa
         }
         else if ('0' <= x.r.front && x.r.front <= '9') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
-            const ix = (x.r.front - '0') + 1;
-            auto ids_ = x.ids[ix];
-            ids_.pointyness = ids_.pointyness >= 1 ? cast(byte)(ids_.pointyness - 1): 0; // NOTE: Undocumented: decrease pointyness
+            const ix = (x.r.front - '0');
+            auto ids_ = x.ids[ix + 1];
+            if (ix == 0)
+            {
+                /* NOTE: Undocumented: decrease pointyness.
+                   See for example: parse_arch(size_t argc, const char** argv, const char* arch)
+                   in dmd/src/mars.c
+                */
+                ids_.pointyness = ids_.pointyness >= 1 ? cast(byte)(ids_.pointyness - 1): 0;
+            }
             type = ids_.to!R;
             x.r.popFront();
             assert(x.r.skipOverSafe('_'));
@@ -575,10 +599,13 @@ R decodeCxxFunctionType(R)(Demangler!R x) if (isInputRange!R)
 struct CxxBareFunctionType(R) if (isInputRange!R)
 {
     R[] types; // optional return and parameter types
+    bool explicitVoidParameter = false; // set to true make void parameters explicit
     R toString() @safe pure
     {
         R value;
-        if (!types.empty)
+        if (!types.empty &&
+            (this.explicitVoidParameter ||
+             !(types.length == 1 && types.front == "void")))
         {
             value = `(` ~ types.joiner(`, `).to!R ~ `)`;
         }
@@ -591,6 +618,7 @@ CxxBareFunctionType!R decodeCxxBareFunctionType(R)(Demangler!R x) if (isInputRan
 {
     if (x.show) dln("r: ", x.r);
     typeof(return) bareFunctionType;
+    bareFunctionType.explicitVoidParameter = x.explicitVoidParameter;
 
     /* TODO: This behaviour may not follow grammar. */
     if (const firstType = x.decodeCxxType())
@@ -1222,11 +1250,11 @@ Demangling decodeSymbol(R)(Demangler!R x) /* @safe pure nothrow @nogc */ if (isI
     }
 }
 
-import backtrace.backtrace;
-
 unittest
 {
+    import backtrace.backtrace;
     import assert_ex;
+
     backtrace.backtrace.install(stderr);
 
     assertEqual(demangler(`memcpy`).decodeSymbol(),
@@ -1247,8 +1275,11 @@ unittest
     assertEqual(demangler(`_ZN9wikipedia7article8print_toEOSo`).decodeSymbol(),
                 Demangling(Lang.cxx, `wikipedia::article::print_to(::std::ostream&&)`));
 
-    assertEqual(demangler(`_ZN9wikipedia7article6formatEv`).decodeSymbol(),
+    assertEqual(demangler(`_ZN9wikipedia7article6formatEv`, true).decodeSymbol(),
                 Demangling(Lang.cxx, `wikipedia::article::format(void)`));
+
+    assertEqual(demangler(`_ZN9wikipedia7article6formatEv`, false).decodeSymbol(),
+                Demangling(Lang.cxx, `wikipedia::article::format()`));
 
     assertEqual(demangler(`_ZL8next_argRPPc`).decodeSymbol(),
                 Demangling(Lang.cxx, `next_arg(char**&)`));
@@ -1256,7 +1287,10 @@ unittest
     assertEqual(demangler(`_ZL10parse_archmPPKcS0_`, true).decodeSymbol(),
                 Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`));
 
-    /* assertEqual(`_ZZL8next_argRPPcE4keys`.decodeSymbol(), */
+    assertEqual(demangler(`_ZN12ExpStatement9scopeCodeEP5ScopePP9StatementS4_S4`).decodeSymbol(),
+                Demangling(Lang.cxx, `ExpStatement::scopeCode(Scope*, Statement**, Statement**, Statement**)`));
+
+    /* assertEqual(demangler(`_ZZL8next_argRPPcE4keys`).decodeSymbol(), */
     /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
 
     /* assertEqual(demangler(`_ZZ8genCmainP5ScopeE9cmaincode`).decodeSymbol(), */
