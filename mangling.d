@@ -59,6 +59,7 @@ else
     }
 }
 
+/** C++ Demangler. */
 class CxxDemangler(R) if (isInputRange!R)
 {
     this(R r)
@@ -148,10 +149,6 @@ R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
 
     if (x.r.empty) { return type; }
 
-    dln("type:", type, "r:", x.r);
-
-    dln("type:", type, "r:", x.r);
-
     if (cvQ.isVolatile)
     {
         type ~= "volatile ";
@@ -175,14 +172,12 @@ R decodeCxxType(R)(CxxDemangler!R x) if (isInputRange!R)
         type ~= " const";
     }
 
-    dln("type:", type, "r:", x.r);
-
     // suffix qualifiers
     type ~= '*'.repeat(pointerCount).array; // type ~= "*".replicate(pointerCount);
     if (isRef) { type ~= `&`; }
     if (isRvalueRef) { type ~= `&&`; }
 
-    dln("type:", type, "r:", x.r);
+    x.ids ~= type;
 
     return type;
 }
