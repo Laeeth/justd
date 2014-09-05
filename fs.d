@@ -678,8 +678,11 @@ void scanELF(NotNull!RegFile regFile,
                 if (doDemangle)
                 {
                     const name = sym.name;
-                    const hit = cxxDemangler(name).decodeSymbol;
-                    writeln(hit[0].toTag(), ": ", hit[1]);
+                    const hit = demangler(name).decodeSymbol;
+                    if (hit)
+                    {
+                        writeln(hit.lang.toTag(), ": ", hit.expr);
+                    }
                 }
                 else
                 {
@@ -699,8 +702,11 @@ void scanELF(NotNull!RegFile regFile,
             {
                 if (doDemangle)
                 {
-                    const hit = cxxDemangler(sym).decodeSymbol;
-                    writeln(hit[0].toTag(), ": ", hit[1]);
+                    const hit = demangler(sym).decodeSymbol;
+                    if (hit)
+                    {
+                        writeln(hit.lang.toTag(), ": ", hit.expr);
+                    }
                 }
                 else
                 {
@@ -5573,6 +5579,7 @@ void scanner(string[] args)
         signal(SIGQUIT, &signalHandler);
         signal(SIGINT, &signalHandler);
     }
+
 
     auto term = Terminal(ConsoleOutputType.linear);
     auto scanner = new Scanner!Terminal(args, term);

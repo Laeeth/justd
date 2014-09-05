@@ -1162,6 +1162,10 @@ struct Demangling
 {
     Lang lang;
     Expr expr;
+    auto opCast(T : bool)() @safe pure nothrow const
+    {
+        return this.expr !is null;
+    }
 }
 
 /** Demangle Symbol $(D r) and Detect Language.
