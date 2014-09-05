@@ -265,6 +265,7 @@ enum FileContent
 /** How File Kinds are detected. */
 enum FileKindDetection
 {
+    equalsParentPathDirsAndName, // Parenting path and file name must match
     equalsName, // Only name must match
     equalsNameAndContents, // Both name and contents must match
     equalsNameOrContents, // Either name or contents must match
@@ -500,6 +501,8 @@ class FKind
     FKind superKind;    // Inherited pattern. For example ELF => ELF core file
     FKind[] subKinds;   // Inherited pattern. For example ELF => ELF core file
     Patt baseNaming;    // Pattern that matches typical file basenames of this Kind. May be null.
+
+    string[] parentPathDirs; // example ["lib", "firmware"] for "/lib/firmware"
 
     const string[] exts;      // Typical Extensions.
     Patt magicData;     // Magic Data.
@@ -811,6 +814,10 @@ KindHit ofKind1(NotNull!RegFile regFile,
     bool hit = false;
     final switch (kind.detection)
     {
+    case FileKindDetection.equalsParentPathDirsAndName:
+        hit = (regFile.parents.map!(a => a.name).startsWith(kind.parentPathDirs) &&
+               kind.matchName(regFile.name, 0, ext));
+        break;
     case FileKindDetection.equalsName:
         hit = kind.matchName(regFile.name, 0, ext);
         break;
@@ -953,7 +960,42 @@ class File
     void makeObselete() @trusted {}
     void makeUnObselete() @safe {}
 
-    /** Returns: Path to $(D this) File. */
+    /** Get Parenting Dirs starting from parent of $(D this) upto root.
+        Make this even more lazily evaluted.
+    */
+    Dir[] parentsUpwards()
+    {
+        auto curr = dir; // current parent
+        typeof(return) parents; // collected parents
+        while (curr !is null && !curr.isRoot)
+        {
+            parents ~= curr;
+            curr = curr.parent;
+        }
+        return parents;
+    }
+    alias dirsDownward = parentsUpwards;
+
+    /** Get Parenting Dirs starting from file system root downto containing
+        directory of $(D this).
+    */
+    auto parents()
+    {
+        return parentsUpwards.retro;
+    }
+    alias dirs = parents;     // SCons style alias
+    alias parentsDownward = parents;
+
+    bool underAnyDir(alias pred = "a")()
+    {
+        import std.algorithm: any;
+        import std.functional: unaryFun;
+        return parents.any!(unaryFun!pred);
+    }
+
+    /** Returns: Path to $(D this) File.
+        TODO: Reuse parents.
+     */
     string path() @property @trusted pure out (result) {
         /* assertEqual(result, pathRecursive); */
     }
@@ -974,21 +1016,20 @@ class File
         }
 
         // build path
-        auto path_ = new char[pathLength];
-        size_t i = 0; // index to path_
+        auto thePath = new char[pathLength];
+        size_t i = 0; // index to thePath
         import std.range: retro;
         foreach (currParent_; parents.retro)
         {
             immutable parentName = currParent_.name;
-            path_[i++] = dirSeparator[0];
-            path_[i .. i + parentName.length] = parentName[];
+            thePath[i++] = dirSeparator[0];
+            thePath[i .. i + parentName.length] = parentName[];
             i += parentName.length;
         }
-        path_[i++] = dirSeparator[0];
-        path_[i .. i + name.length] = name[];
+        thePath[i++] = dirSeparator[0];
+        thePath[i .. i + name.length] = name[];
 
-        return path_;
-
+        return thePath;
     }
 
     /** Returns: Path to $(D this) File.
@@ -1032,31 +1073,6 @@ class File
             unpacker.unpack(stdTime); timeLastModified = SysTime(stdTime); // TODO: Functionize
             unpacker.unpack(stdTime); timeLastAccessed = SysTime(stdTime); // TODO: Functionize
         }
-    }
-
-    /** Get Parenting Dirs starting from file system root downto containing
-        directory of $(D this).
-        Make this even more lazily evaluted.
-    */
-    auto ref parents()
-    {
-        auto curr = dir; // current parent
-        Dir[] parents; // collected parents
-        while (curr !is null && !curr.isRoot)
-        {
-            parents ~= curr;
-            curr = curr.parent;
-        }
-        import std.range: retro;
-        return parents.retro;
-    }
-    alias dirs = parents;     // SCons style alias
-
-    bool underAnyDir(alias pred = "a")()
-    {
-        import std.algorithm: any;
-        import std.functional: unaryFun;
-        return parents.any!(unaryFun!pred);
     }
 
     Dir parent;               // Reference to parenting directory (or null if this is a root directory)
@@ -2610,11 +2626,21 @@ class GStats
         /* elfKind.subKinds ~= elfCoreKind; */
         /* elfKind.subKinds ~= elfKind; */
 
+        auto linuxFirmwareKind = new FKind("Linux Firmware",
+                                 [], ["bin", "ucode", "dat", "sbcf"], [], 0, [], [],
+                                 [], // N/A
+                                 [], // N/A
+                                 FileContent.binaryUnknown,
+                                 FileKindDetection.equalsParentPathDirsAndName);
+        linuxFirmwareKind.parentPathDirs = ["lib", "firmware"];
+        binFKinds ~= linuxFirmwareKind;
+
         // Executables
         binFKinds ~= new FKind("Mach-O", [], ["o"], x"CE FA ED FE", 0, [], [],
                                [], // N/A
                                [], // N/A
                                FileContent.machineCode, FileKindDetection.equalsContents);
+
         binFKinds ~= new FKind("modules.symbols.bin", [], ["bin"],
                                cast(ubyte[])[0xB0, 0x07, 0xF4, 0x57, 0x00, 0x02, 0x00, 0x01, 0x20], 0, [], [],
                                [], // N/A
