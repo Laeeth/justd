@@ -100,7 +100,7 @@ struct CxxType
     bool isRvalueRef = false;    // && ref-qualifier (C++11)
     bool isComplexPair = false;    // complex pair (C 2000)
     bool isImaginary = false;    // imaginary (C 2000)
-    ubyte pointerCount = 0;
+    byte pointyness = 0;           // pointer level
     CXXCVQualifiers cvQ;
 
     string toString() @safe pure nothrow const
@@ -124,7 +124,7 @@ struct CxxType
         }
 
         // suffix qualifiers
-        str ~= '*'.repeat(pointerCount).array; // str ~= "*".replicate(pointerCount);
+        str ~= '*'.repeat(pointyness).array; // str ~= "*".replicate(pointyness);
         if (isRef) { str ~= `&`; }
         if (isRvalueRef) { str ~= `&&`; }
 
@@ -157,7 +157,7 @@ R decodeCxxType(R)(Demangler!R x) if (isInputRange!R)
             auto miss = false;
             switch (x.r[0])
             {
-                case 'P': x.r.popFront(); cxxType.pointerCount++; break;
+                case 'P': x.r.popFront(); cxxType.pointyness++; break;
                     // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
                 case 'R': x.r.popFront(); cxxType.isRef = true; break;
                 case 'O': x.r.popFront(); cxxType.isRvalueRef = true; break;
@@ -507,13 +507,22 @@ R decodeCxxSubstitution(R)(Demangler!R x, R stdPrefix = `::std::`) if (isInputRa
     {
         if (x.r.front == '_') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
-            type = "${PREVIOUS}";
+            type = x.ids[0].to!R;
             x.r.popFront();
         }
-        else if ('0' <= x.r.front && x.r.front <= '9' ||
-                 'A' <= x.r.front && x.r.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
+        else if ('0' <= x.r.front && x.r.front <= '9') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
-            type = "${PREVIOUS}" ~ x.r.front.to!R;
+            const ix = (x.r.front - '0') + 1;
+            auto ids_ = x.ids[ix];
+            ids_.pointyness = ids_.pointyness >= 1 ? cast(byte)(ids_.pointyness - 1): 0; // NOTE: Undocumented: decrease pointyness
+            type = ids_.to!R;
+            x.r.popFront();
+            assert(x.r.skipOverSafe('_'));
+        }
+        else if ('A' <= x.r.front && x.r.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
+        {
+            const ix = (x.r.front - 'A' + 11);
+            type = x.ids[ix].to!R;
             x.r.popFront();
             assert(x.r.skipOverSafe('_'));
         }
@@ -1244,8 +1253,8 @@ unittest
     assertEqual(demangler(`_ZL8next_argRPPc`).decodeSymbol(),
                 Demangling(Lang.cxx, `next_arg(char**&)`));
 
-    /* assertEqual(demangler(`_ZL10parse_archmPPKcS0_`, true).decodeSymbol(), */
-    /*             Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
+    assertEqual(demangler(`_ZL10parse_archmPPKcS0_`, true).decodeSymbol(),
+                Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`));
 
     /* assertEqual(`_ZZL8next_argRPPcE4keys`.decodeSymbol(), */
     /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
