@@ -11,6 +11,7 @@
    See also: http://ridiculousfish.com/blog/posts/old-age-and-treachery.html
    See also: http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
 
+   TODO: Count logical lines.
    TODO: Lexers should be loosely coupled to FKinds instead of Files
    TODO: Generic Token[] and specific CToken[], CxxToken[]
 
