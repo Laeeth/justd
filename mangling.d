@@ -66,7 +66,7 @@ class Demangler(R) if (isInputRange!R)
     R r;
     bool show = false;
 private:
-    string[] ids; // ids demangled so far
+    CxxType[] ids; // ids demangled so far
     R scopeSeparator = "::";
 }
 auto demangler(T...)(T args) if (isInputRange!(T[0]))
@@ -93,6 +93,45 @@ R decodeCxxUnqualifiedType(R)(Demangler!R x) if (isInputRange!R)
                   x.decodeCxxFunctionType());
 }
 
+struct CxxType
+{
+    string typeName;
+    bool isRef = false;      // & <ref-qualifier>
+    bool isRvalueRef = false;    // && ref-qualifier (C++11)
+    bool isComplexPair = false;    // complex pair (C 2000)
+    bool isImaginary = false;    // imaginary (C 2000)
+    ubyte pointerCount = 0;
+    CXXCVQualifiers cvQ;
+
+    string toString() @safe pure nothrow const
+    {
+        typeof(return) str;
+
+        if (cvQ.isVolatile)
+        {
+            str ~= "volatile ";
+        }
+        if (cvQ.isRestrict)
+        {
+            str ~= "restrict ";
+        }
+
+        str ~= typeName;
+
+        if (cvQ.isConst)
+        {
+            str ~= " const";
+        }
+
+        // suffix qualifiers
+        str ~= '*'.repeat(pointerCount).array; // str ~= "*".replicate(pointerCount);
+        if (isRef) { str ~= `&`; }
+        if (isRvalueRef) { str ~= `&&`; }
+
+        return str;
+    }
+}
+
 /** Decode C++ Type at $(D r).
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangling-type
 */
@@ -100,25 +139,17 @@ R decodeCxxType(R)(Demangler!R x) if (isInputRange!R)
 {
     if (x.show) dln("r: ", x.r);
 
-    typeof(return) type;
-
     const packExpansion = x.r.skipOver(`Dp`); // (C++11)
 
-    // <ref-qualifier>)
-    bool isRef = false;      // & ref-qualifier
-    bool isRvalueRef = false;    // && ref-qualifier (C++11)
-    bool isComplexPair = false;    // complex pair (C 2000)
-    bool isImaginary = false;    // imaginary (C 2000)
-    int pointerCount = 0;
-    CXXCVQualifiers cvQ;
+    CxxType cxxType;
 
     while (!x.r.empty)
     {
-        if (const cvQ_ = x.r.decodeCxxCVQualifiers())
+        if (const cvQ_ = x.r.decodeCxxCVQualifiers()) // TODO: Optimize
         {
-            cvQ.isRestrict |= cvQ_.isRestrict;
-            cvQ.isVolatile |= cvQ_.isVolatile;
-            cvQ.isConst |= cvQ_.isConst;
+            cxxType.cvQ.isRestrict |= cvQ_.isRestrict;
+            cxxType.cvQ.isVolatile |= cvQ_.isVolatile;
+            cxxType.cvQ.isConst |= cvQ_.isConst;
             continue;
         }
         else
@@ -126,15 +157,15 @@ R decodeCxxType(R)(Demangler!R x) if (isInputRange!R)
             auto miss = false;
             switch (x.r[0])
             {
-                case 'P': x.r.popFront(); pointerCount++; break;
+                case 'P': x.r.popFront(); cxxType.pointerCount++; break;
                     // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
-                case 'R': x.r.popFront(); isRef = true; break;
-                case 'O': x.r.popFront(); isRvalueRef = true; break;
-                case 'C': x.r.popFront(); isComplexPair = true; dln("TODO: Handle complex pair (C 2000)"); break;
-                case 'G': x.r.popFront(); isImaginary = true; dln("TODO: Handle imaginary (C 2000)"); break;
+                case 'R': x.r.popFront(); cxxType.isRef = true; break;
+                case 'O': x.r.popFront(); cxxType.isRvalueRef = true; break;
+                case 'C': x.r.popFront(); cxxType.isComplexPair = true; dln("TODO: Handle complex pair (C 2000)"); break;
+                case 'G': x.r.popFront(); cxxType.isImaginary = true; dln("TODO: Handle imaginary (C 2000)"); break;
                 case 'U': x.r.popFront();
                     const sourceName = x.decodeCxxSourceName();
-                    type = sourceName ~ x.decodeCxxType();
+                    cxxType.typeName = sourceName ~ x.decodeCxxType();
                     dln("TODO: Handle vendor extended type qualifier <source-name>", x.r);
                     break;
                 default: miss = true; break;
@@ -145,41 +176,22 @@ R decodeCxxType(R)(Demangler!R x) if (isInputRange!R)
             }
         }
     }
-    assert(!(isRef && isRvalueRef));
+    assert(!(cxxType.isRef && cxxType.isRvalueRef));
 
-    if (x.r.empty) { return type; }
+    if (x.r.empty) { return cxxType.to!string; }
 
-    if (cvQ.isVolatile)
-    {
-        type ~= "volatile ";
-    }
-    if (cvQ.isRestrict)
-    {
-        type ~= "restrict ";
-    }
+    cxxType.typeName = either(x.decodeCxxBuiltinType(),
+                              x.decodeCxxFunctionType(),
+                              x.decodeCxxClassEnumType(),
+                              x.decodeCxxArrayType(),
+                              x.decodeCxxPointerToMemberType(),
+                              x.decodeCxxTemplateTemplateParamAndArgs(),
+                              x.decodeCxxDecltype(),
+                              x.decodeCxxSubstitution());
 
-    type ~= either(x.decodeCxxBuiltinType(),
-                   x.decodeCxxFunctionType(),
-                   x.decodeCxxClassEnumType(),
-                   x.decodeCxxArrayType(),
-                   x.decodeCxxPointerToMemberType(),
-                   x.decodeCxxTemplateTemplateParamAndArgs(),
-                   x.decodeCxxDecltype(),
-                   x.decodeCxxSubstitution());
+    x.ids ~= cxxType;
 
-    if (cvQ.isConst)
-    {
-        type ~= " const";
-    }
-
-    // suffix qualifiers
-    type ~= '*'.repeat(pointerCount).array; // type ~= "*".replicate(pointerCount);
-    if (isRef) { type ~= `&`; }
-    if (isRvalueRef) { type ~= `&&`; }
-
-    x.ids ~= type;
-
-    return type;
+    return cxxType.to!string;
 }
 
 /** See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.class-enum-type */
@@ -1122,13 +1134,13 @@ R decodeCxxSpecialName(R)(Demangler!R x) if (isInputRange!R)
         if (x.r.skipOverSafe('c'))
         {
             name = x.r.tryEvery(x.decodeCxxCallOffset(),
-                                 x.decodeCxxCallOffset(),
-                                 x.decodeCxxEncoding()).joiner(` `).to!R;
+                                x.decodeCxxCallOffset(),
+                                x.decodeCxxEncoding()).joiner(` `).to!R;
         }
         else
         {
             name = x.r.tryEvery(x.decodeCxxCallOffset(),
-                                 x.decodeCxxEncoding()).joiner(` `).to!R;
+                                x.decodeCxxEncoding()).joiner(` `).to!R;
         }
     }
     return name;
@@ -1232,11 +1244,11 @@ unittest
     assertEqual(demangler(`_ZL8next_argRPPc`).decodeSymbol(),
                 Demangling(Lang.cxx, `next_arg(char**&)`));
 
+    /* assertEqual(demangler(`_ZL10parse_archmPPKcS0_`, true).decodeSymbol(), */
+    /*             Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
+
     /* assertEqual(`_ZZL8next_argRPPcE4keys`.decodeSymbol(), */
     /*             Demangling(Lang.cxx, `next_arg(char**&)::keys`)); */
-
-    /* assertEqual(demangler(`_ZL10parse_archmPPKcS0_`).decodeSymbol(), */
-    /*             Demangling(Lang.cxx, `parse_arch(unsigned long, char const**, char const*)`)); */
 
     /* assertEqual(demangler(`_ZZ8genCmainP5ScopeE9cmaincode`).decodeSymbol(), */
     /*             Demangling(Lang.cxx, `genCmain(Scope*)::cmaincode`)); */
