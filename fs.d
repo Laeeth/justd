@@ -2626,8 +2626,9 @@ class GStats
         /* elfKind.subKinds ~= elfCoreKind; */
         /* elfKind.subKinds ~= elfKind; */
 
+        // TODO: Specialize to not steal results from file's magics.
         auto linuxFirmwareKind = new FKind("Linux Firmware",
-                                 [], ["bin", "ucode", "dat", "sbcf"], [], 0, [], [],
+                                 [], ["bin", "ucode", "dat", "sbcf", "fw"], [], 0, [], [],
                                  [], // N/A
                                  [], // N/A
                                  FileContent.binaryUnknown,
