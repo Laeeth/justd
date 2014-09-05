@@ -1298,12 +1298,12 @@ unittest
     assertEqual(demangler(`_Zrm1XS_`).decodeSymbol(),
                 Demangling(Lang.cxx, `operator%(X, X)`));
 
-    assertEqual(demangler(`_ZZL8next_argRPPcE4keys`, false, true).decodeSymbol(),
+    assertEqual(demangler(`_ZZL8next_argRPPcE4keys`).decodeSymbol(),
                 Demangling(Lang.cxx, `next_arg(char**&)::keys`));
 
     assertEqual(demangler(`_ZN12ExpStatement9scopeCodeEP5ScopePP9StatementS4_S4`).decodeSymbol(),
                 Demangling(Lang.cxx, `ExpStatement::scopeCode(Scope*, Statement**, Statement**, Statement**)`));
 
-    /* assertEqual(demangler(`_ZZ8genCmainP5ScopeE9cmaincode`).decodeSymbol(), */
-    /*             Demangling(Lang.cxx, `genCmain(Scope*)::cmaincode`)); */
+    assertEqual(demangler(`_ZZ8genCmainP5ScopeE9cmaincode`).decodeSymbol(),
+                Demangling(Lang.cxx, `genCmain(Scope*)::cmaincode`));
 }
