@@ -104,11 +104,12 @@ Error: undefined identifier __dollar
 
 \section{Compiler Inference}
 
-\item Infer guarded AA-indexing expressions such as
+\item Infer \texttt{nothrow}-ness and \texttt{NotNull}-ness for \texttt{hit} in
 \begin{lstlisting}[frame=single]
-if (key in aa) { f(aa[key]); }
+if (key in aa) { auto hit = assumeNotNull(aa[key]); }
 \end{lstlisting}
-to nothrow if key and are aa is (inferred) immutable in this context.
+May require key and aa to be immutable. Alternatively wrap result in a Nullable
+or catch the exception.
 
 \section{Language}
 
