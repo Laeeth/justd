@@ -102,10 +102,13 @@ string makeInstanceAliases(string templateName,
                            const uint minDimension = 2,
                            const uint maxDimension = 4,
                            const string[] elementTypes = defaultElementTypes)
-in {
+in
+{
     assert(templateName.length);
     assert(minDimension <= maxDimension);
-} body {
+}
+body
+{
     import std.string;
     import std.conv;
     string code;
@@ -154,9 +157,7 @@ struct Point(E,
             point_[ix] = arg;
         }
     }
-    /** Element data.
-        TODO: Can this be private and still allow algorithms such as $(D randInPlace) to modify this??
-    */
+    /** Element data. */
     E[D] point_;
     static const uint dimension = D; /// Get dimensionality.
 
@@ -732,9 +733,7 @@ struct Vector(E, uint D,
         }
     }
 
-    /** Element data.
-        TODO: Can this be private and still allow algorithms such as $(D randInPlace) to modify this??
-    */
+    /** Element data. */
     E[D] vector_;
 
     unittest {
@@ -886,9 +885,7 @@ struct Matrix(E,
     static const uint rows = rows_; /// Number of rows
     static const uint cols = cols_; /// Number of columns
 
-    /** Matrix $(RED row-major) in memory.
-        TODO: Can this be private and still allow algorithms such as $(D randInPlace) to modify this??
-     */
+    /** Matrix $(RED row-major) in memory. */
     static if (layout == Layout.rowMajor)
     {
         E[cols][rows] matrix_; // In C it would be mt[rows][cols], D does it like this: (mt[cols])[rows]
@@ -1200,6 +1197,70 @@ unittest {
 
 // ==============================================================================================
 
+/// 3-Dimensional Spherical Point with Coordinate Type (Precision) $(D E).
+struct SpherePoint(E) if (isFloatingPoint!E)
+{
+    enum D = 3;                 // only in three dimensions
+    alias type = E;
+
+    /** Construct from Components $(D args). */
+    this(T...)(T args)
+    {
+        foreach (ix, arg; args)
+        {
+            spherePoint_[ix] = arg;
+        }
+    }
+    /** Element data. */
+    E[D] spherePoint_;
+    static const uint dimension = D; /// Get dimensionality.
+
+    @property @trusted string toString() const { return "SpherePoint:" ~ to!string(spherePoint_); }
+    @property @trusted string toMathML() const
+    {
+        // opening
+        string str = `<math><mrow>
+  <mo>(</mo>
+  <mtable>`;
+
+        foreach (i; siota!(0, D))
+        {
+            str ~= `
+    <mtr>
+      <mtd>
+        <mn>` ~ spherePoint_[i].toMathML ~ `</mn>
+      </mtd>
+    </mtr>`;
+        }
+
+        // closing
+        str ~= `
+  </mtable>
+  <mo>)</mo>
+</mrow></math>
+`;
+        return str;
+    }
+
+    @safe pure nothrow:
+
+    /** Returns: Area 0 */
+    @property auto area() const { return 0; }
+
+    auto ref opSlice() { return spherePoint_[]; }
+}
+alias sphointf = SpherePoint!float;
+alias sphointd = SpherePoint!double;
+alias sphointr = SpherePoint!real;
+
+/** Instantiator. */
+auto spherePoint(T...)(T args) if (!is(CommonType!(T) == void))
+{
+    return SpherePoint!(CommonType!T, args.length)(args);
+}
+
+// ==============================================================================================
+
 /** $(D D)-Dimensional Particle with Cartesian Coordinate $(D position) and
     $(D velocity) of Element (Component) Type $(D E).
 */
@@ -1460,6 +1521,13 @@ struct Sphere(E, uint D) if (D >= 2 &&
         auto area()   const { return 4*PI*radius^^2; }
         auto volume() const { return 4*PI*radius^^3/3; }
     }
+    else static if (D >= 4)
+    {
+        // See also: https://en.wikipedia.org/wiki/Volume_of_an_n-ball
+        real n = D;
+        import std.mathspecial: gamma;
+        auto volume() const { return PI^^(n/2) / gamma(n/2 + 1) * radius^^n; }
+    }
 }
 auto sphere(C, R)(C center, R radius) { return Sphere!(C.type, C.dimension)(center, radius); }
 // TODO: Use this instead:
@@ -1467,8 +1535,10 @@ auto sphere(C, R)(C center, R radius) { return Sphere!(C.type, C.dimension)(cent
 // return Sphere!(CommonType!C, C.length)(center, radius);
 // }
 
-unittest {
-    version(print) wln(sphere(point(1, 2), 1));
+unittest
+{
+    const x = sphere(point(1.0, 2, 3, 4), 10.0);
+    version(print) wln(x, " has volume ", x.volume);
 }
 
 /**
