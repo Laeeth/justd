@@ -4843,7 +4843,7 @@ class Scanner(Term)
                         NotNull!Dir topDir,
                         NotNull!RegFile theRegFile,
                         NotNull!Dir parentDir,
-                        in string[] keys,
+                        const string[] keys,
                         ref Symlink[] fromSymlinks,
                         size_t subIndex,
                         GStats gstats)
@@ -4884,7 +4884,7 @@ class Scanner(Term)
     /** Scan $(D elfFile) for ELF Symbols. */
     void scanELFFile(Viz viz,
                      NotNull!RegFile elfFile,
-                     in string[] keys,
+                     const string[] keys,
                      bool demangle = true)
     {
         import elfdoc: sectionNameExplanations;
@@ -4925,16 +4925,21 @@ class Scanner(Term)
         auto sst = decoder.getSymbolsStringTable;
         if (!sst.isNull)
         {
-            viz.pp(asH!2(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`));
+            import algorithm_ex: findFirstOfAnyInOrder;
             // I love D :)
             auto scan = (sst.strings
                          .filter!(mangled => !mangled.empty) // skip empty
-                         .tee!(mangled => gstats.elfFilesByMangledSymbol[mangled] ~= elfFile) // register them
+                         /* .tee!(mangled => gstats.elfFilesByMangledSymbol[mangled] ~= elfFile) // register them */
                          .map!(mangled => demangler(mangled).decodeSymbol)
-                         .filter!(demangling => (!keys.empty &&
-                                                 !demangling.unmangled.find(keys[0]).empty))
+                         .filter!(demangling => (!keys.empty && // don't show anything if no keys given
+                                                 demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))
+                         .array
                 );
-            viz.ppln(scan.array.asTable);
+            if (!scan.empty)
+            {
+                viz.pp(asH!2(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`));
+                viz.ppln(scan.asTable);
+            }
         }
     }
 
@@ -4943,7 +4948,7 @@ class Scanner(Term)
                      NotNull!Dir topDir,
                      NotNull!RegFile theRegFile,
                      NotNull!Dir parentDir,
-                     in string[] keys,
+                     const string[] keys,
                      ref Symlink[] fromSymlinks,
                      size_t subIndex)
     {
@@ -4960,6 +4965,13 @@ class Scanner(Term)
                                                    topDir, cast(NotNull!File)theRegFile, parentDir,
                                                    fromSymlinks,
                                                    theRegFile.name, keys, [], ScanContext.fileName);
+        }
+
+        // ELF Symbols
+        if (gstats.showELFSymbolDups &&
+            theRegFile.ofKind(`ELF`, gstats.collectTypeHits, gstats.allFKinds))
+        {
+            scanELFFile(viz, theRegFile, keys, gstats.demangleELF);
         }
 
         // Scan Contents
@@ -5001,13 +5013,6 @@ class Scanner(Term)
                                                   gstats.showFileContentDups,
                                                   doBist,
                                                   doBitStatus);
-                if (gstats.showELFSymbolDups)
-                {
-                    if (theRegFile.ofKind(`ELF`, gstats.collectTypeHits, gstats.allFKinds))
-                    {
-                        scanELFFile(viz, theRegFile, keys, gstats.demangleELF);
-                    }
-                }
 
                 // Match Bist of Keys with BistX of File
                 bool[] bistHits;
@@ -5167,7 +5172,7 @@ class Scanner(Term)
                      NotNull!Dir topDir,
                      NotNull!Symlink theSymlink,
                      NotNull!Dir parentDir,
-                     in string[] keys,
+                     const string[] keys,
                      ref Symlink[] fromSymlinks)
     {
         // check for symlink cycles
@@ -5283,7 +5288,7 @@ class Scanner(Term)
     void scanDir(Viz viz,
                  NotNull!Dir topDir,
                  NotNull!Dir theDir,
-                 in string[] keys,
+                 const string[] keys,
                  Symlink[] fromSymlinks = [],
                  int maxDepth = -1)
     {

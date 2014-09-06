@@ -1767,7 +1767,7 @@ unittest
     of a variadic list of key needle arguments.
    Return found range plus index into needles starting at 1 upon.
  */
-Tuple!(R, size_t) findFirstOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[] needles)
+Tuple!(R, size_t) findFirstOfAnyInOrder(alias pred = "a == b", R)(R haystack, const R[] needles)
 {
     import std.algorithm: find;
     switch (needles.length)

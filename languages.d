@@ -23,7 +23,7 @@ unittest
     assert(toTag(Lang.java) == `Java`);
 }
 
-string toTag(Lang lang)
+string toTag(Lang lang) @safe @nogc pure nothrow
 {
     final switch (lang)
     {
@@ -34,6 +34,16 @@ string toTag(Lang lang)
         case Lang.java: return `Java`;
         case Lang.objective_c: return `Objective-C`;
     }
+}
+
+string toHTML(Lang lang) @safe @nogc pure nothrow
+{
+    return lang.toTag;
+}
+
+string toMathML(Lang lang) @safe @nogc pure nothrow
+{
+    return lang.toHTML;
 }
 
 Lang language(string name)

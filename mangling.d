@@ -1200,8 +1200,8 @@ alias Expr = string;
 
 struct Demangling
 {
-    Lang lang;
-    Expr expr;
+    Lang language;
+    Expr unmangled;
     auto opCast(T : bool)() @safe pure nothrow const
     {
         return !expr.empty;

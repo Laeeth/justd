@@ -1169,7 +1169,7 @@ void pp1(Arg)(Viz viz,
 
         // use aggregate members as header
         import std.range: front;
-        const first = arg.args[0].front;
+        const first = arg.args[0].front; // TODO: Print only if non-empty
         alias Front = typeof(first);
         static if (isAggregateType!Front)
         {
