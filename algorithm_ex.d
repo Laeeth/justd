@@ -1761,3 +1761,35 @@ unittest
     assert(!pop);
     assert(haystack == source);
 }
+
+/** Find All Occurrencies of $(D needles) in $(D haystack). */
+Tuple!(R, size_t) findFirstIn(alias pred = "a == b", R)(R haystack, R[] needles)
+{
+    import std.algorithm: find;
+    switch (needles.length)
+    {
+        case 1:
+            auto hit = haystack.find(needles[0]);
+            return tuple(hit, hit.empty ? 0UL : 1UL);
+        case 2:
+            return haystack.find(needles[0],
+                                 needles[1]);
+        case 3:
+            return haystack.find(needles[0],
+                                 needles[1],
+                                 needles[2]);
+        default:
+            return tuple(R.init, 0UL);
+    }
+}
+
+unittest
+{
+    import assert_ex;
+    assertEqual("abc".findFirstIn(["x"]), tuple("", 0UL));
+    assertEqual("abc".findFirstIn(["a"]), tuple("abc", 1UL));
+    assertEqual("abc".findFirstIn(["c"]), tuple("c", 1UL));
+    assertEqual("abc".findFirstIn(["a", "b"]), tuple("abc", 1UL));
+    assertEqual("abc".findFirstIn(["a", "b"]), tuple("abc", 1UL));
+    assertEqual("abc".findFirstIn(["x", "b"]), tuple("bc", 2UL));
+}
