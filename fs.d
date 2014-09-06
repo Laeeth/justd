@@ -4951,13 +4951,14 @@ class Scanner(Term)
                                                  demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))
                          .array
                 );
+
             if (!scan.empty &&
-                `ELF` in gstats.selFKinds.byName) // if user selected ELF file
+                `ELF` in gstats.selFKinds.byName) // if user selected ELF file show them
             {
                 viz.pp(horizontalRuler,
-                       displayedFileName(gstats, elfFile).asPath.asH!3);
-                viz.pp(asH!4(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`));
-                viz.ppln(scan.asTable);
+                       displayedFileName(gstats, elfFile).asPath.asH!3,
+                       asH!4(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`),
+                       scan.asTable);
             }
         }
     }
