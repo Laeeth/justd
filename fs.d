@@ -3972,6 +3972,15 @@ FKind tryLookupKindIn(RegFile regFile,
     }
 }
 
+string displayedFileName(AnyFile)(GStats gstats,
+                                  AnyFile theFile) @safe pure
+{
+    return ((gstats.pathFormat == PathFormat.relative &&
+             gstats.topDirs.length == 1) ?
+            "./" ~ theFile.name :
+            theFile.path);
+}
+
 /** File System Scanner. */
 class Scanner(Term)
 {
@@ -4586,15 +4595,6 @@ class Scanner(Term)
         }
 
         return kindHit;
-    }
-
-    string displayedFileName(AnyFile)(GStats gstats,
-                                      AnyFile theFile) pure
-    {
-        return ((gstats.pathFormat == PathFormat.relative &&
-                 gstats.topDirs.length == 1) ?
-                "./" ~ theFile.name :
-                theFile.path);
     }
 
     /** Search for Keys $(D keys) in Source $(D src).
