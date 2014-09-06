@@ -2287,6 +2287,22 @@ class GStats
         kindDi.operations ~= tuple(FOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO: Include paths
         txtFKinds ~= kindDi;
 
+        static immutable keywordsRust = ["as", "box", "break", "continue", "crate",
+                                         "else", "enum", "extern", "false", "fn", "for", "if", "impl", "in",
+                                         "let", "loop", "match", "mod", "mut", "priv", "proc", "pub", "ref",
+                                         "return", "self", "static", "struct", "super", "true", "trait",
+                                         "type", "unsafe", "use", "while"];
+
+        auto kindRust = new FKind("Rust", [], ["rs"],
+                                  [], 0,
+                                  [],
+                                  keywordsRust,
+                                  cCommentDelims,
+                                  defaultStringDelims,
+                                  FileContent.sourceCode,
+                                  FileKindDetection.equalsNameOrContents);
+        txtFKinds ~= kindRust;
+
         static immutable keywordsFortran77 = ["if", "else"];
         // TODO: Support .h files but require it to contain some Fortran-specific or be parseable.
         auto kindFortan = new FKind("Fortran", [], ["f", "fortran", "f77", "f90", "f95", "f03", "for", "ftn", "fpp"], [], 0, [], keywordsFortran77,
