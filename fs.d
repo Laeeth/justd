@@ -2589,6 +2589,15 @@ class GStats
         linuxFirmwareKind.parentPathDirs = ["lib", "firmware"];
         binFKinds ~= linuxFirmwareKind;
 
+        // TODO: Specialize to not steal results from file's magics.
+        auto linuxHwDbKind = new FKind("Linux Hardware Database Index",
+                                       "hwdb.bin", ["bin"], "KSLPHHRH", 0, [], [],
+                                       [], // N/A
+                                       [], // N/A
+                                       FileContent.binaryUnknown,
+                                       FileKindDetection.equalsNameAndContents);
+        binFKinds ~= linuxHwDbKind;
+
         // Executables
         binFKinds ~= new FKind("Mach-O", [], ["o"], x"CE FA ED FE", 0, [], [],
                                [], // N/A
