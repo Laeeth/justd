@@ -552,7 +552,7 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     alias asTT = asMonospaced;
     alias asP = asParagraph;
     alias asH = asHeader;
-    alias HR = horizontalRuler;
+    alias asHR = horizontalRuler;
     alias asUL = asUList;
     alias asOL = asOList;
     alias asTR = asRow;

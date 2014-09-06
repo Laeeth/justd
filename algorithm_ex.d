@@ -1793,6 +1793,30 @@ Tuple!(R, size_t) findFirstOfAnyInOrder(alias pred = "a == b", R)(R haystack, co
                                  needles[2],
                                  needles[3],
                                  needles[4]);
+        case 6:
+            return haystack.find(needles[0],
+                                 needles[1],
+                                 needles[2],
+                                 needles[3],
+                                 needles[4],
+                                 needles[5]);
+        case 7:
+            return haystack.find(needles[0],
+                                 needles[1],
+                                 needles[2],
+                                 needles[3],
+                                 needles[4],
+                                 needles[5],
+                                 needles[6]);
+        case 8:
+            return haystack.find(needles[0],
+                                 needles[1],
+                                 needles[2],
+                                 needles[3],
+                                 needles[4],
+                                 needles[5],
+                                 needles[6],
+                                 needles[7]);
         default:
             import std.conv: to;
             assert(false, "Too many keys " ~ needles.length.to!string);

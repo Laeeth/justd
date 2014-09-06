@@ -4955,6 +4955,10 @@ class Scanner(Term)
             if (!scan.empty &&
                 `ELF` in gstats.selFKinds.byName) // if user selected ELF file show them
             {
+                foreach (e; sst.strings)
+                {
+                    gstats.elfFilesByMangledSymbol[e] ~= elfFile;
+                }
                 viz.pp(horizontalRuler,
                        displayedFileName(gstats, elfFile).asPath.asH!3,
                        asH!4(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`),
