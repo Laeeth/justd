@@ -63,7 +63,7 @@ import mathml;
 alias wln = writeln;
 import dbg;
 import rational: Rational;
-import algorithm_ex: siota;
+import range_ex: siota;
 import traits_ex: isOpBinary, isComparable, isEquable, isNotEquable, areComparable, areEquable, areNotEquable;
 
 /* TODO: This doesn't seem that elegant. */
@@ -141,10 +141,9 @@ auto sqrtx(T)(T x)
 
 // ==============================================================================================
 
-/// $(D D)-Dimensional Point with Coordinate Type (Precision) $(D E).
+/// $(D D)-Dimensional Cartesian Point with Coordinate Type (Precision) $(D E).
 struct Point(E,
-             uint D) if (/* isNumeric!E && */
-                         D >= 1)
+             uint D) if (D >= 1 /* && isNumeric!E */)
 {
     alias type = E;
 
@@ -222,7 +221,7 @@ unittest {
 
 enum Orient { column, row } // Vector Orientation.
 
-/** $(D D)-Dimensional Vector with Coordinate/Element Type (Precision) $(D E).
+/** $(D D)-Dimensional Vector with Coordinate/Element (Component) Type $(D E).
     See also: http://physics.stackexchange.com/questions/16850/is-0-0-0-an-undefined-vector
 */
 struct Vector(E, uint D,
@@ -1201,8 +1200,8 @@ unittest {
 
 // ==============================================================================================
 
-/** $(D D)-Dimensional Particle with Coordinate Position and Direction/Velocity
-    Type (Precision) $(D E).
+/** $(D D)-Dimensional Particle with Cartesian Coordinate $(D position) and
+    $(D velocity) of Element (Component) Type $(D E).
 */
 struct Particle(E, uint D,
                 bool normalizedVelocityFlag = false) if (D >= 1)
@@ -1230,8 +1229,9 @@ struct ForcedParticle(E, uint D,
 
 // ==============================================================================================
 
-/** $(D D)-Dimensional Axis-Aligned (Hyper) Box.
-    We must use inclusive compares betweeen boxes and points in inclusion
+/** $(D D)-Dimensional Axis-Aligned (Hyper) Cartesian $(D Box) with Element (Component) Type $(D E).
+
+    Note: We must use inclusive compares betweeen boxes and points in inclusion
     functions such as inside() and includes() in order for the behaviour of
     bounding boxes (especially in integer space) to work as desired.
  */
@@ -1321,10 +1321,11 @@ mixin(makeInstanceAliases("Box","box", 2,4, ["int", "float", "double", "real"]))
 
 // ==============================================================================================
 
-/** $(D D)-Dimensional Infinite (Hyper)-Plane.
+/** $(D D)-Dimensional Infinite Cartesian (Hyper)-Plane with Element (Component) Type $(D E).
     See also: http://stackoverflow.com/questions/18600328/preferred-representation-of-a-3d-plane-in-c-c
  */
-struct Plane(E, uint D) if (isFloatingPoint!E && D >= 2)
+struct Plane(E, uint D) if (D >= 2 &&
+                            isFloatingPoint!E)
 {
     static const uint dimension = D; /// Get dimensionality.
 
@@ -1435,9 +1436,10 @@ mixin(makeInstanceAliases("Plane","plane", 3,4, defaultElementTypes));
 
 // ==============================================================================================
 
-/** $(D D)-Dimensional (Hyper)-Sphere.
+/** $(D D)-Dimensional Cartesian (Hyper)-Sphere with Element (Component) Type $(D E).
 */
-struct Sphere(E, uint D) if (isNumeric!E && D >= 2)
+struct Sphere(E, uint D) if (D >= 2 &&
+                             isNumeric!E)
 {
     alias P = Point!(E, D);
     P center;

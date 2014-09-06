@@ -19,18 +19,6 @@ version(print) import dbg;
 
 // ==============================================================================================
 
-/** Static Iota.
-    TODO: Make use of staticIota when it gets available in Phobos.
-*/
-template siota(size_t from, size_t to) { alias siota = siotaImpl!(to-1, from); }
-private template siotaImpl(size_t to, size_t now)
-{
-    static if (now >= to) { alias siotaImpl = TypeTuple!(now); }
-    else                  { alias siotaImpl = TypeTuple!(now, siotaImpl!(to, now+1)); }
-}
-
-// ==============================================================================================
-
 string typestringof(T)(in T a) @safe @nogc pure nothrow { return T.stringof; }
 
 import std.range: dropOne;
@@ -292,6 +280,7 @@ bool allZero(T, bool useStatic = true)(in T x) @safe @nogc pure nothrow // TODO:
     }
     else static if (useStatic && isStaticArray!T)
     {
+        import range_ex: siota;
         foreach (ix; siota!(0, x.length))
         {
             if (!x[ix].allZero) { return false; } // make use of siota?
@@ -1111,6 +1100,7 @@ alias doN = doTimes;
 /** Execute Expression $(D exp) $(I inline) the same way $(D n) times. */
 void doTimes(uint n)(lazy void expression) // TOREVIEW: Should we use delegate instead?
 {
+    import range_ex: siota;
     foreach (i; siota(0, n)) expression();
 }
 

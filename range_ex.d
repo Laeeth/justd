@@ -33,3 +33,14 @@ than buffer capacity");
         _length = length;
     }
 }
+
+/** Static Iota.
+    TODO: Make use of staticIota when it gets available in Phobos.
+*/
+template siota(size_t from, size_t to) { alias siota = siotaImpl!(to-1, from); }
+private template siotaImpl(size_t to, size_t now)
+{
+    import std.typetuple: TypeTuple;
+    static if (now >= to) { alias siotaImpl = TypeTuple!(now); }
+    else                  { alias siotaImpl = TypeTuple!(now, siotaImpl!(to, now+1)); }
+}
