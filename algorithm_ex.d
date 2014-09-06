@@ -1762,8 +1762,12 @@ unittest
     assert(haystack == source);
 }
 
-/** Find All Occurrencies of $(D needles) in $(D haystack). */
-Tuple!(R, size_t) findFirstIn(alias pred = "a == b", R)(R haystack, R[] needles)
+/** Find First Occurrence any of $(D needles) in $(D haystack).
+    Like to std.algorithm.find but takes an array of needles as argument instead
+    of a variadic list of key needle arguments.
+   Return found range plus index into needles starting at 1 upon.
+ */
+Tuple!(R, size_t) findFirstOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[] needles)
 {
     import std.algorithm: find;
     switch (needles.length)
@@ -1778,18 +1782,36 @@ Tuple!(R, size_t) findFirstIn(alias pred = "a == b", R)(R haystack, R[] needles)
             return haystack.find(needles[0],
                                  needles[1],
                                  needles[2]);
+        case 4:
+            return haystack.find(needles[0],
+                                 needles[1],
+                                 needles[2],
+                                 needles[3]);
+        case 5:
+            return haystack.find(needles[0],
+                                 needles[1],
+                                 needles[2],
+                                 needles[3],
+                                 needles[4]);
         default:
-            return tuple(R.init, 0UL);
+            import std.conv: to;
+            assert(false, "Too many keys " ~ needles.length.to!string);
     }
 }
 
 unittest
 {
     import assert_ex;
-    assertEqual("abc".findFirstIn(["x"]), tuple("", 0UL));
-    assertEqual("abc".findFirstIn(["a"]), tuple("abc", 1UL));
-    assertEqual("abc".findFirstIn(["c"]), tuple("c", 1UL));
-    assertEqual("abc".findFirstIn(["a", "b"]), tuple("abc", 1UL));
-    assertEqual("abc".findFirstIn(["a", "b"]), tuple("abc", 1UL));
-    assertEqual("abc".findFirstIn(["x", "b"]), tuple("bc", 2UL));
+    assertEqual("abc".findFirstOfAnyInOrder(["x"]), tuple("", 0UL));
+    assertEqual("abc".findFirstOfAnyInOrder(["a"]), tuple("abc", 1UL));
+    assertEqual("abc".findFirstOfAnyInOrder(["c"]), tuple("c", 1UL));
+    assertEqual("abc".findFirstOfAnyInOrder(["a", "b"]), tuple("abc", 1UL));
+    assertEqual("abc".findFirstOfAnyInOrder(["a", "b"]), tuple("abc", 1UL));
+    assertEqual("abc".findFirstOfAnyInOrder(["x", "b"]), tuple("bc", 2UL));
+}
+
+Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[] needles)
+{
+    // TODO: Return some clever lazy range that calls each possible haystack.findFirstOfAnyInOrder(needles);
+    return typeof(return).init;
 }
