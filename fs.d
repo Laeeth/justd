@@ -4981,13 +4981,6 @@ class Scanner(Term)
                                                    theRegFile.name, keys, [], ScanContext.fileName);
         }
 
-        // ELF Symbols
-        if (gstats.showELFSymbolDups &&
-            theRegFile.ofKind(`ELF`, gstats.collectTypeHits, gstats.allFKinds))
-        {
-            scanELFFile(viz, theRegFile, keys, gstats);
-        }
-
         // Scan Contents
         if ((gstats.scanContext == ScanContext.all ||
              gstats.scanContext == ScanContext.fileContent) &&
@@ -5001,9 +4994,15 @@ class Scanner(Term)
             // TODO: Flag for readText
             try
             {
-
                 ++gstats.noScannedRegFiles;
                 ++gstats.noScannedFiles;
+
+                // ELF Symbols
+                if (gstats.showELFSymbolDups &&
+                    theRegFile.ofKind(`ELF`, gstats.collectTypeHits, gstats.allFKinds))
+                {
+                    scanELFFile(viz, theRegFile, keys, gstats);
+                }
 
                 // Check included kinds first because they are fast.
                 KindHit incKindHit = isSelectedFKind(theRegFile);
