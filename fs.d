@@ -4253,6 +4253,10 @@ class Scanner(Term)
                 gstats.selFKinds.rehash;
             }
         }
+        else
+        {
+            gstats.selFKinds = gstats.allFKinds; // just reuse allFKinds
+        }
 
         // Keys
         auto commaedKeys = keys.joiner(",");
