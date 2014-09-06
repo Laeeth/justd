@@ -4588,6 +4588,15 @@ class Scanner(Term)
         return kindHit;
     }
 
+    string displayedFileName(AnyFile)(GStats gstats,
+                                      AnyFile theFile) pure
+    {
+        return ((gstats.pathFormat == PathFormat.relative &&
+                 gstats.topDirs.length == 1) ?
+                "./" ~ theFile.name :
+                theFile.path);
+    }
+
     /** Search for Keys $(D keys) in Source $(D src).
      */
     size_t scanForKeys(Source, Keys)(Viz viz,
@@ -4614,12 +4623,6 @@ class Scanner(Term)
                 thisFace = fileFace;
             }
         }
-
-        // GNU Grep-Compatible File Name/Path Formatting
-        immutable displayedFileName = ((gstats.pathFormat == PathFormat.relative &&
-                                        gstats.topDirs.length == 1) ?
-                                       "./" ~ theFile.name :
-                                       theFile.path);
 
         size_t nL = 0; // line counter
         foreach (line; src.splitter(cast(immutable ubyte[])newline))
@@ -4689,7 +4692,7 @@ class Scanner(Term)
                                 if (!anyFileHit)
                                 {
                                     viz.pp(horizontalRuler,
-                                           displayedFileName.asPath.asH!3);
+                                           displayedFileName(gstats, theFile).asPath.asH!3);
                                     viz.ppTagOpen(`table`, `border=1`);
                                     anyFileHit = true;
                                 }
@@ -4712,7 +4715,7 @@ class Scanner(Term)
                                                " -> ");
                                     }
                                     // show file path/name
-                                    viz.pp(displayedFileName.asPath); // show path
+                                    viz.pp(displayedFileName(gstats, theFile).asPath); // show path
                                 }
                             }
 
@@ -4951,7 +4954,9 @@ class Scanner(Term)
             if (!scan.empty &&
                 `ELF` in gstats.selFKinds.byName) // if user selected ELF file
             {
-                viz.pp(asH!2(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`));
+                viz.pp(horizontalRuler,
+                       displayedFileName(gstats, elfFile).asPath.asH!3);
+                viz.pp(asH!4(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`));
                 viz.ppln(scan.asTable);
             }
         }
