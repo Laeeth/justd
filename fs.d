@@ -4226,17 +4226,17 @@ class Scanner(Term)
         {
             foreach (lang; selFKindNames.splitter(","))
             {
-                if      (lang         in gstats.txtFKinds.byName) // try exact match
+                if      (lang         in gstats.allFKinds.byName) // try exact match
                 {
-                    gstats.selFKinds ~= gstats.txtFKinds.byName[lang];
+                    gstats.selFKinds ~= gstats.allFKinds.byName[lang];
                 }
-                else if (lang.toLower in gstats.txtFKinds.byName) // else try all in lower case
+                else if (lang.toLower in gstats.allFKinds.byName) // else try all in lower case
                 {
-                    gstats.selFKinds ~= gstats.txtFKinds.byName[lang.toLower];
+                    gstats.selFKinds ~= gstats.allFKinds.byName[lang.toLower];
                 }
-                else if (lang.toUpper in gstats.txtFKinds.byName) // else try all in upper case
+                else if (lang.toUpper in gstats.allFKinds.byName) // else try all in upper case
                 {
-                    gstats.selFKinds ~= gstats.txtFKinds.byName[lang.toUpper];
+                    gstats.selFKinds ~= gstats.allFKinds.byName[lang.toUpper];
                 }
                 else
                 {
@@ -4796,7 +4796,7 @@ class Scanner(Term)
         // version(none)
         // {
         //     ptrdiff_t offHit = 0;
-        //     foreach(ix, key; keys)
+        //     foreach (ix, key; keys)
         //     {
         //         scope immutable hit1 = src.find(key); // single key hit
         //         offHit = hit1.ptr - src.ptr;
@@ -4871,8 +4871,7 @@ class Scanner(Term)
         if (ext in gstats.selFKinds.byExt)
         {
             auto matchingFKinds = gstats.selFKinds.byExt[ext];
-            dln(matchingFKinds);
-            foreach(kind; matchingFKinds)
+            foreach (kind; matchingFKinds)
             {
                 const hit = kind.operations.find!(a => a[0] == gstats.fOp);
                 if (!hit.empty)
@@ -4894,7 +4893,7 @@ class Scanner(Term)
     void scanELFFile(Viz viz,
                      NotNull!RegFile elfFile,
                      const string[] keys,
-                     bool demangle = true)
+                     GStats gstats)
     {
         import elfdoc: sectionNameExplanations;
         /* TODO: Add mouse hovering help for sectionNameExplanations[section] */
@@ -4919,7 +4918,7 @@ class Scanner(Term)
         /*         // TODO: Use range: auto symbolsDemangled = symtab.symbols.map!(sym => demangler(sym.name).decodeSymbol); */
         /*         foreach (sym; symtab.symbols) // you can add filters here */
         /*         { */
-        /*             if (demangle) */
+        /*             if (gstats.demangleELF) */
         /*             { */
         /*                 const hit = demangler(sym.name).decodeSymbol; */
         /*             } */
@@ -4944,7 +4943,8 @@ class Scanner(Term)
                                                  demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))
                          .array
                 );
-            if (!scan.empty)
+            if (!scan.empty &&
+                `ELF` in gstats.selFKinds.byName) // if user selected ELF file
             {
                 viz.pp(asH!2(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`));
                 viz.ppln(scan.asTable);
@@ -4980,7 +4980,7 @@ class Scanner(Term)
         if (gstats.showELFSymbolDups &&
             theRegFile.ofKind(`ELF`, gstats.collectTypeHits, gstats.allFKinds))
         {
-            scanELFFile(viz, theRegFile, keys, gstats.demangleELF);
+            scanELFFile(viz, theRegFile, keys, gstats);
         }
 
         // Scan Contents
