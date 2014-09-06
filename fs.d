@@ -126,7 +126,7 @@ import std.path: baseName, dirName, isAbsolute, dirSeparator, extension, buildNo
 import std.datetime;
 import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
-import std.range: repeat, array, empty, cycle, chain;
+import std.range: repeat, array, empty, cycle, chain, tee;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf, isIterable;
 import std.allocator;
@@ -191,7 +191,7 @@ class SignalCaughtException : Exception
     this(int signo, string file = __FILE__, size_t line = __LINE__ ) @safe {
         this.signo = signo;
         import std.conv: to;
-        super("Signal number " ~ to!string(signo) ~ " at " ~ file ~ ":" ~ to!string(line));
+        super(`Signal number ` ~ to!string(signo) ~ ` at ` ~ file ~ `:` ~ to!string(line));
     }
 }
 
@@ -200,7 +200,7 @@ void signalHandler(int signo)
     import core.atomic: atomicOp;
     if (signo == 2)
     {
-        core.atomic.atomicOp!"+="(ctrlC, 1);
+        core.atomic.atomicOp!`+=`(ctrlC, 1);
     }
     // throw new SignalCaughtException(signo);
 }
@@ -367,18 +367,18 @@ struct Delim
 }
 
 /* Comment Delimiters */
-enum defaultCommentDelims = [Delim("#")];
-enum cCommentDelims = [Delim("/*", "*/"),
-                       Delim("//")];
-enum dCommentDelims = [Delim("/+", "+/")] ~ cCommentDelims;
+enum defaultCommentDelims = [Delim(`#`)];
+enum cCommentDelims = [Delim(`/*`, `*/`),
+                       Delim(`//`)];
+enum dCommentDelims = [Delim(`/+`, `+/`)] ~ cCommentDelims;
 
 /* String Delimiters */
-enum defaultStringDelims = [Delim("\""),
-                            Delim("'"),
+enum defaultStringDelims = [Delim(`"`),
+                            Delim(`'`),
                             Delim("`")];
 enum pythonStringDelims = [Delim(`"""`),
-                           Delim("\""),
-                           Delim("'"),
+                           Delim(`"`),
+                           Delim(`'`),
                            Delim("`")];
 
 /** File Kind.
@@ -434,14 +434,14 @@ class FKind
         else static if (is(MagicData == string)) { this.magicData = lit(magicData.representation.dup); }
         else static if (is(MagicData == void[])) { this.magicData = lit(cast(ubyte[])magicData); }
         else static if (isAssignable!(Patt, MagicData)) { this.magicData = magicData; }
-        else static assert(false, "Cannot handle MagicData being type " ~ MagicData.stringof);
+        else static assert(false, `Cannot handle MagicData being type ` ~ MagicData.stringof);
 
         this.magicOffset = magicOffset;
 
         static      if (is(RefPattern == ubyte[])) { this.refPattern = refPattern_; }
         else static if (is(RefPattern == string)) { this.refPattern = refPattern_.representation.dup; }
         else static if (is(RefPattern == void[])) { this.refPattern = (cast(ubyte[])refPattern_).dup; }
-        else static assert(false, "Cannot handle RefPattern being type " ~ RefPattern.stringof);
+        else static assert(false, `Cannot handle RefPattern being type ` ~ RefPattern.stringof);
 
         this.keywords = keywords_;
 
@@ -488,7 +488,7 @@ class FKind
             }
             else
             {
-                //dln("warning: Handle magicData of type ", kindName);
+                //dln(`warning: Handle magicData of type `, kindName);
             }
             _behaviourDigest = bytes.sha1Of;
         }
@@ -503,7 +503,7 @@ class FKind
     FKind[] subKinds;   // Inherited pattern. For example ELF => ELF core file
     Patt baseNaming;    // Pattern that matches typical file basenames of this Kind. May be null.
 
-    string[] parentPathDirs; // example ["lib", "firmware"] for "/lib/firmware" or "../lib/firmware"
+    string[] parentPathDirs; // example [`lib`, `firmware`] for `/lib/firmware` or `../lib/firmware`
 
     const string[] exts;      // Typical Extensions.
     Patt magicData;     // Magic Data.
@@ -532,14 +532,14 @@ class FKind
 /** Set of File Kinds with Internal Hashing. */
 class FKinds
 {
-    void opOpAssign(string op)(FKind kind) @safe pure if (op == "~")
+    void opOpAssign(string op)(FKind kind) @safe pure if (op == `~`)
     {
-        mixin("this.byIndex " ~ op ~ "= kind;");
+        mixin(`this.byIndex ` ~ op ~ `= kind;`);
         this.register(kind);
     }
-    void opOpAssign(string op)(FKinds kinds) @safe pure if (op == "~")
+    void opOpAssign(string op)(FKinds kinds) @safe pure if (op == `~`)
     {
-        mixin("this.byIndex " ~ op ~ "= kinds.byIndex;");
+        mixin(`this.byIndex ` ~ op ~ `= kinds.byIndex;`);
         foreach (kind; kinds.byIndex)
             this.register(kind);
     }
@@ -812,7 +812,7 @@ class DirKind
 }
 version(msgpack) unittest
 {
-    auto k = tuple("", "");
+    auto k = tuple(``, ``);
     auto data = pack(k);
     Tuple!(string, string) k_; data.unpack(k_);
     assert(k == k_);
@@ -843,10 +843,10 @@ class File
     }
 
     // The Real Extension without leading dot.
-    string realExtension() @safe pure nothrow const { return name.extension.chompPrefix("."); }
+    string realExtension() @safe pure nothrow const { return name.extension.chompPrefix(`.`); }
     alias ext = realExtension; // shorthand
 
-    string toEnglishString() const @property { return "Any File"; }
+    string toEnglishString() const @property { return `Any File`; }
 
     Bytes64 treeSize() @property @trusted /* @safe pure nothrow */ { return size; }
 
@@ -924,7 +924,7 @@ class File
     alias dirs = parents;     // SCons style alias
     alias parentsDownward = parents;
 
-    bool underAnyDir(alias pred = "a")()
+    bool underAnyDir(alias pred = `a`)()
     {
         import std.algorithm: any;
         import std.functional: unaryFun;
@@ -981,7 +981,7 @@ class File
                 // NOTE: This is more efficient than buildPath(parent.path,
                 // name) because we can guarantee things about parent.path and
                 // name
-                immutable parentPath = parent.isRoot ? "" : parent.pathRecursive;
+                immutable parentPath = parent.isRoot ? `` : parent.pathRecursive;
                 return parentPath ~ dirSeparator ~ name;
             }
             else
@@ -992,7 +992,7 @@ class File
         }
         else
         {
-            return "/";  // assume root folder with beginning slash
+            return `/`;  // assume root folder with beginning slash
         }
     }
 
@@ -1000,7 +1000,7 @@ class File
     {
         void toMsgpack(Packer)(ref Packer packer) const
         {
-            writeln("Entering File.toMsgpack ", name);
+            writeln(`Entering File.toMsgpack `, name);
             packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime);
         }
         void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
@@ -1061,21 +1061,21 @@ version(linux) unittest
     GStats gstats = new GStats();
 
     auto root = assumeNotNull(new Dir(cast(Dir)null, gstats));
-    auto etc = getDir(root, "/etc");
-    assert(etc.path == "/etc");
+    auto etc = getDir(root, `/etc`);
+    assert(etc.path == `/etc`);
 
-    auto dent = DirEntry("/etc/passwd");
-    auto passwd = getFile(root, "/etc/passwd", dent.isDir);
-    assert(passwd.path == "/etc/passwd");
+    auto dent = DirEntry(`/etc/passwd`);
+    auto passwd = getFile(root, `/etc/passwd`, dent.isDir);
+    assert(passwd.path == `/etc/passwd`);
     assert(passwd.parent == etc);
-    assert(etc.sub("passwd") == passwd);
+    assert(etc.sub(`passwd`) == passwd);
 
-    ftags.addTag(passwd, "Password");
-    ftags.addTag(passwd, "Password");
-    ftags.addTag(passwd, "Secret");
-    assert(ftags.getTags(passwd) == ["Password", "Secret"]);
-    ftags.removeTag(passwd, "Password");
-    assert(ftags._tags[passwd] == ["Secret"]);
+    ftags.addTag(passwd, `Password`);
+    ftags.addTag(passwd, `Password`);
+    ftags.addTag(passwd, `Secret`);
+    assert(ftags.getTags(passwd) == [`Password`, `Secret`]);
+    ftags.removeTag(passwd, `Password`);
+    assert(ftags._tags[passwd] == [`Secret`]);
 }
 
 /** Symlink Target Status.
@@ -1129,7 +1129,7 @@ class Symlink : File
             return symlinkFace;
     }
 
-    override string toEnglishString() const @property { return "Symbolic Link"; }
+    override string toEnglishString() const @property { return `Symbolic Link`; }
 
     string retarget(ref DirEntry dent) @trusted
     {
@@ -1163,7 +1163,7 @@ class Symlink : File
         }
         void toMsgpack(Packer)(ref Packer packer) const
         {
-            /* writeln("Entering File.toMsgpack ", name); */
+            /* writeln(`Entering File.toMsgpack `, name); */
             packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime);
         }
         void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
@@ -1196,7 +1196,7 @@ class SpecFile : File
 
     override Face!Color face() const @property @safe pure nothrow { return specialFileFace; }
 
-    override string toEnglishString() const @property { return "Special File"; }
+    override string toEnglishString() const @property { return `Special File`; }
 
     version(msgpack)
     {
@@ -1207,7 +1207,7 @@ class SpecFile : File
         }
         void toMsgpack(Packer)(ref Packer packer) const
         {
-            /* writeln("Entering File.toMsgpack ", name); */
+            /* writeln(`Entering File.toMsgpack `, name); */
             packer.pack(name, size, timeLastModified.stdTime, timeLastAccessed.stdTime);
         }
         void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
@@ -1250,7 +1250,7 @@ class RegFile : File
 
     ~this() { _cstat.deallocate(false); }
 
-    override string toEnglishString() const @property { return "Regular File"; }
+    override string toEnglishString() const @property { return `Regular File`; }
 
     /** Returns: Content Id of $(D this). */
     const(SHA1Digest) contentId() @property @trusted /* @safe pure nothrow */
@@ -1381,15 +1381,15 @@ class RegFile : File
             import std.algorithm: remove;
             immutable n = dups.length;
             dups = dups.remove!(a => a is this);
-            assert(n == dups.length + 1); // assert that dups were not decreased by one");
+            assert(n == dups.length + 1); // assert that dups were not decreased by one);
         }
     }
 
     override string toString() @property @trusted
     {
         // import std.traits: fullyQualifiedName;
-        // return fullyQualifiedName!(typeof(this)) ~ "(" ~ buildPath(parent.name, name) ~ ")"; // TODO: typenameof
-        return (typeof(this)).stringof ~ "(" ~ this.path ~ ")"; // TODO: typenameof
+        // return fullyQualifiedName!(typeof(this)) ~ `(` ~ buildPath(parent.name, name) ~ `)`; // TODO: typenameof
+        return (typeof(this)).stringof ~ `(` ~ this.path ~ `)`; // TODO: typenameof
     }
 
     version(msgpack)
@@ -1402,7 +1402,7 @@ class RegFile : File
 
         /** Pack. */
         void toMsgpack(Packer)(ref Packer packer) const {
-            /* writeln("Entering RegFile.toMsgpack ", name); */
+            /* writeln(`Entering RegFile.toMsgpack `, name); */
 
             packer.pack(name, size,
                         timeLastModified.stdTime,
@@ -1431,7 +1431,7 @@ class RegFile : File
             /*     const tags = this_.parent.gstats.ftags.getTags(this_); */
             /*     immutable tagsFlag = !tags.empty; */
             /*     packer.pack(tagsFlag); */
-            /*     debug dln("Packing tags ", tags, " of ", this_.path); */
+            /*     debug dln(`Packing tags `, tags, ` of `, this_.path); */
             /*     if (tagsFlag) { packer.pack(tags); } */
         }
 
@@ -1450,8 +1450,8 @@ class RegFile : File
             if (_cstat.kindId.defined &&
                 _cstat.kindId !in parent.gstats.allFKinds.byId)
             {
-                dln("warning: kindId ", _cstat.kindId, " not found for ",
-                    path, ", FKinds length ", parent.gstats.allFKinds.byIndex.length);
+                dln(`warning: kindId `, _cstat.kindId, ` not found for `,
+                    path, `, FKinds length `, parent.gstats.allFKinds.byIndex.length);
                 _cstat.kindId.reset; // forget it
             }
             unpacker.unpack(_cstat._contentId); // Digest
@@ -1477,7 +1477,7 @@ class RegFile : File
                 /* unpacker.unpack(*_cstat.xgram); */
                 unpacker.unpack(_cstat.xgram,
                                 _cstat._xgramDeepDenseness);
-                /* debug dln("unpacked xgram. empty:", _cstat.xgram.empty); */
+                /* debug dln(`unpacked xgram. empty:`, _cstat.xgram.empty); */
             }
 
             // tags
@@ -1488,11 +1488,11 @@ class RegFile : File
             /* } */
         }
 
-        override void makeObselete() @trusted { _cstat.reset(); /* debug dln("Reset CStat for ", path); */ }
+        override void makeObselete() @trusted { _cstat.reset(); /* debug dln(`Reset CStat for `, path); */ }
     }
 
     /** Returns: Read-Only Contents of $(D this) Regular File. */
-    // } catch (InvalidMemoryOperationError) { viz.ppln(outFile, useHTML, "Failed to mmap ", dent.name); }
+    // } catch (InvalidMemoryOperationError) { viz.ppln(outFile, useHTML, `Failed to mmap `, dent.name); }
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
     immutable(ubyte[]) readOnlyContents(string file = __FILE__, int line = __LINE__)() @trusted
     {
@@ -1509,7 +1509,7 @@ class RegFile : File
                                      mmfile_size, null, pageSize());
                 if (parent.gstats.showMMaps)
                 {
-                    writeln("Mapped ", path, " of size ", size);
+                    writeln(`Mapped `, path, ` of size `, size);
                 }
             }
         }
@@ -1517,7 +1517,7 @@ class RegFile : File
     }
 
     /** Returns: Read-Writable Contents of $(D this) Regular File. */
-    // } catch (InvalidMemoryOperationError) { viz.ppln(outFile, useHTML, "Failed to mmap ", dent.name); }
+    // } catch (InvalidMemoryOperationError) { viz.ppln(outFile, useHTML, `Failed to mmap `, dent.name); }
     // scope immutable src = cast(immutable ubyte[]) read(dent.name, upTo);
     ubyte[] readWriteableContents() @trusted
     {
@@ -4884,61 +4884,57 @@ class Scanner(Term)
     /** Scan $(D elfFile) for ELF Symbols. */
     void scanELFFile(Viz viz,
                      NotNull!RegFile elfFile,
+                     in string[] keys,
                      bool demangle = true)
     {
         import elfdoc: sectionNameExplanations;
         /* TODO: Add mouse hovering help for sectionNameExplanations[section] */
         ELF decoder = ELF.fromFile(elfFile._mmfile);
 
-        version(none)
-            foreach (section; decoder.sections)
-            {
-                if (section.name.length)
-                {
-                    /* auto sst = section.StringTable; */
-                    //writeln("ELF Section named ", section.name);
-                }
-            }
+        /* foreach (section; decoder.sections) */
+        /* { */
+        /*     if (section.name.length) */
+        /*     { */
+        /*         /\* auto sst = section.StringTable; *\/ */
+        /*         //writeln("ELF Section named ", section.name); */
+        /*     } */
+        /* } */
 
-        const sectionNames = [".symtab"/* , ".strtab", ".dynsym" */];    // TODO: These two other sections causes range exceptions.
-        version(none)
-            foreach (sectionName; sectionNames)
-            {
-                auto sts = decoder.getSection(sectionName);
-                if (!sts.isNull)
-                {
-                    SymbolTable symtab = SymbolTable(sts);
-                    // TODO: Use range: auto symbolsDemangled = symtab.symbols.map!(sym => demangler(sym.name).decodeSymbol);
-                    foreach (sym; symtab.symbols) // you can add filters here
-                    {
-                        if (demangle)
-                        {
-                            const hit = demangler(sym.name).decodeSymbol;
-                        }
-                        else
-                        {
-                            writeln("?: ", sym.name);
-                        }
-                    }
-                }
-            }
+        /* const sectionNames = [".symtab"/\* , ".strtab", ".dynsym" *\/];    // TODO: These two other sections causes range exceptions. */
+        /* foreach (sectionName; sectionNames) */
+        /* { */
+        /*     auto sts = decoder.getSection(sectionName); */
+        /*     if (!sts.isNull) */
+        /*     { */
+        /*         SymbolTable symtab = SymbolTable(sts); */
+        /*         // TODO: Use range: auto symbolsDemangled = symtab.symbols.map!(sym => demangler(sym.name).decodeSymbol); */
+        /*         foreach (sym; symtab.symbols) // you can add filters here */
+        /*         { */
+        /*             if (demangle) */
+        /*             { */
+        /*                 const hit = demangler(sym.name).decodeSymbol; */
+        /*             } */
+        /*             else */
+        /*             { */
+        /*                 writeln("?: ", sym.name); */
+        /*             } */
+        /*         } */
+        /*     } */
+        /* } */
 
         auto sst = decoder.getSymbolsStringTable;
         if (!sst.isNull)
         {
-            viz.pp("ELF Symbol Strings Table (.strtab)".asH!2);
-            struct ELFSymbol
-            {
-                Demangling demangling;
-                string mangled;
-            }
-            auto scan = sst.strings.map!(sym => ELFSymbol(demangler(sym).decodeSymbol, sym)); // I love D :)
-            foreach (e; scan)
-            {
-                dln(e.mangled);
-                gstats.elfFilesByMangledSymbol[e.mangled] ~= elfFile;
-            }
-            viz.ppln(scan.asTable);
+            viz.pp(asH!2(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`));
+            // I love D :)
+            auto scan = (sst.strings
+                         .filter!(mangled => !mangled.empty) // skip empty
+                         .tee!(mangled => gstats.elfFilesByMangledSymbol[mangled] ~= elfFile) // register them
+                         .map!(mangled => demangler(mangled).decodeSymbol)
+                         .filter!(demangling => (!keys.empty &&
+                                                 !demangling.unmangled.find(keys[0]).empty))
+                );
+            viz.ppln(scan.array.asTable);
         }
     }
 
@@ -5007,9 +5003,9 @@ class Scanner(Term)
                                                   doBitStatus);
                 if (gstats.showELFSymbolDups)
                 {
-                    if (theRegFile.ofKind("ELF", gstats.collectTypeHits, gstats.allFKinds))
+                    if (theRegFile.ofKind(`ELF`, gstats.collectTypeHits, gstats.allFKinds))
                     {
-                        scanELFFile(viz, theRegFile, gstats.demangleELF);
+                        scanELFFile(viz, theRegFile, keys, gstats.demangleELF);
                     }
                 }
 
@@ -5022,21 +5018,21 @@ class Scanner(Term)
                     auto hitsHist = keysBists.map!(a =>
                                                    ((a.value & theHist.value) ==
                                                     a.value)); // TODO: Functionize to x.subsetOf(y) or reuse std.algorithm: setDifference or similar
-                    bistHits = hitsHist.map!"a == true".array;
-                    noBistMatch = hitsHist.all!"a == false";
+                    bistHits = hitsHist.map!`a == true`.array;
+                    noBistMatch = hitsHist.all!`a == false`;
                 }
                 /* int kix = 0; */
-                /* foreach (hit; bistHits) { if (!hit) { debug dln("Assert key " ~ keys[kix] ~ " not in file " ~ theRegFile.path); } ++kix; } */
+                /* foreach (hit; bistHits) { if (!hit) { debug dln(`Assert key ` ~ keys[kix] ~ ` not in file ` ~ theRegFile.path); } ++kix; } */
 
                 bool allXGramsMiss = false;
                 if (doNGram)
                 {
                     ulong keysXGramUnionMatch = keysXGramsUnion.matchDenser(theRegFile.xgram);
                     debug dln(theRegFile.path,
-                              " sized ", theRegFile.size, " : ",
-                              keysXGramsUnion.length, ", ",
+                              ` sized `, theRegFile.size, ` : `,
+                              keysXGramsUnion.length, `, `,
                               theRegFile.xgram.length,
-                              " gave match:", keysXGramUnionMatch);
+                              ` gave match:`, keysXGramUnionMatch);
                     allXGramsMiss = keysXGramUnionMatch == 0;
                 }
 
@@ -5051,11 +5047,11 @@ class Scanner(Term)
                     {
                         if (gstats.showTree)
                         {
-                            immutable intro = subIndex == parentDir.subs.length - 1 ? "└" : "├";
-                            viz.pp("│  ".repeat(parentDir.depth + 1).join("") ~ intro ~ "─ ");
+                            immutable intro = subIndex == parentDir.subs.length - 1 ? `└` : `├`;
+                            viz.pp(`│  `.repeat(parentDir.depth + 1).join(``) ~ intro ~ `─ `);
                         }
-                        viz.ppln(theRegFile, ": Skipped ", nnKind, " file at ",
-                                 nthString(kindIndex + 1), " blind try");
+                        viz.ppln(theRegFile, `: Skipped `, nnKind, ` file at `,
+                                 nthString(kindIndex + 1), ` blind try`);
                     }
                     final switch (binKindHit)
                     {
@@ -5063,11 +5059,11 @@ class Scanner(Term)
                             break;
                         case KindHit.cached:
                             printSkipped(viz, theRegFile, subIndex, nnKind, binKindHit,
-                                         " using cached KindId");
+                                         ` using cached KindId`);
                             break;
                         case KindHit.uncached:
                             printSkipped(viz, theRegFile, subIndex, nnKind, binKindHit,
-                                         " at " ~ nthString(kindIndex + 1) ~ " extension try");
+                                         ` at ` ~ nthString(kindIndex + 1) ~ ` extension try`);
                             break;
                     }
                 }
@@ -5138,9 +5134,9 @@ class Scanner(Term)
                                 gstats.shallowDensenessSum += shallowDenseness;
                                 gstats.deepDensenessSum += deepDenseness;
                                 ++gstats.densenessCount;
-                                /* dln(theRegFile.path, ":", theRegFile.size, */
-                                /*     ", length:", theRegFile.xgram.length, */
-                                /*     ", deepDenseness:", deepDenseness); */
+                                /* dln(theRegFile.path, `:`, theRegFile.size, */
+                                /*     `, length:`, theRegFile.xgram.length, */
+                                /*     `, deepDenseness:`, deepDenseness); */
                             }
 
                             theRegFile._cstat.hitCount = scanForKeys(viz,
@@ -5180,9 +5176,9 @@ class Scanner(Term)
             if (gstats.showSymlinkCycles)
             {
                 import std.range: back;
-                viz.ppln("Cycle of symbolic links: ",
+                viz.ppln(`Cycle of symbolic links: `,
                          fromSymlinks.asPath,
-                         " -> ",
+                         ` -> `,
                          fromSymlinks.back.target);
             }
             return;
@@ -5204,7 +5200,7 @@ class Scanner(Term)
         //     results.noBytesTotal += dent.size;
         // } catch (Exception)
         //   {
-        //     dln("Could not get size of ",  dir.name);
+        //     dln(`Could not get size of `,  dir.name);
         // }
         if (gstats.followSymlinks == SymlinkFollowContext.none) { return; }
 
@@ -5220,17 +5216,17 @@ class Scanner(Term)
 
                 if (gstats.showTree)
                 {
-                    viz.ppln("│  ".repeat(parentDir.depth + 1).join("") ~ "├" ~ "─ ",
+                    viz.ppln(`│  `.repeat(parentDir.depth + 1).join(``) ~ `├` ~ `─ `,
                              theSymlink,
-                             " modified ",
+                             ` modified `,
                              faze(shortDurationString(_currTime - theSymlink.timeLastModified),
                                   timeFace),
-                             " ago", " -> ",
+                             ` ago`, ` -> `,
                              targetFile.asPath,
-                             faze(" outside of " ~ (_topDirNames.length == 1 ? "tree " : "all trees "),
+                             faze(` outside of ` ~ (_topDirNames.length == 1 ? `tree ` : `all trees `),
                                   infoFace),
                              gstats.topDirs.asPath,
-                             faze(" is followed", infoFace));
+                             faze(` is followed`, infoFace));
                 }
 
                 ++gstats.noScannedSymlinks;
@@ -5265,19 +5261,19 @@ class Scanner(Term)
                 {
                     if (gstats.showTree && ix == 0)
                     {
-                        immutable intro = "├";
-                        viz.pp("│  ".repeat(theSymlink.parent.depth + 1).join("") ~ intro ~ "─ ",
+                        immutable intro = `├`;
+                        viz.pp(`│  `.repeat(theSymlink.parent.depth + 1).join(``) ~ intro ~ `─ `,
                                theSymlink);
                     }
                     else
                     {
                         viz.pp(fromSymlink);
                     }
-                    viz.pp(" -> ");
+                    viz.pp(` -> `);
                 }
 
                 viz.ppln(faze(theSymlink.target, missingSymlinkTargetFace),
-                         faze(" is missing", warnFace));
+                         faze(` is missing`, warnFace));
             }
         }
         fromSymlinks.popBackN(1);
@@ -5291,7 +5287,7 @@ class Scanner(Term)
                  Symlink[] fromSymlinks = [],
                  int maxDepth = -1)
     {
-        if (theDir.isRoot)  { results.reset(); }
+        if (theDir.isRoot)  { results.reset; }
 
         // scan in directory name
         if ((gstats.scanContext == ScanContext.all ||
@@ -5312,25 +5308,25 @@ class Scanner(Term)
             size_t subIndex = 0;
             if (gstats.showTree)
             {
-                immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
+                immutable intro = subIndex == theDir.subs.length - 1 ? `└` : `├`;
 
-                viz.pp("│  ".repeat(theDir.depth).join("") ~ intro ~
-                       "─ ", theDir, " modified ",
+                viz.pp(`│  `.repeat(theDir.depth).join(``) ~ intro ~
+                       `─ `, theDir, ` modified `,
                        faze(shortDurationString(_currTime -
                                                 theDir.timeLastModified),
                             timeFace),
-                       " ago");
+                       ` ago`);
 
                 if (gstats.showUsage)
                 {
-                    viz.pp(" of Tree-Size ", theDir.treeSize);
+                    viz.pp(` of Tree-Size `, theDir.treeSize);
                 }
 
                 if (gstats.showSHA1)
                 {
-                    viz.pp(" with Tree-Content-Id ", theDir.treeContentId);
+                    viz.pp(` with Tree-Content-Id `, theDir.treeContentId);
                 }
-                viz.ppendl();
+                viz.ppendl;
             }
 
             ++gstats.noScannedDirs;
@@ -5339,7 +5335,7 @@ class Scanner(Term)
             auto subsSorted = theDir.subsSorted(gstats.subsSorting);
             foreach (key, sub; subsSorted)
             {
-                /* TODO: Functionize to scanFile() */
+                /* TODO: Functionize to scanFile */
                 if (auto regFile = cast(RegFile)sub)
                 {
                     processRegFile(viz, topDir, assumeNotNull(regFile), theDir, keys, fromSymlinks, subIndex, gstats);
@@ -5354,17 +5350,17 @@ class Scanner(Term)
                             {
                                 if (gstats.showTree)
                                 {
-                                    immutable intro = subIndex == theDir.subs.length - 1 ? "└" : "├";
-                                    viz.pp("│  ".repeat(theDir.depth + 1).join("") ~ intro ~ "─ ");
+                                    immutable intro = subIndex == theDir.subs.length - 1 ? `└` : `├`;
+                                    viz.pp(`│  `.repeat(theDir.depth + 1).join(``) ~ intro ~ `─ `);
                                 }
 
                                 viz.pp(subDir,
-                                       " modified ",
+                                       ` modified `,
                                        faze(shortDurationString(_currTime -
                                                                 subDir.timeLastModified),
                                             timeFace),
-                                       " ago",
-                                       faze(": Skipped Directory of type ", infoFace),
+                                       ` ago`,
+                                       faze(`: Skipped Directory of type `, infoFace),
                                        gstats.skippedDirKindsMap[sub.name].kindName);
                             }
                         }
@@ -5384,13 +5380,13 @@ class Scanner(Term)
                 }
                 else
                 {
-                    if (gstats.showTree) { viz.ppendl(); }
+                    if (gstats.showTree) { viz.ppendl; }
                 }
                 ++subIndex;
 
                 if (ctrlC)
                 {
-                    viz.ppln("Ctrl-C pressed: Aborting scan of ", theDir);
+                    viz.ppln(`Ctrl-C pressed: Aborting scan of `, theDir);
                     break;
                 }
             }
@@ -5438,8 +5434,8 @@ class Scanner(Term)
     {
         foreach (ix, kind; TypeTuple!(RegFile, Dir))
         {
-            immutable typeName = ix == 0 ? "Regular File" : "Directory Tree";
-            viz.pp((typeName ~ " Content Duplicates").asH!2);
+            immutable typeName = ix == 0 ? `Regular File` : `Directory Tree`;
+            viz.pp((typeName ~ ` Content Duplicates`).asH!2);
             foreach (digest, dupFiles; gstats.filesByContentId)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames);
@@ -5455,20 +5451,20 @@ class Scanner(Term)
                                 if (firstDup._cstat.kindId in gstats.allFKinds.byId)
                                 {
                                     viz.pp(asH!3(gstats.allFKinds.byId[firstDup._cstat.kindId],
-                                                 " files sharing digest ", digest, " of size ", firstDup.treeSize));
+                                                 ` files sharing digest `, digest, ` of size `, firstDup.treeSize));
                                 }
                                 else
                                 {
-                                    dln(firstDup.path ~ " kind Id " ~ to!string(firstDup._cstat.kindId) ~
-                                        " could not be found in allFKinds.byId");
+                                    dln(firstDup.path ~ ` kind Id ` ~ to!string(firstDup._cstat.kindId) ~
+                                        ` could not be found in allFKinds.byId`);
                                 }
                             }
-                            viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? "ASCII File" : typeName,
-                                         "s sharing digest ", digest, " of size ", firstDup.treeSize));
+                            viz.pp(asH!3((firstDup._cstat.bitStatus == BitStatus.bits7) ? `ASCII File` : typeName,
+                                         `s sharing digest `, digest, ` of size `, firstDup.treeSize));
                         }
                         else
                         {
-                            viz.pp(asH!3(typeName, "s sharing digest ", digest, " of size ", firstDup.size));
+                            viz.pp(asH!3(typeName, `s sharing digest `, digest, ` of size `, firstDup.size));
                         }
 
                         viz.pp(asUList(dupFilesOk.map!(x => x.asPath.asItem)));
@@ -5485,13 +5481,13 @@ class Scanner(Term)
 
         if (gstats.showNameDups)
         {
-            viz.pp("Name Duplicates".asH!2);
+            viz.pp(`Name Duplicates`.asH!2);
             foreach (digest, dupFiles; gstats.filesByName)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames);
                 if (!dupFilesOk.empty)
                 {
-                    viz.pp(asH!3("Files with same name ",
+                    viz.pp(asH!3(`Files with same name `,
                                  faze(dupFilesOk[0].name, fileFace)),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
@@ -5500,14 +5496,14 @@ class Scanner(Term)
 
         if (gstats.showLinkDups)
         {
-            viz.pp("Inode Duplicates (Hardlinks)".asH!2);
+            viz.pp(`Inode Duplicates (Hardlinks)`.asH!2);
             foreach (inode, dupFiles; gstats.filesByInode)
             {
                 auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames);
                 if (dupFilesOk.length >= 2)
                 {
-                    viz.pp(asH!3("Files with same inode " ~ to!string(inode) ~
-                                 " (hardlinks): "),
+                    viz.pp(asH!3(`Files with same inode ` ~ to!string(inode) ~
+                                 ` (hardlinks): `),
                            asUList(dupFilesOk.map!(x => x.asPath.asItem)));
                 }
             }
@@ -5522,52 +5518,52 @@ class Scanner(Term)
         if (gstats.showBrokenSymlinks &&
             !_brokenSymlinks.empty)
         {
-            viz.pp("Broken Symlinks ".asH!2,
+            viz.pp(`Broken Symlinks `.asH!2,
                    asUList(_brokenSymlinks.map!(x => x.asPath.asItem)));
         }
 
         /* Counts */
-        viz.pp("Scanned Types".asH!2,
-               /* asUList(asItem(gstats.noScannedDirs, " Dirs, "), */
-               /*         asItem(gstats.noScannedRegFiles, " Regular Files, "), */
-               /*         asItem(gstats.noScannedSymlinks, " Symbolic Links, "), */
-               /*         asItem(gstats.noScannedSpecialFiles, " Special Files, "), */
-               /*         asItem("totalling ", gstats.noScannedFiles, " Files") // on extra because of lack of root */
+        viz.pp(`Scanned Types`.asH!2,
+               /* asUList(asItem(gstats.noScannedDirs, ` Dirs, `), */
+               /*         asItem(gstats.noScannedRegFiles, ` Regular Files, `), */
+               /*         asItem(gstats.noScannedSymlinks, ` Symbolic Links, `), */
+               /*         asItem(gstats.noScannedSpecialFiles, ` Special Files, `), */
+               /*         asItem(`totalling `, gstats.noScannedFiles, ` Files`) // on extra because of lack of root */
                /*     ) */
-               asTable(asRow(asCell(asBold("Scan Count")),
-                             asCell(asBold("File Type"))),
+               asTable(asRow(asCell(asBold(`Scan Count`)),
+                             asCell(asBold(`File Type`))),
                        asRow(asCell(gstats.noScannedDirs),
-                             asCell(asItalic("Dirs"))),
+                             asCell(asItalic(`Dirs`))),
                        asRow(asCell(gstats.noScannedRegFiles),
-                             asCell(asItalic("Regular Files"))),
+                             asCell(asItalic(`Regular Files`))),
                        asRow(asCell(gstats.noScannedSymlinks),
-                             asCell(asItalic("Symbolic Links"))),
+                             asCell(asItalic(`Symbolic Links`))),
                        asRow(asCell(gstats.noScannedSpecialFiles),
-                             asCell(asItalic("Special Files"))),
+                             asCell(asItalic(`Special Files`))),
                        asRow(asCell(gstats.noScannedFiles),
-                             asCell(asItalic("Files")))
+                             asCell(asItalic(`Files`)))
                    )
             );
 
         if (gstats.densenessCount)
         {
-            viz.pp("Histograms".asH!2,
-                   asUList(asItem("Average Byte Bistogram (Binary Histogram) Denseness ",
-                                  cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), " Percent"),
-                           asItem("Average Byte ", NGramOrder, "-Gram Denseness ",
-                                  cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), " Percent")));
+            viz.pp(`Histograms`.asH!2,
+                   asUList(asItem(`Average Byte Bistogram (Binary Histogram) Denseness `,
+                                  cast(real)(100*gstats.shallowDensenessSum / gstats.densenessCount), ` Percent`),
+                           asItem(`Average Byte `, NGramOrder, `-Gram Denseness `,
+                                  cast(real)(100*gstats.deepDensenessSum / gstats.densenessCount), ` Percent`)));
         }
 
-        viz.pp("Scanned Bytes".asH!2,
-               asUList(asItem("Scanned ", results.noBytesScanned),
-                       asItem("Skipped ", results.noBytesSkipped),
-                       asItem("Unreadable ", results.noBytesUnreadable),
-                       asItem("Total Contents ", results.noBytesTotalContents),
-                       asItem("Total ", results.noBytesTotal),
-                       asItem("Total number of hits ", results.numTotalHits),
-                       asItem("Number of Files with hits ", results.numFilesWithHits)));
+        viz.pp(`Scanned Bytes`.asH!2,
+               asUList(asItem(`Scanned `, results.noBytesScanned),
+                       asItem(`Skipped `, results.noBytesSkipped),
+                       asItem(`Unreadable `, results.noBytesUnreadable),
+                       asItem(`Total Contents `, results.noBytesTotalContents),
+                       asItem(`Total `, results.noBytesTotal),
+                       asItem(`Total number of hits `, results.numTotalHits),
+                       asItem(`Number of Files with hits `, results.numFilesWithHits)));
 
-        viz.pp("Some Math".asH!2);
+        viz.pp(`Some Math`.asH!2);
 
         {
             struct Stat
@@ -5590,23 +5586,23 @@ class Scanner(Term)
 
             auto stats = new Stat[3];
 
-            /* viz.ppln("A Row Vector: ", */
+            /* viz.ppln(`A Row Vector: `, */
             /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row))); */
-            /* viz.ppln("A Column Vector: ", */
+            /* viz.ppln(`A Column Vector: `, */
             /*          randomInstanceOf!(Vector!(float, 3, false, Orient.column))); */
-            /* viz.ppln("Some Column Vectors: ", */
+            /* viz.ppln(`Some Column Vectors: `, */
             /*          randomInstanceOf!(Vector!(float, 3, false, Orient.column)[3])); */
-            /* viz.ppln("Some Row Vectors: ", */
+            /* viz.ppln(`Some Row Vectors: `, */
             /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row)[3])); */
-            /* viz.ppln("Some Column Vectors: ", */
+            /* viz.ppln(`Some Column Vectors: `, */
             /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row)[3]).asTable); */
 
-            viz.ppln("A number: ", 1.2e10);
+            viz.ppln(`A number: `, 1.2e10);
 
-            viz.ppln("Some Stats: ", randomInstanceOf!particle2f.asTableNr0);
+            viz.ppln(`Some Stats: `, randomInstanceOf!particle2f.asTableNr0);
 
             randomize(stats);
-            viz.ppln("Some Stats: ", stats.randomize.asTableTree);
+            viz.ppln(`Some Stats: `, stats.randomize.asTableTree);
 
             {
                 auto x = randomInstanceOf!Stats3;
@@ -5614,7 +5610,7 @@ class Scanner(Term)
                 {
                     e.velocity *= 1e9;
                 }
-                viz.ppln("Some Stats: ",
+                viz.ppln(`Some Stats: `,
                          x.asTableTree);
             }
         }
