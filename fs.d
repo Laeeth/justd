@@ -634,93 +634,6 @@ enum KindHit
     uncached = 2, // Uncached (fresh) hit.
 }
 
-/** Scan $(D regFile) for ELF Symbols.
-    TODO: Index and cache stuff in gstats.symbolsELF
-    TODO: Support GCC C++ here https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
-    TODO: Format this using asTable: Language | Symbol
- */
-void scanELF(NotNull!RegFile regFile,
-             bool doDemangle = true)
-{
-    import elfdoc: sectionNameExplanations;
-    /* TODO: Iterate all sections and print their sectionNameExplanations[section] */
-    bool flag64 = true;
-    bool showSymbols = true;
-
-    ELF elfAny;                 // either ELF32 or ELF64 context
-
-    if (flag64)
-    {
-        elfAny = new elf.ELF64(regFile._mmfile);
-        elfAny = elfAny;
-    }
-    else
-    {
-        elfAny = new elf.ELF32(regFile._mmfile);
-    }
-
-    foreach (section; elfAny.sections)
-    {
-        if (section.name.length)
-        {
-            /* auto sst = section.StringTable; */
-            //writeln("ELF Section named ", section.name);
-        }
-    }
-
-    auto sts = elfAny.getSection(".symtab"); // or ".dynsym"
-    if (!sts.isNull)
-    {
-        writeln(regFile.path, ": ELF Section ", ".symtab");
-        /* writeln("ELF Section doc ", sectionNameExplanations[".symtab"]); */
-
-        if (showSymbols)
-        {
-            SymbolTable symtab = SymbolTable(sts);
-            // TODO: Use range: auto symbolsDemangled = symtab.symbols.map!(sym => demangler(sym.name).decodeSymbol);
-            foreach (sym; symtab.symbols) // you can add filters here
-            {
-                if (doDemangle)
-                {
-                    const hit = demangler(sym.name).decodeSymbol;
-                    if (hit && hit.expr.empty)
-                    {
-                        writeln(hit.lang.toTag(), ": ", hit.expr);
-                    }
-                }
-                else
-                {
-                    writeln("?: ", sym.name);
-                }
-            }
-        }
-    }
-
-    auto sst = elfAny.getSymbolsStringTable;
-    if (!sst.isNull)
-    {
-        writeln(regFile.path, ": ELF Section ", ".strtab");
-        if (showSymbols)
-        {
-            foreach (const sym; sst.strings)
-            {
-                if (doDemangle)
-                {
-                    const hit = demangler(sym).decodeSymbol;
-                    if (hit)
-                    {
-                        writeln(hit.lang.toTag(), ": ", hit.expr);
-                    }
-                }
-                else
-                {
-                    writeln("?: ", sym);
-                }
-            }
-        }
-    }
-}
-
 Tuple!(KindHit, FKind, size_t) ofAnyKindIn(NotNull!RegFile regFile,
                                            FKinds kinds,
                                            bool collectTypeHits)
@@ -776,11 +689,21 @@ KindHit ofKind(NotNull!RegFile regFile,
     immutable hit = regFile.ofKind1(kind,
                                     collectTypeHits,
                                     allFKinds);
-    if (hit &&
-        kind.kindName == "ELF")
+    return hit;
+}
+
+KindHit ofKind(NotNull!RegFile regFile,
+               string kindName,
+               bool collectTypeHits,
+               FKinds allFKinds) /* nothrow */ @trusted
+{
+    typeof(return) hit;
+    if (kindName in allFKinds.byName)
     {
-        /* TODO: Make this symbol interface available */
-        regFile.scanELF();
+        auto kind = assumeNotNull(allFKinds.byName[kindName]);
+        hit = regFile.ofKind(kind,
+                             collectTypeHits,
+                             allFKinds);
     }
     return hit;
 }
@@ -1444,7 +1367,7 @@ class RegFile : File
         if (doSHA1)
         {
             _cstat._contentId = sha1.finish();
-            filesByContentId[_cstat._contentId] ~= cast(NotNull!File)assumeNotNull(this);
+            filesByContentId[_cstat._contentId] ~= cast(NotNull!File)assumeNotNull(this); // TODO: Prettier way?
         }
     }
 
@@ -1698,6 +1621,7 @@ class GStats
     NotNull!File[][string] filesByName;    // Potential File Name Duplicates
     NotNull!File[][ino_t] filesByInode;    // Potential Link Duplicates
     NotNull!File[][SHA1Digest] filesByContentId; // File(s) (Duplicates) Indexed on Contents SHA1.
+    NotNull!RegFile[][string] elfFilesByMangledSymbol;
     FileTags ftags;
 
     Bytes64[NotNull!File] treeSizesByFile; // Tree sizes.
@@ -3154,6 +3078,7 @@ class GStats
     bool showNameDups = false;
     bool showTreeContentDups = false;
     bool showFileContentDups = false;
+    bool showELFSymbolDups = false;
     bool linkContentDups = false;
 
     bool showLinkDups = false;
@@ -4149,6 +4074,9 @@ class Scanner(Term)
                                     "hardlink-duplicates|inode-duplicates|shd", "\tDetect & Show multiple links to same inode" ~ defaultDoc(gstats.showLinkDups), &gstats.showLinkDups,
                                     "file-content-duplicates|scd", "\tDetect & Show file contents duplicates" ~ defaultDoc(gstats.showFileContentDups), &gstats.showFileContentDups,
                                     "tree-content-duplicates", "\tDetect & Show directory tree contents duplicates" ~ defaultDoc(gstats.showTreeContentDups), &gstats.showTreeContentDups,
+
+                                    "elf-symbol-duplicates", "\tDetect & Show ELF Symbol Duplicates" ~ defaultDoc(gstats.showELFSymbolDups), &gstats.showELFSymbolDups,
+
                                     "duplicates|D", "\tDetect & Show file name and contents duplicates" ~ defaultDoc(gstats.showAnyDups), &gstats.showAnyDups,
                                     "duplicates-context", "\tDuplicates Detection Context. Either: " ~ enumDoc!DuplicatesContext, &gstats.duplicatesContext,
                                     "hardlink-content-duplicates", "\tConvert all content duplicates into hardlinks (common inode) if they reside on the same file system" ~ defaultDoc(gstats.linkContentDups), &gstats.linkContentDups,
@@ -4198,6 +4126,7 @@ class Scanner(Term)
             gstats.showLinkDups = true;
             gstats.showFileContentDups = true;
             gstats.showTreeContentDups = true;
+            gstats.showELFSymbolDups = true;
         }
         if (helpPrinted)
             return;
@@ -4380,8 +4309,8 @@ class Scanner(Term)
         //     _caseFold = true;               // we do case-insensitive search like in Emacs
         // }
 
-        _uid = getuid();
-        _gid = getgid();
+        _uid = getuid;
+        _gid = getgid;
 
         // Setup root directory
         if (!gstats.recache)
@@ -4398,7 +4327,7 @@ class Scanner(Term)
         // Scan for exact key match
         gstats.topDirs = getDirs(enforceNotNull(gstats.rootDir), _topDirNames);
 
-        _currTime = Clock.currTime();
+        _currTime = Clock.currTime;
 
         GC.disable;
         scanTopDirs(viz, commaedKeysString);
@@ -4546,7 +4475,7 @@ class Scanner(Term)
                         NotNull!F file, bool isDir, size_t subIndex)
     {
         auto dent = DirEntry(file.path);
-        immutable stat_t stat = dent.statBuf();
+        immutable stat_t stat = dent.statBuf;
         string msg;
         if (!readable(stat, _uid, _gid, msg))
         {
@@ -4952,6 +4881,67 @@ class Scanner(Term)
         }
     }
 
+    /** Scan $(D elfFile) for ELF Symbols. */
+    void scanELFFile(Viz viz,
+                     NotNull!RegFile elfFile,
+                     bool demangle = true)
+    {
+        import elfdoc: sectionNameExplanations;
+        /* TODO: Add mouse hovering help for sectionNameExplanations[section] */
+        ELF decoder = ELF.fromFile(elfFile._mmfile);
+
+        version(none)
+            foreach (section; decoder.sections)
+            {
+                if (section.name.length)
+                {
+                    /* auto sst = section.StringTable; */
+                    //writeln("ELF Section named ", section.name);
+                }
+            }
+
+        const sectionNames = [".symtab"/* , ".strtab", ".dynsym" */];    // TODO: These two other sections causes range exceptions.
+        version(none)
+            foreach (sectionName; sectionNames)
+            {
+                auto sts = decoder.getSection(sectionName);
+                if (!sts.isNull)
+                {
+                    SymbolTable symtab = SymbolTable(sts);
+                    // TODO: Use range: auto symbolsDemangled = symtab.symbols.map!(sym => demangler(sym.name).decodeSymbol);
+                    foreach (sym; symtab.symbols) // you can add filters here
+                    {
+                        if (demangle)
+                        {
+                            const hit = demangler(sym.name).decodeSymbol;
+                        }
+                        else
+                        {
+                            writeln("?: ", sym.name);
+                        }
+                    }
+                }
+            }
+
+        auto sst = decoder.getSymbolsStringTable;
+        if (!sst.isNull)
+        {
+            viz.pp("ELF Symbol Strings Table (.strtab)".asH!2);
+            struct ELFSymbol
+            {
+                Demangling demangling;
+                string mangled;
+            }
+            auto scan = sst.strings.map!(sym => ELFSymbol(demangler(sym).decodeSymbol, sym)); // I love D :)
+            foreach (e; scan)
+            {
+                dln(e.mangled);
+                gstats.elfFilesByMangledSymbol[e.mangled] ~= elfFile;
+            }
+            viz.ppln(scan.asTable);
+        }
+    }
+
     /** Search for Keys $(D keys) in Regular File $(D theRegFile). */
     void scanRegFile(Viz viz,
                      NotNull!Dir topDir,
@@ -4980,6 +4970,7 @@ class Scanner(Term)
         if ((gstats.scanContext == ScanContext.all ||
              gstats.scanContext == ScanContext.fileContent) &&
             (gstats.showFileContentDups ||
+             gstats.showELFSymbolDups ||
              !keys.empty) &&
             theRegFile.size != 0)        // non-empty file
         {
@@ -5014,6 +5005,13 @@ class Scanner(Term)
                                                   gstats.showFileContentDups,
                                                   doBist,
                                                   doBitStatus);
+                if (gstats.showELFSymbolDups)
+                {
+                    if (theRegFile.ofKind("ELF", gstats.collectTypeHits, gstats.allFKinds))
+                    {
+                        scanELFFile(viz, theRegFile, gstats.demangleELF);
+                    }
+                }
 
                 // Match Bist of Keys with BistX of File
                 bool[] bistHits;
@@ -5022,8 +5020,8 @@ class Scanner(Term)
                 {
                     const theHist = theRegFile.bistogram8;
                     auto hitsHist = keysBists.map!(a =>
-                                                   ((a.value() & theHist.value()) ==
-                                                    a.value())); // TODO: Functionize to x.subsetOf(y) or reuse std.algorithm: setDifference or similar
+                                                   ((a.value & theHist.value) ==
+                                                    a.value)); // TODO: Functionize to x.subsetOf(y) or reuse std.algorithm: setDifference or similar
                     bistHits = hitsHist.map!"a == true".array;
                     noBistMatch = hitsHist.all!"a == false";
                 }
@@ -5163,7 +5161,7 @@ class Scanner(Term)
             {
                 handleError(viz, theRegFile, false, subIndex);
             }
-            theRegFile.freeContents(); // TODO: Call lazily only when open count is too large
+            theRegFile.freeContents; // TODO: Call lazily only when open count is too large
         }
     }
 
