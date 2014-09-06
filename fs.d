@@ -4044,6 +4044,7 @@ class Scanner(Term)
                                     "Usage: fs { --switches } [KEY]...\n" ~
                                     "Note that scanning for multiple KEYs is possible.\nIf so hits are highlighted in different colors!\n" ~
                                     "Sample calls: \n" ~
+                                    "  fdo.d --color -d /lib/modules/3.13.0-24-generic/kernel/drivers/staging/comedi/drivers --browse usb --duplicates --recache\n" ~
                                     "  fdo.d --color -d /etc -s --tree --usage -l --duplicates stallman\n"
                                     "  fdo.d --color -d /etc -d /var --acronym sttccc\n"
                                     "  fdo.d --color -d /etc -d /var --acronym dktp\n"
