@@ -4945,8 +4945,8 @@ class Scanner(Term)
             import algorithm_ex: findFirstOfAnyInOrder;
             auto scan = (sst
                          .strings
-                         .filter!(raw => !raw.empty) // skip empty
-                         //.tee!(raw => gstats.elfFilesByMangledSymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here!
+                         .filter!(raw => !raw.empty) // skip empty raw string
+                         .tee!(raw => gstats.elfFilesByMangledSymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here because we can't rever to raw
                          .map!(raw => demangler(raw).decodeSymbol)
                          .filter!(demangling => (!keys.empty && // don't show anything if no keys given
                                                  demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))); // I love D :)
