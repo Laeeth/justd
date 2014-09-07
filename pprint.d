@@ -1161,7 +1161,7 @@ void pp1(Arg)(Viz viz,
     }
     else static if (isInstanceOf!(AsRows, Arg) &&
                     arg.args.length == 1 &&
-                    isInputRange!(typeof(arg.args[0]))) // if single array
+                    isIterable!(typeof(arg.args[0])))
     {
         bool capitalizeHeadings = true;
 
