@@ -2692,7 +2692,7 @@ class GStats
                                   [], // N/A
                                   [], // N/A
                                   FileContent.imageIcon);
-        icnsKind.wikiURL = "https://en.wikipedia.org/wiki/Executable_and_Linkable_Format";
+        icnsKind.wikiURL = "https://en.wikipedia.org/wiki/Apple_Icon_Image_format";
         binFKinds ~= icnsKind;
         // TODO: read with http://icns.sourceforge.net/
 
