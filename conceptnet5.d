@@ -2,8 +2,19 @@
 
 /** ConceptNet 5.
     Reads data from CN5 into a Hypergraph.
+
     See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: https://github.com/commonsense/conceptnet5/wiki
+
+    TODO: Stricter typing:
+          - Only allow Net.nodes to be indexed by NodeIndex
+          - Only allow Net.edges to be indexed by EdgeIndex
+
+    TODO: Add Net members
+    - byNode
+    - byEdge
+    - Node getNode(EdgeIndex)
+    - Edge getEdge(NodeIndex)
  */
 module conceptnet5;
 
@@ -72,7 +83,6 @@ void infer(T...)(relations)
 */
 alias Index = size_t;
 
-/* TODO: Make these strictly typed. */
 alias EdgeIndex = Index;
 
 /** Node */
@@ -83,7 +93,6 @@ struct Node
     EdgeIndex[] inIndexes; // into Net.edges
 }
 
-/* TODO: Make these strictly typed. */
 alias NodeIndex = Index;
 
 /** Edge */
