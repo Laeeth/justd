@@ -103,3 +103,6 @@
 [submodule "eris"]
 	path = eris
 	url = https://github.com/andersonpd/eris.git
+[submodule "lock-free"]
+	path = lock-free
+	url = https://github.com/nordlow/lock-free.git
