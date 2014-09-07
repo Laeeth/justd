@@ -5630,10 +5630,10 @@ class Scanner(Term)
 
             viz.ppln(`A number: `, 1.2e10);
 
-            viz.ppln(`Some Stats: `, randomInstanceOf!particle2f.asTableNr0);
+            viz.ppln(`Randomize particle2f as TableNr0: `, randomInstanceOf!particle2f.asTableNr0);
 
             randomize(stats);
-            viz.ppln(`Some Stats: `, stats.randomize.asTableTree);
+            viz.ppln(`A ` ~ typeof(stats).stringof, `: `, stats.randomize.asTable);
 
             {
                 auto x = randomInstanceOf!Stats3;
@@ -5642,7 +5642,7 @@ class Scanner(Term)
                     e.velocity *= 1e9;
                 }
                 viz.ppln(`Some Stats: `,
-                         x.asTableTree);
+                         x.asTable);
             }
         }
 
