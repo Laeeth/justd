@@ -57,3 +57,11 @@ T to(T:conceptnet5.Relation)(const Relation relation)
         case Relation.seeAlso: return conceptnet5.Relation.RelatedTox;
     }
 }
+
+version(none)
+unittest
+{
+    auto x = Relation.attribute;
+    auto y = x.to!(conceptnet5.Relation);
+    assert(y == conceptnet5.Relation.Attribute);
+}
