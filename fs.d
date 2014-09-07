@@ -4943,22 +4943,25 @@ class Scanner(Term)
         {
             import algorithm_ex: findFirstOfAnyInOrder;
             // I love D :)
-            auto scan = (sst.strings
+            dln(elfFile.path, " before");
+
+            auto scan = (sst
+                         .strings
                          .filter!(mangled => !mangled.empty) // skip empty
-                         /* .tee!(mangled => gstats.elfFilesByMangledSymbol[mangled] ~= elfFile) // register them */
+                         //.tee!(mangled => gstats.elfFilesByMangledSymbol[mangled] ~= elfFile) // register them
                          .map!(mangled => demangler(mangled).decodeSymbol)
                          .filter!(demangling => (!keys.empty && // don't show anything if no keys given
                                                  demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))
-                         .array
+                         /* .array */
                 );
+            dln(elfFile.path, " after");
 
             if (!scan.empty &&
                 `ELF` in gstats.selFKinds.byName) // if user selected ELF file show them
             {
-                foreach (e; sst.strings)
-                {
-                    gstats.elfFilesByMangledSymbol[e] ~= elfFile;
-                }
+                /* sst.strings */
+                /*     .filter!(mangled => !mangled.empty) */
+                /*     .tee!(e => gstats.elfFilesByMangledSymbol[e] ~= elfFile); */
                 viz.pp(horizontalRuler,
                        displayedFileName(gstats, elfFile).asPath.asH!3,
                        asH!4(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`),

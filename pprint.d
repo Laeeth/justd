@@ -1161,7 +1161,7 @@ void pp1(Arg)(Viz viz,
     }
     else static if (isInstanceOf!(AsRows, Arg) &&
                     arg.args.length == 1 &&
-                    isArray!(typeof(arg.args[0]))) // if single array
+                    isInputRange!(typeof(arg.args[0]))) // if single array
     {
         bool capitalizeHeadings = true;
 
@@ -1229,13 +1229,15 @@ void pp1(Arg)(Viz viz,
             if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
         }
 
-        foreach (ix, subArg; arg.args[0]) // for each table row
+        size_t ix = 0;
+        foreach (subArg; arg.args[0]) // for each table row
         {
             auto cols = subArg.asCols;
             cols.recurseFlag = arg.recurseFlag; // propagate
             cols.rowNr = arg.rowNr;
             cols.rowIx = ix;
             viz.pplnTaggedN(`tr`, cols); // print columns
+            ix++;
         }
     }
     else static if (isInstanceOf!(AsCols, Arg))
