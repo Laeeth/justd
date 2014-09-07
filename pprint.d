@@ -795,26 +795,7 @@ void pp1(Arg)(Viz viz,
     /* TODO: Check if any member has mmber toMathML if so call it otherwise call
      * toString. */
 
-    static if (isArray!Arg &&
-               !isSomeString!Arg)
-    {
-        viz.ppRaw(`[`);
-        foreach (ix, subArg; arg)
-        {
-            if (ix >= 1)
-                viz.ppRaw(`,`); // separator
-            viz.pp1(depth + 1, subArg);
-        }
-        viz.ppRaw(`]`);
-    }
-    else static if (isInputRange!Arg)
-    {
-        foreach (subArg; arg)
-        {
-            viz.pp1(depth + 1, subArg);
-        }
-    }
-    else static if (isInstanceOf!(AsWords, Arg))
+    static if (isInstanceOf!(AsWords, Arg))
     {
         foreach (ix, subArg; arg.args)
         {
@@ -1378,6 +1359,25 @@ void pp1(Arg)(Viz viz,
         if (viz.form == VizForm.HTML) { viz.ppTagOpen(`hit_context`); }
         viz.pp1(depth + 1, arg.args);
         if (viz.form == VizForm.HTML) { viz.ppTagClose(`hit_context`); }
+    }
+    else static if (isArray!Arg &&
+                    !isSomeString!Arg)
+    {
+        viz.ppRaw(`[`);
+        foreach (ix, subArg; arg)
+        {
+            if (ix >= 1)
+                viz.ppRaw(`,`); // separator
+            viz.pp1(depth + 1, subArg);
+        }
+        viz.ppRaw(`]`);
+    }
+    else static if (isInputRange!Arg)
+    {
+        foreach (subArg; arg)
+        {
+            viz.pp1(depth + 1, subArg);
+        }
     }
     else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
     {
