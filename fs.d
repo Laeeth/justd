@@ -154,12 +154,15 @@ import rational: Rational;
 import ngram;
 import notnull;
 import pprint;
-import elf;
+
 import geometry;
 import random_ex;
 import mathml;
 import mangling;
 import languages;
+
+import elf;
+import lock_free.queue;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
