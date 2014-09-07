@@ -4274,8 +4274,9 @@ class Scanner(Term)
         string commaedKeysString = to!string(commaedKeys);
         if (keys)
         {
-            selFKindsNote = " in " ~ (gstats.selFKinds ?
-                                     gstats.selFKinds.byIndex.map!(a => a.kindName).join(",") ~ "-" : "all ") ~ "files";
+            selFKindsNote = " in " ~ (gstats.selFKinds == gstats.allFKinds ?
+                                      "all " :
+                                      gstats.selFKinds.byIndex.map!(a => a.kindName).join(",") ~ "-") ~ "files";
             immutable underNote = " under \"" ~ (_topDirNames.reduce!"a ~ ',' ~ b") ~ "\"";
             const exactNote = gstats.keyAsExact ? "exact " : "";
             string asNote;
