@@ -54,3 +54,12 @@ enum Relation
 
     DefinedAs, /* A and B overlap considerably in meaning, and B is a more explanatory version of A. (This is similar to TranslationOf, but within one language.) */
 }
+
+struct Edge
+{
+    Relation rel; // TODO: packed
+    bool negation; // TODO: packed
+    byte weight; // TODO: normalized
+    size_t startIndex;
+    size_t endIndex;
+}
