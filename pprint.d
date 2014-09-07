@@ -30,6 +30,7 @@ import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
 import std.range: ElementType;
+import std.string: empty;
 
 import w3c: encodeHTML;
 import arsd.terminal; // TODO: Make this optional
@@ -720,18 +721,33 @@ void ppTaggedN(Tag, Args...)(Viz viz,
                              Args args)
     @trusted if (isSomeString!Tag)
 {
-    import dbg;
-    if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
-    viz.ppN(args);
-    if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
+    static if (args.length)
+    {
+        static if (args.length == 1 &&
+                   isSomeString!(typeof(args[0])))
+        {
+            if (viz.form == VizForm.HTML &&
+                args[0].empty)
+            {
+                return;         // skip HTML tags with no content
+            }
+        }
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
+        viz.ppN(args);
+        if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
+    }
 }
+
 
 void pplnTaggedN(Tag, Args...)(Viz viz,
                                in Tag tag,
                                Args args)
     @trusted if (isSomeString!Tag)
 {
-    viz.ppTaggedN(tag, args);
+    static if (args.length)
+    {
+        viz.ppTaggedN(tag, args);
+    }
     if (viz.newlinedTags)
         viz.pplnRaw(``);
 }
@@ -1004,7 +1020,7 @@ void pp1(Arg)(Viz viz,
         if      (viz.form == VizForm.HTML)
         {
             viz.pplnTaggedN(`h` ~ to!string(arg.level),
-                         arg.args);
+                            arg.args);
         }
         else if (viz.form == VizForm.jiraWikiMarkup)
         {
