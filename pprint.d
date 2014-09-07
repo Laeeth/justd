@@ -716,26 +716,31 @@ auto getFace(Arg)(in Arg arg) @safe pure nothrow
     }
 }
 
+/** HTML tags with no side-effect when its arguments is empty.
+    See also: http://www.w3schools.com/html/html_formatting.asp
+ */
+static immutable nonStateHTMLTags = [`b`, `i`, `strong`, `em`, `sub`, `sup`, `small`, `ins`, `del`, `mark`
+                                     `code`, `kbd`, `samp`, `samp`, `var`, `pre`];
+
 void ppTaggedN(Tag, Args...)(Viz viz,
                              in Tag tag,
                              Args args)
     @trusted if (isSomeString!Tag)
 {
-    static if (args.length)
+    import std.algorithm: find;
+    static if (args.length == 1 &&
+               isSomeString!(typeof(args[0])))
     {
-        static if (args.length == 1 &&
-                   isSomeString!(typeof(args[0])))
+        if (viz.form == VizForm.HTML &&
+            args[0].empty &&
+            !nonStateHTMLTags.find(tag).empty)
         {
-            if (viz.form == VizForm.HTML &&
-                args[0].empty)
-            {
-                return;         // skip HTML tags with no content
-            }
+            return;         // skip HTML tags with no content
         }
-        if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
-        viz.ppN(args);
-        if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
     }
+    if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
+    viz.ppN(args);
+    if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
 }
 
 
@@ -744,10 +749,7 @@ void pplnTaggedN(Tag, Args...)(Viz viz,
                                Args args)
     @trusted if (isSomeString!Tag)
 {
-    static if (args.length)
-    {
-        viz.ppTaggedN(tag, args);
-    }
+    viz.ppTaggedN(tag, args);
     if (viz.newlinedTags)
         viz.pplnRaw(``);
 }
