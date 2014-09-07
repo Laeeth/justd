@@ -84,6 +84,7 @@ struct Node
     EdgeIndex[] inIndex;
 }
 
+/* TODO: Make these strictly typed. */
 alias NodeIndex = Index;
 alias NodeIndex = Index;
 
