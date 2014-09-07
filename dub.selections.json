@@ -3,6 +3,7 @@
 	"versions": {
 		"logger": "0.1.0",
 		"ae-graphics": "0.0.3",
+		"libnoise-d": "~master",
 		"vibe-d": "~master",
 		"libevent": "~master",
 		"derelict-util": "1.0.2",

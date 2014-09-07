@@ -21,6 +21,7 @@ module conceptnet5;
 import languages: HumanLang;
 
 /** Semantic Relation Type Code.
+    See also: wordnet.Relation
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
 enum Relation
@@ -73,6 +74,8 @@ enum Relation
 
     DefinedAs, /* A and B overlap considerably in meaning, and B is a more explanatory version of A. (This is similar to TranslationOf, but within one language.) */
 }
+
+import wordnet;
 
 /** Inference Algorithm. */
 void infer(T...)(relations)
