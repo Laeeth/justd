@@ -6,6 +6,8 @@
     See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: https://github.com/commonsense/conceptnet5/wiki
 
+    TODO: If ever will need to sort indexes we should use my radixSort
+
     TODO: Stricter typing:
           - Only allow Net.nodes to be indexed by NodeIndex
           - Only allow Net.edges to be indexed by EdgeIndex
