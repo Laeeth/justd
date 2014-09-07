@@ -4941,22 +4941,17 @@ class Scanner(Term)
         auto sst = decoder.getSymbolsStringTable;
         if (!sst.isNull)
         {
-            // NOTE: This crashes when joined with next loop
-            (sst
-             .strings
-             .filter!(raw => !raw.empty)
-             .tee!(raw => gstats.elfFilesByMangledSymbol[raw] ~= elfFile));
-
             import algorithm_ex: findFirstOfAnyInOrder;
             auto scan = (sst
                          .strings
                          .filter!(raw => !raw.empty) // skip empty
-                         /* NOTE: This crashes things: .tee!(raw => gstats.elfFilesByMangledSymbol[raw] ~= elfFile) // register them */
+                         //.tee!(raw => gstats.elfFilesByMangledSymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here!
                          .map!(raw => demangler(raw).decodeSymbol)
                          .filter!(demangling => (!keys.empty && // don't show anything if no keys given
                                                  demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))); // I love D :)
 
-            if (`ELF` in gstats.selFKinds.byName) // if user selected ELF file show them
+            if (!scan.empty &&
+                `ELF` in gstats.selFKinds.byName) // if user selected ELF file show them
             {
                 viz.pp(horizontalRuler,
                        displayedFileName(gstats, elfFile).asPath.asH!3,

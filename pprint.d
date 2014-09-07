@@ -1141,7 +1141,7 @@ void pp1(Arg)(Viz viz,
         static if (arg.args.length == 1 &&
                    isIterable!(typeof(arg.args[0])))
         {
-            auto rows = arg.args[0].asRows;
+            auto rows = arg.args[0].asRows();
             rows.recurseFlag = arg.recurseFlag; // propagate
             rows.rowNr = arg.rowNr;
             viz.pp(rows);
@@ -1176,9 +1176,7 @@ void pp1(Arg)(Viz viz,
                here https://github.com/D-Programming-Language/dmd/pull/3531
                get merged use it! */
             // viz.pplnTaggedN(`tr`, subArg.asCols); // TODO: asItalic
-
             // Use __traits(allMembers, T) instead
-
             // Can we lookup file and line of user defined types aswell?
 
             // member names header.
@@ -1192,9 +1190,11 @@ void pp1(Arg)(Viz viz,
                 enum idName = __traits(identifier, Front.tupleof[ix]);
                 enum typeName = Unqual!(Member).stringof; // constness of no interest hee
 
-                static      if (is(Memb == struct)) enum qual = `struct `;
-                else static if (is(Memb == class))  enum qual = `class `;
-                else                                enum qual = ``;
+                static      if (is(Memb == struct))    enum qual = `struct `;
+                else static if (is(Memb == class))     enum qual = `class `;
+                else static if (is(Memb == enum))      enum qual = `enum `;
+                else static if (is(Memb == interface)) enum qual = `interface `;
+                else                                   enum qual = ``; // TODO: Are there more qualifiers
 
                 import std.string: capitalize;
                 viz.pplnTaggedN(`td`,
@@ -1209,7 +1209,7 @@ void pp1(Arg)(Viz viz,
         size_t ix = 0;
         foreach (subArg; arg.args[0]) // for each table row
         {
-            auto cols = subArg.asCols;
+            auto cols = subArg.asCols();
             cols.recurseFlag = arg.recurseFlag; // propagate
             cols.rowNr = arg.rowNr;
             cols.rowIx = ix;
@@ -1225,10 +1225,7 @@ void pp1(Arg)(Viz viz,
             auto args0 = arg.args[0];
             if (viz.form == VizForm.jiraWikiMarkup)
             {
-                /* if (args0.length >= 1) */
-                /* { */
-                /*     viz.ppRaw(`|`); */
-                /* } */
+                /* if (args0.length >= 1) { viz.ppRaw(`|`); } */
             }
             if      (arg.rowNr == RowNr.offsetZero)
                 viz.pplnTaggedN(`td`, arg.rowIx + 0);
@@ -1242,8 +1239,7 @@ void pp1(Arg)(Viz viz,
                 }
                 else if (viz.form == VizForm.jiraWikiMarkup)
                 {
-                    /* viz.pp1(subArg); */
-                    /* viz.ppRaw(`|`); */
+                    /* viz.pp1(subArg); viz.ppRaw(`|`); */
                 }
             }
         }
