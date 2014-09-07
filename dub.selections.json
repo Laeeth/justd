@@ -1,21 +1,22 @@
 {
 	"fileVersion": 1,
 	"versions": {
+		"colorize": "1.0.4",
+		"derelict-fi": "1.0.0",
 		"logger": "0.1.0",
+		"derelict-enet": "1.3.10",
 		"ae-graphics": "0.0.3",
-		"libnoise-d": "~master",
+		"openssl": "~master",
 		"vibe-d": "~master",
+		"derelict-sdl2": "1.2.4",
 		"libevent": "~master",
 		"derelict-util": "1.0.2",
-		"derelict-assimp3": "1.0.0",
-		"colorize": "1.0.4",
-		"openssl": "~master",
+		"dstats": "~master",
 		"libev": "~master",
 		"gfm": "~master",
-		"derelict-fi": "1.0.0",
-		"derelict-sdl2": "1.2.4",
-		"derelict-enet": "1.3.10",
+		"libnoise-d": "~master",
+		"derelict-assimp3": "1.0.0",
 		"derelict-gl3": "1.0.4",
-		"dstats": "~master"
+		"hap": "~master"
 	}
 }
