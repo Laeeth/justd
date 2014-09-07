@@ -2,7 +2,7 @@
 
 module conceptnet;
 
-/** Semantic Relation.
+/** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
 enum Relation
@@ -55,11 +55,30 @@ enum Relation
     DefinedAs, /* A and B overlap considerably in meaning, and B is a more explanatory version of A. (This is similar to TranslationOf, but within one language.) */
 }
 
+/** Node */
+struct Node
+{
+}
+
+/** Edge */
 struct Edge
 {
+    size_t startIndexes; // into Net.nodes
+    size_t endIndexes; // into Net.nodes
     Relation rel; // TODO: packed
     bool negation; // TODO: packed
     byte weight; // TODO: normalized
-    size_t startIndex;
-    size_t endIndex;
+    // sources;
+}
+
+class Net
+{
+    Node[] nodes;
+    Edge[] edges;
+}
+
+Net read(string path)
+{
+    auto net = new typeof(return);
+    return net;
 }
