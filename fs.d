@@ -11,7 +11,7 @@
    See also: http://ridiculousfish.com/blog/posts/old-age-and-treachery.html
    See also: http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
 
-   TODO: Call filterUnderAnyOfPaths using std.algorithm.filter directly on AAs. Use byPair?
+   TODO: Call filterUnderAnyOfPaths using std.algorithm.filter directly on AAs. Use byPair or use AA.get(key, defaultValue)
          See also: http://forum.dlang.org/thread/mailman.75.1392335793.6445.digitalmars-d-learn@puremagic.com
          See also: https://github.com/D-Programming-Language/druntime/pull/574
 
