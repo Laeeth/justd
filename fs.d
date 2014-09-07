@@ -11,6 +11,8 @@
    See also: http://ridiculousfish.com/blog/posts/old-age-and-treachery.html
    See also: http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
 
+   TODO: Call filterUnderAnyOfPaths using std.algorithm.filter directly on AAs.
+
    TODO: Count logical lines.
    TODO: Lexers should be loosely coupled to FKinds instead of Files
    TODO: Generic Token[] and specific CToken[], CxxToken[]
@@ -1625,7 +1627,7 @@ class GStats
     NotNull!File[][string] filesByName;    // Potential File Name Duplicates
     NotNull!File[][ino_t] filesByInode;    // Potential Link Duplicates
     NotNull!File[][SHA1Digest] filesByContentId; // File(s) (Duplicates) Indexed on Contents SHA1.
-    NotNull!RegFile[][string] elfFilesByMangledSymbol;
+    NotNull!RegFile[][string] elfFilesBySymbol; // File(s) (Duplicates) Indexed on raw unmangled symbol.
     FileTags ftags;
 
     Bytes64[NotNull!File] treeSizesByFile; // Tree sizes.
@@ -4060,7 +4062,7 @@ class Scanner(Term)
                                     "Usage: fs { --switches } [KEY]...\n" ~
                                     "Note that scanning for multiple KEYs is possible.\nIf so hits are highlighted in different colors!\n" ~
                                     "Sample calls: \n" ~
-                                    "  fdo.d --color -d /lib/modules/3.13.0-24-generic/kernel/drivers/staging --browse --duplicates --recache usb lirc\n" ~
+                                    "  fdo.d --color -d /lib/modules/3.13.0-24-generic/kernel/drivers/staging --browse --duplicates --recache lirc\n" ~
                                     "  fdo.d --color -d /etc -s --tree --usage -l --duplicates stallman\n"
                                     "  fdo.d --color -d /etc -d /var --acronym sttccc\n"
                                     "  fdo.d --color -d /etc -d /var --acronym dktp\n"
@@ -4967,7 +4969,7 @@ class Scanner(Term)
             auto scan = (sst
                          .strings
                          .filter!(raw => !raw.empty) // skip empty raw string
-                         .tee!(raw => gstats.elfFilesByMangledSymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here because we can't rever to raw
+                         .tee!(raw => gstats.elfFilesBySymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here because we can't rever to raw
                          .map!(raw => demangler(raw).decodeSymbol)
                          .filter!(demangling => (!keys.empty && // don't show anything if no keys given
                                                  demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))); // I love D :)
@@ -5446,7 +5448,7 @@ class Scanner(Term)
         }
     }
 
-    // Filter out $(D files) that lie under any of the directories $(D dirPaths).
+    /** Filter out $(D files) that lie under any of the directories $(D dirPaths). */
     F[] filterUnderAnyOfPaths(F)(F[] files,
                                  string[] dirPaths)
     {
@@ -5556,6 +5558,25 @@ class Scanner(Term)
         if (gstats.showFileContentDups)
         {
             showContentDups(viz);
+        }
+
+        if (gstats.showELFSymbolDups &&
+            !keys.empty) // don't show anything if no keys where given
+        {
+            viz.pp(`ELF Symbol Duplicates`.asH!2);
+            foreach (raw, dupFiles; gstats.elfFilesBySymbol)
+            {
+                auto dupFilesOk = filterUnderAnyOfPaths(dupFiles, _topDirNames);
+                if (dupFilesOk.length >= 2)
+                {
+                    const demangling = demangler(raw).decodeSymbol;
+                    if (demangling.unmangled.findFirstOfAnyInOrder(keys)[1])
+                    {
+                        viz.pp(asH!3(`ELF Files with same symbol ` ~ to!string(raw)),
+                               asUList(dupFilesOk.map!(x => x.asPath.asItem)));
+                    }
+                }
+            }
         }
 
         /* Broken Symlinks */
