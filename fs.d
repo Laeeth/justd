@@ -2952,7 +2952,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.binaryCache);
 
-        binFKinds ~= new FKind("GCC precompiled header", [], ["pch", "gpch"], "gpch", 0, [], [],
+        binFKinds ~= new FKind("PCH", "(GCC) Precompiled header", ["pch", "gpch"], "gpch", 0, [], [],
                                [], // N/A
                                defaultStringDelims,
                                FileContent.cache);
