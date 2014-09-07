@@ -26,7 +26,7 @@ import languages: HumanLang;
     See also: wordnet.Relation
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
-enum Relation
+enum Relation:ubyte
 {
     unknown,
     RelatedTo, /* The most general relation. There is some positive relationship
@@ -91,7 +91,7 @@ alias Index = size_t;
 
 alias EdgeIndex = Index;
 
-/** Node */
+/** Network Node. */
 struct Node
 {
     HumanLang hlang;
@@ -101,7 +101,7 @@ struct Node
 
 alias NodeIndex = Index;
 
-/** Hyper Edge.
+/** Network Hyper Edge.
     Its called Hyper because it connects many to many.
  */
 struct Edge

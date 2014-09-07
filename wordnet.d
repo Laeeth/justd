@@ -10,7 +10,7 @@ import conceptnet5;
 /** WordNet Semantic Relation Type Code.
     See also: conceptnet5.Relation
 */
-enum Relation
+enum Relation:ubyte
 {
     unknown,
     attribute,
