@@ -2712,7 +2712,7 @@ class GStats
                                          [], // N/A
                                          defaultStringDelims,
                                          FileContent.binaryCache);
-        icnsKind.wikip = "https://en.wikipedia.org/wiki/Markdown";
+        kindMarkdownFmt.wikip = "https://en.wikipedia.org/wiki/Markdown";
         binFKinds ~= kindMarkdownFmt;
 
         auto kindAsciiDocFmt = new FKind("AsciiDoc", [], ["ad", "adoc", "asciidoc"],
