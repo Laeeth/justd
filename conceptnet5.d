@@ -96,7 +96,9 @@ struct Node
 
 alias NodeIndex = Index;
 
-/** Edge */
+/** Hyper Edge.
+    Its called Hyper because it connects many to many.
+ */
 struct Edge
 {
     NodeIndex[] startIndexes; // into Net.nodes
