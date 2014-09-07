@@ -29,6 +29,7 @@ import std.traits: isInstanceOf, isSomeString, isSomeChar, isAggregateType, Unqu
 import std.stdio: stdout;
 import std.conv: to;
 import std.path: dirSeparator;
+import std.range: ElementType;
 
 import w3c: encodeHTML;
 import arsd.terminal; // TODO: Make this optional
@@ -1169,8 +1170,7 @@ void pp1(Arg)(Viz viz,
 
         // use aggregate members as header
         import std.range: front;
-        const first = arg.args[0].front; // TODO: Print only if non-empty
-        alias Front = typeof(first);
+        alias Front = ElementType!(typeof(arg.args[0])); // elementtype of Iteratable
         static if (isAggregateType!Front)
         {
             /* TODO: When __traits(documentation,x)
@@ -1190,7 +1190,7 @@ void pp1(Arg)(Viz viz,
             else if (arg.rowNr == RowNr.offsetOne)
                 viz.pplnTaggedN(`td`, "Offset");
 
-            foreach (ix, member; first.tupleof)
+            foreach (ix, member; typeof(Front.tupleof))
             {
                 enum idName = __traits(identifier, Front.tupleof[ix]);
                 import std.string: capitalize;
@@ -1206,9 +1206,9 @@ void pp1(Arg)(Viz viz,
             else if (arg.rowNr == RowNr.offsetOne)
                 viz.pplnTaggedN(`td`, "");
 
-            foreach (member; first.tupleof)
+            foreach (Member; typeof(Front.tupleof))
             {
-                alias Memb = Unqual!(typeof(member)); // skip constness for now
+                alias Memb = Unqual!(Member); // skip constness for now
 
                 enum type_string = Memb.stringof;
 

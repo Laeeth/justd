@@ -4945,6 +4945,10 @@ class Scanner(Term)
             // I love D :)
             dln(elfFile.path, " before");
 
+            sst.strings
+                .filter!(mangled => !mangled.empty)
+                .tee!(e => gstats.elfFilesByMangledSymbol[e] ~= elfFile);
+
             auto scan = (sst
                          .strings
                          .filter!(mangled => !mangled.empty) // skip empty
@@ -4952,16 +4956,11 @@ class Scanner(Term)
                          .map!(mangled => demangler(mangled).decodeSymbol)
                          .filter!(demangling => (!keys.empty && // don't show anything if no keys given
                                                  demangling.unmangled.findFirstOfAnyInOrder(keys)[1]))
-                         /* .array */
                 );
             dln(elfFile.path, " after");
 
-            if (!scan.empty &&
-                `ELF` in gstats.selFKinds.byName) // if user selected ELF file show them
+            if (`ELF` in gstats.selFKinds.byName) // if user selected ELF file show them
             {
-                /* sst.strings */
-                /*     .filter!(mangled => !mangled.empty) */
-                /*     .tee!(e => gstats.elfFilesByMangledSymbol[e] ~= elfFile); */
                 viz.pp(horizontalRuler,
                        displayedFileName(gstats, elfFile).asPath.asH!3,
                        asH!4(`ELF Symbol Strings Table (`, `.strtab`.asCode, `)`),
