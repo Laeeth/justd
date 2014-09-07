@@ -806,7 +806,7 @@ class DirKind
         }
         void fromMsgpack(Unpacker)(auto ref Unpacker unpacker)
         {
-            unpacker.beginArray();
+            unpacker.beginArray;
             unpacker.unpack(this.tupleof);
         }
     }
@@ -873,7 +873,7 @@ class File
             (dent.timeLastModified != this.timeLastModified) // if current modtime has changed or
             )
         {
-            makeObselete();
+            makeObselete;
             this.timeLastModified = dent.timeLastModified; // use new time
             this.size = dent.size; // use new time
             flag = true;
@@ -4052,8 +4052,8 @@ class Scanner(Term)
 
     void prepare(string[] args, ref Term term)
     {
-        _scanChunkSize = 32*pageSize();
-        gstats.loadFileKinds();
+        _scanChunkSize = 32*pageSize;
+        gstats.loadFileKinds;
         gstats.loadDirKinds;
 
         bool helpPrinted = getoptEx("FS --- File System Scanning Utility in D.\n" ~
@@ -4191,7 +4191,7 @@ class Scanner(Term)
             gstats.useHTML = true;
             immutable ext = gstats.useHTML ? "html" : "results.txt";
             import std.uuid: randomUUID;
-            outFile = ioFile("/tmp/fs-" ~ randomUUID().toString() ~
+            outFile = ioFile("/tmp/fs-" ~ randomUUID.toString() ~
                              "." ~ ext,
                              "w");
             /* popen("gnome-open " ~ outFile.name); */
