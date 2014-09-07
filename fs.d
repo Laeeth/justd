@@ -160,6 +160,7 @@ import random_ex;
 import mathml;
 import mangling;
 import languages;
+import attributes;
 
 import elf;
 import lock_free.queue;

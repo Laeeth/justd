@@ -67,7 +67,7 @@ enum MarkupLang
     MathML
 }
 
-enum Usage { definition, reference }
+enum Usage { definition, reference, call}
 
 enum TokenId { unknown,
                keyword, type, constant, comment,
