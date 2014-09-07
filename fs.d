@@ -4076,8 +4076,8 @@ class Scanner(Term)
 
                                     "color|C", "\tColorize Output" ~ defaultDoc(gstats.colorFlag),  &gstats.colorFlag,
                                     "types|T", "\tComma separated list (CSV) of file types/kinds to scan" ~ defaultDoc(selFKindNames), &selFKindNames,
-                                    "list-textual-kinds|L", "\tList registered textual types/kinds" ~ defaultDoc(listTxtFKinds), &listTxtFKinds,
-                                    "list-binary-kinds|L", "\tList registered binary types/kinds" ~ defaultDoc(listBinFKinds), &listBinFKinds,
+                                    "list-textual-kinds", "\tList registered textual types/kinds" ~ defaultDoc(listTxtFKinds), &listTxtFKinds,
+                                    "list-binary-kinds", "\tList registered binary types/kinds" ~ defaultDoc(listBinFKinds), &listBinFKinds,
                                     "group-types|G", "\tCollect and group file types found" ~ defaultDoc(gstats.collectTypeHits), &gstats.collectTypeHits,
 
                                     "i", "\tCase-Fold, Case-Insensitive" ~ defaultDoc(_caseFold), &_caseFold,
