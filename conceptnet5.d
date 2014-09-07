@@ -5,6 +5,8 @@
  */
 module conceptnet5;
 
+import languages: HumanLang;
+
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
@@ -66,6 +68,7 @@ void infer(T...)(relations)
 /** Node */
 struct Node
 {
+    HumanLang hlang;
 }
 
 /** Edge */
@@ -75,6 +78,7 @@ struct Edge
     size_t endIndexes; // into Net.nodes
     Relation rel; // TODO: packed
     bool negation; // TODO: packed
+    HumanLang hlang; // TODO: packed
     byte weight; // TODO: normalized
     // sources;
 }

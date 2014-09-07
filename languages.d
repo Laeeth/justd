@@ -3,6 +3,14 @@
 /** Generic Language Constructs. */
 module languages;
 
+/** Human Language. */
+enum HumanLang
+{
+    en,                         // English
+    sv,                         // Svenska (Swedish)
+    de,                         // Deutsch (German)
+}
+
 /** Programming Language. */
 enum Lang
 {
