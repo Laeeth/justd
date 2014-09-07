@@ -4906,7 +4906,9 @@ class Scanner(Term)
     {
         import elfdoc: sectionNameExplanations;
         /* TODO: Add mouse hovering help for sectionNameExplanations[section] */
+        dln("before: ", elfFile);
         ELF decoder = ELF.fromFile(elfFile._mmfile);
+        dln("after: ", elfFile);
 
         /* foreach (section; decoder.sections) */
         /* { */
