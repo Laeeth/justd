@@ -25,6 +25,7 @@ import languages: HumanLang;
 */
 enum Relation
 {
+    unknown,
     RelatedTo, /* The most general relation. There is some positive relationship
                 * between A and B, but ConceptNet can't determine what that
                 * relationship is based on the data. This was called
