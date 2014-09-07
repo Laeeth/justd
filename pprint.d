@@ -378,6 +378,8 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
     struct AsPath(T) { T arg; } auto ref asPath(T)(T arg) { return AsPath!T(arg); }
     /** Printed as Name. */
     struct AsName(T) { T arg; } auto ref asName(T)(T arg) { return AsName!T(arg); }
+    /** Printed as URL. */
+    struct AsURL(T) { T arg; alias arg this; } auto ref asURL(T)(T arg) { return AsURL!T(arg); }
 
     /* TODO: Turn these into an enum for more efficient parsing. */
     /** Printed as Italic/Slanted. */
@@ -1325,27 +1327,38 @@ void pp1(Arg)(Viz viz,
                  viz.form == VizForm.textAsciiDocUTF8 ||
                  viz.form == VizForm.Markdown) { viz.pplnRaw(``); }
     }
-    else static if (isInstanceOf!(AsPath, Arg))
+    else static if (isInstanceOf!(AsPath, Arg) ||
+                    isInstanceOf!(AsURL, Arg))
     {
         auto vizArg = viz;
         vizArg.treeFlag = false;
 
-        import std.traits: isSomeString;
-        enum isString = isSomeString!(typeof(arg.arg));
+        enum isString = isSomeString!(typeof(arg.arg)); // only create hyperlink if arg is a string
 
         static if (isString)
+        {
             if (viz.form == VizForm.HTML)
             {
-                viz.ppTagOpen(`a href="file://` ~ arg.arg ~ `"`);
+                static if (isInstanceOf!(AsPath, Arg))
+                {
+                    viz.ppTagOpen(`a href="file://` ~ arg.arg ~ `"`);
+                }
+                else static if (isInstanceOf!(AsURL, Arg))
+                {
+                    viz.ppTagOpen(`a href="` ~ arg.arg ~ `"`);
+                }
             }
+        }
 
         pp1(vizArg, depth + 1, arg.arg);
 
         static if (isString)
+        {
             if (viz.form == VizForm.HTML)
             {
                 viz.ppTagClose(`a`);
             }
+        }
     }
     else static if (isInstanceOf!(AsName, Arg))
     {

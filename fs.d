@@ -401,7 +401,7 @@ class FKind
                                    FKind superKind = null,
                                    FKind[] subKinds = [],
                                    string description = null,
-                                   string wikiURL = null) @trusted pure
+                                   string wikip = null) @trusted pure
     {
         this.kindName = kindName_;
 
@@ -465,7 +465,7 @@ class FKind
         this.superKind = superKind;
         this.subKinds = subKinds;
         this.description = description;
-        this.wikiURL = wikiURL;
+        this.wikip = wikip.asURL;
     }
 
     override string toString() const @property @trusted pure nothrow { return kindName; }
@@ -497,7 +497,7 @@ class FKind
 
     string kindName;    // Kind Nick Name.
     string description; // Kind Documenting Description.
-    string wikiURL; // Wikipedia URL
+    AsURL!string wikip; // Wikipedia URL
 
     FKind superKind;    // Inherited pattern. For example ELF => ELF core file
     FKind[] subKinds;   // Inherited pattern. For example ELF => ELF core file
@@ -2556,7 +2556,7 @@ class GStats
                                   defaultStringDelims,
                                   FileContent.text);
         txtFKinds ~= diffKind;
-        diffKind.wikiURL = "https://en.wikipedia.org/wiki/Diff";
+        diffKind.wikip = "https://en.wikipedia.org/wiki/Diff";
 
         // Binaries
 
@@ -2568,7 +2568,7 @@ class GStats
                                  [], // N/A
                                  FileContent.machineCode,
                                  FileKindDetection.equalsContents);
-        elfKind.wikiURL = "https://en.wikipedia.org/wiki/Executable_and_Linkable_Format";
+        elfKind.wikip = "https://en.wikipedia.org/wiki/Executable_and_Linkable_Format";
         binFKinds ~= elfKind;
         /* auto extsExeELF = ["out", "bin", "x", "elf", ]; // ELF file extensions */
         /* auto elfExeKind  = new FKind("ELF executable",    [], extsExeELF,  [0x2, 0x0], 16, [], [], FileContent.machineCode, FileKindDetection.equalsContents, elfKind); */
@@ -2692,7 +2692,7 @@ class GStats
                                   [], // N/A
                                   [], // N/A
                                   FileContent.imageIcon);
-        icnsKind.wikiURL = "https://en.wikipedia.org/wiki/Apple_Icon_Image_format";
+        icnsKind.wikip = "https://en.wikipedia.org/wiki/Apple_Icon_Image_format";
         binFKinds ~= icnsKind;
         // TODO: read with http://icns.sourceforge.net/
 
@@ -2709,6 +2709,7 @@ class GStats
                                          [], // N/A
                                          defaultStringDelims,
                                          FileContent.binaryCache);
+        icnsKind.wikip = "https://en.wikipedia.org/wiki/Markdown";
         binFKinds ~= kindMarkdownFmt;
 
         auto kindAsciiDocFmt = new FKind("AsciiDoc", [], ["ad", "adoc", "asciidoc"],
@@ -2760,7 +2761,7 @@ class GStats
                                 [], // N/A
                                 defaultStringDelims,
                                 FileContent.audio, FileKindDetection.equalsNameAndContents);
-        auKind.wikiURL = "https://en.wikipedia.org/wiki/Au_file_format";
+        auKind.wikip = "https://en.wikipedia.org/wiki/Au_file_format";
         binFKinds ~= auKind;
 
         binFKinds ~= new FKind("Ogg", [], ["ogg", "oga", "ogv"],
