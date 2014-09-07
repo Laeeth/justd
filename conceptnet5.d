@@ -58,6 +58,11 @@ enum Relation
     DefinedAs, /* A and B overlap considerably in meaning, and B is a more explanatory version of A. (This is similar to TranslationOf, but within one language.) */
 }
 
+/** Inference Algorithm. */
+void infer(T...)(relations)
+{
+}
+
 /** Node */
 struct Node
 {
