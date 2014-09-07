@@ -74,18 +74,16 @@ alias Index = size_t;
 
 /* TODO: Make these strictly typed. */
 alias EdgeIndex = Index;
-alias EdgeIndex = Index;
 
 /** Node */
 struct Node
 {
     HumanLang hlang;
-    EdgeIndex[] outIndexes
-    EdgeIndex[] inIndex;
+    EdgeIndex[] outIndexes; // into Net.edges
+    EdgeIndex[] inIndexes; // into Net.edges
 }
 
 /* TODO: Make these strictly typed. */
-alias NodeIndex = Index;
 alias NodeIndex = Index;
 
 /** Edge */
