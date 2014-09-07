@@ -50,7 +50,10 @@ import languages: Lang, TokenId, Usage;
     auto ref asConstant(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.constant, lang_, T)(args); } // Emacs: font-lock-constant-face
     auto ref asVariable(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.variableName, lang_, T)(args); } // Emacs: font-lock-variable-name-face
     auto ref asComment(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.comment, lang_, T)(args); } // Emacs: font-lock-comment-face
+
     auto ref asFunction(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.functionName, lang_, T)(args); } // Emacs: font-lock-function-name-face
+    auto ref asFunctionCall(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.functionCall, lang_, T)(args); } // Emacs: font-lock-function-name-face
+
     auto ref asConstructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.constructor, lang_, T)(args); } // constuctor
     auto ref asDestructor(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.destructor, lang_, T)(args); } // destructor
     auto ref asBuiltin(Lang lang_ = Lang.unknown, T...)(T args) { return AsCode!(TokenId.builtinName, lang_, T)(args); } // Emacs: font-lock-builtin-name-face

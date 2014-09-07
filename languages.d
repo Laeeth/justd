@@ -70,7 +70,18 @@ enum MarkupLang
 enum Usage { definition, reference, call}
 
 enum TokenId { unknown,
-               keyword, type, constant, comment,
-               variableName, functionName, builtinName, templateName, macroName, aliasName,
-               enumeration, enumerator,
-               constructor, destructors, operator }
+               keyword,
+               type,
+               constant,
+               comment,
+               variableName,
+               functionName,
+               builtinName,
+               templateName,
+               macroName,
+               aliasName,
+               enumeration,
+               enumerator,
+               constructor,
+               destructors,
+               operator }
