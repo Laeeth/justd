@@ -1,6 +1,9 @@
 #!/usr/bin/env rdmd-dev-module
 
-module conceptnet;
+/** ConceptNet 5
+   See also: https://github.com/commonsense/conceptnet5/wiki
+ */
+module conceptnet5;
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
