@@ -145,7 +145,7 @@ void radixSortImpl(R,
     static if (false/* doInPlace */)
     {
         // Histogram Buckets Upper-Limits/Walls for values in \p x.
-        Slice!size_t bins[radix] = void; // bucket slices
+        Slice!size_t[radix] bins = void; // bucket slices
         for (uint d = 0; d != nDigits; ++d)  // for each digit-index \c d (in base \c radix) starting with least significant (LSD-first)
         {
             const uint sh = d*radixNBits;   // digit bit shift
