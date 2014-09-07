@@ -6,6 +6,8 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
+    TODO: Implement bidirection conversions: http://forum.dlang.org/thread/tuafkxmnntqjgycziixn@forum.dlang.org#post-tuafkxmnntqjgycziixn:40forum.dlang.org
+
     TODO: Join logic for ChainEnum and UnionEnum into common and then define:
     - UnionEnum: only names must be unique
     - StrictUnionEnum: both names and values must be unique
