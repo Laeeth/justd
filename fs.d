@@ -163,7 +163,7 @@ import languages;
 import attributes;
 
 import elf;
-import lock_free.queue;
+import lock_free.rwqueue;
 
 /* NGram Aliases */
 /** Not very likely that we are interested in histograms 64-bit precision
