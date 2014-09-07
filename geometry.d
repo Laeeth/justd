@@ -8,14 +8,14 @@
    $(LI Florian Boesch (___doc__): helps me to understand opengl/complex maths better, see: $(LINK http://codeflow.org/).)
    $(LI #D on freenode: answered general questions about D.)
    )
+
    Authors: David Herberth
    License: MIT
 
    Note: All methods marked with pure are weakly pure since, they all access an instance member.
    All static methods are strongly pure.
-*/
 
-/* TODO: Optimize using core.simd or std.simd
+   TODO: Optimize using core.simd or std.simd
    TODO: Merge with analyticgeometry
    TODO: Merge with https://github.com/CyberShadow/ae/blob/master/utils/geometry.d
    TODO: Integrate with http://code.dlang.org/packages/blazed2
@@ -24,15 +24,10 @@
    TODO: Go through all usages of real and use CommonType!(real, E) to make it work when E is a bignum.
    TODO: ead and perhaps make use of http://stackoverflow.com/questions/3098242/fast-vector-struct-that-allows-i-and-xyz-operations-in-d?rq=1
    TODO: Tag member functions in t_geom.d as pure as is done https://github.com/$(D D)-Programming-Language/phobos/blob/master/std/bigint.d
-   TODO: Why is it preferred make slicing with [] explicit as in
-   - all!"a"(vec2b(true)[])
-   when accessing a data structure as a range.
-   Question: When should a function return const bool instead of just bool in for instance opEquals()?
+   TODO: Remove need to use [] in x[] == y[]
 
    See: https://www.google.se/search?q=point+plus+vector
    See: http://mosra.cz/blog/article.php?a=22-introducing-magnum-a-multiplatform-2d-3d-graphics-engine
-
-   TODO: Remove need to use [] in x[] == y[]
 */
 
 module geometry;
