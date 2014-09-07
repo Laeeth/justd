@@ -4018,6 +4018,8 @@ class Scanner(Term)
     bool _beVerbose = false;
     bool _caseFold = false;
     bool _showSkipped = false;
+    bool listTxtFKinds = false;
+    bool listBinFKinds = false;
     string selFKindNames;
     string[] _topDirNames;
     string[] addTags;
@@ -4074,6 +4076,8 @@ class Scanner(Term)
 
                                     "color|C", "\tColorize Output" ~ defaultDoc(gstats.colorFlag),  &gstats.colorFlag,
                                     "types|T", "\tComma separated list (CSV) of file types/kinds to scan" ~ defaultDoc(selFKindNames), &selFKindNames,
+                                    "list-textual-kinds|L", "\tList registered textual types/kinds" ~ defaultDoc(listTxtFKinds), &listTxtFKinds,
+                                    "list-binary-kinds|L", "\tList registered binary types/kinds" ~ defaultDoc(listBinFKinds), &listBinFKinds,
                                     "group-types|G", "\tCollect and group file types found" ~ defaultDoc(gstats.collectTypeHits), &gstats.collectTypeHits,
 
                                     "i", "\tCase-Fold, Case-Insensitive" ~ defaultDoc(_caseFold), &_caseFold,
@@ -4313,8 +4317,18 @@ class Scanner(Term)
                          " under ", _topDirNames.map!(a => a.asPath)));
         }
 
-        viz.pp("Source Kinds".asH!2,
-               gstats.txtFKinds.byIndex.asTable);
+        if (listTxtFKinds)
+        {
+            viz.pp("Textual (Source) Kinds".asH!2,
+                   gstats.txtFKinds.byIndex.asTable);
+        }
+
+        if (listBinFKinds)
+        {
+            viz.pp("Binary Kinds".asH!2,
+                   gstats.binFKinds.byIndex.asTable);
+        }
+
         /* binFKinds.asTable, */
 
         if (_showSkipped)
