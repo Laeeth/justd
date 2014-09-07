@@ -1169,7 +1169,6 @@ void pp1(Arg)(Viz viz,
         /* See also: http://forum.dlang.org/thread/wjksldfpkpenoskvhsqa@forum.dlang.org#post-jwfildowqrbwtamywsmy:40forum.dlang.org */
 
         // use aggregate members as header
-        import std.range: front;
         alias Front = ElementType!(typeof(arg.args[0])); // elementtype of Iteratable
         static if (isAggregateType!Front)
         {
@@ -1182,49 +1181,27 @@ void pp1(Arg)(Viz viz,
 
             // Can we lookup file and line of user defined types aswell?
 
-            // member names header. TODO: Functionize
-            if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); }
+            // member names header.
+            if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); } // TODO: Functionize
 
-            if      (arg.rowNr == RowNr.offsetZero)
-                viz.pplnTaggedN(`td`, "Offset");
-            else if (arg.rowNr == RowNr.offsetOne)
-                viz.pplnTaggedN(`td`, "Offset");
-
-            foreach (ix, member; typeof(Front.tupleof))
+            // index column
+            if      (arg.rowNr == RowNr.offsetZero) viz.pplnTaggedN(`td`, "0-Offset");
+            else if (arg.rowNr == RowNr.offsetOne)  viz.pplnTaggedN(`td`, "1-Offset");
+            foreach (ix, Member; typeof(Front.tupleof))
             {
                 enum idName = __traits(identifier, Front.tupleof[ix]);
+                enum typeName = Unqual!(Member).stringof; // constness of no interest hee
+
+                static      if (is(Memb == struct)) enum qual = `struct `;
+                else static if (is(Memb == class))  enum qual = `class `;
+                else                                enum qual = ``;
+
                 import std.string: capitalize;
-                viz.pplnTaggedN(`td`, (capitalizeHeadings ? idName.capitalize : idName).asItalic.asBold);
-            }
-            if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
-
-            // member types header. TODO: Functionize
-            if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); }
-
-            if      (arg.rowNr == RowNr.offsetZero)
-                viz.pplnTaggedN(`td`, "");
-            else if (arg.rowNr == RowNr.offsetOne)
-                viz.pplnTaggedN(`td`, "");
-
-            foreach (Member; typeof(Front.tupleof))
-            {
-                alias Memb = Unqual!(Member); // skip constness for now
-
-                enum type_string = Memb.stringof;
-
-                // TODO: Why doesn't this work for builtin types:
-                // enum type_string = __traits(identifier, Memb);
-
-                static      if (is(Memb == struct))
-                    enum qual_string = `struct `;
-                else static if (is(Memb == class))
-                    enum qual_string = `class `;
-                else
-                    enum qual_string = ``;
-
                 viz.pplnTaggedN(`td`,
-                                qual_string.asKeyword,
-                                type_string.asType);
+                                (capitalizeHeadings ? idName.capitalize : idName).asItalic.asBold,
+                                `<br>`,
+                                qual.asKeyword,
+                                typeName.asType);
             }
             if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
         }
