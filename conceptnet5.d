@@ -1,7 +1,9 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** ConceptNet 5
-   See also: https://github.com/commonsense/conceptnet5/wiki
+/** ConceptNet 5.
+    Reads data from CN5 into a Hypergraph.
+    See also: https://en.wikipedia.org/wiki/Hypergraph
+    See also: https://github.com/commonsense/conceptnet5/wiki
  */
 module conceptnet5;
 
@@ -65,17 +67,31 @@ void infer(T...)(relations)
 {
 }
 
+/** Index Precision.
+    Set this to $(D uint) if we get low on memory.
+*/
+alias Index = size_t;
+
+/* TODO: Make these strictly typed. */
+alias EdgeIndex = Index;
+alias EdgeIndex = Index;
+
 /** Node */
 struct Node
 {
     HumanLang hlang;
+    EdgeIndex[] outIndexes
+    EdgeIndex[] inIndex;
 }
+
+alias NodeIndex = Index;
+alias NodeIndex = Index;
 
 /** Edge */
 struct Edge
 {
-    size_t startIndexes; // into Net.nodes
-    size_t endIndexes; // into Net.nodes
+    NodeIndex[] startIndexes; // into Net.nodes
+    NodeIndex[] endIndexes; // into Net.nodes
     Relation rel; // TODO: packed
     bool negation; // TODO: packed
     HumanLang hlang; // TODO: packed
@@ -83,6 +99,7 @@ struct Edge
     // sources;
 }
 
+/** Main Net. */
 class Net
 {
     Node[] nodes;
