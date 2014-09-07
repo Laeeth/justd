@@ -19,10 +19,14 @@ alias inGC = isGCPointer;
 alias isGCed = isGCPointer;
 
 /** Returns: true iff all types T are the same. */
-template allSame(T...) {
-    static if (T.length <= 1) {
+template allSame(T...)
+{
+    static if (T.length <= 1)
+    {
         enum bool allSame = true;
-    } else {
+    }
+    else
+    {
         enum bool allSame = is(T[0] == T[1]) && allSame!(T[1..$]);
     }
 }
@@ -130,9 +134,11 @@ unittest {
     assert(nameOf!var == var.stringof);
 }
 
-template Chainable() {
+template Chainable()
+{
     import std.range: chain;
-    auto ref opCast(Range)(Range r) {
+    auto ref opCast(Range)(Range r)
+    {
         return chain(this, r);
     }
 }
