@@ -1,11 +1,11 @@
 module wordnet;
 
-import languages: WordGroup;
+import languages: WordCategory;
 
 struct Word
 {
     string name;
-    WordGroup group;
+    WordCategory category;
     ubyte synsetCount; // Number of senses (meanings).
 }
 
@@ -16,10 +16,11 @@ class WordNet
     this(string dirPath)
     {
         auto fixed = dirPath.expandTilde;
-        read(buildNormalizedPath(fixed, "index.adj"));
-        read(buildNormalizedPath(fixed, "index.adv"));
-        read(buildNormalizedPath(fixed, "index.noun"));
-        read(buildNormalizedPath(fixed, "index.verb"));
+        alias nPath = buildNormalizedPath;
+        read(nPath(fixed, "index.adj"));
+        read(nPath(fixed, "index.adv"));
+        read(nPath(fixed, "index.noun"));
+        read(nPath(fixed, "index.verb"));
     }
 
     void read(string path)
@@ -32,18 +33,18 @@ class WordNet
             {
                 auto words = line.split;
                 const name = words[0];
-                WordGroup group;
-                with (WordGroup)
+                WordCategory category;
+                with (WordCategory)
                 {
                     final switch (words[1].front)
                     {
-                        case 'n': group = noun; break;
-                        case 'v': group = verb; break;
-                        case 'a': group = adjective; break;
-                        case 'r': group = adverb; break;
+                        case 'n': category = noun; break;
+                        case 'v': category = verb; break;
+                        case 'a': category = adjective; break;
+                        case 'r': category = adverb; break;
                     }
                 }
-                _data[name] = Word(name.dup, group, words[2].to!ubyte);
+                _data[name] = Word(name.dup, category, words[2].to!ubyte);
             }
         }
     }

@@ -250,8 +250,8 @@ enum TokenId:ubyte
     operator
 }
 
-/** Human Word Group. */
-enum WordGroup:ubyte
+/** Human Word Category. */
+enum WordCategory:ubyte
 {
     unknown,
     noun,
@@ -266,14 +266,14 @@ enum WordGroup:ubyte
     conjunction,
 }
 
-/** Lookup WordGroup from Textual $(D x).
+/** Lookup WordCategory from Textual $(D x).
     TODO: Construct internal hash table from WordNet.
  */
-WordGroup to(T: WordGroup, S)(S x) if (isSomeChar!S ||
+WordCategory to(T: WordCategory, S)(S x) if (isSomeChar!S ||
                              isSomeString!S)
 {
     typeof(return) type;
-    with (WordGroup)
+    with (WordCategory)
     {
         switch (x)
         {
@@ -295,8 +295,8 @@ WordGroup to(T: WordGroup, S)(S x) if (isSomeChar!S ||
 
 unittest
 {
-    with (WordGroup)
+    with (WordCategory)
     {
-        assert("car".to!WordGroup == WordGroup.noun);
+        assert("car".to!WordCategory == WordCategory.noun);
     }
 }
