@@ -254,15 +254,21 @@ enum TokenId:ubyte
 enum WordCategory:ubyte
 {
     unknown,
+
     noun,
     verb,
     adjective,
-    adverb,
+
+    normalAdverb,
+    conjunctiveAdverb,
+    adverbialConjunction = conjunctiveAdverb,
+
     preposition,
     pronoun,
     determiner,
     article,
     interjection,
+
     coordinatingConjunction,
     subordinatingConjunction,
 }
@@ -281,7 +287,7 @@ WordCategory to(T: WordCategory, S)(S x) if (isSomeChar!S ||
             case "car": type = noun; break;
             case "drive": type = verb; break;
             case "fast": type = adjective; break;
-            case "quickly": type = adverb; break;
+            case "quickly": type = normalAdverb; break;
             case "at": type = preposition; break;
             case "he": type = pronoun; break;
             case "the": type = article; break;
