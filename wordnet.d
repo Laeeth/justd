@@ -34,6 +34,72 @@ class WordNet
         {
             set(name, WordCategory.subordinatingConjunction, 1);
         }
+
+        foreach (name; [
+                     "accordingly",
+                     "additionally",
+                     "again",
+                     "almost",
+                     "although",
+                     "anyway",
+                     "as a result",
+                     "besides",
+                     "certainly",
+                     "comparatively",
+                     "consequently",
+                     "contrarily",
+                     "conversely",
+                     "elsewhere",
+                     "equally",
+                     "eventually",
+                     "finally",
+                     "further",
+                     "furthermore",
+                     "hence",
+                     "henceforth",
+                     "however",
+                     "in addition",
+                     "in comparison",
+                     "in contrast",
+                     "in fact",
+                     "incidentally",
+                     "indeed",
+                     "instead",
+                     "just as",
+                     "likewise",
+                     "meanwhile",
+                     "moreover",
+                     "namely",
+                     "nevertheless",
+                     "next",
+                     "nonetheless",
+                     "notably",
+                     "now",
+                     "otherwise",
+                     "rather",
+                     "similarly",
+                     "still",
+                     "subsequently",
+                     "that is",
+                     "then",
+                     "thereafter",
+                     "therefore",
+                     "thus",
+                     "undoubtedly",
+                     "uniquely",
+                     "on the other hand",
+                     "also",
+                     "for example",
+                     "for instance",
+                     "of course",
+                     "on the contrary",
+                     "so far",
+                     "until now",
+                     "thus"
+                     ])
+        {
+            set(name, WordCategory.conjunctiveAdverb, 1);
+        }
     }
 
     auto set(string name, WordCategory category, ubyte synsetCount)
@@ -71,7 +137,7 @@ class WordNet
                         case 'n': category = noun; break;
                         case 'v': category = verb; break;
                         case 'a': category = adjective; break;
-                        case 'r': category = adverb; break;
+                        case 'r': category = normalAdverb; break;
                         default: category = unknown; break;
                     }
                 }
