@@ -104,7 +104,18 @@ class WordNet
 
     auto set(string name, WordCategory category, ubyte synsetCount)
     {
-        _words[name] = Word(name, category, synsetCount);
+        if (name in _words)
+        {
+            const existingCategory = _words[name].category;
+            assert(existingCategory == category,
+                   name ~ " stored as " ~
+                   existingCategory.to!string ~ " cannot be restored as " ~
+                   category.to!string);
+        }
+        else
+        {
+            _words[name] = Word(name, category, synsetCount);
+        }
         return this;
     }
 
