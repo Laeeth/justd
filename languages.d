@@ -260,7 +260,8 @@ enum WordCategory:ubyte
     adjective,
 
     normalAdverb,
-    conjunctiveAdverb,
+
+    conjunctiveAdverb, // joins together sentences
     adverbialConjunction = conjunctiveAdverb,
 
     preposition,
