@@ -263,14 +263,15 @@ enum WordCategory:ubyte
     determiner,
     article,
     interjection,
-    conjunction,
+    coordinatingConjunction,
+    subordinatingConjunction,
 }
 
 /** Lookup WordCategory from Textual $(D x).
     TODO: Construct internal hash table from WordNet.
  */
 WordCategory to(T: WordCategory, S)(S x) if (isSomeChar!S ||
-                             isSomeString!S)
+                                             isSomeString!S)
 {
     typeof(return) type;
     with (WordCategory)
