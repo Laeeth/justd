@@ -1,67 +1,57 @@
-#!/usr/bin/env rdmd-dev-module
-
-/** WordNet.
- */
 module wordnet;
 
-import languages: HumanLang;
-import conceptnet5;
+import languages: WordGroup;
 
-/** WordNet Semantic Relation Type Code.
-    See also: conceptnet5.Relation
-*/
-enum Relation:ubyte
+struct Word
 {
-    unknown,
-    attribute,
-    causes,
-    classifiedByRegion,
-    classifiedByUsage,
-    classifiedByTopic,
-    entails,
-    hyponymOf, // also called hyperonymy, hyponymy,
-    instanceOf,
-    memberMeronymOf,
-    partMeronymOf,
-    sameVerbGroupAs,
-    similarTo,
-    substanceMeronymOf,
-    antonymOf,
-    derivationallyRelated,
-    pertainsTo,
-    seeAlso,
+    string name;
+    WordGroup group;
+    ubyte synsetCount; // Number of senses (meanings).
 }
 
-/** Map WordNet to ConceptNet5 Semantic Relation. */
-T to(T:conceptnet5.Relation)(const Relation relation)
+class WordNet
 {
-    final switch (relation)
+    import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv;
+
+    this(string dirPath)
     {
-        case Relation.unknown: return conceptnet5.Relation.unknown;
-        case Relation.attribute: return conceptnet5.Relation.Attribute;
-        case Relation.causes: return conceptnet5.Relation.Causes;
-        case Relation.classifiedByRegion: return conceptnet5.Relation.HasContext;
-        case Relation.classifiedByUsage: return conceptnet5.Relation.HasContext;
-        case Relation.classifiedByTopic: return conceptnet5.Relation.HasContext;
-        case Relation.entails: return conceptnet5.Relation.Entails;
-        case Relation.hyponymOf: return conceptnet5.Relation.IsA;
-        case Relation.instanceOf: return conceptnet5.Relation.InstanceOf;
-        case Relation.memberMeronymOf: return conceptnet5.Relation.MemberOf;
-        case Relation.partMeronymOf: return conceptnet5.Relation.PartOf;
-        case Relation.sameVerbGroupAs: return conceptnet5.Relation.SimilarTo;
-        case Relation.similarTo: return conceptnet5.Relation.SimilarTo;
-        case Relation.substanceMeronymOf: return conceptnet5.Relation.MadeOf;
-        case Relation.antonymOf: return conceptnet5.Relation.Antonym;
-        case Relation.derivationallyRelated: return conceptnet5.Relation.DerivedFrom;
-        case Relation.pertainsTo: return conceptnet5.Relation.PertainsTo;
-        case Relation.seeAlso: return conceptnet5.Relation.RelatedTox;
+        auto fixed = dirPath.expandTilde;
+        read(buildNormalizedPath(fixed, "index.adj"));
+        read(buildNormalizedPath(fixed, "index.adv"));
+        read(buildNormalizedPath(fixed, "index.noun"));
+        read(buildNormalizedPath(fixed, "index.verb"));
     }
+
+    void read(string path)
+    {
+        writeln(path);
+        auto file = File(path);
+        foreach (line; file.byLine)
+        {
+            if (!line.front.isWhite) // if first is not space
+            {
+                auto words = line.split;
+                const name = words[0];
+                WordGroup group;
+                with (WordGroup)
+                {
+                    final switch (words[1].front)
+                    {
+                        case 'n': group = noun; break;
+                        case 'v': group = verb; break;
+                        case 'a': group = adjective; break;
+                        case 'r': group = adverb; break;
+                    }
+                }
+                _data[name] = Word(name.dup, group, words[2].to!ubyte);
+            }
+        }
+    }
+
+    Word[string] _data;
 }
 
-version(none)
 unittest
 {
-    auto x = Relation.attribute;
-    auto y = x.to!(conceptnet5.Relation);
-    assert(y == conceptnet5.Relation.Attribute);
+    auto wn = new WordNet("~/WordNet-3.0/dict");
 }

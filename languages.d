@@ -3,21 +3,167 @@
 /** Generic Language Constructs. */
 module languages;
 
+import std.traits: isSomeChar, isSomeString;
+
 /** Human Language. */
-enum HumanLang
+enum HumanLang:ubyte
 {
-    en,                         // English
-    sv,                         // Svenska (Swedish)
-    de,                         // Deutsch (German)
+    en,                       // English, 英語
+    af,                       // Afrikaans
+    ar,                       // Arabic
+    hy,                       // Armenian
+    eu,                       // Basque
+    be,                       // Belarusian
+    bn,                       // Bengali
+    bs,                       // Bosnian
+    bg,                       // Bulgarian
+    my,                       // Burmese
+    zh,                       // Chinese Mandarin
+    crh,                      // Crimean Tatar
+    hr,                       // Croatian
+    cs,                       // Czech
+    da,                       // Danish
+    nl,                       // Dutch
+    eo,                       // Esperanto
+    et,                       // Estonian
+    fi,                       // Finnish
+    fr,                       // French
+    gl,                       // Galician
+    de,                       // German
+    el,                       // Greek
+    he,                       // Hebrew
+    hi,                       // Hindi
+    hu,                       // Hungarian
+    is_,                      // Icelandic
+    io,                       // Ido
+    id,                       // Indonesian
+    ga,                       // Irish
+    it,                       // Italian
+    ja,                       // Japanese, 日本語
+    kn,                       // Kannada
+    kk,                       // Kazakh
+    km,                       // Khmer
+    ko,                       // Korean
+    ky,                       // Kyrgyz
+    lo,                       // Lao
+    la,                       // Latin
+    lt,                       // Lithuanian
+    jbo,                      // Lojban
+    mk,                       // Macedonian
+    nan,                      // Min Nan
+    mg,                       // Malagasy
+    no,                       // Norwegian
+    ps,                       // Pashto
+    fa,                       // Persian
+    pl,                       // Polish
+    pt,                       // Portuguese
+    ro,                       // Romanian
+    ru,                       // Russian
+    sa,                       // Sanskrit
+    si,                       // Sinhalese
+    sco,                      // Scots
+    gd,                       // Scottish Gaelic
+    sr,                       // Serbian
+    sk,                       // Slovak
+    sl,                       // Slovene, Slovenian
+    es,                       // Spanish
+    sw,                       // Swahili
+    sv,                       // Swedish
+    tg,                       // Tajik
+    ta,                       // Tamil
+    th,                       // Thai
+    tr,                       // Turkish
+    tk,                       // Turkmen
+    uk,                       // Ukrainian
+    ur,                       // Urdu
+    uz,                       // Uzbek
+    vi,                       // Vietnamese
 }
 
-/** Programming Language. */
-enum Lang
+/* LANGUAGES = { */
+/* 'English': 'en', */
+/* 'Afrikaans': 'af', */
+/* 'Arabic': 'ar', */
+/* 'Armenian': 'hy', */
+/* 'Basque': 'eu', */
+/* 'Belarusian': 'be', */
+/* 'Bengali': 'bn', */
+/* 'Bosnian': 'bs', */
+/* 'Bulgarian': 'bg', */
+/* 'Burmese': 'my', */
+/* 'Chinese': 'zh', */
+/* 'Crimean Tatar': 'crh', */
+/* 'Croatian': 'hr', */
+/* 'Czech': 'cs', */
+/* 'Danish': 'da', */
+/* 'Dutch': 'nl', */
+/* 'Esperanto': 'eo', */
+/* 'Estonian': 'et', */
+/* 'Finnish': 'fi', */
+/* 'French': 'fr', */
+/* 'Galician': 'gl', */
+/* 'German': 'de', */
+/* 'Greek': 'el', */
+/* 'Hebrew': 'he', */
+/* 'Hindi': 'hi', */
+/* 'Hungarian': 'hu', */
+/* 'Icelandic': 'is', */
+/* 'Ido': 'io', */
+/* 'Indonesian': 'id', */
+/* 'Irish': 'ga', */
+/* 'Italian': 'it', */
+/* 'Japanese': 'ja', */
+/* 'Kannada': 'kn', */
+/* 'Kazakh': 'kk', */
+/* 'Khmer': 'km', */
+/* 'Korean': 'ko', */
+/* 'Kyrgyz': 'ky', */
+/* 'Lao': 'lo', */
+/* 'Latin': 'la', */
+/* 'Lithuanian': 'lt', */
+/* 'Lojban': 'jbo', */
+/* 'Macedonian': 'mk', */
+/* 'Min Nan': 'nan', */
+/* 'Malagasy': 'mg', */
+/* 'Mandarin': 'zh', */
+/* 'Norwegian': 'no', */
+/* 'Pashto': 'ps', */
+/* 'Persian': 'fa', */
+/* 'Polish': 'pl', */
+/* 'Portuguese': 'pt', */
+/* 'Romanian': 'ro', */
+/* 'Russian': 'ru', */
+/* 'Sanskrit': 'sa', */
+/* 'Sinhalese': 'si', */
+/* 'Scots': 'sco', */
+/* 'Scottish Gaelic': 'gd', */
+/* 'Serbian': 'sr', */
+/* 'Slovak': 'sk', */
+/* 'Slovene': 'sl', */
+/* 'Slovenian': 'sl', */
+/* 'Spanish': 'es', */
+/* 'Swahili': 'sw', */
+/* 'Swedish': 'sv', */
+/*     'Tajik': 'tg', */
+/*     'Tamil': 'ta', */
+/*     'Thai': 'th', */
+/*     'Turkish': 'tr', */
+/*     'Turkmen': 'tk', */
+/*     'Ukrainian': 'uk', */
+/*     'Urdu': 'ur', */
+/*     'Uzbek': 'uz', */
+/*     'Vietnamese': 'vi', */
+/*     '英語': 'en', */
+/*     '日本語': 'ja' */
+/* } */
+
+/* /\** Programming Language. *\/ */
+enum Lang:ubyte
 {
     unknown,                    // Unknown: ?
     c,                          // C
     cxx,                        // C++
-    objective_c,                       // Objective-C
+    objective_c,                // Objective-C
     d,                          // D
     java,                       // Java
 }
@@ -68,28 +214,89 @@ Lang language(string name)
 }
 
 /** Markup Language */
-enum MarkupLang
+enum MarkupLang:ubyte
 {
     unknown,                    // Unknown: ?
     HTML,
     MathML
 }
 
-enum Usage { definition, reference, call}
+/** Computer Token Usage. */
+enum Usage:ubyte
+{
+    definition,
+    reference,
+    call
+}
 
-enum TokenId { unknown,
-               keyword,
-               type,
-               constant,
-               comment,
-               variableName,
-               functionName,
-               builtinName,
-               templateName,
-               macroName,
-               aliasName,
-               enumeration,
-               enumerator,
-               constructor,
-               destructors,
-               operator }
+/** Computer Token Id. */
+enum TokenId:ubyte
+{
+    unknown,
+    keyword,
+    type,
+    constant,
+    comment,
+    variableName,
+    functionName,
+    builtinName,
+    templateName,
+    macroName,
+    aliasName,
+    enumeration,
+    enumerator,
+    constructor,
+    destructors,
+    operator
+}
+
+/** Human Word Group. */
+enum WordGroup:ubyte
+{
+    unknown,
+    noun,
+    verb,
+    adjective,
+    adverb,
+    preposition,
+    pronoun,
+    determiner,
+    article,
+    interjection,
+    conjunction,
+}
+
+/** Lookup WordGroup from Textual $(D x).
+    TODO: Construct internal hash table from WordNet.
+ */
+WordGroup to(T: WordGroup, S)(S x) if (isSomeChar!S ||
+                             isSomeString!S)
+{
+    typeof(return) type;
+    with (WordGroup)
+    {
+        switch (x)
+        {
+            case "car": type = noun; break;
+            case "drive": type = verb; break;
+            case "fast": type = adjective; break;
+            case "quickly": type = adverb; break;
+            case "at": type = preposition; break;
+            case "he": type = pronoun; break;
+            case "the": type = article; break;
+            case "uh":
+            case "er":
+            case "um": type = interjection; break;
+            default: break;
+        }
+        return type;
+    }
+}
+
+unittest
+{
+    with (WordGroup)
+    {
+        assert("car".to!WordGroup == WordGroup.noun);
+    }
+}
