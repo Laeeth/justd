@@ -3,12 +3,13 @@ module wordnet;
 import languages: WordCategory;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons;
 
-/** Word Interpretation. */
-struct Word
+/** WordMeaning Interpretation. */
+struct WordMeaning
 {
-    string name;
+    string lemma;
     WordCategory category;
     ubyte synsetCount; // Number of senses (meanings).
+    uint[] links;
 }
 
 class WordNet
@@ -22,21 +23,21 @@ class WordNet
         read(nPath(fixed, "index.noun"));
         read(nPath(fixed, "index.verb"));
 
-        foreach (name; ["and", "or", "but", "nor", "so", "for", "yet"])
+        foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
-            set(name, WordCategory.coordinatingConjunction, 1);
+            set(lemma, WordCategory.coordinatingConjunction, 1);
         }
 
-        foreach (name; ["after", "although", "as", "as if", "as long as",
+        foreach (lemma; ["after", "although", "as", "as if", "as long as",
                         "because", "before", "even if", "even though", "if",
                         "once", "provided", "since", "so that", "that",
                         "though", "till", "unless", "until", "what", "
                         when", "whenever", "wherever", "whether", "while"])
         {
-            set(name, WordCategory.subordinatingConjunction, 1);
+            set(lemma, WordCategory.subordinatingConjunction, 1);
         }
 
-        foreach (name; [
+        foreach (lemma; [
                      "accordingly",
                      "additionally",
                      "again",
@@ -99,33 +100,33 @@ class WordNet
                      "thus"
                      ])
         {
-            set(name, WordCategory.conjunctiveAdverb, 1);
+            set(lemma, WordCategory.conjunctiveAdverb, 1);
         }
     }
 
-    auto set(string name, WordCategory category, ubyte synsetCount)
+    auto set(string lemma, WordCategory category, ubyte synsetCount)
     {
-        if (name in _words)
+        if (lemma in _words)
         {
-            const existingCategory = _words[name].category;
+            const existingCategory = _words[lemma].category;
             if (existingCategory != category)
             {
-                writeln(name ~ " stored as " ~
+                writeln(lemma ~ " stored as " ~
                         existingCategory.to!string ~ " cannot be restored as " ~
                         category.to!string);
             }
         }
         else
         {
-            _words[name] = Word(name, category, synsetCount);
+            _words[lemma] = WordMeaning(lemma, category, synsetCount);
         }
         return this;
     }
 
-    Word get(string name)
+    WordMeaning get(string lemma)
     {
         typeof(return) word;
-        const lower = name.toLower;
+        const lower = lemma.toLower;
         if (lower in _words)
         {
             word = _words[lower];
@@ -133,34 +134,53 @@ class WordNet
         return word;
     }
 
+    WordCategory parseCategory(dchar x)
+    {
+        WordCategory category;
+        with (WordCategory)
+        {
+            switch (x)
+            {
+                case 'n': category = noun; break;
+                case 'v': category = verb; break;
+                case 'a': category = adjective; break;
+                case 'r': category = normalAdverb; break;
+                default: category = unknown; break;
+            }
+        }
+        return category;
+    }
+
+    /** Read WordNet Index File $(D path).
+        Manual page: wndb
+    */
     void read(string path)
     {
-        writeln(path);
-        auto file = File(path);
-        foreach (line; file.byLine)
+        foreach (line; File(path).byLine)
         {
             if (!line.front.isWhite) // if first is not space
             {
-                auto words = line.split;
-                const name = words[0].idup;
-                WordCategory category;
-                with (WordCategory)
-                {
-                    switch (words[1].front)
-                    {
-                        case 'n': category = noun; break;
-                        case 'v': category = verb; break;
-                        case 'a': category = adjective; break;
-                        case 'r': category = normalAdverb; break;
-                        default: category = unknown; break;
-                    }
-                }
-                _words[name] = Word(name, category, words[2].to!ubyte);
+                const words      = line.split;
+                const lemma      = words[0].idup;
+                const pos        = words[1];
+                const synset_cnt = words[2].to!uint;
+                const p_cnt      = words[3].to!uint;
+                const ptr_symbol = words[4..4+p_cnt];
+                uint[] links      = []; //words[n..$]; // these should be links
+                const sense_cnt = words[4+p_cnt].to!uint;
+                debug assert(synset_cnt == sense_cnt);
+                const tagsense_cnt = words[5+p_cnt].to!uint;
+                auto meaning = WordMeaning(lemma,
+                                            parseCategory(words[1].front)
+                                            ,
+                                            words[2].to!ubyte,
+                                            links);
+                _words[lemma] = meaning;
             }
         }
     }
 
-    Word[string] _words;
+    WordMeaning[string] _words;
 }
 
 unittest
