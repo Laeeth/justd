@@ -111,8 +111,8 @@ class WordNet
             const existingCategory = _words[lemma].category;
             if (existingCategory != category)
             {
-                writeln(lemma ~ " stored as " ~
-                        existingCategory.to!string ~ " cannot be restored as " ~
+                writeln('"' ~ lemma ~ `" stored as "` ~
+                        existingCategory.to!string ~ `" cannot be restored as ` ~
                         category.to!string);
             }
         }
@@ -190,4 +190,6 @@ unittest
     writeln(wn.get("trout"));
     writeln(wn.get("seal"));
     writeln(wn.get("and"));
+    writeln(wn.get("script"));
+    writeln(wn.get("shell"));
 }
