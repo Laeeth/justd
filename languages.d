@@ -463,12 +463,18 @@ unittest {
     assert(54.toTextualString == "fifty-four");
     assert(178.toTextualString == "one hundred and seventy-eight");
     assert(592.toTextualString == "five hundred and ninety-two");
-    assert(1234.toTextualString == "one thousand, two hundred and thirty-four");
-    assert(10234.toTextualString == "ten thousand, two hundred and thirty-four");
-    assert(105234.toTextualString == "one hundred and five thousand, two hundred and thirty-four");
+    assert(1_234.toTextualString == "one thousand, two hundred and thirty-four");
+    assert(10_234.toTextualString == "ten thousand, two hundred and thirty-four");
+    assert(105_234.toTextualString == "one hundred and five thousand, two hundred and thirty-four");
+    assert(71_05_234.toTextualString == "seven million, one hundred and five thousand, two hundred and thirty-four");
+    assert(3_007_105_234.toTextualString == "three billion, seven million, one hundred and five thousand, two hundred and thirty-four");
+    assert(9_003_007_105_234.toTextualString == "nine trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four");
 }
 
 enum onesPlaceWords = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
+enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ];
+enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
+
 immutable ubyte onesPlaceWordsAA[string];
 static this()
 {
@@ -477,9 +483,6 @@ static this()
         onesPlaceWordsAA[word] = ix;
     }
 }
-
-enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ];
-enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
 
 /* version = show; */
 
