@@ -468,8 +468,16 @@ unittest {
     assert(105234.toTextualString == "one hundred and five thousand, two hundred and thirty-four");
 }
 
-/* TODO: Make static immutable hash variants and use in toTextualIntegerMaybe. */
 enum onesPlaceWords = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
+immutable ubyte onesPlaceWordsAA[string];
+static this()
+{
+    foreach (ubyte ix, word; onesPlaceWords)
+    {
+        onesPlaceWordsAA[word] = ix;
+    }
+}
+
 enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ];
 enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
 
@@ -500,9 +508,10 @@ Nullable!long toTextualIntegerMaybe(S)(S x)
 
     words.skipOver(`plus`);
 
-    auto ones = onesPlaceWords.countUntil(words.front);
-    if (ones != onesPlaceWords.length)
-        value = ones;
+    if (words.front in onesPlaceWordsAA)
+    {
+        value = onesPlaceWordsAA[words.front];
+    }
 
     version(show)
     {
