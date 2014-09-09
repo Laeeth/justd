@@ -114,18 +114,10 @@ class WordNet
                 category == WordCategory.conjunctiveAdverb)
             {
                 hit.front.category = category; // specializing
-            }
-            else
-            {
-                writeln('"' ~ lemma ~ `" stored as "` ~
-                        existing.to!string ~ `" cannot be restored as ` ~
-                        category.to!string);
+                return this;
             }
         }
-        else
-        {
-            _words[lemma] ~= WordMeaning(lemma, category, synsetCount);
-        }
+        _words[lemma] ~= WordMeaning(lemma, category, synsetCount);
         return this;
     }
 
@@ -206,6 +198,7 @@ unittest
     writeln(wn.get("trout"));
     writeln(wn.get("seal"));
     writeln(wn.get("and"));
+    writeln(wn.get("or"));
     writeln(wn.get("script"));
     writeln(wn.get("shell"));
     writeln(wn.get("soon"));

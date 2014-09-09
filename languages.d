@@ -256,12 +256,13 @@ enum WordCategory:ubyte
 {
     unknown,
 
-    noun, nounInteger, nounRational,
+    noun, nounInteger, nounRational, nounLocation, nounPerson,
 
     verb,
     adjective,
 
-    adverb, anyAdverb = adverb,
+    adverb, // changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
+    anyAdverb = adverb,
     normalAdverb,
     conjunctiveAdverb, // joins together sentences
 
