@@ -476,22 +476,13 @@ enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fo
 enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
 
 immutable ubyte onesPlaceWordsAA[string];
-static this()
-{
-    foreach (ubyte ix, word; onesPlaceWords)
-    {
-        onesPlaceWordsAA[word] = ix;
-    }
-}
+immutable ubyte singleWordsAA[string];
+immutable ubyte tensPlaceWordsAA[string];
 
-/* version = show; */
-
-version(show)
-unittest
-{
-    import std.stdio;
-    foreach(i; 3433000 ..3433325)
-        writeln(i.toTextualString);
+static this() {
+    foreach (ubyte i, e; onesPlaceWords) { onesPlaceWordsAA[e] = i; }
+    foreach (ubyte i, e; singleWords) { singleWordsAA[e] = i; }
+    foreach (ubyte i, e; tensPlaceWords) { tensPlaceWordsAA[e] = i; }
 }
 
 /** Convert the number $(D number) to its English textual representation.
