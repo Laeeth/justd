@@ -468,7 +468,7 @@ unittest {
     assert(105_234.toTextualString == "one hundred and five thousand, two hundred and thirty-four");
     assert(71_05_234.toTextualString == "seven million, one hundred and five thousand, two hundred and thirty-four");
     assert(3_007_105_234.toTextualString == "three billion, seven million, one hundred and five thousand, two hundred and thirty-four");
-    assert(9_003_007_105_234.toTextualString == "nine trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four");
+    assert(900_003_007_105_234.toTextualString == "nine hundred trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four");
 }
 
 enum onesPlaceWords = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
