@@ -18,7 +18,7 @@ bool isGCPointer(void* ptr){
 alias inGC = isGCPointer;
 alias isGCed = isGCPointer;
 
-/** Returns: true iff all types T are the same. */
+/** Returns: true iff all types $(D T) are the same. */
 template allSame(T...)
 {
     static if (T.length <= 1)
