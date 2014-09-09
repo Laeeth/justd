@@ -108,30 +108,28 @@ class WordNet
     {
         if (lemma in _words)
         {
-            const existingCategory = _words[lemma].category;
-            if (existingCategory != category)
+            auto existing = _words[lemma];
+            auto hit = existing.find!(meaning => meaning.category == WordCategory.anyAdverb);
+            if (!hit.empty &&
+                category == WordCategory.conjunctiveAdverb)
             {
-                if (existingCategory == WordCategory.conjunctiveAdverb ||
-                    category == WordCategory.anyAdverb)
-                {
-                    category = existingCategory; // specializing
-                }
-                else
-                {
-                    writeln('"' ~ lemma ~ `" stored as "` ~
-                            existingCategory.to!string ~ `" cannot be restored as ` ~
-                            category.to!string);
-                }
+                hit.front.category = category; // specializing
+            }
+            else
+            {
+                writeln('"' ~ lemma ~ `" stored as "` ~
+                        existing.to!string ~ `" cannot be restored as ` ~
+                        category.to!string);
             }
         }
         else
         {
-            _words[lemma] = WordMeaning(lemma, category, synsetCount);
+            _words[lemma] ~= WordMeaning(lemma, category, synsetCount);
         }
         return this;
     }
 
-    WordMeaning get(string lemma)
+    WordMeaning[] get(string lemma)
     {
         typeof(return) word;
         const lower = lemma.toLower;
@@ -183,12 +181,12 @@ class WordNet
                                            parseCategory(words[1].front),
                                            words[2].to!ubyte,
                                            links);
-                _words[lemma] = meaning;
+                _words[lemma] ~= meaning;
             }
         }
     }
 
-    WordMeaning[string] _words;
+    WordMeaning[][string] _words;
 }
 
 /** Decode Ambiguous Meaning(s) of string $(D s). */
@@ -210,4 +208,7 @@ unittest
     writeln(wn.get("and"));
     writeln(wn.get("script"));
     writeln(wn.get("shell"));
+    writeln(wn.get("soon"));
+    writeln(wn.get("long"));
+    writeln(wn.get("longing"));
 }
