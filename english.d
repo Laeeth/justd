@@ -94,7 +94,7 @@ string toEnglish(long number)
                     word ~= "-";
             }
         }
-        else if (number < 1000)
+        else if (number < 1_000)
         {
             auto hundreds = number / 100;
             word ~= onesPlaceWords[cast(int) hundreds] ~ " hundred";
@@ -102,35 +102,35 @@ string toEnglish(long number)
             if (number)
                 word ~= " and ";
         }
-        else if (number < 1000_000)
+        else if (number < 1_000_000)
         {
-            auto thousands = number / 1000;
+            auto thousands = number / 1_000;
             word ~= toEnglish(thousands) ~ " thousand";
-            number = number % 1000;
+            number = number % 1_000;
             if (number)
                 word ~= ", ";
         }
         else if (number < 1_000_000_000)
         {
-            auto millions = number / 1000000;
+            auto millions = number / 1_000_000;
             word ~= toEnglish(millions) ~ " million";
-            number = number % 1000000;
+            number = number % 1_000_000;
             if (number)
                 word ~= ", ";
         }
         else if (number < 1_000_000_000_000)
         {
-            auto n = number / 1000000000;
+            auto n = number / 1_000_000_000;
             word ~= toEnglish(n) ~ " billion";
-            number = number % 1000000000;
+            number = number % 1_000_000_000;
             if (number)
                 word ~= ", ";
         }
         else if (number < 1_000_000_000_000_000)
         {
-            auto n = number / 1000000000000;
+            auto n = number / 1_000_000_000_000;
             word ~= toEnglish(n) ~ " trillion";
-            number = number % 1000000000000;
+            number = number % 1_000_000_000_000;
             if (number)
                 word ~= ", ";
         }
