@@ -76,7 +76,7 @@ string toEnglish(long number)
         number = -number;
     }
 
-    while(number)
+    while (number)
     {
         if (number < 100)
         {
