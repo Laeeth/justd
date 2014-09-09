@@ -255,7 +255,8 @@ enum WordCategory:ubyte
 {
     unknown,
 
-    noun,
+    noun, nounInteger, nounRational,
+
     verb,
     adjective,
 
@@ -277,10 +278,10 @@ enum WordCategory:ubyte
 /** Lookup WordCategory from Textual $(D x).
     TODO: Construct internal hash table from WordNet.
  */
-WordCategory to(T: WordCategory, S)(S x) if (isSomeChar!S ||
-                                             isSomeString!S)
+auto to(T: WordCategory, S)(S x) if (isSomeString!S ||
+                                     isSomeChar!S)
 {
-    typeof(return) type;
+    T type;
     with (WordCategory)
     {
         switch (x)
@@ -368,8 +369,8 @@ string inPlural(string word, int count = 2,
 
 import std.traits: isIntegral;
 
-/** Convert $(D number) to textual representation.
-    TODO: Implement opposite conversion fromTextual.
+/** Convert the number $(D number) to its English textual representation.
+    Opposite: toTextualIntegerMaybe
 */
 string toTextualString(T)(T number, string minusName = "minus")
     @safe pure nothrow if (isIntegral!T)
@@ -466,6 +467,7 @@ unittest {
     assert(105234.toTextualString == "one hundred and five thousand, two hundred and thirty-four");
 }
 
+/* TODO: Make static immutable hash variants and use in toTextualIntegerMaybe. */
 enum onesPlaceWords = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
 enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ];
 enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
@@ -478,4 +480,46 @@ unittest
     import std.stdio;
     foreach(i; 3433000 ..3433325)
         writeln(i.toTextualString);
+}
+
+/** Convert the number $(D number) to its English textual representation.
+    Opposite: toTextualString.
+    TODO: Throw if number doesn't fit in long.
+    TODO: Add variant to toTextualBigIntegerMaybe.
+*/
+long toTextualIntegerMaybe(S)(S x)
+    @safe pure if (isSomeString!S)
+{
+    typeof(return) value;
+    import std.algorithm: splitter, countUntil, skipOver;
+
+    auto words = x.splitter;
+
+    bool negative = words.skipOver(`minus`) || words.skipOver(`negative`);
+
+    words.skipOver(`plus`);
+
+    auto ones = onesPlaceWords.countUntil(words.front);
+    value += ones;
+
+    version(show)
+    {
+        import std.stdio;
+        debug writeln(onesPlaceWords);
+        debug writeln(words.front);
+        debug writeln(words);
+        debug writeln(ones);
+    }
+
+    return negative ? -value : value;
+}
+
+unittest
+{
+    foreach (i; 0..9)
+    {
+        const ti = i.toTextualString;
+        assert(-i == (`minus ` ~ ti).toTextualIntegerMaybe);
+        assert(+i == ti.toTextualIntegerMaybe);
+    }
 }

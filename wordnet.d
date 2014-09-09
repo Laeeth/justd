@@ -160,7 +160,7 @@ class WordNet
         {
             if (!line.front.isWhite) // if first is not space
             {
-                const words      = line.split;
+                const words      = line.split; // TODO: Non-eager split?
                 const lemma      = words[0].idup;
                 const pos        = words[1];
                 const synset_cnt = words[2].to!uint;
@@ -181,6 +181,16 @@ class WordNet
     }
 
     WordMeaning[string] _words;
+}
+
+/** Decode Ambiguous Meaning(s) of string $(D s). */
+version(none)
+// TODO: This gives error. Fix.
+private auto to(T: WordMeaning[], S)(S x) if (isSomeString!S ||
+                                              isSomeChar!S)
+{
+    T meanings;
+    return meanings;
 }
 
 unittest
