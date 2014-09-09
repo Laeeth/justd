@@ -1,7 +1,7 @@
 module wordnet;
 
 import languages: WordCategory;
-import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons;
+import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
 
 /** WordMeaning Interpretation. */
 struct WordMeaning
@@ -166,15 +166,15 @@ class WordNet
                 const synset_cnt = words[2].to!uint;
                 const p_cnt      = words[3].to!uint;
                 const ptr_symbol = words[4..4+p_cnt];
-                uint[] links      = []; //words[n..$]; // these should be links
                 const sense_cnt = words[4+p_cnt].to!uint;
                 debug assert(synset_cnt == sense_cnt);
                 const tagsense_cnt = words[5+p_cnt].to!uint;
+                const synset_off = words[6+p_cnt].to!uint;
+                auto links      = words[6+p_cnt..$].map!(a => a.to!uint).array;
                 auto meaning = WordMeaning(lemma,
-                                            parseCategory(words[1].front)
-                                            ,
-                                            words[2].to!ubyte,
-                                            links);
+                                           parseCategory(words[1].front),
+                                           words[2].to!ubyte,
+                                           links);
                 _words[lemma] = meaning;
             }
         }
