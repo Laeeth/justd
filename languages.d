@@ -520,6 +520,7 @@ unittest
     {
         const ti = i.toTextualString;
         assert(-i == (`minus ` ~ ti).toTextualIntegerMaybe);
+        assert(+i == (`plus ` ~ ti).toTextualIntegerMaybe);
         assert(+i == ti.toTextualIntegerMaybe);
     }
 }
