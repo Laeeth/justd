@@ -65,7 +65,7 @@ string inPlural(string word, int count = 2,
     }
 }
 
-string ToEnglish(long number)
+string toEnglish(long number)
 {
     string word;
     if (number == 0)
@@ -106,7 +106,7 @@ string ToEnglish(long number)
         else if (number < 1000000)
         {
             auto thousands = number / 1000;
-            word ~= ToEnglish(thousands) ~ " thousand";
+            word ~= toEnglish(thousands) ~ " thousand";
             number = number % 1000;
             if (number)
                 word ~= ", ";
@@ -114,7 +114,7 @@ string ToEnglish(long number)
         else if (number < 1_000_000_000)
         {
             auto millions = number / 1000000;
-            word ~= ToEnglish(millions) ~ " million";
+            word ~= toEnglish(millions) ~ " million";
             number = number % 1000000;
             if (number)
                 word ~= ", ";
@@ -122,7 +122,7 @@ string ToEnglish(long number)
         else if (number < 1_000_000_000_000)
         {
             auto n = number / 1000000000;
-            word ~= ToEnglish(n) ~ " billion";
+            word ~= toEnglish(n) ~ " billion";
             number = number % 1000000000;
             if (number)
                 word ~= ", ";
@@ -130,7 +130,7 @@ string ToEnglish(long number)
         else if (number < 1_000_000_000_000_000)
         {
             auto n = number / 1000000000000;
-            word ~= ToEnglish(n) ~ " trillion";
+            word ~= toEnglish(n) ~ " trillion";
             number = number % 1000000000000;
             if (number)
                 word ~= ", ";
@@ -146,15 +146,15 @@ string ToEnglish(long number)
 }
 
 unittest {
-    assert(1.ToEnglish == "one");
-    assert(5.ToEnglish == "five");
-    assert(13.ToEnglish == "thirteen");
-    assert(54.ToEnglish == "fifty-four");
-    assert(178.ToEnglish == "one hundred and seventy-eight");
-    assert(592.ToEnglish == "five hundred and ninety-two");
-    assert(1234.ToEnglish == "one thousand, two hundred and thirty-four");
-    assert(10234.ToEnglish == "ten thousand, two hundred and thirty-four");
-    assert(105234.ToEnglish == "one hundred and five thousand, two hundred and thirty-four");
+    assert(1.toEnglish == "one");
+    assert(5.toEnglish == "five");
+    assert(13.toEnglish == "thirteen");
+    assert(54.toEnglish == "fifty-four");
+    assert(178.toEnglish == "one hundred and seventy-eight");
+    assert(592.toEnglish == "five hundred and ninety-two");
+    assert(1234.toEnglish == "one thousand, two hundred and thirty-four");
+    assert(10234.toEnglish == "ten thousand, two hundred and thirty-four");
+    assert(105234.toEnglish == "one hundred and five thousand, two hundred and thirty-four");
 }
 
 enum onesPlaceWords = [
@@ -201,6 +201,6 @@ enum tensPlaceWords = [
   {
   import std.stdio;
   foreach(i; 3433000 ..3433325)
-  writeln(ToEnglish(i));
+  writeln(toEnglish(i));
   }
 */
