@@ -170,11 +170,11 @@ enum Lang:ubyte
 
 unittest
 {
-    assert(toTag(Lang.init) == `?`);
-    assert(toTag(Lang.c) == `C`);
-    assert(toTag(Lang.cxx) == `C++`);
-    assert(toTag(Lang.d) == `D`);
-    assert(toTag(Lang.java) == `Java`);
+    assert(Lang.init.toTag == `?`);
+    assert(Lang.c.toTag == `C`);
+    assert(Lang.cxx.toTag == `C++`);
+    assert(Lang.d.toTag == `D`);
+    assert(Lang.java.toTag == `Java`);
 }
 
 string toTag(Lang lang) @safe @nogc pure nothrow
