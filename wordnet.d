@@ -6,7 +6,6 @@ import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.
 /** WordMeaning Interpretation. */
 struct WordMeaning
 {
-    string lemma;
     WordCategory category;
     ubyte synsetCount; // Number of senses (meanings).
     uint[] links;
@@ -117,7 +116,7 @@ class WordNet
                 return this;
             }
         }
-        _words[lemma] ~= WordMeaning(lemma, category, synsetCount);
+        _words[lemma] ~= WordMeaning(category, synsetCount);
         return this;
     }
 
@@ -149,30 +148,29 @@ class WordNet
         return category;
     }
 
-    /** Read WordNet Index File $(D path).
+    /** Read WordNet Index File $(D filename).
         Manual page: wndb
     */
-    void read(string path)
+    void read(string filename)
     {
-        foreach (line; File(path).byLine)
+        foreach (line; File(filename).byLine)
         {
-            if (!line.front.isWhite) // if first is not space
+            if (!line.front.isWhite) // if first is not space. TODO: move this check
             {
-                const words      = line.split; // TODO: Non-eager split?
-                const lemma      = words[0].idup;
-                const pos        = words[1];
-                const synset_cnt = words[2].to!uint;
-                const p_cnt      = words[3].to!uint;
-                const ptr_symbol = words[4..4+p_cnt];
-                const sense_cnt = words[4+p_cnt].to!uint;
-                debug assert(synset_cnt == sense_cnt);
+                const words        = line.split; // TODO: Non-eager split?
+                const lemma        = words[0].idup;
+                const pos          = words[1];
+                const synset_cnt   = words[2].to!uint;
+                const p_cnt        = words[3].to!uint;
+                const ptr_symbol   = words[4..4+p_cnt];
+                const sense_cnt    = words[4+p_cnt].to!uint;
                 const tagsense_cnt = words[5+p_cnt].to!uint;
-                const synset_off = words[6+p_cnt].to!uint;
-                auto links      = words[6+p_cnt..$].map!(a => a.to!uint).array;
-                auto meaning = WordMeaning(lemma,
-                                           parseCategory(words[1].front),
-                                           words[2].to!ubyte,
-                                           links);
+                const synset_off   = words[6+p_cnt].to!uint;
+                auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
+                auto meaning       = WordMeaning(parseCategory(words[1].front),
+                                                 words[2].to!ubyte,
+                                                 links);
+                debug assert(synset_cnt == sense_cnt);
                 _words[lemma] ~= meaning;
             }
         }

@@ -171,7 +171,18 @@ class Net
     import std.mmfile;
     import dbg;
 
-    this(string filename)
+    import std.path;
+
+    this(string dirPath)
+    {
+        auto fixed = dirPath.expandTilde;
+        alias nPath = buildNormalizedPath;
+        read(nPath(fixed, "part_00.csv"));
+    }
+
+    /** Read ConceptNet5 Assertions File $(D filename).
+    */
+    void read(string filename)
     {
         enum ulong mmfile_size = 0; // 100*1024
         _mmfile = new MmFile(filename, MmFile.Mode.read,
@@ -202,5 +213,5 @@ class Net
 
 unittest
 {
-    auto net = new Net(`/home/per/conceptnet5/assertions/part_00.csv`);
+    auto net = new Net(`/home/per/conceptnet5/assertions`);
 }
