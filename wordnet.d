@@ -107,10 +107,12 @@ class WordNet
         if (name in _words)
         {
             const existingCategory = _words[name].category;
-            assert(existingCategory == category,
-                   name ~ " stored as " ~
-                   existingCategory.to!string ~ " cannot be restored as " ~
-                   category.to!string);
+            if (existingCategory != category)
+            {
+                writeln(name ~ " stored as " ~
+                        existingCategory.to!string ~ " cannot be restored as " ~
+                        category.to!string);
+            }
         }
         else
         {
