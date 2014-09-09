@@ -111,9 +111,17 @@ class WordNet
             const existingCategory = _words[lemma].category;
             if (existingCategory != category)
             {
-                writeln('"' ~ lemma ~ `" stored as "` ~
-                        existingCategory.to!string ~ `" cannot be restored as ` ~
-                        category.to!string);
+                if (existingCategory == WordCategory.conjunctiveAdverb ||
+                    category == WordCategory.anyAdverb)
+                {
+                    category = existingCategory; // specializing
+                }
+                else
+                {
+                    writeln('"' ~ lemma ~ `" stored as "` ~
+                            existingCategory.to!string ~ `" cannot be restored as ` ~
+                            category.to!string);
+                }
             }
         }
         else
@@ -144,7 +152,7 @@ class WordNet
                 case 'n': category = noun; break;
                 case 'v': category = verb; break;
                 case 'a': category = adjective; break;
-                case 'r': category = normalAdverb; break;
+                case 'r': category = anyAdverb; break;
                 default: category = unknown; break;
             }
         }
