@@ -150,7 +150,6 @@ import csunits;
 alias Bytes64 = Bytes!ulong;
 import arsd.terminal;
 import sregex;
-import english;
 import bitset;
 import dbg;
 import tempfs;
@@ -854,7 +853,7 @@ class File
     string realExtension() @safe pure nothrow const { return name.extension.chompPrefix(`.`); }
     alias ext = realExtension; // shorthand
 
-    string toEnglishString() const @property { return `Any File`; }
+    string toTextual() const @property { return `Any File`; }
 
     Bytes64 treeSize() @property @trusted /* @safe pure nothrow */ { return size; }
 
@@ -1137,7 +1136,7 @@ class Symlink : File
             return symlinkFace;
     }
 
-    override string toEnglishString() const @property { return `Symbolic Link`; }
+    override string toTextual() const @property { return `Symbolic Link`; }
 
     string retarget(ref DirEntry dent) @trusted
     {
@@ -1204,7 +1203,7 @@ class SpecFile : File
 
     override Face!Color face() const @property @safe pure nothrow { return specialFileFace; }
 
-    override string toEnglishString() const @property { return `Special File`; }
+    override string toTextual() const @property { return `Special File`; }
 
     version(msgpack)
     {
@@ -1258,7 +1257,7 @@ class RegFile : File
 
     ~this() { _cstat.deallocate(false); }
 
-    override string toEnglishString() const @property { return `Regular File`; }
+    override string toTextual() const @property { return `Regular File`; }
 
     /** Returns: Content Id of $(D this). */
     const(SHA1Digest) contentId() @property @trusted /* @safe pure nothrow */
@@ -3244,7 +3243,7 @@ class Dir : File
         if (gstats) { ++gstats.noDirs; }
     }
 
-    override string toEnglishString() const @property { return "Directory"; }
+    override string toTextual() const @property { return "Directory"; }
 
     override Bytes64 treeSize() @property @trusted /* @safe nothrow */
     {
