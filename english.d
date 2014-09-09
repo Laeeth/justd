@@ -64,6 +64,9 @@ string inPlural(string word, int count = 2,
     }
 }
 
+/** Convert $(D number) to textual representation.
+    TODO: Implement opposite conversion fromTextual.
+ */
 string toEnglish(long number)
 {
     string word;
@@ -143,6 +146,7 @@ string toEnglish(long number)
 
     return word;
 }
+alias toTextual = toEnglish;
 
 unittest {
     assert(1.toEnglish == "one");
@@ -156,50 +160,16 @@ unittest {
     assert(105234.toEnglish == "one hundred and five thousand, two hundred and thirty-four");
 }
 
-enum onesPlaceWords = [
-    "zero",
-    "one",
-    "two",
-    "three",
-    "four",
-    "five",
-    "six",
-    "seven",
-    "eight",
-    "nine",
-    ];
+enum onesPlaceWords = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
+enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ];
+enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
 
-enum singleWords = onesPlaceWords ~ [
-    "ten",
-    "eleven",
-    "twelve",
-    "thirteen",
-    "fourteen",
-    "fifteen",
-    "sixteen",
-    "seventeen",
-    "eighteen",
-    "nineteen",
-    ];
+/* version = show; */
 
-enum tensPlaceWords = [
-    null,
-    "ten",
-    "twenty",
-    "thirty",
-    "forty",
-    "fifty",
-    "sixty",
-    "seventy",
-    "eighty",
-    "ninety",
-    ];
-
-/*
-  void main()
-  {
-  import std.stdio;
-  foreach(i; 3433000 ..3433325)
-  writeln(toEnglish(i));
-  }
-*/
+version(show)
+unittest
+{
+    import std.stdio;
+    foreach(i; 3433000 ..3433325)
+        writeln(i.toEnglish);
+}
