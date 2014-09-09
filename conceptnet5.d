@@ -20,7 +20,7 @@
  */
 module conceptnet5;
 
-import languages: HumanLang, HumanTokenId;
+import languages: HumanLang, TokenId;
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
@@ -82,33 +82,33 @@ enum Relation:ubyte
 enum WordNetRelation:ubyte
 {
     unknown,
-        attribute,
-        causes,
-        classifiedByRegion,
-        classifiedByUsage,
-        classifiedByTopic,
-        entails,
-        hyponymOf, // also called hyperonymy, hyponymy,
-        instanceOf,
-        memberMeronymOf,
-        partMeronymOf,
-        sameVerbGroupAs,
-        similarTo,
-        substanceMeronymOf,
-        antonymOf,
-        derivationallyRelated,
-        pertainsTo,
-        seeAlso,
-        }
+    attribute,
+    causes,
+    classifiedByRegion,
+    classifiedByUsage,
+    classifiedByTopic,
+    entails,
+    hyponymOf, // also called hyperonymy, hyponymy,
+    instanceOf,
+    memberMeronymOf,
+    partMeronymOf,
+    sameVerbGroupAs,
+    similarTo,
+    substanceMeronymOf,
+    antonymOf,
+    derivationallyRelated,
+    pertainsTo,
+    seeAlso,
+}
 
-HumanTokenId to(T:HumanTokenId)(char x)
+TokenId to(T:TokenId)(char x)
 {
     switch (x)
     {
-        case 'n': return HumanTokenId.noun;
-        case 'v': return HumanTokenId.verb;
-        case 'a': return HumanTokenId.adjective;
-        case 'r': return HumanTokenId.adverb;
+        case 'n': return TokenId.noun;
+        case 'v': return TokenId.verb;
+        case 'a': return TokenId.adjective;
+        case 'r': return TokenId.adverb;
     }
 }
 
@@ -177,7 +177,7 @@ class Net
         _mmfile = new MmFile(filename, MmFile.Mode.read,
                              mmfile_size, null, pageSize());
         auto data = cast(ubyte[])_mmfile[];
-        foreach (ix, e; data)
+        foreach (ix, e; data) // TODO: Use ranged variant of byLine
         {
             dln(ix);
         }
