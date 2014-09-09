@@ -3,6 +3,7 @@ module wordnet;
 import languages: WordCategory;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons;
 
+/** Word Interpretation. */
 struct Word
 {
     string name;
