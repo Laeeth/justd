@@ -102,7 +102,7 @@ string toEnglish(long number)
             if (number)
                 word ~= " and ";
         }
-        else if (number < 1000000)
+        else if (number < 1000_000)
         {
             auto thousands = number / 1000;
             word ~= toEnglish(thousands) ~ " thousand";
