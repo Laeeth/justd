@@ -4,6 +4,7 @@
 module languages;
 
 import std.traits: isSomeChar, isSomeString;
+import std.typecons: Nullable;
 
 /** Human Language. */
 enum HumanLang:ubyte
@@ -487,7 +488,7 @@ unittest
     TODO: Throw if number doesn't fit in long.
     TODO: Add variant to toTextualBigIntegerMaybe.
 */
-long toTextualIntegerMaybe(S)(S x)
+Nullable!long toTextualIntegerMaybe(S)(S x)
     @safe pure if (isSomeString!S)
 {
     typeof(return) value;
@@ -500,7 +501,8 @@ long toTextualIntegerMaybe(S)(S x)
     words.skipOver(`plus`);
 
     auto ones = onesPlaceWords.countUntil(words.front);
-    value += ones;
+    if (ones != onesPlaceWords.length)
+        value = ones;
 
     version(show)
     {
@@ -511,7 +513,12 @@ long toTextualIntegerMaybe(S)(S x)
         debug writeln(ones);
     }
 
-    return negative ? -value : value;
+    if (!value.isNull)
+    {
+        value *= negative ? -1 : 1;
+    }
+
+    return value;
 }
 
 unittest
