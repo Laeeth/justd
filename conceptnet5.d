@@ -21,6 +21,7 @@
 module conceptnet5;
 
 import languages: HumanLang, TokenId;
+import std.stdio;
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
@@ -207,9 +208,12 @@ class Net
         _mmfile = new MmFile(filename, MmFile.Mode.read,
                              mmfile_size, null, pageSize());
         auto data = cast(ubyte[])_mmfile[];
+        size_t n;
         foreach (ix, e; data) // TODO: Use ranged variant of byLine
         {
+            n++;
         }
+        writeln(filename, ": ", n);
     }
 
     bool freeContents()
@@ -231,5 +235,5 @@ class Net
 
 unittest
 {
-    auto net = new Net(`/home/per/conceptnet5/assertions`);
+    auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
