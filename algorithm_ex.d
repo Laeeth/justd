@@ -1840,7 +1840,9 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
     return typeof(return).init;
 }
 
-/** Move std.uni.newLine? */
+/** Move std.uni.newLine?
+    TODO: What to do with Windows style endings?
+ */
 @safe pure nothrow @nogc
 bool isNewline(dchar c)
 {
@@ -1854,7 +1856,7 @@ auto byLine(Range)(Range input) if (isForwardRange!Range)
 {
     import std.range: splitter;
     import std.uni: isAlpha;
-    return input.splitter!isNewline;
+    return input.splitter!isNewline; // TODO: What to do with Windows style endings?
 }
 
 unittest
