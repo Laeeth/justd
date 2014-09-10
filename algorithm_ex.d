@@ -11,7 +11,7 @@ module algorithm_ex;
 
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
-import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString;
+import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString, isSomeChar;
 import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing, empty, front;
 import traits_ex: isStruct, isClass, allSame;
 import std.functional: unaryFun, binaryFun;
@@ -1845,7 +1845,7 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
     See also: https://en.wikipedia.org/wiki/Newline
  */
 @safe pure nothrow @nogc
-bool isNewline(dchar c)
+bool isNewline(C)(C c) if (isSomeChar!C)
 {
     import std.ascii: newline; // TODO: Probably not useful.
     static if (newline == "\n")
