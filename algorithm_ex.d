@@ -1842,12 +1842,50 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
 
 /** Move std.uni.newLine?
     TODO: What to do with Windows style endings?
+    See also: https://en.wikipedia.org/wiki/Newline
  */
 @safe pure nothrow @nogc
 bool isNewline(dchar c)
 {
-    return (c == '\n' ||
-            c == '\r');
+    import std.ascii: newline; // TODO: Probably not useful.
+    static if (newline == "\n")
+    {
+        return (c == '\n' || c == '\r'); // optimized for systems with \n as default
+    }
+    else static if (newline == "\r")
+    {
+        return (c == '\r' || c == '\n'); // optimized for systems with \r as default
+    }
+    else
+    {
+        static assert(false, "Support Windows?");
+    }
+}
+
+@safe pure nothrow @nogc
+bool isNewline(S)(S s) if (isSomeString!S)
+{
+    import std.ascii: newline; // TODO: Probably not useful.
+    static if (newline == "\n")
+    {
+        return (s == '\n' || s == '\r'); // optimized for systems with \n as default
+    }
+    else static if (newline == "\r")
+    {
+        return (s == '\r' || s == '\n'); // optimized for systems with \r as default
+    }
+    else static if (newline == "\r\n")
+    {
+        return (s == "\r\n" || s == '\r' || s == '\n'); // optimized for systems with \r\n as default
+    }
+    else static if (newline == "\n\r")
+    {
+        return (s == "\n\r" || s == '\r' || s == '\n'); // optimized for systems with \n\r as default
+    }
+    else
+    {
+        static assert(false, "Support windows?");
+    }
 }
 
 /** Split Input by line.
