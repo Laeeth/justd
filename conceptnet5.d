@@ -179,21 +179,20 @@ class Net
         {
             if (file.extension == ".csv")
             {
-                read(file);
+                readCSV(file);
             }
         }
     }
 
-    /** Read ConceptNet5 Assertions File $(D filename).
-    */
-    void read(string filename)
+    /** Read ConceptNet5 Assertions File $(D filename) in CSV format. */
+    void readCSV(string filename)
     {
         enum ulong mmfile_size = 0; // 100*1024
         _mmfile = new MmFile(filename, MmFile.Mode.read,
                              mmfile_size, null, pageSize);
         auto data = cast(ubyte[])_mmfile[];
         size_t n;
-        foreach (e; data.byLine) // TODO: Use ranged variant of byLine
+        foreach (e; data.byLine) // TODO: Compare with File.byLine
         {
             n++;
         }
