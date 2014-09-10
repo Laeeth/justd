@@ -174,15 +174,16 @@ class Net
 
     import std.path;
     import std.string:format;
+    import std.file: dirEntries, buildNormalizedPath, SpanMode;
 
     this(string dirPath)
     {
-        auto fixed = dirPath.expandTilde;
-        alias nPath = buildNormalizedPath;
-        const n = 20;
-        foreach (i; 0..n)
+        foreach (file; dirPath.expandTilde.buildNormalizedPath.dirEntries(SpanMode.shallow))
         {
-            read(nPath(fixed, format("part_%02d.csv", i)));
+            if (file.extension == ".csv")
+            {
+                read(file);
+            }
         }
     }
 
