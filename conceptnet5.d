@@ -173,31 +173,17 @@ class Net
     import dbg;
 
     import std.path;
+    import std.string:format;
 
     this(string dirPath)
     {
         auto fixed = dirPath.expandTilde;
         alias nPath = buildNormalizedPath;
-        read(nPath(fixed, "part_00.csv"));
-        read(nPath(fixed, "part_01.csv"));
-        read(nPath(fixed, "part_02.csv"));
-        read(nPath(fixed, "part_03.csv"));
-        read(nPath(fixed, "part_04.csv"));
-        read(nPath(fixed, "part_05.csv"));
-        read(nPath(fixed, "part_06.csv"));
-        read(nPath(fixed, "part_07.csv"));
-        read(nPath(fixed, "part_08.csv"));
-        read(nPath(fixed, "part_09.csv"));
-        read(nPath(fixed, "part_10.csv"));
-        read(nPath(fixed, "part_11.csv"));
-        read(nPath(fixed, "part_12.csv"));
-        read(nPath(fixed, "part_13.csv"));
-        read(nPath(fixed, "part_14.csv"));
-        read(nPath(fixed, "part_15.csv"));
-        read(nPath(fixed, "part_16.csv"));
-        read(nPath(fixed, "part_17.csv"));
-        read(nPath(fixed, "part_18.csv"));
-        read(nPath(fixed, "part_19.csv"));
+        const n = 20;
+        foreach (i; 0..n)
+        {
+            read(nPath(fixed, format("part_%02d.csv", i)));
+        }
     }
 
     /** Read ConceptNet5 Assertions File $(D filename).
