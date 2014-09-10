@@ -170,11 +170,10 @@ class Net
     Edge[] edges;
 
     import std.mmfile;
-    import dbg;
-
     import std.path;
     import std.string:format;
     import std.file: dirEntries, buildNormalizedPath, SpanMode;
+    import dbg;
 
     this(string dirPath)
     {
