@@ -1839,3 +1839,26 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
     // TODO: Return some clever lazy range that calls each possible haystack.findFirstOfAnyInOrder(needles);
     return typeof(return).init;
 }
+
+/** Move std.uni.newLine? */
+@safe pure nothrow @nogc
+bool isNewline(dchar c)
+{
+    return (c == '\n' ||
+            c == '\r');
+}
+
+/** Split Input by line.
+    See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org */
+auto byLine(Range)(Range input) if (isForwardRange!Range)
+{
+    import std.range: splitter;
+    import std.uni: isAlpha;
+    return input.splitter!isNewline;
+}
+
+unittest
+{
+    import std.algorithm: equal;
+    assert(equal("a\nb".byLine, ["a", "b"]));
+}

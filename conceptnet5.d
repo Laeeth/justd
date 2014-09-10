@@ -169,11 +169,9 @@ class Net
     Node[] nodes;
     Edge[] edges;
 
-    import std.mmfile;
-    import std.path;
-    import std.string:format;
-    import std.file: dirEntries, buildNormalizedPath, SpanMode;
+    import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array;
     import dbg;
+    import algorithm_ex: byLine;
 
     this(string dirPath)
     {
@@ -192,14 +190,14 @@ class Net
     {
         enum ulong mmfile_size = 0; // 100*1024
         _mmfile = new MmFile(filename, MmFile.Mode.read,
-                             mmfile_size, null, pageSize());
+                             mmfile_size, null, pageSize);
         auto data = cast(ubyte[])_mmfile[];
         size_t n;
-        foreach (ix, e; data) // TODO: Use ranged variant of byLine
+        foreach (e; data.byLine) // TODO: Use ranged variant of byLine
         {
             n++;
         }
-        writeln(filename, ": ", n);
+        writeln(filename, " has ", n, " lines");
     }
 
     bool freeContents()
