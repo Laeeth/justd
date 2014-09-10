@@ -4648,7 +4648,7 @@ class Scanner(Term)
         }
 
         size_t nL = 0; // line counter
-        foreach (line; src.splitter(cast(immutable ubyte[])newline))
+        foreach (line; src.splitter(newline))
         {
             auto rest = cast(string)line; // rest of line as a string
 
