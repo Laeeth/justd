@@ -5,6 +5,8 @@ module languages;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
+import std.algorithm: uniq;
+import std.array: array;
 
 /** Human Language. */
 enum HumanLang:ubyte
@@ -256,19 +258,22 @@ enum WordCategory:ubyte
 {
     unknown,
 
-    noun, nounInteger, nounRational, nounLocation, nounPerson,
+    noun, nounInteger, nounRational, nounLocation, nounPerson, nounName,
 
     verb,
     adjective,
 
     adverb, // changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
-    anyAdverb = adverb,
     normalAdverb,
     conjunctiveAdverb, // joins together sentences
 
     adverbialConjunction = conjunctiveAdverb,
 
-    preposition,
+    preposition, // often ambiguous
+    prepositionTime,
+    prepositionPosition, prepositionPlace = prepositionPosition,
+    prepositionDirection,
+
     pronoun,
     determiner,
     article,
@@ -278,39 +283,22 @@ enum WordCategory:ubyte
     subordinatingConjunction,
 }
 
-/** Lookup WordCategory from Textual $(D x).
-    TODO: Construct internal hash table from WordNet.
- */
-auto to(T: WordCategory, S)(S x) if (isSomeString!S ||
-                                     isSomeChar!S)
-{
-    T type;
-    with (WordCategory)
-    {
-        switch (x)
-        {
-            case "car": type = noun; break;
-            case "drive": type = verb; break;
-            case "fast": type = adjective; break;
-            case "quickly": type = normalAdverb; break;
-            case "at": type = preposition; break;
-            case "he": type = pronoun; break;
-            case "the": type = article; break;
-            case "uh":
-            case "er":
-            case "um": type = interjection; break;
-            default: break;
-        }
-        return type;
-    }
-}
+/** English Noun Suffixes. */
+static immutable nounSuffixes = [ "s", "ses", "xes", "zes", "ches", "shes", "men", "ies", ];
 
-unittest
+/** English Verb Suffixes. */
+static immutable verbSuffixes = [ "s", "ies", "es", "es", "ed", "ed", "ing", "ing", ];
+
+/** English Adjective Suffixes. */
+static immutable adjectiveSuffixes = [ "er", "est", "er", "est" ];
+
+/** English Word Suffixes. */
+static immutable wordSuffixes = [ nounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;
+
+auto wordBase(S)(S x) if (isSomeString!S ||
+                          isSomeChar!S)
 {
-    with (WordCategory)
-    {
-        assert("car".to!WordCategory == WordCategory.noun);
-    }
+    doit;
 }
 
 /** Get english order name of $(D n). */

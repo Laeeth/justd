@@ -24,7 +24,19 @@ class WordNet
 
         foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
-            set(lemma, WordCategory.coordinatingConjunction, 1);
+            set(lemma, WordCategory.coordinatingConjunction, 0);
+        }
+
+        // TODO: Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
+        foreach (lemma; ["to", "at", "of", "on", "off", "in", "out", "up",
+                         "down", "from", "with", "into", "for", "about", "between", "since", "ago", "past", "till", "until", "by"])
+        {
+            set(lemma, WordCategory.preposition, 0);
+        }
+
+        foreach (lemma; ["a", "the"])
+        {
+            set(lemma, WordCategory.article, 0);
         }
 
         foreach (lemma; ["after", "although", "as", "as if", "as long as",
@@ -33,7 +45,7 @@ class WordNet
                         "though", "till", "unless", "until", "what", "
                         when", "whenever", "wherever", "whether", "while"])
         {
-            set(lemma, WordCategory.subordinatingConjunction, 1);
+            set(lemma, WordCategory.subordinatingConjunction, 0);
         }
 
         foreach (lemma; [
@@ -99,7 +111,7 @@ class WordNet
                      "thus"
                      ])
         {
-            set(lemma, WordCategory.conjunctiveAdverb, 1);
+            set(lemma, WordCategory.conjunctiveAdverb, 0);
         }
     }
 
@@ -108,7 +120,7 @@ class WordNet
         if (lemma in _words)
         {
             auto existing = _words[lemma];
-            auto hit = existing.find!(meaning => meaning.category == WordCategory.anyAdverb);
+            auto hit = existing.find!(meaning => meaning.category == WordCategory.adverb);
             if (!hit.empty &&
                 category == WordCategory.conjunctiveAdverb)
             {
@@ -120,7 +132,7 @@ class WordNet
         return this;
     }
 
-    WordMeaning[] get(string lemma)
+    WordMeaning[] meaningsOf(string lemma)
     {
         typeof(return) word;
         const lower = lemma.toLower;
@@ -141,7 +153,7 @@ class WordNet
                 case 'n': category = noun; break;
                 case 'v': category = verb; break;
                 case 'a': category = adjective; break;
-                case 'r': category = anyAdverb; break;
+                case 'r': category = adverb; break;
                 default: category = unknown; break;
             }
         }
@@ -189,17 +201,26 @@ private auto to(T: WordMeaning[], S)(S x) if (isSomeString!S ||
     return meanings;
 }
 
+/* /\** Lookup WordCategory from Textual $(D x). */
+/* *\/ */
+/* auto to(T: WordCategory[], S)(S x) if (isSomeString!S || */
+/*                                      isSomeChar!S) */
+/* { */
+/* } */
+
 unittest
 {
     auto wn = new WordNet("~/Knowledge/WordNet-3.0/dict");
-    writeln(wn.get("car"));
-    writeln(wn.get("trout"));
-    writeln(wn.get("seal"));
-    writeln(wn.get("and"));
-    writeln(wn.get("or"));
-    writeln(wn.get("script"));
-    writeln(wn.get("shell"));
-    writeln(wn.get("soon"));
-    writeln(wn.get("long"));
-    writeln(wn.get("longing"));
+    writeln(wn.meaningsOf("car"));
+    writeln(wn.meaningsOf("trout"));
+    writeln(wn.meaningsOf("seal"));
+    writeln(wn.meaningsOf("and"));
+    writeln(wn.meaningsOf("or"));
+    writeln(wn.meaningsOf("script"));
+    writeln(wn.meaningsOf("shell"));
+    writeln(wn.meaningsOf("soon"));
+    writeln(wn.meaningsOf("long"));
+    writeln(wn.meaningsOf("longing"));
+    writeln(wn.meaningsOf("at"));
+    writeln(wn.meaningsOf("a"));
 }
