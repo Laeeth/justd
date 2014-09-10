@@ -1844,9 +1844,9 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
     See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org */
 auto byLine(Range)(Range input) if (isForwardRange!Range)
 {
-    import std.range: splitter;
+    import std.algorithm: splitter;
     import std.ascii: newline;
-    static if (newline.length == 1)
+    static if (newline.length == 1) // TODO: Is this optimization not necessary?
     {
         return input.splitter(newline.front);
     }
