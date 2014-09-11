@@ -235,6 +235,7 @@ class WordNet
                 lnr++;
             }
         }
+        writeln("Read ", lnr, " words from ", fileName);
     }
 
     WordMeaning[][string] _words;
