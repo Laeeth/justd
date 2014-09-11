@@ -196,6 +196,7 @@ class Net
     void readCSV(string fileName, bool useMmFile = true)
     {
         size_t lnr;
+        /* TODO: Functionize and merge with wordnet.readIndex */
         if (useMmFile)
         {
             auto mmf= new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);

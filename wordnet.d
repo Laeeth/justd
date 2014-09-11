@@ -214,6 +214,7 @@ class WordNet
     {
         import algorithm_ex: byLine;
         size_t lnr;
+        /* TODO: Functionize and merge with conceptnet5.readCSV */
         if (useMmFile)
         {
             import std.mmfile: MmFile;
