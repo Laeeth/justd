@@ -1861,3 +1861,34 @@ unittest
     import std.algorithm: equal;
     assert(equal("a\nb".byLine, ["a", "b"]));
 }
+
+/** Return true if all arguments $(D args) are strictly ordered.
+    See also: http://forum.dlang.org/thread/wzsdhzycwqyrvqmmttix@forum.dlang.org?page=2#post-vprvhifglfegnlvzqmjj:40forum.dlang.org
+*/
+bool areStrictlyOrdered(T...)(T args)
+{
+    static assert(args.length >= 2,
+                  "Only sense in calling this function with 2 arguments.");
+    foreach (i, arg; args[1..$])
+    {
+        if (args[i] >= arg)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+unittest
+{
+    static assert(areStrictlyOrdered(1, 2, 3));
+    static assert(!areStrictlyOrdered(1, 3, 2));
+    static assert(!areStrictlyOrdered(1, 2, 2));
+    static assert(areStrictlyOrdered('a', 'b', 'c'));
+}
+
+import core.checkedint: addu, subu, mulu;
+
+alias sadd = addu;
+alias ssub = subu;
+alias smul = mulu;
