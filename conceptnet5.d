@@ -188,9 +188,7 @@ class Net
     /** Read ConceptNet5 Assertions File $(D filename) in CSV format. */
     void readCSV(string filename)
     {
-        enum ulong mmfile_size = 0; // 100*1024
-        _mmfile = new MmFile(filename, MmFile.Mode.read,
-                             mmfile_size, null, pageSize);
+        _mmfile = new MmFile(filename, MmFile.Mode.read, 0, null, pageSize);
         auto data = cast(ubyte[])_mmfile[];
         size_t n;
         foreach (e; data.byLine) // TODO: Compare with File.byLine
