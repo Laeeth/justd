@@ -199,20 +199,6 @@ class Net
         writeln(filename, " has ", n, " lines");
     }
 
-    bool freeContents()
-    {
-        if (_mmfile)
-        {
-            delete _mmfile;
-            _mmfile = null;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     private MmFile _mmfile = null;
 }
 
