@@ -1841,7 +1841,10 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
 }
 
 /** Split Input by line.
-    See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org */
+    Support searching for multiple encodings of line-endings using variadic find.
+    See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org
+    TODO: Restrict using isSomeString!Range?
+*/
 auto byLine(Range)(Range input) if (isForwardRange!Range)
 {
     import std.algorithm: splitter;
