@@ -17,10 +17,10 @@ class WordNet
     {
         auto fixed = dirPath.expandTilde;
         alias nPath = buildNormalizedPath;
-        read(nPath(fixed, "index.adj"));
-        read(nPath(fixed, "index.adv"));
-        read(nPath(fixed, "index.noun"));
-        read(nPath(fixed, "index.verb"));
+        readIndex(nPath(fixed, "index.adj"));
+        readIndex(nPath(fixed, "index.adv"));
+        readIndex(nPath(fixed, "index.noun"));
+        readIndex(nPath(fixed, "index.verb"));
 
         foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
@@ -160,12 +160,14 @@ class WordNet
         return category;
     }
 
-    /** Read WordNet Index File $(D filename).
+    /** Read WordNet Index File $(D fileName).
         Manual page: wndb
     */
-    void read(string filename)
+    void readIndex(string fileName)
     {
-        foreach (line; File(filename).byLine)
+        import algorithm_ex: byLine;
+
+        foreach (line; File(fileName).byLine)
         {
             if (!line.front.isWhite) // if first is not space. TODO: move this check
             {

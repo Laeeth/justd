@@ -175,27 +175,45 @@ class Net
 
     this(string dirPath)
     {
-        foreach (file; (dirPath
-                        .expandTilde
-                        .buildNormalizedPath
-                        .dirEntries(SpanMode.shallow)
-                        .filter!(name => name.extension == ".csv")))
+        foreach (file; dirPath.expandTilde
+                              .buildNormalizedPath
+                              .dirEntries(SpanMode.shallow)
+                              .filter!(name => name.extension == ".csv")) // I love D :)
         {
             readCSV(file);
         }
     }
 
-    /** Read ConceptNet5 Assertions File $(D filename) in CSV format. */
-    void readCSV(string filename)
+    /** Read CSV Line $(D x) at 0-offset line number $(D lnr). */
+    void readCSVLine(R)(R x, size_t lnr)
     {
-        _mmfile = new MmFile(filename, MmFile.Mode.read, 0, null, pageSize);
-        auto data = cast(ubyte[])_mmfile[];
+    }
+
+    /** Read ConceptNet5 Assertions File $(D fileName) in CSV format.
+        Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
+     */
+    void readCSV(string fileName, bool useMmFile = true)
+    {
         size_t n;
-        foreach (e; data.byLine) // TODO: Compare with File.byLine
+        if (useMmFile)
         {
-            n++;
+            _mmfile = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+            auto data = cast(ubyte[])_mmfile[];
+            foreach (line; data.byLine) // TODO: Compare with File.byLine
+            {
+                readCSVLine(line, n);
+                n++;
+            }
         }
-        writeln(filename, " has ", n, " lines");
+        else
+        {
+            foreach (line; File(fileName).byLine)
+            {
+                readCSVLine(line, n);
+                n++;
+            }
+        }
+        writeln(fileName, " has ", n, " lines");
     }
 
     private MmFile _mmfile = null;
