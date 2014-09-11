@@ -232,7 +232,7 @@ enum Usage:ubyte
     call
 }
 
-/** Computer Token Id. */
+/** Computer Token. */
 enum TokenId:ubyte
 {
     unknown,
@@ -253,6 +253,29 @@ enum TokenId:ubyte
     operator
 }
 
+/** English Tense.
+    See also: http://www.ego4u.com/en/cram-up/grammar/tenses-graphic
+    See also: http://www.ego4u.com/en/cram-up/grammar/tenses-examples
+*/
+enum Tense:ubyte
+{
+    pastMoment, // played
+    presentMoment, // plays
+    futureMoment, // [will|is going to|intends to] play
+
+    pastPeriod,
+    presentPeriod,
+    futurePeriod,
+
+    pastResult,
+    presentResult,
+    futureResult,
+
+    pastDuration,
+    presentDuration,
+    futureDuration,
+}
+
 /** Human Word Category. */
 enum WordCategory:ubyte
 {
@@ -270,9 +293,10 @@ enum WordCategory:ubyte
     adverbialConjunction = conjunctiveAdverb,
 
     preposition, // often ambiguous
-    prepositionTime,
-    prepositionPosition, prepositionPlace = prepositionPosition,
-    prepositionDirection,
+    prepositionTime, // only related to time
+    prepositionPosition, // only related to space (position)
+    prepositionPlace = prepositionPosition,
+    prepositionDirection, // only related to space change (velocity)
 
     pronoun,
     determiner,
