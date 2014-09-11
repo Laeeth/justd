@@ -166,6 +166,7 @@ import languages;
 import attributes;
 
 import elf;
+import typedoc;
 import lock_free.rwqueue;
 
 /* NGram Aliases */
