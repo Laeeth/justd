@@ -231,6 +231,17 @@ class Net
         }
     }
 
+    /** ConceptNet Relatedness.
+        Sum of all paths relating a to b where each path is the path weight
+        product.
+    */
+    real relatedness(NodeIndex a,
+                     NodeIndex b)
+    {
+        typeof(return) value;
+        return value;
+    }
+
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readCSVLine(R, N)(R line, N lnr)
     {
