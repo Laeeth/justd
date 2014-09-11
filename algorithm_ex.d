@@ -1882,6 +1882,8 @@ bool areStrictlyOrdered(T...)(T args)
 
 unittest
 {
+    static assert(!__traits(compiles, areStrictlyOrdered()));
+    static assert(!__traits(compiles, areStrictlyOrdered(1)));
     assert(areStrictlyOrdered(1, 2, 3));
     assert(!areStrictlyOrdered(1, 3, 2));
     assert(!areStrictlyOrdered(1, 2, 2));
@@ -1908,6 +1910,8 @@ bool areUnstrictlyOrdered(T...)(T args)
 
 unittest
 {
+    static assert(!__traits(compiles, areUnstrictlyOrdered()));
+    static assert(!__traits(compiles, areUnstrictlyOrdered(1)));
     assert(areUnstrictlyOrdered(1, 2, 2, 3));
     assert(!areUnstrictlyOrdered(1, 3, 2));
     assert(areUnstrictlyOrdered('a', 'b', 'c'));
