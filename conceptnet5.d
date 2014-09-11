@@ -46,6 +46,8 @@ enum Relation:ubyte
     capableOf, /* Something that A can typically do is B.	/r/CapableOf /c/en/knife /c/en/cut */
 
     atLocation, /* A is a typical location for B, or A is the inherent location of B. Some instances of this would be considered meronyms in WordNet.	/r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation /c/en/boston /c/en/massachusetts */
+    locationOf,
+
     causes, /* A and B are events, and it is typical for A to cause B. */
 
     hasSubevent, /* A and B are events, and B happens as a subevent of A. */
@@ -75,6 +77,50 @@ enum Relation:ubyte
     translationOf, /* A and B are concepts (or assertions) in different languages, and overlap in meaning in such a way that they can be considered translations of each other. (This cannot, of course be taken as an exact equivalence.) */
 
     definedAs, /* A and B overlap considerably in meaning, and B is a more explanatory version of A. (This is similar to TranslationOf, but within one language.) */
+}
+
+enum Thematic:ubyte
+{
+    unknown,
+    kLines,
+    things,
+    agents,
+    events,
+    spatial,
+    causal,
+    affective
+}
+
+Thematic toThematic(Relation relation)
+{
+    final switch (relation)
+    {
+        case Relation.unknown: return Thematic.unknown;
+        case relatedTo: return Thematic.kLines;
+        case isA: return Thematic.things;
+        case partOf: return Thematic.things;
+        case memberOf: return Thematic.things;
+        case hasA: return Thematic.things;
+        case usedFor: return Thematic.functional;
+        case capableOf: return Thematic.agents;
+        case atLocation: return Thematic.spatial;
+        case locationOf: return Thematic.spatial;
+        case causes: return Thematic.causal;
+        case hasSubevent: return Thematic.events;
+        case hasFirstSubevent: return Thematic.events;
+        case hasLastSubevent: return Thematic.events;
+        case hasPrerequisite: return Thematic.;
+        case hasProperty: return Thematic.things;
+        case motivatedByGoal: return Thematic.;
+        case obstructedBy: return Thematic.;
+        case desires: return Thematic.affective;
+        case dreatedBy: return Thematic.;
+        case synonym: return Thematic.;
+        case antonym: return Thematic.;
+        case derivedFrom: return Thematic.;
+        case translationOf: return Thematic.;
+        case definedAs: return Thematic.things;
+    }
 }
 
 /** WordNet Semantic Relation Type Code.
