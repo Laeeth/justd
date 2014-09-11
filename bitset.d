@@ -28,12 +28,12 @@ struct BitSet(size_t len, Block = size_t)
     /**
      * Gets the amount of native words backing this $(D BitSet).
      */
-    @property static size_t dim() @safe pure nothrow { return noBlocks; }
+    @property static size_t dim() @safe @nogc pure nothrow { return noBlocks; }
 
     /**
      * Gets the amount of bits in the $(D BitSet).
      */
-    @property static size_t length() @safe pure nothrow { return len; }
+    @property static size_t length() @safe @nogc pure nothrow { return len; }
 
     BitSet opAssign(BitSet rhs) @safe nothrow { this._data = rhs._data; return this; }
 
@@ -92,7 +92,7 @@ struct BitSet(size_t len, Block = size_t)
     /**
      * Duplicates the $(D BitSet) and its contents.
      */
-    @property BitSet dup() const @safe pure nothrow { return this; }
+    @property BitSet dup() const @safe @nogc pure nothrow { return this; }
 
     /**
      * Support for $(D foreach) loops for $(D BitSet).
@@ -444,7 +444,7 @@ struct BitSet(size_t len, Block = size_t)
         }
     }
 
-    bool opCast(T : bool)() const @safe pure nothrow { return !this.empty ; }
+    bool opCast(T : bool)() const @safe @nogc pure nothrow { return !this.empty ; }
 
     unittest {
         static bool[] ba = [1,0,1,0,1];
@@ -463,7 +463,7 @@ struct BitSet(size_t len, Block = size_t)
     /**
      * Check if this $(D BitSet) has only zeros.
      */
-    bool allZero() const @safe pure nothrow
+    bool allZero() const @safe @nogc pure nothrow
     {
         foreach (block; _data)
         {
@@ -478,7 +478,7 @@ struct BitSet(size_t len, Block = size_t)
     alias Q = Rational!ulong;
 
     /** Returns: Number of Bits Set in $(D this).  */
-    Q denseness(int depth = -1) const @safe pure /* nothrow */
+    Q denseness(int depth = -1) const @safe @nogc pure nothrow
     {
         ulong y = 0;
         foreach (ix, block; _data)
@@ -497,7 +497,7 @@ struct BitSet(size_t len, Block = size_t)
     }
 
     /** Returns: Number of Bits Unset in $(D this).  */
-    Q sparseness(int depth = -1) const @safe pure /* nothrow */ {
+    Q sparseness(int depth = -1) const @safe @nogc pure nothrow {
         return 1 - denseness(depth);
     }
 
