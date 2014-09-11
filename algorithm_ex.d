@@ -1862,7 +1862,8 @@ unittest
     assert(equal("a\nb".byLine, ["a", "b"]));
 }
 
-/** Return true if all arguments $(D args) are strictly ordered.
+/** Return true if all arguments $(D args) are strictly ordered,
+    that is args[0] < args[1] < args[2] < ... .
     See also: http://forum.dlang.org/thread/wzsdhzycwqyrvqmmttix@forum.dlang.org?page=2#post-vprvhifglfegnlvzqmjj:40forum.dlang.org
 */
 bool areStrictlyOrdered(T...)(T args)
@@ -1881,10 +1882,35 @@ bool areStrictlyOrdered(T...)(T args)
 
 unittest
 {
-    static assert(areStrictlyOrdered(1, 2, 3));
-    static assert(!areStrictlyOrdered(1, 3, 2));
-    static assert(!areStrictlyOrdered(1, 2, 2));
-    static assert(areStrictlyOrdered('a', 'b', 'c'));
+    assert(areStrictlyOrdered(1, 2, 3));
+    assert(!areStrictlyOrdered(1, 3, 2));
+    assert(!areStrictlyOrdered(1, 2, 2));
+    assert(areStrictlyOrdered('a', 'b', 'c'));
+}
+
+/** Return true if all arguments $(D args) are unstrictly ordered,
+    that is args[0] <= args[1] <= args[2] <= ... .
+    See also: http://forum.dlang.org/thread/wzsdhzycwqyrvqmmttix@forum.dlang.org?page=2#post-vprvhifglfegnlvzqmjj:40forum.dlang.org
+*/
+bool areUnstrictlyOrdered(T...)(T args)
+{
+    static assert(args.length >= 2,
+                  "Only sense in calling this function with 2 arguments.");
+    foreach (i, arg; args[1..$])
+    {
+        if (args[i] > arg)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+unittest
+{
+    assert(areUnstrictlyOrdered(1, 2, 2, 3));
+    assert(!areUnstrictlyOrdered(1, 3, 2));
+    assert(areUnstrictlyOrdered('a', 'b', 'c'));
 }
 
 import core.checkedint: addu, subu, mulu;
