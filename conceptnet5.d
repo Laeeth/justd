@@ -175,12 +175,13 @@ class Net
 
     this(string dirPath)
     {
-        foreach (file; dirPath.expandTilde.buildNormalizedPath.dirEntries(SpanMode.shallow))
+        foreach (file; (dirPath
+                        .expandTilde
+                        .buildNormalizedPath
+                        .dirEntries(SpanMode.shallow)
+                        .filter!(name => name.extension == ".csv")))
         {
-            if (file.extension == ".csv")
-            {
-                readCSV(file);
-            }
+            readCSV(file);
         }
     }
 
