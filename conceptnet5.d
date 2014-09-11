@@ -65,7 +65,7 @@ enum Relation:ubyte
 
     desires, /* A is a conscious entity that typically wants B. Many assertions of this type use the appropriate language's word for "person" as A.	/r/Desires /c/en/person /c/en/love */
 
-    dreatedBy, /* B is a process that creates A.	/r/CreatedBy /c/en/cake /c/en/bake */
+    createdBy, /* B is a process that creates A.	/r/CreatedBy /c/en/cake /c/en/bake */
 
     synonym, /* A and B have very similar meanings. This is the synonym relation in WordNet as well. */
 
@@ -88,7 +88,9 @@ enum Thematic:ubyte
     events,
     spatial,
     causal,
-    affective
+    functional,
+    affective,
+    synonym,
 }
 
 Thematic toThematic(Relation relation)
@@ -96,30 +98,30 @@ Thematic toThematic(Relation relation)
     final switch (relation)
     {
         case Relation.unknown: return Thematic.unknown;
-        case relatedTo: return Thematic.kLines;
-        case isA: return Thematic.things;
-        case partOf: return Thematic.things;
-        case memberOf: return Thematic.things;
-        case hasA: return Thematic.things;
-        case usedFor: return Thematic.functional;
-        case capableOf: return Thematic.agents;
-        case atLocation: return Thematic.spatial;
-        case locationOf: return Thematic.spatial;
-        case causes: return Thematic.causal;
-        case hasSubevent: return Thematic.events;
-        case hasFirstSubevent: return Thematic.events;
-        case hasLastSubevent: return Thematic.events;
-        case hasPrerequisite: return Thematic.;
-        case hasProperty: return Thematic.things;
-        case motivatedByGoal: return Thematic.;
-        case obstructedBy: return Thematic.;
-        case desires: return Thematic.affective;
-        case dreatedBy: return Thematic.;
-        case synonym: return Thematic.;
-        case antonym: return Thematic.;
-        case derivedFrom: return Thematic.;
-        case translationOf: return Thematic.;
-        case definedAs: return Thematic.things;
+        case Relation.relatedTo: return Thematic.kLines;
+        case Relation.isA: return Thematic.things;
+        case Relation.partOf: return Thematic.things;
+        case Relation.memberOf: return Thematic.things;
+        case Relation.hasA: return Thematic.things;
+        case Relation.usedFor: return Thematic.functional;
+        case Relation.capableOf: return Thematic.agents;
+        case Relation.atLocation: return Thematic.spatial;
+        case Relation.locationOf: return Thematic.spatial;
+        case Relation.causes: return Thematic.causal;
+        case Relation.hasSubevent: return Thematic.events;
+        case Relation.hasFirstSubevent: return Thematic.events;
+        case Relation.hasLastSubevent: return Thematic.events;
+        case Relation.hasPrerequisite: return Thematic.causal; // TODO: Use events, causal, functional
+        case Relation.hasProperty: return Thematic.things;
+        case Relation.motivatedByGoal: return Thematic.affective;
+        case Relation.obstructedBy: return Thematic.causal;
+        case Relation.desires: return Thematic.affective;
+        case Relation.createdBy: return Thematic.agents;
+        case Relation.synonym: return Thematic.synonym;
+        case Relation.antonym: return Thematic.synonym;
+        case Relation.derivedFrom: return Thematic.things;
+        case Relation.translationOf: return Thematic.synonym;
+        case Relation.definedAs: return Thematic.things;
     }
 }
 
