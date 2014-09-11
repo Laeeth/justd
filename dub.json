@@ -9,6 +9,7 @@
 	"vibe-d": "~master",
         "libnoise-d": "~master",
         "dstats": "~master",
+        "d-colorize": "~master",
         "hap": "~master"
     },
     "versions": ["VibeCustomMain"],
