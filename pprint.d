@@ -10,11 +10,6 @@
 
     TODO: Use "alias this" on wrapper structures and test!
 
-    TODO: x.in!Bold
-    TODO: x.in!Color(1,2,3)
-    TODO: x.in!Color(x"122123")
-    TODO: x.in!"bold"
-
     TODO: How should std.typecons.Tuple be pretty printed?
     TODO: Add visited member to keeps track of what objects that have been visited
     TODO: Add asGCCMessage pretty prints
@@ -65,7 +60,8 @@ import core.time: Duration;
 /** Returns: Duration $(D dur) in a Level-Of-Detail (LOD) string
     representation.
 */
-string shortDurationString(in Duration dur) @safe pure
+string shortDurationString(in Duration dur)
+    @safe pure nothrow
 {
     import std.conv: to;
     static if (__VERSION__ >= 2066L)
