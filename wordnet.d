@@ -28,9 +28,22 @@ class WordNet
             set(lemma, WordCategory.coordinatingConjunction, 0);
         }
 
+        foreach (lemma; ["since",
+                         "ago",
+                         "before",
+                         "past",
+                         ])
+        {
+            set(lemma, WordCategory.prepositionTime, 0);
+        }
+
         // TODO: Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
         foreach (lemma; ["to", "at", "of", "on", "off", "in", "out", "up",
-                         "down", "from", "with", "into", "for", "about", "between", "since", "ago", "past", "till", "until", "by"])
+                         "down", "from", "with", "into", "for", "about",
+                         "between",
+                         "till", "until",
+                         "by", "out of", "towards", "through", "across",
+                         "above", "over", "below", "under", "next to", "beside"])
         {
             set(lemma, WordCategory.preposition, 0);
         }
@@ -41,76 +54,29 @@ class WordNet
         }
 
         foreach (lemma; ["after", "although", "as", "as if", "as long as",
-                        "because", "before", "even if", "even though", "if",
-                        "once", "provided", "since", "so that", "that",
-                        "though", "till", "unless", "until", "what", "
-                        when", "whenever", "wherever", "whether", "while"])
+                         "because", "before", "even if", "even though", "if",
+                         "once", "provided", "since", "so that", "that",
+                         "though", "till", "unless", "until", "what",
+                         "when", "whenever", "wherever", "whether", "while"])
         {
             set(lemma, WordCategory.subordinatingConjunction, 0);
         }
 
-        foreach (lemma; [
-                     "accordingly",
-                     "additionally",
-                     "again",
-                     "almost",
-                     "although",
-                     "anyway",
-                     "as a result",
-                     "besides",
-                     "certainly",
-                     "comparatively",
-                     "consequently",
-                     "contrarily",
-                     "conversely",
-                     "elsewhere",
-                     "equally",
-                     "eventually",
-                     "finally",
-                     "further",
-                     "furthermore",
-                     "hence",
-                     "henceforth",
-                     "however",
-                     "in addition",
-                     "in comparison",
-                     "in contrast",
-                     "in fact",
-                     "incidentally",
-                     "indeed",
-                     "instead",
-                     "just as",
-                     "likewise",
-                     "meanwhile",
-                     "moreover",
-                     "namely",
-                     "nevertheless",
-                     "next",
-                     "nonetheless",
-                     "notably",
-                     "now",
-                     "otherwise",
-                     "rather",
-                     "similarly",
-                     "still",
-                     "subsequently",
-                     "that is",
-                     "then",
-                     "thereafter",
-                     "therefore",
-                     "thus",
-                     "undoubtedly",
-                     "uniquely",
-                     "on the other hand",
-                     "also",
-                     "for example",
-                     "for instance",
-                     "of course",
-                     "on the contrary",
-                     "so far",
-                     "until now",
-                     "thus"
-                     ])
+        foreach (lemma; ["accordingly", "additionally", "again", "almost",
+                         "although", "anyway", "as a result", "besides",
+                         "certainly", "comparatively", "consequently",
+                         "contrarily", "conversely", "elsewhere", "equally",
+                         "eventually", "finally", "further", "furthermore",
+                         "hence", "henceforth", "however", "in addition", "in
+                         comparison", "in contrast", "in fact", "incidentally",
+                         "indeed", "instead", "just as", "likewise",
+                         "meanwhile", "moreover", "namely", "nevertheless",
+                         "next", "nonetheless", "notably", "now", "otherwise",
+                         "rather", "similarly", "still", "subsequently", "that
+                         is", "then", "thereafter", "therefore", "thus",
+                         "undoubtedly", "uniquely", "on the other hand", "also",
+                         "for example", "for instance", "of course", "on the
+                         contrary", "so far", "until now", "thus" ])
         {
             set(lemma, WordCategory.conjunctiveAdverb, 0);
         }
