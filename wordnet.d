@@ -17,10 +17,11 @@ class WordNet
     {
         auto fixed = dirPath.expandTilde;
         alias nPath = buildNormalizedPath;
-        readIndex(nPath(fixed, "index.adj"));
-        readIndex(nPath(fixed, "index.adv"));
-        readIndex(nPath(fixed, "index.noun"));
-        readIndex(nPath(fixed, "index.verb"));
+        // NOTE: Test both read variants through alternating uses of Mmfile or not
+        readIndex(nPath(fixed, "index.adj"), false);
+        readIndex(nPath(fixed, "index.adv"), true);
+        readIndex(nPath(fixed, "index.noun"), false);
+        readIndex(nPath(fixed, "index.verb"), true);
 
         foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
@@ -160,32 +161,77 @@ class WordNet
         return category;
     }
 
+    void readIndexLine(R, N)(R line, N lnr)
+    {
+        if (!line.empty &&
+            !line.front.isWhite) // if first is not space. TODO: move this check
+        {
+            static if (isSomeString!R)
+            {
+                const linestr = line;
+            }
+            else
+            {
+                const linestr = cast(string)line.idup; // TODO: Why is this needed? And why does this fail?
+            }
+            /* pragma(msg, typeof(line).stringof); */
+            /* pragma(msg, typeof(line.idup).stringof); */
+            const words        = linestr.split; // TODO: Non-eager split?
+            const lemma        = words[0].idup;
+            const pos          = words[1];
+            const synset_cnt   = words[2].to!uint;
+            const p_cnt        = words[3].to!uint;
+            const ptr_symbol   = words[4..4+p_cnt];
+            const sense_cnt    = words[4+p_cnt].to!uint;
+            const tagsense_cnt = words[5+p_cnt].to!uint;
+            const synset_off   = words[6+p_cnt].to!uint;
+            auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
+            auto meaning       = WordMeaning(parseCategory(words[1].front),
+                                             words[2].to!ubyte,
+                                             links);
+            debug assert(synset_cnt == sense_cnt);
+            _words[lemma] ~= meaning;
+        }
+    }
+
+    auto pageSize() @trusted
+    {
+        version(linux)
+        {
+            import core.sys.posix.sys.shm: __getpagesize;
+            return __getpagesize();
+        }
+        else
+        {
+            return 4096;
+        }
+    }
+
     /** Read WordNet Index File $(D fileName).
         Manual page: wndb
     */
-    void readIndex(string fileName)
+    void readIndex(string fileName, bool useMmFile = false)
     {
         import algorithm_ex: byLine;
-
-        foreach (line; File(fileName).byLine)
+        size_t lnr;
+        if (useMmFile)
         {
-            if (!line.front.isWhite) // if first is not space. TODO: move this check
+            import std.mmfile: MmFile;
+            auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+            const data = cast(ubyte[])mmf[];
+            import algorithm_ex: byLine;
+            foreach (line; data.byLine)
             {
-                const words        = line.split; // TODO: Non-eager split?
-                const lemma        = words[0].idup;
-                const pos          = words[1];
-                const synset_cnt   = words[2].to!uint;
-                const p_cnt        = words[3].to!uint;
-                const ptr_symbol   = words[4..4+p_cnt];
-                const sense_cnt    = words[4+p_cnt].to!uint;
-                const tagsense_cnt = words[5+p_cnt].to!uint;
-                const synset_off   = words[6+p_cnt].to!uint;
-                auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
-                auto meaning       = WordMeaning(parseCategory(words[1].front),
-                                                 words[2].to!ubyte,
-                                                 links);
-                debug assert(synset_cnt == sense_cnt);
-                _words[lemma] ~= meaning;
+                readIndexLine(line, lnr);
+                lnr++;
+            }
+        }
+        else
+        {
+            foreach (line; File(fileName).byLine)
+            {
+                readIndexLine(line, lnr);
+                lnr++;
             }
         }
     }

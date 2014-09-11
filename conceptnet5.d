@@ -169,9 +169,8 @@ class Net
     Node[] nodes;
     Edge[] edges;
 
-    import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array;
+    import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array, std.uni;
     import dbg;
-    import algorithm_ex: byLine;
 
     this(string dirPath)
     {
@@ -184,9 +183,11 @@ class Net
         }
     }
 
-    /** Read CSV Line $(D x) at 0-offset line number $(D lnr). */
-    void readCSVLine(R)(R x, size_t lnr)
+    /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
+    void readCSVLine(R, N)(R line, N lnr)
     {
+        import std.algorithm: splitter;
+        auto parts = line.splitter!isWhite;
     }
 
     /** Read ConceptNet5 Assertions File $(D fileName) in CSV format.
@@ -194,29 +195,28 @@ class Net
      */
     void readCSV(string fileName, bool useMmFile = true)
     {
-        size_t n;
+        size_t lnr;
         if (useMmFile)
         {
-            _mmfile = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
-            auto data = cast(ubyte[])_mmfile[];
+            auto mmf= new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+            auto data = cast(ubyte[])mmf[];
+            import algorithm_ex: byLine;
             foreach (line; data.byLine) // TODO: Compare with File.byLine
             {
-                readCSVLine(line, n);
-                n++;
+                readCSVLine(line, lnr);
+                lnr++;
             }
         }
         else
         {
             foreach (line; File(fileName).byLine)
             {
-                readCSVLine(line, n);
-                n++;
+                readCSVLine(line, lnr);
+                lnr++;
             }
         }
-        writeln(fileName, " has ", n, " lines");
+        writeln(fileName, " has ", lnr, " lines");
     }
-
-    private MmFile _mmfile = null;
 }
 
 unittest

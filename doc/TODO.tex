@@ -38,6 +38,8 @@
 \section{Compiler Diagnostics}
 \begin{itemize}
 
+\item Add warning flag for casting between mutable, const and immutable.
+
 \item Escape Analysis (EA). Pointers to stack memory should not escape scope. This is
   accepted in unsafe mode but not in safe. (EA) could figure out more
   cases where this should be allowed in safe mode.
