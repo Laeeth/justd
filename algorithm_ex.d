@@ -1840,7 +1840,7 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
     return typeof(return).init;
 }
 
-/** Type of  */
+/** Type of NewLine Encoding. */
 enum Newline
 {
     any,                        // Any of win, mac or UNIX
@@ -1855,26 +1855,54 @@ enum Newline
     See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org
     TODO: Restrict using isSomeString!Range?
 */
-auto byLine(Range)(Range input,
-                   Newline newline = Newline.any) if (isForwardRange!Range)
+auto byLine(Newline nl = Newline.any,
+            Range)(Range input) if (isForwardRange!Range)
 {
-    /* import std.regex: splitter, regex; */
-    import std.algorithm: splitter;
-    import std.ascii: newline;
-    static if (newline.length == 1) // TODO: Is this optimization not necessary?
+    static if (nl == Newline.native)
     {
-        return input.splitter(newline.front);
+        import std.ascii: newline;
+        import std.algorithm: splitter;
+        static if (newline.length == 1)
+        {
+            return input.splitter(newline.front);
+        }
+        else
+        {
+            return input.splitter(newline);
+        }
     }
     else
     {
-        return input.splitter(newline);
+        static if (nl == Newline.any)
+        {
+            import std.regex: splitter, regex;
+            return input.splitter(regex("\n|\r\n|\r"));
+        }
+        else static if (nl == Newline.win)
+        {
+            import std.algorithm: splitter;
+            return input.splitter("\r\n");
+        }
+        else static if (nl == Newline.mac)
+        {
+            import std.algorithm: splitter;
+            return input.splitter('\r');
+        }
+        else static if (nl == Newline.unix)
+        {
+            import std.algorithm: splitter;
+            return input.splitter('\n');
+        }
     }
 }
 
 unittest
 {
     import std.algorithm: equal;
-    assert(equal("a\nb".byLine, ["a", "b"]));
+    assert(equal("a\nb".byLine!(Newline.any), ["a", "b"]));
+    assert(equal("a\r\nb".byLine!(Newline.win), ["a", "b"]));
+    assert(equal("a\rb".byLine!(Newline.mac), ["a", "b"]));
+    assert(equal("a\nb".byLine!(Newline.unix), ["a", "b"]));
 }
 
 /** Return true if all arguments $(D args) are strictly ordered,
