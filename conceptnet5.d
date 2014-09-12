@@ -17,6 +17,7 @@
     - byEdge
     - Node getNode(EdgeIndex)
     - Edge getEdge(NodeIndex)
+
  */
 module conceptnet5;
 
@@ -26,26 +27,41 @@ import std.stdio;
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
-enum Relation:ubyte
+enum Relation
 {
     unknown,
     relatedTo, /* The most general relation. There is some positive relationship
-                * between A and B, but ConceptNet can't determine what that
-                * relationship is based on the data. This was called
-                * "ConceptuallyRelatedTo" in ConceptNet 2 through 4.  */
+                * between A and B, but ConceptNet can't determine what that * relationship
+                is based on the data. This was called * "ConceptuallyRelatedTo" in
+                ConceptNet 2 through 4.  */
+
     isA, /* A is a subtype or a specific instance of B; every A is a B. (We do
           * not make the type-token distinction, because people don't usually
           * make that distinction.) This is the hyponym relation in
           * WordNet. /r/IsA /c/en/car /c/en/vehicle ; /r/IsA /c/en/chicago
           * /c/en/city */
-    partOf, /* A is a part of B. This is the part meronym relation in WordNet.	/r/PartOf /c/en/gearshift /c/en/car */
-    memberOf, /* A is a member of B; B is a group that includes A. This is the member meronym relation in WordNet. */
-    hasA, /* B belongs to A, either as an inherent part or due to a social construct of possession. HasA is often the reverse of PartOf.	/r/HasA /c/en/bird /c/en/wing ; /r/HasA /c/en/pen /c/en/ink */
 
-    usedFor, /* A is used for B; the purpose of A is B.	/r/UsedFor /c/en/bridge /c/en/cross_water */
-    capableOf, /* Something that A can typically do is B.	/r/CapableOf /c/en/knife /c/en/cut */
+    partOf, /* A is a part of B. This is the part meronym relation in
+               WordNet. /r/PartOf /c/en/gearshift /c/en/car */
 
-    atLocation, /* A is a typical location for B, or A is the inherent location of B. Some instances of this would be considered meronyms in WordNet.	/r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation /c/en/boston /c/en/massachusetts */
+    memberOf, /* A is a member of B; B is a group that includes A. This is the
+                 member meronym relation in WordNet. */
+
+    hasA, /* B belongs to A, either as an inherent part or due to a social
+             construct of possession. HasA is often the reverse of PartOf. /r/HasA
+             /c/en/bird /c/en/wing ; /r/HasA /c/en/pen /c/en/ink */
+
+
+    usedFor, /* A is used for B; the purpose of A is B. /r/UsedFor /c/en/bridge
+                /c/en/cross_water */
+
+    capableOf, /* Something that A can typically do is B. /r/CapableOf
+                  /c/en/knife /c/en/cut */
+
+    atLocation, /* A is a typical location for B, or A is the inherent location
+                   of B. Some instances of this would be considered meronyms in
+                   WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
+                   /c/en/boston /c/en/massachusetts */
     locationOf,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
@@ -56,27 +72,50 @@ enum Relation:ubyte
 
     hasLastSubevent, /* A is an event that concludes with subevent B. */
 
-    hasPrerequisite, /* In order for A to happen, B needs to happen; B is a dependency of A.	/r/HasPrerequisite/ /c/en/drive/ /c/en/get_in_car/ */
+    hasPrerequisite, /* In order for A to happen, B needs to happen; B is a
+                        dependency of A. /r/HasPrerequisite/ /c/en/drive/ /c/en/get_in_car/ */
 
-    hasProperty, /* A has B as a property; A can be described as B.	/r/HasProperty /c/en/ice /c/en/solid */
+    hasProperty, /* A has B as a property; A can be described as
+                    B. /r/HasProperty /c/en/ice /c/en/solid */
 
-    motivatedByGoal, /* Someone does A because they want result B; A is a step toward accomplishing the goal B. */
-    obstructedBy, /* A is a goal that can be prevented by B; B is an obstacle in the way of A. */
+    motivatedByGoal, /* Someone does A because they want result B; A is a step
+                        toward accomplishing the goal B. */
+    obstructedBy, /* A is a goal that can be prevented by B; B is an obstacle in
+                     the way of A. */
 
-    desires, /* A is a conscious entity that typically wants B. Many assertions of this type use the appropriate language's word for "person" as A.	/r/Desires /c/en/person /c/en/love */
+    desires, /* A is a conscious entity that typically wants B. Many assertions
+                of this type use the appropriate language's word for "person" as
+                A. /r/Desires /c/en/person /c/en/love */
 
-    createdBy, /* B is a process that creates A.	/r/CreatedBy /c/en/cake /c/en/bake */
+    createdBy, /* B is a process that creates A. /r/CreatedBy /c/en/cake
+                  /c/en/bake */
 
-    synonym, /* A and B have very similar meanings. This is the synonym relation in WordNet as well. */
+    synonym, /* A and B have very similar meanings. This is the synonym relation
+                in WordNet as well. */
 
-    antonym, /* A and B are opposites in some relevant way, such as being opposite ends of a scale, or fundamentally similar things with a key difference between them. Counterintuitively, two concepts must be quite similar before people consider them antonyms. This is the antonym relation in WordNet as well.	/r/Antonym /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
+    antonym, /* A and B are opposites in some relevant way, such as being
+                opposite ends of a scale, or fundamentally similar things with a
+                key difference between them. Counterintuitively, two concepts
+                must be quite similar before people consider them antonyms. This
+                is the antonym relation in WordNet as well. /r/Antonym
+                /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
+    oppositeOf = antonym,
 
-    derivedFrom, /* A is a word or phrase that appears within B and contributes to B's meaning.	/r/DerivedFrom /c/en/pocketbook /c/en/book */
+    retronym, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
+    differentation = retronym,
 
+    derivedFrom, /* A is a word or phrase that appears within B and contributes
+                    to B's meaning. /r/DerivedFrom /c/en/pocketbook /c/en/book
+                 */
 
-    translationOf, /* A and B are concepts (or assertions) in different languages, and overlap in meaning in such a way that they can be considered translations of each other. (This cannot, of course be taken as an exact equivalence.) */
+    translationOf, /* A and B are concepts (or assertions) in different
+                      languages, and overlap in meaning in such a way that they
+                      can be considered translations of each other. (This
+                      cannot, of course be taken as an exact equivalence.) */
 
-    definedAs, /* A and B overlap considerably in meaning, and B is a more explanatory version of A. (This is similar to TranslationOf, but within one language.) */
+    definedAs, /* A and B overlap considerably in meaning, and B is a more
+                  explanatory version of A. (This is similar to TranslationOf,
+                  but within one language.) */
 }
 
 enum Thematic:ubyte
@@ -91,6 +130,8 @@ enum Thematic:ubyte
     functional,
     affective,
     synonym,
+    antonym,
+    retronym,
 }
 
 Thematic toThematic(Relation relation)
@@ -117,10 +158,14 @@ Thematic toThematic(Relation relation)
         case Relation.obstructedBy: return Thematic.causal;
         case Relation.desires: return Thematic.affective;
         case Relation.createdBy: return Thematic.agents;
+
         case Relation.synonym: return Thematic.synonym;
-        case Relation.antonym: return Thematic.synonym;
+        case Relation.antonym: return Thematic.antonym;
+        case Relation.retronym: return Thematic.retronym;
+
         case Relation.derivedFrom: return Thematic.things;
         case Relation.translationOf: return Thematic.synonym;
+
         case Relation.definedAs: return Thematic.things;
     }
 }
@@ -211,7 +256,9 @@ auto pageSize() @trusted
     }
 }
 
-/** Main Net. */
+/** Main Net.
+    TODO: Call GC.disable/enable around construction and search.
+ */
 class Net
 {
     Node[] nodes;
@@ -229,17 +276,6 @@ class Net
         {
             readCSV(file);
         }
-    }
-
-    /** ConceptNet Relatedness.
-        Sum of all paths relating a to b where each path is the path weight
-        product.
-    */
-    real relatedness(NodeIndex a,
-                     NodeIndex b)
-    {
-        typeof(return) value;
-        return value;
     }
 
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -276,6 +312,30 @@ class Net
             }
         }
         writeln(fileName, " has ", lnr, " lines");
+    }
+
+    /** ConceptNet Relatedness.
+        Sum of all paths relating a to b where each path is the path weight
+        product.
+    */
+    real relatedness(NodeIndex a,
+                     NodeIndex b) @safe @nogc pure nothrow
+    {
+        typeof(return) value;
+        return value;
+    }
+
+    /** Get Node with strongest relatedness to $(D keywords).
+     */
+    Node contextOf(string[] keywords) @safe @nogc pure nothrow
+    {
+        return typeof(return).init;
+    }
+    alias topicOf = contextOf;
+
+    unittest
+    {
+        contextOf(["gun", "mask", "money", "caught", "rstole"]);
     }
 }
 
