@@ -28,7 +28,7 @@ import std.stdio;
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
-enum Relation
+enum Relation:ubyte
 {
     unknown,
     relatedTo, /* The most general relation. There is some positive relationship
@@ -196,6 +196,12 @@ enum WordNetRelation:ubyte
     seeAlso,
 }
 
+enum Source:ubyte
+{
+    dbpedia37,
+    wordnet30,
+}
+
 TokenId to(T:TokenId)(char x)
 {
     switch (x)
@@ -237,10 +243,11 @@ struct Edge
 {
     NodeIndex[] startIndexes; // into Net.nodes
     NodeIndex[] endIndexes; // into Net.nodes
-    float weight; // TODO: normalized
-    Relation relation; // TODO: packed
-    bool negation; // TODO: packed
-    HumanLang hlang; // TODO: packed
+    float weight;
+    Relation relation;
+    bool negation;
+    HumanLang hlang;
+    Source source;
     // sources;
 }
 
@@ -266,7 +273,8 @@ class Net
     Edge[] edges;
 
     size_t[Relation.max + 1] relationCounts;
-    size_t assertionsCount;
+    size_t[Source.max + 1] sourceCounts;
+    size_t assertionCount;
     real weightSum = 0;
 
     import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array, std.uni;
@@ -331,9 +339,24 @@ class Net
 
                     this.relationCounts[edge.relation]++;
                     break;
+                case 4:
+                    if (part != "/ctx/all")
+                    {
+                        writeln(part);
+                    }
+                    break;
                 case 5:
                     this.weightSum += edge.weight = part.to!float;
-                    this.assertionsCount++;
+                    this.assertionCount++;
+                    break;
+                case 6:
+                    switch (part)
+                    {
+                        case "/s/dbpedia/3.7": edge.source = Source.dbpedia37; break;
+                        case "/d/wordnet/3.0": edge.source = Source.wordnet30; break;
+                        default: break;
+                    }
+                    this.sourceCounts[edge.source]++;
                     break;
                 default:
                     break;
@@ -377,16 +400,27 @@ class Net
 
     void showRelations()
     {
+        writeln("Relations:");
         foreach (relation; Relation.min..Relation.max)
         {
             const count = this.relationCounts[relation];
             if (count)
             {
-                writeln(relation.to!string, ": ", count);
+                writeln("- ", relation.to!string, ": ", count);
             }
         }
-        writeln("Sum of weights: ", this.weightSum);
-        writeln("Number of assertions: ", this.assertionsCount);
+        writeln("Sources:");
+        foreach (source; Source.min..Source.max)
+        {
+            const count = this.sourceCounts[source];
+            if (count)
+            {
+                writeln("- ", source.to!string, ": ", count);
+            }
+        }
+        writeln("Stats:");
+        writeln("- Sum of weights: ", this.weightSum);
+        writeln("- Number of assertions: ", this.assertionCount);
     }
 
     /** ConceptNet Relatedness.
