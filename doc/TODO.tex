@@ -38,6 +38,12 @@
 \section{Compiler Diagnostics}
 \begin{itemize}
 
+\item Better diagnositics when forgetting parentheses in expressions such as
+
+\begin{lstlisting}[frame=single]
+b.byLine!(Newline.unix)
+\end{lstlisting}
+
 \item Add extra advice for when to use \texttt{.idup} or \texttt{.dup}
   properties when trying to assign/pass a \texttt{mutable T} to an
   \texttt{immutable T}.
