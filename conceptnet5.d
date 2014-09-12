@@ -22,6 +22,7 @@
 module conceptnet5;
 
 import languages: HumanLang, TokenId;
+import std.conv: to;
 import std.stdio;
 
 /** Semantic Relation Type Code.
@@ -264,7 +265,8 @@ class Net
     Node[] nodes;
     Edge[] edges;
 
-    size_t[Relation.max] relationCounts;
+    size_t[Relation.max + 1] relationCounts;
+    size_t assertionsCount;
     real weightSum = 0;
 
     import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array, std.uni;
@@ -330,8 +332,8 @@ class Net
                     this.relationCounts[edge.relation]++;
                     break;
                 case 5:
-                    import std.conv: to;
                     this.weightSum += edge.weight = part.to!float;
+                    this.assertionsCount++;
                     break;
                 default:
                     break;
@@ -380,11 +382,11 @@ class Net
             const count = this.relationCounts[relation];
             if (count)
             {
-                import std.conv: to;
                 writeln(relation.to!string, ": ", count);
             }
         }
         writeln("Sum of weights: ", this.weightSum);
+        writeln("Number of assertions: ", this.assertionsCount);
     }
 
     /** ConceptNet Relatedness.
