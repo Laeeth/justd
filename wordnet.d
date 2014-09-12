@@ -226,7 +226,7 @@ private auto to(T: WordMeaning[], S)(S x) if (isSomeString!S ||
 
 unittest
 {
-    auto wn = new WordNet("~/Knowledge/WordNet-3.0/dict");
+    auto wn = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
     writeln(wn.meaningsOf("car"));
     writeln(wn.meaningsOf("trout"));
     writeln(wn.meaningsOf("seal"));
