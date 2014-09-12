@@ -38,6 +38,10 @@
 \section{Compiler Diagnostics}
 \begin{itemize}
 
+\item Add extra advice for when to use \texttt{.idup} or \texttt{.dup}
+  properties when trying to assign/pass a \texttt{mutable T} to an
+  \texttt{immutable T}.
+
 \item Add warning flag for casting between mutable, const and immutable.
 
 \item Escape Analysis (EA). Pointers to stack memory should not escape scope. This is
