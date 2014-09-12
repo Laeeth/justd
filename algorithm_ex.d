@@ -12,7 +12,7 @@ module algorithm_ex;
 import std.algorithm: reduce, min, max;
 import std.typetuple: templateAnd, TypeTuple;
 import std.traits: isArray, Unqual, isIntegral, CommonType, isIterable, isStaticArray, isFloatingPoint, arity, isSomeString, isSomeChar;
-import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing, empty, front;
+import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange, hasSlicing, isNarrowString, hasLength, empty, front;
 import traits_ex: isStruct, isClass, allSame;
 import std.functional: unaryFun, binaryFun;
 version(print) import dbg;
@@ -1851,12 +1851,11 @@ enum Newline
 }
 
 /** Split Input by line.
-    Support searching for multiple encodings of line-endings using variadic find.
     See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org
     TODO: Restrict using isSomeString!Range?
 */
 auto byLine(Newline nl = Newline.any,
-            Range)(Range input) if (isForwardRange!Range)
+            Range)(Range input) if ((hasSlicing!Range && hasLength!Range) || isNarrowString!Range)
 {
     static if (nl == Newline.native)
     {
