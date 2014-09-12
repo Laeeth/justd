@@ -296,8 +296,8 @@ class Net
         {
             auto mmf= new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
             auto data = cast(ubyte[])mmf[];
-            import algorithm_ex: byLine;
-            foreach (line; data.byLine) // TODO: Compare with File.byLine
+            import algorithm_ex: byLine, Newline;
+            foreach (line; data.byLine!(Newline.native)) // TODO: Compare with File.byLine
             {
                 readCSVLine(line, lnr);
                 lnr++;
@@ -335,11 +335,12 @@ class Net
 
     unittest
     {
-        contextOf(["gun", "mask", "money", "caught", "rstole"]);
+        // assert(!new.contextOf(["gun", "mask", "money", "caught", "stole"]).find("robbery").empty);
     }
 }
 
 unittest
 {
-    auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
+    auto net = new Net(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+    //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
