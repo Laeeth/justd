@@ -283,12 +283,14 @@ class Net
     {
         import std.algorithm: splitter;
         auto parts = line.splitter!isWhite;
+        pragma(msg, typeof(line).stringof);
+        writeln(parts);
     }
 
     /** Read ConceptNet5 Assertions File $(D fileName) in CSV format.
         Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
      */
-    void readCSV(string fileName, bool useMmFile = true)
+    void readCSV(string fileName, bool useMmFile = false)
     {
         size_t lnr;
         /* TODO: Functionize and merge with wordnet.readIndex */
@@ -326,6 +328,7 @@ class Net
     }
 
     /** Get Node with strongest relatedness to $(D keywords).
+        TODO: Compare with function Context() in ConceptNet API.
      */
     Node contextOf(string[] keywords) @safe @nogc pure nothrow
     {
