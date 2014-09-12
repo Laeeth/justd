@@ -1,5 +1,8 @@
 #!/usr/bin/env rdmd-dev-module
 
+/* Attributes.
+   Only make T args const when they have value semantics (allAre!hasIndirections!T).
+ */
 module attributes;
 
 import languages: Lang, TokenId, Usage;
