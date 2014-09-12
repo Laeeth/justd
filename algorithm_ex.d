@@ -1840,13 +1840,25 @@ Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[
     return typeof(return).init;
 }
 
+/** Type of  */
+enum Newline
+{
+    any,                        // Any of win, mac or UNIX
+    win,                        // Windows: "\r\n"
+    mac,                        // Mac OS: '\r'
+    unix,                       // UNIX/Linux: '\n'
+    native,                     // Current OS decides: '\n'
+}
+
 /** Split Input by line.
     Support searching for multiple encodings of line-endings using variadic find.
     See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org
     TODO: Restrict using isSomeString!Range?
 */
-auto byLine(Range)(Range input) if (isForwardRange!Range)
+auto byLine(Range)(Range input,
+                   Newline newline = Newline.any) if (isForwardRange!Range)
 {
+    /* import std.regex: splitter, regex; */
     import std.algorithm: splitter;
     import std.ascii: newline;
     static if (newline.length == 1) // TODO: Is this optimization not necessary?
