@@ -1874,6 +1874,7 @@ auto byLine(Newline nl = Newline.any,
     {
         static if (nl == Newline.any)
         {
+            // TODO: Use ctRegex instead?
             import std.regex: splitter, regex;
             return input.splitter(regex("\n|\r\n|\r"));
         }
