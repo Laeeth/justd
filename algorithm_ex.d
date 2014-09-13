@@ -1853,6 +1853,9 @@ enum Newline
 /** Split Input by line.
     See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org
     TODO: Restrict using isSomeString!Range?
+    // TODO: This should fail with better errro message:
+    // assert(equal((cast(ubyte[])"a\nb").byLine!(Newline.any), ["a", "b"]));
+    // Do we require immutability here?
 */
 auto byLine(Newline nl = Newline.any,
             Range)(Range input) if ((hasSlicing!Range && hasLength!Range) || isNarrowString!Range)
