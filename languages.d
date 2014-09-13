@@ -5,8 +5,9 @@ module languages;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
-import std.algorithm: uniq;
+import std.algorithm: uniq, startsWith;
 import std.array: array;
+import std.conv: to;
 
 /** Human Language. */
 enum HumanLang:ubyte
@@ -81,6 +82,11 @@ enum HumanLang:ubyte
     ur,                       // Urdu
     uz,                       // Uzbek
     vi,                       // Vietnamese
+}
+
+unittest
+{
+    assert("sv".to!HumanLang == HumanLang.sv);
 }
 
 /* LANGUAGES = { */
@@ -281,7 +287,12 @@ enum WordCategory:ubyte
 {
     unknown,
 
-    noun, nounInteger, nounRational, nounLocation, nounPerson, nounName,
+    noun,
+    nounInteger,
+    nounRational,
+    nounLocation,
+    nounPerson,
+    nounName,
 
     verb,
     adjective,
@@ -305,6 +316,36 @@ enum WordCategory:ubyte
 
     coordinatingConjunction,
     subordinatingConjunction,
+}
+
+@safe pure @nogc nothrow
+{
+    bool isNoun(WordCategory category)
+    {
+        with (WordCategory)
+        {
+            return (category == noun ||
+                    category == nounInteger ||
+                    category == nounRational ||
+                    category == nounLocation ||
+                    category == nounPerson ||
+                    category == nounName);
+        }
+        // return category.to!string.startsWith("noun");
+    }
+    bool isVerb(WordCategory category) { return (category == WordCategory.verb); }
+    bool isAdjective(WordCategory category) { return (category == WordCategory.adjective); }
+    bool isAdverb(WordCategory category)
+    {
+        return (category == WordCategory.adverb ||
+                category == WordCategory.normalAdverb ||
+                category == WordCategory.conjunctiveAdverb);
+    }
+}
+
+unittest
+{
+    assert(WordCategory.noun.isNoun);
 }
 
 /** English Noun Suffixes. */
