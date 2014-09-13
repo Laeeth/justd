@@ -119,6 +119,24 @@ enum Relation:ubyte
                   but within one language.) */
 }
 
+/** Return true if $(D relation) is transitive. */
+bool isTransitive(Relation relation)
+    @safe @nogc pure nothrow
+{
+    with (Relation)
+    {
+        return (relation == partOf ||
+                relation == isA ||
+                relation == memberOf ||
+                relation == atLocation ||
+                relation == hasSubevent ||
+                relation == synonym ||
+                relation == hasPrerequisite ||
+                relation == hasProperty ||
+                relation == translationOf);
+    }
+}
+
 enum Thematic:ubyte
 {
     unknown,
@@ -136,6 +154,7 @@ enum Thematic:ubyte
 }
 
 Thematic toThematic(Relation relation)
+    @safe @nogc pure nothrow
 {
     final switch (relation)
     {
@@ -203,6 +222,7 @@ enum Source:ubyte
 }
 
 TokenId to(T:TokenId)(char x)
+    @safe @nogc pure nothrow
 {
     switch (x)
     {
