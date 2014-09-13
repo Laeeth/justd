@@ -205,7 +205,7 @@
     \item About me
     \item Time
     \item Age
-    \item Lifes too short for bad code.
+    \item Lifes too short for bad code
     \end{itemize}
   \item Either stick with it, or try to change it:
   \item Help/Promote D and alikes
@@ -217,14 +217,13 @@
   \begin{itemize}[<+->]
   \item Statically Inferred Languages
   \item Game Industry: ``Good C++ programmers are hard to find''. Why?
-  \item Mozilla: Servo Layout Engine using Rust: Performance \emph{and}
-    Safety. Browser Exploits all because of lack of memory safety in C/C++.
+  \item Mozilla: Servo Layout Engine using Rust
   \item Microsoft Announcement: ``We are planning a new language that is''
     \begin{itemize}[<+->]
     \item ``as fast as C++'' and
     \item ``as simple as C\#''
     \end{itemize}
-  \item D already does this and is ready!
+  \item D already does this in company production code
   \end{itemize}
 \end{frame}
 
@@ -248,15 +247,15 @@
       \begin{itemize}[<+->]
       \item Gold is \emph{not} everything that\ldots --- Big leaps are
         \emph{not} made by large companies nor organisations.
-      \item Dynamic: Non-Company Controlled: no more: \textit{``Lets reinvent
+      \item \textbf{Dynamic}: Non-Company Controlled: no more: \textit{``Lets reinvent
           everything again just because we want to be different!''}
-      \item No Priesthood nor too Academic
+      \item \textbf{No Priesthood} nor too Academic
       \item We have done our homework!
-      \item C/C++/C\#-like to ease transition
-      \item Pragmatic: Developers want to GTD in the most efficient way
-      \item Democratic/Dynamic: Key solutions voted for. All about
+      \item C/C++/C\#-like to \textbf{ease transition}
+      \item \textbf{Pragmatic}: Developers want to GTD
+      \item \textbf{Democratic/Dynamic}: Key solutions voted for. All about
         \emph{probabilities}.
-      \item Continuous Integration: \emph{Everything} on Github!
+      \item \textbf{Continuous Integration} on Github
       \end{itemize}
       \column{.35\textwidth}
       \begin{figure}
@@ -940,7 +939,7 @@ void main() {
   \item Exception: \textbf{nothrow}
   \item Code Access: \textbf{pure}
   \item Memory Safety: \textbf{@safe}
-  \item GC Heap Allocation: \textbf{@nogc}
+  \item GC Heap Allocation: \textbf{@nogc} and compiler flag \textbf{-vgc}
   \end{itemize}
   enables optimization and auto-parallelization
 \end{frame}
@@ -965,7 +964,15 @@ void main() {
     \item Members of \texttt{struct} and \texttt{class} via \texttt{tupleof} can
       be iterated with \texttt{foreach} makes reflection in for example
       serialization trivial
-    \item Enum-Members Names (like in Ada)
+    \item Enumerators, along with most other builtins, (de)serialized using
+\begin{lstlisting}[frame=single]
+enumInstance.to!string
+\end{lstlisting}
+and
+\begin{lstlisting}[frame=single]
+stringInstance.to!EnumName
+\end{lstlisting}
+given (\texttt{import std.conv: to;}) like in Ada.
     \item Type Names using \texttt{T.stringof}
     \item Gives more informative error messages
     \end{itemize}
@@ -979,9 +986,9 @@ void main() {
 \end{frame}
 
 \begin{frame}[fragile]{More Inference than in C++11}
-  Along with type inference through \texttt{auto}, also infers
+  Along with type inference through \textbf{\texttt{auto}}, also infers
   \begin{itemize}[<+->]
-  \item Accessibility (auto, const or immutable) using \textbf{inout} parameter
+  \item Accessibility (\textbf{\texttt{auto}}, \textbf{\texttt{const}} or \textbf{\texttt{immutable}}) using \textbf{inout} parameter
     and return qualifier and
   \item Return by Value or Reference Semantics using \textbf{auto ref}
   \item These thanks to D strict memory model --- compiler are aware of what code
@@ -991,9 +998,9 @@ void main() {
 \end{frame}
 
 \begin{frame}[fragile]{Expressiveness: Meta-Programming}
-  Compile-Time-Function-Evaluation (CTFE),
+  Compile-Time-Function-Evaluation (CTFE) ,
   \item realized by the Combo:
-  (\texttt{pure} \& \texttt{immutable}) + \texttt{static if}, enables
+  (\textbf{\texttt{pure}} \& \textbf{\texttt{immutable}}) + \textbf{\texttt{static if}}, enables
   \begin{itemize}[<+->]
   \item \texttt{Safety}: Detect Errors before deployment
   \item \textbf{Declarative Programming} generates D code in same compilation
@@ -1006,7 +1013,7 @@ void main() {
 \end{frame}
 
 \begin{frame}[fragile]{When is CTFE Triggered?}
-  CTFEable functions can be either
+  CTFEable functions (\textbf{\texttt{pure}} with whole body visible) can be either
   \begin{itemize}[<+->]
   \item Evaluated at Compile-time:
 \begin{lstlisting}[frame=single]
@@ -1076,14 +1083,14 @@ alias goodName = badName; // potentially many overloads
 
 \begin{frame}[fragile]{Easy, Flexible \& Safe Module System}
   \begin{itemize}[<+->]
-  \item Hijack-Safe
+  \item \textbf{Hijack-Safe}
   \item Imports automatically ``used'' (like C++’s \texttt{using namespace})
   \item No \emph{need} to qualify symbols like in Python's \texttt{os.path.join()}
   \item Because of advanced type system overloads very seldom collide
   \item This is not possible in dynamic languages like Python and Ruby
   \item When they \emph{do} collide uniquify with scope
-  \item Scoped Imports
-  \item Cyclic Imports (Dependencies) just works, compared to C/C++,
+  \item \textbf{Scoped} Imports (inside structs, classes, functions, templates, etc)
+  \item \textbf{Cyclic} Imports (Dependencies) just works, compared to C/C++,
     Python.
   \item This makes it trivial to break out classes and functions into new
     separate files.
@@ -1221,11 +1228,11 @@ alias Pair(T) = Tuple!(T, T);
   \item When to use \texttt{x[]}?
   \item Compiler Messages are better than C++ but not yet perfect
   \item Template Instance Syntax: \texttt{Tuple! (S,T,U)}
-  \item Compile-Time Constants:
+  \item Compile-Time Constants (like C's \texttt{#define}):
 \begin{lstlisting}[frame=single]
   enum thisConstantCanNeverChange = 42;
 \end{lstlisting}
-  \item Perhaps \texttt{@safe pure nothrow} should have been default\ldots
+  % \item Perhaps \texttt{@safe pure nothrow} should have been default\ldots
   \end{itemize}
 \end{frame}
 
@@ -1233,14 +1240,14 @@ alias Pair(T) = Tuple!(T, T);
   \begin{itemize}[<+->]
   \item Not by default in C/C++,
   \item and compilers optimize away it by default, because
-  \item C,C++ memory models is not built to provide ownership control and safe
+  \item C,C++ is not built to provide ownership control and safe
     memory slicing, so range checking gives a significant performance hit
-  \item Firefox \& Rust: 95 \% of browser security holes are potential buffer
-    overflows
+  \item Firefox \& Rust: 95 \% of browser security holes are buffer overflows
   \item D has thought of this---DMD's \texttt{-release} builds keeps range
-    checking (thanks to Andrei)
-  \item Further, DMD is preparing for \emph{Data-flow Analysis}: Inhibit slice
-    checking in Divide-\&-Conquer Algorithms: Describe example on whiteboard.
+    checking % (thanks to Andrei)
+  \item Further, DMD is preparing for \emph{Data-flow and Escape Analysis}
+  \item Inhibit slice checking in Divide-\&-Conquer
+    Algorithms. % Describe example on whiteboard.
   \item Strongly-Typed ``Nullness'' á lá Haskell's \texttt{Maybe}: \texttt{NotNull} or
     \texttt{@nullable}: No more ``null-pointer-exceptions''.
     % See also: http://forum.dlang.org/thread/hvjcxxffhbziwbldbchf@forum.dlang.org?page=1
