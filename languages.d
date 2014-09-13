@@ -9,33 +9,50 @@ import std.algorithm: uniq, startsWith;
 import std.array: array;
 import std.conv: to;
 
-/** Human Language. */
-enum HumanLang:ubyte
+/** (Human) Language Code according to ISO 639-1.
+    See also: http://www.mathguide.de/info/tools/languagecode.html
+    See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+ */
+enum HumanLang/* :ubyte */
 {
     en,                       // English, 英語
     af,                       // Afrikaans
     ar,                       // Arabic
+    ae,                       // Avestan
+    ak,                       // Akan
     hy,                       // Armenian
     eu,                       // Basque
+    ba,                       // Baskhir
     be,                       // Belarusian
     bn,                       // Bengali
+    br,                       // Breton
     bs,                       // Bosnian
     bg,                       // Bulgarian
     my,                       // Burmese
     zh,                       // Chinese Mandarin
     crh,                      // Crimean Tatar
     hr,                       // Croatian
+    cr,                       // TODO?
+    ca,                       // Catalan
+    cy,                       // Welch
     cs,                       // Czech
     da,                       // Danish
+    ds,                       // TODO?
     nl,                       // Dutch
     eo,                       // Esperanto
     et,                       // Estonian
     fi,                       // Finnish
+    fj,                       // Fiji
+    fo,                       // Faeroese
+    fu,                       // TODO?
     fr,                       // French
     gl,                       // Galician
+    gv,                       // Manx
     de,                       // German
     el,                       // Greek
+    ha,                       // Hausa
     he,                       // Hebrew
+    hs,                       // TODO?
     hi,                       // Hindi
     hu,                       // Hungarian
     is_,                      // Icelandic
@@ -44,6 +61,8 @@ enum HumanLang:ubyte
     ga,                       // Irish
     it,                       // Italian
     ja,                       // Japanese, 日本語
+    ka,                       // Georgian
+    ku,                       // Kurdish
     kn,                       // Kannada
     kk,                       // Kazakh
     km,                       // Khmer
@@ -52,20 +71,29 @@ enum HumanLang:ubyte
     lo,                       // Lao
     la,                       // Latin
     lt,                       // Lithuanian
+    lv,                       // Latvian
     jbo,                      // Lojban
     mk,                       // Macedonian
     nan,                      // Min Nan
     mg,                       // Malagasy
+    mn,                       // Mongolian
+    ms,                       // Malay
+    mt,                       // Maltese
+    ne,                       // Nepali
     no,                       // Norwegian
     ps,                       // Pashto
     fa,                       // Persian
+    oc,                       // Occitan
     pl,                       // Polish
     pt,                       // Portuguese
     ro,                       // Romanian
     ru,                       // Russian
     sa,                       // Sanskrit
+    sc,                       // TODO?
     si,                       // Sinhalese
+    sm,                       // Samoan
     sco,                      // Scots
+    sq,                       // Albanian
     gd,                       // Scottish Gaelic
     sr,                       // Serbian
     sk,                       // Slovak
@@ -82,6 +110,18 @@ enum HumanLang:ubyte
     ur,                       // Urdu
     uz,                       // Uzbek
     vi,                       // Vietnamese
+}
+
+HumanLang decodeHumanLang(char[] x) @safe pure
+{
+    if (x == "is")
+    {
+        return HumanLang.is_;
+    }
+    else
+    {
+        return x.to!HumanLang;
+    }
 }
 
 unittest
