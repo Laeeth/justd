@@ -100,6 +100,7 @@ class WordNet
     }
 
     WordMeaning[] meaningsOf(string lemma)
+        @safe pure
     {
         typeof(return) word;
         const lower = lemma.toLower;
@@ -111,6 +112,7 @@ class WordNet
     }
 
     WordCategory parseCategory(dchar x)
+        @safe @nogc pure nothrow
     {
         WordCategory category;
         with (WordCategory)
@@ -183,15 +185,15 @@ class WordNet
         /* TODO: Functionize and merge with conceptnet5.readCSV */
         if (useMmFile)
         {
-            import std.mmfile: MmFile;
-            auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
-            const data = cast(ubyte[])mmf[];
-            import algorithm_ex: byLine;
-            foreach (line; data.byLine)
-            {
-                readIndexLine(line, lnr);
-                lnr++;
-            }
+            /* import std.mmfile: MmFile; */
+            /* auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize); */
+            /* const data = cast(ubyte[])mmf[]; */
+            /* import algorithm_ex: byLine; */
+            /* foreach (line; data.byLine) */
+            /* { */
+            /*     readIndexLine(line, lnr); */
+            /*     lnr++; */
+            /* } */
         }
         else
         {
@@ -216,13 +218,6 @@ private auto to(T: WordMeaning[], S)(S x) if (isSomeString!S ||
     T meanings;
     return meanings;
 }
-
-/* /\** Lookup WordCategory from Textual $(D x). */
-/* *\/ */
-/* auto to(T: WordCategory[], S)(S x) if (isSomeString!S || */
-/*                                      isSomeChar!S) */
-/* { */
-/* } */
 
 unittest
 {
