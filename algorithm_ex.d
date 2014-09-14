@@ -742,13 +742,22 @@ bool isPalindrome(R)(in R range) @safe pure /* nothrow */ if (isBidirectionalRan
 {
     import std.range: retro;
     import std.algorithm: equal;
-    return range.retro.equal(range);
+    static if (isRandomAccessRange!R)
+    {
+        const mid = range.length/2;
+        return range[$-mid..$].retro.equal(range[0..mid]);
+    }
+    else
+    {
+        return range.retro.equal(range);
+    }
 }
 unittest {
-    assert(isPalindrome("dallassallad"));
-    assert(!isPalindrome("ab"));
-    assert(isPalindrome("a"));
-    assert(isPalindrome(""));
+    assert("dallassallad".isPalindrome);
+    assert(!"ab".isPalindrome);
+    assert("a".isPalindrome);
+    assert("".isPalindrome);
+    assert([1, 2, 2, 1].isPalindrome);
 }
 
 /* ref Unqual!T unqual(T)(in T x) pure nothrow if isStuct!T { return cast(Unqual!T)x; } */
