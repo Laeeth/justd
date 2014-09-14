@@ -1542,10 +1542,10 @@ unittest
 }
 
 /** Simpler Variant of Phobos' split. */
-auto split(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+auto split(alias pred, R)(R haystack) if (isForwardRange!R)
 {
-    static if (isSomeString!R1 ||
-               isRandomAccessRange!R1)
+    static if (isSomeString!R ||
+               isRandomAccessRange!R)
     {
         auto balance = find!pred(haystack);
         immutable pos1 = haystack.length - balance.length;
@@ -1589,10 +1589,10 @@ unittest
 }
 
 /** Simpler Variant of Phobos' splitBefore. */
-auto splitBefore(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+auto splitBefore(alias pred, R)(R haystack) if (isForwardRange!R)
 {
-    static if (isSomeString!R1 ||
-               sRandomAccessRange!R1)
+    static if (isSomeString!R ||
+               sRandomAccessRange!R)
     {
         auto balance = find!pred(haystack);
         immutable pos = haystack.length - balance.length;
@@ -1630,9 +1630,9 @@ unittest
     assert("ab".splitBefore!(a => !a.isDigit) == tuple("", "ab"));
 }
 
-auto splitAfter(alias pred, R1)(R1 haystack) if (isForwardRange!R1)
+auto splitAfter(alias pred, R)(R haystack) if (isForwardRange!R)
 {
-    static if (isSomeString!R1 || isRandomAccessRange!R1)
+    static if (isSomeString!R || isRandomAccessRange!R)
     {
         auto balance = find!pred(haystack);
         immutable pos = balance.empty ? 0 : haystack.length - balance.length + 1;
