@@ -48,9 +48,40 @@ class WordNet
             set(lemma, WordCategory.preposition, 0);
         }
 
-        foreach (lemma; ["a", "the"])
+        foreach (lemma; ["a", "an", // definite
+                         "the" // undefinite
+                     ])
         {
             set(lemma, WordCategory.article, 0);
+        }
+
+        foreach (lemma; ["I", "me",
+                         "you",
+                         "she", "her",
+                         "he", "him",
+                         "it",
+                         "we", "us",
+                         "they", "them"])
+        {
+            set(lemma, WordCategory.pronounPersonal, 0);
+        }
+
+        /* TODO: near/far in distance/time , singular, plural */
+        foreach (lemma; ["this", "that",
+                         "these", "those"])
+        {
+            set(lemma, WordCategory.pronounDemonstrative, 0);
+        }
+
+        foreach (lemma; ["mine", // 1st person singular
+                         "yours", // 2nd person singular
+                         "his", "hers", "its", // 3rd person singular
+                         "ours", // 1st person plural
+                         "yours", // 2nd person plural
+                         "theirs" // 3rd person plural
+                     ])
+        {
+            set(lemma, WordCategory.pronounPossessive, 0);
         }
 
         foreach (lemma; ["after", "although", "as", "as if", "as long as",

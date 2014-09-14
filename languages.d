@@ -395,6 +395,10 @@ enum WordCategory:ubyte
     prepositionDirection, // only related to space change (velocity)
 
     pronoun,
+    pronounPersonal,
+    pronounDemonstrative,
+    pronounPossessive,
+
     determiner,
     article,
     interjection,
@@ -425,6 +429,13 @@ enum WordCategory:ubyte
         return (category == WordCategory.adverb ||
                 category == WordCategory.normalAdverb ||
                 category == WordCategory.conjunctiveAdverb);
+    }
+    bool isPronoun(WordCategory category)
+    {
+        return (category == WordCategory.pronoun ||
+                category == WordCategory.pronounPersonal ||
+                category == WordCategory.pronounDemonstrative ||
+                category == WordCategory.pronounPossessive);
     }
 }
 
