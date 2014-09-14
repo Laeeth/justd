@@ -13,21 +13,31 @@ import std.conv: to;
     See also: http://www.mathguide.de/info/tools/languagecode.html
     See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
  */
-enum HumanLang/* :ubyte */
+enum HumanLang:ubyte
 {
     en,                       // English, 英語
+    ac,                       // TODO?
+    ai,                       // TODO?
     af,                       // Afrikaans
     ar,                       // Arabic
     ae,                       // Avestan
     ak,                       // Akan
+    an,                       // Aragonese
+    as,                       // Assamese
+    ax,                       // TODO?
+    az,                       // Azerbaijani
     hy,                       // Armenian
     eu,                       // Basque
     ba,                       // Baskhir
     be,                       // Belarusian
+    bj,                       // TODO?
     bn,                       // Bengali
     br,                       // Breton
     bs,                       // Bosnian
     bg,                       // Bulgarian
+    bo,                       // Tibetan
+    bp,                       // TODO?
+    bt,                       // TODO?
     my,                       // Burmese
     zh,                       // Chinese Mandarin
     crh,                      // Crimean Tatar
@@ -94,6 +104,11 @@ enum HumanLang/* :ubyte */
     sm,                       // Samoan
     sco,                      // Scots
     sq,                       // Albanian
+    se,                       // TODO?
+    sy,                       // TODO?
+    te,                       // Tegulu
+    tl,                       // Tagalog
+    tp,                       // TODO?
     gd,                       // Scottish Gaelic
     sr,                       // Serbian
     sk,                       // Slovak
@@ -110,10 +125,15 @@ enum HumanLang/* :ubyte */
     ur,                       // Urdu
     uz,                       // Uzbek
     vi,                       // Vietnamese
+    vo,                       // Volapük
+    wa,                       // Waloon
+    yi,                       // Yiddish
 }
 
-HumanLang decodeHumanLang(char[] x) @safe pure
+HumanLang decodeHumanLang(char[] x)
+    @safe pure
 {
+    import std.stdio: writeln;
     if (x == "is")
     {
         return HumanLang.is_;
