@@ -268,7 +268,7 @@ unittest { assert([42, 42].allEqualTo(42)); }
 // ==============================================================================================
 
 /** Check if all Elements of $(D x) are zero. */
-bool allZero(T, bool useStatic = true)(in T x) @safe @nogc pure nothrow // TODO: Extend to support struct's and classes's'
+bool allZero(T, bool useStatic = true)(in T x) @safe @nogc pure nothrow
 {
     static if (isStruct!T || isClass!T)
     {
