@@ -15,54 +15,69 @@ import std.conv: to;
  */
 enum HumanLang:ubyte
 {
+    unknown,
     en,                       // English, 英語
-    ac,                       // TODO?
-    ai,                       // TODO?
+    // ac,                       // TODO?
+    // ace,                      // TODO?
+    // ai,                       // TODO?
+    // ain,                       // TODO?
     af,                       // Afrikaans
     ar,                       // Arabic
+    // ary,                       // TODO?
+    // arc,                       // TODO?
     ae,                       // Avestan
     ak,                       // Akan
+    // akk,                      // TODO?
     an,                       // Aragonese
+    // ang,                       // TODO?
     as,                       // Assamese
-    ax,                       // TODO?
+    // ase,                       // TODO?
+    // ast,                       // TODO?
+    // ax,                       // TODO?
     az,                       // Azerbaijani
     hy,                       // Armenian
     eu,                       // Basque
     ba,                       // Baskhir
+    // ban,                      // TODO?
     be,                       // Belarusian
-    bj,                       // TODO?
+    // bj,                       // TODO?
     bn,                       // Bengali
     br,                       // Breton
     bs,                       // Bosnian
     bg,                       // Bulgarian
     bo,                       // Tibetan
-    bp,                       // TODO?
-    bt,                       // TODO?
+    // bp,                       // TODO?
+    // bt,                       // TODO?
     my,                       // Burmese
     zh,                       // Chinese Mandarin
     crh,                      // Crimean Tatar
     hr,                       // Croatian
-    cr,                       // TODO?
+    // cr,                       // TODO?
     ca,                       // Catalan
     cy,                       // Welch
     cs,                       // Czech
+    // csb,                      // TODO?
     da,                       // Danish
-    ds,                       // TODO?
+    // ds,                       // TODO?
+    // dsb,                      // TODO?
     nl,                       // Dutch
     eo,                       // Esperanto
     et,                       // Estonian
     fi,                       // Finnish
     fj,                       // Fiji
     fo,                       // Faeroese
-    fu,                       // TODO?
+    // fu,                       // TODO?
+    // fur,                      // TODO?
     fr,                       // French
     gl,                       // Galician
     gv,                       // Manx
     de,                       // German
     el,                       // Greek
     ha,                       // Hausa
+    // haw,                      // TODO?
     he,                       // Hebrew
-    hs,                       // TODO?
+    // hs,                       // TODO?
+    // hsb,                      // TODO?
     hi,                       // Hindi
     hu,                       // Hungarian
     is_,                      // Icelandic
@@ -99,16 +114,19 @@ enum HumanLang:ubyte
     ro,                       // Romanian
     ru,                       // Russian
     sa,                       // Sanskrit
-    sc,                       // TODO?
+    // sc,                       // TODO?
+    // scn,                       // TODO?
     si,                       // Sinhalese
     sm,                       // Samoan
     sco,                      // Scots
     sq,                       // Albanian
-    se,                       // TODO?
-    sy,                       // TODO?
+    // se,                       // TODO?
+    // sy,                       // TODO?
+    // syc,                       // TODO?
     te,                       // Tegulu
     tl,                       // Tagalog
-    tp,                       // TODO?
+    // tp,                       // TODO?
+    // tpi,                       // TODO?
     gd,                       // Scottish Gaelic
     sr,                       // Serbian
     sk,                       // Slovak
@@ -140,7 +158,14 @@ HumanLang decodeHumanLang(char[] x)
     }
     else
     {
-        return x.to!HumanLang;
+        try
+        {
+            return x.to!HumanLang;
+        }
+        catch (Exception a)
+        {
+            return HumanLang.unknown;
+        }
     }
 }
 

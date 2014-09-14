@@ -24,6 +24,8 @@ module conceptnet5;
 import languages;
 import std.conv: to;
 import std.stdio;
+import std.algorithm: findSplitBefore, findSplitAfter;
+import algorithm_ex: findPopBefore;
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
@@ -329,6 +331,7 @@ class Net
 
     size_t[Relation.max + 1] relationCounts;
     size_t[Source.max + 1] sourceCounts;
+    size_t[HumanLang.max + 1] hlangCounts;
     size_t assertionCount;
     real weightSum = 0;
 
@@ -395,8 +398,30 @@ class Net
 
                     this.relationCounts[link.relation]++;
                     break;
+                case 2:
+                    if (part.skipOver(`/c/`))
+                    {
+                        const srcLang = part.findPopBefore(`/`).decodeHumanLang;
+                        hlangCounts[srcLang]++;
+                    }
+                    else
+                    {
+                        writeln(part);
+                    }
+                    break;
+                case 3:
+                    if (part.skipOver(`/c/`))
+                    {
+                        const dstLang = part.findPopBefore(`/`).decodeHumanLang;
+                        hlangCounts[dstLang]++;
+                    }
+                    else
+                    {
+                        writeln(part);
+                    }
+                    break;
                 case 4:
-                    if (part != "/ctx/all")
+                    if (part != `/ctx/all`)
                     {
                         writeln(part);
                     }
@@ -408,9 +433,9 @@ class Net
                 case 6:
                     switch (part)
                     {
-                        case "/s/dbpedia/3.7": link.source = Source.dbpedia37; break;
-                        case "/d/dbpedia/en":  link.source = Source.dbpediaen; break;
-                        case "/d/wordnet/3.0": link.source = Source.wordnet30; break;
+                        case `/s/dbpedia/3.7`: link.source = Source.dbpedia37; break;
+                        case `/d/dbpedia/en`:  link.source = Source.dbpediaen; break;
+                        case `/d/wordnet/3.0`: link.source = Source.wordnet30; break;
                         default: break;
                     }
                     this.sourceCounts[link.source]++;
@@ -466,6 +491,7 @@ class Net
                 writeln("- ", relation.to!string, ": ", count);
             }
         }
+
         writeln("Sources:");
         foreach (source; Source.min..Source.max)
         {
@@ -475,6 +501,17 @@ class Net
                 writeln("- ", source.to!string, ": ", count);
             }
         }
+
+        writeln("Languages:");
+        foreach (hlang; HumanLang.min..HumanLang.max)
+        {
+            const count = this.hlangCounts[hlang];
+            if (count)
+            {
+                writeln("- ", hlang.to!string, ": ", count);
+            }
+        }
+
         writeln("Stats:");
         writeln("- Sum of weights: ", this.weightSum);
         writeln("- Number of assertions: ", this.assertionCount);
@@ -506,8 +543,12 @@ class Net
     }
 }
 
+import backtrace.backtrace;
+
 unittest
 {
+    import std.stdio: stderr;
+    backtrace.backtrace.install(stderr);
     auto net = new Net(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
     //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
