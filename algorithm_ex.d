@@ -491,10 +491,7 @@ enum FindContext { inWord, inSymbol,
 
 bool isSymbolASCII(string rest, ptrdiff_t off, size_t end)
     @safe @nogc pure nothrow
-in
-{
-    assert(end <= rest.length);
-}
+    in { assert(end <= rest.length); }
 body
 {
     import std.ascii: isAlphaNum;
@@ -517,9 +514,9 @@ unittest
 // ==============================================================================================
 
 bool isWordASCII(string rest, ptrdiff_t off, size_t end) @safe @nogc pure nothrow
-    in {
-        assert(end <= rest.length);
-    } body {
+    in { assert(end <= rest.length); }
+body
+{
     import std.ascii: isAlphaNum;
     return ((off == 0 || // either beginning of line
              !rest[off - 1].isAlphaNum) &&
@@ -655,7 +652,8 @@ auto findInOrder(alias pred = "a == b",
     }
     return hit;
 }
-unittest {
+unittest
+{
     import std.range: empty;
     assert("a b c".findInOrder("a", "b", "c"));
     assert("b a".findInOrder("a", "b").empty);
@@ -700,7 +698,8 @@ inout(T[]) overlap(T)(inout(T[]) a,
         return [];
     }
 }
-unittest {
+unittest
+{
     auto x = [-11_111, 11, 22, 333_333];
     auto y = [-22_222, 441, 555, 66];
 
@@ -731,7 +730,8 @@ bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
     static U* min(U* a, U* b) nothrow { return a < b ? a : b; }
 
     auto b = max(r1.ptr, r2.ptr);
-    auto e = min(r1.ptr + r1.length, r2.ptr + r2.length);
+    auto e = min(r1.ptr + r1.length,
+                 r2.ptr + r2.length);
     return b < e;
 }
 
@@ -740,19 +740,27 @@ bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
 */
 bool isPalindrome(R)(in R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
 {
-    import std.range: retro;
+    import std.range: retro, take;
     import std.algorithm: equal;
-    static if (isRandomAccessRange!R)
+    /* static if (isRandomAccessRange!R) */
+    /* { */
+    /*     const mid = range.length/2; */
+    /*     return range[$-mid..$].retro.equal(range[0..mid]); */
+    /* } */
+    /* else  */
+    static if (hasLength!R)
     {
         const mid = range.length/2;
-        return range[$-mid..$].retro.equal(range[0..mid]);
+        return equal(range.retro.take(mid),
+                     range.take(mid));
     }
     else
     {
         return range.retro.equal(range);
     }
 }
-unittest {
+unittest
+{
     assert("dallassallad".isPalindrome);
     assert(!"ab".isPalindrome);
     assert("a".isPalindrome);
@@ -767,7 +775,8 @@ alias isSymmetrical = isPalindrome;
 /*     unqual(x) = 1; */
 /* } */
 
-enum Reduction {
+enum Reduction
+{
     forwardDifference,
     backwardDifference,
     sum,
@@ -783,7 +792,8 @@ auto ref windowedReduce(Reduction reduction = Reduction.forwardDifference, R)(R 
 {
     import std.algorithm: map;
     import std.range: zip, dropOne;
-    auto ref op(T)(T a, T b) @safe pure nothrow {
+    auto ref op(T)(T a, T b) @safe pure nothrow
+    {
         static      if (reduction == Reduction.forwardDifference)  return b - a; // TODO: final static switch
         else static if (reduction == Reduction.backwardDifference) return a - b;
         else static if (reduction == Reduction.sum)                return a + b;
@@ -819,7 +829,8 @@ auto ref windowedReduce(Reduction reduction = Reduction.forwardDifference, R)(R 
 /*     dln([1, 22, 333].windowedReduce!(Reduction.forwardDifference)); */
 /* } */
 
-unittest {
+unittest
+{
     import std.datetime: Clock, SysTime, Duration;
     import std.algorithm: map;
     SysTime[] times;
@@ -833,7 +844,8 @@ unittest {
     version(print) dln(Duration.sizeof);
 }
 
-unittest {
+unittest
+{
     immutable i = [1, 4, 9, 17];
     import std.algorithm: equal;
     assert(i.windowedReduce!(Reduction.forwardDifference).equal ([+3, +5, +8]));
@@ -915,9 +927,9 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
         D _front;
         bool _initialized = false;
 
-        this(R range)
-        in { assert(!range.empty); }
-        body {
+        this(R range) in { assert(!range.empty); }
+        body
+        {
             auto tmp = range;
             if (tmp.dropOne.empty) // TODO: This may be an unneccesary cost but is practical to remove extra logic
                 _range = R.init; // return empty range
@@ -1123,11 +1135,15 @@ void times(alias action, N)(N n) if (isCallable!action &&
 {
     static if (arity!action == 1 && // if one argument and
                isIntegral!(ParameterTypeTuple!action[0])) // its an integer
+    {
         foreach (i; 0 .. n)
             action(i); // use it as action input
+    }
     else
+    {
         foreach (i; 0 .. n)
             action();
+    }
 }
 
 unittest
@@ -1285,10 +1301,9 @@ bool areColinear(T)(T a, T b) @safe pure nothrow
 */
 static if (__VERSION__ < 2066)
 {
-    auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper) @safe pure nothrow
-        in {
-            assert(lower <= upper, "lower > upper");
-        }
+    auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper)
+        @safe pure nothrow
+        in { assert(lower <= upper, "lower > upper"); }
     body
     {
         import std.algorithm : min, max;
@@ -1344,7 +1359,9 @@ template expand(alias array, size_t idx = 0) if (isStaticArray!(typeof(array)))
     static if (idx + 1 < array.length)
     {
         alias expand = TypeTuple!(delay, expand!(array, idx + 1));
-    } else {
+    }
+    else
+    {
         alias expand = delay;
     }
 }
