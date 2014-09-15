@@ -549,6 +549,14 @@ enum WordCategory:ubyte
                 category == WordCategory.pronounDemonstrative ||
                 category == WordCategory.pronounPossessive);
     }
+    bool isPreposition(WordCategory category)
+    {
+        return (category == WordCategory.preposition ||
+                category == WordCategory.prepositionTime ||
+                category == WordCategory.prepositionPosition ||
+                category == WordCategory.prepositionPlace ||
+                category == WordCategory.prepositionDirection);
+    }
 }
 
 bool memberOf(WordCategory child,
