@@ -1172,7 +1172,7 @@ alias Pair(T) = Tuple!(T, T);
 \begin{frame}[fragile]{Compatibility with C/C++}
   \texttt{@safe} functions can
   \begin{itemize}[<+->]
-  \item ABI Compatible with C, most of C++ and soon Objective-C! through \texttt{extern}
+  \item ABI Compatible with C, most of C++ and soon Objective-C (Apple IOS) through \texttt{extern}
   \item No Surprises when porting: C constructs that compiles in D should
     behave the same as in C
   \item @safeness of templated functions are automatically deduced by compiler
