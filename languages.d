@@ -15,137 +15,137 @@ import std.conv: to;
  */
 enum HLang:ubyte
 {
-    unknown,                    // Unknown
-    en,                       // English, 英語
-    // ac,                       // TODO?
-    // ace,                      // TODO?
-    // ai,                       // TODO?
-    // ain,                       // TODO?
-    af,                       // Afrikaans
-    ar,                       // Arabic
-    // ary,                       // TODO?
-    // arc,                       // TODO?
-    ae,                       // Avestan
-    ak,                       // Akan
-    // akk,                      // TODO?
-    an,                       // Aragonese
-    // ang,                       // TODO?
-    as,                       // Assamese
-    // ase,                       // TODO?
-    // ast,                       // TODO?
-    // ax,                       // TODO?
-    az,                       // Azerbaijani
-    hy,                       // Armenian
-    eu,                       // Basque
-    ba,                       // Baskhir
-    // ban,                      // TODO?
-    be,                       // Belarusian
-    // bj,                       // TODO?
-    bn,                       // Bengali
-    br,                       // Breton
-    bs,                       // Bosnian
-    bg,                       // Bulgarian
-    bo,                       // Tibetan
-    // bp,                       // TODO?
-    // bt,                       // TODO?
-    my,                       // Burmese
-    zh,                       // Chinese Mandarin
-    crh,                      // Crimean Tatar
-    hr,                       // Croatian
-    // cr,                       // TODO?
-    ca,                       // Catalan
-    cy,                       // Welch
-    cs,                       // Czech
-    // csb,                      // TODO?
-    da,                       // Danish
-    // ds,                       // TODO?
-    // dsb,                      // TODO?
-    nl,                       // Dutch
-    eo,                       // Esperanto
-    et,                       // Estonian
-    fi,                       // Finnish
-    fj,                       // Fiji
-    fo,                       // Faeroese
-    // fu,                       // TODO?
-    // fur,                      // TODO?
-    fr,                       // French
-    gl,                       // Galician
-    gv,                       // Manx
-    de,                       // German
-    el,                       // Greek
-    ha,                       // Hausa
-    // haw,                      // TODO?
-    he,                       // Hebrew
-    // hs,                       // TODO?
-    // hsb,                      // TODO?
-    hi,                       // Hindi
-    hu,                       // Hungarian
-    is_,                      // Icelandic
-    io,                       // Ido
-    id,                       // Indonesian
-    ga,                       // Irish
-    it,                       // Italian
-    ja,                       // Japanese, 日本語
-    ka,                       // Georgian
-    ku,                       // Kurdish
-    kn,                       // Kannada
-    kk,                       // Kazakh
-    km,                       // Khmer
-    ko,                       // Korean
-    ky,                       // Kyrgyz
-    lo,                       // Lao
-    la,                       // Latin
-    lt,                       // Lithuanian
-    lv,                       // Latvian
-    jbo,                      // Lojban
-    mk,                       // Macedonian
-    nan,                      // Min Nan
-    mg,                       // Malagasy
-    mn,                       // Mongolian
-    ms,                       // Malay
-    mt,                       // Maltese
-    ne,                       // Nepali
-    no,                       // Norwegian
-    ps,                       // Pashto
-    fa,                       // Persian
-    oc,                       // Occitan
-    pl,                       // Polish
-    pt,                       // Portuguese
-    ro,                       // Romanian
-    ru,                       // Russian
-    sa,                       // Sanskrit
-    // sc,                       // TODO?
-    // scn,                       // TODO?
-    si,                       // Sinhalese
-    sm,                       // Samoan
-    sco,                      // Scots
-    sq,                       // Albanian
-    // se,                       // TODO?
-    // sy,                       // TODO?
-    // syc,                       // TODO?
-    te,                       // Tegulu
-    tl,                       // Tagalog
-    // tp,                       // TODO?
-    // tpi,                       // TODO?
-    gd,                       // Scottish Gaelic
-    sr,                       // Serbian
-    sk,                       // Slovak
-    sl,                       // Slovene, Slovenian
-    es,                       // Spanish
-    sw,                       // Swahili
-    sv,                       // Swedish
-    tg,                       // Tajik
-    ta,                       // Tamil
-    th,                       // Thai
-    tr,                       // Turkish
-    tk,                       // Turkmen
-    uk,                       // Ukrainian
-    ur,                       // Urdu
-    uz,                       // Uzbek
-    vi,                       // Vietnamese
-    vo,                       // Volapük
-    wa,                       // Waloon
-    yi,                       // Yiddish
+    unknown,                    /// Unknown
+    en,                       /// English, 英語
+    // ac,                       /// TODO?
+    // ace,                      /// TODO?
+    // ai,                       /// TODO?
+    // ain,                       /// TODO?
+    af,                       /// Afrikaans
+    ar,                       /// Arabic
+    // ary,                       /// TODO?
+    // arc,                       /// TODO?
+    ae,                       /// Avestan
+    ak,                       /// Akan
+    // akk,                      /// TODO?
+    an,                       /// Aragonese
+    // ang,                       /// TODO?
+    as,                       /// Assamese
+    // ase,                       /// TODO?
+    // ast,                       /// TODO?
+    // ax,                       /// TODO?
+    az,                       /// Azerbaijani
+    hy,                       /// Armenian
+    eu,                       /// Basque
+    ba,                       /// Baskhir
+    // ban,                      /// TODO?
+    be,                       /// Belarusian
+    // bj,                       /// TODO?
+    bn,                       /// Bengali
+    br,                       /// Breton
+    bs,                       /// Bosnian
+    bg,                       /// Bulgarian
+    bo,                       /// ibetan
+    // bp,                       /// TODO?
+    // bt,                       /// TODO?
+    my,                       /// Burmese
+    zh,                       /// Chinese Mandarin
+    crh,                      /// Crimean Tatar
+    hr,                       /// Croatian
+    // cr,                       /// TODO?
+    ca,                       /// Catalan
+    cy,                       /// Welch
+    cs,                       /// Czech
+    // csb,                      /// TODO?
+    da,                       /// Danish
+    // ds,                       /// TODO?
+    // dsb,                      /// TODO?
+    nl,                       /// Dutch
+    eo,                       /// Esperanto
+    et,                       /// Estonian
+    fi,                       /// Finnish
+    fj,                       /// Fiji
+    fo,                       /// Faeroese
+    // fu,                       /// TODO?
+    // fur,                      /// TODO?
+    fr,                       /// French
+    gl,                       /// Galician
+    gv,                       /// Manx
+    de,                       /// German
+    el,                       /// Greek
+    ha,                       /// Hausa
+    // haw,                      /// TODO?
+    he,                       /// Hebrew
+    // hs,                       /// TODO?
+    // hsb,                      /// TODO?
+    hi,                       /// Hindi
+    hu,                       /// Hungarian
+    is_,                      /// Icelandic
+    io,                       /// Ido
+    id,                       /// Indonesian
+    ga,                       /// Irish
+    it,                       /// Italian
+    ja,                       /// Japanese, 日本語
+    ka,                       /// Georgian
+    ku,                       /// Kurdish
+    kn,                       /// Kannada
+    kk,                       /// Kazakh
+    km,                       /// Khmer
+    ko,                       /// Korean
+    ky,                       /// Kyrgyz
+    lo,                       /// Lao
+    la,                       /// Latin
+    lt,                       /// Lithuanian
+    lv,                       /// Latvian
+    jbo,                      /// Lojban
+    mk,                       /// Macedonian
+    nan,                      /// Min Nan
+    mg,                       /// Malagasy
+    mn,                       /// Mongolian
+    ms,                       /// Malay
+    mt,                       /// Maltese
+    ne,                       /// Nepali
+    no,                       /// Norwegian
+    ps,                       /// Pashto
+    fa,                       /// Persian
+    oc,                       /// Occitan
+    pl,                       /// Polish
+    pt,                       /// Portuguese
+    ro,                       /// omanian
+    ru,                       /// ussian
+    sa,                       /// Sanskrit
+    // sc,                       /// TODO?
+    // scn,                       /// TODO?
+    si,                       /// Sinhalese
+    sm,                       /// Samoan
+    sco,                      /// Scots
+    sq,                       /// Albanian
+    // se,                       /// TODO?
+    // sy,                       /// TODO?
+    // syc,                       /// TODO?
+    te,                       /// egulu
+    tl,                       /// agalog
+    // tp,                       /// TODO?
+    // tpi,                       /// TODO?
+    gd,                       /// Scottish Gaelic
+    sr,                       /// Serbian
+    sk,                       /// Slovak
+    sl,                       /// Slovene, Slovenian
+    es,                       /// Spanish
+    sw,                       /// Swahili
+    sv,                       /// Swedish
+    tg,                       /// Tajik
+    ta,                       /// Tamil
+    th,                       /// Thai
+    tr,                       /// Turkish
+    tk,                       /// Turkmen
+    uk,                       /// Ukrainian
+    ur,                       /// Urdu
+    uz,                       /// Uzbek
+    vi,                       /// Vietnamese
+    vo,                       /// Volapük
+    wa,                       /// Waloon
+    yi,                       /// Yiddish
 }
 
 /** TODO: Remove when __traits(documentation is merged */
@@ -494,28 +494,28 @@ enum WordCategory:ubyte
     verb,
     adjective,
 
-    adverb, // changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
+    adverb, /// changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
     normalAdverb,
-    conjunctiveAdverb, // joins together sentences
+    conjunctiveAdverb, /// joins together sentences
 
     adverbialConjunction = conjunctiveAdverb,
 
-    preposition, // often ambiguous
-    prepositionTime, // only related to time
-    prepositionPosition, // only related to space (position)
+    preposition, /// often ambiguous
+    prepositionTime, /// only related to time
+    prepositionPosition, /// only related to space (position)
     prepositionPlace = prepositionPosition,
-    prepositionDirection, // only related to space change (velocity)
+    prepositionDirection, /// only related to space change (velocity)
 
-    pronoun, // https://www.englishclub.com/grammar/pronouns.htm
-    pronounPersonal, // https://www.englishclub.com/grammar/pronouns-personal.htm
-    pronounDemonstrative, // https://www.englishclub.com/grammar/pronouns-demonstrative.htm
-    pronounPossessive, // https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronoun, /// https://www.englishclub.com/grammar/pronouns.htm
+    pronounPersonal, /// https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounDemonstrative, /// https://www.englishclub.com/grammar/pronouns-demonstrative.htm
+    pronounPossessive, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
 
     determiner,
     article,
     interjection,
 
-    coordinatingConjunction,
+    coordinatingConjunction, /// Coordinating conjunction
     subordinatingConjunction,
 }
 
@@ -572,8 +572,8 @@ enum Number { singular, plural }
 enum Person { first, second, third }
 
 /** Subject Gender. */
-enum Gender { male, // maskulinum in Swedish
-              female, // femininum in Swedish
+enum Gender { male, /// maskulinum in Swedish
+              female, /// femininum in Swedish
               neutral }
 
 /* Number number(string x, WordCategory wc) {} */
