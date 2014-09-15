@@ -13,9 +13,9 @@ import std.conv: to;
     See also: http://www.mathguide.de/info/tools/languagecode.html
     See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
  */
-enum HumanLang:ubyte
+enum HLang:ubyte
 {
-    unknown,
+    unknown,                    // Unknown
     en,                       // English, 英語
     // ac,                       // TODO?
     // ace,                      // TODO?
@@ -148,30 +148,142 @@ enum HumanLang:ubyte
     yi,                       // Yiddish
 }
 
-HumanLang decodeHumanLang(char[] x)
+/** TODO: Remove when __traits(documentation is merged */
+string toName(HLang hlang)
+{
+    with (HLang)
+    {
+        final switch (hlang)
+        {
+            case unknown: return "Unknown";
+            case en: return "English, 英語";
+            case af: return "Afrikaans";
+            case ar: return "Arabic";
+            case ae: return "Avestan";
+            case ak: return "Akan";
+            case an: return "Aragonese";
+            case as: return "Assamese";
+            case az: return "Azerbaijani";
+            case hy: return "Armenian";
+            case eu: return "Basque";
+            case ba: return "Baskhir";
+            case be: return "Belarusian";
+            case bn: return "Bengali";
+            case br: return "Breton";
+            case bs: return "Bosnian";
+            case bg: return "Bulgarian";
+            case bo: return "Tibetan";
+            case my: return "Burmese";
+            case zh: return "Chinese Mandarin";
+            case crh: return "Crimean Tatar";
+            case hr: return "Croatian";
+            case ca: return "Catalan";
+            case cy: return "Welch";
+            case cs: return "Czech";
+            case da: return "Danish";
+            case nl: return "Dutch";
+            case eo: return "Esperanto";
+            case et: return "Estonian";
+            case fi: return "Finnish";
+            case fj: return "Fiji";
+            case fo: return "Faeroese";
+            case fr: return "French";
+            case gl: return "Galician";
+            case gv: return "Manx";
+            case de: return "German";
+            case el: return "Greek";
+            case ha: return "Hausa";
+            case he: return "Hebrew";
+            case hi: return "Hindi";
+            case hu: return "Hungarian";
+            case is_: return "Icelandic";
+            case io: return "Ido";
+            case id: return "Indonesian";
+            case ga: return "Irish";
+            case it: return "Italian";
+            case ja: return "Japanese, 日本語";
+            case ka: return "Georgian";
+            case ku: return "Kurdish";
+            case kn: return "Kannada";
+            case kk: return "Kazakh";
+            case km: return "Khmer";
+            case ko: return "Korean";
+            case ky: return "Kyrgyz";
+            case lo: return "Lao";
+            case la: return "Latin";
+            case lt: return "Lithuanian";
+            case lv: return "Latvian";
+            case jbo: return "Lojban";
+            case mk: return "Macedonian";
+            case nan: return "Min Nan";
+            case mg: return "Malagasy";
+            case mn: return "Mongolian";
+            case ms: return "Malay";
+            case mt: return "Maltese";
+            case ne: return "Nepali";
+            case no: return "Norwegian";
+            case ps: return "Pashto";
+            case fa: return "Persian";
+            case oc: return "Occitan";
+            case pl: return "Polish";
+            case pt: return "Portuguese";
+            case ro: return "Romanian";
+            case ru: return "Russian";
+            case sa: return "Sanskrit";
+            case si: return "Sinhalese";
+            case sm: return "Samoan";
+            case sco: return "Scots";
+            case sq: return "Albanian";
+            case te: return "Tegulu";
+            case tl: return "Tagalog";
+            case gd: return "Scottish Gaelic";
+            case sr: return "Serbian";
+            case sk: return "Slovak";
+            case sl: return "Slovene, Slovenian";
+            case es: return "Spanish";
+            case sw: return "Swahili";
+            case sv: return "Swedish";
+            case tg: return "Tajik";
+            case ta: return "Tamil";
+            case th: return "Thai";
+            case tr: return "Turkish";
+            case tk: return "Turkmen";
+            case uk: return "Ukrainian";
+            case ur: return "Urdu";
+            case uz: return "Uzbek";
+            case vi: return "Vietnamese";
+            case vo: return "Volapük";
+            case wa: return "Waloon";
+            case yi: return "Yiddish";
+        }
+    }
+
+}
+
+HLang decodeHumanLang(char[] x)
     @safe pure
 {
     import std.stdio: writeln;
     if (x == "is")
     {
-        return HumanLang.is_;
+        return HLang.is_;
     }
     else
     {
         try
         {
-            return x.to!HumanLang;
+            return x.to!HLang;
         }
         catch (Exception a)
         {
-            return HumanLang.unknown;
+            return HLang.unknown;
         }
     }
 }
 
 unittest
 {
-    assert("sv".to!HumanLang == HumanLang.sv);
+    assert("sv".to!HLang == HLang.sv);
 }
 
 /* LANGUAGES = { */
@@ -373,11 +485,11 @@ enum WordCategory:ubyte
     unknown,
 
     noun,
-    nounInteger,
-    nounRational,
-    nounLocation,
-    nounPerson,
-    nounName,
+    nounInteger,                // 11
+    nounRational,               // 1/3
+    nounLocationName,           // Stockholm
+    nounPersonName,             // John
+    nounOtherName,
 
     verb,
     adjective,
@@ -394,10 +506,10 @@ enum WordCategory:ubyte
     prepositionPlace = prepositionPosition,
     prepositionDirection, // only related to space change (velocity)
 
-    pronoun,
-    pronounPersonal,
-    pronounDemonstrative,
-    pronounPossessive,
+    pronoun, // https://www.englishclub.com/grammar/pronouns.htm
+    pronounPersonal, // https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounDemonstrative, // https://www.englishclub.com/grammar/pronouns-demonstrative.htm
+    pronounPossessive, // https://www.englishclub.com/grammar/pronouns-possessive.htm
 
     determiner,
     article,
@@ -416,9 +528,9 @@ enum WordCategory:ubyte
             return (category == noun ||
                     category == nounInteger ||
                     category == nounRational ||
-                    category == nounLocation ||
-                    category == nounPerson ||
-                    category == nounName);
+                    category == nounLocationName ||
+                    category == nounPersonName ||
+                    category == nounOtherName);
         }
         // return category.to!string.startsWith("noun");
     }
@@ -439,10 +551,37 @@ enum WordCategory:ubyte
     }
 }
 
+bool memberOf(WordCategory child,
+              WordCategory parent)
+    @safe @nogc pure nothrow
+{
+    return child == parent;
+}
+
+static immutable implies = ["in order to"];
+
 unittest
 {
     assert(WordCategory.noun.isNoun);
 }
+
+/** Subject Count. */
+enum Number { singular, plural }
+
+/** Subject Person. */
+enum Person { first, second, third }
+
+/** Subject Gender. */
+enum Gender { male, // maskulinum in Swedish
+              female, // femininum in Swedish
+              neutral }
+
+/* Number number(string x, WordCategory wc) {} */
+/* Person person(string x, WordCategory wc) {} */
+/* Gender gender(string x, WordCategory wc) {} */
+
+/** English Negation Prefixes. */
+static immutable negationPrefixes = [ "un", "non", "dis", "im", "in", "il", "ir", ];
 
 /** English Noun Suffixes. */
 static immutable nounSuffixes = [ "s", "ses", "xes", "zes", "ches", "shes", "men", "ies", ];
