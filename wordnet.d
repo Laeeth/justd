@@ -138,7 +138,7 @@ class WordNet
 
     /** Get Possible Meanings of $(D lemma) in $(D hlangs). */
     WordSense[] meaningsOf(S)(S lemma,
-                                HLang[] hlangs = []) if (isSomeString!S)
+                              HLang[] hlangs = []) if (isSomeString!S)
     {
         typeof(return) word;
         const lower = lemma.toLower;
@@ -231,15 +231,18 @@ class WordNet
         /* TODO: Functionize and merge with conceptnet5.readCSV */
         if (useMmFile)
         {
-            /* import std.mmfile: MmFile; */
-            /* auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize); */
-            /* const data = cast(ubyte[])mmf[]; */
-            /* import algorithm_ex: byLine; */
-            /* foreach (line; data.byLine) */
-            /* { */
-            /*     readIndexLine(line, lnr); */
-            /*     lnr++; */
-            /* } */
+            version (none)
+            {
+                import std.mmfile: MmFile;
+                auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+                const data = cast(ubyte[])mmf[];
+                import algorithm_ex: byLine;
+                foreach (line; data.byLine)
+                {
+                    readIndexLine(line, lnr);
+                    lnr++;
+                }
+            }
         }
         else
         {
