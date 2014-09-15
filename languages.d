@@ -558,7 +558,7 @@ bool memberOf(WordCategory child,
     return child == parent;
 }
 
-static immutable implies = ["in order to"];
+static immutable implies = [ "in order to" ];
 
 unittest
 {
@@ -580,11 +580,18 @@ enum Gender { male, // maskulinum in Swedish
 /* Person person(string x, WordCategory wc) {} */
 /* Gender gender(string x, WordCategory wc) {} */
 
-/** English Negation Prefixes. */
+/** English Negation Prefixes.
+    See also: http://www.english-for-students.com/Negative-Prefixes.html
+ */
 static immutable negationPrefixes = [ "un", "non", "dis", "im", "in", "il", "ir", ];
 
-/** English Noun Suffixes. */
-static immutable nounSuffixes = [ "s", "ses", "xes", "zes", "ches", "shes", "men", "ies", ];
+/** English Noun Suffixes.
+    See also: http://www.english-for-students.com/Noun-Suffixes.html
+ */
+static immutable adjectiveNounSuffixes = [ "ness", "ity", "ment", "ance" ];
+static immutable verbNounSuffixes = [ "tion", "sion", "ment", "ence" ];
+static immutable nounNounSuffixes = [ "ship", "hood" ];
+static immutable allNounSuffixes = adjectiveNounSuffixes ~ verbNounSuffixes ~ nounNounSuffixes ~ [ "s", "ses", "xes", "zes", "ches", "shes", "men", "ies", ];
 
 /** English Verb Suffixes. */
 static immutable verbSuffixes = [ "s", "ies", "es", "es", "ed", "ed", "ing", "ing", ];
@@ -593,7 +600,7 @@ static immutable verbSuffixes = [ "s", "ies", "es", "es", "ed", "ed", "ing", "in
 static immutable adjectiveSuffixes = [ "er", "est", "er", "est" ];
 
 /** English Word Suffixes. */
-static immutable wordSuffixes = [ nounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;
+static immutable wordSuffixes = [ allNounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;
 
 auto wordBase(S)(S x) if (isSomeString!S ||
                           isSomeChar!S)
