@@ -4968,8 +4968,7 @@ class Scanner(Term)
         if (!sst.isNull)
         {
             import algorithm_ex: findFirstOfAnyInOrder;
-            auto scan = (sst
-                         .strings
+            auto scan = (sst.strings
                          .filter!(raw => !raw.empty) // skip empty raw string
                          .tee!(raw => gstats.elfFilesBySymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here because we can't rever to raw
                          .map!(raw => demangler(raw).decodeSymbol)

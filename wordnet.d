@@ -1,16 +1,21 @@
+#!/usr/bin/env rdmd-dev-module
+
+/** WordNet
+    */
 module wordnet;
 
-import languages: WordCategory;
+import languages: WordCategory, HLang;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
 
-/** WordMeaning Interpretation. */
-struct WordMeaning
+/** Word Sense/Meaning/Interpretation. */
+struct WordSense
 {
     WordCategory category;
     ubyte synsetCount; // Number of senses (meanings).
     uint[] links;
 }
 
+/** WordNet */
 class WordNet
 {
     this(string dirPath)
@@ -113,6 +118,7 @@ class WordNet
         }
     }
 
+    /** Store $(D lemma) as $(D category). */
     auto set(string lemma, WordCategory category, ubyte synsetCount)
     {
         if (lemma in _words)
@@ -126,12 +132,13 @@ class WordNet
                 return this;
             }
         }
-        _words[lemma] ~= WordMeaning(category, synsetCount);
+        _words[lemma] ~= WordSense(category, synsetCount);
         return this;
     }
 
-    WordMeaning[] meaningsOf(string lemma)
-        @safe pure
+    /** Get Possible Meanings of $(D lemma) in $(D hlangs). */
+    WordSense[] meaningsOf(S)(S lemma,
+                                HLang[] hlangs = []) if (isSomeString!S)
     {
         typeof(return) word;
         const lower = lemma.toLower;
@@ -141,6 +148,15 @@ class WordNet
         }
         return word;
     }
+
+    auto hasMeaning(S)(S lemma,
+                       WordCategory category,
+                       HLang[] hlangs = []) if (isSomeString!S)
+    {
+        import std.algorithm: canFind;
+        return meaningsOf(lemma, hlangs).canFind!(meaning => meaning.category.memberOf(category));
+    }
+
 
     WordCategory parseCategory(dchar x)
         @safe @nogc pure nothrow
@@ -185,7 +201,7 @@ class WordNet
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
             auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
-            auto meaning       = WordMeaning(parseCategory(words[1].front),
+            auto meaning       = WordSense(parseCategory(words[1].front),
                                              words[2].to!ubyte,
                                              links);
             debug assert(synset_cnt == sense_cnt);
@@ -211,7 +227,6 @@ class WordNet
     */
     void readIndex(string fileName, bool useMmFile = false)
     {
-        import algorithm_ex: byLine;
         size_t lnr;
         /* TODO: Functionize and merge with conceptnet5.readCSV */
         if (useMmFile)
@@ -237,13 +252,13 @@ class WordNet
         writeln("Read ", lnr, " words from ", fileName);
     }
 
-    WordMeaning[][string] _words;
+    WordSense[][string] _words;
 }
 
 /** Decode Ambiguous Meaning(s) of string $(D s). */
 version(none)
 // TODO: This gives error. Fix.
-private auto to(T: WordMeaning[], S)(S x) if (isSomeString!S ||
+private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
                                               isSomeChar!S)
 {
     T meanings;

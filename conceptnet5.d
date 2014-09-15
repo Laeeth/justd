@@ -254,7 +254,7 @@ struct Concept
     EdgeIndex[] outIndexes; // into Net.edges
     EdgeIndex[] inIndexes; // into Net.edges
     string concept;
-    HumanLang hlang;
+    HLang hlang;
 }
 
 alias NodeIndex = Index;
@@ -269,7 +269,7 @@ struct Link
     float weight;
     Relation relation;
     bool negation;
-    HumanLang hlang;
+    HLang hlang;
     Source source;
     // sources;
 }
@@ -331,9 +331,9 @@ class Net
 
     size_t[Relation.max + 1] relationCounts;
     size_t[Source.max + 1] sourceCounts;
-    size_t[HumanLang.max + 1] hlangCounts;
+    size_t[HLang.max + 1] hlangCounts;
     size_t assertionCount;
-    real weightSum = 0;
+    real weightSum = 0; // Sum of all link weights.
 
     import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array, std.uni;
     import dbg;
@@ -406,7 +406,7 @@ class Net
                     }
                     else
                     {
-                        writeln(part);
+                        dln(part);
                     }
                     break;
                 case 3:
@@ -417,13 +417,13 @@ class Net
                     }
                     else
                     {
-                        writeln(part);
+                        dln(part);
                     }
                     break;
                 case 4:
                     if (part != `/ctx/all`)
                     {
-                        writeln(part);
+                        dln(part);
                     }
                     break;
                 case 5:
@@ -482,6 +482,8 @@ class Net
 
     void showRelations()
     {
+        /* TODO: Functionize foreachs */
+
         writeln("Relations:");
         foreach (relation; Relation.min..Relation.max)
         {
@@ -503,12 +505,12 @@ class Net
         }
 
         writeln("Languages:");
-        foreach (hlang; HumanLang.min..HumanLang.max)
+        foreach (hlang; HLang.min..HLang.max)
         {
             const count = this.hlangCounts[hlang];
             if (count)
             {
-                writeln("- ", hlang.to!string, ": ", count);
+                writeln("- ", hlang.toName, " (", hlang.to!string, ") : ", count);
             }
         }
 
