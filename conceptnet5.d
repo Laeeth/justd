@@ -22,6 +22,7 @@
 module conceptnet5;
 
 import languages;
+import std.traits: isSomeString;
 import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
@@ -307,9 +308,8 @@ class Net
         context) $(D category).
         If no category given return all possible.
     */
-    Concept[] conceptsByWord(string word,
-                             WordCategory category = WordCategory.unknown)
-        @safe pure
+    Concept[] conceptsByWord(S)(S word,
+                                WordCategory category = WordCategory.unknown) if (isSomeString!S)
     {
         if (category == WordCategory.unknown)
         {
@@ -459,13 +459,16 @@ class Net
         /* TODO: Functionize and merge with wordnet.readIndex */
         if (useMmFile)
         {
-            auto mmf= new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
-            auto data = cast(ubyte[])mmf[];
-            import algorithm_ex: byLine, Newline;
-            foreach (line; data.byLine!(Newline.native)) // TODO: Compare with File.byLine
+            version(none)
             {
-                //readCSVLine(line, lnr);
-                lnr++;
+                auto mmf= new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+                auto data = cast(ubyte[])mmf[];
+                import algorithm_ex: byLine, Newline;
+                foreach (line; data.byLine!(Newline.native)) // TODO: Compare with File.byLine
+                {
+                    readCSVLine(line, lnr);
+                    lnr++;
+                }
             }
         }
         else
