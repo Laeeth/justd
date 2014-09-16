@@ -40,6 +40,7 @@ enum Relation:ubyte
                 * between A and B, but ConceptNet can't determine what that * relationship
                 is based on the data. This was called * "ConceptuallyRelatedTo" in
                 ConceptNet 2 through 4.  */
+    conceptuallyRelatedTo = relatedTo,
 
     isA, /* A is a subtype or a specific instance of B; every A is a B. (We do
           * not make the type-token distinction, because people don't usually
@@ -56,7 +57,6 @@ enum Relation:ubyte
     hasA, /* B belongs to A, either as an inherent part or due to a social
              construct of possession. HasA is often the reverse of PartOf. /r/HasA
              /c/en/bird /c/en/wing ; /r/HasA /c/en/pen /c/en/ink */
-
 
     usedFor, /* A is used for B; the purpose of A is B. /r/UsedFor /c/en/bridge
                 /c/en/cross_water */
@@ -124,51 +124,61 @@ enum Relation:ubyte
                   but within one language.) */
 }
 
-/** Return true if $(D relation) is a transitive relation.
-    A relation R from A to B is transitive
-    if A => R => B and B => R => C infers A => R => C.
- */
-bool isTransitive(Relation relation)
-    @safe @nogc pure nothrow
+@safe @nogc pure nothrow
 {
-    with (Relation)
+    bool isSymmetric(const Relation relation)
     {
-        return (relation == partOf ||
-                relation == isA ||
-                relation == memberOf ||
-                relation == atLocation ||
-                relation == hasSubevent ||
-                relation == synonym ||
-                relation == hasPrerequisite ||
-                relation == hasProperty ||
-                relation == translationOf);
+        with (Relation)
+        {
+            return (relation == relatedTo ||
+                    relation == synonym);
+        }
     }
-}
 
-/** Return true if $(D relation) is a strong.
-    TODO: Where is strength decided and what purpose does it have?
- */
-bool isStrong(Relation relation)
-    @safe @nogc pure nothrow
-{
-    with (Relation)
+    /** Return true if $(D relation) is a transitive relation.
+        A relation R from A to B is transitive
+        if A => R => B and B => R => C infers A => R => C.
+    */
+    bool isTransitive(const Relation relation)
     {
-        return (relation == hasProperty ||
-                relation == motivatedByGoal);
+        with (Relation)
+        {
+            return (relation == partOf ||
+                    relation == isA ||
+                    relation == memberOf ||
+                    relation == atLocation ||
+                    relation == hasSubevent ||
+                    relation == synonym ||
+                    relation == hasPrerequisite ||
+                    relation == hasProperty ||
+                    relation == translationOf);
+        }
     }
-}
 
-/** Return true if $(D relation) is a weak.
-    TODO: Where is strongness decided and what purpose does it have?
- */
-bool isWeak(Relation relation)
-    @safe @nogc pure nothrow
-{
-    with (Relation)
+    /** Return true if $(D relation) is a strong.
+        TODO: Where is strength decided and what purpose does it have?
+    */
+    bool isStrong(Relation relation)
     {
-        return (relation == isA ||
-                relation == locationOf);
+        with (Relation)
+        {
+            return (relation == hasProperty ||
+                    relation == motivatedByGoal);
+        }
     }
+
+    /** Return true if $(D relation) is a weak.
+        TODO: Where is strongness decided and what purpose does it have?
+    */
+    bool isWeak(Relation relation)
+    {
+        with (Relation)
+        {
+            return (relation == isA ||
+                    relation == locationOf);
+        }
+    }
+
 }
 
 enum Thematic:ubyte
@@ -279,28 +289,35 @@ void infer(T...)(relations)
 alias Index = uint; // TODO: Change this to size_t when we have more concepts and memory.
 
 alias EdgeIndex = Index;
+alias EdgeIndexes = Array!EdgeIndex; // TODO: Distinguish from NodeIndexes
 
 /** Concept. */
 struct Concept
 {
-    EdgeIndex[] outIndexes; // into Net.edges
-    EdgeIndex[] inIndexes; // into Net.edges
+    this(string concept, HLang hlang)
+    {
+        this.concept = concept;
+        this.hlang = hlang;
+    }
+    EdgeIndexes outIndexes; // into Net.edges
+    EdgeIndexes inIndexes; // into Net.edges
     string concept;
     HLang hlang;
 }
 
+import std.container: Array;
+
 alias NodeIndex = Index;
+alias NodeIndexes = Array!NodeIndex; // TODO: Distinguish from EdgeIndexes
 
 /** Network Hyper Link.
     Its called Hyper because it connects many to many.
  */
 struct Link
 {
-    NodeIndex[] startIndexes; // into Net.nodes
-    NodeIndex[] endIndexes; // into Net.nodes
-
+    NodeIndexes startIndexes; // into Net.nodes
+    NodeIndexes endIndexes; // into Net.nodes
     float weight;
-
     Relation relation;
     bool negation;
     HLang hlang;
@@ -470,7 +487,7 @@ class Net(bool hashedStorage = true)
                     {
                         const srcLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[srcLang]++;
-                        this.store(part, Concept([], [], part.idup, srcLang));
+                        this.store(part, Concept(part.idup, srcLang));
                     }
                     else
                     {
@@ -482,7 +499,7 @@ class Net(bool hashedStorage = true)
                     {
                         const dstLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[dstLang]++;
-                        this.store(part, Concept([], [], part.idup, dstLang));
+                        this.store(part, Concept(part.idup, dstLang));
                     }
                     else
                     {
