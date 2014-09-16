@@ -216,13 +216,14 @@ class WordNet
     WordSense[] meaningsOf(S)(S lemma,
                               HLang[] hlangs = []) if (isSomeString!S)
     {
-        typeof(return) word;
+        typeof(return) wordSense;
         const lower = lemma.toLower;
         if (lower in _words)
         {
-            word = _words[lower];
+            wordSense = _words[lower];
         }
-        return word;
+        writeln(lemma, " have sense ", wordSense);
+        return wordSense;
     }
 
     /** Return true if $(D lemma) can mean a $(D category) in any of $(D
