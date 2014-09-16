@@ -464,9 +464,10 @@ class Net(bool hashedStorage = true)
                 case 2:
                     if (part.skipOver(`/c/`))
                     {
-                        const srcLang = part.findPopBefore(`/`).decodeHumanLang;
+                        auto split = part.findSplit(`/`);
+                        const srcLang = split[0].decodeHumanLang;
                         hlangCounts[srcLang]++;
-                        immutable srcConcept = part.idup;
+                        immutable srcConcept = split[2].idup;
                         this.store(srcConcept, Concept(srcConcept, srcLang));
                     }
                     else
@@ -477,9 +478,10 @@ class Net(bool hashedStorage = true)
                 case 3:
                     if (part.skipOver(`/c/`))
                     {
-                        const dstLang = part.findPopBefore(`/`).decodeHumanLang;
+                        auto split = part.findSplit(`/`);
+                        const dstLang = split[0].decodeHumanLang;
                         hlangCounts[dstLang]++;
-                        immutable dstConcept = part.idup;
+                        immutable dstConcept = split[2].idup;
                         this.store(dstConcept, Concept(dstConcept, dstLang));
                     }
                     else
