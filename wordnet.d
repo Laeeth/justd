@@ -256,7 +256,7 @@ class WordNet
         return category;
     }
 
-    void readIndexLine(R, N)(R line, N lnr)
+    void readIndexLine(R, N)(R line, N lnr, bool useMmFile = false)
     {
         if (!line.empty &&
             !line.front.isWhite) // if first is not space. TODO: move this check
@@ -272,7 +272,7 @@ class WordNet
             /* pragma(msg, typeof(line).stringof); */
             /* pragma(msg, typeof(line.idup).stringof); */
             const words        = linestr.split; // TODO: Non-eager split?
-            const lemma        = words[0].idup;
+            const lemma        = words[0].idup; // NOTE: Stuff fails if this is set
             const pos          = words[1];
             const synset_cnt   = words[2].to!uint;
             const p_cnt        = words[3].to!uint;
@@ -319,7 +319,7 @@ class WordNet
                 import algorithm_ex: byLine;
                 foreach (line; data.byLine)
                 {
-                    readIndexLine(line, lnr);
+                    readIndexLine(line, lnr, useMmFile);
                     lnr++;
                 }
             }
