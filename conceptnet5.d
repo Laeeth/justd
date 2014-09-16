@@ -273,6 +273,7 @@ auto pageSize() @trusted
 }
 
 /** Main Net.
+    TODO: Use DCD, stringcache, slice ubyte[] allocator
     TODO: Call GC.disable/enable around construction and search.
 */
 class Net(bool hashedStorage = true)
