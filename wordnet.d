@@ -54,38 +54,33 @@ class WordNet
             addWord(lemma, WordCategory.preposition, 0, HLang.en);
         }
 
-        foreach (lemma; ["a", "an"])
-        {
+        /* undefinite articles */
+        foreach (lemma; ["a", "an"]) {
             addWord(lemma, WordCategory.articleUndefinite, 0, HLang.en);
         }
-
-        foreach (lemma; ["en", "ena", "ett"])
-        {
+        foreach (lemma; ["ein", "eine", "eines", "einem", "einen", "einer"]) {
+            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.de);
+        }
+        foreach (lemma; ["en", "ena", "ett"]) {
             addWord(lemma, WordCategory.articleUndefinite, 0, HLang.sv);
         }
 
-        foreach (lemma; ["the"])
-        {
+        /* definite articles */
+        foreach (lemma; ["the"]) {
             addWord(lemma, WordCategory.articleDefinite, 0, HLang.en);
         }
-
-        foreach (lemma; ["den", "det"])
-        {
+        foreach (lemma; ["der", "die", "das", "des", "dem", "den"]) {
+            addWord(lemma, WordCategory.articleDefinite, 0, HLang.de);
+        }
+        foreach (lemma; ["den", "det"]) {
             addWord(lemma, WordCategory.articleDefinite, 0, HLang.sv);
         }
 
-        foreach (lemma; ["I", "me",
-                         "you",
-                         "she", "her",
-                         "he", "him",
-                         "it"])
-        {
+        /* personal pronoun */
+        foreach (lemma; ["I", "me", "you", "she", "her", "he", "him", "it"]) {
             addWord(lemma, WordCategory.pronounPersonalSingular, 0, HLang.en);
         }
-
-        foreach (lemma; ["we", "us", "you",
-                         "they", "them"])
-        {
+        foreach (lemma; ["we", "us", "you", "they", "them"]) {
             addWord(lemma, WordCategory.pronounPersonalPlural, 0, HLang.en);
         }
 
