@@ -50,6 +50,18 @@ b.byLine!(Newline.unix)
   properties when trying to assign/pass a \texttt{mutable T} to an
   \texttt{immutable T}.
 
+This sample diagnostics
+
+\begin{lstlisting}[frame=single]
+associative arrays can only be assigned values with immutable keys, not char[]
+\end{lstlisting}
+
+should be enhanced with
+
+\begin{lstlisting}[frame=single]
+, suffix with .idup if intentional
+\end{lstlisting}
+
 \item Add warning flag for casting between mutable, const and immutable.
 
 \item Escape Analysis (EA). Pointers to stack memory should not escape scope. This is
