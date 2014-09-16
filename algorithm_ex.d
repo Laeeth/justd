@@ -26,6 +26,28 @@ alias tail = dropOne;
 
 // ==============================================================================================
 
+/** Return true if $(D x) is a equal to any of $(D y). */
+bool of(S, T...)(S x, lazy T ys) pure if (ys.length >= 1 &&
+                                          is(typeof({ return S.init == CommonType!(T).init; })))
+{
+    foreach (y; ys)
+    {
+        if (x == y)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+unittest
+{
+    assert(1.of(1, 2, 3));
+    assert(!4.of(1, 2, 3));
+}
+
+// ==============================================================================================
+
 /** Returns: First Argument (element of $(D a)) whose implicit conversion to
     bool is true.
 
@@ -36,7 +58,7 @@ alias tail = dropOne;
 
     TODO: Is inout Conversion!T the correct return value?
 */
-CommonType!T either(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.length >= 1)
+CommonType!T either(T...)(lazy T a) pure if (a.length >= 1)
 {
     auto a0 = a[0]();           // evaluate only once
     static if (T.length == 1)
@@ -49,7 +71,7 @@ CommonType!T either(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (a.l
     }
 }
 /** This overload enables, when possible, lvalue return. */
-auto ref either(T...)(ref T a) @safe @nogc pure nothrow if (a.length >= 1 && allSame!T)
+auto ref either(T...)(ref T a) pure if (a.length >= 1 && allSame!T)
 {
     static if (T.length == 1)
     {
