@@ -490,6 +490,7 @@ enum WordCategory:ubyte
     nounLocationName,           // Stockholm
     nounPersonName,             // John
     nounOtherName,
+    nounWeekday,
 
     verb,
     adjective,
@@ -535,7 +536,8 @@ enum WordCategory:ubyte
                     category == nounRational ||
                     category == nounLocationName ||
                     category == nounPersonName ||
-                    category == nounOtherName);
+                    category == nounOtherName ||
+                    category == nounWeekday);
         }
     }
     bool isNounName(WordCategory category)
