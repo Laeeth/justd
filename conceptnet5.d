@@ -3,6 +3,8 @@
 /** ConceptNet 5.
     Reads data from CN5 into a Hypergraph.
 
+    Data: http://conceptnet5.media.mit.edu/downloads/current/
+
     See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: https://github.com/commonsense/conceptnet5/wiki
 
@@ -590,6 +592,7 @@ unittest
 {
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
+    // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
     auto net = new Net(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
     //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
