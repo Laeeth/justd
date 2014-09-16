@@ -25,9 +25,9 @@ class WordNet
         alias nPath = buildNormalizedPath;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
         readIndex(nPath(fixed, "index.adj"), false);
-        readIndex(nPath(fixed, "index.adv"), true);
+        readIndex(nPath(fixed, "index.adv"), false);
         readIndex(nPath(fixed, "index.noun"), false);
-        readIndex(nPath(fixed, "index.verb"), true);
+        readIndex(nPath(fixed, "index.verb"), false);
 
         foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
