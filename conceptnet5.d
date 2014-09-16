@@ -146,7 +146,7 @@ bool isTransitive(Relation relation)
 }
 
 /** Return true if $(D relation) is a strong.
-    TODO: Where is strongness decided and what purpose does it have?
+    TODO: Where is strength decided and what purpose does it have?
  */
 bool isStrong(Relation relation)
     @safe @nogc pure nothrow
@@ -322,15 +322,27 @@ auto pageSize() @trusted
 
 /** Main Net.
     TODO: Call GC.disable/enable around construction and search.
- */
-class Net
+*/
+class Net(bool hashedStorage = true)
 {
-    /** Concepts by WordCategory */
-    Concept[][string] conceptsByNoun;
-    Concept[][string] conceptsByVerb;
-    Concept[][string] conceptsByAdjective;
-    Concept[][string] conceptsByAdverb;
-    Concept[][string] conceptsByOther;
+    private
+    {
+        static if (hashedStorage)
+        {
+            /** Concepts by WordCategory */
+            Concept[][string] conceptsByNoun;
+            Concept[][string] conceptsByVerb;
+            Concept[][string] conceptsByAdjective;
+            Concept[][string] conceptsByAdverb;
+            Concept[][string] conceptsByOther;
+        }
+        else
+        {
+            Concept[] concepts;
+        }
+    }
+
+    private Link[] links;
 
     import wordnet: WordNet;
 
@@ -340,26 +352,26 @@ class Net
         context) $(D category).
         If no category given return all possible.
     */
-    Concept[] conceptsByWord(S)(S word,
-                                WordCategory category = WordCategory.unknown) if (isSomeString!S)
+    static if (hashedStorage)
     {
-        if (category == WordCategory.unknown)
+        Concept[] conceptsByWord(S)(S word,
+                                    WordCategory category = WordCategory.unknown) if (isSomeString!S)
         {
-            const meanings = this.wordnet.meaningsOf(word);
-            if (!meanings.empty)
+            if (category == WordCategory.unknown)
             {
-                category = meanings.front.category; // TODO: Pick union of all meanings
+                const meanings = this.wordnet.meaningsOf(word);
+                if (!meanings.empty)
+                {
+                    category = meanings.front.category; // TODO: Pick union of all meanings
+                }
             }
+            if      (category.isNoun)      return conceptsByNoun[word];
+            else if (category.isVerb)      return conceptsByVerb[word];
+            else if (category.isAdjective) return conceptsByAdjective[word];
+            else if (category.isAdverb)    return conceptsByAdverb[word];
+            else                           return conceptsByOther[word];
         }
-
-        if      (category.isNoun)      return conceptsByNoun[word];
-        else if (category.isVerb)      return conceptsByVerb[word];
-        else if (category.isAdjective) return conceptsByAdjective[word];
-        else if (category.isAdverb)    return conceptsByAdverb[word];
-        else                           return conceptsByOther[word];
     }
-
-    Link[] links;
 
     size_t[Relation.max + 1] relationCounts;
     size_t[Source.max + 1] sourceCounts;
@@ -377,6 +389,7 @@ class Net
     this(string dirPath)
     {
         this.wordnet = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
+        // GC.disabled had no noticeble effect here: import core.memory: GC;
         foreach (file; dirPath.expandTilde
                               .buildNormalizedPath
                               .dirEntries(SpanMode.shallow)
@@ -384,6 +397,25 @@ class Net
         {
             readCSV(file);
         }
+        GC.enable;
+    }
+
+    /** Store $(D concept) at $(D lemma) index. */
+    auto ref store(S)(S lemma, Concept concept) if (isSomeString!S)
+    {
+        static if (hashedStorage)
+        {
+            if      (wordnet.canMean(lemma, WordCategory.noun))      { conceptsByNoun[lemma.idup]      ~= concept; }
+            else if (wordnet.canMean(lemma, WordCategory.verb))      { conceptsByVerb[lemma.idup]      ~= concept; }
+            else if (wordnet.canMean(lemma, WordCategory.adjective)) { conceptsByAdjective[lemma.idup] ~= concept; }
+            else if (wordnet.canMean(lemma, WordCategory.adverb))    { conceptsByAdverb[lemma.idup]    ~= concept; }
+            else                                                     { conceptsByOther[lemma.idup]     ~= concept; }
+        }
+        else
+        {
+            concepts ~= concept;
+        }
+        return this;
     }
 
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -439,13 +471,7 @@ class Net
                     {
                         const srcLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[srcLang]++;
-                        const meanings = wordnet.meaningsOf(part);
-                        auto concept = Concept([], [], part.idup, srcLang);
-                        if      (wordnet.hasMeaning(part, WordCategory.noun))      { conceptsByNoun[part.idup] ~= concept; }
-                        else if (wordnet.hasMeaning(part, WordCategory.verb))      { conceptsByVerb[part.idup] ~= concept; }
-                        else if (wordnet.hasMeaning(part, WordCategory.adjective)) { conceptsByAdjective[part.idup] ~= concept; }
-                        else if (wordnet.hasMeaning(part, WordCategory.adverb))    { conceptsByAdverb[part.idup] ~= concept; }
-                        else                                                       { conceptsByOther[part.idup] ~= concept; }
+                        this.store(part, Concept([], [], part.idup, srcLang));
                     }
                     else
                     {
@@ -457,7 +483,7 @@ class Net
                     {
                         const dstLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[dstLang]++;
-                        auto concept = Concept([], [], part.idup, dstLang);
+                        this.store(part, Concept([], [], part.idup, dstLang));
                     }
                     else
                     {
@@ -603,6 +629,7 @@ unittest
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
     // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
-    auto net = new Net(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+    auto net = new Net!(false)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+    /* auto netH = new Net!(true)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`); */
     //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
