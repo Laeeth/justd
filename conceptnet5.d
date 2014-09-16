@@ -145,7 +145,9 @@ bool isTransitive(Relation relation)
     }
 }
 
-/** Return true if $(D relation) is a strong. */
+/** Return true if $(D relation) is a strong.
+    TODO: Where is strongness decided and what purpose does it have?
+ */
 bool isStrong(Relation relation)
     @safe @nogc pure nothrow
 {
@@ -156,7 +158,9 @@ bool isStrong(Relation relation)
     }
 }
 
-/** Return true if $(D relation) is a weak. */
+/** Return true if $(D relation) is a weak.
+    TODO: Where is strongness decided and what purpose does it have?
+ */
 bool isWeak(Relation relation)
     @safe @nogc pure nothrow
 {
@@ -272,7 +276,7 @@ void infer(T...)(relations)
 /** Index Precision.
     Set this to $(D uint) if we get low on memory.
 */
-alias Index = size_t;
+alias Index = uint; // TODO: Change this to size_t when we have more concepts and memory.
 
 alias EdgeIndex = Index;
 
@@ -361,6 +365,10 @@ class Net
     size_t[Source.max + 1] sourceCounts;
     size_t[HLang.max + 1] hlangCounts;
     size_t assertionCount;
+
+    // is there a Phobos structure for this?
+    real weightMin = real.max;
+    real weightMax = real.min_normal;
     real weightSum = 0; // Sum of all link weights.
 
     import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array, std.uni;
@@ -384,7 +392,6 @@ class Net
         import std.algorithm: splitter;
         auto parts = line.splitter('\t');
 
-        Concept concept;
         Link link;
 
         size_t ix;
@@ -433,10 +440,12 @@ class Net
                         const srcLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[srcLang]++;
                         const meanings = wordnet.meaningsOf(part);
-                        if (wordnet.hasMeaning(part, WordCategory.noun))
-                        {
-                            conceptsByNoun[part.idup] ~= Concept([], [], part.idup, srcLang);
-                        }
+                        auto concept = Concept([], [], part.idup, srcLang);
+                        if      (wordnet.hasMeaning(part, WordCategory.noun))      { conceptsByNoun[part.idup] ~= concept; }
+                        else if (wordnet.hasMeaning(part, WordCategory.verb))      { conceptsByVerb[part.idup] ~= concept; }
+                        else if (wordnet.hasMeaning(part, WordCategory.adjective)) { conceptsByAdjective[part.idup] ~= concept; }
+                        else if (wordnet.hasMeaning(part, WordCategory.adverb))    { conceptsByAdverb[part.idup] ~= concept; }
+                        else                                                       { conceptsByOther[part.idup] ~= concept; }
                     }
                     else
                     {
@@ -448,10 +457,7 @@ class Net
                     {
                         const dstLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[dstLang]++;
-                        if (wordnet.hasMeaning(part, WordCategory.noun))
-                        {
-                            conceptsByNoun[part.idup] ~= Concept([], [], part.idup, dstLang);
-                        }
+                        auto concept = Concept([], [], part.idup, dstLang);
                     }
                     else
                     {
@@ -466,6 +472,8 @@ class Net
                     break;
                 case 5:
                     this.weightSum += link.weight = part.to!float;
+                    this.weightMin = min(part.to!float, this.weightMin);
+                    this.weightMax = max(part.to!float, this.weightMax);
                     this.assertionCount++;
                     break;
                 case 6:
@@ -556,7 +564,9 @@ class Net
         }
 
         writeln("Stats:");
-        writeln("- Sum of weights: ", this.weightSum);
+        writeln("- Weights Min: ", this.weightMin);
+        writeln("- Weights Max: ", this.weightMax);
+        writeln("- Weights Sum: ", this.weightSum);
         writeln("- Number of assertions: ", this.assertionCount);
     }
 
