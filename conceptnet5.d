@@ -325,6 +325,9 @@ auto pageSize() @trusted
 */
 class Net(bool hashedStorage = true)
 {
+    import std.file, std.algorithm, std.range, std.string, std.path, std.array, std.uni;
+    import dbg;
+
     private
     {
         static if (hashedStorage)
@@ -382,9 +385,6 @@ class Net(bool hashedStorage = true)
     real weightMin = real.max;
     real weightMax = real.min_normal;
     real weightSum = 0; // Sum of all link weights.
-
-    import std.file, std.algorithm, std.range, std.string, std.path, std.mmfile, std.array, std.uni;
-    import dbg;
 
     this(string dirPath)
     {
@@ -526,19 +526,19 @@ class Net(bool hashedStorage = true)
      */
     void readCSV(string fileName, bool useMmFile = false)
     {
-        size_t lnr;
+        size_t lnr = 0;
         /* TODO: Functionize and merge with wordnet.readIndex */
         if (useMmFile)
         {
             version(none)
             {
-                auto mmf= new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+                import std.mmfile: MmFile;
+                auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
                 auto data = cast(ubyte[])mmf[];
                 import algorithm_ex: byLine, Newline;
                 foreach (line; data.byLine!(Newline.native)) // TODO: Compare with File.byLine
                 {
-                    readCSVLine(line, lnr);
-                    lnr++;
+                    readCSVLine(line, lnr); lnr++;
                 }
             }
         }
@@ -546,8 +546,7 @@ class Net(bool hashedStorage = true)
         {
             foreach (line; File(fileName).byLine)
             {
-                readCSVLine(line, lnr);
-                lnr++;
+                readCSVLine(line, lnr); lnr++;
             }
         }
         writeln(fileName, " has ", lnr, " lines");
@@ -593,6 +592,16 @@ class Net(bool hashedStorage = true)
         writeln("- Weights Max: ", this.weightMax);
         writeln("- Weights Sum: ", this.weightSum);
         writeln("- Number of assertions: ", this.assertionCount);
+
+        static if (hashedStorage)
+        {
+            writeln("Concept Counts:");
+            writeln("- by Nouns: ", conceptsByNoun.length);
+            writeln("- by Verbs: ", conceptsByVerb.length);
+            writeln("- by Adjectives: ", conceptsByAdjective.length);
+            writeln("- by Adverbs: ", conceptsByAdverb.length);
+            writeln("- by Others: ", conceptsByOther.length);
+        }
     }
 
     /** ConceptNet Relatedness.
