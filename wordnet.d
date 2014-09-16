@@ -316,7 +316,7 @@ class WordNet
 version(none)
 // TODO: This gives error. Fix.
 private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
-                                              isSomeChar!S)
+                                            isSomeChar!S)
 {
     T meanings;
     return meanings;
@@ -330,6 +330,6 @@ unittest
     {
         writeln(word, " has meanings ", wn.meaningsOf(word));
     }
-    assert(wn.canMean("car", WordCategory.noun));
-    assert(!wn.canMean("longing", WordCategory.verb));
+    assert(wn.canMean("car", WordCategory.noun, [HLang.en]));
+    assert(!wn.canMean("longing", WordCategory.verb, [HLang.en]));
 }
