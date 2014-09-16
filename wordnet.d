@@ -222,7 +222,7 @@ class WordNet
         {
             wordSense = _words[lower];
         }
-        writeln(lemma, " have sense ", wordSense);
+        // writeln(lemma, " have sense ", wordSense);
         return wordSense;
     }
 
