@@ -122,7 +122,10 @@ enum Relation:ubyte
                   but within one language.) */
 }
 
-/** Return true if $(D relation) is transitive. */
+/** Return true if $(D relation) is a transitive relation.
+    A relation R from A to B is transitive
+    if A => R => B and B => R => C infers A => R => C.
+ */
 bool isTransitive(Relation relation)
     @safe @nogc pure nothrow
 {
@@ -139,6 +142,29 @@ bool isTransitive(Relation relation)
                 relation == translationOf);
     }
 }
+
+/** Return true if $(D relation) is a strong. */
+bool isStrong(Relation relation)
+    @safe @nogc pure nothrow
+{
+    with (Relation)
+    {
+        return (relation == hasProperty ||
+                relation == motivatedByGoal);
+    }
+}
+
+/** Return true if $(D relation) is a weak. */
+bool isWeak(Relation relation)
+    @safe @nogc pure nothrow
+{
+    with (Relation)
+    {
+        return (relation == isA ||
+                relation == locationOf);
+    }
+}
+
 
 enum Thematic:ubyte
 {
@@ -267,12 +293,18 @@ struct Link
 {
     NodeIndex[] startIndexes; // into Net.nodes
     NodeIndex[] endIndexes; // into Net.nodes
+
     float weight;
+
     Relation relation;
     bool negation;
     HLang hlang;
     Source source;
-    // sources;
+}
+
+unittest
+{
+    pragma(msg, Link.sizeof);
 }
 
 auto pageSize() @trusted
@@ -356,6 +388,7 @@ class Net
         import std.algorithm: splitter;
         auto parts = line.splitter('\t');
 
+        Concept concept;
         Link link;
 
         size_t ix;
@@ -403,6 +436,11 @@ class Net
                     {
                         const srcLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[srcLang]++;
+                        const meanings = wordnet.meaningsOf(part);
+                        if (wordnet.hasMeaning(part, WordCategory.noun))
+                        {
+                            conceptsByNoun[part] ~= Concept([], [], part.idup, srcLang);
+                        }
                     }
                     else
                     {
@@ -414,6 +452,10 @@ class Net
                     {
                         const dstLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[dstLang]++;
+                        if (wordnet.hasMeaning(part, WordCategory.noun))
+                        {
+                            conceptsByNoun[part] ~= Concept([], [], part.idup, dstLang);
+                        }
                     }
                     else
                     {
