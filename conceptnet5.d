@@ -397,7 +397,6 @@ class Net(bool hashedStorage = true)
         {
             readCSV(file);
         }
-        GC.enable;
     }
 
     /** Store $(D concept) at $(D lemma) index. */
@@ -630,6 +629,9 @@ unittest
     backtrace.backtrace.install(stderr);
     // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
     auto net = new Net!(false)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
-    /* auto netH = new Net!(true)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`); */
+    if (false) // just to make hashedStorage compile
+    {
+        auto netH = new Net!(true)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+    }
     //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
