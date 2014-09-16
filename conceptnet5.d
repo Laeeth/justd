@@ -12,13 +12,13 @@
 
     TODO: Stricter typing:
           - Only allow Net.nodes to be indexed by NodeIndex
-          - Only allow Net.edges to be indexed by EdgeIndex
+          - Only allow Net.links to be indexed by LinkIndex
 
     TODO: Add Net members
     - byNode
-    - byEdge
-    - Concept getNode(EdgeIndex)
-    - Link getEdge(NodeIndex)
+    - byLink
+    - Concept getNode(LinkIndex)
+    - Link getLink(NodeIndex)
 
  */
 module conceptnet5;
@@ -28,6 +28,7 @@ import std.traits: isSomeString;
 import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
+import std.container: Array;
 import algorithm_ex: findPopBefore;
 
 /** Semantic Relation Type Code.
@@ -234,31 +235,6 @@ Thematic toThematic(Relation relation)
     }
 }
 
-/** WordNet Semantic Relation Type Code.
-    See also: conceptnet5.Relation
-*/
-enum WordNetRelation:ubyte
-{
-    unknown,
-    attribute,
-    causes,
-    classifiedByRegion,
-    classifiedByUsage,
-    classifiedByTopic,
-    entails,
-    hyponymOf, // also called hyperonymy, hyponymy,
-    instanceOf,
-    memberMeronymOf,
-    partMeronymOf,
-    sameVerbGroupAs,
-    similarTo,
-    substanceMeronymOf,
-    antonymOf,
-    derivationallyRelated,
-    pertainsTo,
-    seeAlso,
-}
-
 enum Source:ubyte
 {
     dbpedia37,
@@ -283,47 +259,6 @@ void infer(T...)(relations)
 {
 }
 
-/** Index Precision.
-    Set this to $(D uint) if we get low on memory.
-*/
-alias Index = uint; // TODO: Change this to size_t when we have more concepts and memory.
-
-alias EdgeIndex = Index;
-alias EdgeIndexes = Array!EdgeIndex; // TODO: Distinguish from NodeIndexes
-
-/** Concept. */
-struct Concept
-{
-    this(string concept, HLang hlang)
-    {
-        this.concept = concept;
-        this.hlang = hlang;
-    }
-    EdgeIndexes outIndexes; // into Net.edges
-    EdgeIndexes inIndexes; // into Net.edges
-    string concept;
-    HLang hlang;
-}
-
-import std.container: Array;
-
-alias NodeIndex = Index;
-alias NodeIndexes = Array!NodeIndex; // TODO: Distinguish from EdgeIndexes
-
-/** Network Hyper Link.
-    Its called Hyper because it connects many to many.
- */
-struct Link
-{
-    NodeIndexes startIndexes; // into Net.nodes
-    NodeIndexes endIndexes; // into Net.nodes
-    float weight;
-    Relation relation;
-    bool negation;
-    HLang hlang;
-    Source source;
-}
-
 auto pageSize() @trusted
 {
     version(linux)
@@ -344,6 +279,50 @@ class Net(bool hashedStorage = true)
 {
     import std.file, std.algorithm, std.range, std.string, std.path, std.array, std.uni;
     import dbg;
+
+    /** Index Precision.
+        Set this to $(D uint) if we get low on memory.
+    */
+    alias Index = uint; // TODO: Change this to size_t when we have more concepts and memory.
+
+    alias LinkIndex = Index;
+    alias LinkIndexes = Array!LinkIndex; // TODO: Distinguish from NodeIndexes
+
+    /** Concept. */
+    struct Concept
+    {
+        this(const string concept, HLang hlang)
+        {
+            static if (!hashedStorage)
+            {
+                this.concept = concept; // in-place of hash-key
+            }
+            this.hlang = hlang;
+        }
+        LinkIndexes outIndexes; // into Net.links
+        LinkIndexes inIndexes; // into Net.links
+        static if (!hashedStorage)
+        {
+            immutable string concept; // in-place of hash-key
+        }
+        HLang hlang;
+    }
+
+    alias NodeIndex = Index;
+    alias NodeIndexes = Array!NodeIndex; // TODO: Distinguish from LinkIndexes
+
+    /** Many-to-Many (Hyper) Link.
+     */
+    struct Link
+    {
+        NodeIndexes startIndexes; // into Net.nodes
+        NodeIndexes endIndexes; // into Net.nodes
+        float weight;
+        Relation relation;
+        bool negation;
+        HLang hlang;
+        Source source;
+    }
 
     private
     {
@@ -421,11 +400,11 @@ class Net(bool hashedStorage = true)
     {
         static if (hashedStorage)
         {
-            if      (wordnet.canMean(lemma, WordCategory.noun))      { conceptsByNoun[lemma.idup]      ~= concept; }
-            else if (wordnet.canMean(lemma, WordCategory.verb))      { conceptsByVerb[lemma.idup]      ~= concept; }
-            else if (wordnet.canMean(lemma, WordCategory.adjective)) { conceptsByAdjective[lemma.idup] ~= concept; }
-            else if (wordnet.canMean(lemma, WordCategory.adverb))    { conceptsByAdverb[lemma.idup]    ~= concept; }
-            else                                                     { conceptsByOther[lemma.idup]     ~= concept; }
+            if      (wordnet.canMean(lemma, WordCategory.noun))      { conceptsByNoun[lemma]      ~= concept; }
+            else if (wordnet.canMean(lemma, WordCategory.verb))      { conceptsByVerb[lemma]      ~= concept; }
+            else if (wordnet.canMean(lemma, WordCategory.adjective)) { conceptsByAdjective[lemma] ~= concept; }
+            else if (wordnet.canMean(lemma, WordCategory.adverb))    { conceptsByAdverb[lemma]    ~= concept; }
+            else                                                     { conceptsByOther[lemma]     ~= concept; }
         }
         else
         {
@@ -487,7 +466,8 @@ class Net(bool hashedStorage = true)
                     {
                         const srcLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[srcLang]++;
-                        this.store(part, Concept(part.idup, srcLang));
+                        immutable srcConcept = part.idup;
+                        this.store(srcConcept, Concept(srcConcept, srcLang));
                     }
                     else
                     {
@@ -499,7 +479,8 @@ class Net(bool hashedStorage = true)
                     {
                         const dstLang = part.findPopBefore(`/`).decodeHumanLang;
                         hlangCounts[dstLang]++;
-                        this.store(part, Concept(part.idup, dstLang));
+                        immutable dstConcept = part.idup;
+                        this.store(dstConcept, Concept(dstConcept, dstLang));
                     }
                     else
                     {
@@ -654,10 +635,10 @@ unittest
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
     // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
-    auto net = new Net!(false)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+    auto net = new Net!(true)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
     if (false) // just to make hashedStorage compile
     {
-        auto netH = new Net!(true)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+        auto netH = new Net!(false)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
     }
     //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
