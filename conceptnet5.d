@@ -165,7 +165,6 @@ bool isWeak(Relation relation)
     }
 }
 
-
 enum Thematic:ubyte
 {
     unknown,
@@ -302,11 +301,6 @@ struct Link
     Source source;
 }
 
-unittest
-{
-    pragma(msg, Link.sizeof);
-}
-
 auto pageSize() @trusted
 {
     version(linux)
@@ -439,7 +433,7 @@ class Net
                         const meanings = wordnet.meaningsOf(part);
                         if (wordnet.hasMeaning(part, WordCategory.noun))
                         {
-                            conceptsByNoun[part] ~= Concept([], [], part.idup, srcLang);
+                            conceptsByNoun[part.idup] ~= Concept([], [], part.idup, srcLang);
                         }
                     }
                     else
@@ -454,7 +448,7 @@ class Net
                         hlangCounts[dstLang]++;
                         if (wordnet.hasMeaning(part, WordCategory.noun))
                         {
-                            conceptsByNoun[part] ~= Concept([], [], part.idup, dstLang);
+                            conceptsByNoun[part.idup] ~= Concept([], [], part.idup, dstLang);
                         }
                     }
                     else

@@ -508,11 +508,15 @@ enum WordCategory:ubyte
 
     pronoun, /// https://www.englishclub.com/grammar/pronouns.htm
     pronounPersonal, /// https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonalSingular, /// https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonalPlural, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounDemonstrative, /// https://www.englishclub.com/grammar/pronouns-demonstrative.htm
     pronounPossessive, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
 
     determiner,
     article,
+    articleUndefinite,
+    articleDefinite,
     interjection,
 
     coordinatingConjunction, /// Coordinating conjunction
@@ -532,7 +536,15 @@ enum WordCategory:ubyte
                     category == nounPersonName ||
                     category == nounOtherName);
         }
-        // return category.to!string.startsWith("noun");
+    }
+    bool isNounName(WordCategory category)
+    {
+        with (WordCategory)
+        {
+            return (category == nounLocationName ||
+                    category == nounPersonName ||
+                    category == nounOtherName);
+        }
     }
     bool isVerb(WordCategory category) { return (category == WordCategory.verb); }
     bool isAdjective(WordCategory category) { return (category == WordCategory.adjective); }
@@ -546,6 +558,8 @@ enum WordCategory:ubyte
     {
         return (category == WordCategory.pronoun ||
                 category == WordCategory.pronounPersonal ||
+                category == WordCategory.pronounPersonalSingular ||
+                category == WordCategory.pronounPersonalPlural ||
                 category == WordCategory.pronounDemonstrative ||
                 category == WordCategory.pronounPossessive);
     }
@@ -557,13 +571,28 @@ enum WordCategory:ubyte
                 category == WordCategory.prepositionPlace ||
                 category == WordCategory.prepositionDirection);
     }
+    bool isArticle(WordCategory category)
+    {
+        return (category == WordCategory.article ||
+                category == WordCategory.articleUndefinite ||
+                category == WordCategory.articleDefinite);
+    }
 }
 
 bool memberOf(WordCategory child,
               WordCategory parent)
     @safe @nogc pure nothrow
 {
-    return child == parent;
+    switch (parent)
+    {
+        /* TODO: Use static foreach over all enum members to generate all
+         * relevant cases: */
+        case WordCategory.noun: return child.isNoun;
+        case WordCategory.verb: return child.isVerb;
+        case WordCategory.adverb: return child.isAdverb;
+        case WordCategory.adjective: return child.isAdjective;
+        default:return child == parent;
+    }
 }
 
 static immutable implies = [ "in order to" ];

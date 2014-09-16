@@ -4,7 +4,7 @@
     */
 module wordnet;
 
-import languages: WordCategory, HLang;
+import languages;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
 
 /** Word Sense/Meaning/Interpretation. */
@@ -13,6 +13,7 @@ struct WordSense
     WordCategory category;
     ubyte synsetCount; // Number of senses (meanings).
     uint[] links;
+    HLang hlang;
 }
 
 /** WordNet */
@@ -30,7 +31,7 @@ class WordNet
 
         foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
-            set(lemma, WordCategory.coordinatingConjunction, 0);
+            addWord(lemma, WordCategory.coordinatingConjunction, 0, HLang.en);
         }
 
         foreach (lemma; ["since",
@@ -39,7 +40,7 @@ class WordNet
                          "past",
                          ])
         {
-            set(lemma, WordCategory.prepositionTime, 0);
+            addWord(lemma, WordCategory.prepositionTime, 0, HLang.en);
         }
 
         // TODO: Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
@@ -50,32 +51,49 @@ class WordNet
                          "by", "out of", "towards", "through", "across",
                          "above", "over", "below", "under", "next to", "beside"])
         {
-            set(lemma, WordCategory.preposition, 0);
+            addWord(lemma, WordCategory.preposition, 0, HLang.en);
         }
 
-        foreach (lemma; ["a", "an", // definite
-                         "the" // undefinite
-                     ])
+        foreach (lemma; ["a", "an"])
         {
-            set(lemma, WordCategory.article, 0);
+            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.en);
+        }
+
+        foreach (lemma; ["en", "ena", "ett"])
+        {
+            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.sv);
+        }
+
+        foreach (lemma; ["the"])
+        {
+            addWord(lemma, WordCategory.articleDefinite, 0, HLang.en);
+        }
+
+        foreach (lemma; ["den", "det"])
+        {
+            addWord(lemma, WordCategory.articleDefinite, 0, HLang.sv);
         }
 
         foreach (lemma; ["I", "me",
                          "you",
                          "she", "her",
                          "he", "him",
-                         "it",
-                         "we", "us",
+                         "it"])
+        {
+            addWord(lemma, WordCategory.pronounPersonalSingular, 0, HLang.en);
+        }
+
+        foreach (lemma; ["we", "us", "you",
                          "they", "them"])
         {
-            set(lemma, WordCategory.pronounPersonal, 0);
+            addWord(lemma, WordCategory.pronounPersonalPlural, 0, HLang.en);
         }
 
         /* TODO: near/far in distance/time , singular, plural */
         foreach (lemma; ["this", "that",
                          "these", "those"])
         {
-            set(lemma, WordCategory.pronounDemonstrative, 0);
+            addWord(lemma, WordCategory.pronounDemonstrative, 0, HLang.en);
         }
 
         foreach (lemma; ["mine", // 1st person singular
@@ -86,7 +104,7 @@ class WordNet
                          "theirs" // 3rd person plural
                      ])
         {
-            set(lemma, WordCategory.pronounPossessive, 0);
+            addWord(lemma, WordCategory.pronounPossessive, 0, HLang.en);
         }
 
         foreach (lemma; ["after", "although", "as", "as if", "as long as",
@@ -95,7 +113,7 @@ class WordNet
                          "though", "till", "unless", "until", "what",
                          "when", "whenever", "wherever", "whether", "while"])
         {
-            set(lemma, WordCategory.subordinatingConjunction, 0);
+            addWord(lemma, WordCategory.subordinatingConjunction, 0, HLang.en);
         }
 
         foreach (lemma; ["accordingly", "additionally", "again", "almost",
@@ -114,25 +132,31 @@ class WordNet
                          "for example", "for instance", "of course", "on the
                          contrary", "so far", "until now", "thus" ])
         {
-            set(lemma, WordCategory.conjunctiveAdverb, 0);
+            addWord(lemma, WordCategory.conjunctiveAdverb, 0, HLang.en);
         }
     }
 
-    /** Store $(D lemma) as $(D category). */
-    auto set(string lemma, WordCategory category, ubyte synsetCount)
+    /** Store $(D lemma) as $(D category) in language $(D hlang). */
+    auto addWord(string lemma, WordCategory category, ubyte synsetCount,
+                 HLang hlang = HLang.init)
     {
         if (lemma in _words)
         {
             auto existing = _words[lemma];
-            auto hit = existing.find!(meaning => meaning.category == WordCategory.adverb);
-            if (!hit.empty &&
-                category == WordCategory.conjunctiveAdverb)
+            foreach (e; existing) // for each possible more general category
             {
-                hit.front.category = category; // specializing
-                return this;
+                writeln(e.category, " => ", category, " for lemma ", lemma);
+                if (category != e.category &&
+                    category.memberOf(e.category))
+                {
+                    e.category = category; // specialize
+                    return this;
+                }
             }
         }
-        _words[lemma] ~= WordSense(category, synsetCount);
+
+        uint[] links;
+        _words[lemma] ~= WordSense(category, synsetCount, links, hlang);
         return this;
     }
 
