@@ -517,6 +517,7 @@ enum WordCategory:ubyte
     article,
     articleUndefinite,
     articleDefinite,
+    articlePartitive,
     interjection,
 
     coordinatingConjunction, /// Coordinating conjunction
@@ -575,7 +576,8 @@ enum WordCategory:ubyte
     {
         return (category == WordCategory.article ||
                 category == WordCategory.articleUndefinite ||
-                category == WordCategory.articleDefinite);
+                category == WordCategory.articleDefinite ||
+                category == WordCategory.articlePartitive);
     }
 }
 
