@@ -61,6 +61,9 @@ class WordNet
         foreach (lemma; ["ein", "eine", "eines", "einem", "einen", "einer"]) {
             addWord(lemma, WordCategory.articleUndefinite, 0, HLang.de);
         }
+        foreach (lemma; ["un", "une", "des"]) {
+            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.fr);
+        }
         foreach (lemma; ["en", "ena", "ett"]) {
             addWord(lemma, WordCategory.articleUndefinite, 0, HLang.sv);
         }
@@ -72,8 +75,19 @@ class WordNet
         foreach (lemma; ["der", "die", "das", "des", "dem", "den"]) {
             addWord(lemma, WordCategory.articleDefinite, 0, HLang.de);
         }
+        foreach (lemma; ["le", "la", "l'", "les"]) {
+            addWord(lemma, WordCategory.articleDefinite, 0, HLang.fr);
+        }
         foreach (lemma; ["den", "det"]) {
             addWord(lemma, WordCategory.articleDefinite, 0, HLang.sv);
+        }
+
+        /* partitive articles */
+        foreach (lemma; ["some"]) {
+            addWord(lemma, WordCategory.articlePartitive, 0, HLang.en);
+        }
+        foreach (lemma; ["du", "de", "la", "de", "l'", "des"]) {
+            addWord(lemma, WordCategory.articlePartitive, 0, HLang.fr);
         }
 
         /* personal pronoun */
@@ -290,16 +304,9 @@ private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
 unittest
 {
     auto wn = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
-    writeln(wn.meaningsOf("car"));
-    writeln(wn.meaningsOf("trout"));
-    writeln(wn.meaningsOf("seal"));
-    writeln(wn.meaningsOf("and"));
-    writeln(wn.meaningsOf("or"));
-    writeln(wn.meaningsOf("script"));
-    writeln(wn.meaningsOf("shell"));
-    writeln(wn.meaningsOf("soon"));
-    writeln(wn.meaningsOf("long"));
-    writeln(wn.meaningsOf("longing"));
-    writeln(wn.meaningsOf("at"));
-    writeln(wn.meaningsOf("a"));
+    const words = ["car", "trout", "seal", "and", "or", "script", "shell", "soon", "long", "longing", "at", "a"];
+    foreach (word; words)
+    {
+        writeln(word, " has meanings ", wn.meaningsOf(word));
+    }
 }
