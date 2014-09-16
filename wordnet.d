@@ -143,6 +143,22 @@ class WordNet
         {
             addWord(lemma, WordCategory.conjunctiveAdverb, 0, HLang.en);
         }
+
+        /* weekdays */
+        foreach (lemma; ["monday", "tuesday", "wednesday", "thursday", "friday",
+                         "saturday", "sunday"]) {
+            addWord(lemma, WordCategory.nounWeekday, 0, HLang.en);
+        }
+        foreach (lemma; ["montag", "dienstag", "mittwoch", "donnerstag", "freitag",
+                         "samstag", "sonntag"]) {
+            addWord(lemma, WordCategory.nounWeekday, 0, HLang.de);
+        }
+        foreach (lemma; ["måndag", "tisdag", "onsdag", "torsdag", "fredag",
+                         "lördag", "söndag"]) {
+            addWord(lemma, WordCategory.nounWeekday, 0, HLang.sv);
+        }
+
+        // TODO: Learn: adjective strong <=> noun strength
     }
 
     /** Store $(D lemma) as $(D category) in language $(D hlang). */
@@ -169,7 +185,9 @@ class WordNet
         return this;
     }
 
-    /** Get Possible Meanings of $(D lemma) in $(D hlangs). */
+    /** Get Possible Meanings of $(D lemma) in all $(D hlangs).
+        TODO: Make use of hlangs.
+     */
     WordSense[] meaningsOf(S)(S lemma,
                               HLang[] hlangs = []) if (isSomeString!S)
     {
@@ -182,17 +200,20 @@ class WordNet
         return word;
     }
 
-    auto hasMeaning(S)(S lemma,
-                       WordCategory category,
-                       HLang[] hlangs = []) if (isSomeString!S)
+    /** Return true if $(D lemma) can mean a $(D category) in any of $(D
+        hlangs).
+    */
+    auto canMean(S)(S lemma,
+                    WordCategory category,
+                    HLang[] hlangs = []) if (isSomeString!S)
     {
         import std.algorithm: canFind;
         return meaningsOf(lemma, hlangs).canFind!(meaning => meaning.category.memberOf(category));
     }
 
 
-    WordCategory parseCategory(dchar x)
-        @safe @nogc pure nothrow
+    WordCategory parseCategory(C)(C x)
+        @safe @nogc pure nothrow if (isSomeChar!C)
     {
         WordCategory category;
         with (WordCategory)
@@ -235,8 +256,8 @@ class WordNet
             const synset_off   = words[6+p_cnt].to!uint;
             auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
             auto meaning       = WordSense(parseCategory(words[1].front),
-                                             words[2].to!ubyte,
-                                             links);
+                                           words[2].to!ubyte,
+                                           links);
             debug assert(synset_cnt == sense_cnt);
             _words[lemma] ~= meaning;
         }
@@ -309,4 +330,6 @@ unittest
     {
         writeln(word, " has meanings ", wn.meaningsOf(word));
     }
+    assert(wn.canMean("car", WordCategory.noun));
+    assert(!wn.canMean("longing", WordCategory.verb));
 }
