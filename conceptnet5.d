@@ -247,23 +247,6 @@ enum Source:ubyte
     wordnet30,
 }
 
-TokenId to(T:TokenId)(char x)
-    @safe @nogc pure nothrow
-{
-    switch (x)
-    {
-        case 'n': return TokenId.noun;
-        case 'v': return TokenId.verb;
-        case 'a': return TokenId.adjective;
-        case 'r': return TokenId.adverb;
-    }
-}
-
-/** Inference Algorithm. */
-void infer(T...)(relations)
-{
-}
-
 auto pageSize() @trusted
 {
     version(linux)
@@ -345,7 +328,7 @@ class Net(bool hashedStorage = true,
     {
         static if (hashedStorage)
         {
-            /** Concepts by WordCategory */
+            /** Concepts by WordKind */
             Concept[][string] conceptsByNoun;
             Concept[][string] conceptsByVerb;
             Concept[][string] conceptsByAdjective;
@@ -371,9 +354,9 @@ class Net(bool hashedStorage = true,
     static if (hashedStorage)
     {
         Concept[] conceptsByWord(S)(S word,
-                                    WordCategory category = WordCategory.unknown) if (isSomeString!S)
+                                    WordKind category = WordKind.unknown) if (isSomeString!S)
         {
-            if (category == WordCategory.unknown)
+            if (category == WordKind.unknown)
             {
                 const meanings = this.wordnet.meaningsOf(word);
                 if (!meanings.empty)
@@ -417,10 +400,10 @@ class Net(bool hashedStorage = true,
     {
         static if (hashedStorage)
         {
-            if      (wordnet.canMean(lemma, WordCategory.noun))      { conceptsByNoun[lemma]      ~= concept; }
-            else if (wordnet.canMean(lemma, WordCategory.verb))      { conceptsByVerb[lemma]      ~= concept; }
-            else if (wordnet.canMean(lemma, WordCategory.adjective)) { conceptsByAdjective[lemma] ~= concept; }
-            else if (wordnet.canMean(lemma, WordCategory.adverb))    { conceptsByAdverb[lemma]    ~= concept; }
+            if      (wordnet.canMean(lemma, WordKind.noun))      { conceptsByNoun[lemma]      ~= concept; }
+            else if (wordnet.canMean(lemma, WordKind.verb))      { conceptsByVerb[lemma]      ~= concept; }
+            else if (wordnet.canMean(lemma, WordKind.adjective)) { conceptsByAdjective[lemma] ~= concept; }
+            else if (wordnet.canMean(lemma, WordKind.adverb))    { conceptsByAdverb[lemma]    ~= concept; }
             else                                                     { conceptsByOther[lemma]     ~= concept; }
         }
         else
@@ -441,7 +424,11 @@ class Net(bool hashedStorage = true,
                    Concept(srcConcept, srcLang));
         if (!items.empty)
         {
-            writeln("Make use of WordSense ", items.front);
+            const category = items.front.parseWordKind;
+            if (category == WordKind.unknown)
+            {
+                dln("Unknown WordKind code ", items.front);
+            }
         }
         return srcConcept;
     }

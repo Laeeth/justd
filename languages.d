@@ -7,7 +7,6 @@ import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
 import std.algorithm: uniq, startsWith;
 import std.array: array;
-import std.conv: to;
 
 /** (Human) Language Code according to ISO 639-1.
     See also: http://www.mathguide.de/info/tools/languagecode.html
@@ -272,6 +271,7 @@ HLang decodeHumanLang(char[] x)
     {
         try
         {
+            import std.conv: to;
             return x.to!HLang;
         }
         catch (Exception a)
@@ -480,7 +480,7 @@ enum Tense:ubyte
 }
 
 /** Human Word Category. */
-enum WordCategory:ubyte
+enum WordKind:ubyte
 {
     unknown,
 
@@ -525,11 +525,59 @@ enum WordCategory:ubyte
     subordinatingConjunction,
 }
 
+import std.conv: to;
+
+WordKind parseWordKind(C)(C x) if (isSomeChar!C)
+{
+    typeof(return) category;
+    with (WordKind)
+    {
+        switch (x)
+        {
+            case 'n': category = noun; break;
+            case 'v': category = verb; break;
+            case 'a': category = adjective; break;
+            case 'r': category = adverb; break;
+            default: category = unknown; break;
+        }
+    }
+    return category;
+}
+
+unittest
+{
+    assert('n'.parseWordKind == WordKind.noun);
+}
+
+WordKind parseWordKind(C)(C x) if (isSomeString!C)
+{
+    if (x.length == 1)
+    {
+        return x[0].parseWordKind;
+    }
+    else
+    {
+        return typeof(return).init;
+    }
+}
+
+unittest
+{
+    assert("n".parseWordKind == WordKind.noun);
+}
+
+/* TODO: How do I make this work? */
+/* private T to(T:WordKind)(char x) */
+unittest
+{
+    /* assert('n'.to!WordKind == WordKind.noun); */
+}
+
 @safe pure @nogc nothrow
 {
-    bool isNoun(WordCategory category)
+    bool isNoun(WordKind category)
     {
-        with (WordCategory)
+        with (WordKind)
         {
             return (category == noun ||
                     category == nounInteger ||
@@ -540,61 +588,61 @@ enum WordCategory:ubyte
                     category == nounWeekday);
         }
     }
-    bool isNounName(WordCategory category)
+    bool isNounName(WordKind category)
     {
-        with (WordCategory)
+        with (WordKind)
         {
             return (category == nounLocationName ||
                     category == nounPersonName ||
                     category == nounOtherName);
         }
     }
-    bool isVerb(WordCategory category) { return (category == WordCategory.verb); }
-    bool isAdjective(WordCategory category) { return (category == WordCategory.adjective); }
-    bool isAdverb(WordCategory category)
+    bool isVerb(WordKind category) { return (category == WordKind.verb); }
+    bool isAdjective(WordKind category) { return (category == WordKind.adjective); }
+    bool isAdverb(WordKind category)
     {
-        return (category == WordCategory.adverb ||
-                category == WordCategory.normalAdverb ||
-                category == WordCategory.conjunctiveAdverb);
+        return (category == WordKind.adverb ||
+                category == WordKind.normalAdverb ||
+                category == WordKind.conjunctiveAdverb);
     }
-    bool isPronoun(WordCategory category)
+    bool isPronoun(WordKind category)
     {
-        return (category == WordCategory.pronoun ||
-                category == WordCategory.pronounPersonal ||
-                category == WordCategory.pronounPersonalSingular ||
-                category == WordCategory.pronounPersonalPlural ||
-                category == WordCategory.pronounDemonstrative ||
-                category == WordCategory.pronounPossessive);
+        return (category == WordKind.pronoun ||
+                category == WordKind.pronounPersonal ||
+                category == WordKind.pronounPersonalSingular ||
+                category == WordKind.pronounPersonalPlural ||
+                category == WordKind.pronounDemonstrative ||
+                category == WordKind.pronounPossessive);
     }
-    bool isPreposition(WordCategory category)
+    bool isPreposition(WordKind category)
     {
-        return (category == WordCategory.preposition ||
-                category == WordCategory.prepositionTime ||
-                category == WordCategory.prepositionPosition ||
-                category == WordCategory.prepositionPlace ||
-                category == WordCategory.prepositionDirection);
+        return (category == WordKind.preposition ||
+                category == WordKind.prepositionTime ||
+                category == WordKind.prepositionPosition ||
+                category == WordKind.prepositionPlace ||
+                category == WordKind.prepositionDirection);
     }
-    bool isArticle(WordCategory category)
+    bool isArticle(WordKind category)
     {
-        return (category == WordCategory.article ||
-                category == WordCategory.articleUndefinite ||
-                category == WordCategory.articleDefinite ||
-                category == WordCategory.articlePartitive);
+        return (category == WordKind.article ||
+                category == WordKind.articleUndefinite ||
+                category == WordKind.articleDefinite ||
+                category == WordKind.articlePartitive);
     }
 }
 
-bool memberOf(WordCategory child,
-              WordCategory parent)
+bool memberOf(WordKind child,
+              WordKind parent)
     @safe @nogc pure nothrow
 {
     switch (parent)
     {
         /* TODO: Use static foreach over all enum members to generate all
          * relevant cases: */
-        case WordCategory.noun: return child.isNoun;
-        case WordCategory.verb: return child.isVerb;
-        case WordCategory.adverb: return child.isAdverb;
-        case WordCategory.adjective: return child.isAdjective;
+        case WordKind.noun: return child.isNoun;
+        case WordKind.verb: return child.isVerb;
+        case WordKind.adverb: return child.isAdverb;
+        case WordKind.adjective: return child.isAdjective;
         default:return child == parent;
     }
 }
@@ -603,7 +651,7 @@ static immutable implies = [ "in order to" ];
 
 unittest
 {
-    assert(WordCategory.noun.isNoun);
+    assert(WordKind.noun.isNoun);
 }
 
 /** Subject Count. */
@@ -617,9 +665,9 @@ enum Gender { male, /// maskulinum in Swedish
               female, /// femininum in Swedish
               neutral }
 
-/* Number number(string x, WordCategory wc) {} */
-/* Person person(string x, WordCategory wc) {} */
-/* Gender gender(string x, WordCategory wc) {} */
+/* Number number(string x, WordKind wc) {} */
+/* Person person(string x, WordKind wc) {} */
+/* Gender gender(string x, WordKind wc) {} */
 
 /** English Negation Prefixes.
     See also: http://www.english-for-students.com/Negative-Prefixes.html

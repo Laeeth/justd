@@ -10,7 +10,7 @@ import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.
 /** Word Sense/Meaning/Interpretation. */
 struct WordSense
 {
-    WordCategory category;
+    WordKind category;
     ubyte synsetCount; // Number of senses (meanings).
     uint[] links;
     HLang hlang;
@@ -56,7 +56,7 @@ class WordNet
 
         foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
-            addWord(lemma, WordCategory.coordinatingConjunction, 0, HLang.en);
+            addWord(lemma, WordKind.coordinatingConjunction, 0, HLang.en);
         }
 
         foreach (lemma; ["since",
@@ -65,7 +65,7 @@ class WordNet
                          "past",
                          ])
         {
-            addWord(lemma, WordCategory.prepositionTime, 0, HLang.en);
+            addWord(lemma, WordKind.prepositionTime, 0, HLang.en);
         }
 
         // TODO: Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
@@ -76,58 +76,58 @@ class WordNet
                          "by", "out of", "towards", "through", "across",
                          "above", "over", "below", "under", "next to", "beside"])
         {
-            addWord(lemma, WordCategory.preposition, 0, HLang.en);
+            addWord(lemma, WordKind.preposition, 0, HLang.en);
         }
 
         /* undefinite articles */
         foreach (lemma; ["a", "an"]) {
-            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.en);
+            addWord(lemma, WordKind.articleUndefinite, 0, HLang.en);
         }
         foreach (lemma; ["ein", "eine", "eines", "einem", "einen", "einer"]) {
-            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.de);
+            addWord(lemma, WordKind.articleUndefinite, 0, HLang.de);
         }
         foreach (lemma; ["un", "une", "des"]) {
-            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.fr);
+            addWord(lemma, WordKind.articleUndefinite, 0, HLang.fr);
         }
         foreach (lemma; ["en", "ena", "ett"]) {
-            addWord(lemma, WordCategory.articleUndefinite, 0, HLang.sv);
+            addWord(lemma, WordKind.articleUndefinite, 0, HLang.sv);
         }
 
         /* definite articles */
         foreach (lemma; ["the"]) {
-            addWord(lemma, WordCategory.articleDefinite, 0, HLang.en);
+            addWord(lemma, WordKind.articleDefinite, 0, HLang.en);
         }
         foreach (lemma; ["der", "die", "das", "des", "dem", "den"]) {
-            addWord(lemma, WordCategory.articleDefinite, 0, HLang.de);
+            addWord(lemma, WordKind.articleDefinite, 0, HLang.de);
         }
         foreach (lemma; ["le", "la", "l'", "les"]) {
-            addWord(lemma, WordCategory.articleDefinite, 0, HLang.fr);
+            addWord(lemma, WordKind.articleDefinite, 0, HLang.fr);
         }
         foreach (lemma; ["den", "det"]) {
-            addWord(lemma, WordCategory.articleDefinite, 0, HLang.sv);
+            addWord(lemma, WordKind.articleDefinite, 0, HLang.sv);
         }
 
         /* partitive articles */
         foreach (lemma; ["some"]) {
-            addWord(lemma, WordCategory.articlePartitive, 0, HLang.en);
+            addWord(lemma, WordKind.articlePartitive, 0, HLang.en);
         }
         foreach (lemma; ["du", "de", "la", "de", "l'", "des"]) {
-            addWord(lemma, WordCategory.articlePartitive, 0, HLang.fr);
+            addWord(lemma, WordKind.articlePartitive, 0, HLang.fr);
         }
 
         /* personal pronoun */
         foreach (lemma; ["I", "me", "you", "she", "her", "he", "him", "it"]) {
-            addWord(lemma, WordCategory.pronounPersonalSingular, 0, HLang.en);
+            addWord(lemma, WordKind.pronounPersonalSingular, 0, HLang.en);
         }
         foreach (lemma; ["we", "us", "you", "they", "them"]) {
-            addWord(lemma, WordCategory.pronounPersonalPlural, 0, HLang.en);
+            addWord(lemma, WordKind.pronounPersonalPlural, 0, HLang.en);
         }
 
         /* TODO: near/far in distance/time , singular, plural */
         foreach (lemma; ["this", "that",
                          "these", "those"])
         {
-            addWord(lemma, WordCategory.pronounDemonstrative, 0, HLang.en);
+            addWord(lemma, WordKind.pronounDemonstrative, 0, HLang.en);
         }
 
         foreach (lemma; ["mine", // 1st person singular
@@ -138,7 +138,7 @@ class WordNet
                          "theirs" // 3rd person plural
                      ])
         {
-            addWord(lemma, WordCategory.pronounPossessive, 0, HLang.en);
+            addWord(lemma, WordKind.pronounPossessive, 0, HLang.en);
         }
 
         foreach (lemma; ["after", "although", "as", "as if", "as long as",
@@ -147,7 +147,7 @@ class WordNet
                          "though", "till", "unless", "until", "what",
                          "when", "whenever", "wherever", "whether", "while"])
         {
-            addWord(lemma, WordCategory.subordinatingConjunction, 0, HLang.en);
+            addWord(lemma, WordKind.subordinatingConjunction, 0, HLang.en);
         }
 
         foreach (lemma; ["accordingly", "additionally", "again", "almost",
@@ -166,28 +166,28 @@ class WordNet
                          "for example", "for instance", "of course", "on the
                          contrary", "so far", "until now", "thus" ])
         {
-            addWord(lemma, WordCategory.conjunctiveAdverb, 0, HLang.en);
+            addWord(lemma, WordKind.conjunctiveAdverb, 0, HLang.en);
         }
 
         /* weekdays */
         foreach (lemma; ["monday", "tuesday", "wednesday", "thursday", "friday",
                          "saturday", "sunday"]) {
-            addWord(lemma, WordCategory.nounWeekday, 0, HLang.en);
+            addWord(lemma, WordKind.nounWeekday, 0, HLang.en);
         }
         foreach (lemma; ["montag", "dienstag", "mittwoch", "donnerstag", "freitag",
                          "samstag", "sonntag"]) {
-            addWord(lemma, WordCategory.nounWeekday, 0, HLang.de);
+            addWord(lemma, WordKind.nounWeekday, 0, HLang.de);
         }
         foreach (lemma; ["måndag", "tisdag", "onsdag", "torsdag", "fredag",
                          "lördag", "söndag"]) {
-            addWord(lemma, WordCategory.nounWeekday, 0, HLang.sv);
+            addWord(lemma, WordKind.nounWeekday, 0, HLang.sv);
         }
 
         // TODO: Learn: adjective strong <=> noun strength
     }
 
     /** Store $(D lemma) as $(D category) in language $(D hlang). */
-    auto addWord(string lemma, WordCategory category, ubyte synsetCount,
+    auto addWord(string lemma, WordKind category, ubyte synsetCount,
                  HLang hlang = HLang.init)
     {
         if (lemma in _words)
@@ -230,31 +230,13 @@ class WordNet
         hlangs).
     */
     auto canMean(S)(S lemma,
-                    WordCategory category,
+                    WordKind category,
                     HLang[] hlangs = []) if (isSomeString!S)
     {
         import std.algorithm: canFind;
         return meaningsOf(lemma, hlangs).canFind!(meaning => meaning.category.memberOf(category));
     }
 
-
-    WordCategory parseCategory(C)(C x)
-        @safe @nogc pure nothrow if (isSomeChar!C)
-    {
-        WordCategory category;
-        with (WordCategory)
-        {
-            switch (x)
-            {
-                case 'n': category = noun; break;
-                case 'v': category = verb; break;
-                case 'a': category = adjective; break;
-                case 'r': category = adverb; break;
-                default: category = unknown; break;
-            }
-        }
-        return category;
-    }
 
     void readIndexLine(R, N)(R line, N lnr, bool useMmFile = false)
     {
@@ -281,7 +263,7 @@ class WordNet
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
             auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
-            auto meaning       = WordSense(parseCategory(words[1].front),
+            auto meaning       = WordSense(words[1].front.parseWordKind,
                                            words[2].to!ubyte,
                                            links);
             debug assert(synset_cnt == sense_cnt);
@@ -356,6 +338,6 @@ unittest
     {
         writeln(word, " has meanings ", wn.meaningsOf(word));
     }
-    assert(wn.canMean("car", WordCategory.noun, [HLang.en]));
-    assert(!wn.canMean("longing", WordCategory.verb, [HLang.en]));
+    assert(wn.canMean("car", WordKind.noun, [HLang.en]));
+    assert(!wn.canMean("longing", WordKind.verb, [HLang.en]));
 }
