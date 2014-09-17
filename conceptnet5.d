@@ -660,7 +660,7 @@ unittest
     backtrace.backtrace.install(stderr);
     // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
-    enum hashedStorage = false;
+    enum hashedStorage = true;
     auto net = new Net!(hashedStorage)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
 
     if (false) // just to make all variants of compile
