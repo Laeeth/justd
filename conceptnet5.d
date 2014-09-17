@@ -430,6 +430,7 @@ class Net(bool hashedStorage = true,
         return this;
     }
 
+    /** See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0 */
     auto ref readConceptURI(T)(T part)
     {
         auto items = part.splitter('/').array;
