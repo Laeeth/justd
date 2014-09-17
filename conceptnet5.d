@@ -74,9 +74,12 @@ enum Relation:ubyte
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
+    hasContext,
     locationOf,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
+
+    entails,
 
     hasSubevent, /* A and B are events, and B happens as a subevent of A. */
 
@@ -90,6 +93,8 @@ enum Relation:ubyte
     hasProperty, /* A has B as a property; A can be described as
                     B. /r/HasProperty /c/en/ice /c/en/solid */
 
+    attribute,
+
     motivatedByGoal, /* Someone does A because they want result B; A is a step
                         toward accomplishing the goal B. */
     obstructedBy, /* A is a goal that can be prevented by B; B is an obstacle in
@@ -98,6 +103,10 @@ enum Relation:ubyte
     desires, /* A is a conscious entity that typically wants B. Many assertions
                 of this type use the appropriate language's word for "person" as
                 A. /r/Desires /c/en/person /c/en/love */
+
+    causesDesire,
+
+    desireOf,
 
     createdBy, /* B is a process that creates A. /r/CreatedBy /c/en/cake
                   /c/en/bake */
@@ -120,6 +129,10 @@ enum Relation:ubyte
                     to B's meaning. /r/DerivedFrom /c/en/pocketbook /c/en/book
                  */
 
+    compoundDerivedFrom,
+
+    etymologicallyDerivedFrom,
+
     translationOf, /* A and B are concepts (or assertions) in different
                       languages, and overlap in meaning in such a way that they
                       can be considered translations of each other. (This
@@ -128,6 +141,10 @@ enum Relation:ubyte
     definedAs, /* A and B overlap considerably in meaning, and B is a more
                   explanatory version of A. (This is similar to TranslationOf,
                   but within one language.) */
+
+    instanceOf,
+
+    inheritsFrom,
 }
 
 @safe @nogc pure nothrow
@@ -153,6 +170,7 @@ enum Relation:ubyte
                     relation == isA ||
                     relation == memberOf ||
                     relation == atLocation ||
+                    relation == hasContext ||
                     relation == hasSubevent ||
                     relation == synonym ||
                     relation == hasPrerequisite ||
@@ -217,16 +235,22 @@ Thematic toThematic(Relation relation)
         case Relation.usedFor: return Thematic.functional;
         case Relation.capableOf: return Thematic.agents;
         case Relation.atLocation: return Thematic.spatial;
+        case Relation.hasContext: return Thematic.things;
         case Relation.locationOf: return Thematic.spatial;
         case Relation.causes: return Thematic.causal;
+        case Relation.entails: return Thematic.causal;
         case Relation.hasSubevent: return Thematic.events;
         case Relation.hasFirstSubevent: return Thematic.events;
         case Relation.hasLastSubevent: return Thematic.events;
         case Relation.hasPrerequisite: return Thematic.causal; // TODO: Use events, causal, functional
         case Relation.hasProperty: return Thematic.things;
+        case Relation.attribute: return Thematic.things;
         case Relation.motivatedByGoal: return Thematic.affective;
         case Relation.obstructedBy: return Thematic.causal;
         case Relation.desires: return Thematic.affective;
+        case Relation.causesDesire: return Thematic.affective;
+        case Relation.desireOf: return Thematic.affective;
+
         case Relation.createdBy: return Thematic.agents;
 
         case Relation.synonym: return Thematic.synonym;
@@ -234,9 +258,14 @@ Thematic toThematic(Relation relation)
         case Relation.retronym: return Thematic.retronym;
 
         case Relation.derivedFrom: return Thematic.things;
+        case Relation.compoundDerivedFrom: return Thematic.things;
+        case Relation.etymologicallyDerivedFrom: return Thematic.things;
         case Relation.translationOf: return Thematic.synonym;
 
         case Relation.definedAs: return Thematic.things;
+
+        case Relation.instanceOf: return Thematic.things;
+        case Relation.inheritsFrom: return Thematic.things;
     }
 }
 
@@ -453,29 +482,40 @@ class Net(bool hashedStorage = true,
                     // TODO: Functionize to parseRelation or x.to!Relation
                     switch (relationString)
                     {
-                        case "RelatedTo":        link.relation = Relation.relatedTo; break;
-                        case "IsA":              link.relation = Relation.isA; break;
-                        case "PartOf":           link.relation = Relation.partOf; break;
-                        case "MemberOf":         link.relation = Relation.memberOf; break;
-                        case "HasA":             link.relation = Relation.hasA; break;
-                        case "UsedFor":          link.relation = Relation.usedFor; break;
-                        case "CapableOf":        link.relation = Relation.capableOf; break;
-                        case "AtLocation":       link.relation = Relation.atLocation; break;
-                        case "LocationOf":       link.relation = Relation.locationOf; break;
-                        case "Causes":           link.relation = Relation.causes; break;
-                        case "HasSubevent":      link.relation = Relation.hasSubevent; break;
-                        case "HasFirstSubevent": link.relation = Relation.hasFirstSubevent; break;
-                        case "HasPrerequisite":  link.relation = Relation.hasPrerequisite; break;
-                        case "MotivatedByGoal":  link.relation = Relation.motivatedByGoal; break;
-                        case "ObstructedBy":     link.relation = Relation.obstructedBy; break;
-                        case "Desires":          link.relation = Relation.desires; break;
-                        case "CreatedBy":        link.relation = Relation.createdBy; break;
-                        case "Synonym":          link.relation = Relation.synonym; break;
-                        case "Antonym":          link.relation = Relation.antonym; break;
-                        case "Retronym":         link.relation = Relation.retronym; break;
-                        case "DerivedFrom":      link.relation = Relation.derivedFrom; break;
-                        case "TranslationOf":    link.relation = Relation.translationOf; break;
-                        case "DefinedAs":        link.relation = Relation.definedAs; break;
+                        case "RelatedTo":           link.relation = Relation.relatedTo; break;
+                        case "IsA":                 link.relation = Relation.isA; break;
+                        case "PartOf":              link.relation = Relation.partOf; break;
+                        case "MemberOf":            link.relation = Relation.memberOf; break;
+                        case "HasA":                link.relation = Relation.hasA; break;
+                        case "UsedFor":             link.relation = Relation.usedFor; break;
+                        case "CapableOf":           link.relation = Relation.capableOf; break;
+                        case "AtLocation":          link.relation = Relation.atLocation; break;
+                        case "HasContext":          link.relation = Relation.hasContext; break;
+                        case "LocationOf":          link.relation = Relation.locationOf; break;
+                        case "Causes":              link.relation = Relation.causes; break;
+                        case "Entails":             link.relation = Relation.entails; break;
+                        case "HasSubevent":         link.relation = Relation.hasSubevent; break;
+                        case "HasFirstSubevent":    link.relation = Relation.hasFirstSubevent; break;
+                        case "HasLastSubevent":     link.relation = Relation.hasLastSubevent; break;
+                        case "HasPrerequisite":     link.relation = Relation.hasPrerequisite; break;
+                        case "HasProperty":         link.relation = Relation.hasProperty; break;
+                        case "Attribute":           link.relation = Relation.attribute; break;
+                        case "MotivatedByGoal":     link.relation = Relation.motivatedByGoal; break;
+                        case "ObstructedBy":        link.relation = Relation.obstructedBy; break;
+                        case "Desires":             link.relation = Relation.desires; break;
+                        case "CausesDesire":        link.relation = Relation.causesDesire; break;
+                        case "DesireOf":            link.relation = Relation.desireOf; break;
+                        case "CreatedBy":           link.relation = Relation.createdBy; break;
+                        case "Synonym":             link.relation = Relation.synonym; break;
+                        case "Antonym":             link.relation = Relation.antonym; break;
+                        case "Retronym":            link.relation = Relation.retronym; break;
+                        case "DerivedFrom":         link.relation = Relation.derivedFrom; break;
+                        case "CompoundDerivedFrom": link.relation = Relation.compoundDerivedFrom; break;
+                        case "EtymologicallyDerivedFrom": link.relation = Relation.etymologicallyDerivedFrom; break;
+                        case "TranslationOf":       link.relation = Relation.translationOf; break;
+                        case "DefinedAs":           link.relation = Relation.definedAs; break;
+                        case "InstanceOf":          link.relation = Relation.instanceOf; break;
+                        case "InheritsFrom":        link.relation = Relation.inheritsFrom; break;
                         default:
                             writeln("Unknown relationString ", relationString);
                             link.relation = Relation.unknown;
