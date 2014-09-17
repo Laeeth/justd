@@ -688,11 +688,11 @@ unittest
     // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
     enum hashedStorage = true;
-    auto net = new Net!(hashedStorage)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+    auto net = new Net!(hashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
 
     if (false) // just to make all variants of compile
     {
-        auto netH = new Net!(!hashedStorage)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+        auto netH = new Net!(!hashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
     }
     //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
