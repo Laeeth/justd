@@ -430,6 +430,21 @@ class Net(bool hashedStorage = true,
         return this;
     }
 
+    auto ref readConceptURI(T)(T part)
+    {
+        auto items = part.splitter('/').array;
+        const srcLang = items.front.decodeHumanLang; items.popFront;
+        hlangCounts[srcLang]++;
+        immutable srcConcept = items.front.idup; items.popFront;
+        this.store(srcConcept,
+                   Concept(srcConcept, srcLang));
+        if (!items.empty)
+        {
+            // TODO: Make use of 'v' => verb, etc.
+        }
+        return srcConcept;
+    }
+
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readCSVLine(R, N)(R line, N lnr)
     {
@@ -480,33 +495,15 @@ class Net(bool hashedStorage = true,
                     break;
                 case 2:
                     if (part.skipOver(`/c/`))
-                    {
-                        auto items = part.splitter('/').array;
-                        const srcLang = items.front.decodeHumanLang; items.popFront;
-                        hlangCounts[srcLang]++;
-                        immutable srcConcept = items.front.idup; items.popFront;
-                        this.store(srcConcept,
-                                   Concept(srcConcept, srcLang));
-                    }
+                        immutable srcConcept = this.readConceptURI(part);
                     else
-                    {
                         dln(part);
-                    }
                     break;
                 case 3:
                     if (part.skipOver(`/c/`))
-                    {
-                        auto items = part.splitter('/').array;
-                        const dstLang = items.front.decodeHumanLang; items.popFront;
-                        hlangCounts[dstLang]++;
-                        immutable dstConcept = items.front.idup; items.popFront;
-                        this.store(dstConcept,
-                                   Concept(dstConcept, dstLang));
-                    }
+                        immutable dstConcept = this.readConceptURI(part);
                     else
-                    {
                         dln(part);
-                    }
                     break;
                 case 4:
                     if (part != `/ctx/all`)
