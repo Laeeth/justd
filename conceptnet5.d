@@ -9,21 +9,15 @@
     See also: https://github.com/commonsense/conceptnet5/wiki
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
 
+    TODO: Functionize front and popFront and make use of it
+
     TODO: If ever will need to sort indexes we should use my radixSort
-
-    TODO: Use part.splitter('/') instead to decode concept attributes. For
-    reference see
-    https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
-
-    TODO: Stricter typing:
-          - Only allow Net.nodes to be indexed by NodeIndex
-          - Only allow Net.links to be indexed by LinkIndex
 
     TODO: Add Net members
     - byNode
     - byLink
-    - Concept getNode(LinkIndex)
-    - Link getLink(NodeIndex)
+    - Concept getNode(LinkIx)
+    - Link getLink(NodeIx)
 
  */
 module conceptnet5;
@@ -293,15 +287,16 @@ class Net(bool hashedStorage = true,
     import std.file, std.algorithm, std.range, std.string, std.path, std.array;
     import dbg;
 
-    /** Index Precision.
+    /** Ix Precision.
         Set this to $(D uint) if we get low on memory.
+        Set this to $(D ulong) when number of link nodes exceed Ix.
     */
-    alias Index = uint; // TODO: Change this to size_t when we have more concepts and memory.
-    alias LinkIndex = Index;
+    alias Ix = uint; // TODO: Change this to size_t when we have more concepts and memory.
+    struct LinkIx { Ix ix; } /* alias LinkIx = Ix; */
     static if (useArray)
-        alias LinkIndexes = Array!LinkIndex; // TODO: Distinguish from NodeIndexes
+        alias LinkIxes = Array!LinkIx;
     else
-        alias LinkIndexes = LinkIndex[]; // TODO: Distinguish from NodeIndexes
+        alias LinkIxes = LinkIx[];
 
     /** Concept Node/Vertex. */
     struct Concept
@@ -313,15 +308,15 @@ class Net(bool hashedStorage = true,
             this.hlang = hlang;
         }
     private:
-        LinkIndexes outIndexes; // into Net.links
-        LinkIndexes inIndexes; // into Net.links
+        LinkIxes outIxes; // into Net.links
+        LinkIxes inIxes; // into Net.links
         static if (!hashedStorage)
             immutable string concept; // in-place of hash-key
         HLang hlang;
     }
 
-    alias NodeIndex = Index;
-    alias NodeIndexes = Array!NodeIndex; // TODO: Distinguish from LinkIndexes
+    struct NodeIx { Ix ix; } /* alias NodeIx = Ix; */
+    alias NodeIxes = Array!NodeIx;
 
     /** Many-Concepts-to-Many-Concepts Link (Edge).
      */
@@ -337,8 +332,8 @@ class Net(bool hashedStorage = true,
             return cast(real)this.weight/25;
         }
     private:
-        NodeIndexes startIndexes; // into Net.nodes
-        NodeIndexes endIndexes; // into Net.nodes
+        NodeIxes startIxes; // into Net.nodes
+        NodeIxes endIxes; // into Net.nodes
         ubyte weight;
         Relation relation;
         //bool negation;
@@ -486,11 +481,12 @@ class Net(bool hashedStorage = true,
                 case 2:
                     if (part.skipOver(`/c/`))
                     {
-                        auto split = part.findSplit(`/`);
-                        const srcLang = split[0].decodeHumanLang;
+                        auto items = part.splitter('/').array;
+                        const srcLang = items.front.decodeHumanLang; items.popFront;
                         hlangCounts[srcLang]++;
-                        immutable srcConcept = split[2].idup;
-                        this.store(srcConcept, Concept(srcConcept, srcLang));
+                        immutable srcConcept = items.front.idup; items.popFront;
+                        this.store(srcConcept,
+                                   Concept(srcConcept, srcLang));
                     }
                     else
                     {
@@ -500,11 +496,12 @@ class Net(bool hashedStorage = true,
                 case 3:
                     if (part.skipOver(`/c/`))
                     {
-                        auto split = part.findSplit(`/`);
-                        const dstLang = split[0].decodeHumanLang;
+                        auto items = part.splitter('/').array;
+                        const dstLang = items.front.decodeHumanLang; items.popFront;
                         hlangCounts[dstLang]++;
-                        immutable dstConcept = split[2].idup;
-                        this.store(dstConcept, Concept(dstConcept, dstLang));
+                        immutable dstConcept = items.front.idup; items.popFront;
+                        this.store(dstConcept,
+                                   Concept(dstConcept, dstLang));
                     }
                     else
                     {
@@ -520,7 +517,6 @@ class Net(bool hashedStorage = true,
                 case 5:
                     const weight = part.to!real;
                     link.setWeight(weight);
-                    writeln(link.normalizedWeight());
                     this.weightSum += weight;
                     this.weightMin = min(part.to!float, this.weightMin);
                     this.weightMax = max(part.to!float, this.weightMax);
@@ -552,7 +548,7 @@ class Net(bool hashedStorage = true,
     void readCSV(string fileName, bool useMmFile = false)
     {
         size_t lnr = 0;
-        /* TODO: Functionize and merge with wordnet.readIndex */
+        /* TODO: Functionize and merge with wordnet.readIx */
         if (useMmFile)
         {
             version(none)
@@ -633,8 +629,8 @@ class Net(bool hashedStorage = true,
         Sum of all paths relating a to b where each path is the path weight
         product.
     */
-    real relatedness(NodeIndex a,
-                     NodeIndex b) @safe @nogc pure nothrow
+    real relatedness(NodeIx a,
+                     NodeIx b) @safe @nogc pure nothrow
     {
         typeof(return) value;
         return value;
