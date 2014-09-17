@@ -328,15 +328,14 @@ class Net(bool hashedStorage = true,
     struct Link
     {
         @safe @nogc pure nothrow:
-        real normalizedWeight()
-        {
-            return cast(real)this.weight/25;
-        }
         void setWeight(T)(T weight) if (isFloatingPoint!T)
         {
             this.weight = cast(ubyte)(weight.clamp(0,10)/10*255);
         }
-
+        real normalizedWeight()
+        {
+            return cast(real)this.weight/25;
+        }
     private:
         NodeIndexes startIndexes; // into Net.nodes
         NodeIndexes endIndexes; // into Net.nodes
