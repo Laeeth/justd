@@ -29,7 +29,7 @@
 module conceptnet5;
 
 import languages;
-import std.traits: isSomeString;
+import std.traits: isSomeString, isFloatingPoint;
 import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
@@ -327,6 +327,16 @@ class Net(bool hashedStorage = true,
      */
     struct Link
     {
+        @safe @nogc pure nothrow:
+        real normalizedWeight()
+        {
+            return cast(real)this.weight / 25;
+        }
+        void setWeight(T)(T weight) if (isFloatingPoint!T)
+        {
+            this.weight = cast(ubyte)(weight.clamp(0,10)/10*255);
+        }
+
     private:
         NodeIndexes startIndexes; // into Net.nodes
         NodeIndexes endIndexes; // into Net.nodes
@@ -510,7 +520,8 @@ class Net(bool hashedStorage = true,
                     break;
                 case 5:
                     const weight = part.to!real;
-                    link.weight = cast(ubyte)(weight.clamp(0,10)/10*255); // pack
+                    link.setWeight(weight);
+                    writeln(link.normalizedWeight());
                     this.weightSum += weight;
                     this.weightMin = min(part.to!float, this.weightMin);
                     this.weightMax = max(part.to!float, this.weightMax);
