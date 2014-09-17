@@ -7,11 +7,13 @@
 
     See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: https://github.com/commonsense/conceptnet5/wiki
+    See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
 
     TODO: If ever will need to sort indexes we should use my radixSort
 
-    TODO: Use part.splitter('/') instead to decode concept attributes. For reference
-    see its format documentation on Wiki.
+    TODO: Use part.splitter('/') instead to decode concept attributes. For
+    reference see
+    https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
 
     TODO: Stricter typing:
           - Only allow Net.nodes to be indexed by NodeIndex
