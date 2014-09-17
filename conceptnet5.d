@@ -433,7 +433,7 @@ class Net(bool hashedStorage = true,
     /** See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0 */
     auto ref readConceptURI(T)(T part)
     {
-        auto items = part.splitter('/').array;
+        auto items = part.splitter('/');
         const srcLang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[srcLang]++;
         immutable srcConcept = items.front.idup; items.popFront;
@@ -441,7 +441,7 @@ class Net(bool hashedStorage = true,
                    Concept(srcConcept, srcLang));
         if (!items.empty)
         {
-            // TODO: Make use of 'v' => verb, etc.
+            writeln("Make use of WordSense ", items.front);
         }
         return srcConcept;
     }
@@ -489,7 +489,10 @@ class Net(bool hashedStorage = true,
                         case "DerivedFrom":      link.relation = Relation.derivedFrom; break;
                         case "TranslationOf":    link.relation = Relation.translationOf; break;
                         case "DefinedAs":        link.relation = Relation.definedAs; break;
-                        default:                 link.relation = Relation.unknown; break;
+                        default:
+                            writeln("Unknown relationString ", relationString);
+                            link.relation = Relation.unknown;
+                            break;
                     }
 
                     this.relationCounts[link.relation]++;
