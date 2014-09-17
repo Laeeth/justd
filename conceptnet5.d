@@ -330,7 +330,7 @@ class Net(bool hashedStorage = true,
         @safe @nogc pure nothrow:
         real normalizedWeight()
         {
-            return cast(real)this.weight / 25;
+            return cast(real)this.weight/25;
         }
         void setWeight(T)(T weight) if (isFloatingPoint!T)
         {
