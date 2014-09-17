@@ -10,6 +10,9 @@
 
     TODO: If ever will need to sort indexes we should use my radixSort
 
+    TODO: Use part.splitter('/') instead to decode concept attributes. For reference
+    see its format documentation on Wiki.
+
     TODO: Stricter typing:
           - Only allow Net.nodes to be indexed by NodeIndex
           - Only allow Net.links to be indexed by LinkIndex
@@ -30,6 +33,12 @@ import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
 import std.container: Array;
 import algorithm_ex: findPopBefore;
+
+auto clamp(T1, T2, T3)(T1 val, T2 lower, T3 upper)
+{
+    import std.algorithm: min, max;
+    return max(lower, min(upper, val));
+}
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
@@ -276,51 +285,52 @@ auto pageSize() @trusted
     TODO: Use DCD, stringcache, slice ubyte[] allocator
     TODO: Call GC.disable/enable around construction and search.
 */
-class Net(bool hashedStorage = true)
+class Net(bool hashedStorage = true,
+          bool useArray = true)
 {
-    import std.file, std.algorithm, std.range, std.string, std.path, std.array, std.uni;
+    import std.file, std.algorithm, std.range, std.string, std.path, std.array;
     import dbg;
 
     /** Index Precision.
         Set this to $(D uint) if we get low on memory.
     */
     alias Index = uint; // TODO: Change this to size_t when we have more concepts and memory.
-
     alias LinkIndex = Index;
-    alias LinkIndexes = Array!LinkIndex; // TODO: Distinguish from NodeIndexes
+    static if (useArray)
+        alias LinkIndexes = Array!LinkIndex; // TODO: Distinguish from NodeIndexes
+    else
+        alias LinkIndexes = LinkIndex[]; // TODO: Distinguish from NodeIndexes
 
-    /** Concept. */
+    /** Concept Node/Vertex. */
     struct Concept
     {
         this(const string concept, HLang hlang)
         {
             static if (!hashedStorage)
-            {
                 this.concept = concept; // in-place of hash-key
-            }
             this.hlang = hlang;
         }
+    private:
         LinkIndexes outIndexes; // into Net.links
         LinkIndexes inIndexes; // into Net.links
         static if (!hashedStorage)
-        {
             immutable string concept; // in-place of hash-key
-        }
         HLang hlang;
     }
 
     alias NodeIndex = Index;
     alias NodeIndexes = Array!NodeIndex; // TODO: Distinguish from LinkIndexes
 
-    /** Many-to-Many (Hyper) Link.
+    /** Many-Concepts-to-Many-Concepts Link (Edge).
      */
     struct Link
     {
+    private:
         NodeIndexes startIndexes; // into Net.nodes
         NodeIndexes endIndexes; // into Net.nodes
-        float weight;
+        ubyte weight;
         Relation relation;
-        bool negation;
+        //bool negation;
         HLang hlang;
         Source source;
     }
@@ -497,7 +507,9 @@ class Net(bool hashedStorage = true)
                     }
                     break;
                 case 5:
-                    this.weightSum += link.weight = part.to!float;
+                    const weight = part.to!real;
+                    link.weight = cast(ubyte)(weight.clamp(0,10)/10*255); // pack
+                    this.weightSum += weight;
                     this.weightMin = min(part.to!float, this.weightMin);
                     this.weightMax = max(part.to!float, this.weightMax);
                     this.assertionCount++;
@@ -638,10 +650,13 @@ unittest
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
     // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
-    auto net = new Net!(true)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
-    if (false) // just to make hashedStorage compile
+
+    enum hashedStorage = false;
+    auto net = new Net!(hashedStorage)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+
+    if (false) // just to make all variants of compile
     {
-        auto netH = new Net!(false)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
+        auto netH = new Net!(!hashedStorage)(`~/Knowledge/conceptnet5-downloads-20140905/data/assertions/`);
     }
     //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
