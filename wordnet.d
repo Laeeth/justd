@@ -47,183 +47,190 @@ class WordNet
         readIndex(nPath(fixed, "index.noun"), false, hlang);
         readIndex(nPath(fixed, "index.verb"), false, hlang);
 
-        foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
+        foreach (e; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
-            addWord(lemma, WordKind.coordinatingConjunction, 0, HLang.en);
+            addWord(e, WordKind.coordinatingConjunction, 0, HLang.en);
         }
 
-        foreach (lemma; ["och", "eller", "men", "så", "för", "ännu"])
+        foreach (e; ["och", "eller", "men", "så", "för", "ännu"])
         {
-            addWord(lemma, WordKind.coordinatingConjunction, 0, HLang.sv);
+            addWord(e, WordKind.coordinatingConjunction, 0, HLang.sv);
         }
 
-        foreach (lemma; ["since",
-                         "ago",
-                         "before",
-                         "past",
-                         ])
+        foreach (e; ["since", "ago", "before", "past"])
         {
-            addWord(lemma, WordKind.prepositionTime, 0, HLang.en);
+            addWord(e, WordKind.prepositionTime, 0, HLang.en);
         }
 
         // TODO: Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
-        foreach (lemma; ["to", "at", "of", "on", "off", "in", "out", "up",
-                         "down", "from", "with", "into", "for", "about",
-                         "between",
-                         "till", "until",
-                         "by", "out of", "towards", "through", "across",
-                         "above", "over", "below", "under", "next to", "beside"])
+        foreach (e; ["to", "at", "of", "on", "off", "in", "out", "up",
+                     "down", "from", "with", "into", "for", "about",
+                     "between",
+                     "till", "until",
+                     "by", "out of", "towards", "through", "across",
+                     "above", "over", "below", "under", "next to", "beside"])
         {
-            addWord(lemma, WordKind.preposition, 0, HLang.en);
+            addWord(e, WordKind.preposition, 0, HLang.en);
         }
 
         /* undefinite articles */
-        foreach (lemma; ["a", "an"]) {
-            addWord(lemma, WordKind.articleUndefinite, 0, HLang.en);
+        foreach (e; ["a", "an"]) {
+            addWord(e, WordKind.articleUndefinite, 0, HLang.en);
         }
-        foreach (lemma; ["ein", "eine", "eines", "einem", "einen", "einer"]) {
-            addWord(lemma, WordKind.articleUndefinite, 0, HLang.de);
+        foreach (e; ["ein", "eine", "eines", "einem", "einen", "einer"]) {
+            addWord(e, WordKind.articleUndefinite, 0, HLang.de);
         }
-        foreach (lemma; ["un", "une", "des"]) {
-            addWord(lemma, WordKind.articleUndefinite, 0, HLang.fr);
+        foreach (e; ["un", "une", "des"]) {
+            addWord(e, WordKind.articleUndefinite, 0, HLang.fr);
         }
-        foreach (lemma; ["en", "ena", "ett"]) {
-            addWord(lemma, WordKind.articleUndefinite, 0, HLang.sv);
+        foreach (e; ["en", "ena", "ett"]) {
+            addWord(e, WordKind.articleUndefinite, 0, HLang.sv);
         }
 
         /* definite articles */
-        foreach (lemma; ["the"]) {
-            addWord(lemma, WordKind.articleDefinite, 0, HLang.en);
+        foreach (e; ["the"]) {
+            addWord(e, WordKind.articleDefinite, 0, HLang.en);
         }
-        foreach (lemma; ["der", "die", "das", "des", "dem", "den"]) {
-            addWord(lemma, WordKind.articleDefinite, 0, HLang.de);
+        foreach (e; ["der", "die", "das", "des", "dem", "den"]) {
+            addWord(e, WordKind.articleDefinite, 0, HLang.de);
         }
-        foreach (lemma; ["le", "la", "l'", "les"]) {
-            addWord(lemma, WordKind.articleDefinite, 0, HLang.fr);
+        foreach (e; ["le", "la", "l'", "les"]) {
+            addWord(e, WordKind.articleDefinite, 0, HLang.fr);
         }
-        foreach (lemma; ["den", "det"]) {
-            addWord(lemma, WordKind.articleDefinite, 0, HLang.sv);
+        foreach (e; ["den", "det"]) {
+            addWord(e, WordKind.articleDefinite, 0, HLang.sv);
         }
 
         /* partitive articles */
-        foreach (lemma; ["some"]) {
-            addWord(lemma, WordKind.articlePartitive, 0, HLang.en);
+        foreach (e; ["some"]) {
+            addWord(e, WordKind.articlePartitive, 0, HLang.en);
         }
-        foreach (lemma; ["du", "de", "la", "de", "l'", "des"]) {
-            addWord(lemma, WordKind.articlePartitive, 0, HLang.fr);
+        foreach (e; ["du", "de", "la", "de", "l'", "des"]) {
+            addWord(e, WordKind.articlePartitive, 0, HLang.fr);
         }
 
         /* personal pronoun */
-        foreach (lemma; ["I", "me", "you", "she", "her", "he", "him", "it"]) {
-            addWord(lemma, WordKind.pronounPersonalSingular, 0, HLang.en);
+        foreach (e; ["I", "me",  "you", "it"]) {
+            addWord(e, WordKind.pronounPersonalSingular, 0, HLang.en);
         }
-        foreach (lemma; ["jag", "mig", // 1st person
-                         "du", "dig", // 2nd person
-                         "han", "honom", // 3rd person
-                         "hon", "henne", // 3rd person
-                         "den", "det"]) { // 3rd person
-            addWord(lemma, WordKind.pronounPersonalSingular, 0, HLang.sv);
+        foreach (e; ["he", "him"]) {
+            addWord(e, WordKind.pronounPersonalSingularMale, 0, HLang.en);
+        }
+        foreach (e; ["she", "her"]) {
+            addWord(e, WordKind.pronounPersonalSingularFemale, 0, HLang.en);
         }
 
-        foreach (lemma; ["we", "us", // 1st person
-                         "you", // 2nd person
-                         "they", "them"]) // 3rd person
-        {
-            addWord(lemma, WordKind.pronounPersonalPlural, 0, HLang.en);
+        foreach (e; ["jag", "mig", // 1st person
+                     "du", "dig", // 2nd person
+                     "den", "det"]) { // 3rd person
+            addWord(e, WordKind.pronounPersonalSingular, 0, HLang.sv);
         }
-        foreach (lemma; ["vi", "oss", // 1st person
-                         "ni", // 2nd person
-                         "de", "dem"]) // 3rd person
+        foreach (e; ["han", "honom"]) {
+            addWord(e, WordKind.pronounPersonalSingularMale, 0, HLang.sv);
+        }
+        foreach (e; ["hon", "henne"]) {
+            addWord(e, WordKind.pronounPersonalSingularFemale, 0, HLang.sv);
+        }
+
+        foreach (e; ["we", "us", // 1st person
+                     "you", // 2nd person
+                     "they", "them"]) // 3rd person
         {
-            addWord(lemma, WordKind.pronounPersonalPlural, 0, HLang.sv);
+            addWord(e, WordKind.pronounPersonalPlural, 0, HLang.en);
+        }
+        foreach (e; ["vi", "oss", // 1st person
+                     "ni", // 2nd person
+                     "de", "dem"]) // 3rd person
+        {
+            addWord(e, WordKind.pronounPersonalPlural, 0, HLang.sv);
         }
 
         /* TODO: near/far in distance/time , singular, plural */
-        foreach (lemma; ["this", "that",
-                         "these", "those"])
+        foreach (e; ["this", "that",
+                     "these", "those"])
         {
-            addWord(lemma, WordKind.pronounDemonstrative, 0, HLang.en);
+            addWord(e, WordKind.pronounDemonstrative, 0, HLang.en);
         }
 
         /* TODO: near/far in distance/time , singular, plural */
-        foreach (lemma; ["den här", "den där",
-                         "de här", "de där"])
+        foreach (e; ["den här", "den där",
+                     "de här", "de där"])
         {
-            addWord(lemma, WordKind.pronounDemonstrative, 0, HLang.sv);
+            addWord(e, WordKind.pronounDemonstrative, 0, HLang.sv);
         }
 
-        foreach (lemma; ["mine", // 1st person
-                         "yours", // 2nd person
-                         "his", "hers", "its", // 3rd person
+        foreach (e; ["mine", // 1st person
+                     "yours", // 2nd person
+                     "his", "hers", "its", // 3rd person
                      ])
         {
-            addWord(lemma, WordKind.pronounPossessiveSingular, 0, HLang.en);
+            addWord(e, WordKind.pronounPossessiveSingular, 0, HLang.en);
         }
 
-        foreach (lemma; ["min", // 1st person
-                         "din", // 2nd person
-                         "hans", "hennes", "dens", "dets", // 3rd person
+        foreach (e; ["min", // 1st person
+                     "din", // 2nd person
+                     "hans", "hennes", "dens", "dets", // 3rd person
                      ])
         {
-            addWord(lemma, WordKind.pronounPossessiveSingular, 0, HLang.sv);
+            addWord(e, WordKind.pronounPossessiveSingular, 0, HLang.sv);
         }
 
-        foreach (lemma; ["ours", // 1st person
-                         "yours", // 2nd person
-                         "theirs" // 3rd person
+        foreach (e; ["ours", // 1st person
+                     "yours", // 2nd person
+                     "theirs" // 3rd person
                      ])
         {
-            addWord(lemma, WordKind.pronounPossessivePlural, 0, HLang.en);
+            addWord(e, WordKind.pronounPossessivePlural, 0, HLang.en);
         }
 
-        foreach (lemma; ["vår", // 1st person
-                         "er", // 2nd person
-                         "deras" // 3rd person
+        foreach (e; ["vår", // 1st person
+                     "er", // 2nd person
+                     "deras" // 3rd person
                      ])
         {
-            addWord(lemma, WordKind.pronounPossessivePlural, 0, HLang.sv);
+            addWord(e, WordKind.pronounPossessivePlural, 0, HLang.sv);
         }
 
-        foreach (lemma; ["after", "although", "as", "as if", "as long as",
-                         "because", "before", "even if", "even though", "if",
-                         "once", "provided", "since", "so that", "that",
-                         "though", "till", "unless", "until", "what",
-                         "when", "whenever", "wherever", "whether", "while"])
+        foreach (e; ["after", "although", "as", "as if", "as long as",
+                     "because", "before", "even if", "even though", "if",
+                     "once", "provided", "since", "so that", "that",
+                     "though", "till", "unless", "until", "what",
+                     "when", "whenever", "wherever", "whether", "while"])
         {
-            addWord(lemma, WordKind.subordinatingConjunction, 0, HLang.en);
+            addWord(e, WordKind.subordinatingConjunction, 0, HLang.en);
         }
 
-        foreach (lemma; ["accordingly", "additionally", "again", "almost",
-                         "although", "anyway", "as a result", "besides",
-                         "certainly", "comparatively", "consequently",
-                         "contrarily", "conversely", "elsewhere", "equally",
-                         "eventually", "finally", "further", "furthermore",
-                         "hence", "henceforth", "however", "in addition", "in
+        foreach (e; ["accordingly", "additionally", "again", "almost",
+                     "although", "anyway", "as a result", "besides",
+                     "certainly", "comparatively", "consequently",
+                     "contrarily", "conversely", "elsewhere", "equally",
+                     "eventually", "finally", "further", "furthermore",
+                     "hence", "henceforth", "however", "in addition", "in
                          comparison", "in contrast", "in fact", "incidentally",
-                         "indeed", "instead", "just as", "likewise",
-                         "meanwhile", "moreover", "namely", "nevertheless",
-                         "next", "nonetheless", "notably", "now", "otherwise",
-                         "rather", "similarly", "still", "subsequently", "that
+                     "indeed", "instead", "just as", "likewise",
+                     "meanwhile", "moreover", "namely", "nevertheless",
+                     "next", "nonetheless", "notably", "now", "otherwise",
+                     "rather", "similarly", "still", "subsequently", "that
                          is", "then", "thereafter", "therefore", "thus",
-                         "undoubtedly", "uniquely", "on the other hand", "also",
-                         "for example", "for instance", "of course", "on the
+                     "undoubtedly", "uniquely", "on the other hand", "also",
+                     "for example", "for instance", "of course", "on the
                          contrary", "so far", "until now", "thus" ])
         {
-            addWord(lemma, WordKind.conjunctiveAdverb, 0, HLang.en);
+            addWord(e, WordKind.conjunctiveAdverb, 0, HLang.en);
         }
 
         /* weekdays */
-        foreach (lemma; ["monday", "tuesday", "wednesday", "thursday", "friday",
-                         "saturday", "sunday"]) {
-            addWord(lemma, WordKind.nounWeekday, 0, HLang.en);
+        foreach (e; ["monday", "tuesday", "wednesday", "thursday", "friday",
+                     "saturday", "sunday"]) {
+            addWord(e, WordKind.nounWeekday, 0, HLang.en);
         }
-        foreach (lemma; ["montag", "dienstag", "mittwoch", "donnerstag", "freitag",
-                         "samstag", "sonntag"]) {
-            addWord(lemma, WordKind.nounWeekday, 0, HLang.de);
+        foreach (e; ["montag", "dienstag", "mittwoch", "donnerstag", "freitag",
+                     "samstag", "sonntag"]) {
+            addWord(e, WordKind.nounWeekday, 0, HLang.de);
         }
-        foreach (lemma; ["måndag", "tisdag", "onsdag", "torsdag", "fredag",
-                         "lördag", "söndag"]) {
-            addWord(lemma, WordKind.nounWeekday, 0, HLang.sv);
+        foreach (e; ["måndag", "tisdag", "onsdag", "torsdag", "fredag",
+                     "lördag", "söndag"]) {
+            addWord(e, WordKind.nounWeekday, 0, HLang.sv);
         }
 
         // TODO: Learn: adjective strong <=> noun strength

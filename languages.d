@@ -521,11 +521,16 @@ enum WordKind:ubyte
 
     pronounPersonal, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingular, /// https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonalSingularMale,
+    pronounPersonalSingularFemale,
+    pronounPersonalSingularNeutral,
     pronounPersonalPlural, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounDemonstrative, /// https://www.englishclub.com/grammar/pronouns-demonstrative.htm
 
     pronounPossessive, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
     pronounPossessiveSingular, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessiveSingularMale,
+    pronounPossessiveSingularFemale,
     pronounPossessivePlural, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
 
     determiner,
@@ -664,6 +669,9 @@ unittest
         return (kind == WordKind.pronoun ||
                 kind == WordKind.pronounPersonal ||
                 kind == WordKind.pronounPersonalSingular ||
+                kind == WordKind.pronounPersonalSingularMale ||
+                kind == WordKind.pronounPersonalSingularFemale ||
+                kind == WordKind.pronounPersonalSingularNeutral ||
                 kind == WordKind.pronounPersonalPlural ||
                 kind == WordKind.pronounDemonstrative ||
                 kind == WordKind.pronounPossessive ||
@@ -673,9 +681,12 @@ unittest
     bool isPronounSingular(WordKind kind)
     {
         return (kind == WordKind.pronounPersonalSingular ||
-                kind == WordKind.pronounPossessiveSingular);
+                kind == WordKind.pronounPersonalSingularMale ||
+                kind == WordKind.pronounPersonalSingularFemale ||
+                kind == WordKind.pronounPersonalSingularNeutral ||
+                kind == WordKind.pronounPossessiveSingularMale);
     }
-    bool isPronounPluaral(WordKind kind)
+    bool isPronounPlural(WordKind kind)
     {
         return (kind == WordKind.pronounPersonalPlural ||
                 kind == WordKind.pronounPossessivePlural);
@@ -733,7 +744,8 @@ enum Number { singular, plural }
 enum Person { first, second, third }
 
 /** Subject Gender. */
-enum Gender { male, /// maskulinum in Swedish
+enum Gender { unknown,
+              male, /// maskulinum in Swedish
               female, /// femininum in Swedish
               neutral }
 
@@ -784,6 +796,30 @@ static immutable wordSuffixes = [ allNounSuffixes ~ verbSuffixes ~ adjectiveSuff
 auto wordBase(S)(S lemma, WordSense wordSense) if (isSomeString!S)
 {
     doit;
+}
+
+Gender getGender(S)(S lemma, WordKind kind) if (isSomeString!S)
+{
+    if (kind.isPronounSingularMale)
+    {
+        return Gender.male;
+    }
+    else if (kind.isPronounPersonalSingularFemale)
+    {
+        return Gender.female;
+    }
+    else if (kind.isPronounPersonalSingularNeutral)
+    {
+        return Gender.neutral;
+    }
+    else if (kind.isNoun)
+    {
+        return Gender.unknown;
+    }
+    else
+    {
+        return Gender.unknown;
+    }
 }
 
 /** Get English Order Name of $(D n). */
