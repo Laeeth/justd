@@ -157,6 +157,13 @@ class WordNet
             addWord(e, WordKind.pronounDemonstrative, 0, HLang.sv);
         }
 
+        foreach (e; ["my", "your"]) {
+            addWord(e, WordKind.adjectivePossessiveSingular, 0, HLang.en);
+        }
+        foreach (e; ["our", "their"]) {
+            addWord(e, WordKind.adjectivePossessivePlural, 0, HLang.en);
+        }
+
         foreach (e; ["mine", "yours"]) /* 1st person */ {
             addWord(e, WordKind.pronounPossessiveSingular, 0, HLang.en);
         }
