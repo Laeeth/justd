@@ -40,10 +40,12 @@ class WordNet
         auto fixed = dirPath.expandTilde;
         alias nPath = buildNormalizedPath;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
-        readIndex(nPath(fixed, "index.adj"), false);
-        readIndex(nPath(fixed, "index.adv"), false);
-        readIndex(nPath(fixed, "index.noun"), false);
-        readIndex(nPath(fixed, "index.verb"), false);
+
+        const hlang = HLang.en;
+        readIndex(nPath(fixed, "index.adj"), false, hlang);
+        readIndex(nPath(fixed, "index.adv"), false, hlang);
+        readIndex(nPath(fixed, "index.noun"), false, hlang);
+        readIndex(nPath(fixed, "index.verb"), false, hlang);
 
         foreach (lemma; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
@@ -224,7 +226,7 @@ class WordNet
 
     /** Store $(D lemma) as $(D kind) in language $(D hlang). */
     auto addWord(string lemma, WordKind kind, ubyte synsetCount,
-                 HLang hlang = HLang.init)
+                 HLang hlang = HLang.unknown)
     {
         if (lemma in _words)
         {
@@ -247,19 +249,22 @@ class WordNet
     }
 
     /** Get Possible Meanings of $(D lemma) in all $(D hlangs).
-        TODO: Make use of hlangs.
+        TODO: filter on hlangs if hlangs is non-empty.
      */
     WordSense[] meaningsOf(S)(S lemma,
                               HLang[] hlangs = []) if (isSomeString!S)
     {
-        typeof(return) wordSense;
+        typeof(return) senses;
         const lower = lemma.toLower;
         if (lower in _words)
         {
-            wordSense = _words[lower];
+            senses = _words[lower];
+            if (!hlangs.empty)
+            {
+                senses = senses.filter!(sense => !hlangs.find(sense.hlang).empty).array;
+            }
         }
-        // writeln(lemma, " have sense ", wordSense);
-        return wordSense;
+        return senses;
     }
 
     /** Return true if $(D lemma) can mean a $(D kind) in any of $(D
@@ -274,7 +279,9 @@ class WordNet
     }
 
 
-    void readIndexLine(R, N)(R line, N lnr, bool useMmFile = false)
+    void readIndexLine(R, N)(R line, N lnr,
+                             HLang hlang = HLang.unknown,
+                             bool useMmFile = false)
     {
         if (!line.empty &&
             !line.front.isWhite) // if first is not space. TODO: move this check
@@ -301,7 +308,8 @@ class WordNet
             auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
             auto meaning       = WordSense(words[1].front.decodeWordKind,
                                            words[2].to!ubyte,
-                                           links);
+                                           links,
+                                           hlang);
             debug assert(synset_cnt == sense_cnt);
             _words[lemma] ~= meaning;
         }
@@ -323,7 +331,8 @@ class WordNet
     /** Read WordNet Index File $(D fileName).
         Manual page: wndb
     */
-    void readIndex(string fileName, bool useMmFile = false)
+    void readIndex(string fileName, bool useMmFile = false,
+                   HLang hlang = HLang.unknown)
     {
         size_t lnr;
         /* TODO: Functionize and merge with conceptnet5.readCSV */
@@ -337,7 +346,7 @@ class WordNet
                 import algorithm_ex: byLine;
                 foreach (line; data.byLine)
                 {
-                    readIndexLine(line, lnr, useMmFile);
+                    readIndexLine(line, lnr, hlang, useMmFile);
                     lnr++;
                 }
             }
@@ -346,7 +355,7 @@ class WordNet
         {
             foreach (line; File(fileName).byLine)
             {
-                readIndexLine(line, lnr);
+                readIndexLine(line, lnr, hlang);
                 lnr++;
             }
         }
@@ -374,6 +383,8 @@ unittest
     {
         writeln(word, " has meanings ", wn.meaningsOf(word));
     }
+
     assert(wn.canMean("car", WordKind.noun, [HLang.en]));
+    assert(wn.canMean("måndag", WordKind.nounWeekday, [HLang.sv]));
     assert(!wn.canMean("longing", WordKind.verb, [HLang.en]));
 }
