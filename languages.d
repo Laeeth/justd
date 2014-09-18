@@ -663,7 +663,7 @@ unittest
                     kind == verbPast ||
                     kind == verbFuture);
         }
-}
+    }
     bool isAdjective(WordKind kind) {
         with (WordKind) {
             return (kind == adjective ||
@@ -678,7 +678,7 @@ unittest
                     kind == normalAdverb ||
                     kind == conjunctiveAdverb);
         }
-}
+    }
     bool isPronoun(WordKind kind)
     {
         with (WordKind) {
@@ -727,16 +727,22 @@ unittest
     }
     bool isPronounPossessivePlural(WordKind kind)
     {
-        return (kind == WordKind.pronounPossessivePlural);
+        with (WordKind) {
+            return (kind == pronounPossessivePlural);
+        }
     }
     bool isPronounDemonstrative(WordKind kind)
     {
-        return (kind == WordKind.pronounDemonstrative);
+        with (WordKind) {
+            return (kind == pronounDemonstrative);
+        }
     }
     bool isPronounPlural(WordKind kind)
     {
-        return (kind.isPronounPersonalPlural ||
-                kind == WordKind.pronounPossessivePlural);
+        with (WordKind) {
+            return (kind.isPronounPersonalPlural ||
+                    kind == pronounPossessivePlural);
+        }
     }
     bool isPreposition(WordKind kind)
     {
@@ -771,15 +777,17 @@ bool memberOf(WordKind child,
               WordKind parent)
     @safe @nogc pure nothrow
 {
-    switch (parent)
-    {
-        /* TODO: Use static foreach over all enum members to generate all
-         * relevant cases: */
-        case WordKind.noun: return child.isNoun;
-        case WordKind.verb: return child.isVerb;
-        case WordKind.adverb: return child.isAdverb;
-        case WordKind.adjective: return child.isAdjective;
-        default:return child == parent;
+    with (WordKind) {
+        switch (parent)
+        {
+            /* TODO: Use static foreach over all enum members to generate all
+             * relevant cases: */
+            case noun: return child.isNoun;
+            case verb: return child.isVerb;
+            case adverb: return child.isAdverb;
+            case adjective: return child.isAdjective;
+            default:return child == parent;
+        }
     }
 }
 
