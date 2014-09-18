@@ -55,7 +55,7 @@ else
     }
 }
 
-/** Demangler. */
+/** C++ Demangler. */
 class Demangler(R) if (isInputRange!R)
 {
     this(R r,
