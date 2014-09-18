@@ -1,6 +1,7 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** ConceptNet 5.
+/** ConceptNet 5 Commonsense Knowledge Database.
+
     Reads data from CN5 into a Hypergraph.
 
     Data: http://conceptnet5.media.mit.edu/downloads/current/
@@ -38,6 +39,25 @@ auto clamp(T1, T2, T3)(T1 val, T2 lower, T3 upper)
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
+
+    TODO:
+
+    HasPainIntensity
+    LocatedNear
+    LocationOfAction
+    MadeOf
+    NotCapableOf
+    NotCauses
+    NotDesires
+    NotHasA
+    NotHasProperty
+    NotIsA
+    NotMadeOf
+    NotUsedFor
+    ReceivesAction
+    SimilarSize
+    SimilarTo
+    SymbolOf
 */
 enum Relation:ubyte
 {
