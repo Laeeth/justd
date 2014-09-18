@@ -473,7 +473,7 @@ class Net(bool hashedStorage = true,
                    Concept(srcConcept, srcLang));
         if (!items.empty)
         {
-            const category = items.front.parseWordKind;
+            const category = items.front.decodeWordKind;
             if (category == WordKind.unknown)
             {
                 dln("Unknown WordKind code ", items.front);
