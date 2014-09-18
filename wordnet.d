@@ -52,6 +52,11 @@ class WordNet
             addWord(lemma, WordKind.coordinatingConjunction, 0, HLang.en);
         }
 
+        foreach (lemma; ["och", "eller", "men", "så", "för", "ännu"])
+        {
+            addWord(lemma, WordKind.coordinatingConjunction, 0, HLang.sv);
+        }
+
         foreach (lemma; ["since",
                          "ago",
                          "before",

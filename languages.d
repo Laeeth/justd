@@ -535,7 +535,8 @@ enum WordKind:ubyte
     articlePartitive,
     interjection,
 
-    coordinatingConjunction, /// Coordinating conjunction
+    conjunction,
+    coordinatingConjunction,
     subordinatingConjunction,
 }
 
@@ -693,6 +694,12 @@ unittest
                 kind == WordKind.articleUndefinite ||
                 kind == WordKind.articleDefinite ||
                 kind == WordKind.articlePartitive);
+    }
+    bool isConjunction(WordKind kind)
+    {
+        return (kind == WordKind.conjunction ||
+                kind == WordKind.coordinatingConjunction ||
+                kind == WordKind.subordinatingConjunction);
     }
 }
 
