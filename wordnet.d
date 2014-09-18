@@ -222,27 +222,27 @@ class WordNet
         // TODO: Learn: adjective strong <=> noun strength
     }
 
-    /** Store $(D lemma) as $(D category) in language $(D hlang). */
-    auto addWord(string lemma, WordKind category, ubyte synsetCount,
+    /** Store $(D lemma) as $(D kind) in language $(D hlang). */
+    auto addWord(string lemma, WordKind kind, ubyte synsetCount,
                  HLang hlang = HLang.init)
     {
         if (lemma in _words)
         {
             auto existing = _words[lemma];
-            foreach (e; existing) // for each possible more general category
+            foreach (e; existing) // for each possible more general kind
             {
-                writeln(e.category, " => ", category, " for lemma ", lemma);
-                if (category != e.category &&
-                    category.memberOf(e.category))
+                writeln(e.kind, " => ", kind, " for lemma ", lemma);
+                if (kind != e.kind &&
+                    kind.memberOf(e.kind))
                 {
-                    e.category = category; // specialize
+                    e.kind = kind; // specialize
                     return this;
                 }
             }
         }
 
         uint[] links;
-        _words[lemma] ~= WordSense(category, synsetCount, links, hlang);
+        _words[lemma] ~= WordSense(kind, synsetCount, links, hlang);
         return this;
     }
 
@@ -262,15 +262,15 @@ class WordNet
         return wordSense;
     }
 
-    /** Return true if $(D lemma) can mean a $(D category) in any of $(D
+    /** Return true if $(D lemma) can mean a $(D kind) in any of $(D
         hlangs).
     */
     auto canMean(S)(S lemma,
-                    WordKind category,
+                    WordKind kind,
                     HLang[] hlangs = []) if (isSomeString!S)
     {
         import std.algorithm: canFind;
-        return meaningsOf(lemma, hlangs).canFind!(meaning => meaning.category.memberOf(category));
+        return meaningsOf(lemma, hlangs).canFind!(meaning => meaning.kind.memberOf(kind));
     }
 
 

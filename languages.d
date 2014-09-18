@@ -7,7 +7,7 @@ module languages;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
-import std.algorithm: uniq, startsWith;
+import std.algorithm: uniq;
 import std.array: array;
 
 /** (Human) Language Code according to ISO 639-1.
@@ -487,6 +487,7 @@ enum WordKind:ubyte
     unknown,
 
     noun,
+    nounNumeric,
     nounInteger,                // 11
     nounRational,               // 1/3
     nounLocationName,           // Stockholm
@@ -495,6 +496,10 @@ enum WordKind:ubyte
     nounWeekday,
 
     verb,
+    verbPresent,
+    verbPast,
+    verbFuture,
+
     adjective,
 
     adverb, /// changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
@@ -534,7 +539,7 @@ enum WordKind:ubyte
 /** Word Sense/Meaning/Interpretation. */
 struct WordSense
 {
-    WordKind category;
+    WordKind kind;
     ubyte synsetCount; // Number of senses (meanings).
     uint[] links;
     HLang hlang;
@@ -545,19 +550,19 @@ import std.conv: to;
 /** Decode character $(D kindCode) into a $(D WordKind). */
 WordKind decodeWordKind(C)(C kindCode) if (isSomeChar!C)
 {
-    typeof(return) category;
+    typeof(return) kind;
     with (WordKind)
     {
         switch (kindCode)
         {
-            case 'n': category = noun; break;
-            case 'v': category = verb; break;
-            case 'a': category = adjective; break;
-            case 'r': category = adverb; break;
-            default: category = unknown; break;
+            case 'n': kind = noun; break;
+            case 'v': kind = verb; break;
+            case 'a': kind = adjective; break;
+            case 'r': kind = adverb; break;
+            default: kind = unknown; break;
         }
     }
-    return category;
+    return kind;
 }
 
 unittest
@@ -600,61 +605,78 @@ unittest
 
 @safe pure @nogc nothrow
 {
-    bool isNoun(WordKind category)
+    bool isNoun(WordKind kind)
     {
         with (WordKind)
         {
-            return (category == noun ||
-                    category == nounInteger ||
-                    category == nounRational ||
-                    category == nounLocationName ||
-                    category == nounPersonName ||
-                    category == nounOtherName ||
-                    category == nounWeekday);
+            return (kind == noun ||
+                    kind == nounNumeric ||
+                    kind == nounInteger ||
+                    kind == nounRational ||
+                    kind == nounLocationName ||
+                    kind == nounPersonName ||
+                    kind == nounOtherName ||
+                    kind == nounWeekday);
         }
     }
-    bool isNounName(WordKind category)
+    bool isNounName(WordKind kind)
     {
         with (WordKind)
         {
-            return (category == nounLocationName ||
-                    category == nounPersonName ||
-                    category == nounOtherName);
+            return (kind == nounLocationName ||
+                    kind == nounPersonName ||
+                    kind == nounOtherName);
         }
     }
-    bool isVerb(WordKind category) { return (category == WordKind.verb); }
-    bool isAdjective(WordKind category) { return (category == WordKind.adjective); }
-    bool isAdverb(WordKind category)
+    bool isVerb(WordKind kind)
     {
-        return (category == WordKind.adverb ||
-                category == WordKind.normalAdverb ||
-                category == WordKind.conjunctiveAdverb);
+        return (kind == WordKind.verb ||
+                kind == WordKind.verbPresent ||
+                kind == WordKind.verbPast ||
+                kind == WordKind.verbFuture);
     }
-    bool isPronoun(WordKind category)
+    bool isAdjective(WordKind kind) { return (kind == WordKind.adjective); }
+    bool isAdverb(WordKind kind)
     {
-        return (category == WordKind.pronoun ||
-                category == WordKind.pronounPersonal ||
-                category == WordKind.pronounPersonalSingular ||
-                category == WordKind.pronounPersonalPlural ||
-                category == WordKind.pronounDemonstrative ||
-                category == WordKind.pronounPossessive ||
-                category == WordKind.pronounPossessiveSingular ||
-                category == WordKind.pronounPossessivePlural);
+        return (kind == WordKind.adverb ||
+                kind == WordKind.normalAdverb ||
+                kind == WordKind.conjunctiveAdverb);
     }
-    bool isPreposition(WordKind category)
+    bool isPronoun(WordKind kind)
     {
-        return (category == WordKind.preposition ||
-                category == WordKind.prepositionTime ||
-                category == WordKind.prepositionPosition ||
-                category == WordKind.prepositionPlace ||
-                category == WordKind.prepositionDirection);
+        return (kind == WordKind.pronoun ||
+                kind == WordKind.pronounPersonal ||
+                kind == WordKind.pronounPersonalSingular ||
+                kind == WordKind.pronounPersonalPlural ||
+                kind == WordKind.pronounDemonstrative ||
+                kind == WordKind.pronounPossessive ||
+                kind == WordKind.pronounPossessiveSingular ||
+                kind == WordKind.pronounPossessivePlural);
     }
-    bool isArticle(WordKind category)
+    bool isPronounSingular(WordKind kind)
     {
-        return (category == WordKind.article ||
-                category == WordKind.articleUndefinite ||
-                category == WordKind.articleDefinite ||
-                category == WordKind.articlePartitive);
+        return (kind == WordKind.pronounPersonalSingular ||
+                kind == WordKind.pronounPossessiveSingular);
+    }
+    bool isPronounPluaral(WordKind kind)
+    {
+        return (kind == WordKind.pronounPersonalPlural ||
+                kind == WordKind.pronounPossessivePlural);
+    }
+    bool isPreposition(WordKind kind)
+    {
+        return (kind == WordKind.preposition ||
+                kind == WordKind.prepositionTime ||
+                kind == WordKind.prepositionPosition ||
+                kind == WordKind.prepositionPlace ||
+                kind == WordKind.prepositionDirection);
+    }
+    bool isArticle(WordKind kind)
+    {
+        return (kind == WordKind.article ||
+                kind == WordKind.articleUndefinite ||
+                kind == WordKind.articleDefinite ||
+                kindx1 == WordKind.articlePartitive);
     }
 }
 
