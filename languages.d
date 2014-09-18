@@ -489,7 +489,10 @@ enum WordKind:ubyte
     noun,
     nounNumeric,
     nounInteger,                // 11
-    nounRational,               // 1/3
+    nounRationalNumber,         // 1/3
+    nounIrrationalNumber,       // pi
+    nounComplexNumber,          // 1+2i
+
     nounLocationName,           // Stockholm
     nounPersonName,             // John
     nounOtherName,
@@ -612,11 +615,24 @@ unittest
             return (kind == noun ||
                     kind == nounNumeric ||
                     kind == nounInteger ||
-                    kind == nounRational ||
+                    kind == nounRationalNumber ||
+                    kind == nounIrrationalNumber ||
+                    kind == nounComplexNumber ||
                     kind == nounLocationName ||
                     kind == nounPersonName ||
                     kind == nounOtherName ||
                     kind == nounWeekday);
+        }
+    }
+    bool isNounNumeric(WordKind kind)
+    {
+        with (WordKind)
+        {
+            return (kind == nounNumeric ||
+                    kind == nounInteger ||
+                    kind == nounRationalNumber ||
+                    kind == nounIrrationalNumber ||
+                    kind == nounComplexNumber);
         }
     }
     bool isNounName(WordKind kind)
