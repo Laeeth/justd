@@ -210,13 +210,25 @@ class WordNet
             addWord(e, WordKind.pronounInterrogative, 0, HLang.sv);
         }
 
-        foreach (e; ["myself", "yourself", "himself", "herself", "itself"])
-        {
+        foreach (e; ["myself", "yourself", "himself", "herself", "itself"]) {
             addWord(e, WordKind.pronounReflexiveSingular, 0, HLang.en);
         }
-        foreach (e; ["ourselves", "yourselves", "themselves"])
-        {
-            addWord(e, WordKind.pronounReflexiveSingular, 0, HLang.en);
+        foreach (e; ["mig själv", "dig själv", "han själv", "henne själv", "den själv"]) {
+            addWord(e, WordKind.pronounReflexiveSingular, 0, HLang.sv);
+        }
+
+        foreach (e; ["ourselves", "yourselves", "themselves"]) {
+            addWord(e, WordKind.pronounReflexivePlural, 0, HLang.en);
+        }
+        foreach (e; ["oss själva", "er själva", "dem själva"]) {
+            addWord(e, WordKind.pronounReflexivePlural, 0, HLang.sv);
+        }
+
+        foreach (e; ["each other", "one another"]) {
+            addWord(e, WordKind.pronounReciprocal, 0, HLang.en);
+        }
+        foreach (e; ["varandra"]) {
+            addWord(e, WordKind.pronounReciprocal, 0, HLang.sv);
         }
 
         foreach (e; ["after", "although", "as", "as if", "as long as",
@@ -233,16 +245,16 @@ class WordNet
                      "certainly", "comparatively", "consequently",
                      "contrarily", "conversely", "elsewhere", "equally",
                      "eventually", "finally", "further", "furthermore",
-                     "hence", "henceforth", "however", "in addition", "in
-                         comparison", "in contrast", "in fact", "incidentally",
+                     "hence", "henceforth", "however", "in addition",
+                     "in comparison", "in contrast", "in fact", "incidentally",
                      "indeed", "instead", "just as", "likewise",
                      "meanwhile", "moreover", "namely", "nevertheless",
                      "next", "nonetheless", "notably", "now", "otherwise",
-                     "rather", "similarly", "still", "subsequently", "that
-                         is", "then", "thereafter", "therefore", "thus",
+                     "rather", "similarly", "still", "subsequently", "that is",
+                     "then", "thereafter", "therefore", "thus",
                      "undoubtedly", "uniquely", "on the other hand", "also",
-                     "for example", "for instance", "of course", "on the
-                         contrary", "so far", "until now", "thus" ])
+                     "for example", "for instance", "of course", "on the contrary",
+                     "so far", "until now", "thus" ])
         {
             addWord(e, WordKind.conjunctiveAdverb, 0, HLang.en);
         }
