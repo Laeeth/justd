@@ -202,7 +202,8 @@ class WordNet
         {
             addWord(e, WordKind.pronounPossessivePlural, 0, HLang.sv);
         }
-        foreach (e; ["who", "whom", "what", "which", "whose"]) {
+        foreach (e; ["who", "whom", "what", "which", "whose",
+                     "whoever", "whatever", "whichever"]) {
             addWord(e, WordKind.pronounInterrogative, 0, HLang.sv);
         }
         foreach (e; ["vem", "som", "vad", "vilken", "vems"]) {
