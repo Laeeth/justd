@@ -21,9 +21,9 @@ enum Format { Text, HTML, };
     Use as debug print in algorithms where we need to present slices and their
     relations.
 
-    TODO: Calculate $(D names) from $(D args) or $(D args) from $(D names) using Mixins.
-    TODO: Generalize to Ranges other than slices!?
-    TODO: Support HTML
+    TODO Calculate $(D names) from $(D args) or $(D args) from $(D names) using Mixins.
+    TODO Generalize to Ranges other than slices!?
+    TODO Support HTML
 */
 @trusted void fshow(Args...)(Format format, string[] names, inout (Args) args)
 {

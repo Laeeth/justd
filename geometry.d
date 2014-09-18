@@ -15,16 +15,16 @@
    Note: All methods marked with pure are weakly pure since, they all access an instance member.
    All static methods are strongly pure.
 
-   TODO: Optimize using core.simd or std.simd
-   TODO: Merge with analyticgeometry
-   TODO: Merge with https://github.com/CyberShadow/ae/blob/master/utils/geometry.d
-   TODO: Integrate with http://code.dlang.org/packages/blazed2
-   TODO: logln, log.warn, log.error, log.info, log.debug
-   TODO: Make use of staticReduce etc when they become available in Phobos.
-   TODO: Go through all usages of real and use CommonType!(real, E) to make it work when E is a bignum.
-   TODO: ead and perhaps make use of http://stackoverflow.com/questions/3098242/fast-vector-struct-that-allows-i-and-xyz-operations-in-d?rq=1
-   TODO: Tag member functions in t_geom.d as pure as is done https://github.com/$(D D)-Programming-Language/phobos/blob/master/std/bigint.d
-   TODO: Remove need to use [] in x[] == y[]
+   TODO Optimize using core.simd or std.simd
+   TODO Merge with analyticgeometry
+   TODO Merge with https://github.com/CyberShadow/ae/blob/master/utils/geometry.d
+   TODO Integrate with http://code.dlang.org/packages/blazed2
+   TODO logln, log.warn, log.error, log.info, log.debug
+   TODO Make use of staticReduce etc when they become available in Phobos.
+   TODO Go through all usages of real and use CommonType!(real, E) to make it work when E is a bignum.
+   TODO ead and perhaps make use of http://stackoverflow.com/questions/3098242/fast-vector-struct-that-allows-i-and-xyz-operations-in-d?rq=1
+   TODO Tag member functions in t_geom.d as pure as is done https://github.com/$(D D)-Programming-Language/phobos/blob/master/std/bigint.d
+   TODO Remove need to use [] in x[] == y[]
 
    See: https://www.google.se/search?q=point+plus+vector
    See: http://mosra.cz/blog/article.php?a=22-introducing-magnum-a-multiplatform-2d-3d-graphics-engine
@@ -61,7 +61,7 @@ import rational: Rational;
 import range_ex: siota;
 import traits_ex: isOpBinary, isComparable, isEquable, isNotEquable, areComparable, areEquable, areNotEquable;
 
-/* TODO: This doesn't seem that elegant. */
+/* TODO This doesn't seem that elegant. */
 
 enum isVector(E)     = is(typeof(isVectorImpl(E.init)));
 enum isPoint(E)      = is(typeof(isPointImpl(E.init)));
@@ -352,7 +352,7 @@ struct Vector(E, uint D,
             else
             {
                 vector_.randInPlace;
-                normalize(); // TODO: Turn this into D data restriction instead?
+                normalize(); // TODO Turn this into D data restriction instead?
             }
         }
         else
@@ -548,7 +548,7 @@ struct Vector(E, uint D,
         return this.opBinary!(op)(inp);
     }
 
-    /** TODO: Suitable Restrictions on F. */
+    /** TODO Suitable Restrictions on F. */
     void opOpAssign(string op, F)(F r) /* if ((op == "+") || (op == "-") || (op == "*") || (op == "%") || (op == "/") || (op == "^^")) */
     {
         foreach (i; siota!(0, dimension))
@@ -741,7 +741,7 @@ auto rowVector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(C
 auto columnVector(T...)(T args) if (!is(CommonType!(T) == void)) { return Vector!(CommonType!T, args.length, false, Orient.column)(args); }
 alias colVector = columnVector;
 
-alias vector = rowVector; // TODO: Should rowVector or columnVector be default?
+alias vector = rowVector; // TODO Should rowVector or columnVector be default?
 
 mixin(makeInstanceAliases("Vector", "vec", 2,4, ["ubyte", "int", "float", "double", "real", "bool"]));
 
@@ -1525,7 +1525,7 @@ struct Sphere(E, uint D) if (D >= 2 &&
     }
 }
 auto sphere(C, R)(C center, R radius) { return Sphere!(C.type, C.dimension)(center, radius); }
-// TODO: Use this instead:
+// TODO Use this instead:
 // auto sphere(R, C...)(Point!(CommonType!C, C.length) center, R radius) {
 // return Sphere!(CommonType!C, C.length)(center, radius);
 // }

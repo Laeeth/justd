@@ -14,7 +14,7 @@ import std.string;
 import assert_ex;
 import rational: Rational;
 
-/* TODO: opSlice, opSliceAssign */
+/* TODO opSlice, opSliceAssign */
 struct BitSet(size_t len, Block = size_t)
 {
     enum bitsPerBlocks = Block.sizeof * 8;

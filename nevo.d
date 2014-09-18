@@ -4,7 +4,7 @@
    Neuroevolution.
    See_Also: https://en.wikipedia.org/wiki/Neuroevolution
 
-   TODO: Profile use of cellops and logops in a specific domain or pattern och
+   TODO Profile use of cellops and logops in a specific domain or pattern och
    and use roulette wheel sampling based on these in future patterns.
 */
 module evo;
@@ -180,7 +180,7 @@ enum LOp {
  * Instructions for a Program that builds \em Computing Networks (for
  * example Artificial Nerual Networks ANN).
  *
- * \TODO: What does \em nature call this information bearer: Closest I
+ * \TODO What does \em nature call this information bearer: Closest I
  * have found is http://en.wikipedia.org/wiki/Allele.
  */
 enum GOp {

@@ -6,13 +6,13 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    TODO: Implement bidirection conversions: http://forum.dlang.org/thread/tuafkxmnntqjgycziixn@forum.dlang.org#post-tuafkxmnntqjgycziixn:40forum.dlang.org
+    TODO Implement bidirection conversions: http://forum.dlang.org/thread/tuafkxmnntqjgycziixn@forum.dlang.org#post-tuafkxmnntqjgycziixn:40forum.dlang.org
 
-    TODO: Join logic for ChainEnum and UnionEnum into common and then define:
+    TODO Join logic for ChainEnum and UnionEnum into common and then define:
     - UnionEnum: only names must be unique
     - StrictUnionEnum: both names and values must be unique
 
-    TODO: Move to std.typecons (Type Constructor) in Phobos when ready.
+    TODO Move to std.typecons (Type Constructor) in Phobos when ready.
  */
 module enums;
 
@@ -109,7 +109,7 @@ template UnionEnum(E...) if (E.length >= 2 &&
 
 /** Instance Wrapper for UnionEnum.
     Provides safe assignment and explicit casts.
-    TODO: Use opImplicitCastTo instead of opCast when it becomes available in DMD.
+    TODO Use opImplicitCastTo instead of opCast when it becomes available in DMD.
 */
 struct EnumUnion(E...)
 {
@@ -156,7 +156,7 @@ struct EnumUnion(E...)
         }
     }
 
-    /* TODO: Use (static) foreach here when it becomes available. */
+    /* TODO Use (static) foreach here when it becomes available. */
     /* foreach (ix, E0; E) */
     /* { */
     /* } */
@@ -169,7 +169,7 @@ struct EnumUnion(E...)
     static if (E.length >= 9) void opAssign(E[8] e) { _value = cast(U)e; }
 
     /* ====================== */
-    /* TODO: Why doesn't the following mixin templates have an effect? */
+    /* TODO Why doesn't the following mixin templates have an effect? */
     version(linux)
     {
         mixin template genOpAssign(uint i)
@@ -198,7 +198,7 @@ struct EnumUnion(E...)
                 return cast(E[i])_value;
             }
         }
-        /* TODO: Alternative to this set of static if? */
+        /* TODO Alternative to this set of static if? */
         static if (E.length >= 1) { mixin genOpAssign!0; mixin genOpCast!0; }
         static if (E.length >= 2) { mixin genOpAssign!1; mixin genOpCast!1; }
         static if (E.length >= 3) { mixin genOpAssign!2; mixin genOpCast!2; }

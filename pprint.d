@@ -6,16 +6,16 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    TODO: Remove all restrictions on pp.*Raw.* and call them using ranges such as repeat
+    TODO Remove all restrictions on pp.*Raw.* and call them using ranges such as repeat
 
-    TODO: Use "alias this" on wrapper structures and test!
+    TODO Use "alias this" on wrapper structures and test!
 
-    TODO: How should std.typecons.Tuple be pretty printed?
-    TODO: Add visited member to keeps track of what objects that have been visited
-    TODO: Add asGCCMessage pretty prints
+    TODO How should std.typecons.Tuple be pretty printed?
+    TODO Add visited member to keeps track of what objects that have been visited
+    TODO Add asGCCMessage pretty prints
           seq($PATH, ':', $ROW, ':', $COL, ':', message, '[', $TYPE, ']'
 
-    TODO: Support VizForm.D3js
+    TODO Support VizForm.D3js
 */
 module pprint;
 
@@ -28,9 +28,9 @@ import std.range: ElementType;
 import std.string: empty;
 
 import w3c: encodeHTML;
-import arsd.terminal; // TODO: Make this optional
+import arsd.terminal; // TODO Make this optional
 
-/* TODO: Move logic (toHTML) to these deps and remove these imports */
+/* TODO Move logic (toHTML) to these deps and remove these imports */
 import digest_ex: Digest;
 import csunits: Bytes;
 import fs: FKind, isSymlink, isDir;
@@ -43,7 +43,7 @@ import traits_ex: isCallableWith;
 
 import rational;
 
-// TODO: Check for MathML support on backend
+// TODO Check for MathML support on backend
 @property @trusted void ppMathML(T)(Viz viz,
                                     Rational!T arg)
 {
@@ -540,7 +540,7 @@ void pp1(Arg)(Viz viz,
     {
         if (viz.form == VizForm.HTML)
         {
-            // TODO: Check for MathML support on backend
+            // TODO Check for MathML support on backend
             return viz.ppRaw(arg.toMathML);
         }
     }
@@ -559,7 +559,7 @@ void pp1(Arg)(Viz viz,
         }
     }
 
-    /* TODO: Check if any member has mmber toMathML if so call it otherwise call
+    /* TODO Check if any member has mmber toMathML if so call it otherwise call
      * toString. */
 
     static if (isInstanceOf!(AsWords, Arg))
@@ -635,7 +635,7 @@ void pp1(Arg)(Viz viz,
     {
         if      (viz.form == VizForm.HTML)
         {
-            /* TODO: Use arg.language member to highlight using fs tokenizers
+            /* TODO Use arg.language member to highlight using fs tokenizers
              * which must be moved out of fs. */
             viz.ppTaggedN(`code`, arg.args);
         }
@@ -833,7 +833,7 @@ void pp1(Arg)(Viz viz,
         {
             foreach (subArg; arg.args)
             {
-                viz.pplnRaw(`> `, subArg); // TODO: Iterate for each line in subArg
+                viz.pplnRaw(`> `, subArg); // TODO Iterate for each line in subArg
             }
         }
     }
@@ -888,8 +888,8 @@ void pp1(Arg)(Viz viz,
     }
     else static if (isInstanceOf!(AsDescription, Arg)) // if args .length == 1 && an InputRange of 2-tuples pairs
     {
-        if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`dl`); } // TODO: TERM <dt>, DEFINITION <dd>
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{description}`); } // TODO: \item[TERM] DEFINITION
+        if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`dl`); } // TODO TERM <dt>, DEFINITION <dd>
+        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{description}`); } // TODO \item[TERM] DEFINITION
         viz.ppN(arg.args);
         if (viz.form == VizForm.HTML) { viz.pplnTagClose(`dl`); }
         else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{description}`); }
@@ -940,15 +940,15 @@ void pp1(Arg)(Viz viz,
         alias Front = ElementType!(typeof(arg.args[0])); // elementtype of Iteratable
         static if (isAggregateType!Front)
         {
-            /* TODO: When __traits(documentation,x)
+            /* TODO When __traits(documentation,x)
                here https://github.com/D-Programming-Language/dmd/pull/3531
                get merged use it! */
-            // viz.pplnTaggedN(`tr`, subArg.asCols); // TODO: asItalic
+            // viz.pplnTaggedN(`tr`, subArg.asCols); // TODO asItalic
             // Use __traits(allMembers, T) instead
             // Can we lookup file and line of user defined types aswell?
 
             // member names header.
-            if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); } // TODO: Functionize
+            if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); } // TODO Functionize
 
             // index column
             if      (arg.rowNr == RowNr.offsetZero) viz.pplnTaggedN(`td`, "0-Offset");
@@ -962,7 +962,7 @@ void pp1(Arg)(Viz viz,
                 else static if (is(Memb == class))     enum qual = `class `;
                 else static if (is(Memb == enum))      enum qual = `enum `;
                 else static if (is(Memb == interface)) enum qual = `interface `;
-                else                                   enum qual = ``; // TODO: Are there more qualifiers
+                else                                   enum qual = ``; // TODO Are there more qualifiers
 
                 import std.string: capitalize;
                 viz.pplnTaggedN(`td`,
@@ -1067,7 +1067,7 @@ void pp1(Arg)(Viz viz,
         else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(` - `); } // if inside ordered list use . instead of -
         else if (viz.form == VizForm.LaTeX) { viz.ppRaw(`\item `); }
         else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(` • `); }
-        else if (viz.form == VizForm.Markdown) { viz.ppRaw(`* `); } // TODO: Alternatively +,-,*, or 1. TODO: Need counter for ordered lists
+        else if (viz.form == VizForm.Markdown) { viz.ppRaw(`* `); } // TODO Alternatively +,-,*, or 1. TODO Need counter for ordered lists
         viz.ppN(arg.args);
         if (viz.form == VizForm.HTML) { viz.pplnTagClose(`li`); }
         else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(``); }
@@ -1146,7 +1146,7 @@ void pp1(Arg)(Viz viz,
             viz.pp1(depth + 1, subArg);
         }
     }
-    else static if (__traits(hasMember, arg, "parent")) // TODO: Use isFile = File or NonNull!File
+    else static if (__traits(hasMember, arg, "parent")) // TODO Use isFile = File or NonNull!File
     {
         if (viz.form == VizForm.HTML)
         {
@@ -1169,7 +1169,7 @@ void pp1(Arg)(Viz viz,
         }
 
         // write name
-        static if (__traits(hasMember, arg, "isRoot")) // TODO: Use isDir = Dir or NonNull!Dir
+        static if (__traits(hasMember, arg, "isRoot")) // TODO Use isDir = Dir or NonNull!Dir
         {
             immutable name = arg.isRoot ? dirSeparator : arg.name ~ dirSeparator;
         }

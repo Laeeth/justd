@@ -9,8 +9,8 @@
 
    Namings borrowed from Emacs' 'sregex'.
 
-   TODO: Make returns from factory functions immutable.
-   TODO: Reuse return patterns from Lit
+   TODO Make returns from factory functions immutable.
+   TODO Reuse return patterns from Lit
  */
 module sregex;
 import std.algorithm: find, all, map, reduce, min, max;
@@ -40,9 +40,9 @@ class Patt {
     }
 
     final size_t at(in string haystack, size_t soff = 0) const nothrow
-    // TODO: Activate this
+    // TODO Activate this
     /* out (hit) { */
-    /*     assert((!hit) || hit >= minLength); // TODO: Is this needed? */
+    /*     assert((!hit) || hit >= minLength); // TODO Is this needed? */
     /* } */
     /* body */
     {
@@ -309,7 +309,7 @@ class Seq : SPatt {
     @property auto ref inout (Patt[]) elms() inout nothrow { return super._subs; }
 
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
-        assert(!elms.empty); // TODO: Move to in contract?
+        assert(!elms.empty); // TODO Move to in contract?
         const(ubyte[]) c = getConstant;
         if (!c.empty)
         {
@@ -318,7 +318,7 @@ class Seq : SPatt {
         }
         size_t sum = 0;
         size_t off = soff;
-        foreach (ix, sub; elms) // TODO: Reuse std.algorithm instead?
+        foreach (ix, sub; elms) // TODO Reuse std.algorithm instead?
         {
             size_t hit = sub.atU(haystack, off);
             if (hit == size_t.max) { sum = hit; break; } // if any miss skip
@@ -364,10 +364,10 @@ class Alt : SPatt {
     /** Get Length of hit at index soff in haystack or size_t.max if none.
      */
     size_t atU(in ubyte[] haystack, size_t soff, out size_t alt_hix) const nothrow {
-        assert(!alts.empty);    // TODO: Move to in contract?
+        assert(!alts.empty);    // TODO Move to in contract?
         size_t hit = 0;
         size_t off = soff;
-        foreach (ix, sub; alts)  // TODO: Reuse std.algorithm instead?
+        foreach (ix, sub; alts)  // TODO Reuse std.algorithm instead?
         {
             hit = sub.atU(haystack[off..$]);                     // match alternative
             if (hit != size_t.max) { alt_hix = ix; break; } // if any hit were done
@@ -380,11 +380,11 @@ class Alt : SPatt {
     }
 
     /** Find $(D this) in $(D haystack) at Offset $(D soff).
-        TODO: Add findAt() and detect case when all alternatives full isConstant
+        TODO Add findAt() and detect case when all alternatives full isConstant
         (cached them) and use variadic version of std.algorithm:find.
     */
     override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
-        assert(!alts.empty);    // TODO: Move to in contract?
+        assert(!alts.empty);    // TODO Move to in contract?
         if        (alts.length == 1)  {              // if one alternative
             return alts[0].findAtU(haystack, soff); // recurse to it
         } else if (alts.length == 2)  {       // if two alternatives
@@ -445,7 +445,7 @@ class Alt : SPatt {
     override size_t maxLength() const { return reduce!max(size_t.min,
                                                           _subs.map!(a => a.maxLength)); }
     override bool isFixed() const {
-        // TODO: Merge these loops using tuple algorithm.
+        // TODO Merge these loops using tuple algorithm.
         auto mins = _subs.map!(a => a.minLength);
         auto maxs = _subs.map!(a => a.maxLength);
         return (mins.allEqual &&
@@ -464,7 +464,7 @@ class Alt : SPatt {
         }
         else
         {
-            return false;       // TODO: Maybe handle case when _subs are different.
+            return false;       // TODO Maybe handle case when _subs are different.
         }
     }
 }
@@ -584,7 +584,7 @@ class Rep : SPatt1 {
         size_t sum = 0;
         size_t off = soff;
         /* mandatory */
-        foreach (ix; 0..countReq)  // TODO: Reuse std.algorithm instead?
+        foreach (ix; 0..countReq)  // TODO Reuse std.algorithm instead?
         {
             size_t hit = sub.atU(haystack[off..$]);
             if (hit == size_t.max) { return hit; } // if any miss skip
@@ -592,7 +592,7 @@ class Rep : SPatt1 {
             sum += hit;
         }
         /* optional part */
-        foreach (ix; countReq..countReq + countOpt) // TODO: Reuse std.algorithm instead?
+        foreach (ix; countReq..countReq + countOpt) // TODO Reuse std.algorithm instead?
         {
             size_t hit = sub.atU(haystack[off..$]);
             if (hit == size_t.max) { break; } // if any miss just break
@@ -670,10 +670,10 @@ class Ctx : Patt {
 
             /* symbol */
         case Type.bos: ok = ((soff == 0         || (!haystack[soff - 1].isAlphaNum &&
-                                                   haystack[soff - 1] != '_')) && // TODO: Make '_' language-dependent
+                                                   haystack[soff - 1] != '_')) && // TODO Make '_' language-dependent
                              (soff < haystack.length &&  haystack[soff].isAlphaNum)) ; break;
         case Type.eos: ok = ((soff == haystack.length || (!haystack[soff].isAlphaNum &&
-                                                    haystack[soff] != '_')) && // TODO: Make '_' language-dependent
+                                                    haystack[soff] != '_')) && // TODO Make '_' language-dependent
                              (soff >= 1          &&  haystack[soff - 1].isAlphaNum)) ; break;
 
             /* word */
@@ -767,7 +767,7 @@ unittest {
     assert(bos_.findAt("a") == []);
     assert(bos_.findAt("a").ptr != null);
     assert(eos_.findAt("a") == []);
-    // TODO: This fails assert(eos_.findAt("a").ptr != null);
+    // TODO This fails assert(eos_.findAt("a").ptr != null);
 }
 
 /** Create Matcher for a UNIX Shell $(LUCKY Shebang) Pattern.

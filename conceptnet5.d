@@ -10,11 +10,11 @@
     See also: https://github.com/commonsense/conceptnet5/wiki
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
 
-    TODO: Functionize front and popFront and make use of it
+    TODO Functionize front and popFront and make use of it
 
-    TODO: If ever will need to sort indexes we should use my radixSort
+    TODO If ever will need to sort indexes we should use my radixSort
 
-    TODO: Add Net members
+    TODO Add Net members
     - byNode
     - byLink
     - Concept getNode(LinkIx)
@@ -41,7 +41,7 @@ auto clamp(T1, T2, T3)(T1 val, T2 lower, T3 upper)
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 
-    TODO:
+    TODO
 
     HasPainIntensity
     MadeOf
@@ -166,7 +166,7 @@ enum Relation:ubyte
                   but within one language.) */
 
     instanceOf,
-    madeOf, // TODO: Unite with instanceOf
+    madeOf, // TODO Unite with instanceOf
 
     inheritsFrom,
 }
@@ -204,7 +204,7 @@ enum Relation:ubyte
     }
 
     /** Return true if $(D relation) is a strong.
-        TODO: Where is strength decided and what purpose does it have?
+        TODO Where is strength decided and what purpose does it have?
     */
     bool isStrong(Relation relation)
     {
@@ -216,7 +216,7 @@ enum Relation:ubyte
     }
 
     /** Return true if $(D relation) is a weak.
-        TODO: Where is strongness decided and what purpose does it have?
+        TODO Where is strongness decided and what purpose does it have?
     */
     bool isWeak(Relation relation)
     {
@@ -272,7 +272,7 @@ Thematic toThematic(Relation relation)
         case Relation.hasSubevent: return Thematic.events;
         case Relation.hasFirstSubevent: return Thematic.events;
         case Relation.hasLastSubevent: return Thematic.events;
-        case Relation.hasPrerequisite: return Thematic.causal; // TODO: Use events, causal, functional
+        case Relation.hasPrerequisite: return Thematic.causal; // TODO Use events, causal, functional
         case Relation.hasProperty: return Thematic.things;
         case Relation.attribute: return Thematic.things;
         case Relation.motivatedByGoal: return Thematic.affective;
@@ -321,8 +321,8 @@ auto pageSize() @trusted
 }
 
 /** Main Net.
-    TODO: Use containers.HashMap
-    TODO: Call GC.disable/enable around construction and search.
+    TODO Use containers.HashMap
+    TODO Call GC.disable/enable around construction and search.
 */
 class Net(bool hashedStorage = true,
           bool useArray = true)
@@ -334,7 +334,7 @@ class Net(bool hashedStorage = true,
         Set this to $(D uint) if we get low on memory.
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
-    alias Ix = uint; // TODO: Change this to size_t when we have more concepts and memory.
+    alias Ix = uint; // TODO Change this to size_t when we have more concepts and memory.
     struct LinkIx { Ix ix; } /* alias LinkIx = Ix; */
     static if (useArray)
         alias LinkIxes = Array!LinkIx;
@@ -421,7 +421,7 @@ class Net(bool hashedStorage = true,
                 const meanings = this.wordnet.meaningsOf(word);
                 if (!meanings.empty)
                 {
-                    category = meanings.front.category; // TODO: Pick union of all meanings
+                    category = meanings.front.category; // TODO Pick union of all meanings
                 }
             }
             if      (category.isNoun)      return conceptsByNoun[word];
@@ -507,10 +507,10 @@ class Net(bool hashedStorage = true,
             switch (ix)
             {
                 case 1:
-                    // TODO: Handle case when part matches /r/wordnet/X
+                    // TODO Handle case when part matches /r/wordnet/X
                     const relationString = part[3..$];
 
-                    // TODO: Functionize to parseRelation or x.to!Relation
+                    // TODO Functionize to parseRelation or x.to!Relation
                     switch (relationString)
                     {
                         case "RelatedTo":                 link.relation = Relation.relatedTo; break;
@@ -585,7 +585,7 @@ class Net(bool hashedStorage = true,
                     this.assertionCount++;
                     break;
                 case 6:
-                    // TODO: Use part.splitter('/')
+                    // TODO Use part.splitter('/')
                     switch (part)
                     {
                         case `/s/dbpedia/3.7`: link.source = Source.dbpedia37; break;
@@ -611,7 +611,7 @@ class Net(bool hashedStorage = true,
     void readCSV(string fileName, bool useMmFile = false)
     {
         size_t lnr = 0;
-        /* TODO: Functionize and merge with wordnet.readIx */
+        /* TODO Functionize and merge with wordnet.readIx */
         if (useMmFile)
         {
             version(none)
@@ -620,7 +620,7 @@ class Net(bool hashedStorage = true,
                 auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
                 auto data = cast(ubyte[])mmf[];
                 import algorithm_ex: byLine, Newline;
-                foreach (line; data.byLine!(Newline.native)) // TODO: Compare with File.byLine
+                foreach (line; data.byLine!(Newline.native)) // TODO Compare with File.byLine
                 {
                     readCSVLine(line, lnr); lnr++;
                 }
@@ -639,7 +639,7 @@ class Net(bool hashedStorage = true,
 
     void showRelations()
     {
-        /* TODO: Functionize foreachs */
+        /* TODO Functionize foreachs */
 
         writeln("Relations:");
         foreach (relation; Relation.min..Relation.max)
@@ -700,7 +700,7 @@ class Net(bool hashedStorage = true,
     }
 
     /** Get Concept with strongest relatedness to $(D keywords).
-        TODO: Compare with function Context() in ConceptNet API.
+        TODO Compare with function Context() in ConceptNet API.
      */
     Concept contextOf(string[] keywords) @safe @nogc pure nothrow
     {
@@ -720,7 +720,7 @@ unittest
 {
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
-    // TODO: Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
+    // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
     enum hashedStorage = true;
     auto net = new Net!(hashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);

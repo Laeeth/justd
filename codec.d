@@ -20,7 +20,7 @@ struct ForwardDifferenceCode(R) if (isInputRange!R)
     this(R r)
     {
         _front = r.front;
-        _diff = r.forwardDifference.array; // TODO: Can we make msgpack pack r.forwardDifference without .array
+        _diff = r.forwardDifference.array; // TODO Can we make msgpack pack r.forwardDifference without .array
     }
 private:
     typeof(R.init.front) _front; // First element
@@ -31,7 +31,7 @@ private:
  */
 auto encodeForwardDifference(R)(R r) if (isInputRange!R)
 {
-    return ForwardDifferenceCode!R(r); // TODO: Use named parts?
+    return ForwardDifferenceCode!R(r); // TODO Use named parts?
 }
 
 unittest
@@ -69,10 +69,10 @@ auto decodeForwardDifference_alt(E, R)(Tuple!(E, R) x)
     if (isInputRange!R &&
         is(ElementType!R == typeof(E - E)))
 {
-    /* TODO: Extract as ForwardSum */
+    /* TODO Extract as ForwardSum */
     auto diffs = x[1]; // differences
     immutable n = diffs.array.length;
-    auto y = new E[1 + n]; // TODO: Remove array and keep extra length argument in forwardDifference
+    auto y = new E[1 + n]; // TODO Remove array and keep extra length argument in forwardDifference
     y[0] = x[0];
     auto a = diffs.array;
     foreach (ix; 0..n) {

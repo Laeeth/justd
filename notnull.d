@@ -22,7 +22,7 @@ import traits_ex: isNullable;
    Condition: T must be a reference type.
    Instead of: __traits(compiles, { T t; assert(t is null); }.
 
-   TODO: Merge with http://arsdnet.net/dcode/notnullsimplified.d
+   TODO Merge with http://arsdnet.net/dcode/notnullsimplified.d
 
    Examples:
    ---

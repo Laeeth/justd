@@ -21,7 +21,7 @@ struct persistent(Type, string file = __FILE__, size_t line = __LINE__) {
         info = t;
     }
     ~this() {
-        // you should actually save it to the file. TODO: Import file and
+        // you should actually save it to the file. TODO Import file and
         // calculate its sha1 all at compile-time!
         writeln("Saving ", info, " as key ",
                 file,":",line);

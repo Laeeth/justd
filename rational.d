@@ -84,7 +84,7 @@ alias std.math.abs abs;  // Allow cross-module overloading.
  * All built-in D integers and character types and $(XREF bigint, BigInt) are
  * integer-like by this definition.
  *
- * TODO: Why not use isIntegral here instead?
+ * TODO Why not use isIntegral here instead?
  */
 template isIntegerLike(T)
 {

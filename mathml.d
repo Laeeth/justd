@@ -7,7 +7,7 @@
 */
 module mathml;
 
-import rational: Rational; // TODO: Can we turn this dep into a duck type dep?
+import rational: Rational; // TODO Can we turn this dep into a duck type dep?
 import std.traits: isScalarType, isFloatingPoint;
 import languages: MarkupLang;
 
@@ -34,13 +34,13 @@ string toML(T)(T x,
 {
     import std.conv: to;
     import std.algorithm: findSplit;
-    const parts = to!string(x).findSplit("e"); // TODO: Use std.bitmanip.FloatRep instead
+    const parts = to!string(x).findSplit("e"); // TODO Use std.bitmanip.FloatRep instead
     if (parts[2].length >= 1)
     {
         // mantissa
         const mant = parts[0];
 
-        // TODO: These format fixes for the exponent are not needed if we use
+        // TODO These format fixes for the exponent are not needed if we use
         // std.bitmanip.FloatRep instead
 
         // exponent

@@ -79,13 +79,13 @@ import std.traits: isUnsigned, isSigned, isIntegral, isFloatingPoint, Unsigned, 
    Params:
      radixNBits = Number of bits in Radix (Digit)
 
-   TODO: x[] = y[] not needed when input is mutable
-   TODO: Restrict fun.
-   TODO: Choose fastDigitDiscardal based on elementMin and elementMax (if they
+   TODO x[] = y[] not needed when input is mutable
+   TODO Restrict fun.
+   TODO Choose fastDigitDiscardal based on elementMin and elementMax (if they
    are given)
-   TODO: Add doInPlace CT-param. If doInPlace isRandomAccessRange!R is needed
+   TODO Add doInPlace CT-param. If doInPlace isRandomAccessRange!R is needed
 
-   TODO: Use @nogc attribute when possible
+   TODO Use @nogc attribute when possible
 
    See also: http://forum.dlang.org/thread/vmytpazcusauxypkwdbn@forum.dlang.org#post-vmytpazcusauxypkwdbn:40forum.dlang.org
  */
@@ -124,7 +124,7 @@ void radixSortImpl(R,
         static assert("Cannot handle ElementType " ~ Elem.stringof);
     }
 
-    // TODO: Activate this: subtract min from all values and then const uint elemBits = is_min(a_max) ? 8*sizeof(Elem) : binlog(a_max); and add it back.
+    // TODO Activate this: subtract min from all values and then const uint elemBits = is_min(a_max) ? 8*sizeof(Elem) : binlog(a_max); and add it back.
     enum nDigits = elemBits / radixNBits;         // Number of \c nDigits in radix \p radixNBits
     static assert(elemBits % radixNBits == 0,
                   "Precision of ElementType must be evenly divisble by bit-precision of Radix.");
@@ -150,7 +150,7 @@ void radixSortImpl(R,
         {
             const uint sh = d*radixNBits;   // digit bit shift
 
-            // TODO: Activate and verify that performance is unchanged.
+            // TODO Activate and verify that performance is unchanged.
             // auto uize_ = [descending, sh, mask](Elem a) { return (bijectToUnsigned(a, descending) >> sh) & mask; }; // local shorthand
 
             // Reset Histogram Counters
@@ -178,7 +178,7 @@ void radixSortImpl(R,
                 bins[j].low()  = bins[j - 1].high(); // previous roof becomes current floor
                 bins[j].high() += bins[j - 1].high(); // accumulate bin counter
             }
-            // TODO: if (bin_max == 1) { std::cout << "No accumulation needed!" << std::endl; }
+            // TODO if (bin_max == 1) { std::cout << "No accumulation needed!" << std::endl; }
 
             /** \em Unstable In-Place (Permutate) Reorder/Sort \p x.
              * Access \p x's elements in \em reverse to \em reuse filled caches from previous forward iteration.
@@ -207,7 +207,7 @@ void radixSortImpl(R,
         // Histogram Buckets Upper-Limits/Walls for values in \p x.
         size_t[radix] O; // most certainly fits in the stack (L1-cache)
 
-        // Non-In-Place requires temporary \p y. TODO: We could allocate these
+        // Non-In-Place requires temporary \p y. TODO We could allocate these
         // as a Variable Length Arrays (VLA) for small arrays and gain extra
         // speed.
         import std.array: uninitializedArray;

@@ -22,7 +22,7 @@ int tempfile(string namePrefix = null) @trusted {
     return tmp;
 }
 
-/** TODO: Scoped variant of tempfile.
+/** TODO Scoped variant of tempfile.
     Search http://forum.dlang.org/thread/mailman.262.1386205638.3242.digitalmars-d-learn@puremagic.com
 */
 

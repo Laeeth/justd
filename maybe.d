@@ -16,7 +16,7 @@ struct Maybe(T,
 {
     @property string toString() @trusted const {
         import std.conv: to;
-        return defined ? to!string(_value) : "undefined"; // TODO: Is "none" better?
+        return defined ? to!string(_value) : "undefined"; // TODO Is "none" better?
     }
 
     import std.traits: isIntegral, isSigned, isUnsigned, isFloatingPoint;

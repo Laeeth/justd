@@ -62,7 +62,7 @@ class WordNet
             addWord(e, WordKind.prepositionTime, 0, HLang.en);
         }
 
-        // TODO: Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
+        // TODO Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
         foreach (e; ["to", "at", "of", "on", "off", "in", "out", "up",
                      "down", "from", "with", "into", "for", "about",
                      "between",
@@ -145,13 +145,13 @@ class WordNet
             addWord(e, WordKind.pronounPersonalPlural, 0, HLang.sv);
         }
 
-        /* TODO: near/far in distance/time , singular, plural */
+        /* TODO near/far in distance/time , singular, plural */
         foreach (e; ["this", "that",
                      "these", "those"]) {
             addWord(e, WordKind.pronounDemonstrative, 0, HLang.en);
         }
 
-        /* TODO: near/far in distance/time , singular, plural */
+        /* TODO near/far in distance/time , singular, plural */
         foreach (e; ["den här", "den där",
                      "de här", "de där"]) {
             addWord(e, WordKind.pronounDemonstrative, 0, HLang.sv);
@@ -261,7 +261,7 @@ class WordNet
             addWord(e, WordKind.nounWeekday, 0, HLang.sv);
         }
 
-        // TODO: Learn: adjective strong <=> noun strength
+        // TODO Learn: adjective strong <=> noun strength
     }
 
     /** Store $(D lemma) as $(D kind) in language $(D hlang). */
@@ -293,7 +293,7 @@ class WordNet
     }
 
     /** Get Possible Meanings of $(D lemma) in all $(D hlangs).
-        TODO: filter on hlangs if hlangs is non-empty.
+        TODO filter on hlangs if hlangs is non-empty.
      */
     WordSense[] meaningsOf(S)(S lemma,
                               HLang[] hlangs = []) if (isSomeString!S)
@@ -328,7 +328,7 @@ class WordNet
                              bool useMmFile = false)
     {
         if (!line.empty &&
-            !line.front.isWhite) // if first is not space. TODO: move this check
+            !line.front.isWhite) // if first is not space. TODO move this check
         {
             static if (isSomeString!R)
             {
@@ -336,11 +336,11 @@ class WordNet
             }
             else
             {
-                const linestr = cast(string)line.idup; // TODO: Why is this needed? And why does this fail?
+                const linestr = cast(string)line.idup; // TODO Why is this needed? And why does this fail?
             }
             /* pragma(msg, typeof(line).stringof); */
             /* pragma(msg, typeof(line.idup).stringof); */
-            const words        = linestr.split; // TODO: Non-eager split?
+            const words        = linestr.split; // TODO Non-eager split?
             const lemma        = words[0].idup; // NOTE: Stuff fails if this is set
             const pos          = words[1];
             const synset_cnt   = words[2].to!uint;
@@ -379,7 +379,7 @@ class WordNet
                    HLang hlang = HLang.unknown)
     {
         size_t lnr;
-        /* TODO: Functionize and merge with conceptnet5.readCSV */
+        /* TODO Functionize and merge with conceptnet5.readCSV */
         if (useMmFile)
         {
             version (none)
@@ -411,7 +411,7 @@ class WordNet
 
 /** Decode Ambiguous Meaning(s) of string $(D s). */
 version(none)
-// TODO: This gives error. Fix.
+// TODO This gives error. Fix.
 private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
                                             isSomeChar!S)
 {

@@ -1,7 +1,7 @@
 module typecons_ex;
 
-// TODO: Add to Phobos and refer to http://forum.dlang.org/thread/lzyqywovlmdseqgqfvun@forum.dlang.org#post-ibvkvjwexdafpgtsamut:40forum.dlang.org
-// TODO: Better with?:
+// TODO Add to Phobos and refer to http://forum.dlang.org/thread/lzyqywovlmdseqgqfvun@forum.dlang.org#post-ibvkvjwexdafpgtsamut:40forum.dlang.org
+// TODO Better with?:
 /* inout(Nullable!T) nullable(T)(inout T a) */
 /* { */
 /*     return typeof(return)(a); */

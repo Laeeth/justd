@@ -35,7 +35,7 @@ than buffer capacity");
 }
 
 /** Static Iota.
-    TODO: Make use of staticIota when it gets available in Phobos.
+    TODO Make use of staticIota when it gets available in Phobos.
 */
 template siota(size_t from, size_t to) { alias siota = siotaImpl!(to-1, from); }
 private template siotaImpl(size_t to, size_t now)

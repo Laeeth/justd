@@ -16,7 +16,7 @@ void main(string[] args)
 
     auto y = x[0 .. $]; // whole
 
-    // TODO: This should give static error (instead of runtime throw) through
+    // TODO This should give static error (instead of runtime throw) through
     // some common range propagation of min/max of lower and upper bound
     // relative to beginning and end of slice
     auto z = x[0 .. $+1];

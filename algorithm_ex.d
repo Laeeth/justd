@@ -53,10 +53,10 @@ unittest
 
     Similar to behaviour of Lisp's (or a...) and Python's a or ....
 
-    TODO: Why can't we make this lazy version @nogc and nothrow. This shouldn't
+    TODO Why can't we make this lazy version @nogc and nothrow. This shouldn't
     be a problem, though, since qualifiers are inferred for templated functions.
 
-    TODO: Is inout Conversion!T the correct return value?
+    TODO Is inout Conversion!T the correct return value?
 */
 CommonType!T either(T...)(lazy T a) pure if (a.length >= 1)
 {
@@ -114,7 +114,7 @@ unittest {
     otherwise CommonType!T.init.
 
     Similar to behaviour of Lisp's (and a...) and Python's a and ....
-    TODO: Is inout Conversion!T the correct return value?
+    TODO Is inout Conversion!T the correct return value?
 */
 CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (T.length >= 1)
 {
@@ -129,7 +129,7 @@ CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (T.le
     }
 }
 /** This overload enables, when possible, lvalue return.
-    TODO: Only last argument needs to be an l-value.
+    TODO Only last argument needs to be an l-value.
 */
 auto ref every(T...)(ref T a) @safe @nogc pure nothrow if (T.length >= 1 && allSame!T)
 {
@@ -481,7 +481,7 @@ unittest {
     { immutable float[3]    x  = [1, 2, 3];    assert(x[].sparseness == Q(0, 3)); }
     { immutable ubyte[2][2] x  = [0, 1, 0, 1]; assert(x[].sparseness == Q(2, 4)); }
     immutable ubyte[2][2] x22z = [0, 0, 0, 0]; assert(x22z[].sparseness == Q(4, 4));
-    assert("".sparseness == 1); // TODO: Is this correct?
+    assert("".sparseness == 1); // TODO Is this correct?
     assert(null.sparseness == 1);
 }
 
@@ -562,14 +562,14 @@ import std.string: CaseSensitive;
 // Parameterize on isAlpha and isSymbol.
 
 /** Find $(D needle) as Word or Symbol Acronym at $(D haystackOffset) in $(D haystack).
-    TODO: Make it compatible (specialized) for InputRange or BidirectionalRange.
+    TODO Make it compatible (specialized) for InputRange or BidirectionalRange.
  */
 Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b",
                                      R,
                                      E)(R haystack,
                                         E needle,
                                         FindContext ctx = FindContext.inWord,
-                                        CaseSensitive cs = CaseSensitive.yes, // TODO: Use this
+                                        CaseSensitive cs = CaseSensitive.yes, // TODO Use this
                                         size_t haystackOffset = 0) @safe pure
 {
     import std.ascii: isAlpha;
@@ -594,8 +594,8 @@ Tuple!(R, ptrdiff_t[]) findAcronymAt(alias pred = "a == b",
         // check context before point
         final switch (ctx)
         {
-        case FindContext.inWord:   break; // TODO: find word characters before point and set start offset
-        case FindContext.inSymbol: break; // TODO: find symbol characters before point and set start offset
+        case FindContext.inWord:   break; // TODO find word characters before point and set start offset
+        case FindContext.inSymbol: break; // TODO find symbol characters before point and set start offset
         case FindContext.asWord:
             if (ix0 >= 1 && haystack[ix0-1].isAlpha) { goto miss; } // quit if not word start
             break;
@@ -816,7 +816,7 @@ auto ref windowedReduce(Reduction reduction = Reduction.forwardDifference, R)(R 
     import std.range: zip, dropOne;
     auto ref op(T)(T a, T b) @safe pure nothrow
     {
-        static      if (reduction == Reduction.forwardDifference)  return b - a; // TODO: final static switch
+        static      if (reduction == Reduction.forwardDifference)  return b - a; // TODO final static switch
         else static if (reduction == Reduction.backwardDifference) return a - b;
         else static if (reduction == Reduction.sum)                return a + b;
     }
@@ -877,7 +877,7 @@ unittest
     version(print) dln(i.windowedReduce!(Reduction.sum));
 }
 
-/* TODO: Assert that ElementType!R only value semantics.  */
+/* TODO Assert that ElementType!R only value semantics.  */
 auto ref packBitParallelRunLengths(R)(in R x) if (isInputRange!R)
 {
     import std.bitmanip: BitArray;
@@ -928,10 +928,10 @@ unittest {
 
 /** Compute Forward Difference of $(D range).
 
-    TODO: Is there a difference between whether R r is immutable, const or
+    TODO Is there a difference between whether R r is immutable, const or
     mutable?
 
-    TODO: If r contains only one element return empty range.
+    TODO If r contains only one element return empty range.
 
     See also: https://stackoverflow.com/questions/21004944/forward-difference-algorithm
     See also: http://forum.dlang.org/thread/ujouqtqeehkegmtaxebg@forum.dlang.org#post-lczzsypupcfigttghkwx:40forum.dlang.org
@@ -945,7 +945,7 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
     {
         R _range;
         alias E = ElementType!R;                       // Input ElementType
-        alias D = typeof(_range.front - _range.front); // Element Difference Type. TODO: Use this as ElementType of range
+        alias D = typeof(_range.front - _range.front); // Element Difference Type. TODO Use this as ElementType of range
         D _front;
         bool _initialized = false;
 
@@ -953,7 +953,7 @@ auto forwardDifference(R)(R r) if (isInputRange!R)
         body
         {
             auto tmp = range;
-            if (tmp.dropOne.empty) // TODO: This may be an unneccesary cost but is practical to remove extra logic
+            if (tmp.dropOne.empty) // TODO This may be an unneccesary cost but is practical to remove extra logic
                 _range = R.init; // return empty range
             else
                 _range = range; // store range internally (by reference)
@@ -1013,7 +1013,7 @@ import traits_ex: arityMin0;
 
     Use for example to generate random instances of return value of fun.
 
-    TODO: I believe we need arityMin, arityMax trait here
+    TODO I believe we need arityMin, arityMax trait here
 */
 auto apply(alias fun, N)(N n) if (isCallable!fun &&
                                   arityMin0!fun &&
@@ -1202,7 +1202,7 @@ unittest {
 import std.typetuple : allSatisfy;
 
 /** Zip $(D ranges) together with operation $(D fun).
-    TODO: Remove when Issue 8715 is fixed providing zipWith
+    TODO Remove when Issue 8715 is fixed providing zipWith
 */
 auto zipWith(alias fun, Ranges...)(Ranges ranges) @safe pure nothrow if (Ranges.length >= 2 &&
 									 allSatisfy!(isInputRange, Ranges))
@@ -1306,7 +1306,7 @@ bool areColinear(T)(T a, T b) @safe pure nothrow
     return a.x * b.y == a.y * b.x;
 }
 
-/* /\** TODO: Remove when each is standard in Phobos. *\/ */
+/* /\** TODO Remove when each is standard in Phobos. *\/ */
 /* void each(R)(R range, delegate x) @safe pure /\* nothrow *\/ if (isInputRange!R) { */
 /*     foreach (ref elt; range) { */
 /*         x(elt); */
@@ -1538,8 +1538,8 @@ unittest
 
 /* Check if $(D part) is part of $(D whole).
    See also: http://forum.dlang.org/thread/ls9dbk$jkq$1@digitalmars.com
-   TODO: Standardize name and remove alises.
-   TODO: Use partOf if generalized to InputRange.
+   TODO Standardize name and remove alises.
+   TODO Use partOf if generalized to InputRange.
  */
 bool sliceOf(T)(in T[] part,
                 in T[] whole)
@@ -1570,7 +1570,7 @@ unittest
     assert([1, 2, 3].dropWhile(1) == [2, 3]);
     assert([1, 1, 1, 2, 3].dropWhile(1) == [2, 3]);
     assert([1, 2, 3].dropWhile(2) == [1, 2, 3]);
-    assert("aabc".dropWhile('a') == "bc"); // TODO: Remove restriction on cast to dchar
+    assert("aabc".dropWhile('a') == "bc"); // TODO Remove restriction on cast to dchar
 }
 
 /* See also: http://forum.dlang.org/thread/cjpplpzdzebfxhyqtskw@forum.dlang.org#post-cjpplpzdzebfxhyqtskw:40forum.dlang.org */
@@ -1735,13 +1735,13 @@ auto findPopBefore(alias pred = "a == b", R1, R2)(ref R1 haystack,
 {
     if (haystack.empty || needle.empty)
     {
-        return R1.init; // TODO: correct?
+        return R1.init; // TODO correct?
     }
     import std.algorithm: findSplitBefore;
     auto split = findSplitBefore!pred(haystack, needle);
-    if (split[0].empty) // TODO: If which case are empty and what return value should they lead to?
+    if (split[0].empty) // TODO If which case are empty and what return value should they lead to?
     {
-        return R1.init; // TODO: correct?
+        return R1.init; // TODO correct?
     }
     else
     {
@@ -1775,13 +1775,13 @@ auto findPopAfter(alias pred = "a == b", R1, R2)(ref R1 haystack,
 {
     if (haystack.empty || needle.empty)
     {
-        return R1.init; // TODO: correct?
+        return R1.init; // TODO correct?
     }
     import std.algorithm: findSplitAfter;
     auto split = findSplitAfter!pred(haystack, needle);
     if (split[0].empty)
     {
-        return R1.init; // TODO: correct?
+        return R1.init; // TODO correct?
     }
     else
     {
@@ -1885,7 +1885,7 @@ unittest
 
 Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[] needles)
 {
-    // TODO: Return some clever lazy range that calls each possible haystack.findFirstOfAnyInOrder(needles);
+    // TODO Return some clever lazy range that calls each possible haystack.findFirstOfAnyInOrder(needles);
     return typeof(return).init;
 }
 
@@ -1901,8 +1901,8 @@ enum Newline
 
 /** Split Input by line.
     See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org
-    TODO: Restrict using isSomeString!Range?
-    // TODO: This should fail with better errro message:
+    TODO Restrict using isSomeString!Range?
+    // TODO This should fail with better errro message:
     // assert(equal((cast(ubyte[])"a\nb").byLine!(Newline.any), ["a", "b"]));
     // Do we require immutability here?
 */
@@ -1926,7 +1926,7 @@ auto byLine(Newline nl = Newline.any,
     {
         static if (nl == Newline.any)
         {
-            // TODO: Use ctRegex instead?
+            // TODO Use ctRegex instead?
             import std.regex: splitter, regex;
             return input.splitter(regex("\n|\r\n|\r"));
         }

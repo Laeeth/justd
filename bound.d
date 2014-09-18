@@ -12,33 +12,33 @@
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
     See also: http://dlang.org/operatoroverloading.html
 
-    TODO: Test with geometry.Vector or geometry.Point
+    TODO Test with geometry.Vector or geometry.Point
 
-    TODO: Make stuff @safe pure @nogc and in some case nothrow
+    TODO Make stuff @safe pure @nogc and in some case nothrow
 
-    TODO: Implement overload for conditional operator p ? x1 : x2
-    TODO: Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
+    TODO Implement overload for conditional operator p ? x1 : x2
+    TODO Propagate ranges in arithmetic (opUnary, opBinary, opOpAssign):
           - Integer: +,-,*,^^,/
           - FloatingPoint: +,-,*,/,^^,sqrt,
 
-    TODO: Should implicit conversions to un-Bounds be allowed?
+    TODO Should implicit conversions to un-Bounds be allowed?
     Not in https://bitbucket.org/davidstone/bounded_integer.
 
-    TODO: Merge with limited
-    TODO: Is this a good idea to use?:
+    TODO Merge with limited
+    TODO Is this a good idea to use?:
     import std.typecons;
     mixin Proxy!_t;             // Limited acts as V (almost).
     invariant() {
     enforce(_t >= low && _t <= high);
     wln("fdsf");
 
-    TODO: If these things take to long to evaluted at compile-time maybe we need
+    TODO If these things take to long to evaluted at compile-time maybe we need
     to build it into the language for example using a new syntax either using
     - integer(range:low..high, step:1)
     - int(range:low..high, step:1)
     - num(range:low..high, step:1)
 
-    TODO: Use
+    TODO Use
     V saveOp(string op, V)(V x, V y) pure @save @nogc if(isIntegral!V
     && (op=="+" || op=="-" || op=="<<" || op=="*"))
     {
@@ -64,7 +64,7 @@
     return x;
     }
 
-    TODO: Reuse core.checkedint
+    TODO Reuse core.checkedint
 
  */
 module bound;
@@ -80,10 +80,10 @@ version = print;
 
 version(print) import std.stdio: wln = writeln;
 
-/** TODO: Use Boundness Policy. */
+/** TODO Use Boundness Policy. */
 enum Policy { clamped, overflowed, throwed, modulo }
 
-//     TODO: Do we need a specific underflow Exception?
+//     TODO Do we need a specific underflow Exception?
 // class BoundUnderflowException : Exception {
 //     this(string msg) { super(msg); }
 // }
@@ -113,12 +113,12 @@ enum areBoundable(T, U) = (isBoundable!T &&
 enum isCTBound(alias expr) = (isBoundable!(typeof(expr)) &&
                               isCTEable!expr);
 
-/** TODO: Use this. */
+/** TODO Use this. */
 enum areCTBoundable(alias low, alias high) = (isCTBound!low &&
                                               isCTBound!high &&
                                               low < high);
 
-/* TODO: Is there a already a Phobos trait or builtin property for this? */
+/* TODO Is there a already a Phobos trait or builtin property for this? */
 template PackedNumericType(alias expr) if (isCTBound!expr)
 {
     alias Type = typeof(expr);
@@ -229,7 +229,7 @@ unittest
 {
     assertThrown(('a'.bound!(false, true)));
     assertThrown((false.bound!('a', 'z')));
-    //wln(false.bound!('a', 'z')); // TODO: Should this give compile-time error?
+    //wln(false.bound!('a', 'z')); // TODO Should this give compile-time error?
 
     static assert(!__traits(compiles, { alias IBT = BoundsType!(0, 0); }));  // disallow
     static assert(!__traits(compiles, { alias IBT = BoundsType!(1, 0); })); // disallow
@@ -422,7 +422,7 @@ struct Bound(V,
         else static if (op == "-")
         {
             Bound!(-cast(int)V.max,
-                   -cast(int)V.min) tmp = void; // TODO: Needs fix
+                   -cast(int)V.min) tmp = void; // TODO Needs fix
         }
         mixin("tmp._value = " ~ op ~ "_value " ~ ";");
         mixin(check());
@@ -464,7 +464,7 @@ struct Bound(V,
             /* else static if (op == "/") */
             /* { */
             /* } */
-            else static if (op == "^^")  // TODO: Verify this case for integers and floats
+            else static if (op == "^^")  // TODO Verify this case for integers and floats
             {
                 import traits_ex: isEven;
                 if (_value >= 0 ||
@@ -476,7 +476,7 @@ struct Bound(V,
                 }
                 else
                 {
-                    /* TODO: What to do here? */
+                    /* TODO What to do here? */
                     enum min_ = max^^U.max;
                     enum max_ = min^^U.min;
                 }
@@ -595,7 +595,7 @@ unittest
 
 unittest
 {
-    /* TODO: static assert(is(typeof(bound!13 + bound!14) == const Bound!(ubyte, 27, 27))); */
+    /* TODO static assert(is(typeof(bound!13 + bound!14) == const Bound!(ubyte, 27, 27))); */
 }
 
 /** Return $(D x) with Automatic Packed Saturation.
@@ -603,7 +603,7 @@ unittest
  */
 auto ref saturated(V,
                    bool optional = false,
-                   bool packed = true)(V x) // TODO: inout may be irrelevant here
+                   bool packed = true)(V x) // TODO inout may be irrelevant here
 {
     enum exceptional = false;
     return bound!(V.min, V.max, optional, exceptional, packed)(x);
@@ -612,7 +612,7 @@ auto ref saturated(V,
 /** Return $(D x) with Automatic Packed Saturation.
     If $(D packed) optimize storage for compactness otherwise for speed.
 */
-auto ref optional(V, bool packed = true)(V x) // TODO: inout may be irrelevant here
+auto ref optional(V, bool packed = true)(V x) // TODO inout may be irrelevant here
 {
     return bound!(V.min, V.max, true, false, packed)(x);
 }
@@ -654,7 +654,7 @@ unittest
 }
 
 /** Calculate Minimum.
-    TODO: variadic.
+    TODO variadic.
 */
 auto min(V1, alias low1, alias high1,
          V2, alias low2, alias high2,
@@ -676,7 +676,7 @@ auto min(V1, alias low1, alias high1,
 }
 
 /** Calculate Maximum.
-    TODO: variadic.
+    TODO variadic.
 */
 auto max(V1, alias low1, alias high1,
          V2, alias low2, alias high2,
@@ -764,7 +764,7 @@ unittest
     static assert(!__traits(compiles, { x01 = x02; })); // should fail
 }
 
-/** TODO: Can D do better than C++ here?
+/** TODO Can D do better than C++ here?
     Does this automatically deduce to CommonType and if so do we need to declare it?
     Or does it suffice to constructors?
  */

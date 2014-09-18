@@ -8,10 +8,10 @@
 
     See also: http://forum.dlang.org/thread/byonwfghdqgcirdjyboh@forum.dlang.org
 
-    TODO: Can these be tagged with @nogc? Currently std.random.uniform may allocate.
-    TODO: Tags as @safe when std.random gets there.
-    TODO: Tags as nothrow when std.random gets there.
-    TODO: How to handle possibly null reference (class, dynamic types) types?
+    TODO Can these be tagged with @nogc? Currently std.random.uniform may allocate.
+    TODO Tags as @safe when std.random gets there.
+    TODO Tags as nothrow when std.random gets there.
+    TODO How to handle possibly null reference (class, dynamic types) types?
     Answer relates to how to randomize empty/null variable length structures
     (arrays, strings, etc).
     - Maybe some kind of length randomization?
@@ -104,7 +104,7 @@ unittest
 {
     auto x = randomized!dchar;
     dstring d = "alphaalphaalphaalphaalphaalphaalphaalphaalphaalpha";
-    auto r = d.randomize; // TODO: Use Phobos function to check if string is legally coded.
+    auto r = d.randomize; // TODO Use Phobos function to check if string is legally coded.
 }
 
 /** Randomize Contents of $(D x). */
@@ -113,7 +113,7 @@ auto ref randInPlace(dstring x)
 {
     dstring y;
     foreach (ix; 0 .. x.length)
-        y ~= randomized!dchar; // TODO: How to do this in a better way?
+        y ~= randomized!dchar; // TODO How to do this in a better way?
     x = y;
     return y;
 }
@@ -302,7 +302,7 @@ unittest
 T randomInstanceOf(T)()
     @safe
 {
-    /* TODO: recursively only void-initialize parts of T that are POD, not
+    /* TODO recursively only void-initialize parts of T that are POD, not
      reference types */
     static if (hasIndirections!T)
         T x;
@@ -318,7 +318,7 @@ T randomInstanceOf(T)(T low = T.min,
                       T high = T.max)
     @safe if (isNumeric!T)
 {
-    /* TODO: recursively only void-initialize parts of T that are POD, not
+    /* TODO recursively only void-initialize parts of T that are POD, not
        reference types */
     static if (hasIndirections!T)
         T x;

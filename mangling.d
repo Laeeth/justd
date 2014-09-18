@@ -6,19 +6,19 @@
     Authors: $(WEB Per Nordlöw)
     See also: https://mentorembedded.github.io/cxx-abi/abi.html
 
-    TODO: Only check for emptyness before any optionals.
+    TODO Only check for emptyness before any optionals.
 
-    TODO: Search for pattern "X> <Y" and assure that they all use
+    TODO Search for pattern "X> <Y" and assure that they all use
     return r.tryEvery(X, Y).
 
-    TODO: 1. Replace calls to decode ~ decode with separate decodes
-    TODO: 2 : Replace calls to decode ~ decode with a sequence call.
+    TODO 1. Replace calls to decode ~ decode with separate decodes
+    TODO 2 : Replace calls to decode ~ decode with a sequence call.
 
-    TODO: Detect recursion:
+    TODO Detect recursion:
           See: http://forum.dlang.org/thread/edaduxaxmihvzkoudeqa@forum.dlang.org#post-edaduxaxmihvzkoudeqa:40forum.dlang.org
           See: http://code.dlang.org/packages/backtrace-d
 
-    TODO: What role does _ZL have? See localFlag for details.
+    TODO What role does _ZL have? See localFlag for details.
  */
 module mangling;
 
@@ -150,7 +150,7 @@ R decodeCxxType(R)(Demangler!R x) if (isInputRange!R)
 
     while (!x.r.empty)
     {
-        if (const cvQ_ = x.r.decodeCxxCVQualifiers()) // TODO: Optimize
+        if (const cvQ_ = x.r.decodeCxxCVQualifiers()) // TODO Optimize
         {
             cxxType.cvQ.isRestrict |= cvQ_.isRestrict;
             cxxType.cvQ.isVolatile |= cvQ_.isVolatile;
@@ -166,12 +166,12 @@ R decodeCxxType(R)(Demangler!R x) if (isInputRange!R)
                     // <ref-qualifier>: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ref-qualifier
                 case 'R': x.r.popFront(); cxxType.isRef = true; break;
                 case 'O': x.r.popFront(); cxxType.isRvalueRef = true; break;
-                case 'C': x.r.popFront(); cxxType.isComplexPair = true; dln("TODO: Handle complex pair (C 2000)"); break;
-                case 'G': x.r.popFront(); cxxType.isImaginary = true; dln("TODO: Handle imaginary (C 2000)"); break;
+                case 'C': x.r.popFront(); cxxType.isComplexPair = true; dln("TODO Handle complex pair (C 2000)"); break;
+                case 'G': x.r.popFront(); cxxType.isImaginary = true; dln("TODO Handle imaginary (C 2000)"); break;
                 case 'U': x.r.popFront();
                     const sourceName = x.decodeCxxSourceName();
                     cxxType.typeName = sourceName ~ x.decodeCxxType();
-                    dln("TODO: Handle vendor extended type qualifier <source-name>", x.r);
+                    dln("TODO Handle vendor extended type qualifier <source-name>", x.r);
                     break;
                 default: miss = true; break;
             }
@@ -487,11 +487,11 @@ R decodeCxxBuiltinType(R)(Demangler!R x) if (isInputRange!R)
                 case 'a': x.r.popFront(); type = `auto`; break;
                 case 'c': x.r.popFront(); type = `decltype(auto)`; break;
                 case 'n': x.r.popFront(); type = `std::nullptr_t`; break; // (i.e., decltype(nullptr))
-                default: dln(`TODO: Handle `, x.r);
+                default: dln(`TODO Handle `, x.r);
             }
             break;
 
-            /* TODO: */
+            /* TODO */
             /* ::= u <source-name>	# vendor extended type */
 
         default:
@@ -518,7 +518,7 @@ R decodeCxxSubstitution(R)(Demangler!R x, R stdPrefix = `::std::`) if (isInputRa
         else if ('0' <= x.r.front && x.r.front <= '9') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
             const ix = (x.r.front - '0');
-            auto ids_ = x.ids[min(x.ids.length - 1, ix + 1)]; // TODO: Use of min here is hacky. Investigate.
+            auto ids_ = x.ids[min(x.ids.length - 1, ix + 1)]; // TODO Use of min here is hacky. Investigate.
             if (ix == 0)
             {
                 /* NOTE: Undocumented: decrease pointyness.
@@ -529,7 +529,7 @@ R decodeCxxSubstitution(R)(Demangler!R x, R stdPrefix = `::std::`) if (isInputRa
             }
             type = ids_.to!R;
             x.r.popFront();
-            x.r.skipOverSafe('_'); // TODO: Relaxed this to optional by removing surrounding assert. Investigate.
+            x.r.skipOverSafe('_'); // TODO Relaxed this to optional by removing surrounding assert. Investigate.
         }
         else if ('A' <= x.r.front && x.r.front <= 'Z') // See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.seq-id
         {
@@ -610,7 +610,7 @@ CxxBareFunctionType!R decodeCxxBareFunctionType(R)(Demangler!R x) if (isInputRan
     typeof(return) bareFunctionType;
     bareFunctionType.explicitVoidParameter = x.explicitVoidParameter;
 
-    /* TODO: This behaviour may not follow grammar. */
+    /* TODO This behaviour may not follow grammar. */
     if (const firstType = x.decodeCxxType())
     {
         bareFunctionType.types ~= firstType;
@@ -719,7 +719,7 @@ R decodeCxxSourceName(R)(Demangler!R x) if (isInputRange!R)
     x.r = match[1];
     if (!digits.empty)     // digit prefix
     {
-        // TODO: Functionize these three lines
+        // TODO Functionize these three lines
         const num = digits.to!uint;
         id = x.r[0..num]; // identifier, x.r.take(num)
         x.r = x.r[num..$]; // x.r.drop(num);
@@ -754,7 +754,7 @@ R decodeCxxNestedName(R)(Demangler!R x) if (isInputRange!R)
     return null;
 }
 
-/** TODO: Use this
+/** TODO Use this
     See also: https://mentorembedded.github.io/cxx-abi/abi.html#mangle.ctor-dtor-name
  */
 enum CtorDtorName
@@ -874,8 +874,8 @@ R decodeCxxExprPrimary(R)(Demangler!R x) if (isInputRange!R)
         if (!expr)
         {
             auto number = x.decodeCxxNumber();
-            // TODO: Howto demangle <float>?
-            // TODO: Howto demangle <float> _ <float> E
+            // TODO Howto demangle <float>?
+            // TODO Howto demangle <float> _ <float> E
             expr = x.decodeCxxType(); // <R>, <nullptr>, <pointer> type
             bool pointerType = x.r.skipOverSafe('0'); // null pointer template argument
         }
@@ -1051,7 +1051,7 @@ R decodeCxxDescriminator(R)(Demangler!R x) if (isInputRange!R)
         else                    // number < 10
         {
             x.r.skipOverSafe('n'); // optional prefix
-            /* TODO: Merge these two into a variant of popFront() that returns
+            /* TODO Merge these two into a variant of popFront() that returns
              the popped element. What is best out of:
              - General: x.r.takeOne().to!R
              - Arrays only: r[0..1]
@@ -1077,7 +1077,7 @@ R decodeCxxLocalName(R)(Demangler!R x) if (isInputRange!R)
         x.r.skipOverSafe('E');
         if (x.r.skipOverSafe('D'))
         {
-            assert(false, "TODO: Decode C++0x Closure Type (lambda)"); // see https://mentorembedded.github.io/cxx-abi/abi.html#closure-types
+            assert(false, "TODO Decode C++0x Closure Type (lambda)"); // see https://mentorembedded.github.io/cxx-abi/abi.html#closure-types
         }
         else
         {
@@ -1087,7 +1087,7 @@ R decodeCxxLocalName(R)(Demangler!R x) if (isInputRange!R)
             return (functionEncoding ~
                     x.scopeSeparator ~
                     entityNameMaybe ~
-                    discriminator.to!R); // TODO: Optional
+                    discriminator.to!R); // TODO Optional
         }
     }
     return R.init;
@@ -1099,7 +1099,7 @@ R decodeCxxName(R)(Demangler!R x) if (isInputRange!R)
     if (x.show) dln("rest: ", x.r);
     return either(x.decodeCxxNestedName(),
                   x.decodeCxxUnscopedName(),
-                  x.decodeCxxLocalName(), // TODO: order flipped
+                  x.decodeCxxLocalName(), // TODO order flipped
                   x.decodeCxxUnscopedTemplateNameAndArgs()); // NOTE: order flipped
 }
 
@@ -1182,7 +1182,7 @@ R decodeCxxSpecialName(R)(Demangler!R x) if (isInputRange!R)
 R decodeCxxEncoding(R)(Demangler!R x) /* @safe pure nothrow @nogc */ if (isInputRange!R)
 {
     if (x.show) dln("rest: ", x.r);
-    const localFlag = x.r.skipOverSafe('L'); // TODO: What role does the L have in symbols starting with _ZL have?
+    const localFlag = x.r.skipOverSafe('L'); // TODO What role does the L have in symbols starting with _ZL have?
     if (const name = x.decodeCxxSpecialName())
     {
         return name;
@@ -1236,7 +1236,7 @@ Demangling decodeSymbol(R)(Demangler!R x) /* @safe pure nothrow @nogc */ if (isI
         import core.demangle: demangle;
         const symAsD = x.r.demangle;
         import std.conv: to;
-        if (symAsD != x.r) // TODO: Why doesn't (symAsD is r) work here?
+        if (symAsD != x.r) // TODO Why doesn't (symAsD is r) work here?
             return Demangling(Lang.d, symAsD.to!R);
         else
             return Demangling(Lang.init, x.r);

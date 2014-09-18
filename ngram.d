@@ -6,9 +6,9 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    TODO: Replace static ifs with static final switch when Issue 6921 is fixed
+    TODO Replace static ifs with static final switch when Issue 6921 is fixed
 
-    TODO: Remove overloads using std.string:representation and use sparse maps
+    TODO Remove overloads using std.string:representation and use sparse maps
     over dchar for strings.
 */
 module ngram;
@@ -57,7 +57,7 @@ enum Symmetry {
    If Bin/Bucket Type $(D RequestedBinType), requested by user, is $(D void) it
    will be chosen automatically based on element type of $(D Range).
 
-   TODO: Add optimized put() be precalculating maximum number of elements that
+   TODO Add optimized put() be precalculating maximum number of elements that
    can be inserted without any risk overflow.
 */
 struct NGram(ValueType,
@@ -117,10 +117,10 @@ struct NGram(ValueType,
             // show as sparse
             rval ~= "[";
 
-            // TODO: Replace these with recursion?
+            // TODO Replace these with recursion?
             static if (N == 1) {
                 bool begun = false;
-                foreach (ix, elt; _bins) { // TODO: Make bitset support ref foreach and make elt const ref
+                foreach (ix, elt; _bins) { // TODO Make bitset support ref foreach and make elt const ref
                     if (elt) {
                         if (begun) { rval ~= ", "; }
                         rval ~= "{" ~ to!string(ix) ~ "}#" ~ to!string(elt);
@@ -131,7 +131,7 @@ struct NGram(ValueType,
             else static if (N == 2) {
                 bool begun = false;
                 foreach (ix0, const ref elt0; _bins) {
-                    foreach (ix1, elt1; elt0) { // TODO: Make bitset support ref foreach and make elt1 const ref
+                    foreach (ix1, elt1; elt0) { // TODO Make bitset support ref foreach and make elt1 const ref
                         if (elt1) {
                             if (begun) { rval ~= ", "; }
                             rval ~= ("{" ~
@@ -147,7 +147,7 @@ struct NGram(ValueType,
                 bool begun = false;
                 foreach (ix0, const ref elt0; _bins) {
                     foreach (ix1, const ref elt1; elt0) {
-                        foreach (ix2, elt2; elt1) { // TODO: Make bitset support ref foreach and make elt2 const ref
+                        foreach (ix2, elt2; elt1) { // TODO Make bitset support ref foreach and make elt2 const ref
                             if (elt2) {
                                 if (begun) { rval ~= ", "; }
                                 rval ~= ("{" ~
@@ -166,7 +166,7 @@ struct NGram(ValueType,
                 foreach (ix0, const ref elt0; _bins) {
                     foreach (ix1, const ref elt1; elt0) {
                         foreach (ix2, elt2; elt1) {
-                            foreach (ix3, elt3; elt2) { // TODO: Make bitset support ref foreach and make elt2 const ref
+                            foreach (ix3, elt3; elt2) { // TODO Make bitset support ref foreach and make elt2 const ref
                                 if (elt3) {
                                     if (begun) { rval ~= ", "; }
                                     rval ~= ("{" ~
@@ -187,8 +187,8 @@ struct NGram(ValueType,
                 foreach (ix0, const ref elt0; _bins) {
                     foreach (ix1, const ref elt1; elt0) {
                         foreach (ix2, const ref elt2; elt1) {
-                            foreach (ix3, const ref elt3; elt2) { // TODO: Make bitset support ref foreach and make elt2 const ref
-                                foreach (ix4, elt4; elt3) { // TODO: Make bitset support ref foreach and make elt2 const ref
+                            foreach (ix3, const ref elt3; elt2) { // TODO Make bitset support ref foreach and make elt2 const ref
+                                foreach (ix4, elt4; elt3) { // TODO Make bitset support ref foreach and make elt2 const ref
                                     if (elt4) {
                                         if (begun) { rval ~= ", "; }
                                         rval ~= ("{" ~
@@ -268,7 +268,7 @@ struct NGram(ValueType,
         static if      (storage == Storage.denseDynamic)
             _bins = rhs._bins.dup;
         else static if (storage == Storage.sparse)
-            _bins = cast(BinType[ValueType[N]])(rhs._bins.dup); // TODO: How can we prevent this cast?
+            _bins = cast(BinType[ValueType[N]])(rhs._bins.dup); // TODO How can we prevent this cast?
         else static if (storage == Storage.denseStatic)
             _bins = rhs._bins;
         else
@@ -282,7 +282,7 @@ struct NGram(ValueType,
                 static if (isFloatingPoint!ValueType) {
                     immutable scaleFactor = (cast(real)1) / _bins.length; // precalc scaling
                 }
-                foreach (ref elt; _bins) { // TODO: Why can this throw for associative arrays?
+                foreach (ref elt; _bins) { // TODO Why can this throw for associative arrays?
                     static if (isIntegral!ValueType ||
                                isSomeChar!ValueType) {
                         elt /= 2; // drop least significant bit
@@ -528,8 +528,8 @@ struct NGram(ValueType,
             import std.range: zip;
             import std.algorithm: map;
             import std.array: array;
-            tmp._bins = zip(this._bins[], rhs._bins[]).map!(a => mixin("a[0] " ~ op ~ "a[1]"))().array; // TODO: Use zipWith when Issue 8715 is fixed
-            /* foreach (ix, let; this._bins) { // TODO: Reuse Phobos algorithm or range */
+            tmp._bins = zip(this._bins[], rhs._bins[]).map!(a => mixin("a[0] " ~ op ~ "a[1]"))().array; // TODO Use zipWith when Issue 8715 is fixed
+            /* foreach (ix, let; this._bins) { // TODO Reuse Phobos algorithm or range */
             /*     mixin("tmp[ix] = _bins[ix] " ~ op ~ "rhs._bins[ix];"); */
             /* } */
         } else {
@@ -548,7 +548,7 @@ struct NGram(ValueType,
         alias BinType = RequestedBinType;
     }
 
-    enum bitsE = 8 * ValueType.sizeof; /** Number of Bits in ValueType (element). TODO: This may have to be fixed for ref types. */
+    enum bitsE = 8 * ValueType.sizeof; /** Number of Bits in ValueType (element). TODO This may have to be fixed for ref types. */
     enum combE = 2^^bitsE;  /** Number of combinations in element. */
     enum noABins = combE; // Number of bins per array dimension
     enum noBins = combE^^N; /** Maximum number of bins (possible). */

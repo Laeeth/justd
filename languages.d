@@ -149,7 +149,7 @@ enum HLang:ubyte
     yi,                       /// Yiddish
 }
 
-/** TODO: Remove when __traits(documentation is merged */
+/** TODO Remove when __traits(documentation is merged */
 string toName(HLang hlang)
 {
     with (HLang)
@@ -540,11 +540,13 @@ enum WordKind:ubyte
     pronounPossessiveSingularNeutral,
     pronounPossessivePlural, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
 
-    pronounInterrogative,
+    pronounInterrogative, /// https://www.englishclub.com/grammar/pronouns-reciprocal.htm
 
     pronounReflexive,
     pronounReflexiveSingular,
     pronounReflexivePlural,
+
+    pronounReciprocal,
 
     determiner,
     article,
@@ -618,7 +620,7 @@ auto toWordOfKind(S)(S word,
     return word;
 }
 
-/* TODO: How do I make this work? */
+/* TODO How do I make this work? */
 /* private T to(T:WordKind)(char x) */
 unittest
 {
@@ -691,7 +693,8 @@ unittest
                     kind.isPronounPossessive ||
                     kind.isPronounDemonstrative ||
                     kind == pronounInterrogative ||
-                    kind.isPronounReflexive);
+                    kind.isPronounReflexive ||
+                    kind == pronounInterrogative);
         }
     }
     bool isPronounPersonal(WordKind kind)
@@ -794,7 +797,7 @@ bool memberOf(WordKind child,
     with (WordKind) {
         switch (parent)
         {
-            /* TODO: Use static foreach over all enum members to generate all
+            /* TODO Use static foreach over all enum members to generate all
              * relevant cases: */
             case noun: return child.isNoun || child.isPronoun;
             case nounNumeric: return child.isNounNumeric;
@@ -1081,8 +1084,8 @@ static this() {
 
 /** Convert the number $(D number) to its English textual representation.
     Opposite: toTextualString.
-    TODO: Throw if number doesn't fit in long.
-    TODO: Add variant to toTextualBigIntegerMaybe.
+    TODO Throw if number doesn't fit in long.
+    TODO Add variant to toTextualBigIntegerMaybe.
 */
 Nullable!long toTextualIntegerMaybe(S)(S x)
     @safe pure if (isSomeString!S)

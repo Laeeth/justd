@@ -39,7 +39,7 @@ unittest {
 
 import std.functional: unaryFun, binaryFun;
 
-/* TODO: Do we need use of unaryFun and binaryFun here? */
+/* TODO Do we need use of unaryFun and binaryFun here? */
 alias isEven = unaryFun!(a => (a & 1) == 0); // Limit to Integers?
 alias isOdd = unaryFun!(a => (a & 1) == 1); // Limit to Integers?
 alias lessThan = binaryFun!((a, b) => a < b);
@@ -182,23 +182,23 @@ enum hasValueSemantics(T) = !hasIndirections!T;
 
 enum arityMin0(alias fun) = __traits(compiles, fun());
 
-/** TODO: Unite into a variadic.
+/** TODO Unite into a variadic.
     See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
 */
 enum isCallableWith(alias fun, T) = (is(typeof(fun(T.init))) ||
-                                     is(typeof(T.init.fun))); // TODO: Are both these needed?
+                                     is(typeof(T.init.fun))); // TODO Are both these needed?
 unittest {
     auto sqr(T)(T x) { return x*x; }
     assert(isCallableWith!(sqr, int));
     assert(!isCallableWith!(sqr, string));
 }
 
-/* TODO: Unite into a variadic.
+/* TODO Unite into a variadic.
    See also: http://forum.dlang.org/thread/bfjwbhkyehcloqcjzxck@forum.dlang.org#post-atjmewbffdzeixrviyoa:40forum.dlang.org
  */
 enum isCallableWith(alias fun, T, U) = (is(typeof(fun(T.init,
                                                       U.init))) ||
-                                        is(typeof(T.init.fun(U)))); // TODO: Are both these needed?
+                                        is(typeof(T.init.fun(U)))); // TODO Are both these needed?
 unittest {
     auto sqr2(T)(T x, T y) { return x*x + y*y; }
     assert(isCallableWith!(sqr2, int, int));
@@ -211,7 +211,7 @@ import std.range: SortedRange;
 /** Check if $(D T) is a Sorted Range.
     See also: http://forum.dlang.org/thread/lt1g3q$15fe$1@digitalmars.com
 */
-alias isSortedRange(T) = isInstanceOf!(SortedRange, T); // TODO: Or use: __traits(isSame, TemplateOf!R, SortedRange)
+alias isSortedRange(T) = isInstanceOf!(SortedRange, T); // TODO Or use: __traits(isSame, TemplateOf!R, SortedRange)
 
 /** Check if Function $(D expr) is callable at compile-time.
     See also: http://forum.dlang.org/thread/owlwzvidwwpsrelpkbok@forum.dlang.org
@@ -314,13 +314,13 @@ auto persistentlyMemoizedCall(alias fun, T...)(T args) if (isPure!fun &&
 }
 
 /** Move std.uni.newLine?
-    TODO: What to do with Windows style endings?
+    TODO What to do with Windows style endings?
     See also: https://en.wikipedia.org/wiki/Newline
 */
 @safe pure nothrow @nogc
 bool isNewline(C)(C c) if (isSomeChar!C)
 {
-    import std.ascii: newline; // TODO: Probably not useful.
+    import std.ascii: newline; // TODO Probably not useful.
     static if (newline == "\n")
     {
         return (c == '\n' || c == '\r'); // optimized for systems with \n as default
@@ -338,7 +338,7 @@ bool isNewline(C)(C c) if (isSomeChar!C)
 @safe pure nothrow @nogc
 bool isNewline(S)(S s) if (isSomeString!S)
 {
-    import std.ascii: newline; // TODO: Probably not useful.
+    import std.ascii: newline; // TODO Probably not useful.
     static if (newline == "\n")
     {
         return (s == '\n' || s == '\r'); // optimized for systems with \n as default

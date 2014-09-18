@@ -1,7 +1,7 @@
 #!/usr/bin/env rdmd-dev
 
 // See: http://forum.dlang.org/thread/hojk95$4mk$1@digitalmars.com
-// TODO: Support inout relevant for const?
+// TODO Support inout relevant for const?
 
 module deepdup;
 
