@@ -291,9 +291,9 @@ Thematic toThematic(Relation relation)
 
 enum Source:ubyte
 {
-    dbpedia37,
-    dbpediaen,
-    wordnet30,
+    dbpedia37,                  // dbpedia 3.7
+    dbpediaEn,                  // dbpedia English
+    wordnet30,                  // WordNet 3.0
 }
 
 auto pageSize() @trusted
@@ -310,7 +310,7 @@ auto pageSize() @trusted
 }
 
 /** Main Net.
-    TODO: Use DCD, stringcache, slice ubyte[] allocator
+    TODO: Use containers.HashMap
     TODO: Call GC.disable/enable around construction and search.
 */
 class Net(bool hashedStorage = true,
@@ -571,10 +571,11 @@ class Net(bool hashedStorage = true,
                     this.assertionCount++;
                     break;
                 case 6:
+                    // TODO: Use part.splitter('/')
                     switch (part)
                     {
                         case `/s/dbpedia/3.7`: link.source = Source.dbpedia37; break;
-                        case `/d/dbpedia/en`:  link.source = Source.dbpediaen; break;
+                        case `/d/dbpedia/en`:  link.source = Source.dbpediaEn; break;
                         case `/d/wordnet/3.0`: link.source = Source.wordnet30; break;
                         default: break;
                     }
