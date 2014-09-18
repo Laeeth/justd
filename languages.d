@@ -504,6 +504,9 @@ enum WordKind:ubyte
     verbFuture,
 
     adjective,
+    adjectivePossessive,
+    adjectivePossessiveSingular,
+    adjectivePossessivePlural,
 
     adverb, /// changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
     normalAdverb,
@@ -621,8 +624,7 @@ unittest
 {
     bool isNoun(WordKind kind)
     {
-        with (WordKind)
-        {
+        with (WordKind) {
             return (kind == noun ||
                     kind == nounNumeric ||
                     kind == nounInteger ||
@@ -637,8 +639,7 @@ unittest
     }
     bool isNounNumeric(WordKind kind)
     {
-        with (WordKind)
-        {
+        with (WordKind) {
             return (kind == nounNumeric ||
                     kind == nounInteger ||
                     kind == nounRationalNumber ||
@@ -648,8 +649,7 @@ unittest
     }
     bool isNounName(WordKind kind)
     {
-        with (WordKind)
-        {
+        with (WordKind) {
             return (kind == nounLocationName ||
                     kind == nounPersonName ||
                     kind == nounOtherName);
@@ -657,24 +657,36 @@ unittest
     }
     bool isVerb(WordKind kind)
     {
-        return (kind == WordKind.verb ||
-                kind == WordKind.verbPresent ||
-                kind == WordKind.verbPast ||
-                kind == WordKind.verbFuture);
+        with (WordKind) {
+            return (kind == verb ||
+                    kind == verbPresent ||
+                    kind == verbPast ||
+                    kind == verbFuture);
+        }
+}
+    bool isAdjective(WordKind kind) {
+        with (WordKind) {
+            return (kind == adjective ||
+                    kind == adjectivePossessiveSingular ||
+                    kind == adjectivePossessivePlural);
+        }
     }
-    bool isAdjective(WordKind kind) { return (kind == WordKind.adjective); }
     bool isAdverb(WordKind kind)
     {
-        return (kind == WordKind.adverb ||
-                kind == WordKind.normalAdverb ||
-                kind == WordKind.conjunctiveAdverb);
-    }
+        with (WordKind) {
+            return (kind == adverb ||
+                    kind == normalAdverb ||
+                    kind == conjunctiveAdverb);
+        }
+}
     bool isPronoun(WordKind kind)
     {
-        return (kind == WordKind.pronoun ||
-                kind.isPronounPersonal ||
-                kind.isPronounPossessive ||
-                kind.isPronounDemonstrative);
+        with (WordKind) {
+            return (kind == pronoun ||
+                    kind.isPronounPersonal ||
+                    kind.isPronounPossessive ||
+                    kind.isPronounDemonstrative);
+        }
     }
     bool isPronounPersonal(WordKind kind)
     {
@@ -683,27 +695,35 @@ unittest
     }
     bool isPronounPersonalSingular(WordKind kind)
     {
-        return (kind == WordKind.pronounPersonalSingular ||
-                kind == WordKind.pronounPersonalSingularMale ||
-                kind == WordKind.pronounPersonalSingularFemale ||
-                kind == WordKind.pronounPersonalSingularNeutral);
+        with (WordKind) {
+            return (kind == pronounPersonalSingular ||
+                    kind == pronounPersonalSingularMale ||
+                    kind == pronounPersonalSingularFemale ||
+                    kind == pronounPersonalSingularNeutral);
+        }
     }
     bool isPronounPersonalPlural(WordKind kind)
     {
-        return (kind == WordKind.pronounPersonalPlural);
+        with (WordKind) {
+            return (kind == pronounPersonalPlural);
+        }
     }
     bool isPronounPossessive(WordKind kind)
     {
-        return (kind == WordKind.pronounPossessive ||
-                kind.isPronounPossessiveSingular ||
-                kind.isPronounPossessivePlural);
+        with (WordKind) {
+            return (kind == pronounPossessive ||
+                    kind.isPronounPossessiveSingular ||
+                    kind.isPronounPossessivePlural);
+        }
     }
     bool isPronounPossessiveSingular(WordKind kind)
     {
-        return (kind == WordKind.pronounPossessiveSingular ||
-                kind == WordKind.pronounPossessiveSingularMale ||
-                kind == WordKind.pronounPossessiveSingularFemale ||
-                kind == WordKind.pronounPossessiveSingularNeutral);
+        with (WordKind) {
+            return (kind == pronounPossessiveSingular ||
+                    kind == pronounPossessiveSingularMale ||
+                    kind == pronounPossessiveSingularFemale ||
+                    kind == pronounPossessiveSingularNeutral);
+        }
     }
     bool isPronounPossessivePlural(WordKind kind)
     {
@@ -720,24 +740,30 @@ unittest
     }
     bool isPreposition(WordKind kind)
     {
-        return (kind == WordKind.preposition ||
-                kind == WordKind.prepositionTime ||
-                kind == WordKind.prepositionPosition ||
-                kind == WordKind.prepositionPlace ||
-                kind == WordKind.prepositionDirection);
+        with (WordKind) {
+            return (kind == preposition ||
+                    kind == prepositionTime ||
+                    kind == prepositionPosition ||
+                    kind == prepositionPlace ||
+                    kind == prepositionDirection);
+        }
     }
     bool isArticle(WordKind kind)
     {
-        return (kind == WordKind.article ||
-                kind == WordKind.articleUndefinite ||
-                kind == WordKind.articleDefinite ||
-                kind == WordKind.articlePartitive);
+        with (WordKind) {
+            return (kind == article ||
+                    kind == articleUndefinite ||
+                    kind == articleDefinite ||
+                    kind == articlePartitive);
+        }
     }
     bool isConjunction(WordKind kind)
     {
-        return (kind == WordKind.conjunction ||
-                kind == WordKind.coordinatingConjunction ||
-                kind == WordKind.subordinatingConjunction);
+        with (WordKind) {
+            return (kind == conjunction ||
+                    kind == coordinatingConjunction ||
+                    kind == subordinatingConjunction);
+        }
     }
 }
 
