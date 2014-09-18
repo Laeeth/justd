@@ -548,6 +548,8 @@ enum WordKind:ubyte
 
     pronounReciprocal,
 
+    pronounIndefinite,
+
     determiner,
     article,
     articleUndefinite,
@@ -694,7 +696,9 @@ unittest
                     kind.isPronounDemonstrative ||
                     kind == pronounInterrogative ||
                     kind.isPronounReflexive ||
-                    kind == pronounInterrogative);
+                    kind == pronounInterrogative ||
+                    kind == pronounReciprocal ||
+                    kind == pronounIndefinite);
         }
     }
     bool isPronounPersonal(WordKind kind)
