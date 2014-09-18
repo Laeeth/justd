@@ -276,7 +276,6 @@ class WordNet
                 if (kind != e.kind &&
                     kind.memberOf(e.kind))
                 {
-                    writeln("Specializing ", e.kind, " => ", kind, " for lemma ", lemma);
                     e.kind = kind; // specialize
                     return this;
                 }
