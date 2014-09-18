@@ -524,7 +524,6 @@ enum WordKind:ubyte
 
     pronoun, /// https://www.englishclub.com/grammar/pronouns.htm
 
-    // personal
     pronounPersonal, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingular, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingularMale,
@@ -532,10 +531,8 @@ enum WordKind:ubyte
     pronounPersonalSingularNeutral,
     pronounPersonalPlural, /// https://www.englishclub.com/grammar/pronouns-personal.htm
 
-    // demonstrative
     pronounDemonstrative, /// https://www.englishclub.com/grammar/pronouns-demonstrative.htm
 
-    // possessive
     pronounPossessive, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
     pronounPossessiveSingular, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
     pronounPossessiveSingularMale,
@@ -543,8 +540,11 @@ enum WordKind:ubyte
     pronounPossessiveSingularNeutral,
     pronounPossessivePlural, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
 
-    // interrogative
     pronounInterrogative,
+
+    pronounReflexive,
+    pronounReflexiveSingular,
+    pronounReflexivePlural,
 
     determiner,
     article,
@@ -690,7 +690,8 @@ unittest
                     kind.isPronounPersonal ||
                     kind.isPronounPossessive ||
                     kind.isPronounDemonstrative ||
-                    kind == pronounInterrogative);
+                    kind == pronounInterrogative ||
+                    kind.isPronounReflexive);
         }
     }
     bool isPronounPersonal(WordKind kind)
@@ -749,6 +750,14 @@ unittest
                     kind == pronounPossessivePlural);
         }
     }
+    bool isPronounReflexive(WordKind kind)
+    {
+        with (WordKind) {
+            return (kind == pronounReflexive ||
+                    kind == pronounReflexiveSingular ||
+                    kind == pronounReflexivePlural);
+        }
+    }
     bool isPreposition(WordKind kind)
     {
         with (WordKind) {
@@ -787,7 +796,7 @@ bool memberOf(WordKind child,
         {
             /* TODO: Use static foreach over all enum members to generate all
              * relevant cases: */
-            case noun: return child.isNoun;
+            case noun: return child.isNoun || child.isPronoun;
             case nounNumeric: return child.isNounNumeric;
             case nounName: return child.isNounName;
             case verb: return child.isVerb;
