@@ -44,8 +44,6 @@ auto clamp(T1, T2, T3)(T1 val, T2 lower, T3 upper)
     TODO:
 
     HasPainIntensity
-    LocatedNear
-    LocationOfAction
     MadeOf
     NotCapableOf
     NotCauses
@@ -98,6 +96,9 @@ enum Relation:ubyte
                    /c/en/boston /c/en/massachusetts */
     hasContext,
     locationOf,
+    locationOfAction,
+
+    locatedNear,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
 
@@ -165,6 +166,7 @@ enum Relation:ubyte
                   but within one language.) */
 
     instanceOf,
+    madeOf, // TODO: Unite with instanceOf
 
     inheritsFrom,
 }
@@ -221,7 +223,9 @@ enum Relation:ubyte
         with (Relation)
         {
             return (relation == isA ||
-                    relation == locationOf);
+                    relation == locationOf ||
+                    relation == locationOfAction ||
+                    relation == locatedNear);
         }
     }
 
@@ -258,7 +262,11 @@ Thematic toThematic(Relation relation)
         case Relation.capableOf: return Thematic.agents;
         case Relation.atLocation: return Thematic.spatial;
         case Relation.hasContext: return Thematic.things;
+
         case Relation.locationOf: return Thematic.spatial;
+        case Relation.locationOfAction: return Thematic.spatial;
+        case Relation.locatedNear: return Thematic.spatial;
+
         case Relation.causes: return Thematic.causal;
         case Relation.entails: return Thematic.causal;
         case Relation.hasSubevent: return Thematic.events;
@@ -287,6 +295,7 @@ Thematic toThematic(Relation relation)
         case Relation.definedAs: return Thematic.things;
 
         case Relation.instanceOf: return Thematic.things;
+        case Relation.madeOf: return Thematic.things;
         case Relation.inheritsFrom: return Thematic.things;
     }
 }
@@ -504,43 +513,46 @@ class Net(bool hashedStorage = true,
                     // TODO: Functionize to parseRelation or x.to!Relation
                     switch (relationString)
                     {
-                        case "RelatedTo":           link.relation = Relation.relatedTo; break;
-                        case "IsA":                 link.relation = Relation.isA; break;
-                        case "PartOf":              link.relation = Relation.partOf; break;
-                        case "MemberOf":            link.relation = Relation.memberOf; break;
-                        case "HasA":                link.relation = Relation.hasA; break;
-                        case "UsedFor":             link.relation = Relation.usedFor; break;
-                        case "CapableOf":           link.relation = Relation.capableOf; break;
-                        case "AtLocation":          link.relation = Relation.atLocation; break;
-                        case "HasContext":          link.relation = Relation.hasContext; break;
-                        case "LocationOf":          link.relation = Relation.locationOf; break;
-                        case "Causes":              link.relation = Relation.causes; break;
-                        case "Entails":             link.relation = Relation.entails; break;
-                        case "HasSubevent":         link.relation = Relation.hasSubevent; break;
-                        case "HasFirstSubevent":    link.relation = Relation.hasFirstSubevent; break;
-                        case "HasLastSubevent":     link.relation = Relation.hasLastSubevent; break;
-                        case "HasPrerequisite":     link.relation = Relation.hasPrerequisite; break;
-                        case "HasProperty":         link.relation = Relation.hasProperty; break;
-                        case "Attribute":           link.relation = Relation.attribute; break;
-                        case "MotivatedByGoal":     link.relation = Relation.motivatedByGoal; break;
-                        case "ObstructedBy":        link.relation = Relation.obstructedBy; break;
-                        case "Desires":             link.relation = Relation.desires; break;
-                        case "CausesDesire":        link.relation = Relation.causesDesire; break;
-                        case "DesireOf":            link.relation = Relation.desireOf; break;
-                        case "CreatedBy":           link.relation = Relation.createdBy; break;
-                        case "Synonym":             link.relation = Relation.synonym; break;
-                        case "Antonym":             link.relation = Relation.antonym; break;
-                        case "Retronym":            link.relation = Relation.retronym; break;
-                        case "DerivedFrom":         link.relation = Relation.derivedFrom; break;
-                        case "CompoundDerivedFrom": link.relation = Relation.compoundDerivedFrom; break;
+                        case "RelatedTo":                 link.relation = Relation.relatedTo; break;
+                        case "IsA":                       link.relation = Relation.isA; break;
+                        case "PartOf":                    link.relation = Relation.partOf; break;
+                        case "MemberOf":                  link.relation = Relation.memberOf; break;
+                        case "HasA":                      link.relation = Relation.hasA; break;
+                        case "UsedFor":                   link.relation = Relation.usedFor; break;
+                        case "CapableOf":                 link.relation = Relation.capableOf; break;
+                        case "AtLocation":                link.relation = Relation.atLocation; break;
+                        case "HasContext":                link.relation = Relation.hasContext; break;
+                        case "LocationOf":                link.relation = Relation.locationOf; break;
+                        case "LocationOfAction":          link.relation = Relation.locationOfAction; break;
+                        case "LocatedNear":               link.relation = Relation.locatedNear; break;
+                        case "Causes":                    link.relation = Relation.causes; break;
+                        case "Entails":                   link.relation = Relation.entails; break;
+                        case "HasSubevent":               link.relation = Relation.hasSubevent; break;
+                        case "HasFirstSubevent":          link.relation = Relation.hasFirstSubevent; break;
+                        case "HasLastSubevent":           link.relation = Relation.hasLastSubevent; break;
+                        case "HasPrerequisite":           link.relation = Relation.hasPrerequisite; break;
+                        case "HasProperty":               link.relation = Relation.hasProperty; break;
+                        case "Attribute":                 link.relation = Relation.attribute; break;
+                        case "MotivatedByGoal":           link.relation = Relation.motivatedByGoal; break;
+                        case "ObstructedBy":              link.relation = Relation.obstructedBy; break;
+                        case "Desires":                   link.relation = Relation.desires; break;
+                        case "CausesDesire":              link.relation = Relation.causesDesire; break;
+                        case "DesireOf":                  link.relation = Relation.desireOf; break;
+                        case "CreatedBy":                 link.relation = Relation.createdBy; break;
+                        case "Synonym":                   link.relation = Relation.synonym; break;
+                        case "Antonym":                   link.relation = Relation.antonym; break;
+                        case "Retronym":                  link.relation = Relation.retronym; break;
+                        case "DerivedFrom":               link.relation = Relation.derivedFrom; break;
+                        case "CompoundDerivedFrom":       link.relation = Relation.compoundDerivedFrom; break;
                         case "EtymologicallyDerivedFrom": link.relation = Relation.etymologicallyDerivedFrom; break;
-                        case "TranslationOf":       link.relation = Relation.translationOf; break;
-                        case "DefinedAs":           link.relation = Relation.definedAs; break;
-                        case "InstanceOf":          link.relation = Relation.instanceOf; break;
-                        case "InheritsFrom":        link.relation = Relation.inheritsFrom; break;
+                        case "TranslationOf":             link.relation = Relation.translationOf; break;
+                        case "DefinedAs":                 link.relation = Relation.definedAs; break;
+                        case "InstanceOf":                link.relation = Relation.instanceOf; break;
+                        case "MadeOf":                    link.relation = Relation.madeOf; break;
+                        case "InheritsFrom":              link.relation = Relation.inheritsFrom; break;
                         default:
                             writeln("Unknown relationString ", relationString);
-                            link.relation = Relation.unknown;
+                                                          link.relation = Relation.unknown;
                             break;
                     }
 
