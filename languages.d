@@ -1,7 +1,7 @@
 #!/usr/bin/env rdmd-dev
 
-/**
-   Generic Language Constructs.
+/** Generic Language Constructs.
+    See also: https://en.wikipedia.org/wiki/Predicate_(grammar)
  */
 module languages;
 
