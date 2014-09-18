@@ -210,6 +210,15 @@ class WordNet
             addWord(e, WordKind.pronounInterrogative, 0, HLang.sv);
         }
 
+        foreach (e; ["myself", "yourself", "himself", "herself", "itself"])
+        {
+            addWord(e, WordKind.pronounReflexiveSingular, 0, HLang.en);
+        }
+        foreach (e; ["ourselves", "yourselves", "themselves"])
+        {
+            addWord(e, WordKind.pronounReflexiveSingular, 0, HLang.en);
+        }
+
         foreach (e; ["after", "although", "as", "as if", "as long as",
                      "because", "before", "even if", "even though", "if",
                      "once", "provided", "since", "so that", "that",
@@ -270,6 +279,10 @@ class WordNet
                     writeln("Specializing ", e.kind, " => ", kind, " for lemma ", lemma);
                     e.kind = kind; // specialize
                     return this;
+                }
+                else
+                {
+                    writeln("Unspecializable ", e.kind, " => ", kind, " for lemma ", lemma);
                 }
             }
         }
