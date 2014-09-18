@@ -676,7 +676,7 @@ unittest
         return (kind == WordKind.article ||
                 kind == WordKind.articleUndefinite ||
                 kind == WordKind.articleDefinite ||
-                kindx1 == WordKind.articlePartitive);
+                kind == WordKind.articlePartitive);
     }
 }
 
