@@ -30,7 +30,6 @@ import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
 import std.container: Array;
 /* import containers: HashMap; */
-import algorithm_ex: findPopBefore;
 
 auto clamp(T1, T2, T3)(T1 val, T2 lower, T3 upper)
 {
