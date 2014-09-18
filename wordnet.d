@@ -231,6 +231,22 @@ class WordNet
             addWord(e, WordKind.pronounReciprocal, 0, HLang.sv);
         }
 
+        foreach (e; ["another", "anybody", "anyone", "anything", "each", "either", "enough",
+                     "everybody", "everyone", "everything", "less", "little", "much", "neither",
+                     "nobody", "noone", "one", "other",
+                     "somebody", "someone",
+                     "something", "you"]) {
+            addWord(e, WordKind.pronounIndefiniteSingular, 0, HLang.en);
+        }
+
+        foreach (e; ["both", "few", "fewer", "many", "others", "several", "they"]) {
+            addWord(e, WordKind.pronounIndefinitePlural, 0, HLang.en);
+        }
+
+        foreach (e; ["all", "any", "more", "most", "none", "some", "such"]) {
+            addWord(e, WordKind.pronounIndefinite, 0, HLang.en);
+        }
+
         foreach (e; ["after", "although", "as", "as if", "as long as",
                      "because", "before", "even if", "even though", "if",
                      "once", "provided", "since", "so that", "that",
