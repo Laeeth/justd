@@ -519,18 +519,23 @@ enum WordKind:ubyte
 
     pronoun, /// https://www.englishclub.com/grammar/pronouns.htm
 
+    // personal
     pronounPersonal, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingular, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingularMale,
     pronounPersonalSingularFemale,
     pronounPersonalSingularNeutral,
     pronounPersonalPlural, /// https://www.englishclub.com/grammar/pronouns-personal.htm
+
+    // demonstrative
     pronounDemonstrative, /// https://www.englishclub.com/grammar/pronouns-demonstrative.htm
 
+    // possessive
     pronounPossessive, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
     pronounPossessiveSingular, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
     pronounPossessiveSingularMale,
     pronounPossessiveSingularFemale,
+    pronounPossessiveSingularNeutral,
     pronounPossessivePlural, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
 
     determiner,
@@ -667,28 +672,50 @@ unittest
     bool isPronoun(WordKind kind)
     {
         return (kind == WordKind.pronoun ||
-                kind == WordKind.pronounPersonal ||
-                kind == WordKind.pronounPersonalSingular ||
-                kind == WordKind.pronounPersonalSingularMale ||
-                kind == WordKind.pronounPersonalSingularFemale ||
-                kind == WordKind.pronounPersonalSingularNeutral ||
-                kind == WordKind.pronounPersonalPlural ||
-                kind == WordKind.pronounDemonstrative ||
-                kind == WordKind.pronounPossessive ||
-                kind == WordKind.pronounPossessiveSingular ||
-                kind == WordKind.pronounPossessivePlural);
+                kind.isPronounPersonal ||
+                kind.isPronounPossessive ||
+                kind.isPronounDemonstrative);
     }
-    bool isPronounSingular(WordKind kind)
+    bool isPronounPersonal(WordKind kind)
+    {
+        return (kind.isPronounPersonalSingular ||
+                kind.isPronounPersonalPlural);
+    }
+    bool isPronounPersonalSingular(WordKind kind)
     {
         return (kind == WordKind.pronounPersonalSingular ||
                 kind == WordKind.pronounPersonalSingularMale ||
                 kind == WordKind.pronounPersonalSingularFemale ||
-                kind == WordKind.pronounPersonalSingularNeutral ||
-                kind == WordKind.pronounPossessiveSingularMale);
+                kind == WordKind.pronounPersonalSingularNeutral);
+    }
+    bool isPronounPersonalPlural(WordKind kind)
+    {
+        return (kind == WordKind.pronounPersonalPlural);
+    }
+    bool isPronounPossessive(WordKind kind)
+    {
+        return (kind == WordKind.pronounPossessive ||
+                kind.isPronounPossessiveSingular ||
+                kind.isPronounPossessivePlural);
+    }
+    bool isPronounPossessiveSingular(WordKind kind)
+    {
+        return (kind == WordKind.pronounPossessiveSingular ||
+                kind == WordKind.pronounPossessiveSingularMale ||
+                kind == WordKind.pronounPossessiveSingularFemale ||
+                kind == WordKind.pronounPossessiveSingularNeutral);
+    }
+    bool isPronounPossessivePlural(WordKind kind)
+    {
+        return (kind == WordKind.pronounPossessivePlural);
+    }
+    bool isPronounDemonstrative(WordKind kind)
+    {
+        return (kind == WordKind.pronounDemonstrative);
     }
     bool isPronounPlural(WordKind kind)
     {
-        return (kind == WordKind.pronounPersonalPlural ||
+        return (kind.isPronounPersonalPlural ||
                 kind == WordKind.pronounPossessivePlural);
     }
     bool isPreposition(WordKind kind)

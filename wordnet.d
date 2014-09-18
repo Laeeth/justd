@@ -147,32 +147,37 @@ class WordNet
 
         /* TODO: near/far in distance/time , singular, plural */
         foreach (e; ["this", "that",
-                     "these", "those"])
-        {
+                     "these", "those"]) {
             addWord(e, WordKind.pronounDemonstrative, 0, HLang.en);
         }
 
         /* TODO: near/far in distance/time , singular, plural */
         foreach (e; ["den här", "den där",
-                     "de här", "de där"])
-        {
+                     "de här", "de där"]) {
             addWord(e, WordKind.pronounDemonstrative, 0, HLang.sv);
         }
 
-        foreach (e; ["mine", // 1st person
-                     "yours", // 2nd person
-                     "his", "hers", "its", // 3rd person
-                     ])
-        {
+        foreach (e; ["mine", "yours"]) /* 1st person */ {
             addWord(e, WordKind.pronounPossessiveSingular, 0, HLang.en);
         }
+        foreach (e; ["his"]) {
+            addWord(e, WordKind.pronounPossessiveSingularMale, 0, HLang.en);
+        }
+        foreach (e; ["hers"]) {
+            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, HLang.en);
+        }
 
-        foreach (e; ["min", // 1st person
-                     "din", // 2nd person
-                     "hans", "hennes", "dens", "dets", // 3rd person
-                     ])
-        {
+        foreach (e; ["min", /* 1st person */ "din", /* 2nd person */ ]) {
             addWord(e, WordKind.pronounPossessiveSingular, 0, HLang.sv);
+        }
+        foreach (e; ["hans"]) {
+            addWord(e, WordKind.pronounPossessiveSingularMale, 0, HLang.sv);
+        }
+        foreach (e; ["hennes"]) {
+            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, HLang.sv);
+        }
+        foreach (e; ["dens", "dets", /* 3rd person */ ]) {
+            addWord(e, WordKind.pronounPossessiveSingularNeutral, 0, HLang.sv);
         }
 
         foreach (e; ["ours", // 1st person
