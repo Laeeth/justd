@@ -95,7 +95,7 @@
 	path = elf-d
 	url = https://github.com/nordlow/elf-d.git
 [submodule "containers"]
-	path = containers
+	path = containers-em
 	url = https://github.com/economicmodeling/containers.git
 [submodule "FReD"]
 	path = FReD
