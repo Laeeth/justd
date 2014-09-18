@@ -7,15 +7,6 @@ module wordnet;
 import languages;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
 
-/** Word Sense/Meaning/Interpretation. */
-struct WordSense
-{
-    WordKind category;
-    ubyte synsetCount; // Number of senses (meanings).
-    uint[] links;
-    HLang hlang;
-}
-
 /** WordNet */
 class WordNet
 {
@@ -119,8 +110,25 @@ class WordNet
         foreach (lemma; ["I", "me", "you", "she", "her", "he", "him", "it"]) {
             addWord(lemma, WordKind.pronounPersonalSingular, 0, HLang.en);
         }
-        foreach (lemma; ["we", "us", "you", "they", "them"]) {
+        foreach (lemma; ["jag", "mig", // 1st person
+                         "du", "dig", // 2nd person
+                         "han", "honom", // 3rd person
+                         "hon", "henne", // 3rd person
+                         "den", "det"]) { // 3rd person
+            addWord(lemma, WordKind.pronounPersonalSingular, 0, HLang.sv);
+        }
+
+        foreach (lemma; ["we", "us", // 1st person
+                         "you", // 2nd person
+                         "they", "them"]) // 3rd person
+        {
             addWord(lemma, WordKind.pronounPersonalPlural, 0, HLang.en);
+        }
+        foreach (lemma; ["vi", "oss", // 1st person
+                         "ni", // 2nd person
+                         "de", "dem"]) // 3rd person
+        {
+            addWord(lemma, WordKind.pronounPersonalPlural, 0, HLang.sv);
         }
 
         /* TODO: near/far in distance/time , singular, plural */
@@ -130,15 +138,43 @@ class WordNet
             addWord(lemma, WordKind.pronounDemonstrative, 0, HLang.en);
         }
 
-        foreach (lemma; ["mine", // 1st person singular
-                         "yours", // 2nd person singular
-                         "his", "hers", "its", // 3rd person singular
-                         "ours", // 1st person plural
-                         "yours", // 2nd person plural
-                         "theirs" // 3rd person plural
+        /* TODO: near/far in distance/time , singular, plural */
+        foreach (lemma; ["den här", "den där",
+                         "de här", "de där"])
+        {
+            addWord(lemma, WordKind.pronounDemonstrative, 0, HLang.sv);
+        }
+
+        foreach (lemma; ["mine", // 1st person
+                         "yours", // 2nd person
+                         "his", "hers", "its", // 3rd person
                      ])
         {
-            addWord(lemma, WordKind.pronounPossessive, 0, HLang.en);
+            addWord(lemma, WordKind.pronounPossessiveSingular, 0, HLang.en);
+        }
+
+        foreach (lemma; ["min", // 1st person
+                         "din", // 2nd person
+                         "hans", "hennes", "dens", "dets", // 3rd person
+                     ])
+        {
+            addWord(lemma, WordKind.pronounPossessiveSingular, 0, HLang.sv);
+        }
+
+        foreach (lemma; ["ours", // 1st person
+                         "yours", // 2nd person
+                         "theirs" // 3rd person
+                     ])
+        {
+            addWord(lemma, WordKind.pronounPossessivePlural, 0, HLang.en);
+        }
+
+        foreach (lemma; ["vår", // 1st person
+                         "er", // 2nd person
+                         "deras" // 3rd person
+                     ])
+        {
+            addWord(lemma, WordKind.pronounPossessivePlural, 0, HLang.sv);
         }
 
         foreach (lemma; ["after", "although", "as", "as if", "as long as",
@@ -263,7 +299,7 @@ class WordNet
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
             auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
-            auto meaning       = WordSense(words[1].front.parseWordKind,
+            auto meaning       = WordSense(words[1].front.decodeWordKind,
                                            words[2].to!ubyte,
                                            links);
             debug assert(synset_cnt == sense_cnt);
