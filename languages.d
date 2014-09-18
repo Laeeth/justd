@@ -1,6 +1,8 @@
 #!/usr/bin/env rdmd-dev
 
-/** Generic Language Constructs. */
+/**
+   Generic Language Constructs.
+ */
 module languages;
 
 import std.traits: isSomeChar, isSomeString;
@@ -508,11 +510,15 @@ enum WordKind:ubyte
     prepositionDirection, /// only related to space change (velocity)
 
     pronoun, /// https://www.englishclub.com/grammar/pronouns.htm
+
     pronounPersonal, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingular, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalPlural, /// https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounDemonstrative, /// https://www.englishclub.com/grammar/pronouns-demonstrative.htm
+
     pronounPossessive, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessiveSingular, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessivePlural, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
 
     determiner,
     article,
@@ -525,14 +531,24 @@ enum WordKind:ubyte
     subordinatingConjunction,
 }
 
+/** Word Sense/Meaning/Interpretation. */
+struct WordSense
+{
+    WordKind category;
+    ubyte synsetCount; // Number of senses (meanings).
+    uint[] links;
+    HLang hlang;
+}
+
 import std.conv: to;
 
-WordKind parseWordKind(C)(C x) if (isSomeChar!C)
+/** Decode character $(D kindCode) into a $(D WordKind). */
+WordKind decodeWordKind(C)(C kindCode) if (isSomeChar!C)
 {
     typeof(return) category;
     with (WordKind)
     {
-        switch (x)
+        switch (kindCode)
         {
             case 'n': category = noun; break;
             case 'v': category = verb; break;
@@ -546,14 +562,15 @@ WordKind parseWordKind(C)(C x) if (isSomeChar!C)
 
 unittest
 {
-    assert('n'.parseWordKind == WordKind.noun);
+    assert('n'.decodeWordKind == WordKind.noun);
 }
 
-WordKind parseWordKind(C)(C x) if (isSomeString!C)
+/** Decode string $(D kindCode) into a $(D WordKind). */
+WordKind decodeWordKind(S)(S kindCode) if (isSomeString!S)
 {
-    if (x.length == 1)
+    if (kindCode.length == 1)
     {
-        return x[0].parseWordKind;
+        return kindCode[0].decodeWordKind;
     }
     else
     {
@@ -563,7 +580,15 @@ WordKind parseWordKind(C)(C x) if (isSomeString!C)
 
 unittest
 {
-    assert("n".parseWordKind == WordKind.noun);
+    assert("n".decodeWordKind == WordKind.noun);
+}
+
+/** Convert $(D word) to $(D kind). */
+auto toWordOfKind(S)(S word,
+                     WordKind toKind,
+                     WordKind fromKind = WordKind.unknown) if (isSomeString!S)
+{
+    return word;
 }
 
 /* TODO: How do I make this work? */
@@ -612,7 +637,9 @@ unittest
                 category == WordKind.pronounPersonalSingular ||
                 category == WordKind.pronounPersonalPlural ||
                 category == WordKind.pronounDemonstrative ||
-                category == WordKind.pronounPossessive);
+                category == WordKind.pronounPossessive ||
+                category == WordKind.pronounPossessiveSingular ||
+                category == WordKind.pronounPossessivePlural);
     }
     bool isPreposition(WordKind category)
     {
@@ -688,16 +715,33 @@ static immutable verbSuffixes = [ "s", "ies", "es", "es", "ed", "ed", "ing", "in
 /** English Adjective Suffixes. */
 static immutable adjectiveSuffixes = [ "er", "est", "er", "est" ];
 
+/** English Job/Professin Title Suffixes.
+    Typically built from noun or verb bases.
+    See also: http://www.english-for-students.com/Job-Title-Suffixes.html
+*/
+static immutable jobTitleSuffixes = [ "or", // traitor
+                                      "er", // builder
+                                      "ist", // typist
+                                      "an", // technician
+                                      "man", // dustman, barman
+                                      "woman", // policewoman
+                                      "ian", // optician
+                                      "person", // chairperson
+                                      "sperson", // spokesperson
+                                      "ess", // waitress
+                                      "ive" // representative
+    ];
+
 /** English Word Suffixes. */
 static immutable wordSuffixes = [ allNounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;
 
-auto wordBase(S)(S x) if (isSomeString!S ||
-                          isSomeChar!S)
+/** Get English Word Base of $(D x). */
+auto wordBase(S)(S lemma, WordSense wordSense) if (isSomeString!S)
 {
     doit;
 }
 
-/** Get english order name of $(D n). */
+/** Get English Order Name of $(D n). */
 string nthString(T)(T n) @safe pure
 {
     import std.conv : to;
