@@ -202,6 +202,12 @@ class WordNet
         {
             addWord(e, WordKind.pronounPossessivePlural, 0, HLang.sv);
         }
+        foreach (e; ["who", "whom", "what", "which", "whose"]) {
+            addWord(e, WordKind.pronounInterrogative, 0, HLang.sv);
+        }
+        foreach (e; ["vem", "som", "vad", "vilken", "vems"]) {
+            addWord(e, WordKind.pronounInterrogative, 0, HLang.sv);
+        }
 
         foreach (e; ["after", "although", "as", "as if", "as long as",
                      "because", "before", "even if", "even though", "if",
@@ -257,10 +263,10 @@ class WordNet
             auto existing = _words[lemma];
             foreach (e; existing) // for each possible more general kind
             {
-                writeln(e.kind, " => ", kind, " for lemma ", lemma);
                 if (kind != e.kind &&
                     kind.memberOf(e.kind))
                 {
+                    writeln("Specializing ", e.kind, " => ", kind, " for lemma ", lemma);
                     e.kind = kind; // specialize
                     return this;
                 }

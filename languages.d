@@ -493,9 +493,11 @@ enum WordKind:ubyte
     nounIrrationalNumber,       // pi
     nounComplexNumber,          // 1+2i
 
+    nounName,
     nounLocationName,           // Stockholm
     nounPersonName,             // John
     nounOtherName,
+
     nounWeekday,
 
     verb,
@@ -540,6 +542,9 @@ enum WordKind:ubyte
     pronounPossessiveSingularFemale,
     pronounPossessiveSingularNeutral,
     pronounPossessivePlural, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
+
+    // interrogative
+    pronounInterrogative,
 
     determiner,
     article,
@@ -631,9 +636,7 @@ unittest
                     kind == nounRationalNumber ||
                     kind == nounIrrationalNumber ||
                     kind == nounComplexNumber ||
-                    kind == nounLocationName ||
-                    kind == nounPersonName ||
-                    kind == nounOtherName ||
+                    kind.isNounName ||
                     kind == nounWeekday);
         }
     }
@@ -650,7 +653,8 @@ unittest
     bool isNounName(WordKind kind)
     {
         with (WordKind) {
-            return (kind == nounLocationName ||
+            return (kind == nounName ||
+                    kind == nounLocationName ||
                     kind == nounPersonName ||
                     kind == nounOtherName);
         }
@@ -685,7 +689,8 @@ unittest
             return (kind == pronoun ||
                     kind.isPronounPersonal ||
                     kind.isPronounPossessive ||
-                    kind.isPronounDemonstrative);
+                    kind.isPronounDemonstrative ||
+                    kind == pronounInterrogative);
         }
     }
     bool isPronounPersonal(WordKind kind)
@@ -783,9 +788,17 @@ bool memberOf(WordKind child,
             /* TODO: Use static foreach over all enum members to generate all
              * relevant cases: */
             case noun: return child.isNoun;
+            case nounNumeric: return child.isNounNumeric;
+            case nounName: return child.isNounName;
             case verb: return child.isVerb;
             case adverb: return child.isAdverb;
             case adjective: return child.isAdjective;
+            case pronoun: return child.isPronoun;
+            case pronounPersonal: return child.isPronounPersonal;
+            case pronounPossessive: return child.isPronounPossessive;
+            case preposition: return child.isPreposition;
+            case article: return child.isArticle;
+            case conjunction: return child.isConjunction;
             default:return child == parent;
         }
     }
