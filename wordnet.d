@@ -247,6 +247,14 @@ class WordNet
             addWord(e, WordKind.pronounIndefinite, 0, HLang.en);
         }
 
+        foreach (e; ["who", "whom", // generally only for people
+                     "whose", // possession
+                     "which", // things
+                     "that" // things and people
+                     ]) {
+            addWord(e, WordKind.pronounRelative, 0, HLang.en);
+        }
+
         foreach (e; ["after", "although", "as", "as if", "as long as",
                      "because", "before", "even if", "even though", "if",
                      "once", "provided", "since", "so that", "that",

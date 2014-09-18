@@ -552,6 +552,8 @@ enum WordKind:ubyte
     pronounIndefiniteSingular,
     pronounIndefinitePlural,
 
+    pronounRelative, /// https://www.englishclub.com/grammar/pronouns-relative.htm
+
     determiner,
     article,
     articleUndefinite,
@@ -698,7 +700,8 @@ unittest
                     kind.isPronounDemonstrative ||
                     kind == pronounInterrogative ||
                     kind.isPronounReflexive ||
-                    kind.isPronounIndefinite);
+                    kind.isPronounIndefinite ||
+                    kind == pronounRelative);
         }
     }
     bool isPronounPersonal(WordKind kind)
