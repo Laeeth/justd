@@ -315,10 +315,6 @@ class WordNet
                     e.kind = kind; // specialize
                     return this;
                 }
-                else
-                {
-                    writeln("Unspecializable ", e.kind, " => ", kind, " for lemma ", lemma);
-                }
             }
         }
 
