@@ -805,28 +805,28 @@ unittest
     }
 }
 
-bool memberOf(WordKind child,
-              WordKind parent)
+bool memberOf(WordKind special,
+              WordKind general)
     @safe @nogc pure nothrow
 {
     with (WordKind) {
-        switch (parent)
+        switch (general)
         {
             /* TODO Use static foreach over all enum members to generate all
              * relevant cases: */
-            case noun: return child.isNoun || child.isPronoun;
-            case nounNumeric: return child.isNounNumeric;
-            case nounName: return child.isNounName;
-            case verb: return child.isVerb;
-            case adverb: return child.isAdverb;
-            case adjective: return child.isAdjective;
-            case pronoun: return child.isPronoun;
-            case pronounPersonal: return child.isPronounPersonal;
-            case pronounPossessive: return child.isPronounPossessive;
-            case preposition: return child.isPreposition;
-            case article: return child.isArticle;
-            case conjunction: return child.isConjunction;
-            default:return child == parent;
+            case noun: return special.isNoun || special.isPronoun;
+            case nounNumeric: return special.isNounNumeric;
+            case nounName: return special.isNounName;
+            case verb: return special.isVerb;
+            case adverb: return special.isAdverb;
+            case adjective: return special.isAdjective;
+            case pronoun: return special.isPronoun;
+            case pronounPersonal: return special.isPronounPersonal;
+            case pronounPossessive: return special.isPronounPossessive;
+            case preposition: return special.isPreposition;
+            case article: return special.isArticle;
+            case conjunction: return special.isConjunction;
+            default:return special == general;
         }
     }
 }
