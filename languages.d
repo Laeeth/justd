@@ -831,6 +831,8 @@ bool memberOf(WordKind child,
     }
 }
 
+alias specializes = memberOf;
+
 static immutable implies = [ "in order to" ];
 
 unittest
