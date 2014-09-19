@@ -125,11 +125,11 @@ unittest
     import core.exception;
     import std.exception;
 
-    void NotNullCompiliationTest1()() // I'm making these templates to defer compiling them
+    void NotNullCompilationTest1()() // I'm making these templates to defer compiling them
     {
         NotNull!(int*) defaultInitiliation; // should fail because this would be null otherwise
     }
-    assert(!__traits(compiles, NotNullCompiliationTest1!()()));
+    assert(!__traits(compiles, NotNullCompilationTest1!()()));
 
     void NotNullCompiliationTest2()()
     {
