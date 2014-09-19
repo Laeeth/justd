@@ -186,24 +186,25 @@ unittest
     assert(a is b);
 }
 
-/* unittest */
-/* { */
-/*     class A {} */
-/*     class B : A {} */
-/*     void f(NotNull!A a) {} */
-/*     NotNull!B b = assumeNotNull(new B); */
-/*     f(b); */
-/* } */
+unittest
+{
+    class A {}
+    class B : A {}
+    auto b = assumeNotNull(new B);
+    auto a = assumeNotNull(new A);
+    a = b;
+    assert(a is b);
+}
 
-/* unittest */
-/* { */
-/*     class A {} */
-/*     class B : A {} */
-/*     immutable b = cast(immutable)assumeNotNull(new B); */
-/*     immutable a = cast(immutable)assumeNotNull(new A); */
-/*     a = b; */
-/*     assert(a is b); */
-/* } */
+/** See also: http://forum.dlang.org/thread/mxpfzghydhirdtltmmvo@forum.dlang.org?page=3#post-ngtuwqiqumommfrlngjy:40forum.dlang.org */
+unittest
+{
+    class A {}
+    class B : A {}
+    void f(NotNull!A a) {}
+    NotNull!B b = assumeNotNull(new B);
+    static assert(!__traits(compiles, { f(b); })); // TODO I don't want this to fail.
+}
 
 /** by Andrej Mitrovic
     See also: http://forum.dlang.org/thread/llezieyytpcbcaoqeajz@forum.dlang.org?page=6
