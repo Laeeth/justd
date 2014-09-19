@@ -39,20 +39,6 @@ import std.container: Array;
 
     TODO
 
-    HasPainIntensity
-    MadeOf
-    NotCapableOf
-    NotCauses
-    NotDesires
-    NotHasA
-    NotHasProperty
-    NotIsA
-    NotMadeOf
-    NotUsedFor
-    ReceivesAction
-    SimilarSize
-    SimilarTo
-    SymbolOf
 
 */
 enum Relation:ubyte
@@ -129,6 +115,7 @@ enum Relation:ubyte
 
     createdBy, /* B is a process that creates A. /r/CreatedBy /c/en/cake
                   /c/en/bake */
+    receivesAction,
 
     synonym, /* A and B have very similar meanings. This is the synonym relation
                 in WordNet as well. */
@@ -162,9 +149,18 @@ enum Relation:ubyte
                   but within one language.) */
 
     instanceOf,
+
     madeOf, // TODO Unite with instanceOf
 
     inheritsFrom,
+
+    similarSize,
+
+    symbolOf,
+
+    similarTo,
+
+    hasPainIntensity,
 }
 
 @safe @nogc pure nothrow
@@ -278,6 +274,7 @@ Thematic toThematic(Relation relation)
         case Relation.desireOf: return Thematic.affective;
 
         case Relation.createdBy: return Thematic.agents;
+        case Relation.receivesAction: return Thematic.agents;
 
         case Relation.synonym: return Thematic.synonym;
         case Relation.antonym: return Thematic.antonym;
@@ -293,6 +290,10 @@ Thematic toThematic(Relation relation)
         case Relation.instanceOf: return Thematic.things;
         case Relation.madeOf: return Thematic.things;
         case Relation.inheritsFrom: return Thematic.things;
+        case Relation.similarSize: return Thematic.things;
+        case Relation.symbolOf: return Thematic.kLines;
+        case Relation.similarTo: return Thematic.kLines;
+        case Relation.hasPainIntensity: return Thematic.kLines;
     }
 }
 
@@ -375,7 +376,7 @@ class Net(bool hashedStorage = true,
         NodeIxes endIxes; // into Net.nodes
         ubyte weight;
         Relation relation;
-        //bool negation;
+        bool negation; // relation negation
         HLang hlang;
         Source source;
     }
@@ -535,6 +536,7 @@ class Net(bool hashedStorage = true,
                         case "CausesDesire":              link.relation = Relation.causesDesire; break;
                         case "DesireOf":                  link.relation = Relation.desireOf; break;
                         case "CreatedBy":                 link.relation = Relation.createdBy; break;
+                        case "ReceivesAction":            link.relation = Relation.receivesAction; break;
                         case "Synonym":                   link.relation = Relation.synonym; break;
                         case "Antonym":                   link.relation = Relation.antonym; break;
                         case "Retronym":                  link.relation = Relation.retronym; break;
@@ -546,6 +548,19 @@ class Net(bool hashedStorage = true,
                         case "InstanceOf":                link.relation = Relation.instanceOf; break;
                         case "MadeOf":                    link.relation = Relation.madeOf; break;
                         case "InheritsFrom":              link.relation = Relation.inheritsFrom; break;
+                        case "SimilarSize":               link.relation = Relation.similarSize; break;
+                        case "SymbolOf":                  link.relation = Relation.symbolOf; break;
+                        case "SimilarTo":                 link.relation = Relation.similarTo; break;
+                        case "HasPainIntensity":          link.relation = Relation.hasPainIntensity; break;
+                            // negations
+                        case "NotMadeOf":                 link.relation = Relation.madeOf; link.negation = true; break;
+                        case "NotIsA":                    link.relation = Relation.isA; link.negation = true; break;
+                        case "NotUsedFor":                link.relation = Relation.usedFor; link.negation = true; break;
+                        case "NotHasA":                   link.relation = Relation.hasA; link.negation = true; break;
+                        case "NotDesires":                link.relation = Relation.desires; link.negation = true; break;
+                        case "NotCauses":                 link.relation = Relation.causes; link.negation = true; break;
+                        case "NotCapableOf":              link.relation = Relation.capableOf; link.negation = true; break;
+                        case "NotHasProperty":            link.relation = Relation.hasProperty; link.negation = true; break;
                         default:
                             writeln("Unknown relationString ", relationString);
                                                           link.relation = Relation.unknown;
