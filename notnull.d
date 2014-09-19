@@ -146,7 +146,7 @@ unittest
 
     test = &dummy;
 
-    foo = assumeNotNull(test); // should be fine
+    foo = test.assumeNotNull; // should be fine
 
     void bar(int* a) {}
 
@@ -159,16 +159,16 @@ unittest
     assert(!__traits(compiles, takesNotNull(test))); // should not work; plain int might be null
     takesNotNull(foo); // should be fine
 
-    takesNotNull(assumeNotNull(test)); // this should work too
-    assert(!__traits(compiles, takesNotNull(assumeNotNull(null)))); // notNull(null) shouldn't compile
+    takesNotNull(test.assumeNotNull); // this should work too
+    assert(!__traits(compiles, takesNotNull(null.assumeNotNull))); // notNull(null) shouldn't compile
     test = null; // reset our pointer
 
-    assertThrown!AssertError(takesNotNull(assumeNotNull(test))); // test is null now, so this should throw an assert failure
+    assertThrown!AssertError(takesNotNull(test.assumeNotNull)); // test is null now, so this should throw an assert failure
 
     void takesConstNotNull(in NotNull!(int *) a) {}
 
     test = &dummy; // make it valid again
-    takesConstNotNull(assumeNotNull(test)); // should Just Work
+    takesConstNotNull(test.assumeNotNull); // should Just Work
 
     NotNull!(int*) foo2 = foo; // we should be able to assign NotNull to other NotNulls too
     foo2 = foo; // including init and assignment
@@ -179,8 +179,8 @@ unittest
 {
     class A {}
     class B : A {}
-    NotNull!B b = assumeNotNull(new B);
-    NotNull!A a = assumeNotNull(new A);
+    NotNull!B b = (new B).assumeNotNull;
+    NotNull!A a = (new A).assumeNotNull;
     assert(a && b);
     a = b;
     assert(a is b);
