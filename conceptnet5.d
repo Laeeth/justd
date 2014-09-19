@@ -563,7 +563,7 @@ class Net(bool hashedStorage = true,
                         case "NotHasProperty":            link.relation = Relation.hasProperty; link.negation = true; break;
                         default:
                             writeln("Unknown relationString ", relationString);
-                                                          link.relation = Relation.unknown;
+                            link.relation = Relation.unknown;
                             break;
                     }
 
