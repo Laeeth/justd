@@ -493,10 +493,10 @@ enum WordKind:ubyte
     nounIrrationalNumber,       // pi
     nounComplexNumber,          // 1+2i
 
-    nounName,
+    nounName,                   // proper name
     nounLocationName,           // Stockholm
     nounPersonName,             // John
-    nounOtherName,
+    nounOrganisationName,       // CIA
 
     nounWeekday,
 
@@ -664,7 +664,7 @@ unittest
             return (kind == nounName ||
                     kind == nounLocationName ||
                     kind == nounPersonName ||
-                    kind == nounOtherName);
+                    kind == nounOrganisationName);
         }
     }
     bool isVerb(WordKind kind)

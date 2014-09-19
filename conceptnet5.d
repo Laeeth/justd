@@ -29,13 +29,10 @@ import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
 import std.container: Array;
-/* import containers: HashMap; */
 
-auto clamp(T1, T2, T3)(T1 val, T2 lower, T3 upper)
-{
-    import std.algorithm: min, max;
-    return max(lower, min(upper, val));
-}
+/* import stdx.allocator; */
+/* import memory.allocators; */
+/* import containers: HashMap; */
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
