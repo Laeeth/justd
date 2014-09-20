@@ -334,6 +334,11 @@ public:
         assert(s1.length == 55);
     }
 
+    string toString() const @trusted pure nothrow
+    {
+        return this.asSlice;
+    }
+
     /*
      * Construct a RCXString from a slice. If the slice is immutable, assumes the slice is a literal or GC-allocated
      * and does NOT copy it internally. Warning: Subsequently deallocating $(D s) will cause the $(D RCXString) to
