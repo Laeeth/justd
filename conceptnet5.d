@@ -11,11 +11,6 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
-    TODO Ask forum for functionize front and popFront and make use of it
-    See http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-jkbhlezbcrufowxtthmy:40forum.dlang.org
-
-    TODO If ever will need to sort indexes we should use my radixSort
-
     TODO Add Net members
     - byNode
     - byLink
