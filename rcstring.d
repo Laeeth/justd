@@ -266,7 +266,7 @@ private:
     size_t toHash() const @trusted pure nothrow
     {
         import core.internal.hash : hashOf;
-        return isSmall ? small.hashOf : large[].hashOf;
+        return this.asSlice.hashOf;
     }
 
     unittest
