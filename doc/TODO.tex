@@ -128,6 +128,15 @@ Error: undefined identifier __dollar
 \item Detect duplicates: \texttt{version(print) version(print)}
 \end{itemize}
 
+\section{Compiler Optimization}
+
+\begin{itemize}
+\item Add an optimization pass that CT-introspects the enumerators of an
+  enum-indexed AA and represent it internally as a lookup-table if the
+  enumerator values are adjacent (enough), that is contain 1,2,3, or 1,3,5, or
+  3,6,9 etc. See http://forum.dlang.org/thread/akibggljgcmmacsbahmm@forum.dlang.org#post-dwyzmiklhfsnpanpicdh:40forum.dlang.org
+\end{itemize}
+
 \section{Compiler Inference}
 
 \item Infer \texttt{nothrow}-ness and \texttt{NotNull}-ness for \texttt{hit} in
