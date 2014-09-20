@@ -1,3 +1,5 @@
+#!/usr/bin/env rdmd-dev-module
+
 /** Reference Counted String.
     See also: http://dpaste.dzfl.pl/817283c163f5
  */
