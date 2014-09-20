@@ -334,6 +334,7 @@ public:
         assert(s1.length == 55);
     }
 
+    /// Needed for correct printing in other modules
     string toString() const @trusted pure nothrow
     {
         return this.asSlice;
