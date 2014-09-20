@@ -9,6 +9,7 @@
     See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: https://github.com/commonsense/conceptnet5/wiki
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
+    See also: http://www.eturner.net/omcsnetcpp/
 
     TODO Make use of result from decodeWordKind added to a Concept
 
