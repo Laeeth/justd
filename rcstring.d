@@ -1,0 +1,905 @@
+module rcstring;
+
+import core.stdc.stdlib, core.stdc.string, core.memory;
+import std.algorithm;
+
+/*
+ * La prima donna.
+ */
+alias RCString = RCXString!(immutable char);
+
+/* alias RCWString = RCXString!(immutable wchar); */
+
+/**
+ * Reference counted string. Configured with character type $(D Char), maximum length for the small string optimization,
+ * and the allocation function, which must have the same semantics as $(D realloc).
+ */
+struct RCXString(Char = immutable char, size_t maxSmall = 23, alias realloc = GC.realloc)
+{
+    // Preconditions
+    static assert(is(Char == immutable), "Only immutable characters supported for now.");
+    static assert(Char.alignof <= 4, "Character type must be 32-bit aligned at most.");
+    static assert(Char.min == 0, "Character type must be unsigned.");
+    static assert((maxSmall + 1) * Char.sizeof % size_t.sizeof == 0,
+                  "maxSmall + 1 must be a multiple of size_t.sizeof.");
+    static assert((maxSmall + 1) * Char.sizeof >= 3 * size_t.sizeof,
+                  "maxSmall + 1 must be >= size_t.sizeof * 3.");
+    static assert(maxSmall < Char.max, "maxSmall must be less than Char.max");
+
+private:
+    import std.utf, std.conv, std.traits;
+    version(unittest) import std.stdio;
+    alias MChar = Unqual!Char;
+
+    // Simple reference-counted buffer. The reference count itself is a Char. Layout is a size_t (the capacity)
+    // followed by the reference count followed by the payload.
+    struct RCBuffer
+    {
+        size_t capacity;
+        uint refCount;
+
+        // Data starts right after the refcount, no padding because of the static assert above
+        MChar* mptr() { return cast(MChar*) (&refCount + 1); }
+        Char* ptr() { return cast(Char*) mptr; }
+
+        // Create a new buffer given capacity and initializes payload. Capacity must be large enough.
+        static RCBuffer* make(size_t capacity, const(MChar)[] content) pure
+        {
+            assert(capacity >= content.length);
+            auto result = cast(RCBuffer*) realloc(null, size_t.sizeof + uint.sizeof + capacity * Char.sizeof);
+            result || assert(0);
+            result.capacity = capacity;
+            result.refCount = 1;
+            result.mptr[0 .. content.length] = content;
+            return result;
+        }
+
+        // Resize the buffer. It is assumed the reference count is 1.
+        static void resize(ref RCBuffer* p, size_t capacity) pure
+        {
+            assert(p.refCount == 1);
+            p = cast(RCBuffer*) realloc(p, size_t.sizeof + uint.sizeof + capacity * Char.sizeof);
+            p || assert(0);
+            p.capacity = capacity;
+        }
+
+        unittest
+        {
+            auto p = make(101, null);
+            assert(p.refCount == 1);
+            assert(p.capacity == 101);
+            resize(p, 203);
+            assert(p.refCount == 1);
+            assert(p.capacity == 203);
+            realloc(p, 0);
+        }
+    }
+
+    // Hosts a large string
+    struct Large
+    {
+        // <layout>
+        union
+        {
+            immutable RCBuffer* buf;
+            RCBuffer* mbuf;
+        }
+        union
+        {
+            Char* ptr;
+            MChar* mptr;
+        }
+        static if ((maxSmall + 1) * Char.sizeof == 3 * size_t.sizeof)
+        {
+            /* The small buffer and the large buffer overlap. This means the large buffer must give up its last byte
+             * as a discriminator.
+             */
+            size_t _length;
+            enum maxLarge = size_t.max >> (8 * Char.sizeof);
+            version(BigEndian)
+            {
+                // Use the LSB to store the marker
+                size_t length() const { return _length >> 8 * Char.sizeof; }
+                void length(size_t s) { _length = Marker.isRefCounted | (s << (8 * Char.sizeof)); }
+            }
+            else version(LittleEndian)
+            {
+                // Use the MSB to store the marker
+                private enum size_t mask = size_t(Char.max) << (8 * (size_t.sizeof - Char.sizeof));
+                size_t length() const { return _length & ~mask; }
+                void length(size_t s) { assert(s <= maxLarge); _length = s | mask; }
+            }
+            else
+            {
+                static assert(false, "Unspecified endianness.");
+            }
+        }
+        else
+        {
+            // No tricks needed, store the size plainly
+            size_t _length;
+            size_t length() const
+            {
+                return _length;
+            }
+            void length(size_t s)
+            {
+                _length = s;
+            }
+        }
+        // </layout>
+
+        // Get length
+        alias opDollar = length;
+
+        // Initializes a Large given capacity and content. Capacity must be at least as large as content's size.
+        this(size_t capacity, const(MChar)[] content) pure
+        {
+            assert(capacity >= content.length);
+            mbuf = RCBuffer.make(capacity, content);
+            mptr = mbuf.mptr;
+            length = content.length;
+        }
+
+        // Initializes a Large from a string by copying it.
+        this(const(MChar)[] s) pure
+        {
+            this(s.length, s);
+        }
+
+        unittest
+        {
+            const(MChar)[] s1 = "hello, world";
+            auto lrg1 = Large(s1);
+            assert(lrg1.length == 12);
+            immutable lrg2 = immutable Large(s1);
+            assert(lrg2.length == 12);
+            const lrg3 = const Large(s1);
+            assert(lrg3.length == 12);
+        }
+
+        // Initializes a Large from a static string by referring to it.
+        this(immutable(MChar)[] s) pure
+        {
+            assert(buf is null);
+            ptr = s.ptr;
+            length = s.length;
+        }
+
+        unittest
+        {
+            immutable MChar[] s = "abcdef";
+            auto lrg1 = Large(s);
+            assert(lrg1.length == 6);
+            assert(lrg1.buf is null);
+        }
+
+        // Decrements the reference count and frees buf if it goes down to zero.
+        void decRef()
+        {
+            if (!mbuf) return;
+            if (mbuf.refCount == 1) realloc(mbuf, 0);
+            else --mbuf.refCount;
+        }
+
+        auto opSlice() inout
+        {
+            assert(ptr);
+            return ptr[0 .. length];
+        }
+
+        // Makes sure there's room for at least newCap Chars.
+        void reserve(size_t newCap)
+        {
+            if (mbuf && mbuf.refCount == 1 && mbuf.capacity >= newCap) return;
+            immutable size = this.length;
+            version(assert) scope(exit) assert(size == this.length);
+            if (!mbuf)
+            {
+                // Migrate from static string to allocated string
+                mbuf = RCBuffer.make(newCap, ptr[0 .. size]);
+                ptr = mbuf.ptr;
+                return;
+            }
+            if (mbuf.refCount > 1)
+            {
+                // Split this guy making its buffer unique
+                --mbuf.refCount;
+                mbuf = RCBuffer.make(newCap, ptr[0 .. size]);
+                ptr = mbuf.ptr;
+                // size stays untouched
+            }
+            else
+            {
+                immutable offset = ptr - mbuf.ptr;
+                // If offset is too large, it's worth decRef()ing and then allocating a new buffer
+                if (offset * 2 >= newCap)
+                {
+                    auto newBuf = RCBuffer.make(newCap, ptr[0 .. size]);
+                    decRef;
+                    mbuf = newBuf;
+                    ptr = mbuf.ptr;
+                }
+                else
+                {
+                    RCBuffer.resize(mbuf, newCap);
+                    ptr = mbuf.ptr + offset;
+                }
+            }
+        }
+
+        unittest
+        {
+            Large obj;
+            obj.reserve(1);
+            assert(obj.mbuf !is null);
+            assert(obj.mbuf.capacity >= 1);
+            obj.reserve(1000);
+            assert(obj.mbuf.capacity >= 1000);
+            obj.reserve(10000);
+            assert(obj.mbuf.capacity >= 10000);
+        }
+    }
+
+    // <layout>
+    union
+    {
+        Large large;
+        struct
+        {
+            union
+            {
+                Char[maxSmall] small;
+                MChar[maxSmall] msmall;
+            }
+            MChar smallLength;
+        }
+        size_t ancillary[(maxSmall + 1) / size_t.sizeof]; // used internally
+    }
+    // </layout>
+
+    unittest
+    {
+        RCXString x;
+        assert(x.smallLength == 0);
+        assert(x.length == 0);
+        x.large.length = 133;
+        assert(x.smallLength == Char.max);
+        assert(x.large.length == 133);
+        x.large.length = 0x0088_8888_8888_8888;
+        assert(x.large.length == 0x0088_8888_8888_8888);
+        assert(x.smallLength == Char.max);
+    }
+
+    // is this string small?
+    bool isSmall() const
+    {
+        return smallLength <= maxSmall;
+    }
+
+    // release all memory associated with this
+    private void decRef()
+    {
+        if (!isSmall) large.decRef;
+    }
+
+    // Return a slice with the string's contents
+    // Not public because it leaks the internals
+    auto asSlice() inout
+    {
+        immutable s = smallLength;
+        if (s <= maxSmall) return small.ptr[0 .. s];
+        return large[];
+    }
+
+public:
+
+    /// Returns the length of the string
+    size_t length() const
+    {
+        immutable s = smallLength;
+        return s <= maxSmall ? s : large.length;
+    }
+    /// Ditto
+    alias opDollar = length;
+
+    unittest
+    {
+        auto s1 = RCXString("123456789_");
+        assert(s1.length == 10);
+        s1 ~= RCXString("123456789_123456789_123456789_123456789_12345");
+        assert(s1.length == 55);
+    }
+
+    /*
+     * Construct a RCXString from a slice. If the slice is immutable, assumes the slice is a literal or GC-allocated
+     * and does NOT copy it internally. Warning: Subsequently deallocating $(D s) will cause the $(D RCXString) to
+     * dangle. If the slice has $(D const) or mutable characters, creates and manages a copy internally.
+     */
+    pure this(C)(C[] s) if (is(Unqual!C == MChar))
+    {
+        // Contents is immutable, we may assume it won't go away ever
+        if (s.length <= maxSmall)
+        {
+            // Fits in small
+            small[0 .. s.length] = s[];
+            smallLength = cast(Char) s.length;
+        }
+        else
+        {
+            emplace(&large, s);
+        }
+    }
+
+    // Test construction from immutable(MChar)[], const(MChar)[], and MChar[]
+    unittest
+    {
+        immutable(Char)[] a = "123456789_";
+        auto s1 = RCXString(a);
+        assert(s1 == a);
+        assert(s1.asSlice !is a, "Small strings must be copied");
+        a = "123456789_123456789_123456789_123456789_";
+        auto s2 = RCXString(a);
+        assert(s2 == a);
+        assert(s2.asSlice is a, "Large immutable strings shall not be copied");
+
+        const(char)[] b = "123456789_";
+        auto s3 = RCXString(b);
+        assert(s3 == b);
+        assert(s3.isSmall, "Small strings must be copied");
+        b = "123456789_123456789_123456789_123456789_";
+        auto s4 = RCXString(b);
+        assert(s4 == b);
+        assert(s4.asSlice !is b, "Large non-immutable strings shall be copied");
+
+        char[] c = "123456789_".dup;
+        auto s5 = RCXString(c);
+        assert(s5 == c);
+        assert(s5.isSmall, "Small strings must be copied");
+        c = "123456789_123456789_123456789_123456789_".dup;
+        auto s6 = RCXString(c);
+        assert(s6 == c);
+        assert(s6.asSlice !is c, "Large non-immutable strings shall be copied");
+    }
+
+    unittest
+    {
+        const(MChar)[] s = "123456789_123456789_123456789_123456789_";
+        auto s1 = RCXString(s);
+        assert(s1.large.mbuf);
+        auto s2 = s1;
+        assert(s1.large.mbuf is s2.large.mbuf);
+        assert(s1.large.mbuf.refCount == 2);
+        s1 = s ~ "123";
+        assert(s1.large.mbuf.refCount == 1);
+        assert(s2.large.mbuf.refCount == 1);
+        assert(s2 == s);
+        assert(s1 == s ~ "123");
+        const s3 = s1;
+        assert(s1.large.mbuf.refCount == 2);
+        immutable s4 = s1;
+        //immutable s5 = s3;
+        assert(s1.large.mbuf.refCount == 3);
+    }
+
+    // Postblit
+    this(this)
+    {
+        if (!isSmall && large.mbuf) ++large.mbuf.refCount;
+    }
+
+    // Dtor decrements refcount and may deallocate
+    ~this()
+    {
+        decRef;
+    }
+
+    // Assigns another string
+    void opAssign(immutable(MChar)[] s)
+    {
+        decRef;
+        // Contents is immutable, we may assume it won't go away ever
+        emplace(&this, s);
+    }
+
+    unittest
+    {
+        immutable(MChar)[] s = "123456789_";
+        RCXString rcs;
+        rcs = s;
+        assert(rcs.isSmall);
+        s = "123456789_123456789_123456789_123456789_";
+        rcs = s;
+        assert(!rcs.isSmall);
+        assert(rcs.large.mbuf is null);
+    }
+
+    // Assigns another string
+    void opAssign(const(MChar)[] s)
+    {
+        if (capacity >= s.length)
+        {
+            // Noice, there's room
+            if (s.length <= maxSmall)
+            {
+                // Fits in small
+                msmall[0 .. s.length] = s[];
+                smallLength = cast(Char) s.length;
+            }
+            else
+            {
+                // Large it is
+                assert(!isSmall);
+                large.mptr[0 .. s.length] = s;
+                large.length = s.length;
+            }
+        }
+        else
+        {
+            // Tear down and rebuild
+            decRef;
+            emplace(&this, s);
+        }
+    }
+
+    unittest
+    {
+        const(MChar)[] s = "123456789_123456789_123456789_123456789_";
+        RCXString s1;
+        s1 = s;
+        assert(!s1.isSmall && s1.large.buf !is null);
+        auto p = s1.ptr;
+        s1 = s;
+        assert(s1.ptr is p, "Wasteful reallocation");
+        RCXString s2;
+        s2 = s1;
+        assert(s1.large.mbuf is s2.large.mbuf);
+        assert(s1.large.mbuf.refCount == 2);
+        s1 = "123456789_123456789_123456789_123456789_123456789_";
+        assert(s1.large.mbuf !is s2.large.mbuf);
+        assert(s1.large.mbuf is null);
+        assert(s2.large.mbuf.refCount == 1);
+        assert(s1 == "123456789_123456789_123456789_123456789_123456789_");
+        assert(s2 == "123456789_123456789_123456789_123456789_");
+    }
+
+    bool opEquals(const(MChar)[] s) const
+    {
+        if (isSmall) return s.length == smallLength && small[0 .. s.length] == s;
+        return large[] == s;
+    }
+
+    bool opEquals(in RCXString s) const
+    {
+        return this == s.asSlice;
+    }
+
+    unittest
+    {
+        const s1 = RCXString("123456789_123456789_123456789_123456789_123456789_");
+        RCXString s2 = s1[0 .. 10];
+        auto s3 = RCXString("123456789_");
+        assert(s2 == s3);
+    }
+
+    /**
+     * Returns the maximum number of character this string can store without requesting more memory.
+     */
+    size_t capacity() const
+    {
+        /* This is subtle: if large.mbuf is null (i.e. the string had been constructed from a literal), then the
+         * capacity is maxSmall because that's what we can store without a memory (re)allocation. Same if refCount is
+         * greater than 1 - we can't reuse the memory.
+         */
+        return isSmall || !large.mbuf || large.mbuf.refCount > 1 ? maxSmall : large.mbuf.capacity;
+    }
+
+    unittest
+    {
+        auto s = RCXString("abc");
+        assert(s.capacity == maxSmall);
+        s = "123456789_123456789_123456789_123456789_123456789_";
+        assert(s.capacity == maxSmall);
+        const char[] lit = "123456789_123456789_123456789_123456789_123456789_";
+        s = lit;
+        assert(s.capacity >= 50);
+    }
+
+    void reserve(size_t capacity)
+    {
+        if (isSmall)
+        {
+            if (capacity <= maxSmall)
+            {
+                // stays small
+                return;
+            }
+            // small to large
+            immutable length = smallLength;
+            auto newLayout = Large(capacity, small.ptr[0 .. length]);
+            large = newLayout;
+        }
+        else
+        {
+            // large to large
+            if (large.mbuf && large.mbuf.capacity >= capacity) return;
+            large.reserve(capacity);
+        }
+    }
+
+    unittest
+    {
+        RCXString s1;
+        s1.reserve(1);
+        assert(s1.capacity >= 1);
+        s1.reserve(1023);
+        assert(s1.capacity >= 1023);
+        s1.reserve(10230);
+        assert(s1.capacity >= 10230);
+    }
+
+    /**
+     * Appends $(D s) to $(D this).
+     */
+    void opOpAssign(string s : "~")(const(MChar)[] s)
+    {
+        immutable length = this.length;
+        immutable newLen = length + s.length;
+        if (isSmall)
+        {
+            if (newLen <= maxSmall)
+            {
+                // stays small
+                msmall[length .. newLen] = s;
+                smallLength = cast(Char) newLen;
+            }
+            else
+            {
+                // small to large
+                auto newLayout = Large(newLen, small.ptr[0 .. length]);
+                newLayout.mptr[length .. newLen][] = s;
+                newLayout.length = newLen;
+                large = newLayout;
+                assert(!isSmall);
+                assert(this.length == newLen);
+            }
+        }
+        else
+        {
+            // large to large
+            large.reserve(newLen);
+            large.mptr[length .. newLen][] = s;
+            large.length = newLen;
+        }
+    }
+
+    unittest
+    {
+        auto s1 = RCXString("123456789_123456789_123456789_123456789_");
+        s1 ~= s1;
+        assert(s1 == "123456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_");
+        foreach (i; 0 .. 70) s1.popFront;
+        assert(s1 == "123456789_");
+        s1 ~= "abc";
+        assert(s1 == "123456789_abc");
+    }
+
+    /// Ditto
+    void opOpAssign(string s : "~")(const auto ref RCXString s)
+    {
+        this ~= s.asSlice;
+    }
+
+    unittest
+    {
+        RCXString s1;
+        s1 = "hello";
+        assert(s1 == "hello");
+        s1 ~= ", world! ";
+        assert(s1 == "hello, world! ");
+        s1 ~= s1;
+        assert(s1 == "hello, world! hello, world! ");
+        s1 ~= s1;
+        assert(s1 == "hello, world! hello, world! hello, world! hello, world! ");
+        auto s2 = RCXString("yah! ");
+        assert(s2 == "yah! ");
+        s2 ~= s1;
+        assert(s2 == "yah! hello, world! hello, world! hello, world! hello, world! ");
+        s2 = "123456789_123456789_123456789_123456789_";
+        s2 ~= s2;
+        assert(s2 == "123456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_");
+        auto s3 = s2;
+        assert(s3.large.mbuf.refCount == 2);
+        s2 ~= "123456789_";
+        assert(s2.large.mbuf.refCount == 1);
+        assert(s3.large.mbuf.refCount == 1);
+        assert(s3 == "123456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_");
+
+        s2 = "123456789_123456789_123456789_123456789_";
+        const s4 = RCXString(", world");
+        s2 ~= s4;
+        assert(s2 == "123456789_123456789_123456789_123456789_, world");
+        s2 ~= const RCXString("!!!");
+        assert(s2 == "123456789_123456789_123456789_123456789_, world!!!");
+    }
+
+    /// Returns $(D true) iff $(D this) is empty
+    bool empty() const
+    {
+        return !length;
+    }
+
+    private dchar unsafeDecode(const(MChar)* p) const pure
+    {
+        byte c = *p;
+        dchar res = c & 0b0111_1111;
+        if (c >= 0) return res;
+        assert(c < 0b1111_1000);
+        dchar cover = 0b1000_0000;
+        c <<= 1;
+        assert(c < 0);
+        do
+        {
+            ++p;
+            assert((*p >> 6) == 0b10);
+            cover <<= 5;
+            res = (res << 6) ^ *p ^ cover ^ 0b1000_0000;
+            c <<= 1;
+        } while(c < 0);
+        return res;
+    }
+
+    /// Returns the first code point of $(D this).
+    dchar front() const pure
+    {
+        assert(!empty);
+        // TODO: make safe
+        return unsafeDecode(ptr);
+    }
+
+    /// Returns the last code point of $(D this).
+    dchar back() const pure
+    {
+        assert(!empty);
+        auto p = ptr + length - 1;
+        if (*p < 0b1000_0000) return *p;
+        // TODO: make safe
+        do
+        {
+            --p;
+        } while (!(*p & 0b0100_0000));
+        return unsafeDecode(p);
+    }
+
+    /// Returns the $(D n)th code unit in $(D this).
+    Char opIndex(size_t n) const pure
+    {
+        assert(n < length);
+        return ptr[n];
+    }
+
+    unittest
+    {
+        auto s1 = RCXString("hello");
+        assert(s1.front == 'h');
+        assert(s1[1] == 'e');
+        assert(s1.back == 'o');
+        assert(s1[$ - 1] == 'o');
+        s1 = RCXString("Ü");
+        assert(s1.length == 2);
+        assert(s1.front == 'Ü');
+        assert(s1.back == 'Ü');
+    }
+
+    /// Discards the first code point
+    void popFront() pure
+    {
+        assert(!empty && ptr);
+        uint toPop = 1;
+        auto b = *ptr;
+        if (b >= 0b1000_0000)
+        {
+            toPop = (b | 0b0010_0000) != b ? 2
+                : (b | 0b0001_0000) != b ? 3
+                : 4;
+        }
+        if (isSmall)
+        {
+            // Must shuffle in place
+            // TODO: make faster
+            foreach (i; 0 .. length - toPop)
+            {
+                msmall[i] = small[i + toPop];
+            }
+            smallLength -= toPop;
+        }
+        else
+        {
+            large.ptr += toPop;
+            large.length = large.length - toPop;
+        }
+    }
+
+    unittest
+    {
+        auto s1 = RCXString("123456789_");
+        auto s2 = s1;
+        s1.popFront;
+        assert(s1 == "23456789_");
+        assert(s2 == "123456789_");
+        s1 = RCXString("123456789_123456789_123456789_123456789_");
+        s2 = s1;
+        s1.popFront;
+        assert(s1 == "23456789_123456789_123456789_123456789_");
+        assert(s2 == "123456789_123456789_123456789_123456789_");
+        s1 = "öü";
+        s2 = s1;
+        s1.popFront;
+        assert(s1 == "ü");
+        assert(s2 == "öü");
+    }
+
+    /// Discards the last code point
+    void popBack() pure
+    {
+        assert(!empty && ptr);
+        auto p = ptr + length - 1;
+        if (*p < 0b1000_0000)
+        {
+            // hot path
+            if (isSmall) --smallLength;
+            else large.length = large.length - 1;
+            return;
+        }
+        // TODO: make safe
+        auto p1 = p;
+        do
+        {
+            --p;
+        } while (!(*p & 0b0100_0000));
+        immutable diff = p1 - p + 1;
+        assert(diff > 1 && diff <= length);
+        if (isSmall) smallLength -= diff;
+        else large.length = large.length - diff;
+    }
+
+    unittest
+    {
+        auto s1 = RCXString("123456789_");
+        auto s2 = s1;
+        s1.popBack;
+        assert(s1 == "123456789");
+        assert(s2 == "123456789_");
+        s1 = RCXString("123456789_123456789_123456789_123456789_");
+        s2 = s1;
+        s1.popBack;
+        assert(s1 == "123456789_123456789_123456789_123456789");
+        assert(s2 == "123456789_123456789_123456789_123456789_");
+        s1 = "öü";
+        s2 = s1;
+        s1.popBack;
+        assert(s1 == "ö");
+        assert(s2 == "öü");
+    }
+
+    /// Returns a slice to the entire string or a portion of it.
+    auto opSlice() inout
+    {
+        return this;
+    }
+
+    /// Ditto
+    auto opSlice(size_t b, size_t e) inout pure
+    {
+        assert(b <= e && e <= length);
+        auto ptr = this.ptr;
+        auto sz = e - b;
+        if (sz <= maxSmall)
+        {
+            // result is small
+            RCXString result = void;
+            result.msmall[0 .. sz] = ptr[b .. e];
+            result.smallLength = cast(Char) sz;
+            return result;
+        }
+        assert(!isSmall);
+        RCXString result = this;
+        result.large.ptr += b;
+        result.large.length = e - b;
+        return result;
+    }
+
+    unittest
+    {
+        immutable s = RCXString("123456789_123456789_123456789_123456789");
+        RCXString s1 = s[0 .. 38];
+        assert(!s1.isSmall && s1.large.buf is null);
+    }
+
+    // Unsafe! Returns a pointer to the beginning of the payload.
+    @system auto ptr() inout
+    {
+        return isSmall ? small.ptr : large.ptr;
+    }
+
+    unittest
+    {
+        auto s1 = RCXString("hello");
+        auto s2 = s1[1 .. $ - 1];
+        assert(s2 == "ell");
+        s1 = "123456789_123456789_123456789_123456789_";
+        s2 = s1[1 .. $ - 1];
+        assert(s2 == "23456789_123456789_123456789_123456789");
+    }
+
+    /// Returns the concatenation of $(D this) with $(D s).
+    RCXString opBinary(string s = "~")(const auto ref RCXString s) const
+    {
+        return this ~ s.asSlice;
+    }
+
+    /// Ditto
+    RCXString opBinary(string s = "~")(const(MChar)[] s) const
+    {
+        immutable length = this.length;
+        auto resultLen = length + s.length;
+        RCXString result = void;
+        if (resultLen <= maxSmall)
+        {
+            // noice
+            result.msmall.ptr[0 .. length] = ptr[0 .. length];
+            result.msmall.ptr[length .. resultLen] = s[];
+            result.smallLength = cast(Char) resultLen;
+            return result;
+        }
+        emplace(&result.large, resultLen, this.asSlice);
+        result ~= s;
+        return result;
+    }
+
+    /// Returns the concatenation of $(D s) with $(D this).
+    RCXString opBinaryRight(string s = "~")(const(Char)[] s) const
+    {
+        immutable length = this.length, resultLen = length + s.length;
+        RCXString result = void;
+        if (resultLen <= maxSmall)
+        {
+            // noice
+            result.msmall.ptr[0 .. s.length] = s[];
+            result.msmall.ptr[s.length .. resultLen] = small.ptr[0 .. length];
+            result.smallLength = cast(Char) resultLen;
+            return result;
+        }
+        emplace(&result.large, resultLen, s);
+        result ~= this;
+        return result;
+    }
+
+    unittest
+    {
+        auto s1 = RCXString("hello");
+        auto s2 = s1 ~ ", world!";
+        assert(s2 == "hello, world!");
+        s1 = "123456789_123456789_123456789_123456789_";
+        s2 = s1 ~ "abcdefghi_";
+        assert(s2 == "123456789_123456789_123456789_123456789_abcdefghi_");
+        s2 = s1 ~ s1;
+        assert(s2 == "123456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_");
+        s2 = "abcdefghi_" ~ s1;
+        assert(s2 == "abcdefghi_123456789_123456789_123456789_123456789_");
+    }
+}
+
+unittest
+{
+    RCXString!() s1;
+    // Not working yet
+    // RCXString!(immutable wchar) s2;
+}
+
+unittest
+{
+    version(unittest) import std.stdio;
+    auto s = RCString("hello");
+    writelnf(s ~ s);
+}
