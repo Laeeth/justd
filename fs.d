@@ -2757,11 +2757,17 @@ class GStats
                                   FileContent.font);
         binFKinds ~= kindTTCF;
 
-        auto kindWOFF = new FKind("Web Open Font Format", [], ["woff"], "wOFF", 0, [], [],
+        auto kindWOFF = new FKind("Web Open Font", [], ["woff"], "wOFF", 0, [], [],
+                                  [], // N/A
+                                  defaultStringDelims,
+                                  FileContent.font); // TODO container for kindSFNT
+        binFKinds ~= kindWOFF;
+
+        auto kindSFNT = new FKind("Spline Font", [], ["sfnt"], "sfnt", 0, [], [],
                                   [], // N/A
                                   defaultStringDelims,
                                   FileContent.font); // TODO container for Sfnt
-        binFKinds ~= kindWOFF;
+        binFKinds ~= kindSFNT;
 
         // Audio
 
