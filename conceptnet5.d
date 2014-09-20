@@ -414,18 +414,18 @@ class Net(bool hashedStorage = true,
     */
     static if (hashedStorage)
     {
-        Concepts conceptsByWord(S)(S word,
-                                    WordKind category = WordKind.unknown) if (isSomeString!S)
+        Concepts conceptsByWord(S)(S lemma,
+                                   WordKind category = WordKind.unknown) if (isSomeString!S)
         {
             if (category == WordKind.unknown)
             {
-                const meanings = this._wordnet.meaningsOf(word);
+                const meanings = this._wordnet.meaningsOf(lemma);
                 if (!meanings.empty)
                 {
                     category = meanings.front.category; // TODO Pick union of all meanings
                 }
             }
-            _conceptsByLemma[word];
+            _conceptsByLemma[lemma];
         }
     }
 
