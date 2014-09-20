@@ -326,7 +326,8 @@ auto pageSize() @trusted
     TODO Call GC.disable/enable around construction and search.
 */
 class Net(bool hashedStorage = true,
-          bool useArray = true)
+          bool useArray = true,
+          bool useRCString = true)
 {
     import std.file, std.algorithm, std.range, std.string, std.path, std.array;
     import dbg;
@@ -337,30 +338,33 @@ class Net(bool hashedStorage = true,
     */
     alias Ix = uint; // TODO Change this to size_t when we have more concepts and memory.
     struct LinkIx { Ix ix; } /* alias LinkIx = Ix; */
-    static if (useArray)
-        alias LinkIxes = Array!LinkIx;
-    else
-        alias LinkIxes = LinkIx[];
+    static if (useArray) { alias LinkIxes = Array!LinkIx; }
+    else                 { alias LinkIxes = LinkIx[]; }
+
+    static if (useRCString) { alias Lemma = RCString; }
+    else                    { alias Lemma = string; }
 
     /** Concept Node/Vertex. */
     struct Concept
     {
-        this(const string concept, HLang hlang)
+        this(const Lemma lemma, HLang hlang)
         {
             static if (!hashedStorage)
-                this.concept = concept; // in-place of hash-key
+                this.lemma = lemma; // in-place of hash-key
             this.hlang = hlang;
         }
     private:
         LinkIxes outIxes; // into Net.links
         LinkIxes inIxes; // into Net.links
         static if (!hashedStorage)
-            immutable string concept; // in-place of hash-key
+            Lemma lemma; // in-place of hash-key
         HLang hlang;
     }
 
     struct NodeIx { Ix ix; } /* alias NodeIx = Ix; */
-    alias NodeIxes = Array!NodeIx;
+
+    static if (useArray) { alias NodeIxes = Array!NodeIx; }
+    else                 { alias NodeIxes = NodeIx[]; }
 
     /** Many-Concepts-to-Many-Concepts Link (Edge).
      */
@@ -385,27 +389,30 @@ class Net(bool hashedStorage = true,
         Source source;
     }
 
-    static if (useArray) { alias Concepts = Concept[]; }
+    static if (useArray) { alias Concepts = Array!Concept; }
     else                 { alias Concepts = Concept[]; }
+
+    static if (useArray) { alias Links = Array!Link; }
+    else                 { alias Links = Link[]; }
+
+    private Links links;
 
     private
     {
         static if (hashedStorage)
         {
             /** Concepts by WordKind */
-            Concepts[string] conceptsByNoun;
-            Concepts[string] conceptsByVerb;
-            Concepts[string] conceptsByAdjective;
-            Concepts[string] conceptsByAdverb;
-            Concepts[string] conceptsByOther;
+            Concepts[Lemma] conceptsByNoun;
+            Concepts[Lemma] conceptsByVerb;
+            Concepts[Lemma] conceptsByAdjective;
+            Concepts[Lemma] conceptsByAdverb;
+            Concepts[Lemma] conceptsByOther;
         }
         else
         {
             Concepts concepts;
         }
     }
-
-    private Link[] links;
 
     import wordnet: WordNet;
     WordNet wordnet;
@@ -467,7 +474,7 @@ class Net(bool hashedStorage = true,
             else if (wordnet.canMean(lemma, WordKind.verb))      { conceptsByVerb[lemma]      ~= concept; }
             else if (wordnet.canMean(lemma, WordKind.adjective)) { conceptsByAdjective[lemma] ~= concept; }
             else if (wordnet.canMean(lemma, WordKind.adverb))    { conceptsByAdverb[lemma]    ~= concept; }
-            else                                                     { conceptsByOther[lemma]     ~= concept; }
+            else                                                 { conceptsByOther[lemma]     ~= concept; }
         }
         else
         {
