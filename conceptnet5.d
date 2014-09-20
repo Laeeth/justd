@@ -453,7 +453,10 @@ class Net(bool useArray = true,
         {
             if (lemma !in _conceptsByLemma)
             {
-                _conceptsByLemma[lemma] = Concepts.init; // TODO why is this needed for Array!T but not for T[]? A bug? Or an overload missing?
+                /* TODO why is this needed for Array!T but not for T[]?
+                   A bug?
+                   Or an overload missing? */
+                _conceptsByLemma[lemma] = Concepts.init;
             }
         }
         _conceptsByLemma[lemma] ~= concept;
