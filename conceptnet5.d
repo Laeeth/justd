@@ -14,6 +14,8 @@
 
     TODO If ever will need to sort indexes we should use my radixSort
 
+    TODO use rcstring.RCString
+
     TODO Add Net members
     - byNode
     - byLink
@@ -23,12 +25,14 @@
  */
 module conceptnet5;
 
-import languages;
 import std.traits: isSomeString, isFloatingPoint;
 import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
 import std.container: Array;
+
+import languages;
+import rcstring;
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
@@ -381,27 +385,29 @@ class Net(bool hashedStorage = true,
         Source source;
     }
 
+    static if (useArray) { alias Concepts = Concept[]; }
+    else                 { alias Concepts = Concept[]; }
+
     private
     {
         static if (hashedStorage)
         {
             /** Concepts by WordKind */
-            Concept[][string] conceptsByNoun;
-            Concept[][string] conceptsByVerb;
-            Concept[][string] conceptsByAdjective;
-            Concept[][string] conceptsByAdverb;
-            Concept[][string] conceptsByOther;
+            Concepts[string] conceptsByNoun;
+            Concepts[string] conceptsByVerb;
+            Concepts[string] conceptsByAdjective;
+            Concepts[string] conceptsByAdverb;
+            Concepts[string] conceptsByOther;
         }
         else
         {
-            Concept[] concepts;
+            Concepts concepts;
         }
     }
 
     private Link[] links;
 
     import wordnet: WordNet;
-
     WordNet wordnet;
 
     /** Get Concepts related to $(D word) in the interpretation (semantic
@@ -410,7 +416,7 @@ class Net(bool hashedStorage = true,
     */
     static if (hashedStorage)
     {
-        Concept[] conceptsByWord(S)(S word,
+        Concepts conceptsByWord(S)(S word,
                                     WordKind category = WordKind.unknown) if (isSomeString!S)
         {
             if (category == WordKind.unknown)
@@ -481,8 +487,10 @@ class Net(bool hashedStorage = true,
                    Concept(srcConcept, srcLang));
         if (!items.empty)
         {
-            const category = items.front.decodeWordKind;
-            if (category == WordKind.unknown)
+            const item = items.front;
+            const category = item.decodeWordKind;
+            if (category == WordKind.unknown
+                && item != "_")
             {
                 dln("Unknown WordKind code ", items.front);
             }
