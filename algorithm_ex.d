@@ -116,7 +116,7 @@ unittest {
     Similar to behaviour of Lisp's (and a...) and Python's a and ....
     TODO Is inout Conversion!T the correct return value?
 */
-CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (T.length >= 1)
+CommonType!T every(T...)(lazy T a) /* @safe @nogc pure nothrow */ if (T.length >= 1)
 {
     auto a0 = a[0]();           // evaluate only once
     static if (T.length == 1)
@@ -128,25 +128,9 @@ CommonType!T every(T...)(lazy T a) @safe /* @nogc */ pure /* nothrow */ if (T.le
         return a0 ? every(a[1 .. $]) : CommonType!T.init; // recurse
     }
 }
-/** This overload enables, when possible, lvalue return.
-    TODO Only last argument needs to be an l-value.
-*/
-auto ref every(T...)(ref T a) @safe @nogc pure nothrow if (T.length >= 1 && allSame!T)
-{
-    static if (T.length == 1)
-    {
-        return a[0];
-    }
-    else
-    {
-        return a[0] ? every(a[1 .. $]) : a[0]; // recurse
-    }
-}
-alias and = every;
-unittest {
-    immutable p = 1, q = 2;
-    assert(every(p, q) == 2);
 
+unittest
+{
     assert(every(3) == 3);
     assert(every(3, 4) == 4);
     assert(every(0, 4) == 0);
@@ -156,12 +140,37 @@ unittest {
     assert(every("a", "b") == "b");
     assert(every("", "b") == "b");
     assert(every(cast(string)null, "b") == cast(string)null);
-
-    int x = 1, y = 2;
-    every(x, y) = 3;
-    assert(x == 1);
-    assert(y == 3);
 }
+
+version(none) // WARNING disabled because I don't see any use of this for.
+{
+    /** This overload enables, when possible, lvalue return.
+    */
+    auto ref every(T...)(ref T a) /* @safe @nogc pure nothrow */ if (T.length >= 1 && allSame!T)
+    {
+        static if (T.length == 1)
+        {
+            return a[0];
+        }
+        else
+        {
+            return a[0] ? every(a[1 .. $]) : a[0]; // recurse
+        }
+    }
+
+    unittest
+    {
+        immutable p = 1, q = 2;
+        assert(every(p, q) == 2);
+
+        int x = 1, y = 2;
+        every(x, y) = 3;
+        assert(x == 1);
+        assert(y == 3);
+    }
+}
+
+alias and = every;
 
 /** Evaluate all $(D parts) possibly digesting $(D whole).
     If all values of $(D parts) implicitly convert to bool true return the
