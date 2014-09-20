@@ -1,3 +1,6 @@
+/** Reference Counted String.
+    See also: http://dpaste.dzfl.pl/817283c163f5
+ */
 module rcstring;
 
 import core.stdc.stdlib, core.stdc.string, core.memory;
@@ -888,18 +891,4 @@ public:
         s2 = "abcdefghi_" ~ s1;
         assert(s2 == "abcdefghi_123456789_123456789_123456789_123456789_");
     }
-}
-
-unittest
-{
-    RCXString!() s1;
-    // Not working yet
-    // RCXString!(immutable wchar) s2;
-}
-
-unittest
-{
-    version(unittest) import std.stdio;
-    auto s = RCString("hello");
-    writelnf(s ~ s);
 }
