@@ -10,6 +10,8 @@
     See also: https://github.com/commonsense/conceptnet5/wiki
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
 
+    TODO Make use of result from decodeWordKind added to a Concept
+
     TODO Functionize front and popFront and make use of it
 
     TODO If ever will need to sort indexes we should use my radixSort
@@ -327,7 +329,7 @@ auto pageSize() @trusted
 */
 class Net(bool hashedStorage = true,
           bool useArray = true,
-          bool useRCString = true)
+          bool useRCString = false)
 {
     import std.file, std.algorithm, std.range, std.string, std.path, std.array;
     import dbg;
@@ -359,6 +361,7 @@ class Net(bool hashedStorage = true,
         static if (!hashedStorage)
             Lemma lemma; // in-place of hash-key
         HLang hlang;
+        WordKind lemmaKind;
     }
 
     struct NodeIx { Ix ix; } /* alias NodeIx = Ix; */
@@ -401,12 +404,7 @@ class Net(bool hashedStorage = true,
     {
         static if (hashedStorage)
         {
-            /** Concepts by WordKind */
-            Concepts[Lemma] conceptsByNoun;
-            Concepts[Lemma] conceptsByVerb;
-            Concepts[Lemma] conceptsByAdjective;
-            Concepts[Lemma] conceptsByAdverb;
-            Concepts[Lemma] conceptsByOther;
+            Concepts[Lemma] conceptsByLemma;
         }
         else
         {
@@ -438,7 +436,7 @@ class Net(bool hashedStorage = true,
             else if (category.isVerb)      return conceptsByVerb[word];
             else if (category.isAdjective) return conceptsByAdjective[word];
             else if (category.isAdverb)    return conceptsByAdverb[word];
-            else                           return conceptsByOther[word];
+            else                           return conceptsByLemma[word];
         }
     }
 
@@ -466,15 +464,26 @@ class Net(bool hashedStorage = true,
     }
 
     /** Store $(D concept) at $(D lemma) index. */
-    auto ref store(S)(S lemma, Concept concept) if (isSomeString!S)
+    auto ref store(S)(S lemma, Concept concept)
     {
         static if (hashedStorage)
         {
-            if      (wordnet.canMean(lemma, WordKind.noun))      { conceptsByNoun[lemma]      ~= concept; }
-            else if (wordnet.canMean(lemma, WordKind.verb))      { conceptsByVerb[lemma]      ~= concept; }
-            else if (wordnet.canMean(lemma, WordKind.adjective)) { conceptsByAdjective[lemma] ~= concept; }
-            else if (wordnet.canMean(lemma, WordKind.adverb))    { conceptsByAdverb[lemma]    ~= concept; }
-            else                                                 { conceptsByOther[lemma]     ~= concept; }
+            static if (useArray)
+            {
+                if (lemma in conceptsByLemma)
+                {
+                    conceptsByLemma[lemma] ~= concept;
+                }
+                else
+                {
+                    conceptsByLemma[lemma] = Concepts.init; // why is this needed?
+                    conceptsByLemma[lemma] ~= concept;
+                }
+            }
+            else
+            {
+                conceptsByLemma[lemma]     ~= concept;
+            }
         }
         else
         {
@@ -489,9 +498,15 @@ class Net(bool hashedStorage = true,
         auto items = part.splitter('/');
         const srcLang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[srcLang]++;
-        immutable srcConcept = items.front.idup; items.popFront;
-        this.store(srcConcept,
-                   Concept(srcConcept, srcLang));
+        static if (useRCString)
+        {
+            const srcConcept = items.front.RCString;
+        }
+        else
+        {
+            immutable srcConcept = items.front.idup;
+        }
+        items.popFront;
         if (!items.empty)
         {
             const item = items.front;
@@ -502,6 +517,7 @@ class Net(bool hashedStorage = true,
                 dln("Unknown WordKind code ", items.front);
             }
         }
+        this.store(srcConcept, Concept(srcConcept, srcLang));
         return srcConcept;
     }
 
@@ -706,11 +722,7 @@ class Net(bool hashedStorage = true,
         static if (hashedStorage)
         {
             writeln("Concept Counts:");
-            writeln("- by Nouns: ", conceptsByNoun.length);
-            writeln("- by Verbs: ", conceptsByVerb.length);
-            writeln("- by Adjectives: ", conceptsByAdjective.length);
-            writeln("- by Adverbs: ", conceptsByAdverb.length);
-            writeln("- by Others: ", conceptsByOther.length);
+            writeln("- by Lemma: ", conceptsByLemma.length);
         }
     }
 
