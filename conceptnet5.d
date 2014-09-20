@@ -351,9 +351,11 @@ class Net(bool useArray = true,
     /** Concept Node/Vertex. */
     struct Concept
     {
-        this(HLang hlang)
+        this(HLang hlang,
+             WordKind lemmaKind)
         {
             this.hlang = hlang;
+            this.lemmaKind = lemmaKind;
         }
     private:
         LinkIxes outIxes; // into Net._links
@@ -417,18 +419,18 @@ class Net(bool useArray = true,
     }
 
     /** Get Concepts related to $(D word) in the interpretation (semantic
-        context) $(D category).
-        If no category given return all possible.
+        context) $(D wordKind).
+        If no wordKind given return all possible.
     */
     Concepts conceptsByLemma(S)(S lemma,
-                                WordKind category = WordKind.unknown) if (isSomeString!S)
+                                WordKind wordKind = WordKind.unknown) if (isSomeString!S)
     {
-        if (category == WordKind.unknown)
+        if (wordKind == WordKind.unknown)
         {
             const meanings = this._wordnet.meaningsOf(lemma);
             if (!meanings.empty)
             {
-                category = meanings.front.category; // TODO Pick union of all meanings
+                wordKind = meanings.front.wordKind; // TODO Pick union of all meanings
             }
         }
         _conceptsByLemma[lemma];
@@ -473,18 +475,19 @@ class Net(bool useArray = true,
         static if (useRCString) { immutable lemma = Lemma(items.front); }
         else                    { immutable lemma = items.front.idup; }
         items.popFront;
+        WordKind lemmaKind;
         if (!items.empty)
         {
             const item = items.front;
-            const category = item.decodeWordKind;
-            if (category == WordKind.unknown
+            lemmaKind = item.decodeWordKind;
+            if (lemmaKind == WordKind.unknown
                 && item != "_")
             {
                 dln("Unknown WordKind code ", items.front);
             }
         }
         _lemmaLengthSum += lemma.length;
-        this.store(lemma, Concept(srcLang));
+        this.store(lemma, Concept(srcLang, lemmaKind));
         return lemma;
     }
 
@@ -550,7 +553,7 @@ class Net(bool useArray = true,
                         case "SymbolOf":                  link.relation = Relation.symbolOf; break;
                         case "SimilarTo":                 link.relation = Relation.similarTo; break;
                         case "HasPainIntensity":          link.relation = Relation.hasPainIntensity; break;
-                        case "hasPainCharacter":          link.relation = Relation.hasPainCharacter; break;
+                        case "HasPainCharacter":          link.relation = Relation.hasPainCharacter; break;
                             // negations
                         case "NotMadeOf":                 link.relation = Relation.madeOf; link.negation = true; break;
                         case "NotIsA":                    link.relation = Relation.isA; link.negation = true; break;
@@ -649,8 +652,6 @@ class Net(bool useArray = true,
 
     void showRelations()
     {
-        /* TODO Functionize foreachs */
-
         writeln("Relations:");
         foreach (relation; Relation.min..Relation.max)
         {
