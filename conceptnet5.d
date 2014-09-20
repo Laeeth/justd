@@ -128,7 +128,7 @@ enum Relation:ubyte
 
     antonym, /* A and B are opposites in some relevant way, such as being
                 opposite ends of a scale, or fundamentally similar things with a
-                key difference between them. Counterintuitively, two concepts
+                key difference between them. Counterintuitively, two _concepts
                 must be quite similar before people consider them antonyms. This
                 is the antonym relation in WordNet as well. /r/Antonym
                 /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
@@ -145,7 +145,7 @@ enum Relation:ubyte
 
     etymologicallyDerivedFrom,
 
-    translationOf, /* A and B are concepts (or assertions) in different
+    translationOf, /* A and B are _concepts (or assertions) in different
                       languages, and overlap in meaning in such a way that they
                       can be considered translations of each other. (This
                       cannot, of course be taken as an exact equivalence.) */
@@ -338,7 +338,7 @@ class Net(bool hashedStorage = true,
         Set this to $(D uint) if we get low on memory.
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
-    alias Ix = uint; // TODO Change this to size_t when we have more concepts and memory.
+    alias Ix = uint; // TODO Change this to size_t when we have more _concepts and memory.
     struct LinkIx { Ix ix; } /* alias LinkIx = Ix; */
     static if (useArray) { alias LinkIxes = Array!LinkIx; }
     else                 { alias LinkIxes = LinkIx[]; }
@@ -356,8 +356,8 @@ class Net(bool hashedStorage = true,
             this.hlang = hlang;
         }
     private:
-        LinkIxes outIxes; // into Net.links
-        LinkIxes inIxes; // into Net.links
+        LinkIxes outIxes; // into Net._links
+        LinkIxes inIxes; // into Net._links
         static if (!hashedStorage)
             Lemma lemma; // in-place of hash-key
         HLang hlang;
@@ -398,22 +398,15 @@ class Net(bool hashedStorage = true,
     static if (useArray) { alias Links = Array!Link; }
     else                 { alias Links = Link[]; }
 
-    private Links links;
+    import wordnet: WordNet;
 
     private
     {
-        static if (hashedStorage)
-        {
-            Concepts[Lemma] conceptsByLemma;
-        }
-        else
-        {
-            Concepts concepts;
-        }
+        Links _links;
+        static if (hashedStorage) { Concepts[Lemma] _conceptsByLemma; }
+        else                      { Concepts _concepts; }
+        WordNet _wordnet;
     }
-
-    import wordnet: WordNet;
-    WordNet wordnet;
 
     /** Get Concepts related to $(D word) in the interpretation (semantic
         context) $(D category).
@@ -426,17 +419,13 @@ class Net(bool hashedStorage = true,
         {
             if (category == WordKind.unknown)
             {
-                const meanings = this.wordnet.meaningsOf(word);
+                const meanings = this._wordnet.meaningsOf(word);
                 if (!meanings.empty)
                 {
                     category = meanings.front.category; // TODO Pick union of all meanings
                 }
             }
-            if      (category.isNoun)      return conceptsByNoun[word];
-            else if (category.isVerb)      return conceptsByVerb[word];
-            else if (category.isAdjective) return conceptsByAdjective[word];
-            else if (category.isAdverb)    return conceptsByAdverb[word];
-            else                           return conceptsByLemma[word];
+            _conceptsByLemma[word];
         }
     }
 
@@ -452,7 +441,7 @@ class Net(bool hashedStorage = true,
 
     this(string dirPath)
     {
-        this.wordnet = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
+        this._wordnet = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
         // GC.disabled had no noticeble effect here: import core.memory: GC;
         foreach (file; dirPath.expandTilde
                               .buildNormalizedPath
@@ -470,24 +459,24 @@ class Net(bool hashedStorage = true,
         {
             static if (useArray)
             {
-                if (lemma in conceptsByLemma)
+                if (lemma in _conceptsByLemma)
                 {
-                    conceptsByLemma[lemma] ~= concept;
+                    _conceptsByLemma[lemma] ~= concept;
                 }
                 else
                 {
-                    conceptsByLemma[lemma] = Concepts.init; // why is this needed?
-                    conceptsByLemma[lemma] ~= concept;
+                    _conceptsByLemma[lemma] = Concepts.init; // why is this needed?
+                    _conceptsByLemma[lemma] ~= concept;
                 }
             }
             else
             {
-                conceptsByLemma[lemma]     ~= concept;
+                _conceptsByLemma[lemma]     ~= concept;
             }
         }
         else
         {
-            concepts ~= concept;
+            _concepts ~= concept;
         }
         return this;
     }
@@ -535,7 +524,7 @@ class Net(bool hashedStorage = true,
             switch (ix)
             {
                 case 1:
-                    // TODO Handle case when part matches /r/wordnet/X
+                    // TODO Handle case when part matches /r/_wordnet/X
                     const relationString = part[3..$];
 
                     // TODO Functionize to parseRelation or x.to!Relation
@@ -644,7 +633,7 @@ class Net(bool hashedStorage = true,
             ix++;
         }
 
-        links ~= link;
+        _links ~= link;
     }
 
     /** Read ConceptNet5 Assertions File $(D fileName) in CSV format.
@@ -653,7 +642,7 @@ class Net(bool hashedStorage = true,
     void readCSV(string fileName, bool useMmFile = false)
     {
         size_t lnr = 0;
-        /* TODO Functionize and merge with wordnet.readIx */
+        /* TODO Functionize and merge with _wordnet.readIx */
         if (useMmFile)
         {
             version(none)
@@ -722,7 +711,7 @@ class Net(bool hashedStorage = true,
         static if (hashedStorage)
         {
             writeln("Concept Counts:");
-            writeln("- by Lemma: ", conceptsByLemma.length);
+            writeln("- by Lemma: ", _conceptsByLemma.length);
         }
     }
 
