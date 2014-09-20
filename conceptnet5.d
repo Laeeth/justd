@@ -43,8 +43,9 @@ import rcstring;
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 
     TODO
-
-
+    wordnet/adjectivePertainsTo
+    wordnet/adverbPertainsTo
+    wordnet/participleOf
 */
 enum Relation:ubyte
 {
@@ -166,6 +167,7 @@ enum Relation:ubyte
     similarTo,
 
     hasPainIntensity,
+    hasPainCharacter,
 }
 
 @safe @nogc pure nothrow
@@ -299,6 +301,7 @@ Thematic toThematic(Relation relation)
         case Relation.symbolOf: return Thematic.kLines;
         case Relation.similarTo: return Thematic.kLines;
         case Relation.hasPainIntensity: return Thematic.kLines;
+        case Relation.hasPainCharacter: return Thematic.kLines;
     }
 }
 
@@ -341,7 +344,7 @@ class Net(bool useArray = true,
     static if (useArray) { alias LinkIxes = Array!LinkIx; }
     else                 { alias LinkIxes = LinkIx[]; }
 
-    static if (useRCString) { alias Lemma = RCString; }
+    static if (useRCString) { alias Lemma = RCXString!(immutable char, 31 /** use 31 because concept lemma are quite large */ ); }
     else                    { alias Lemma = string; }
 
     /** Concept Node/Vertex. */
@@ -463,7 +466,7 @@ class Net(bool useArray = true,
         auto items = part.splitter('/');
         const srcLang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[srcLang]++;
-        static if (useRCString) { immutable lemma = items.front.RCString; }
+        static if (useRCString) { immutable lemma = Lemma(items.front); }
         else                    { immutable lemma = items.front.idup; }
         items.popFront;
         if (!items.empty)
@@ -543,6 +546,7 @@ class Net(bool useArray = true,
                         case "SymbolOf":                  link.relation = Relation.symbolOf; break;
                         case "SimilarTo":                 link.relation = Relation.similarTo; break;
                         case "HasPainIntensity":          link.relation = Relation.hasPainIntensity; break;
+                        case "hasPainCharacter":          link.relation = Relation.hasPainCharacter; break;
                             // negations
                         case "NotMadeOf":                 link.relation = Relation.madeOf; link.negation = true; break;
                         case "NotIsA":                    link.relation = Relation.isA; link.negation = true; break;
@@ -678,9 +682,8 @@ class Net(bool useArray = true,
         writeln("- Weights Max: ", this.weightMax);
         writeln("- Weights Sum: ", this.weightSum);
         writeln("- Number of assertions: ", this._assertionCount);
-
-        writeln("Concept Counts:");
-        writeln("- by Lemma: ", _conceptsByLemma.length);
+        writeln("- Concepts Count: ", _conceptsByLemma.length);
+        writeln("- Concepts Lemma Length Average: ", cast(real)_lemmaLengthSum/_conceptsByLemma.length);
     }
 
     /** ConceptNet Relatedness.
@@ -723,4 +726,7 @@ unittest
     {
         /* auto netH = new Net!(!useHashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`); */
     }
+
+    write("Press enter to continue: ");
+    readln();
 }
