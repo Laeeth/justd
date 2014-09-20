@@ -12,11 +12,10 @@
 
     TODO Make use of result from decodeWordKind added to a Concept
 
-    TODO Functionize front and popFront and make use of it
+    TODO Ask forum for functionize front and popFront and make use of it
+    See http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-jkbhlezbcrufowxtthmy:40forum.dlang.org
 
     TODO If ever will need to sort indexes we should use my radixSort
-
-    TODO use rcstring.RCString
 
     TODO Add Net members
     - byNode
@@ -348,7 +347,7 @@ class Net(bool useArray = true,
     /** Concept Node/Vertex. */
     struct Concept
     {
-        this(const Lemma lemma, HLang hlang)
+        this(HLang hlang)
         {
             this.hlang = hlang;
         }
@@ -400,6 +399,17 @@ class Net(bool useArray = true,
         Links _links;
         Concepts[Lemma] _conceptsByLemma;
         WordNet _wordnet;
+
+        size_t[Relation.max + 1] relationCounts;
+        size_t[Source.max + 1] sourceCounts;
+        size_t[HLang.max + 1] hlangCounts;
+        size_t _assertionCount = 0;
+        size_t _lemmaLengthSum = 0;
+
+        // is there a Phobos structure for this?
+        real weightMin = real.max;
+        real weightMax = real.min_normal;
+        real weightSum = 0; // Sum of all link weights.
     }
 
     /** Get Concepts related to $(D word) in the interpretation (semantic
@@ -420,16 +430,6 @@ class Net(bool useArray = true,
         _conceptsByLemma[lemma];
     }
 
-    size_t[Relation.max + 1] relationCounts;
-    size_t[Source.max + 1] sourceCounts;
-    size_t[HLang.max + 1] hlangCounts;
-    size_t assertionCount;
-
-    // is there a Phobos structure for this?
-    real weightMin = real.max;
-    real weightMax = real.min_normal;
-    real weightSum = 0; // Sum of all link weights.
-
     this(string dirPath)
     {
         this._wordnet = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
@@ -448,20 +448,12 @@ class Net(bool useArray = true,
     {
         static if (useArray)
         {
-            if (lemma in _conceptsByLemma)
+            if (lemma !in _conceptsByLemma)
             {
-                _conceptsByLemma[lemma] ~= concept;
-            }
-            else
-            {
-                _conceptsByLemma[lemma] = Concepts.init; // why is this needed?
-                _conceptsByLemma[lemma] ~= concept;
+                _conceptsByLemma[lemma] = Concepts.init; // TODO why is this needed for Array!T but not for T[]? A bug? Or an overload missing?
             }
         }
-        else
-        {
-            _conceptsByLemma[lemma]     ~= concept;
-        }
+        _conceptsByLemma[lemma] ~= concept;
         return this;
     }
 
@@ -471,14 +463,8 @@ class Net(bool useArray = true,
         auto items = part.splitter('/');
         const srcLang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[srcLang]++;
-        static if (useRCString)
-        {
-            const srcConcept = items.front.RCString;
-        }
-        else
-        {
-            immutable srcConcept = items.front.idup;
-        }
+        static if (useRCString) { immutable lemma = items.front.RCString; }
+        else                    { immutable lemma = items.front.idup; }
         items.popFront;
         if (!items.empty)
         {
@@ -490,8 +476,9 @@ class Net(bool useArray = true,
                 dln("Unknown WordKind code ", items.front);
             }
         }
-        this.store(srcConcept, Concept(srcConcept, srcLang));
-        return srcConcept;
+        _lemmaLengthSum += lemma.length;
+        this.store(lemma, Concept(srcLang));
+        return lemma;
     }
 
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -597,7 +584,7 @@ class Net(bool useArray = true,
                     this.weightSum += weight;
                     this.weightMin = min(part.to!float, this.weightMin);
                     this.weightMax = max(part.to!float, this.weightMax);
-                    this.assertionCount++;
+                    this._assertionCount++;
                     break;
                 case 6:
                     // TODO Use part.splitter('/')
@@ -690,7 +677,7 @@ class Net(bool useArray = true,
         writeln("- Weights Min: ", this.weightMin);
         writeln("- Weights Max: ", this.weightMax);
         writeln("- Weights Sum: ", this.weightSum);
-        writeln("- Number of assertions: ", this.assertionCount);
+        writeln("- Number of assertions: ", this._assertionCount);
 
         writeln("Concept Counts:");
         writeln("- by Lemma: ", _conceptsByLemma.length);
