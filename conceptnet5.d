@@ -327,9 +327,8 @@ auto pageSize() @trusted
     TODO Use containers.HashMap
     TODO Call GC.disable/enable around construction and search.
 */
-class Net(bool hashedStorage = true,
-          bool useArray = true,
-          bool useRCString = false)
+class Net(bool useArray = true,
+          bool useRCString = true)
 {
     import std.file, std.algorithm, std.range, std.string, std.path, std.array;
     import dbg;
@@ -351,15 +350,11 @@ class Net(bool hashedStorage = true,
     {
         this(const Lemma lemma, HLang hlang)
         {
-            static if (!hashedStorage)
-                this.lemma = lemma; // in-place of hash-key
             this.hlang = hlang;
         }
     private:
         LinkIxes outIxes; // into Net._links
         LinkIxes inIxes; // into Net._links
-        static if (!hashedStorage)
-            Lemma lemma; // in-place of hash-key
         HLang hlang;
         WordKind lemmaKind;
     }
@@ -403,8 +398,7 @@ class Net(bool hashedStorage = true,
     private
     {
         Links _links;
-        static if (hashedStorage) { Concepts[Lemma] _conceptsByLemma; }
-        else                      { Concepts _concepts; }
+        Concepts[Lemma] _conceptsByLemma;
         WordNet _wordnet;
     }
 
@@ -412,21 +406,18 @@ class Net(bool hashedStorage = true,
         context) $(D category).
         If no category given return all possible.
     */
-    static if (hashedStorage)
+    Concepts conceptsByLemma(S)(S lemma,
+                                WordKind category = WordKind.unknown) if (isSomeString!S)
     {
-        Concepts conceptsByWord(S)(S lemma,
-                                   WordKind category = WordKind.unknown) if (isSomeString!S)
+        if (category == WordKind.unknown)
         {
-            if (category == WordKind.unknown)
+            const meanings = this._wordnet.meaningsOf(lemma);
+            if (!meanings.empty)
             {
-                const meanings = this._wordnet.meaningsOf(lemma);
-                if (!meanings.empty)
-                {
-                    category = meanings.front.category; // TODO Pick union of all meanings
-                }
+                category = meanings.front.category; // TODO Pick union of all meanings
             }
-            _conceptsByLemma[lemma];
         }
+        _conceptsByLemma[lemma];
     }
 
     size_t[Relation.max + 1] relationCounts;
@@ -455,28 +446,21 @@ class Net(bool hashedStorage = true,
     /** Store $(D concept) at $(D lemma) index. */
     auto ref store(S)(S lemma, Concept concept)
     {
-        static if (hashedStorage)
+        static if (useArray)
         {
-            static if (useArray)
+            if (lemma in _conceptsByLemma)
             {
-                if (lemma in _conceptsByLemma)
-                {
-                    _conceptsByLemma[lemma] ~= concept;
-                }
-                else
-                {
-                    _conceptsByLemma[lemma] = Concepts.init; // why is this needed?
-                    _conceptsByLemma[lemma] ~= concept;
-                }
+                _conceptsByLemma[lemma] ~= concept;
             }
             else
             {
-                _conceptsByLemma[lemma]     ~= concept;
+                _conceptsByLemma[lemma] = Concepts.init; // why is this needed?
+                _conceptsByLemma[lemma] ~= concept;
             }
         }
         else
         {
-            _concepts ~= concept;
+            _conceptsByLemma[lemma]     ~= concept;
         }
         return this;
     }
@@ -708,11 +692,8 @@ class Net(bool hashedStorage = true,
         writeln("- Weights Sum: ", this.weightSum);
         writeln("- Number of assertions: ", this.assertionCount);
 
-        static if (hashedStorage)
-        {
-            writeln("Concept Counts:");
-            writeln("- by Lemma: ", _conceptsByLemma.length);
-        }
+        writeln("Concept Counts:");
+        writeln("- by Lemma: ", _conceptsByLemma.length);
     }
 
     /** ConceptNet Relatedness.
@@ -749,12 +730,10 @@ unittest
     backtrace.backtrace.install(stderr);
     // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
-    enum hashedStorage = true;
-    auto net = new Net!(hashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
+    auto net = new Net!(true, true)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
 
     if (false) // just to make all variants of compile
     {
-        auto netH = new Net!(!hashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
+        /* auto netH = new Net!(!useHashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`); */
     }
-    //auto net = new Net(`/home/per/Knowledge/conceptnet5/assertions`);
 }
