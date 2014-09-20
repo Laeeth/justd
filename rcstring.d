@@ -263,6 +263,19 @@ private:
     }
     // </layout>
 
+    size_t toHash() const @trusted pure nothrow
+    {
+        import core.internal.hash : hashOf;
+        if (isSmall)
+        {
+            return this.small.hashOf;
+        }
+        else
+        {
+            return this.large[].hashOf;
+        }
+    }
+
     unittest
     {
         RCXString x;
@@ -274,6 +287,13 @@ private:
         x.large.length = 0x0088_8888_8888_8888;
         assert(x.large.length == 0x0088_8888_8888_8888);
         assert(x.smallLength == Char.max);
+    }
+
+    unittest
+    {
+        auto x = RCXString("a");
+        auto y = RCXString("a");
+        assert(x.toHash == y.toHash);
     }
 
     // is this string small?
@@ -314,6 +334,7 @@ public:
         assert(s1.length == 10);
         s1 ~= RCXString("123456789_123456789_123456789_123456789_12345");
         assert(s1.length == 55);
+        auto s = new int[3];
     }
 
     /*
