@@ -11,8 +11,6 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
-    TODO Make use of result from decodeWordKind added to a Concept
-
     TODO Ask forum for functionize front and popFront and make use of it
     See http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-jkbhlezbcrufowxtthmy:40forum.dlang.org
 
