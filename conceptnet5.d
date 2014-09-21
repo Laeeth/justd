@@ -487,19 +487,35 @@ class Net(bool useArray = true,
         const cix = ConceptIx(cast(Ix)_concepts.length);
         _concepts ~= concept; // .. new concept that is stored
         _conceptIxesByLemma[lemma] ~= cix; // lookupOrStore index to ..
-        // dln(_conceptIxesByLemma[lemma]);
 
         return cix;
+    }
+
+    void showLemmaConcepts(T)(T lemma)
+    {
+        if (lemma in _conceptIxesByLemma)
+        {
+            auto ixes = _conceptIxesByLemma[lemma];
+            if (ixes.length >= 5)
+            {
+                dln("lemma ", lemma, " has multiple interpretations: ",
+                    ixes[].map!(cix => (conceptByIndex(cix).hlang.to!string ~ ":" ~
+                                        conceptByIndex(cix).lemmaKind.to!string)));
+            }
+        }
     }
 
     /** See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0 */
     ConceptIx readConceptURI(T)(T part)
     {
         auto items = part.splitter('/');
+
         const hlang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[hlang]++;
+
         static if (useRCString) { immutable lemma = Lemma(items.front); }
         else                    { immutable lemma = items.front.idup; }
+
         items.popFront;
         WordKind lemmaKind;
         if (!items.empty)
@@ -513,7 +529,9 @@ class Net(bool useArray = true,
             }
         }
         _lemmaLengthSum += lemma.length;
-        return this.lookupOrStore(lemma, Concept(hlang, lemmaKind));
+        auto cix = this.lookupOrStore(lemma, Concept(hlang, lemmaKind));
+        /* showLemmaConcepts(lemma); */
+        return cix;
     }
 
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
