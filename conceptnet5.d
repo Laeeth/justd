@@ -11,7 +11,10 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
-    TODO Assert that we don't create duplicte entries in inIxes, outIxes ~=
+    TODO Template on NodeData and rename Concept to Node. Instantiate with
+    NodeData begin Concept and break out Concept outside.
+
+    TODO Profile read
     TODO Use containers.HashMap
     TODO Call GC.disable/enable around construction and search.
  */
