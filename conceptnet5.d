@@ -11,6 +11,8 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
+    TODO Assert that we don't create duplicte entries in srcIxes, dstIxes, inIxes, outIxes ~=
+
     TODO Add Net members
     - byNode
     - byLink
