@@ -342,8 +342,18 @@ class Net(bool useArray = true,
     else                 { alias ConceptIxes = ConceptIx[]; }
     static if (useArray) { alias LinkIxes = Array!LinkIx; }
     else                 { alias LinkIxes = LinkIx[]; }
-    static if (useRCString) { alias Lemma = RCXString!(immutable char, 31 /** use 31 because concept lemma are quite large */ ); }
-    else                    { alias Lemma = string; }
+
+    /* String Storage */
+    static if (useRCString)
+    {
+        /** use 31 because concept lemma are quite large, on average a length of
+         * 27 */
+        alias Lemma = RCXString!(immutable char, 31 );
+    }
+    else
+    {
+        alias Lemma = string;
+    }
 
     /* const @safe @nogc pure nothrow */
     version(all) {
