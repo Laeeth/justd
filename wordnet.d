@@ -61,14 +61,9 @@ class WordNet
         writeln("Added ", lnr, " new ", hlang.toName, " words from ", fileName);
     }
 
-    this()
+    void readWordNet(string dirName = "~/Knowledge/wordnet/WordNet-3.0/dict")
     {
-        readUNIXDict(`/usr/share/dict/words`, HLang.en);
-        readUNIXDict(`/usr/share/dict/swedish`, HLang.sv);
-
-        const dirPath = "~/Knowledge/wordnet/WordNet-3.0/dict";
-
-        auto fixed = dirPath.expandTilde;
+        const fixed = dirName.expandTilde;
         alias nPath = buildNormalizedPath;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
 
@@ -77,6 +72,14 @@ class WordNet
         readIndex(nPath(fixed, "index.adv"), false, hlang);
         readIndex(nPath(fixed, "index.noun"), false, hlang);
         readIndex(nPath(fixed, "index.verb"), false, hlang);
+    }
+
+    this()
+    {
+        readUNIXDict(`/usr/share/dict/words`, HLang.en);
+        readUNIXDict(`/usr/share/dict/swedish`, HLang.sv);
+
+        readWordNet();
 
         foreach (e; ["and", "or", "but", "nor", "so", "for", "yet"])
         {

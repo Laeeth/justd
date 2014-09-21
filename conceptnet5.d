@@ -408,10 +408,10 @@ class Net(bool useArray = true,
 
     unittest
     {
-        pragma(msg, "LinkIxes.sizeof: ", LinkIxes.sizeof);
-        pragma(msg, "ConceptIxes.sizeof: ", ConceptIxes.sizeof);
-        pragma(msg, "Concept.sizeof: ", Concept.sizeof);
-        pragma(msg, "Link.sizeof: ", Link.sizeof);
+        /* pragma(msg, "LinkIxes.sizeof: ", LinkIxes.sizeof); */
+        /* pragma(msg, "ConceptIxes.sizeof: ", ConceptIxes.sizeof); */
+        /* pragma(msg, "Concept.sizeof: ", Concept.sizeof); */
+        /* pragma(msg, "Link.sizeof: ", Link.sizeof); */
     }
 
     static if (useArray) { alias Concepts = Array!Concept; }
@@ -460,7 +460,7 @@ class Net(bool useArray = true,
 
     this(string dirPath)
     {
-        this._wordnet = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
+        this._wordnet = new WordNet();
         // GC.disabled had no noticeble effect here: import core.memory: GC;
         foreach (file; dirPath.expandTilde
                               .buildNormalizedPath
