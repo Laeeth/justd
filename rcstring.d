@@ -8,17 +8,14 @@ module rcstring;
 import core.stdc.stdlib, core.stdc.string, core.memory;
 import std.algorithm;
 
-/*
- * La prima donna.
+/** Reference Counted (RC) version of string.
  */
 alias RCString = RCXString!(immutable char);
 
-/* alias RCWString = RCXString!(immutable wchar); */
-
-/**
- * Reference counted string. Configured with character type $(D Char), maximum length for the small string optimization,
- * and the allocation function, which must have the same semantics as $(D realloc).
- */
+/** Reference Counted String.
+    Configured with character type $(D Char), maximum length for the small string optimization,
+    and the allocation function, which must have the same semantics as $(D realloc).
+*/
 struct RCXString(Char = immutable char, size_t maxSmall = 23, alias realloc = GC.realloc)
 {
     // Preconditions

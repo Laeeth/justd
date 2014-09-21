@@ -4,7 +4,7 @@ import dbg: dln;
 import std.typecons: Tuple, tuple;
 import msgpack;
 
-string typestringof(T)(T a) @safe pure nothrow { return T.stringof; }
+auto typestringof(T)(T a) { return T.stringof; }
 
 version = print;
 

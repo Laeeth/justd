@@ -19,7 +19,7 @@ version(print) import dbg;
 
 // ==============================================================================================
 
-string typestringof(T)(in T a) @safe @nogc pure nothrow { return T.stringof; }
+auto typestringof(T)(in T a) { return T.stringof; }
 
 import std.range: dropOne;
 alias tail = dropOne;
