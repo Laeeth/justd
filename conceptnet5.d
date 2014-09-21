@@ -11,14 +11,7 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
-    TODO Assert that we don't create duplicte entries in srcIxes, dstIxes, inIxes, outIxes ~=
-
-    TODO Add Net members
-    - byNode
-    - byLink
-    - Concept getNode(LinkIx)
-    - Link getLink(ConceptIx)
-
+    TODO Assert that we don't create duplicte entries in inIxes, outIxes ~=
     TODO Use containers.HashMap
     TODO Call GC.disable/enable around construction and search.
  */
@@ -392,8 +385,8 @@ class Net(bool useArray = true,
             return cast(real)this.weight/25;
         }
     private:
-        ConceptIxes srcIxes;
-        ConceptIxes dstIxes;
+        ConceptIx srcIx;
+        ConceptIx dstIx;
         ubyte weight;
         Relation relation;
         bool negation; // relation negation
@@ -627,11 +620,8 @@ class Net(bool useArray = true,
                 case 2:         // source concept
                     if (part.skipOver(`/c/`))
                     {
-                        const cix = this.readConceptURI(part);
-                        link.srcIxes ~= cix;
-                        conceptByIndex(cix).inIxes ~= LinkIx(cast(Ix)_links.length);
-                        debug assert(conceptByIndex(cix).outIxes[].uniq.array.length ==
-                                     conceptByIndex(cix).outIxes.length);
+                        link.srcIx = this.readConceptURI(part);
+                        conceptByIndex(link.srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
                     }
                     else
                         dln(part);
@@ -639,11 +629,8 @@ class Net(bool useArray = true,
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
                     {
-                        const cix = this.readConceptURI(part);
-                        link.dstIxes ~= cix;
-                        conceptByIndex(cix).outIxes ~= LinkIx(cast(Ix)_links.length);
-                        debug assert(conceptByIndex(cix).outIxes[].uniq.array.length ==
-                                     conceptByIndex(cix).outIxes.length);
+                        link.dstIx = this.readConceptURI(part);
+                        conceptByIndex(link.dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
                     }
                     else
                         dln(part);
