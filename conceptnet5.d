@@ -463,9 +463,11 @@ class Net(bool useArray = true,
             // check if lemma with same meaning as in concept already stored
             foreach (cix; _conceptIxesByLemma[lemma])
             {
-                if (conceptByIndex(cix) == concept) // if concept stored before
+                const existingConcept = conceptByIndex(cix);
+                if (existingConcept.hlang == concept.hlang &&
+                    existingConcept.lemmaKind == concept.lemmaKind) // if lemma with same semantic meaning was stored before
                 {
-                    dln("Reused ", concept, " for lemma", lemma);
+                    // dln("Reused index ", cix, " to concept for lemma ", lemma);
                     return cix; // reuse concept index
                 }
             }
@@ -493,8 +495,8 @@ class Net(bool useArray = true,
     ConceptIx readConceptURI(T)(T part)
     {
         auto items = part.splitter('/');
-        const srcLang = items.front.decodeHumanLang; items.popFront;
-        hlangCounts[srcLang]++;
+        const hlang = items.front.decodeHumanLang; items.popFront;
+        hlangCounts[hlang]++;
         static if (useRCString) { immutable lemma = Lemma(items.front); }
         else                    { immutable lemma = items.front.idup; }
         items.popFront;
@@ -510,7 +512,7 @@ class Net(bool useArray = true,
             }
         }
         _lemmaLengthSum += lemma.length;
-        return this.lookupOrStore(lemma, Concept(srcLang, lemmaKind));
+        return this.lookupOrStore(lemma, Concept(hlang, lemmaKind));
     }
 
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
