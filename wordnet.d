@@ -11,6 +11,8 @@ import rcstring;
 
 /** WordNet
     TODO represent dictionaries with a Trie instead of a hash table
+    TODO aspell -d sv dump master > my.dict
+    TODO https://superuser.com/questions/814761/dumping-all-words-with-properties-from-an-aspell-database
  */
 class WordNet(bool useArray = true,
               bool useRCString = true)
@@ -119,6 +121,32 @@ class WordNet(bool useArray = true,
         readUNIXDict(nPath(dictDir, `bulgarian`), HLang.bg); // TODO apt:wbulgarian, TODO ISO-8859
 
         readWordNet();
+
+        // TODO: Conncectives
+        const connectives = ["the", "of", "and", "to", "a", "in", "that", "is",
+                             "was", "he", "for", "it", "with", "as", "his",
+                             "on", "be", "at", "by", "i", "this", "had", "not",
+                             "are", "but", "from", "or", "have", "an", "they",
+                             "which", "one", "you", "were", "her", "all", "she",
+                             "there", "would", "their", "we him", "been", "has",
+                             "when", "who", "will", "more", "no", "if", "out",
+                             "so", "said", "what", "up", "its", "about", "into",
+                             "than them", "can", "only", "other", "new", "some",
+                             "could", "time", "these", "two", "may", "then",
+                             "do", "first", "any", "my", "now", "such", "like",
+                             "our", "over", "man", "me", "even", "most", "made",
+                             "after", "also", "did", "many", "before", "must",
+                             "through back", "years", "where", "much", "your",
+                             "way", "well", "down", "should", "because", "each",
+                             "just", "those", "people mr", "how", "too",
+                             "little", "state", "good", "very", "make", "world",
+                             "still", "own", "see", "men", "work", "long", "get",
+                             "here", "between", "both", "life", "being", "under",
+                             "never", "day", "same", "another", "know", "while",
+                             "last", "might us", "great", "old", "year", "off",
+                             "come", "since", "against", "go", "came", "right",
+                             "used", "take", "three"];
+
 
         foreach (e; ["and", "or", "but", "nor", "so", "for", "yet"])
         {
