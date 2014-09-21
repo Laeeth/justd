@@ -348,7 +348,7 @@ class Net(bool useArray = true,
     {
         /** use 31 because concept lemma are quite large, on average a length of
          * 27 */
-        alias Lemma = RCXString!(immutable char, 31 );
+        alias Lemma = RCXString!(immutable char, 31);
     }
     else
     {
