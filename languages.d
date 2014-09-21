@@ -157,7 +157,7 @@ string toName(HLang hlang)
         final switch (hlang)
         {
             case unknown: return "Unknown";
-            case en: return "English, 英語";
+            case en: return "English"; // 英語
             case af: return "Afrikaans";
             case ar: return "Arabic";
             case ae: return "Avestan";
@@ -202,7 +202,7 @@ string toName(HLang hlang)
             case id: return "Indonesian";
             case ga: return "Irish";
             case it: return "Italian";
-            case ja: return "Japanese, 日本語";
+            case ja: return "Japanese"; // 日本語
             case ka: return "Georgian";
             case ku: return "Kurdish";
             case kn: return "Kannada";
@@ -240,7 +240,7 @@ string toName(HLang hlang)
             case gd: return "Scottish Gaelic";
             case sr: return "Serbian";
             case sk: return "Slovak";
-            case sl: return "Slovene, Slovenian";
+            case sl: return "Slovene";
             case es: return "Spanish";
             case sw: return "Swahili";
             case sv: return "Swedish";

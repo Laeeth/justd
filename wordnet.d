@@ -1,6 +1,14 @@
 #!/usr/bin/env rdmd-dev-module
 
 /** WordNet
+    TODO Use RCString
+
+    TODO Reads /usr/share/dict/
+    - american english
+    - british english
+
+    TODO Read myspell
+    TODO Read aspell
     */
 module wordnet;
 
@@ -35,8 +43,31 @@ class WordNet
         seeAlso,
     }
 
-    this(string dirPath)
+    void readUNIXDict(string fileName,
+                      HLang hlang)
     {
+        size_t lnr = 0;
+        foreach (word; File(fileName).byLine)
+        {
+            WordKind kind;
+            auto split = word.findSplit(`'`);
+            if (!split[1].empty)
+            {
+                word = split[0];
+                kind = WordKind.noun;
+            }
+            lnr += addWord(word.idup, kind, 0, hlang);
+        }
+        writeln("Added ", lnr, " new ", hlang.toName, " words from ", fileName);
+    }
+
+    this()
+    {
+        readUNIXDict(`/usr/share/dict/words`, HLang.en);
+        readUNIXDict(`/usr/share/dict/swedish`, HLang.sv);
+
+        const dirPath = "~/Knowledge/wordnet/WordNet-3.0/dict";
+
         auto fixed = dirPath.expandTilde;
         alias nPath = buildNormalizedPath;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
@@ -300,8 +331,10 @@ class WordNet
         // TODO Learn: adjective strong <=> noun strength
     }
 
-    /** Store $(D lemma) as $(D kind) in language $(D hlang). */
-    auto addWord(string lemma, WordKind kind, ubyte synsetCount,
+    /** Store $(D lemma) as $(D kind) in language $(D hlang).
+        Return true if a new word was added, false if word was specialized.
+     */
+    bool addWord(string lemma, WordKind kind, ubyte synsetCount,
                  HLang hlang = HLang.unknown)
     {
         if (lemma in _words)
@@ -309,18 +342,19 @@ class WordNet
             auto existing = _words[lemma];
             foreach (e; existing) // for each possible more general kind
             {
-                if (kind != e.kind &&
-                    kind.memberOf(e.kind))
+                if (e.kind == WordKind.init ||
+                    (kind != e.kind &&
+                     kind.memberOf(e.kind)))
                 {
                     e.kind = kind; // specialize
-                    return this;
+                    return false;
                 }
             }
         }
 
         uint[] links;
         _words[lemma] ~= WordSense(kind, synsetCount, links, hlang);
-        return this;
+        return true;
     }
 
     /** Get Possible Meanings of $(D lemma) in all $(D hlangs).
@@ -452,7 +486,7 @@ private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
 
 unittest
 {
-    auto wn = new WordNet("~/Knowledge/wordnet/WordNet-3.0/dict");
+    auto wn = new WordNet();
     const words = ["car", "trout", "seal", "and", "or", "script", "shell", "soon", "long", "longing", "at", "a"];
     foreach (word; words)
     {

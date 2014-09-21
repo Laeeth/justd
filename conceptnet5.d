@@ -15,6 +15,7 @@
     NodeData begin Concept and break out Concept outside.
 
     TODO Profile read
+    TODO Read/Write msgpack. Needs msgpack for RCXString.
     TODO Use containers.HashMap
     TODO Call GC.disable/enable around construction and search.
  */
