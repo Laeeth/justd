@@ -87,19 +87,19 @@ class WordNet(bool useArray = true,
                 exceptionCount++;
             lnr += addWord(normalizedLemma[0].idup, kind, 0, hlang);
         }
-        writeln("Added ", lnr, " new ", hlang.toName, " (", exceptionCount, " uncaseable) words from ", fileName);
+        writeln(`Added `, lnr, ` new `, hlang.toName, ` (`, exceptionCount, ` uncaseable) words from `, fileName);
     }
 
-    void readWordNet(string dirName = "~/Knowledge/wordnet/WordNet-3.0/dict")
+    void readWordNet(string dirName = `~/Knowledge/wordnet/WordNet-3.0/dict`)
     {
         const fixed = dirName.expandTilde;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
 
         const hlang = HLang.en;
-        readIndex(nPath(fixed, "index.adj"), false, hlang);
-        readIndex(nPath(fixed, "index.adv"), false, hlang);
-        readIndex(nPath(fixed, "index.noun"), false, hlang);
-        readIndex(nPath(fixed, "index.verb"), false, hlang);
+        readIndex(nPath(fixed, `index.adj`), false, hlang);
+        readIndex(nPath(fixed, `index.adv`), false, hlang);
+        readIndex(nPath(fixed, `index.noun`), false, hlang);
+        readIndex(nPath(fixed, `index.verb`), false, hlang);
     }
 
     this()
@@ -457,6 +457,12 @@ class WordNet(bool useArray = true,
         return meaningsOf(lemma, hlangs).canFind!(meaning => meaning.kind.memberOf(kind));
     }
 
+    auto canMean(S)(S lemma,
+                    WordKind kind,
+                    HLang hlang = HLang.unknown) if (isSomeString!S)
+    {
+        return canMean(lemma, kind, hlang == HLang.unknown ? [] : [hlang]);
+    }
 
     void readIndexLine(R, N)(R line, N lnr,
                              HLang hlang = HLang.unknown,
@@ -543,7 +549,7 @@ class WordNet(bool useArray = true,
                 lnr++;
             }
         }
-        writeln("Read ", lnr, " words from ", fileName);
+        writeln(`Read `, lnr, ` words from `, fileName);
     }
 
     WordSense!Links[][string] _words;
@@ -568,13 +574,14 @@ private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
 unittest
 {
     auto wn = new WordNet!(true, false);
-    const words = ["car", "trout", "seal", "and", "or", "script", "shell", "soon", "long", "longing", "at", "a"];
+    const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
     foreach (word; words)
     {
-        writeln(word, " has meanings ", wn.meaningsOf(word));
+        writeln(word, ` has meanings `, wn.meaningsOf(word));
     }
 
-    assert(wn.canMean("car", WordKind.noun, [HLang.en]));
-    assert(wn.canMean("måndag", WordKind.nounWeekday, [HLang.sv]));
-    assert(!wn.canMean("longing", WordKind.verb, [HLang.en]));
+    assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
+    assert(wn.canMean(`car`, WordKind.noun, HLang.en));
+    assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
+    assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
 }
