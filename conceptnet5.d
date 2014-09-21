@@ -367,8 +367,8 @@ class Net(bool useArray = true,
             this.outIxes = outIxes;
         }
     private:
-        LinkIxes inIxes; // into Net._links
-        LinkIxes outIxes; // into Net._links
+        LinkIxes inIxes;
+        LinkIxes outIxes;
         HLang hlang;
         WordKind lemmaKind;
     }
