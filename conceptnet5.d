@@ -627,9 +627,11 @@ class Net(bool useArray = true,
                 case 2:         // source concept
                     if (part.skipOver(`/c/`))
                     {
-                        const srcConceptIx = this.readConceptURI(part);
-                        link.srcIxes ~= srcConceptIx;
-                        conceptByIndex(srcConceptIx).inIxes ~= LinkIx(cast(Ix)_links.length);
+                        const cix = this.readConceptURI(part);
+                        link.srcIxes ~= cix;
+                        conceptByIndex(cix).inIxes ~= LinkIx(cast(Ix)_links.length);
+                        debug assert(conceptByIndex(cix).outIxes[].uniq.array.length ==
+                                     conceptByIndex(cix).outIxes.length);
                     }
                     else
                         dln(part);
@@ -637,9 +639,11 @@ class Net(bool useArray = true,
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
                     {
-                        const dstConceptIx = this.readConceptURI(part);
-                        link.dstIxes ~= dstConceptIx;
-                        conceptByIndex(dstConceptIx).outIxes ~= LinkIx(cast(Ix)_links.length);
+                        const cix = this.readConceptURI(part);
+                        link.dstIxes ~= cix;
+                        conceptByIndex(cix).outIxes ~= LinkIx(cast(Ix)_links.length);
+                        debug assert(conceptByIndex(cix).outIxes[].uniq.array.length ==
+                                     conceptByIndex(cix).outIxes.length);
                     }
                     else
                         dln(part);
