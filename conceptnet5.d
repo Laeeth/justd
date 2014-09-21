@@ -484,9 +484,10 @@ class Net(bool useArray = true,
         }
 
         // store Concept
-        const cix = ConceptIx(cast(uint)_concepts.length);
+        const cix = ConceptIx(cast(Ix)_concepts.length);
         _concepts ~= concept; // .. new concept that is stored
         _conceptIxesByLemma[lemma] ~= cix; // lookupOrStore index to ..
+        // dln(_conceptIxesByLemma[lemma]);
 
         return cix;
     }
@@ -595,15 +596,23 @@ class Net(bool useArray = true,
 
                     this.relationCounts[link.relation]++;
                     break;
-                case 2:
+                case 2:         // source concept
                     if (part.skipOver(`/c/`))
-                        link.srcIxes ~= this.readConceptURI(part);
+                    {
+                        const srcConceptIx = this.readConceptURI(part);
+                        link.srcIxes ~= srcConceptIx;
+                        conceptByIndex(srcConceptIx).inIxes ~= LinkIx(cast(Ix)_links.length);
+                    }
                     else
                         dln(part);
                     break;
-                case 3:
+                case 3:         // destination concept
                     if (part.skipOver(`/c/`))
-                        link.dstIxes ~= this.readConceptURI(part);
+                    {
+                        const dstConceptIx = this.readConceptURI(part);
+                        link.dstIxes ~= dstConceptIx;
+                        conceptByIndex(dstConceptIx).outIxes ~= LinkIx(cast(Ix)_links.length);
+                    }
                     else
                         dln(part);
                     break;
