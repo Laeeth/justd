@@ -395,7 +395,6 @@ class Net(bool useArray = true,
         ubyte weight;
         Relation relation;
         bool negation; // relation negation
-        HLang hlang;
         Source source;
     }
 
@@ -466,6 +465,7 @@ class Net(bool useArray = true,
             {
                 if (conceptByIndex(cix) == concept) // if concept stored before
                 {
+                    dln("Reused ", concept, " for lemma", lemma);
                     return cix; // reuse concept index
                 }
             }
