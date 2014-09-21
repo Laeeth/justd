@@ -426,7 +426,7 @@ class Net(bool useArray = true,
         Concepts _concepts;
         Links _links;
 
-        WordNet _wordnet;
+        WordNet!(true, true) _wordnet;
 
         size_t[Relation.max + 1] relationCounts;
         size_t[Source.max + 1] sourceCounts;
@@ -460,7 +460,7 @@ class Net(bool useArray = true,
 
     this(string dirPath)
     {
-        this._wordnet = new WordNet();
+        this._wordnet = new WordNet!(true, true);
         // GC.disabled had no noticeble effect here: import core.memory: GC;
         foreach (file; dirPath.expandTilde
                               .buildNormalizedPath

@@ -1,22 +1,19 @@
 #!/usr/bin/env rdmd-dev-module
 
 /** WordNet
-    TODO Use RCString
-
-    TODO Reads /usr/share/dict/
-    - american english
-    - british english
-
-    TODO Read myspell
-    TODO Read aspell
     */
 module wordnet;
 
 import languages;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
+import std.container: Array;
+import rcstring;
 
-/** WordNet */
-class WordNet
+/** WordNet
+    TODO represent dictionaries with a Trie instead of a hash table
+ */
+class WordNet(bool useArray = true,
+              bool useRCString = true)
 {
     /** WordNet Semantic Relation Type Code.
         See also: conceptnet5.Relation
@@ -43,28 +40,57 @@ class WordNet
         seeAlso,
     }
 
+    alias nPath = buildNormalizedPath;
+
+    alias LinkIx = uint; // link index (precision)
+
+    static if (useArray) alias Links = Array!LinkIx;
+    else                 alias Links = LinkIx[];
+
+    Tuple!(S, bool) normalize(S)(S lemma,
+                                 HLang hlang = HLang.unknown) if (isSomeString!S)
+    {
+        // TODO: Use Walter's new decoder functions
+        if (!hlang.hasCase) // to many exceptions are thrown for languages such as Bulgarian
+        {
+            return tuple(lemma, false); // skip it for them for now
+        }
+        try
+        {
+            return tuple(lemma.toLower, false);
+        }
+        catch (core.exception.UnicodeException e) // no all language support lowercasing
+        {
+            return tuple(lemma, true); // so leave it as is
+        }
+    }
+
     void readUNIXDict(string fileName,
-                      HLang hlang)
+                      HLang hlang,
+                      WordKind kindAll = WordKind.unknown)
     {
         size_t lnr = 0;
-        foreach (word; File(fileName).byLine)
+        size_t exceptionCount = 0;
+        foreach (lemma; File(fileName).byLine)
         {
             WordKind kind;
-            auto split = word.findSplit(`'`);
+            auto split = lemma.findSplit(`'`);
             if (!split[1].empty)
             {
-                word = split[0];
+                lemma = split[0]; // exclude genitive ending 's
                 kind = WordKind.noun;
             }
-            lnr += addWord(word.idup, kind, 0, hlang);
+            const normalizedLemma = normalize(lemma, hlang);
+            if (normalizedLemma[1])
+                exceptionCount++;
+            lnr += addWord(normalizedLemma[0].idup, kind, 0, hlang);
         }
-        writeln("Added ", lnr, " new ", hlang.toName, " words from ", fileName);
+        writeln("Added ", lnr, " new ", hlang.toName, " (", exceptionCount, " uncaseable) words from ", fileName);
     }
 
     void readWordNet(string dirName = "~/Knowledge/wordnet/WordNet-3.0/dict")
     {
         const fixed = dirName.expandTilde;
-        alias nPath = buildNormalizedPath;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
 
         const hlang = HLang.en;
@@ -76,8 +102,21 @@ class WordNet
 
     this()
     {
-        readUNIXDict(`/usr/share/dict/words`, HLang.en);
-        readUNIXDict(`/usr/share/dict/swedish`, HLang.sv);
+        const dictDir = `~/Knowledge/dict`.expandTilde;
+
+        readUNIXDict(nPath(dictDir, `words`), HLang.en); // TODO apt:dictionaries-common
+        readUNIXDict(nPath(dictDir, `swedish`), HLang.sv); // TODO apt:wswedish, TODO iso-latin-1
+
+        readUNIXDict(nPath(dictDir, `british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
+        readUNIXDict(nPath(dictDir, `british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
+        readUNIXDict(nPath(dictDir, `british-english`), HLang.en_GB); // TODO apt:wbritish
+
+        readUNIXDict(nPath(dictDir, `american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
+        readUNIXDict(nPath(dictDir, `american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
+        readUNIXDict(nPath(dictDir, `american-english`), HLang.en_US); // TODO apt:wamerican
+
+        readUNIXDict(nPath(dictDir, `brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, TODO iso-latin-1
+        readUNIXDict(nPath(dictDir, `bulgarian`), HLang.bg); // TODO apt:wbulgarian, TODO ISO-8859
 
         readWordNet();
 
@@ -355,16 +394,16 @@ class WordNet
             }
         }
 
-        uint[] links;
-        _words[lemma] ~= WordSense(kind, synsetCount, links, hlang);
+        Links links;
+        _words[lemma] ~= WordSense!Links(kind, synsetCount, links, hlang);
         return true;
     }
 
     /** Get Possible Meanings of $(D lemma) in all $(D hlangs).
         TODO filter on hlangs if hlangs is non-empty.
      */
-    WordSense[] meaningsOf(S)(S lemma,
-                              HLang[] hlangs = []) if (isSomeString!S)
+    WordSense!Links[] meaningsOf(S)(S lemma,
+                                    HLang[] hlangs = []) if (isSomeString!S)
     {
         typeof(return) senses;
         const lower = lemma.toLower;
@@ -417,11 +456,16 @@ class WordNet
             const sense_cnt    = words[4+p_cnt].to!uint;
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
-            auto links         = words[6+p_cnt..$].map!(a => a.to!uint).array;
-            auto meaning       = WordSense(words[1].front.decodeWordKind,
-                                           words[2].to!ubyte,
-                                           links,
-                                           hlang);
+            static if (useArray)
+            {
+                auto links = Links(words[6+p_cnt..$].map!(a => a.to!uint));
+            }
+            else
+            {
+                auto links = words[6+p_cnt..$].map!(a => a.to!uint).array;
+            }
+            auto meaning = WordSense!Links(words[1].front.decodeWordKind,
+                                           words[2].to!ubyte, links, hlang);
             debug assert(synset_cnt == sense_cnt);
             _words[lemma] ~= meaning;
         }
@@ -474,7 +518,13 @@ class WordNet
         writeln("Read ", lnr, " words from ", fileName);
     }
 
-    WordSense[][string] _words;
+    WordSense!Links[][string] _words;
+}
+
+auto ref makeWordNet(bool useArray = true,
+                     bool useRCString = true)()
+{
+    return new WordNet!(useArray, useRCString);
 }
 
 /** Decode Ambiguous Meaning(s) of string $(D s). */
@@ -489,7 +539,7 @@ private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
 
 unittest
 {
-    auto wn = new WordNet();
+    auto wn = new WordNet!(true, false);
     const words = ["car", "trout", "seal", "and", "or", "script", "shell", "soon", "long", "longing", "at", "a"];
     foreach (word; words)
     {

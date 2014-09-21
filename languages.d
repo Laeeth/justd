@@ -18,6 +18,8 @@ enum HLang:ubyte
 {
     unknown,                    /// Unknown
     en,                       /// English, 英語
+    en_US,                       /// American. English, 英語
+    en_GB,                       /// British English, 英語
     // ac,                       /// TODO?
     // ace,                      /// TODO?
     // ai,                       /// TODO?
@@ -112,11 +114,12 @@ enum HLang:ubyte
     oc,                       /// Occitan
     pl,                       /// Polish
     pt,                       /// Portuguese
+    pt_BR,                    /// Brazilian Portuguese
     ro,                       /// omanian
     ru,                       /// ussian
     sa,                       /// Sanskrit
-    // sc,                       /// TODO?
-    // scn,                       /// TODO?
+    // sc,                    /// TODO?
+    // scn,                   /// TODO?
     si,                       /// Sinhalese
     sm,                       /// Samoan
     sco,                      /// Scots
@@ -149,8 +152,14 @@ enum HLang:ubyte
     yi,                       /// Yiddish
 }
 
+bool hasCase(HLang hlang) @safe pure @nogc nothrow
+{
+    return hlang != HLang.bg;
+}
+
+
 /** TODO Remove when __traits(documentation is merged */
-string toName(HLang hlang)
+string toName(HLang hlang) @safe pure @nogc nothrow
 {
     with (HLang)
     {
@@ -158,6 +167,8 @@ string toName(HLang hlang)
         {
             case unknown: return "Unknown";
             case en: return "English"; // 英語
+            case en_US: return "American English";
+            case en_GB: return "British English";
             case af: return "Afrikaans";
             case ar: return "Arabic";
             case ae: return "Avestan";
@@ -228,6 +239,7 @@ string toName(HLang hlang)
             case oc: return "Occitan";
             case pl: return "Polish";
             case pt: return "Portuguese";
+            case pt_BR: return "Brazilian Portuguese";
             case ro: return "Romanian";
             case ru: return "Russian";
             case sa: return "Sanskrit";
@@ -567,11 +579,11 @@ enum WordKind:ubyte
 }
 
 /** Word Sense/Meaning/Interpretation. */
-struct WordSense
+struct WordSense(Links = uint[])
 {
     WordKind kind;
     ubyte synsetCount; // Number of senses (meanings).
-    uint[] links;
+    Links links;
     HLang hlang;
 }
 
