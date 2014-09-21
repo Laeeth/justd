@@ -8,8 +8,15 @@ auto typestringof(T)(T a) { return T.stringof; }
 
 import dbg;
 
+ubyte[] pack(bool withFieldName = false)(RCString s)
+{
+    auto packer = Packer(withFieldName);
+    packer.pack(s.toString);
+    return packer.stream.data;
+}
+
 unittest
 {
-    dln(RCString("alpha").toString.pack);
-    dln("alpha".pack);
+    assert(RCString("alpha").pack ==
+           msgpack.pack("alpha"));
 }
