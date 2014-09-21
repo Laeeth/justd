@@ -346,8 +346,7 @@ class Net(bool useArray = true,
     /* String Storage */
     static if (useRCString)
     {
-        /** use 31 because concept lemma are quite large, on average a length of
-         * 27 */
+        /* use 31 because CN5 lemmas are on average length of 27 */
         alias Lemma = RCXString!(immutable char, 31);
     }
     else
