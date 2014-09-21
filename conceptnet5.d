@@ -15,8 +15,10 @@
     - byNode
     - byLink
     - Concept getNode(LinkIx)
-    - Link getLink(NodeIx)
+    - Link getLink(ConceptIx)
 
+    TODO Use containers.HashMap
+    TODO Call GC.disable/enable around construction and search.
  */
 module conceptnet5;
 
@@ -320,13 +322,12 @@ auto pageSize() @trusted
 }
 
 /** Main Net.
-    TODO Use containers.HashMap
-    TODO Call GC.disable/enable around construction and search.
 */
 class Net(bool useArray = true,
           bool useRCString = true)
 {
     import std.file, std.algorithm, std.range, std.string, std.path, std.array;
+    import wordnet: WordNet;
     import dbg;
 
     /** Ix Precision.
@@ -334,33 +335,46 @@ class Net(bool useArray = true,
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
     alias Ix = uint; // TODO Change this to size_t when we have more _concepts and memory.
-    struct LinkIx { Ix ix; } /* alias LinkIx = Ix; */
+
+    /* These LinkIx and ConceptIx are structs intead of aliases for type-safe
+     * indexing. */
+    struct LinkIx { Ix _lIx; }
+    struct ConceptIx { Ix _cIx; }
+    static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
+    else                 { alias ConceptIxes = ConceptIx[]; }
     static if (useArray) { alias LinkIxes = Array!LinkIx; }
     else                 { alias LinkIxes = LinkIx[]; }
-
     static if (useRCString) { alias Lemma = RCXString!(immutable char, 31 /** use 31 because concept lemma are quite large */ ); }
     else                    { alias Lemma = string; }
+
+    /* const @safe @nogc pure nothrow */
+    version(all) {
+        Concept conceptByIndex(ConceptIx ix) { return _concepts[ix._cIx]; }
+        Link    linkByIndex   (LinkIx ix) { return _links[ix._lIx]; }
+    }
 
     /** Concept Node/Vertex. */
     struct Concept
     {
         this(HLang hlang,
-             WordKind lemmaKind)
+             WordKind lemmaKind,
+             LinkIxes inIxes = LinkIxes.init,
+             LinkIxes outIxes = LinkIxes.init)
         {
             this.hlang = hlang;
             this.lemmaKind = lemmaKind;
+            this.inIxes = inIxes;
+            this.outIxes = outIxes;
         }
     private:
-        LinkIxes outIxes; // into Net._links
         LinkIxes inIxes; // into Net._links
+        LinkIxes outIxes; // into Net._links
         HLang hlang;
         WordKind lemmaKind;
     }
 
-    struct NodeIx { Ix ix; } /* alias NodeIx = Ix; */
-
-    static if (useArray) { alias NodeIxes = Array!NodeIx; }
-    else                 { alias NodeIxes = NodeIx[]; }
+    static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
+    else                 { alias ConceptIxes = ConceptIx[]; }
 
     /** Many-Concepts-to-Many-Concepts Link (Edge).
      */
@@ -376,8 +390,8 @@ class Net(bool useArray = true,
             return cast(real)this.weight/25;
         }
     private:
-        NodeIxes startIxes; // into Net.nodes
-        NodeIxes endIxes; // into Net.nodes
+        ConceptIxes srcIxes;
+        ConceptIxes dstIxes;
         ubyte weight;
         Relation relation;
         bool negation; // relation negation
@@ -391,12 +405,12 @@ class Net(bool useArray = true,
     static if (useArray) { alias Links = Array!Link; }
     else                 { alias Links = Link[]; }
 
-    import wordnet: WordNet;
-
     private
     {
+        ConceptIxes[Lemma] _conceptIxesByLemma;
+        Concepts _concepts;
         Links _links;
-        Concepts[Lemma] _conceptsByLemma;
+
         WordNet _wordnet;
 
         size_t[Relation.max + 1] relationCounts;
@@ -426,7 +440,7 @@ class Net(bool useArray = true,
                 wordKind = meanings.front.wordKind; // TODO Pick union of all meanings
             }
         }
-        _conceptsByLemma[lemma];
+        _conceptIxesByLemma[lemma];
     }
 
     this(string dirPath)
@@ -442,25 +456,41 @@ class Net(bool useArray = true,
         }
     }
 
-    /** Store $(D concept) at $(D lemma) index. */
-    auto ref store(S)(S lemma, Concept concept)
+    /** Lookup Previous or Store New $(D concept) at $(D lemma) index. */
+    ConceptIx lookupOrStore(S)(S lemma, Concept concept)
     {
-        static if (useArray)
+        if (lemma in _conceptIxesByLemma)
         {
-            if (lemma !in _conceptsByLemma)
+            // check if lemma with same meaning as in concept already stored
+            foreach (cix; _conceptIxesByLemma[lemma])
+            {
+                if (conceptByIndex(cix) == concept) // if concept stored before
+                {
+                    return cix; // reuse concept index
+                }
+            }
+        }
+        else
+        {
+            static if (useArray)
             {
                 /* TODO why is this needed for Array!T but not for T[]?
                    A bug?
                    Or an overload missing? */
-                _conceptsByLemma[lemma] = Concepts.init;
+                _conceptIxesByLemma[lemma] = ConceptIxes.init;
             }
         }
-        _conceptsByLemma[lemma] ~= concept;
-        return this;
+
+        // store Concept
+        const cix = ConceptIx(cast(uint)_concepts.length);
+        _concepts ~= concept; // .. new concept that is stored
+        _conceptIxesByLemma[lemma] ~= cix; // lookupOrStore index to ..
+
+        return cix;
     }
 
     /** See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0 */
-    auto ref readConceptURI(T)(T part)
+    ConceptIx readConceptURI(T)(T part)
     {
         auto items = part.splitter('/');
         const srcLang = items.front.decodeHumanLang; items.popFront;
@@ -480,8 +510,7 @@ class Net(bool useArray = true,
             }
         }
         _lemmaLengthSum += lemma.length;
-        this.store(lemma, Concept(srcLang, lemmaKind));
-        return lemma;
+        return this.lookupOrStore(lemma, Concept(srcLang, lemmaKind));
     }
 
     /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -566,13 +595,13 @@ class Net(bool useArray = true,
                     break;
                 case 2:
                     if (part.skipOver(`/c/`))
-                        immutable srcConcept = this.readConceptURI(part);
+                        link.srcIxes ~= this.readConceptURI(part);
                     else
                         dln(part);
                     break;
                 case 3:
                     if (part.skipOver(`/c/`))
-                        immutable dstConcept = this.readConceptURI(part);
+                        link.dstIxes ~= this.readConceptURI(part);
                     else
                         dln(part);
                     break;
@@ -680,16 +709,16 @@ class Net(bool useArray = true,
         writeln("- Weights Max: ", this.weightMax);
         writeln("- Weights Sum: ", this.weightSum);
         writeln("- Number of assertions: ", this._assertionCount);
-        writeln("- Concepts Count: ", _conceptsByLemma.length);
-        writeln("- Concepts Lemma Length Average: ", cast(real)_lemmaLengthSum/_conceptsByLemma.length);
+        writeln("- Concepts Count: ", _conceptIxesByLemma.length);
+        writeln("- Concepts Lemma Length Average: ", cast(real)_lemmaLengthSum/_conceptIxesByLemma.length);
     }
 
     /** ConceptNet Relatedness.
         Sum of all paths relating a to b where each path is the path weight
         product.
     */
-    real relatedness(NodeIx a,
-                     NodeIx b) @safe @nogc pure nothrow
+    real relatedness(ConceptIx a,
+                     ConceptIx b) const @safe @nogc pure nothrow
     {
         typeof(return) value;
         return value;
@@ -698,7 +727,7 @@ class Net(bool useArray = true,
     /** Get Concept with strongest relatedness to $(D keywords).
         TODO Compare with function Context() in ConceptNet API.
      */
-    Concept contextOf(string[] keywords) @safe @nogc pure nothrow
+    Concept contextOf(string[] keywords) const @safe @nogc pure nothrow
     {
         return typeof(return).init;
     }
