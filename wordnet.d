@@ -127,37 +127,79 @@ class WordNet(bool useArray = true,
         readIndex(dictDir.nPath(`index.verb`), false, hlang);
     }
 
-    this()
+    /** Create a WordNet of languages $(D langs). */
+    this(HLang[] langs = [HLang.en,
+                          HLang.sv])
     {
         const dictDir = `~/Knowledge/dict`.expandTilde;
 
         // See also: https://packages.debian.org/sv/sid/wordlist
-        readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, TODO iso-latin-1
-        readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
-        readUNIXDict(dictDir.nPath("polish"), HLang.pl);
-        readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
-        readUNIXDict(dictDir.nPath("spanish"), HLang.es);
-        readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
-        readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
-        readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
-        readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
-        readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
-        readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
-        readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
-        readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
-        readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
-        readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, TODO iso-latin-1
-        readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, TODO ISO-8859
-        readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
-        readUNIXDict(dictDir.nPath("danish"), HLang.da);
-        readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
-        readUNIXDict(dictDir.nPath("french"), HLang.fr);
-        readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
-        readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
-        readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
-        readUNIXDict(dictDir.nPath("italian"), HLang.it);
-        readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
-        readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
+        if (!langs.find(HLang.sv).empty)
+            readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, NOTE iso-latin-1
+        if (!langs.find(HLang.de).empty)
+            readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
+        if (!langs.find(HLang.pl).empty)
+            readUNIXDict(dictDir.nPath("polish"), HLang.pl);
+        if (!langs.find(HLang.pt).empty)
+            readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
+        if (!langs.find(HLang.es).empty)
+            readUNIXDict(dictDir.nPath("spanish"), HLang.es);
+        if (!langs.find(HLang.fr_ch).empty)
+            readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
+        if (!langs.find(HLang.uk).empty)
+            readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
+
+        if (!langs.find(HLang.en).empty)
+            readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
+        if (!langs.find(HLang.en_GB).empty)
+            readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
+        if (!langs.find(HLang.en_GB).empty)
+            readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
+        if (!langs.find(HLang.en_GB).empty)
+            readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
+
+        if (!langs.find(HLang.en_US).empty)
+            readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
+        if (!langs.find(HLang.en_US).empty)
+            readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
+        if (!langs.find(HLang.en_US).empty)
+            readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
+
+        if (!langs.find(HLang.pt_BR).empty)
+            readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, NOTE iso-latin-1
+
+        if (!langs.find(HLang.pt_BR).empty)
+            readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
+
+        if (!langs.find(HLang.en_CA).empty)
+            readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
+
+        if (!langs.find(HLang.da).empty)
+            readUNIXDict(dictDir.nPath("danish"), HLang.da);
+
+        if (!langs.find(HLang.nl).empty)
+            readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
+
+        if (!langs.find(HLang.fr).empty)
+            readUNIXDict(dictDir.nPath("french"), HLang.fr);
+
+        if (!langs.find(HLang.faroese).empty)
+            readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
+
+        if (!langs.find(HLang.gl).empty)
+            readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
+
+        if (!langs.find(HLang.de).empty)
+            readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
+
+        if (!langs.find(HLang.it).empty)
+            readUNIXDict(dictDir.nPath("italian"), HLang.it);
+
+        if (!langs.find(HLang.de).empty)
+            readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
+
+        if (!langs.find(HLang.no).empty)
+            readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
 
         readWordNet();
 
@@ -606,9 +648,10 @@ class WordNet(bool useArray = true,
 }
 
 auto ref makeWordNet(bool useArray = true,
-                     bool useRCString = true)()
+                     bool useRCString = true)(HLang[] langs = [HLang.en,
+                                                               HLang.sv])
 {
-    return new WordNet!(useArray, useRCString);
+    return new WordNet!(useArray, useRCString)(langs);
 }
 
 /** Decode Ambiguous Meaning(s) of string $(D s). */
