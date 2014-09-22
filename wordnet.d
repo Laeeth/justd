@@ -47,17 +47,11 @@ class WordNet(bool useArray = true,
     alias LinkIx = uint; // link index (precision)
 
     /* String Storage */
-    static if (useRCString)
-    {
-        alias Lemma = RCXString!(immutable char, 16 - 1);
-    }
-    else
-    {
-        alias Lemma = string;
-    }
+    static if (useRCString) { alias Lemma = RCXString!(immutable char, 24 - 1); }
+    else                    { alias Lemma = string; }
 
-    static if (useArray) alias Links = Array!LinkIx;
-    else                 alias Links = LinkIx[];
+    static if (useArray) { alias Links = Array!LinkIx; }
+    else                 { alias Links = LinkIx[]; }
 
     Tuple!(S, bool) normalize(S)(S lemma,
                                  HLang hlang = HLang.unknown) if (isSomeString!S)
@@ -134,71 +128,71 @@ class WordNet(bool useArray = true,
         const dictDir = `~/Knowledge/dict`.expandTilde;
 
         // See also: https://packages.debian.org/sv/sid/wordlist
-        if (!langs.find(HLang.sv).empty)
+        if (langs is null || !langs.find(HLang.sv).empty)
             readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, NOTE iso-latin-1
-        if (!langs.find(HLang.de).empty)
+        if (langs is null || !langs.find(HLang.de).empty)
             readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
-        if (!langs.find(HLang.pl).empty)
+        if (langs is null || !langs.find(HLang.pl).empty)
             readUNIXDict(dictDir.nPath("polish"), HLang.pl);
-        if (!langs.find(HLang.pt).empty)
+        if (langs is null || !langs.find(HLang.pt).empty)
             readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
-        if (!langs.find(HLang.es).empty)
+        if (langs is null || !langs.find(HLang.es).empty)
             readUNIXDict(dictDir.nPath("spanish"), HLang.es);
-        if (!langs.find(HLang.fr_ch).empty)
+        if (langs is null || !langs.find(HLang.fr_ch).empty)
             readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
-        if (!langs.find(HLang.uk).empty)
+        if (langs is null || !langs.find(HLang.uk).empty)
             readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
 
-        if (!langs.find(HLang.en).empty)
+        if (langs is null || !langs.find(HLang.en).empty)
             readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
-        if (!langs.find(HLang.en_GB).empty)
+        if (langs is null || !langs.find(HLang.en_GB).empty)
             readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
-        if (!langs.find(HLang.en_GB).empty)
+        if (langs is null || !langs.find(HLang.en_GB).empty)
             readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
-        if (!langs.find(HLang.en_GB).empty)
+        if (langs is null || !langs.find(HLang.en_GB).empty)
             readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
 
-        if (!langs.find(HLang.en_US).empty)
+        if (langs is null || !langs.find(HLang.en_US).empty)
             readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
-        if (!langs.find(HLang.en_US).empty)
+        if (langs is null || !langs.find(HLang.en_US).empty)
             readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
-        if (!langs.find(HLang.en_US).empty)
+        if (langs is null || !langs.find(HLang.en_US).empty)
             readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
 
-        if (!langs.find(HLang.pt_BR).empty)
+        if (langs is null || !langs.find(HLang.pt_BR).empty)
             readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, NOTE iso-latin-1
 
-        if (!langs.find(HLang.pt_BR).empty)
+        if (langs is null || !langs.find(HLang.pt_BR).empty)
             readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
 
-        if (!langs.find(HLang.en_CA).empty)
+        if (langs is null || !langs.find(HLang.en_CA).empty)
             readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
 
-        if (!langs.find(HLang.da).empty)
+        if (langs is null || !langs.find(HLang.da).empty)
             readUNIXDict(dictDir.nPath("danish"), HLang.da);
 
-        if (!langs.find(HLang.nl).empty)
+        if (langs is null || !langs.find(HLang.nl).empty)
             readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
 
-        if (!langs.find(HLang.fr).empty)
+        if (langs is null || !langs.find(HLang.fr).empty)
             readUNIXDict(dictDir.nPath("french"), HLang.fr);
 
-        if (!langs.find(HLang.faroese).empty)
+        if (langs is null || !langs.find(HLang.faroese).empty)
             readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
 
-        if (!langs.find(HLang.gl).empty)
+        if (langs is null || !langs.find(HLang.gl).empty)
             readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
 
-        if (!langs.find(HLang.de).empty)
+        if (langs is null || !langs.find(HLang.de).empty)
             readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
 
-        if (!langs.find(HLang.it).empty)
+        if (langs is null || !langs.find(HLang.it).empty)
             readUNIXDict(dictDir.nPath("italian"), HLang.it);
 
-        if (!langs.find(HLang.de).empty)
+        if (langs is null || !langs.find(HLang.de).empty)
             readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
 
-        if (!langs.find(HLang.no).empty)
+        if (langs is null || !langs.find(HLang.no).empty)
             readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
 
         readWordNet();
@@ -499,9 +493,11 @@ class WordNet(bool useArray = true,
     bool addWord(S)(S lemma, WordKind kind, ubyte synsetCount,
                     HLang hlang = HLang.unknown)
     {
-        if (lemma in _words)
+        static if (useRCString) { const Lemma lemmaFixed = lemma; }
+        else                    { immutable lemmaFixed = lemma; }
+        if (lemmaFixed in _words)
         {
-            auto existing = _words[lemma];
+            auto existing = _words[lemmaFixed];
             foreach (e; existing) // for each possible more general kind
             {
                 if (e.kind == WordKind.init ||
@@ -515,7 +511,7 @@ class WordNet(bool useArray = true,
         }
 
         Links links;
-        _words[lemma] ~= WordSense!Links(kind, synsetCount, links, hlang);
+        _words[lemmaFixed] ~= WordSense!Links(kind, synsetCount, links, hlang);
         return true;
     }
 
@@ -523,13 +519,16 @@ class WordNet(bool useArray = true,
         TODO filter on hlangs if hlangs is non-empty.
      */
     WordSense!Links[] meaningsOf(S)(S lemma,
-                                    HLang[] hlangs = []) if (isSomeString!S)
+                                    HLang[] hlangs = [])
     {
         typeof(return) senses;
-        const lower = lemma.toLower;
-        if (lower in _words)
+
+        static if (useRCString) { const Lemma lowLemma = lemma.toLower; }
+        else                    { immutable lowLemma = lemma.toLower; }
+
+        if (lowLemma in _words)
         {
-            senses = _words[lower];
+            senses = _words[lowLemma];
             if (!hlangs.empty)
             {
                 senses = senses.filter!(sense => !hlangs.find(sense.hlang).empty).array;
@@ -563,18 +562,16 @@ class WordNet(bool useArray = true,
         if (!line.empty &&
             !line.front.isWhite) // if first is not space. TODO move this check
         {
-            static if (isSomeString!R)
-            {
-                const linestr = line;
-            }
-            else
-            {
-                const linestr = cast(string)line.idup; // TODO Why is this needed? And why does this fail?
-            }
+            static if (isSomeString!R) { const linestr = line; }
+            else                       { const linestr = cast(string)line.idup; } // TODO Why is this needed? And why does this fail?
             /* pragma(msg, typeof(line).stringof); */
             /* pragma(msg, typeof(line.idup).stringof); */
             const words        = linestr.split; // TODO Non-eager split?
-            const lemma        = words[0].idup; // NOTE: Stuff fails if this is set
+
+            // const lemma        = words[0].idup; // NOTE: Stuff fails if this is set
+            static if (useRCString) { immutable Lemma lemma = words[0]; }
+            else                    { immutable lemma = words[0].idup; }
+
             const pos          = words[1];
             const synset_cnt   = words[2].to!uint;
             const p_cnt        = words[3].to!uint;
@@ -582,14 +579,8 @@ class WordNet(bool useArray = true,
             const sense_cnt    = words[4+p_cnt].to!uint;
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
-            static if (useArray)
-            {
-                auto links = Links(words[6+p_cnt..$].map!(a => a.to!uint));
-            }
-            else
-            {
-                auto links = words[6+p_cnt..$].map!(a => a.to!uint).array;
-            }
+            static if (useArray) { auto links = Links(words[6+p_cnt..$].map!(a => a.to!uint)); }
+            else                 { auto links = words[6+p_cnt..$].map!(a => a.to!uint).array; }
             auto meaning = WordSense!Links(words[1].front.decodeWordKind,
                                            words[2].to!ubyte, links, hlang);
             debug assert(synset_cnt == sense_cnt);
@@ -666,7 +657,10 @@ private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
 
 unittest
 {
-    auto wn = new WordNet!(true, false);
+    enum useArray = true;
+    enum useRCString = true;
+
+    auto wn = new WordNet!(useArray, useRCString)([]);
     const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
     foreach (word; words)
     {
