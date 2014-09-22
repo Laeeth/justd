@@ -433,6 +433,7 @@ class Net(bool useArray = true,
         size_t[HLang.max + 1] hlangCounts;
         size_t _assertionCount = 0;
         size_t _lemmaLengthSum = 0;
+        size_t _connectednessSum = 0;
 
         // is there a Phobos structure for this?
         real weightMin = real.max;
@@ -635,6 +636,7 @@ class Net(bool useArray = true,
                     {
                         link.srcIx = this.readConceptURI(part);
                         conceptByIndex(link.srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
+                        _connectednessSum++;
                     }
                     else
                         dln(part);
@@ -644,6 +646,7 @@ class Net(bool useArray = true,
                     {
                         link.dstIx = this.readConceptURI(part);
                         conceptByIndex(link.dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
+                        _connectednessSum++;
                     }
                     else
                         dln(part);
@@ -752,8 +755,9 @@ class Net(bool useArray = true,
         writeln("- Weights Max: ", this.weightMax);
         writeln("- Weights Sum: ", this.weightSum);
         writeln("- Number of assertions: ", this._assertionCount);
-        writeln("- Concepts Count: ", _conceptIxesByLemma.length);
-        writeln("- Concepts Lemma Length Average: ", cast(real)_lemmaLengthSum/_conceptIxesByLemma.length);
+        writeln("- Concepts Count: ", _concepts.length);
+        writeln("- Concept Lemma Length Average: ", cast(real)_lemmaLengthSum/_concepts.length);
+        writeln("- Concept Connectedness Average: ", cast(real)_connectednessSum/_concepts.length);
     }
 
     /** ConceptNet Relatedness.
