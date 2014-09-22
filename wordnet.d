@@ -46,6 +46,16 @@ class WordNet(bool useArray = true,
 
     alias LinkIx = uint; // link index (precision)
 
+    /* String Storage */
+    static if (useRCString)
+    {
+        alias Lemma = RCXString!(immutable char, 15);
+    }
+    else
+    {
+        alias Lemma = string;
+    }
+
     static if (useArray) alias Links = Array!LinkIx;
     else                 alias Links = LinkIx[];
 
@@ -73,13 +83,15 @@ class WordNet(bool useArray = true,
     {
         size_t lnr = 0;
         size_t exceptionCount = 0;
-        string lemmaOld;
+        Lemma lemmaOld;
         foreach (lemma; File(fileName).byLine)
         {
             if (hlang == HLang.sv &&
-                lemmaOld ~ "s" == lemma) // Swedish genitive noun or passive verb form
+                lemma.startsWith(lemmaOld) &&
+                lemma.length == lemmaOld.length + 1 &&
+                lemma.back == 's') // Swedish genitive noun or passive verb form
             {
-                // writeln("Skipping genitive noun ", lemma);
+                /* writeln("Skipping genitive noun ", lemma); */
             }
             else
             {
@@ -93,7 +105,11 @@ class WordNet(bool useArray = true,
                 const normalizedLemma = normalize(lemma, hlang);
                 if (normalizedLemma[1])
                     exceptionCount++;
-                lnr += addWord(normalizedLemma[0].idup, kind, 0, hlang);
+
+                static if (useRCString) { immutable internedLemma = Lemma(normalizedLemma[0]); }
+                else                    { immutable internedLemma = normalizedLemma[0].idup; }
+
+                lnr += addWord(internedLemma, kind, 0, hlang);
             }
             lemmaOld = lemma.idup;
         }
@@ -115,19 +131,33 @@ class WordNet(bool useArray = true,
     {
         const dictDir = `~/Knowledge/dict`.expandTilde;
 
-        readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
+        // See also: https://packages.debian.org/sv/sid/wordlist
         readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, TODO iso-latin-1
-
+        readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
+        readUNIXDict(dictDir.nPath("polish"), HLang.pl);
+        readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
+        readUNIXDict(dictDir.nPath("spanish"), HLang.es);
+        readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
+        readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
+        readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
         readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
         readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
         readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
-
         readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
         readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
         readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
-
         readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, TODO iso-latin-1
         readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, TODO ISO-8859
+        readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
+        readUNIXDict(dictDir.nPath("danish"), HLang.da);
+        readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
+        readUNIXDict(dictDir.nPath("french"), HLang.fr);
+        readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
+        readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
+        readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
+        readUNIXDict(dictDir.nPath("italian"), HLang.it);
+        readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
+        readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
 
         readWordNet();
 
@@ -408,13 +438,24 @@ class WordNet(bool useArray = true,
         }
 
         // TODO Learn: adjective strong <=> noun strength
+
+        size_t lnr = 0;
+        size_t lemmaLengthSum = 0;
+        foreach (lemma, sense; _words)
+        {
+            lemmaLengthSum += lemma.length;
+            lnr++;
+        }
+
+        writeln(`Average Lemma Length `, cast(real)lemmaLengthSum/lnr);
+        writeln(`Read `, lnr, ` words`);
     }
 
     /** Store $(D lemma) as $(D kind) in language $(D hlang).
         Return true if a new word was added, false if word was specialized.
      */
-    bool addWord(string lemma, WordKind kind, ubyte synsetCount,
-                 HLang hlang = HLang.unknown)
+    bool addWord(S)(S lemma, WordKind kind, ubyte synsetCount,
+                    HLang hlang = HLang.unknown)
     {
         if (lemma in _words)
         {
@@ -561,7 +602,7 @@ class WordNet(bool useArray = true,
         writeln(`Read `, lnr, ` words from `, fileName);
     }
 
-    WordSense!Links[][string] _words;
+    WordSense!Links[][Lemma] _words;
 }
 
 auto ref makeWordNet(bool useArray = true,

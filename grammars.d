@@ -13,13 +13,15 @@ import std.array: array;
 /** (Human) Language Code according to ISO 639-1.
     See also: http://www.mathguide.de/info/tools/languagecode.html
     See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+    See also: http://msdn.microsoft.com/en-us/library/ms533052(v=vs.85).aspx
  */
 enum HLang:ubyte
 {
     unknown,                    /// Unknown
-    en,                       /// English, 英語
-    en_US,                       /// American. English, 英語
-    en_GB,                       /// British English, 英語
+    en,                       /// English
+    en_US,                       /// American. English
+    en_GB,                       /// British English
+    en_CA,                       /// Canadian English
     // ac,                       /// TODO?
     // ace,                      /// TODO?
     // ai,                       /// TODO?
@@ -72,6 +74,7 @@ enum HLang:ubyte
     // fu,                       /// TODO?
     // fur,                      /// TODO?
     fr,                       /// French
+    fr_ch,                    /// French (Switzerland)
     gl,                       /// Galician
     gv,                       /// Manx
     de,                       /// German
@@ -150,6 +153,7 @@ enum HLang:ubyte
     vo,                       /// Volapük
     wa,                       /// Waloon
     yi,                       /// Yiddish
+    faroese,                  /// Faroese
 }
 
 bool hasCase(HLang hlang) @safe pure @nogc nothrow
@@ -169,6 +173,7 @@ string toName(HLang hlang) @safe pure @nogc nothrow
             case en: return "English"; // 英語
             case en_US: return "American English";
             case en_GB: return "British English";
+            case en_CA: return "Canadian English";
             case af: return "Afrikaans";
             case ar: return "Arabic";
             case ae: return "Avestan";
@@ -200,6 +205,7 @@ string toName(HLang hlang) @safe pure @nogc nothrow
             case fj: return "Fiji";
             case fo: return "Faeroese";
             case fr: return "French";
+            case fr_ch: return "French (Switzerland)";
             case gl: return "Galician";
             case gv: return "Manx";
             case de: return "German";
@@ -268,6 +274,7 @@ string toName(HLang hlang) @safe pure @nogc nothrow
             case vo: return "Volapük";
             case wa: return "Waloon";
             case yi: return "Yiddish";
+            case faroese: return "Faroese";
         }
     }
 

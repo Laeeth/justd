@@ -1,22 +1,18 @@
 #!/usr/bin/env rdmd-dev-module
 
+import std.stdio;
 import std.conv: to;
 import rcstring;
 import msgpack;
 
-auto typestringof(T)(T a) { return T.stringof; }
-
-import dbg;
-
-ubyte[] pack(bool withFieldName = false)(RCString s)
+void rcstringPackHandler(ref Packer p, ref RCString rcstring)
 {
-    auto packer = Packer(withFieldName);
-    packer.pack(s.toString);
-    return packer.stream.data;
+    writeln("Packing ", p);
+    p.pack(rcstring.toString);
 }
 
 unittest
 {
-    assert(RCString("alpha").pack ==
-           msgpack.pack("alpha"));
+    registerPackHandler!(RCString, rcstringPackHandler);
+    writeln(RCString("").pack);
 }

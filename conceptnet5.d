@@ -29,6 +29,7 @@ import std.container: Array;
 
 import grammars;
 import rcstring;
+import msgpack;
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
@@ -469,6 +470,7 @@ class Net(bool useArray = true,
                               .filter!(name => name.extension == ".csv")) // I love D :)
         {
             readCSV(file);
+            break;
         }
     }
 
@@ -508,7 +510,7 @@ class Net(bool useArray = true,
         return cix;
     }
 
-    void showLemmaConcepts(T)(T lemma)
+    void showLemmaConcepts(S)(S lemma) if (isSomeString!S)
     {
         if (lemma in _conceptIxesByLemma)
         {
@@ -788,13 +790,35 @@ class Net(bool useArray = true,
 
 import backtrace.backtrace;
 
+void rcstringPackHandler(ref Packer p, ref RCString rcstring)
+{
+    writeln("Packing ", p);
+    p.pack(rcstring.toString);
+}
+
+/* void rcstringUnpackHandler(ref Unpacker u, ref RCString rcstring) */
+/* { */
+/*     /\* u.unpack(rcstring.toString); *\/ */
+/* } */
+
 unittest
 {
+    registerPackHandler!(RCString, rcstringPackHandler);
+    /* registerUnpackHandler!(RCString, rcstringUnpackHandler); */
+
+    writeln(RCString("").pack);
+    return;
+
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
     // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
     auto net = new Net!(true, true)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
+    if (true)
+    {
+        auto netPack = net.pack;
+        writeln("Packed to ", netPack.length, " bytes");
+    }
 
     if (false) // just to make all variants of compile
     {
