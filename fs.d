@@ -3069,19 +3069,19 @@ class GStats
     // Interpret Command Line
     void loadDirKinds()
     {
-        vcDirKinds ~= new DirKind(".git",  "Git");
-        vcDirKinds ~= new DirKind(".svn",  "Subversion (Svn)");
-        vcDirKinds ~= new DirKind(".bzr",  "Bazaar (Bzr)");
-        vcDirKinds ~= new DirKind("RCS",  "RCS");
-        vcDirKinds ~= new DirKind("CVS",  "CVS");
-        vcDirKinds ~= new DirKind("MCVS",  "MCVS");
-        vcDirKinds ~= new DirKind("RCS",  "RCS");
-        vcDirKinds ~= new DirKind(".hg",  "Mercurial (Hg)");
-        vcDirKinds ~= new DirKind("SCCS",  "SCCS");
-        vcDirKinds ~= new DirKind(".wact",  "WACT");
-        vcDirKinds ~= new DirKind("_MTN",  "Monotone");
-        vcDirKinds ~= new DirKind("_darcs",  "Darcs");
-        vcDirKinds ~= new DirKind("{arch}",  "Arch");
+        vcDirKinds ~= new DirKind(".git", "Git");
+        vcDirKinds ~= new DirKind(".svn", "Subversion (Svn)");
+        vcDirKinds ~= new DirKind(".bzr", "Bazaar (Bzr)");
+        vcDirKinds ~= new DirKind("RCS", "RCS");
+        vcDirKinds ~= new DirKind("CVS", "CVS");
+        vcDirKinds ~= new DirKind("MCVS", "MCVS");
+        vcDirKinds ~= new DirKind("RCS", "RCS");
+        vcDirKinds ~= new DirKind(".hg", "Mercurial (Hg)");
+        vcDirKinds ~= new DirKind("SCCS", "SCCS");
+        vcDirKinds ~= new DirKind(".wact", "WACT");
+        vcDirKinds ~= new DirKind("_MTN", "Monotone");
+        vcDirKinds ~= new DirKind("_darcs", "Darcs");
+        vcDirKinds ~= new DirKind("{arch}", "Arch");
 
         skippedDirKinds ~= vcDirKinds;
 
