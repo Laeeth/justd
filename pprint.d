@@ -36,7 +36,7 @@ import csunits: Bytes;
 import fs: FKind, isSymlink, isDir;
 import notnull: NotNull;
 import mathml;
-import languages;
+import grammars;
 import attributes;
 
 import traits_ex: isCallableWith;

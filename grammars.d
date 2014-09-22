@@ -3,7 +3,7 @@
 /** Generic Language Constructs.
     See also: https://en.wikipedia.org/wiki/Predicate_(grammar)
  */
-module languages;
+module grammars;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;

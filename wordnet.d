@@ -4,7 +4,7 @@
     */
 module wordnet;
 
-import languages;
+import grammars;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
 import std.container: Array;
 import rcstring;

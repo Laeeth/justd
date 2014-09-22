@@ -9,7 +9,7 @@ module mathml;
 
 import rational: Rational; // TODO Can we turn this dep into a duck type dep?
 import std.traits: isScalarType, isFloatingPoint;
-import languages: MarkupLang;
+import grammars: MarkupLang;
 
 /** Horizontal Alignment. */
 enum HAlign { left, center, right }

@@ -27,7 +27,7 @@ import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
 import std.container: Array;
 
-import languages;
+import grammars;
 import rcstring;
 
 /* import stdx.allocator; */
