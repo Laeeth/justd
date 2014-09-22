@@ -313,7 +313,7 @@ pointers on top of another allocator.))
 )
  */
 
-module std.allocator;
+module stdx.allocator;
 
 // Example in the synopsis above
 unittest

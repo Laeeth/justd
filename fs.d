@@ -3609,26 +3609,26 @@ class Dir : File
                     default:
                         assert(false, "Unknown File parent class " ~ subClassName); // TODO Exception
                     case "Dir":
-                        auto subDir = assumeNotNull(new Dir(this, gstats));
+                        auto subDir = new Dir(this, gstats);
                         unpacker.unpack(subDir); sub = subDir;
                         auto subDent = DirEntry(sub.path);
                         subDir.checkObseleted(subDent); // Invalidate Statistics using fresh CStat if needed
-                        addTreeStatsFromSub(subDir, subDent);
+                        addTreeStatsFromSub(assumeNotNull(subDir), subDent);
                         break;
                     case "RegFile":
-                        auto subRegFile = assumeNotNull(new RegFile(assumeNotNull(this)));
+                        auto subRegFile = new RegFile(assumeNotNull(this));
                         unpacker.unpack(subRegFile); sub = subRegFile;
                         auto subDent = DirEntry(sub.path);
                         subRegFile.checkObseleted(subDent); // Invalidate Statistics using fresh CStat if needed
-                        updateStats(subRegFile, subDent, true);
-                        addTreeStatsFromSub(subRegFile, subDent);
+                        updateStats(assumeNotNull(subRegFile), subDent, true);
+                        addTreeStatsFromSub(assumeNotNull(subRegFile), subDent);
                         break;
                     case "Symlink":
-                        auto subSymlink = assumeNotNull(new Symlink(assumeNotNull(this)));
+                        auto subSymlink = new Symlink(assumeNotNull(this));
                         unpacker.unpack(subSymlink); sub = subSymlink;
                         break;
                     case "SpecFile":
-                        auto SpecFile = assumeNotNull(new SpecFile(assumeNotNull(this)));
+                        auto SpecFile = new SpecFile(assumeNotNull(this));
                         unpacker.unpack(SpecFile); sub = SpecFile;
                         break;
                     }
