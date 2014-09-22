@@ -658,7 +658,7 @@ private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
 unittest
 {
     enum useArray = true;
-    enum useRCString = true;
+    enum useRCString = false;
 
     auto wn = new WordNet!(useArray, useRCString)([]);
     const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
