@@ -49,7 +49,7 @@ class WordNet(bool useArray = true,
     /* String Storage */
     static if (useRCString)
     {
-        alias Lemma = RCXString!(immutable char, 15);
+        alias Lemma = RCXString!(immutable char, 16 - 1);
     }
     else
     {
