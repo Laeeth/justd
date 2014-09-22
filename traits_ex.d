@@ -31,11 +31,19 @@ template allSame(T...)
     }
 }
 
-enum isArrayOf(T, U) = isArray!T && is(ElementType!T == U); // version(2.064)
+enum isRandomAccessRangeOf(R, E) = isRandomAccessRange!R && is(ElementType!R == E);
+enum isForwardRangeOf(R, E) = isForwardRange!R && is(ElementType!R == E);
+enum isInputRangeOf(R, E) = isInputRange!R && is(ElementType!R == E);
+enum isBidirectionalRangeOf(R, E) = isBidirectionalRange!R && is(ElementType!R == E);
+enum isOutputRangeOf(R, E) = isOutputRange!R && is(ElementType!R == E);
+enum isArrayOf(R, E) = isArray!R && is(ElementType!R == E);
 unittest {
-    alias T = typeof(["a", "b"]);
-    assert(isArrayOf!(T, string));
+    alias R = typeof(["a", "b"]);
+    assert(isArrayOf!(R, string));
 }
+
+alias isSourceOf = isForwardRangeOf;
+alias isSinkOf = isOutputRangeOf;
 
 import std.functional: unaryFun, binaryFun;
 
