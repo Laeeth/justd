@@ -634,4 +634,7 @@ unittest
     assert(wn.canMean(`car`, WordKind.noun, HLang.en));
     /* assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv])); */
     assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
+
+    write("Press enter to continue: ");
+    readln();
 }
