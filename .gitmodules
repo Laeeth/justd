@@ -22,9 +22,6 @@
 [submodule "arsd"]
 	path = arsd
 	url = https://github.com/adamdruppe/misc-stuff-including-D-programming-language-web-stuff.git
-[submodule "nordlow-msgpack-d"]
-	path = msgpack-d
-	url = https://github.com/nordlow/msgpack-d.git
 [submodule "lectures/minted"]
 	path = lectures/minted
 	url = https://github.com/gpoore/minted.git
