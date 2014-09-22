@@ -1115,6 +1115,7 @@ static this() {
     Opposite: toTextualString.
     TODO Throw if number doesn't fit in long.
     TODO Add variant to toTextualBigIntegerMaybe.
+    TODO Could this be merged with to!(T)(string) if (isInteger!T) ?
 */
 Nullable!long toTextualIntegerMaybe(S)(S x)
     @safe pure if (isSomeString!S)
