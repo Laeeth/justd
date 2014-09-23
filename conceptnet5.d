@@ -351,12 +351,11 @@ class Net(bool useArray = true,
     /* String Storage */
     static if (useRCString)
     {
-        /* use 31 because CN5 lemmas are on average length of 27 */
         alias Lemma = RCXString!(immutable char, 24-1);
     }
     else
     {
-        alias Lemma = string;
+        alias Lemma = immutable string;
     }
 
     /* const @safe @nogc pure nothrow */
@@ -761,9 +760,8 @@ class Net(bool useArray = true,
         }
 
         writeln("Stats:");
-        writeln("- Weights Min: ", this.weightMin);
-        writeln("- Weights Max: ", this.weightMax);
-        writeln("- Weights Sum: ", this.weightSum);
+        writeln("- Weights Min,Max,Average: ",
+                this.weightMin, ',', this.weightMax, ',', cast(real)this.weightSum/this._links.length);
         writeln("- Number of assertions: ", this._assertionCount);
         writeln("- Concepts Count: ", _concepts.length);
         writeln("- Concept Lemma Length Average: ", cast(real)_lemmaLengthSum/_concepts.length);
@@ -821,7 +819,7 @@ unittest
     backtrace.backtrace.install(stderr);
     // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
-    auto net = new Net!(true, true)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
+    auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
     if (false)
     {
         auto netPack = net.pack;
