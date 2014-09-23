@@ -12,9 +12,12 @@ private auto pmap(alias fun, R)(R range) if(isInputRange!R)
 {
     import std.parallelism;
     import core.sync.mutex;
+
     static __gshared Mutex mutex;
     if (mutex is null) mutex = new Mutex;
+
     typeof (fun(range.front))[] values;
+
     foreach (i, value; range.parallel)
     {
         auto newValue = fun(value);
@@ -24,5 +27,6 @@ private auto pmap(alias fun, R)(R range) if(isInputRange!R)
             values[i] = newValue;
         }
     }
+
     return values;
 }
