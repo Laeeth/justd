@@ -122,8 +122,7 @@ class WordNet(bool useArray = true,
     }
 
     /** Create a WordNet of languages $(D langs). */
-    this(HLang[] langs = [HLang.en,
-                          HLang.sv])
+    this(HLang[] langs = [HLang.en])
     {
         const dictDir = `~/Knowledge/dict`.expandTilde;
 
@@ -195,7 +194,8 @@ class WordNet(bool useArray = true,
         if (langs is null || !langs.find(HLang.no).empty)
             readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
 
-        readWordNet();
+        if (langs is null || !langs.find(HLang.en).empty)
+            readWordNet(); // put this last to specialize existing lemma
 
         // TODO merge with conjunctions?
         // TODO categorize like http://www.grammarbank.com/connectives-list.html
@@ -660,7 +660,7 @@ unittest
     enum useArray = true;
     enum useRCString = false;
 
-    auto wn = new WordNet!(useArray, useRCString)([]);
+    auto wn = new WordNet!(useArray, useRCString)();
     const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
     foreach (word; words)
     {
@@ -672,6 +672,6 @@ unittest
     /* assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv])); */
     assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
 
-    write("Press enter to continue: ");
-    readln();
+    /* write("Press enter to continue: "); */
+    /* readln(); */
 }
