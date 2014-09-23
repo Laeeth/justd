@@ -37,11 +37,6 @@ import msgpack;
 
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
-
-    TODO
-    wordnet/adjectivePertainsTo
-    wordnet/adverbPertainsTo
-    wordnet/participleOf
 */
 enum Relation:ubyte
 {
@@ -164,6 +159,10 @@ enum Relation:ubyte
 
     hasPainIntensity,
     hasPainCharacter,
+
+    adjectivePertainsTo,
+    adverbPertainsTo,
+    participleOf,
 }
 
 @safe @nogc pure nothrow
@@ -298,6 +297,10 @@ Thematic toThematic(Relation relation)
         case Relation.similarTo: return Thematic.kLines;
         case Relation.hasPainIntensity: return Thematic.kLines;
         case Relation.hasPainCharacter: return Thematic.kLines;
+
+        case Relation.adjectivePertainsTo: return Thematic.unknown;
+        case Relation.adverbPertainsTo: return Thematic.unknown;
+        case Relation.participleOf: return Thematic.unknown;
     }
 }
 
@@ -625,10 +628,15 @@ class Net(bool useArray = true,
                         case "NotCauses":                 link.relation = Relation.causes; link.negation = true; break;
                         case "NotCapableOf":              link.relation = Relation.capableOf; link.negation = true; break;
                         case "NotHasProperty":            link.relation = Relation.hasProperty; link.negation = true; break;
+
+                        case "AdjectivePertainsTo":       link.relation = Relation.adjectivePertainsTo; link.negation = true; break;
+                        case "AdverbPertainsTo":          link.relation = Relation.adverbPertainsTo; link.negation = true; break;
+                        case "ParticipleOf":              link.relation = Relation.participleOf; link.negation = true; break;
+
                         default:
-                            writeln("Unknown relationString ", relationString);
-                            link.relation = Relation.unknown;
-                            break;
+                        writeln("Unknown relationString ", relationString);
+                        link.relation = Relation.unknown;
+                        break;
                     }
 
                     this.relationCounts[link.relation]++;
@@ -641,7 +649,7 @@ class Net(bool useArray = true,
                         _connectednessSum++;
                     }
                     else
-                        dln(part);
+                    dln(part);
                     break;
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
@@ -651,7 +659,7 @@ class Net(bool useArray = true,
                         _connectednessSum++;
                     }
                     else
-                        dln(part);
+                    dln(part);
                     break;
                 case 4:
                     if (part != `/ctx/all`)
