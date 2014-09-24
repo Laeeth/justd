@@ -6,16 +6,10 @@ import msgpack;
 
 import rcstring;
 
-void rcstringPackHandler(ref Packer p, ref RCString rcstring)
+void rcstringPackHandler(ref Packer p,
+                         const RCString rcstring) pure nothrow
 {
-    writeln("Packing ", p);
     p.pack(rcstring.toString);
-}
-
-unittest
-{
-    registerPackHandler!(RCString, rcstringPackHandler);
-    writeln(RCString("").pack);
 }
 
 import std.container: Array;
@@ -26,15 +20,14 @@ unittest
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
 
-    Array!string a;
-    writeln(a.pack);
+    registerPackHandler!(RCString, rcstringPackHandler);
 
-    string[] b;
-    writeln(b.pack);
+    writeln("RCString.pack: ", RCString("").pack);
+    writeln(`"".pack: `, "".pack);
+    assert(RCString("").pack == "".pack);
 
-    string c;
-    writeln(c.pack);
+    writeln(`[""].pack: `, [""].pack);
+    writeln("RCString[].pack: ", [RCString("")].pack);
 
-    a ~= "a";
-    writeln(a.pack);
+    assert([RCString("")].pack == [""].pack);
 }
