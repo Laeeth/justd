@@ -796,25 +796,8 @@ class Net(bool useArray = true,
 
 import backtrace.backtrace;
 
-void rcstringPackHandler(ref Packer p, ref RCString rcstring)
-{
-    writeln("Packing ", p);
-    p.pack(rcstring.toString);
-}
-
-/* void rcstringUnpackHandler(ref Unpacker u, ref RCString rcstring) */
-/* { */
-/*     /\* u.unpack(rcstring.toString); *\/ */
-/* } */
-
 unittest
 {
-    /* registerPackHandler!(RCString, rcstringPackHandler); */
-    /* /\* registerUnpackHandler!(RCString, rcstringUnpackHandler); *\/ */
-
-    /* writeln(RCString("").pack); */
-    /* return; */
-
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
     // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
