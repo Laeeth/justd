@@ -1,7 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
 /** Extensions to std.parallelism.
-    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
 */
 
 module algorithm_ex;
