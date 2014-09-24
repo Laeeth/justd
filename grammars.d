@@ -1108,9 +1108,9 @@ enum onesPlaceWords = [ "zero", "one", "two", "three", "four", "five", "six", "s
 enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ];
 enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
 
-immutable ubyte onesPlaceWordsAA[string];
-immutable ubyte singleWordsAA[string];
-immutable ubyte tensPlaceWordsAA[string];
+immutable ubyte[string] onesPlaceWordsAA;
+immutable ubyte[string] singleWordsAA;
+immutable ubyte[string] tensPlaceWordsAA;
 
 static this() {
     foreach (ubyte i, e; onesPlaceWords) { onesPlaceWordsAA[e] = i; }
