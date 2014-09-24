@@ -12,7 +12,6 @@ void rcstringPackHandler(ref Packer p,
     p.pack(rcstring.toString);
 }
 
-import std.container: Array;
 import backtrace.backtrace;
 
 unittest
