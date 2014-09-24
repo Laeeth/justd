@@ -54,10 +54,10 @@ class WordNet(bool useArray = true,
     else                 { alias Links = LinkIx[]; }
 
     Tuple!(S, bool) normalize(S)(S lemma,
-                                 HLang hlang = HLang.unknown) if (isSomeString!S)
+                                 HLang lang = HLang.unknown) if (isSomeString!S)
     {
         // TODO: Use Walter's new decoder functions
-        if (!hlang.hasCase) // to many exceptions are thrown for languages such as Bulgarian
+        if (!lang.hasCase) // to many exceptions are thrown for languages such as Bulgarian
         {
             return tuple(lemma, false); // skip it for them for now
         }
@@ -72,7 +72,7 @@ class WordNet(bool useArray = true,
     }
 
     void readUNIXDict(string fileName,
-                      HLang hlang,
+                      HLang lang,
                       WordKind kindAll = WordKind.unknown)
     {
         size_t lnr = 0;
@@ -80,7 +80,7 @@ class WordNet(bool useArray = true,
         Lemma lemmaOld;
         foreach (lemma; File(fileName).byLine)
         {
-            if (hlang == HLang.sv &&
+            if (lang == HLang.sv &&
                 lemma.startsWith(lemmaOld) &&
                 lemma.length == lemmaOld.length + 1 &&
                 lemma.back == 's') // Swedish genitive noun or passive verb form
@@ -96,29 +96,29 @@ class WordNet(bool useArray = true,
                     lemma = split[0]; // exclude genitive ending 's
                     kind = WordKind.noun;
                 }
-                const normalizedLemma = normalize(lemma, hlang);
+                const normalizedLemma = normalize(lemma, lang);
                 if (normalizedLemma[1])
                     exceptionCount++;
 
                 static if (useRCString) { immutable internedLemma = Lemma(normalizedLemma[0]); }
                 else                    { immutable internedLemma = normalizedLemma[0].idup; }
 
-                lnr += addWord(internedLemma, kind, 0, hlang);
+                lnr += addWord(internedLemma, kind, 0, lang);
             }
             lemmaOld = lemma.idup;
         }
-        writeln(`Added `, lnr, ` new `, hlang.toName, ` (`, exceptionCount, ` uncaseable) words from `, fileName);
+        writeln(`Added `, lnr, ` new `, lang.toName, ` (`, exceptionCount, ` uncaseable) words from `, fileName);
     }
 
     void readWordNet(string dirName = `~/Knowledge/wordnet/WordNet-3.0/dict`)
     {
         const dictDir = dirName.expandTilde;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
-        const hlang = HLang.en;
-        readIndex(dictDir.nPath(`index.adj`), false, hlang);
-        readIndex(dictDir.nPath(`index.adv`), false, hlang);
-        readIndex(dictDir.nPath(`index.noun`), false, hlang);
-        readIndex(dictDir.nPath(`index.verb`), false, hlang);
+        const lang = HLang.en;
+        readIndex(dictDir.nPath(`index.adj`), false, lang);
+        readIndex(dictDir.nPath(`index.adv`), false, lang);
+        readIndex(dictDir.nPath(`index.noun`), false, lang);
+        readIndex(dictDir.nPath(`index.verb`), false, lang);
     }
 
     /** Create a WordNet of languages $(D langs). */
@@ -487,11 +487,11 @@ class WordNet(bool useArray = true,
         writeln(`Read `, lnr, ` words`);
     }
 
-    /** Store $(D lemma) as $(D kind) in language $(D hlang).
+    /** Store $(D lemma) as $(D kind) in language $(D lang).
         Return true if a new word was added, false if word was specialized.
      */
     bool addWord(S)(S lemma, WordKind kind, ubyte synsetCount,
-                    HLang hlang = HLang.unknown)
+                    HLang lang = HLang.unknown)
     {
         static if (useRCString) { const Lemma lemmaFixed = lemma; }
         else                    { immutable lemmaFixed = lemma; }
@@ -511,7 +511,7 @@ class WordNet(bool useArray = true,
         }
 
         Links links;
-        _words[lemmaFixed] ~= WordSense!Links(kind, synsetCount, links, hlang);
+        _words[lemmaFixed] ~= WordSense!Links(kind, synsetCount, links, lang);
         return true;
     }
 
@@ -550,13 +550,13 @@ class WordNet(bool useArray = true,
 
     auto canMean(S)(S lemma,
                     WordKind kind,
-                    HLang hlang = HLang.unknown) if (isSomeString!S)
+                    HLang lang = HLang.unknown) if (isSomeString!S)
     {
-        return canMean(lemma, kind, hlang == HLang.unknown ? [] : [hlang]);
+        return canMean(lemma, kind, lang == HLang.unknown ? [] : [lang]);
     }
 
     void readIndexLine(R, N)(R line, N lnr,
-                             HLang hlang = HLang.unknown,
+                             HLang lang = HLang.unknown,
                              bool useMmFile = false)
     {
         if (!line.empty &&
@@ -582,7 +582,7 @@ class WordNet(bool useArray = true,
             static if (useArray) { auto links = Links(words[6+p_cnt..$].map!(a => a.to!uint)); }
             else                 { auto links = words[6+p_cnt..$].map!(a => a.to!uint).array; }
             auto meaning = WordSense!Links(words[1].front.decodeWordKind,
-                                           words[2].to!ubyte, links, hlang);
+                                           words[2].to!ubyte, links, lang);
             debug assert(synset_cnt == sense_cnt);
             _words[lemma] ~= meaning;
         }
@@ -605,7 +605,7 @@ class WordNet(bool useArray = true,
         Manual page: wndb
     */
     void readIndex(string fileName, bool useMmFile = false,
-                   HLang hlang = HLang.unknown)
+                   HLang lang = HLang.unknown)
     {
         size_t lnr;
         /* TODO Functionize and merge with conceptnet5.readCSV */
@@ -619,7 +619,7 @@ class WordNet(bool useArray = true,
                 import algorithm_ex: byLine;
                 foreach (line; data.byLine)
                 {
-                    readIndexLine(line, lnr, hlang, useMmFile);
+                    readIndexLine(line, lnr, lang, useMmFile);
                     lnr++;
                 }
             }
@@ -628,7 +628,7 @@ class WordNet(bool useArray = true,
         {
             foreach (line; File(fileName).byLine)
             {
-                readIndexLine(line, lnr, hlang);
+                readIndexLine(line, lnr, lang);
                 lnr++;
             }
         }
