@@ -326,8 +326,9 @@ way simpler and more flexible
     \item Compare with Monad
     \item Example:
       \begin{lstlisting}[frame=single]
-        writeln(x,y,z); // no allocation
-        writeln(x~y~z); // heap allocates
+writeln(x,y,z); // no heap
+writeln(x~y~z); // use heap, revealed with -vgc
+writeln(tuple(pair(x1,x2), y, z)); // composable, no heap
       \end{lstlisting}
     \item Concept easily confused with \emph{value} ranges such as Ada's
       \emph{Range Types}
@@ -338,13 +339,13 @@ way simpler and more flexible
   \item \textbf{Emptyness Propagation}: no if statments to check for null etc
     enables. Removes Error handling problem!
   \item \textbf{Concepts}: (Type Predicates)
-  \item \textbf{Inlining} instead of function calls
+  \item \textbf{Inlineable} gives C/C++ performance
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Uniform Call Syntax (UFCS)}
   \begin{itemize}[<+->]
-  \item to! makes API-integration transparent
+  \item std.conv.to! makes API-integration transparent
   \item \texttt{needle.findIn(haystack)} is more obvious than
   \item \texttt{findIn(needle, haystack)} and is used in
   \item module \texttt{msgpack-d} as
