@@ -127,74 +127,75 @@ class WordNet(bool useArray = true,
         const dictDir = `~/Knowledge/dict`.expandTilde;
 
         // See also: https://packages.debian.org/sv/sid/wordlist
-        if (langs is null || !langs.find(HLang.sv).empty)
+        // TODO turn this into a for loop over all files in directory
+        if (langs.canFind(HLang.sv))
             readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, NOTE iso-latin-1
-        if (langs is null || !langs.find(HLang.de).empty)
+        if (langs.canFind(HLang.de))
             readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
-        if (langs is null || !langs.find(HLang.pl).empty)
+        if (langs.canFind(HLang.pl))
             readUNIXDict(dictDir.nPath("polish"), HLang.pl);
-        if (langs is null || !langs.find(HLang.pt).empty)
+        if (langs.canFind(HLang.pt))
             readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
-        if (langs is null || !langs.find(HLang.es).empty)
+        if (langs.canFind(HLang.es))
             readUNIXDict(dictDir.nPath("spanish"), HLang.es);
-        if (langs is null || !langs.find(HLang.fr_ch).empty)
+        if (langs.canFind(HLang.fr_ch))
             readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
-        if (langs is null || !langs.find(HLang.uk).empty)
+        if (langs.canFind(HLang.uk))
             readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
 
-        if (langs is null || !langs.find(HLang.en).empty)
+        if (langs.canFind(HLang.en))
             readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
-        if (langs is null || !langs.find(HLang.en_GB).empty)
+        if (langs.canFind(HLang.en_GB))
             readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
-        if (langs is null || !langs.find(HLang.en_GB).empty)
+        if (langs.canFind(HLang.en_GB))
             readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
-        if (langs is null || !langs.find(HLang.en_GB).empty)
+        if (langs.canFind(HLang.en_GB))
             readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
 
-        if (langs is null || !langs.find(HLang.en_US).empty)
+        if (langs.canFind(HLang.en_US))
             readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
-        if (langs is null || !langs.find(HLang.en_US).empty)
+        if (langs.canFind(HLang.en_US))
             readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
-        if (langs is null || !langs.find(HLang.en_US).empty)
+        if (langs.canFind(HLang.en_US))
             readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
 
-        if (langs is null || !langs.find(HLang.pt_BR).empty)
+        if (langs.canFind(HLang.pt_BR))
             readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, NOTE iso-latin-1
 
-        if (langs is null || !langs.find(HLang.pt_BR).empty)
+        if (langs.canFind(HLang.pt_BR))
             readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
 
-        if (langs is null || !langs.find(HLang.en_CA).empty)
+        if (langs.canFind(HLang.en_CA))
             readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
 
-        if (langs is null || !langs.find(HLang.da).empty)
+        if (langs.canFind(HLang.da))
             readUNIXDict(dictDir.nPath("danish"), HLang.da);
 
-        if (langs is null || !langs.find(HLang.nl).empty)
+        if (langs.canFind(HLang.nl))
             readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
 
-        if (langs is null || !langs.find(HLang.fr).empty)
+        if (langs.canFind(HLang.fr))
             readUNIXDict(dictDir.nPath("french"), HLang.fr);
 
-        if (langs is null || !langs.find(HLang.faroese).empty)
+        if (langs.canFind(HLang.faroese))
             readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
 
-        if (langs is null || !langs.find(HLang.gl).empty)
+        if (langs.canFind(HLang.gl))
             readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
 
-        if (langs is null || !langs.find(HLang.de).empty)
+        if (langs.canFind(HLang.de))
             readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
 
-        if (langs is null || !langs.find(HLang.it).empty)
+        if (langs.canFind(HLang.it))
             readUNIXDict(dictDir.nPath("italian"), HLang.it);
 
-        if (langs is null || !langs.find(HLang.de).empty)
+        if (langs.canFind(HLang.de))
             readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
 
-        if (langs is null || !langs.find(HLang.no).empty)
+        if (langs.canFind(HLang.no))
             readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
 
-        if (langs is null || !langs.find(HLang.en).empty)
+        if (langs.canFind(HLang.en))
             readWordNet(); // put this last to specialize existing lemma
 
         // TODO merge with conjunctions?
