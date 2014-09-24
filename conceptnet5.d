@@ -764,6 +764,7 @@ class Net(bool useArray = true,
                 this.weightMin, ',', this.weightMax, ',', cast(real)this.weightSum/this._links.length);
         writeln("- Number of assertions: ", this._assertionCount);
         writeln("- Concepts Count: ", _concepts.length);
+        writeln("- Concepts Indexes by Lemma Count: ", _conceptIxesByLemma.length);
         writeln("- Concept Lemma Length Average: ", cast(real)_lemmaLengthSum/_concepts.length);
         writeln("- Concept Connectedness Average: ", cast(real)_connectednessSum/_concepts.length);
     }
