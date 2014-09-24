@@ -256,7 +256,7 @@ private:
             }
             MChar smallLength;
         }
-        size_t ancillary[(maxSmall + 1) / size_t.sizeof]; // used internally
+        size_t[(maxSmall + 1) / size_t.sizeof] ancillary; // used internally
     }
     // </layout>
 
