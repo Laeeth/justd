@@ -31,7 +31,7 @@ struct RCXString(Char = immutable char, size_t maxSmall = 23, alias realloc = GC
 private:
     import std.utf, std.conv, std.traits;
     version(unittest) import std.stdio;
-    alias MChar = Unqual!Char;
+    alias MChar = Unqual!Char; // mutable Char
 
     // Simple reference-counted buffer. The reference count itself is a Char. Layout is a size_t (the capacity)
     // followed by the reference count followed by the payload.
