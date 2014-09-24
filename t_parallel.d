@@ -12,9 +12,10 @@ void main(string[] args)
 {
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
-    foreach(d; parallel(args[1 .. $], 1))
+    immutable ext = ".php";
+    foreach(dir; parallel(args[1 .. $], 1))
     {
-        auto phpFiles = d.dirEntries(SpanMode.depth).filter!(a => a.name.endsWith(".php"));
-        writeln(phpFiles);
+        auto files = dir.dirEntries(SpanMode.depth).filter!(a => a.name.endsWith(ext));
+        writeln(files);
     }
 }
