@@ -460,7 +460,7 @@ class Net(bool useArray = true,
                 wordKind = meanings.front.wordKind; // TODO Pick union of all meanings
             }
         }
-        _conceptIxesByLemma[lemma];
+        return _conceptIxesByLemma[lemma].map!(ix => _concepts[ix]);
     }
 
     this(string dirPath)
