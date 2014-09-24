@@ -14,8 +14,7 @@ void main(string[] args)
     backtrace.backtrace.install(stderr);
     foreach(d; parallel(args[1 .. $], 1))
     {
-        auto phpFiles =
-        filter!(a => a.name.endsWith(".php"))(dirEntries(d,SpanMode.depth));
+        auto phpFiles = d.dirEntries(SpanMode.depth).filter!(a => a.name.endsWith(".php"));
         writeln(phpFiles);
     }
 }
