@@ -5662,25 +5662,11 @@ class Scanner(Term)
 
             /* Vector!(Complex!float, 4) complexVec; */
 
-            alias Stats3 = Stat[3];
-
-            auto stats = new Stat[3];
-
-            /* viz.ppln(`A Row Vector: `, */
-            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row))); */
-            /* viz.ppln(`A Column Vector: `, */
-            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.column))); */
-            /* viz.ppln(`Some Column Vectors: `, */
-            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.column)[3])); */
-            /* viz.ppln(`Some Row Vectors: `, */
-            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row)[3])); */
-            /* viz.ppln(`Some Column Vectors: `, */
-            /*          randomInstanceOf!(Vector!(float, 3, false, Orient.row)[3]).asTable); */
-
             viz.ppln(`A number: `, 1.2e10);
-
             viz.ppln(`Randomize particle2f as TableNr0: `, randomInstanceOf!particle2f.asTableNr0);
 
+            alias Stats3 = Stat[3];
+            auto stats = new Stat[3];
             randomize(stats);
             viz.ppln(`A ` ~ typeof(stats).stringof, `: `, stats.randomize.asTable);
 
