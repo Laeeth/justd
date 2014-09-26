@@ -1198,17 +1198,16 @@ alias Pair(T) = Tuple!(T, T);
 \begin{frame}[fragile]{Safe Code}
   \texttt{@safe} functions can
   \begin{itemize}[<+->]
-  \item Unrefer pointers but
-  \item \emph{Not} null-initialize nor do arithmetic on them
-  \item \emph{Not} do any memory recast dribblings
+  \item unrefer pointers but
+  \item \emph{not} null-initialize nor do arithmetic on them
+  \item \emph{not} do any memory recast dribblings
   % \item No byteorder problems =>
   % \item Architecture Independence
-  \item Cannot do unsafe \texttt{cast}.
+  \item \emph{not} do unsafe \texttt{cast}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Compatibility with C/C++}
-  \texttt{@safe} functions can
   \begin{itemize}[<+->]
   \item ABI Compatible with C, most of C++ and soon Objective-C (Apple IOS) through \texttt{extern}
   \item No Surprises when porting: C constructs that compiles in D should
@@ -1218,12 +1217,11 @@ alias Pair(T) = Tuple!(T, T);
 \end{frame}
 
 \begin{frame}[fragile]{Commercial Successes}
-  A Few Brave so far:
   \begin{itemize}[<+->]
   \item \textbf{Sociomantic}: Profitable D-only company with no initial
     funding/backing bought for \$100M.
-  \item \textbf{Remedy Games Engine}: replace scripting languages!
-  \item \textbf{Facebook}!: Andrei, Proof-of-Concept, Bounties!
+  \item \textbf{Remedy Games Engine}: replace scripting languages
+  \item \textbf{Facebook}!: Andrei, Proof-of-Concept, Bounties
   \item \textbf{EMSI}: Economic Modeling Specialists Intl
   \item \textbf{STACK4}: Gameserver Backend written in D 2
   \item \textbf{SR Labs}: Eye Tracking Systems Integrator
@@ -1237,8 +1235,8 @@ alias Pair(T) = Tuple!(T, T);
   \item \textbf{Multi-Dim Slicing} a la Matlab och Fortran 90+:
     \texttt{x[0..m, 0..n]}. Just merged into DMD 2.066 (git master).
   \item Compacter generics using \texttt{static if}
-  \item No darn semicolons after classes/structs!
-  \item \textbf{Power-operator}: ^^
+  \item No darn semicolons after classes/structs
+  % \item \textbf{Power-operator}: ^^
   \item \textbf{Nested functions}: Capture scope of parent
   \end{itemize}
 \end{frame}
@@ -1272,6 +1270,7 @@ alias Pair(T) = Tuple!(T, T);
   enum thisConstantCanNeverChange = 42;
 \end{lstlisting}
   % \item Perhaps \texttt{@safe pure nothrow} should have been default\ldots
+  \item CTFE is slow for complex usage such as \textbf{Pegged}.
   \end{itemize}
 \end{frame}
 
