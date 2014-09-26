@@ -22,7 +22,7 @@
 \usetheme{Boadilla}              %default, Boadilla
 \usecolortheme[named=Maroon]{structure}
 
-\title[Error Handling \& D]{Error Handling \& D}
+\title[Why D?]{Error Handling \& D}
 \author[Per Nordlöw% , HiQ
 ]{\textbf {Per Nordlöw% \\HiQ
   }} % auteur
@@ -202,14 +202,14 @@
   % \item Why do we keep on torturing ourselves with obselete/faulty languages?
   \item Why am I doing this?
     \begin{itemize}[<+->]
-    \item About me
-    \item Time
-    \item Age
+    % \item About me
+    % \item Time
+    % \item Age
     \item Lifes too short for bad code
     \end{itemize}
   \item Either stick with it, or try to change it:
-  \item Help/Promote D and alikes
-  \item Get to work with what I find meaningful
+  % \item Help/Promote D and alikes
+  % \item Get to work on what's meaningful
   \end{itemize}
 \end{frame}
 
@@ -482,6 +482,16 @@ auto cb = b.cycle; // circular buffer
   \item \textbf{\texttt{chunks}}: Creates a range that returns fixed-size chunks of the
     original range.
   \item \textbf{\texttt{only}}: Creates a range that iterates over a single value.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{List of Upcoming Range Creations}
+  \begin{itemize}[<+->]
+  \item \textbf{\texttt{enumerate}}: (Just merged)
+  \item \textbf{\texttt{cache}}: Inject caching of (in-pipeline) calculations of
+    intermediate results. (Just merged)
+  \item \textbf{\texttt{each}}: (PR on review)
+  \item \textbf{\texttt{chunkBy}}: (PR on review)
   \end{itemize}
 \end{frame}
 
@@ -874,6 +884,28 @@ void main(string[] args)
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Safe Concurrency: Example}
+\begin{lstlisting}[frame=single]
+import std.concurrency: spawn;
+
+alias T = string[];
+
+void useArgs(const T x)
+{
+    import std.stdio: writeln;
+    writeln("x: ", x);
+}
+
+void main(T args)
+{
+    useArgs(args); // ok to call in same thread
+    auto f1 = spawn(&useArgs, args.idup); // ok
+    auto f3 = spawn(&useArgs, args); // errors as: "Aliases to mutable thread-local data not allowed."
+}
+\end{lstlisting}
+
+\end{frame}
+
 \begin{frame}[fragile]{Message Passing}
   \begin{itemize}[<+->]
   \item Unique Feature: Messages are automatically dynamically typed and can be
@@ -881,13 +913,15 @@ void main(string[] args)
     with compiler, type mangling (serialization) etc.
 \begin{lstlisting}[frame=single]
 import std.concurrency;
-void f(Tid tid) {
+void f(Tid tid)
+{
     receive(
         (int i) { /* do something with i */ }
     );
     send(tid, true);
 }
-void main() {
+void main()
+{
     auto tid = spawn(&f, thisTid); // async call f
     send(tid, 42);
     const ok = receiveOnly!(bool);
@@ -1211,9 +1245,10 @@ alias Pair(T) = Tuple!(T, T);
 
 \begin{frame}[fragile]{Compilers}
   \begin{itemize}[<+->]
-  \item \textbf{DMD}: Reference (Recent Features), Super-Fast Compile
-  \item \textbf{GDC}: GCC, Fast Code, Fast Compile, Ubuntu-Packaged
-  \item \textbf{LDC}: LLVM, Fast Code, Fast Compile, Ubuntu-Packaged
+  \item \textbf{DMD}: Reference (Recent Features), Fast Compile
+  \item \textbf{GDC}: GCC, Fast Code
+  \item \textbf{LDC}: LLVM (ca 1 month behing DMD), Fast Code
+  \item \textbf{DDMD}: coming ``soon''.
   \end{itemize}
 \end{frame}
 
@@ -1221,7 +1256,7 @@ alias Pair(T) = Tuple!(T, T);
   \begin{itemize}[<+->]
   \item \textbf{Visual D}: (Visual Studio):
   \item \textbf{Eclipse DDT}:
-  \item \textbf{Emacs FlyCheck}: Including unittests!
+  \item \textbf{Emacs FlyCheck}: Including visual feedback overlays of unittests!
   \item \textbf{DCD}: D Completion Daemon: Server-Client! Frontends for Emacs,
     Vi, Sublime Text, etc.
   \end{itemize}
@@ -1231,7 +1266,7 @@ alias Pair(T) = Tuple!(T, T);
   \begin{itemize}[<+->]
   \item When to use \texttt{x[]}?
   \item Compiler Messages are better than C++ but not yet perfect
-  \item Template Instance Syntax: \texttt{Tuple! (S,T,U)}
+  \item Template Instance Syntax: \texttt{Tuple!(S,T,U)}
   \item Compile-Time Constants (like C's \texttt{#define}):
 \begin{lstlisting}[frame=single]
   enum thisConstantCanNeverChange = 42;
@@ -1262,10 +1297,11 @@ alias Pair(T) = Tuple!(T, T);
   \begin{itemize}[<+->]
   % \item 36:th to 18:th place on TIOBE in recent 12 months
   \item \textbf{Allocators}: \texttt{std.allocator}
+  \item \textbf{Reference Counted String}: \texttt{rcstring}
   \item \textbf{D Parsing}: \texttt{std.lexer}
-  \item and prepared for the Apocalypse: 128-bits Integers: \texttt{cent} and
-    \texttt{ucent} are reserved words!
-  \item New Forum look: Buttons for editing and DISQUS support.
+  % \item and prepared for the Apocalypse: 128-bits Integers: \texttt{cent} and
+  %   \texttt{ucent} are reserved words!
+  % \item New Forum look: Buttons for editing and DISQUS support.
   \end{itemize}
 \end{frame}
 
