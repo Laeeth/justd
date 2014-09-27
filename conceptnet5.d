@@ -349,13 +349,13 @@ class Net(bool useArray = true,
     else                 { alias LinkIxes = LinkIx[]; }
 
     /* String Storage */
-    static if (useRCString)
+    static if (useRCString) { alias Word = RCXString!(immutable char, 24-1); }
+    else                    { alias Word = immutable string; }
+
+    struct Lemma
     {
-        alias Lemma = RCXString!(immutable char, 24-1);
-    }
-    else
-    {
-        alias Lemma = immutable string;
+        Word word;
+        HLang lang;
     }
 
     /* const @safe @nogc pure nothrow */
@@ -426,7 +426,7 @@ class Net(bool useArray = true,
 
     private
     {
-        ConceptIxes[Lemma] _conceptIxesByLemma;
+        ConceptIx[Lemma] _conceptIxByLemma;
         Concepts _concepts;
         Links _links;
 
@@ -436,7 +436,7 @@ class Net(bool useArray = true,
         size_t[Source.max + 1] sourceCounts;
         size_t[HLang.max + 1] hlangCounts;
         size_t _assertionCount = 0;
-        size_t _lemmaLengthSum = 0;
+        size_t _lemmaWordLengthSum = 0;
         size_t _connectednessSum = 0;
 
         // is there a Phobos structure for this?
@@ -460,7 +460,7 @@ class Net(bool useArray = true,
                 wordKind = meanings.front.wordKind; // TODO Pick union of all meanings
             }
         }
-        return _conceptIxesByLemma[lemma].map!(ix => _concepts[ix]);
+        return _conceptIxByLemma[lemma].map!(ix => _concepts[ix]);
     }
 
     this(string dirPath)
@@ -477,47 +477,47 @@ class Net(bool useArray = true,
     }
 
     /** Lookup Previous or Store New $(D concept) at $(D lemma) index. */
-    ConceptIx lookupOrStore(S)(S lemma, Concept concept)
+    ConceptIx lookupOrStore(Lemma lemma, Concept concept)
     {
-        if (lemma in _conceptIxesByLemma)
+        if (lemma in _conceptIxByLemma)
         {
-            // check if lemma with same meaning as in concept already stored
-            foreach (cix; _conceptIxesByLemma[lemma])
-            {
-                const existingConcept = conceptByIndex(cix);
-                if (existingConcept.hlang == concept.hlang &&
-                    existingConcept.lemmaKind == concept.lemmaKind) // if lemma with same semantic meaning was stored before
-                {
-                    // dln("Reused index ", cix, " to concept for lemma ", lemma);
-                    return cix; // reuse concept index
-                }
-            }
+            return _conceptIxByLemma[lemma];
+            /* foreach (cix; _conceptIxByLemma[lemma]) */
+            /* { */
+            /*     const existingConcept = conceptByIndex(cix); */
+            /*     if (existingConcept.hlang == concept.hlang && */
+            /*         existingConcept.lemmaKind == concept.lemmaKind) // if lemma with same semantic meaning was stored before */
+            /*     { */
+            /*         // dln("Reused index ", cix, " to concept for lemma ", lemma); */
+            /*         return cix; // reuse concept index */
+            /*     } */
+            /* } */
         }
-        else
-        {
-            static if (useArray)
-            {
-                /* TODO why is this needed for Array!T but not for T[]?
-                   A bug?
-                   Or an overload missing? */
-                _conceptIxesByLemma[lemma] = ConceptIxes.init;
-            }
-        }
+        /* else */
+        /* { */
+        /*     static if (useArray) */
+        /*     { */
+        /*         /\* TODO why is this needed for Array!T but not for T[]? */
+        /*            A bug? */
+        /*            Or an overload missing? *\/ */
+        /*         _conceptIxByLemma[lemma] = ConceptIxes.init; */
+        /*     } */
+        /* } */
 
         // store Concept
         const cix = ConceptIx(cast(Ix)_concepts.length);
         _concepts ~= concept; // .. new concept that is stored
-        _conceptIxesByLemma[lemma] ~= cix; // lookupOrStore index to ..
-        _lemmaLengthSum += lemma.length;
+        _conceptIxByLemma[lemma] = cix; // lookupOrStore index to ..
+        _lemmaWordLengthSum += lemma.word.length;
 
         return cix;
     }
 
     void showLemmaConcepts(S)(S lemma) if (isSomeString!S)
     {
-        if (lemma in _conceptIxesByLemma)
+        if (lemma in _conceptIxByLemma)
         {
-            auto ixes = _conceptIxesByLemma[lemma];
+            auto ixes = _conceptIxByLemma[lemma];
             if (ixes.length >= 5)
             {
                 dln("lemma ", lemma, " has multiple interpretations: ",
@@ -535,8 +535,8 @@ class Net(bool useArray = true,
         const hlang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[hlang]++;
 
-        static if (useRCString) { immutable lemma = Lemma(items.front); }
-        else                    { immutable lemma = items.front.idup; }
+        static if (useRCString) { immutable lemma = Lemma(items.front, hlang); }
+        else                    { immutable lemma = Lemma(items.front.idup, hlang); }
 
         items.popFront;
         WordKind lemmaKind;
@@ -764,8 +764,8 @@ class Net(bool useArray = true,
                 this.weightMin, ',', this.weightMax, ',', cast(real)this.weightSum/this._links.length);
         writeln("- Number of assertions: ", this._assertionCount);
         writeln("- Concepts Count: ", _concepts.length);
-        writeln("- Concepts Indexes by Lemma Count: ", _conceptIxesByLemma.length);
-        writeln("- Concept Lemma Length Average: ", cast(real)_lemmaLengthSum/_concepts.length);
+        writeln("- Concepts Indexes by Lemma Count: ", _conceptIxByLemma.length);
+        writeln("- Concept Lemma Length Average: ", cast(real)_lemmaWordLengthSum/_concepts.length);
         writeln("- Concept Connectedness Average: ", cast(real)_connectednessSum/_concepts.length);
     }
 
