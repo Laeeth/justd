@@ -9,9 +9,9 @@ static void stringArrayPackHandler(E)(ref Packer p,
                                       ref Array!E x)
 {
     // p.put(192);
-    p.packArray(x);
-    /* foreach (e; x) */
-    /*     p.pack(e); */
+    /* p.packArray(x); */
+    foreach (e; x)
+        p.pack(e);
 }
 
 unittest
