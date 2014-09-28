@@ -11,6 +11,7 @@
         "dstats": "~master",
         "hap": "~master"
     },
+    "buildRequirements": ["allowWarnings"],
     "versions": ["VibeCustomMain"],
     "importPaths": [ ".", "std" ],
     "sourcePaths": [ "elf", "backtrace", "std" ],
