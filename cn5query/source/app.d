@@ -18,6 +18,7 @@ int main(string[] args)
         }
         else
         {
+            writeln();
             break;
         }
     }
