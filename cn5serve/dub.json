@@ -1,0 +1,11 @@
+{
+    "name": "cn5serve",
+    "description": "A Conceptnet Server.",
+    "copyright": "Copyright © 2014, Per Nordlöw",
+    "dependencies": {
+	"vibe-d": "~master",
+    },
+    "buildRequirements": ["allowWarnings"],
+    "importPaths": [ ".." ],
+    "sourceFiles": [ "app.d" ]
+}

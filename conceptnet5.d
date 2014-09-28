@@ -1,4 +1,4 @@
-#!/usr/bin/env rdmd-dev-module
+#!/usr/bin/env rdmd-dev
 
 /** ConceptNet 5 Commonsense Knowledge Database.
 
@@ -409,10 +409,10 @@ class Net(bool useArray = true,
 
     unittest
     {
-        /* pragma(msg, "LinkIxes.sizeof: ", LinkIxes.sizeof); */
-        /* pragma(msg, "ConceptIxes.sizeof: ", ConceptIxes.sizeof); */
-        /* pragma(msg, "Concept.sizeof: ", Concept.sizeof); */
-        /* pragma(msg, "Link.sizeof: ", Link.sizeof); */
+        /* pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof); */
+        /* pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof); */
+        /* pragma(msg, `Concept.sizeof: `, Concept.sizeof); */
+        /* pragma(msg, `Link.sizeof: `, Link.sizeof); */
     }
 
     static if (useArray) { alias Concepts = Array!Concept; }
@@ -488,6 +488,14 @@ class Net(bool useArray = true,
             }
             return concepts;
         }
+        if (concepts.empty)
+        {
+            writeln(`Lookup translation of individual words; bil_tvätt => car-wash`);
+            foreach (word; words.splitter(`_`))
+            {
+                writeln(`Translate word "`, word, `" from `, hlang, ` to English`);
+            }
+        }
         return concepts;
     }
 
@@ -498,7 +506,7 @@ class Net(bool useArray = true,
         const fixedPath = dirPath.expandTilde
                                  .buildNormalizedPath;
         foreach (file; fixedPath.dirEntries(SpanMode.shallow)
-                                .filter!(name => name.extension == ".csv"))
+                                .filter!(name => name.extension == `.csv`))
         {
             readCSV(file);
             break;
@@ -537,13 +545,13 @@ class Net(bool useArray = true,
         {
             const item = items.front;
             wordKind = item.decodeWordKind;
-            if (wordKind == WordKind.unknown && item != "_")
+            if (wordKind == WordKind.unknown && item != `_`)
             {
-                dln("Unknown WordKind code ", items.front);
+                dln(`Unknown WordKind code `, items.front);
             }
             /* if (wordKind != WordKind.unknown) */
             /* { */
-            /*     dln(word, " has kind ", wordKind); */
+            /*     dln(word, ` has kind `, wordKind); */
             /* } */
         }
 
@@ -572,65 +580,65 @@ class Net(bool useArray = true,
                     // TODO Functionize to parseRelation or x.to!Relation
                     switch (relationString)
                     {
-                        case "RelatedTo":                   link.relation = Relation.relatedTo; break;
-                        case "IsA":                         link.relation = Relation.isA; break;
-                        case "PartOf":                      link.relation = Relation.partOf; break;
-                        case "MemberOf":                    link.relation = Relation.memberOf; break;
-                        case "HasA":                        link.relation = Relation.hasA; break;
-                        case "UsedFor":                     link.relation = Relation.usedFor; break;
-                        case "CapableOf":                   link.relation = Relation.capableOf; break;
-                        case "AtLocation":                  link.relation = Relation.atLocation; break;
-                        case "HasContext":                  link.relation = Relation.hasContext; break;
-                        case "LocationOf":                  link.relation = Relation.locationOf; break;
-                        case "LocationOfAction":            link.relation = Relation.locationOfAction; break;
-                        case "LocatedNear":                 link.relation = Relation.locatedNear; break;
-                        case "Causes":                      link.relation = Relation.causes; break;
-                        case "Entails":                     link.relation = Relation.entails; break;
-                        case "HasSubevent":                 link.relation = Relation.hasSubevent; break;
-                        case "HasFirstSubevent":            link.relation = Relation.hasFirstSubevent; break;
-                        case "HasLastSubevent":             link.relation = Relation.hasLastSubevent; break;
-                        case "HasPrerequisite":             link.relation = Relation.hasPrerequisite; break;
-                        case "HasProperty":                 link.relation = Relation.hasProperty; break;
-                        case "Attribute":                   link.relation = Relation.attribute; break;
-                        case "MotivatedByGoal":             link.relation = Relation.motivatedByGoal; break;
-                        case "ObstructedBy":                link.relation = Relation.obstructedBy; break;
-                        case "Desires":                     link.relation = Relation.desires; break;
-                        case "CausesDesire":                link.relation = Relation.causesDesire; break;
-                        case "DesireOf":                    link.relation = Relation.desireOf; break;
-                        case "CreatedBy":                   link.relation = Relation.createdBy; break;
-                        case "ReceivesAction":              link.relation = Relation.receivesAction; break;
-                        case "Synonym":                     link.relation = Relation.synonym; break;
-                        case "Antonym":                     link.relation = Relation.antonym; break;
-                        case "Retronym":                    link.relation = Relation.retronym; break;
-                        case "DerivedFrom":                 link.relation = Relation.derivedFrom; break;
-                        case "CompoundDerivedFrom":         link.relation = Relation.compoundDerivedFrom; break;
-                        case "EtymologicallyDerivedFrom":   link.relation = Relation.etymologicallyDerivedFrom; break;
-                        case "TranslationOf":               link.relation = Relation.translationOf; break;
-                        case "DefinedAs":                   link.relation = Relation.definedAs; break;
-                        case "InstanceOf":                  link.relation = Relation.instanceOf; break;
-                        case "MadeOf":                      link.relation = Relation.madeOf; break;
-                        case "InheritsFrom":                link.relation = Relation.inheritsFrom; break;
-                        case "SimilarSize":                 link.relation = Relation.similarSize; break;
-                        case "SymbolOf":                    link.relation = Relation.symbolOf; break;
-                        case "SimilarTo":                   link.relation = Relation.similarTo; break;
-                        case "HasPainIntensity":            link.relation = Relation.hasPainIntensity; break;
-                        case "HasPainCharacter":            link.relation = Relation.hasPainCharacter; break;
+                        case `RelatedTo`:                   link.relation = Relation.relatedTo; break;
+                        case `IsA`:                         link.relation = Relation.isA; break;
+                        case `PartOf`:                      link.relation = Relation.partOf; break;
+                        case `MemberOf`:                    link.relation = Relation.memberOf; break;
+                        case `HasA`:                        link.relation = Relation.hasA; break;
+                        case `UsedFor`:                     link.relation = Relation.usedFor; break;
+                        case `CapableOf`:                   link.relation = Relation.capableOf; break;
+                        case `AtLocation`:                  link.relation = Relation.atLocation; break;
+                        case `HasContext`:                  link.relation = Relation.hasContext; break;
+                        case `LocationOf`:                  link.relation = Relation.locationOf; break;
+                        case `LocationOfAction`:            link.relation = Relation.locationOfAction; break;
+                        case `LocatedNear`:                 link.relation = Relation.locatedNear; break;
+                        case `Causes`:                      link.relation = Relation.causes; break;
+                        case `Entails`:                     link.relation = Relation.entails; break;
+                        case `HasSubevent`:                 link.relation = Relation.hasSubevent; break;
+                        case `HasFirstSubevent`:            link.relation = Relation.hasFirstSubevent; break;
+                        case `HasLastSubevent`:             link.relation = Relation.hasLastSubevent; break;
+                        case `HasPrerequisite`:             link.relation = Relation.hasPrerequisite; break;
+                        case `HasProperty`:                 link.relation = Relation.hasProperty; break;
+                        case `Attribute`:                   link.relation = Relation.attribute; break;
+                        case `MotivatedByGoal`:             link.relation = Relation.motivatedByGoal; break;
+                        case `ObstructedBy`:                link.relation = Relation.obstructedBy; break;
+                        case `Desires`:                     link.relation = Relation.desires; break;
+                        case `CausesDesire`:                link.relation = Relation.causesDesire; break;
+                        case `DesireOf`:                    link.relation = Relation.desireOf; break;
+                        case `CreatedBy`:                   link.relation = Relation.createdBy; break;
+                        case `ReceivesAction`:              link.relation = Relation.receivesAction; break;
+                        case `Synonym`:                     link.relation = Relation.synonym; break;
+                        case `Antonym`:                     link.relation = Relation.antonym; break;
+                        case `Retronym`:                    link.relation = Relation.retronym; break;
+                        case `DerivedFrom`:                 link.relation = Relation.derivedFrom; break;
+                        case `CompoundDerivedFrom`:         link.relation = Relation.compoundDerivedFrom; break;
+                        case `EtymologicallyDerivedFrom`:   link.relation = Relation.etymologicallyDerivedFrom; break;
+                        case `TranslationOf`:               link.relation = Relation.translationOf; break;
+                        case `DefinedAs`:                   link.relation = Relation.definedAs; break;
+                        case `InstanceOf`:                  link.relation = Relation.instanceOf; break;
+                        case `MadeOf`:                      link.relation = Relation.madeOf; break;
+                        case `InheritsFrom`:                link.relation = Relation.inheritsFrom; break;
+                        case `SimilarSize`:                 link.relation = Relation.similarSize; break;
+                        case `SymbolOf`:                    link.relation = Relation.symbolOf; break;
+                        case `SimilarTo`:                   link.relation = Relation.similarTo; break;
+                        case `HasPainIntensity`:            link.relation = Relation.hasPainIntensity; break;
+                        case `HasPainCharacter`:            link.relation = Relation.hasPainCharacter; break;
                             // negations
-                        case "NotMadeOf":                   link.relation = Relation.madeOf; link.negation = true; break;
-                        case "NotIsA":                      link.relation = Relation.isA; link.negation = true; break;
-                        case "NotUsedFor":                  link.relation = Relation.usedFor; link.negation = true; break;
-                        case "NotHasA":                     link.relation = Relation.hasA; link.negation = true; break;
-                        case "NotDesires":                  link.relation = Relation.desires; link.negation = true; break;
-                        case "NotCauses":                   link.relation = Relation.causes; link.negation = true; break;
-                        case "NotCapableOf":                link.relation = Relation.capableOf; link.negation = true; break;
-                        case "NotHasProperty":              link.relation = Relation.hasProperty; link.negation = true; break;
+                        case `NotMadeOf`:                   link.relation = Relation.madeOf; link.negation = true; break;
+                        case `NotIsA`:                      link.relation = Relation.isA; link.negation = true; break;
+                        case `NotUsedFor`:                  link.relation = Relation.usedFor; link.negation = true; break;
+                        case `NotHasA`:                     link.relation = Relation.hasA; link.negation = true; break;
+                        case `NotDesires`:                  link.relation = Relation.desires; link.negation = true; break;
+                        case `NotCauses`:                   link.relation = Relation.causes; link.negation = true; break;
+                        case `NotCapableOf`:                link.relation = Relation.capableOf; link.negation = true; break;
+                        case `NotHasProperty`:              link.relation = Relation.hasProperty; link.negation = true; break;
 
-                        case "wordnet/adjectivePertainsTo": link.relation = Relation.adjectivePertainsTo; link.negation = true; break;
-                        case "wordnet/adverbPertainsTo":    link.relation = Relation.adverbPertainsTo; link.negation = true; break;
-                        case "worndnet/participleOf":       link.relation = Relation.participleOf; link.negation = true; break;
+                        case `wordnet/adjectivePertainsTo`: link.relation = Relation.adjectivePertainsTo; link.negation = true; break;
+                        case `wordnet/adverbPertainsTo`:    link.relation = Relation.adverbPertainsTo; link.negation = true; break;
+                        case `wordnet/participleOf`:        link.relation = Relation.participleOf; link.negation = true; break;
 
                         default:
-                        writeln("Unknown relationString ", relationString);
+                        writeln(`Unknown relationString `, relationString);
                         link.relation = Relation.unknown;
                         break;
                     }
@@ -720,50 +728,73 @@ class Net(bool useArray = true,
                 readCSVLine(line, lnr); lnr++;
             }
         }
-        writeln(fileName, " has ", lnr, " lines");
+        writeln(fileName, ` has `, lnr, ` lines`);
         showRelations;
     }
 
     void showRelations()
     {
-        writeln("Relations:");
+        writeln(`Relations:`);
         foreach (relation; Relation.min..Relation.max)
         {
             const count = this.relationCounts[relation];
             if (count)
             {
-                writeln("- ", relation.to!string, ": ", count);
+                writeln(`- `, relation.to!string, `: `, count);
             }
         }
 
-        writeln("Sources:");
+        writeln(`Sources:`);
         foreach (source; Source.min..Source.max)
         {
             const count = this.sourceCounts[source];
             if (count)
             {
-                writeln("- ", source.to!string, ": ", count);
+                writeln(`- `, source.to!string, `: `, count);
             }
         }
 
-        writeln("Languages:");
+        writeln(`Languages:`);
         foreach (hlang; HLang.min..HLang.max)
         {
             const count = this.hlangCounts[hlang];
             if (count)
             {
-                writeln("- ", hlang.toName, " (", hlang.to!string, ") : ", count);
+                writeln(`- `, hlang.toName, ` (`, hlang.to!string, `) : `, count);
             }
         }
 
-        writeln("Stats:");
-        writeln("- Weights Min,Max,Average: ",
+        writeln(`Stats:`);
+        writeln(`- Weights Min,Max,Average: `,
                 this.weightMin, ',', this.weightMax, ',', cast(real)this.weightSum/this._links.length);
-        writeln("- Number of assertions: ", this._assertionCount);
-        writeln("- Concepts Count: ", _concepts.length);
-        writeln("- Concepts Indexes by Lemma Count: ", _conceptIxByLemma.length);
-        writeln("- Concept String Length Average: ", cast(real)_conceptStringLengthSum/_concepts.length);
-        writeln("- Concept Connectedness Average: ", cast(real)_connectednessSum/_concepts.length);
+        writeln(`- Number of assertions: `, this._assertionCount);
+        writeln(`- Concepts Count: `, _concepts.length);
+        writeln(`- Concepts Indexes by Lemma Count: `, _conceptIxByLemma.length);
+        writeln(`- Concept String Length Average: `, cast(real)_conceptStringLengthSum/_concepts.length);
+        writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/_concepts.length);
+    }
+
+    /** Show concepts and their relations matching $(D line). */
+    void showConcepts(S)(S line,
+                         HLang hlang = HLang.unknown,
+                         WordKind wordKind = WordKind.unknown) if (isSomeString!S)
+    {
+        writeln(`Line `, line);
+        foreach (concept; this.conceptsByWords(line,
+                                               hlang,
+                                               wordKind))
+        {
+            writeln(`- in language `, concept.hlang,
+                    ` of kind `, concept.lemmaKind, ` relates to `);
+            foreach (inIx; concept.inIxes)
+            {
+                writeln(`  - in `, linkByIndex(inIx));
+            }
+            foreach (outIx; concept.outIxes)
+            {
+                writeln(`  - out `, linkByIndex(outIx));
+            }
+        }
     }
 
     /** ConceptNet Relatedness.
@@ -788,33 +819,36 @@ class Net(bool useArray = true,
 
     unittest
     {
-        // assert(!new.contextOf(["gun", "mask", "money", "caught", "stole"]).find("robbery").empty);
+        // assert(!new.contextOf([`gun`, `mask`, `money`, `caught`, `stole`]).find(`robbery`).empty);
     }
 }
 
-import backtrace.backtrace;
-
-static void stringArrayPackHandler(E)(ref Packer p,
-                                      ref Array!E x)
-{
-    foreach (e; x)
-        p.pack(e);
-}
-
-unittest
+version(none) unittest
 {
     import std.stdio: stderr;
-    backtrace.backtrace.install(stderr);
     // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
-    registerPackHandler!(Array!string, stringArrayPackHandler);
-
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
-    writeln(net.conceptsByWords("car"));
+    net.showConcepts(`car`);
+    net.showConcepts(`car_wash`);
+
+    while (true)
+    {
+        write(`Lookup: `); stdout.flush;
+        string line;
+        if ((line = readln()) !is null)
+        {
+            net.showConcepts(line);
+        }
+        else
+        {
+            break;
+        }
+    }
     /* if (true) */
     /* { */
     /*     auto netPack = net.pack; */
-    /*     writeln("Packed to ", netPack.length, " bytes"); */
+    /*     writeln(`Packed to `, netPack.length, ` bytes`); */
     /* } */
 
     if (false) // just to make all variants of compile
@@ -822,6 +856,8 @@ unittest
         /* auto netH = new Net!(!useHashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`); */
     }
 
-    write("Press enter to continue: ");
+    write(`Press enter to continue: `);
     readln();
+
+    return 0;
 }
