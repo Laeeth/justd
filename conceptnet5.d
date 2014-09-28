@@ -482,10 +482,10 @@ class Net(bool useArray = true,
     {
         this._wordnet = new WordNet!(true, true)([HLang.en]);
         // GC.disabled had no noticeble effect here: import core.memory: GC;
-        foreach (file; dirPath.expandTilde
-                              .buildNormalizedPath
-                              .dirEntries(SpanMode.shallow)
-                              .filter!(name => name.extension == ".csv")) // I love D :)
+        const fixedPath = dirPath.expandTilde
+                                 .buildNormalizedPath;
+        foreach (file; fixedPath.dirEntries(SpanMode.shallow)
+                                .filter!(name => name.extension == ".csv"))
         {
             readCSV(file);
             break;
@@ -505,20 +505,6 @@ class Net(bool useArray = true,
         _conceptIxByLemma[lemma] = cix; // lookupOrStore index to ..
         _lemmaWordLengthSum += lemma.word.length;
         return cix;
-    }
-
-    void showLemmaConcepts(S)(S lemma) if (isSomeString!S)
-    {
-        if (lemma in _conceptIxByLemma)
-        {
-            auto ixes = _conceptIxByLemma[lemma];
-            if (ixes.length >= 5)
-            {
-                dln("lemma ", lemma, " has multiple interpretations: ",
-                    ixes[].map!(cix => (conceptByIndex(cix).hlang.to!string ~ ":" ~
-                                        conceptByIndex(cix).lemmaKind.to!string)));
-            }
-        }
     }
 
     /** See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0 */
@@ -547,7 +533,6 @@ class Net(bool useArray = true,
             }
         }
         auto cix = this.lookupOrStore(lemma, Concept(hlang, lemmaKind));
-        /* showLemmaConcepts(lemma); */
         return cix;
     }
 
