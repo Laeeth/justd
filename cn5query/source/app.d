@@ -32,8 +32,5 @@ int main(string[] args)
         /* auto netH = new Net!(!useHashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`); */
     }
 
-    write(`Press enter to continue: `);
-    readln();
-
     return 0;
 }
