@@ -8,8 +8,8 @@ import std.traits;
 
 import backtrace.backtrace;
 
-static void stringArrayPackHandler(E)(ref Packer p,
-                                      ref Array!E x)
+static void arrayPackHandler(E)(ref Packer p,
+                                ref Array!E x)
 {
     p.beginArray(x.length);
     foreach (e; x)
@@ -21,7 +21,7 @@ unittest
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
 
-    registerPackHandler!(Array!string, stringArrayPackHandler);
+    registerPackHandler!(Array!string, arrayPackHandler);
 
     Array!string x = ["x", "y"];
     writeln(x.pack);
