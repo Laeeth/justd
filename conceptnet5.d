@@ -804,7 +804,7 @@ class Net(bool useArray = true,
                                                hlang,
                                                wordKind))
         {
-            writeln(`- in language `, concept.hlang,
+            writeln(`- in language `, concept.hlang.toName,
                     ` of kind `, concept.lemmaKind, ` relates to `);
             foreach (inIx; concept.inIxes)
             {
