@@ -1,8 +1,10 @@
 #!/usr/bin/env rdmd-dev
 
+import vibe.d;
+
 import conceptnet5;
 
-int main(string[] args)
+void loadCN5()
 {
     import std.stdio;
     // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
@@ -37,6 +39,4 @@ int main(string[] args)
 
     write(`Press enter to continue: `);
     readln();
-
-    return 0;
 }

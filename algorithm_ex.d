@@ -1330,7 +1330,7 @@ bool areColinear(T)(T a, T b) @safe pure nothrow
 /** Returns: min(max(x, min_val), max_val),
     Results are undefined if min_val > max_val.
 */
-static if (__VERSION__ < 2066)
+static if (__VERSION__ < 2067)
 {
     auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper)
         @safe pure nothrow

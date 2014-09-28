@@ -1,5 +1,6 @@
 {
     "name": "cn5serve",
+    "targetType": "executable",
     "description": "A Conceptnet Server.",
     "copyright": "Copyright © 2014, Per Nordlöw",
     "dependencies": {
@@ -7,5 +8,5 @@
     },
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
-    "sourceFiles": [ "app.d" ]
+    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../conceptnet5.d", "../rcstring.d", "../wordnet.d", "../grammars.d" ]
 }

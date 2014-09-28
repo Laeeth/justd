@@ -31,6 +31,26 @@ import grammars;
 import rcstring;
 import msgpack;
 
+static if (__VERSION__ < 2067)
+{
+    auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper)
+    @safe pure nothrow
+    in { assert(lower <= upper, "lower > upper"); }
+    body
+    {
+        import std.algorithm : min, max;
+        return min(max(x, lower), upper);
+    }
+
+    unittest {
+        assert((-1).clamp(0, 2) == 0);
+        assert(0.clamp(0, 2) == 0);
+        assert(1.clamp(0, 2) == 1);
+        assert(2.clamp(0, 2) == 2);
+        assert(3.clamp(0, 2) == 2);
+    }
+}
+
 /* import stdx.allocator; */
 /* import memory.allocators; */
 /* import containers: HashMap; */
