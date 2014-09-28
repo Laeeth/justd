@@ -24,9 +24,7 @@ unittest
     registerPackHandler!(Array!string, stringArrayPackHandler);
 
     Array!string x = ["x", "y"];
-
-    auto p = x.pack;
-    writeln(p);
+    writeln(x.pack);
 
     string[] y = ["x", "y"];
     writeln(y.pack);
