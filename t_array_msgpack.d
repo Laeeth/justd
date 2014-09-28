@@ -11,7 +11,7 @@ import backtrace.backtrace;
 static void stringArrayPackHandler(E)(ref Packer p,
                                       ref Array!E x)
 {
-    p.packArray(x.length);
+    p.beginArray(x.length);
     foreach (e; x)
         p.pack(e);
 }
