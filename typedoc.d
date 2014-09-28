@@ -8,7 +8,7 @@ string enumDoc(EnumType, string separator = `|`)() @safe pure nothrow
     /* import std.traits: EnumMembers; */
     /* return EnumMembers!EnumType.join(separator); */
     /* auto subsSortingNames = EnumMembers!EnumType; */
-    auto x = (__traits(allMembers, EnumType));
+    auto x = __traits(allMembers, EnumType);
     string doc = ``;
     foreach (ix, name; x)
     {
