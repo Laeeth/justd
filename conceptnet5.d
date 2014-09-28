@@ -488,7 +488,6 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == ".csv"))
         {
             readCSV(file);
-            break;
         }
     }
 
@@ -515,24 +514,27 @@ class Net(bool useArray = true,
         const hlang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[hlang]++;
 
-        auto wordKind = WordKind.unknown;
-
-        static if (useRCString) { immutable lemma = Lemma(items.front, hlang, wordKind); }
-        else                    { immutable lemma = Lemma(items.front.idup, hlang, wordKind); }
+        static if (useRCString) { immutable word = items.front; }
+        else                    { immutable word = items.front.idup; }
 
         items.popFront;
-        WordKind lemmaKind;
+        auto wordKind = WordKind.unknown;
         if (!items.empty)
         {
             const item = items.front;
-            lemmaKind = item.decodeWordKind;
-            if (lemmaKind == WordKind.unknown
-                && item != "_")
+            wordKind = item.decodeWordKind;
+            if (wordKind == WordKind.unknown && item != "_")
             {
                 dln("Unknown WordKind code ", items.front);
             }
+            /* if (wordKind != WordKind.unknown) */
+            /* { */
+            /*     dln(word, " has kind ", wordKind); */
+            /* } */
         }
-        auto cix = this.lookupOrStore(lemma, Concept(hlang, lemmaKind));
+
+        auto cix = this.lookupOrStore(Lemma(word, hlang, wordKind),
+                                      Concept(hlang, wordKind));
         return cix;
     }
 
