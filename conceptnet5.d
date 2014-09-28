@@ -332,6 +332,7 @@ class Net(bool useArray = true,
     import std.file, std.algorithm, std.range, std.string, std.path, std.array;
     import wordnet: WordNet;
     import dbg;
+    import std.typecons: Nullable;
 
     /** Ix Precision.
         Set this to $(D uint) if we get low on memory.
@@ -348,19 +349,33 @@ class Net(bool useArray = true,
     static if (useArray) { alias LinkIxes = Array!LinkIx; }
     else                 { alias LinkIxes = LinkIx[]; }
 
-    /* String Storage */
+    /** String Storage */
     static if (useRCString) { alias Word = RCXString!(immutable char, 24-1); }
     else                    { alias Word = immutable string; }
 
+    /** Concept Lemma. */
     struct Lemma
     {
         Word word;
         HLang lang;
+        WordKind wordKind;
     }
 
     /* const @safe @nogc pure nothrow */
-    version(all) {
+    version(all)
+    {
         Concept conceptByIndex(ConceptIx ix) { return _concepts[ix._cIx]; }
+        Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
+        {
+            if (lemma in _conceptIxByLemma)
+            {
+                return typeof(return)(conceptByIndex(_conceptIxByLemma[lemma]));
+            }
+            else
+            {
+                return typeof(return).init;
+            }
+        }
         Link    linkByIndex   (LinkIx ix) { return _links[ix._lIx]; }
     }
 
@@ -449,8 +464,8 @@ class Net(bool useArray = true,
         context) $(D wordKind).
         If no wordKind given return all possible.
     */
-    Concepts conceptsByLemma(S)(S lemma,
-                                WordKind wordKind = WordKind.unknown) if (isSomeString!S)
+    Concepts conceptByLemma(S)(S lemma,
+                               WordKind wordKind = WordKind.unknown) if (isSomeString!S)
     {
         if (wordKind == WordKind.unknown)
         {
@@ -473,6 +488,7 @@ class Net(bool useArray = true,
                               .filter!(name => name.extension == ".csv")) // I love D :)
         {
             readCSV(file);
+            break;
         }
     }
 
@@ -482,34 +498,12 @@ class Net(bool useArray = true,
         if (lemma in _conceptIxByLemma)
         {
             return _conceptIxByLemma[lemma];
-            /* foreach (cix; _conceptIxByLemma[lemma]) */
-            /* { */
-            /*     const existingConcept = conceptByIndex(cix); */
-            /*     if (existingConcept.hlang == concept.hlang && */
-            /*         existingConcept.lemmaKind == concept.lemmaKind) // if lemma with same semantic meaning was stored before */
-            /*     { */
-            /*         // dln("Reused index ", cix, " to concept for lemma ", lemma); */
-            /*         return cix; // reuse concept index */
-            /*     } */
-            /* } */
         }
-        /* else */
-        /* { */
-        /*     static if (useArray) */
-        /*     { */
-        /*         /\* TODO why is this needed for Array!T but not for T[]? */
-        /*            A bug? */
-        /*            Or an overload missing? *\/ */
-        /*         _conceptIxByLemma[lemma] = ConceptIxes.init; */
-        /*     } */
-        /* } */
-
         // store Concept
         const cix = ConceptIx(cast(Ix)_concepts.length);
         _concepts ~= concept; // .. new concept that is stored
         _conceptIxByLemma[lemma] = cix; // lookupOrStore index to ..
         _lemmaWordLengthSum += lemma.word.length;
-
         return cix;
     }
 
@@ -535,8 +529,10 @@ class Net(bool useArray = true,
         const hlang = items.front.decodeHumanLang; items.popFront;
         hlangCounts[hlang]++;
 
-        static if (useRCString) { immutable lemma = Lemma(items.front, hlang); }
-        else                    { immutable lemma = Lemma(items.front.idup, hlang); }
+        auto wordKind = WordKind.unknown;
+
+        static if (useRCString) { immutable lemma = Lemma(items.front, hlang, wordKind); }
+        else                    { immutable lemma = Lemma(items.front.idup, hlang, wordKind); }
 
         items.popFront;
         WordKind lemmaKind;
@@ -797,18 +793,27 @@ class Net(bool useArray = true,
 
 import backtrace.backtrace;
 
+static void stringArrayPackHandler(E)(ref Packer p,
+                                      ref Array!E x)
+{
+    foreach (e; x)
+        p.pack(e);
+}
+
 unittest
 {
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
     // TODO Add auto-download and unpack from http://conceptnet5.media.mit.edu/downloads/current/
 
+    registerPackHandler!(Array!string, stringArrayPackHandler);
+
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
-    if (false)
-    {
-        auto netPack = net.pack;
-        writeln("Packed to ", netPack.length, " bytes");
-    }
+    /* if (true) */
+    /* { */
+    /*     auto netPack = net.pack; */
+    /*     writeln("Packed to ", netPack.length, " bytes"); */
+    /* } */
 
     if (false) // just to make all variants of compile
     {
