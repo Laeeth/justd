@@ -3,7 +3,7 @@
     "description": "A Conceptnet Server.",
     "copyright": "Copyright © 2014, Per Nordlöw",
     "dependencies": {
-	"vibe-d": "~master",
+	"vibe-d": "~master"
     },
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
