@@ -21,7 +21,7 @@
  */
 module conceptnet5;
 
-import std.traits: isSomeString, isFloatingPoint;
+import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
@@ -350,33 +350,15 @@ class Net(bool useArray = true,
     else                 { alias LinkIxes = LinkIx[]; }
 
     /** String Storage */
-    static if (useRCString) { alias Word = RCXString!(immutable char, 24-1); }
-    else                    { alias Word = immutable string; }
+    static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
+    else                    { alias Words = immutable string; }
 
     /** Concept Lemma. */
     struct Lemma
     {
-        Word word;
+        Words words;
         HLang lang;
         WordKind wordKind;
-    }
-
-    /* const @safe @nogc pure nothrow */
-    version(all)
-    {
-        Concept conceptByIndex(ConceptIx ix) { return _concepts[ix._cIx]; }
-        Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
-        {
-            if (lemma in _conceptIxByLemma)
-            {
-                return typeof(return)(conceptByIndex(_conceptIxByLemma[lemma]));
-            }
-            else
-            {
-                return typeof(return).init;
-            }
-        }
-        Link    linkByIndex   (LinkIx ix) { return _links[ix._lIx]; }
     }
 
     /** Concept Node/Vertex. */
@@ -451,7 +433,7 @@ class Net(bool useArray = true,
         size_t[Source.max + 1] sourceCounts;
         size_t[HLang.max + 1] hlangCounts;
         size_t _assertionCount = 0;
-        size_t _lemmaWordLengthSum = 0;
+        size_t _conceptStringLengthSum = 0;
         size_t _connectednessSum = 0;
 
         // is there a Phobos structure for this?
@@ -460,22 +442,53 @@ class Net(bool useArray = true,
         real weightSum = 0; // Sum of all link weights.
     }
 
+    Link    linkByIndex   (LinkIx ix) { return _links[ix._lIx]; }
+
+    /* const @safe @nogc pure nothrow */
+    Concept conceptByIndex(ConceptIx ix) { return _concepts[ix._cIx]; }
+
+    Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
+    {
+        if (lemma in _conceptIxByLemma)
+        {
+            return typeof(return)(conceptByIndex(_conceptIxByLemma[lemma]));
+        }
+        else
+        {
+            return typeof(return).init;
+        }
+    }
+
     /** Get Concepts related to $(D word) in the interpretation (semantic
         context) $(D wordKind).
         If no wordKind given return all possible.
     */
-    Concepts conceptByLemma(S)(S lemma,
-                               WordKind wordKind = WordKind.unknown) if (isSomeString!S)
+    Concept[] conceptsByWords(S)(S words,
+                                 HLang hlang = HLang.unknown,
+                                 WordKind wordKind = WordKind.unknown) if (isSomeString!S)
     {
-        if (wordKind == WordKind.unknown)
+        typeof(return) concepts;
+        if (hlang != HLang.unknown &&
+            wordKind != WordKind.unknown)
         {
-            const meanings = this._wordnet.meaningsOf(lemma);
-            if (!meanings.empty)
-            {
-                wordKind = meanings.front.wordKind; // TODO Pick union of all meanings
-            }
+            auto lemma = Lemma(words, hlang, wordKind);
+            if (lemma in _conceptIxByLemma)
+                concepts = [conceptByIndex(_conceptIxByLemma[lemma])];
         }
-        return _conceptIxByLemma[lemma].map!(ix => _concepts[ix]);
+        else
+        {
+            foreach (hlang_; EnumMembers!HLang)
+            {
+                foreach (wordKind_; EnumMembers!WordKind)
+                {
+                    auto lemma = Lemma(words, hlang_, wordKind_);
+                    if (lemma in _conceptIxByLemma)
+                        concepts ~= conceptByIndex(_conceptIxByLemma[lemma]);
+                }
+            }
+            return concepts;
+        }
+        return concepts;
     }
 
     this(string dirPath)
@@ -488,6 +501,7 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == ".csv"))
         {
             readCSV(file);
+            break;
         }
     }
 
@@ -502,7 +516,7 @@ class Net(bool useArray = true,
         const cix = ConceptIx(cast(Ix)_concepts.length);
         _concepts ~= concept; // .. new concept that is stored
         _conceptIxByLemma[lemma] = cix; // lookupOrStore index to ..
-        _lemmaWordLengthSum += lemma.word.length;
+        _conceptStringLengthSum += lemma.words.length;
         return cix;
     }
 
@@ -748,7 +762,7 @@ class Net(bool useArray = true,
         writeln("- Number of assertions: ", this._assertionCount);
         writeln("- Concepts Count: ", _concepts.length);
         writeln("- Concepts Indexes by Lemma Count: ", _conceptIxByLemma.length);
-        writeln("- Concept Lemma Length Average: ", cast(real)_lemmaWordLengthSum/_concepts.length);
+        writeln("- Concept String Length Average: ", cast(real)_conceptStringLengthSum/_concepts.length);
         writeln("- Concept Connectedness Average: ", cast(real)_connectednessSum/_concepts.length);
     }
 
@@ -796,6 +810,7 @@ unittest
     registerPackHandler!(Array!string, stringArrayPackHandler);
 
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
+    writeln(net.conceptsByWords("car"));
     /* if (true) */
     /* { */
     /*     auto netPack = net.pack; */
