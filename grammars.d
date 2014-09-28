@@ -460,6 +460,7 @@ enum Usage:ubyte
 enum TokenId:ubyte
 {
     unknown,
+
     keyword,
     type,
     constant,
@@ -474,7 +475,7 @@ enum TokenId:ubyte
     enumerator,
     constructor,
     destructors,
-    operator
+    operator,
 }
 
 /** English Tense.
@@ -483,7 +484,8 @@ enum TokenId:ubyte
 */
 enum Tense:ubyte
 {
-    pastMoment, // played
+    unknown,
+    pastMoment,
     presentMoment, // plays
     futureMoment, // [will|is going to|intends to] play
 
