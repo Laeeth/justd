@@ -9,6 +9,7 @@ import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
 import std.algorithm: uniq;
 import std.array: array;
+import std.conv;
 
 /** (Human) Language Code according to ISO 639-1.
     See also: http://www.mathguide.de/info/tools/languagecode.html
@@ -292,7 +293,6 @@ HLang decodeHumanLang(char[] x)
     {
         try
         {
-            import std.conv: to;
             return x.to!HLang;
         }
         catch (Exception a)
@@ -595,8 +595,6 @@ struct WordSense(Links = uint[])
     Links links;
     HLang hlang;
 }
-
-import std.conv: to;
 
 /** Decode character $(D kindCode) into a $(D WordKind). */
 WordKind decodeWordKind(C)(C kindCode) if (isSomeChar!C)
@@ -949,7 +947,6 @@ Gender getGender(S)(S lemma, WordKind kind) if (isSomeString!S)
 /** Get English Order Name of $(D n). */
 string nthString(T)(T n) @safe pure
 {
-    import std.conv : to;
     string s;
     switch (n)
     {
@@ -1082,7 +1079,6 @@ string toTextualString(T)(T number, string minusName = "minus")
         }
         else
         {
-            import std.conv;
             return to!string(number);
         }
     }
@@ -1145,7 +1141,7 @@ Nullable!long toTextualIntegerMaybe(S)(S x)
 
     version(show)
     {
-        import std.stdio;
+        import std.stdio: writeln;
         debug writeln(onesPlaceWords);
         debug writeln(words.front);
         debug writeln(words);
