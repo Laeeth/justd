@@ -23,13 +23,13 @@ void scanMagicFiles(string dir)
         foreach (line; File(file).byLine)
         {
             auto parts = line.splitter("\t");
-            if (!parts.empty)
+            if (!parts.empty) // line contains something
             {
-                if (parts.front.startsWith('#'))
+                if (parts.front.startsWith('#')) // if comment
                 {
                     /* writeln("comment: ", parts); */
                 }
-                else
+                else            // otherwise magic
                 {
                     const first = parts.front;
                     const firstChar = first.front;
