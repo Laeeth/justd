@@ -1136,7 +1136,8 @@ unittest
     a.randInPlace;
     auto b = a.dup;
     a[].stableSort;
-    b[].sort;
+    import std.algorithm: sort;
+    sort(b);
     assert(a == b);
 }
 
