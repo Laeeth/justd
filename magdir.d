@@ -35,7 +35,24 @@ void scanMagicFiles(string dir)
                     const firstChar = first.front;
                     if (firstChar.isDigit)
                     {
-                        writeln("digit: ", parts);
+                        if (first == "0")
+                        {
+                            writeln("zero: ", parts);
+                            parts.popFront;
+                            switch (parts.front)
+                            {
+                                case "string":
+                                    parts.popFront;
+                                    writeln("string: ", parts);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            writeln("non-zero: ", parts);
+                        }
                         magicCount++;
                     }
                     else if (firstChar == '>')
