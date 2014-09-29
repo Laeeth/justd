@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if type ddemangle &> /dev/null; then
-    exec rdmd -L--export-dynamic -color=on -g -gs -debug -unittest $* 2>&1 | ddemangle
+    exec rdmd -L--export-dynamic -color=on -g -gs -debug -unittest "$@" >2 >( ddemangle )
 else
-    exec rdmd -L--export-dynamic -color=on -g -gs -debug -unittest $* 2>&1
+    exec rdmd -L--export-dynamic -color=on -g -gs -debug -unittest "$@"
 fi

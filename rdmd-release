@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if type ddemangle &> /dev/null; then
-    exec rdmd -L--export-dynamic -color=on -release -inline -noboundscheck $* 2>&1 | ddemangle
+    exec rdmd -L--export-dynamic -color=on -release -inline -noboundscheck "$@" 2> >( ddemangle )
 else
-    exec rdmd -L--export-dynamic -color=on -release -inline -noboundscheck $* 2>&1
+    exec rdmd -L--export-dynamic -color=on -release -inline -noboundscheck "$@"
 fi

@@ -3,7 +3,7 @@
 # See also: http://forum.dlang.org/thread/qvznmjdmdvkyyrkhbkgy@forum.dlang.org
 
 if type ddemangle &> /dev/null; then
-    exec rdmd -L--export-dynamic -color=on -g -gs -debug $* 2>&1 | ddemangle
+    exec rdmd -L--export-dynamic -color=on -g -gs -debug "$@" 2> >( ddemangle )
 else
-    exec rdmd -L--export-dynamic -color=on -g -gs -debug $* 2>&1
+    exec rdmd -L--export-dynamic -color=on -g -gs -debug "$@"
 fi
