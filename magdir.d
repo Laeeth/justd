@@ -12,6 +12,7 @@ void scanMagicFiles(string dir)
     import std.range: front, empty;
     import std.algorithm: startsWith, find;
     import std.ascii: isDigit;
+    import std.range: splitter;
 
     size_t magicCount = 0;
     size_t attributeCount = 0;
@@ -19,7 +20,6 @@ void scanMagicFiles(string dir)
     foreach (file; dir.dirEntries(SpanMode.depth))
     {
         writeln(file.name);
-        import std.range: splitter;
         foreach (line; File(file).byLine)
         {
             auto parts = line.splitter("\t");
