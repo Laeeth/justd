@@ -14,6 +14,7 @@ void scanMagicFiles(string dir)
     import std.ascii: isDigit;
 
     size_t magicCount = 0;
+    size_t attributeCount = 0;
 
     foreach (file; dir.dirEntries(SpanMode.depth))
     {
@@ -26,22 +27,29 @@ void scanMagicFiles(string dir)
             {
                 if (parts.front.startsWith('#'))
                 {
-                    writeln("comment: ", parts);
+                    /* writeln("comment: ", parts); */
                 }
-                else if (parts.front.front.isDigit)
+                else
                 {
-                    writeln(parts);
+                    const first = parts.front;
+                    const firstChar = first.front;
+                    if (firstChar.isDigit)
+                    {
+                        writeln("digit: ", parts);
+                        magicCount++;
+                    }
+                    else if (firstChar == '>')
+                    {
+                        writeln(">: ", parts);
+                        attributeCount++;
+                    }
                 }
-                else if (parts.front.front == '>')
-                {
-                    writeln("2: ", parts);
-                }
-                magicCount++;
             }
         }
     }
 
     writeln("Found ", magicCount, " number of magics");
+    writeln("Found ", attributeCount, " number of attributes");
 }
 
 unittest
