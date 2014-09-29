@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # See also: http://forum.dlang.org/thread/qvznmjdmdvkyyrkhbkgy@forum.dlang.org
+# See also: http://forum.dlang.org/thread/evmocypqxxwjwkvsdfir@forum.dlang.org#post-evmocypqxxwjwkvsdfir:40forum.dlang.org
 
 if type ddemangle &> /dev/null; then
     exec rdmd -L--export-dynamic -color=on -g -gs -debug "$@" 2> >( ddemangle )
