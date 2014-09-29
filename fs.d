@@ -2568,6 +2568,51 @@ class GStats
         txtFKinds ~= diffKind;
         diffKind.wikip = "https://en.wikipedia.org/wiki/Diff";
 
+        auto pemCertKind = new FKind(`PEM certificate`, [], [`cert`],
+                                     `-----BEGIN CERTIFICATE-----`, 0,
+                                     [], [],
+                                     [], // N/A
+                                     [], // N/A
+                                     FileContent.text,
+                                     FileKindDetection.equalsContents);
+        txtFKinds ~= pemCertKind;
+
+        auto pemCertReqKind = new FKind(`PEM certificate request`, [], [`cert`],
+                                        `-----BEGIN CERTIFICATE REQ`, 0,
+                                        [], [],
+                                        [], // N/A
+                                        [], // N/A
+                                        FileContent.text,
+                                        FileKindDetection.equalsContents);
+        txtFKinds ~= pemCertReqKind;
+
+        auto pemRSAPrivateKeyKind = new FKind(`PEM RSA private key`, [], [`cert`],
+                                              `-----BEGIN RSA PRIVATE`, 0,
+                                              [], [],
+                                              [], // N/A
+                                              [], // N/A
+                                              FileContent.text,
+                                              FileKindDetection.equalsContents);
+        txtFKinds ~= pemRSAPrivateKeyKind;
+
+        auto pemDSAPrivateKeyKind = new FKind(`PEM DSA private key`, [], [`cert`],
+                                              `-----BEGIN DSA PRIVATE`, 0,
+                                              [], [],
+                                              [], // N/A
+                                              [], // N/A
+                                              FileContent.text,
+                                              FileKindDetection.equalsContents);
+        txtFKinds ~= pemDSAPrivateKeyKind;
+
+        auto pemECPrivateKeyKind = new FKind(`PEM EC private key`, [], [`cert`],
+                                              `-----BEGIN EC PRIVATE`, 0,
+                                              [], [],
+                                              [], // N/A
+                                              [], // N/A
+                                              FileContent.text,
+                                              FileKindDetection.equalsContents);
+        txtFKinds ~= pemECPrivateKeyKind;
+
         // Binaries
 
         static immutable extsELF = ["o", "so", "ko", "os", "out", "bin", "x", "elf", "axf", "prx", "puff", "none"]; // ELF file extensions
