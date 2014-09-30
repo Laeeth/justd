@@ -568,7 +568,7 @@ class FKinds
             if (const magicLit = cast(Lit)kind.magicData)
             {
                 this.byMagic[magicLit.bytes][magicLit.bytes.length] ~= kind;
-                this.magicLengths ~= magicLit.bytes.length; // add it
+                _magicLengths ~= magicLit.bytes.length; // add it
             }
         }
         return this;
@@ -580,7 +580,9 @@ class FKinds
     */
     FKinds rehash() @trusted pure /* nothrow */
     {
-        this.magicLengths = this.magicLengths.uniq.array.sort; // remove duplicates
+        import std.algorithm: sort;
+        _magicLengths = _magicLengths.uniq.array; // remove duplicates
+        _magicLengths.sort();
         this.byName.rehash;
         this.byExt.rehash;
         this.byMagic.rehash;
@@ -597,7 +599,7 @@ private:
     FKind[][string] byExt; // Index by possibly non-unique extension string
 
     FKind[][size_t][immutable ubyte[]] byMagic; // length => zero-offset magic byte array to Binary FKind[]
-    size_t[] magicLengths; // List of magic lengths to try as index in byMagic
+    size_t[] _magicLengths; // List of magic lengths to try as index in byMagic
 
     FKind[SHA1Digest] byId;    // Index Kinds by their behaviour
 }
