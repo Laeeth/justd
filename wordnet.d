@@ -53,6 +53,7 @@ class WordNet(bool useArray = true,
     static if (useArray) { alias Links = Array!LinkIx; }
     else                 { alias Links = LinkIx[]; }
 
+    /** Normalize Lemma $(D lemma). */
     Tuple!(S, bool) normalize(S)(S lemma,
                                  HLang lang = HLang.unknown) if (isSomeString!S)
     {
@@ -69,6 +70,12 @@ class WordNet(bool useArray = true,
         {
             return tuple(lemma, true); // so leave it as is
         }
+    }
+
+    /** Formalize Sentence $(D sentence). */
+    void formalize(R)(R sentence,
+                      HLang lang = HLang.unknown) if (isSomeString!(ElementType!R))
+    {
     }
 
     void readUNIXDict(string fileName,
