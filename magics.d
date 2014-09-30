@@ -70,7 +70,8 @@ void scanMagicFiles(string dir)
                                         /* magic = magic.replace(`\r`, "\r"); */
                                         /* magic = magic.replace(`\n`, "\n"); */
                                         /* magic = magic.replace(`\t`, "\t"); */
-                                        // TODO Replace \0, \1
+                                        // TODO Replace `\0`, `\1`
+                                        // TODO Replace `\OCTAL` with "\OCTAL"
                                         // TODO Replace \0xa
                                         writeln(kind, `: `, magic);
                                     }
