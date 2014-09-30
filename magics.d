@@ -3,6 +3,7 @@
 /** Scan file/magic/Magdir */
 module magics;
 
+/** Magic Specifier. */
 struct Magic
 {
     string header;
@@ -26,7 +27,7 @@ void scanMagicFiles(string dir)
 
     foreach (file; dir.dirEntries(SpanMode.depth))
     {
-        writeln(file.name);
+        writeln("file: ", file.name);
         foreach (line; File(file).byLine)
         {
             auto parts = line.splitter("\t");

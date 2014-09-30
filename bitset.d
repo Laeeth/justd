@@ -331,7 +331,7 @@ struct BitSet(size_t len, Block = size_t)
     /*         debug(bitset) printf("BitSet.sort.unittest\n"); */
     /*         __gshared size_t x = 0b1100011000; */
     /*         __gshared BitSet ba = { 10, &x }; */
-    /*         ba.sort; */
+    /*         ba.sort(); */
     /*         for (size_t i = 0; i < 6; i++) */
     /*             assert(ba[i] == false); */
     /*         for (size_t i = 6; i < 10; i++) */
