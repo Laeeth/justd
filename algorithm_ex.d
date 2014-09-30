@@ -39,6 +39,7 @@ bool of(S, T...)(S x, lazy T ys) pure if (ys.length >= 1 &&
     }
     return false;
 }
+alias isEither = of;
 
 unittest
 {
