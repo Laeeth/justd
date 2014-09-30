@@ -587,6 +587,15 @@ enum WordKind:ubyte
     subordinatingConjunction,
 }
 
+/** Part of a Sentence. */
+enum SentencePart
+{
+    subject,
+    predicate,
+    adverbial,
+    object,
+}
+
 /** Word Sense/Meaning/Interpretation. */
 struct WordSense(Links = uint[])
 {

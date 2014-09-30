@@ -21,7 +21,7 @@ unittest
     import std.stdio: stderr;
     backtrace.backtrace.install(stderr);
 
-    registerPackHandler!(Array!string, arrayPackHandler);
+    /* registerPackHandler!(Array!string, arrayPackHandler); */
 
     Array!string x = ["x", "y"];
     writeln(x.pack);
