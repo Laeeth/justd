@@ -833,6 +833,7 @@ bool memberOf(WordKind special,
         {
             /* TODO Use static foreach over all enum members to generate all
              * relevant cases: */
+            case unknown: return true;
             case noun: return special.isNoun || special.isPronoun;
             case nounNumeric: return special.isNounNumeric;
             case nounName: return special.isNounName;
@@ -845,7 +846,7 @@ bool memberOf(WordKind special,
             case preposition: return special.isPreposition;
             case article: return special.isArticle;
             case conjunction: return special.isConjunction;
-            default:return special == general;
+            default: return special == general;
         }
     }
 }
