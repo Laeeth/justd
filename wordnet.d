@@ -50,6 +50,7 @@ class WordNet(bool useArray = true,
     static if (useRCString) { alias Lemma = RCXString!(immutable char, 24 - 1); }
     else                    { alias Lemma = string; }
 
+    /* Links */
     static if (useArray) { alias Links = Array!LinkIx; }
     else                 { alias Links = LinkIx[]; }
 
@@ -73,9 +74,22 @@ class WordNet(bool useArray = true,
     }
 
     /** Formalize Sentence $(D sentence). */
-    void formalize(R)(R sentence,
-                      HLang lang = HLang.unknown) if (isSomeString!(ElementType!R))
+    WordRole[] formalize(R)(R parts,
+                            HLang[] langs = []) if (isSomeString!(ElementType!R))
     {
+        typeof(return) roles;
+        if (canMean(parts[0], WordKind.noun, langs) &&
+            canMean(parts[1], WordKind.verb, langs))
+        {
+            roles = [WordRole.subject, WordRole.predicate];
+        }
+        return roles;
+    }
+
+    WordRole[] formalize(S)(S sentence,
+                            HLang[] langs = []) if (isSomeString!S)
+    {
+        return formalize(sentence.split!isWhite, langs); // TODO splitter
     }
 
     void readUNIXDict(string fileName,
@@ -408,7 +422,7 @@ class WordNet(bool useArray = true,
         }
     }
 
-    void readDicts(HLang[] langs = [HLang.en, HLang.sv],
+    void readDicts(const HLang[] langs = [HLang.en, HLang.sv],
                    bool allLangs = false)
     {
         const dictDir = `~/Knowledge/dict`.expandTilde;
@@ -487,7 +501,7 @@ class WordNet(bool useArray = true,
 
     /** Create a WordNet of languages $(D langs).
      */
-    this(HLang[] langs = [HLang.en, HLang.sv],
+    this(const HLang[] langs = [HLang.en, HLang.sv],
          bool allLangs = false)
     {
         readDicts(langs, allLangs);
@@ -535,11 +549,11 @@ class WordNet(bool useArray = true,
         return true;
     }
 
-    /** Get Possible Meanings of $(D lemma) in all $(D hlangs).
-        TODO filter on hlangs if hlangs is non-empty.
+    /** Get Possible Meanings of $(D lemma) in all $(D langs).
+        TODO filter on langs if langs is non-empty.
      */
     WordSense!Links[] meaningsOf(S)(S lemma,
-                                    HLang[] hlangs = [])
+                                    HLang[] langs = [])
     {
         typeof(return) senses;
 
@@ -549,23 +563,23 @@ class WordNet(bool useArray = true,
         if (lowLemma in _words)
         {
             senses = _words[lowLemma];
-            if (!hlangs.empty)
+            if (!langs.empty)
             {
-                senses = senses.filter!(sense => !hlangs.find(sense.hlang).empty).array;
+                senses = senses.filter!(sense => !langs.find(sense.hlang).empty).array;
             }
         }
         return senses;
     }
 
     /** Return true if $(D lemma) can mean a $(D kind) in any of $(D
-        hlangs).
+        langs).
     */
     auto canMean(S)(S lemma,
                     WordKind kind,
-                    HLang[] hlangs = []) if (isSomeString!S)
+                    HLang[] langs = []) if (isSomeString!S)
     {
         import std.algorithm: canFind;
-        auto meanings = meaningsOf(lemma, hlangs);
+        auto meanings = meaningsOf(lemma, langs);
         return meanings.canFind!(meaning => meaning.kind.memberOf(kind));
     }
 
@@ -681,7 +695,9 @@ unittest
     enum useArray = true;
     enum useRCString = false;
 
-    auto wn = new WordNet!(useArray, useRCString)([HLang.en, HLang.sv]);
+    const langs = [HLang.en, HLang.sv];
+
+    auto wn = new WordNet!(useArray, useRCString)(langs);
     const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
     foreach (word; words)
     {
@@ -698,6 +714,11 @@ unittest
     assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
 
     assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
+
+    writeln(wn.formalize("Jack run"), [HLang.en]);
+    writeln(wn.formalize("Men can drive", [HLang.en]));
+    writeln(wn.formalize("Women can also drive", [HLang.en]));
+    writeln(wn.formalize("Jag spelar tennis", [HLang.sv]));
 
     /* write("Press enter to continue: "); */
     /* readln(); */
