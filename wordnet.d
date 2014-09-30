@@ -401,13 +401,9 @@ class WordNet(bool useArray = true,
         }
     }
 
-    /** Create a WordNet of languages $(D langs).
-     */
-    this(HLang[] langs = [HLang.en, HLang.sv],
-         bool allLangs = false)
+    void readDicts(HLang[] langs = [HLang.en, HLang.sv],
+                   bool allLangs = false)
     {
-        readExplicits;
-
         const dictDir = `~/Knowledge/dict`.expandTilde;
 
         // See also: https://packages.debian.org/sv/sid/wordlist
@@ -480,6 +476,15 @@ class WordNet(bool useArray = true,
 
         if (allLangs || langs.canFind(HLang.en))
             readWordNet(); // put this last to specialize existing lemma
+    }
+
+    /** Create a WordNet of languages $(D langs).
+     */
+    this(HLang[] langs = [HLang.en, HLang.sv],
+         bool allLangs = false)
+    {
+        readDicts(langs, allLangs);
+        readExplicits();
 
         // TODO Learn: adjective strong <=> noun strength
 
@@ -506,7 +511,7 @@ class WordNet(bool useArray = true,
         if (lemmaFixed in _words)
         {
             auto existing = _words[lemmaFixed];
-            foreach (e; existing) // for each possible more general kind
+            foreach (ref e; existing) // for each possible more general kind
             {
                 if (e.kind == WordKind.init ||
                     (kind != e.kind &&
@@ -553,7 +558,8 @@ class WordNet(bool useArray = true,
                     HLang[] hlangs = []) if (isSomeString!S)
     {
         import std.algorithm: canFind;
-        return meaningsOf(lemma, hlangs).canFind!(meaning => meaning.kind.memberOf(kind));
+        auto meanings = meaningsOf(lemma, hlangs);
+        return meanings.canFind!(meaning => meaning.kind.memberOf(kind));
     }
 
     auto canMean(S)(S lemma,
@@ -672,7 +678,8 @@ unittest
     const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
     foreach (word; words)
     {
-        writeln(word, ` has meanings `, wn.meaningsOf(word));
+        writeln(word, ` has meanings `,
+                wn.meaningsOf(word).map!(wordSense => wordSense.kind.to!string).joiner(`, `));
     }
 
     assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
