@@ -121,83 +121,8 @@ class WordNet(bool useArray = true,
         readIndex(dictDir.nPath(`index.verb`), false, lang);
     }
 
-    /** Create a WordNet of languages $(D langs).
-     */
-    this(HLang[] langs = [HLang.en],
-         bool allLangs = false)
+    void readExplicits()
     {
-        const dictDir = `~/Knowledge/dict`.expandTilde;
-
-        // See also: https://packages.debian.org/sv/sid/wordlist
-        if (allLangs || langs.canFind(HLang.sv))
-            readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, NOTE iso-latin-1
-        if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
-        if (allLangs || langs.canFind(HLang.pl))
-            readUNIXDict(dictDir.nPath("polish"), HLang.pl);
-        if (allLangs || langs.canFind(HLang.pt))
-            readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
-        if (allLangs || langs.canFind(HLang.es))
-            readUNIXDict(dictDir.nPath("spanish"), HLang.es);
-        if (allLangs || langs.canFind(HLang.fr_ch))
-            readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
-        if (allLangs || langs.canFind(HLang.uk))
-            readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
-
-        if (allLangs || langs.canFind(HLang.en))
-            readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
-        if (allLangs || langs.canFind(HLang.en_GB))
-            readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
-        if (allLangs || langs.canFind(HLang.en_GB))
-            readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
-        if (allLangs || langs.canFind(HLang.en_GB))
-            readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
-
-        if (allLangs || langs.canFind(HLang.en_US))
-            readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
-        if (allLangs || langs.canFind(HLang.en_US))
-            readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
-        if (allLangs || langs.canFind(HLang.en_US))
-            readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
-
-        if (allLangs || langs.canFind(HLang.pt_BR))
-            readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, NOTE iso-latin-1
-
-        if (allLangs || langs.canFind(HLang.pt_BR))
-            readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
-
-        if (allLangs || langs.canFind(HLang.en_CA))
-            readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
-
-        if (allLangs || langs.canFind(HLang.da))
-            readUNIXDict(dictDir.nPath("danish"), HLang.da);
-
-        if (allLangs || langs.canFind(HLang.nl))
-            readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
-
-        if (allLangs || langs.canFind(HLang.fr))
-            readUNIXDict(dictDir.nPath("french"), HLang.fr);
-
-        if (allLangs || langs.canFind(HLang.faroese))
-            readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
-
-        if (allLangs || langs.canFind(HLang.gl))
-            readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
-
-        if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
-
-        if (allLangs || langs.canFind(HLang.it))
-            readUNIXDict(dictDir.nPath("italian"), HLang.it);
-
-        if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
-
-        if (allLangs || langs.canFind(HLang.no))
-            readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
-
-        if (allLangs || langs.canFind(HLang.en))
-            readWordNet(); // put this last to specialize existing lemma
 
         // TODO merge with conjunctions?
         // TODO categorize like http://www.grammarbank.com/connectives-list.html
@@ -474,6 +399,87 @@ class WordNet(bool useArray = true,
                      `lördag`, `söndag`]) {
             addWord(e, WordKind.nounWeekday, 0, HLang.sv);
         }
+    }
+
+    /** Create a WordNet of languages $(D langs).
+     */
+    this(HLang[] langs = [HLang.en, HLang.sv],
+         bool allLangs = false)
+    {
+        readExplicits;
+
+        const dictDir = `~/Knowledge/dict`.expandTilde;
+
+        // See also: https://packages.debian.org/sv/sid/wordlist
+        if (allLangs || langs.canFind(HLang.sv))
+            readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, NOTE iso-latin-1
+        if (allLangs || langs.canFind(HLang.de))
+            readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
+        if (allLangs || langs.canFind(HLang.pl))
+            readUNIXDict(dictDir.nPath("polish"), HLang.pl);
+        if (allLangs || langs.canFind(HLang.pt))
+            readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
+        if (allLangs || langs.canFind(HLang.es))
+            readUNIXDict(dictDir.nPath("spanish"), HLang.es);
+        if (allLangs || langs.canFind(HLang.fr_ch))
+            readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
+        if (allLangs || langs.canFind(HLang.uk))
+            readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
+
+        if (allLangs || langs.canFind(HLang.en))
+            readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
+        if (allLangs || langs.canFind(HLang.en_GB))
+            readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
+        if (allLangs || langs.canFind(HLang.en_GB))
+            readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
+        if (allLangs || langs.canFind(HLang.en_GB))
+            readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
+
+        if (allLangs || langs.canFind(HLang.en_US))
+            readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
+        if (allLangs || langs.canFind(HLang.en_US))
+            readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
+        if (allLangs || langs.canFind(HLang.en_US))
+            readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
+
+        if (allLangs || langs.canFind(HLang.pt_BR))
+            readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, NOTE iso-latin-1
+
+        if (allLangs || langs.canFind(HLang.pt_BR))
+            readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
+
+        if (allLangs || langs.canFind(HLang.en_CA))
+            readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
+
+        if (allLangs || langs.canFind(HLang.da))
+            readUNIXDict(dictDir.nPath("danish"), HLang.da);
+
+        if (allLangs || langs.canFind(HLang.nl))
+            readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
+
+        if (allLangs || langs.canFind(HLang.fr))
+            readUNIXDict(dictDir.nPath("french"), HLang.fr);
+
+        if (allLangs || langs.canFind(HLang.faroese))
+            readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
+
+        if (allLangs || langs.canFind(HLang.gl))
+            readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
+
+        if (allLangs || langs.canFind(HLang.de))
+            readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
+
+        if (allLangs || langs.canFind(HLang.it))
+            readUNIXDict(dictDir.nPath("italian"), HLang.it);
+
+        if (allLangs || langs.canFind(HLang.de))
+            readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
+
+        if (allLangs || langs.canFind(HLang.no))
+            readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
+
+        if (allLangs || langs.canFind(HLang.en))
+            readWordNet(); // put this last to specialize existing lemma
 
         // TODO Learn: adjective strong <=> noun strength
 
@@ -662,7 +668,7 @@ unittest
     enum useArray = true;
     enum useRCString = false;
 
-    auto wn = new WordNet!(useArray, useRCString)();
+    auto wn = new WordNet!(useArray, useRCString)([HLang.en, HLang.sv]);
     const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
     foreach (word; words)
     {
@@ -671,7 +677,12 @@ unittest
 
     assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
     assert(wn.canMean(`car`, WordKind.noun, HLang.en));
-    /* assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv])); */
+
+    assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
+    assert(wn.canMean(`måndag`, WordKind.noun, [HLang.sv]));
+    assert(!wn.canMean(`måndag`, WordKind.verb, [HLang.sv]));
+    assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
+
     assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
 
     /* write("Press enter to continue: "); */
