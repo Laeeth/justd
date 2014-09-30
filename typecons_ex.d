@@ -53,3 +53,18 @@ unittest
     xr.nullify;
     assert(xr.isNull);
 }
+
+/** See also: http://forum.dlang.org/thread/jwdbjlobbilowlnpdzzo@forum.dlang.org
+ */
+template New(T) if (is(T == class))
+{
+    T New(Args...) (Args args) {
+        return new T(args);
+    }
+}
+
+/* unittest */
+/* { */
+/*     class C { int x, y; } */
+/*     assert(New!C == new C); */
+/* } */
