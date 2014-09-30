@@ -89,7 +89,9 @@ class WordNet(bool useArray = true,
     WordRole[] formalize(S)(S sentence,
                             HLang[] langs = []) if (isSomeString!S)
     {
-        return formalize(sentence.split!isWhite, langs); // TODO splitter
+        auto roles = formalize(sentence.split!isWhite, langs); // TODO splitter
+        writeln(`"`, sentence, `" has roles `, roles);
+        return roles;
     }
 
     void readUNIXDict(string fileName,
@@ -715,10 +717,13 @@ unittest
 
     assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
 
-    writeln(wn.formalize("Jack run"), [HLang.en]);
-    writeln(wn.formalize("Men can drive", [HLang.en]));
-    writeln(wn.formalize("Women can also drive", [HLang.en]));
-    writeln(wn.formalize("Jag spelar tennis", [HLang.sv]));
+    wn.formalize("Jack run", [HLang.en]);
+    wn.formalize("Jack and Jill", [HLang.en]);
+    wn.formalize("Men can drive", [HLang.en]);
+    wn.formalize("Women can also drive", [HLang.en]);
+
+    wn.formalize("Jag spelar tennis", [HLang.sv]);
+    wn.formalize("Biltvätt", [HLang.sv]);
 
     /* write("Press enter to continue: "); */
     /* readln(); */
