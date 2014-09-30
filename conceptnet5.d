@@ -11,6 +11,10 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
+    TODO ansiktstvätt => facial_wash
+    TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
+    TODO promote equal splits through weigthing sum_over_i(x[i].length^)2
+
     TODO Template on NodeData and rename Concept to Node. Instantiate with
     NodeData begin Concept and break out Concept outside.
 
