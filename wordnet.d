@@ -74,20 +74,21 @@ class WordNet(bool useArray = true,
     }
 
     /** Formalize Sentence $(D sentence). */
-    WordRole[] formalize(R)(R parts,
-                            HLang[] langs = []) if (isSomeString!(ElementType!R))
+    SentencePart[] formalize(Words)(Words words,
+                                    HLang[] langs = []) if (isSomeString!(ElementType!Words))
     {
         typeof(return) roles;
-        if (canMean(parts[0], WordKind.noun, langs) &&
-            canMean(parts[1], WordKind.verb, langs))
+        if (canMean(words[0], WordKind.noun, langs) &&
+            canMean(words[1], WordKind.verb, langs))
         {
-            roles = [WordRole.subject, WordRole.predicate];
+            roles = [SentencePart.subject,
+                     SentencePart.predicate];
         }
         return roles;
     }
 
-    WordRole[] formalize(S)(S sentence,
-                            HLang[] langs = []) if (isSomeString!S)
+    SentencePart[] formalize(S)(S sentence,
+                                HLang[] langs = []) if (isSomeString!S)
     {
         auto roles = formalize(sentence.split!isWhite, langs); // TODO splitter
         writeln(`"`, sentence, `" has roles `, roles);
@@ -700,12 +701,13 @@ unittest
     const langs = [HLang.en, HLang.sv];
 
     auto wn = new WordNet!(useArray, useRCString)(langs);
-    const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`];
-    foreach (word; words)
-    {
-        writeln(word, ` has meanings `,
-                wn.meaningsOf(word).map!(wordSense => wordSense.kind.to!string).joiner(`, `));
-    }
+
+    /* const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`]; */
+    /* foreach (word; words) */
+    /* { */
+    /*     writeln(word, ` has meanings `, */
+    /*             wn.meaningsOf(word).map!(wordSense => wordSense.kind.to!string).joiner(`, `)); */
+    /* } */
 
     assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
     assert(wn.canMean(`car`, WordKind.noun, HLang.en));
@@ -717,13 +719,33 @@ unittest
 
     assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
 
-    wn.formalize("Jack run", [HLang.en]);
-    wn.formalize("Jack and Jill", [HLang.en]);
-    wn.formalize("Men can drive", [HLang.en]);
-    wn.formalize("Women can also drive", [HLang.en]);
 
-    wn.formalize("Jag spelar tennis", [HLang.sv]);
-    wn.formalize("Biltvätt", [HLang.sv]);
+    assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
+                                                    SentencePart.predicate]);
+    assert(wn.formalize("Men swim", [HLang.en]) == [SentencePart.subject,
+                                                    SentencePart.predicate]);
+    if (false)
+    {
+        assert(wn.formalize("Does jack run?", [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
+                                                              SentencePart.predicate]);
+
+        assert(wn.formalize("Does men swim?", [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
+                                                              SentencePart.predicate]);
+
+        assert(wn.formalize("Jack and Jill", [HLang.en]), [SentencePart.subject]);
+        assert(wn.formalize("Men can drive", [HLang.en]), [SentencePart.subject,
+                                                           SentencePart.predicate]);
+        assert(wn.formalize("Women can also drive", [HLang.en]), [SentencePart.subject,
+                                                                  SentencePart.predicate]);
+
+        assert(wn.formalize("The big blue car", [HLang.en]) == [SentencePart.subject]);
+        assert(wn.formalize("A big blue car", [HLang.en]) == [SentencePart.subject]);
+
+        assert(wn.formalize("Jag spelar tennis", [HLang.sv]) == [SentencePart.subject,
+                                                                 SentencePart.predicate,
+                                                                 SentencePart.object]);
+        assert(wn.formalize("Biltvätt", [HLang.sv]) == [SentencePart.subject]);
+    }
 
     /* write("Press enter to continue: "); */
     /* readln(); */
