@@ -593,9 +593,10 @@ class WordNet(bool useArray = true,
         return !meanings.empty;
     }
 
-    /** Find First Possible Split for of word $(D lemma). */
-    S[] findWordSplit(S)(S word,
-                         HLang[] langs = []) if (isSomeString!S)
+    /** Find First Possible Split word $(D lemma) with semantic meaning inf
+     * languages $(D langs). */
+    S[] findMeaningfulWordSplit(S)(S word,
+                                   HLang[] langs = []) if (isSomeString!S)
     {
         for (size_t i = 1; i + 1 < word.length; i++)
         {
@@ -748,11 +749,11 @@ unittest
     assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
     assert(wn.canMean(`tvätt`, WordKind.unknown, [HLang.sv]));
 
-    assert(wn.findWordSplit(``, [HLang.sv]) == []);
-    assert(wn.findWordSplit(`i`, [HLang.sv]) == []);
-    assert(wn.findWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
-    assert(wn.findWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
-    assert(wn.findWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
+    assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == []);
+    assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == []);
+    assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
+    assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
+    assert(wn.findMeaningfulWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
 
     assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
                                                     SentencePart.predicate]);
