@@ -149,7 +149,7 @@ class WordNet(bool useArray = true,
 
         // TODO merge with conjunctions?
         // TODO categorize like http://www.grammarbank.com/connectives-list.html
-        const connectives = [`the`, `of`, `and`, `to`, `a`, `in`, `that`, `is`,
+        immutable connectives = [`the`, `of`, `and`, `to`, `a`, `in`, `that`, `is`,
                              `was`, `he`, `for`, `it`, `with`, `as`, `his`,
                              `on`, `be`, `at`, `by`, `i`, `this`, `had`, `not`,
                              `are`, `but`, `from`, `or`, `have`, `an`, `they`,
@@ -632,7 +632,7 @@ class WordNet(bool useArray = true,
                         second];
             }
         }
-        return typeof(return).init;
+        return [word];
     }
 
     auto canMean(S)(S lemma,
@@ -772,13 +772,16 @@ unittest
     assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
     assert(wn.canMean(`tvätt`, WordKind.unknown, [HLang.sv]));
 
-    assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == []);
-    assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == []);
+    assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == [``]);
+    assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == [`i`]);
     assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
     assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
+    assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]);
     assert(wn.findMeaningfulWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
     assert(wn.findMeaningfulWordSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
     assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
+    assert(wn.findMeaningfulWordSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
+    assert(wn.findMeaningfulWordSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
 
     assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
                                                     SentencePart.predicate]);
