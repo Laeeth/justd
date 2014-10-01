@@ -422,6 +422,16 @@ class WordNet(bool useArray = true,
                      `lördag`, `söndag`]) {
             addWord(e, WordKind.nounWeekday, 0, HLang.sv);
         }
+
+        /* months */
+        foreach (e; [`januari`, `februari`, `mars`, `april`, `maj`, `juni`,
+                     `juli`, `augusti`, `september`, `oktober`, `november`, `december`]) {
+            addWord(e, WordKind.nounMonth, 0, HLang.sv);
+        }
+        foreach (e; [`january`, `february`, `mars`, `april`, `may`, `june`,
+                     `july`, `august`, `september`, `oktober`, `november`, `december`]) {
+            addWord(e, WordKind.nounMonth, 0, HLang.en);
+        }
     }
 
     void readDicts(const HLang[] langs = [HLang.en, HLang.sv],
@@ -763,16 +773,18 @@ unittest
         assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
         assert(wn.canMean(`car`, WordKind.noun, HLang.en));
         assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
+        assert(wn.canMean(`january`, WordKind.nounMonth, [HLang.en]));
     }
 
-    if (langs.canFind(HLang.de))
+    if (langs.canFind(HLang.sv))
     {
         assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
         assert(wn.canMean(`måndag`, WordKind.noun, [HLang.sv]));
-        assert(!wn.canMean(`måndag`, WordKind.verb, [HLang.sv]));
-        assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
         assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
         assert(wn.canMean(`tvätt`, WordKind.unknown, [HLang.sv]));
+        assert(!wn.canMean(`måndag`, WordKind.verb, [HLang.sv]));
+        assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
+        assert(wn.canMean(`januari`, WordKind.nounMonth, [HLang.sv]));
     }
 
     if (langs.canFind(HLang.de))
