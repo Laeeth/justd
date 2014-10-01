@@ -146,7 +146,6 @@ class WordNet(bool useArray = true,
 
     void readExplicits()
     {
-
         // TODO merge with conjunctions?
         // TODO categorize like http://www.grammarbank.com/connectives-list.html
         enum connectives = [`the`, `of`, `and`, `to`, `a`, `in`, `that`, `is`,
@@ -443,17 +442,17 @@ class WordNet(bool useArray = true,
         if (allLangs || langs.canFind(HLang.sv))
             readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, NOTE iso-latin-1
         if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath("ogerman"), HLang.de); // TODO old german
+            readUNIXDict(dictDir.nPath(`ogerman`), HLang.de); // TODO old german
         if (allLangs || langs.canFind(HLang.pl))
-            readUNIXDict(dictDir.nPath("polish"), HLang.pl);
+            readUNIXDict(dictDir.nPath(`polish`), HLang.pl);
         if (allLangs || langs.canFind(HLang.pt))
-            readUNIXDict(dictDir.nPath("portuguese"), HLang.pt);
+            readUNIXDict(dictDir.nPath(`portuguese`), HLang.pt);
         if (allLangs || langs.canFind(HLang.es))
-            readUNIXDict(dictDir.nPath("spanish"), HLang.es);
+            readUNIXDict(dictDir.nPath(`spanish`), HLang.es);
         if (allLangs || langs.canFind(HLang.fr_ch))
-            readUNIXDict(dictDir.nPath("swiss"), HLang.fr_ch);
+            readUNIXDict(dictDir.nPath(`swiss`), HLang.fr_ch);
         if (allLangs || langs.canFind(HLang.uk))
-            readUNIXDict(dictDir.nPath("ukrainian"), HLang.uk);
+            readUNIXDict(dictDir.nPath(`ukrainian`), HLang.uk);
 
         if (allLangs || langs.canFind(HLang.en))
             readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
@@ -478,34 +477,34 @@ class WordNet(bool useArray = true,
             readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
 
         if (allLangs || langs.canFind(HLang.en_CA))
-            readUNIXDict(dictDir.nPath("canadian-english-insane"), HLang.en_CA);
+            readUNIXDict(dictDir.nPath(`canadian-english-insane`), HLang.en_CA);
 
         if (allLangs || langs.canFind(HLang.da))
-            readUNIXDict(dictDir.nPath("danish"), HLang.da);
+            readUNIXDict(dictDir.nPath(`danish`), HLang.da);
 
         if (allLangs || langs.canFind(HLang.nl))
-            readUNIXDict(dictDir.nPath("dutch"), HLang.nl);
+            readUNIXDict(dictDir.nPath(`dutch`), HLang.nl);
 
         if (allLangs || langs.canFind(HLang.fr))
-            readUNIXDict(dictDir.nPath("french"), HLang.fr);
+            readUNIXDict(dictDir.nPath(`french`), HLang.fr);
 
         if (allLangs || langs.canFind(HLang.faroese))
-            readUNIXDict(dictDir.nPath("faroese"), HLang.faroese);
+            readUNIXDict(dictDir.nPath(`faroese`), HLang.faroese);
 
         if (allLangs || langs.canFind(HLang.gl))
-            readUNIXDict(dictDir.nPath("galician-minimos"), HLang.gl);
+            readUNIXDict(dictDir.nPath(`galician-minimos`), HLang.gl);
 
         if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath("german-medical"), HLang.de); // TODO medical german
+            readUNIXDict(dictDir.nPath(`german-medical`), HLang.de); // TODO medical german
 
         if (allLangs || langs.canFind(HLang.it))
-            readUNIXDict(dictDir.nPath("italian"), HLang.it);
+            readUNIXDict(dictDir.nPath(`italian`), HLang.it);
 
         if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath("ngerman"), HLang.de); // new german
+            readUNIXDict(dictDir.nPath(`ngerman`), HLang.de); // new german
 
         if (allLangs || langs.canFind(HLang.no))
-            readUNIXDict(dictDir.nPath("nynorsk"), HLang.no);
+            readUNIXDict(dictDir.nPath(`nynorsk`), HLang.no);
 
         if (allLangs || langs.canFind(HLang.en))
             readWordNet(); // put this last to specialize existing lemma
@@ -815,35 +814,35 @@ unittest
 
     if (langs.canFind(HLang.en))
     {
-        assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
+        assert(wn.formalize(`Jack run`, [HLang.en]) == [SentencePart.subject,
                                                         SentencePart.predicate]);
-        assert(wn.formalize("Men swim", [HLang.en]) == [SentencePart.subject,
+        assert(wn.formalize(`Men swim`, [HLang.en]) == [SentencePart.subject,
                                                         SentencePart.predicate]);
     }
 
     if (false)
     {
-        assert(wn.formalize("Does jack run?", [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
+        assert(wn.formalize(`Does jack run?`, [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
                                                               SentencePart.predicate]);
 
-        assert(wn.formalize("Does men swim?", [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
+        assert(wn.formalize(`Does men swim?`, [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
                                                               SentencePart.predicate]);
 
-        assert(wn.formalize("Jack and Jill", [HLang.en]), [SentencePart.subject]);
-        assert(wn.formalize("Men can drive", [HLang.en]), [SentencePart.subject,
+        assert(wn.formalize(`Jack and Jill`, [HLang.en]), [SentencePart.subject]);
+        assert(wn.formalize(`Men can drive`, [HLang.en]), [SentencePart.subject,
                                                            SentencePart.predicate]);
-        assert(wn.formalize("Women can also drive", [HLang.en]), [SentencePart.subject,
+        assert(wn.formalize(`Women can also drive`, [HLang.en]), [SentencePart.subject,
                                                                   SentencePart.predicate]);
 
-        assert(wn.formalize("The big blue car", [HLang.en]) == [SentencePart.subject]);
-        assert(wn.formalize("A big blue car", [HLang.en]) == [SentencePart.subject]);
+        assert(wn.formalize(`The big blue car`, [HLang.en]) == [SentencePart.subject]);
+        assert(wn.formalize(`A big blue car`, [HLang.en]) == [SentencePart.subject]);
 
-        assert(wn.formalize("Jag spelar tennis", [HLang.sv]) == [SentencePart.subject,
+        assert(wn.formalize(`Jag spelar tennis`, [HLang.sv]) == [SentencePart.subject,
                                                                  SentencePart.predicate,
                                                                  SentencePart.object]);
-        assert(wn.formalize("Biltvätt", [HLang.sv]) == [SentencePart.subject]);
+        assert(wn.formalize(`Biltvätt`, [HLang.sv]) == [SentencePart.subject]);
     }
 
-    /* write("Press enter to continue: "); */
+    /* write(`Press enter to continue: `); */
     /* readln(); */
 }
