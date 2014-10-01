@@ -703,7 +703,7 @@ class WordNet(bool useArray = true,
                 import std.mmfile: MmFile;
                 auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
                 const data = cast(ubyte[])mmf[];
-                import algorithm_ex: byLine;
+                // import algorithm_ex: byLine;
                 foreach (line; data.byLine)
                 {
                     readIndexLine(line, lnr, lang, useMmFile);
