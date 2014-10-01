@@ -605,11 +605,11 @@ class WordNet(bool useArray = true,
     {
         for (size_t i = 1; i + 1 < word.length; i++)
         {
-            const first = word.takeExactly(i).to!string;
-            const second = word.dropExactly(i).to!string;
+            const first = word.takeExactly(i).to!S;
+            const second = word.dropExactly(i).to!S;
 
             auto firstOk = canMeanSomething(first, langs);
-            bool genitiveS = false; // TODO return this as a Node
+            bool genitiveForm = false; // TODO return this as a Node
             if (!firstOk &&
                 first.length >= 2 &&
                 first.endsWith(`s`))
@@ -617,7 +617,7 @@ class WordNet(bool useArray = true,
                 firstOk = canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
                 if (firstOk)
                 {
-                    genitiveS = true;
+                    genitiveForm = true;
                 }
             }
             auto secondOk = canMeanSomething(second, langs);
