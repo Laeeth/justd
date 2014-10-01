@@ -611,19 +611,19 @@ class WordNet(bool useArray = true,
             const first = word.takeExactly(i).to!string;
             const second = word.dropExactly(i).to!string;
 
-            auto firstOk = this.canMeanSomething(first, langs);
+            auto firstOk = canMeanSomething(first, langs);
             bool genitiveS = false; // TODO return this as a Node
             if (!firstOk &&
                 first.length >= 2 &&
                 first.endsWith(`s`))
             {
-                firstOk = this.canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
+                firstOk = canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
                 if (firstOk)
                 {
                     genitiveS = true;
                 }
             }
-            auto secondOk = this.canMeanSomething(second, langs);
+            auto secondOk = canMeanSomething(second, langs);
 
             if (firstOk &&
                 secondOk)
