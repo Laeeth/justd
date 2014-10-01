@@ -594,7 +594,10 @@ class WordNet(bool useArray = true,
     }
 
     /** Find First Possible Split word $(D lemma) with semantic meaning inf
-     * languages $(D langs). */
+        languages $(D langs).
+        TODO: We may need a new std.range to implement this in a single pass.
+        See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org#post-qqkqwiwdwmynrbkddkoy:40forum.dlang.org
+     */
     S[] findMeaningfulWordSplit(S)(S word,
                                    HLang[] langs = []) if (isSomeString!S)
     {
