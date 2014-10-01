@@ -91,7 +91,6 @@ class WordNet(bool useArray = true,
                                 HLang[] langs = []) if (isSomeString!S)
     {
         auto roles = formalize(sentence.split!isWhite, langs); // TODO splitter
-        writeln(`"`, sentence, `" has roles `, roles);
         return roles;
     }
 
@@ -586,6 +585,32 @@ class WordNet(bool useArray = true,
         return meanings.canFind!(meaning => meaning.kind.memberOf(kind));
     }
 
+    bool canMeanSomething(S)(S lemma,
+                             HLang[] langs = []) if (isSomeString!S)
+    {
+        import std.algorithm: canFind;
+        auto meanings = meaningsOf(lemma, langs);
+        return !meanings.empty;
+    }
+
+    /** Find First Possible Split for of word $(D lemma). */
+    S[] findWordSplit(S)(S word,
+                         HLang[] langs = []) if (isSomeString!S)
+    {
+        for (size_t i = 1; i + 1 < word.length; i++)
+        {
+            const first = word.takeExactly(i).to!string;
+            const second = word.dropExactly(i).to!string;
+            if (this.canMeanSomething(first, langs) &&
+                this.canMeanSomething(second, langs))
+            {
+                return [first,
+                        second];
+            }
+        }
+        return typeof(return).init;
+    }
+
     auto canMean(S)(S lemma,
                     WordKind kind,
                     HLang lang = HLang.unknown) if (isSomeString!S)
@@ -698,7 +723,8 @@ unittest
     enum useArray = true;
     enum useRCString = false;
 
-    const langs = [HLang.en, HLang.sv];
+    const langs = [HLang.en,
+                   HLang.sv];
 
     auto wn = new WordNet!(useArray, useRCString)(langs);
 
@@ -719,6 +745,14 @@ unittest
 
     assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
 
+    assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
+    assert(wn.canMean(`tvätt`, WordKind.unknown, [HLang.sv]));
+
+    assert(wn.findWordSplit(``, [HLang.sv]) == []);
+    assert(wn.findWordSplit(`i`, [HLang.sv]) == []);
+    assert(wn.findWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
+    assert(wn.findWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
+    assert(wn.findWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
 
     assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
                                                     SentencePart.predicate]);
