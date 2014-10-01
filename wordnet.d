@@ -620,6 +620,7 @@ class WordNet(bool useArray = true,
                     genitiveForm = true;
                 }
             }
+
             auto secondOk = canMeanSomething(second, langs);
 
             if (firstOk &&
@@ -745,6 +746,7 @@ unittest
     enum useRCString = false;
 
     const langs = [HLang.en,
+                   HLang.de,
                    HLang.sv];
 
     auto wn = new WordNet!(useArray, useRCString)(langs);
@@ -756,35 +758,57 @@ unittest
     /*             wn.meaningsOf(word).map!(wordSense => wordSense.kind.to!string).joiner(`, `)); */
     /* } */
 
-    assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
-    assert(wn.canMean(`car`, WordKind.noun, HLang.en));
+    if (langs.canFind(HLang.en))
+    {
+        assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
+        assert(wn.canMean(`car`, WordKind.noun, HLang.en));
+        assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
+    }
 
-    assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
-    assert(wn.canMean(`måndag`, WordKind.noun, [HLang.sv]));
-    assert(!wn.canMean(`måndag`, WordKind.verb, [HLang.sv]));
-    assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
+    if (langs.canFind(HLang.de))
+    {
+        assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
+        assert(wn.canMean(`måndag`, WordKind.noun, [HLang.sv]));
+        assert(!wn.canMean(`måndag`, WordKind.verb, [HLang.sv]));
+        assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
+        assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
+        assert(wn.canMean(`tvätt`, WordKind.unknown, [HLang.sv]));
+    }
 
-    assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
+    if (langs.canFind(HLang.de))
+    {
+        assert(wn.canMean(`fenster`, WordKind.unknown, [HLang.de]));
+    }
 
-    assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
-    assert(wn.canMean(`tvätt`, WordKind.unknown, [HLang.sv]));
+    if (langs.canFind(HLang.en))
+    {
+        assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
+        assert(wn.findMeaningfulWordSplit(`xwing`, [HLang.en]) == [`x`, `wing`]);
+    }
 
-    assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == [``]);
-    assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == [`i`]);
-    assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
-    assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
     assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]);
-    assert(wn.findMeaningfulWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
-    assert(wn.findMeaningfulWordSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
-    assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
-    assert(wn.findMeaningfulWordSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
-    assert(wn.findMeaningfulWordSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
-    assert(wn.findMeaningfulWordSplit(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
 
-    assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
-                                                    SentencePart.predicate]);
-    assert(wn.formalize("Men swim", [HLang.en]) == [SentencePart.subject,
-                                                    SentencePart.predicate]);
+    if (langs.canFind(HLang.sv))
+    {
+        assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == [``]);
+        assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == [`i`]);
+        assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
+        assert(wn.findMeaningfulWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
+        assert(wn.findMeaningfulWordSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
+        assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
+        assert(wn.findMeaningfulWordSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
+        assert(wn.findMeaningfulWordSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
+        assert(wn.findMeaningfulWordSplit(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
+    }
+
+    if (langs.canFind(HLang.en))
+    {
+        assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
+                                                        SentencePart.predicate]);
+        assert(wn.formalize("Men swim", [HLang.en]) == [SentencePart.subject,
+                                                        SentencePart.predicate]);
+    }
+
     if (false)
     {
         assert(wn.formalize("Does jack run?", [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
