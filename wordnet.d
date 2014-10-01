@@ -605,11 +605,6 @@ class WordNet(bool useArray = true,
     {
         for (size_t i = 1; i + 1 < word.length; i++)
         {
-            if (langs.canFind(HLang.sv))
-            {
-                // special handling for Swedish genitiv s in for example
-                // funktionskontroll
-            }
             const first = word.takeExactly(i).to!string;
             const second = word.dropExactly(i).to!string;
 
