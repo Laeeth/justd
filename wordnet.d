@@ -603,10 +603,30 @@ class WordNet(bool useArray = true,
     {
         for (size_t i = 1; i + 1 < word.length; i++)
         {
+            if (langs.canFind(HLang.sv))
+            {
+                // special handling for Swedish genitiv s in for example
+                // funktionskontroll
+            }
             const first = word.takeExactly(i).to!string;
             const second = word.dropExactly(i).to!string;
-            if (this.canMeanSomething(first, langs) &&
-                this.canMeanSomething(second, langs))
+
+            auto firstOk = this.canMeanSomething(first, langs);
+            bool genitiveS = false; // TODO return this as a Node
+            if (!firstOk &&
+                first.length >= 2 &&
+                first.endsWith(`s`))
+            {
+                firstOk = this.canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
+                if (firstOk)
+                {
+                    genitiveS = true;
+                }
+            }
+            auto secondOk = this.canMeanSomething(second, langs);
+
+            if (firstOk &&
+                secondOk)
             {
                 return [first,
                         second];
@@ -757,6 +777,8 @@ unittest
     assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
     assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
     assert(wn.findMeaningfulWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
+    assert(wn.findMeaningfulWordSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
+    assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
 
     assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
                                                     SentencePart.predicate]);
