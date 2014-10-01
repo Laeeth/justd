@@ -596,6 +596,22 @@ enum SentencePart
     object,
 }
 
+class Part
+{
+}
+
+class Predicate : Part
+{
+}
+
+// TODO: Conversion to WordKind
+enum Article { unindefinite, definite,  partitive }
+
+class Subject : Part
+{
+    Article article;
+}
+
 /** Word Sense/Meaning/Interpretation. */
 struct WordSense(Links = uint[])
 {
