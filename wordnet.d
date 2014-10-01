@@ -593,13 +593,15 @@ class WordNet(bool useArray = true,
         return !meanings.empty;
     }
 
-    /** Find First Possible Split word $(D lemma) with semantic meaning inf
+    /** Find First Possible Split of $(D word) with semantic meaning in
         languages $(D langs).
+
         TODO: We may need a new std.range to implement this in a single pass.
         See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org#post-qqkqwiwdwmynrbkddkoy:40forum.dlang.org
      */
     S[] findMeaningfulWordSplit(S)(S word,
-                                   HLang[] langs = []) if (isSomeString!S)
+                                   HLang[] langs = [],
+                                   bool crossLanguage = false) if (isSomeString!S)
     {
         for (size_t i = 1; i + 1 < word.length; i++)
         {
@@ -782,6 +784,7 @@ unittest
     assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
     assert(wn.findMeaningfulWordSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
     assert(wn.findMeaningfulWordSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
+    assert(wn.findMeaningfulWordSplit(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
 
     assert(wn.formalize("Jack run", [HLang.en]) == [SentencePart.subject,
                                                     SentencePart.predicate]);
