@@ -520,6 +520,7 @@ enum WordKind:ubyte
     nounOrganisationName,       // CIA
 
     nounWeekday,
+    nounMonth,
 
     verb,
     verbPresent,
@@ -689,7 +690,8 @@ unittest
                     kind == nounIrrationalNumber ||
                     kind == nounComplexNumber ||
                     kind.isNounName ||
-                    kind == nounWeekday);
+                    kind == nounWeekday ||
+                    kind == nounMonth);
         }
     }
     bool isNounNumeric(WordKind kind)
