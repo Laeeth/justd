@@ -8,6 +8,8 @@ import grammars;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
 import std.container: Array;
 import rcstring;
+import assert_ex;
+import dbg;
 
 alias nPath = buildNormalizedPath;
 
@@ -74,8 +76,8 @@ class WordNet(bool useArray = true,
     }
 
     /** Formalize Sentence $(D sentence). */
-    SentencePart[] formalize(Words)(Words words,
-                                    HLang[] langs = []) if (isSomeString!(ElementType!Words))
+    SentencePart[] formalize(Words)(const Words words,
+                                    const HLang[] langs = []) if (isSomeString!(ElementType!Words))
     {
         typeof(return) roles;
         if (canMean(words[0], WordKind.noun, langs) &&
@@ -87,14 +89,14 @@ class WordNet(bool useArray = true,
         return roles;
     }
 
-    SentencePart[] formalize(S)(S sentence,
-                                HLang[] langs = []) if (isSomeString!S)
+    SentencePart[] formalize(S)(const S sentence,
+                                const HLang[] langs = []) if (isSomeString!S)
     {
         auto roles = formalize(sentence.split!isWhite, langs); // TODO splitter
         return roles;
     }
 
-    void readUNIXDict(string fileName,
+    void readUNIXDict(const string fileName,
                       HLang lang,
                       WordKind kindAll = WordKind.unknown)
     {
@@ -133,7 +135,7 @@ class WordNet(bool useArray = true,
         writeln(`Added `, lnr, ` new `, lang.toName, ` (`, exceptionCount, ` uncaseable) words from `, fileName);
     }
 
-    void readWordNet(string dirName = `~/Knowledge/wordnet/WordNet-3.0/dict`)
+    void readWordNet(const string dirName = `~/Knowledge/wordnet/WordNet-3.0/dict`)
     {
         const dictDir = dirName.expandTilde;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
@@ -535,7 +537,7 @@ class WordNet(bool useArray = true,
     /** Store $(D lemma) as $(D kind) in language $(D lang).
         Return true if a new word was added, false if word was specialized.
      */
-    bool addWord(S)(S lemma, WordKind kind, ubyte synsetCount,
+    bool addWord(S)(const S lemma, WordKind kind, ubyte synsetCount,
                     HLang lang = HLang.unknown)
     {
         static if (useRCString) { const Lemma lemmaFixed = lemma; }
@@ -563,8 +565,8 @@ class WordNet(bool useArray = true,
     /** Get Possible Meanings of $(D lemma) in all $(D langs).
         TODO filter on langs if langs is non-empty.
      */
-    WordSense!Links[] meaningsOf(S)(S lemma,
-                                    HLang[] langs = [])
+    WordSense!Links[] meaningsOf(S)(const S lemma,
+                                    const HLang[] langs = [])
     {
         typeof(return) senses;
 
@@ -585,17 +587,17 @@ class WordNet(bool useArray = true,
     /** Return true if $(D lemma) can mean a $(D kind) in any of $(D
         langs).
     */
-    auto canMean(S)(S lemma,
-                    WordKind kind,
-                    HLang[] langs = []) if (isSomeString!S)
+    auto canMean(S)(const S lemma,
+                    const WordKind kind,
+                    const HLang[] langs = []) if (isSomeString!S)
     {
         import std.algorithm: canFind;
         auto meanings = meaningsOf(lemma, langs);
         return meanings.canFind!(meaning => meaning.kind.memberOf(kind));
     }
 
-    bool canMeanSomething(S)(S lemma,
-                             HLang[] langs = []) if (isSomeString!S)
+    bool canMeanSomething(S)(const S lemma,
+                             const HLang[] langs = []) if (isSomeString!S)
     {
         import std.algorithm: canFind;
         auto meanings = meaningsOf(lemma, langs);
@@ -608,14 +610,20 @@ class WordNet(bool useArray = true,
         TODO: We may need a new std.range to implement this in a single pass.
         See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org#post-qqkqwiwdwmynrbkddkoy:40forum.dlang.org
      */
-    S[] findMeaningfulWordSplit(S)(S word,
-                                   HLang[] langs = [],
-                                   bool crossLanguage = false) if (isSomeString!S)
+    S[] findMeaningfulWordSplit(S)(const S word,
+                                   const HLang[] langs = [],
+                                   const bool crossLanguage = false,
+                                   const size_t minSize = 2) if (isSomeString!S)
     {
-        for (size_t i = 1; i + 1 < word.length; i++)
+        if (word.length < 2*minSize)    // need at least two parts of at least two characters
+            return [word];
+        for (size_t i = word.length - 2; i >= 2; i--)
         {
             const first = word.takeExactly(i).to!S;
             const second = word.dropExactly(i).to!S;
+
+            if (first.length < 2)
+                continue;
 
             auto firstOk = canMeanSomething(first, langs);
             bool genitiveForm = false; // TODO return this as a Node
@@ -630,13 +638,21 @@ class WordNet(bool useArray = true,
                 }
             }
 
-            auto secondOk = canMeanSomething(second, langs);
-
-            if (firstOk &&
-                secondOk)
+            if (firstOk)
             {
-                return [first,
-                        second];
+                auto secondOk = canMeanSomething(second, langs);
+                if (secondOk)
+                {
+                    return [first, second];
+                }
+                else
+                {
+                    auto secondSplits = findMeaningfulWordSplit(second, langs, crossLanguage);
+                    if (secondSplits.length >= 2)
+                    {
+                        return [first] ~ secondSplits;
+                    }
+                }
             }
         }
         return [word];
@@ -649,9 +665,10 @@ class WordNet(bool useArray = true,
         return canMean(lemma, kind, lang == HLang.unknown ? [] : [lang]);
     }
 
-    void readIndexLine(R, N)(R line, N lnr,
-                             HLang lang = HLang.unknown,
-                             bool useMmFile = false)
+    void readIndexLine(R, N)(const R line,
+                             const N lnr,
+                             const HLang lang = HLang.unknown,
+                             const bool useMmFile = false)
     {
         if (!line.empty &&
             !line.front.isWhite) // if first is not space. TODO move this check
@@ -784,6 +801,7 @@ unittest
         assert(!wn.canMean(`måndag`, WordKind.verb, [HLang.sv]));
         assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
         assert(wn.canMean(`januari`, WordKind.nounMonth, [HLang.sv]));
+        assert(wn.canMean(`sopstation`, WordKind.unknown, [HLang.sv]));
     }
 
     if (langs.canFind(HLang.de))
@@ -793,23 +811,23 @@ unittest
 
     if (langs.canFind(HLang.en))
     {
-        assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
-        assert(wn.findMeaningfulWordSplit(`xwing`, [HLang.en]) == [`x`, `wing`]);
+        assertEqual(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]), [`car`, `wash`]);
+        assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]); // shouldn't find any split
     }
-
-    assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]);
 
     if (langs.canFind(HLang.sv))
     {
+        assert(wn.findMeaningfulWordSplit(`kärnkraftsavfallshink` == [HLang.sv]), [`kärnkrafts`, `avfalls`, `hink`]);
+        assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]), [`pappers`, `korg`]);
         assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == [``]);
         assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == [`i`]);
         assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
         assert(wn.findMeaningfulWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
         assert(wn.findMeaningfulWordSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
-        assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
         assert(wn.findMeaningfulWordSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
         assert(wn.findMeaningfulWordSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
         assert(wn.findMeaningfulWordSplit(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
+        assert(wn.findMeaningfulWordSplit(`kärnkraftsavfall`, [HLang.sv]) == [`kärnkrafts`, `avfall`]);
     }
 
     if (langs.canFind(HLang.en))
