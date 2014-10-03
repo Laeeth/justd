@@ -86,10 +86,11 @@ unittest
     auto x = [1, 2, 3];
     auto y = SlidingSplitter!(typeof(x))(x);
 
-    import std.range: isInputRange, isForwardRange;
+    import std.range: isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange;
 
     static assert(isInputRange!(SlidingSplitter!(typeof(x))));
     static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
+    // static assert(isBidirectionalRange!(SlidingSplitter!(typeof(x))));
 
     assert(y[0] == tuple([], x));
     assert(y.front == tuple([], x));
