@@ -10,6 +10,7 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
+    See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#post-viwkavbmwouiquoqwntm:40forum.dlang.org
 */
 struct SlidingSplitter(Range) if (isSomeString!Range ||
                                   (hasSlicing!Range &&
@@ -57,16 +58,6 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
     }
 
-    /** Leave this out for now according to
-        http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#post-viwkavbmwouiquoqwntm:40forum.dlang.org
-     */
-    /* auto moveFront() */
-    /* { */
-    /*     auto frontValue = front; */
-    /*     popFront(); */
-    /*     return frontValue; */
-    /* } */
-
     static if (isForwardRange!R)
     {
         @property auto save()
@@ -76,7 +67,17 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
     }
 
-    bool empty() const { return length == 0; }
+    bool empty() const
+    {
+        static if (hasSlicing!R)
+        {
+            return length == 0;
+        }
+        else
+        {
+            return _data.length == _index; // TODO what to use here instead?
+        }
+    }
 
     private R _data;
     private size_t _index;
@@ -87,9 +88,12 @@ auto slidingSplitter(R)(R data)
     return SlidingSplitter!R(data);
 }
 
+version = show;
+
 unittest
 {
     import std.typecons: tuple;
+    version(show) import std.stdio;
 
     auto x = [1, 2, 3];
     auto y = SlidingSplitter!(typeof(x))(x);
@@ -115,11 +119,22 @@ unittest
     assert(y.empty);
 
     auto z = slidingSplitter(x);
-    foreach (i, e; z)
+    size_t i;
+    foreach (e; z)
     {
-        import std.stdio;
-        writeln(i, ": ", e);
+        version(show) writeln(i, ": ", e);
+        ++i;
     }
+
+    auto name = slidingSplitter("Nordlöw");
+    assert(!name.empty);
+
+    /* foreach (e; name) */
+    /* { */
+    /*     version(show) writeln(e); */
+    /* } */
+
+    /* version(show) writefln("%(%s\n%)", slidingSplitter("Nordlöw")); */
 }
 
 /** Ring Buffer.
