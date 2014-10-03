@@ -55,9 +55,9 @@ struct SlidingSplitter(Range)
     // TODO should we reuse std.range.moveFront instead?
     auto moveFront()
     {
-        auto front_ = front;
+        auto frontValue = front;
         popFront();
-        return front_;
+        return frontValue;
     }
 
     static if (isForwardRange!R)
@@ -75,7 +75,7 @@ struct SlidingSplitter(Range)
     private size_t _index;
 }
 
-auto ref slidingSplitter(R)(R data)
+auto slidingSplitter(R)(R data)
 {
     return SlidingSplitter!R(data);
 }
