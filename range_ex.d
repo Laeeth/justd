@@ -52,13 +52,15 @@ struct SlidingSplitter(Range)
         }
     }
 
-    // TODO should we reuse std.range.moveFront instead?
-    auto moveFront()
-    {
-        auto frontValue = front;
-        popFront();
-        return frontValue;
-    }
+    /** Leave this out for now according to
+        http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#post-viwkavbmwouiquoqwntm:40forum.dlang.org
+     */
+    /* auto moveFront() */
+    /* { */
+    /*     auto frontValue = front; */
+    /*     popFront(); */
+    /*     return frontValue; */
+    /* } */
 
     static if (isForwardRange!R)
     {
@@ -98,14 +100,16 @@ unittest
     assert(!y.empty);
     assert(x.length == y.length);
 
-    assert(y.moveFront == tuple([], [1, 2, 3]));
-    assert(y.moveFront == tuple([1], [2, 3]));
-    assert(y.moveFront == tuple([1, 2], [3]));
+    import std.range: moveFront;
+    assert(y.front == tuple([], [1, 2, 3])); y.popFront;
+    assert(y.front == tuple([1], [2, 3])); y.popFront;
+    assert(y.front == tuple([1, 2], [3])); y.popFront;
 
     assert(y.length == 0);
     assert(y.empty);
 
-    foreach (i, e; slidingSplitter(x))
+    auto z = slidingSplitter(x);
+    foreach (i, e; z)
     {
         import std.stdio;
         writeln(i, ": ", e);
