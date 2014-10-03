@@ -22,34 +22,43 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
     import std.typecons: Tuple, tuple;
 
-    this(R)(R data, size_t index = 0)
+    this(R)(R data, size_t beginIndex = 0)
     {
         _data = data;
-        _index = index;
+        _beginIndex = beginIndex;
+        _endIndex = data.length;
     }
 
-    @property Tuple!(R, R) front() { return typeof(return)(_data[0 .. _index],
-                                                           _data[_index .. $]); }
+    this(R)(R data, size_t beginIndex, size_t endIndex)
+    {
+        _data = data;
+        _beginIndex = beginIndex;
+        _endIndex = endIndex;
+    }
+
+    @property Tuple!(R, R) front() { return typeof(return)(_data[0 .. _beginIndex],
+                                                           _data[_beginIndex .. $]); }
+
 
     void popFront()
     {
         static if (isNarrowString!R)
         {
-            if (_index < _data.length)
+            if (_beginIndex < _data.length)
             {
                 import std.utf: stride;
-                _index += stride(_data, _index);
+                _beginIndex += stride(_data, _beginIndex);
             }
             else
             {
-                ++_index;
+                ++_beginIndex;
             }
         }
         else
         {
-            if (_index < _data.length)
+            if (_beginIndex < _data.length)
             {
-                ++_index;
+                ++_beginIndex;
             }
         }
     }
@@ -59,7 +68,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         @property auto save()
         {
             import std.range: save;
-            return typeof(this)(_data.save, _index);
+            return typeof(this)(_data.save, _beginIndex);
         }
     }
 
@@ -71,7 +80,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
         else
         {
-            return _data.length < _index;
+            return _data.length < _beginIndex;
         }
     }
 
@@ -79,20 +88,26 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     {
         Tuple!(R, R) opIndex(size_t i)
         {
-            return typeof(return)(_data[0 .. _index + i],
-                                  _data[_index + i .. $]);
+            return typeof(return)(_data[0 .. _beginIndex + i],
+                                  _data[_beginIndex + i .. $]);
         }
 
-        @property size_t length() const { return _data.length - _index; }
+        @property size_t length() const { return _data.length - _beginIndex; }
     }
 
     private R _data;
-    private size_t _index;
+    private size_t _beginIndex;
+    private size_t _endIndex;
 }
 
-auto slidingSplitter(R)(R data)
+auto slidingSplitter(R)(R data, size_t beginIndex = 0)
 {
-    return SlidingSplitter!R(data);
+    return SlidingSplitter!R(data, beginIndex, data.length);
+}
+
+auto slidingSplitter(R)(R data, size_t beginIndex, size_t endIndex)
+{
+    return SlidingSplitter!R(data, beginIndex, endIndex);
 }
 
 version = show;
@@ -133,7 +148,7 @@ unittest
         ++i;
     }
 
-    auto name = slidingSplitter("Nordlöw");
+    auto name = slidingSplitter("Nordlöw", 2);
     assert(!name.empty);
     version(show) writefln("%(%s\n%)", name);
 }
@@ -145,7 +160,7 @@ unittest
 struct RingBuffer(T)
 {
     private T[] _data;
-    private size_t _index;
+    private size_t _beginIndex;
     private size_t _length;
 
     auto opSlice() const
@@ -162,7 +177,7 @@ struct RingBuffer(T)
         enforce(length <= data.length, "buffer length shall not be more
 than buffer capacity");
         _data = data;
-        _index = 0;
+        _beginIndex = 0;
         _length = length;
     }
 }
