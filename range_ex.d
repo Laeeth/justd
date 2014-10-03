@@ -64,7 +64,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
         else
         {
-            return _data.length == _index; // TODO what to use here instead?
+            return _data.length == _index; // TODO is this correct?
         }
     }
 
@@ -126,7 +126,9 @@ unittest
         ++i;
     }
 
-    /* auto name = slidingSplitter("Nordlöw"); */
+    /* TODO These fail */
+
+    auto name = slidingSplitter("Nordlöw");
     /* assert(!name.empty); */
 
     /* foreach (e; name) */
