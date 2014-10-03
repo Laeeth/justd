@@ -74,8 +74,8 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     {
         Tuple!(R, R) opIndex(size_t i)
         {
-            return tuple(_data[0 .. _index + i],
-                         _data[_index + i .. $]);
+            return typeof(return)(_data[0 .. _index + i],
+                                  _data[_index + i .. $]);
         }
 
         size_t length() const { return _data.length - _index; }
