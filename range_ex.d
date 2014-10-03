@@ -6,8 +6,87 @@
 
 module range_ex;
 
-/** Ring Buffer Container.
+/** Sliding Splitter.
+    See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
+*/
+struct SlidingSplitter(R)
+{
+    import std.range: isRandomAccessRange;
+    import std.typecons: Tuple, tuple;
+
+    this(R)(R data)
+    {
+        _data = data;
+    }
+
+    static if (isRandomAccessRange!R)
+    {
+        auto opSlice() const
+        {
+            // TODO what should we return here?
+            return tuple(_data[0.._index],
+                         _data[_index..$]);
+        }
+
+        Tuple!(R, R) front() { return typeof(return)(_data[0.._index],
+                                                     _data[_index..$]); }
+
+        size_t length() const { return _data.length - _index; }
+    }
+
+    auto ref moveFront()
+    {
+        popFront();
+        return front;
+    }
+
+    void popFront()
+    {
+        if (_index < _data.length)
+        {
+            _index++;
+        }
+    }
+
+    bool empty() const { return length == 0; }
+
+    private R _data;
+    private size_t _index;
+}
+
+auto ref slidingSplitter(R)(R data)
+{
+    return SlidingSplitter!R(data);
+}
+
+unittest
+{
+    import std.typecons: tuple;
+
+    auto x = [1, 2, 3];
+    auto y = SlidingSplitter!(int[])(x);
+
+    assert(y.front == tuple([], x));
+    assert(!y.empty);
+    assert(x.length == y.length);
+
+    assert(y.moveFront == tuple([1], [2, 3]));
+    assert(y.moveFront == tuple([1, 2], [3]));
+    assert(y.moveFront == tuple([1, 2, 3], []));
+
+    assert(y.empty);
+
+    auto z = slidingSplitter(x);
+    foreach (i, e; z)
+    {
+        import std.stdio;
+        writeln(i, ": ", e);
+    }
+}
+
+/** Ring Buffer.
     See also: http://forum.dlang.org/thread/ltpaqk$2dav$1@digitalmars.com
+    TODO inout
  */
 struct RingBuffer(T)
 {
