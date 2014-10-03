@@ -28,8 +28,8 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _index = index;
     }
 
-    Tuple!(R, R) front() { return typeof(return)(_data[0 .. _index],
-                                                 _data[_index .. $]); }
+    @property Tuple!(R, R) front() { return typeof(return)(_data[0 .. _index],
+                                                           _data[_index .. $]); }
 
     void popFront()
     {
@@ -56,7 +56,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
     }
 
-    bool empty() const
+    @property bool empty() const
     {
         static if (hasSlicing!R)
         {
@@ -64,7 +64,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
         else
         {
-            return _data.length == _index; // TODO is this correct?
+            return _data.length == _index;
         }
     }
 
@@ -76,7 +76,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
                                   _data[_index + i .. $]);
         }
 
-        size_t length() const { return _data.length - _index; }
+        @property size_t length() const { return _data.length - _index; }
     }
 
     private R _data;
