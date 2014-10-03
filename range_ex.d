@@ -52,7 +52,7 @@ struct SlidingSplitter(Range)
         }
     }
 
-    auto ref moveFront()
+    auto moveFront()
     {
         auto front_ = front;
         popFront();
