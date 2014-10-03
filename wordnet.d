@@ -811,7 +811,7 @@ unittest
 
     if (langs.canFind(HLang.en))
     {
-        assertEqual(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]), [`car`, `wash`]);
+        assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
         assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]); // shouldn't find any split
     }
 
