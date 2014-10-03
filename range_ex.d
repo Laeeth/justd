@@ -6,15 +6,17 @@
 
 module range_ex;
 
+import std.range: hasSlicing, isSomeString;
+
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
 */
-struct SlidingSplitter(Range)
+struct SlidingSplitter(Range) if (hasSlicing!Range)
 {
+    import std.range: isForwardRange;
     import std.typecons: Unqual;
     alias R = Unqual!Range;
 
-    import std.range: isInputRange, isForwardRange, hasSlicing;
     import std.typecons: Tuple, tuple;
 
     this(R)(R data, size_t index = 0)
@@ -92,6 +94,7 @@ unittest
     import std.range: isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange;
 
     static assert(isInputRange!(SlidingSplitter!(typeof(x))));
+
     static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
     // static assert(isBidirectionalRange!(SlidingSplitter!(typeof(x))));
 
