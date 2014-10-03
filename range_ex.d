@@ -28,8 +28,8 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _index = index;
     }
 
-    Tuple!(R, R) front() { return typeof(return)(_data[0.._index],
-                                                 _data[_index..$]); }
+    Tuple!(R, R) front() { return typeof(return)(_data[0 .. _index],
+                                                 _data[_index .. $]); }
 
     void popFront()
     {
@@ -72,8 +72,8 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     {
         auto opIndex(size_t i)
         {
-            return tuple(_data[0.._index + i],
-                         _data[_index + i..$]);
+            return tuple(_data[0 .. _index + i],
+                         _data[_index + i .. $]);
         }
 
         size_t length() const { return _data.length - _index; }
@@ -128,7 +128,7 @@ unittest
 
     /* TODO These fail */
 
-    auto name = slidingSplitter("Nordlöw");
+    /* auto name = slidingSplitter("Nordlöw"); */
     /* assert(!name.empty); */
 
     /* foreach (e; name) */
@@ -151,7 +151,7 @@ struct RingBuffer(T)
 
     auto opSlice() const
     {
-	return cycle(_data[0.._length]).take(_length);
+	return cycle(_data[0 .. _length]).take(_length);
     }
 
     @property
