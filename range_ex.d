@@ -40,7 +40,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
                 import std.range: stride;
                 import std.array: array;
                 // TODO Is this anywhere close, monarch_dodra?
-                _index += cast(char*)(stride(_data[_index .. $], 1).array.ptr) - cast()(_data.ptr);
+                _index += cast(char*)(stride(_data[_index .. $], 1).array.ptr) - _data.ptr;
             }
             else
             {
