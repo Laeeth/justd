@@ -28,32 +28,21 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _index = index;
     }
 
-    static if (hasSlicing!R)
+    Tuple!(R, R) front() { return typeof(return)(_data[0.._index],
+                                                 _data[_index..$]); }
+
+    void popFront()
     {
-        auto opIndex(size_t i)
+        if (_index < _data.length)
         {
-            return tuple(_data[0.._index + i],
-                         _data[_index + i..$]);
-        }
-
-        Tuple!(R, R) front() { return typeof(return)(_data[0.._index],
-                                                     _data[_index..$]); }
-
-        size_t length() const { return _data.length - _index; }
-
-        void popFront()
-        {
-            if (_index < _data.length)
+            static if (isNarrowString!R)
             {
-                static if (isNarrowString!R)
-                {
-                    import std.range: stride;
-                    _index += stride(_data, _index);
-                }
-                else
-                {
-                    ++_index;
-                }
+                import std.range: stride;
+                _index += stride(_data, _index);
+            }
+            else
+            {
+                ++_index;
             }
         }
     }
@@ -77,6 +66,17 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         {
             return _data.length == _index; // TODO what to use here instead?
         }
+    }
+
+    static if (hasSlicing!R)
+    {
+        auto opIndex(size_t i)
+        {
+            return tuple(_data[0.._index + i],
+                         _data[_index + i..$]);
+        }
+
+        size_t length() const { return _data.length - _index; }
     }
 
     private R _data;
@@ -118,6 +118,7 @@ unittest
     assert(y.empty);
 
     auto z = slidingSplitter(x);
+
     size_t i;
     foreach (e; z)
     {
@@ -125,8 +126,8 @@ unittest
         ++i;
     }
 
-    auto name = slidingSplitter("Nordlöw");
-    assert(!name.empty);
+    /* auto name = slidingSplitter("Nordlöw"); */
+    /* assert(!name.empty); */
 
     /* foreach (e; name) */
     /* { */
