@@ -110,7 +110,6 @@ unittest
     assert(!y.empty);
     assert(x.length == y.length);
 
-    import std.range: moveFront;
     assert(y.front == tuple([], [1, 2, 3])); y.popFront;
     assert(y.front == tuple([1], [2, 3])); y.popFront;
     assert(y.front == tuple([1, 2], [3])); y.popFront;
