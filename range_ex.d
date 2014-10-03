@@ -33,14 +33,21 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
     void popFront()
     {
-        if (_index < _data.length)
+        static if (isNarrowString!R)
         {
-            static if (isNarrowString!R)
+            if (_index < _data.length)
             {
                 import std.utf: stride;
                 _index += stride(_data, _index);
             }
             else
+            {
+                ++_index;
+            }
+        }
+        else
+        {
+            if (_index < _data.length)
             {
                 ++_index;
             }
@@ -64,7 +71,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
         else
         {
-            return _data.length == _index;
+            return _data.length < _index;
         }
     }
 
