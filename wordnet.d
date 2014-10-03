@@ -817,8 +817,8 @@ unittest
 
     if (langs.canFind(HLang.sv))
     {
-        assert(wn.findMeaningfulWordSplit(`kärnkraftsavfallshink` == [HLang.sv]), [`kärnkrafts`, `avfalls`, `hink`]);
-        assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]), [`pappers`, `korg`]);
+        assert(wn.findMeaningfulWordSplit(`kärnkraftsavfallshink`, [HLang.sv]) == [`kärnkrafts`, `avfalls`, `hink`]);
+        assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
         assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == [``]);
         assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == [`i`]);
         assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
