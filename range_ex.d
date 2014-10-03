@@ -52,6 +52,7 @@ struct SlidingSplitter(Range)
         }
     }
 
+    // TODO should we reuse std.range.moveFront instead?
     auto moveFront()
     {
         auto front_ = front;
