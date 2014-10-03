@@ -38,7 +38,9 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
             static if (isNarrowString!R)
             {
                 import std.range: stride;
-                _index += stride(_data, _index);
+                import std.array: array;
+                // TODO Is this anywhere close, monarch_dodra?
+                _index += cast(char*)(stride(_data[_index .. $], 1).array.ptr) - cast()(_data.ptr);
             }
             else
             {
@@ -128,8 +130,8 @@ unittest
 
     /* TODO These fail */
 
-    /* auto name = slidingSplitter("Nordlöw"); */
-    /* assert(!name.empty); */
+    auto name = slidingSplitter("Nordlöw");
+    assert(!name.empty);
 
     /* foreach (e; name) */
     /* { */
