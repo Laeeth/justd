@@ -622,7 +622,7 @@ class WordNet(bool useArray = true,
             const first = word.takeExactly(i).to!S;
             const second = word.dropExactly(i).to!S;
 
-            if (first.length < 2)
+            if (first.length < minSize)
                 continue;
 
             auto firstOk = canMeanSomething(first, langs);
