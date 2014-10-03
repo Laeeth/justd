@@ -9,14 +9,18 @@ module range_ex;
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
 */
-struct SlidingSplitter(R)
+struct SlidingSplitter(Range)
 {
-    import std.range: hasSlicing;
+    import std.typecons: Unqual;
+    alias R = Unqual!Range;
+
+    import std.range: isInputRange, isForwardRange, hasSlicing;
     import std.typecons: Tuple, tuple;
 
-    this(R)(R data)
+    this(R)(R data, size_t index = 0)
     {
         _data = data;
+        _index = index;
     }
 
     static if (hasSlicing!R)
@@ -38,6 +42,14 @@ struct SlidingSplitter(R)
                                                      _data[_index..$]); }
 
         size_t length() const { return _data.length - _index; }
+
+        void popFront()
+        {
+            if (_index < _data.length)
+            {
+                _index++;
+            }
+        }
     }
 
     auto ref moveFront()
@@ -47,11 +59,12 @@ struct SlidingSplitter(R)
         return front_;
     }
 
-    void popFront()
+    static if (isForwardRange!R)
     {
-        if (_index < _data.length)
+        @property auto save()
         {
-            _index++;
+            import std.range: save;
+            return typeof(this)(_data.save, _index);
         }
     }
 
@@ -72,6 +85,11 @@ unittest
 
     auto x = [1, 2, 3];
     auto y = SlidingSplitter!(typeof(x))(x);
+
+    import std.range: isInputRange, isForwardRange;
+
+    static assert(isInputRange!(SlidingSplitter!(typeof(x))));
+    static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
 
     assert(y[0] == tuple([], x));
     assert(y.front == tuple([], x));
