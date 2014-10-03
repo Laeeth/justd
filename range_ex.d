@@ -25,7 +25,7 @@ struct SlidingSplitter(Range)
 
     static if (hasSlicing!R)
     {
-        auto opIndex(size_t i) const
+        auto opIndex(size_t i)
         {
             return tuple(_data[0.._index + i],
                          _data[_index + i..$]);
