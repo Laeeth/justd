@@ -72,7 +72,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
     static if (hasSlicing!R)
     {
-        auto opIndex(size_t i)
+        Tuple!(R, R) opIndex(size_t i)
         {
             return tuple(_data[0 .. _index + i],
                          _data[_index + i .. $]);
