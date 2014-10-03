@@ -6,12 +6,14 @@
 
 module range_ex;
 
-import std.range: hasSlicing, isSomeString;
+import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
 */
-struct SlidingSplitter(Range) if (hasSlicing!Range)
+struct SlidingSplitter(Range) if (isSomeString!Range ||
+                                  (hasSlicing!Range &&
+                                   !isInfinite!Range))
 {
     import std.range: isForwardRange;
     import std.typecons: Unqual;
@@ -33,13 +35,6 @@ struct SlidingSplitter(Range) if (hasSlicing!Range)
                          _data[_index + i..$]);
         }
 
-        auto opSlice() const
-        {
-            // TODO what should we return here?
-            return tuple(_data[0.._index],
-                         _data[_index..$]);
-        }
-
         Tuple!(R, R) front() { return typeof(return)(_data[0.._index],
                                                      _data[_index..$]); }
 
@@ -49,7 +44,15 @@ struct SlidingSplitter(Range) if (hasSlicing!Range)
         {
             if (_index < _data.length)
             {
-                _index++;
+                static if (isNarrowString!R)
+                {
+                    import std.range: stride;
+                    _index += stride(_data, _index);
+                }
+                else
+                {
+                    ++_index;
+                }
             }
         }
     }
