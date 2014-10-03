@@ -59,9 +59,9 @@ struct BitSet(size_t len, Block = size_t)
 
     unittest {
         BitSet!2 bs = [0, 1];
-        assert(bs.at!0 == false);
-        assert(bs.at!1 == true);
-        // Note: This fails during compile-time: assert(bs.at!2 == false);
+        assert(bs.at!0 is false);
+        assert(bs.at!1 is true);
+        // Note: This fails during compile-time: assert(bs.at!2 is false);
     }
 
     /**
@@ -165,9 +165,9 @@ struct BitSet(size_t len, Block = size_t)
         {
             switch (i)
             {
-            case 0: assert(b == true); break;
-            case 1: assert(b == false); break;
-            case 2: assert(b == true); break;
+            case 0: assert(b is true); break;
+            case 1: assert(b is false); break;
+            case 2: assert(b is true); break;
             default: assert(0);
             }
             i++;
@@ -176,9 +176,9 @@ struct BitSet(size_t len, Block = size_t)
         {
             switch (j)
             {
-            case 0: assert(b == true); break;
-            case 1: assert(b == false); break;
-            case 2: assert(b == true); break;
+            case 0: assert(b is true); break;
+            case 1: assert(b is false); break;
+            case 2: assert(b is true); break;
             default: assert(0);
             }
         }
@@ -304,7 +304,7 @@ struct BitSet(size_t len, Block = size_t)
                 {
                     if (lo >= hi)
                         goto Ldone;
-                    if (this[lo] == true)
+                    if (this[lo] is true)
                         break;
                     lo++;
                 }
@@ -312,7 +312,7 @@ struct BitSet(size_t len, Block = size_t)
                 {
                     if (lo >= hi)
                         goto Ldone;
-                    if (this[hi] == false)
+                    if (this[hi] is false)
                         break;
                     hi--;
                 }
@@ -333,9 +333,9 @@ struct BitSet(size_t len, Block = size_t)
     /*         __gshared BitSet ba = { 10, &x }; */
     /*         ba.sort(); */
     /*         for (size_t i = 0; i < 6; i++) */
-    /*             assert(ba[i] == false); */
+    /*             assert(ba[i] is false); */
     /*         for (size_t i = 6; i < 10; i++) */
-    /*             assert(ba[i] == true); */
+    /*             assert(ba[i] is true); */
     /*     } */
 
 
