@@ -1,6 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Extensions to std.algorithm.
+/** Extensions to std.range.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
 */
 
