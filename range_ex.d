@@ -21,6 +21,12 @@ struct SlidingSplitter(R)
 
     static if (isRandomAccessRange!R)
     {
+        auto opIndex(size_t i) const
+        {
+            return tuple(_data[0.._index + i],
+                         _data[_index + i..$]);
+        }
+
         auto opSlice() const
         {
             // TODO what should we return here?
@@ -36,8 +42,9 @@ struct SlidingSplitter(R)
 
     auto ref moveFront()
     {
+        auto front_ = front;
         popFront();
-        return front;
+        return front_;
     }
 
     void popFront()
@@ -64,20 +71,21 @@ unittest
     import std.typecons: tuple;
 
     auto x = [1, 2, 3];
-    auto y = SlidingSplitter!(int[])(x);
+    auto y = SlidingSplitter!(typeof(x))(x);
 
+    assert(y[0] == tuple([], x));
     assert(y.front == tuple([], x));
     assert(!y.empty);
     assert(x.length == y.length);
 
+    assert(y.moveFront == tuple([], [1, 2, 3]));
     assert(y.moveFront == tuple([1], [2, 3]));
     assert(y.moveFront == tuple([1, 2], [3]));
-    assert(y.moveFront == tuple([1, 2, 3], []));
 
+    assert(y.length == 0);
     assert(y.empty);
 
-    auto z = slidingSplitter(x);
-    foreach (i, e; z)
+    foreach (i, e; slidingSplitter(x))
     {
         import std.stdio;
         writeln(i, ": ", e);
