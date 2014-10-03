@@ -11,7 +11,7 @@ module range_ex;
 */
 struct SlidingSplitter(R)
 {
-    import std.range: isRandomAccessRange;
+    import std.range: hasSlicing;
     import std.typecons: Tuple, tuple;
 
     this(R)(R data)
@@ -19,7 +19,7 @@ struct SlidingSplitter(R)
         _data = data;
     }
 
-    static if (isRandomAccessRange!R)
+    static if (hasSlicing!R)
     {
         auto opIndex(size_t i) const
         {
