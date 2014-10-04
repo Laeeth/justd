@@ -8,14 +8,6 @@ import std.traits;
 
 import backtrace.backtrace;
 
-static void arrayPackHandler(E)(ref Packer p,
-                                ref Array!E x)
-{
-    p.beginArray(x.length);
-    foreach (e; x)
-        p.pack(e);
-}
-
 unittest
 {
     import std.stdio: stderr;
