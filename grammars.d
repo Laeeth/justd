@@ -456,7 +456,42 @@ enum Usage:ubyte
     call
 }
 
-/** Computer Token. */
+/** English Vowel. */
+enum Vowel { a, o, u, e, i, y }
+
+/** English Consonants.
+    See also: https://simple.wikipedia.org/wiki/Consonant
+*/
+enum Consonant { b, c, d, f, g, h, j, k, l, m, n, p, q, r, s, t, v, w, x }
+
+/** Check if $(D c) is a Vowel. */
+bool isVowel(C)(C c) if (isSomeChar!C)
+{
+    import algorithm_ex: of;
+    return c.of('a', 'o', 'u', 'å',
+                'e', 'i', 'y', 'ä', 'ö');
+}
+
+unittest
+{
+    assert(!'k'.isVowel);
+    assert('å'.isVowel);
+}
+
+/** Check if $(D c) is a Consonant. */
+bool isConsonant(C)(C c) if (isSomeChar!C)
+{
+    import algorithm_ex: of;
+    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x');
+}
+
+unittest
+{
+    assert('k'.isConsonant);
+    assert(!'å'.isConsonant);
+}
+
+/** computer Token. */
 enum TokenId:ubyte
 {
     unknown,
