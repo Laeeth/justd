@@ -132,9 +132,9 @@ unittest
     assert(!y.empty);
     assert(x.length == y.length);
 
-    assert(y.front == tuple([], [1, 2, 3])); y.popFront;
-    assert(y.front == tuple([1], [2, 3])); y.popFront;
-    assert(y.front == tuple([1, 2], [3])); y.popFront;
+    assert(!y.empty); assert(y.front == tuple([], [1, 2, 3])); y.popFront;
+    assert(!y.empty); assert(y.front == tuple([1], [2, 3])); y.popFront;
+    assert(!y.empty); assert(y.front == tuple([1, 2], [3])); y.popFront;
 
     assert(y.length == 0);
     assert(y.empty);
@@ -151,6 +151,13 @@ unittest
     auto name = slidingSplitter("Nordlöw", 2);
     assert(!name.empty);
     version(show) writefln("%(%s\n%)", name);
+
+    import std.conv: to;
+    auto wname = slidingSplitter("Nordlöw".to!wstring, 2);
+    version(show) writefln("%(%s\n%)", wname);
+
+    auto dname = slidingSplitter("Nordlöw".to!dstring, 2);
+    version(show) writefln("%(%s\n%)", dname);
 }
 
 /** Ring Buffer.
