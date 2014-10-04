@@ -469,7 +469,7 @@ bool isVowel(C)(C c) if (isSomeChar!C)
 {
     import algorithm_ex: of;
     return c.of('a', 'o', 'u', 'å',
-                'e', 'i', 'y', 'ä', 'ö');
+                'e', 'i', 'y', 'ä', 'ö'); // TODO Use hash-table
 }
 
 unittest
@@ -482,7 +482,7 @@ unittest
 bool isConsonant(C)(C c) if (isSomeChar!C)
 {
     import algorithm_ex: of;
-    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x');
+    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x'); // TODO Use hash-table
 }
 
 unittest
