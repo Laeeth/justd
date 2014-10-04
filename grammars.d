@@ -482,7 +482,8 @@ unittest
 bool isConsonant(C)(C c) if (isSomeChar!C)
 {
     import algorithm_ex: of;
-    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x'); // TODO Use hash-table
+    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+                'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x'); // TODO Use hash-table
 }
 
 unittest
