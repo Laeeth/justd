@@ -5,7 +5,5 @@ import std.container;
 
 unittest
 {
-    Array!string x = ["x", "y"];
-    string[] y = ["x", "y"];
-    assert(x.pack == y.pack);
+     assert(Array!string(["x", "y"]).pack == ["x", "y"].pack);
 }
