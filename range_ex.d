@@ -144,12 +144,12 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
 auto slidingSplitter(R)(R data, size_t frontIndex = 0)
 {
-    return SlidingSplitter!(R)(data, frontIndex, data.length);
+    return SlidingSplitter!R(data, frontIndex, data.length);
 }
 
 auto slidingSplitter(R)(R data, size_t frontIndex, size_t backIndex)
 {
-    return SlidingSplitter!(R)(data, frontIndex, backIndex);
+    return SlidingSplitter!R(data, frontIndex, backIndex);
 }
 
 unittest
