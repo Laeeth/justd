@@ -13,7 +13,7 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
     See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#epost-viwkavbmwouiquoqwntm:40forum.dlang.org
 
     TODO Bidirectional support
-    TODO Make beginIndex and endIndex operate on code units instead of code
+    TODO Make frontIndex and backIndex operate on code units instead of code
     point if isNarrowString!Range.
 */
 struct SlidingSplitter(bool reverse = false,
@@ -25,63 +25,70 @@ struct SlidingSplitter(bool reverse = false,
     import std.typecons: Unqual, Tuple, tuple;
     alias R = Unqual!Range;
 
-    /** beginIndex is currently code unit not points */
-    this(R)(R data, size_t beginIndex = 0)
-    in { assert(beginIndex <= data.length); }
+    /** frontIndex is currently code unit not points */
+    this(R)(R data, size_t frontIndex = 0)
+    in { assert(frontIndex <= data.length); }
     body
     {
         _data = data;
         static if (hasSlicing!Range) // TODO should we use isSomeString here instead?
         {
-            _beginIndex = beginIndex;
-            _endIndex = data.length;
+            _frontIndex = frontIndex;
+            _backIndex = data.length;
         }
         else
         {
-            while (beginIndex)
+            while (frontIndex)
             {
                 popFront;
-                --beginIndex;
+                --frontIndex;
             }
         }
-        _endIndex = data.length;
+        _backIndex = data.length;
     }
 
-    /** beginIndex and endIndex are currently code units not points */
-    this(R)(R data, size_t beginIndex, size_t endIndex)
-    in { assert(beginIndex <= data.length);
-         assert(endIndex <= data.length); }
+    /** frontIndex and backIndex are currently code units not points */
+    this(R)(R data, size_t frontIndex, size_t backIndex)
+    in { assert(frontIndex <= data.length);
+         assert(backIndex <= data.length); }
     body
     {
         _data = data;
-        _beginIndex = beginIndex;
-        _endIndex = endIndex;
+        _frontIndex = frontIndex;
+        _backIndex = backIndex;
     }
 
     @property Tuple!(R, R) front()
     {
         import std.stdio;
-        return typeof(return)(_data[0 .. _beginIndex],
-                              _data[_beginIndex .. _endIndex]);
+        return typeof(return)(_data[0 .. _frontIndex],
+                              _data[_frontIndex .. $]);
+    }
+
+    @property Tuple!(R, R) back()
+    {
+        import std.stdio;
+        return typeof(return)(_data[0 .. _backIndex],
+                              _data[_backIndex .. $]);
     }
 
     void popFront()
     {
         static if (isNarrowString!R)
         {
-            if (_beginIndex < _endIndex)
+            if (_frontIndex < _backIndex)
             {
                 import std.utf: stride;
-                _beginIndex += stride(_data, _beginIndex);
+                _frontIndex += stride(_data, _frontIndex);
             }
             else                // when we can't decode beyond
             {
-                ++_beginIndex; // so just indicate we're beyond end
+                ++_frontIndex; // so just indicate we're beyond end
             }
         }
         else
         {
-            ++_beginIndex;
+            ++_frontIndex;
         }
     }
 
@@ -89,19 +96,19 @@ struct SlidingSplitter(bool reverse = false,
     {
         static if (isNarrowString!R)
         {
-            if (_beginIndex < _endIndex)
+            if (_frontIndex < _backIndex)
             {
                 import std.utf: stride, strideBack;
-                _endIndex -= strideBack(_data, _endIndex);
+                _backIndex -= strideBack(_data, _backIndex);
             }
             else                // when we can't decode beyond
             {
-                --_endIndex; // so just indicate we're beyond end
+                --_backIndex; // so just indicate we're beyond end
             }
         }
         else
         {
-            --_endIndex;
+            --_backIndex;
         }
     }
 
@@ -110,53 +117,53 @@ struct SlidingSplitter(bool reverse = false,
         @property auto save()
         {
             import std.range: save;
-            return typeof(this)(_data.save, _beginIndex);
+            return typeof(this)(_data.save, _frontIndex);
         }
     }
 
     @property bool empty() const
     {
-        return _endIndex < _beginIndex;
+        return _backIndex < _frontIndex;
     }
 
     static if (hasSlicing!R)
     {
         Tuple!(R, R) opIndex(size_t i)
         {
-            return typeof(return)(_data[0 .. _beginIndex + i],
-                                  _data[_beginIndex + i .. _endIndex]);
+            return typeof(return)(_data[0 .. _frontIndex + i],
+                                  _data[_frontIndex + i .. _backIndex]);
         }
 
         // TODO Should length be provided if isNarrowString!Range?
         @property size_t length() const
         {
-            return _endIndex - _beginIndex;
+            return _backIndex - _frontIndex;
         }
     }
 
     private R _data;
-    private ptrdiff_t _beginIndex;
-    private ptrdiff_t _endIndex;
+    private ptrdiff_t _frontIndex;
+    private ptrdiff_t _backIndex;
 }
 
-auto slidingSplitter(R)(R data, size_t beginIndex = 0)
+auto slidingSplitter(R)(R data, size_t frontIndex = 0)
 {
-    return SlidingSplitter!(false, R)(data, beginIndex, data.length);
+    return SlidingSplitter!(false, R)(data, frontIndex, data.length);
 }
 
-auto slidingReverseSplitter(R)(R data, size_t beginIndex = 0)
+auto slidingReverseSplitter(R)(R data, size_t frontIndex = 0)
 {
-    return SlidingSplitter!(true, R)(data, beginIndex, data.length);
+    return SlidingSplitter!(true, R)(data, frontIndex, data.length);
 }
 
-auto slidingSplitter(R)(R data, size_t beginIndex, size_t endIndex)
+auto slidingSplitter(R)(R data, size_t frontIndex, size_t backIndex)
 {
-    return SlidingSplitter!(false, R)(data, beginIndex, endIndex);
+    return SlidingSplitter!(false, R)(data, frontIndex, backIndex);
 }
 
-auto slidingReverseSplitter(R)(R data, size_t beginIndex, size_t endIndex)
+auto slidingReverseSplitter(R)(R data, size_t frontIndex, size_t backIndex)
 {
-    return SlidingSplitter!(true, R)(data, beginIndex, endIndex);
+    return SlidingSplitter!(true, R)(data, frontIndex, backIndex);
 }
 
 unittest
@@ -185,11 +192,11 @@ unittest
     assert(!y.empty); assert(y.front == tuple([1, 2, 3], [])); y.popFront;
     y.popFront; assert(y.empty);
 
-    size_t beginIndex = 2;
+    size_t frontIndex = 2;
 
-    auto cname = slidingSplitter("Nordlöw", beginIndex);
-    auto wname = slidingSplitter("Nordlöw".to!wstring, beginIndex);
-    auto dname = slidingSplitter("Nordlöw".to!dstring, beginIndex);
+    auto cname = slidingSplitter("Nordlöw", frontIndex);
+    auto wname = slidingSplitter("Nordlöw".to!wstring, frontIndex);
+    auto dname = slidingSplitter("Nordlöw".to!dstring, frontIndex);
 
     static assert(!__traits(compiles, { cname.length >= 0; } ));
     static assert(!__traits(compiles, { wname.length >= 0; } ));
