@@ -12,8 +12,8 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
     See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#epost-viwkavbmwouiquoqwntm:40forum.dlang.org
 
-    TODO Make frontIndex and backIndex operate on code units instead of code
-    point if isNarrowString!Range.
+    TODO Should frontIndex and backIndex operate on code units instead of code
+    point if isNarrowString!Range. ?
 */
 struct SlidingSplitter(Range) if (isSomeString!Range ||
                                   (hasSlicing!Range &&
@@ -23,7 +23,6 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     import std.typecons: Unqual, Tuple, tuple;
     alias R = Unqual!Range;
 
-    /** frontIndex is currently code unit not points */
     this(R)(R data, size_t frontIndex = 0)
     in { assert(frontIndex <= data.length); }
     body
@@ -45,7 +44,6 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _backIndex = data.length;
     }
 
-    /** frontIndex and backIndex are currently code units not points */
     this(R)(R data, size_t frontIndex, size_t backIndex)
     in { assert(frontIndex <= data.length);
          assert(backIndex <= data.length); }
