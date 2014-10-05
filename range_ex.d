@@ -12,12 +12,10 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
     See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#epost-viwkavbmwouiquoqwntm:40forum.dlang.org
 
-    TODO Bidirectional support
     TODO Make frontIndex and backIndex operate on code units instead of code
     point if isNarrowString!Range.
 */
-struct SlidingSplitter(bool reverse = false,
-                       Range) if (isSomeString!Range ||
+struct SlidingSplitter(Range) if (isSomeString!Range ||
                                   (hasSlicing!Range &&
                                    !isInfinite!Range))
 {
@@ -146,22 +144,12 @@ struct SlidingSplitter(bool reverse = false,
 
 auto slidingSplitter(R)(R data, size_t frontIndex = 0)
 {
-    return SlidingSplitter!(false, R)(data, frontIndex, data.length);
-}
-
-auto slidingReverseSplitter(R)(R data, size_t frontIndex = 0)
-{
-    return SlidingSplitter!(true, R)(data, frontIndex, data.length);
+    return SlidingSplitter!(R)(data, frontIndex, data.length);
 }
 
 auto slidingSplitter(R)(R data, size_t frontIndex, size_t backIndex)
 {
-    return SlidingSplitter!(false, R)(data, frontIndex, backIndex);
-}
-
-auto slidingReverseSplitter(R)(R data, size_t frontIndex, size_t backIndex)
-{
-    return SlidingSplitter!(true, R)(data, frontIndex, backIndex);
+    return SlidingSplitter!(R)(data, frontIndex, backIndex);
 }
 
 unittest
@@ -173,11 +161,11 @@ unittest
 
     import std.range: isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange;
 
-    static assert(isInputRange!(SlidingSplitter!(false, typeof(x))));
-    static assert(isForwardRange!(SlidingSplitter!(false, typeof(x))));
+    static assert(isInputRange!(SlidingSplitter!(typeof(x))));
+    static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
     // static assert(isBidirectionalRange!(SlidingSplitter!(typeof(x))));
 
-    auto y = SlidingSplitter!(false, typeof(x))(x);
+    auto y = SlidingSplitter!(typeof(x))(x);
 
     assert(y[0] == tuple([], x));
     assert(y.front == tuple([], x));
