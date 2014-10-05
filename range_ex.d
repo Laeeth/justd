@@ -24,14 +24,29 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     alias R = Unqual!Range;
 
     this(R)(R data, size_t beginIndex = 0)
+    in { assert(beginIndex <= data.length); }
+    body
     {
         _data = data;
-        _beginIndex = beginIndex;
+        static if (hasSlicing!Range) // TODO should we use isSomeString here instead?
+        {
+            _beginIndex = beginIndex;
+            _endIndex = data.length;
+        }
+        else
+        {
+            while (beginIndex)
+            {
+                popFront;
+                --beginIndex;
+            }
+        }
         _endIndex = data.length;
     }
 
     this(R)(R data, size_t beginIndex, size_t endIndex)
-    in { assert(endIndex <= data.length); }
+    in { assert(beginIndex <= data.length);
+         assert(endIndex <= data.length); }
     body
     {
         _data = data;
