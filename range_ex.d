@@ -83,7 +83,7 @@ struct SlidingSplitter(bool reverse = false,
             }
             else                // when we can't decode beyond
             {
-                ++_frontIndex; // so just indicate we're beyond end
+                ++_frontIndex; // so just indicate we're beyond back
             }
         }
         else
@@ -103,7 +103,7 @@ struct SlidingSplitter(bool reverse = false,
             }
             else                // when we can't decode beyond
             {
-                --_backIndex; // so just indicate we're beyond end
+                --_backIndex; // so just indicate we're beyond front
             }
         }
         else
