@@ -106,13 +106,10 @@ auto slidingSplitter(R)(R data, size_t beginIndex, size_t endIndex)
     return SlidingSplitter!R(data, beginIndex, endIndex);
 }
 
-/* version = show; */
-
 unittest
 {
     import std.typecons: tuple;
     import std.conv: to;
-    version(show) import std.stdio;
 
     auto x = [1, 2, 3];
 
@@ -135,15 +132,6 @@ unittest
     assert(!y.empty); assert(y.front == tuple([1, 2, 3], [])); y.popFront;
     y.popFront; assert(y.empty);
 
-    auto z = slidingSplitter(x);
-
-    size_t i;
-    foreach (e; z)
-    {
-        version(show) writeln(i, ": ", e);
-        ++i;
-    }
-
     size_t beginIndex = 2;
 
     auto cname = slidingSplitter("Nordlöw", beginIndex);
@@ -164,9 +152,9 @@ unittest
         dname.popFront;
     }
 
-    /* version(show) writefln("%(%s\n%)", cname); */
-    /* version(show) writefln("%(%s\n%)", wname); */
-    /* version(show) writefln("%(%s\n%)", dname); */
+    /* writefln("%(%s\n%)", cname); */
+    /* writefln("%(%s\n%)", wname); */
+    /* writefln("%(%s\n%)", dname); */
 }
 
 /** Ring Buffer.
