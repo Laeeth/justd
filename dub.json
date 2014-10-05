@@ -19,7 +19,8 @@
     "sourceFiles": [ "rational.d",
                      "fs.d",
                      "msgpack.d", "mangling.d", "grammars.d", "attributes.d", "typedoc.d",
-                     "assert_ex.d", "algorithm_ex.d", "digest_ex.d", "traits_ex.d", "getopt_ex.d", "bitop_ex.d", "geometry.d", "random_ex.d", "mathml.d",
+                     "assert_ex.d", "algorithm_ex.d", "range_ex.d", "digest_ex.d", "traits_ex.d",
+                     "getopt_ex.d", "bitop_ex.d", "geometry.d", "random_ex.d", "mathml.d",
                      "w3c.d", "codec.d", "csunits.d", "notnull.d", "ngram.d", "bitset.d", "pprint.d", "dbg.d", "sregex.d",
                      "arsd/color.d",
                      "arsd/terminal.d"

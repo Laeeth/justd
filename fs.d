@@ -5029,7 +5029,15 @@ class Scanner(Term)
         if (!sst.isNull)
         {
             import algorithm_ex: findFirstOfAnyInOrder;
-            import std.range: tee;
+            static if (__VERSION__ >= 2067)
+            {
+                import std.range: tee;
+            }
+            else
+            {
+                import range_ex: tee;
+            }
+
             auto scan = (sst.strings
                             .filter!(raw => !raw.empty) // skip empty raw string
                             .tee!(raw => gstats.elfFilesBySymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here because we can't rever to raw

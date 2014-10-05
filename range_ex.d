@@ -199,3 +199,100 @@ private template siotaImpl(size_t to, size_t now)
     static if (now >= to) { alias siotaImpl = TypeTuple!(now); }
     else                  { alias siotaImpl = TypeTuple!(now, siotaImpl!(to, now+1)); }
 }
+
+/* TODO Remove when new DMD is released */
+static if (__VERSION__ < 2067)
+{
+    import std.typecons : Flag, No, Tuple, tuple, Yes;
+    import std.range : ElementType, isInputRange, isOutputRange, hasLength, put;
+    import std.traits : isFunctionPointer, isDelegate;
+
+    auto tee(Flag!"pipeOnPop" pipeOnPop = Yes.pipeOnPop, R1, R2)(R1 inputRange, R2 outputRange)
+    if (isInputRange!R1 && isOutputRange!(R2, typeof(inputRange.front)))
+    {
+        static struct Result
+        {
+            private R1 _input;
+            private R2 _output;
+            static if (!pipeOnPop)
+            {
+                private bool _frontAccessed;
+            }
+
+            static if (hasLength!R1)
+            {
+                @property length()
+                {
+                    return _input.length;
+                }
+            }
+
+            static if (isInfinite!R1)
+            {
+                enum bool empty = false;
+            }
+            else
+            {
+                @property bool empty() { return _input.empty; }
+            }
+
+            void popFront()
+            {
+                assert(!_input.empty);
+                static if (pipeOnPop)
+                {
+                    put(_output, _input.front);
+                }
+                else
+                {
+                    _frontAccessed = false;
+                }
+                _input.popFront();
+            }
+
+            @property auto ref front()
+            {
+                static if (!pipeOnPop)
+                {
+                    if (!_frontAccessed)
+                    {
+                        _frontAccessed = true;
+                        put(_output, _input.front);
+                    }
+                }
+                return _input.front;
+            }
+        }
+
+        return Result(inputRange, outputRange);
+    }
+
+    /++
+     Overload for taking a function or template lambda as an $(LREF OutputRange)
+     +/
+    auto tee(alias fun, Flag!"pipeOnPop" pipeOnPop = Yes.pipeOnPop, R1)(R1 inputRange)
+    if (is(typeof(fun) == void) || isSomeFunction!fun)
+    {
+        /*
+          Distinguish between function literals and template lambdas
+          when using either as an $(LREF OutputRange). Since a template
+          has no type, typeof(template) will always return void.
+          If it's a template lambda, it's first necessary to instantiate
+          it with $(D ElementType!R1).
+        */
+        static if (is(typeof(fun) == void))
+            alias _fun = fun!(ElementType!R1);
+        else
+        alias _fun = fun;
+
+        static if (isFunctionPointer!_fun || isDelegate!_fun)
+        {
+            return tee!pipeOnPop(inputRange, _fun);
+        }
+        else
+        {
+            return tee!pipeOnPop(inputRange, &_fun);
+        }
+    }
+
+}
