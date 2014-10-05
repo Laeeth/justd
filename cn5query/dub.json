@@ -5,5 +5,5 @@
     "copyright": "Copyright © 2014, Per Nordlöw",
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
-    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../conceptnet5.d", "../rcstring.d", "../wordnet.d", "../grammars.d" ]
+    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../conceptnet5.d", "../rcstring.d", "../wordnet.d", "../grammars.d", "../assert_ex.d" ]
 }
