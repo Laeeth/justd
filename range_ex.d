@@ -10,7 +10,10 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
-    See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#post-viwkavbmwouiquoqwntm:40forum.dlang.org
+    See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#epost-viwkavbmwouiquoqwntm:40forum.dlang.org
+
+    TODO Make beginIndex and endIndex operate on code units instead of code
+    point if isNarrowString!Range.
 */
 struct SlidingSplitter(Range) if (isSomeString!Range ||
                                   (hasSlicing!Range &&
@@ -52,9 +55,9 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
                 import std.utf: stride;
                 _beginIndex += stride(_data, _beginIndex);
             }
-            else
+            else                // when we can't decode beyond
             {
-                ++_beginIndex;
+                ++_beginIndex; // so just indicate we're beyond end
             }
         }
         else
@@ -133,10 +136,11 @@ unittest
     y.popFront; assert(y.empty);
 
     size_t beginIndex = 2;
+    size_t endIndex = 6;
 
-    auto cname = slidingSplitter("Nordlöw", beginIndex);
-    auto wname = slidingSplitter("Nordlöw".to!wstring, beginIndex);
-    auto dname = slidingSplitter("Nordlöw".to!dstring, beginIndex);
+    auto cname = slidingSplitter("Nordlöw", beginIndex, endIndex);
+    auto wname = slidingSplitter("Nordlöw".to!wstring, beginIndex, endIndex);
+    auto dname = slidingSplitter("Nordlöw".to!dstring, beginIndex, endIndex);
 
     import std.algorithm: equal;
 
@@ -152,7 +156,8 @@ unittest
         dname.popFront;
     }
 
-    /* writefln("%(%s\n%)", cname); */
+    import std.stdio;
+    writefln("%(%s\n%)", cname);
     /* writefln("%(%s\n%)", wname); */
     /* writefln("%(%s\n%)", dname); */
 }
