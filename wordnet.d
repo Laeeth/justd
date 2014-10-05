@@ -615,8 +615,11 @@ class WordNet(bool useArray = true,
                                    const bool crossLanguage = false,
                                    const size_t minSize = 2) if (isSomeString!S)
     {
+        import range_ex: slidingSplitter;
+
         if (word.length < 2*minSize)    // need at least two parts of at least two characters
             return [word];
+
         for (size_t i = word.length - 2; i >= 2; i--)
         {
             const first = word.takeExactly(i).to!S;
