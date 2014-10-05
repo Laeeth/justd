@@ -329,9 +329,11 @@ Thematic toThematic(Relation relation)
 
 enum Source:ubyte
 {
-    dbpedia37,                  // dbpedia 3.7
-    dbpediaEn,                  // dbpedia English
-    wordnet30,                  // WordNet 3.0
+    dbpedia37,
+    dbpedia39umbel,
+    dbpediaEn,
+    wordnet30,
+    verbosity,
 }
 
 auto pageSize() @trusted
@@ -532,6 +534,7 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == `.csv`))
         {
             readCSV(file);
+            break;
         }
     }
 
@@ -675,7 +678,9 @@ class Net(bool useArray = true,
                         _connectednessSum++;
                     }
                     else
-                    dln(part);
+                    {
+                        dln("TODO ", part);
+                    }
                     break;
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
@@ -685,12 +690,14 @@ class Net(bool useArray = true,
                         _connectednessSum++;
                     }
                     else
-                    dln(part);
+                    {
+                        dln("TODO ", part);
+                    }
                     break;
                 case 4:
                     if (part != `/ctx/all`)
                     {
-                        dln(part);
+                        dln("TODO ", part);
                     }
                     break;
                 case 5:
@@ -706,9 +713,12 @@ class Net(bool useArray = true,
                     switch (part)
                     {
                         case `/s/dbpedia/3.7`: link.source = Source.dbpedia37; break;
+                        case `/s/dbpedia/3.9/umbel`: link.source = Source.dbpedia39umbel; break;
                         case `/d/dbpedia/en`:  link.source = Source.dbpediaEn; break;
                         case `/d/wordnet/3.0`: link.source = Source.wordnet30; break;
-                        default: break;
+                        case `/s/wordnet/3.0`: link.source = Source.wordnet30; break;
+                        case `/s/site/verbosity`: link.source = Source.verbosity; break;
+                        default: /* dln("Handle ", part); */ break;
                     }
                     this.sourceCounts[link.source]++;
                     break;
@@ -756,7 +766,7 @@ class Net(bool useArray = true,
 
     void showRelations()
     {
-        writeln(`Relations:`);
+        writeln(`Relation Count by Type:`);
         foreach (relation; Relation.min..Relation.max)
         {
             const count = this.relationCounts[relation];
@@ -766,7 +776,7 @@ class Net(bool useArray = true,
             }
         }
 
-        writeln(`Sources:`);
+        writeln(`Concept Count by Source:`);
         foreach (source; Source.min..Source.max)
         {
             const count = this.sourceCounts[source];
@@ -776,7 +786,7 @@ class Net(bool useArray = true,
             }
         }
 
-        writeln(`Languages:`);
+        writeln(`Concept Count by Language:`);
         foreach (hlang; HLang.min..HLang.max)
         {
             const count = this.hlangCounts[hlang];
@@ -790,8 +800,8 @@ class Net(bool useArray = true,
         writeln(`- Weights Min,Max,Average: `,
                 this.weightMin, ',', this.weightMax, ',', cast(real)this.weightSum/this._links.length);
         writeln(`- Number of assertions: `, this._assertionCount);
-        writeln(`- Concepts Count: `, _concepts.length);
-        writeln(`- Concepts Indexes by Lemma Count: `, _conceptIxByLemma.length);
+        writeln(`- Concept Count: `, _concepts.length);
+        writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
         writeln(`- Concept String Length Average: `, cast(real)_conceptStringLengthSum/_concepts.length);
         writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/_concepts.length);
     }
@@ -801,13 +811,18 @@ class Net(bool useArray = true,
                          HLang hlang = HLang.unknown,
                          WordKind wordKind = WordKind.unknown) if (isSomeString!S)
     {
-        writeln(`Line `, line);
-        foreach (concept; this.conceptsByWords(line,
+        import std.uni: isWhite;
+        import std.algorithm: splitter;
+        auto normalizedLine = line.splitter!isWhite.joiner("_").to!S;
+        writeln(`Line `, normalizedLine);
+        foreach (concept; this.conceptsByWords(normalizedLine,
                                                hlang,
                                                wordKind))
         {
             writeln(`- in `, concept.hlang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
+            writeln(concept.inIxes.length);
+            writeln(concept.outIxes.length);
             foreach (inIx; concept.inIxes)
             {
                 writeln(`  - in `, linkByIndex(inIx));
