@@ -1,4 +1,4 @@
-import std.logger;
+import std.experimental.logger;
 
 import gfm.opengl,
        gfm.sdl2,
