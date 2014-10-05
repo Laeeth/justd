@@ -218,6 +218,8 @@ unittest
 
     /* import std.stdio; */
     /* writefln("%(%s\n%)", cname); */
+    /* import std.range: retro; */
+    /* writefln("%(%s\n%)", cname.retro); */
     /* writefln("%(%s\n%)", wname); */
     /* writefln("%(%s\n%)", dname); */
 }
