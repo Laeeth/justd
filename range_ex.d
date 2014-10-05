@@ -12,10 +12,12 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
     See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#epost-viwkavbmwouiquoqwntm:40forum.dlang.org
 
+    TODO Bidirectional support
     TODO Make beginIndex and endIndex operate on code units instead of code
     point if isNarrowString!Range.
 */
-struct SlidingSplitter(Range) if (isSomeString!Range ||
+struct SlidingSplitter(bool reverse = false,
+                       Range) if (isSomeString!Range ||
                                   (hasSlicing!Range &&
                                    !isInfinite!Range))
 {
@@ -23,6 +25,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     import std.typecons: Unqual, Tuple, tuple;
     alias R = Unqual!Range;
 
+    /** beginIndex is currently code unit not points */
     this(R)(R data, size_t beginIndex = 0)
     in { assert(beginIndex <= data.length); }
     body
@@ -44,6 +47,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _endIndex = data.length;
     }
 
+    /** beginIndex and endIndex are currently code units not points */
     this(R)(R data, size_t beginIndex, size_t endIndex)
     in { assert(beginIndex <= data.length);
          assert(endIndex <= data.length); }
@@ -56,8 +60,9 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
     @property Tuple!(R, R) front()
     {
+        import std.stdio;
         return typeof(return)(_data[0 .. _beginIndex],
-                              _data[_beginIndex .. $]);
+                              _data[_beginIndex .. _endIndex]);
     }
 
 
@@ -100,12 +105,13 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         Tuple!(R, R) opIndex(size_t i)
         {
             return typeof(return)(_data[0 .. _beginIndex + i],
-                                  _data[_beginIndex + i .. $]);
+                                  _data[_beginIndex + i .. _endIndex]);
         }
 
+        // TODO Should length be provided if isNarrowString!Range?
         @property size_t length() const
         {
-            return _data.length - _beginIndex;
+            return _endIndex - _beginIndex;
         }
     }
 
@@ -116,12 +122,22 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
 auto slidingSplitter(R)(R data, size_t beginIndex = 0)
 {
-    return SlidingSplitter!R(data, beginIndex, data.length);
+    return SlidingSplitter!(false, R)(data, beginIndex, data.length);
+}
+
+auto slidingReverseSplitter(R)(R data, size_t beginIndex = 0)
+{
+    return SlidingSplitter!(true, R)(data, beginIndex, data.length);
 }
 
 auto slidingSplitter(R)(R data, size_t beginIndex, size_t endIndex)
 {
-    return SlidingSplitter!R(data, beginIndex, endIndex);
+    return SlidingSplitter!(false, R)(data, beginIndex, endIndex);
+}
+
+auto slidingReverseSplitter(R)(R data, size_t beginIndex, size_t endIndex)
+{
+    return SlidingSplitter!(true, R)(data, beginIndex, endIndex);
 }
 
 unittest
@@ -133,11 +149,11 @@ unittest
 
     import std.range: isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange;
 
-    static assert(isInputRange!(SlidingSplitter!(typeof(x))));
-    static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
+    static assert(isInputRange!(SlidingSplitter!(false, typeof(x))));
+    static assert(isForwardRange!(SlidingSplitter!(false, typeof(x))));
     // static assert(isBidirectionalRange!(SlidingSplitter!(typeof(x))));
 
-    auto y = SlidingSplitter!(typeof(x))(x);
+    auto y = SlidingSplitter!(false, typeof(x))(x);
 
     assert(y[0] == tuple([], x));
     assert(y.front == tuple([], x));
@@ -151,11 +167,14 @@ unittest
     y.popFront; assert(y.empty);
 
     size_t beginIndex = 2;
-    size_t endIndex = 6;
 
-    auto cname = slidingSplitter("Nordlöw", beginIndex, endIndex);
-    auto wname = slidingSplitter("Nordlöw".to!wstring, beginIndex, endIndex);
-    auto dname = slidingSplitter("Nordlöw".to!dstring, beginIndex, endIndex);
+    auto cname = slidingSplitter("Nordlöw", beginIndex);
+    auto wname = slidingSplitter("Nordlöw".to!wstring, beginIndex);
+    auto dname = slidingSplitter("Nordlöw".to!dstring, beginIndex);
+
+    static assert(!__traits(compiles, { cname.length >= 0; } ));
+    static assert(!__traits(compiles, { wname.length >= 0; } ));
+    assert(dname.length);
 
     import std.algorithm: equal;
 
