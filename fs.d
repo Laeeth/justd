@@ -484,7 +484,7 @@ class FKind
         behaviour of $(D this) FKind changes returned id will change.
         value is memoized.
     */
-    auto ref const(SHA1Digest) behaviorId() @property @safe pure nothrow
+    auto ref const(SHA1Digest) behaviorId() @property @safe /* pure nothrow */
         out(result) { assert(!result.empty); }
     body
     {
@@ -542,19 +542,19 @@ class FKind
 /** Set of File Kinds with Internal Hashing. */
 class FKinds
 {
-    void opOpAssign(string op)(FKind kind) @safe pure if (op == `~`)
+    void opOpAssign(string op)(FKind kind) @safe /* pure */ if (op == `~`)
     {
         mixin(`this.byIndex ` ~ op ~ `= kind;`);
         this.register(kind);
     }
-    void opOpAssign(string op)(FKinds kinds) @safe pure if (op == `~`)
+    void opOpAssign(string op)(FKinds kinds) @safe /* pure */ if (op == `~`)
     {
         mixin(`this.byIndex ` ~ op ~ `= kinds.byIndex;`);
         foreach (kind; kinds.byIndex)
             this.register(kind);
     }
 
-    FKinds register(FKind kind) @safe pure
+    FKinds register(FKind kind) @safe /* pure */
     {
         this.byName[kind.kindName] = kind;
         foreach (const ext; kind.exts)
@@ -1647,10 +1647,10 @@ class GStats
     DirKind[] skippedDirKinds;
     DirKind[string] skippedDirKindsMap;
 
-    NotNull!FKinds txtFKinds = new FKinds; // Textual
-    NotNull!FKinds binFKinds = new FKinds; // Binary (Non-Textual)
-    NotNull!FKinds allFKinds = new FKinds; // All
-    NotNull!FKinds selFKinds = new FKinds; // User selected
+    FKinds txtFKinds = new FKinds; // Textual
+    FKinds binFKinds = new FKinds; // Binary (Non-Textual)
+    FKinds allFKinds = new FKinds; // All
+    FKinds selFKinds = new FKinds; // User selected
 
     void loadFileKinds()
     {
