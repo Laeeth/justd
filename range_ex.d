@@ -7,6 +7,7 @@
 module range_ex;
 
 import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
+import dbg;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
@@ -36,8 +37,11 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _endIndex = endIndex;
     }
 
-    @property Tuple!(R, R) front() { return typeof(return)(_data[0 .. _beginIndex],
-                                                           _data[_beginIndex .. $]); }
+    @property Tuple!(R, R) front()
+    {
+        return typeof(return)(_data[0 .. _beginIndex],
+                              _data[_beginIndex .. $]);
+    }
 
 
     void popFront()
@@ -56,10 +60,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
         else
         {
-            if (_beginIndex < _data.length)
-            {
-                ++_beginIndex;
-            }
+            ++_beginIndex;
         }
     }
 
@@ -74,14 +75,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
     @property bool empty() const
     {
-        static if (hasSlicing!R)
-        {
-            return length == 0;
-        }
-        else
-        {
-            return _data.length < _beginIndex;
-        }
+        return _data.length < _beginIndex;
     }
 
     static if (hasSlicing!R)
@@ -92,7 +86,10 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
                                   _data[_beginIndex + i .. $]);
         }
 
-        @property size_t length() const { return _data.length - _beginIndex; }
+        @property size_t length() const
+        {
+            return _data.length - _beginIndex;
+        }
     }
 
     private R _data;
@@ -117,6 +114,8 @@ unittest
     import std.typecons: tuple;
     version(show) import std.stdio;
 
+    version(show) writefln("%(%s\n%)", slidingSplitter([1, 2, 3, 4, 5, 6]));
+
     auto x = [1, 2, 3];
     auto y = SlidingSplitter!(typeof(x))(x);
 
@@ -135,9 +134,8 @@ unittest
     assert(!y.empty); assert(y.front == tuple([], [1, 2, 3])); y.popFront;
     assert(!y.empty); assert(y.front == tuple([1], [2, 3])); y.popFront;
     assert(!y.empty); assert(y.front == tuple([1, 2], [3])); y.popFront;
-
-    assert(y.length == 0);
-    assert(y.empty);
+    assert(!y.empty); assert(y.front == tuple([1, 2, 3], [])); y.popFront;
+    y.popFront; assert(y.empty);
 
     auto z = slidingSplitter(x);
 
@@ -159,8 +157,6 @@ unittest
     auto dname = slidingSplitter("Nordlöw".to!dstring, 2);
     version(show) writefln("%(%s\n%)", dname);
 
-    auto arr = slidingSplitter([1, 2, 3, 4, 5, 6]);
-    version(show) writefln("%(%s\n%)", arr);
 }
 
 /** Ring Buffer.
