@@ -17,10 +17,10 @@ ulong lookup(in uint[uint] m, in uint[] b) @safe
     return sw.peek.msecs;
 }
 
-void randomizeInput(uint[] a,
-                    uint[] b,
-                    in double p,
-                    ref Xorshift rng) @safe
+void randomizeInput(RNG)(uint[] a,
+                         uint[] b,
+                         in double p,
+                         ref RNG rng) @safe pure
 {
     foreach (ref ai; a)
         ai = uniform!"[]"(0, uint.max, rng);
@@ -60,7 +60,7 @@ int main(in string[] args)
         }
 
         t += lookup(m, b);
-        m.clear; // deprecated?
+        m.destroy; // previously .clear
     }
 
     writefln("%.2f MOPS\n", double(r) * k / t);
