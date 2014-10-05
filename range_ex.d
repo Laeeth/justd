@@ -7,7 +7,6 @@
 module range_ex;
 
 import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
-import dbg;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
@@ -18,10 +17,8 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
                                    !isInfinite!Range))
 {
     import std.range: isForwardRange;
-    import std.typecons: Unqual;
+    import std.typecons: Unqual, Tuple, tuple;
     alias R = Unqual!Range;
-
-    import std.typecons: Tuple, tuple;
 
     this(R)(R data, size_t beginIndex = 0)
     {
@@ -30,7 +27,12 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _endIndex = data.length;
     }
 
+    import assert_ex;
+
+
     this(R)(R data, size_t beginIndex, size_t endIndex)
+    in { assert(endIndex <= data.length); }
+    body
     {
         _data = data;
         _beginIndex = beginIndex;
@@ -107,24 +109,23 @@ auto slidingSplitter(R)(R data, size_t beginIndex, size_t endIndex)
     return SlidingSplitter!R(data, beginIndex, endIndex);
 }
 
-version = show;
+/* version = show; */
 
 unittest
 {
     import std.typecons: tuple;
+    import std.conv: to;
     version(show) import std.stdio;
 
-    version(show) writefln("%(%s\n%)", slidingSplitter([1, 2, 3, 4, 5, 6]));
-
     auto x = [1, 2, 3];
-    auto y = SlidingSplitter!(typeof(x))(x);
 
     import std.range: isInputRange, isForwardRange, isBidirectionalRange, isRandomAccessRange;
 
     static assert(isInputRange!(SlidingSplitter!(typeof(x))));
-
     static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
     // static assert(isBidirectionalRange!(SlidingSplitter!(typeof(x))));
+
+    auto y = SlidingSplitter!(typeof(x))(x);
 
     assert(y[0] == tuple([], x));
     assert(y.front == tuple([], x));
@@ -146,17 +147,29 @@ unittest
         ++i;
     }
 
-    auto name = slidingSplitter("Nordlöw", 2);
-    assert(!name.empty);
-    version(show) writefln("%(%s\n%)", name);
+    size_t beginIndex = 2;
 
-    import std.conv: to;
-    auto wname = slidingSplitter("Nordlöw".to!wstring, 2);
-    version(show) writefln("%(%s\n%)", wname);
+    auto cname = slidingSplitter("Nordlöw", beginIndex);
+    auto wname = slidingSplitter("Nordlöw".to!wstring, beginIndex);
+    auto dname = slidingSplitter("Nordlöw".to!dstring, beginIndex);
 
-    auto dname = slidingSplitter("Nordlöw".to!dstring, 2);
-    version(show) writefln("%(%s\n%)", dname);
+    import std.algorithm: equal;
 
+    foreach (ch; cname)
+    {
+        foreach (ix; siota!(0, ch.length)) // for each part in split
+        {
+            assert(equal(ch[ix], wname.front[ix]));
+            assert(equal(ch[ix], dname.front[ix]));
+
+        }
+        wname.popFront;
+        dname.popFront;
+    }
+
+    /* version(show) writefln("%(%s\n%)", cname); */
+    /* version(show) writefln("%(%s\n%)", wname); */
+    /* version(show) writefln("%(%s\n%)", dname); */
 }
 
 /** Ring Buffer.
