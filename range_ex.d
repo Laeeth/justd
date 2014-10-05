@@ -60,14 +60,12 @@ struct SlidingSplitter(bool reverse = false,
 
     @property Tuple!(R, R) front()
     {
-        import std.stdio;
         return typeof(return)(_data[0 .. _frontIndex],
                               _data[_frontIndex .. $]);
     }
 
     @property Tuple!(R, R) back()
     {
-        import std.stdio;
         return typeof(return)(_data[0 .. _backIndex],
                               _data[_backIndex .. $]);
     }
@@ -98,7 +96,7 @@ struct SlidingSplitter(bool reverse = false,
         {
             if (_frontIndex < _backIndex)
             {
-                import std.utf: stride, strideBack;
+                import std.utf: strideBack;
                 _backIndex -= strideBack(_data, _backIndex);
             }
             else                // when we can't decode beyond
