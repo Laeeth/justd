@@ -69,7 +69,7 @@ struct SlidingSplitter(bool reverse = false,
     {
         static if (isNarrowString!R)
         {
-            if (_beginIndex < _data.length)
+            if (_beginIndex < _endIndex)
             {
                 import std.utf: stride;
                 _beginIndex += stride(_data, _beginIndex);
@@ -89,10 +89,10 @@ struct SlidingSplitter(bool reverse = false,
     {
         static if (isNarrowString!R)
         {
-            if (_beginIndex <= _endIndex)
+            if (_beginIndex < _endIndex)
             {
-                import std.utf: stride;
-                _beginIndex += stride(_data, _beginIndex);
+                import std.utf: stride, strideBack;
+                _endIndex -= strideBack(_data, _endIndex);
             }
             else                // when we can't decode beyond
             {
@@ -116,7 +116,7 @@ struct SlidingSplitter(bool reverse = false,
 
     @property bool empty() const
     {
-        return _data.length < _beginIndex;
+        return _endIndex < _beginIndex;
     }
 
     static if (hasSlicing!R)
