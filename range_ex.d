@@ -27,9 +27,6 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         _endIndex = data.length;
     }
 
-    import assert_ex;
-
-
     this(R)(R data, size_t beginIndex, size_t endIndex)
     in { assert(endIndex <= data.length); }
     body
