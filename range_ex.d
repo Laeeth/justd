@@ -65,7 +65,6 @@ struct SlidingSplitter(bool reverse = false,
                               _data[_beginIndex .. _endIndex]);
     }
 
-
     void popFront()
     {
         static if (isNarrowString!R)
@@ -83,6 +82,26 @@ struct SlidingSplitter(bool reverse = false,
         else
         {
             ++_beginIndex;
+        }
+    }
+
+    void popBack()
+    {
+        static if (isNarrowString!R)
+        {
+            if (_beginIndex <= _endIndex)
+            {
+                import std.utf: stride;
+                _beginIndex += stride(_data, _beginIndex);
+            }
+            else                // when we can't decode beyond
+            {
+                --_endIndex; // so just indicate we're beyond end
+            }
+        }
+        else
+        {
+            --_endIndex;
         }
     }
 
@@ -116,8 +135,8 @@ struct SlidingSplitter(bool reverse = false,
     }
 
     private R _data;
-    private size_t _beginIndex;
-    private size_t _endIndex;
+    private ptrdiff_t _beginIndex;
+    private ptrdiff_t _endIndex;
 }
 
 auto slidingSplitter(R)(R data, size_t beginIndex = 0)
