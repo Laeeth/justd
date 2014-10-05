@@ -42,7 +42,7 @@ struct Bytes(T: ulong)
 {
     alias _value this;
 
-    inout T value() @property inout @safe pure nothrow { return _value; }
+    inout(T) value() @property inout @safe pure nothrow { return _value; }
 
     /**
        See also: http://searchstorage.techtarget.com/definition/Kilo-mega-giga-tera-peta-and-all-that

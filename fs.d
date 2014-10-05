@@ -132,7 +132,7 @@ import std.path: baseName, dirName, isAbsolute, dirSeparator, extension, buildNo
 import std.datetime;
 import std.file: FileException;
 import std.digest.sha: sha1Of, toHexString;
-import std.range: repeat, array, empty, cycle, chain, tee;
+import std.range: repeat, array, empty, cycle, chain;
 import std.stdint: uint64_t;
 import std.traits: Unqual, isInstanceOf, isIterable;
 import std.allocator;
@@ -5029,6 +5029,7 @@ class Scanner(Term)
         if (!sst.isNull)
         {
             import algorithm_ex: findFirstOfAnyInOrder;
+            import std.range: tee;
             auto scan = (sst.strings
                             .filter!(raw => !raw.empty) // skip empty raw string
                             .tee!(raw => gstats.elfFilesBySymbol[raw.idup] ~= elfFile) // WARNING: needs raw.idup here because we can't rever to raw

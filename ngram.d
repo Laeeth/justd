@@ -72,7 +72,7 @@ struct NGram(ValueType,
 {
     this(in Range range) @safe pure nothrow { put(range); }
 
-    inout auto ref value() @property @safe pure inout nothrow { return _bins; }
+    auto ref value() @property @safe pure inout nothrow { return _bins; }
 
     alias Q = Rational!ulong;
 
