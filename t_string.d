@@ -1,6 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
-import std.stdio, std.algorithm, std.range, std.array;
+import all;
 
 void main(string[] args)
 {
@@ -24,4 +24,11 @@ void main(string[] args)
 
     static assert("ab" ~ null == "ab");
     static assert("ab" ~ [] == "ab");
+
+    writeln("åäö".length);
+    writeln("åäö".retro);
+    writeln("åäö".byCodeUnit.retro);
+    writeln("åäö".byCodePoint.retro);
+    writeln("åäö".byCodePoint.length);
+    writeln("åäö".byCodeUnit.length);
 }
