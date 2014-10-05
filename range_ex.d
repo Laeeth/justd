@@ -158,6 +158,9 @@ unittest
 
     auto dname = slidingSplitter("Nordlöw".to!dstring, 2);
     version(show) writefln("%(%s\n%)", dname);
+
+    auto arr = slidingSplitter([1, 2, 3, 4, 5, 6]);
+    version(show) writefln("%(%s\n%)", arr);
 }
 
 /** Ring Buffer.
