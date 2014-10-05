@@ -171,8 +171,8 @@ unittest
         dname.popFront;
     }
 
-    import std.stdio;
-    writefln("%(%s\n%)", cname);
+    /* import std.stdio; */
+    /* writefln("%(%s\n%)", cname); */
     /* writefln("%(%s\n%)", wname); */
     /* writefln("%(%s\n%)", dname); */
 }
