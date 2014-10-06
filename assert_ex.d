@@ -58,6 +58,7 @@ void assertEqual(T,
     version (assert) if (lhs != rhs)
         throw new AssertError("at \n" ~file~ ":" ~to!string(line)~ ":\n  lhs: " ~to!string(lhs)~ " !=\n  rhs: " ~to!string(rhs));
 }
+alias assertE = assertEqual;
 
 void assertLessThanOrEqual(T,
                            U,
@@ -65,9 +66,10 @@ void assertLessThanOrEqual(T,
                            uint line = __LINE__,
                            Args...) (T lhs, U rhs, lazy Args args)
 {
-    version (assert) if (lhs <= rhs)
+    version (assert) if (lhs > rhs)
         throw new AssertError("at \n" ~file~ ":" ~to!string(line)~ ":\n  lhs: " ~to!string(lhs)~ " >\n  rhs: " ~to!string(rhs));
 }
+alias assertLTE = assertLessThanOrEqual;
 
 void assertNotEqual(T,
                     U,
@@ -78,3 +80,4 @@ void assertNotEqual(T,
     version (assert) if (lhs == rhs)
         throw new AssertError("at \n" ~file~ ":" ~to!string(line)~ ":\n  lhs: " ~to!string(lhs)~ " ==\n  rhs: " ~to!string(rhs));
 }
+alias assertNE = assertNotEqual;
