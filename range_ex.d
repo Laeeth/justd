@@ -7,7 +7,8 @@
 module range_ex;
 
 import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
-import dbg;
+import std.stdio;
+import assert_ex;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
@@ -46,7 +47,8 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     }
 
     this(R)(R data, size_t lower, size_t upper)
-    in { assert(lower <= data.length);
+    in { assert(lower <= upper);
+         assert(lower <= data.length);
          assert(upper <= data.length); }
     body
     {
@@ -124,6 +126,8 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     static if (hasSlicing!R)
     {
         Tuple!(R, R) opIndex(size_t i)
+        in { assert(i < length); }
+        body
         {
             return typeof(return)(_data[0 .. _lower + i],
                                   _data[_lower + i .. _upper]);
@@ -131,15 +135,16 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
         typeof(this) opSlice(size_t lower, size_t upper)
         {
-            return slidingSplitter(_data,
-                                   _lower + lower,
-                                   _lower + upper);
+            auto x = slidingSplitter(_data,
+                                     _lower + lower,
+                                     _lower + upper);
+            return x;
         }
 
         // TODO Should length be provided if isNarrowString!Range?
         @property size_t length() const
         {
-            return _upper - _lower;
+            return _upper - _lower + 1;
         }
     }
 
@@ -177,12 +182,12 @@ unittest
     assert(y[0] == tuple([], x));
     assert(y.front == tuple([], x));
     assert(!y.empty);
-    assert(x.length == y.length);
+    assert(x.length + 1 == y.length);
 
-    assert(!y.empty); assert(y.front == tuple([], [1, 2, 3])); y.popFront;
-    assert(!y.empty); assert(y.front == tuple([1], [2, 3])); y.popFront;
-    assert(!y.empty); assert(y.front == tuple([1, 2], [3])); y.popFront;
-    assert(!y.empty); assert(y.front == tuple([1, 2, 3], [])); y.popFront;
+    assert(!y.empty); assert(y.front == tuple(x[0 .. 0], x[0 .. 3])); y.popFront;
+    assert(!y.empty); assert(y.front == tuple(x[0 .. 1], x[1 .. 3])); y.popFront;
+    assert(!y.empty); assert(y.front == tuple(x[0 .. 2], x[2 .. 3])); y.popFront;
+    assert(!y.empty); assert(y.front == tuple(x[0 .. 3], x[3 .. 3])); y.popFront;
     y.popFront; assert(y.empty);
 }
 
@@ -240,12 +245,18 @@ unittest                        // backwards
     }
 }
 
+import backtrace.backtrace;
+
 unittest                        // radial
 {
+    import std.stdio: stderr;
+    backtrace.backtrace.install(stderr);
+
     auto x = [1, 2, 3];
     import std.stdio;
     import std.range: radial;
-    writefln("%(%s\n%)", slidingSplitter(x).radial);
+    /* auto s = slidingSplitter(x); */
+    /* writefln("%(%s\n%)", s.radial); */
 }
 
 /** Ring Buffer.
