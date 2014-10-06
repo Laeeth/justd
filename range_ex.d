@@ -7,6 +7,7 @@
 module range_ex;
 
 import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
+import dbg;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
@@ -233,20 +234,17 @@ unittest                        // backwards
             import std.algorithm: equal;
             assert(equal(ch[ix], name16.front[ix]));
             assert(equal(ch[ix], name32.front[ix]));
-
         }
         name16.popFront;
         name32.popFront;
     }
 }
 
-unittest
+unittest                        // radial
 {
-    auto x = [1, 2, 3, 4];
+    auto x = [1, 2, 3];
     import std.stdio;
     import std.range: radial;
-    /* writefln("%(%s\n%)", slidingSplitter(x)[1 .. x.length]); */
-    writefln("%(%s\n%)", x.radial);
     writefln("%(%s\n%)", slidingSplitter(x).radial);
 }
 
