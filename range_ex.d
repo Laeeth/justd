@@ -114,7 +114,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         @property auto save()
         {
             import std.range: save;
-            return typeof(this)(_data.save, _lower);
+            return typeof(this)(_data.save, _lower, _upper);
         }
     }
 
