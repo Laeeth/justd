@@ -175,37 +175,61 @@ unittest
     assert(!y.empty); assert(y.front == tuple([1, 2], [3])); y.popFront;
     assert(!y.empty); assert(y.front == tuple([1, 2, 3], [])); y.popFront;
     y.popFront; assert(y.empty);
+}
+
+unittest                        // forwards
+{
+    import std.conv: to;
 
     size_t frontIndex = 2;
 
-    auto cname = slidingSplitter("Nordlöw", frontIndex);
-    auto wname = slidingSplitter("Nordlöw".to!wstring, frontIndex);
-    auto dname = slidingSplitter("Nordlöw".to!dstring, frontIndex);
+    auto name = "Nordlöw";
+    auto name8 = slidingSplitter(name.to!string, frontIndex);
+    auto name16 = slidingSplitter(name.to!wstring, frontIndex);
+    auto name32 = slidingSplitter(name.to!dstring, frontIndex);
 
-    static assert(!__traits(compiles, { cname.length >= 0; } ));
-    static assert(!__traits(compiles, { wname.length >= 0; } ));
-    assert(dname.length);
+    static assert(!__traits(compiles, { name8.length >= 0; } ));
+    static assert(!__traits(compiles, { name16.length >= 0; } ));
+    assert(name32.length);
 
-    import std.algorithm: equal;
-
-    foreach (ch; cname)
+    foreach (ch; name8)
     {
         foreach (ix; siota!(0, ch.length)) // for each part in split
         {
-            assert(equal(ch[ix], wname.front[ix]));
-            assert(equal(ch[ix], dname.front[ix]));
+            import std.algorithm: equal;
+            assert(equal(ch[ix], name16.front[ix]));
+            assert(equal(ch[ix], name32.front[ix]));
 
         }
-        wname.popFront;
-        dname.popFront;
+        name16.popFront;
+        name32.popFront;
     }
+}
 
-    /* import std.stdio; */
-    /* writefln("%(%s\n%)", cname); */
-    /* import std.range: retro; */
-    /* writefln("%(%s\n%)", cname.retro); */
-    /* writefln("%(%s\n%)", wname); */
-    /* writefln("%(%s\n%)", dname); */
+unittest                        // backwards
+{
+    import std.conv: to;
+    import std.range: retro;
+
+    size_t frontIndex = 2;
+
+    auto name = "Nordlöw";
+    auto name8 = slidingSplitter(name.to!string, frontIndex).retro;
+    auto name16 = slidingSplitter(name.to!wstring, frontIndex).retro;
+    auto name32 = slidingSplitter(name.to!dstring, frontIndex).retro;
+
+    foreach (ch; name8)
+    {
+        foreach (ix; siota!(0, ch.length)) // for each part in split
+        {
+            import std.algorithm: equal;
+            assert(equal(ch[ix], name16.front[ix]));
+            assert(equal(ch[ix], name32.front[ix]));
+
+        }
+        name16.popFront;
+        name32.popFront;
+    }
 }
 
 /** Ring Buffer.
