@@ -179,7 +179,11 @@ unittest
 
     auto y = SlidingSplitter!(typeof(x))(x);
 
-    assert(y[0] == tuple([], x));
+    for (size_t i; i < y.length; ++i)
+    {
+        assert(y[i] == tuple(x[0..i], x[i..3]));
+    }
+
     assert(y.front == tuple([], x));
     assert(!y.empty);
     assert(x.length + 1 == y.length);
@@ -188,6 +192,7 @@ unittest
     assert(!y.empty); assert(y.front == tuple(x[0 .. 1], x[1 .. 3])); y.popFront;
     assert(!y.empty); assert(y.front == tuple(x[0 .. 2], x[2 .. 3])); y.popFront;
     assert(!y.empty); assert(y.front == tuple(x[0 .. 3], x[3 .. 3])); y.popFront;
+
     y.popFront; assert(y.empty);
 }
 
