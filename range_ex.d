@@ -12,7 +12,7 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
     See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#epost-viwkavbmwouiquoqwntm:40forum.dlang.org
 
-    TODO Should frontIndex and backIndex operate on code units instead of code
+    TODO Should lower and upper operate on code units instead of code
     point if isNarrowString!Range. ?
 */
 struct SlidingSplitter(Range) if (isSomeString!Range ||
@@ -23,66 +23,66 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     import std.typecons: Unqual, Tuple, tuple;
     alias R = Unqual!Range;
 
-    this(R)(R data, size_t frontIndex = 0)
-    in { assert(frontIndex <= data.length); }
+    this(R)(R data, size_t lower = 0)
+    in { assert(lower <= data.length); }
     body
     {
         _data = data;
         static if (hasSlicing!Range) // TODO should we use isSomeString here instead?
         {
-            _frontIndex = frontIndex;
-            _backIndex = data.length;
+            _lower = lower;
+            _upper = data.length;
         }
         else
         {
-            while (frontIndex)
+            while (lower)
             {
                 popFront;
-                --frontIndex;
+                --lower;
             }
         }
-        _backIndex = data.length;
+        _upper = data.length;
     }
 
-    this(R)(R data, size_t frontIndex, size_t backIndex)
-    in { assert(frontIndex <= data.length);
-         assert(backIndex <= data.length); }
+    this(R)(R data, size_t lower, size_t upper)
+    in { assert(lower <= data.length);
+         assert(upper <= data.length); }
     body
     {
         _data = data;
-        _frontIndex = frontIndex;
-        _backIndex = backIndex;
+        _lower = lower;
+        _upper = upper;
     }
 
     @property Tuple!(R, R) front()
     {
-        return typeof(return)(_data[0 .. _frontIndex],
-                              _data[_frontIndex .. $]);
+        return typeof(return)(_data[0 .. _lower],
+                              _data[_lower .. $]);
     }
 
     @property Tuple!(R, R) back()
     {
-        return typeof(return)(_data[0 .. _backIndex],
-                              _data[_backIndex .. $]);
+        return typeof(return)(_data[0 .. _upper],
+                              _data[_upper .. $]);
     }
 
     void popFront()
     {
         static if (isNarrowString!R)
         {
-            if (_frontIndex < _backIndex)
+            if (_lower < _upper)
             {
                 import std.utf: stride;
-                _frontIndex += stride(_data, _frontIndex);
+                _lower += stride(_data, _lower);
             }
             else                // when we can't decode beyond
             {
-                ++_frontIndex; // so just indicate we're beyond back
+                ++_lower; // so just indicate we're beyond back
             }
         }
         else
         {
-            ++_frontIndex;
+            ++_lower;
         }
     }
 
@@ -90,19 +90,19 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     {
         static if (isNarrowString!R)
         {
-            if (_frontIndex < _backIndex)
+            if (_lower < _upper)
             {
                 import std.utf: strideBack;
-                _backIndex -= strideBack(_data, _backIndex);
+                _upper -= strideBack(_data, _upper);
             }
             else                // when we can't decode beyond
             {
-                --_backIndex; // so just indicate we're beyond front
+                --_upper; // so just indicate we're beyond front
             }
         }
         else
         {
-            --_backIndex;
+            --_upper;
         }
     }
 
@@ -111,43 +111,50 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         @property auto save()
         {
             import std.range: save;
-            return typeof(this)(_data.save, _frontIndex);
+            return typeof(this)(_data.save, _lower);
         }
     }
 
     @property bool empty() const
     {
-        return _backIndex < _frontIndex;
+        return _upper < _lower;
     }
 
     static if (hasSlicing!R)
     {
         Tuple!(R, R) opIndex(size_t i)
         {
-            return typeof(return)(_data[0 .. _frontIndex + i],
-                                  _data[_frontIndex + i .. _backIndex]);
+            return typeof(return)(_data[0 .. _lower + i],
+                                  _data[_lower + i .. _upper]);
+        }
+
+        typeof(this) opSlice(size_t lower, size_t upper)
+        {
+            return slidingSplitter(_data,
+                                   _lower + lower,
+                                   _lower + upper);
         }
 
         // TODO Should length be provided if isNarrowString!Range?
         @property size_t length() const
         {
-            return _backIndex - _frontIndex;
+            return _upper - _lower;
         }
     }
 
     private R _data;
-    private ptrdiff_t _frontIndex;
-    private ptrdiff_t _backIndex;
+    private ptrdiff_t _lower;
+    private ptrdiff_t _upper;
 }
 
-auto slidingSplitter(R)(R data, size_t frontIndex = 0)
+auto slidingSplitter(R)(R data, size_t lower = 0)
 {
-    return SlidingSplitter!R(data, frontIndex, data.length);
+    return SlidingSplitter!R(data, lower, data.length);
 }
 
-auto slidingSplitter(R)(R data, size_t frontIndex, size_t backIndex)
+auto slidingSplitter(R)(R data, size_t lower, size_t upper)
 {
-    return SlidingSplitter!R(data, frontIndex, backIndex);
+    return SlidingSplitter!R(data, lower, upper);
 }
 
 unittest
@@ -162,6 +169,7 @@ unittest
     static assert(isInputRange!(SlidingSplitter!(typeof(x))));
     static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
     // static assert(isBidirectionalRange!(SlidingSplitter!(typeof(x))));
+    static assert(isRandomAccessRange!(SlidingSplitter!(typeof(x))));
 
     auto y = SlidingSplitter!(typeof(x))(x);
 
@@ -181,12 +189,12 @@ unittest                        // forwards
 {
     import std.conv: to;
 
-    size_t frontIndex = 2;
+    size_t lower = 2;
 
     auto name = "Nordlöw";
-    auto name8 = slidingSplitter(name.to!string, frontIndex);
-    auto name16 = slidingSplitter(name.to!wstring, frontIndex);
-    auto name32 = slidingSplitter(name.to!dstring, frontIndex);
+    auto name8 = slidingSplitter(name.to!string, lower);
+    auto name16 = slidingSplitter(name.to!wstring, lower);
+    auto name32 = slidingSplitter(name.to!dstring, lower);
 
     static assert(!__traits(compiles, { name8.length >= 0; } ));
     static assert(!__traits(compiles, { name16.length >= 0; } ));
@@ -211,12 +219,12 @@ unittest                        // backwards
     import std.conv: to;
     import std.range: retro;
 
-    size_t frontIndex = 2;
+    size_t lower = 2;
 
     auto name = "Nordlöw";
-    auto name8 = slidingSplitter(name.to!string, frontIndex).retro;
-    auto name16 = slidingSplitter(name.to!wstring, frontIndex).retro;
-    auto name32 = slidingSplitter(name.to!dstring, frontIndex).retro;
+    auto name8 = slidingSplitter(name.to!string, lower).retro;
+    auto name16 = slidingSplitter(name.to!wstring, lower).retro;
+    auto name32 = slidingSplitter(name.to!dstring, lower).retro;
 
     foreach (ch; name8)
     {
@@ -230,6 +238,16 @@ unittest                        // backwards
         name16.popFront;
         name32.popFront;
     }
+}
+
+unittest
+{
+    auto x = [1, 2, 3, 4];
+    import std.stdio;
+    import std.range: radial;
+    /* writefln("%(%s\n%)", slidingSplitter(x)[1 .. x.length]); */
+    writefln("%(%s\n%)", x.radial);
+    writefln("%(%s\n%)", slidingSplitter(x).radial);
 }
 
 /** Ring Buffer.
