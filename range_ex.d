@@ -7,8 +7,6 @@
 module range_ex;
 
 import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
-import std.stdio;
-import assert_ex;
 
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
@@ -47,9 +45,9 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
     }
 
     this(R)(R data, size_t lower, size_t upper)
-    in { assert(lower <= upper);
-         assert(lower <= data.length);
-         assert(upper <= data.length); }
+    in { assert(lower <= upper + 1 || // the extra + 1 makes empty initialization (lower + 1 == upper) possible in for example opSlice below
+                ((lower <= data.length) &&
+                 (upper <= data.length))); }
     body
     {
         _data = data;
@@ -135,10 +133,18 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
         typeof(this) opSlice(size_t lower, size_t upper)
         {
-            auto x = slidingSplitter(_data,
-                                     _lower + lower,
-                                     _lower + upper);
-            return x;
+            if (lower == upper)
+            {
+                return slidingSplitter(_data,
+                                       _upper + 1, // defines empty intialization
+                                       _upper);
+            }
+            else
+            {
+                return slidingSplitter(_data,
+                                       _lower + lower,
+                                       _lower + (upper - 1));
+            }
         }
 
         // TODO Should length be provided if isNarrowString!Range?
@@ -250,18 +256,18 @@ unittest                        // backwards
     }
 }
 
-import backtrace.backtrace;
-
 unittest                        // radial
 {
-    import std.stdio: stderr;
-    backtrace.backtrace.install(stderr);
-
     auto x = [1, 2, 3];
-    import std.stdio;
     import std.range: radial;
-    /* auto s = slidingSplitter(x); */
-    /* writefln("%(%s\n%)", s.radial); */
+    import std.typecons: tuple;
+    auto s = slidingSplitter(x);
+    auto r = s.radial;
+    assert(!r.empty); assert(r.front == tuple(x[0 .. 1], x[1 .. 3])); r.popFront;
+    assert(!r.empty); assert(r.front == tuple(x[0 .. 2], x[2 .. 3])); r.popFront;
+    assert(!r.empty); assert(r.front == tuple(x[0 .. 0], x[0 .. 3])); r.popFront;
+    assert(!r.empty); assert(r.front == tuple(x[0 .. 3], x[3 .. 3])); r.popFront;
+    assert(r.empty);
 }
 
 /** Ring Buffer.
