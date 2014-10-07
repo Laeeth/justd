@@ -1737,6 +1737,34 @@ unittest
     assert("aa1".splitAfter!(a => a.isDigit) == tuple("aa1", ""));
 }
 
+auto moveUntil(alias pred, R)(ref R r) if (isInputRange!R)
+{
+    auto split = r.splitBefore!pred;
+    r = split[1];
+    return split[0];
+}
+
+unittest
+{
+    auto r = "xxx111";
+    auto id = r.moveUntil!(a => a == '1');
+    assert(id == "xxx");
+    assert(r == "111");
+}
+
+auto moveWhile(alias pred, R)(ref R r) if (isInputRange!R)
+{
+    return r.moveUntil!(a => !pred(a));
+}
+
+unittest
+{
+    auto r = "xxx111";
+    auto id = r.moveWhile!(a => a == 'x');
+    assert(id == "xxx");
+    assert(r == "111");
+}
+
 /** Variant of $(D findSplitBefore) that destructively pops everthing up to, not
     including, $(D needle) from $(D haystack).
 */
