@@ -17,8 +17,18 @@ enum operatorsUnaryAdding = ["+", "-"];
 /// Multiplying Operators
 enum operatorsMultiplying = ["*", "/", "mod", "rem"];
 
+/// Parens
+enum operatorsParens = ["(", ")", "[", "]", "{", "}"];
+
+/// Assignment
+enum operatorsAssignment = [":="];
+
 /// Other Operators
-enum operatorsOther = ["**", "not", "abs", "in"];
+enum operatorsOther = ["**", "not", "abs", "in",
+                       ".", ",", ";", "..",
+                       "<>",
+                       "<<",
+                       ">>"];
 
 /// Operators
 enum operators = (operatorsLogical
@@ -26,6 +36,8 @@ enum operators = (operatorsLogical
                   ~ operatorsBinaryAdding
                   ~ operatorsUnaryAdding
                   ~ operatorsMultiplying
+                  ~ operatorsParens
+                  ~ operatorsAssignment
                   ~ operatorsOther
     );
 
