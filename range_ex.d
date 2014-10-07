@@ -198,7 +198,6 @@ unittest
     assert(!y.empty); assert(y.front == tuple(x[0 .. 1], x[1 .. 3])); y.popFront;
     assert(!y.empty); assert(y.front == tuple(x[0 .. 2], x[2 .. 3])); y.popFront;
     assert(!y.empty); assert(y.front == tuple(x[0 .. 3], x[3 .. 3])); y.popFront;
-
     y.popFront; assert(y.empty);
 }
 
