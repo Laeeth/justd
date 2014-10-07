@@ -605,9 +605,8 @@ class WordNet(bool useArray = true,
 
     /** Find First Possible Split of $(D word) with semantic meaning in
         languages $(D langs).
-
-        TODO: We may need a new std.range to implement this in a single pass.
-        See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org#post-qqkqwiwdwmynrbkddkoy:40forum.dlang.org
+        TODO logic using minSize may pick single character for UTF-8 characters
+        such, for instance, Swedish å, ä, ö
      */
     S[] findMeaningfulWordSplit(S)(const S word,
                                    const HLang[] langs = [],
@@ -621,11 +620,11 @@ class WordNet(bool useArray = true,
 
         foreach (immutable first, second; word.slidingSplitter.retro)
         {
-            if (first.length >= minSize && // TODO may pick single character for UTF-8
-                second.length >= minSize) // TODO may pick single character for UTF-8
+            if (first.length >= minSize &&
+                second.length >= minSize)
             {
                 auto firstOk = canMeanSomething(first, langs);
-                bool genitiveForm = false; // TODO return this as a Node
+                bool genitiveForm = false;
                 if (!firstOk &&
                     first.length >= 2 &&
                     first.endsWith(`s`))
