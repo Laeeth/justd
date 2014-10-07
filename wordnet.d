@@ -620,44 +620,43 @@ class WordNet(bool useArray = true,
         if (word.length < 2*minSize)    // need at least two parts of at least two characters
             return [word];
 
-        for (size_t i = word.length - 2; i >= 2; i--)
+        foreach (immutable first, second; word.slidingSplitter.retro)
         {
-            const first = word.takeExactly(i).to!S;
-            const second = word.dropExactly(i).to!S;
-
-            if (first.length < minSize)
-                continue;
-
-            auto firstOk = canMeanSomething(first, langs);
-            bool genitiveForm = false; // TODO return this as a Node
-            if (!firstOk &&
-                first.length >= 2 &&
-                first.endsWith(`s`))
+            if (first.length >= minSize && // TODO may pick single character for UTF-8
+                second.length >= minSize) // TODO may pick single character for UTF-8
             {
-                firstOk = canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
+                auto firstOk = canMeanSomething(first, langs);
+                bool genitiveForm = false; // TODO return this as a Node
+                if (!firstOk &&
+                    first.length >= 2 &&
+                    first.endsWith(`s`))
+                {
+                    firstOk = canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
+                    if (firstOk)
+                    {
+                        genitiveForm = true;
+                    }
+                }
+
                 if (firstOk)
                 {
-                    genitiveForm = true;
-                }
-            }
-
-            if (firstOk)
-            {
-                auto secondOk = canMeanSomething(second, langs);
-                if (secondOk)
-                {
-                    return [first, second];
-                }
-                else
-                {
-                    auto secondSplits = findMeaningfulWordSplit(second, langs, crossLanguage);
-                    if (secondSplits.length >= 2)
+                    auto secondOk = canMeanSomething(second, langs);
+                    if (secondOk)
                     {
-                        return [first] ~ secondSplits;
+                        return [first, second];
+                    }
+                    else
+                    {
+                        auto secondSplits = findMeaningfulWordSplit(second, langs, crossLanguage);
+                        if (secondSplits.length >= 2)
+                        {
+                            return [first] ~ secondSplits;
+                        }
                     }
                 }
             }
         }
+
         return [word];
     }
 
