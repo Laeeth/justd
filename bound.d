@@ -73,7 +73,6 @@ import std.conv: to;
 import std.traits: CommonType, isIntegral, isUnsigned, isSigned, isFloatingPoint, isNumeric, isSomeChar, isScalarType, isBoolean;
 import std.stdint: intmax_t;
 import std.exception: assertThrown;
-import assert_ex;
 import traits_ex: areComparable;
 
 version = print;
@@ -352,7 +351,7 @@ struct Bound(V,
         return this;
     }
 
-    inout auto ref value() @property @safe pure inout nothrow { return _value + this.min; }
+    auto ref value() @property @safe pure inout nothrow { return _value + this.min; }
 
     @property string toString() const @trusted
     {
@@ -641,10 +640,10 @@ unittest
         const shift = T.max;
         auto x = saturated!T(shift);
         static assert(x.sizeof == T.sizeof);
-        x -= shift; assertEqual(x, T.min);
-        x += shift; assertEqual(x, T.max);
-        x -= shift + 1; assertEqual(x, T.min);
-        x += shift + 1; assertEqual(x, T.max);
+        x -= shift; assert(x == T.min);
+        x += shift; assert(x == T.max);
+        x -= shift + 1; assert(x == T.min);
+        x += shift + 1; assert(x == T.max);
     }
 
     foreach (T; TypeTuple!(ubyte, ushort, uint, ulong))
