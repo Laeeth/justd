@@ -1885,13 +1885,12 @@ Tuple!(R, size_t) findFirstOfAnyInOrder(alias pred = "a == b", R)(R haystack, co
 
 unittest
 {
-    import assert_ex;
-    assertEqual("abc".findFirstOfAnyInOrder(["x"]), tuple("", 0UL));
-    assertEqual("abc".findFirstOfAnyInOrder(["a"]), tuple("abc", 1UL));
-    assertEqual("abc".findFirstOfAnyInOrder(["c"]), tuple("c", 1UL));
-    assertEqual("abc".findFirstOfAnyInOrder(["a", "b"]), tuple("abc", 1UL));
-    assertEqual("abc".findFirstOfAnyInOrder(["a", "b"]), tuple("abc", 1UL));
-    assertEqual("abc".findFirstOfAnyInOrder(["x", "b"]), tuple("bc", 2UL));
+    assert("abc".findFirstOfAnyInOrder(["x"]) == tuple("", 0UL));
+    assert("abc".findFirstOfAnyInOrder(["a"]) == tuple("abc", 1UL));
+    assert("abc".findFirstOfAnyInOrder(["c"]) == tuple("c", 1UL));
+    assert("abc".findFirstOfAnyInOrder(["a", "b"]) == tuple("abc", 1UL));
+    assert("abc".findFirstOfAnyInOrder(["a", "b"]) == tuple("abc", 1UL));
+    assert("abc".findFirstOfAnyInOrder(["x", "b"]) == tuple("bc", 2UL));
 }
 
 Tuple!(R, size_t)[] findAllOfAnyInOrder(alias pred = "a == b", R)(R haystack, R[] needles)
