@@ -1,7 +1,7 @@
 #!/usr/bin/env rdmd-dev-module
 
 /** Ada Lexer.  */
-module adalexer;
+module ada_lexer;
 
 import lexer;
 import std.typecons;
@@ -434,46 +434,50 @@ const(Token)[] getTokensForParser(ubyte[] sourceCode, const LexerConfig config,
     auto lexer = DLexer(sourceCode, config, cache);
     string blockComment;
     size_t tokenCount;
-    while (!lexer.empty) switch (lexer.front.type)
-                         {
-                             case tok!"specialTokenSequence":
-                             case tok!"whitespace":
-                                 lexer.popFront();
-                             break;
-                             case tok!"comment":
-                                 final switch (commentType(lexer.front.text))
-                             {
-                                 case CommentType.block:
-                                     blockComment = lexer.front.text;
-                                     lexer.popFront();
-                                     break;
-                                 case CommentType.line:
-                                     if (tokenCount > 0 && lexer.front.line == output.data[tokenCount - 1].line)
-                                     {
+    while (!lexer.empty)
+    {
+        switch (lexer.front.type)
+        {
+            case tok!"specialTokenSequence":
+            case tok!"whitespace":
+                lexer.popFront();
+            break;
+            case tok!"comment":
+                final switch (commentType(lexer.front.text))
+            {
+                case CommentType.block:
+                    blockComment = lexer.front.text;
+                    lexer.popFront();
+                    break;
+                case CommentType.line:
+                    if (tokenCount > 0 && lexer.front.line == output.data[tokenCount - 1].line)
+                    {
 //				writeln("attaching comment");
-                                         (cast() output.data[tokenCount - 1]).trailingComment = lexer.front.text;
-                                     }
-                                     else
-                                     {
-                                         blockComment = cache.intern(blockComment.length == 0 ? lexer.front.text
-                                                                     : blockComment ~ "\n" ~ lexer.front.text);
-                                     }
-                                     lexer.popFront();
-                                     break;
-                                 case CommentType.notDoc:
-                                     lexer.popFront();
-                                     break;
-                             }
-                                 break;
-                             default:
-                                 Token t = lexer.front;
-                                 lexer.popFront();
-                                 tokenCount++;
-                                 t.comment = blockComment;
-                                 blockComment = null;
-                                 output.put(t);
-                                 break;
-                         }
+                        (cast() output.data[tokenCount - 1]).trailingComment = lexer.front.text;
+                    }
+                    else
+                    {
+                        blockComment = cache.intern(blockComment.length == 0 ? lexer.front.text
+                                                    : blockComment ~ "\n" ~ lexer.front.text);
+                    }
+                    lexer.popFront();
+                    break;
+                case CommentType.notDoc:
+                    lexer.popFront();
+                    break;
+            }
+                break;
+            default:
+                Token t = lexer.front;
+                lexer.popFront();
+                tokenCount++;
+                t.comment = blockComment;
+                blockComment = null;
+                output.put(t);
+                break;
+        }
+    }
+
     return output.data;
 }
 
