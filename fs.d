@@ -2248,16 +2248,11 @@ class GStats
         txtFKinds ~= kindFortan;
 
         // Ada
-        static immutable keywordsAda83 = [ "abort", "else", "new", "return", "abs", "elsif", "not", "reverse",
-                               "end", "null", "accept", "entry", "select", "access", "exception", "of", "separate",
-                               "exit", "or", "subtype", "all", "others", "and", "for", "out", "array",
-                               "function", "task", "at", "package", "terminate", "generic", "pragma", "then", "begin", "goto", "private",
-                               "type", "body", "procedure", "if", "case", "in", "use", "constant", "is", "raise",
-                               "range", "when", "declare", "limited", "record", "while", "delay", "loop", "rem", "with", "delta", "renames",
-                               "digits", "mod", "xor", "do", ];
-        static immutable keywordsAda95 = keywordsAda83 ~ ["abstract", "aliased", "tagged", "protected", "until", "requeue"];
-        static immutable keywordsAda2005 = keywordsAda95 ~ ["synchronized", "overriding", "interface"];
-        static immutable keywordsAda2012 = keywordsAda2005 ~ ["some"];
+        import ada_defs;
+        static immutable keywordsAda83 = ada_defs.keywords83;
+        static immutable keywordsAda95 = keywordsAda83 ~ ada_defs.keywordsNew95;
+        static immutable keywordsAda2005 = keywordsAda95 ~ ada_defs.keywordsNew2005;
+        static immutable keywordsAda2012 = keywordsAda2005 ~ ada_defs.keywordsNew2012;
         static immutable extsAda = ["ada", "adb", "ads"];
         txtFKinds ~= new FKind("Ada 82", [], extsAda, [], 0, [], keywordsAda83,
                                [Delim("--")],
