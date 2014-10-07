@@ -11,7 +11,6 @@ import core.bitop;
 import std.format;
 import std.range;
 import std.string;
-import assert_ex;
 import rational: Rational;
 
 /* TODO opSlice, opSliceAssign */
