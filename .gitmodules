@@ -103,3 +103,6 @@
 [submodule "lock-free"]
 	path = lock-free
 	url = https://github.com/nordlow/lock-free.git
+[submodule "libdparse"]
+	path = libdparse
+	url = https://github.com/Hackerpilot/libdparse.git
