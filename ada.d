@@ -108,17 +108,15 @@ bool isDigit(C)(C c) if (isSomeChar!C)
 
 Id parseId(R)(Parser!R p)
 {
-    auto ids = p.r.moveWhile!isIdChar;
-    dln(p.r);
-    dln(ids);
-    return ids.empty ? new Id(ids) : null;
+    const tok = p.r.moveWhile!isIdChar;
+    return tok.empty ? null : new Id(tok);
 }
 
 Int parseInt(R)(Parser!R p)
 {
     import std.ascii: isDigit;
-    auto tok = p.r.moveWhile!isDigit;
-    return tok ? new Int(tok.to!long) : null;
+    const tok = p.r.moveWhile!isDigit;
+    return tok.empty ? null : new Int(tok.to!long);
 }
 
 Expr parse(R)(Parser!R p) if (isInputRange!R)
@@ -134,7 +132,6 @@ Expr parse(R)(R r) if (isInputRange!R)
 
 unittest
 {
-    parse("name");
-    auto p = parser("name");
-    dln(p.parse);
+    assert(cast(Id)parse("name"));
+    assert(cast(Int)parse("42"));
 }
