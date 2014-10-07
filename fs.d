@@ -142,7 +142,6 @@ import std.complex: Complex;
 import core.memory: GC;
 import core.exception;
 
-import assert_ex;
 import traits_ex;
 import getopt_ex;
 import digest_ex;
@@ -947,7 +946,7 @@ class File
         TODO Reuse parents.
      */
     string path() @property @trusted pure out (result) {
-        /* assertEqual(result, pathRecursive); */
+        /* assert(result == pathRecursive); */
     }
     body
     {
