@@ -13,7 +13,6 @@
 */
 module ngram;
 
-import assert_ex;
 import bitset;
 import std.range: InputRange, ElementType, isInputRange;
 import std.traits: isSomeChar, isUnsigned, isIntegral, isFloatingPoint, Unqual, isStaticArray, isIterable, isAssociativeArray, CommonType;
@@ -887,8 +886,7 @@ unittest {
 
     const bS = x.trigram!(Kind.saturated, Storage.denseStatic);
     version(print) dln(bS);
-    assertEqual(bS.denseness.numerator,
-                x.length - bS.order + 1);
+    assert(bS.denseness.numerator == x.length - bS.order + 1);
 
     const bD = x.trigram!(Kind.saturated, Storage.denseDynamic);
     version(print) dln(bD);
