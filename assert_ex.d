@@ -71,6 +71,17 @@ void assertLessThanOrEqual(T,
 }
 alias assertLTE = assertLessThanOrEqual;
 
+void assertLessThan(T,
+                    U,
+                    string file = __FILE__,
+                    uint line = __LINE__,
+                    Args...) (T lhs, U rhs, lazy Args args)
+{
+    version (assert) if (lhs >= rhs)
+        throw new AssertError("at \n" ~file~ ":" ~to!string(line)~ ":\n  lhs: " ~to!string(lhs)~ " >=\n  rhs: " ~to!string(rhs));
+}
+alias assertLT = assertLessThan;
+
 void assertNotEqual(T,
                     U,
                     string file = __FILE__,
