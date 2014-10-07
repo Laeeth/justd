@@ -608,10 +608,10 @@ class WordNet(bool useArray = true,
         TODO logic using minSize may pick single character for UTF-8 characters
         such, for instance, Swedish å, ä, ö
      */
-    S[] findMeaningfulWordSplit(S)(const S word,
-                                   const HLang[] langs = [],
-                                   const bool crossLanguage = false,
-                                   const size_t minSize = 2) if (isSomeString!S)
+    S[] findWordSplits(S)(const S word,
+                          const HLang[] langs = [],
+                          const bool crossLanguage = false,
+                          const size_t minSize = 2) if (isSomeString!S)
     {
         import range_ex: slidingSplitter;
 
@@ -645,7 +645,7 @@ class WordNet(bool useArray = true,
                     }
                     else
                     {
-                        auto secondSplits = findMeaningfulWordSplit(second, langs, crossLanguage);
+                        auto secondSplits = findWordSplits(second, langs, crossLanguage, minSize);
                         if (secondSplits.length >= 2)
                         {
                             return [first] ~ secondSplits;
@@ -811,25 +811,25 @@ unittest
 
     if (langs.canFind(HLang.en))
     {
-        assert(wn.findMeaningfulWordSplit(`physicalaction`, [HLang.en]) == [`physical`, `action`]);
-        assert(wn.findMeaningfulWordSplit(`physicsexam`, [HLang.en]) == [`physics`, `exam`]);
-        assert(wn.findMeaningfulWordSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
-        assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]); // shouldn't find any split
+        assert(wn.findWordSplits(`physicalaction`, [HLang.en]) == [`physical`, `action`]);
+        assert(wn.findWordSplits(`physicsexam`, [HLang.en]) == [`physics`, `exam`]);
+        assert(wn.findWordSplits(`carwash`, [HLang.en]) == [`car`, `wash`]);
+        assert(wn.findWordSplits(`biltvätt`, [HLang.en]) == [`biltvätt`]); // shouldn't find any split
     }
 
     if (langs.canFind(HLang.sv))
     {
-        assert(wn.findMeaningfulWordSplit(`kärnkraftsavfallshink`, [HLang.sv]) == [`kärnkrafts`, `avfalls`, `hink`]);
-        assert(wn.findMeaningfulWordSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
-        assert(wn.findMeaningfulWordSplit(``, [HLang.sv]) == [``]);
-        assert(wn.findMeaningfulWordSplit(`i`, [HLang.sv]) == [`i`]);
-        assert(wn.findMeaningfulWordSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
-        assert(wn.findMeaningfulWordSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
-        assert(wn.findMeaningfulWordSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
-        assert(wn.findMeaningfulWordSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
-        assert(wn.findMeaningfulWordSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
-        assert(wn.findMeaningfulWordSplit(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
-        assert(wn.findMeaningfulWordSplit(`kärnkraftsavfall`, [HLang.sv]) == [`kärnkrafts`, `avfall`]);
+        assert(wn.findWordSplits(`kärnkraftsavfallshink`, [HLang.sv]) == [`kärnkrafts`, `avfalls`, `hink`]);
+        assert(wn.findWordSplits(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
+        assert(wn.findWordSplits(``, [HLang.sv]) == [``]);
+        assert(wn.findWordSplits(`i`, [HLang.sv]) == [`i`]);
+        assert(wn.findWordSplits(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
+        assert(wn.findWordSplits(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
+        assert(wn.findWordSplits(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
+        assert(wn.findWordSplits(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
+        assert(wn.findWordSplits(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
+        assert(wn.findWordSplits(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
+        assert(wn.findWordSplits(`kärnkraftsavfall`, [HLang.sv]) == [`kärnkrafts`, `avfall`]);
     }
 
     if (langs.canFind(HLang.en))
