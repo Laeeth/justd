@@ -603,7 +603,7 @@ class WordNet(bool useArray = true,
         return !meanings.empty;
     }
 
-    /** Find First Possible Split of $(D word) with semantic meaning in
+    /** Find First Possible Split of $(D word) with semantic meaning(s) in
         languages $(D langs).
         TODO logic using minSize may pick single character for UTF-8 characters
         such, for instance, Swedish å, ä, ö
