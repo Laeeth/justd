@@ -8,7 +8,17 @@
  */
 module ada;
 
-import std.traits: isSomeString;
+import std.range: empty, popFront, popFrontExactly, take, drop, front, takeOne, moveFront, repeat, replicate, isInputRange;
+import std.algorithm: startsWith, findSplitAfter, skipOver, joiner, min;
+import std.typecons: tuple, Tuple;
+import std.conv: to;
+import std.ascii: isDigit;
+import std.array: array;
+import std.stdio;
+import std.functional : unaryFun, binaryFun;
+import std.traits: isSomeString, isSomeChar;
+import algorithm_ex: moveWhile, moveUntil, either;
+import dbg;
 
 /** Ada Parser. */
 class Parser(R) if (isSomeString!R)
@@ -24,6 +34,11 @@ class Parser(R) if (isSomeString!R)
     bool supportDollars = true; // support GCC-style dollars in symbols
 private:
     string[] sourceNames;
+}
+
+auto parser(R)(R r)
+{
+    return new Parser!R(r);
 }
 
 /** Expression */
@@ -53,6 +68,11 @@ class NOp : Expr
 /** Identifier */
 class Id : Expr
 {
+    this(string id)
+    {
+        this.id = id;
+    }
+    string id;
 }
 
 /** Keyword */
@@ -60,24 +80,61 @@ class Keyword : Expr
 {
 }
 
-/** Numeric Literal */
-class Num : Expr
+/** Integereger Literal */
+class Int : Expr
 {
+    this(long integer)
+    {
+        this.integer = integer;
+    }
+    long integer;
 }
 
-auto parseId(R)(R r)
+bool isIdChar(C)(C c) if (isSomeChar!C)
 {
+    return ((c >= 'a' &&
+             c <= 'z') ||
+            (c >= 'A' &&
+             c <= 'Z') ||
+            c == '_' &&
+            c == '$');
 }
 
-auto parse(R)(R r)
+bool isDigit(C)(C c) if (isSomeChar!C)
 {
-    return new Parser!R(r);
+    return ((c >= '0' &&
+             c <= '9'));
+}
+
+Id parseId(R)(Parser!R p)
+{
+    auto ids = p.r.moveWhile!isIdChar;
+    dln(p.r);
+    dln(ids);
+    return ids.empty ? new Id(ids) : null;
+}
+
+Int parseInt(R)(Parser!R p)
+{
+    import std.ascii: isDigit;
+    auto tok = p.r.moveWhile!isDigit;
+    return tok ? new Int(tok.to!long) : null;
+}
+
+Expr parse(R)(Parser!R p) if (isInputRange!R)
+{
+    return either(p.parseId(),
+                  p.parseInt());
+}
+
+Expr parse(R)(R r) if (isInputRange!R)
+{
+    return r.parser.parse;
 }
 
 unittest
 {
-    import dbg;
-    dln(parse("name"));
-    dln(parse("42"));
-    dln(parse("1.1"));
+    parse("name");
+    auto p = parser("name");
+    dln(p.parse);
 }
