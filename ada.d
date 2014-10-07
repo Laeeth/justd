@@ -19,7 +19,7 @@ import std.functional : unaryFun, binaryFun;
 import std.traits: isSomeString, isSomeChar;
 import algorithm_ex: moveWhile, moveUntil, either;
 import dbg;
-import std.lexer;
+import adalexer;
 
 /** Ada Parser. */
 class Parser(R) if (isSomeString!R)
@@ -100,7 +100,6 @@ bool isIdChar(C)(C c) if (isSomeChar!C)
             c == '_' &&
             c == '$');
 }
-
 bool isDigit(C)(C c) if (isSomeChar!C)
 {
     return ((c >= '0' &&
