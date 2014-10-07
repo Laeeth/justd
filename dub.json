@@ -9,8 +9,7 @@
 	"vibe-d": "~master",
         "libnoise-d": "~master",
         "dstats": "~master",
-        "hap": "~master",
-        "logger": "~master"
+        "hap": "~master"
     },
     "buildRequirements": ["allowWarnings"],
     "versions": ["VibeCustomMain"],
