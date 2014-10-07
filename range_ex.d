@@ -208,9 +208,9 @@ unittest                        // forwards
     size_t lower = 2;
 
     auto name = "Nordlöw";
-    auto name8 = slidingSplitter(name.to!string, lower);
-    auto name16 = slidingSplitter(name.to!wstring, lower);
-    auto name32 = slidingSplitter(name.to!dstring, lower);
+    auto name8  = name.to! string.slidingSplitter(lower);
+    auto name16 = name.to!wstring.slidingSplitter(lower);
+    auto name32 = name.to!dstring.slidingSplitter(lower);
 
     static assert(!__traits(compiles, { name8.length >= 0; } ));
     static assert(!__traits(compiles, { name16.length >= 0; } ));
@@ -238,9 +238,9 @@ unittest                        // backwards
     size_t lower = 2;
 
     auto name = "Nordlöw";
-    auto name8 = slidingSplitter(name.to!string, lower).retro;
-    auto name16 = slidingSplitter(name.to!wstring, lower).retro;
-    auto name32 = slidingSplitter(name.to!dstring, lower).retro;
+    auto name8  = name.to! string.slidingSplitter(lower).retro;
+    auto name16 = name.to!wstring.slidingSplitter(lower).retro;
+    auto name32 = name.to!dstring.slidingSplitter(lower).retro;
 
     foreach (ch; name8)
     {
@@ -260,7 +260,7 @@ unittest                        // radial
     auto x = [1, 2, 3];
     import std.range: radial;
     import std.typecons: tuple;
-    auto s = slidingSplitter(x);
+    auto s = x.slidingSplitter;
     auto r = s.radial;
     assert(!r.empty); assert(r.front == tuple(x[0 .. 1], x[1 .. 3])); r.popFront;
     assert(!r.empty); assert(r.front == tuple(x[0 .. 2], x[2 .. 3])); r.popFront;
