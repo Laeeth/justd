@@ -19,7 +19,7 @@ import std.functional : unaryFun, binaryFun;
 import std.traits: isSomeString, isSomeChar;
 import algorithm_ex: moveWhile, moveUntil, either;
 import dbg;
-import adalexer;
+import ada_lexer;
 
 /** Ada Parser. */
 class Parser(R) if (isSomeString!R)
