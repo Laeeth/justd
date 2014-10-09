@@ -1,10 +1,10 @@
 #!/usr/bin/env rdmd-dev-module
 
-   /** Extensions to std.algorithm.
-       Copyright: Per Nordlöw 2014-.
-       License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
-       Authors: $(WEB Per Nordlöw)
-   */
+/** Extensions to std.algorithm.
+    Copyright: Per Nordlöw 2014-.
+    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
+    Authors: $(WEB Per Nordlöw)
+*/
 module algorithm_ex;
 
 /* version = print; */
@@ -1460,92 +1460,6 @@ unittest
 }
 
 // ==============================================================================================
-
-/** Slicer.
-    Enhanced version of std.algorithm.splitter.
-    http://forum.dlang.org/thread/qjbmfeukiqvribmdylkl@forum.dlang.org?page=1
-    http://dlang.org/library/std/algorithm/splitter.html.
-*/
-auto slicer(alias isTerminator, Range)(Range input) /* if (((isRandomAccessRange!Range && */
-                                                    /*       hasSlicing!Range) || */
-                                                    /*      isSomeString!Range) && */
-                                                    /*     is(typeof(unaryFun!isTerminator(input.front)))) */
-{
-    import std.functional: unaryFun;
-    return SlicerResult!(unaryFun!isTerminator, Range)(input);
-}
-
-private struct SlicerResult(alias isTerminator, Range)
-{
-    //alias notTerminator = not!isTerminator;
-
-    private Range _input;
-    private size_t _end = 0;
-
-    private void findTerminator()
-    {
-        auto r = _input.save.find!(not!isTerminator).find!isTerminator();
-        _end = _input.length - r.length;
-    }
-
-    this(Range input)
-    {
-        _input = input;
-        if (_input.empty)
-            _end = size_t.max;
-        else
-            findTerminator();
-    }
-
-    import std.range: isInfinite;
-
-    static if (isInfinite!Range)
-    {
-        enum bool empty = false;  // Propagate infiniteness.
-    }
-    else
-    {
-        @property bool empty()
-        {
-            return _end == size_t.max;
-        }
-    }
-
-    @property auto front()
-    {
-        return _input[0 .. _end];
-    }
-
-    void popFront()
-    {
-        _input = _input[_end .. _input.length];
-        if (_input.empty)
-        {
-            _end = size_t.max;
-            return;
-        }
-        findTerminator();
-    }
-
-    @property typeof(this) save()
-    {
-        auto ret = this;
-        ret._input = _input.save;
-        return ret;
-    }
-}
-
-version(none)
-unittest
-{
-    import std.string: isUpper;
-    "SomeGreatVariableName"  .slicer!isUpper.writeln();
-    "someGGGreatVariableName".slicer!isUpper.writeln();
-    "".slicer!isUpper.writeln();
-    "a".slicer!isUpper.writeln();
-    "A".slicer!isUpper.writeln();
-}
-
 
 /* Check if $(D part) is part of $(D whole).
    See also: http://forum.dlang.org/thread/ls9dbk$jkq$1@digitalmars.com
