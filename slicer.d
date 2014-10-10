@@ -37,9 +37,13 @@ private struct PreSlicer(alias isTerminator, R)
         _input = input;
         import std.range: empty;
         if (_input.empty)
+        {
             _end = size_t.max;
+        }
         else
-        findTerminator();
+        {
+            findTerminator();
+        }
     }
 
     import std.range: isInfinite;
