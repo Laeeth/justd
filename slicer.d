@@ -44,7 +44,7 @@ private struct PreSlicer(alias isTerminator, R)
 
     static if (isInfinite!R)
     {
-        enum bool empty = false;  // Propagate infiniteness.
+        enum bool empty = false;  // propagate infiniteness
     }
     else
     {

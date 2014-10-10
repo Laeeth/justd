@@ -120,7 +120,7 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
 
     static if (isInfinite!R)
     {
-        enum bool empty = false;  // Propagate infiniteness.
+        enum bool empty = false;  // propagate infiniteness
     }
     else
     {
