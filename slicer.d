@@ -84,6 +84,7 @@ unittest
 {
     import std.uni: isUpper;
     import std.algorithm: equal;
+    import std.range: retro;
     assert(equal("doThis".preslicer!isUpper, ["do", "This"]));
     assert(equal("SomeGreatVariableName".preslicer!isUpper, ["Some", "Great", "Variable", "Name"]));
     assert(equal("someGGGreatVariableName".preslicer!isUpper, ["some", "GGGreat", "Variable", "Name"]));
@@ -91,4 +92,7 @@ unittest
     assert(equal("".preslicer!isUpper, e));
     assert(equal("a".preslicer!isUpper, ["a"]));
     assert(equal("A".preslicer!isUpper, ["A"]));
+    assert(equal("A".preslicer!isUpper, ["A"]));
+
+    assert(equal([1, -1, 1, -1].preslicer!(a => a > 0), [[1, -1], [1, -1]]));
 }
