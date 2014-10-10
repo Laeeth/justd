@@ -2,8 +2,8 @@
 
 module slicer;
 
-/** Slice at all positions where isTerminator is false before current elmenent
-    and true after current.
+/** Slice at all positions where isTerminator is false before current element
+    and true at current.
 
     See also: http://dlang.org/library/std/algorithm/splitter.html.
     See also: http://forum.dlang.org/thread/qjbmfeukiqvribmdylkl@forum.dlang.org?page=1
