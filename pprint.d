@@ -38,6 +38,7 @@ import notnull: NotNull;
 import mathml;
 import grammars;
 import attributes;
+import slicer: preSlicer;
 
 import traits_ex: isCallableWith;
 
@@ -955,7 +956,11 @@ void pp1(Arg)(Viz viz,
             else if (arg.rowNr == RowNr.offsetOne)  viz.pplnTaggedN(`td`, "1-Offset");
             foreach (ix, Member; typeof(Front.tupleof))
             {
-                enum idName = __traits(identifier, Front.tupleof[ix]);
+                import std.ascii: isUpper; // D symbols cannot have unicode
+                import std.string: capitalize;
+                import std.algorithm: joiner;
+
+                enum idName = __traits(identifier, Front.tupleof[ix]).preSlicer!isUpper.map!capitalize.joiner(" ");
                 enum typeName = Unqual!(Member).stringof; // constness of no interest hee
 
                 static      if (is(Memb == struct))    enum qual = `struct `;
@@ -964,9 +969,8 @@ void pp1(Arg)(Viz viz,
                 else static if (is(Memb == interface)) enum qual = `interface `;
                 else                                   enum qual = ``; // TODO Are there more qualifiers
 
-                import std.string: capitalize;
                 viz.pplnTaggedN(`td`,
-                                (capitalizeHeadings ? idName.capitalize : idName).asItalic.asBold,
+                                idName.asItalic.asBold,
                                 `<br>`,
                                 qual.asKeyword,
                                 typeName.asType);
