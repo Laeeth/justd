@@ -2,10 +2,11 @@
 
 module slicer;
 
-/** PreSlicer.
-    Enhanced version of std.algorithm.splitter.
-    http://forum.dlang.org/thread/qjbmfeukiqvribmdylkl@forum.dlang.org?page=1
-    http://dlang.org/library/std/algorithm/splitter.html.
+/** Slice at all positions where isTerminator is false before current elmenent
+    and true after current.
+
+    See also: http://dlang.org/library/std/algorithm/splitter.html.
+    See also: http://forum.dlang.org/thread/qjbmfeukiqvribmdylkl@forum.dlang.org?page=1
 */
 auto preslicer(alias isTerminator, R)(R input) /* if (((isRandomAccessRange!R && */
 /*       hasSlicing!R) || */
