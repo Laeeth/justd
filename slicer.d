@@ -62,6 +62,7 @@ private struct Slicer(alias isTerminator, Range)
     void popFront()
     {
         _input = _input[_end .. _input.length];
+        import std.range: empty;
         if (_input.empty)
         {
             _end = size_t.max;
@@ -73,6 +74,7 @@ private struct Slicer(alias isTerminator, Range)
     @property typeof(this) save()
     {
         auto ret = this;
+        import std.range: save;
         ret._input = _input.save;
         return ret;
     }
@@ -80,7 +82,8 @@ private struct Slicer(alias isTerminator, Range)
 
 unittest
 {
-    import std.string: isUpper;
+    import std.uni: isUpper;
+    import std.stdio;
     "SomeGreatVariableName"  .slicer!isUpper.writeln();
     "someGGGreatVariableName".slicer!isUpper.writeln();
     "".slicer!isUpper.writeln();
