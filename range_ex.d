@@ -61,12 +61,6 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
                               _data[_lower .. $]);
     }
 
-    @property Tuple!(R, R) back()
-    {
-        return typeof(return)(_data[0 .. _upper],
-                              _data[_upper .. $]);
-    }
-
     void popFront()
     {
         static if (isNarrowString!R)
@@ -87,23 +81,31 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
     }
 
-    void popBack()
+    static if (!isInfinite!R)
     {
-        static if (isNarrowString!R)
+        @property Tuple!(R, R) back()
         {
-            if (_lower < _upper)
-            {
-                import std.utf: strideBack;
-                _upper -= strideBack(_data, _upper);
-            }
-            else                // when we can't decode beyond
-            {
-                --_upper; // so just indicate we're beyond front
-            }
+            return typeof(return)(_data[0 .. _upper],
+                                  _data[_upper .. $]);
         }
-        else
+        void popBack()
         {
-            --_upper;
+            static if (isNarrowString!R)
+            {
+                if (_lower < _upper)
+                {
+                    import std.utf: strideBack;
+                    _upper -= strideBack(_data, _upper);
+                }
+                else                // when we can't decode beyond
+                {
+                    --_upper; // so just indicate we're beyond front
+                }
+            }
+            else
+            {
+                --_upper;
+            }
         }
     }
 
