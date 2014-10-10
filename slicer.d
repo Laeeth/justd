@@ -86,7 +86,6 @@ unittest
 {
     import std.uni: isUpper;
     import std.algorithm: equal;
-    import std.range: retro;
 
     assert(equal("doThis".preSlicer!isUpper, ["do", "This"]));
     assert(equal("SomeGreatVariableName".preSlicer!isUpper, ["Some", "Great", "Variable", "Name"]));
@@ -99,4 +98,8 @@ unittest
     assert(equal("A".preSlicer!isUpper, ["A"]));
 
     assert(equal([1, -1, 1, -1].preSlicer!(a => a > 0), [[1, -1], [1, -1]]));
+
+    /* TODO Add bidir support */
+    /* import std.range: retro; */
+    /* assert(equal([-1, 1, -1, 1].retro.preSlicer!(a => a > 0), [[1, -1], [1, -1]])); */
 }
