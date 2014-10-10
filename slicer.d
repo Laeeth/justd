@@ -2,21 +2,21 @@
 
 module slicer;
 
-/** Slicer.
+/** PreSlicer.
     Enhanced version of std.algorithm.splitter.
     http://forum.dlang.org/thread/qjbmfeukiqvribmdylkl@forum.dlang.org?page=1
     http://dlang.org/library/std/algorithm/splitter.html.
 */
-auto slicer(alias isTerminator, Range)(Range input) /* if (((isRandomAccessRange!Range && */
+auto preslicer(alias isTerminator, Range)(Range input) /* if (((isRandomAccessRange!Range && */
 /*       hasSlicing!Range) || */
 /*      isSomeString!Range) && */
 /*     is(typeof(unaryFun!isTerminator(input.front)))) */
 {
     import std.functional: unaryFun;
-    return Slicer!(unaryFun!isTerminator, Range)(input);
+    return PreSlicer!(unaryFun!isTerminator, Range)(input);
 }
 
-private struct Slicer(alias isTerminator, Range)
+private struct PreSlicer(alias isTerminator, Range)
 {
     private Range _input;
     private size_t _end = 0;
@@ -84,10 +84,11 @@ unittest
 {
     import std.uni: isUpper;
     import std.algorithm: equal;
-    assert(equal("SomeGreatVariableName".slicer!isUpper, ["Some", "Great", "Variable", "Name"]));
-    assert(equal("someGGGreatVariableName".slicer!isUpper, ["some", "GGGreat", "Variable", "Name"]));
+    assert(equal("doThis".preslicer!isUpper, ["do", "This"]));
+    assert(equal("SomeGreatVariableName".preslicer!isUpper, ["Some", "Great", "Variable", "Name"]));
+    assert(equal("someGGGreatVariableName".preslicer!isUpper, ["some", "GGGreat", "Variable", "Name"]));
     string[] e;
-    assert(equal("".slicer!isUpper, e));
-    assert(equal("a".slicer!isUpper, ["a"]));
-    assert(equal("A".slicer!isUpper, ["A"]));
+    assert(equal("".preslicer!isUpper, e));
+    assert(equal("a".preslicer!isUpper, ["a"]));
+    assert(equal("A".preslicer!isUpper, ["A"]));
 }
