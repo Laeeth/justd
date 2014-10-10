@@ -24,9 +24,8 @@ private struct Slicer(alias isTerminator, Range)
     private void findTerminator()
     {
         import std.range: save;
-        import std.functional: not;
         import std.algorithm: find;
-        auto hit = _input.save.find!(not!isTerminator);
+        auto hit = _input.save.find!(a => !isTerminator(a));
         auto r = hit.find!isTerminator();
         _end = _input.length - r.length;
     }
