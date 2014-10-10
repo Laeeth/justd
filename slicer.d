@@ -83,10 +83,11 @@ private struct Slicer(alias isTerminator, Range)
 unittest
 {
     import std.uni: isUpper;
-    import std.stdio;
-    "SomeGreatVariableName"  .slicer!isUpper.writeln();
-    "someGGGreatVariableName".slicer!isUpper.writeln();
-    "".slicer!isUpper.writeln();
-    "a".slicer!isUpper.writeln();
-    "A".slicer!isUpper.writeln();
+    import std.algorithm: equal;
+    assert(equal("SomeGreatVariableName".slicer!isUpper, ["Some", "Great", "Variable", "Name"]));
+    assert(equal("someGGGreatVariableName".slicer!isUpper, ["some", "GGGreat", "Variable", "Name"]));
+    string[] e;
+    assert(equal("".slicer!isUpper, e));
+    assert(equal("a".slicer!isUpper, ["a"]));
+    assert(equal("A".slicer!isUpper, ["A"]));
 }
