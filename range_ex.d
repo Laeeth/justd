@@ -191,6 +191,9 @@ unittest
     static assert(isForwardRange!(SlidingSplitter!(typeof(x))));
     // static assert(isBidirectionalRange!(SlidingSplitter!(typeof(x))));
     static assert(isRandomAccessRange!(SlidingSplitter!(typeof(x))));
+    static assert(!isRandomAccessRange!(SlidingSplitter!string));
+    static assert(!isRandomAccessRange!(SlidingSplitter!wstring));
+    static assert(isRandomAccessRange!(SlidingSplitter!dstring));
 
     auto y = SlidingSplitter!(typeof(x))(x);
 
