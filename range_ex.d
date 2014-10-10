@@ -116,9 +116,16 @@ struct SlidingSplitter(Range) if (isSomeString!Range ||
         }
     }
 
-    @property bool empty() const
+    static if (isInfinite!R)
     {
-        return _upper < _lower;
+        enum bool empty = false;  // Propagate infiniteness.
+    }
+    else
+    {
+        @property bool empty() const
+        {
+            return _upper < _lower;
+        }
     }
 
     static if (hasSlicing!R)

@@ -7,18 +7,18 @@ module slicer;
     http://forum.dlang.org/thread/qjbmfeukiqvribmdylkl@forum.dlang.org?page=1
     http://dlang.org/library/std/algorithm/splitter.html.
 */
-auto preslicer(alias isTerminator, Range)(Range input) /* if (((isRandomAccessRange!Range && */
-/*       hasSlicing!Range) || */
-/*      isSomeString!Range) && */
+auto preslicer(alias isTerminator, R)(R input) /* if (((isRandomAccessRange!R && */
+/*       hasSlicing!R) || */
+/*      isSomeString!R) && */
 /*     is(typeof(unaryFun!isTerminator(input.front)))) */
 {
     import std.functional: unaryFun;
-    return PreSlicer!(unaryFun!isTerminator, Range)(input);
+    return PreSlicer!(unaryFun!isTerminator, R)(input);
 }
 
-private struct PreSlicer(alias isTerminator, Range)
+private struct PreSlicer(alias isTerminator, R)
 {
-    private Range _input;
+    private R _input;
     private size_t _end = 0;
 
     private void findTerminator()
@@ -30,7 +30,7 @@ private struct PreSlicer(alias isTerminator, Range)
         _end = _input.length - r.length;
     }
 
-    this(Range input)
+    this(R input)
     {
         _input = input;
         import std.range: empty;
@@ -42,7 +42,7 @@ private struct PreSlicer(alias isTerminator, Range)
 
     import std.range: isInfinite;
 
-    static if (isInfinite!Range)
+    static if (isInfinite!R)
     {
         enum bool empty = false;  // Propagate infiniteness.
     }
