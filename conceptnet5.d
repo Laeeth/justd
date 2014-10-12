@@ -422,7 +422,7 @@ class Net(bool useArray = true,
         }
         real normalizedWeight()
         {
-            return cast(real)this.weight/(cast(real)Weight/10);
+            return cast(real)this.weight/(cast(real)Weight.max/10);
         }
     private:
         ConceptIx srcIx;
@@ -455,17 +455,17 @@ class Net(bool useArray = true,
 
         WordNet!(true, true) _wordnet;
 
-        size_t[Relation.max + 1] relationCounts;
-        size_t[Source.max + 1] sourceCounts;
-        size_t[HLang.max + 1] hlangCounts;
+        size_t[Relation.max + 1] _relationCounts;
+        size_t[Source.max + 1] _sourceCounts;
+        size_t[HLang.max + 1] _hlangCounts;
         size_t _assertionCount = 0;
         size_t _conceptStringLengthSum = 0;
         size_t _connectednessSum = 0;
 
         // is there a Phobos structure for this?
-        real weightMin = real.max;
-        real weightMax = real.min_normal;
-        real weightSum = 0; // Sum of all link weights.
+        real _weightMin = real.max;
+        real _weightMax = real.min_normal;
+        real _weightSum = 0; // Sum of all link weights.
     }
 
     ref Link linkByIndex(LinkIx ix) { return _links[ix._lIx]; }
@@ -560,7 +560,7 @@ class Net(bool useArray = true,
         auto items = part.splitter('/');
 
         const hlang = items.front.decodeHumanLang; items.popFront;
-        hlangCounts[hlang]++;
+        _hlangCounts[hlang]++;
 
         static if (useRCString) { immutable word = items.front; }
         else                    { immutable word = items.front.idup; }
@@ -669,7 +669,7 @@ class Net(bool useArray = true,
                         break;
                     }
 
-                    this.relationCounts[link.relation]++;
+                    this._relationCounts[link.relation]++;
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`))
@@ -704,9 +704,9 @@ class Net(bool useArray = true,
                 case 5:
                     const weight = part.to!real;
                     link.setWeight(weight);
-                    this.weightSum += weight;
-                    this.weightMin = min(part.to!float, this.weightMin);
-                    this.weightMax = max(part.to!float, this.weightMax);
+                    this._weightSum += weight;
+                    this._weightMin = min(part.to!float, this._weightMin);
+                    this._weightMax = max(part.to!float, this._weightMax);
                     this._assertionCount++;
                     break;
                 case 6:
@@ -721,7 +721,7 @@ class Net(bool useArray = true,
                         case `/s/site/verbosity`: link.source = Source.verbosity; break;
                         default: /* dln("Handle ", part); */ break;
                     }
-                    this.sourceCounts[link.source]++;
+                    this._sourceCounts[link.source]++;
                     break;
                 default:
                     break;
@@ -770,7 +770,7 @@ class Net(bool useArray = true,
         writeln(`Relation Count by Type:`);
         foreach (relation; Relation.min..Relation.max)
         {
-            const count = this.relationCounts[relation];
+            const count = this._relationCounts[relation];
             if (count)
             {
                 writeln(`- `, relation.to!string, `: `, count);
@@ -780,7 +780,7 @@ class Net(bool useArray = true,
         writeln(`Concept Count by Source:`);
         foreach (source; Source.min..Source.max)
         {
-            const count = this.sourceCounts[source];
+            const count = this._sourceCounts[source];
             if (count)
             {
                 writeln(`- `, source.to!string, `: `, count);
@@ -790,7 +790,7 @@ class Net(bool useArray = true,
         writeln(`Concept Count by Language:`);
         foreach (hlang; HLang.min..HLang.max)
         {
-            const count = this.hlangCounts[hlang];
+            const count = this._hlangCounts[hlang];
             if (count)
             {
                 writeln(`- `, hlang.toName, ` (`, hlang.to!string, `) : `, count);
@@ -799,7 +799,7 @@ class Net(bool useArray = true,
 
         writeln(`Stats:`);
         writeln(`- Weights Min,Max,Average: `,
-                this.weightMin, ',', this.weightMax, ',', cast(real)this.weightSum/this._links.length);
+                this._weightMin, ',', this._weightMax, ',', cast(real)this._weightSum/this._links.length);
         writeln(`- Number of assertions: `, this._assertionCount);
         writeln(`- Concept Count: `, _concepts.length);
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
