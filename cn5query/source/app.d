@@ -4,7 +4,6 @@ import conceptnet5;
 int main(string[] args)
 {
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
-    net.showConcepts(`car`);
     net.showConcepts(`car_wash`);
 
     while (true)
