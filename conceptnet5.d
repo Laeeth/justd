@@ -534,7 +534,7 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == `.csv`))
         {
             readCSV(file);
-            break;
+            /* break; */
         }
     }
 
@@ -821,8 +821,6 @@ class Net(bool useArray = true,
         {
             writeln(`- in `, concept.hlang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
-            writeln(concept.inIxes.length);
-            writeln(concept.outIxes.length);
             foreach (inIx; concept.inIxes)
             {
                 writeln(`  - in `, linkByIndex(inIx));
