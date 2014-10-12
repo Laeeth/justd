@@ -413,20 +413,21 @@ class Net(bool useArray = true,
      */
     struct Link
     {
+        alias Weight = ubyte; // link weight pack type
         @safe @nogc pure nothrow:
         void setWeight(T)(T weight) if (isFloatingPoint!T)
         {
-            // pack from 0..about10 to ubyte 0.255 to save memory
-            this.weight = cast(ubyte)(weight.clamp(0,10)/10*255);
+            // pack from 0..about10 to Weight 0.255 to save memory
+            this.weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
         }
         real normalizedWeight()
         {
-            return cast(real)this.weight/25;
+            return cast(real)this.weight/(cast(real)Weight/10);
         }
     private:
         ConceptIx srcIx;
         ConceptIx dstIx;
-        ubyte weight;
+        Weight weight;
         Relation relation;
         bool negation; // relation negation
         Source source;
