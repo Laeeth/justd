@@ -467,10 +467,10 @@ class Net(bool useArray = true,
         real weightSum = 0; // Sum of all link weights.
     }
 
-    Link    linkByIndex   (LinkIx ix) { return _links[ix._lIx]; }
+    ref Link linkByIndex(LinkIx ix) { return _links[ix._lIx]; }
 
     /* const @safe @nogc pure nothrow */
-    Concept conceptByIndex(ConceptIx ix) { return _concepts[ix._cIx]; }
+    ref Concept conceptByIndex(ConceptIx ix) { return _concepts[ix._cIx]; }
 
     Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
     {
