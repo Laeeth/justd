@@ -770,7 +770,7 @@ class Net(bool useArray = true,
             // pack from 0..about10 to Weight 0.255 to save memory
             this._weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
         }
-        real normalizedWeight()
+        @property real normalizedWeight() const
         {
             return cast(real)this._weight/(cast(real)Weight.max/10);
         }
@@ -1127,7 +1127,7 @@ class Net(bool useArray = true,
         std.stdio.write(`  - `, dir, ` =`, link._relation, `=> `);
         if (linkConcept.hlang) std.stdio.write(` hlang:`, linkConcept.hlang);
         if (linkConcept.lemmaKind) std.stdio.write(` hlang:`, linkConcept.lemmaKind);
-        writeln(` weight:`, link._weight);
+        writefln(` weight: %.2f`, link.normalizedWeight);
     }
 
     /** Show concepts and their relations matching content in $(D line). */
