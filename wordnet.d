@@ -814,11 +814,11 @@ unittest
     enum useArray = true;
     enum useRCString = false;
 
-    const langs = [HLang.en,
-                   HLang.de,
-                   HLang.sv];
+    const netLangs = [HLang.en,
+                      HLang.de,
+                      HLang.sv];
 
-    auto wn = new WordNet!(useArray, useRCString)(langs);
+    auto wn = new WordNet!(useArray, useRCString)(netLangs);
 
     /* const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`]; */
     /* foreach (word; words) */
@@ -827,7 +827,7 @@ unittest
     /*             wn.meaningsOf(word).map!(wordSense => wordSense.kind.to!string).joiner(`, `)); */
     /* } */
 
-    if (langs.canFind(HLang.en))
+    if (netLangs.canFind(HLang.en))
     {
         assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
         assert(wn.canMean(`car`, WordKind.noun, HLang.en));
@@ -835,7 +835,7 @@ unittest
         assert(wn.canMean(`january`, WordKind.nounMonth, [HLang.en]));
     }
 
-    if (langs.canFind(HLang.sv))
+    if (netLangs.canFind(HLang.sv))
     {
         assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
         assert(wn.canMean(`måndag`, WordKind.noun, [HLang.sv]));
@@ -847,45 +847,48 @@ unittest
         assert(wn.canMean(`sopstation`, WordKind.unknown, [HLang.sv]));
     }
 
-    if (langs.canFind(HLang.de))
+    if (netLangs.canFind(HLang.de))
     {
         assert(wn.canMean(`fenster`, WordKind.unknown, [HLang.de]));
     }
 
-    if (langs.canFind(HLang.en))
+    if (netLangs.canFind(HLang.en))
     {
-        assert(wn.findWordsSplit(`hashusband`, [HLang.en], false, 2, false) == [`has`, `husband`]);
-        assert(wn.findWordsSplit(`physicalaction`, [HLang.en]) == [`physical`, `action`]);
-        assert(wn.findWordsSplit(`physicsexam`, [HLang.en]) == [`physics`, `exam`]);
-        assert(wn.findWordsSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
-        assert(wn.findWordsSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]); // shouldn't find any split
+        const langs = [HLang.en];
+        assert(wn.findWordsSplit(`hashusband`, langs, false, 2, false) == [`has`, `husband`]);
+        assert(wn.findWordsSplit(`physicalaction`, langs) == [`physical`, `action`]);
+        assert(wn.findWordsSplit(`physicsexam`, langs) == [`physics`, `exam`]);
+        assert(wn.findWordsSplit(`carwash`, langs) == [`car`, `wash`]);
+        assert(wn.findWordsSplit(`biltvätt`, langs) == [`biltvätt`]);
     }
 
-    if (langs.canFind(HLang.sv))
+    if (netLangs.canFind(HLang.sv))
     {
-        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, [HLang.sv]) == [`kärnkrafts`, `avfalls`, `hink`]);
-        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, [HLang.sv], false, 2, false) == [`kärnkraft`, `sav`, `falls`, `hink`]);
-        assert(wn.findWordsSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
-        assert(wn.findWordsSplit(``, [HLang.sv]) == [``]);
-        assert(wn.findWordsSplit(`i`, [HLang.sv]) == [`i`]);
-        assert(wn.findWordsSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
-        assert(wn.findWordsSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
-        assert(wn.findWordsSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
-        assert(wn.findWordsSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
-        assert(wn.findWordsSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
-        assert(wn.findWordsSplit(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
-        assert(wn.findWordsSplit(`kärnkraftsavfall`, [HLang.sv]) == [`kärnkrafts`, `avfall`]);
+        const langs = [HLang.sv];
+        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs) == [`kärnkrafts`, `avfalls`, `hink`]);
+        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs, false, 2, false) == [`kärnkraft`, `sav`, `falls`, `hink`]);
+        assert(wn.findWordsSplit(`papperskorg`, langs) == [`pappers`, `korg`]);
+        assert(wn.findWordsSplit(``, langs) == [``]);
+        assert(wn.findWordsSplit(`i`, langs) == [`i`]);
+        assert(wn.findWordsSplit(`biltvätt`, langs) == [`bil`, `tvätt`]);
+        assert(wn.findWordsSplit(`trötthet`, langs) == [`trött`, `het`]);
+        assert(wn.findWordsSplit(`paprikabit`, langs) == [`paprika`, `bit`]);
+        assert(wn.findWordsSplit(`funktionsteori`, langs) == [`funktions`, `teori`]);
+        assert(wn.findWordsSplit(`nyhetstorka`, langs) == [`nyhets`, `torka`]);
+        assert(wn.findWordsSplit(`induktionsbevis`, langs) == [`induktions`, `bevis`]);
+        assert(wn.findWordsSplit(`kärnkraftsavfall`, langs) == [`kärnkrafts`, `avfall`]);
     }
 
-    if (langs.canFind(HLang.en))
+    if (netLangs.canFind(HLang.en))
     {
-        assert(wn.formalize(`Jack run`, [HLang.en]) == [SentencePart.subject,
-                                                        SentencePart.predicate]);
-        assert(wn.formalize(`Men swim`, [HLang.en]) == [SentencePart.subject,
-                                                        SentencePart.predicate]);
+        const langs = [HLang.en];
+        assert(wn.formalize(`Jack run`, langs) == [SentencePart.subject,
+                                                   SentencePart.predicate]);
+        assert(wn.formalize(`Men swim`, langs) == [SentencePart.subject,
+                                                   SentencePart.predicate]);
     }
 
-    if (false)
+    if (false) // TODO Activate
     {
         assert(wn.formalize(`Does jack run?`, [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
                                                               SentencePart.predicate]);
