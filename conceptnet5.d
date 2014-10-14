@@ -698,12 +698,12 @@ auto pageSize() @trusted
     }
 }
 
-/** Main Net.
+/** Main Knowledge Network.
 */
 class Net(bool useArray = true,
           bool useRCString = true)
 {
-    import std.file, std.algorithm, std.range, std.string, std.path, std.array;
+    import std.algorithm, std.range, std.string, std.path, std.array;
     import wordnet: WordNet;
     import dbg;
     import std.typecons: Nullable;
@@ -784,10 +784,10 @@ class Net(bool useArray = true,
 
     unittest
     {
-        /* pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof); */
-        /* pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof); */
-        /* pragma(msg, `Concept.sizeof: `, Concept.sizeof); */
-        /* pragma(msg, `Link.sizeof: `, Link.sizeof); */
+        pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof);
+        pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof);
+        pragma(msg, `Concept.sizeof: `, Concept.sizeof);
+        pragma(msg, `Link.sizeof: `, Link.sizeof);
     }
 
     static if (useArray) { alias Concepts = Array!Concept; }
@@ -880,6 +880,7 @@ class Net(bool useArray = true,
         // GC.disabled had no noticeble effect here: import core.memory: GC;
         const fixedPath = dirPath.expandTilde
                                  .buildNormalizedPath;
+        import std.file: dirEntries, SpanMode;
         foreach (file; fixedPath.dirEntries(SpanMode.shallow)
                                 .filter!(name => name.extension == `.csv`))
         {
@@ -963,7 +964,7 @@ class Net(bool useArray = true,
                     }
                     else
                     {
-                        dln("TODO ", part);
+                        /* dln("TODO ", part); */
                     }
                     break;
                 case 3:         // destination concept
@@ -976,13 +977,13 @@ class Net(bool useArray = true,
                     }
                     else
                     {
-                        dln("TODO ", part);
+                        /* dln("TODO ", part); */
                     }
                     break;
                 case 4:
                     if (part != `/ctx/all`)
                     {
-                        dln("TODO ", part);
+                        /* dln("TODO ", part); */
                     }
                     break;
                 case 5:
@@ -1086,9 +1087,26 @@ class Net(bool useArray = true,
                 this._weightMin, ',', this._weightMax, ',', cast(real)this._weightSum/this._links.length);
         writeln(`- Number of assertions: `, this._assertionCount);
         writeln(`- Concept Count: `, _concepts.length);
+        writeln(`- Link Count: `, _links.length);
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
         writeln(`- Concept String Length Average: `, cast(real)_conceptStringLengthSum/_concepts.length);
-        writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/_concepts.length);
+        writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/2/_concepts.length);
+    }
+
+    /** Link Direction. */
+    enum LinkDir
+    {
+        input,
+        output
+    }
+
+    void showConceptLink(in Link link, LinkDir dir)
+    {
+        const linkConcept = conceptByIndex(link._dstIx);
+        std.stdio.write(`  - `, dir, ` =`, link._relation, `=> `);
+        if (linkConcept.hlang) std.stdio.write(` hlang:`, linkConcept.hlang);
+        if (linkConcept.lemmaKind) std.stdio.write(` hlang:`, linkConcept.lemmaKind);
+        writeln(` weight:`, link._weight);
     }
 
     /** Show concepts and their relations matching content in $(D line). */
@@ -1110,13 +1128,11 @@ class Net(bool useArray = true,
                     ` of sense `, concept.lemmaKind, ` relates to `);
             foreach (ix; concept.inIxes)
             {
-                const link = linkByIndex(ix);
-                writeln(`  - in =`, link._relation, `=> `, conceptByIndex(link._dstIx), ` `, link._weight);
+                showConceptLink(linkByIndex(ix), LinkDir.input);
             }
             foreach (ix; concept.outIxes)
             {
-                const link = linkByIndex(ix);
-                writeln(`  - out `, link._relation);
+                showConceptLink(linkByIndex(ix), LinkDir.output);
             }
         }
     }
