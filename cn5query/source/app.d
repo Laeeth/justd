@@ -12,8 +12,7 @@ int main(string[] args)
         string line;
         if ((line = readln()) !is null)
         {
-            import std.string: strip;
-            net.showConcepts(line.strip);
+            net.showConcepts(line);
         }
         else
         {

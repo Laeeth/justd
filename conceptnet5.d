@@ -195,13 +195,16 @@ enum Relation:ubyte
         with (Relation)
         {
             return (relation == relatedTo ||
+                    relation == translationOf ||
                     relation == synonym);
         }
     }
 
-    /** Return true if $(D relation) is a transitive relation.
-        A relation R from A to B is transitive
-        if A => R => B and B => R => C infers A => R => C.
+    /** Return true if $(D relation) is a transitive relation that can used to
+        inference new relations (knowledge).
+
+        A relation R from A to B is transitive if A >=R=> B and B >=R=> C
+        infers A >=R=> C.
     */
     bool isTransitive(const Relation relation)
     {
@@ -675,6 +678,7 @@ class Net(bool useArray = true,
                     if (part.skipOver(`/c/`))
                     {
                         link.srcIx = this.readConceptURI(part);
+                        assert(_links.length < Ix.max);
                         conceptByIndex(link.srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
                     }
@@ -687,6 +691,7 @@ class Net(bool useArray = true,
                     if (part.skipOver(`/c/`))
                     {
                         link.dstIx = this.readConceptURI(part);
+                        assert(_links.length < Ix.max);
                         conceptByIndex(link.dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
                     }
@@ -807,14 +812,16 @@ class Net(bool useArray = true,
         writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/_concepts.length);
     }
 
-    /** Show concepts and their relations matching $(D line). */
+    /** Show concepts and their relations matching content in $(D line). */
     void showConcepts(S)(S line,
                          HLang hlang = HLang.unknown,
-                         WordKind wordKind = WordKind.unknown) if (isSomeString!S)
+                         WordKind wordKind = WordKind.unknown,
+                         S lineSeparator = "_") if (isSomeString!S)
     {
         import std.uni: isWhite;
         import std.algorithm: splitter;
-        auto normalizedLine = line.splitter!isWhite.joiner("_").to!S;
+        import std.string: strip;
+        auto normalizedLine = line.strip.splitter!isWhite.joiner(lineSeparator).to!S;
         writeln(`Line `, normalizedLine);
         foreach (concept; this.conceptsByWords(normalizedLine,
                                                hlang,
@@ -852,9 +859,4 @@ class Net(bool useArray = true,
         return typeof(return).init;
     }
     alias topicOf = contextOf;
-
-    unittest
-    {
-        // assert(!new.contextOf([`gun`, `mask`, `money`, `caught`, `stole`]).find(`robbery`).empty);
-    }
 }
