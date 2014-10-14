@@ -421,19 +421,19 @@ class Net(bool useArray = true,
         void setWeight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..about10 to Weight 0.255 to save memory
-            this.weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
+            this._weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
         }
         real normalizedWeight()
         {
-            return cast(real)this.weight/(cast(real)Weight.max/10);
+            return cast(real)this._weight/(cast(real)Weight.max/10);
         }
     private:
-        ConceptIx srcIx;
-        ConceptIx dstIx;
-        Weight weight;
-        Relation relation;
-        bool negation; // relation negation
-        Source source;
+        ConceptIx _srcIx;
+        ConceptIx _dstIx;
+        Weight _weight;
+        Relation _relation;
+        bool _negation; // relation negation
+        Source _origin;
     }
 
     unittest
@@ -538,7 +538,7 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == `.csv`))
         {
             readCSV(file);
-            /* break; */
+            break;
         }
     }
 
@@ -609,77 +609,77 @@ class Net(bool useArray = true,
                     // TODO Functionize to parseRelation or x.to!Relation
                     switch (relationString)
                     {
-                        case `RelatedTo`:                   link.relation = Relation.relatedTo; break;
-                        case `IsA`:                         link.relation = Relation.isA; break;
-                        case `PartOf`:                      link.relation = Relation.partOf; break;
-                        case `MemberOf`:                    link.relation = Relation.memberOf; break;
-                        case `HasA`:                        link.relation = Relation.hasA; break;
-                        case `UsedFor`:                     link.relation = Relation.usedFor; break;
-                        case `CapableOf`:                   link.relation = Relation.capableOf; break;
-                        case `AtLocation`:                  link.relation = Relation.atLocation; break;
-                        case `HasContext`:                  link.relation = Relation.hasContext; break;
-                        case `LocationOf`:                  link.relation = Relation.locationOf; break;
-                        case `LocationOfAction`:            link.relation = Relation.locationOfAction; break;
-                        case `LocatedNear`:                 link.relation = Relation.locatedNear; break;
-                        case `Causes`:                      link.relation = Relation.causes; break;
-                        case `Entails`:                     link.relation = Relation.entails; break;
-                        case `HasSubevent`:                 link.relation = Relation.hasSubevent; break;
-                        case `HasFirstSubevent`:            link.relation = Relation.hasFirstSubevent; break;
-                        case `HasLastSubevent`:             link.relation = Relation.hasLastSubevent; break;
-                        case `HasPrerequisite`:             link.relation = Relation.hasPrerequisite; break;
-                        case `HasProperty`:                 link.relation = Relation.hasProperty; break;
-                        case `Attribute`:                   link.relation = Relation.attribute; break;
-                        case `MotivatedByGoal`:             link.relation = Relation.motivatedByGoal; break;
-                        case `ObstructedBy`:                link.relation = Relation.obstructedBy; break;
-                        case `Desires`:                     link.relation = Relation.desires; break;
-                        case `CausesDesire`:                link.relation = Relation.causesDesire; break;
-                        case `DesireOf`:                    link.relation = Relation.desireOf; break;
-                        case `CreatedBy`:                   link.relation = Relation.createdBy; break;
-                        case `ReceivesAction`:              link.relation = Relation.receivesAction; break;
-                        case `Synonym`:                     link.relation = Relation.synonym; break;
-                        case `Antonym`:                     link.relation = Relation.antonym; break;
-                        case `Retronym`:                    link.relation = Relation.retronym; break;
-                        case `DerivedFrom`:                 link.relation = Relation.derivedFrom; break;
-                        case `CompoundDerivedFrom`:         link.relation = Relation.compoundDerivedFrom; break;
-                        case `EtymologicallyDerivedFrom`:   link.relation = Relation.etymologicallyDerivedFrom; break;
-                        case `TranslationOf`:               link.relation = Relation.translationOf; break;
-                        case `DefinedAs`:                   link.relation = Relation.definedAs; break;
-                        case `InstanceOf`:                  link.relation = Relation.instanceOf; break;
-                        case `MadeOf`:                      link.relation = Relation.madeOf; break;
-                        case `InheritsFrom`:                link.relation = Relation.inheritsFrom; break;
-                        case `SimilarSize`:                 link.relation = Relation.similarSize; break;
-                        case `SymbolOf`:                    link.relation = Relation.symbolOf; break;
-                        case `SimilarTo`:                   link.relation = Relation.similarTo; break;
-                        case `HasPainIntensity`:            link.relation = Relation.hasPainIntensity; break;
-                        case `HasPainCharacter`:            link.relation = Relation.hasPainCharacter; break;
+                        case `RelatedTo`:                   link._relation = Relation.relatedTo; break;
+                        case `IsA`:                         link._relation = Relation.isA; break;
+                        case `PartOf`:                      link._relation = Relation.partOf; break;
+                        case `MemberOf`:                    link._relation = Relation.memberOf; break;
+                        case `HasA`:                        link._relation = Relation.hasA; break;
+                        case `UsedFor`:                     link._relation = Relation.usedFor; break;
+                        case `CapableOf`:                   link._relation = Relation.capableOf; break;
+                        case `AtLocation`:                  link._relation = Relation.atLocation; break;
+                        case `HasContext`:                  link._relation = Relation.hasContext; break;
+                        case `LocationOf`:                  link._relation = Relation.locationOf; break;
+                        case `LocationOfAction`:            link._relation = Relation.locationOfAction; break;
+                        case `LocatedNear`:                 link._relation = Relation.locatedNear; break;
+                        case `Causes`:                      link._relation = Relation.causes; break;
+                        case `Entails`:                     link._relation = Relation.entails; break;
+                        case `HasSubevent`:                 link._relation = Relation.hasSubevent; break;
+                        case `HasFirstSubevent`:            link._relation = Relation.hasFirstSubevent; break;
+                        case `HasLastSubevent`:             link._relation = Relation.hasLastSubevent; break;
+                        case `HasPrerequisite`:             link._relation = Relation.hasPrerequisite; break;
+                        case `HasProperty`:                 link._relation = Relation.hasProperty; break;
+                        case `Attribute`:                   link._relation = Relation.attribute; break;
+                        case `MotivatedByGoal`:             link._relation = Relation.motivatedByGoal; break;
+                        case `ObstructedBy`:                link._relation = Relation.obstructedBy; break;
+                        case `Desires`:                     link._relation = Relation.desires; break;
+                        case `CausesDesire`:                link._relation = Relation.causesDesire; break;
+                        case `DesireOf`:                    link._relation = Relation.desireOf; break;
+                        case `CreatedBy`:                   link._relation = Relation.createdBy; break;
+                        case `ReceivesAction`:              link._relation = Relation.receivesAction; break;
+                        case `Synonym`:                     link._relation = Relation.synonym; break;
+                        case `Antonym`:                     link._relation = Relation.antonym; break;
+                        case `Retronym`:                    link._relation = Relation.retronym; break;
+                        case `DerivedFrom`:                 link._relation = Relation.derivedFrom; break;
+                        case `CompoundDerivedFrom`:         link._relation = Relation.compoundDerivedFrom; break;
+                        case `EtymologicallyDerivedFrom`:   link._relation = Relation.etymologicallyDerivedFrom; break;
+                        case `TranslationOf`:               link._relation = Relation.translationOf; break;
+                        case `DefinedAs`:                   link._relation = Relation.definedAs; break;
+                        case `InstanceOf`:                  link._relation = Relation.instanceOf; break;
+                        case `MadeOf`:                      link._relation = Relation.madeOf; break;
+                        case `InheritsFrom`:                link._relation = Relation.inheritsFrom; break;
+                        case `SimilarSize`:                 link._relation = Relation.similarSize; break;
+                        case `SymbolOf`:                    link._relation = Relation.symbolOf; break;
+                        case `SimilarTo`:                   link._relation = Relation.similarTo; break;
+                        case `HasPainIntensity`:            link._relation = Relation.hasPainIntensity; break;
+                        case `HasPainCharacter`:            link._relation = Relation.hasPainCharacter; break;
                             // negations
-                        case `NotMadeOf`:                   link.relation = Relation.madeOf; link.negation = true; break;
-                        case `NotIsA`:                      link.relation = Relation.isA; link.negation = true; break;
-                        case `NotUsedFor`:                  link.relation = Relation.usedFor; link.negation = true; break;
-                        case `NotHasA`:                     link.relation = Relation.hasA; link.negation = true; break;
-                        case `NotDesires`:                  link.relation = Relation.desires; link.negation = true; break;
-                        case `NotCauses`:                   link.relation = Relation.causes; link.negation = true; break;
-                        case `NotCapableOf`:                link.relation = Relation.capableOf; link.negation = true; break;
-                        case `NotHasProperty`:              link.relation = Relation.hasProperty; link.negation = true; break;
+                        case `NotMadeOf`:                   link._relation = Relation.madeOf; link._negation = true; break;
+                        case `NotIsA`:                      link._relation = Relation.isA; link._negation = true; break;
+                        case `NotUsedFor`:                  link._relation = Relation.usedFor; link._negation = true; break;
+                        case `NotHasA`:                     link._relation = Relation.hasA; link._negation = true; break;
+                        case `NotDesires`:                  link._relation = Relation.desires; link._negation = true; break;
+                        case `NotCauses`:                   link._relation = Relation.causes; link._negation = true; break;
+                        case `NotCapableOf`:                link._relation = Relation.capableOf; link._negation = true; break;
+                        case `NotHasProperty`:              link._relation = Relation.hasProperty; link._negation = true; break;
 
-                        case `wordnet/adjectivePertainsTo`: link.relation = Relation.adjectivePertainsTo; link.negation = true; break;
-                        case `wordnet/adverbPertainsTo`:    link.relation = Relation.adverbPertainsTo; link.negation = true; break;
-                        case `wordnet/participleOf`:        link.relation = Relation.participleOf; link.negation = true; break;
+                        case `wordnet/adjectivePertainsTo`: link._relation = Relation.adjectivePertainsTo; link._negation = true; break;
+                        case `wordnet/adverbPertainsTo`:    link._relation = Relation.adverbPertainsTo; link._negation = true; break;
+                        case `wordnet/participleOf`:        link._relation = Relation.participleOf; link._negation = true; break;
 
                         default:
                         writeln(`Unknown relationString `, relationString);
-                        link.relation = Relation.unknown;
+                        link._relation = Relation.unknown;
                         break;
                     }
 
-                    this._relationCounts[link.relation]++;
+                    this._relationCounts[link._relation]++;
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`))
                     {
-                        link.srcIx = this.readConceptURI(part);
+                        link._srcIx = this.readConceptURI(part);
                         assert(_links.length < Ix.max);
-                        conceptByIndex(link.srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
+                        conceptByIndex(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
                     }
                     else
@@ -690,9 +690,9 @@ class Net(bool useArray = true,
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
                     {
-                        link.dstIx = this.readConceptURI(part);
+                        link._dstIx = this.readConceptURI(part);
                         assert(_links.length < Ix.max);
-                        conceptByIndex(link.dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
+                        conceptByIndex(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
                     }
                     else
@@ -718,15 +718,15 @@ class Net(bool useArray = true,
                     // TODO Use part.splitter('/')
                     switch (part)
                     {
-                        case `/s/dbpedia/3.7`: link.source = Source.dbpedia37; break;
-                        case `/s/dbpedia/3.9/umbel`: link.source = Source.dbpedia39umbel; break;
-                        case `/d/dbpedia/en`:  link.source = Source.dbpediaEn; break;
-                        case `/d/wordnet/3.0`: link.source = Source.wordnet30; break;
-                        case `/s/wordnet/3.0`: link.source = Source.wordnet30; break;
-                        case `/s/site/verbosity`: link.source = Source.verbosity; break;
+                        case `/s/dbpedia/3.7`: link._origin = Source.dbpedia37; break;
+                        case `/s/dbpedia/3.9/umbel`: link._origin = Source.dbpedia39umbel; break;
+                        case `/d/dbpedia/en`:  link._origin = Source.dbpediaEn; break;
+                        case `/d/wordnet/3.0`: link._origin = Source.wordnet30; break;
+                        case `/s/wordnet/3.0`: link._origin = Source.wordnet30; break;
+                        case `/s/site/verbosity`: link._origin = Source.verbosity; break;
                         default: /* dln("Handle ", part); */ break;
                     }
-                    this._sourceCounts[link.source]++;
+                    this._sourceCounts[link._origin]++;
                     break;
                 default:
                     break;
@@ -829,13 +829,15 @@ class Net(bool useArray = true,
         {
             writeln(`- in `, concept.hlang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
-            foreach (inIx; concept.inIxes)
+            foreach (ix; concept.inIxes)
             {
-                writeln(`  - in `, linkByIndex(inIx));
+                const link = linkByIndex(ix);
+                writeln(`  - in =`, link._relation, `=> `, conceptByIndex(link._dstIx), ` `, link._weight);
             }
-            foreach (outIx; concept.outIxes)
+            foreach (ix; concept.outIxes)
             {
-                writeln(`  - out `, linkByIndex(outIx));
+                const link = linkByIndex(ix);
+                writeln(`  - out `, link._relation);
             }
         }
     }
