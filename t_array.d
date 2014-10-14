@@ -18,7 +18,7 @@ int main(string[] args)
         wln("There!");
     }
 
-    int xx[2];
+    int[2] xx;
     auto xc = xx;
     xc[0] = 1;
     wln(xx);
