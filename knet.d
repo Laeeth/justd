@@ -917,6 +917,7 @@ class Net(bool useArray = true,
             return _conceptIxByLemma[lemma];
         }
         // store Concept
+        assert(_concepts.length <= Ix.max);
         const cix = ConceptIx(cast(Ix)_concepts.length);
         _concepts ~= concept; // .. new concept that is stored
         _conceptIxByLemma[lemma] = cix; // lookupOrStore index to ..
@@ -978,7 +979,7 @@ class Net(bool useArray = true,
                     if (part.skipOver(`/c/`))
                     {
                         link._srcIx = this.readConceptURI(part);
-                        assert(_links.length < Ix.max);
+                        assert(_links.length <= Ix.max);
                         conceptByIndex(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
                     }
@@ -991,7 +992,7 @@ class Net(bool useArray = true,
                     if (part.skipOver(`/c/`))
                     {
                         link._dstIx = this.readConceptURI(part);
-                        assert(_links.length < Ix.max);
+                        assert(_links.length <= Ix.max);
                         conceptByIndex(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
                     }
