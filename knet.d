@@ -1,8 +1,9 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** ConceptNet 5 Commonsense Knowledge Database.
+/** Knowledge Database.
 
-    Reads data from CN5 into a Hypergraph.
+    Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
+    Wikidata, WikiTaxonomy into a Knowledge Graph.
 
     Data: http://conceptnet5.media.mit.edu/downloads/current/
 
@@ -22,7 +23,7 @@
     TODO Use containers.HashMap
     TODO Call GC.disable/enable around construction and search.
  */
-module conceptnet5;
+module knet;
 
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;

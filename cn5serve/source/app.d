@@ -47,9 +47,9 @@ class WebInterface {
     }
 }
 
-import conceptnet5;
+import knet;
 
-void loadCN5()
+void loadKNet()
 {
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
 }

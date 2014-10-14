@@ -8,5 +8,5 @@
     },
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
-    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../conceptnet5.d", "../rcstring.d", "../wordnet.d", "../grammars.d" ]
+    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../knet.d", "../rcstring.d", "../wordnet.d", "../grammars.d" ]
 }

@@ -1,9 +1,9 @@
 {
-    "name": "cn5query",
+    "name": "knetquery",
     "targetType": "executable",
     "description": "A Conceptnet Command Line Query tool.",
     "copyright": "Copyright © 2014, Per Nordlöw",
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
-    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../conceptnet5.d", "../rcstring.d", "../wordnet.d", "../grammars.d", "../assert_ex.d" ]
+    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../knet.d", "../rcstring.d", "../wordnet.d", "../grammars.d", "../assert_ex.d" ]
 }

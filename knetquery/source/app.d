@@ -1,5 +1,5 @@
 import std.stdio;
-import conceptnet5;
+import knet;
 
 int main(string[] args)
 {
