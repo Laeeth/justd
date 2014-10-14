@@ -847,9 +847,28 @@ class Net(bool useArray = true,
         if (hlang != HLang.unknown &&
             wordKind != WordKind.unknown)
         {
+            // TODO: Functionize
             auto lemma = Lemma(words, hlang, wordKind);
             if (lemma in _conceptIxByLemma)
+            {
                 concepts = [conceptByIndex(_conceptIxByLemma[lemma])];
+            }
+            else
+            {
+                auto wordsSplit = _wordnet.findWordsSplit(words, [hlang]);
+                dln("wordsSplit:", wordsSplit);
+                if (wordsSplit.length >= 2)
+                {
+                    const wordsFixed = wordsSplit.joiner("_").to!S;
+                    dln("wordsFixed:", wordsFixed);
+                    // TODO: Functionize
+                    auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind);
+                    if (lemmaFixed in _conceptIxByLemma)
+                    {
+                        concepts = [conceptByIndex(_conceptIxByLemma[lemmaFixed])];
+                    }
+                }
+            }
         }
         else
         {
