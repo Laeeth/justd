@@ -9,6 +9,7 @@ import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.
 import std.container: Array;
 import rcstring;
 import dbg;
+import assert_ex;
 
 alias nPath = buildNormalizedPath;
 
@@ -603,59 +604,101 @@ class WordNet(bool useArray = true,
         return !meanings.empty;
     }
 
+    /** Check if $(D first) and $(D second) are meaningful. */
+    S[] tryWordSplit(S)(S first, S second,
+                        const HLang[] langs = [],
+                        const bool crossLanguage = false,
+                        const size_t minSize = 2,
+                        bool backwards = true) if (isSomeString!S)
+    {
+        if (first.length >= minSize &&
+            second.length >= minSize)
+        {
+            auto firstOk = canMeanSomething(first, langs);
+            bool genitiveForm = false;
+            if (!firstOk &&
+                first.length >= 2 &&
+                first.endsWith(`s`))
+            {
+                firstOk = canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
+                if (firstOk)
+                {
+                    genitiveForm = true;
+                }
+            }
+
+            if (firstOk)
+            {
+                auto secondOk = canMeanSomething(second, langs);
+                if (secondOk)
+                {
+                    return [first, second];
+                }
+                else
+                {
+                    auto secondSplits = findWordsSplit(second, langs, crossLanguage, minSize);
+                    if (secondSplits.length >= 2)
+                    {
+                        return [first] ~ secondSplits;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /** Find First Possible Split of $(D word) with semantic meaning(s) in
         languages $(D langs).
         TODO logic using minSize may pick single character for UTF-8 characters
         such, for instance, Swedish å, ä, ö
      */
-    S[] findWordSplits(S)(const S word,
+    S[] findWordsSplit(S)(const S word,
                           const HLang[] langs = [],
                           const bool crossLanguage = false,
-                          const size_t minSize = 2) if (isSomeString!S)
+                          const size_t minSize = 2,
+                          bool backwards = true) if (isSomeString!S)
     {
         import range_ex: slidingSplitter;
 
         if (word.length < 2*minSize)    // need at least two parts of at least two characters
             return [word];
 
-        foreach (immutable first, second; word.slidingSplitter.retro)
+        if (backwards)
         {
-            if (first.length >= minSize &&
-                second.length >= minSize)
+            foreach (immutable first, second; word.slidingSplitter.retro)
             {
-                auto firstOk = canMeanSomething(first, langs);
-                bool genitiveForm = false;
-                if (!firstOk &&
-                    first.length >= 2 &&
-                    first.endsWith(`s`))
+                if (auto split = tryWordSplit(first, second,
+                                              langs, crossLanguage, minSize, backwards))
                 {
-                    firstOk = canMeanSomething(first[0..$ - 1], langs); // TODO is there a dropEnd
-                    if (firstOk)
-                    {
-                        genitiveForm = true;
-                    }
+                    return split;
                 }
-
-                if (firstOk)
+            }
+        }
+        else
+        {
+            foreach (immutable first, second; word.slidingSplitter)
+            {
+                if (auto split = tryWordSplit(first, second,
+                                              langs, crossLanguage, minSize, backwards))
                 {
-                    auto secondOk = canMeanSomething(second, langs);
-                    if (secondOk)
-                    {
-                        return [first, second];
-                    }
-                    else
-                    {
-                        auto secondSplits = findWordSplits(second, langs, crossLanguage, minSize);
-                        if (secondSplits.length >= 2)
-                        {
-                            return [first] ~ secondSplits;
-                        }
-                    }
+                    return split;
                 }
             }
         }
 
         return [word];
+    }
+
+    /** Find All Possible Split of $(D word) with semantic meaning(s) in
+        languages $(D langs).
+    */
+    S[][] findWordsSplits(S)(const S word,
+                             const HLang[] langs = [],
+                             const bool crossLanguage = false,
+                             const size_t minSize = 2) if (isSomeString!S)
+    {
+        return (findWordsSplits(word, langs, crossLanguage, minSize, false) ~
+                findWordsSplits(word, langs, crossLanguage, minSize, true));
     }
 
     auto canMean(S)(S lemma,
@@ -811,25 +854,27 @@ unittest
 
     if (langs.canFind(HLang.en))
     {
-        assert(wn.findWordSplits(`physicalaction`, [HLang.en]) == [`physical`, `action`]);
-        assert(wn.findWordSplits(`physicsexam`, [HLang.en]) == [`physics`, `exam`]);
-        assert(wn.findWordSplits(`carwash`, [HLang.en]) == [`car`, `wash`]);
-        assert(wn.findWordSplits(`biltvätt`, [HLang.en]) == [`biltvätt`]); // shouldn't find any split
+        assert(wn.findWordsSplit(`hashusband`, [HLang.en], false, 2, false) == [`has`, `husband`]);
+        assert(wn.findWordsSplit(`physicalaction`, [HLang.en]) == [`physical`, `action`]);
+        assert(wn.findWordsSplit(`physicsexam`, [HLang.en]) == [`physics`, `exam`]);
+        assert(wn.findWordsSplit(`carwash`, [HLang.en]) == [`car`, `wash`]);
+        assert(wn.findWordsSplit(`biltvätt`, [HLang.en]) == [`biltvätt`]); // shouldn't find any split
     }
 
     if (langs.canFind(HLang.sv))
     {
-        assert(wn.findWordSplits(`kärnkraftsavfallshink`, [HLang.sv]) == [`kärnkrafts`, `avfalls`, `hink`]);
-        assert(wn.findWordSplits(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
-        assert(wn.findWordSplits(``, [HLang.sv]) == [``]);
-        assert(wn.findWordSplits(`i`, [HLang.sv]) == [`i`]);
-        assert(wn.findWordSplits(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
-        assert(wn.findWordSplits(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
-        assert(wn.findWordSplits(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
-        assert(wn.findWordSplits(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
-        assert(wn.findWordSplits(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
-        assert(wn.findWordSplits(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
-        assert(wn.findWordSplits(`kärnkraftsavfall`, [HLang.sv]) == [`kärnkrafts`, `avfall`]);
+        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, [HLang.sv]) == [`kärnkrafts`, `avfalls`, `hink`]);
+        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, [HLang.sv], false, 2, false) == [`kärnkraft`, `sav`, `falls`, `hink`]);
+        assert(wn.findWordsSplit(`papperskorg`, [HLang.sv]) == [`pappers`, `korg`]);
+        assert(wn.findWordsSplit(``, [HLang.sv]) == [``]);
+        assert(wn.findWordsSplit(`i`, [HLang.sv]) == [`i`]);
+        assert(wn.findWordsSplit(`biltvätt`, [HLang.sv]) == [`bil`, `tvätt`]);
+        assert(wn.findWordsSplit(`trötthet`, [HLang.sv]) == [`trött`, `het`]);
+        assert(wn.findWordsSplit(`paprikabit`, [HLang.sv]) == [`paprika`, `bit`]);
+        assert(wn.findWordsSplit(`funktionsteori`, [HLang.sv]) == [`funktions`, `teori`]);
+        assert(wn.findWordsSplit(`nyhetstorka`, [HLang.sv]) == [`nyhets`, `torka`]);
+        assert(wn.findWordsSplit(`induktionsbevis`, [HLang.sv]) == [`induktions`, `bevis`]);
+        assert(wn.findWordsSplit(`kärnkraftsavfall`, [HLang.sv]) == [`kärnkrafts`, `avfall`]);
     }
 
     if (langs.canFind(HLang.en))
