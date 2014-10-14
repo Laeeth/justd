@@ -58,7 +58,7 @@ static if (__VERSION__ < 2067)
 /* import memory.allocators; */
 /* import containers: HashMap; */
 
-/** Semantic Relation Type Code.
+/** Conceptnet Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
 enum Relation:ubyte
@@ -188,6 +188,351 @@ enum Relation:ubyte
     participleOf,
 }
 
+Relation decodeRelation(S)(S s,
+                           out bool negation) if (isSomeString!S)
+{
+    switch (s)
+    {
+        case `RelatedTo`:                   return Relation.relatedTo;
+        case `IsA`:                         return Relation.isA;
+        case `PartOf`:                      return Relation.partOf;
+        case `MemberOf`:                    return Relation.memberOf;
+        case `HasA`:                        return Relation.hasA;
+        case `UsedFor`:                     return Relation.usedFor;
+        case `CapableOf`:                   return Relation.capableOf;
+        case `AtLocation`:                  return Relation.atLocation;
+        case `HasContext`:                  return Relation.hasContext;
+        case `LocationOf`:                  return Relation.locationOf;
+        case `LocationOfAction`:            return Relation.locationOfAction;
+        case `LocatedNear`:                 return Relation.locatedNear;
+        case `Causes`:                      return Relation.causes;
+        case `Entails`:                     return Relation.entails;
+        case `HasSubevent`:                 return Relation.hasSubevent;
+        case `HasFirstSubevent`:            return Relation.hasFirstSubevent;
+        case `HasLastSubevent`:             return Relation.hasLastSubevent;
+        case `HasPrerequisite`:             return Relation.hasPrerequisite;
+        case `HasProperty`:                 return Relation.hasProperty;
+        case `Attribute`:                   return Relation.attribute;
+        case `MotivatedByGoal`:             return Relation.motivatedByGoal;
+        case `ObstructedBy`:                return Relation.obstructedBy;
+        case `Desires`:                     return Relation.desires;
+        case `CausesDesire`:                return Relation.causesDesire;
+        case `DesireOf`:                    return Relation.desireOf;
+        case `CreatedBy`:                   return Relation.createdBy;
+        case `ReceivesAction`:              return Relation.receivesAction;
+        case `Synonym`:                     return Relation.synonym;
+        case `Antonym`:                     return Relation.antonym;
+        case `Retronym`:                    return Relation.retronym;
+        case `DerivedFrom`:                 return Relation.derivedFrom;
+        case `CompoundDerivedFrom`:         return Relation.compoundDerivedFrom;
+        case `EtymologicallyDerivedFrom`:   return Relation.etymologicallyDerivedFrom;
+        case `TranslationOf`:               return Relation.translationOf;
+        case `DefinedAs`:                   return Relation.definedAs;
+        case `InstanceOf`:                  return Relation.instanceOf;
+        case `MadeOf`:                      return Relation.madeOf;
+        case `InheritsFrom`:                return Relation.inheritsFrom;
+        case `SimilarSize`:                 return Relation.similarSize;
+        case `SymbolOf`:                    return Relation.symbolOf;
+        case `SimilarTo`:                   return Relation.similarTo;
+        case `HasPainIntensity`:            return Relation.hasPainIntensity;
+        case `HasPainCharacter`:            return Relation.hasPainCharacter;
+            // negations
+        case `NotMadeOf`:                   negation = true; return Relation.madeOf;
+        case `NotIsA`:                      negation = true; return Relation.isA;
+        case `NotUsedFor`:                  negation = true; return Relation.usedFor;
+        case `NotHasA`:                     negation = true; return Relation.hasA;
+        case `NotDesires`:                  negation = true; return Relation.desires;
+        case `NotCauses`:                   negation = true; return Relation.causes;
+        case `NotCapableOf`:                negation = true; return Relation.capableOf;
+        case `NotHasProperty`:              negation = true; return Relation.hasProperty;
+
+        case `wordnet/adjectivePertainsTo`: negation = true; return Relation.adjectivePertainsTo;
+        case `wordnet/adverbPertainsTo`:    negation = true; return Relation.adverbPertainsTo;
+        case `wordnet/participleOf`:        negation = true; return Relation.participleOf;
+
+        default:
+            writeln(`Unknown relationString `, s);
+            return Relation.unknown;
+    }
+}
+
+/** NELL Concept Category.
+    Typically named NELL.08m.734.categories.csv
+*/
+enum NELLCategory:ushort
+{
+    book,
+    celltype,
+    physicalaction,
+    species,
+    muscle,
+    abstractthing,
+    eventoutcome,
+    retailstore,
+    mlconference,
+    bird,
+    grain,
+    color,
+    school,
+    personcanada,
+    mountain,
+    poem,
+    dayofweek,
+    agriculturalproduct,
+    date,
+    monarch,
+    astronaut,
+    fish,
+    personeurope,
+    cave,
+    programminglanguage,
+    olympics,
+    personus,
+    protein,
+    visualartist,
+    chemical,
+    buildingmaterial,
+    event,
+    url,
+    televisionnetwork,
+    landscapefeatures,
+    hallwayitem,
+    mldataset,
+    lyrics,
+    nerve,
+    researchproject,
+    weapon,
+    braintissue,
+    creditunion,
+    personmexico,
+    nut,
+    hospital,
+    politicsissue,
+    boardgame,
+    musicinstrument,
+    gamescore,
+    transportation,
+    cardgame,
+    currency,
+    condiment,
+    politicsblog,
+    geopoliticalentity,
+    terroristorganization,
+    religion,
+    economicsector,
+    videogamesystem,
+    nonneginteger,
+    politicsbill,
+    year,
+    reptile,
+    physicsterm,
+    fruit,
+    politicalparty,
+    lake,
+    product,
+    bakedgood,
+    agent,
+    furniture,
+    country,
+    parlourgame,
+    charactertrait,
+    personaustralia,
+    musicalbum,
+    room,
+    model,
+    scientist,
+    musicgenre,
+    professionalorganization,
+    legume,
+    personnorthamerica,
+    tool,
+    trainstation,
+    physicalcharacteristic,
+    organization,
+    farm,
+    personafrica,
+    conference,
+    planet,
+    politicsgroup,
+    tableitem,
+    journalist,
+    convention,
+    automobilemaker,
+    female,
+    actor,
+    automobilemodel,
+    professor,
+    geolocatablething,
+    dateliteral,
+    nondiseasecondition,
+    mediatype,
+    nongovorganization,
+    attraction,
+    politicaloffice,
+    mlsoftware,
+    placeofworship,
+    clothing,
+    stadiumoreventvenue,
+    lymphnode,
+    musicartist,
+    island,
+    visualartmovement,
+    bedroomitem,
+    geometricshape,
+    sportsteam,
+    software,
+    personalcareitem,
+    musicsong,
+    humanagent,
+    televisionshow,
+    bank,
+    insect,
+    personsouthamerica,
+    sport,
+    animal,
+    bodypart,
+    wine,
+    hobby,
+    director,
+    museum,
+    vertebrate,
+    emotion,
+    mammal,
+    crimeorcharge,
+    movie,
+    perceptionaction,
+    county,
+    aquarium,
+    language,
+    newspaper,
+    architect,
+    invertebrate,
+    person,
+    sociopolitical,
+    recipe,
+    disease,
+    street,
+    month,
+    vehicle,
+    filmfestival,
+    politicianus,
+    perceptionevent,
+    airport,
+    sportsleague,
+    arthropod,
+    zoo,
+    shoppingmall,
+    athlete,
+    musician,
+    artery,
+    mlmetric,
+    chef,
+    archaea,
+    male,
+    zipcode,
+    personbylocation,
+    crustacean,
+    medicalprocedure,
+    item,
+    awardtrophytournament,
+    company,
+    arachnid,
+    personasia,
+    beverage,
+    vegetable,
+    sportsteamposition,
+    kitchenitem,
+    highschool,
+    stateorprovince,
+    port,
+    buildingfeature,
+    beach,
+    llcoordinate,
+    academicfield,
+    tradeunion,
+    geopoliticalorganization,
+    geopoliticallocation,
+    mlarea,
+    amphibian,
+    ethnicgroup,
+    writer,
+    ceo,
+    videogame,
+    judge,
+    game,
+    nonprofitorganization,
+    building,
+    musicfestival,
+    flooritem,
+    publication,
+    creativework,
+    food,
+    consumerelectronicitem,
+    bridge,
+    continent,
+    bacteria,
+    hotel,
+    personantarctica,
+    radiostation,
+    winery,
+    televisionstation,
+    fungus,
+    blog,
+    bathroomitem,
+    restaurant,
+    plant,
+    race,
+    trail,
+    sportsequipment,
+    recordlabel,
+    drug,
+    university,
+    mlauthor,
+    governmentorganization,
+    jobposition,
+    wallitem,
+    website,
+    coach,
+    celebrity,
+    mollusk,
+    visualartform,
+    weatherphenomenon,
+    election,
+    mediacompany,
+    householditem,
+    skiarea,
+    traditionalgame,
+    grandprix,
+    river,
+    sportsevent,
+    sportsgame,
+    officeitem,
+    city,
+    location,
+    biotechcompany,
+    highway,
+    vein,
+    cheese,
+    militaryeventtype,
+    automobileengine,
+    comedian,
+    cognitiveactions,
+    mlalgorithm,
+    bone,
+    physiologicalcondition,
+    politician,
+    meat,
+    magazine,
+    skyscraper,
+    park,
+    militaryconflict,
+    monument,
+    criminal,
+    mountainrange,
+    candy,
+    profession,
+}
+
 @safe @nogc pure nothrow
 {
     bool isSymmetric(const Relation relation)
@@ -251,6 +596,7 @@ enum Relation:ubyte
 
 }
 
+/** ConceptNet Thematic. */
 enum Thematic:ubyte
 {
     unknown,
@@ -604,74 +950,7 @@ class Net(bool useArray = true,
             {
                 case 1:
                     // TODO Handle case when part matches /r/_wordnet/X
-                    const relationString = part[3..$];
-
-                    // TODO Functionize to parseRelation or x.to!Relation
-                    switch (relationString)
-                    {
-                        case `RelatedTo`:                   link._relation = Relation.relatedTo; break;
-                        case `IsA`:                         link._relation = Relation.isA; break;
-                        case `PartOf`:                      link._relation = Relation.partOf; break;
-                        case `MemberOf`:                    link._relation = Relation.memberOf; break;
-                        case `HasA`:                        link._relation = Relation.hasA; break;
-                        case `UsedFor`:                     link._relation = Relation.usedFor; break;
-                        case `CapableOf`:                   link._relation = Relation.capableOf; break;
-                        case `AtLocation`:                  link._relation = Relation.atLocation; break;
-                        case `HasContext`:                  link._relation = Relation.hasContext; break;
-                        case `LocationOf`:                  link._relation = Relation.locationOf; break;
-                        case `LocationOfAction`:            link._relation = Relation.locationOfAction; break;
-                        case `LocatedNear`:                 link._relation = Relation.locatedNear; break;
-                        case `Causes`:                      link._relation = Relation.causes; break;
-                        case `Entails`:                     link._relation = Relation.entails; break;
-                        case `HasSubevent`:                 link._relation = Relation.hasSubevent; break;
-                        case `HasFirstSubevent`:            link._relation = Relation.hasFirstSubevent; break;
-                        case `HasLastSubevent`:             link._relation = Relation.hasLastSubevent; break;
-                        case `HasPrerequisite`:             link._relation = Relation.hasPrerequisite; break;
-                        case `HasProperty`:                 link._relation = Relation.hasProperty; break;
-                        case `Attribute`:                   link._relation = Relation.attribute; break;
-                        case `MotivatedByGoal`:             link._relation = Relation.motivatedByGoal; break;
-                        case `ObstructedBy`:                link._relation = Relation.obstructedBy; break;
-                        case `Desires`:                     link._relation = Relation.desires; break;
-                        case `CausesDesire`:                link._relation = Relation.causesDesire; break;
-                        case `DesireOf`:                    link._relation = Relation.desireOf; break;
-                        case `CreatedBy`:                   link._relation = Relation.createdBy; break;
-                        case `ReceivesAction`:              link._relation = Relation.receivesAction; break;
-                        case `Synonym`:                     link._relation = Relation.synonym; break;
-                        case `Antonym`:                     link._relation = Relation.antonym; break;
-                        case `Retronym`:                    link._relation = Relation.retronym; break;
-                        case `DerivedFrom`:                 link._relation = Relation.derivedFrom; break;
-                        case `CompoundDerivedFrom`:         link._relation = Relation.compoundDerivedFrom; break;
-                        case `EtymologicallyDerivedFrom`:   link._relation = Relation.etymologicallyDerivedFrom; break;
-                        case `TranslationOf`:               link._relation = Relation.translationOf; break;
-                        case `DefinedAs`:                   link._relation = Relation.definedAs; break;
-                        case `InstanceOf`:                  link._relation = Relation.instanceOf; break;
-                        case `MadeOf`:                      link._relation = Relation.madeOf; break;
-                        case `InheritsFrom`:                link._relation = Relation.inheritsFrom; break;
-                        case `SimilarSize`:                 link._relation = Relation.similarSize; break;
-                        case `SymbolOf`:                    link._relation = Relation.symbolOf; break;
-                        case `SimilarTo`:                   link._relation = Relation.similarTo; break;
-                        case `HasPainIntensity`:            link._relation = Relation.hasPainIntensity; break;
-                        case `HasPainCharacter`:            link._relation = Relation.hasPainCharacter; break;
-                            // negations
-                        case `NotMadeOf`:                   link._relation = Relation.madeOf; link._negation = true; break;
-                        case `NotIsA`:                      link._relation = Relation.isA; link._negation = true; break;
-                        case `NotUsedFor`:                  link._relation = Relation.usedFor; link._negation = true; break;
-                        case `NotHasA`:                     link._relation = Relation.hasA; link._negation = true; break;
-                        case `NotDesires`:                  link._relation = Relation.desires; link._negation = true; break;
-                        case `NotCauses`:                   link._relation = Relation.causes; link._negation = true; break;
-                        case `NotCapableOf`:                link._relation = Relation.capableOf; link._negation = true; break;
-                        case `NotHasProperty`:              link._relation = Relation.hasProperty; link._negation = true; break;
-
-                        case `wordnet/adjectivePertainsTo`: link._relation = Relation.adjectivePertainsTo; link._negation = true; break;
-                        case `wordnet/adverbPertainsTo`:    link._relation = Relation.adverbPertainsTo; link._negation = true; break;
-                        case `wordnet/participleOf`:        link._relation = Relation.participleOf; link._negation = true; break;
-
-                        default:
-                        writeln(`Unknown relationString `, relationString);
-                        link._relation = Relation.unknown;
-                        break;
-                    }
-
+                    link._relation = part[3..$].decodeRelation(link._negation);
                     this._relationCounts[link._relation]++;
                     break;
                 case 2:         // source concept
