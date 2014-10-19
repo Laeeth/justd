@@ -4,13 +4,14 @@ import std.container: redBlackTree;
 alias Node = string;
 alias Weight = int;
 
-const struct Neighbor
+const struct Neighbour
 {
     Node target;
     Weight weight;
 }
 
-alias AdjacencyMap = Neighbor[][Node];
+/** Adjacency Map. */
+alias AdjacencyMap = Neighbour[][Node];
 
 /** Dijkstra's Algorithm.
    See also: http://rosettacode.org/wiki/Dijkstra's_algorithm#D
@@ -19,23 +20,23 @@ Tuple!(Weight[Node], Node[Node]) dijkstraComputePaths(in Node source,
                                                       in Node target,
                                                       in AdjacencyMap adjacencyMap) /* pure */
 {
-    Weight[Node] minDistance;
+    Weight[Node] minDist;
     foreach (immutable v, const neighs; adjacencyMap)
     {
-        minDistance[v] = Weight.max;
+        minDist[v] = Weight.max;
         foreach (immutable n; neighs)
-            minDistance[n.target] = Weight.max;
+            minDist[n.target] = Weight.max;
     }
 
-    minDistance[source] = 0;
+    minDist[source] = 0;
     alias Pair = Tuple!(Weight, Node);
-    auto vertexQueue = redBlackTree(Pair(minDistance[source], source));
+    auto nodeQ = redBlackTree(Pair(minDist[source], source));
     typeof(typeof(return).init[1]) previous;
 
-    while (!vertexQueue.empty)
+    while (!nodeQ.empty)
     {
-        const u = vertexQueue.front[1];
-        vertexQueue.removeFront;
+        const u = nodeQ.front[1];
+        nodeQ.removeFront;
 
         if (u == target)
             break;
@@ -44,18 +45,18 @@ Tuple!(Weight[Node], Node[Node]) dijkstraComputePaths(in Node source,
         foreach (immutable n; adjacencyMap.get(u, null))
         {
             const v = n.target;
-            const distanceThroughU = minDistance[u] + n.weight;
-            if (distanceThroughU < minDistance[v])
+            const distanceThroughU = minDist[u] + n.weight;
+            if (distanceThroughU < minDist[v])
             {
-                vertexQueue.removeKey(Pair(minDistance[v], v));
-                minDistance[v] = distanceThroughU;
+                nodeQ.removeKey(Pair(minDist[v], v));
+                minDist[v] = distanceThroughU;
                 previous[v] = u;
-                vertexQueue.insert(Pair(minDistance[v], v));
+                nodeQ.insert(Pair(minDist[v], v));
             }
         }
     }
 
-    return tuple(minDistance, previous);
+    return tuple(minDist, previous);
 }
 
 Node[] dijkstraGetShortestPathTo(Node v,
@@ -74,6 +75,8 @@ Node[] dijkstraGetShortestPathTo(Node v,
     return path;
 }
 
+version = print;
+
 unittest
 {
     immutable arcs = [tuple("a", "b", 7),
@@ -89,24 +92,27 @@ unittest
     AdjacencyMap adj;
     foreach (immutable arc; arcs)
     {
-        adj[arc[0]] ~= Neighbor(arc[1], arc[2]);
+        adj[arc[0]] ~= Neighbour(arc[1], arc[2]);
         // Add this if you want an undirected graph:
-        //adj[arc[1]] ~= Neighbor(arc[0], arc[2]);
+        //adj[arc[1]] ~= Neighbour(arc[0], arc[2]);
     }
 
     const minDistPrevious = dijkstraComputePaths("a", "e", adj);
-    const minDistance = minDistPrevious[0];
+    const minDist = minDistPrevious[0];
     const previous = minDistPrevious[1];
 
-    assert(minDistance["e"] == 26);
-    assert(minDistance["f"] == 11);
+    assert(minDist["e"] == 26);
+    assert(minDist["b"] ==  7);
+    assert(minDist["c"] ==  9);
+    assert(minDist["d"] == 20);
+    assert(minDist["e"] == 26);
+    assert(minDist["f"] == 11);
     assert(dijkstraGetShortestPathTo("e", previous) == ["a", "c", "d", "e"]);
 
     version(print)
     {
         import std.stdio: writeln;
-        writeln(`Distance from "a" to "e": `, minDistance["e"]);
-        writeln(`Distance from "a" to "f": `, minDistance["f"]);
+        writeln(`Distance from "a" to "e": `, minDist["e"]);
         writeln("Path: ", dijkstraGetShortestPathTo("e", previous));
     }
 }
