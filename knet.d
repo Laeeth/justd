@@ -768,11 +768,11 @@ class Net(bool useArray = true,
         void setWeight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..about10 to Weight 0.255 to save memory
-            this._weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
+            _weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
         }
         @property real normalizedWeight() const
         {
-            return cast(real)this._weight/(cast(real)Weight.max/10);
+            return cast(real)_weight/(cast(real)Weight.max/10);
         }
     private:
         ConceptIx _srcIx;
@@ -808,6 +808,7 @@ class Net(bool useArray = true,
         size_t[Relation.max + 1] _relationCounts;
         size_t[Source.max + 1] _sourceCounts;
         size_t[HLang.max + 1] _hlangCounts;
+        size_t[WordKind.max + 1] _kindCounts;
         size_t _assertionCount = 0;
         size_t _conceptStringLengthSum = 0;
         size_t _connectednessSum = 0;
@@ -835,6 +836,34 @@ class Net(bool useArray = true,
         }
     }
 
+    Concept[] foo(S)(S words,
+                     HLang hlang = HLang.unknown,
+                     WordKind wordKind = WordKind.unknown) if (isSomeString!S)
+    {
+        typeof(return) concepts;
+        auto lemma = Lemma(words, hlang, wordKind);
+        if (lemma in _conceptIxByLemma) // if hashed lookup possible
+        {
+            concepts = [conceptByIndex(_conceptIxByLemma[lemma])]; // use it
+        }
+        else
+        {
+            auto wordsSplit = _wordnet.findWordsSplit(words, [hlang]); // split in parts
+            if (wordsSplit.length >= 2)
+            {
+                const wordsFixed = wordsSplit.joiner("_").to!S;
+                dln("wordsFixed: ", wordsFixed, " in ", hlang, " as ", wordKind);
+                // TODO: Functionize
+                auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind);
+                if (lemmaFixed in _conceptIxByLemma)
+                {
+                    concepts = [conceptByIndex(_conceptIxByLemma[lemmaFixed])];
+                }
+            }
+        }
+        return concepts;
+    }
+
     /** Get Concepts related to $(D word) in the interpretation (semantic
         context) $(D wordKind).
         If no wordKind given return all possible.
@@ -847,41 +876,23 @@ class Net(bool useArray = true,
         if (hlang != HLang.unknown &&
             wordKind != WordKind.unknown)
         {
-            // TODO: Functionize
-            auto lemma = Lemma(words, hlang, wordKind);
-            if (lemma in _conceptIxByLemma)
-            {
-                concepts = [conceptByIndex(_conceptIxByLemma[lemma])];
-            }
-            else
-            {
-                auto wordsSplit = _wordnet.findWordsSplit(words, [hlang]);
-                dln("wordsSplit:", wordsSplit);
-                if (wordsSplit.length >= 2)
-                {
-                    const wordsFixed = wordsSplit.joiner("_").to!S;
-                    dln("wordsFixed:", wordsFixed);
-                    // TODO: Functionize
-                    auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind);
-                    if (lemmaFixed in _conceptIxByLemma)
-                    {
-                        concepts = [conceptByIndex(_conceptIxByLemma[lemmaFixed])];
-                    }
-                }
-            }
+            return foo(words, hlang, wordKind);
         }
         else
         {
-            foreach (hlang_; EnumMembers!HLang)
+            foreach (hlangGuess; EnumMembers!HLang) // for each language
             {
-                foreach (wordKind_; EnumMembers!WordKind)
+                if (_hlangCounts[hlangGuess])
                 {
-                    auto lemma = Lemma(words, hlang_, wordKind_);
-                    if (lemma in _conceptIxByLemma)
-                        concepts ~= conceptByIndex(_conceptIxByLemma[lemma]);
+                    foreach (wordKindGuess; EnumMembers!WordKind) // for each meaning
+                    {
+                        if (_kindCounts[wordKindGuess])
+                        {
+                            concepts ~= foo(words, hlangGuess, wordKindGuess);
+                        }
+                    }
                 }
             }
-            return concepts;
         }
         if (concepts.empty)
         {
@@ -896,7 +907,7 @@ class Net(bool useArray = true,
 
     this(string dirPath)
     {
-        this._wordnet = new WordNet!(true, true)([HLang.en]);
+        _wordnet = new WordNet!(true, true)([HLang.en]);
         // GC.disabled had no noticeble effect here: import core.memory: GC;
         const fixedPath = dirPath.expandTilde
                                  .buildNormalizedPath;
@@ -931,7 +942,7 @@ class Net(bool useArray = true,
         auto items = part.splitter('/');
 
         const hlang = items.front.decodeHumanLang; items.popFront;
-        _hlangCounts[hlang]++;
+        ++_hlangCounts[hlang];
 
         static if (useRCString) { immutable word = items.front; }
         else                    { immutable word = items.front.idup; }
@@ -951,9 +962,10 @@ class Net(bool useArray = true,
             /*     dln(word, ` has kind `, wordKind); */
             /* } */
         }
+        ++_kindCounts[wordKind];
 
-        auto cix = this.lookupOrStore(Lemma(word, hlang, wordKind),
-                                      Concept(hlang, wordKind));
+        auto cix = lookupOrStore(Lemma(word, hlang, wordKind),
+                                 Concept(hlang, wordKind));
         return cix;
     }
 
@@ -973,12 +985,12 @@ class Net(bool useArray = true,
                 case 1:
                     // TODO Handle case when part matches /r/_wordnet/X
                     link._relation = part[3..$].decodeRelation(link._negation);
-                    this._relationCounts[link._relation]++;
+                    _relationCounts[link._relation]++;
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`))
                     {
-                        link._srcIx = this.readConceptURI(part);
+                        link._srcIx = readConceptURI(part);
                         assert(_links.length <= Ix.max);
                         conceptByIndex(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
@@ -991,7 +1003,7 @@ class Net(bool useArray = true,
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
                     {
-                        link._dstIx = this.readConceptURI(part);
+                        link._dstIx = readConceptURI(part);
                         assert(_links.length <= Ix.max);
                         conceptByIndex(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
@@ -1010,10 +1022,10 @@ class Net(bool useArray = true,
                 case 5:
                     const weight = part.to!real;
                     link.setWeight(weight);
-                    this._weightSum += weight;
-                    this._weightMin = min(part.to!float, this._weightMin);
-                    this._weightMax = max(part.to!float, this._weightMax);
-                    this._assertionCount++;
+                    _weightSum += weight;
+                    _weightMin = min(part.to!float, _weightMin);
+                    _weightMax = max(part.to!float, _weightMax);
+                    _assertionCount++;
                     break;
                 case 6:
                     // TODO Use part.splitter('/')
@@ -1027,7 +1039,7 @@ class Net(bool useArray = true,
                         case `/s/site/verbosity`: link._origin = Source.verbosity; break;
                         default: /* dln("Handle ", part); */ break;
                     }
-                    this._sourceCounts[link._origin]++;
+                    _sourceCounts[link._origin]++;
                     break;
                 default:
                     break;
@@ -1074,9 +1086,9 @@ class Net(bool useArray = true,
     void showRelations()
     {
         writeln(`Relation Count by Type:`);
-        foreach (relation; Relation.min..Relation.max)
+        foreach (relation; Relation.min .. Relation.max)
         {
-            const count = this._relationCounts[relation];
+            const count = _relationCounts[relation];
             if (count)
             {
                 writeln(`- `, relation.to!string, `: `, count);
@@ -1086,7 +1098,7 @@ class Net(bool useArray = true,
         writeln(`Concept Count by Source:`);
         foreach (source; Source.min..Source.max)
         {
-            const count = this._sourceCounts[source];
+            const count = _sourceCounts[source];
             if (count)
             {
                 writeln(`- `, source.to!string, `: `, count);
@@ -1096,17 +1108,27 @@ class Net(bool useArray = true,
         writeln(`Concept Count by Language:`);
         foreach (hlang; HLang.min..HLang.max)
         {
-            const count = this._hlangCounts[hlang];
+            const count = _hlangCounts[hlang];
             if (count)
             {
                 writeln(`- `, hlang.toName, ` (`, hlang.to!string, `) : `, count);
             }
         }
 
+        writeln(`Concept Count by Word Kind:`);
+        foreach (wordKind; WordKind.min..WordKind.max)
+        {
+            const count = _kindCounts[wordKind];
+            if (count)
+            {
+                writeln(`- `, wordKind, ` (`, wordKind.to!string, `) : `, count);
+            }
+        }
+
         writeln(`Stats:`);
         writeln(`- Weights Min,Max,Average: `,
-                this._weightMin, ',', this._weightMax, ',', cast(real)this._weightSum/this._links.length);
-        writeln(`- Number of assertions: `, this._assertionCount);
+                _weightMin, ',', _weightMax, ',', cast(real)_weightSum/_links.length);
+        writeln(`- Number of assertions: `, _assertionCount);
         writeln(`- Concept Count: `, _concepts.length);
         writeln(`- Link Count: `, _links.length);
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
@@ -1141,9 +1163,9 @@ class Net(bool useArray = true,
         import std.string: strip;
         auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         writeln(`Line `, normalizedLine);
-        foreach (concept; this.conceptsByWords(normalizedLine,
-                                               hlang,
-                                               wordKind))
+        foreach (concept; conceptsByWords(normalizedLine,
+                                          hlang,
+                                          wordKind))
         {
             writeln(`- in `, concept.hlang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
