@@ -905,6 +905,7 @@ class Net(bool useArray = true,
         return concepts;
     }
 
+    /** Construct Network */
     this(string dirPath)
     {
         _wordnet = new WordNet!(true, true)([HLang.en]);
@@ -918,6 +919,10 @@ class Net(bool useArray = true,
             readCSV(file);
             break;
         }
+
+        // TODO msgpack fails to pack
+        /* auto bytes = this.pack; */
+        /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
     }
 
     /** Lookup Previous or Store New $(D concept) at $(D lemma) index. */
