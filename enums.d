@@ -37,8 +37,7 @@ template ChainEnum(E...) if (E.length >= 2 &&
                              allSatisfy!(isEnum, E) &&
                              is(CommonOriginalType!E))
 {
-    mixin({
-            string r = "enum ChainEnum { ";
+    mixin({ string r = "enum ChainEnum { ";
             string[string] names;   // lookup: enumName[memberName]
             foreach (T; E)
             {
