@@ -31,9 +31,11 @@ import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
 import std.container: Array;
 
+/* version = msgpack; */
+
 import grammars;
 import rcstring;
-import msgpack;
+version(msgpack) import msgpack;
 
 static if (__VERSION__ < 2067)
 {
