@@ -1139,7 +1139,7 @@ class Net(bool useArray = true,
         import std.uni: isWhite;
         import std.algorithm: splitter;
         import std.string: strip;
-        auto normalizedLine = line.strip.splitter!isWhite.joiner(lineSeparator).to!S;
+        auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         writeln(`Line `, normalizedLine);
         foreach (concept; this.conceptsByWords(normalizedLine,
                                                hlang,
