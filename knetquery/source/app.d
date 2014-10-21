@@ -8,7 +8,7 @@ int main(string[] args)
 
     while (true)
     {
-        write(`Lookup: `); stdout.flush;
+        write(`Concept(s): `); stdout.flush;
         string line;
         if ((line = readln()) !is null)
         {
