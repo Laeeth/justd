@@ -741,20 +741,23 @@ class Net(bool useArray = true,
     /** Concept Node/Vertex. */
     struct Concept
     {
-        this(HLang hlang,
+        this(Words words,
+             HLang lang,
              WordKind lemmaKind,
              LinkIxes inIxes = LinkIxes.init,
              LinkIxes outIxes = LinkIxes.init)
         {
-            this.hlang = hlang;
+            this.words = words;
+            this.lang = lang;
             this.lemmaKind = lemmaKind;
             this.inIxes = inIxes;
             this.outIxes = outIxes;
         }
     private:
+        Words words;
         LinkIxes inIxes;
         LinkIxes outIxes;
-        HLang hlang;
+        HLang lang;
         WordKind lemmaKind;
     }
 
@@ -785,16 +788,15 @@ class Net(bool useArray = true,
         Source _origin;
     }
 
-    unittest
-    {
-        pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof);
-        pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof);
-        pragma(msg, `Concept.sizeof: `, Concept.sizeof);
-        pragma(msg, `Link.sizeof: `, Link.sizeof);
-    }
+    pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof);
+    pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof);
+    pragma(msg, `Concept.sizeof: `, Concept.sizeof);
+    pragma(msg, `Link.sizeof: `, Link.sizeof);
+    pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
 
-    static if (useArray) { alias Concepts = Array!Concept; }
-    else                 { alias Concepts = Concept[]; }
+    /* static if (useArray) { alias Concepts = Array!Concept; } */
+    /* else                 { alias Concepts = Concept[]; } */
+    alias Concepts = Concept[]; // no need to use std.container.Array here
 
     static if (useArray) { alias Links = Array!Link; }
     else                 { alias Links = Link[]; }
@@ -972,7 +974,7 @@ class Net(bool useArray = true,
         ++_kindCounts[wordKind];
 
         auto cix = lookupOrStore(Lemma(word, hlang, wordKind),
-                                 Concept(hlang, wordKind));
+                                 Concept(word, hlang, wordKind));
         return cix;
     }
 
@@ -1154,7 +1156,7 @@ class Net(bool useArray = true,
     {
         const linkConcept = conceptByIndex(link._dstIx);
         std.stdio.write(`  - `, dir, ` =`, link._relation, `=> `);
-        if (linkConcept.hlang) std.stdio.write(` hlang:`, linkConcept.hlang);
+        if (linkConcept.lang) std.stdio.write(` hlang:`, linkConcept.lang);
         if (linkConcept.lemmaKind) std.stdio.write(` hlang:`, linkConcept.lemmaKind);
         writefln(` weight: %.2f`, link.normalizedWeight);
     }
@@ -1179,7 +1181,7 @@ class Net(bool useArray = true,
                                           hlang,
                                           wordKind))
         {
-            writeln(`- in `, concept.hlang.toName,
+            writeln(`- in `, concept.lang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
             foreach (ix; concept.inIxes)
             {
