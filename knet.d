@@ -827,10 +827,12 @@ class Net(bool useArray = true,
         real _weightSum = 0; // Sum of all link weights.
     }
 
-    ref Link linkByIndex(LinkIx ix) { return _links[ix._lIx]; }
+    ref inout(Link) linkByIndex(LinkIx ix) inout { return _links[ix._lIx]; }
+    ref inout(Link) opIndex(LinkIx ix) inout { return linkByIndex(ix); }
 
     /* const @safe @nogc pure nothrow */
-    ref Concept conceptByIndex(ConceptIx ix) { return _concepts[ix._cIx]; }
+    ref inout(Concept) conceptByIndex(ConceptIx ix) inout { return _concepts[ix._cIx]; }
+    ref inout(Concept) opIndex(ConceptIx ix) inout { return conceptByIndex(ix); }
 
     Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
     {
@@ -1209,7 +1211,7 @@ class Net(bool useArray = true,
         }
     }
 
-    /** Return true if $(D a) and $(D b) are related. */
+    /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     LinkIx areRelated(Lemma a,
                       Lemma b)
     {
