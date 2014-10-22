@@ -719,7 +719,11 @@ class Net(bool useArray = true,
 
     /* These LinkIx and ConceptIx are structs intead of aliases for type-safe
      * indexing. */
-    struct LinkIx { Ix _lIx; }
+    struct LinkIx
+    {
+        Ix _lIx;
+        static LinkIx undefined() { return LinkIx(Ix.max); }
+    }
     struct ConceptIx { Ix _cIx; }
     static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
     else                 { alias ConceptIxes = ConceptIx[]; }
@@ -1161,38 +1165,53 @@ class Net(bool useArray = true,
         writefln(` weight: %.2f`, link.normalizedWeight);
     }
 
-    /** Check if $(D a) is related to $(D b). */
-    bool areRelatedInOrder(ConceptIx a,
-                           ConceptIx b)
+    /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
+     */
+    LinkIx areRelatedInOrder(ConceptIx a,
+                             ConceptIx b)
     {
         const cA = conceptByIndex(a);
         const cB = conceptByIndex(b);
         foreach (inIx; cA.inIxes)
         {
             const inLink = linkByIndex(inIx);
-            return (inLink._srcIx == b ||
-                    inLink._dstIx == b);
+            if (inLink._srcIx == b ||
+                inLink._dstIx == b)
+            {
+                return inIx;
+            }
         }
         foreach (outIx; cA.outIxes)
         {
             const outLink = linkByIndex(outIx);
-            return (outLink._srcIx == b ||
-                    outLink._dstIx == b);
+            if (outLink._srcIx == b ||
+                outLink._dstIx == b)
+            {
+                return outIx;
+            }
         }
-        return false;
+        return typeof(return).undefined;
     }
 
-    /** Check if $(D a) is related to $(D b) in any direction. */
-    bool areRelated(ConceptIx a,
-                    ConceptIx b)
+    /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkIx.max.
+     */
+    LinkIx areRelated(ConceptIx a,
+                      ConceptIx b)
     {
-        return (areRelatedInOrder(a, b) ||
-                areRelatedInOrder(b, a));
+        const ab = areRelatedInOrder(a, b);
+        if (ab != typeof(return).undefined)
+        {
+            return ab;
+        }
+        else
+        {
+            return areRelatedInOrder(b, a);
+        }
     }
 
     /** Return true if $(D a) and $(D b) are related. */
-    bool areRelated(Lemma a,
-                    Lemma b)
+    LinkIx areRelated(Lemma a,
+                      Lemma b)
     {
         if (a in _conceptIxByLemma &&
             b in _conceptIxByLemma)
@@ -1200,7 +1219,7 @@ class Net(bool useArray = true,
             return areRelated(_conceptIxByLemma[a],
                               _conceptIxByLemma[b]);
         }
-        return false;
+        return typeof(return).undefined;
     }
 
     /** Show concepts and their relations matching content in $(D line). */
