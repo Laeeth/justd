@@ -706,7 +706,7 @@ auto pageSize() @trusted
 class Net(bool useArray = true,
           bool useRCString = true)
 {
-    import std.algorithm, std.range, std.string, std.path, std.array;
+    import std.algorithm, std.range, std.path, std.array;
     import wordnet: WordNet;
     import dbg;
     import std.typecons: Nullable;
@@ -1166,9 +1166,14 @@ class Net(bool useArray = true,
                          S lineSeparator = "_") if (isSomeString!S)
     {
         import std.uni: isWhite;
+        import std.ascii: whitespace;
         import std.algorithm: splitter;
-        import std.string: strip;
-        auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
+
+        // auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
+        // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
+        import std.string: strip, tr;
+        auto normalizedLine = line.strip.tr(std.ascii.whitespace, "_", "s");
+
         writeln(`Line `, normalizedLine);
         foreach (concept; conceptsByWords(normalizedLine,
                                           hlang,
