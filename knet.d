@@ -1158,13 +1158,13 @@ class Net(bool useArray = true,
         output
     }
 
-    void showConceptLink(in Link link, LinkDir dir)
+    void showConceptLink(in Concept concept, Relation relation, real weight)
     {
-        const linkConcept = conceptByIndex(link._dstIx);
-        std.stdio.write(`  - `, dir, ` =`, link._relation, `=> `);
-        if (linkConcept.lang) std.stdio.write(` hlang:`, linkConcept.lang);
-        if (linkConcept.lemmaKind) std.stdio.write(` hlang:`, linkConcept.lemmaKind);
-        writefln(` weight: %.2f`, link.normalizedWeight);
+        std.stdio.write(`  - `, ` =`, relation, `=> `);
+        if (concept.words) std.stdio.write(` words:`, concept.words);
+        if (concept.lang) std.stdio.write(` lang:`, concept.lang);
+        if (concept.lemmaKind) std.stdio.write(` kind:`, concept.lemmaKind);
+        writefln(` weight: %.2f`, weight);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
@@ -1248,11 +1248,13 @@ class Net(bool useArray = true,
                     ` of sense `, concept.lemmaKind, ` relates to `);
             foreach (ix; concept.inIxes)
             {
-                showConceptLink(linkByIndex(ix), LinkDir.input);
+                const link = linkByIndex(ix);
+                showConceptLink(conceptByIndex(link._dstIx), link._relation, link.normalizedWeight);
             }
             foreach (ix; concept.outIxes)
             {
-                showConceptLink(linkByIndex(ix), LinkDir.output);
+                const link = linkByIndex(ix);
+                showConceptLink(conceptByIndex(link._srcIx), link._relation, link.normalizedWeight);
             }
         }
     }
