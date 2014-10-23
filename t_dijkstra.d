@@ -60,7 +60,7 @@ Tuple!(Weight[Node], Node[Node]) dijkstraComputePaths(in Node source,
 }
 
 Node[] dijkstraGetShortestPathTo(Node v,
-                                 in Node[Node] previous) /* pure */ nothrow
+                                 in Node[Node] previous) pure nothrow
 {
     auto path = [v];
     while (v in previous)
@@ -77,7 +77,7 @@ Node[] dijkstraGetShortestPathTo(Node v,
 
 version = print;
 
-unittest
+pure unittest
 {
     immutable arcs = [tuple("a", "b", 7),
                       tuple("a", "c", 9),
@@ -112,7 +112,7 @@ unittest
     version(print)
     {
         import std.stdio: writeln;
-        writeln(`Distance from "a" to "e": `, minDist["e"]);
-        writeln("Path: ", dijkstraGetShortestPathTo("e", previous));
+        debug writeln(`Distance from "a" to "e": `, minDist["e"]);
+        debug writeln("Path: ", dijkstraGetShortestPathTo("e", previous));
     }
 }
