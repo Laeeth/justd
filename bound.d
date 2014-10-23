@@ -6,8 +6,9 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
+    See also: http://en.wikipedia.org/wiki/Interval_arithmetic
     See also: https://bitbucket.org/davidstone/bounded_integer
+    See also: http://stackoverflow.com/questions/18514806/ada-like-types-in-nimrod
     See also: http://forum.dlang.org/thread/xogeuqdwdjghkklzkfhl@forum.dlang.org#post-rksboytciisyezkapxkr:40forum.dlang.org
     See also: http://forum.dlang.org/thread/lxdtukwzlbmzebazusgb@forum.dlang.org#post-ymqdbvrwoupwjycpizdi:40forum.dlang.org
     See also: http://dlang.org/operatoroverloading.html
