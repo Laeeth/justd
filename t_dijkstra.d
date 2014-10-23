@@ -18,7 +18,7 @@ alias AdjacencyMap = Neighbour[][Node];
  */
 Tuple!(Weight[Node], Node[Node]) dijkstraComputePaths(in Node source,
                                                       in Node target,
-                                                      in AdjacencyMap adjacencyMap) /* pure */
+                                                      in AdjacencyMap adjacencyMap) pure
 {
     Weight[Node] minDist;
     foreach (immutable v, const neighs; adjacencyMap)
