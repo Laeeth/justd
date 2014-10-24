@@ -30,6 +30,7 @@ import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter;
 import std.container: Array;
+import algorithm_ex: isPalindrome;
 
 /* version = msgpack; */
 
@@ -107,7 +108,8 @@ enum Relation:ubyte
 
     causes, /* A and B are events, and it is typical for A to cause B. */
 
-    entails,
+    entails = causes, /* TODO same as causes? */
+    leadsTo = causes,
 
     hasSubevent, /* A and B are events, and B happens as a subevent of A. */
 
@@ -544,7 +546,10 @@ enum NELLCategory:ushort
         {
             return (relation == relatedTo ||
                     relation == translationOf ||
-                    relation == synonym);
+                    relation == synonym ||
+                    relation == antonym ||
+                    relation == similarSize ||
+                    relation == similarTo);
         }
     }
 
@@ -559,10 +564,16 @@ enum NELLCategory:ushort
         with (Relation)
         {
             return (relation == partOf ||
+                    relation == relatedTo ||
                     relation == isA ||
                     relation == memberOf ||
+                    relation == hasA ||
                     relation == atLocation ||
                     relation == hasContext ||
+                    relation == locationOf ||
+                    relation == locatedNear ||
+                    relation == causes ||
+                    relation == entails ||
                     relation == hasSubevent ||
                     relation == synonym ||
                     relation == hasPrerequisite ||
@@ -637,7 +648,6 @@ Thematic toThematic(Relation relation)
         case Relation.locatedNear: return Thematic.spatial;
 
         case Relation.causes: return Thematic.causal;
-        case Relation.entails: return Thematic.causal;
         case Relation.hasSubevent: return Thematic.events;
         case Relation.hasFirstSubevent: return Thematic.events;
         case Relation.hasLastSubevent: return Thematic.events;
@@ -1229,14 +1239,14 @@ class Net(bool useArray = true,
                          WordKind wordKind = WordKind.unknown,
                          S lineSeparator = "_") if (isSomeString!S)
     {
-        import std.uni: isWhite;
+        import std.uni: isWhite, toLower;
         import std.ascii: whitespace;
         import std.algorithm: splitter;
 
         // auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
         import std.string: strip, tr;
-        auto normalizedLine = line.strip.tr(std.ascii.whitespace, "_", "s");
+        auto normalizedLine = line.strip.tr(std.ascii.whitespace, "_", "s").toLower;
 
         writeln(`Line `, normalizedLine);
         foreach (concept; conceptsByWords(normalizedLine,
@@ -1258,6 +1268,19 @@ class Net(bool useArray = true,
                 showConceptLink(conceptByIndex(link._srcIx),
                                 link._relation,
                                 link.normalizedWeight);
+            }
+        }
+
+        if (normalizedLine == "palindrome")
+        {
+            import std.algorithm: filter;
+            import std.utf: byDchar;
+            foreach (palindromeConcept; _concepts.filter!(concept => (concept.words.byDchar.array.length >= 3 && // only interesting with at least three characters
+                                                                      concept.words.isPalindrome)))
+            {
+                showConceptLink(palindromeConcept,
+                                Relation.instanceOf,
+                                real.infinity);
             }
         }
     }
