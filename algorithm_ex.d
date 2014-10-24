@@ -771,7 +771,7 @@ bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
     See also: http://forum.dlang.org/thread/dlfeiszyweafpjiocplf@forum.dlang.org#post-vpzuaqxvtdpzpeuorxdl:40forum.dlang.org
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
 */
-bool isPalindrome(R)(R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
+bool isPalindrome(R)(R range) if (isBidirectionalRange!(R))
 {
     import std.range: front, back, popFront, popBack;
     while (!range.empty)
