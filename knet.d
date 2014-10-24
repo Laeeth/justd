@@ -927,7 +927,6 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == `.csv`))
         {
             readCSV(file);
-            break;
         }
 
         // TODO msgpack fails to pack
@@ -1249,12 +1248,16 @@ class Net(bool useArray = true,
             foreach (ix; concept.inIxes)
             {
                 const link = linkByIndex(ix);
-                showConceptLink(conceptByIndex(link._dstIx), link._relation, link.normalizedWeight);
+                showConceptLink(conceptByIndex(link._dstIx),
+                                link._relation,
+                                link.normalizedWeight);
             }
             foreach (ix; concept.outIxes)
             {
                 const link = linkByIndex(ix);
-                showConceptLink(conceptByIndex(link._srcIx), link._relation, link.normalizedWeight);
+                showConceptLink(conceptByIndex(link._srcIx),
+                                link._relation,
+                                link.normalizedWeight);
             }
         }
     }
