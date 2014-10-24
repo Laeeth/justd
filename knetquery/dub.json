@@ -5,5 +5,6 @@
     "copyright": "Copyright © 2014, Per Nordlöw",
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
-    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../knet.d", "../rcstring.d", "../wordnet.d", "../grammars.d", "../assert_ex.d", "../range_ex.d" ]
+    "sourceFiles": [ "../dbg.d", "../msgpack.d", "../knet.d", "../rcstring.d",
+                     "../wordnet.d", "../grammars.d", "../assert_ex.d", "../range_ex.d", "../algorithm_ex.d", "../traits_ex.d", "../rational.d" ]
 }
