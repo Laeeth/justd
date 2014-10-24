@@ -31,4 +31,9 @@ void main(string[] args)
     writeln("åäö".byCodePoint.retro);
     writeln("åäö".byCodePoint.length);
     writeln("åäö".byCodeUnit.length);
+    writeln("åäö".byWchar.array.length);
+    writeln("åäö".byDchar.array.length);
+
+    import algorithm_ex: isPalindrome;
+    writeln("åäå".isPalindrome);
 }
