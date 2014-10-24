@@ -1275,8 +1275,9 @@ class Net(bool useArray = true,
         {
             import std.algorithm: filter;
             import std.utf: byDchar;
-            foreach (palindromeConcept; _concepts.filter!(concept => (concept.words.byDchar.array.length >= 3 && // only interesting with at least three characters
-                                                                      concept.words.isPalindrome)))
+            foreach (palindromeConcept;
+                     _concepts.filter!(concept => (concept.words.byDchar.array.length >= 3 && // only interesting with at least three characters
+                                                   concept.words.isPalindrome)))
             {
                 showConceptLink(palindromeConcept,
                                 Relation.instanceOf,
