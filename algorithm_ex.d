@@ -790,6 +790,7 @@ unittest
     assert("dallassallad".isPalindrome);
     assert(!"ab".isPalindrome);
     assert("a".isPalindrome);
+    assert("åäå".isPalindrome);
     assert("".isPalindrome);
     assert([1, 2, 2, 1].isPalindrome);
 }
