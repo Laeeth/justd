@@ -768,22 +768,32 @@ bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
 }
 
 /** Returns: If range is a palindrome.
+    See also: http://forum.dlang.org/thread/dlfeiszyweafpjiocplf@forum.dlang.org#post-vpzuaqxvtdpzpeuorxdl:40forum.dlang.org
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
 */
-bool isPalindrome(R)(in R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
+bool isPalindrome(R)(R range) @safe pure /* nothrow */ if (isBidirectionalRange!(R))
 {
-    import std.range: retro, take;
-    import std.algorithm: equal;
-    static if (hasLength!R)
+    import std.range: front, back, popFront, popBack;
+    while (!range.empty)
     {
-        const mid = range.length/2;
-        return equal(range.retro.take(mid),
-                     range.take(mid));
+        if (range.front != range.back) return false;
+        range.popFront();
+        if (range.empty) break;
+        range.popBack();
     }
-    else
-    {
-        return range.retro.equal(range);
-    }
+    return true;
+    /* import std.range: retro, take; */
+    /* import std.algorithm: equal; */
+    /* static if (hasLength!R) */
+    /* { */
+    /*     const mid = range.length/2; */
+    /*     return equal(range.retro.take(mid), */
+    /*                  range.take(mid)); */
+    /* } */
+    /* else */
+    /* { */
+    /*     return range.retro.equal(range); */
+    /* } */
 }
 unittest
 {
