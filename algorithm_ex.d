@@ -774,12 +774,6 @@ bool isPalindrome(R)(in R range) @safe pure /* nothrow */ if (isBidirectionalRan
 {
     import std.range: retro, take;
     import std.algorithm: equal;
-    /* static if (isRandomAccessRange!R) */
-    /* { */
-    /*     const mid = range.length/2; */
-    /*     return range[$-mid..$].retro.equal(range[0..mid]); */
-    /* } */
-    /* else  */
     static if (hasLength!R)
     {
         const mid = range.length/2;
