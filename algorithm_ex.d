@@ -767,21 +767,22 @@ bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
     return b < e;
 }
 
-/** Returns: If range is a palindrome.
+/** Returns: If range is a palindrome larger than $(D minLength).
     See also: http://forum.dlang.org/thread/dlfeiszyweafpjiocplf@forum.dlang.org#post-vpzuaqxvtdpzpeuorxdl:40forum.dlang.org
     See also: https://stackoverflow.com/questions/21849580/equality-operator-in-favour-of-std-range-equal
 */
-bool isPalindrome(R)(R range) if (isBidirectionalRange!(R))
+bool isPalindrome(R)(R range, size_t minLength = 0) if (isBidirectionalRange!(R))
 {
     import std.range: front, back, popFront, popBack;
+    size_t i = 0;
     while (!range.empty)
     {
         if (range.front != range.back) return false;
-        range.popFront();
+        range.popFront(); i++;
         if (range.empty) break;
-        range.popBack();
+        range.popBack(); i++;
     }
-    return true;
+    return i >= minLength;
     /* import std.range: retro, take; */
     /* import std.algorithm: equal; */
     /* static if (hasLength!R) */
@@ -801,6 +802,8 @@ unittest
     assert(!"ab".isPalindrome);
     assert("a".isPalindrome);
     assert("åäå".isPalindrome);
+    assert("åäå".isPalindrome(3));
+    assert(!"åäå".isPalindrome(4));
     assert("".isPalindrome);
     assert([1, 2, 2, 1].isPalindrome);
 }
