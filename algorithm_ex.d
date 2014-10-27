@@ -773,28 +773,21 @@ bool overlaps(T)(const(T)[] r1, const(T)[] r2) @trusted pure nothrow
 */
 bool isPalindrome(R)(R range, size_t minLength = 0) if (isBidirectionalRange!(R))
 {
-    import std.range: front, back, popFront, popBack;
+    static if (hasLength!R)
+    {
+        if (range.length < minLength)
+            return false;
+    }
     size_t i = 0;
     while (!range.empty)
     {
+        import std.range: front, back, popFront, popBack;
         if (range.front != range.back) return false;
         range.popFront(); i++;
         if (range.empty) break;
         range.popBack(); i++;
     }
     return i >= minLength;
-    /* import std.range: retro, take; */
-    /* import std.algorithm: equal; */
-    /* static if (hasLength!R) */
-    /* { */
-    /*     const mid = range.length/2; */
-    /*     return equal(range.retro.take(mid), */
-    /*                  range.take(mid)); */
-    /* } */
-    /* else */
-    /* { */
-    /*     return range.retro.equal(range); */
-    /* } */
 }
 unittest
 {
@@ -806,6 +799,7 @@ unittest
     assert(!"åäå".isPalindrome(4));
     assert("".isPalindrome);
     assert([1, 2, 2, 1].isPalindrome);
+    assert(![1, 2, 2, 1].isPalindrome(5));
 }
 alias isSymmetrical = isPalindrome;
 
