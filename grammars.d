@@ -1084,14 +1084,10 @@ S porterStem(S)(S s) if (isSomeString!S)
 {
     import std.algorithm: endsWith;
     /* Step 1a */
-    if      (s.endsWith("sses"))
-        return s[0 .. $-2];
-    else if (s.endsWith("ies"))
-        return s[0 .. $-2];
-    else if (s.endsWith("ss"))
-        return s;
-    else if (s.endsWith("s"))
-        return s[0 .. $-1];
+    if      (s.endsWith("sses")) return s[0 .. $-2];
+    else if (s.endsWith("ies"))  return s[0 .. $-2];
+    else if (s.endsWith("ss"))   return s;
+    else if (s.endsWith("s"))    return s[0 .. $-1];
     else
         return s;
 }
@@ -1099,6 +1095,9 @@ S porterStem(S)(S s) if (isSomeString!S)
 unittest
 {
     assert("caresses".porterStem == "caress");
+    assert("ponies".porterStem == "poni");
+    assert("caress".porterStem == "caress");
+    assert("cats".porterStem == "cat");
 }
 
 import std.traits: isIntegral;
