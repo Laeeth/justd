@@ -1046,10 +1046,8 @@ string inPlural(string word, int count = 2,
 {
     if (count == 1 || word.length == 0)
         return word; // it isn't actually inPlural
-
     if (pluralWord !is null)
         return pluralWord;
-
     switch (word[$ - 1])
     {
         case 's':
@@ -1062,6 +1060,45 @@ string inPlural(string word, int count = 2,
         default:
             return word ~ "s";
     }
+}
+
+/** Return $(D s) lemmatized (normalized). */
+S lemmatize(S)(S s) if (isSomeString!S)
+{
+    if (s == "is" ||
+        s == "am" ||
+        s == "are")
+    {
+        return "be";
+    }
+    else
+    {
+        return s;
+    }
+}
+
+/** Return Stem of $(D s) using Porter's algorithm
+    See also: https://www.youtube.com/watch?v=2s7f8mBwnko&list=PL6397E4B26D00A269&index=4.
+*/
+S porterStem(S)(S s) if (isSomeString!S)
+{
+    import std.algorithm: endsWith;
+    /* Step 1a */
+    if      (s.endsWith("sses"))
+        return s[0 .. $-2];
+    else if (s.endsWith("ies"))
+        return s[0 .. $-2];
+    else if (s.endsWith("ss"))
+        return s;
+    else if (s.endsWith("s"))
+        return s[0 .. $-1];
+    else
+        return s;
+}
+
+unittest
+{
+    assert("caresses".porterStem == "caress");
 }
 
 import std.traits: isIntegral;
