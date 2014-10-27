@@ -775,8 +775,7 @@ bool isPalindrome(R)(R range, size_t minLength = 0) if (isBidirectionalRange!(R)
 {
     static if (hasLength!R)
     {
-        if (range.length < minLength)
-            return false;
+        if (range.length < minLength) { return false; }
     }
     size_t i = 0;
     while (!range.empty)
