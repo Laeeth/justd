@@ -1090,10 +1090,15 @@ S porterStem(S)(S s) if (isSomeString!S)
     else if (s.endsWith("ss"))   { }
     else if (s.endsWith("s"))    { s = s[0 .. $-1]; }
 
-    /* Step 1b */
+    /* Step 2 */
     if      (s.endsWith("ational")) { s = s[0 .. $-7] ~ "ate"; }
     else if (s.endsWith("izer"))    { s = s[0 .. $-1]; }
     else if (s.endsWith("ator"))    { s = s[0 .. $-2] ~ "e"; }
+
+    /* Step 3 */
+    else if (s.endsWith("al")) { s = s[0 .. $-2] ~ "e"; }
+    else if (s.endsWith("able")) { s = s[0 .. $-4]; }
+    else if (s.endsWith("ate")) { s = s[0 .. $-3] ~ "e"; }
 
     return s;
 }
@@ -1104,9 +1109,14 @@ unittest
     assert("ponies".porterStem == "poni");
     assert("caress".porterStem == "caress");
     assert("cats".porterStem == "cat");
+
     assert("relational".porterStem == "relate");
     assert("digitizer".porterStem == "digitize");
     assert("operator".porterStem == "operate");
+
+    assert("revival".porterStem == "revive");
+    assert("adjustable".porterStem == "adjust");
+    assert("activate".porterStem == "active");
 }
 
 import std.traits: isIntegral;
