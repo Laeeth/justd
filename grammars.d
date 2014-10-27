@@ -1083,13 +1083,19 @@ S lemmatize(S)(S s) if (isSomeString!S)
 S porterStem(S)(S s) if (isSomeString!S)
 {
     import std.algorithm: endsWith;
+
     /* Step 1a */
-    if      (s.endsWith("sses")) return s[0 .. $-2];
-    else if (s.endsWith("ies"))  return s[0 .. $-2];
-    else if (s.endsWith("ss"))   return s;
-    else if (s.endsWith("s"))    return s[0 .. $-1];
-    else
-        return s;
+    if      (s.endsWith("sses")) { s = s[0 .. $-2]; }
+    else if (s.endsWith("ies"))  { s = s[0 .. $-2]; }
+    else if (s.endsWith("ss"))   { }
+    else if (s.endsWith("s"))    { s = s[0 .. $-1]; }
+
+    /* Step 1b */
+    if      (s.endsWith("ational")) { s = s[0 .. $-7] ~ "ate"; }
+    else if (s.endsWith("izer"))    { s = s[0 .. $-1]; }
+    else if (s.endsWith("ator"))    { s = s[0 .. $-2] ~ "e"; }
+
+    return s;
 }
 
 unittest
@@ -1098,6 +1104,9 @@ unittest
     assert("ponies".porterStem == "poni");
     assert("caress".porterStem == "caress");
     assert("cats".porterStem == "cat");
+    assert("relational".porterStem == "relate");
+    assert("digitizer".porterStem == "digitize");
+    assert("operator".porterStem == "operate");
 }
 
 import std.traits: isIntegral;
