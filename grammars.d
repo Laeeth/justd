@@ -7,7 +7,7 @@ module grammars;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
-import std.algorithm: uniq;
+import std.algorithm: uniq, map, find;
 import std.array: array;
 import std.conv;
 import predicates: of;
@@ -1054,7 +1054,54 @@ string inPlural(string word, int count = 2,
     }
 }
 
-/** Return $(D s) lemmatized (normalized). */
+import std.typecons: tuple;
+
+/** Irregular Adjectives.
+    See also: http://www.talkenglish.com/Grammar/comparative-superlative-adjectives.aspx
+*/
+enum irregularAdjectivesEnglish = [tuple("good", "better", "best"),
+                                   tuple("well", "better", "best"),
+                                   tuple("bad", "worse", "worst"),
+                                   tuple("little", "less", "least"),
+                                   tuple("much", "more", "most"),
+                                   tuple("far", "further", "furthest"),
+                                   tuple("far", "farther", "farthest"),
+                                   tuple("big", "larger", "largest"),
+    ];
+
+bool isComparativeAdjective(S)(S s) if (isSomeString!S)
+{
+    import std.range: empty;
+    return !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty;
+}
+
+bool isNominativeAdjective(S)(S s) if (isSomeString!S)
+{
+    import std.range: empty;
+    return !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty;
+}
+
+bool isSuperlativeAdjective(S)(S s) if (isSomeString!S)
+{
+    import std.range: empty;
+    return !irregularAdjectivesEnglish.map!(a => a[2]).array.find(s).empty;
+}
+
+unittest
+{
+    assert(`better`.isComparativeAdjective);
+    assert(!`best`.isComparativeAdjective);
+    assert(`best`.isSuperlativeAdjective);
+    assert(!`better`.isSuperlativeAdjective);
+}
+
+/** Irregular Adjectives. */
+enum irregularAdjectivesGerman = [tuple("gut", "besser", "besten")
+    ];
+
+/** Return $(D s) lemmatized (normalized).
+    See also: https://en.wikipedia.org/wiki/Lemmatisation
+ */
 S lemmatize(S)(S s) if (isSomeString!S)
 {
     if (s.of(`be`, `is`, `am`, `are`))
