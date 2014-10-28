@@ -1,5 +1,6 @@
-import std.stdio;
+module set;
 
+/** Set of Values of Type $(D T). */
 struct Set(T)
 {
     static if (is(T == char))
@@ -9,9 +10,10 @@ struct Set(T)
 public:
     this(E...)(E args) if (is(CommonType!E == T))
     {
-        foreach (arg; args)
+        _data = new T[args.length];
+        foreach (ix, arg; args)
         {
-            _data ~= arg;
+            _data[ix] = arg;
         }
     }
     typeof(this) opSlice(char lo, char hi)
@@ -56,6 +58,7 @@ unittest
 {
     auto x = set(1, 2, 3);
     assert(1 in x);
+    assert(!(4 in x));
 }
 
 void main(string[] args)
