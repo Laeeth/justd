@@ -922,6 +922,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         _wordnet = new WordNet!(true, true)([HLang.en]);
+
         // GC.disabled had no noticeble effect here: import core.memory: GC;
         const fixedPath = dirPath.expandTilde
                                  .buildNormalizedPath;
@@ -930,6 +931,7 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == `.csv`))
         {
             readCSV(file);
+            break;
         }
 
         // TODO msgpack fails to pack
@@ -1160,9 +1162,13 @@ class Net(bool useArray = true,
         output
     }
 
-    void showConceptLink(in Concept concept, Relation relation, real weight)
+    void showConceptLink(in Concept concept, Relation relation, real weight, LinkDir linkDir)
     {
-        std.stdio.write(`  - `, ` =`, relation, `=> `);
+        std.stdio.write(` - `,
+                        ((!relation.isSymmetric) && linkDir == LinkDir.output ? `<` : ``),
+                        `=`, relation, `=`,
+                        ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``),
+                        ` `);
         if (concept.words) std.stdio.write(` words:`, concept.words);
         if (concept.lang) std.stdio.write(` lang:`, concept.lang);
         if (concept.lemmaKind) std.stdio.write(` kind:`, concept.lemmaKind);
@@ -1253,14 +1259,16 @@ class Net(bool useArray = true,
                 const link = linkByIndex(ix);
                 showConceptLink(conceptByIndex(link._dstIx),
                                 link._relation,
-                                link.normalizedWeight);
+                                link.normalizedWeight,
+                                LinkDir.input);
             }
             foreach (ix; concept.outIxes)
             {
                 const link = linkByIndex(ix);
                 showConceptLink(conceptByIndex(link._srcIx),
                                 link._relation,
-                                link.normalizedWeight);
+                                link.normalizedWeight,
+                                LinkDir.output);
             }
         }
 
@@ -1272,7 +1280,8 @@ class Net(bool useArray = true,
             {
                 showConceptLink(palindromeConcept,
                                 Relation.instanceOf,
-                                real.infinity);
+                                real.infinity,
+                                LinkDir.input);
             }
         }
     }
