@@ -1126,7 +1126,7 @@ unittest
     assert(!`better`.isNominativeAdjective);
     assert(`better`.isComparativeAdjective);
     assert(!`best`.isComparativeAdjective);
-    assert(`more important`.isSuperlativeAdjective);
+    assert(`more important`.isComparativeAdjective);
     assert(`best`.isSuperlativeAdjective);
     assert(!`better`.isSuperlativeAdjective);
     assert(`most important`.isSuperlativeAdjective);

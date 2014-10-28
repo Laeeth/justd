@@ -543,14 +543,12 @@ enum NELLCategory:ushort
     bool isSymmetric(const Relation relation)
     {
         with (Relation)
-        {
-            return (relation == relatedTo ||
-                    relation == translationOf ||
-                    relation == synonym ||
-                    relation == antonym ||
-                    relation == similarSize ||
-                    relation == similarTo);
-        }
+            return relation.of(relatedTo,
+                               translationOf,
+                               synonym,
+                               antonym,
+                               similarSize,
+                               similarTo);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
@@ -562,24 +560,22 @@ enum NELLCategory:ushort
     bool isTransitive(const Relation relation)
     {
         with (Relation)
-        {
-            return (relation == partOf ||
-                    relation == relatedTo ||
-                    relation == isA ||
-                    relation == memberOf ||
-                    relation == hasA ||
-                    relation == atLocation ||
-                    relation == hasContext ||
-                    relation == locationOf ||
-                    relation == locatedNear ||
-                    relation == causes ||
-                    relation == entails ||
-                    relation == hasSubevent ||
-                    relation == synonym ||
-                    relation == hasPrerequisite ||
-                    relation == hasProperty ||
-                    relation == translationOf);
-        }
+            return relation.of(partOf,
+                               relatedTo,
+                               isA,
+                               memberOf,
+                               hasA,
+                               atLocation,
+                               hasContext,
+                               locationOf,
+                               locatedNear,
+                               causes,
+                               entails,
+                               hasSubevent,
+                               synonym,
+                               hasPrerequisite,
+                               hasProperty,
+                               translationOf);
     }
 
     /** Return true if $(D relation) is a strong.
@@ -588,10 +584,8 @@ enum NELLCategory:ushort
     bool isStrong(Relation relation)
     {
         with (Relation)
-        {
-            return (relation == hasProperty ||
-                    relation == motivatedByGoal);
-        }
+            return relation.of(hasProperty,
+                               motivatedByGoal);
     }
 
     /** Return true if $(D relation) is a weak.
@@ -600,12 +594,10 @@ enum NELLCategory:ushort
     bool isWeak(Relation relation)
     {
         with (Relation)
-        {
-            return (relation == isA ||
-                    relation == locationOf ||
-                    relation == locationOfAction ||
-                    relation == locatedNear);
-        }
+            return relation.of(isA,
+                               locationOf,
+                               locationOfAction,
+                               locatedNear);
     }
 
 }
