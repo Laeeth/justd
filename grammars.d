@@ -576,6 +576,9 @@ enum WordKind:ubyte
     verbFuture,
 
     adjective,
+    adjectiveNominative,
+    adjectiveComparative,
+    adjectiveSuperlative,
     adjectivePossessive,
     adjectivePossessiveSingular,
     adjectivePossessivePlural,
@@ -769,6 +772,9 @@ unittest
     {
         with (WordKind)
             return kind.of(adjective,
+                           adjectiveNominative,
+                           adjectiveComparative,
+                           adjectiveSuperlative,
                            adjectivePossessiveSingular,
                            adjectivePossessivePlural);
     }
@@ -896,6 +902,10 @@ bool memberOf(WordKind special,
             case verb: return special.isVerb;
             case adverb: return special.isAdverb;
             case adjective: return special.isAdjective;
+            case adjectiveNominative:
+            case adjectiveComparative:
+            case adjectiveSuperlative:
+                return special == general;
             case pronoun: return special.isPronoun;
             case pronounPersonal: return special.isPronounPersonal;
             case pronounPossessive: return special.isPronounPossessive;
@@ -1066,7 +1076,9 @@ enum irregularAdjectivesEnglish = [tuple("good", "better", "best"),
                                    tuple("bad", "worse", "worst"),
 
                                    tuple("little", "less", "least"),
+                                   tuple("little", "smaller", "smallest"),
                                    tuple("much", "more", "most"),
+                                   tuple("many", "more", "most"),
 
                                    tuple("far", "further", "furthest"),
                                    tuple("far", "farther", "farthest"),
@@ -1075,28 +1087,34 @@ enum irregularAdjectivesEnglish = [tuple("good", "better", "best"),
                                    tuple("old", "elder", "eldest"),
     ];
 
-/** Return true if $(D s) is an adjective in nominative form. */
+/** Return true if $(D s) is an adjective in nominative form.
+    TODO Add to ConceptNet instead.
+ */
 bool isNominativeAdjective(S)(S s) if (isSomeString!S)
 {
     import std.range: empty;
     return (!irregularAdjectivesEnglish.map!(a => a[0]).array.find(s).empty); // TODO Check if s[0..$-2] is a wordnet adjective
 }
 
-/** Return true if $(D s) is an adjective in comparative form. */
+/** Return true if $(D s) is an adjective in comparative form.
+    TODO Add to ConceptNet instead.
+ */
 bool isComparativeAdjective(S)(S s) if (isSomeString!S)
 {
     import std.range: empty;
-    return (s.startsWith(`more `) ||
+    return (s.startsWith(`more `) || // TODO Check that s[5..$] is a wordnet adjective
             !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty ||
             s.endsWith(`er`)   // TODO Check if s[0..$-2] is a wordnet adjective
         );
 }
 
-/** Return true if $(D s) is an adjective in superlative form. */
+/** Return true if $(D s) is an adjective in superlative form.
+    TODO Add to ConceptNet instead.
+ */
 bool isSuperlativeAdjective(S)(S s) if (isSomeString!S)
 {
     import std.range: empty;
-    return (s.startsWith(`most `) ||
+    return (s.startsWith(`most `) || // TODO Check that s[5..$] is a wordnet adjective
             !irregularAdjectivesEnglish.map!(a => a[2]).array.find(s).empty ||
             s.endsWith(`est`)   // TODO Check if s[0..$-3] is a wordnet adjective
         );
