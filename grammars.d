@@ -10,6 +10,7 @@ import std.typecons: Nullable;
 import std.algorithm: uniq;
 import std.array: array;
 import std.conv;
+import algorithm_ex: of;
 
 /** (Human) Language Code according to ISO 639-1.
     See also: http://www.mathguide.de/info/tools/languagecode.html
@@ -464,32 +465,44 @@ enum Vowel { a, o, u, e, i, y }
 */
 enum Consonant { b, c, d, f, g, h, j, k, l, m, n, p, q, r, s, t, v, w, x }
 
+/** English Vowels. */
+enum englishVowels = ['a', 'o', 'u', 'e', 'i', 'y',
+                      'A', 'O', 'U', 'E', 'I', 'Y'];
+
+/** Swedish Vowels. */
+enum swedishVowels = ['a', 'o', 'u', 'å', 'e', 'i', 'y', 'ä', 'ö',
+                      'A', 'O', 'U', 'Å', 'E', 'I', 'Y', 'Ä', 'Ö'];
+
 /** Check if $(D c) is a Vowel. */
-bool isVowel(C)(C c) if (isSomeChar!C)
+bool isSwedishVowel(C)(C c) if (isSomeChar!C)
 {
-    import algorithm_ex: of;
+    // TODO Reuse swedishVowels and hash-table
     return c.of('a', 'o', 'u', 'å',
-                'e', 'i', 'y', 'ä', 'ö'); // TODO Use hash-table
+                'e', 'i', 'y', 'ä', 'ö');
 }
 
 unittest
 {
-    assert(!'k'.isVowel);
-    assert('å'.isVowel);
+    assert(!'k'.isSwedishVowel);
+    assert('å'.isSwedishVowel);
 }
+
+/** English Consontants. */
+enum englishConsonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x',
+                          'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X'];
 
 /** Check if $(D c) is a Consonant. */
-bool isConsonant(C)(C c) if (isSomeChar!C)
+bool isEnglishConsonant(C)(C c) if (isSomeChar!C)
 {
-    import algorithm_ex: of;
-    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-                'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x'); // TODO Use hash-table
+    // TODO Reuse englishConsonants and hash-table
+    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x',
+                'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X');
 }
 
 unittest
 {
-    assert('k'.isConsonant);
-    assert(!'å'.isConsonant);
+    assert('k'.isEnglishConsonant);
+    assert(!'å'.isEnglishConsonant);
 }
 
 /** computer Token. */
@@ -1065,9 +1078,7 @@ string inPlural(string word, int count = 2,
 /** Return $(D s) lemmatized (normalized). */
 S lemmatize(S)(S s) if (isSomeString!S)
 {
-    if (s == "is" ||
-        s == "am" ||
-        s == "are")
+    if (s.of("be", "is", "am", "are"))
     {
         return "be";
     }
@@ -1078,6 +1089,8 @@ S lemmatize(S)(S s) if (isSomeString!S)
 }
 
 /** Return Stem of $(D s) using Porter's algorithm
+    See also: https://en.wikipedia.org/wiki/Stemming
+    See also: https://en.wikipedia.org/wiki/Martin_Porter
     See also: https://www.youtube.com/watch?v=2s7f8mBwnko&list=PL6397E4B26D00A269&index=4.
 */
 S porterStem(S)(S s) if (isSomeString!S)
