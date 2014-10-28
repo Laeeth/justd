@@ -768,6 +768,9 @@ class Net(bool useArray = true,
         WordKind lemmaKind;
     }
 
+    auto inLinksOf(in Concept concept)  { return concept.inIxes[].map!(ix => linkByIndex(ix)); }
+    auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIndex(ix)); }
+
     static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
     else                 { alias ConceptIxes = ConceptIx[]; }
 
@@ -1254,6 +1257,7 @@ class Net(bool useArray = true,
         {
             writeln(`- in `, concept.lang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
+            auto x = inLinksOf(concept);
             foreach (ix; concept.inIxes)
             {
                 const link = linkByIndex(ix);
