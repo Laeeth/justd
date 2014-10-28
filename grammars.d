@@ -171,112 +171,112 @@ string toName(HLang hlang) @safe pure @nogc nothrow
     {
         final switch (hlang)
         {
-            case unknown: return "Unknown";
-            case en: return "English"; // 英語
-            case en_US: return "American English";
-            case en_GB: return "British English";
-            case en_CA: return "Canadian English";
-            case af: return "Afrikaans";
-            case ar: return "Arabic";
-            case ae: return "Avestan";
-            case ak: return "Akan";
-            case an: return "Aragonese";
-            case as: return "Assamese";
-            case az: return "Azerbaijani";
-            case hy: return "Armenian";
-            case eu: return "Basque";
-            case ba: return "Baskhir";
-            case be: return "Belarusian";
-            case bn: return "Bengali";
-            case br: return "Breton";
-            case bs: return "Bosnian";
-            case bg: return "Bulgarian";
-            case bo: return "Tibetan";
-            case my: return "Burmese";
-            case zh: return "Chinese Mandarin";
-            case crh: return "Crimean Tatar";
-            case hr: return "Croatian";
-            case ca: return "Catalan";
-            case cy: return "Welch";
-            case cs: return "Czech";
-            case da: return "Danish";
-            case nl: return "Dutch";
-            case eo: return "Esperanto";
-            case et: return "Estonian";
-            case fi: return "Finnish";
-            case fj: return "Fiji";
-            case fo: return "Faeroese";
-            case fr: return "French";
-            case fr_ch: return "French (Switzerland)";
-            case gl: return "Galician";
-            case gv: return "Manx";
-            case de: return "German";
-            case el: return "Greek";
-            case ha: return "Hausa";
-            case he: return "Hebrew";
-            case hi: return "Hindi";
-            case hu: return "Hungarian";
-            case is_: return "Icelandic";
-            case io: return "Ido";
-            case id: return "Indonesian";
-            case ga: return "Irish";
-            case it: return "Italian";
-            case ja: return "Japanese"; // 日本語
-            case ka: return "Georgian";
-            case ku: return "Kurdish";
-            case kn: return "Kannada";
-            case kk: return "Kazakh";
-            case km: return "Khmer";
-            case ko: return "Korean";
-            case ky: return "Kyrgyz";
-            case lo: return "Lao";
-            case la: return "Latin";
-            case lt: return "Lithuanian";
-            case lv: return "Latvian";
-            case jbo: return "Lojban";
-            case mk: return "Macedonian";
-            case nan: return "Min Nan";
-            case mg: return "Malagasy";
-            case mn: return "Mongolian";
-            case ms: return "Malay";
-            case mt: return "Maltese";
-            case ne: return "Nepali";
-            case no: return "Norwegian";
-            case ps: return "Pashto";
-            case fa: return "Persian";
-            case oc: return "Occitan";
-            case pl: return "Polish";
-            case pt: return "Portuguese";
-            case pt_BR: return "Brazilian Portuguese";
-            case ro: return "Romanian";
-            case ru: return "Russian";
-            case sa: return "Sanskrit";
-            case si: return "Sinhalese";
-            case sm: return "Samoan";
-            case sco: return "Scots";
-            case sq: return "Albanian";
-            case te: return "Tegulu";
-            case tl: return "Tagalog";
-            case gd: return "Scottish Gaelic";
-            case sr: return "Serbian";
-            case sk: return "Slovak";
-            case sl: return "Slovene";
-            case es: return "Spanish";
-            case sw: return "Swahili";
-            case sv: return "Swedish";
-            case tg: return "Tajik";
-            case ta: return "Tamil";
-            case th: return "Thai";
-            case tr: return "Turkish";
-            case tk: return "Turkmen";
-            case uk: return "Ukrainian";
-            case ur: return "Urdu";
-            case uz: return "Uzbek";
-            case vi: return "Vietnamese";
-            case vo: return "Volapük";
-            case wa: return "Waloon";
-            case yi: return "Yiddish";
-            case faroese: return "Faroese";
+            case unknown: return `Unknown`;
+            case en: return `English`; // 英語
+            case en_US: return `American English`;
+            case en_GB: return `British English`;
+            case en_CA: return `Canadian English`;
+            case af: return `Afrikaans`;
+            case ar: return `Arabic`;
+            case ae: return `Avestan`;
+            case ak: return `Akan`;
+            case an: return `Aragonese`;
+            case as: return `Assamese`;
+            case az: return `Azerbaijani`;
+            case hy: return `Armenian`;
+            case eu: return `Basque`;
+            case ba: return `Baskhir`;
+            case be: return `Belarusian`;
+            case bn: return `Bengali`;
+            case br: return `Breton`;
+            case bs: return `Bosnian`;
+            case bg: return `Bulgarian`;
+            case bo: return `Tibetan`;
+            case my: return `Burmese`;
+            case zh: return `Chinese Mandarin`;
+            case crh: return `Crimean Tatar`;
+            case hr: return `Croatian`;
+            case ca: return `Catalan`;
+            case cy: return `Welch`;
+            case cs: return `Czech`;
+            case da: return `Danish`;
+            case nl: return `Dutch`;
+            case eo: return `Esperanto`;
+            case et: return `Estonian`;
+            case fi: return `Finnish`;
+            case fj: return `Fiji`;
+            case fo: return `Faeroese`;
+            case fr: return `French`;
+            case fr_ch: return `French (Switzerland)`;
+            case gl: return `Galician`;
+            case gv: return `Manx`;
+            case de: return `German`;
+            case el: return `Greek`;
+            case ha: return `Hausa`;
+            case he: return `Hebrew`;
+            case hi: return `Hindi`;
+            case hu: return `Hungarian`;
+            case is_: return `Icelandic`;
+            case io: return `Ido`;
+            case id: return `Indonesian`;
+            case ga: return `Irish`;
+            case it: return `Italian`;
+            case ja: return `Japanese`; // 日本語
+            case ka: return `Georgian`;
+            case ku: return `Kurdish`;
+            case kn: return `Kannada`;
+            case kk: return `Kazakh`;
+            case km: return `Khmer`;
+            case ko: return `Korean`;
+            case ky: return `Kyrgyz`;
+            case lo: return `Lao`;
+            case la: return `Latin`;
+            case lt: return `Lithuanian`;
+            case lv: return `Latvian`;
+            case jbo: return `Lojban`;
+            case mk: return `Macedonian`;
+            case nan: return `Min Nan`;
+            case mg: return `Malagasy`;
+            case mn: return `Mongolian`;
+            case ms: return `Malay`;
+            case mt: return `Maltese`;
+            case ne: return `Nepali`;
+            case no: return `Norwegian`;
+            case ps: return `Pashto`;
+            case fa: return `Persian`;
+            case oc: return `Occitan`;
+            case pl: return `Polish`;
+            case pt: return `Portuguese`;
+            case pt_BR: return `Brazilian Portuguese`;
+            case ro: return `Romanian`;
+            case ru: return `Russian`;
+            case sa: return `Sanskrit`;
+            case si: return `Sinhalese`;
+            case sm: return `Samoan`;
+            case sco: return `Scots`;
+            case sq: return `Albanian`;
+            case te: return `Tegulu`;
+            case tl: return `Tagalog`;
+            case gd: return `Scottish Gaelic`;
+            case sr: return `Serbian`;
+            case sk: return `Slovak`;
+            case sl: return `Slovene`;
+            case es: return `Spanish`;
+            case sw: return `Swahili`;
+            case sv: return `Swedish`;
+            case tg: return `Tajik`;
+            case ta: return `Tamil`;
+            case th: return `Thai`;
+            case tr: return `Turkish`;
+            case tk: return `Turkmen`;
+            case uk: return `Ukrainian`;
+            case ur: return `Urdu`;
+            case uz: return `Uzbek`;
+            case vi: return `Vietnamese`;
+            case vo: return `Volapük`;
+            case wa: return `Waloon`;
+            case yi: return `Yiddish`;
+            case faroese: return `Faroese`;
         }
     }
 
@@ -284,7 +284,7 @@ string toName(HLang hlang) @safe pure @nogc nothrow
 
 HLang decodeHumanLang(S)(S hlang) @safe pure nothrow if (isSomeString!S)
 {
-    if (hlang == "is")
+    if (hlang == `is`)
     {
         return HLang.is_;
     }
@@ -303,7 +303,7 @@ HLang decodeHumanLang(S)(S hlang) @safe pure nothrow if (isSomeString!S)
 
 unittest
 {
-    assert("sv".to!HLang == HLang.sv);
+    assert(`sv`.to!HLang == HLang.sv);
 }
 
 /* LANGUAGES = { */
@@ -707,7 +707,7 @@ WordKind decodeWordKind(S)(S kindCode) if (isSomeString!S)
 
 unittest
 {
-    assert("n".decodeWordKind == WordKind.noun);
+    assert(`n`.decodeWordKind == WordKind.noun);
 }
 
 /** Convert $(D word) to $(D kind). */
@@ -908,7 +908,7 @@ bool memberOf(WordKind special,
 
 alias specializes = memberOf;
 
-static immutable implies = [ "in order to" ];
+static immutable implies = [ `in order to` ];
 
 unittest
 {
@@ -934,37 +934,37 @@ enum Gender { unknown,
 /** English Negation Prefixes.
     See also: http://www.english-for-students.com/Negative-Prefixes.html
  */
-static immutable negationPrefixes = [ "un", "non", "dis", "im", "in", "il", "ir", ];
+static immutable negationPrefixes = [ `un`, `non`, `dis`, `im`, `in`, `il`, `ir`, ];
 
 /** English Noun Suffixes.
     See also: http://www.english-for-students.com/Noun-Suffixes.html
  */
-static immutable adjectiveNounSuffixes = [ "ness", "ity", "ment", "ance" ];
-static immutable verbNounSuffixes = [ "tion", "sion", "ment", "ence" ];
-static immutable nounNounSuffixes = [ "ship", "hood" ];
-static immutable allNounSuffixes = adjectiveNounSuffixes ~ verbNounSuffixes ~ nounNounSuffixes ~ [ "s", "ses", "xes", "zes", "ches", "shes", "men", "ies", ];
+static immutable adjectiveNounSuffixes = [ `ness`, `ity`, `ment`, `ance` ];
+static immutable verbNounSuffixes = [ `tion`, `sion`, `ment`, `ence` ];
+static immutable nounNounSuffixes = [ `ship`, `hood` ];
+static immutable allNounSuffixes = adjectiveNounSuffixes ~ verbNounSuffixes ~ nounNounSuffixes ~ [ `s`, `ses`, `xes`, `zes`, `ches`, `shes`, `men`, `ies`, ];
 
 /** English Verb Suffixes. */
-static immutable verbSuffixes = [ "s", "ies", "es", "es", "ed", "ed", "ing", "ing", ];
+static immutable verbSuffixes = [ `s`, `ies`, `es`, `es`, `ed`, `ed`, `ing`, `ing`, ];
 
 /** English Adjective Suffixes. */
-static immutable adjectiveSuffixes = [ "er", "est", "er", "est" ];
+static immutable adjectiveSuffixes = [ `er`, `est`, `er`, `est` ];
 
 /** English Job/Professin Title Suffixes.
     Typically built from noun or verb bases.
     See also: http://www.english-for-students.com/Job-Title-Suffixes.html
 */
-static immutable jobTitleSuffixes = [ "or", // traitor
-                                      "er", // builder
-                                      "ist", // typist
-                                      "an", // technician
-                                      "man", // dustman, barman
-                                      "woman", // policewoman
-                                      "ian", // optician
-                                      "person", // chairperson
-                                      "sperson", // spokesperson
-                                      "ess", // waitress
-                                      "ive" // representative
+static immutable jobTitleSuffixes = [ `or`, // traitor
+                                      `er`, // builder
+                                      `ist`, // typist
+                                      `an`, // technician
+                                      `man`, // dustman, barman
+                                      `woman`, // policewoman
+                                      `ian`, // optician
+                                      `person`, // chairperson
+                                      `sperson`, // spokesperson
+                                      `ess`, // waitress
+                                      `ive` // representative
     ];
 
 /** English Word Suffixes. */
@@ -1006,28 +1006,28 @@ string nthString(T)(T n) @safe pure
     string s;
     switch (n)
     {
-        default: s = to!string(n) ~ ":th"; break;
-        case 0: s = "zeroth"; break;
-        case 1: s = "first"; break;
-        case 2: s = "second"; break;
-        case 3: s = "third"; break;
-        case 4: s = "fourth"; break;
-        case 5: s = "fifth"; break;
-        case 6: s = "sixth"; break;
-        case 7: s = "seventh"; break;
-        case 8: s = "eighth"; break;
-        case 9: s = "ninth"; break;
-        case 10: s = "tenth"; break;
-        case 11: s = "eleventh"; break;
-        case 12: s = "twelveth"; break;
-        case 13: s = "thirteenth"; break;
-        case 14: s = "fourteenth"; break;
-        case 15: s = "fifteenth"; break;
-        case 16: s = "sixteenth"; break;
-        case 17: s = "seventeenth"; break;
-        case 18: s = "eighteenth"; break;
-        case 19: s = "nineteenth"; break;
-        case 20: s = "twentieth"; break;
+        default: s = to!string(n) ~ `:th`; break;
+        case 0: s = `zeroth`; break;
+        case 1: s = `first`; break;
+        case 2: s = `second`; break;
+        case 3: s = `third`; break;
+        case 4: s = `fourth`; break;
+        case 5: s = `fifth`; break;
+        case 6: s = `sixth`; break;
+        case 7: s = `seventh`; break;
+        case 8: s = `eighth`; break;
+        case 9: s = `ninth`; break;
+        case 10: s = `tenth`; break;
+        case 11: s = `eleventh`; break;
+        case 12: s = `twelveth`; break;
+        case 13: s = `thirteenth`; break;
+        case 14: s = `fourteenth`; break;
+        case 15: s = `fifteenth`; break;
+        case 16: s = `sixteenth`; break;
+        case 17: s = `seventeenth`; break;
+        case 18: s = `eighteenth`; break;
+        case 19: s = `nineteenth`; break;
+        case 20: s = `twentieth`; break;
     }
     return s;
 }
@@ -1044,22 +1044,22 @@ string inPlural(string word, int count = 2,
     {
         case 's':
         case 'a', 'e', 'i', 'o', 'u':
-            return word ~ "es";
+            return word ~ `es`;
         case 'f':
-            return word[0 .. $-1] ~ "ves";
+            return word[0 .. $-1] ~ `ves`;
         case 'y':
-            return word[0 .. $-1] ~ "ies";
+            return word[0 .. $-1] ~ `ies`;
         default:
-            return word ~ "s";
+            return word ~ `s`;
     }
 }
 
 /** Return $(D s) lemmatized (normalized). */
 S lemmatize(S)(S s) if (isSomeString!S)
 {
-    if (s.of("be", "is", "am", "are"))
+    if (s.of(`be`, `is`, `am`, `are`))
     {
-        return "be";
+        return `be`;
     }
     else
     {
@@ -1072,43 +1072,43 @@ S lemmatize(S)(S s) if (isSomeString!S)
     See also: https://en.wikipedia.org/wiki/Martin_Porter
     See also: https://www.youtube.com/watch?v=2s7f8mBwnko&list=PL6397E4B26D00A269&index=4.
 */
-S porterStem(S)(S s) if (isSomeString!S)
+S porterStemEnglish(S)(S s) if (isSomeString!S)
 {
     import std.algorithm: endsWith;
 
     /* Step 1a */
-    if      (s.endsWith("sses")) { s = s[0 .. $-2]; }
-    else if (s.endsWith("ies"))  { s = s[0 .. $-2]; }
-    else if (s.endsWith("ss"))   { }
-    else if (s.endsWith("s"))    { s = s[0 .. $-1]; }
+    if      (s.endsWith(`sses`)) { s = s[0 .. $-2]; }
+    else if (s.endsWith(`ies`))  { s = s[0 .. $-2]; }
+    else if (s.endsWith(`ss`))   { }
+    else if (s.endsWith(`s`))    { s = s[0 .. $-1]; }
 
     /* Step 2 */
-    if      (s.endsWith("ational")) { s = s[0 .. $-7] ~ "ate"; }
-    else if (s.endsWith("izer"))    { s = s[0 .. $-1]; }
-    else if (s.endsWith("ator"))    { s = s[0 .. $-2] ~ "e"; }
+    if      (s.endsWith(`ational`)) { s = s[0 .. $-7] ~ `ate`; }
+    else if (s.endsWith(`izer`))    { s = s[0 .. $-1]; }
+    else if (s.endsWith(`ator`))    { s = s[0 .. $-2] ~ `e`; }
 
     /* Step 3 */
-    else if (s.endsWith("al")) { s = s[0 .. $-2] ~ "e"; }
-    else if (s.endsWith("able")) { s = s[0 .. $-4]; }
-    else if (s.endsWith("ate")) { s = s[0 .. $-3] ~ "e"; }
+    else if (s.endsWith(`al`)) { s = s[0 .. $-2] ~ `e`; }
+    else if (s.endsWith(`able`)) { s = s[0 .. $-4]; }
+    else if (s.endsWith(`ate`)) { s = s[0 .. $-3] ~ `e`; }
 
     return s;
 }
 
 unittest
 {
-    assert("caresses".porterStem == "caress");
-    assert("ponies".porterStem == "poni");
-    assert("caress".porterStem == "caress");
-    assert("cats".porterStem == "cat");
+    assert(`caresses`.porterStemEnglish == `caress`);
+    assert(`ponies`.porterStemEnglish == `poni`);
+    assert(`caress`.porterStemEnglish == `caress`);
+    assert(`cats`.porterStemEnglish == `cat`);
 
-    assert("relational".porterStem == "relate");
-    assert("digitizer".porterStem == "digitize");
-    assert("operator".porterStem == "operate");
+    assert(`relational`.porterStemEnglish == `relate`);
+    assert(`digitizer`.porterStemEnglish == `digitize`);
+    assert(`operator`.porterStemEnglish == `operate`);
 
-    assert("revival".porterStem == "revive");
-    assert("adjustable".porterStem == "adjust");
-    assert("activate".porterStem == "active");
+    assert(`revival`.porterStemEnglish == `revive`);
+    assert(`adjustable`.porterStemEnglish == `adjust`);
+    assert(`activate`.porterStemEnglish == `active`);
 }
 
 import std.traits: isIntegral;
@@ -1116,13 +1116,13 @@ import std.traits: isIntegral;
 /** Convert the number $(D number) to its English textual representation.
     Opposite: toTextualIntegerMaybe
 */
-string toTextualString(T)(T number, string minusName = "minus")
+string toTextualString(T)(T number, string minusName = `minus`)
     @safe pure nothrow if (isIntegral!T)
 {
     string word;
 
     if (number == 0)
-        return "zero";
+        return `zero`;
 
     if (number < 0)
     {
@@ -1145,48 +1145,48 @@ string toTextualString(T)(T number, string minusName = "minus")
                 word ~= tensPlaceWords[cast(int) tens];
                 number = number % 10;
                 if (number)
-                    word ~= "-";
+                    word ~= `-`;
             }
         }
         else if (number < 1_000)
         {
             auto hundreds = number / 100;
-            word ~= onesPlaceWords[cast(int) hundreds] ~ " hundred";
+            word ~= onesPlaceWords[cast(int) hundreds] ~ ` hundred`;
             number = number % 100;
             if (number)
-                word ~= " and ";
+                word ~= ` and `;
         }
         else if (number < 1_000_000)
         {
             auto thousands = number / 1_000;
-            word ~= toTextualString(thousands) ~ " thousand";
+            word ~= toTextualString(thousands) ~ ` thousand`;
             number = number % 1_000;
             if (number)
-                word ~= ", ";
+                word ~= `, `;
         }
         else if (number < 1_000_000_000)
         {
             auto millions = number / 1_000_000;
-            word ~= toTextualString(millions) ~ " million";
+            word ~= toTextualString(millions) ~ ` million`;
             number = number % 1_000_000;
             if (number)
-                word ~= ", ";
+                word ~= `, `;
         }
         else if (number < 1_000_000_000_000)
         {
             auto n = number / 1_000_000_000;
-            word ~= toTextualString(n) ~ " billion";
+            word ~= toTextualString(n) ~ ` billion`;
             number = number % 1_000_000_000;
             if (number)
-                word ~= ", ";
+                word ~= `, `;
         }
         else if (number < 1_000_000_000_000_000)
         {
             auto n = number / 1_000_000_000_000;
-            word ~= toTextualString(n) ~ " trillion";
+            word ~= toTextualString(n) ~ ` trillion`;
             number = number % 1_000_000_000_000;
             if (number)
-                word ~= ", ";
+                word ~= `, `;
         }
         else
         {
@@ -1199,23 +1199,23 @@ string toTextualString(T)(T number, string minusName = "minus")
 alias toTextual = toTextualString;
 
 unittest {
-    assert(1.toTextualString == "one");
-    assert(5.toTextualString == "five");
-    assert(13.toTextualString == "thirteen");
-    assert(54.toTextualString == "fifty-four");
-    assert(178.toTextualString == "one hundred and seventy-eight");
-    assert(592.toTextualString == "five hundred and ninety-two");
-    assert(1_234.toTextualString == "one thousand, two hundred and thirty-four");
-    assert(10_234.toTextualString == "ten thousand, two hundred and thirty-four");
-    assert(105_234.toTextualString == "one hundred and five thousand, two hundred and thirty-four");
-    assert(71_05_234.toTextualString == "seven million, one hundred and five thousand, two hundred and thirty-four");
-    assert(3_007_105_234.toTextualString == "three billion, seven million, one hundred and five thousand, two hundred and thirty-four");
-    assert(900_003_007_105_234.toTextualString == "nine hundred trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four");
+    assert(1.toTextualString == `one`);
+    assert(5.toTextualString == `five`);
+    assert(13.toTextualString == `thirteen`);
+    assert(54.toTextualString == `fifty-four`);
+    assert(178.toTextualString == `one hundred and seventy-eight`);
+    assert(592.toTextualString == `five hundred and ninety-two`);
+    assert(1_234.toTextualString == `one thousand, two hundred and thirty-four`);
+    assert(10_234.toTextualString == `ten thousand, two hundred and thirty-four`);
+    assert(105_234.toTextualString == `one hundred and five thousand, two hundred and thirty-four`);
+    assert(71_05_234.toTextualString == `seven million, one hundred and five thousand, two hundred and thirty-four`);
+    assert(3_007_105_234.toTextualString == `three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
+    assert(900_003_007_105_234.toTextualString == `nine hundred trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
 }
 
-enum onesPlaceWords = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
-enum singleWords = onesPlaceWords ~ [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ];
-enum tensPlaceWords = [ null, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", ];
+enum onesPlaceWords = [ `zero`, `one`, `two`, `three`, `four`, `five`, `six`, `seven`, `eight`, `nine` ];
+enum singleWords = onesPlaceWords ~ [ `ten`, `eleven`, `twelve`, `thirteen`, `fourteen`, `fifteen`, `sixteen`, `seventeen`, `eighteen`, `nineteen` ];
+enum tensPlaceWords = [ null, `ten`, `twenty`, `thirty`, `forty`, `fifty`, `sixty`, `seventy`, `eighty`, `ninety`, ];
 
 immutable ubyte[string] onesPlaceWordsAA;
 immutable ubyte[string] singleWordsAA;
