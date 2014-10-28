@@ -834,11 +834,11 @@ class Net(bool useArray = true,
     }
 
     ref inout(Link) linkByIndex(LinkIx ix) inout { return _links[ix._lIx]; }
-    ref inout(Link) opIndex(LinkIx ix) inout { return linkByIndex(ix); }
+    ref inout(Link)     opIndex(LinkIx ix) inout { return linkByIndex(ix); }
 
     /* const @safe @nogc pure nothrow */
     ref inout(Concept) conceptByIndex(ConceptIx ix) inout { return _concepts[ix._cIx]; }
-    ref inout(Concept) opIndex(ConceptIx ix) inout { return conceptByIndex(ix); }
+    ref inout(Concept)        opIndex(ConceptIx ix) inout { return conceptByIndex(ix); }
 
     Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
     {
