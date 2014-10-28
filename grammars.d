@@ -283,7 +283,7 @@ string toName(HLang hlang) @safe pure @nogc nothrow
 }
 
 HLang decodeHumanLang(char[] x)
-    @safe pure
+    @safe pure nothrow
 {
     import std.stdio: writeln;
     if (x == "is")
