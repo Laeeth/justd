@@ -3,11 +3,6 @@ module set;
 /** Set of Values of Type $(D T). */
 struct Set(T)
 {
-    static if (is(T == char))
-        private string _data;
-    else
-        private T[] _data;
-public:
     this(E...)(E args) if (is(CommonType!E == T))
     {
         _data = new T[args.length];
@@ -44,6 +39,10 @@ public:
             return _data;
         }
     }
+
+private:
+    static if (is(T == char)) string _data;
+    else                      T[] _data;
 }
 
 import std.typecons: CommonType;
