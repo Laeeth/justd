@@ -1061,12 +1061,18 @@ import std.typecons: tuple;
 */
 enum irregularAdjectivesEnglish = [tuple("good", "better", "best"),
                                    tuple("well", "better", "best"),
+
                                    tuple("bad", "worse", "worst"),
+
                                    tuple("little", "less", "least"),
+
                                    tuple("much", "more", "most"),
+
                                    tuple("far", "further", "furthest"),
                                    tuple("far", "farther", "farthest"),
+
                                    tuple("big", "larger", "largest"),
+                                   tuple("old", "elder", "eldest"),
     ];
 
 bool isComparativeAdjective(S)(S s) if (isSomeString!S)
@@ -1074,13 +1080,11 @@ bool isComparativeAdjective(S)(S s) if (isSomeString!S)
     import std.range: empty;
     return !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty;
 }
-
 bool isNominativeAdjective(S)(S s) if (isSomeString!S)
 {
     import std.range: empty;
     return !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty;
 }
-
 bool isSuperlativeAdjective(S)(S s) if (isSomeString!S)
 {
     import std.range: empty;
@@ -1104,14 +1108,9 @@ enum irregularAdjectivesGerman = [tuple("gut", "besser", "besten")
  */
 S lemmatize(S)(S s) if (isSomeString!S)
 {
-    if (s.of(`be`, `is`, `am`, `are`))
-    {
-        return `be`;
-    }
-    else
-    {
-        return s;
-    }
+    if      (s.of(`be`, `is`, `am`, `are`)) return `be`;
+    else if (s.of(`do`, `does`))            return `do`;
+    else return s;
 }
 
 /** Return Stem of $(D s) using Porter's algorithm
