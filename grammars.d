@@ -7,10 +7,11 @@ module grammars;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
-import std.algorithm: uniq, map, find;
+import std.algorithm: uniq, map, find, startsWith, endsWith;
 import std.array: array;
 import std.conv;
 import predicates: of;
+
 
 /** (Human) Language Code according to ISO 639-1.
     See also: http://www.mathguide.de/info/tools/languagecode.html
@@ -1065,7 +1066,6 @@ enum irregularAdjectivesEnglish = [tuple("good", "better", "best"),
                                    tuple("bad", "worse", "worst"),
 
                                    tuple("little", "less", "least"),
-
                                    tuple("much", "more", "most"),
 
                                    tuple("far", "further", "furthest"),
@@ -1075,28 +1075,43 @@ enum irregularAdjectivesEnglish = [tuple("good", "better", "best"),
                                    tuple("old", "elder", "eldest"),
     ];
 
-bool isComparativeAdjective(S)(S s) if (isSomeString!S)
-{
-    import std.range: empty;
-    return !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty;
-}
+/** Return true if $(D s) is an adjective in nominative form. */
 bool isNominativeAdjective(S)(S s) if (isSomeString!S)
 {
     import std.range: empty;
-    return !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty;
+    return (!irregularAdjectivesEnglish.map!(a => a[0]).array.find(s).empty); // TODO Check if s[0..$-2] is a wordnet adjective
 }
+
+/** Return true if $(D s) is an adjective in comparative form. */
+bool isComparativeAdjective(S)(S s) if (isSomeString!S)
+{
+    import std.range: empty;
+    return (s.startsWith(`more `) ||
+            !irregularAdjectivesEnglish.map!(a => a[1]).array.find(s).empty ||
+            s.endsWith(`er`)   // TODO Check if s[0..$-2] is a wordnet adjective
+        );
+}
+
+/** Return true if $(D s) is an adjective in superlative form. */
 bool isSuperlativeAdjective(S)(S s) if (isSomeString!S)
 {
     import std.range: empty;
-    return !irregularAdjectivesEnglish.map!(a => a[2]).array.find(s).empty;
+    return (s.startsWith(`most `) ||
+            !irregularAdjectivesEnglish.map!(a => a[2]).array.find(s).empty ||
+            s.endsWith(`est`)   // TODO Check if s[0..$-3] is a wordnet adjective
+        );
 }
 
 unittest
 {
+    assert(`good`.isNominativeAdjective);
+    assert(!`better`.isNominativeAdjective);
     assert(`better`.isComparativeAdjective);
     assert(!`best`.isComparativeAdjective);
+    assert(`more important`.isSuperlativeAdjective);
     assert(`best`.isSuperlativeAdjective);
     assert(!`better`.isSuperlativeAdjective);
+    assert(`most important`.isSuperlativeAdjective);
 }
 
 /** Irregular Adjectives. */
@@ -1120,8 +1135,6 @@ S lemmatize(S)(S s) if (isSomeString!S)
 */
 S porterStemEnglish(S)(S s) if (isSomeString!S)
 {
-    import std.algorithm: endsWith;
-
     /* Step 1a */
     if      (s.endsWith(`sses`)) { s = s[0 .. $-2]; }
     else if (s.endsWith(`ies`))  { s = s[0 .. $-2]; }
