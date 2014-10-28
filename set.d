@@ -78,5 +78,5 @@ void main(string[] args)
     import std.conv;
     assert(to!string(Z29) == "0123456789");
 
-    assert('x' in cs['x'..'x'+1]);
+    assert('x' in cs['x' .. 'x'+1]);
 }
