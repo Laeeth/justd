@@ -7,6 +7,13 @@ struct Set(T)
     else
         private T[] _data;
 public:
+    this(E...)(E args) if (is(CommonType!E == T))
+    {
+        foreach (arg; args)
+        {
+            _data ~= arg;
+        }
+    }
     typeof(this) opSlice(char lo, char hi)
     {
         Set result;
@@ -42,12 +49,13 @@ import std.typecons: CommonType;
 /** Instantiator for $(D Set). */
 Set!(CommonType!T) set(T...)(T args)
 {
-    return typeof(return)();
+    return typeof(return)(args);
 }
 
 unittest
 {
-    assert(1 in set(1, 2, 3));
+    auto x = set(1, 2, 3);
+    assert(1 in x);
 }
 
 void main(string[] args)
