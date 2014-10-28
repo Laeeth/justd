@@ -16,6 +16,7 @@ import std.range: ElementType, isInputRange, isForwardRange, isBidirectionalRang
 import traits_ex: isStruct, isClass, allSame;
 import std.functional: unaryFun, binaryFun;
 version(print) import dbg;
+public import predicates;
 
 // ==============================================================================================
 
@@ -23,29 +24,6 @@ auto typestringof(T)(in T a) { return T.stringof; }
 
 import std.range: dropOne;
 alias tail = dropOne;
-
-// ==============================================================================================
-
-/** Return true if $(D x) is a equal to any of $(D y). */
-bool of(S, T...)(S x, lazy T ys) pure if (ys.length >= 1 &&
-                                          is(typeof({ return S.init == CommonType!(T).init; })))
-{
-    foreach (y; ys)
-    {
-        if (x == y)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-alias isEither = of;
-
-unittest
-{
-    assert(1.of(1, 2, 3));
-    assert(!4.of(1, 2, 3));
-}
 
 // ==============================================================================================
 
