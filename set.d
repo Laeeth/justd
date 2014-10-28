@@ -11,20 +11,20 @@ struct Set(T)
             _data[ix] = arg;
         }
     }
-    typeof(this) opSlice(char lo, char hi)
+    Set opSlice(T lo, T hi)
     {
         Set result;
         foreach(c; lo .. hi)
             result._data ~= c;
         return result;
     }
-    typeof(this) opSlice(char lohi)
+    Set opSlice(T lohi)
     {
         Set result;
         result._data ~= lohi;
         return result;
     }
-    bool opIn_r(char elem)
+    bool opIn_r(T elem)
     {
         import std.range: empty;
         if (_data.empty)
@@ -55,7 +55,7 @@ Set!(CommonType!T) set(T...)(T args)
 
 unittest
 {
-    auto x = set(1, 2, 3);
+    auto x = set(1, 3);
     assert(1 in x);
     assert(!(4 in x));
 }

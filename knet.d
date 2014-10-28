@@ -7,6 +7,7 @@
 
     Data: http://conceptnet5.media.mit.edu/downloads/current/
 
+    See also: http://programmers.stackexchange.com/q/261163/38719
     See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: https://github.com/commonsense/conceptnet5/wiki
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
