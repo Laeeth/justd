@@ -1167,12 +1167,12 @@ class Net(bool useArray = true,
         std.stdio.write(` - `,
                         ((!relation.isSymmetric) && linkDir == LinkDir.output ? `<` : ``),
                         `=`, relation, `=`,
-                        ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``),
-                        ` `);
-        if (concept.words) std.stdio.write(` words:`, concept.words);
-        if (concept.lang) std.stdio.write(` lang:`, concept.lang);
-        if (concept.lemmaKind) std.stdio.write(` kind:`, concept.lemmaKind);
-        writefln(` weight: %.2f`, weight);
+                        ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``));
+        if (concept.words) std.stdio.write(` `, concept.words);
+        std.stdio.write(`(`);
+        if (concept.lang) std.stdio.write(concept.lang);
+        if (concept.lemmaKind) std.stdio.write("-", concept.lemmaKind);
+        writefln(`:%.2f)`, weight);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
