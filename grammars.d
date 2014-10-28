@@ -282,11 +282,9 @@ string toName(HLang hlang) @safe pure @nogc nothrow
 
 }
 
-HLang decodeHumanLang(char[] x)
-    @safe pure nothrow
+HLang decodeHumanLang(S)(S hlang) @safe pure nothrow if (isSomeString!S)
 {
-    import std.stdio: writeln;
-    if (x == "is")
+    if (hlang == "is")
     {
         return HLang.is_;
     }
@@ -294,7 +292,7 @@ HLang decodeHumanLang(char[] x)
     {
         try
         {
-            return x.to!HLang;
+            return hlang.to!HLang;
         }
         catch (Exception a)
         {
