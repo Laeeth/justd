@@ -10,7 +10,7 @@ import std.typecons: Nullable;
 import std.algorithm: uniq;
 import std.array: array;
 import std.conv;
-import algorithm_ex: of;
+import predicates: of;
 
 /** (Human) Language Code according to ISO 639-1.
     See also: http://www.mathguide.de/info/tools/languagecode.html
@@ -731,64 +731,58 @@ unittest
 {
     bool isNoun(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == noun ||
-                    kind == nounNumeric ||
-                    kind == nounInteger ||
-                    kind == nounRationalNumber ||
-                    kind == nounIrrationalNumber ||
-                    kind == nounComplexNumber ||
-                    kind.isNounName ||
-                    kind == nounWeekday ||
-                    kind == nounMonth);
-        }
+        with (WordKind)
+            return (kind.of(noun,
+                            nounNumeric,
+                            nounInteger,
+                            nounRationalNumber,
+                            nounIrrationalNumber,
+                            nounComplexNumber,
+                            nounWeekday,
+                            nounMonth) ||
+                    kind.isNounName);
     }
     bool isNounNumeric(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == nounNumeric ||
-                    kind == nounInteger ||
-                    kind == nounRationalNumber ||
-                    kind == nounIrrationalNumber ||
-                    kind == nounComplexNumber);
-        }
+        with (WordKind)
+            return (kind.of(nounNumeric,
+                            nounInteger,
+                            nounRationalNumber,
+                            nounComplexNumber));
     }
     bool isNounName(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == nounName ||
-                    kind == nounLocationName ||
-                    kind == nounPersonName ||
-                    kind == nounOrganisationName);
-        }
+        with (WordKind)
+            return kind.of(nounName,
+                           nounLocationName,
+                           nounPersonName,
+                           nounOrganisationName);
     }
     bool isVerb(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == verb ||
-                    kind == verbPresent ||
-                    kind == verbPast ||
-                    kind == verbFuture);
-        }
+        with (WordKind)
+            return kind.of(verb,
+                           verbPresent,
+                           verbPast,
+                           verbFuture);
     }
-    bool isAdjective(WordKind kind) {
-        with (WordKind) {
-            return (kind == adjective ||
-                    kind == adjectivePossessiveSingular ||
-                    kind == adjectivePossessivePlural);
-        }
+    bool isAdjective(WordKind kind)
+    {
+        with (WordKind)
+            return kind.of(adjective,
+                           adjectivePossessiveSingular,
+                           adjectivePossessivePlural);
     }
     bool isAdverb(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == adverb ||
-                    kind == normalAdverb ||
-                    kind == conjunctiveAdverb);
-        }
+        with (WordKind)
+            return kind.of(adverb,
+                           normalAdverb,
+                           conjunctiveAdverb);
     }
     bool isPronoun(WordKind kind)
     {
-        with (WordKind) {
+        with (WordKind)
             return (kind == pronoun ||
                     kind.isPronounPersonal ||
                     kind.isPronounPossessive ||
@@ -797,7 +791,6 @@ unittest
                     kind.isPronounReflexive ||
                     kind.isPronounIndefinite ||
                     kind == pronounRelative);
-        }
     }
     bool isPronounPersonal(WordKind kind)
     {
@@ -806,97 +799,85 @@ unittest
     }
     bool isPronounPersonalSingular(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == pronounPersonalSingular ||
-                    kind == pronounPersonalSingularMale ||
-                    kind == pronounPersonalSingularFemale ||
-                    kind == pronounPersonalSingularNeutral);
-        }
+        with (WordKind)
+            return kind.of(pronounPersonalSingular,
+                           pronounPersonalSingularMale,
+                           pronounPersonalSingularFemale,
+                           pronounPersonalSingularNeutral);
     }
     bool isPronounPersonalPlural(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == pronounPersonalPlural);
-        }
+        with (WordKind)
+            return kind.of(pronounPersonalPlural);
     }
     bool isPronounPossessive(WordKind kind)
     {
-        with (WordKind) {
+        with (WordKind)
             return (kind == pronounPossessive ||
                     kind.isPronounPossessiveSingular ||
                     kind.isPronounPossessivePlural);
-        }
     }
     bool isPronounPossessiveSingular(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == pronounPossessiveSingular ||
-                    kind == pronounPossessiveSingularMale ||
-                    kind == pronounPossessiveSingularFemale ||
-                    kind == pronounPossessiveSingularNeutral);
-        }
+        with (WordKind)
+            return kind.of(pronounPossessiveSingular,
+                           pronounPossessiveSingularMale,
+                           pronounPossessiveSingularFemale,
+                           pronounPossessiveSingularNeutral);
     }
     bool isPronounPossessivePlural(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == pronounPossessivePlural);
-        }
+        with (WordKind)
+            return kind.of(pronounPossessivePlural);
     }
     bool isPronounDemonstrative(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == pronounDemonstrative);
-        }
+        with (WordKind)
+            return kind.of(pronounDemonstrative);
     }
     bool isPronounPlural(WordKind kind)
     {
-        with (WordKind) {
+        with (WordKind)
             return (kind.isPronounPersonalPlural ||
                     kind == pronounPossessivePlural);
-        }
     }
     bool isPronounReflexive(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == pronounReflexive ||
-                    kind == pronounReflexiveSingular ||
-                    kind == pronounReflexivePlural);
-        }
+        with (WordKind)
+            return kind.of(pronounReflexive,
+                           pronounReflexiveSingular,
+                           pronounReflexivePlural);
     }
     bool isPronounIndefinite(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == pronounIndefinite ||
-                    kind == pronounIndefiniteSingular ||
-                    kind == pronounIndefinitePlural);
-        }
+        with (WordKind)
+            return kind.of(pronounIndefinite,
+                           pronounIndefiniteSingular,
+                           pronounIndefinitePlural);
     }
     bool isPreposition(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == preposition ||
-                    kind == prepositionTime ||
-                    kind == prepositionPosition ||
-                    kind == prepositionPlace ||
-                    kind == prepositionDirection);
-        }
+        with (WordKind)
+            return kind.of(preposition,
+                           prepositionTime,
+                           prepositionPosition,
+                           prepositionPlace,
+                           prepositionDirection);
     }
     bool isArticle(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == article ||
-                    kind == articleUndefinite ||
-                    kind == articleDefinite ||
-                    kind == articlePartitive);
-        }
+        with (WordKind)
+            return kind.of(article,
+                           articleUndefinite,
+                           articleDefinite,
+                           articlePartitive);
     }
     bool isConjunction(WordKind kind)
     {
-        with (WordKind) {
-            return (kind == conjunction ||
-                    kind == coordinatingConjunction ||
-                    kind == subordinatingConjunction);
-        }
+        with (WordKind)
+            return kind.of(conjunction,
+                           coordinatingConjunction,
+                           subordinatingConjunction);
     }
 }
 
