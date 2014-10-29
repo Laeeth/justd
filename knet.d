@@ -924,8 +924,13 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
+        // WordNet
         _wordnet = new WordNet!(true, true)([HLang.en]);
 
+        // NELL
+        readNELL("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde.buildNormalizedPath, 1000);
+
+        // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
         const fixedPath = dirPath.expandTilde
                                  .buildNormalizedPath;
@@ -933,8 +938,8 @@ class Net(bool useArray = true,
         foreach (file; fixedPath.dirEntries(SpanMode.shallow)
                                 .filter!(name => name.extension == `.csv`))
         {
-            readCSV(file);
-            break;
+            readCN5(file);
+            /* break; */
         }
 
         // TODO msgpack fails to pack
@@ -991,10 +996,22 @@ class Net(bool useArray = true,
         return cix;
     }
 
-    /** Read CSV Line $(D line) at 0-offset line number $(D lnr). */
-    void readCSVLine(R, N)(R line, N lnr)
+    import std.algorithm: splitter;
+
+    /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
+    void readNELLLine(R, N)(R line, N lnr)
     {
-        import std.algorithm: splitter;
+        auto parts = line.splitter('\t');
+        if (!parts.empty)
+        {
+            auto concept = parts.front.splitter(':');
+            writeln(concept);
+        }
+    }
+
+    /** Read ConceptNet CSV Line $(D line) at 0-offset line number $(D lnr). */
+    void readCN5Line(R, N)(R line, N lnr)
+    {
         auto parts = line.splitter('\t');
 
         Link link;
@@ -1073,10 +1090,10 @@ class Net(bool useArray = true,
         _links ~= link;
     }
 
-    /** Read ConceptNet5 Assertions File $(D fileName) in CSV format.
+    /** Read ConceptNet5 Assertions File $(D path) in CSV format.
         Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
      */
-    void readCSV(string fileName, bool useMmFile = false)
+    void readCN5(string path, bool useMmFile = false)
     {
         size_t lnr = 0;
         /* TODO Functionize and merge with _wordnet.readIx */
@@ -1085,24 +1102,37 @@ class Net(bool useArray = true,
             version(none)
             {
                 import std.mmfile: MmFile;
-                auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+                auto mmf = new MmFile(path, MmFile.Mode.read, 0, null, pageSize);
                 auto data = cast(ubyte[])mmf[];
                 /* import algorithm_ex: byLine, Newline; */
                 foreach (line; data.byLine!(Newline.native)) // TODO Compare with File.byLine
                 {
-                    readCSVLine(line, lnr); lnr++;
+                    readCN5Line(line, lnr); ++lnr;
                 }
             }
         }
         else
         {
-            foreach (line; File(fileName).byLine)
+            foreach (line; File(path).byLine)
             {
-                readCSVLine(line, lnr); lnr++;
+                readCN5Line(line, lnr); ++lnr;
             }
         }
-        writeln(fileName, ` has `, lnr, ` lines`);
+        writeln(path, ` has `, lnr, ` lines`);
         showRelations;
+    }
+
+    /** Read NELL File $(D fileName) in CSV format.
+    */
+    void readNELL(string path, size_t maxCount = size_t.max)
+    {
+        size_t lnr = 0;
+        foreach (line; File(path).byLine)
+        {
+            readNELLLine(line, lnr); ++lnr;
+            if (lnr >= maxCount) break;
+        }
+        writeln(path, ` has `, lnr, ` lines`);
     }
 
     void showRelations()
