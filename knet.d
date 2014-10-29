@@ -5,6 +5,8 @@
     Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
     Wikidata, WikiTaxonomy into a Knowledge Graph.
 
+    See also: www.oneacross.com/crosswords for inspiring applications
+
     Data: http://conceptnet5.media.mit.edu/downloads/current/
 
     See also: http://programmers.stackexchange.com/q/261163/38719
@@ -29,7 +31,7 @@ module knet;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
-import std.algorithm: findSplitBefore, findSplitAfter;
+import std.algorithm: findSplitBefore, findSplitAfter, groupBy;
 import std.container: Array;
 import algorithm_ex: isPalindrome;
 
@@ -771,6 +773,19 @@ class Net(bool useArray = true,
     auto inLinksOf(in Concept concept)  { return concept.inIxes[].map!(ix => linkByIndex(ix)); }
     auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIndex(ix)); }
 
+    auto inLinksGroupedByRelation(in Concept concept)
+    {
+        return inLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
+                                                 (a._negation == b._negation &&
+                                                  a._relation == b._relation));
+    }
+    auto outLinksGroupedByRelation(in Concept concept)
+    {
+        return outLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
+                                                  (a._negation == b._negation &&
+                                                   a._relation == b._relation));
+    }
+
     static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
     else                 { alias ConceptIxes = ConceptIx[]; }
 
@@ -792,9 +807,12 @@ class Net(bool useArray = true,
     private:
         ConceptIx _srcIx;
         ConceptIx _dstIx;
+
         Weight _weight;
+
         Relation _relation;
         bool _negation; // relation negation
+
         Source _origin;
     }
 
@@ -941,7 +959,7 @@ class Net(bool useArray = true,
                                 .filter!(name => name.extension == `.csv`))
         {
             readCN5(file);
-            /* break; */
+            break;
         }
 
         // TODO msgpack fails to pack
@@ -1292,7 +1310,9 @@ class Net(bool useArray = true,
         {
             writeln(`- in `, concept.lang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
-            auto x = inLinksOf(concept);
+            auto ins = inLinksGroupedByRelation(concept);
+            writeln(ins);
+
             foreach (ix; concept.inIxes)
             {
                 const link = linkByIndex(ix);
