@@ -928,7 +928,9 @@ class Net(bool useArray = true,
         _wordnet = new WordNet!(true, true)([HLang.en]);
 
         // NELL
-        readNELL("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde.buildNormalizedPath, 1000);
+        readNELL("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde
+                                                        .buildNormalizedPath,
+                 1000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1095,6 +1097,7 @@ class Net(bool useArray = true,
      */
     void readCN5(string path, bool useMmFile = false)
     {
+        writeln("Reading ConceptNet from ", path, " ...");
         size_t lnr = 0;
         /* TODO Functionize and merge with _wordnet.readIx */
         if (useMmFile)
@@ -1118,7 +1121,7 @@ class Net(bool useArray = true,
                 readCN5Line(line, lnr); ++lnr;
             }
         }
-        writeln(path, ` has `, lnr, ` lines`);
+        writeln("Reading ConceptNet from ", path, ` having `, lnr, ` lines`);
         showRelations;
     }
 
@@ -1126,13 +1129,15 @@ class Net(bool useArray = true,
     */
     void readNELL(string path, size_t maxCount = size_t.max)
     {
+        writeln("Reading NELL from ", path, " ...");
         size_t lnr = 0;
         foreach (line; File(path).byLine)
         {
-            readNELLLine(line, lnr); ++lnr;
+            readNELLLine(line, lnr);
+            ++lnr;
             if (lnr >= maxCount) break;
         }
-        writeln(path, ` has `, lnr, ` lines`);
+        writeln("Read NELL ", path, ` having `, lnr, ` lines`);
     }
 
     void showRelations()
