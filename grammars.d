@@ -886,7 +886,7 @@ unittest
     }
 }
 
-bool memberOf(WordKind special,
+bool specializes(WordKind special,
               WordKind general)
     @safe @nogc pure nothrow
 {
@@ -895,7 +895,7 @@ bool memberOf(WordKind special,
         {
             /* TODO Use static foreach over all enum members to generate all
              * relevant cases: */
-            case unknown: return true;
+            case unknown: return special != unknown;
             case noun: return special.isNoun || special.isPronoun;
             case nounNumeric: return special.isNounNumeric;
             case nounName: return special.isNounName;
@@ -917,7 +917,7 @@ bool memberOf(WordKind special,
     }
 }
 
-alias specializes = memberOf;
+alias memberOf = specializes;
 
 static immutable implies = [ `in order to` ];
 

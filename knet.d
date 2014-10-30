@@ -70,7 +70,6 @@ static if (__VERSION__ < 2067)
 */
 enum Relation:ubyte
 {
-    unknown,
     relatedTo, /* The most general relation. There is some positive relationship
                 * between A and B, but ConceptNet can't determine what that * relationship
                 is based on the data. This was called * "ConceptuallyRelatedTo" in
@@ -260,8 +259,34 @@ Relation decodeRelation(S)(S s,
 
         default:
             writeln(`Unknown relationString `, s);
-            return Relation.unknown;
+            return Relation.relatedTo;
     }
+}
+
+/** Return true if $(D special) is a more specialized relation than $(D general). */
+bool specializes(Relation special,
+                 Relation general)
+    @safe @nogc pure nothrow
+{
+    with (Relation) {
+        switch (general)
+        {
+            /* TODO Use static foreach over all enum members to generate all
+             * relevant cases: */
+            case relatedTo:
+                return special != relatedTo;
+            case isA:
+                return !special.of(isA, relatedTo);
+            default: return special == general;
+        }
+    }
+}
+
+/** Return true if $(D general) is a more general relation than $(D special). */
+bool generalizes(T)(T general,
+                    T special)
+{
+    return specializes(special, general);
 }
 
 /** NELL Concept Category.
@@ -627,7 +652,6 @@ Thematic toThematic(Relation relation)
 {
     final switch (relation)
     {
-        case Relation.unknown: return Thematic.unknown;
         case Relation.relatedTo: return Thematic.kLines;
         case Relation.isA: return Thematic.things;
         case Relation.partOf: return Thematic.things;
