@@ -818,6 +818,19 @@ class Net(bool useArray = true,
                                                    a._relation == b._relation));
     }
 
+    auto insGroupedByRelation(in Concept concept)
+    {
+        return insOf(concept).array.groupBy!((a, b) => // TODO array needed?
+                                             (a[0]._negation == b[0]._negation &&
+                                              a[0]._relation == b[0]._relation));
+    }
+    auto outsGroupedByRelation(in Concept concept)
+    {
+        return outsOf(concept).array.groupBy!((a, b) => // TODO array needed?
+                                              (a[0]._negation == b[0]._negation &&
+                                               a[0]._relation == b[0]._relation));
+    }
+
     static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
     else                 { alias ConceptIxes = ConceptIx[]; }
 
@@ -1347,9 +1360,8 @@ class Net(bool useArray = true,
         {
             writeln(`- in `, concept.lang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
-            auto ins_ = inLinksGroupedByRelation(concept);
+            auto ins_ = insGroupedByRelation(concept);
             writeln(ins_);
-            auto ins__ = insOf(concept);
 
             foreach (ix; concept.inIxes)
             {
