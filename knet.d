@@ -75,6 +75,7 @@ enum Relation:ubyte
                 is based on the data. This was called * "ConceptuallyRelatedTo" in
                 ConceptNet 2 through 4.  */
     conceptuallyRelatedTo = relatedTo,
+    any = relatedTo,
 
     isA, /* A is a subtype or a specific instance of B; every A is a B. (We do
           * not make the type-token distinction, because people don't usually
@@ -109,7 +110,6 @@ enum Relation:ubyte
     locatedNear,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
-
     entails = causes, /* TODO same as causes? */
     leadsTo = causes,
 
@@ -294,6 +294,7 @@ bool generalizes(T)(T general,
 */
 enum NELLCategory:ushort
 {
+    any,
     book,
     celltype,
     physicalaction,
@@ -794,16 +795,15 @@ class Net(bool useArray = true,
         WordKind lemmaKind;
     }
 
-    /* src out => link => in dst */
     /** Get Ingoing Links of $(D concept). */
-    auto inLinksOf(in Concept concept)  { return concept. inIxes[].map!(ix => linkByIndex(ix)); }
+    auto  inLinksOf(in Concept concept) { return concept. inIxes[].map!(ix => linkByIndex(ix)); }
     /** Get Outgoing Links of $(D concept). */
     auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIndex(ix)); }
 
     /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto insOf(in Concept concept)  { return  inLinksOf(concept).map!(link => tuple(link, src(link))); }
+    auto  insOf(in Concept concept) { return  inLinksOf(concept).map!(link => tuple(link, dst(link))); }
     /** Get Outgoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto outsOf(in Concept concept) { return outLinksOf(concept).map!(link => tuple(link, dst(link))); }
+    auto outsOf(in Concept concept) { return outLinksOf(concept).map!(link => tuple(link, src(link))); }
 
     auto inLinksGroupedByRelation(in Concept concept)
     {
@@ -1074,8 +1074,9 @@ class Net(bool useArray = true,
         auto parts = line.splitter('\t');
         if (!parts.empty)
         {
-            auto concept = parts.front.splitter(':');
-            writeln(concept);
+            auto conceptPath = parts.front.splitter(':');
+            /* TODO Lookup parts of concept and related them using isA: for example car >isA> vehicle > artifact */
+            writeln(conceptPath);
         }
     }
 
@@ -1268,19 +1269,6 @@ class Net(bool useArray = true,
         output
     }
 
-    void showConceptLink(in Concept concept, Relation relation, real weight, LinkDir linkDir)
-    {
-        std.stdio.write(` - `,
-                        ((!relation.isSymmetric) && linkDir == LinkDir.output ? `<` : ``),
-                        `=`, relation, `=`,
-                        ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``));
-        if (concept.words) std.stdio.write(` `, concept.words);
-        std.stdio.write(`(`);
-        if (concept.lang) std.stdio.write(concept.lang);
-        if (concept.lemmaKind) std.stdio.write("-", concept.lemmaKind);
-        writefln(`:%.2f)`, weight);
-    }
-
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
      */
     LinkIx areRelatedInOrder(ConceptIx a,
@@ -1338,6 +1326,30 @@ class Net(bool useArray = true,
         return typeof(return).undefined;
     }
 
+    void showLinkRelation(Relation relation, LinkDir linkDir)
+    {
+        std.stdio.write(` - `,
+                        ((!relation.isSymmetric) && linkDir == LinkDir.output ? `<` : ``),
+                        `=`, relation, `=`,
+                        ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``));
+    }
+
+    void showConcept(in Concept concept, real weight)
+    {
+        if (concept.words) std.stdio.write(` `, concept.words);
+        std.stdio.write(`(`);
+        if (concept.lang) std.stdio.write(concept.lang);
+        if (concept.lemmaKind) std.stdio.write("-", concept.lemmaKind);
+        writef(`:%.2f)`, weight);
+    }
+
+    void showLinkConcept(in Concept concept, Relation relation, real weight, LinkDir linkDir)
+    {
+        showLinkRelation(relation, linkDir);
+        showConcept(concept, weight);
+        writeln();
+    }
+
     /** Show concepts and their relations matching content in $(D line). */
     void showConcepts(S)(S line,
                          HLang hlang = HLang.unknown,
@@ -1360,25 +1372,49 @@ class Net(bool useArray = true,
         {
             writeln(`- in `, concept.lang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
-            auto ins_ = insByRelation(concept);
-            writeln(ins_);
 
-            foreach (ix; concept.inIxes)
+            foreach (inGroup; insByRelation(concept))
             {
-                const link = linkByIndex(ix);
-                showConceptLink(conceptByIndex(link._dstIx),
-                                link._relation,
-                                link.normalizedWeight,
-                                LinkDir.input);
+                size_t ix = 0;
+                foreach (inLink, inConcept; inGroup)
+                {
+                    if (ix == 0) // TODO can we check if elt is equal to inGroup.front
+                        showLinkRelation(inLink._relation, LinkDir.input);
+                    showConcept(inConcept, inLink.normalizedWeight);
+                    ++ix;
+                }
+                writeln();
             }
-            foreach (ix; concept.outIxes)
+
+            foreach (outGroup; outsByRelation(concept))
             {
-                const link = linkByIndex(ix);
-                showConceptLink(conceptByIndex(link._srcIx),
-                                link._relation,
-                                link.normalizedWeight,
-                                LinkDir.output);
+                size_t ix = 0;
+                foreach (outLink, outConcept; outGroup)
+                {
+                    if (ix == 0) // TODO can we check if elt is equal to outGroup.front
+                        showLinkRelation(outLink._relation, LinkDir.output);
+                    showConcept(outConcept, outLink.normalizedWeight);
+                    ++ix;
+                }
+                writeln();
             }
+
+            /* foreach (ix; concept.inIxes) */
+            /* { */
+            /*     const link = linkByIndex(ix); */
+            /*     showLinkConcept(conceptByIndex(link._dstIx), */
+            /*                     link._relation, */
+            /*                     link.normalizedWeight, */
+            /*                     LinkDir.input); */
+            /* } */
+            /* foreach (ix; concept.outIxes) */
+            /* { */
+            /*     const link = linkByIndex(ix); */
+            /*     showLinkConcept(conceptByIndex(link._srcIx), */
+            /*                     link._relation, */
+            /*                     link.normalizedWeight, */
+            /*                     LinkDir.output); */
+            /* } */
         }
 
         if (normalizedLine == "palindrome")
@@ -1387,7 +1423,7 @@ class Net(bool useArray = true,
             import std.utf: byDchar;
             foreach (palindromeConcept; _concepts.filter!(concept => concept.words.isPalindrome(3)))
             {
-                showConceptLink(palindromeConcept,
+                showLinkConcept(palindromeConcept,
                                 Relation.instanceOf,
                                 real.infinity,
                                 LinkDir.input);
