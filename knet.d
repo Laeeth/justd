@@ -794,8 +794,16 @@ class Net(bool useArray = true,
         WordKind lemmaKind;
     }
 
-    auto inLinksOf(in Concept concept)  { return concept.inIxes[].map!(ix => linkByIndex(ix)); }
+    /* src out => link => in dst */
+    /** Get Ingoing Links of $(D concept). */
+    auto inLinksOf(in Concept concept) { return concept.inIxes[].map!(ix => linkByIndex(ix)); }
+    /** Get Outgoing Links of $(D concept). */
     auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIndex(ix)); }
+
+    /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
+    auto insOf(in Concept concept)  { return inLinksOf(concept).map!(link => tuple(link, src(link))); }
+    /** Get Outgoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
+    auto outsOf(in Concept concept)  { return inLinksOf(concept).map!(link => tuple(link, dst(link))); }
 
     auto inLinksGroupedByRelation(in Concept concept)
     {
@@ -840,6 +848,9 @@ class Net(bool useArray = true,
         Source _origin;
     }
 
+    Concept src(Link link) { return conceptByIndex(link._srcIx); }
+    Concept dst(Link link) { return conceptByIndex(link._dstIx); }
+
     pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof);
     pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof);
     pragma(msg, `Concept.sizeof: `, Concept.sizeof);
@@ -875,12 +886,14 @@ class Net(bool useArray = true,
         real _weightSum = 0; // Sum of all link weights.
     }
 
-    ref inout(Link) linkByIndex(LinkIx ix) inout { return _links[ix._lIx]; }
-    ref inout(Link)     opIndex(LinkIx ix) inout { return linkByIndex(ix); }
+    @safe pure nothrow
+    {
+        ref inout(Link) linkByIndex(LinkIx ix) inout { return _links[ix._lIx]; }
+        ref inout(Link)     opIndex(LinkIx ix) inout { return linkByIndex(ix); }
 
-    /* const @safe @nogc pure nothrow */
-    ref inout(Concept) conceptByIndex(ConceptIx ix) inout { return _concepts[ix._cIx]; }
-    ref inout(Concept)        opIndex(ConceptIx ix) inout { return conceptByIndex(ix); }
+        ref inout(Concept) conceptByIndex(ConceptIx ix) inout @nogc { return _concepts[ix._cIx]; }
+        ref inout(Concept)        opIndex(ConceptIx ix) inout @nogc { return conceptByIndex(ix); }
+    }
 
     Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
     {
@@ -1334,8 +1347,9 @@ class Net(bool useArray = true,
         {
             writeln(`- in `, concept.lang.toName,
                     ` of sense `, concept.lemmaKind, ` relates to `);
-            auto ins = inLinksGroupedByRelation(concept);
-            writeln(ins);
+            auto ins_ = inLinksGroupedByRelation(concept);
+            writeln(ins_);
+            auto ins__ = insOf(concept);
 
             foreach (ix; concept.inIxes)
             {
