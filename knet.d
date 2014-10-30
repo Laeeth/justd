@@ -796,14 +796,14 @@ class Net(bool useArray = true,
 
     /* src out => link => in dst */
     /** Get Ingoing Links of $(D concept). */
-    auto inLinksOf(in Concept concept) { return concept.inIxes[].map!(ix => linkByIndex(ix)); }
+    auto inLinksOf(in Concept concept)  { return concept.inIxes[].map!(ix => linkByIndex(ix)); }
     /** Get Outgoing Links of $(D concept). */
     auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIndex(ix)); }
 
     /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
     auto insOf(in Concept concept)  { return inLinksOf(concept).map!(link => tuple(link, src(link))); }
     /** Get Outgoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto outsOf(in Concept concept)  { return inLinksOf(concept).map!(link => tuple(link, dst(link))); }
+    auto outsOf(in Concept concept) { return inLinksOf(concept).map!(link => tuple(link, dst(link))); }
 
     auto inLinksGroupedByRelation(in Concept concept)
     {
