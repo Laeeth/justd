@@ -23,7 +23,7 @@ bool of(S, T...)(in S x, in T ys) pure if (ys.length >= 1 &&
     return false;
 }
 
-@safe pure @nogc nothrow unittest
+@safe @nogc pure nothrow unittest
 {
     assert(1.of(1, 2, 3));
     assert(!4.of(1, 2, 3));
