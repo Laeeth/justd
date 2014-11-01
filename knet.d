@@ -998,7 +998,7 @@ class Net(bool useArray = true,
         // NELL
         readNELL("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde
                                                         .buildNormalizedPath,
-                 1000);
+                 100000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1072,12 +1072,40 @@ class Net(bool useArray = true,
     void readNELLLine(R, N)(R line, N lnr)
     {
         auto parts = line.splitter('\t');
+
         if (!parts.empty)
         {
             auto conceptPath = parts.front.splitter(':');
             /* TODO Lookup parts of concept and related them using isA: for example car >isA> vehicle > artifact */
-            writeln(conceptPath);
+            std.stdio.write(conceptPath);
+            parts.popFront;
         }
+
+        if (!parts.empty)
+        {
+            std.stdio.write(" relation: ", parts.front);
+            parts.popFront;
+        }
+
+        if (!parts.empty)
+        {
+            std.stdio.write(" url: ", parts.front);
+            parts.popFront;
+        }
+
+        if (!parts.empty)
+        {
+            std.stdio.write(" other: ", parts.front);
+            parts.popFront;
+        }
+
+        if (!parts.empty)
+        {
+            std.stdio.write(" more: ", parts.front);
+            parts.popFront;
+        }
+
+        writeln();
     }
 
     /** Read ConceptNet CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -1375,26 +1403,20 @@ class Net(bool useArray = true,
 
             foreach (inGroup; insByRelation(concept))
             {
-                size_t ix = 0;
+                showLinkRelation(inGroup.front[0]._relation, LinkDir.input);
                 foreach (inLink, inConcept; inGroup)
                 {
-                    if (ix == 0) // TODO can we check if elt is equal to inGroup.front
-                        showLinkRelation(inLink._relation, LinkDir.input);
                     showConcept(inConcept, inLink.normalizedWeight);
-                    ++ix;
                 }
                 writeln();
             }
 
             foreach (outGroup; outsByRelation(concept))
             {
-                size_t ix = 0;
+                showLinkRelation(outGroup.front[0]._relation, LinkDir.input);
                 foreach (outLink, outConcept; outGroup)
                 {
-                    if (ix == 0) // TODO can we check if elt is equal to outGroup.front
-                        showLinkRelation(outLink._relation, LinkDir.output);
                     showConcept(outConcept, outLink.normalizedWeight);
-                    ++ix;
                 }
                 writeln();
             }
