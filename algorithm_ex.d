@@ -708,10 +708,11 @@ inout(T[]) overlap(T)(inout(T[]) a,
         return [];
     }
 }
+
 unittest
 {
     auto x = [-11_111, 11, 22, 333_333];
-    auto y = [-22_222, 441, 555, 66];
+    const y = [-22_222, 441, 555, 66];
 
     assert(!overlap(x, y));
     assert(!overlap(y, x));
