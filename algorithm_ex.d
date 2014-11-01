@@ -648,7 +648,7 @@ auto findInOrder(alias pred = "a == b",
                  alias finder = find,
                  R,
                  E...)(R haystack,
-                       E needles) @trusted pure nothrow
+                       E needles) /* @trusted pure nothrow */
 {
     import std.range: empty;
     auto hit = haystack; // reference
@@ -672,7 +672,7 @@ unittest
 /** Returns: Slice Overlap of $(D a) and $(D b) in order given by arguments.
  */
 inout(T[]) overlapInOrder(T)(inout(T[]) a,
-                             inout(T[]) b) @trusted pure nothrow
+                             inout(T[]) b) /* @trusted pure nothrow */
 {
     if (a.ptr <= b.ptr &&       // if a-start lies at or before b-start
         b.ptr < a.ptr + a.length) // if b-start lies before b-end
@@ -693,7 +693,7 @@ inout(T[]) overlapInOrder(T)(inout(T[]) a,
     Deprecated by: std.array.overlap
  */
 inout(T[]) overlap(T)(inout(T[]) a,
-                      inout(T[]) b) @safe pure nothrow
+                      inout(T[]) b) /* @safe pure nothrow */
 {
     if (inout(T[]) ab = overlapInOrder(a, b))
     {
