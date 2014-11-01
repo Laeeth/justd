@@ -12,7 +12,6 @@ import std.array: array;
 import std.conv;
 import predicates: of;
 
-
 /** (Human) Language Code according to ISO 639-1.
     See also: http://www.mathguide.de/info/tools/languagecode.html
     See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
