@@ -19,6 +19,8 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
+    TODO Make use of stealFront and stealBack
+
     TODO ansiktstvätt => facial_wash
     TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
     TODO promote equal splits through weigthing sum_over_i(x[i].length^)2
@@ -38,6 +40,7 @@ import std.stdio;
 import std.algorithm: findSplitBefore, findSplitAfter, groupBy;
 import std.container: Array;
 import algorithm_ex: isPalindrome;
+import range_ex: stealFront, stealBack;
 
 /* version = msgpack; */
 
