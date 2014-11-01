@@ -9,6 +9,9 @@
 
     Data: http://conceptnet5.media.mit.edu/downloads/current/
     Data: http://wiki.dbpedia.org/DBpediaAsTables
+    Data: http://icon.shef.ac.uk/Moby/
+    Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
+    Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
 
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: https://en.wikipedia.org/wiki/Hypergraph
