@@ -1,6 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
-import all;
+import std.stdio, std.range;
 
 int main(string[] args)
 {
