@@ -22,10 +22,8 @@ auto ref stealFront(R)(ref R r)
 unittest
 {
     auto x = [11, 22];
-    assert(x.stealFront == 11);
-    assert(x == [22]);
-    assert(x.stealFront == 22);
-    assert(x == []);
+    assert(x.stealFront == 11); assert(x == [22]);
+    assert(x.stealFront == 22); assert(x == []);
 }
 
 /** Steal back from $(D r) destructively and return it.
@@ -42,10 +40,8 @@ auto ref stealBack(R)(ref R r)
 unittest
 {
     auto x = [11, 22];
-    assert(x.stealBack == 22);
-    assert(x == [11]);
-    assert(x.stealBack == 11);
-    assert(x == []);
+    assert(x.stealBack == 22); assert(x == [11]);
+    assert(x.stealBack == 11); assert(x == []);
 }
 
 /** Sliding Splitter.
