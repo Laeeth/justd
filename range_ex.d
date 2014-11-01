@@ -8,6 +8,46 @@ module range_ex;
 
 import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
 
+/** Steal front from $(D r) destructively and return it.
+   See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
+*/
+auto ref stealFront(R)(ref R r)
+{
+    import std.range: moveFront, popFront;
+    auto e = r.moveFront;
+    r.popFront;
+    return e;
+}
+
+unittest
+{
+    auto x = [11, 22];
+    assert(x.stealFront == 11);
+    assert(x == [22]);
+    assert(x.stealFront == 22);
+    assert(x == []);
+}
+
+/** Steal back from $(D r) destructively and return it.
+    See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
+*/
+auto ref stealBack(R)(ref R r)
+{
+    import std.range: moveBack, popBack;
+    auto e = r.moveBack;
+    r.popBack;
+    return e;
+}
+
+unittest
+{
+    auto x = [11, 22];
+    assert(x.stealBack == 22);
+    assert(x == [11]);
+    assert(x.stealBack == 11);
+    assert(x == []);
+}
+
 /** Sliding Splitter.
     See also: http://forum.dlang.org/thread/dndicafxfubzmndehzux@forum.dlang.org
     See also: http://forum.dlang.org/thread/uzrbmjonrkixojzflbig@forum.dlang.org#epost-viwkavbmwouiquoqwntm:40forum.dlang.org
