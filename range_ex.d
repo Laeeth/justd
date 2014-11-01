@@ -11,12 +11,14 @@ import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
 /** Steal front from $(D r) destructively and return it.
    See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
 */
-auto ref stealFront(R)(ref R r)
+auto stealFront(R)(ref R r)
 {
     import std.range: moveFront, popFront;
-    auto e = r.moveFront;
-    r.popFront;
-    return e;
+    scope(success) r.popFront;
+    return r.moveFront;
+    /* auto e = r.moveFront; */
+    /* r.popFront; */
+    /* return e; */
 }
 
 unittest
@@ -29,12 +31,14 @@ unittest
 /** Steal back from $(D r) destructively and return it.
     See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
 */
-auto ref stealBack(R)(ref R r)
+auto stealBack(R)(ref R r)
 {
     import std.range: moveBack, popBack;
-    auto e = r.moveBack;
-    r.popBack;
-    return e;
+    scope(success) r.popBack;
+    return r.moveBack;
+    /* auto e = r.moveBack; */
+    /* r.popBack; */
+    /* return e; */
 }
 
 unittest
