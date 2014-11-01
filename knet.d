@@ -8,6 +8,7 @@
     See also: www.oneacross.com/crosswords for inspiring applications
 
     Data: http://conceptnet5.media.mit.edu/downloads/current/
+    Data: http://wiki.dbpedia.org/DBpediaAsTables
 
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: https://en.wikipedia.org/wiki/Hypergraph
@@ -1075,10 +1076,17 @@ class Net(bool useArray = true,
 
         if (!parts.empty)
         {
-            auto conceptPath = parts.front.splitter(':');
+            auto subject = parts.front.splitter(':');
+
+            if (subject.front == "concept")
+                subject.popFront; // ignore no-meaningful information
+            else
+                writeln("TODO Handle non-concept ", subject);
+
             /* TODO Lookup parts of concept and related them using isA: for example car >isA> vehicle > artifact */
-            std.stdio.write(conceptPath);
-            parts.popFront;
+            std.stdio.write(subject);
+
+            parts.popFront; // TODO Use moveFront instead if as efficient
         }
 
         if (!parts.empty)
