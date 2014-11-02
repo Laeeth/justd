@@ -7,13 +7,61 @@
 module range_ex;
 
 import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite, ElementType;
-import std.traits: hasUnsharedAliasing;
+import std.traits: hasUnsharedAliasing, hasElaborateDestructor, isArray, isScalarType;
+
+enum hasPureCopy(T) = (isScalarType!T || // TODO remove?
+                       (!hasUnsharedAliasing!T &&
+                        !hasElaborateDestructor!T));
+
+enum hasStealableElements(R) = (hasPureCopy!(ElementType!R)); // TODO recurse
+
+/* template hasStealableElements(T...) */
+/* { */
+/*     import std.range: ElementType; */
+/*     import std.typecons : Rebindable; */
+
+/*     static if (is(ElementType!T)) */
+/*     { */
+/*         enum hasStealableElements = true; */
+/*     } */
+/*     else static if (is(T[0] R: Rebindable!R)) */
+/*     { */
+/*         enum hasStealableElements = hasStealableElements!R; */
+/*     } */
+/*     else */
+/*     { */
+/*         template unsharedDelegate(T) */
+/*         { */
+/*             enum bool unsharedDelegate = isDelegate!T */
+/*             && !is(T == shared) */
+/*             && !is(T == shared) */
+/*             && !is(T == immutable) */
+/*             && !is(FunctionTypeOf!T == shared) */
+/*             && !is(FunctionTypeOf!T == immutable); */
+/*         } */
+
+/*         enum hasStealableElements = */
+/*         hasRawUnsharedAliasing!(T[0]) || */
+/*         anySatisfy!(unsharedDelegate, RepresentationTypeTuple!(T[0])) || */
+/*         hasUnsharedObjects!(T[0]) || */
+/*         hasStealableElements!(T[1..$]); */
+/*     } */
+/* } */
+
+@safe @nogc pure nothrow unittest
+{
+    static assert(hasStealableElements!(int[]));
+
+    import std.stdio: File;
+    alias BL = File.ByLine!(char, char);
+    static assert(!hasStealableElements!BL);
+}
 
 /** Steal front from $(D r) destructively and return it.
    See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
    See also: http://forum.dlang.org/thread/onibkzepudfisxtrigsi@forum.dlang.org#post-dafmzroxvaeejyxrkbon:40forum.dlang.org
 */
-auto stealFront(R)(ref R r) if (!hasUnsharedAliasing!(ElementType!R))
+auto stealFront(R)(ref R r) if (hasStealableElements!R)
 {
     import std.range: moveFront, popFront;
     /* scope(success) r.popFront; */
@@ -23,14 +71,14 @@ auto stealFront(R)(ref R r) if (!hasUnsharedAliasing!(ElementType!R))
     return e;
 }
 
-unittest
+@safe pure nothrow unittest
 {
     auto x = [11, 22];
     assert(x.stealFront == 11); assert(x == [22]);
     assert(x.stealFront == 22); assert(x == []);
 }
 
-unittest
+@safe pure nothrow unittest
 {
     auto x = ["a", "b"];
     assert(x.stealFront == "a"); assert(x == ["b"]);
@@ -40,7 +88,7 @@ unittest
     See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
     See also: http://forum.dlang.org/thread/onibkzepudfisxtrigsi@forum.dlang.org#post-dafmzroxvaeejyxrkbon:40forum.dlang.org
 */
-auto stealBack(R)(ref R r) if (!hasUnsharedAliasing!(ElementType!R))
+auto stealBack(R)(ref R r) if (hasStealableElements!R)
 {
     import std.range: moveBack, popBack;
     /* scope(success) r.popBack; */
@@ -50,14 +98,14 @@ auto stealBack(R)(ref R r) if (!hasUnsharedAliasing!(ElementType!R))
     return e;
 }
 
-unittest
+@safe pure nothrow unittest
 {
     auto x = [11, 22];
     assert(x.stealBack == 22); assert(x == [11]);
     assert(x.stealBack == 11); assert(x == []);
 }
 
-unittest
+@safe pure nothrow unittest
 {
     auto x = ["a", "b"];
     assert(x.stealBack == "b"); assert(x == ["a"]);
@@ -236,7 +284,7 @@ auto slidingSplitter(R)(R data, size_t lower, size_t upper)
     return SlidingSplitter!R(data, lower, upper);
 }
 
-unittest
+@safe pure nothrow unittest
 {
     import std.typecons: tuple;
     import std.conv: to;
@@ -271,7 +319,7 @@ unittest
     y.popFront; assert(y.empty);
 }
 
-unittest                        // forwards
+@safe pure unittest                        // forwards
 {
     import std.conv: to;
 
@@ -300,7 +348,7 @@ unittest                        // forwards
     }
 }
 
-unittest                        // backwards
+@safe pure unittest                        // backwards
 {
     import std.conv: to;
     import std.range: retro;
@@ -325,7 +373,7 @@ unittest                        // backwards
     }
 }
 
-unittest                        // radial
+@safe pure nothrow unittest                        // radial
 {
     auto x = [1, 2, 3];
     import std.range: radial;
