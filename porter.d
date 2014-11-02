@@ -491,6 +491,8 @@ unittest
 
     assert(stemmer.stem("agreed") == "agre");
     assert(stemmer.stem("disabled") == "disabl");
+    assert(stemmer.stem("gentle") == "gentl");
+    assert(stemmer.stem("gently") == "gentli");
 
     assert(stemmer.stem("fullnessful") == "fullness");
     assert(stemmer.stem(stemmer.stem("fullnessful")) == "full");
