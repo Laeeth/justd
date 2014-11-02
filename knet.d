@@ -745,6 +745,7 @@ enum Source:ubyte
     dbpediaEn,
     wordnet30,
     verbosity,
+    nell,
 }
 
 auto pageSize() @trusted
@@ -836,9 +837,9 @@ class Net(bool useArray = true,
     }
 
     /** Get Ingoing Links of $(D concept). */
-    auto  inLinksOf(in Concept concept) { return concept. inIxes[].map!(ix => linkByIndex(ix)); }
+    auto  inLinksOf(in Concept concept) { return concept. inIxes[].map!(ix => linkByIx(ix)); }
     /** Get Outgoing Links of $(D concept). */
-    auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIndex(ix)); }
+    auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIx(ix)); }
 
     /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
     auto  insOf(in Concept concept) { return  inLinksOf(concept).map!(link => tuple(link, dst(link))); }
@@ -901,8 +902,8 @@ class Net(bool useArray = true,
         Source _origin;
     }
 
-    Concept src(Link link) { return conceptByIndex(link._srcIx); }
-    Concept dst(Link link) { return conceptByIndex(link._dstIx); }
+    Concept src(Link link) { return conceptByIx(link._srcIx); }
+    Concept dst(Link link) { return conceptByIx(link._dstIx); }
 
     pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof);
     pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof);
@@ -946,18 +947,18 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) linkByIndex(LinkIx ix) inout { return _links[ix._lIx]; }
-        ref inout(Link)     opIndex(LinkIx ix) inout { return linkByIndex(ix); }
+        ref inout(Link) linkByIx(LinkIx ix) inout { return _links[ix._lIx]; }
+        ref inout(Link)  opIndex(LinkIx ix) inout { return linkByIx(ix); }
 
-        ref inout(Concept) conceptByIndex(ConceptIx ix) inout @nogc { return _concepts[ix._cIx]; }
-        ref inout(Concept)        opIndex(ConceptIx ix) inout @nogc { return conceptByIndex(ix); }
+        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return _concepts[ix._cIx]; }
+        ref inout(Concept)     opIndex(ConceptIx ix) inout @nogc { return conceptByIx(ix); }
     }
 
     Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
     {
         if (lemma in _conceptIxByLemma)
         {
-            return typeof(return)(conceptByIndex(_conceptIxByLemma[lemma]));
+            return typeof(return)(conceptByIx(_conceptIxByLemma[lemma]));
         }
         else
         {
@@ -973,7 +974,7 @@ class Net(bool useArray = true,
         auto lemma = Lemma(words, hlang, wordKind, anyCategory);
         if (lemma in _conceptIxByLemma) // if hashed lookup possible
         {
-            concepts = [conceptByIndex(_conceptIxByLemma[lemma])]; // use it
+            concepts = [conceptByIx(_conceptIxByLemma[lemma])]; // use it
         }
         else
         {
@@ -986,7 +987,7 @@ class Net(bool useArray = true,
                 auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind, anyCategory);
                 if (lemmaFixed in _conceptIxByLemma)
                 {
-                    concepts = [conceptByIndex(_conceptIxByLemma[lemmaFixed])];
+                    concepts = [conceptByIx(_conceptIxByLemma[lemmaFixed])];
                 }
             }
         }
@@ -1118,14 +1119,17 @@ class Net(bool useArray = true,
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readNELLLine(R, N)(R line, N lnr)
     {
-        auto parts = line.splitter('\t');
-
-        size_t ix;
         bool ignored = false;
         auto categoryConceptIx = ConceptIx.undefined;
         auto subjectConceptIx = ConceptIx.undefined;
         auto categoryIx = anyCategory;
+        Link link;
+        link._origin = Source.nell;
 
+        bool show = false;
+
+        auto parts = line.splitter('\t');
+        size_t ix;
         foreach (part; parts)
         {
             switch (ix)
@@ -1138,11 +1142,11 @@ class Net(bool useArray = true,
                     }
                     else
                     {
-                        writeln("TODO Handle non-concept ", subject);
+                        if (show) writeln("TODO Handle non-concept ", subject);
                         return;
                     }
 
-                    std.stdio.write("SUBJECT:", subject);
+                    if (show) std.stdio.write("SUBJECT:", subject);
 
                     /* category */
                     immutable categoryName = subject.front.idup; subject.popFront;
@@ -1157,13 +1161,17 @@ class Net(bool useArray = true,
                         _categoryNameByIx[categoryIx] = categoryName;
                         _categoryIxByName[categoryName] = categoryIx;
                     }
-                    categoryConceptIx = lookupOrStore(Lemma(categoryName, HLang.unknown, WordKind.noun, categoryIx),
-                                                      Concept(categoryName, HLang.unknown, WordKind.noun));
+                    link._srcIx = categoryConceptIx = lookupOrStore(Lemma(categoryName, HLang.unknown, WordKind.noun, categoryIx),
+                                                                    Concept(categoryName, HLang.unknown, WordKind.noun));
+                    assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     /* name */
                     immutable subjectName = subject.front.idup; subject.popFront;
-                    subjectConceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
-                                                     Concept(subjectName, HLang.unknown, WordKind.noun));
+                    link._dstIx = subjectConceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
+                                                                   Concept(subjectName, HLang.unknown, WordKind.noun));
+                    assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
+
+                    link._relation = Relation.isA;
 
                     break;
                 case 1:
@@ -1171,24 +1179,25 @@ class Net(bool useArray = true,
                     if (predicate.front == "concept")
                         predicate.popFront; // ignore no-meaningful information
                     else
-                        writeln("TODO Handle non-concept predicate ", predicate);
+                        if (show) writeln("TODO Handle non-concept predicate ", predicate);
                     switch (predicate.front)
                     {
                         case "haswikipediaurl": ignored = true; break;
-                        default: std.stdio.write(" PREDICATE:", part); break;
+                        default: if (show) std.stdio.write(" PREDICATE:", part); break;
                     }
                     break;
                 default:
                     if (ix < 5 && !ignored)
                     {
-                        std.stdio.write(" MORE:", part);
+                        if (show) std.stdio.write(" MORE:", part);
                     }
                     break;
             }
             ++ix;
         }
 
-        writeln();
+        _links ~= link;
+        if (show) writeln();
     }
 
     /** Read ConceptNet CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -1211,10 +1220,8 @@ class Net(bool useArray = true,
                 case 2:         // source concept
                     if (part.skipOver(`/c/`))
                     {
-                        link._srcIx = readCN5ConceptURI(part);
-                        assert(_links.length <= Ix.max);
-                        conceptByIndex(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
-                        _connectednessSum++;
+                        link._srcIx = readCN5ConceptURI(part); // TODO use Concept returned from readCN5ConceptURI
+                        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
                     }
                     else
                     {
@@ -1224,10 +1231,8 @@ class Net(bool useArray = true,
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
                     {
-                        link._dstIx = readCN5ConceptURI(part);
-                        assert(_links.length <= Ix.max);
-                        conceptByIndex(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
-                        _connectednessSum++;
+                        link._dstIx = readCN5ConceptURI(part); // TODO use Concept returned from readCN5ConceptURI
+                        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
                     }
                     else
                     {
@@ -1385,11 +1390,11 @@ class Net(bool useArray = true,
     LinkIx areRelatedInOrder(ConceptIx a,
                              ConceptIx b)
     {
-        const cA = conceptByIndex(a);
-        const cB = conceptByIndex(b);
+        const cA = conceptByIx(a);
+        const cB = conceptByIx(b);
         foreach (inIx; cA.inIxes)
         {
-            const inLink = linkByIndex(inIx);
+            const inLink = linkByIx(inIx);
             if (inLink._srcIx == b ||
                 inLink._dstIx == b)
             {
@@ -1398,7 +1403,7 @@ class Net(bool useArray = true,
         }
         foreach (outIx; cA.outIxes)
         {
-            const outLink = linkByIndex(outIx);
+            const outLink = linkByIx(outIx);
             if (outLink._srcIx == b ||
                 outLink._dstIx == b)
             {
@@ -1506,16 +1511,16 @@ class Net(bool useArray = true,
 
             /* foreach (ix; concept.inIxes) */
             /* { */
-            /*     const link = linkByIndex(ix); */
-            /*     showLinkConcept(conceptByIndex(link._dstIx), */
+            /*     const link = linkByIx(ix); */
+            /*     showLinkConcept(conceptByIx(link._dstIx), */
             /*                     link._relation, */
             /*                     link.normalizedWeight, */
             /*                     LinkDir.input); */
             /* } */
             /* foreach (ix; concept.outIxes) */
             /* { */
-            /*     const link = linkByIndex(ix); */
-            /*     showLinkConcept(conceptByIndex(link._srcIx), */
+            /*     const link = linkByIx(ix); */
+            /*     showLinkConcept(conceptByIx(link._srcIx), */
             /*                     link._relation, */
             /*                     link.normalizedWeight, */
             /*                     LinkDir.output); */
