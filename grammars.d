@@ -506,6 +506,8 @@ unittest
     assert(!'å'.isEnglishConsonant);
 }
 
+enum EnglishDoubleConsonants = ["bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt"];
+
 /** Check if $(D c) is a Consonant. */
 bool isEnglishDoubleConsonant(S)(S s) if (isSomeString!S)
 {
