@@ -488,6 +488,10 @@ unittest
     assert(stemmer.stem("relational") == "relat");
     assert(stemmer.stem("relational") == "relat");
     assert(stemmer.stem("intricate") == "intric");
-    assertEqual(stemmer.stem("agreed"), "agre");
-    assertEqual(stemmer.stem("disabled"), "disabl");
+
+    assert(stemmer.stem("agreed") == "agre");
+    assert(stemmer.stem("disabled") == "disabl");
+
+    assert(stemmer.stem("fullnessful") == "fullness");
+    assert(stemmer.stem(stemmer.stem("fullnessful")) == "full");
 }
