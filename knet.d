@@ -1122,7 +1122,8 @@ class Net(bool useArray = true,
 
         size_t ix;
         bool ignored = false;
-        auto conceptIx = ConceptIx.undefined;
+        auto categoryConceptIx = ConceptIx.undefined;
+        auto subjectConceptIx = ConceptIx.undefined;
         auto categoryIx = anyCategory;
 
         foreach (part; parts)
@@ -1141,9 +1142,10 @@ class Net(bool useArray = true,
                         return;
                     }
 
-                    std.stdio.write("SUBJECT: ", subject);
+                    std.stdio.write("SUBJECT:", subject);
 
-                    const categoryName = subject.front;
+                    /* category */
+                    immutable categoryName = subject.front.idup; subject.popFront;
                     if (categoryName in _categoryIxByName)
                     {
                         categoryIx = _categoryIxByName[categoryName];
@@ -1152,34 +1154,34 @@ class Net(bool useArray = true,
                     {
                         assert(_categoryIxCounter != _categoryIxCounter.max);
                         categoryIx._cIx = _categoryIxCounter++;
-                        _categoryNameByIx[categoryIx] = categoryName.idup;
+                        _categoryNameByIx[categoryIx] = categoryName;
                         _categoryIxByName[categoryName] = categoryIx;
                     }
-                    subject.popFront;
+                    categoryConceptIx = lookupOrStore(Lemma(categoryName, HLang.unknown, WordKind.noun, categoryIx),
+                                                      Concept(categoryName, HLang.unknown, WordKind.noun));
 
-                    const subjectName = subject.front.idup;
-                    subject.popFront;
-
-                    conceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
-                                              Concept(subjectName, HLang.unknown, WordKind.noun));
+                    /* name */
+                    immutable subjectName = subject.front.idup; subject.popFront;
+                    subjectConceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
+                                                     Concept(subjectName, HLang.unknown, WordKind.noun));
 
                     break;
                 case 1:
-                    auto subject = part.splitter(':');
-                    if (subject.front == "concept")
-                        subject.popFront; // ignore no-meaningful information
+                    auto predicate = part.splitter(':');
+                    if (predicate.front == "concept")
+                        predicate.popFront; // ignore no-meaningful information
                     else
-                        writeln("TODO Handle non-concept ", subject);
-                    switch (subject.front)
+                        writeln("TODO Handle non-concept predicate ", predicate);
+                    switch (predicate.front)
                     {
                         case "haswikipediaurl": ignored = true; break;
-                        default: std.stdio.write(" PREDICATE: ", part); break;
+                        default: std.stdio.write(" PREDICATE:", part); break;
                     }
                     break;
                 default:
-                    if (!ignored)
+                    if (ix < 5 && !ignored)
                     {
-                        std.stdio.write(" MORE: ", part);
+                        std.stdio.write(" MORE:", part);
                     }
                     break;
             }
