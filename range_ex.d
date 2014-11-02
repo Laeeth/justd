@@ -6,19 +6,21 @@
 
 module range_ex;
 
-import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite;
+import std.range: hasSlicing, isSomeString, isNarrowString, isInfinite, ElementType;
+import std.traits: hasUnsharedAliasing;
 
 /** Steal front from $(D r) destructively and return it.
    See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
+   See also: http://forum.dlang.org/thread/onibkzepudfisxtrigsi@forum.dlang.org#post-dafmzroxvaeejyxrkbon:40forum.dlang.org
 */
-auto stealFront(R)(ref R r)
+auto stealFront(R)(ref R r) if (!hasUnsharedAliasing!(ElementType!R))
 {
     import std.range: moveFront, popFront;
-    scope(success) r.popFront;
-    return r.moveFront;
-    /* auto e = r.moveFront; */
-    /* r.popFront; */
-    /* return e; */
+    /* scope(success) r.popFront; */
+    /* return r.moveFront; */
+    auto e = r.moveFront;
+    r.popFront;
+    return e;
 }
 
 unittest
@@ -28,17 +30,24 @@ unittest
     assert(x.stealFront == 22); assert(x == []);
 }
 
+unittest
+{
+    auto x = ["a", "b"];
+    assert(x.stealFront == "a"); assert(x == ["b"]);
+}
+
 /** Steal back from $(D r) destructively and return it.
     See also: http://forum.dlang.org/thread/jkbhlezbcrufowxtthmy@forum.dlang.org#post-konhvblwbmpdrbeqhyuv:40forum.dlang.org
+    See also: http://forum.dlang.org/thread/onibkzepudfisxtrigsi@forum.dlang.org#post-dafmzroxvaeejyxrkbon:40forum.dlang.org
 */
-auto stealBack(R)(ref R r)
+auto stealBack(R)(ref R r) if (!hasUnsharedAliasing!(ElementType!R))
 {
     import std.range: moveBack, popBack;
-    scope(success) r.popBack;
-    return r.moveBack;
-    /* auto e = r.moveBack; */
-    /* r.popBack; */
-    /* return e; */
+    /* scope(success) r.popBack; */
+    /* return r.moveBack; */
+    auto e = r.moveBack;
+    r.popBack;
+    return e;
 }
 
 unittest
@@ -46,6 +55,12 @@ unittest
     auto x = [11, 22];
     assert(x.stealBack == 22); assert(x == [11]);
     assert(x.stealBack == 11); assert(x == []);
+}
+
+unittest
+{
+    auto x = ["a", "b"];
+    assert(x.stealBack == "b"); assert(x == ["a"]);
 }
 
 /** Sliding Splitter.
