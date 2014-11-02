@@ -783,7 +783,11 @@ class Net(bool useArray = true,
         Ix _lIx;
         static LinkIx undefined() { return LinkIx(Ix.max); }
     }
-    struct ConceptIx { Ix _cIx; }
+    struct ConceptIx
+    {
+        Ix _cIx;
+        static ConceptIx undefined() { return ConceptIx(Ix.max); }
+    }
 
     /** String Storage */
     static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
@@ -1058,7 +1062,8 @@ class Net(bool useArray = true,
         /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
     }
 
-    /** Lookup Previous or Store New $(D concept) at $(D lemma) index. */
+    /** Lookup Previous or Store New $(D concept) at $(D lemma) index.
+     */
     ConceptIx lookupOrStore(Lemma lemma, Concept concept)
     {
         if (lemma in _conceptIxByLemma)
@@ -1074,8 +1079,10 @@ class Net(bool useArray = true,
         return cix;
     }
 
-    /** See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0 */
-    ConceptIx readConceptURI(T)(T part)
+    /** Read ConceptNet5 URI.
+        See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
+    */
+    ConceptIx readCN5ConceptURI(T)(T part)
     {
         auto items = part.splitter('/');
 
@@ -1102,9 +1109,8 @@ class Net(bool useArray = true,
         }
         ++_kindCounts[wordKind];
 
-        auto cix = lookupOrStore(Lemma(word, hlang, wordKind, anyCategory),
-                                 Concept(word, hlang, wordKind));
-        return cix;
+        return lookupOrStore(Lemma(word, hlang, wordKind, anyCategory),
+                             Concept(word, hlang, wordKind));
     }
 
     import std.algorithm: splitter;
@@ -1115,41 +1121,67 @@ class Net(bool useArray = true,
         auto parts = line.splitter('\t');
 
         size_t ix;
+        bool ignored = false;
+        auto conceptIx = ConceptIx.undefined;
+        auto categoryIx = anyCategory;
+
         foreach (part; parts)
         {
             switch (ix)
             {
                 case 0:
                     auto subject = part.splitter(':');
-                    if (subject.front == "concept") subject.popFront; // ignore no-meaningful information
-                    else                           writeln("TODO Handle non-concept ", subject);
-                    /* TODO Lookup parts of concept and related them using isA: for example car >isA> vehicle > artifact */
+                    if (subject.front == "concept")
+                    {
+                        subject.popFront; // ignore no-meaningful information
+                    }
+                    else
+                    {
+                        writeln("TODO Handle non-concept ", subject);
+                        return;
+                    }
+
                     std.stdio.write("SUBJECT: ", subject);
 
                     const categoryName = subject.front;
-                    auto categoryIx = anyCategory;
                     if (categoryName in _categoryIxByName)
                     {
                         categoryIx = _categoryIxByName[categoryName];
                     }
                     else
                     {
+                        assert(_categoryIxCounter != _categoryIxCounter.max);
                         categoryIx._cIx = _categoryIxCounter++;
                         _categoryNameByIx[categoryIx] = categoryName.idup;
                         _categoryIxByName[categoryName] = categoryIx;
                     }
+                    subject.popFront;
+
+                    const subjectName = subject.front.idup;
+                    subject.popFront;
+
+                    conceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
+                                              Concept(subjectName, HLang.unknown, WordKind.noun));
 
                     break;
                 case 1:
                     auto subject = part.splitter(':');
-                    if (subject.front == "concept") subject.popFront; // ignore no-meaningful information
-                    else                            writeln("TODO Handle non-concept ", subject);
-                    std.stdio.write(" RELATION: ", subject);
+                    if (subject.front == "concept")
+                        subject.popFront; // ignore no-meaningful information
+                    else
+                        writeln("TODO Handle non-concept ", subject);
+                    switch (subject.front)
+                    {
+                        case "haswikipediaurl": ignored = true; break;
+                        default: std.stdio.write(" PREDICATE: ", part); break;
+                    }
                     break;
-                case 2: std.stdio.write(" URL: ", part); break;
-                case 3: std.stdio.write(" OTHER: ", part); break;
-                case 4: std.stdio.write(" MORE: ", part); break;
-                default: break;
+                default:
+                    if (!ignored)
+                    {
+                        std.stdio.write(" MORE: ", part);
+                    }
+                    break;
             }
             ++ix;
         }
@@ -1177,7 +1209,7 @@ class Net(bool useArray = true,
                 case 2:         // source concept
                     if (part.skipOver(`/c/`))
                     {
-                        link._srcIx = readConceptURI(part);
+                        link._srcIx = readCN5ConceptURI(part);
                         assert(_links.length <= Ix.max);
                         conceptByIndex(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
@@ -1190,7 +1222,7 @@ class Net(bool useArray = true,
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`))
                     {
-                        link._dstIx = readConceptURI(part);
+                        link._dstIx = readCN5ConceptURI(part);
                         assert(_links.length <= Ix.max);
                         conceptByIndex(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length);
                         _connectednessSum++;
