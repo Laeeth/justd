@@ -456,20 +456,20 @@ enum Usage:ubyte
 }
 
 /** English Vowel. */
-enum Vowel { a, o, u, e, i, y }
-
-/** English Consonants.
-    See also: https://simple.wikipedia.org/wiki/Consonant
-*/
-enum Consonant { b, c, d, f, g, h, j, k, l, m, n, p, q, r, s, t, v, w, x }
+enum EnglishVowel { a, o, u, e, i, y }
 
 /** English Vowels. */
-enum englishVowels = ['a', 'o', 'u', 'e', 'i', 'y',
-                      'A', 'O', 'U', 'E', 'I', 'Y'];
+enum englishVowels = ['a', 'o', 'u', 'e', 'i', 'y'];
+
+/** Check if $(D c) is a Vowel. */
+bool isEnglishVowel(C)(C c) if (isSomeChar!C)
+{
+    // TODO Reuse englishVowels and hash-table
+    return c.of('a', 'o', 'u', 'e', 'i', 'y');
+}
 
 /** Swedish Vowels. */
-enum swedishVowels = ['a', 'o', 'u', 'å', 'e', 'i', 'y', 'ä', 'ö',
-                      'A', 'O', 'U', 'Å', 'E', 'I', 'Y', 'Ä', 'Ö'];
+enum swedishVowels = ['a', 'o', 'u', 'å', 'e', 'i', 'y', 'ä', 'ö'];
 
 /** Check if $(D c) is a Vowel. */
 bool isSwedishVowel(C)(C c) if (isSomeChar!C)
@@ -485,16 +485,19 @@ unittest
     assert('å'.isSwedishVowel);
 }
 
+/** English Consonants.
+    See also: https://simple.wikipedia.org/wiki/Consonant
+*/
+enum EnglishConsonant { b, c, d, f, g, h, j, k, l, m, n, p, q, r, s, t, v, w, x }
+
 /** English Consontants. */
-enum englishConsonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x',
-                          'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X'];
+enum englishConsonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x'];
 
 /** Check if $(D c) is a Consonant. */
 bool isEnglishConsonant(C)(C c) if (isSomeChar!C)
 {
     // TODO Reuse englishConsonants and hash-table
-    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x',
-                'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X');
+    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x');
 }
 
 unittest
@@ -1146,7 +1149,7 @@ S lemmatize(S)(S s) if (isSomeString!S)
 }
 
 /** Return Stem of $(D s) using Porter's algorithm
-    See also: https://en.wikipedia.org/wiki/Stemming
+    See also: https://en.wikipedia.org/wiki/I_m_still_remembering
     See also: https://en.wikipedia.org/wiki/Martin_Porter
     See also: https://www.youtube.com/watch?v=2s7f8mBwnko&list=PL6397E4B26D00A269&index=4.
 */
