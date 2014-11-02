@@ -1080,43 +1080,30 @@ class Net(bool useArray = true,
     {
         auto parts = line.splitter('\t');
 
-        if (!parts.empty)
+        size_t ix;
+        foreach (part; parts)
         {
-            auto subject = parts.front.splitter(':');
-
-            if (subject.front == "concept")
-                subject.popFront; // ignore no-meaningful information
-            else
-                writeln("TODO Handle non-concept ", subject);
-
-            /* TODO Lookup parts of concept and related them using isA: for example car >isA> vehicle > artifact */
-            std.stdio.write(subject);
-
-            parts.popFront; // TODO Use moveFront instead if as efficient
-        }
-
-        if (!parts.empty)
-        {
-            std.stdio.write(" relation: ", parts.front);
-            parts.popFront;
-        }
-
-        if (!parts.empty)
-        {
-            std.stdio.write(" url: ", parts.front);
-            parts.popFront;
-        }
-
-        if (!parts.empty)
-        {
-            std.stdio.write(" other: ", parts.front);
-            parts.popFront;
-        }
-
-        if (!parts.empty)
-        {
-            std.stdio.write(" more: ", parts.front);
-            parts.popFront;
+            switch (ix)
+            {
+                case 0:
+                    auto subject = part.splitter(':');
+                    if (subject.front == "concept") subject.popFront; // ignore no-meaningful information
+                    else                           writeln("TODO Handle non-concept ", subject);
+                    /* TODO Lookup parts of concept and related them using isA: for example car >isA> vehicle > artifact */
+                    std.stdio.write("SUBJECT: ", subject);
+                    break;
+                case 1:
+                    auto subject = part.splitter(':');
+                    if (subject.front == "concept") subject.popFront; // ignore no-meaningful information
+                    else                            writeln("TODO Handle non-concept ", subject);
+                    std.stdio.write(" RELATION: ", subject);
+                    break;
+                case 2: std.stdio.write(" URL: ", part); break;
+                case 3: std.stdio.write(" OTHER: ", part); break;
+                case 4: std.stdio.write(" MORE: ", part); break;
+                default: break;
+            }
+            ++ix;
         }
 
         writeln();
