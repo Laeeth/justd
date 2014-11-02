@@ -506,6 +506,12 @@ unittest
     assert(!'å'.isEnglishConsonant);
 }
 
+/** Check if $(D c) is a Consonant. */
+bool isEnglishDoubleConsonant(S)(S s) if (isSomeString!S)
+{
+    return c.of("bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt");
+}
+
 /** computer Token. */
 enum TokenId:ubyte
 {
