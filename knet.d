@@ -202,6 +202,28 @@ enum Relation:ubyte
     participleOf,
 }
 
+string toHumanLang(const Relation relation,
+                   HLang lang = HLang.en)
+{
+    with (Relation)
+    {
+        with (HLang)
+        {
+            switch (relation)
+            {
+                case isA:
+                    switch (lang)
+                    {
+                        case en: return "is a";
+                        default: return "is a";
+                    }
+                default: return relation.to!(typeof(return));
+            }
+        }
+    }
+}
+
+
 Relation decodeRelation(S)(S s,
                            out bool negation) if (isSomeString!S)
 {
@@ -762,21 +784,28 @@ class Net(bool useArray = true,
         static LinkIx undefined() { return LinkIx(Ix.max); }
     }
     struct ConceptIx { Ix _cIx; }
-    static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
-    else                 { alias ConceptIxes = ConceptIx[]; }
-    static if (useArray) { alias LinkIxes = Array!LinkIx; }
-    else                 { alias LinkIxes = LinkIx[]; }
 
     /** String Storage */
     static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
     else                    { alias Words = immutable string; }
 
+    static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
+    else                 { alias ConceptIxes = ConceptIx[]; }
+    static if (useArray) { alias LinkIxes = Array!LinkIx; }
+    else                 { alias LinkIxes = LinkIx[]; }
+
+    /** Ontology Category Index (currently from NELL). */
+    struct CategoryIx { ushort _cIx; }
+
     /** Concept Lemma. */
     struct Lemma
     {
         Words words;
+        /* The following three are used to disambiguate different semantics
+         * meanings of the same word in different languages. */
         HLang lang;
         WordKind wordKind;
+        CategoryIx categoryIx;
     }
 
     /** Concept Node/Vertex. */
@@ -890,6 +919,11 @@ class Net(bool useArray = true,
         Concepts _concepts;
         Links _links;
 
+        string[CategoryIx] _categoryNameByIx; /** Ontology Category Names by Index. */
+        CategoryIx[string] _categoryIxByName; /** Ontology Category Indexes by Name. */
+        enum anyCategory = CategoryIx(0);
+        ushort _categoryIxCounter = 1;
+
         WordNet!(true, true) _wordnet;
 
         size_t[Relation.max + 1] _relationCounts;
@@ -932,7 +966,7 @@ class Net(bool useArray = true,
                      WordKind wordKind = WordKind.unknown) if (isSomeString!S)
     {
         typeof(return) concepts;
-        auto lemma = Lemma(words, hlang, wordKind);
+        auto lemma = Lemma(words, hlang, wordKind, anyCategory);
         if (lemma in _conceptIxByLemma) // if hashed lookup possible
         {
             concepts = [conceptByIndex(_conceptIxByLemma[lemma])]; // use it
@@ -945,7 +979,7 @@ class Net(bool useArray = true,
                 const wordsFixed = wordsSplit.joiner("_").to!S;
                 dln("wordsFixed: ", wordsFixed, " in ", hlang, " as ", wordKind);
                 // TODO: Functionize
-                auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind);
+                auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind, anyCategory);
                 if (lemmaFixed in _conceptIxByLemma)
                 {
                     concepts = [conceptByIndex(_conceptIxByLemma[lemmaFixed])];
@@ -1003,9 +1037,9 @@ class Net(bool useArray = true,
         _wordnet = new WordNet!(true, true)([HLang.en]);
 
         // NELL
-        readNELL("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde
-                                                        .buildNormalizedPath,
-                 100000);
+        readNELLFile("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde
+                                                            .buildNormalizedPath,
+                     100000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1015,7 +1049,7 @@ class Net(bool useArray = true,
         foreach (file; fixedPath.dirEntries(SpanMode.shallow)
                                 .filter!(name => name.extension == `.csv`))
         {
-            readCN5(file);
+            readCN5File(file);
             break;
         }
 
@@ -1068,7 +1102,7 @@ class Net(bool useArray = true,
         }
         ++_kindCounts[wordKind];
 
-        auto cix = lookupOrStore(Lemma(word, hlang, wordKind),
+        auto cix = lookupOrStore(Lemma(word, hlang, wordKind, anyCategory),
                                  Concept(word, hlang, wordKind));
         return cix;
     }
@@ -1091,6 +1125,20 @@ class Net(bool useArray = true,
                     else                           writeln("TODO Handle non-concept ", subject);
                     /* TODO Lookup parts of concept and related them using isA: for example car >isA> vehicle > artifact */
                     std.stdio.write("SUBJECT: ", subject);
+
+                    const categoryName = subject.front;
+                    auto categoryIx = anyCategory;
+                    if (categoryName in _categoryIxByName)
+                    {
+                        categoryIx = _categoryIxByName[categoryName];
+                    }
+                    else
+                    {
+                        categoryIx._cIx = _categoryIxCounter++;
+                        _categoryNameByIx[categoryIx] = categoryName.idup;
+                        _categoryIxByName[categoryName] = categoryIx;
+                    }
+
                     break;
                 case 1:
                     auto subject = part.splitter(':');
@@ -1193,7 +1241,7 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 Assertions File $(D path) in CSV format.
         Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
      */
-    void readCN5(string path, bool useMmFile = false)
+    void readCN5File(string path, bool useMmFile = false)
     {
         writeln("Reading ConceptNet from ", path, " ...");
         size_t lnr = 0;
@@ -1225,7 +1273,7 @@ class Net(bool useArray = true,
 
     /** Read NELL File $(D fileName) in CSV format.
     */
-    void readNELL(string path, size_t maxCount = size_t.max)
+    void readNELLFile(string path, size_t maxCount = size_t.max)
     {
         writeln("Reading NELL from ", path, " ...");
         size_t lnr = 0;
