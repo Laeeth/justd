@@ -236,6 +236,13 @@ string toHumanLang(const Relation relation,
             auto negationString = negation ? negationIn(lang) : "";
             switch (relation)
             {
+                case relatedTo:
+                    switch (lang)
+                    {
+                        case en: return "is" ~ negationString ~ " related to";
+                        case sv: return "är" ~ negationString ~ " relaterat till";
+                        default: return "is" ~ negationString ~ " related to";
+                    }
                 case isA:
                     if (linkDir == LinkDir.output)
                     {
@@ -251,10 +258,10 @@ string toHumanLang(const Relation relation,
                     {
                         switch (lang)
                         {
-                            case en: return "can " ~ negationString ~ " be a";
-                            case sv: return "kan " ~ negationString ~ " vara en";
+                            case en: return "can" ~ negationString ~ " be a";
+                            case sv: return "kan" ~ negationString ~ " vara en";
                             case de: return "can" ~ negationString ~ " sein ein";
-                            default: return "can " ~ negationString ~ " be a";
+                            default: return "can" ~ negationString ~ " be a";
                         }
                     }
                 default: return relation.to!(typeof(return));
