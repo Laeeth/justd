@@ -1043,8 +1043,7 @@ class Net(bool useArray = true,
 
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde
-                                                            .buildNormalizedPath,
-                     100000);
+                                                            .buildNormalizedPath);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1136,6 +1135,8 @@ class Net(bool useArray = true,
             {
                 case 0:
                     auto subject = part.splitter(':');
+                    /* writeln(subject); */
+
                     if (subject.front == "concept")
                     {
                         subject.popFront; // ignore no-meaningful information
@@ -1161,14 +1162,24 @@ class Net(bool useArray = true,
                         _categoryNameByIx[categoryIx] = categoryName;
                         _categoryIxByName[categoryName] = categoryIx;
                     }
-                    link._srcIx = categoryConceptIx = lookupOrStore(Lemma(categoryName, HLang.unknown, WordKind.noun, categoryIx),
-                                                                    Concept(categoryName, HLang.unknown, WordKind.noun));
-                    assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
+
+                    if (subject.empty)
+                    {
+                        if (show) writeln("TODO Handle category-only ", subject);
+                        return;
+                    }
 
                     /* name */
                     immutable subjectName = subject.front.idup; subject.popFront;
-                    link._dstIx = subjectConceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
+
+                    /* TODO functionize */
+                    link._srcIx = subjectConceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
                                                                    Concept(subjectName, HLang.unknown, WordKind.noun));
+                    assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
+
+                    /* TODO functionize */
+                    link._dstIx = categoryConceptIx = lookupOrStore(Lemma(categoryName, HLang.unknown, WordKind.noun, categoryIx),
+                                                                    Concept(categoryName, HLang.unknown, WordKind.noun));
                     assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     link._relation = Relation.isA;
