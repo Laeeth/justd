@@ -41,6 +41,7 @@ import std.algorithm: findSplitBefore, findSplitAfter, groupBy;
 import std.container: Array;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
+import std.string: tr;
 
 /* version = msgpack; */
 
@@ -202,20 +203,59 @@ enum Relation:ubyte
     participleOf,
 }
 
+string negationIn(HLang lang = HLang.en)
+    @safe pure nothrow
+{
+    with (HLang)
+        switch (lang)
+        {
+            case en: return "not";
+            case sv: return "inte";
+            case de: return "nicht";
+            default: return "not";
+        }
+}
+
+/** Link Direction. */
+enum LinkDir
+{
+    input,
+    output
+}
+
 string toHumanLang(const Relation relation,
-                   HLang lang = HLang.en)
+                   const LinkDir linkDir,
+                   const bool negation = false,
+                   const HLang lang = HLang.en)
+    @safe pure
 {
     with (Relation)
     {
         with (HLang)
         {
+            auto negationString = negation ? negationIn(lang) : "";
             switch (relation)
             {
                 case isA:
-                    switch (lang)
+                    if (linkDir == LinkDir.output)
                     {
-                        case en: return "is a";
-                        default: return "is a";
+                        switch (lang)
+                        {
+                            case en: return "is" ~ negationString ~ " a";
+                            case sv: return "är" ~ negationString ~ " en";
+                            case de: return "ist" ~ negationString ~ " ein";
+                            default: return "is" ~ negationString ~ " a";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case en: return "can " ~ negationString ~ " be a";
+                            case sv: return "kan " ~ negationString ~ " vara en";
+                            case de: return "can" ~ negationString ~ " sein ein";
+                            default: return "can " ~ negationString ~ " be a";
+                        }
                     }
                 default: return relation.to!(typeof(return));
             }
@@ -1389,13 +1429,6 @@ class Net(bool useArray = true,
         writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/2/_concepts.length);
     }
 
-    /** Link Direction. */
-    enum LinkDir
-    {
-        input,
-        output
-    }
-
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
      */
     LinkIx areRelatedInOrder(ConceptIx a,
@@ -1463,11 +1496,14 @@ class Net(bool useArray = true,
 
     void showConcept(in Concept concept, real weight)
     {
-        if (concept.words) std.stdio.write(` `, concept.words);
+        if (concept.words)
+            std.stdio.write(` `, concept.words.tr("_", " "));
         std.stdio.write(`(`);
-        if (concept.lang) std.stdio.write(concept.lang);
-        if (concept.lemmaKind) std.stdio.write("-", concept.lemmaKind);
-        writef(`:%.2f)`, weight);
+        if (concept.lang)
+            std.stdio.write(concept.lang);
+        if (concept.lemmaKind)
+            std.stdio.write("-", concept.lemmaKind);
+        writef(`:%.2f),`, weight);
     }
 
     void showLinkConcept(in Concept concept, Relation relation, real weight, LinkDir linkDir)
@@ -1486,10 +1522,10 @@ class Net(bool useArray = true,
         import std.uni: isWhite, toLower;
         import std.ascii: whitespace;
         import std.algorithm: splitter;
+        import std.string: strip;
 
         // auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
-        import std.string: strip, tr;
         auto normalizedLine = line.strip.tr(std.ascii.whitespace, "_", "s").toLower;
 
         writeln(`Line `, normalizedLine);
