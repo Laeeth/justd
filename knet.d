@@ -37,7 +37,7 @@ module knet;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
-import std.algorithm: findSplitBefore, findSplitAfter, groupBy;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy;
 import std.container: Array;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
@@ -666,7 +666,10 @@ class Net(bool useArray = true,
     else                 { alias LinkIxes = LinkIx[]; }
 
     /** Ontology Category Index (currently from NELL). */
-    struct CategoryIx { ushort _cIx; }
+    struct CategoryIx {
+        ushort _cIx = ushort.max;
+        static CategoryIx undefined() { return CategoryIx(ushort.max); }
+    }
 
     /** Concept Lemma. */
     struct Lemma
@@ -1000,6 +1003,11 @@ class Net(bool useArray = true,
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readNELLLine(R, N)(R line, N lnr)
     {
+        Relation relation = Relation.any;
+
+        ConceptIx subjectConceptIx;
+        ConceptIx categoryConceptIx;
+
         bool ignored = false;
         auto categoryIx = anyCategory;
         Link link;
@@ -1056,13 +1064,13 @@ class Net(bool useArray = true,
                     immutable subjectName = subject.front.idup; subject.popFront;
 
                     /* TODO functionize */
-                    link._srcIx = lookupOrStore(Lemma(subjectName, lang, kind, categoryIx),
-                                                Concept(subjectName, lang, kind));
+                    subjectConceptIx = link._srcIx = lookupOrStore(Lemma(subjectName, lang, kind, categoryIx),
+                                                                   Concept(subjectName, lang, kind));
                     assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     /* TODO functionize */
-                    link._dstIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
-                                                Concept(categoryName, lang, kind));
+                    categoryConceptIx = link._dstIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
+                                                                    Concept(categoryName, lang, kind));
                     assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     link._relation = Relation.isA;
@@ -1070,14 +1078,28 @@ class Net(bool useArray = true,
                     break;
                 case 1:
                     auto predicate = part.splitter(':');
+
                     if (predicate.front == "concept")
                         predicate.popFront; // ignore no-meaningful information
                     else
                         if (show) writeln("TODO Handle non-concept predicate ", predicate);
+
                     switch (predicate.front)
                     {
                         case "haswikipediaurl": ignored = true; break;
-                        default: if (show) write(" PREDICATE:", part); break;
+                        case "latitudelongitude": relation = Relation.atLocation; break;
+                        default:
+                            if (show) write(" PREDICATE:", part);
+                            break;
+                    }
+                    break;
+                case 2:
+                    if (relation == Relation.atLocation)
+                    {
+                        const loc = part.findSplit(",");
+                        setLocation(subjectConceptIx,
+                                    Location(loc[0].to!double,
+                                             loc[2].to!double));
                     }
                     break;
                 case 4:
@@ -1096,6 +1118,22 @@ class Net(bool useArray = true,
         propagateLinkConcepts(link);
         _links ~= link;
         if (show) writeln();
+    }
+
+    struct Location
+    {
+        double latitude;
+        double longitude;
+    }
+
+    /** Concept Locations. */
+    Location[ConceptIx] _locations;
+
+    /** Set Location of Concept $(D cix) to $(D location) */
+    void setLocation(ConceptIx cix, in Location location)
+    {
+        assert (cix !in _locations);
+        _locations[cix] = location;
     }
 
     /** If $(D link) concept origins unknown propagate them from $(D link)
