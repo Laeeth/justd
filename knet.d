@@ -1126,7 +1126,7 @@ class Net(bool useArray = true,
         double longitude;
     }
 
-    /** Concept Locations. */
+    /** Concept Locations. */x
     Location[ConceptIx] _locations;
 
     /** Set Location of Concept $(D cix) to $(D location) */
