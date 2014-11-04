@@ -233,49 +233,49 @@ string toHumanLang(const Relation relation,
     {
         with (HLang)
         {
-            auto neg = negation ? negationIn(lang) : "";
+            auto neg = negation ? " " ~ negationIn(lang) : "";
             switch (relation)
             {
                 case relatedTo:
                     switch (lang)
                     {
-                        case en: return "is" ~ neg ~ " related to";
                         case sv: return "är" ~ neg ~ " relaterat till";
+                        case en:
                         default: return "is" ~ neg ~ " related to";
                     }
                 case translationOf:
                     switch (lang)
                     {
-                        case en: return "is" ~ neg ~ " translated to";
                         case sv: return "kan" ~ neg ~ " översättas till";
+                        case en:
                         default: return "is" ~ neg ~ " translated to";
                     }
                 case synonym:
                     switch (lang)
                     {
-                        case en: return "is" ~ neg ~ " synonymous with";
                         case sv: return "är" ~ neg ~ " synonym med";
+                        case en:
                         default: return "is" ~ neg ~ " synonymous with";
                     }
                 case antonym:
                     switch (lang)
                     {
-                        case en: return "is" ~ neg ~ " the opposite of";
                         case sv: return "är" ~ neg ~ " motsatsen till";
+                        case en:
                         default: return "is" ~ neg ~ " the opposite of";
                     }
                 case similarSize:
                     switch (lang)
                     {
-                        case en: return "is" ~ neg ~ " similar in size to";
                         case sv: return "är" ~ neg ~ " lika stor som";
+                        case en:
                         default: return "is" ~ neg ~ " similar in size to";
                     }
                 case similarTo:
                     switch (lang)
                     {
-                        case en: return "is" ~ neg ~ " similar to";
                         case sv: return "är" ~ neg ~ " likvärdig med";
+                        case en:
                         default: return "is" ~ neg ~ " similar to";
                     }
                 case isA:
@@ -283,9 +283,9 @@ string toHumanLang(const Relation relation,
                     {
                         switch (lang)
                         {
-                            case en: return "is" ~ neg ~ " a";
                             case sv: return "är" ~ neg ~ " en";
                             case de: return "ist" ~ neg ~ " ein";
+                            case en:
                             default: return "is" ~ neg ~ " a";
                         }
                     }
@@ -293,10 +293,67 @@ string toHumanLang(const Relation relation,
                     {
                         switch (lang)
                         {
-                            case en: return "can" ~ neg ~ " be a";
                             case sv: return "kan" ~ neg ~ " vara en";
                             case de: return "can" ~ neg ~ " sein ein";
+                            case en:
                             default: return "can" ~ neg ~ " be a";
+                        }
+                    }
+                case partOf:
+                    if (linkDir == LinkDir.output)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "är" ~ neg ~ " en del av";
+                            case en:
+                            default: return "is" ~ neg ~ " a part of";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "innehåller" ~ neg;
+                            case en:
+                            default: return neg ~ "contains";
+                        }
+                    }
+                case memberOf:
+                    if (linkDir == LinkDir.output)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "är" ~ neg ~ " en medlem av";
+                            case en:
+                            default: return "is" ~ neg ~ " a member of";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "kan ha" ~ neg ~ " en medlem";
+                            case en:
+                            default: return "may" ~ neg ~ " have a member";
+                        }
+                    }
+                case hasA:
+                    if (linkDir == LinkDir.output)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "har" ~ neg ~ " en";
+                            case en:
+                            default: return "has" ~ neg ~ " a";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "tillhör" ~ neg;
+                            case en:
+                            default: return neg ~ "belongs to";
                         }
                     }
                 default:
@@ -545,8 +602,10 @@ Thematic toThematic(Relation relation)
     }
 }
 
-enum Source:ubyte
+enum Origin:ubyte
 {
+    unknown,
+    cn5,
     dbpedia37,
     dbpedia39umbel,
     dbpediaEn,
@@ -588,12 +647,12 @@ class Net(bool useArray = true,
      * indexing. */
     struct LinkIx
     {
-        Ix _lIx;
+        Ix _lIx = Ix.max;
         static LinkIx undefined() { return LinkIx(Ix.max); }
     }
     struct ConceptIx
     {
-        Ix _cIx;
+        Ix _cIx = Ix.max;
         static ConceptIx undefined() { return ConceptIx(Ix.max); }
     }
 
@@ -626,12 +685,14 @@ class Net(bool useArray = true,
         this(Words words,
              HLang lang,
              WordKind lemmaKind,
+             Origin origin = Origin.unknown,
              LinkIxes inIxes = LinkIxes.init,
              LinkIxes outIxes = LinkIxes.init)
         {
             this.words = words;
             this.lang = lang;
             this.lemmaKind = lemmaKind;
+            this.origin = origin;
             this.inIxes = inIxes;
             this.outIxes = outIxes;
         }
@@ -641,6 +702,7 @@ class Net(bool useArray = true,
         LinkIxes outIxes;
         HLang lang;
         WordKind lemmaKind;
+        Origin origin;
     }
 
     /** Get Ingoing Links of $(D concept). */
@@ -706,7 +768,7 @@ class Net(bool useArray = true,
         Relation _relation;
         bool _negation; // relation negation
 
-        Source _origin;
+        Origin _origin;
     }
 
     Concept src(Link link) { return conceptByIx(link._srcIx); }
@@ -739,7 +801,7 @@ class Net(bool useArray = true,
         WordNet!(true, true) _wordnet;
 
         size_t[Relation.max + 1] _relationCounts;
-        size_t[Source.max + 1] _sourceCounts;
+        size_t[Origin.max + 1] _sourceCounts;
         size_t[HLang.max + 1] _hlangCounts;
         size_t[WordKind.max + 1] _kindCounts;
         size_t _assertionCount = 0;
@@ -933,7 +995,7 @@ class Net(bool useArray = true,
         auto subjectConceptIx = ConceptIx.undefined;
         auto categoryIx = anyCategory;
         Link link;
-        link._origin = Source.nell;
+        link._origin = Origin.nell;
 
         bool show = false;
 
@@ -1021,13 +1083,29 @@ class Net(bool useArray = true,
         if (show) writeln();
     }
 
+    /** If $(D link) concept origins unknown propagate them from $(D link)
+        itself. */
+    bool propagateLinkConcepts(ref Link link)
+    {
+        bool done = false;
+        if (link._origin != Origin.unknown)
+        {
+            // TODO prevent duplicate lookups to conceptByIx
+            if (conceptByIx(link._srcIx).origin != Origin.unknown)
+                conceptByIx(link._srcIx).origin = link._origin;
+            if (conceptByIx(link._dstIx).origin != Origin.unknown)
+                conceptByIx(link._dstIx).origin = link._origin;
+            done = true;
+        }
+        return done;
+    }
+
     /** Read ConceptNet CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readCN5Line(R, N)(R line, N lnr)
     {
-        auto parts = line.splitter('\t');
-
         Link link;
 
+        auto parts = line.splitter('\t');
         size_t ix;
         foreach (part; parts)
         {
@@ -1078,13 +1156,16 @@ class Net(bool useArray = true,
                     // TODO Use part.splitter('/')
                     switch (part)
                     {
-                        case `/s/dbpedia/3.7`: link._origin = Source.dbpedia37; break;
-                        case `/s/dbpedia/3.9/umbel`: link._origin = Source.dbpedia39umbel; break;
-                        case `/d/dbpedia/en`:  link._origin = Source.dbpediaEn; break;
-                        case `/d/wordnet/3.0`: link._origin = Source.wordnet30; break;
-                        case `/s/wordnet/3.0`: link._origin = Source.wordnet30; break;
-                        case `/s/site/verbosity`: link._origin = Source.verbosity; break;
-                        default: /* dln("Handle ", part); */ break;
+                        case `/s/dbpedia/3.7`: link._origin = Origin.dbpedia37; break;
+                        case `/s/dbpedia/3.9/umbel`: link._origin = Origin.dbpedia39umbel; break;
+                        case `/d/dbpedia/en`:  link._origin = Origin.dbpediaEn; break;
+                        case `/d/wordnet/3.0`: link._origin = Origin.wordnet30; break;
+                        case `/s/wordnet/3.0`: link._origin = Origin.wordnet30; break;
+                        case `/s/site/verbosity`: link._origin = Origin.verbosity; break;
+                        default:
+                            /* dln("Handle ", part); */
+                            link._origin = Origin.cn5;
+                            break;
                     }
                     _sourceCounts[link._origin]++;
                     break;
@@ -1094,6 +1175,8 @@ class Net(bool useArray = true,
 
             ix++;
         }
+
+        propagateLinkConcepts(link);
 
         _links ~= link;
     }
@@ -1159,8 +1242,8 @@ class Net(bool useArray = true,
             }
         }
 
-        writeln(`Concept Count by Source:`);
-        foreach (source; Source.min..Source.max)
+        writeln(`Concept Count by Origin:`);
+        foreach (source; Origin.min..Origin.max)
         {
             const count = _sourceCounts[source];
             if (count)
@@ -1265,13 +1348,10 @@ class Net(bool useArray = true,
 
     void showConcept(in Concept concept, real weight)
     {
-        if (concept.words)
-            write(` `, concept.words.tr("_", " "));
+        if (concept.words) write(` `, concept.words.tr("_", " "));
         write(`(`);
-        if (concept.lang)
-            write(concept.lang);
-        if (concept.lemmaKind)
-            write("-", concept.lemmaKind);
+        if (concept.lang) write(concept.lang);
+        if (concept.lemmaKind) write("-", concept.lemmaKind);
         writef(`:%.2f),`, weight);
     }
 
