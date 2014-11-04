@@ -749,12 +749,22 @@ class Net(bool useArray = true,
     struct Link
     {
         alias Weight = ubyte; // link weight pack type
+
         @safe @nogc pure nothrow:
-        void setWeight(T)(T weight) if (isFloatingPoint!T)
+
+        /** Set ConceptNet5 Weight $(weigth). */
+        void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..about10 to Weight 0.255 to save memory
             _weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
         }
+
+        /** Set NELL Probability Weight $(weight). */
+        void setNELLWeight(T)(T weight) if (isFloatingPoint!T)
+        {
+            _weight = cast(Weight)(weight.clamp(0, 1)*Weight.max);
+        }
+
         @property real normalizedWeight() const
         {
             return cast(real)_weight/(cast(real)Weight.max/10);
@@ -991,13 +1001,11 @@ class Net(bool useArray = true,
     void readNELLLine(R, N)(R line, N lnr)
     {
         bool ignored = false;
-        auto categoryConceptIx = ConceptIx.undefined;
-        auto subjectConceptIx = ConceptIx.undefined;
         auto categoryIx = anyCategory;
         Link link;
         link._origin = Origin.nell;
 
-        bool show = false;
+        bool show = true;
 
         auto parts = line.splitter('\t');
         size_t ix;
@@ -1015,7 +1023,7 @@ class Net(bool useArray = true,
                     }
                     else
                     {
-                        if (show) writeln("TODO Handle non-concept ", subject);
+                        writeln("Columns ", parts);
                         return;
                     }
 
@@ -1048,13 +1056,13 @@ class Net(bool useArray = true,
                     immutable subjectName = subject.front.idup; subject.popFront;
 
                     /* TODO functionize */
-                    link._srcIx = subjectConceptIx = lookupOrStore(Lemma(subjectName, lang, kind, categoryIx),
-                                                                   Concept(subjectName, lang, kind));
+                    link._srcIx = lookupOrStore(Lemma(subjectName, lang, kind, categoryIx),
+                                                Concept(subjectName, lang, kind));
                     assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     /* TODO functionize */
-                    link._dstIx = categoryConceptIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
-                                                                    Concept(categoryName, lang, kind));
+                    link._dstIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
+                                                Concept(categoryName, lang, kind));
                     assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     link._relation = Relation.isA;
@@ -1071,6 +1079,9 @@ class Net(bool useArray = true,
                         case "haswikipediaurl": ignored = true; break;
                         default: if (show) write(" PREDICATE:", part); break;
                     }
+                    break;
+                case 4:
+                    link.setNELLWeight(part.to!real);
                     break;
                 default:
                     if (ix < 5 && !ignored)
@@ -1165,7 +1176,7 @@ class Net(bool useArray = true,
                     break;
                 case 5:
                     const weight = part.to!real;
-                    link.setWeight(weight);
+                    link.setCN5Weight(weight);
                     _weightSum += weight;
                     _weightMin = min(part.to!float, _weightMin);
                     _weightMax = max(part.to!float, _weightMax);
