@@ -253,9 +253,9 @@ string toHumanLang(const Relation relation,
                 case synonym:
                     switch (lang)
                     {
-                        case en: return "is" ~ neg ~ " synonynoms with";
+                        case en: return "is" ~ neg ~ " synonymous with";
                         case sv: return "är" ~ neg ~ " synonym med";
-                        default: return "is" ~ neg ~ " synonynoms with";
+                        default: return "is" ~ neg ~ " synonymous with";
                     }
                 case antonym:
                     switch (lang)
@@ -299,7 +299,10 @@ string toHumanLang(const Relation relation,
                             default: return "can" ~ neg ~ " be a";
                         }
                     }
-                default: return relation.to!(typeof(return));
+                default:
+                    return (((!relation.isSymmetric) && linkDir == LinkDir.output ? `<` : ``) ~
+                            `-` ~ relation.to!(typeof(return)) ~ `-` ~
+                            ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``));
             }
         }
     }
@@ -842,12 +845,16 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
+        bool quick = true;
+        const maxCount = quick ? 10000 : size_t.max;
+
         // WordNet
         _wordnet = new WordNet!(true, true)([HLang.en]);
 
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde
-                                                            .buildNormalizedPath);
+                                                            .buildNormalizedPath,
+                     maxCount);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -857,8 +864,7 @@ class Net(bool useArray = true,
         foreach (file; fixedPath.dirEntries(SpanMode.shallow)
                                 .filter!(name => name.extension == `.csv`))
         {
-            readCN5File(file);
-            break;
+            readCN5File(file, false, maxCount);
         }
 
         // TODO msgpack fails to pack
@@ -951,7 +957,7 @@ class Net(bool useArray = true,
                         return;
                     }
 
-                    if (show) std.stdio.write("SUBJECT:", subject);
+                    if (show) write("SUBJECT:", subject);
 
                     /* category */
                     immutable categoryName = subject.front.idup; subject.popFront;
@@ -998,13 +1004,13 @@ class Net(bool useArray = true,
                     switch (predicate.front)
                     {
                         case "haswikipediaurl": ignored = true; break;
-                        default: if (show) std.stdio.write(" PREDICATE:", part); break;
+                        default: if (show) write(" PREDICATE:", part); break;
                     }
                     break;
                 default:
                     if (ix < 5 && !ignored)
                     {
-                        if (show) std.stdio.write(" MORE:", part);
+                        if (show) write(" MORE:", part);
                     }
                     break;
             }
@@ -1095,7 +1101,7 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 Assertions File $(D path) in CSV format.
         Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
      */
-    void readCN5File(string path, bool useMmFile = false)
+    void readCN5File(string path, bool useMmFile = false, size_t maxCount = size_t.max)
     {
         writeln("Reading ConceptNet from ", path, " ...");
         size_t lnr = 0;
@@ -1110,7 +1116,8 @@ class Net(bool useArray = true,
                 /* import algorithm_ex: byLine, Newline; */
                 foreach (line; data.byLine!(Newline.native)) // TODO Compare with File.byLine
                 {
-                    readCN5Line(line, lnr); ++lnr;
+                    readCN5Line(line, lnr);
+                    if (++lnr >= maxCount) break;
                 }
             }
         }
@@ -1118,7 +1125,8 @@ class Net(bool useArray = true,
         {
             foreach (line; File(path).byLine)
             {
-                readCN5Line(line, lnr); ++lnr;
+                readCN5Line(line, lnr);
+                if (++lnr >= maxCount) break;
             }
         }
         writeln("Reading ConceptNet from ", path, ` having `, lnr, ` lines`);
@@ -1134,8 +1142,7 @@ class Net(bool useArray = true,
         foreach (line; File(path).byLine)
         {
             readNELLLine(line, lnr);
-            ++lnr;
-            if (lnr >= maxCount) break;
+            if (++lnr >= maxCount) break;
         }
         writeln("Read NELL ", path, ` having `, lnr, ` lines`);
     }
@@ -1250,23 +1257,21 @@ class Net(bool useArray = true,
         return typeof(return).undefined;
     }
 
-    void showLinkRelation(Relation relation, LinkDir linkDir)
+    void showLinkRelation(Relation relation, LinkDir linkDir, bool negation = false,
+                          HLang lang = HLang.en)
     {
-        std.stdio.write(` - `,
-                        ((!relation.isSymmetric) && linkDir == LinkDir.output ? `<` : ``),
-                        `=`, relation, `=`,
-                        ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``));
+        write(` - `, relation.toHumanLang(linkDir, negation, lang));
     }
 
     void showConcept(in Concept concept, real weight)
     {
         if (concept.words)
-            std.stdio.write(` `, concept.words.tr("_", " "));
-        std.stdio.write(`(`);
+            write(` `, concept.words.tr("_", " "));
+        write(`(`);
         if (concept.lang)
-            std.stdio.write(concept.lang);
+            write(concept.lang);
         if (concept.lemmaKind)
-            std.stdio.write("-", concept.lemmaKind);
+            write("-", concept.lemmaKind);
         writef(`:%.2f),`, weight);
     }
 
@@ -1297,8 +1302,9 @@ class Net(bool useArray = true,
                                           hlang,
                                           wordKind))
         {
-            writeln(`- in `, concept.lang.toName,
-                    ` of sense `, concept.lemmaKind, ` relates to `);
+            write(`- in `, concept.lang.toName);
+            write(` of sense `, concept.lemmaKind);
+            writeln(` relates to `);
 
             foreach (inGroup; insByRelation(concept))
             {
