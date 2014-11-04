@@ -801,7 +801,7 @@ class Net(bool useArray = true,
         WordNet!(true, true) _wordnet;
 
         size_t[Relation.max + 1] _relationCounts;
-        size_t[Origin.max + 1] _sourceCounts;
+        size_t[Origin.max + 1] _linkSourceCounts;
         size_t[HLang.max + 1] _hlangCounts;
         size_t[WordKind.max + 1] _kindCounts;
         size_t _assertionCount = 0;
@@ -1100,6 +1100,21 @@ class Net(bool useArray = true,
         return done;
     }
 
+    Origin decodeCN5Origin(char[] origin)
+    {
+        // TODO Use part.splitter('/')
+        switch (origin)
+        {
+            case `/s/dbpedia/3.7`: return Origin.dbpedia37;
+            case `/s/dbpedia/3.9/umbel`: return Origin.dbpedia39umbel;
+            case `/d/dbpedia/en`:  return Origin.dbpediaEn;
+            case `/d/wordnet/3.0`: return Origin.wordnet30;
+            case `/s/wordnet/3.0`: return Origin.wordnet30;
+            case `/s/site/verbosity`: return Origin.verbosity;
+            default: return Origin.cn5; /* dln("Handle ", part); */
+        }
+    }
+
     /** Read ConceptNet CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readCN5Line(R, N)(R line, N lnr)
     {
@@ -1153,21 +1168,9 @@ class Net(bool useArray = true,
                     _assertionCount++;
                     break;
                 case 6:
-                    // TODO Use part.splitter('/')
-                    switch (part)
-                    {
-                        case `/s/dbpedia/3.7`: link._origin = Origin.dbpedia37; break;
-                        case `/s/dbpedia/3.9/umbel`: link._origin = Origin.dbpedia39umbel; break;
-                        case `/d/dbpedia/en`:  link._origin = Origin.dbpediaEn; break;
-                        case `/d/wordnet/3.0`: link._origin = Origin.wordnet30; break;
-                        case `/s/wordnet/3.0`: link._origin = Origin.wordnet30; break;
-                        case `/s/site/verbosity`: link._origin = Origin.verbosity; break;
-                        default:
-                            /* dln("Handle ", part); */
-                            link._origin = Origin.cn5;
-                            break;
-                    }
-                    _sourceCounts[link._origin]++;
+                    link._origin = decodeCN5Origin(part);
+                    ++_linkSourceCounts[link._origin];
+                    propagateLinkConcepts(link);
                     break;
                 default:
                     break;
@@ -1175,8 +1178,6 @@ class Net(bool useArray = true,
 
             ix++;
         }
-
-        propagateLinkConcepts(link);
 
         _links ~= link;
     }
@@ -1245,7 +1246,7 @@ class Net(bool useArray = true,
         writeln(`Concept Count by Origin:`);
         foreach (source; Origin.min..Origin.max)
         {
-            const count = _sourceCounts[source];
+            const count = _linkSourceCounts[source];
             if (count)
             {
                 writeln(`- `, source.to!string, `: `, count);
