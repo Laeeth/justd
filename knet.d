@@ -233,35 +233,70 @@ string toHumanLang(const Relation relation,
     {
         with (HLang)
         {
-            auto negationString = negation ? negationIn(lang) : "";
+            auto neg = negation ? negationIn(lang) : "";
             switch (relation)
             {
                 case relatedTo:
                     switch (lang)
                     {
-                        case en: return "is" ~ negationString ~ " related to";
-                        case sv: return "är" ~ negationString ~ " relaterat till";
-                        default: return "is" ~ negationString ~ " related to";
+                        case en: return "is" ~ neg ~ " related to";
+                        case sv: return "är" ~ neg ~ " relaterat till";
+                        default: return "is" ~ neg ~ " related to";
+                    }
+                case translationOf:
+                    switch (lang)
+                    {
+                        case en: return "is" ~ neg ~ " translated to";
+                        case sv: return "kan" ~ neg ~ " översättas till";
+                        default: return "is" ~ neg ~ " translated to";
+                    }
+                case synonym:
+                    switch (lang)
+                    {
+                        case en: return "is" ~ neg ~ " synonynoms with";
+                        case sv: return "är" ~ neg ~ " synonym med";
+                        default: return "is" ~ neg ~ " synonynoms with";
+                    }
+                case antonym:
+                    switch (lang)
+                    {
+                        case en: return "is" ~ neg ~ " the opposite of";
+                        case sv: return "är" ~ neg ~ " motsatsen till";
+                        default: return "is" ~ neg ~ " the opposite of";
+                    }
+                case similarSize:
+                    switch (lang)
+                    {
+                        case en: return "is" ~ neg ~ " similar in size to";
+                        case sv: return "är" ~ neg ~ " lika stor som";
+                        default: return "is" ~ neg ~ " similar in size to";
+                    }
+                case similarSize:
+                    switch (lang)
+                    {
+                        case en: return "is" ~ neg ~ " similar to";
+                        case sv: return "är" ~ neg ~ " likvärdig med";
+                        default: return "is" ~ neg ~ " similar to";
                     }
                 case isA:
                     if (linkDir == LinkDir.output)
                     {
                         switch (lang)
                         {
-                            case en: return "is" ~ negationString ~ " a";
-                            case sv: return "är" ~ negationString ~ " en";
-                            case de: return "ist" ~ negationString ~ " ein";
-                            default: return "is" ~ negationString ~ " a";
+                            case en: return "is" ~ neg ~ " a";
+                            case sv: return "är" ~ neg ~ " en";
+                            case de: return "ist" ~ neg ~ " ein";
+                            default: return "is" ~ neg ~ " a";
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case en: return "can" ~ negationString ~ " be a";
-                            case sv: return "kan" ~ negationString ~ " vara en";
-                            case de: return "can" ~ negationString ~ " sein ein";
-                            default: return "can" ~ negationString ~ " be a";
+                            case en: return "can" ~ neg ~ " be a";
+                            case sv: return "kan" ~ neg ~ " vara en";
+                            case de: return "can" ~ neg ~ " sein ein";
+                            default: return "can" ~ neg ~ " be a";
                         }
                     }
                 default: return relation.to!(typeof(return));
