@@ -1041,17 +1041,20 @@ class Net(bool useArray = true,
                         return;
                     }
 
+                    const lang = HLang.unknown;
+                    const kind = WordKind.noun;
+
                     /* name */
                     immutable subjectName = subject.front.idup; subject.popFront;
 
                     /* TODO functionize */
-                    link._srcIx = subjectConceptIx = lookupOrStore(Lemma(subjectName, HLang.unknown, WordKind.noun, categoryIx),
-                                                                   Concept(subjectName, HLang.unknown, WordKind.noun));
+                    link._srcIx = subjectConceptIx = lookupOrStore(Lemma(subjectName, lang, kind, categoryIx),
+                                                                   Concept(subjectName, lang, kind));
                     assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     /* TODO functionize */
-                    link._dstIx = categoryConceptIx = lookupOrStore(Lemma(categoryName, HLang.unknown, WordKind.noun, categoryIx),
-                                                                    Concept(categoryName, HLang.unknown, WordKind.noun));
+                    link._dstIx = categoryConceptIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
+                                                                    Concept(categoryName, lang, kind));
                     assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
 
                     link._relation = Relation.isA;
@@ -1079,6 +1082,7 @@ class Net(bool useArray = true,
             ++ix;
         }
 
+        propagateLinkConcepts(link);
         _links ~= link;
         if (show) writeln();
     }
@@ -1170,7 +1174,6 @@ class Net(bool useArray = true,
                 case 6:
                     link._origin = decodeCN5Origin(part);
                     ++_linkSourceCounts[link._origin];
-                    propagateLinkConcepts(link);
                     break;
                 default:
                     break;
@@ -1179,6 +1182,7 @@ class Net(bool useArray = true,
             ix++;
         }
 
+        propagateLinkConcepts(link);
         _links ~= link;
     }
 
