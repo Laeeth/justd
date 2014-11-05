@@ -211,6 +211,8 @@ enum Relation:ubyte
     hasSister, // TODO specializes hasSibling
     hasSpouse, // TODO specializes hasFamilyMember
     hasSibling, // TODO specializes hasFamilyMember
+
+    wikipediaURL,
 }
 
 string negationIn(HLang lang = HLang.en)
@@ -377,7 +379,8 @@ string toHumanLang(const Relation relation,
 
 
 Relation decodeRelation(S)(S s,
-                           out bool negation) if (isSomeString!S)
+                           out bool negation,
+                           out bool reverse) if (isSomeString!S)
 {
     with (Relation)
     {
@@ -440,6 +443,7 @@ Relation decodeRelation(S)(S s,
             case `wordnet/adverbpertainsto`:    negation = true; return adverbPertainsTo;
             case `wordnet/participleof`:        negation = true; return participleOf;
 
+                /* NELL: */
             case `hasfamilymember`:                              return hasFamilyMember;
             case `haswife`:                                      return hasWife;
             case `hashusband`:                                   return hasHusband;
@@ -447,6 +451,19 @@ Relation decodeRelation(S)(S s,
             case `hassister`:                                    return hasSister;
             case `hasspouse`:                                    return hasSpouse;
             case `hassibling`:                                   return hasSibling;
+
+            case "haswikipediaurl": return wikipediaURL;
+            case "latitudelongitude": return atLocation;
+            case "subpartof": return partOf;
+            case "synonymfor": return synonym;
+            case "generalizations": return generalizes;
+            case "specializationof": reverse = true; return generalizes;
+            case "conceptprerequisiteof": reverse = true; return hasPrerequisite;
+            case "sportusesequipment": reverse = true; return usedFor; // TODO sport, equipment?
+            case "sportusesstadium": reverse = true; return usedFor; // TODO  sport, stadium?
+            case "sportfansincountry": reverse = true; return locationOf; // TODO sportsfan, country?
+            case "sportschoolincountry": reverse = true; return locationOf; // TODO sportsschool, country?
+            case "bodypartcontainsbodypart": reverse = true; return partOf; // TODO bodypart, bodypart?
 
             default:
                 writeln(`Unknown relationString `, s);
@@ -632,6 +649,8 @@ Thematic toThematic(Relation relation)
             case hasSister: return Thematic.kLines;
             case hasSpouse: return Thematic.kLines;
             case hasSibling: return Thematic.kLines;
+
+            case wikipediaURL: return Thematic.things;
         }
     }
 
@@ -1042,18 +1061,19 @@ class Net(bool useArray = true,
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D relation) and weight $(D weight). */
-    LinkIx connect(ConceptIx src,
+    LinkIx connect(ConceptIx srcIx,
                    Relation relation,
-                   ConceptIx dst,
+                   ConceptIx dstIx,
                    Origin origin,
                    real weight = 1.0,
-                   bool negation = false)
+                   bool negation = false,
+                   bool reverse = false)
     {
         LinkIx linkIx = LinkIx(cast(Ix)_links.length);
         auto link = Link(Relation.isA, Origin.nell);
 
-        link._srcIx = src;
-        link._dstIx = dst;
+        link._srcIx = reverse ? dstIx : srcIx;
+        link._dstIx = reverse ? srcIx : dstIx;
 
         assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= linkIx; _connectednessSum++;
         assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= linkIx; _connectednessSum++;
@@ -1120,13 +1140,13 @@ class Net(bool useArray = true,
     void readNELLLine(R, N)(R line, N lnr)
     {
         Relation relation = Relation.any;
+        bool negation = false;
         bool reverse = false;
 
         ConceptIx entityIx;
         ConceptIx entityCategoryIx;
 
         bool ignored = false;
-        bool atLocationLatLong = false;
         auto categoryIx = anyCategory;
 
         LinkIx entityCategoryLink;
@@ -1197,51 +1217,42 @@ class Net(bool useArray = true,
                     else
                         if (show) writeln("TODO Handle non-concept predicate ", predicate);
 
+                    relation = predicate.front.decodeRelation(negation, reverse);
+                    ignored = (relation == Relation.wikipediaURL);
+
                     switch (predicate.front)
                     {
                         // TODO reuse decodeRelation
-                        case "haswikipediaurl": ignored = true; break;
-                        case "latitudelongitude": atLocationLatLong = true; break;
-                        case "atlocation": relation = Relation.atLocation; break;
-                        case "subpartof": relation = Relation.partOf; break;
-                        case "synonymfor": relation = Relation.synonym; break;
-                        case "generalizations": relation = Relation.generalizes; break;
-                        case "specializationof": relation = Relation.generalizes; reverse = true; break;
-                        case "conceptprerequisiteof": relation = Relation.hasPrerequisite; reverse = true; break;
-                        case "sportusesequipment": relation = Relation.usedFor; reverse = true; break; // TODO sport, equipment?
-                        case "sportusesstadium": relation = Relation.usedFor; reverse = true; break; // TODO  sport, stadium?
-                        case "sportfansincountry": relation = Relation.locationOf; reverse = true; break; // TODO sportsfan, country?
-                        case "sportschoolincountry": relation = Relation.locationOf; reverse = true; break; // TODO sportsschool, country?
-                        case "bodypartcontainsbodypart": relation = Relation.partOf; reverse = true; break; // TODO bodypart, bodypart?
                         default:
                             writeln(" PREDICATE:", predicate.front);
                             break;
                     }
                     break;
                 case 2:
-                    if (atLocationLatLong)
+                    if (relation == Relation.atLocation)
                     {
                         const loc = part.findSplit(",");
-                        setLocation(entityIx,
-                                    Location(loc[0].to!double,
-                                             loc[2].to!double));
-                    }
-                    else if (relation == Relation.atLocation)
-                    {
-                        auto value = part.splitter(':');
-                        if (value.front == "concept")
+                        if (!loc[1].empty)
                         {
-                            value.popFront; // ignore no-meaningful information
+                            writeln("LATLON: ", loc);
+                            setLocation(entityIx,
+                                        Location(loc[0].to!double,
+                                                 loc[2].to!double));
                         }
                         else
                         {
-                            if (show) writeln("TODO Handle non-concept value ", value);
-                        }
+                            auto value = part.splitter(':');
+                            writeln("LOCATION: ", value);
+                            if (value.front == "concept")
+                            {
+                                value.popFront; // ignore no-meaningful information
+                            }
+                            else
+                            {
+                                if (show) writeln("TODO Handle non-concept value ", value);
+                            }
 
-                    }
-                    else if (!ignored)
-                    {
-                        if (show) write(" VALUE:", part);
+                        }
                     }
                     break;
                 case 4:
@@ -1316,10 +1327,12 @@ class Net(bool useArray = true,
     LinkIx readCN5Line(R, N)(R line, N lnr)
     {
         Relation relation = Relation.any;
+        bool negation = false;
+        bool reverse = false;
+
         ConceptIx src;
         ConceptIx dst;
         real weight;
-        bool negation = false;
         Origin origin = Origin.unknown;
 
         auto parts = line.splitter('\t');
@@ -1329,7 +1342,7 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 1:
-                    relation = part[3..$].decodeRelation(negation); // TODO Handle case when part matches /r/_wordnet/X
+                    relation = part[3..$].decodeRelation(negation, reverse); // TODO Handle case when part matches /r/_wordnet/X
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
@@ -1357,7 +1370,7 @@ class Net(bool useArray = true,
 
         if (src.defined && dst.defined)
         {
-            return connect(src, relation, dst, origin, weight, negation);
+            return connect(src, relation, dst, origin, weight, negation, reverse);
         }
         else
         {
