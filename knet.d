@@ -1007,12 +1007,12 @@ class Net(bool useArray = true,
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D relation) and weight $(D weight). */
-    LinkIx relate(ConceptIx src,
-                  Relation relation,
-                  ConceptIx dst,
-                  Origin origin,
-                  real weight = 1.0,
-                  bool negation = false)
+    LinkIx connect(ConceptIx src,
+                   Relation relation,
+                   ConceptIx dst,
+                   Origin origin,
+                   real weight = 1.0,
+                   bool negation = false)
     {
         LinkIx linkIx = LinkIx(cast(Ix)_links.length);
         auto link = Link(Relation.isA, Origin.nell);
@@ -1146,10 +1146,10 @@ class Net(bool useArray = true,
                     /* name */
                     immutable entityName = entity.front.idup; entity.popFront;
 
-                    entityCategoryLink = relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
-                                                Relation.isA,
-                                                entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
-                                                Origin.nell, 1.0);
+                    entityCategoryLink = connect(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
+                                                 Relation.isA,
+                                                 entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
+                                                 Origin.nell, 1.0);
 
                     break;
                 case 1:
@@ -1309,7 +1309,7 @@ class Net(bool useArray = true,
 
         if (src.defined && dst.defined)
         {
-            return relate(src, relation, dst, origin, weight, negation);
+            return connect(src, relation, dst, origin, weight, negation);
         }
         else
         {
