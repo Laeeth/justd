@@ -1092,7 +1092,7 @@ class Net(bool useArray = true,
         bool atLocationLatLong = false;
         auto categoryIx = anyCategory;
 
-        LinkIx entityLink;
+        LinkIx entityCategoryLink;
         auto valueLink = Link(Origin.nell);
         auto mainLink = Link(Origin.nell);
 
@@ -1146,10 +1146,10 @@ class Net(bool useArray = true,
                     /* name */
                     immutable entityName = entity.front.idup; entity.popFront;
 
-                    entityLink = relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
-                                        Relation.isA,
-                                        entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
-                                        Origin.nell, 1.0);
+                    entityCategoryLink = relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
+                                                Relation.isA,
+                                                entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
+                                                Origin.nell, 1.0);
 
                     break;
                 case 1:
