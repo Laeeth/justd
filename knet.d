@@ -647,13 +647,19 @@ class Net(bool useArray = true,
      * indexing. */
     struct LinkIx
     {
-        Ix _lIx = Ix.max;
+        @safe @nogc pure nothrow:
         static LinkIx undefined() { return LinkIx(Ix.max); }
+        bool defined() const { return this != LinkIx.undefined; }
+    private:
+        Ix _lIx = Ix.max;
     }
     struct ConceptIx
     {
-        Ix _cIx = Ix.max;
+        @safe @nogc pure nothrow:
         static ConceptIx undefined() { return ConceptIx(Ix.max); }
+        bool defined() const { return this != ConceptIx.undefined; }
+    private:
+        Ix _cIx = Ix.max;
     }
 
     /** String Storage */
@@ -668,8 +674,11 @@ class Net(bool useArray = true,
     /** Ontology Category Index (currently from NELL). */
     struct CategoryIx
     {
-        ushort _cIx = ushort.max;
+        @safe @nogc pure nothrow:
         static CategoryIx undefined() { return CategoryIx(ushort.max); }
+        bool defined() const { return this != CategoryIx.undefined; }
+    private:
+        ushort _cIx = ushort.max;
     }
 
     /** Concept Lemma. */
@@ -998,20 +1007,42 @@ class Net(bool useArray = true,
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D relation) and weight $(D weight). */
-    ref Link relate(ConceptIx src,
-                    Relation relation,
-                    ConceptIx dst,
-                    Origin origin,
-                    real weight = 1.0)
+    LinkIx relate(ConceptIx src,
+                  Relation relation,
+                  ConceptIx dst,
+                  Origin origin,
+                  real weight = 1.0,
+                  bool negation = false)
     {
+        LinkIx linkIx = LinkIx(cast(Ix)_links.length);
         auto link = Link(Relation.isA, Origin.nell);
+
         link._srcIx = src;
         link._dstIx = dst;
-        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
-        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
+
+        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= linkIx; _connectednessSum++;
+        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= linkIx; _connectednessSum++;
+
+        ++_relationCounts[relation];
+        ++_linkSourceCounts[origin];
+
+        if (origin == Origin.cn5)
+        {
+            link.setCN5Weight(weight);
+            _weightSum += weight;
+            _weightMin = min(weight, _weightMin);
+            _weightMax = max(weight, _weightMax);
+            _assertionCount++;
+        }
+        else
+        {
+            link.setNELLWeight(weight);
+        }
+
         propagateLinkConcepts(link);
+
         _links ~= link;
-        return _links.back;
+        return linkIx; // _links.back;
     }
 
     /** Read ConceptNet5 URI.
@@ -1061,7 +1092,7 @@ class Net(bool useArray = true,
         bool atLocationLatLong = false;
         auto categoryIx = anyCategory;
 
-        Link* entityLink = null;
+        LinkIx entityLink;
         auto valueLink = Link(Origin.nell);
         auto mainLink = Link(Origin.nell);
 
@@ -1115,11 +1146,10 @@ class Net(bool useArray = true,
                     /* name */
                     immutable entityName = entity.front.idup; entity.popFront;
 
-                    entityLink = &relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
-                                         Relation.isA,
-                                         entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
-                                         Origin.nell, 1.0);
-
+                    entityLink = relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
+                                        Relation.isA,
+                                        entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
+                                        Origin.nell, 1.0);
 
                     break;
                 case 1:
@@ -1235,9 +1265,14 @@ class Net(bool useArray = true,
     }
 
     /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
-    void readCN5Line(R, N)(R line, N lnr)
+    LinkIx readCN5Line(R, N)(R line, N lnr)
     {
-        Link link;
+        Relation relation = Relation.any;
+        ConceptIx src;
+        ConceptIx dst;
+        real weight;
+        bool negation = false;
+        Origin origin = Origin.unknown;
 
         auto parts = line.splitter('\t');
         size_t ix;
@@ -1246,49 +1281,24 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 1:
-                    // TODO Handle case when part matches /r/_wordnet/X
-                    link._relation = part[3..$].decodeRelation(link._negation);
-                    _relationCounts[link._relation]++;
+                    relation = part[3..$].decodeRelation(negation); // TODO Handle case when part matches /r/_wordnet/X
                     break;
                 case 2:         // source concept
-                    if (part.skipOver(`/c/`))
-                    {
-                        link._srcIx = readCN5ConceptURI(part); // TODO use Concept returned from readCN5ConceptURI
-                        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
-                    }
-                    else
-                    {
-                        /* dln("TODO ", part); */
-                    }
+                    if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
+                    else { /* dln("TODO ", part); */ }
                     break;
                 case 3:         // destination concept
-                    if (part.skipOver(`/c/`))
-                    {
-                        link._dstIx = readCN5ConceptURI(part); // TODO use Concept returned from readCN5ConceptURI
-                        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
-                    }
-                    else
-                    {
-                        /* dln("TODO ", part); */
-                    }
+                    if (part.skipOver(`/c/`)) { dst = readCN5ConceptURI(part); }
+                    else { /* dln("TODO ", part); */ }
                     break;
                 case 4:
-                    if (part != `/ctx/all`)
-                    {
-                        /* dln("TODO ", part); */
-                    }
+                    if (part != `/ctx/all`) { /* dln("TODO ", part); */ }
                     break;
                 case 5:
-                    const weight = part.to!real;
-                    link.setCN5Weight(weight);
-                    _weightSum += weight;
-                    _weightMin = min(part.to!float, _weightMin);
-                    _weightMax = max(part.to!float, _weightMax);
-                    _assertionCount++;
+                    weight = part.to!real;
                     break;
                 case 6:
-                    link._origin = decodeCN5Origin(part);
-                    ++_linkSourceCounts[link._origin];
+                    origin = decodeCN5Origin(part);
                     break;
                 default:
                     break;
@@ -1297,8 +1307,14 @@ class Net(bool useArray = true,
             ix++;
         }
 
-        propagateLinkConcepts(link);
-        _links ~= link;
+        if (src.defined && dst.defined)
+        {
+            return relate(src, relation, dst, origin, weight, negation);
+        }
+        else
+        {
+            return LinkIx.undefined;
+        }
     }
 
     /** Read ConceptNet5 Assertions File $(D path) in CSV format.
