@@ -755,6 +755,18 @@ class Net(bool useArray = true,
 
         @safe @nogc pure nothrow:
 
+        this(Relation relation,
+             Origin origin = Origin.unknown)
+        {
+            this._relation = relation;
+            this._origin = origin;
+        }
+
+        this(Origin origin = Origin.unknown)
+        {
+            this._origin = origin;
+        }
+
         /** Set ConceptNet5 Weight $(weigth). */
         void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
         {
@@ -964,6 +976,22 @@ class Net(bool useArray = true,
         return cix;
     }
 
+    ref Link relate(ConceptIx src,
+                    Relation relation,
+                    ConceptIx dst,
+                    Origin origin,
+                    real weight = 1.0)
+    {
+        auto link = Link(Relation.isA, Origin.nell);
+        link._srcIx = src;
+        link._dstIx = dst;
+        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
+        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
+        propagateLinkConcepts(link);
+        _links ~= link;
+        return _links.back;
+    }
+
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
     */
@@ -1005,13 +1033,15 @@ class Net(bool useArray = true,
     {
         Relation relation = Relation.any;
 
-        ConceptIx subjectConceptIx;
-        ConceptIx categoryConceptIx;
+        ConceptIx entityIx;
+        ConceptIx entityCategoryIx;
 
         bool ignored = false;
+        bool atLocationLatLong = false;
         auto categoryIx = anyCategory;
-        Link link;
-        link._origin = Origin.nell;
+
+        auto valueLink = Link(Origin.nell);
+        auto mainLink = Link(Origin.nell);
 
         bool show = true;
 
@@ -1022,12 +1052,12 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 0:
-                    auto subject = part.splitter(':');
-                    /* writeln(subject); */
+                    auto entity = part.splitter(':');
+                    /* writeln(entity); */
 
-                    if (subject.front == "concept")
+                    if (entity.front == "concept")
                     {
-                        subject.popFront; // ignore no-meaningful information
+                        entity.popFront; // ignore no-meaningful information
                     }
                     else
                     {
@@ -1035,10 +1065,10 @@ class Net(bool useArray = true,
                         return;
                     }
 
-                    if (show) write("SUBJECT:", subject);
+                    if (show) write("ENTITY:", entity);
 
                     /* category */
-                    immutable categoryName = subject.front.idup; subject.popFront;
+                    immutable categoryName = entity.front.idup; entity.popFront;
                     if (categoryName in _categoryIxByName)
                     {
                         categoryIx = _categoryIxByName[categoryName];
@@ -1051,9 +1081,9 @@ class Net(bool useArray = true,
                         _categoryIxByName[categoryName] = categoryIx;
                     }
 
-                    if (subject.empty)
+                    if (entity.empty)
                     {
-                        if (show) writeln("TODO Handle category-only ", subject);
+                        if (show) writeln("TODO Handle category-only ", entity);
                         return;
                     }
 
@@ -1061,19 +1091,14 @@ class Net(bool useArray = true,
                     const kind = WordKind.noun;
 
                     /* name */
-                    immutable subjectName = subject.front.idup; subject.popFront;
+                    immutable entityName = entity.front.idup; entity.popFront;
 
-                    /* TODO functionize */
-                    subjectConceptIx = link._srcIx = lookupOrStore(Lemma(subjectName, lang, kind, categoryIx),
-                                                                   Concept(subjectName, lang, kind));
-                    assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
-
-                    /* TODO functionize */
-                    categoryConceptIx = link._dstIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
-                                                                    Concept(categoryName, lang, kind));
-                    assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= LinkIx(cast(Ix)_links.length); _connectednessSum++;
-
-                    link._relation = Relation.isA;
+                    relate(entityIx = lookupOrStore(Lemma(entityName, lang, kind, categoryIx),
+                                                    Concept(entityName, lang, kind)),
+                           Relation.isA,
+                           entityCategoryIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
+                                                            Concept(categoryName, lang, kind)),
+                           Origin.nell, 1.0);
 
                     break;
                 case 1:
@@ -1087,23 +1112,41 @@ class Net(bool useArray = true,
                     switch (predicate.front)
                     {
                         case "haswikipediaurl": ignored = true; break;
-                        case "latitudelongitude": relation = Relation.atLocation; break;
+                        case "latitudelongitude": atLocationLatLong = true; break;
+                        case "atlocation": relation = Relation.atLocation; break;
                         default:
                             if (show) write(" PREDICATE:", part);
                             break;
                     }
                     break;
                 case 2:
-                    if (relation == Relation.atLocation)
+                    if (atLocationLatLong)
                     {
                         const loc = part.findSplit(",");
-                        setLocation(subjectConceptIx,
+                        setLocation(entityIx,
                                     Location(loc[0].to!double,
                                              loc[2].to!double));
                     }
+                    else if (relation == Relation.atLocation)
+                    {
+                        auto value = part.splitter(':');
+                        if (value.front == "concept")
+                        {
+                            value.popFront; // ignore no-meaningful information
+                        }
+                        else
+                        {
+                            if (show) writeln("TODO Handle non-concept value ", value);
+                        }
+
+                    }
+                    else if (!ignored)
+                    {
+                        if (show) write(" VALUE:", part);
+                    }
                     break;
                 case 4:
-                    link.setNELLWeight(part.to!real);
+                    mainLink.setNELLWeight(part.to!real);
                     break;
                 default:
                     if (ix < 5 && !ignored)
@@ -1115,8 +1158,9 @@ class Net(bool useArray = true,
             ++ix;
         }
 
-        propagateLinkConcepts(link);
-        _links ~= link;
+        /* propagateLinkConcepts(mainLink); */
+        /* _links ~= mainLink; */
+
         if (show) writeln();
     }
 
@@ -1279,7 +1323,7 @@ class Net(bool useArray = true,
         foreach (line; File(path).byLine)
         {
             readNELLLine(line, lnr);
-            if (++lnr >= maxCount) break;
+
         }
         writeln("Read NELL ", path, ` having `, lnr, ` lines`);
     }
