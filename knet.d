@@ -204,13 +204,27 @@ enum Relation:ubyte
 
     generalizes, // TODO Merge with other enumerator?
 
-    hasFamilyMember,
+    hasRelative,
+
+    hasFamilyMember, // can be a dog
+
+    hasSpouse, // TODO specializes hasFamilyMember
     hasWife, // TODO specializes hasSpouse
     hasHusband, // TODO specializes hasSpouse
+
+    hasSibling, // TODO specializes hasFamilyMember
     hasBrother, // TODO specializes hasSibling
     hasSister, // TODO specializes hasSibling
-    hasSpouse, // TODO specializes hasFamilyMember
-    hasSibling, // TODO specializes hasFamilyMember
+
+    hasGrandParent, // TODO specializes hasRelative
+    hasParent, // TODO specializes hasFamilyMember
+    hasFather, // TODO specializes hasParent
+    hasMother, // TODO specializes hasParent
+
+    hasGrandChild, // TODO specializes hasRelative
+    hasChild, // TODO specializes hasFamilyMember
+    hasSon, // TODO specializes hasChild
+    hasDaugther, // TODO specializes hasChild
 
     wikipediaURL,
 }
@@ -482,10 +496,13 @@ bool specializes(Relation special,
         {
             /* TODO Use static foreach over all enum members to generate all
              * relevant cases: */
-            case relatedTo:
-                return special != relatedTo;
-            case isA:
-                return !special.of(isA, relatedTo);
+            case relatedTo:   return special != relatedTo;
+            case hasRelative: return special == hasFamilyMember;
+            case hasSpouse: return special.of(hasWife, hasHusband);
+            case hasSibling: return special.of(hasBrother, hasSister);
+            case hasParent: return special.of(hasFather, hasMother);
+            case hasChild: return special.of(hasSon, hasDaugther);
+            case isA: return !special.of(isA, relatedTo);
             default: return special == general;
         }
     }
@@ -508,7 +525,8 @@ bool generalizes(T)(T general,
                                synonym,
                                antonym,
                                similarSize,
-                               similarTo);
+                               similarTo,
+                               hasFamilyMember, hasSibling);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
@@ -535,7 +553,8 @@ bool generalizes(T)(T general,
                                synonym,
                                hasPrerequisite,
                                hasProperty,
-                               translationOf);
+                               translationOf,
+                               hasFamilyMember, hasSibling, hasBrother, hasSister);
     }
 
     /** Return true if $(D relation) is a strong.
