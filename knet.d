@@ -42,6 +42,7 @@ import std.container: Array;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
 import std.string: tr;
+import std.uni: isWhite, toLower;
 
 /* version = msgpack; */
 
@@ -144,9 +145,8 @@ enum Relation:ubyte
                 of this type use the appropriate language's word for "person" as
                 A. /r/Desires /c/en/person /c/en/love */
 
-    causesDesire,
-
-    desireOf,
+    causesDesire, // TODO redundant with desires
+    desireOf, // TODO redundant with desires
 
     createdBy, /* B is a process that creates A. /r/CreatedBy /c/en/cake
                   /c/en/bake */
@@ -201,6 +201,16 @@ enum Relation:ubyte
     adjectivePertainsTo,
     adverbPertainsTo,
     participleOf,
+
+    generalizes, // TODO Merge with other enumerator?
+
+    hasFamilyMember,
+    hasWife, // TODO specializes hasSpouse
+    hasHusband, // TODO specializes hasSpouse
+    hasBrother, // TODO specializes hasSibling
+    hasSister, // TODO specializes hasSibling
+    hasSpouse, // TODO specializes hasFamilyMember
+    hasSibling, // TODO specializes hasFamilyMember
 }
 
 string negationIn(HLang lang = HLang.en)
@@ -369,68 +379,79 @@ string toHumanLang(const Relation relation,
 Relation decodeRelation(S)(S s,
                            out bool negation) if (isSomeString!S)
 {
-    switch (s)
+    with (Relation)
     {
-        case `RelatedTo`:                   return Relation.relatedTo;
-        case `IsA`:                         return Relation.isA;
-        case `PartOf`:                      return Relation.partOf;
-        case `MemberOf`:                    return Relation.memberOf;
-        case `HasA`:                        return Relation.hasA;
-        case `UsedFor`:                     return Relation.usedFor;
-        case `CapableOf`:                   return Relation.capableOf;
-        case `AtLocation`:                  return Relation.atLocation;
-        case `HasContext`:                  return Relation.hasContext;
-        case `LocationOf`:                  return Relation.locationOf;
-        case `LocationOfAction`:            return Relation.locationOfAction;
-        case `LocatedNear`:                 return Relation.locatedNear;
-        case `Causes`:                      return Relation.causes;
-        case `Entails`:                     return Relation.entails;
-        case `HasSubevent`:                 return Relation.hasSubevent;
-        case `HasFirstSubevent`:            return Relation.hasFirstSubevent;
-        case `HasLastSubevent`:             return Relation.hasLastSubevent;
-        case `HasPrerequisite`:             return Relation.hasPrerequisite;
-        case `HasProperty`:                 return Relation.hasProperty;
-        case `Attribute`:                   return Relation.attribute;
-        case `MotivatedByGoal`:             return Relation.motivatedByGoal;
-        case `ObstructedBy`:                return Relation.obstructedBy;
-        case `Desires`:                     return Relation.desires;
-        case `CausesDesire`:                return Relation.causesDesire;
-        case `DesireOf`:                    return Relation.desireOf;
-        case `CreatedBy`:                   return Relation.createdBy;
-        case `ReceivesAction`:              return Relation.receivesAction;
-        case `Synonym`:                     return Relation.synonym;
-        case `Antonym`:                     return Relation.antonym;
-        case `Retronym`:                    return Relation.retronym;
-        case `DerivedFrom`:                 return Relation.derivedFrom;
-        case `CompoundDerivedFrom`:         return Relation.compoundDerivedFrom;
-        case `EtymologicallyDerivedFrom`:   return Relation.etymologicallyDerivedFrom;
-        case `TranslationOf`:               return Relation.translationOf;
-        case `DefinedAs`:                   return Relation.definedAs;
-        case `InstanceOf`:                  return Relation.instanceOf;
-        case `MadeOf`:                      return Relation.madeOf;
-        case `InheritsFrom`:                return Relation.inheritsFrom;
-        case `SimilarSize`:                 return Relation.similarSize;
-        case `SymbolOf`:                    return Relation.symbolOf;
-        case `SimilarTo`:                   return Relation.similarTo;
-        case `HasPainIntensity`:            return Relation.hasPainIntensity;
-        case `HasPainCharacter`:            return Relation.hasPainCharacter;
-            // negations
-        case `NotMadeOf`:                   negation = true; return Relation.madeOf;
-        case `NotIsA`:                      negation = true; return Relation.isA;
-        case `NotUsedFor`:                  negation = true; return Relation.usedFor;
-        case `NotHasA`:                     negation = true; return Relation.hasA;
-        case `NotDesires`:                  negation = true; return Relation.desires;
-        case `NotCauses`:                   negation = true; return Relation.causes;
-        case `NotCapableOf`:                negation = true; return Relation.capableOf;
-        case `NotHasProperty`:              negation = true; return Relation.hasProperty;
+        switch (s.toLower)
+        {
+            case `relatedto`:                                    return relatedTo;
+            case `isa`:                                          return isA;
+            case `partof`:                                       return partOf;
+            case `memberof`:                                     return memberOf;
+            case `hasa`:                                         return hasA;
+            case `usedfor`:                                      return usedFor;
+            case `capableof`:                                    return capableOf;
+            case `atlocation`:                                   return atLocation;
+            case `hascontext`:                                   return hasContext;
+            case `locationof`:                                   return locationOf;
+            case `locationofaction`:                             return locationOfAction;
+            case `locatednear`:                                  return locatedNear;
+            case `causes`:                                       return causes;
+            case `entails`:                                      return entails;
+            case `hassubevent`:                                  return hasSubevent;
+            case `hasfirstsubevent`:                             return hasFirstSubevent;
+            case `haslastsubevent`:                              return hasLastSubevent;
+            case `hasprerequisite`:                              return hasPrerequisite;
+            case `hasproperty`:                                  return hasProperty;
+            case `attribute`:                                    return attribute;
+            case `motivatedbygoal`:                              return motivatedByGoal;
+            case `obstructedby`:                                 return obstructedBy;
+            case `desires`:                                      return desires;
+            case `causesdesire`:                                 return causesDesire;
+            case `desireof`:                                     return desireOf;
+            case `createdby`:                                    return createdBy;
+            case `receivesaction`:                               return receivesAction;
+            case `synonym`:                                      return synonym;
+            case `antonym`:                                      return antonym;
+            case `retronym`:                                     return retronym;
+            case `derivedfrom`:                                  return derivedFrom;
+            case `compoundderivedfrom`:                          return compoundDerivedFrom;
+            case `etymologicallyderivedfrom`:                    return etymologicallyDerivedFrom;
+            case `translationof`:                                return translationOf;
+            case `definedas`:                                    return definedAs;
+            case `instanceof`:                                   return instanceOf;
+            case `madeof`:                                       return madeOf;
+            case `inheritsfrom`:                                 return inheritsFrom;
+            case `similarsize`:                                  return similarSize;
+            case `symbolof`:                                     return symbolOf;
+            case `similarto`:                                    return similarTo;
+            case `haspainintensity`:                             return hasPainIntensity;
+            case `haspaincharacter`:                             return hasPainCharacter;
 
-        case `wordnet/adjectivePertainsTo`: negation = true; return Relation.adjectivePertainsTo;
-        case `wordnet/adverbPertainsTo`:    negation = true; return Relation.adverbPertainsTo;
-        case `wordnet/participleOf`:        negation = true; return Relation.participleOf;
+            case `notmadeof`:                   negation = true; return madeOf;
+            case `notisa`:                      negation = true; return isA;
+            case `notusedfor`:                  negation = true; return usedFor;
+            case `nothasa`:                     negation = true; return hasA;
+            case `notdesires`:                  negation = true; return desires;
+            case `notcauses`:                   negation = true; return causes;
+            case `notcapableof`:                negation = true; return capableOf;
+            case `nothasproperty`:              negation = true; return hasProperty;
 
-        default:
-            writeln(`Unknown relationString `, s);
-            return Relation.relatedTo;
+            case `wordnet/adjectivepertainsto`: negation = true; return adjectivePertainsTo;
+            case `wordnet/adverbpertainsto`:    negation = true; return adverbPertainsTo;
+            case `wordnet/participleof`:        negation = true; return participleOf;
+
+            case `hasfamilymember`:                              return hasFamilyMember;
+            case `haswife`:                                      return hasWife;
+            case `hashusband`:                                   return hasHusband;
+            case `hasbrother`:                                   return hasBrother;
+            case `hassister`:                                    return hasSister;
+            case `hasspouse`:                                    return hasSpouse;
+            case `hassibling`:                                   return hasSibling;
+
+            default:
+                writeln(`Unknown relationString `, s);
+                return relatedTo;
+        }
     }
 }
 
@@ -544,62 +565,76 @@ enum Thematic:ubyte
 Thematic toThematic(Relation relation)
     @safe @nogc pure nothrow
 {
-    final switch (relation)
+    with (Relation)
     {
-        case Relation.relatedTo: return Thematic.kLines;
-        case Relation.isA: return Thematic.things;
-        case Relation.partOf: return Thematic.things;
-        case Relation.memberOf: return Thematic.things;
-        case Relation.hasA: return Thematic.things;
-        case Relation.usedFor: return Thematic.functional;
-        case Relation.capableOf: return Thematic.agents;
-        case Relation.atLocation: return Thematic.spatial;
-        case Relation.hasContext: return Thematic.things;
+        final switch (relation)
+        {
+            case relatedTo: return Thematic.kLines;
+            case isA: return Thematic.things;
+            case partOf: return Thematic.things;
+            case memberOf: return Thematic.things;
+            case hasA: return Thematic.things;
+            case usedFor: return Thematic.functional;
+            case capableOf: return Thematic.agents;
+            case atLocation: return Thematic.spatial;
+            case hasContext: return Thematic.things;
 
-        case Relation.locationOf: return Thematic.spatial;
-        case Relation.locationOfAction: return Thematic.spatial;
-        case Relation.locatedNear: return Thematic.spatial;
+            case locationOf: return Thematic.spatial;
+            case locationOfAction: return Thematic.spatial;
+            case locatedNear: return Thematic.spatial;
 
-        case Relation.causes: return Thematic.causal;
-        case Relation.hasSubevent: return Thematic.events;
-        case Relation.hasFirstSubevent: return Thematic.events;
-        case Relation.hasLastSubevent: return Thematic.events;
-        case Relation.hasPrerequisite: return Thematic.causal; // TODO Use events, causal, functional
-        case Relation.hasProperty: return Thematic.things;
-        case Relation.attribute: return Thematic.things;
-        case Relation.motivatedByGoal: return Thematic.affective;
-        case Relation.obstructedBy: return Thematic.causal;
-        case Relation.desires: return Thematic.affective;
-        case Relation.causesDesire: return Thematic.affective;
-        case Relation.desireOf: return Thematic.affective;
+            case causes: return Thematic.causal;
+            case hasSubevent: return Thematic.events;
+            case hasFirstSubevent: return Thematic.events;
+            case hasLastSubevent: return Thematic.events;
+            case hasPrerequisite: return Thematic.causal; // TODO Use events, causal, functional
+            case hasProperty: return Thematic.things;
+            case attribute: return Thematic.things;
+            case motivatedByGoal: return Thematic.affective;
+            case obstructedBy: return Thematic.causal;
+            case desires: return Thematic.affective;
+            case causesDesire: return Thematic.affective;
+            case desireOf: return Thematic.affective;
 
-        case Relation.createdBy: return Thematic.agents;
-        case Relation.receivesAction: return Thematic.agents;
+            case createdBy: return Thematic.agents;
+            case receivesAction: return Thematic.agents;
 
-        case Relation.synonym: return Thematic.synonym;
-        case Relation.antonym: return Thematic.antonym;
-        case Relation.retronym: return Thematic.retronym;
+            case synonym: return Thematic.synonym;
+            case antonym: return Thematic.antonym;
+            case retronym: return Thematic.retronym;
 
-        case Relation.derivedFrom: return Thematic.things;
-        case Relation.compoundDerivedFrom: return Thematic.things;
-        case Relation.etymologicallyDerivedFrom: return Thematic.things;
-        case Relation.translationOf: return Thematic.synonym;
+            case derivedFrom: return Thematic.things;
+            case compoundDerivedFrom: return Thematic.things;
+            case etymologicallyDerivedFrom: return Thematic.things;
+            case translationOf: return Thematic.synonym;
 
-        case Relation.definedAs: return Thematic.things;
+            case definedAs: return Thematic.things;
 
-        case Relation.instanceOf: return Thematic.things;
-        case Relation.madeOf: return Thematic.things;
-        case Relation.inheritsFrom: return Thematic.things;
-        case Relation.similarSize: return Thematic.things;
-        case Relation.symbolOf: return Thematic.kLines;
-        case Relation.similarTo: return Thematic.kLines;
-        case Relation.hasPainIntensity: return Thematic.kLines;
-        case Relation.hasPainCharacter: return Thematic.kLines;
+            case instanceOf: return Thematic.things;
+            case madeOf: return Thematic.things;
+            case inheritsFrom: return Thematic.things;
+            case similarSize: return Thematic.things;
+            case symbolOf: return Thematic.kLines;
+            case similarTo: return Thematic.kLines;
+            case hasPainIntensity: return Thematic.kLines;
+            case hasPainCharacter: return Thematic.kLines;
 
-        case Relation.adjectivePertainsTo: return Thematic.unknown;
-        case Relation.adverbPertainsTo: return Thematic.unknown;
-        case Relation.participleOf: return Thematic.unknown;
+            case adjectivePertainsTo: return Thematic.unknown;
+            case adverbPertainsTo: return Thematic.unknown;
+            case participleOf: return Thematic.unknown;
+
+            case generalizes: return Thematic.unknown;
+
+            case hasFamilyMember: return Thematic.kLines;
+            case hasWife: return Thematic.kLines;
+            case hasHusband: return Thematic.kLines;
+            case hasBrother: return Thematic.kLines;
+            case hasSister: return Thematic.kLines;
+            case hasSpouse: return Thematic.kLines;
+            case hasSibling: return Thematic.kLines;
+        }
     }
+
 }
 
 enum Origin:ubyte
@@ -1044,6 +1079,7 @@ class Net(bool useArray = true,
         _links ~= link;
         return linkIx; // _links.back;
     }
+    alias relate = connect;
 
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
@@ -1084,6 +1120,7 @@ class Net(bool useArray = true,
     void readNELLLine(R, N)(R line, N lnr)
     {
         Relation relation = Relation.any;
+        bool reverse = false;
 
         ConceptIx entityIx;
         ConceptIx entityCategoryIx;
@@ -1096,7 +1133,7 @@ class Net(bool useArray = true,
         auto valueLink = Link(Origin.nell);
         auto mainLink = Link(Origin.nell);
 
-        bool show = true;
+        bool show = false;
 
         auto parts = line.splitter('\t');
         size_t ix;
@@ -1162,11 +1199,22 @@ class Net(bool useArray = true,
 
                     switch (predicate.front)
                     {
+                        // TODO reuse decodeRelation
                         case "haswikipediaurl": ignored = true; break;
                         case "latitudelongitude": atLocationLatLong = true; break;
                         case "atlocation": relation = Relation.atLocation; break;
+                        case "subpartof": relation = Relation.partOf; break;
+                        case "synonymfor": relation = Relation.synonym; break;
+                        case "generalizations": relation = Relation.generalizes; break;
+                        case "specializationof": relation = Relation.generalizes; reverse = true; break;
+                        case "conceptprerequisiteof": relation = Relation.hasPrerequisite; reverse = true; break;
+                        case "sportusesequipment": relation = Relation.usedFor; reverse = true; break; // TODO sport, equipment?
+                        case "sportusesstadium": relation = Relation.usedFor; reverse = true; break; // TODO  sport, stadium?
+                        case "sportfansincountry": relation = Relation.locationOf; reverse = true; break; // TODO sportsfan, country?
+                        case "sportschoolincountry": relation = Relation.locationOf; reverse = true; break; // TODO sportsschool, country?
+                        case "bodypartcontainsbodypart": relation = Relation.partOf; reverse = true; break; // TODO bodypart, bodypart?
                         default:
-                            if (show) write(" PREDICATE:", part);
+                            writeln(" PREDICATE:", predicate.front);
                             break;
                     }
                     break;
@@ -1506,7 +1554,6 @@ class Net(bool useArray = true,
                          WordKind wordKind = WordKind.unknown,
                          S lineSeparator = "_") if (isSomeString!S)
     {
-        import std.uni: isWhite, toLower;
         import std.ascii: whitespace;
         import std.algorithm: splitter;
         import std.string: strip;
