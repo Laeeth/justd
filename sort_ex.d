@@ -6,7 +6,7 @@
 
 module sort_ex;
 
-import std.traits: isAggregateType;
+import std.traits: isAggregateType, isIntegral;
 import std.range: ElementType, isRandomAccessRange;
 
 template extractorFun(alias extractor)
@@ -16,6 +16,13 @@ template extractorFun(alias extractor)
         auto ref extractorFun(T)(auto ref T a)
         {
             mixin("with (a) { return " ~ extractor ~ "; }");
+        }
+    }
+    else static if (is(isIntegral!(typeof(extractor))))
+    {
+        auto ref extractorFun(T)(auto ref T a)
+        {
+            mixin("{ return " ~ a.tupleof[extractor] ~ "; }");
         }
     }
     else
@@ -48,12 +55,10 @@ void sortBy(alias extractor, R)(R r) if (isRandomAccessRange!R &&
     assert(r == [ X(0, 1, 2),
                   X(1, 2, 1),
                   X(2, 0, 0) ]);
-
     r.sortBy!(a => a.y);
     assert(r == [ X(2, 0, 0),
                   X(0, 1, 2),
                   X(1, 2, 1)] );
-
     r.sortBy!(a => a.z);
     assert(r == [ X(2, 0, 0),
                   X(1, 2, 1),
@@ -63,15 +68,25 @@ void sortBy(alias extractor, R)(R r) if (isRandomAccessRange!R &&
     assert(r == [ X(0, 1, 2),
                   X(1, 2, 1),
                   X(2, 0, 0) ]);
-
     r.sortBy!"y";
     assert(r == [ X(2, 0, 0),
                   X(0, 1, 2),
                   X(1, 2, 1)] );
-
     r.sortBy!"z";
     assert(r == [ X(2, 0, 0),
                   X(1, 2, 1),
                   X(0, 1, 2) ]);
 
+    /* r.sortBy!0; */
+    /* assert(r == [ X(0, 1, 2), */
+    /*               X(1, 2, 1), */
+    /*               X(2, 0, 0) ]); */
+    /* r.sortBy!1; */
+    /* assert(r == [ X(2, 0, 0), */
+    /*               X(0, 1, 2), */
+    /*               X(1, 2, 1)] ); */
+    /* r.sortBy!2; */
+    /* assert(r == [ X(2, 0, 0), */
+    /*               X(1, 2, 1), */
+    /*               X(0, 1, 2) ]); */
 }
