@@ -208,23 +208,23 @@ enum Relation:ubyte
 
     hasFamilyMember, // can be a dog
 
-    hasSpouse, // TODO specializes hasFamilyMember
-    hasWife, // TODO specializes hasSpouse
-    hasHusband, // TODO specializes hasSpouse
+    hasSpouse,
+    hasWife,
+    hasHusband,
 
-    hasSibling, // TODO specializes hasFamilyMember
-    hasBrother, // TODO specializes hasSibling
-    hasSister, // TODO specializes hasSibling
+    hasSibling,
+    hasBrother,
+    hasSister,
 
-    hasGrandParent, // TODO specializes hasRelative
-    hasParent, // TODO specializes hasFamilyMember
-    hasFather, // TODO specializes hasParent
-    hasMother, // TODO specializes hasParent
+    hasGrandParent,
+    hasParent,
+    hasFather,
+    hasMother,
 
-    hasGrandChild, // TODO specializes hasRelative
-    hasChild, // TODO specializes hasFamilyMember
-    hasSon, // TODO specializes hasChild
-    hasDaugther, // TODO specializes hasChild
+    hasGrandChild,
+    hasChild,
+    hasSon,
+    hasDaugther,
 
     wikipediaURL,
 }
@@ -498,6 +498,7 @@ bool specializes(Relation special,
              * relevant cases: */
             case relatedTo:   return special != relatedTo;
             case hasRelative: return special == hasFamilyMember;
+            case hasFamilyMember: return special.of(hasSpouse, hasSibling, hasParent, hasChild);
             case hasSpouse: return special.of(hasWife, hasHusband);
             case hasSibling: return special.of(hasBrother, hasSister);
             case hasParent: return special.of(hasFather, hasMother);
