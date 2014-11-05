@@ -21,7 +21,7 @@ void sortBy(alias extractor, R)(R r) if (isRandomAccessRange!R &&
                        unaryFun!extractor(b)));
 }
 
-unittest
+@safe pure nothrow unittest
 {
     static struct X { int x, y, z; }
 
