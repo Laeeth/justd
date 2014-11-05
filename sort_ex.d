@@ -9,20 +9,38 @@ module sort_ex;
 import std.traits: isAggregateType;
 import std.range: ElementType, isRandomAccessRange;
 
-/** Sort Random Access Range $(D R) of Aggregates on Values of Extractors members.
+/** Sort Random Access Range $(D R) of Aggregates on Value of Calls to $(D extractor).
     See also: http://forum.dlang.org/thread/nqwzojnlidlsmpunpqqy@forum.dlang.org#post-dmfvkbfhzigecnwglrur:40forum.dlang.org
  */
-void sortBy(E..., R)(R r) if (isRandomAccessRange!R &&
-                              isAggregateType!(ElementType!R))
+void sortBy(alias extractor, R)(R r) if (isRandomAccessRange!R &&
+                                         isAggregateType!(ElementType!R))
 {
     import std.algorithm: sort;
     import std.functional: unaryFun;
-    r.sort!();
+    r.sort!((a, b) => (unaryFun!extractor(a) <
+                       unaryFun!extractor(b)));
 }
 
 unittest
 {
     struct X { double x, y, z; }
-    auto r = new X[3];
-    r.sortBy!("x", "y");
+    auto r = [ X(1, 2, 1),
+               X(0, 1, 2),
+               X(2, 0, 0) ];
+
+    r.sortBy!(a => a.x);
+    assert(r == [ X(0, 1, 2),
+                  X(1, 2, 1),
+                  X(2, 0, 0) ]);
+
+    r.sortBy!(a => a.y);
+    assert(r == [ X(2, 0, 0),
+                  X(0, 1, 2),
+                  X(1, 2, 1)] );
+
+    r.sortBy!(a => a.z);
+    assert(r == [ X(2, 0, 0),
+                  X(1, 2, 1),
+                  X(0, 1, 2) ]);
+
 }
