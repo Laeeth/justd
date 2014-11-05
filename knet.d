@@ -977,12 +977,17 @@ class Net(bool useArray = true,
         return cix;
     }
 
-    ConceptIx lookupOrStore(Words words, HLang lang, WordKind kind, CategoryIx categoryIx)
+    /** Lookup or Store Concept named $(D words) in language $(D lang). */
+    ConceptIx lookupOrStore(Words words,
+                            HLang lang,
+                            WordKind kind,
+                            CategoryIx categoryIx)
     {
         return lookupOrStore(Lemma(words, lang, kind, categoryIx),
                              Concept(words, lang, kind));
     }
 
+    /** Add Link from $(D src) to $(D dst) of type $(D relation) and weight $(D weight). */
     ref Link relate(ConceptIx src,
                     Relation relation,
                     ConceptIx dst,
