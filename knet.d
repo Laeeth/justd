@@ -848,7 +848,7 @@ class Net(bool useArray = true,
         ref inout(Concept)     opIndex(ConceptIx ix) inout @nogc { return conceptByIx(ix); }
     }
 
-    Nullable!Concept conceptByLemmaMaybe(Lemma lemma)
+    Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
     {
         if (lemma in _conceptIxByLemma)
         {
@@ -961,7 +961,8 @@ class Net(bool useArray = true,
 
     /** Lookup Previous or Store New $(D concept) at $(D lemma) index.
      */
-    ConceptIx lookupOrStore(Lemma lemma, Concept concept)
+    ConceptIx lookupOrStore(in Lemma lemma,
+                            Concept concept)
     {
         if (lemma in _conceptIxByLemma)
         {
@@ -974,6 +975,12 @@ class Net(bool useArray = true,
         _conceptIxByLemma[lemma] = cix; // lookupOrStore index to ..
         _conceptStringLengthSum += lemma.words.length;
         return cix;
+    }
+
+    ConceptIx lookupOrStore(Words words, HLang lang, WordKind kind, CategoryIx categoryIx)
+    {
+        return lookupOrStore(Lemma(words, lang, kind, categoryIx),
+                             Concept(words, lang, kind));
     }
 
     ref Link relate(ConceptIx src,
@@ -1022,8 +1029,7 @@ class Net(bool useArray = true,
         }
         ++_kindCounts[wordKind];
 
-        return lookupOrStore(Lemma(word, hlang, wordKind, anyCategory),
-                             Concept(word, hlang, wordKind));
+        return lookupOrStore(word, hlang, wordKind, anyCategory);
     }
 
     import std.algorithm: splitter;
@@ -1093,11 +1099,9 @@ class Net(bool useArray = true,
                     /* name */
                     immutable entityName = entity.front.idup; entity.popFront;
 
-                    relate(entityIx = lookupOrStore(Lemma(entityName, lang, kind, categoryIx),
-                                                    Concept(entityName, lang, kind)),
+                    relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
                            Relation.isA,
-                           entityCategoryIx = lookupOrStore(Lemma(categoryName, lang, kind, categoryIx),
-                                                            Concept(categoryName, lang, kind)),
+                           entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
                            Origin.nell, 1.0);
 
                     break;
@@ -1426,8 +1430,8 @@ class Net(bool useArray = true,
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
-    LinkIx areRelated(Lemma a,
-                      Lemma b)
+    LinkIx areRelated(in Lemma a,
+                      in Lemma b)
     {
         if (a in _conceptIxByLemma &&
             b in _conceptIxByLemma)
