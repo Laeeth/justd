@@ -1,6 +1,6 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Extensions to std.algorith.sort.
+/** Extensions to std.algorithm.sort.
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
 */
 
@@ -23,7 +23,8 @@ void sortBy(alias extractor, R)(R r) if (isRandomAccessRange!R &&
 
 unittest
 {
-    struct X { double x, y, z; }
+    static struct X { int x, y, z; }
+
     auto r = [ X(1, 2, 1),
                X(0, 1, 2),
                X(2, 0, 0) ];
