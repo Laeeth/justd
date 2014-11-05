@@ -1206,6 +1206,7 @@ class Net(bool useArray = true,
         return done;
     }
 
+    /** Decode ConceptNet5 Origin $(D origin). */
     Origin decodeCN5Origin(char[] origin)
     {
         // TODO Use part.splitter('/')
@@ -1221,7 +1222,7 @@ class Net(bool useArray = true,
         }
     }
 
-    /** Read ConceptNet CSV Line $(D line) at 0-offset line number $(D lnr). */
+    /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readCN5Line(R, N)(R line, N lnr)
     {
         Link link;
@@ -1337,6 +1338,8 @@ class Net(bool useArray = true,
         writeln("Read NELL ", path, ` having `, lnr, ` lines`);
     }
 
+    /** Show Network Relations.
+     */
     void showRelations()
     {
         writeln(`Relation Count by Type:`);
