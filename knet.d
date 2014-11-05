@@ -666,7 +666,8 @@ class Net(bool useArray = true,
     else                 { alias LinkIxes = LinkIx[]; }
 
     /** Ontology Category Index (currently from NELL). */
-    struct CategoryIx {
+    struct CategoryIx
+    {
         ushort _cIx = ushort.max;
         static CategoryIx undefined() { return CategoryIx(ushort.max); }
     }
@@ -688,6 +689,7 @@ class Net(bool useArray = true,
         this(Words words,
              HLang lang,
              WordKind lemmaKind,
+             CategoryIx categoryIx,
              Origin origin = Origin.unknown,
              LinkIxes inIxes = LinkIxes.init,
              LinkIxes outIxes = LinkIxes.init)
@@ -695,16 +697,23 @@ class Net(bool useArray = true,
             this.words = words;
             this.lang = lang;
             this.lemmaKind = lemmaKind;
+            this.categoryIx = categoryIx;
+
             this.origin = origin;
+
             this.inIxes = inIxes;
             this.outIxes = outIxes;
         }
     private:
-        Words words;
         LinkIxes inIxes;
         LinkIxes outIxes;
+
+        // TODO Make this Lemma
+        Words words;
         HLang lang;
         WordKind lemmaKind;
+        CategoryIx categoryIx;
+
         Origin origin;
     }
 
@@ -799,11 +808,12 @@ class Net(bool useArray = true,
     Concept src(Link link) { return conceptByIx(link._srcIx); }
     Concept dst(Link link) { return conceptByIx(link._dstIx); }
 
+    pragma(msg, `Words.sizeof: `, Words.sizeof);
+    pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
+    pragma(msg, `Concept.sizeof: `, Concept.sizeof);
     pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof);
     pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof);
-    pragma(msg, `Concept.sizeof: `, Concept.sizeof);
     pragma(msg, `Link.sizeof: `, Link.sizeof);
-    pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
 
     /* static if (useArray) { alias Concepts = Array!Concept; } */
     /* else                 { alias Concepts = Concept[]; } */
@@ -984,7 +994,7 @@ class Net(bool useArray = true,
                             CategoryIx categoryIx)
     {
         return lookupOrStore(Lemma(words, lang, kind, categoryIx),
-                             Concept(words, lang, kind));
+                             Concept(words, lang, kind, categoryIx));
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D relation) and weight $(D weight). */
@@ -1051,6 +1061,7 @@ class Net(bool useArray = true,
         bool atLocationLatLong = false;
         auto categoryIx = anyCategory;
 
+        Link* entityLink = null;
         auto valueLink = Link(Origin.nell);
         auto mainLink = Link(Origin.nell);
 
@@ -1104,10 +1115,11 @@ class Net(bool useArray = true,
                     /* name */
                     immutable entityName = entity.front.idup; entity.popFront;
 
-                    relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
-                           Relation.isA,
-                           entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
-                           Origin.nell, 1.0);
+                    entityLink = &relate(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
+                                         Relation.isA,
+                                         entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
+                                         Origin.nell, 1.0);
+
 
                     break;
                 case 1:
