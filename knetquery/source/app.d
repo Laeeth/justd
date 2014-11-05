@@ -1,8 +1,12 @@
 import std.stdio;
 import knet;
+import backtrace.backtrace;
 
 int main(string[] args)
 {
+    import std.stdio: stderr;
+    backtrace.backtrace.install(stderr);
+
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
     net.showConcepts(`car_wash`);
 
