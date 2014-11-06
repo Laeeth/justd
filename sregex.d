@@ -23,7 +23,8 @@ import std.string: representation;
 
 /** Base Pattern.
  */
-class Patt {
+class Patt
+{
     @safe pure:
 
     /** Match $(D this) with $(D haystack) at Offset $(D soff).
@@ -54,12 +55,14 @@ class Patt {
     }
 
     /** Find $(D this) in $(D haystack) at Offset $(D soff). */
-    final const(ubyte[]) findAt(in string haystack, size_t soff = 0) const {
+    final const(ubyte[]) findAt(in string haystack, size_t soff = 0) const
+    {
         return findAtU(haystack.representation, soff);
     }
 
     /** Find $(D this) in $(D haystack) at Offset $(D soff). */
-    const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
+    const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
+    {
         auto i = soff;
         while (i < haystack.length) // while bytes left at i
         {
@@ -110,7 +113,8 @@ class Lit : Patt
                 _bytes[] == haystack[soff..soff + l]) ? l : size_t.max; // same contents
     }
 
-    override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
+    override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
+    {
         return haystack[soff..$].find(_bytes); // reuse std.algorithm: find!
     }
 
@@ -128,7 +132,8 @@ class Lit : Patt
     alias BitSet!(2^^ubyte.sizeof) SinglesHist;
 
     /// Get (Cached) (Binary) Histogram over single elements contained in this $(D Lit).
-    SinglesHist singlesHist() nothrow {
+    SinglesHist singlesHist() nothrow
+    {
         if (!_bytes.empty &&
             _singlesHist.allZero)
         {
@@ -142,7 +147,8 @@ class Lit : Patt
     private SinglesHist _singlesHist;
 }
 auto lit(Args...)(Args args) { return new Lit(args); } // maker
-unittest {
+unittest
+{
     immutable ab = "ab";
     assert(lit('b').at("ab", 1) == 1);
     const a = lit('a');
@@ -173,7 +179,8 @@ unittest {
 
 /** Word/Symbol Acronym Pattern.
  */
-class Acronym : Patt {
+class Acronym : Patt
+{
     pure:
         this(string bytes_, FindContext ctx = FindContext.inSymbol)
     {
@@ -193,7 +200,8 @@ class Acronym : Patt {
         this._ctx = ctx;
     }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    {
         auto offs = new size_t[_acros.length]; // hit offsets
         size_t a = 0;         // acronym index
         foreach(s, ub; haystack[soff..$])  // for each element in source
@@ -243,7 +251,8 @@ auto inwac(Args...)(Args args) { return new Acronym(args, FindContext.inWord); }
 auto insac(Args...)(Args args) { return new Acronym(args, FindContext.inSymbol); } // symbol acronym
 auto aswac(Args...)(Args args) { return new Acronym(args, FindContext.asWord); } // word acronym
 auto assac(Args...)(Args args) { return new Acronym(args, FindContext.asSymbol); } // symbol acronym
-unittest {
+unittest
+{
     assert(inwac("a").at("a") == 1);
     assert(inwac("ab").at("ab") == 2);
     assert(inwac("ab").at("a") == size_t.max);
@@ -255,7 +264,8 @@ unittest {
 
 /** Any Byte.
  */
-class Any : Patt {
+class Any : Patt
+{
     @safe: pure:
     this() {}
 
@@ -272,7 +282,8 @@ auto any(Args...)(Args args) { return new Any(args); } // maker
 
 /** Abstract Super Pattern.
  */
-abstract class SPatt : Patt {
+abstract class SPatt : Patt
+{
     this(Patt[] subs_) { this._subs = subs_; }
     this(Args...)(Args subs_)
     {
@@ -301,14 +312,16 @@ abstract class SPatt : Patt {
 
 /** Sequence of Patterns.
  */
-class Seq : SPatt {
+class Seq : SPatt
+{
     this(Patt[] subs_) { super(subs_); }
     this(Args...)(Args subs_) { super(subs_); }
 
     @safe: pure:
     @property auto ref inout (Patt[]) elms() inout nothrow { return super._subs; }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    {
         assert(!elms.empty); // TODO Move to in contract?
         const(ubyte[]) c = getConstant;
         if (!c.empty)
@@ -335,7 +348,9 @@ class Seq : SPatt {
     override const(ubyte[]) getConstant() const { return []; }
 }
 auto seq(Args...)(Args args) { return new Seq(args); } // maker
-unittest {
+
+unittest
+{
     const s = seq(lit("al"),
                   lit("pha"));
     immutable haystack = "alpha";
@@ -349,12 +364,14 @@ unittest {
 
 /** Alternative of Patterns in $(D ALTS).
  */
-class Alt : SPatt {
+class Alt : SPatt
+{
     this(Patt[] subs_) { super(subs_); }
     this(Args...)(Args subs_) { super(subs_); }
 
     pure:
-    size_t atIx(in string haystack, size_t soff, out size_t alt_hix) const nothrow {
+    size_t atIx(in string haystack, size_t soff, out size_t alt_hix) const nothrow
+    {
         return atU(haystack.representation, soff, alt_hix);
     }
 
@@ -363,7 +380,8 @@ class Alt : SPatt {
 
     /** Get Length of hit at index soff in haystack or size_t.max if none.
      */
-    size_t atU(in ubyte[] haystack, size_t soff, out size_t alt_hix) const nothrow {
+    size_t atU(in ubyte[] haystack, size_t soff, out size_t alt_hix) const nothrow
+    {
         assert(!alts.empty);    // TODO Move to in contract?
         size_t hit = 0;
         size_t off = soff;
@@ -374,7 +392,8 @@ class Alt : SPatt {
         }
         return hit;
     }
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    {
         size_t alt_hix;
         return atU(haystack, soff, alt_hix);
     }
@@ -383,11 +402,15 @@ class Alt : SPatt {
         TODO Add findAt() and detect case when all alternatives full isConstant
         (cached them) and use variadic version of std.algorithm:find.
     */
-    override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
+    override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
+    {
         assert(!alts.empty);    // TODO Move to in contract?
-        if        (alts.length == 1)  {              // if one alternative
+        if        (alts.length == 1)
+        {
             return alts[0].findAtU(haystack, soff); // recurse to it
-        } else if (alts.length == 2)  {       // if two alternatives
+        }
+        else if (alts.length == 2)
+        {
             const ubyte[] a0 = alts[0].getConstant;
             const ubyte[] a1 = alts[1].getConstant;
             if (!a0.empty &&
@@ -396,7 +419,9 @@ class Alt : SPatt {
                 auto hit = find(haystack[soff..$], a0, a1); // Use: second argument to return alt_hix
                 return hit[0];
             }
-        } else if (alts.length == 3)  {       // if two alternatives
+        }
+        else if (alts.length == 3)
+        {
             const ubyte[] a0 = alts[0].getConstant;
             const ubyte[] a1 = alts[1].getConstant;
             const ubyte[] a2 = alts[2].getConstant;
@@ -407,7 +432,9 @@ class Alt : SPatt {
                 auto hit = find(haystack[soff..$], a0, a1, a2); // Use: second argument to return alt_hix
                 return hit[0];
             }
-        } else if (alts.length == 4)  {       // if two alternatives
+        }
+        else if (alts.length == 4)
+        {
             const ubyte[] a0 = alts[0].getConstant;
             const ubyte[] a1 = alts[1].getConstant;
             const ubyte[] a2 = alts[2].getConstant;
@@ -420,7 +447,9 @@ class Alt : SPatt {
                 auto hit = find(haystack[soff..$], a0, a1, a2, a3); // Use: second argument to return alt_hix
                 return hit[0];
             }
-        } else if (alts.length == 5)  {       // if two alternatives
+        }
+        else if (alts.length == 5)
+        {
             const ubyte[] a0 = alts[0].getConstant;
             const ubyte[] a1 = alts[1].getConstant;
             const ubyte[] a2 = alts[2].getConstant;
@@ -444,7 +473,8 @@ class Alt : SPatt {
                                                           _subs.map!(a => a.minLength)); }
     override size_t maxLength() const { return reduce!max(size_t.min,
                                                           _subs.map!(a => a.maxLength)); }
-    override bool isFixed() const {
+    override bool isFixed() const
+    {
         // TODO Merge these loops using tuple algorithm.
         auto mins = _subs.map!(a => a.minLength);
         auto maxs = _subs.map!(a => a.maxLength);
@@ -469,7 +499,8 @@ class Alt : SPatt {
     }
 }
 auto alt(Args...)(Args args) { return new Alt(args); } // maker
-unittest {
+unittest
+{
     immutable a_b = alt(lit("a"),
                         lit("b"));
     assert(a_b.isFixed);
@@ -515,7 +546,8 @@ unittest {
     assert(aa_bb.findAt("") == []);
 }
 
-class Space : Patt {
+class Space : Patt
+{
     @safe: pure:
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
         import std.ascii: isWhite;
@@ -527,7 +559,8 @@ class Space : Patt {
     override bool isConstant() const { return false; }
 }
 auto ws() { return new Space(); } // maker
-unittest {
+unittest
+{
     assert(ws().at(" ") == 1);
     assert(ws().at("\t") == 1);
     assert(ws().at("\n") == 1);
@@ -547,7 +580,8 @@ abstract class SPatt1 : Patt
 
 /** Optional Sub Pattern $(D count) times.
  */
-class Opt : SPatt1 {
+class Opt : SPatt1
+{
     this(Patt sub) { super(sub); }
     @safe: pure:
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
@@ -562,14 +596,16 @@ class Opt : SPatt1 {
     override bool isConstant() const { return false; }
 }
 auto opt(Args...)(Args args) { return new Opt(args); } // optional
-unittest {
+unittest
+{
     assert(opt(lit("a")).at("b") == 0);
     assert(opt(lit("a")).at("a") == 1);
 }
 
 /** Repetition Sub Pattern $(D count) times.
  */
-class Rep : SPatt1 {
+class Rep : SPatt1
+{
     this(Patt sub, size_t count) { super(sub);
         this.countReq = count;
         this.countOpt = 0;
@@ -615,7 +651,8 @@ class Rep : SPatt1 {
 auto rep(Args...)(Args args) { return new Rep(args); } // repetition
 auto zom(Args...)(Args args) { return new Rep(args, 0, size_t.max); } // zero or more
 auto oom(Args...)(Args args) { return new Rep(args, 1, size_t.max); } // one or more
-unittest {
+unittest
+{
     auto l = lit('a');
 
     const l5 = rep(l, 5);
@@ -634,8 +671,10 @@ unittest {
     assert(!l23.isConstant);
 }
 
-class Ctx : Patt {
-    enum Type {
+class Ctx : Patt
+{
+    enum Type
+    {
         bob, /// Beginning Of \em Block/Name/File/String. @b Emacs: "\`"
         eob, /// End       Of \em Block/Name/File/String. @b Emacs: "\'"
 
@@ -652,7 +691,8 @@ class Ctx : Patt {
     @safe pure:
         this(Type type) { this.type = type; }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    {
         assert(soff <= haystack.length); // include equality because haystack might be empty and size zero
         bool ok = false;
         import std.ascii : isAlphaNum/* , newline */;
@@ -704,7 +744,8 @@ Seq buf(Args...)(Args args) { return seq(bob(), args, eob()); }
 Seq line(Args...)(Args args) { return seq(bol(), args, eol()); }
 Seq sym(Args...)(Args args) { return seq(bos(), args, eos()); }
 Seq word(Args...)(Args args) { return seq(bow(), args, eow()); }
-unittest {
+unittest
+{
     const bob_ = bob();
     const eob_ = eob();
     assert(bob_.at("ab") == 0);
@@ -782,7 +823,8 @@ auto ref shebangLine(Patt interpreter)
                oom(ws()),
                interpreter);
 }
-unittest {
+unittest
+{
     assert(shebangLine(lit("rdmd")).
            at("#!/bin/env rdmd") ==
            15);
