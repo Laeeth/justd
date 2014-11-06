@@ -18,11 +18,12 @@ template extractorFun(alias extractor)
             mixin("with (a) { return " ~ extractor ~ "; }");
         }
     }
-    else static if (is(isIntegral!(typeof(extractor))))
+    else static if (isIntegral!(typeof(extractor)))
     {
         auto ref extractorFun(T)(auto ref T a)
         {
-            mixin("return " ~ a.tupleof[extractor] ~ ";");
+            import std.conv: to;
+            mixin("return a.tupleof[" ~ extractor.to!string ~ "];");
         }
     }
     else
@@ -77,17 +78,16 @@ void sortBy(alias extractor, R)(R r) if (isRandomAccessRange!R &&
                   X(1, 2, 1),
                   X(0, 1, 2) ]);
 
-    /* r.sortBy!0; */
-    /* assert(r == [ X(0, 1, 2), */
-    /*               X(1, 2, 1), */
-    /*               X(2, 0, 0) ]); */
-    /* r.sortBy!1; */
-    /* assert(r == [ X(2, 0, 0), */
-    /*               X(0, 1, 2), */
-    /*               X(1, 2, 1)] ); */
-    /* r.sortBy!2; */
-    /* assert(r == [ X(2, 0, 0), */
-    /*               X(1, 2, 1), */
-    /*               X(0, 1, 2) ]); */
-
+    r.sortBy!0;
+    assert(r == [ X(0, 1, 2),
+                  X(1, 2, 1),
+                  X(2, 0, 0) ]);
+    r.sortBy!1;
+    assert(r == [ X(2, 0, 0),
+                  X(0, 1, 2),
+                  X(1, 2, 1)] );
+    r.sortBy!2;
+    assert(r == [ X(2, 0, 0),
+                  X(1, 2, 1),
+                  X(0, 1, 2) ]);
 }
