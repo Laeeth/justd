@@ -12,6 +12,7 @@
     Data: http://icon.shef.ac.uk/Moby/
     Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
     Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
+    Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
 
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: https://en.wikipedia.org/wiki/Hypergraph
@@ -39,10 +40,11 @@ import std.conv: to;
 import std.stdio;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy;
 import std.container: Array;
-import algorithm_ex: isPalindrome;
-import range_ex: stealFront, stealBack;
 import std.string: tr;
 import std.uni: isWhite, toLower;
+import algorithm_ex: isPalindrome;
+import range_ex: stealFront, stealBack;
+import sort_ex: sortBy;
 
 /* version = msgpack; */
 
@@ -1607,7 +1609,7 @@ class Net(bool useArray = true,
             foreach (inGroup; insByRelation(concept))
             {
                 showLinkRelation(inGroup.front[0]._relation, LinkDir.input);
-                foreach (inLink, inConcept; inGroup)
+                foreach (inLink, inConcept; inGroup.rsortBy!(a => a[0]._weight)) // sort on descending weights
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
                 }
@@ -1617,7 +1619,7 @@ class Net(bool useArray = true,
             foreach (outGroup; outsByRelation(concept))
             {
                 showLinkRelation(outGroup.front[0]._relation, LinkDir.input);
-                foreach (outLink, outConcept; outGroup)
+                foreach (outLink, outConcept; outGroup.rsortBy!(a => a[0]._weight)) // sort on descending weights
                 {
                     showConcept(outConcept, outLink.normalizedWeight);
                 }
