@@ -9,7 +9,7 @@ module sort_ex;
 import std.traits: isAggregateType, isIntegral;
 import std.range: ElementType, isRandomAccessRange;
 
-template xtorFun(alias xtor)
+private template xtorFun(alias xtor)
 {
     static if (is(typeof(xtor) : string))
     {
