@@ -38,13 +38,13 @@ module knet;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort;
 import std.container: Array;
 import std.string: tr;
 import std.uni: isWhite, toLower;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
-import sort_ex: sortBy;
+import sort_ex: sortBy, rsortBy;
 
 /* version = msgpack; */
 
@@ -207,7 +207,6 @@ enum Relation:ubyte
     generalizes, // TODO Merge with other enumerator?
 
     hasRelative,
-
     hasFamilyMember, // can be a dog
 
     hasSpouse,
@@ -664,13 +663,22 @@ Thematic toThematic(Relation relation)
 
             case generalizes: return Thematic.unknown;
 
-            case hasFamilyMember: return Thematic.kLines;
-            case hasWife: return Thematic.kLines;
-            case hasHusband: return Thematic.kLines;
-            case hasBrother: return Thematic.kLines;
-            case hasSister: return Thematic.kLines;
-            case hasSpouse: return Thematic.kLines;
-            case hasSibling: return Thematic.kLines;
+            case hasRelative: return Thematic.unknown;
+            case hasFamilyMember: return Thematic.unknown;
+            case hasSpouse: return Thematic.unknown;
+            case hasWife: return Thematic.unknown;
+            case hasHusband: return Thematic.unknown;
+            case hasSibling: return Thematic.unknown;
+            case hasBrother: return Thematic.unknown;
+            case hasSister: return Thematic.unknown;
+            case hasGrandParent: return Thematic.unknown;
+            case hasParent: return Thematic.unknown;
+            case hasFather: return Thematic.unknown;
+            case hasMother: return Thematic.unknown;
+            case hasGrandChild: return Thematic.unknown;
+            case hasChild: return Thematic.unknown;
+            case hasSon: return Thematic.unknown;
+            case hasDaugther: return Thematic.unknown;
 
             case wikipediaURL: return Thematic.things;
         }
@@ -1561,7 +1569,9 @@ class Net(bool useArray = true,
         return typeof(return).undefined;
     }
 
-    void showLinkRelation(Relation relation, LinkDir linkDir, bool negation = false,
+    void showLinkRelation(Relation relation,
+                          LinkDir linkDir,
+                          bool negation = false,
                           HLang lang = HLang.en)
     {
         write(` - `, relation.toHumanLang(linkDir, negation, lang));
@@ -1576,7 +1586,10 @@ class Net(bool useArray = true,
         writef(`:%.2f),`, weight);
     }
 
-    void showLinkConcept(in Concept concept, Relation relation, real weight, LinkDir linkDir)
+    void showLinkConcept(in Concept concept,
+                         Relation relation,
+                         real weight,
+                         LinkDir linkDir)
     {
         showLinkRelation(relation, linkDir);
         showConcept(concept, weight);
@@ -1609,7 +1622,8 @@ class Net(bool useArray = true,
             foreach (inGroup; insByRelation(concept))
             {
                 showLinkRelation(inGroup.front[0]._relation, LinkDir.backward);
-                foreach (inLink, inConcept; inGroup.rsortBy!(a => a[0]._weight)) // sort on descending weights
+                foreach (inLink, inConcept; inGroup.array.sort!((a, b) => (a[0]._weight >
+                                                                           b[0]._weight))) // sort on descending weights
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
                 }
@@ -1619,7 +1633,7 @@ class Net(bool useArray = true,
             foreach (outGroup; outsByRelation(concept))
             {
                 showLinkRelation(outGroup.front[0]._relation, LinkDir.backward);
-                foreach (outLink, outConcept; outGroup.rsortBy!(a => a[0]._weight)) // sort on descending weights
+                foreach (outLink, outConcept; outGroup.array.rsortBy!(a => a[0]._weight)) // sort on descending weights
                 {
                     showConcept(outConcept, outLink.normalizedWeight);
                 }
