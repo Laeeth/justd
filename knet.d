@@ -100,6 +100,7 @@ enum Relation:ubyte
     memberOf, /* A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
     worksFor,
+    leaderOf,
     ceoOf,
 
     hasA, /* B belongs to A, either as an inherent part or due to a social
@@ -116,10 +117,15 @@ enum Relation:ubyte
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
+    bornInLocation, // TODO specializes atLocation
+    diedInLocation, // TODO specializes atLocation
+    hasOfficeIn, // TODO specializes atLocation
+    headquarteredIn, // TODO specializes atLocation
+
     hasContext,
+
     locationOf,
     locationOfAction,
-
     locatedNear,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
@@ -159,16 +165,14 @@ enum Relation:ubyte
     synonymFor, /* A and B have very similar meanings. This is the synonym relation
                 in WordNet as well. */
 
-    antonymFor, /* A and B are opposites in some relevant way, such as being
+    antonymFor, oppositeOf = antonymFor, /* A and B are opposites in some relevant way, such as being
                 opposite ends of a scale, or fundamentally similar things with a
                 key difference between them. Counterintuitively, two _concepts
                 must be quite similar before people consider them antonyms. This
                 is the antonym relation in WordNet as well. /r/Antonym
                 /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
-    oppositeOf = antonymFor,
 
-    retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
-    differentation = retronymFor,
+    retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
 
     derivedFrom, /* A is a word or phrase that appears within B and contributes
                     to B's meaning. /r/DerivedFrom /c/en/pocketbook /c/en/book
@@ -194,6 +198,13 @@ enum Relation:ubyte
     inheritsFrom,
 
     similarSize,
+
+    // comparison
+    isTallerThan,
+    isLargerThan,
+    isHeavierThan,
+    isOlderThan,
+    areMoreThan,
 
     symbolOf,
 
@@ -233,6 +244,18 @@ enum Relation:ubyte
     hasColor,
 
     wikipediaURL,
+
+    atDate,
+    proxyFor,
+    mutualProxyFor,
+    competesWith,
+
+    hasJobPosition, hasEmployment = hasJobPosition,
+    graduatedFrom,
+    agentCreated,
+
+    diedAtAge,
+
 }
 
 string negationIn(HLang lang = HLang.en)
@@ -388,6 +411,25 @@ string toHumanLang(const Relation relation,
                             default: return "has " ~ neg ~ " employee";
                         }
                     }
+                case leaderOf:
+                    if (linkDir == LinkDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "leder" ~ neg;
+                            case en:
+                            default: return "leads" ~ neg;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "leds " ~ neg ~ " av";
+                            case en:
+                            default: return "is lead " ~ neg ~ " by";
+                        }
+                    }
                 case ceoOf:
                     if (linkDir == LinkDir.forward)
                     {
@@ -440,7 +482,7 @@ Relation decodeRelation(S)(S s,
                            out bool negation,
                            out bool reverse) if (isSomeString!S)
 {
-    // TODO Skip nouns such as thing, bodypart, sport, sportchool, sportfans, at beginning and en of s
+    // TODO Skip nouns such as building, item, person, writer, journalist, thing, bodypart, sport, sportchool, sportfans, at beginning and en of s
     with (Relation)
     {
         switch (s.toLower)
@@ -560,6 +602,7 @@ bool specializes(Relation special,
             case hasChild: return special.of(hasSon, hasDaugther);
             case isA: return !special.of(isA, relatedTo);
             case worksFor: return special.of(ceoOf);
+            case leads: return special.of(ceoOf);
             case partOf: return special.of(worksFor);
             default: return special == general;
         }
