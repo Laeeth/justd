@@ -43,11 +43,23 @@ private template xtorFun(alias xtor)
     See also: http://forum.dlang.org/thread/nqwzojnlidlsmpunpqqy@forum.dlang.org#post-dmfvkbfhzigecnwglrur:40forum.dlang.org
  */
 void sortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
-                                         isAggregateType!(ElementType!R))
+                                    isAggregateType!(ElementType!R))
 {
     import std.algorithm: sort;
     import std.functional: unaryFun;
     r.sort!((a, b) => (xtorFun!xtor(a) <
+                       xtorFun!xtor(b)));
+}
+
+/** Reverse Sort Random Access Range $(D R) of Aggregates on Value of Calls to $(D xtor).
+    See also: http://forum.dlang.org/thread/nqwzojnlidlsmpunpqqy@forum.dlang.org#post-dmfvkbfhzigecnwglrur:40forum.dlang.org
+*/
+void rsortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
+                                     isAggregateType!(ElementType!R))
+{
+    import std.algorithm: sort;
+    import std.functional: unaryFun;
+    r.sort!((a, b) => (xtorFun!xtor(a) >
                        xtorFun!xtor(b)));
 }
 
