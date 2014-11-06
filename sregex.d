@@ -323,7 +323,7 @@ class Seq : SPatt
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
     {
         assert(!elms.empty); // TODO Move to in contract?
-        const(ubyte[]) c = getConstant;
+        const c = getConstant;
         if (!c.empty)
         {
             return (soff + c.length <= haystack.length &&   // if equal size and
@@ -411,8 +411,8 @@ class Alt : SPatt
         }
         else if (alts.length == 2)
         {
-            const ubyte[] a0 = alts[0].getConstant;
-            const ubyte[] a1 = alts[1].getConstant;
+            const a0 = alts[0].getConstant;
+            const a1 = alts[1].getConstant;
             if (!a0.empty &&
                 !a1.empty)
             {
@@ -422,9 +422,9 @@ class Alt : SPatt
         }
         else if (alts.length == 3)
         {
-            const ubyte[] a0 = alts[0].getConstant;
-            const ubyte[] a1 = alts[1].getConstant;
-            const ubyte[] a2 = alts[2].getConstant;
+            const a0 = alts[0].getConstant;
+            const a1 = alts[1].getConstant;
+            const a2 = alts[2].getConstant;
             if (!a0.empty &&
                 !a1.empty &&
                 !a2.empty)
@@ -435,10 +435,10 @@ class Alt : SPatt
         }
         else if (alts.length == 4)
         {
-            const ubyte[] a0 = alts[0].getConstant;
-            const ubyte[] a1 = alts[1].getConstant;
-            const ubyte[] a2 = alts[2].getConstant;
-            const ubyte[] a3 = alts[3].getConstant;
+            const a0 = alts[0].getConstant;
+            const a1 = alts[1].getConstant;
+            const a2 = alts[2].getConstant;
+            const a3 = alts[3].getConstant;
             if (!a0.empty &&
                 !a1.empty &&
                 !a2.empty &&
@@ -450,11 +450,11 @@ class Alt : SPatt
         }
         else if (alts.length == 5)
         {
-            const ubyte[] a0 = alts[0].getConstant;
-            const ubyte[] a1 = alts[1].getConstant;
-            const ubyte[] a2 = alts[2].getConstant;
-            const ubyte[] a3 = alts[3].getConstant;
-            const ubyte[] a4 = alts[4].getConstant;
+            const a0 = alts[0].getConstant;
+            const a1 = alts[1].getConstant;
+            const a2 = alts[2].getConstant;
+            const a3 = alts[3].getConstant;
+            const a4 = alts[4].getConstant;
             if (!a0.empty &&
                 !a1.empty &&
                 !a2.empty &&
