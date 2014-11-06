@@ -247,8 +247,8 @@ string negationIn(HLang lang = HLang.en)
 /** Link Direction. */
 enum LinkDir
 {
-    input,
-    output
+    backward,
+    forward
 }
 
 string toHumanLang(const Relation relation,
@@ -307,7 +307,7 @@ string toHumanLang(const Relation relation,
                         default: return "is" ~ neg ~ " similar to";
                     }
                 case isA:
-                    if (linkDir == LinkDir.output)
+                    if (linkDir == LinkDir.forward)
                     {
                         switch (lang)
                         {
@@ -328,7 +328,7 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 case partOf:
-                    if (linkDir == LinkDir.output)
+                    if (linkDir == LinkDir.forward)
                     {
                         switch (lang)
                         {
@@ -347,7 +347,7 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 case memberOf:
-                    if (linkDir == LinkDir.output)
+                    if (linkDir == LinkDir.forward)
                     {
                         switch (lang)
                         {
@@ -366,7 +366,7 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 case hasA:
-                    if (linkDir == LinkDir.output)
+                    if (linkDir == LinkDir.forward)
                     {
                         switch (lang)
                         {
@@ -385,9 +385,9 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 default:
-                    return (((!relation.isSymmetric) && linkDir == LinkDir.output ? `<` : ``) ~
+                    return (((!relation.isSymmetric) && linkDir == LinkDir.forward ? `<` : ``) ~
                             `-` ~ relation.to!(typeof(return)) ~ `-` ~
-                            ((!relation.isSymmetric) && linkDir == LinkDir.input ? `>` : ``));
+                            ((!relation.isSymmetric) && linkDir == LinkDir.backward ? `>` : ``));
             }
         }
     }
@@ -1608,7 +1608,7 @@ class Net(bool useArray = true,
 
             foreach (inGroup; insByRelation(concept))
             {
-                showLinkRelation(inGroup.front[0]._relation, LinkDir.input);
+                showLinkRelation(inGroup.front[0]._relation, LinkDir.backward);
                 foreach (inLink, inConcept; inGroup.rsortBy!(a => a[0]._weight)) // sort on descending weights
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
@@ -1618,7 +1618,7 @@ class Net(bool useArray = true,
 
             foreach (outGroup; outsByRelation(concept))
             {
-                showLinkRelation(outGroup.front[0]._relation, LinkDir.input);
+                showLinkRelation(outGroup.front[0]._relation, LinkDir.backward);
                 foreach (outLink, outConcept; outGroup.rsortBy!(a => a[0]._weight)) // sort on descending weights
                 {
                     showConcept(outConcept, outLink.normalizedWeight);
@@ -1632,7 +1632,7 @@ class Net(bool useArray = true,
             /*     showLinkConcept(conceptByIx(link._dstIx), */
             /*                     link._relation, */
             /*                     link.normalizedWeight, */
-            /*                     LinkDir.input); */
+            /*                     LinkDir.backward); */
             /* } */
             /* foreach (ix; concept.outIxes) */
             /* { */
@@ -1640,7 +1640,7 @@ class Net(bool useArray = true,
             /*     showLinkConcept(conceptByIx(link._srcIx), */
             /*                     link._relation, */
             /*                     link.normalizedWeight, */
-            /*                     LinkDir.output); */
+            /*                     LinkDir.forward); */
             /* } */
         }
 
@@ -1653,7 +1653,7 @@ class Net(bool useArray = true,
                 showLinkConcept(palindromeConcept,
                                 Relation.instanceOf,
                                 real.infinity,
-                                LinkDir.input);
+                                LinkDir.backward);
             }
         }
     }
