@@ -156,19 +156,19 @@ enum Relation:ubyte
                   /c/en/bake */
     receivesAction,
 
-    synonym, /* A and B have very similar meanings. This is the synonym relation
+    synonymFor, /* A and B have very similar meanings. This is the synonym relation
                 in WordNet as well. */
 
-    antonym, /* A and B are opposites in some relevant way, such as being
+    antonymFor, /* A and B are opposites in some relevant way, such as being
                 opposite ends of a scale, or fundamentally similar things with a
                 key difference between them. Counterintuitively, two _concepts
                 must be quite similar before people consider them antonyms. This
                 is the antonym relation in WordNet as well. /r/Antonym
                 /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
-    oppositeOf = antonym,
+    oppositeOf = antonymFor,
 
-    retronym, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
-    differentation = retronym,
+    retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
+    differentation = retronymFor,
 
     derivedFrom, /* A is a word or phrase that appears within B and contributes
                     to B's meaning. /r/DerivedFrom /c/en/pocketbook /c/en/book
@@ -230,6 +230,8 @@ enum Relation:ubyte
     hasDaugther,
     hasPet, // TODO dst concept is animal
 
+    hasColor,
+
     wikipediaURL,
 }
 
@@ -280,14 +282,14 @@ string toHumanLang(const Relation relation,
                         case en:
                         default: return "is" ~ neg ~ " translated to";
                     }
-                case synonym:
+                case synonymFor:
                     switch (lang)
                     {
                         case sv: return "är" ~ neg ~ " synonym med";
                         case en:
                         default: return "is" ~ neg ~ " synonymous with";
                     }
-                case antonym:
+                case antonymFor:
                     switch (lang)
                     {
                         case sv: return "är" ~ neg ~ " motsatsen till";
@@ -438,6 +440,7 @@ Relation decodeRelation(S)(S s,
                            out bool negation,
                            out bool reverse) if (isSomeString!S)
 {
+    // TODO Skip nouns such as thing, bodypart, sport, sportchool, sportfans, at beginning and en of s
     with (Relation)
     {
         switch (s.toLower)
@@ -464,8 +467,11 @@ Relation decodeRelation(S)(S s,
             case `hasfirstsubevent`:                             return hasFirstSubevent;
             case `haslastsubevent`:                              return hasLastSubevent;
             case `hasprerequisite`:                              return hasPrerequisite;
+
             case `hasproperty`:                                  return hasProperty;
+            case `thinghascolor`:                                return hasColor;
             case `attribute`:                                    return attribute;
+
             case `motivatedbygoal`:                              return motivatedByGoal;
             case `obstructedby`:                                 return obstructedBy;
             case `desires`:                                      return desires;
@@ -473,9 +479,9 @@ Relation decodeRelation(S)(S s,
             case `desireof`:                                     return desireOf;
             case `createdby`:                                    return createdBy;
             case `receivesaction`:                               return receivesAction;
-            case `synonym`:                                      return synonym;
-            case `antonym`:                                      return antonym;
-            case `retronym`:                                     return retronym;
+            case `synonym`:                                      return synonymFor;
+            case `antonym`:                                      return antonymFor;
+            case `retronym`:                                     return retronymFor;
             case `derivedfrom`:                                  return derivedFrom;
             case `compoundderivedfrom`:                          return compoundDerivedFrom;
             case `etymologicallyderivedfrom`:                    return etymologicallyDerivedFrom;
@@ -515,7 +521,7 @@ Relation decodeRelation(S)(S s,
             case "haswikipediaurl": return wikipediaURL;
             case "latitudelongitude": return atLocation;
             case "subpartof": return partOf;
-            case "synonymfor": return synonym;
+            case "synonymfor": return synonymFor;
             case "generalizations": return generalizes;
             case "specializationof": reverse = true; return generalizes;
             case "conceptprerequisiteof": reverse = true; return hasPrerequisite;
@@ -574,8 +580,8 @@ bool generalizes(T)(T general,
         with (Relation)
             return relation.of(relatedTo,
                                translationOf,
-                               synonym,
-                               antonym,
+                               synonymFor,
+                               antonymFor,
                                similarSize,
                                similarTo,
                                hasFamilyMember, hasSibling);
@@ -602,9 +608,8 @@ bool generalizes(T)(T general,
                                causes,
                                entails,
                                hasSubevent,
-                               synonym,
+                               synonymFor,
                                hasPrerequisite,
-                               hasProperty,
                                translationOf,
 
                                hasRelative, hasFamilyMember, hasSibling, hasBrother, hasSister);
@@ -617,6 +622,7 @@ bool generalizes(T)(T general,
     {
         with (Relation)
             return relation.of(hasProperty,
+                               hasColor,
                                motivatedByGoal);
     }
 
@@ -681,8 +687,11 @@ Thematic toThematic(Relation relation)
             case hasFirstSubevent: return Thematic.events;
             case hasLastSubevent: return Thematic.events;
             case hasPrerequisite: return Thematic.causal; // TODO Use events, causal, functional
+
             case hasProperty: return Thematic.things;
+            case hasColor: return Thematic.unknown;
             case attribute: return Thematic.things;
+
             case motivatedByGoal: return Thematic.affective;
             case obstructedBy: return Thematic.causal;
             case desires: return Thematic.affective;
@@ -692,9 +701,9 @@ Thematic toThematic(Relation relation)
             case createdBy: return Thematic.agents;
             case receivesAction: return Thematic.agents;
 
-            case synonym: return Thematic.synonym;
-            case antonym: return Thematic.antonym;
-            case retronym: return Thematic.retronym;
+            case synonymFor: return Thematic.synonym;
+            case antonymFor: return Thematic.antonym;
+            case retronymFor: return Thematic.retronym;
 
             case derivedFrom: return Thematic.things;
             case compoundDerivedFrom: return Thematic.things;
