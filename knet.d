@@ -226,6 +226,7 @@ enum Relation:ubyte
     hasChild,
     hasSon,
     hasDaugther,
+    hasPet,
 
     wikipediaURL,
 }
@@ -487,7 +488,10 @@ Relation decodeRelation(S)(S s,
     }
 }
 
-/** Return true if $(D special) is a more specialized relation than $(D general). */
+/** Return true if $(D special) is a more specialized relation than $(D general).
+    TODO extend to apply specialization in several steps:
+    If A specializes B and B specializes C then A specializes C
+ */
 bool specializes(Relation special,
                  Relation general)
     @safe @nogc pure nothrow
@@ -499,7 +503,7 @@ bool specializes(Relation special,
              * relevant cases: */
             case relatedTo:   return special != relatedTo;
             case hasRelative: return special == hasFamilyMember;
-            case hasFamilyMember: return special.of(hasSpouse, hasSibling, hasParent, hasChild);
+            case hasFamilyMember: return special.of(hasSpouse, hasSibling, hasParent, hasChild, hasPet);
             case hasSpouse: return special.of(hasWife, hasHusband);
             case hasSibling: return special.of(hasBrother, hasSister);
             case hasParent: return special.of(hasFather, hasMother);
@@ -556,7 +560,8 @@ bool generalizes(T)(T general,
                                hasPrerequisite,
                                hasProperty,
                                translationOf,
-                               hasFamilyMember, hasSibling, hasBrother, hasSister);
+
+                               hasRelative, hasFamilyMember, hasSibling, hasBrother, hasSister);
     }
 
     /** Return true if $(D relation) is a strong.
@@ -1622,8 +1627,7 @@ class Net(bool useArray = true,
             foreach (inGroup; insByRelation(concept))
             {
                 showLinkRelation(inGroup.front[0]._relation, LinkDir.backward);
-                foreach (inLink, inConcept; inGroup.array.sort!((a, b) => (a[0]._weight >
-                                                                           b[0]._weight))) // sort on descending weights
+                foreach (inLink, inConcept; inGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
                 }
@@ -1633,7 +1637,7 @@ class Net(bool useArray = true,
             foreach (outGroup; outsByRelation(concept))
             {
                 showLinkRelation(outGroup.front[0]._relation, LinkDir.backward);
-                foreach (outLink, outConcept; outGroup.array.rsortBy!(a => a[0]._weight)) // sort on descending weights
+                foreach (outLink, outConcept; outGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
                     showConcept(outConcept, outLink.normalizedWeight);
                 }
