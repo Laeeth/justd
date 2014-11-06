@@ -45,6 +45,7 @@ import std.uni: isWhite, toLower;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy;
+import dbg;
 
 /* version = msgpack; */
 
@@ -96,9 +97,10 @@ enum Relation:ubyte
 
     partOf, /* A is a part of B. This is the part meronym relation in
                WordNet. /r/PartOf /c/en/gearshift /c/en/car */
-
     memberOf, /* A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
+    worksFor,
+    ceoOf,
 
     hasA, /* B belongs to A, either as an inherent part or due to a social
              construct of possession. HasA is often the reverse of PartOf. /r/HasA
@@ -360,9 +362,47 @@ string toHumanLang(const Relation relation,
                     {
                         switch (lang)
                         {
-                            case sv: return "kan ha" ~ neg ~ " en medlem";
+                            case sv: return "har" ~ neg ~ " medlem";
                             case en:
-                            default: return "may" ~ neg ~ " have a member";
+                            default: return "have" ~ neg ~ " member";
+                        }
+                    }
+                case worksFor:
+                    if (linkDir == LinkDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "arbetar" ~ neg ~ " för";
+                            case en:
+                            default: return "works" ~ neg ~ " for";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "har " ~ neg ~ " arbetar";
+                            case en:
+                            default: return "has " ~ neg ~ " employee";
+                        }
+                    }
+                case ceoOf:
+                    if (linkDir == LinkDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "är" ~ neg ~ " VD för";
+                            case en:
+                            default: return "is" ~ neg ~ " CEO of";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "is " ~ neg ~ " led by";
+                            case en:
+                            default: return "leds " ~ neg ~ " av";
                         }
                     }
                 case hasA:
@@ -404,8 +444,12 @@ Relation decodeRelation(S)(S s,
         {
             case `relatedto`:                                    return relatedTo;
             case `isa`:                                          return isA;
+
             case `partof`:                                       return partOf;
             case `memberof`:                                     return memberOf;
+            case "worksfor":                                     return worksFor;
+            case "ceoof":                                        return ceoOf;
+
             case `hasa`:                                         return hasA;
             case `usedfor`:                                      return usedFor;
             case `capableof`:                                    return capableOf;
@@ -482,7 +526,7 @@ Relation decodeRelation(S)(S s,
             case "bodypartcontainsbodypart": reverse = true; return partOf; // TODO bodypart, bodypart?
 
             default:
-                writeln(`Unknown relationString `, s);
+                dln(`Unknown relationString `, s);
                 return relatedTo;
         }
     }
@@ -509,6 +553,8 @@ bool specializes(Relation special,
             case hasParent: return special.of(hasFather, hasMother);
             case hasChild: return special.of(hasSon, hasDaugther);
             case isA: return !special.of(isA, relatedTo);
+            case worksFor: return special.of(ceoOf);
+            case partOf: return special.of(worksFor);
             default: return special == general;
         }
     }
@@ -614,8 +660,12 @@ Thematic toThematic(Relation relation)
         {
             case relatedTo: return Thematic.kLines;
             case isA: return Thematic.things;
+
             case partOf: return Thematic.things;
             case memberOf: return Thematic.things;
+            case worksFor: return Thematic.unknown;
+            case ceoOf: return Thematic.unknown;
+
             case hasA: return Thematic.things;
             case usedFor: return Thematic.functional;
             case capableOf: return Thematic.agents;
@@ -724,7 +774,6 @@ class Net(bool useArray = true,
 {
     import std.algorithm, std.range, std.path, std.array;
     import wordnet: WordNet;
-    import dbg;
     import std.typecons: Nullable;
 
     /** Ix Precision.
@@ -1211,7 +1260,7 @@ class Net(bool useArray = true,
                         return;
                     }
 
-                    if (show) write("ENTITY:", entity);
+                    if (show) dln("ENTITY:", entity);
 
                     /* category */
                     immutable categoryName = entity.front.idup; entity.popFront;
@@ -1229,7 +1278,7 @@ class Net(bool useArray = true,
 
                     if (entity.empty)
                     {
-                        if (show) writeln("TODO Handle category-only ", entity);
+                        if (show) dln("TODO Handle category-only ", entity);
                         return;
                     }
 
@@ -1251,7 +1300,7 @@ class Net(bool useArray = true,
                     if (predicate.front == "concept")
                         predicate.popFront; // ignore no-meaningful information
                     else
-                        if (show) writeln("TODO Handle non-concept predicate ", predicate);
+                        if (show) dln("TODO Handle non-concept predicate ", predicate);
 
                     relation = predicate.front.decodeRelation(negation, reverse);
                     ignored = (relation == Relation.wikipediaURL);
@@ -1263,7 +1312,6 @@ class Net(bool useArray = true,
                         const loc = part.findSplit(",");
                         if (!loc[1].empty)
                         {
-                            writeln("LATLON: ", loc);
                             setLocation(entityIx,
                                         Location(loc[0].to!double,
                                                  loc[2].to!double));
@@ -1271,14 +1319,14 @@ class Net(bool useArray = true,
                         else
                         {
                             auto value = part.splitter(':');
-                            writeln("LOCATION: ", value);
+                            dln("connect(src, Relation.atLocation, dst): ", value);
                             if (value.front == "concept")
                             {
                                 value.popFront; // ignore no-meaningful information
                             }
                             else
                             {
-                                if (show) writeln("TODO Handle non-concept value ", value);
+                                if (show) dln("TODO Handle non-concept value ", value);
                             }
 
                         }
@@ -1290,7 +1338,7 @@ class Net(bool useArray = true,
                 default:
                     if (ix < 5 && !ignored)
                     {
-                        if (show) write(" MORE:", part);
+                        if (show) dln(" MORE:", part);
                     }
                     break;
             }
