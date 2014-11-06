@@ -226,7 +226,7 @@ enum Relation:ubyte
     hasChild,
     hasSon,
     hasDaugther,
-    hasPet,
+    hasPet, // TODO dst concept is animal
 
     wikipediaURL,
 }
@@ -684,6 +684,7 @@ Thematic toThematic(Relation relation)
             case hasChild: return Thematic.unknown;
             case hasSon: return Thematic.unknown;
             case hasDaugther: return Thematic.unknown;
+            case hasPet: return Thematic.unknown;
 
             case wikipediaURL: return Thematic.things;
         }
@@ -1255,13 +1256,6 @@ class Net(bool useArray = true,
                     relation = predicate.front.decodeRelation(negation, reverse);
                     ignored = (relation == Relation.wikipediaURL);
 
-                    switch (predicate.front)
-                    {
-                        // TODO reuse decodeRelation
-                        default:
-                            writeln(" PREDICATE:", predicate.front);
-                            break;
-                    }
                     break;
                 case 2:
                     if (relation == Relation.atLocation)
