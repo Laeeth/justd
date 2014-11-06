@@ -1,11 +1,14 @@
 import std.stdio;
 import knet;
+
+import etc.linux.memoryerror;
 debug import backtrace.backtrace;
 
 int main(string[] args)
 {
     debug import std.stdio: stderr;
     debug backtrace.backtrace.install(stderr);
+    registerMemoryErrorHandler();
 
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
     net.showConcepts(`car_wash`);
