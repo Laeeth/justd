@@ -9,39 +9,46 @@ module sort_ex;
 import std.traits: isAggregateType, isIntegral;
 import std.range: ElementType, isRandomAccessRange;
 
-template extractorFun(alias extractor)
+template xtorFun(alias xtor)
 {
-    static if (is(typeof(extractor) : string))
+    static if (is(typeof(xtor) : string))
     {
-        auto ref extractorFun(T)(auto ref T a)
+        auto ref xtorFun(T)(auto ref T a)
         {
-            mixin("with (a) { return " ~ extractor ~ "; }");
+            mixin("with (a) { return " ~ xtor ~ "; }");
         }
     }
-    else static if (isIntegral!(typeof(extractor)))
+    else static if (isIntegral!(typeof(xtor)))
     {
-        auto ref extractorFun(T)(auto ref T a)
+        auto ref xtorFun(T)(auto ref T a)
         {
             import std.conv: to;
-            mixin("return a.tupleof[" ~ extractor.to!string ~ "];");
+            mixin("return a.tupleof[" ~ xtor.to!string ~ "];");
         }
     }
     else
     {
-        alias extractorFun = extractor;
+        alias xtorFun = xtor;
     }
 }
 
-/** Sort Random Access Range $(D R) of Aggregates on Value of Calls to $(D extractor).
+/* private alias makePredicate(alias xtor) = (a, b) => (xtorFun!xtor(a) < xtorFun!xtor(b)); */
+
+/* auto sortBy(xtors..., R)(R r) { */
+/*     alias preds = staticMap!(makePredicate, xtors); */
+/*     return r.sort!preds; */
+/* } */
+
+/** Sort Random Access Range $(D R) of Aggregates on Value of Calls to $(D xtor).
     See also: http://forum.dlang.org/thread/nqwzojnlidlsmpunpqqy@forum.dlang.org#post-dmfvkbfhzigecnwglrur:40forum.dlang.org
  */
-void sortBy(alias extractor, R)(R r) if (isRandomAccessRange!R &&
+void sortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
                                          isAggregateType!(ElementType!R))
 {
     import std.algorithm: sort;
     import std.functional: unaryFun;
-    r.sort!((a, b) => (extractorFun!extractor(a) <
-                       extractorFun!extractor(b)));
+    r.sort!((a, b) => (xtorFun!xtor(a) <
+                       xtorFun!xtor(b)));
 }
 
 @safe pure nothrow unittest
