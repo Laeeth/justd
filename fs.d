@@ -186,7 +186,7 @@ alias XGram = NGram!(ubyte, NGramOrder, ngram.Kind.saturated, ngram.Storage.spar
 /* import pegged.dynamic.peg; */
 
 /* Need for signal handling */
-import std.c.stdlib;
+import core.stdc.stdlib;
 version(linux) import std.c.linux.linux;
 /* TODO Set global state.
    http://forum.dlang.org/thread/cu9fgg$28mr$1@digitaldaemon.com
@@ -1705,6 +1705,16 @@ class GStats
                                FileContent.text, FileKindDetection.equalsContents);
 
         txtFKinds ~= new FKind("Audacity Project", [], ["aup"], [], 0, "<?xml", [],
+                               defaultCommentDelims,
+                               defaultStringDelims,
+                               FileContent.text, FileKindDetection.equalsNameAndContents);
+
+        txtFKinds ~= new FKind("Comma-separated values", [], ["csv"], [], 0, [], [], // TODO decribe with sregex
+                               defaultCommentDelims,
+                               defaultStringDelims,
+                               FileContent.text, FileKindDetection.equalsNameAndContents);
+
+        txtFKinds ~= new FKind("Tab-separated values", [], ["tsv"], [], 0, [], [], // TODO describe with sregex
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
