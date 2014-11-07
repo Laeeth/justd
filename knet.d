@@ -38,7 +38,7 @@ module knet;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver;
 import std.container: Array;
 import std.string: tr;
 import std.uni: isWhite, toLower;
@@ -80,7 +80,7 @@ static if (__VERSION__ < 2067)
 /** Conceptnet Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
-enum Relation:ubyte
+enum Rel:ubyte
 {
     relatedTo, /* The most general relation. There is some positive relationship
                 * between A and B, but ConceptNet can't determine what that * relationship
@@ -99,9 +99,11 @@ enum Relation:ubyte
                WordNet. /r/PartOf /c/en/gearshift /c/en/car */
     memberOf, /* A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
+    participateIn,
     worksFor,
     leaderOf,
     ceoOf,
+    playsIn,
 
     hasA, /* B belongs to A, either as an inherent part or due to a social
              construct of possession. HasA is often the reverse of PartOf. /r/HasA
@@ -125,7 +127,6 @@ enum Relation:ubyte
     hasContext,
 
     locationOf,
-    locationOfAction,
     locatedNear,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
@@ -158,6 +159,7 @@ enum Relation:ubyte
     causesDesire, // TODO redundant with desires
     desireOf, // TODO redundant with desires
 
+    hiredBy,
     createdBy, /* B is a process that creates A. /r/CreatedBy /c/en/cake
                   /c/en/bake */
     receivesAction,
@@ -241,6 +243,7 @@ enum Relation:ubyte
     hasDaugther,
     hasPet, // TODO dst concept is animal
 
+    hasShape,
     hasColor,
 
     wikipediaURL,
@@ -256,40 +259,29 @@ enum Relation:ubyte
 
     diedAtAge,
 
+    chargedWithCrime,
+
 }
 
-string negationIn(HLang lang = HLang.en)
-    @safe pure nothrow
-{
-    with (HLang)
-        switch (lang)
-        {
-            case en: return "not";
-            case sv: return "inte";
-            case de: return "nicht";
-            default: return "not";
-        }
-}
-
-/** Link Direction. */
-enum LinkDir
+/** Relation Direction. */
+enum RelDir
 {
     backward,
     forward
 }
 
-string toHumanLang(const Relation relation,
-                   const LinkDir linkDir,
+string toHumanLang(const Rel rel,
+                   const RelDir linkDir,
                    const bool negation = false,
                    const HLang lang = HLang.en)
     @safe pure
 {
-    with (Relation)
+    with (Rel)
     {
         with (HLang)
         {
             auto neg = negation ? " " ~ negationIn(lang) : "";
-            switch (relation)
+            switch (rel)
             {
                 case relatedTo:
                     switch (lang)
@@ -334,7 +326,7 @@ string toHumanLang(const Relation relation,
                         default: return "is" ~ neg ~ " similar to";
                     }
                 case isA:
-                    if (linkDir == LinkDir.forward)
+                    if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -355,7 +347,7 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 case partOf:
-                    if (linkDir == LinkDir.forward)
+                    if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -374,7 +366,7 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 case memberOf:
-                    if (linkDir == LinkDir.forward)
+                    if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -392,8 +384,27 @@ string toHumanLang(const Relation relation,
                             default: return "have" ~ neg ~ " member";
                         }
                     }
+                case participateIn:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "deltog" ~ neg ~ " i";
+                            case en:
+                            default: return "participate" ~ neg ~ " in";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "har" ~ neg ~ " deltagare";
+                            case en:
+                            default: return "have" ~ neg ~ " participant";
+                        }
+                    }
                 case worksFor:
-                    if (linkDir == LinkDir.forward)
+                    if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -411,8 +422,27 @@ string toHumanLang(const Relation relation,
                             default: return "has " ~ neg ~ " employee";
                         }
                     }
+                case playsIn:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "spelar" ~ neg ~ " i";
+                            case en:
+                            default: return "plays" ~ neg ~ " in";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "har " ~ neg ~ " spelare";
+                            case en:
+                            default: return "have " ~ neg ~ " player";
+                        }
+                    }
                 case leaderOf:
-                    if (linkDir == LinkDir.forward)
+                    if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -431,7 +461,7 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 case ceoOf:
-                    if (linkDir == LinkDir.forward)
+                    if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -450,7 +480,7 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 case hasA:
-                    if (linkDir == LinkDir.forward)
+                    if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -469,21 +499,47 @@ string toHumanLang(const Relation relation,
                         }
                     }
                 default:
-                    return (((!relation.isSymmetric) && linkDir == LinkDir.forward ? `<` : ``) ~
-                            `-` ~ relation.to!(typeof(return)) ~ `-` ~
-                            ((!relation.isSymmetric) && linkDir == LinkDir.backward ? `>` : ``));
+                    return (((!rel.isSymmetric) && linkDir == RelDir.forward ? `<` : ``) ~
+                            `-` ~ rel.to!(typeof(return)) ~ `-` ~
+                            ((!rel.isSymmetric) && linkDir == RelDir.backward ? `>` : ``));
             }
         }
     }
 }
 
-
-Relation decodeRelation(S)(S s,
-                           out bool negation,
-                           out bool reverse) if (isSomeString!S)
+void skipOverNELLPrefixes(R, A)(ref R s, in A agents)
 {
-    // TODO Skip nouns such as building, item, person, writer, journalist, thing, bodypart, sport, sportchool, sportfans, at beginning and en of s
-    with (Relation)
+    foreach (agent; agents)
+    {
+        if (s.skipOver(agent)) { break; }
+    }
+}
+
+void skipOverNELLSuffixes(R, A)(ref R s, in A agents)
+{
+    foreach (agent; agents)
+    {
+        if (s.endsWith(agent)) { s = s[0 .. $ - agent.length]; break; }
+    }
+}
+
+void skipOverNELLNouns(R, A)(ref R s, in A agents)
+{
+    s.skipOverNELLPrefixes(agents);
+    s.skipOverNELLSuffixes(agents);
+}
+
+Rel decodeRelation(S)(S s,
+                      out bool negation,
+                      out bool reverse) if (isSomeString!S)
+{
+    enum nellAgents = ["concept", "agent", "item", "person", "building", "writer",
+                       "journalist", "thing", "bodypart", "sportschool", "school",
+                       "sportfans", "event",
+                       "city", "organization", "university", "action", "room"];
+    s.skipOverNELLNouns(nellAgents);
+
+    with (Rel)
     {
         switch (s.toLower)
         {
@@ -492,26 +548,36 @@ Relation decodeRelation(S)(S s,
 
             case `partof`:                                       return partOf;
             case `memberof`:                                     return memberOf;
+            case `belongsto`:                                    return memberOf;
+
+            case `participatein`:                                return participateIn;
+            case `participatedin`:                               return participateIn; // TODO past tense
             case "worksfor":                                     return worksFor;
             case "ceoof":                                        return ceoOf;
+            case "playsin":                                      return playsIn;
 
             case `hasa`:                                         return hasA;
             case `usedfor`:                                      return usedFor;
             case `capableof`:                                    return capableOf;
+
             case `atlocation`:                                   return atLocation;
+            case `actsinlocation`:                               return atLocation;
+            case "foundin":                                      return atLocation;
+
             case `hascontext`:                                   return hasContext;
             case `locationof`:                                   return locationOf;
-            case `locationofaction`:                             return locationOfAction;
             case `locatednear`:                                  return locatedNear;
             case `causes`:                                       return causes;
             case `entails`:                                      return entails;
+
             case `hassubevent`:                                  return hasSubevent;
             case `hasfirstsubevent`:                             return hasFirstSubevent;
             case `haslastsubevent`:                              return hasLastSubevent;
             case `hasprerequisite`:                              return hasPrerequisite;
 
             case `hasproperty`:                                  return hasProperty;
-            case `thinghascolor`:                                return hasColor;
+            case `hasshape`:                                     return hasShape;
+            case `hascolor`:                                     return hasColor;
             case `attribute`:                                    return attribute;
 
             case `motivatedbygoal`:                              return motivatedByGoal;
@@ -519,12 +585,21 @@ Relation decodeRelation(S)(S s,
             case `desires`:                                      return desires;
             case `causesdesire`:                                 return causesDesire;
             case `desireof`:                                     return desireOf;
+
+            case "hired":                        reverse = true; return hiredBy;
+            case `hiredBy`:                                      return hiredBy;
+
+            case `created`:                      reverse = true; return createdBy;
             case `createdby`:                                    return createdBy;
+
             case `receivesaction`:                               return receivesAction;
+
             case `synonym`:                                      return synonymFor;
             case `antonym`:                                      return antonymFor;
             case `retronym`:                                     return retronymFor;
+
             case `derivedfrom`:                                  return derivedFrom;
+
             case `compoundderivedfrom`:                          return compoundDerivedFrom;
             case `etymologicallyderivedfrom`:                    return etymologicallyDerivedFrom;
             case `translationof`:                                return translationOf;
@@ -567,11 +642,26 @@ Relation decodeRelation(S)(S s,
             case "generalizations": return generalizes;
             case "specializationof": reverse = true; return generalizes;
             case "conceptprerequisiteof": reverse = true; return hasPrerequisite;
-            case "sportusesequipment": reverse = true; return usedFor; // TODO sport, equipment?
-            case "sportusesstadium": reverse = true; return usedFor; // TODO  sport, stadium?
-            case "sportfansincountry": reverse = true; return locationOf; // TODO sportsfan, country?
-            case "sportschoolincountry": reverse = true; return locationOf; // TODO sportsschool, country?
-            case "bodypartcontainsbodypart": reverse = true; return partOf; // TODO bodypart, bodypart?
+            case "usesequipment": reverse = true; return usedFor;
+            case "usesstadium": reverse = true; return usedFor;
+            case "incountry": reverse = true; return locationOf;
+            case "containsbodypart": reverse = true; return partOf;
+
+            case "atdate": return atDate;
+            case "proxyfor": return proxyFor;
+            case "mutualproxyfor": return mutualProxyFor;
+            case "parentofperson": return hasChild;
+            case "hasjobposition": return hasJobPosition;
+
+            case "graduatedfrom": return graduatedFrom;
+            case "diedatage": return diedAtAge;
+
+            case "competeswith": return competesWith;
+
+            case "parentof": reverse = true; return hasParent;
+            case "contains": reverse = true; return partOf;
+            case "leads": reverse = true; return leaderOf;
+            case "chargedwithcrime": return chargedWithCrime;
 
             default:
                 dln(`Unknown relationString `, s);
@@ -584,11 +674,11 @@ Relation decodeRelation(S)(S s,
     TODO extend to apply specialization in several steps:
     If A specializes B and B specializes C then A specializes C
  */
-bool specializes(Relation special,
-                 Relation general)
+bool specializes(Rel special,
+                 Rel general)
     @safe @nogc pure nothrow
 {
-    with (Relation) {
+    with (Rel) {
         switch (general)
         {
             /* TODO Use static foreach over all enum members to generate all
@@ -602,8 +692,8 @@ bool specializes(Relation special,
             case hasChild: return special.of(hasSon, hasDaugther);
             case isA: return !special.of(isA, relatedTo);
             case worksFor: return special.of(ceoOf);
-            case leads: return special.of(ceoOf);
-            case partOf: return special.of(worksFor);
+            case leaderOf: return special.of(ceoOf);
+            case memberOf: return special.of(participateIn, worksFor, playsIn);
             default: return special == general;
         }
     }
@@ -618,10 +708,10 @@ bool generalizes(T)(T general,
 
 @safe @nogc pure nothrow
 {
-    bool isSymmetric(const Relation relation)
+    bool isSymmetric(const Rel rel)
     {
-        with (Relation)
-            return relation.of(relatedTo,
+        with (Rel)
+            return rel.of(relatedTo,
                                translationOf,
                                synonymFor,
                                antonymFor,
@@ -636,10 +726,10 @@ bool generalizes(T)(T general,
         A relation R from A to B is transitive if A >=R=> B and B >=R=> C
         infers A >=R=> C.
     */
-    bool isTransitive(const Relation relation)
+    bool isTransitive(const Rel rel)
     {
-        with (Relation)
-            return relation.of(partOf,
+        with (Rel)
+            return rel.of(partOf,
                                relatedTo,
                                isA,
                                memberOf,
@@ -658,27 +748,27 @@ bool generalizes(T)(T general,
                                hasRelative, hasFamilyMember, hasSibling, hasBrother, hasSister);
     }
 
-    /** Return true if $(D relation) is a strong.
+    /** Return true if $(D rel) is a strong.
         TODO Where is strength decided and what purpose does it have?
     */
-    bool isStrong(Relation relation)
+    bool isStrong(Rel rel)
     {
-        with (Relation)
-            return relation.of(hasProperty,
-                               hasColor,
-                               motivatedByGoal);
+        with (Rel)
+            return rel.of(hasProperty,
+                          hasShape,
+                          hasColor,
+                          motivatedByGoal);
     }
 
-    /** Return true if $(D relation) is a weak.
+    /** Return true if $(D rel) is a weak.
         TODO Where is strongness decided and what purpose does it have?
     */
-    bool isWeak(Relation relation)
+    bool isWeak(Rel rel)
     {
-        with (Relation)
-            return relation.of(isA,
-                               locationOf,
-                               locationOfAction,
-                               locatedNear);
+        with (Rel)
+            return rel.of(isA,
+                          locationOf,
+                          locatedNear);
     }
 
 }
@@ -700,99 +790,99 @@ enum Thematic:ubyte
     retronym,
 }
 
-Thematic toThematic(Relation relation)
-    @safe @nogc pure nothrow
-{
-    with (Relation)
-    {
-        final switch (relation)
-        {
-            case relatedTo: return Thematic.kLines;
-            case isA: return Thematic.things;
+/* Thematic toThematic(Rel rel) */
+/*     @safe @nogc pure nothrow */
+/* { */
+/*     with (Rel) */
+/*     { */
+/*         final switch (rel) */
+/*         { */
+/*             case relatedTo: return Thematic.kLines; */
+/*             case isA: return Thematic.things; */
 
-            case partOf: return Thematic.things;
-            case memberOf: return Thematic.things;
-            case worksFor: return Thematic.unknown;
-            case ceoOf: return Thematic.unknown;
+/*             case partOf: return Thematic.things; */
+/*             case memberOf: return Thematic.things; */
+/*             case worksFor: return Thematic.unknown; */
+/*             case leaderOf: return Thematic.unknown; */
+/*             case ceoOf: return Thematic.unknown; */
 
-            case hasA: return Thematic.things;
-            case usedFor: return Thematic.functional;
-            case capableOf: return Thematic.agents;
-            case atLocation: return Thematic.spatial;
-            case hasContext: return Thematic.things;
+/*             case hasA: return Thematic.things; */
+/*             case usedFor: return Thematic.functional; */
+/*             case capableOf: return Thematic.agents; */
+/*             case atLocation: return Thematic.spatial; */
+/*             case hasContext: return Thematic.things; */
 
-            case locationOf: return Thematic.spatial;
-            case locationOfAction: return Thematic.spatial;
-            case locatedNear: return Thematic.spatial;
+/*             case locationOf: return Thematic.spatial; */
+/*             case locatedNear: return Thematic.spatial; */
 
-            case causes: return Thematic.causal;
-            case hasSubevent: return Thematic.events;
-            case hasFirstSubevent: return Thematic.events;
-            case hasLastSubevent: return Thematic.events;
-            case hasPrerequisite: return Thematic.causal; // TODO Use events, causal, functional
+/*             case causes: return Thematic.causal; */
+/*             case hasSubevent: return Thematic.events; */
+/*             case hasFirstSubevent: return Thematic.events; */
+/*             case hasLastSubevent: return Thematic.events; */
+/*             case hasPrerequisite: return Thematic.causal; // TODO Use events, causal, functional */
 
-            case hasProperty: return Thematic.things;
-            case hasColor: return Thematic.unknown;
-            case attribute: return Thematic.things;
+/*             case hasProperty: return Thematic.things; */
+/*             case hasColor: return Thematic.unknown; */
+/*             case attribute: return Thematic.things; */
 
-            case motivatedByGoal: return Thematic.affective;
-            case obstructedBy: return Thematic.causal;
-            case desires: return Thematic.affective;
-            case causesDesire: return Thematic.affective;
-            case desireOf: return Thematic.affective;
+/*             case motivatedByGoal: return Thematic.affective; */
+/*             case obstructedBy: return Thematic.causal; */
+/*             case desires: return Thematic.affective; */
+/*             case causesDesire: return Thematic.affective; */
+/*             case desireOf: return Thematic.affective; */
 
-            case createdBy: return Thematic.agents;
-            case receivesAction: return Thematic.agents;
+/*             case createdBy: return Thematic.agents; */
+/*             case receivesAction: return Thematic.agents; */
 
-            case synonymFor: return Thematic.synonym;
-            case antonymFor: return Thematic.antonym;
-            case retronymFor: return Thematic.retronym;
+/*             case synonymFor: return Thematic.synonym; */
+/*             case antonymFor: return Thematic.antonym; */
+/*             case retronymFor: return Thematic.retronym; */
 
-            case derivedFrom: return Thematic.things;
-            case compoundDerivedFrom: return Thematic.things;
-            case etymologicallyDerivedFrom: return Thematic.things;
-            case translationOf: return Thematic.synonym;
+/*             case derivedFrom: return Thematic.things; */
+/*             case compoundDerivedFrom: return Thematic.things; */
+/*             case etymologicallyDerivedFrom: return Thematic.things; */
+/*             case translationOf: return Thematic.synonym; */
 
-            case definedAs: return Thematic.things;
+/*             case definedAs: return Thematic.things; */
 
-            case instanceOf: return Thematic.things;
-            case madeOf: return Thematic.things;
-            case inheritsFrom: return Thematic.things;
-            case similarSize: return Thematic.things;
-            case symbolOf: return Thematic.kLines;
-            case similarTo: return Thematic.kLines;
-            case hasPainIntensity: return Thematic.kLines;
-            case hasPainCharacter: return Thematic.kLines;
+/*             case instanceOf: return Thematic.things; */
+/*             case madeOf: return Thematic.things; */
+/*             case inheritsFrom: return Thematic.things; */
+/*             case similarSize: return Thematic.things; */
+/*             case symbolOf: return Thematic.kLines; */
+/*             case similarTo: return Thematic.kLines; */
+/*             case hasPainIntensity: return Thematic.kLines; */
+/*             case hasPainCharacter: return Thematic.kLines; */
 
-            case adjectivePertainsTo: return Thematic.unknown;
-            case adverbPertainsTo: return Thematic.unknown;
-            case participleOf: return Thematic.unknown;
+/*             case adjectivePertainsTo: return Thematic.unknown; */
+/*             case adverbPertainsTo: return Thematic.unknown; */
+/*             case participleOf: return Thematic.unknown; */
 
-            case generalizes: return Thematic.unknown;
+/*             case generalizes: return Thematic.unknown; */
 
-            case hasRelative: return Thematic.unknown;
-            case hasFamilyMember: return Thematic.unknown;
-            case hasSpouse: return Thematic.unknown;
-            case hasWife: return Thematic.unknown;
-            case hasHusband: return Thematic.unknown;
-            case hasSibling: return Thematic.unknown;
-            case hasBrother: return Thematic.unknown;
-            case hasSister: return Thematic.unknown;
-            case hasGrandParent: return Thematic.unknown;
-            case hasParent: return Thematic.unknown;
-            case hasFather: return Thematic.unknown;
-            case hasMother: return Thematic.unknown;
-            case hasGrandChild: return Thematic.unknown;
-            case hasChild: return Thematic.unknown;
-            case hasSon: return Thematic.unknown;
-            case hasDaugther: return Thematic.unknown;
-            case hasPet: return Thematic.unknown;
+/*             case hasRelative: return Thematic.unknown; */
+/*             case hasFamilyMember: return Thematic.unknown; */
+/*             case hasSpouse: return Thematic.unknown; */
+/*             case hasWife: return Thematic.unknown; */
+/*             case hasHusband: return Thematic.unknown; */
+/*             case hasSibling: return Thematic.unknown; */
+/*             case hasBrother: return Thematic.unknown; */
+/*             case hasSister: return Thematic.unknown; */
+/*             case hasGrandParent: return Thematic.unknown; */
+/*             case hasParent: return Thematic.unknown; */
+/*             case hasFather: return Thematic.unknown; */
+/*             case hasMother: return Thematic.unknown; */
+/*             case hasGrandChild: return Thematic.unknown; */
+/*             case hasChild: return Thematic.unknown; */
+/*             case hasSon: return Thematic.unknown; */
+/*             case hasDaugther: return Thematic.unknown; */
+/*             case hasPet: return Thematic.unknown; */
 
-            case wikipediaURL: return Thematic.things;
-        }
-    }
+/*             case wikipediaURL: return Thematic.things; */
+/*         } */
+/*     } */
 
-}
+/* } */
 
 enum Origin:ubyte
 {
@@ -964,10 +1054,10 @@ class Net(bool useArray = true,
 
         @safe @nogc pure nothrow:
 
-        this(Relation relation,
+        this(Rel rel,
              Origin origin = Origin.unknown)
         {
-            this._relation = relation;
+            this._relation = rel;
             this._origin = origin;
         }
 
@@ -999,7 +1089,7 @@ class Net(bool useArray = true,
 
         Weight _weight;
 
-        Relation _relation;
+        Rel _relation;
         bool _negation; // relation negation
 
         Origin _origin;
@@ -1035,7 +1125,7 @@ class Net(bool useArray = true,
 
         WordNet!(true, true) _wordnet;
 
-        size_t[Relation.max + 1] _relationCounts;
+        size_t[Rel.max + 1] _relationCounts;
         size_t[Origin.max + 1] _linkSourceCounts;
         size_t[HLang.max + 1] _hlangCounts;
         size_t[WordKind.max + 1] _kindCounts;
@@ -1197,9 +1287,9 @@ class Net(bool useArray = true,
                              Concept(words, lang, kind, categoryIx));
     }
 
-    /** Add Link from $(D src) to $(D dst) of type $(D relation) and weight $(D weight). */
+    /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight). */
     LinkIx connect(ConceptIx srcIx,
-                   Relation relation,
+                   Rel rel,
                    ConceptIx dstIx,
                    Origin origin,
                    real weight = 1.0,
@@ -1207,7 +1297,7 @@ class Net(bool useArray = true,
                    bool reverse = false)
     {
         LinkIx linkIx = LinkIx(cast(Ix)_links.length);
-        auto link = Link(Relation.isA, Origin.nell);
+        auto link = Link(Rel.isA, Origin.nell);
 
         link._srcIx = reverse ? dstIx : srcIx;
         link._dstIx = reverse ? srcIx : dstIx;
@@ -1215,7 +1305,7 @@ class Net(bool useArray = true,
         assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= linkIx; _connectednessSum++;
         assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= linkIx; _connectednessSum++;
 
-        ++_relationCounts[relation];
+        ++_relationCounts[rel];
         ++_linkSourceCounts[origin];
 
         if (origin == Origin.cn5)
@@ -1276,7 +1366,7 @@ class Net(bool useArray = true,
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readNELLLine(R, N)(R line, N lnr)
     {
-        Relation relation = Relation.any;
+        Rel rel = Rel.any;
         bool negation = false;
         bool reverse = false;
 
@@ -1341,7 +1431,7 @@ class Net(bool useArray = true,
                     immutable entityName = entity.front.idup; entity.popFront;
 
                     entityCategoryLink = connect(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
-                                                 Relation.isA,
+                                                 Rel.isA,
                                                  entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
                                                  Origin.nell, 1.0);
 
@@ -1354,12 +1444,12 @@ class Net(bool useArray = true,
                     else
                         if (show) dln("TODO Handle non-concept predicate ", predicate);
 
-                    relation = predicate.front.decodeRelation(negation, reverse);
-                    ignored = (relation == Relation.wikipediaURL);
+                    rel = predicate.front.decodeRelation(negation, reverse);
+                    ignored = (rel == Rel.wikipediaURL);
 
                     break;
                 case 2:
-                    if (relation == Relation.atLocation)
+                    if (rel == Rel.atLocation)
                     {
                         const loc = part.findSplit(",");
                         if (!loc[1].empty)
@@ -1371,7 +1461,7 @@ class Net(bool useArray = true,
                         else
                         {
                             auto value = part.splitter(':');
-                            dln("connect(src, Relation.atLocation, dst): ", value);
+                            dln("connect(src, Rel.atLocation, dst): ", value);
                             if (value.front == "concept")
                             {
                                 value.popFront; // ignore no-meaningful information
@@ -1455,7 +1545,7 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
     LinkIx readCN5Line(R, N)(R line, N lnr)
     {
-        Relation relation = Relation.any;
+        Rel rel = Rel.any;
         bool negation = false;
         bool reverse = false;
 
@@ -1471,7 +1561,7 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 1:
-                    relation = part[3..$].decodeRelation(negation, reverse); // TODO Handle case when part matches /r/_wordnet/X
+                    rel = part[3..$].decodeRelation(negation, reverse); // TODO Handle case when part matches /r/_wordnet/X
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
@@ -1499,7 +1589,7 @@ class Net(bool useArray = true,
 
         if (src.defined && dst.defined)
         {
-            return connect(src, relation, dst, origin, weight, negation, reverse);
+            return connect(src, rel, dst, origin, weight, negation, reverse);
         }
         else
         {
@@ -1560,13 +1650,13 @@ class Net(bool useArray = true,
      */
     void showRelations()
     {
-        writeln(`Relation Count by Type:`);
-        foreach (relation; Relation.min .. Relation.max)
+        writeln(`Rel Count by Type:`);
+        foreach (rel; Rel.min .. Rel.max)
         {
-            const count = _relationCounts[relation];
+            const count = _relationCounts[rel];
             if (count)
             {
-                writeln(`- `, relation.to!string, `: `, count);
+                writeln(`- `, rel.to!string, `: `, count);
             }
         }
 
@@ -1668,12 +1758,12 @@ class Net(bool useArray = true,
         return typeof(return).undefined;
     }
 
-    void showLinkRelation(Relation relation,
-                          LinkDir linkDir,
+    void showLinkRelation(Rel rel,
+                          RelDir linkDir,
                           bool negation = false,
                           HLang lang = HLang.en)
     {
-        write(` - `, relation.toHumanLang(linkDir, negation, lang));
+        write(` - `, rel.toHumanLang(linkDir, negation, lang));
     }
 
     void showConcept(in Concept concept, real weight)
@@ -1686,11 +1776,11 @@ class Net(bool useArray = true,
     }
 
     void showLinkConcept(in Concept concept,
-                         Relation relation,
+                         Rel rel,
                          real weight,
-                         LinkDir linkDir)
+                         RelDir linkDir)
     {
-        showLinkRelation(relation, linkDir);
+        showLinkRelation(rel, linkDir);
         showConcept(concept, weight);
         writeln();
     }
@@ -1720,7 +1810,7 @@ class Net(bool useArray = true,
 
             foreach (inGroup; insByRelation(concept))
             {
-                showLinkRelation(inGroup.front[0]._relation, LinkDir.backward);
+                showLinkRelation(inGroup.front[0]._relation, RelDir.backward);
                 foreach (inLink, inConcept; inGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
@@ -1730,7 +1820,7 @@ class Net(bool useArray = true,
 
             foreach (outGroup; outsByRelation(concept))
             {
-                showLinkRelation(outGroup.front[0]._relation, LinkDir.backward);
+                showLinkRelation(outGroup.front[0]._relation, RelDir.backward);
                 foreach (outLink, outConcept; outGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
                     showConcept(outConcept, outLink.normalizedWeight);
@@ -1744,7 +1834,7 @@ class Net(bool useArray = true,
             /*     showLinkConcept(conceptByIx(link._dstIx), */
             /*                     link._relation, */
             /*                     link.normalizedWeight, */
-            /*                     LinkDir.backward); */
+            /*                     RelDir.backward); */
             /* } */
             /* foreach (ix; concept.outIxes) */
             /* { */
@@ -1752,7 +1842,7 @@ class Net(bool useArray = true,
             /*     showLinkConcept(conceptByIx(link._srcIx), */
             /*                     link._relation, */
             /*                     link.normalizedWeight, */
-            /*                     LinkDir.forward); */
+            /*                     RelDir.forward); */
             /* } */
         }
 
@@ -1763,9 +1853,9 @@ class Net(bool useArray = true,
             foreach (palindromeConcept; _concepts.filter!(concept => concept.words.isPalindrome(3)))
             {
                 showLinkConcept(palindromeConcept,
-                                Relation.instanceOf,
+                                Rel.instanceOf,
                                 real.infinity,
-                                LinkDir.backward);
+                                RelDir.backward);
             }
         }
     }
