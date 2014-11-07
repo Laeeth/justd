@@ -104,6 +104,7 @@ enum Rel:ubyte
     leaderOf,
     ceoOf,
     playsIn,
+    playsFor,
     contributedTo,
 
     hasA, /* B belongs to A, either as an inherent part or due to a social
@@ -120,10 +121,10 @@ enum Rel:ubyte
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
-    bornInLocation,
+    bornAtLocation,
     hasCitizenship,
     livesIn = hasCitizenship,
-    diedInLocation,
+    diedAtLocation,
     hasOfficeIn,
     headquarteredIn,
 
@@ -564,11 +565,12 @@ Rel decodeRelation(S)(S s,
                       out bool negation,
                       out bool reversion) if (isSomeString!S)
 {
-    enum nellAgents = ["concept", "agent", "item", "person", "building", "writer",
+    enum nellAgents = ["object", "product", "concept", "agent", "team", "item", "person", "building", "writer",
                        "athlete",
                        "journalist", "thing", "bodypart", "sportschool", "school",
-                       "sportfans", "event",
-                       "city", "country",
+                       "sportfans", "event", "scene",
+                       "bankbank", // TODO bug in NELL?
+                       "bank", "hotel", "city", "country",
                        "geopoliticalorganization", "politicalorganization", "organization",
                        "league", "university", "action", "room", "animal",
                        "location", "creativework"];
@@ -582,6 +584,7 @@ Rel decodeRelation(S)(S s,
             case `relatedto`:                                      return relatedTo;
 
             case `isa`:                                            return isA;
+            case `istypeof`:                                       return isA;
             case `notisa`:                      negation = true;   return isA;
 
             case `partof`:                                         return partOf;
@@ -592,10 +595,11 @@ Rel decodeRelation(S)(S s,
             case `participatein`:
             case `participatedin`:                                 return participateIn; // TODO past tense
 
-            case "worksfor":                                       return worksFor;
-            case "ceoof":                                          return ceoOf;
-            case "playsin":                                        return playsIn;
-            case "contributedto":                                  return contributedTo;
+            case `worksfor`:                                       return worksFor;
+            case `ceoof`:                                          return ceoOf;
+            case `playsin`:                                        return playsIn;
+            case `playsfor`:                                       return playsFor;
+            case `contributedto`:                                  return contributedTo;
 
             case `hasa`:                                           return hasA;
             case `usedfor`:                                        return usedFor;
@@ -603,13 +607,15 @@ Rel decodeRelation(S)(S s,
 
             case `at`:                assert(s == `atlocation`);   return atLocation;
 
-            case "foundin":
+            case `in`:
+            case `foundin`:
+            case `existsat`:
             case `locatedin`:
             case `attractionof`:
             case `headquarteredin`:
-            case "latitudelongitude":
-            case "incountry":
-            case "actsin":                                         return atLocation;
+            case `latitudelongitude`:
+            case `incountry`:
+            case `actsin`:                                         return atLocation;
 
             case `locationof`:                   reversion = true; return atLocation;
             case `locatedwithin`:                                  return atLocation;
@@ -640,7 +646,7 @@ Rel decodeRelation(S)(S s,
             case `causesdesire`:                                   return causesDesire;
             case `desireof`:                                       return desireOf;
 
-            case "hired":                        reversion = true; return hiredBy;
+            case `hired`:                        reversion = true; return hiredBy;
             case `hiredBy`:                                        return hiredBy;
 
             case `created`:                      reversion = true; return createdBy;
@@ -703,45 +709,51 @@ Rel decodeRelation(S)(S s,
             case `hassibling`:
             case `siblingof`:                                      return hasSibling; // symmetric
 
-            case "haschild":                                       return hasChild;
-            case "childof":                      reversion = true; return hasChild;
+            case `haschild`:                                       return hasChild;
+            case `childof`:                      reversion = true; return hasChild;
 
-            case "hasparent":                                      return hasParent;
-            case "parentof":                     reversion = true; return hasParent;
+            case `hasparent`:                                      return hasParent;
+            case `parentof`:                     reversion = true; return hasParent;
 
-            case "haswikipediaurl":                                return wikipediaURL;
-            case "subpartof":                                      return partOf;
-            case "synonymfor":                                     return synonymFor;
-            case "generalizations":                                return generalizes;
-            case "specializationof": reversion = true;             return generalizes;
-            case "conceptprerequisiteof": reversion = true;        return hasPrerequisite;
-            case "usesequipment": reversion = true;                return usedFor;
-            case "usesstadium": reversion = true;                  return usedFor;
-            case "containsbodypart": reversion = true;             return partOf;
+            case `hasfather`:                                      return hasFather;
+            case `fatherof`:                     reversion = true; return hasFather;
 
-            case "atdate":                                         return atDate;
-            case "proxyfor":                                       return proxyFor;
-            case "mutualproxyfor":                                 return mutualProxyFor;
+            case `hasmother`:                                      return hasMother;
+            case `motherof`:                     reversion = true; return hasMother;
 
-            case "hasjobposition":                                 return hasJobPosition;
+            case `haswikipediaurl`:                                return wikipediaURL;
+            case `subpartof`:                                      return partOf;
+            case `synonymfor`:                                     return synonymFor;
+            case `generalizations`:                                return generalizes;
+            case `specializationof`: reversion = true;             return generalizes;
+            case `conceptprerequisiteof`: reversion = true;        return hasPrerequisite;
+            case `usesequipment`: reversion = true;                return usedFor;
+            case `usesstadium`: reversion = true;                  return usedFor;
+            case `containsbodypart`: reversion = true;             return partOf;
 
-            case "graduated":
-            case "graduatedfrom":                                  return graduatedFrom;
+            case `atdate`:                                         return atDate;
+            case `proxyfor`:                                       return proxyFor;
+            case `mutualproxyfor`:                                 return mutualProxyFor;
 
-            case "competeswith":                                   return competesWith;
-            case "involvedwith":                                   return involvedWith;
-            case "collaborateswith":                               return collaboratesWith;
+            case `hasjobposition`:                                 return hasJobPosition;
 
-            case "contains": reversion = true;                     return partOf;
-            case "leads": reversion = true;                        return leaderOf;
-            case "chargedwithcrime":                               return chargedWithCrime;
+            case `graduated`:
+            case `graduatedfrom`:                                  return graduatedFrom;
 
-            case "wasbornin":                                      return bornIn;
-            case "bornin":                                         return bornIn;
-            case "marriedinyear":
-            case "marriedin":                                      return marriedIn;
-            case "diedin":                                         return diedIn;
-            case "diedatage":                                      return diedAtAge;
+            case `competeswith`:                                   return competesWith;
+            case `involvedwith`:                                   return involvedWith;
+            case `collaborateswith`:                               return collaboratesWith;
+
+            case `contains`: reversion = true;                     return partOf;
+            case `leads`: reversion = true;                        return leaderOf;
+            case `chargedwithcrime`:                               return chargedWithCrime;
+
+            case `wasbornin`:                                      return bornIn;
+            case `bornin`:                                         return bornIn;
+            case `marriedinyear`:
+            case `marriedin`:                                      return marriedIn;
+            case `diedin`:                                         return diedIn;
+            case `diedatage`:                                      return diedAtAge;
 
             default:
                 dln(`Unknown relationString `, t, ` originally `, s);
@@ -784,15 +796,15 @@ bool specializes(Rel special,
             case leaderOf: return special.of(ceoOf);
             case memberOf: return special.of(participateIn,
                                              worksFor,
-                                             playsIn);
+                                             playsFor);
             case hasProperty: return special.of(hasAge,
                                                 hasColor,
                                                 hasShape,
                                                 hasJobPosition);
             case derivedFrom: return special.of(acronymFor);
-            case atLocation: return special.of(bornInLocation,
+            case atLocation: return special.of(bornAtLocation,
                                                hasCitizenship,
-                                               diedInLocation,
+                                               diedAtLocation,
                                                hasOfficeIn,
                                                headquarteredIn);
             default: return special == general;
