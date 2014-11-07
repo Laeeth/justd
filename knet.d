@@ -126,7 +126,6 @@ enum Rel:ubyte
 
     hasContext,
 
-    locationOf,
     locatedNear,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
@@ -257,6 +256,8 @@ enum Rel:ubyte
     graduatedFrom,
     agentCreated,
 
+    bornIn,
+    diedIn,
     diedAtAge,
 
     chargedWithCrime,
@@ -534,17 +535,24 @@ Rel decodeRelation(S)(S s,
                       out bool reverse) if (isSomeString!S)
 {
     enum nellAgents = ["concept", "agent", "item", "person", "building", "writer",
+                       "athlete",
                        "journalist", "thing", "bodypart", "sportschool", "school",
                        "sportfans", "event",
-                       "city", "organization", "university", "action", "room"];
-    s.skipOverNELLNouns(nellAgents);
+                       "city",
+                       "geopoliticalorganization", "politicalorganization", "organization",
+                       "league", "university", "action", "room", "animal",
+                       "location", "creativework"];
+    S t = s;
+    t.skipOverNELLNouns(nellAgents);
 
     with (Rel)
     {
-        switch (s.toLower)
+        switch (t.toLower)
         {
             case `relatedto`:                                    return relatedTo;
+
             case `isa`:                                          return isA;
+            case `notisa`:                      negation = true; return isA;
 
             case `partof`:                                       return partOf;
             case `memberof`:                                     return memberOf;
@@ -560,13 +568,19 @@ Rel decodeRelation(S)(S s,
             case `usedfor`:                                      return usedFor;
             case `capableof`:                                    return capableOf;
 
-            case `atlocation`:                                   return atLocation;
-            case `actsinlocation`:                               return atLocation;
+            case `at`:                assert(s == `atlocation`); return atLocation;
             case "foundin":                                      return atLocation;
+            case `locatedin`:                                    return atLocation;
+            case `headquarteredin`:                              return atLocation;
+            case "latitudelongitude":                            return atLocation;
+            case "incountry":                                    return atLocation;
+            case "actsin":                                       return atLocation;
+            case `locationof`:                   reverse = true; return atLocation;
+            case `locatedwithin`:                                return atLocation;
 
             case `hascontext`:                                   return hasContext;
-            case `locationof`:                                   return locationOf;
             case `locatednear`:                                  return locatedNear;
+
             case `causes`:                                       return causes;
             case `entails`:                                      return entails;
 
@@ -614,7 +628,6 @@ Rel decodeRelation(S)(S s,
             case `haspaincharacter`:                             return hasPainCharacter;
 
             case `notmadeof`:                   negation = true; return madeOf;
-            case `notisa`:                      negation = true; return isA;
             case `notusedfor`:                  negation = true; return usedFor;
             case `nothasa`:                     negation = true; return hasA;
             case `notdesires`:                  negation = true; return desires;
@@ -626,17 +639,34 @@ Rel decodeRelation(S)(S s,
             case `wordnet/adverbpertainsto`:    negation = true; return adverbPertainsTo;
             case `wordnet/participleof`:        negation = true; return participleOf;
 
-                /* NELL: */
-            case `hasfamilymember`:                              return hasFamilyMember;
+            case `hasfamilymember`:
+            case `familymemberof`:                               return hasFamilyMember; // symmetric
+
             case `haswife`:                                      return hasWife;
+            case `wifeof`:                      negation = true; return hasWife;
+
             case `hashusband`:                                   return hasHusband;
-            case `hasbrother`:                                   return hasBrother;
-            case `hassister`:                                    return hasSister;
-            case `hasspouse`:                                    return hasSpouse;
-            case `hassibling`:                                   return hasSibling;
+            case `husbandof`:                   negation = true; return hasHusband;
+
+            case `hasbrother`:
+            case `brotherof`:                                    return hasBrother; // symmetric
+
+            case `hassister`:
+            case `sisterof`:                                     return hasSister; // symmetric
+
+            case `hasspouse`:
+            case `spouseof`:                                     return hasSpouse; // symmetric
+
+            case `hassibling`:
+            case `siblingof`:                                    return hasSibling; // symmetric
+
+            case "haschild":                                     return hasChild;
+            case "childof":                      reverse = true; return hasChild;
+
+            case "hasparent":                                    return hasParent;
+            case "parentof":                     reverse = true; return hasParent;
 
             case "haswikipediaurl": return wikipediaURL;
-            case "latitudelongitude": return atLocation;
             case "subpartof": return partOf;
             case "synonymfor": return synonymFor;
             case "generalizations": return generalizes;
@@ -644,13 +674,12 @@ Rel decodeRelation(S)(S s,
             case "conceptprerequisiteof": reverse = true; return hasPrerequisite;
             case "usesequipment": reverse = true; return usedFor;
             case "usesstadium": reverse = true; return usedFor;
-            case "incountry": reverse = true; return locationOf;
             case "containsbodypart": reverse = true; return partOf;
 
             case "atdate": return atDate;
             case "proxyfor": return proxyFor;
             case "mutualproxyfor": return mutualProxyFor;
-            case "parentofperson": return hasChild;
+
             case "hasjobposition": return hasJobPosition;
 
             case "graduatedfrom": return graduatedFrom;
@@ -658,13 +687,16 @@ Rel decodeRelation(S)(S s,
 
             case "competeswith": return competesWith;
 
-            case "parentof": reverse = true; return hasParent;
             case "contains": reverse = true; return partOf;
             case "leads": reverse = true; return leaderOf;
             case "chargedwithcrime": return chargedWithCrime;
 
+            case "wasbornin": return bornIn;
+            case "bornin": return bornIn;
+            case "diedin": return diedIn;
+
             default:
-                dln(`Unknown relationString `, s);
+                dln(`Unknown relationString `, t, ` originally `, s);
                 return relatedTo;
         }
     }
@@ -730,22 +762,21 @@ bool generalizes(T)(T general,
     {
         with (Rel)
             return rel.of(partOf,
-                               relatedTo,
-                               isA,
-                               memberOf,
-                               hasA,
-                               atLocation,
-                               hasContext,
-                               locationOf,
-                               locatedNear,
-                               causes,
-                               entails,
-                               hasSubevent,
-                               synonymFor,
-                               hasPrerequisite,
-                               translationOf,
+                          relatedTo,
+                          isA,
+                          memberOf,
+                          hasA,
+                          atLocation,
+                          hasContext,
+                          locatedNear,
+                          causes,
+                          entails,
+                          hasSubevent,
+                          synonymFor,
+                          hasPrerequisite,
+                          translationOf,
 
-                               hasRelative, hasFamilyMember, hasSibling, hasBrother, hasSister);
+                          hasRelative, hasFamilyMember, hasSibling, hasBrother, hasSister);
     }
 
     /** Return true if $(D rel) is a strong.
@@ -767,7 +798,6 @@ bool generalizes(T)(T general,
     {
         with (Rel)
             return rel.of(isA,
-                          locationOf,
                           locatedNear);
     }
 
