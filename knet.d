@@ -104,6 +104,7 @@ enum Rel:ubyte
     leaderOf,
     ceoOf,
     playsIn,
+    contributedTo,
 
     hasA, /* B belongs to A, either as an inherent part or due to a social
              construct of possession. HasA is often the reverse of PartOf. /r/HasA
@@ -119,10 +120,12 @@ enum Rel:ubyte
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
-    bornInLocation, // TODO specializes atLocation
-    diedInLocation, // TODO specializes atLocation
-    hasOfficeIn, // TODO specializes atLocation
-    headquarteredIn, // TODO specializes atLocation
+    bornInLocation,
+    hasCitizenship,
+    livesIn = hasCitizenship,
+    diedInLocation,
+    hasOfficeIn,
+    headquarteredIn,
 
     hasContext,
 
@@ -143,6 +146,10 @@ enum Rel:ubyte
 
     hasProperty, /* A has B as a property; A can be described as
                     B. /r/HasProperty /c/en/ice /c/en/solid */
+    hasShape,
+    hasColor,
+    hasAge,
+    hasJobPosition, hasEmployment = hasJobPosition,
 
     attribute,
 
@@ -175,6 +182,8 @@ enum Rel:ubyte
 
     retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
 
+    acronymFor,
+
     derivedFrom, /* A is a word or phrase that appears within B and contributes
                     to B's meaning. /r/DerivedFrom /c/en/pocketbook /c/en/book
                  */
@@ -200,7 +209,7 @@ enum Rel:ubyte
 
     similarSize,
 
-    // comparison
+    // comparison. TODO generalize using adjectives and three way link
     isTallerThan,
     isLargerThan,
     isHeavierThan,
@@ -242,21 +251,21 @@ enum Rel:ubyte
     hasDaugther,
     hasPet, // TODO dst concept is animal
 
-    hasShape,
-    hasColor,
-
     wikipediaURL,
 
     atDate,
     proxyFor,
     mutualProxyFor,
-    competesWith,
 
-    hasJobPosition, hasEmployment = hasJobPosition,
+    competesWith,
+    involvedWith,
+    collaboratesWith,
+
     graduatedFrom,
     agentCreated,
 
     bornIn,
+    marriedIn,
     diedIn,
     diedAtAge,
 
@@ -442,6 +451,25 @@ string toHumanLang(const Rel rel,
                             default: return "have " ~ neg ~ " player";
                         }
                     }
+                case contributedTo:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "bidrog" ~ neg ~ " till";
+                            case en:
+                            default: return "contributed" ~ neg ~ " to";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "hade " ~ neg ~ " bidragare";
+                            case en:
+                            default: return "had " ~ neg ~ " contributor";
+                        }
+                    }
                 case leaderOf:
                     if (linkDir == RelDir.forward)
                     {
@@ -530,15 +558,17 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
     s.skipOverNELLSuffixes(agents);
 }
 
+/** Decode Relation $(D s) together with its possible $(D negation) and
+    $(D reversion). */
 Rel decodeRelation(S)(S s,
                       out bool negation,
-                      out bool reverse) if (isSomeString!S)
+                      out bool reversion) if (isSomeString!S)
 {
     enum nellAgents = ["concept", "agent", "item", "person", "building", "writer",
                        "athlete",
                        "journalist", "thing", "bodypart", "sportschool", "school",
                        "sportfans", "event",
-                       "city",
+                       "city", "country",
                        "geopoliticalorganization", "politicalorganization", "organization",
                        "league", "university", "action", "room", "animal",
                        "location", "creativework"];
@@ -549,155 +579,173 @@ Rel decodeRelation(S)(S s,
     {
         switch (t.toLower)
         {
-            case `relatedto`:                                    return relatedTo;
+            case `relatedto`:                                      return relatedTo;
 
-            case `isa`:                                          return isA;
-            case `notisa`:                      negation = true; return isA;
+            case `isa`:                                            return isA;
+            case `notisa`:                      negation = true;   return isA;
 
-            case `partof`:                                       return partOf;
-            case `memberof`:                                     return memberOf;
-            case `belongsto`:                                    return memberOf;
+            case `partof`:                                         return partOf;
 
-            case `participatein`:                                return participateIn;
-            case `participatedin`:                               return participateIn; // TODO past tense
-            case "worksfor":                                     return worksFor;
-            case "ceoof":                                        return ceoOf;
-            case "playsin":                                      return playsIn;
+            case `memberof`:
+            case `belongsto`:                                      return memberOf;
 
-            case `hasa`:                                         return hasA;
-            case `usedfor`:                                      return usedFor;
-            case `capableof`:                                    return capableOf;
+            case `participatein`:
+            case `participatedin`:                                 return participateIn; // TODO past tense
 
-            case `at`:                assert(s == `atlocation`); return atLocation;
-            case "foundin":                                      return atLocation;
-            case `locatedin`:                                    return atLocation;
-            case `headquarteredin`:                              return atLocation;
-            case "latitudelongitude":                            return atLocation;
-            case "incountry":                                    return atLocation;
-            case "actsin":                                       return atLocation;
-            case `locationof`:                   reverse = true; return atLocation;
-            case `locatedwithin`:                                return atLocation;
+            case "worksfor":                                       return worksFor;
+            case "ceoof":                                          return ceoOf;
+            case "playsin":                                        return playsIn;
+            case "contributedto":                                  return contributedTo;
 
-            case `hascontext`:                                   return hasContext;
-            case `locatednear`:                                  return locatedNear;
+            case `hasa`:                                           return hasA;
+            case `usedfor`:                                        return usedFor;
+            case `capableof`:                                      return capableOf;
 
-            case `causes`:                                       return causes;
-            case `entails`:                                      return entails;
+            case `at`:                assert(s == `atlocation`);   return atLocation;
 
-            case `hassubevent`:                                  return hasSubevent;
-            case `hasfirstsubevent`:                             return hasFirstSubevent;
-            case `haslastsubevent`:                              return hasLastSubevent;
-            case `hasprerequisite`:                              return hasPrerequisite;
+            case "foundin":
+            case `locatedin`:
+            case `attractionof`:
+            case `headquarteredin`:
+            case "latitudelongitude":
+            case "incountry":
+            case "actsin":                                         return atLocation;
 
-            case `hasproperty`:                                  return hasProperty;
-            case `hasshape`:                                     return hasShape;
-            case `hascolor`:                                     return hasColor;
-            case `attribute`:                                    return attribute;
+            case `locationof`:                   reversion = true; return atLocation;
+            case `locatedwithin`:                                  return atLocation;
 
-            case `motivatedbygoal`:                              return motivatedByGoal;
-            case `obstructedby`:                                 return obstructedBy;
-            case `desires`:                                      return desires;
-            case `causesdesire`:                                 return causesDesire;
-            case `desireof`:                                     return desireOf;
+            case `hascitizenship`:                                 return hasCitizenship;
+            case `hasofficein`:                                    return hasOfficeIn;
 
-            case "hired":                        reverse = true; return hiredBy;
-            case `hiredBy`:                                      return hiredBy;
+            case `hascontext`:                                     return hasContext;
+            case `locatednear`:                                    return locatedNear;
 
-            case `created`:                      reverse = true; return createdBy;
-            case `createdby`:                                    return createdBy;
+            case `causes`:                                         return causes;
+            case `entails`:                                        return entails;
 
-            case `receivesaction`:                               return receivesAction;
+            case `hassubevent`:                                    return hasSubevent;
+            case `hasfirstsubevent`:                               return hasFirstSubevent;
+            case `haslastsubevent`:                                return hasLastSubevent;
+            case `hasprerequisite`:                                return hasPrerequisite;
 
-            case `synonym`:                                      return synonymFor;
-            case `antonym`:                                      return antonymFor;
-            case `retronym`:                                     return retronymFor;
+            case `hasproperty`:                                    return hasProperty;
+            case `hasshape`:                                       return hasShape;
+            case `hascolor`:                                       return hasColor;
+            case `hasage`:                                         return hasAge;
+            case `attribute`:                                      return attribute;
 
-            case `derivedfrom`:                                  return derivedFrom;
+            case `motivatedbygoal`:                                return motivatedByGoal;
+            case `obstructedby`:                                   return obstructedBy;
+            case `desires`:                                        return desires;
+            case `causesdesire`:                                   return causesDesire;
+            case `desireof`:                                       return desireOf;
 
-            case `compoundderivedfrom`:                          return compoundDerivedFrom;
-            case `etymologicallyderivedfrom`:                    return etymologicallyDerivedFrom;
-            case `translationof`:                                return translationOf;
-            case `definedas`:                                    return definedAs;
-            case `instanceof`:                                   return instanceOf;
-            case `madeof`:                                       return madeOf;
-            case `inheritsfrom`:                                 return inheritsFrom;
-            case `similarsize`:                                  return similarSize;
-            case `symbolof`:                                     return symbolOf;
-            case `similarto`:                                    return similarTo;
-            case `haspainintensity`:                             return hasPainIntensity;
-            case `haspaincharacter`:                             return hasPainCharacter;
+            case "hired":                        reversion = true; return hiredBy;
+            case `hiredBy`:                                        return hiredBy;
 
-            case `notmadeof`:                   negation = true; return madeOf;
-            case `notusedfor`:                  negation = true; return usedFor;
-            case `nothasa`:                     negation = true; return hasA;
-            case `notdesires`:                  negation = true; return desires;
-            case `notcauses`:                   negation = true; return causes;
-            case `notcapableof`:                negation = true; return capableOf;
-            case `nothasproperty`:              negation = true; return hasProperty;
+            case `created`:                      reversion = true; return createdBy;
+            case `createdby`:                                      return createdBy;
 
-            case `wordnet/adjectivepertainsto`: negation = true; return adjectivePertainsTo;
-            case `wordnet/adverbpertainsto`:    negation = true; return adverbPertainsTo;
-            case `wordnet/participleof`:        negation = true; return participleOf;
+            case `receivesaction`:                                 return receivesAction;
+
+            case `synonym`:                                        return synonymFor;
+            case `antonym`:                                        return antonymFor;
+            case `retronym`:                                       return retronymFor;
+
+            case `acronymhasname`:
+            case `acronymfor`:                                     return acronymFor;
+
+            case `derivedfrom`:                                    return derivedFrom;
+
+            case `compoundderivedfrom`:                            return compoundDerivedFrom;
+            case `etymologicallyderivedfrom`:                      return etymologicallyDerivedFrom;
+            case `translationof`:                                  return translationOf;
+            case `definedas`:                                      return definedAs;
+            case `instanceof`:                                     return instanceOf;
+            case `madeof`:                                         return madeOf;
+            case `inheritsfrom`:                                   return inheritsFrom;
+            case `similarsize`:                                    return similarSize;
+            case `symbolof`:                                       return symbolOf;
+            case `similarto`:                                      return similarTo;
+            case `haspainintensity`:                               return hasPainIntensity;
+            case `haspaincharacter`:                               return hasPainCharacter;
+
+            case `notmadeof`:                   negation = true;   return madeOf;
+            case `notusedfor`:                  negation = true;   return usedFor;
+            case `nothasa`:                     negation = true;   return hasA;
+            case `notdesires`:                  negation = true;   return desires;
+            case `notcauses`:                   negation = true;   return causes;
+            case `notcapableof`:                negation = true;   return capableOf;
+            case `nothasproperty`:              negation = true;   return hasProperty;
+
+            case `wordnet/adjectivepertainsto`: negation = true;   return adjectivePertainsTo;
+            case `wordnet/adverbpertainsto`:    negation = true;   return adverbPertainsTo;
+            case `wordnet/participleof`:        negation = true;   return participleOf;
 
             case `hasfamilymember`:
-            case `familymemberof`:                               return hasFamilyMember; // symmetric
+            case `familymemberof`:                                 return hasFamilyMember; // symmetric
 
-            case `haswife`:                                      return hasWife;
-            case `wifeof`:                      negation = true; return hasWife;
+            case `haswife`:                                        return hasWife;
+            case `wifeof`:                      negation = true;   return hasWife;
 
-            case `hashusband`:                                   return hasHusband;
-            case `husbandof`:                   negation = true; return hasHusband;
+            case `hashusband`:                                     return hasHusband;
+            case `husbandof`:                   negation = true;   return hasHusband;
 
             case `hasbrother`:
-            case `brotherof`:                                    return hasBrother; // symmetric
+            case `brotherof`:                                      return hasBrother; // symmetric
 
             case `hassister`:
-            case `sisterof`:                                     return hasSister; // symmetric
+            case `sisterof`:                                       return hasSister; // symmetric
 
             case `hasspouse`:
-            case `spouseof`:                                     return hasSpouse; // symmetric
+            case `spouseof`:                                       return hasSpouse; // symmetric
 
             case `hassibling`:
-            case `siblingof`:                                    return hasSibling; // symmetric
+            case `siblingof`:                                      return hasSibling; // symmetric
 
-            case "haschild":                                     return hasChild;
-            case "childof":                      reverse = true; return hasChild;
+            case "haschild":                                       return hasChild;
+            case "childof":                      reversion = true; return hasChild;
 
-            case "hasparent":                                    return hasParent;
-            case "parentof":                     reverse = true; return hasParent;
+            case "hasparent":                                      return hasParent;
+            case "parentof":                     reversion = true; return hasParent;
 
-            case "haswikipediaurl": return wikipediaURL;
-            case "subpartof": return partOf;
-            case "synonymfor": return synonymFor;
-            case "generalizations": return generalizes;
-            case "specializationof": reverse = true; return generalizes;
-            case "conceptprerequisiteof": reverse = true; return hasPrerequisite;
-            case "usesequipment": reverse = true; return usedFor;
-            case "usesstadium": reverse = true; return usedFor;
-            case "containsbodypart": reverse = true; return partOf;
+            case "haswikipediaurl":                                return wikipediaURL;
+            case "subpartof":                                      return partOf;
+            case "synonymfor":                                     return synonymFor;
+            case "generalizations":                                return generalizes;
+            case "specializationof": reversion = true;             return generalizes;
+            case "conceptprerequisiteof": reversion = true;        return hasPrerequisite;
+            case "usesequipment": reversion = true;                return usedFor;
+            case "usesstadium": reversion = true;                  return usedFor;
+            case "containsbodypart": reversion = true;             return partOf;
 
-            case "atdate": return atDate;
-            case "proxyfor": return proxyFor;
-            case "mutualproxyfor": return mutualProxyFor;
+            case "atdate":                                         return atDate;
+            case "proxyfor":                                       return proxyFor;
+            case "mutualproxyfor":                                 return mutualProxyFor;
 
-            case "hasjobposition": return hasJobPosition;
+            case "hasjobposition":                                 return hasJobPosition;
 
-            case "graduatedfrom": return graduatedFrom;
-            case "diedatage": return diedAtAge;
+            case "graduated":
+            case "graduatedfrom":                                  return graduatedFrom;
 
-            case "competeswith": return competesWith;
+            case "competeswith":                                   return competesWith;
+            case "involvedwith":                                   return involvedWith;
+            case "collaborateswith":                               return collaboratesWith;
 
-            case "contains": reverse = true; return partOf;
-            case "leads": reverse = true; return leaderOf;
-            case "chargedwithcrime": return chargedWithCrime;
+            case "contains": reversion = true;                     return partOf;
+            case "leads": reversion = true;                        return leaderOf;
+            case "chargedwithcrime":                               return chargedWithCrime;
 
-            case "wasbornin": return bornIn;
-            case "bornin": return bornIn;
-            case "diedin": return diedIn;
+            case "wasbornin":                                      return bornIn;
+            case "bornin":                                         return bornIn;
+            case "marriedinyear":
+            case "marriedin":                                      return marriedIn;
+            case "diedin":                                         return diedIn;
+            case "diedatage":                                      return diedAtAge;
 
             default:
                 dln(`Unknown relationString `, t, ` originally `, s);
-                return relatedTo;
+                                                                   return relatedTo;
         }
     }
 }
@@ -717,15 +765,36 @@ bool specializes(Rel special,
              * relevant cases: */
             case relatedTo:   return special != relatedTo;
             case hasRelative: return special == hasFamilyMember;
-            case hasFamilyMember: return special.of(hasSpouse, hasSibling, hasParent, hasChild, hasPet);
-            case hasSpouse: return special.of(hasWife, hasHusband);
-            case hasSibling: return special.of(hasBrother, hasSister);
-            case hasParent: return special.of(hasFather, hasMother);
-            case hasChild: return special.of(hasSon, hasDaugther);
-            case isA: return !special.of(isA, relatedTo);
+            case hasFamilyMember: return special.of(hasSpouse,
+                                                    hasSibling,
+                                                    hasParent,
+                                                    hasChild,
+                                                    hasPet);
+            case hasSpouse: return special.of(hasWife,
+                                              hasHusband);
+            case hasSibling: return special.of(hasBrother,
+                                               hasSister);
+            case hasParent: return special.of(hasFather,
+                                              hasMother);
+            case hasChild: return special.of(hasSon,
+                                             hasDaugther);
+            case isA: return !special.of(isA,
+                                         relatedTo);
             case worksFor: return special.of(ceoOf);
             case leaderOf: return special.of(ceoOf);
-            case memberOf: return special.of(participateIn, worksFor, playsIn);
+            case memberOf: return special.of(participateIn,
+                                             worksFor,
+                                             playsIn);
+            case hasProperty: return special.of(hasAge,
+                                                hasColor,
+                                                hasShape,
+                                                hasJobPosition);
+            case derivedFrom: return special.of(acronymFor);
+            case atLocation: return special.of(bornInLocation,
+                                               hasCitizenship,
+                                               diedInLocation,
+                                               hasOfficeIn,
+                                               headquarteredIn);
             default: return special == general;
         }
     }
@@ -788,6 +857,7 @@ bool generalizes(T)(T general,
             return rel.of(hasProperty,
                           hasShape,
                           hasColor,
+                          hasAge,
                           motivatedByGoal);
     }
 
@@ -1324,13 +1394,13 @@ class Net(bool useArray = true,
                    Origin origin,
                    real weight = 1.0,
                    bool negation = false,
-                   bool reverse = false)
+                   bool reversion = false)
     {
         LinkIx linkIx = LinkIx(cast(Ix)_links.length);
         auto link = Link(Rel.isA, Origin.nell);
 
-        link._srcIx = reverse ? dstIx : srcIx;
-        link._dstIx = reverse ? srcIx : dstIx;
+        link._srcIx = reversion ? dstIx : srcIx;
+        link._dstIx = reversion ? srcIx : dstIx;
 
         assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= linkIx; _connectednessSum++;
         assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= linkIx; _connectednessSum++;
@@ -1398,7 +1468,7 @@ class Net(bool useArray = true,
     {
         Rel rel = Rel.any;
         bool negation = false;
-        bool reverse = false;
+        bool reversion = false;
 
         ConceptIx entityIx;
         ConceptIx entityCategoryIx;
@@ -1474,7 +1544,7 @@ class Net(bool useArray = true,
                     else
                         if (show) dln("TODO Handle non-concept predicate ", predicate);
 
-                    rel = predicate.front.decodeRelation(negation, reverse);
+                    rel = predicate.front.decodeRelation(negation, reversion);
                     ignored = (rel == Rel.wikipediaURL);
 
                     break;
@@ -1577,7 +1647,7 @@ class Net(bool useArray = true,
     {
         Rel rel = Rel.any;
         bool negation = false;
-        bool reverse = false;
+        bool reversion = false;
 
         ConceptIx src;
         ConceptIx dst;
@@ -1591,7 +1661,7 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 1:
-                    rel = part[3..$].decodeRelation(negation, reverse); // TODO Handle case when part matches /r/_wordnet/X
+                    rel = part[3..$].decodeRelation(negation, reversion); // TODO Handle case when part matches /r/_wordnet/X
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
@@ -1619,7 +1689,7 @@ class Net(bool useArray = true,
 
         if (src.defined && dst.defined)
         {
-            return connect(src, rel, dst, origin, weight, negation, reverse);
+            return connect(src, rel, dst, origin, weight, negation, reversion);
         }
         else
         {
