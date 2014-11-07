@@ -132,6 +132,8 @@ enum Rel:ubyte
 
     locatedNear,
 
+    controls,
+
     causes, /* A and B are events, and it is typical for A to cause B. */
     entails = causes, /* TODO same as causes? */
     leadsTo = causes,
@@ -565,15 +567,21 @@ Rel decodeRelation(S)(S s,
                       out bool negation,
                       out bool reversion) if (isSomeString!S)
 {
-    enum nellAgents = ["object", "product", "concept", "agent", "team", "item", "person", "building", "writer",
+    enum nellAgents = ["object", "product", "concept", "food", "building", "disease",
+                       "agent", "team", "item", "person", "writer",
                        "athlete",
-                       "journalist", "thing", "bodypart", "sportschool", "school",
-                       "sportfans", "event", "scene",
+                       "journalist", "thing", "bodypart", "sportschool",
+                       "sportfans", "sport", "event", "scene", "school",
+                       "vegetable",
                        "bankbank", // TODO bug in NELL?
-                       "bank", "hotel", "city", "country",
+                       "airport", "bank", "hotel", "port",
+
+                       "skiarea", "area", "room", "hall", "island", "city", "country",
+                       "state", "province", "stateorprovince", // TODO specialize from spatialregion
+
                        "geopoliticalorganization", "politicalorganization", "organization",
                        "league", "university", "action", "room", "animal",
-                       "location", "creativework"];
+                       "location", "creativework", "equipment", "profession", "tool"];
     S t = s;
     t.skipOverNELLNouns(nellAgents);
 
@@ -603,8 +611,11 @@ Rel decodeRelation(S)(S s,
 
             case `hasa`:                                           return hasA;
             case `usedfor`:                                        return usedFor;
+            case `use`:
+            case `uses`:                         reversion = true; return usedFor;
             case `capableof`:                                      return capableOf;
 
+                // spatial
             case `at`:                assert(s == `atlocation`);   return atLocation;
 
             case `in`:
@@ -620,20 +631,28 @@ Rel decodeRelation(S)(S s,
             case `locationof`:                   reversion = true; return atLocation;
             case `locatedwithin`:                                  return atLocation;
 
-            case `hascitizenship`:                                 return hasCitizenship;
-            case `hasofficein`:                                    return hasOfficeIn;
-
             case `hascontext`:                                     return hasContext;
             case `locatednear`:                                    return locatedNear;
+            case `hasofficein`:                                    return hasOfficeIn;
 
+                // membership
+            case `hascitizenship`:                                 return hasCitizenship;
+
+                // cause and effect
             case `causes`:                                         return causes;
+            case `cancause`:                                       return causes;
+            case `leadsto`:                                        return causes;
+            case `leadto`:                                        return causes;
             case `entails`:                                        return entails;
 
+                // time
             case `hassubevent`:                                    return hasSubevent;
             case `hasfirstsubevent`:                               return hasFirstSubevent;
             case `haslastsubevent`:                                return hasLastSubevent;
             case `hasprerequisite`:                                return hasPrerequisite;
+            case `prerequisiteof`:               reversion = true; return hasPrerequisite;
 
+                // properties
             case `hasproperty`:                                    return hasProperty;
             case `hasshape`:                                       return hasShape;
             case `hascolor`:                                       return hasColor;
@@ -745,6 +764,7 @@ Rel decodeRelation(S)(S s,
             case `collaborateswith`:                               return collaboratesWith;
 
             case `contains`: reversion = true;                     return partOf;
+            case `controls`:                                       return controls;
             case `leads`: reversion = true;                        return leaderOf;
             case `chargedwithcrime`:                               return chargedWithCrime;
 
