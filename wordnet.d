@@ -410,6 +410,16 @@ class WordNet(bool useArray = true,
             addWord(e, WordKind.conjunctiveAdverb, 0, HLang.en);
         }
 
+        foreach (e; [`no`, `not`, `never`, `nowhere`, `none`, `nothing`])
+        {
+            addWord(e, WordKind.negatingAdverb, 0, HLang.en);
+        }
+
+        foreach (e; [`ej`, `inte`, `icke`])
+        {
+            addWord(e, WordKind.negatingAdverb, 0, HLang.sv);
+        }
+
         /* weekdays */
         foreach (e; [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
                      `saturday`, `sunday`]) {

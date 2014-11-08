@@ -596,6 +596,7 @@ enum WordKind:ubyte
     adverb, /// changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
     normalAdverb,
     conjunctiveAdverb, /// joins together sentences
+    negatingAdverb,
 
     adverbialConjunction = conjunctiveAdverb,
 
@@ -793,6 +794,7 @@ unittest
         with (WordKind)
             return kind.of(adverb,
                            normalAdverb,
+                           negatingAdverb,
                            conjunctiveAdverb);
     }
     bool isPronoun(WordKind kind)
@@ -1363,4 +1365,17 @@ unittest
         assert(+i == (`plus ` ~ ti).toTextualIntegerMaybe);
         assert(+i == ti.toTextualIntegerMaybe);
     }
+}
+
+string negationIn(HLang lang = HLang.en)
+    @safe pure nothrow
+{
+    with (HLang)
+        switch (lang)
+        {
+            case en: return "not";
+            case sv: return "inte";
+            case de: return "nicht";
+            default: return "not";
+        }
 }
