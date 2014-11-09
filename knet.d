@@ -578,6 +578,7 @@ Rel decodeRelation(S)(S s,
 
                        "skiarea", "area", "room", "hall", "island", "city", "country",
                        "state", "province", "stateorprovince", // TODO specialize from spatialregion
+                       "headquarter",
 
                        "geopoliticalorganization", "politicalorganization", "organization",
                        "league", "university", "action", "room", "animal",

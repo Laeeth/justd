@@ -597,6 +597,7 @@ enum WordKind:ubyte
     normalAdverb,
     conjunctiveAdverb, /// joins together sentences
     negatingAdverb,
+    affirmingAdverb,
 
     adverbialConjunction = conjunctiveAdverb,
 
@@ -795,6 +796,7 @@ unittest
             return kind.of(adverb,
                            normalAdverb,
                            negatingAdverb,
+                           affirmingAdverb,
                            conjunctiveAdverb);
     }
     bool isPronoun(WordKind kind)
@@ -957,7 +959,9 @@ enum Gender { unknown,
 /** English Negation Prefixes.
     See also: http://www.english-for-students.com/Negative-Prefixes.html
  */
-static immutable negationPrefixes = [ `un`, `non`, `dis`, `im`, `in`, `il`, `ir`, ];
+static immutable englishNegationPrefixes = [ `un`, `non`, `dis`, `im`, `in`, `il`, `ir`, ];
+
+static immutable swedishNegationPrefixes = [ `icke`, `o`, ];
 
 /** English Noun Suffixes.
     See also: http://www.english-for-students.com/Noun-Suffixes.html

@@ -415,6 +415,11 @@ class WordNet(bool useArray = true,
             addWord(e, WordKind.negatingAdverb, 0, HLang.en);
         }
 
+        foreach (e; [`yes`, `yeah`])
+        {
+            addWord(e, WordKind.affirmingAdverb, 0, HLang.en);
+        }
+
         foreach (e; [`ej`, `inte`, `icke`])
         {
             addWord(e, WordKind.negatingAdverb, 0, HLang.sv);
