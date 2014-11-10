@@ -167,9 +167,9 @@ enum Rel:ubyte
     desires, /* A is a conscious entity that typically wants B. Many assertions
                 of this type use the appropriate language's word for "person" as
                 A. /r/Desires /c/en/person /c/en/love */
+    eats,
 
-    causesDesire, // TODO redundant with desires
-    desireOf, // TODO redundant with desires
+    causesDesire,
 
     hiredBy,
     createdBy, /* B is a process that creates A. /r/CreatedBy /c/en/cake
@@ -277,6 +277,7 @@ enum Rel:ubyte
 
     chargedWithCrime,
 
+    movedTo, // TODO infers atLocation
 }
 
 /** Relation Direction. */
@@ -610,7 +611,7 @@ Rel decodeRelation(S)(S s,
                            "airport", "bank", "hotel", "port",
 
                            "skiarea", "area", "room", "hall", "island", "city", "country",
-                           "state", "province", "stateorprovince", // TODO specialize from spatialregion
+                           "stateorprovince", "state", "province", // TODO specialize from spatialregion
                            "headquarter",
 
                            "geopoliticalorganization", "politicalorganization", "organization",
@@ -652,7 +653,6 @@ Rel decodeRelation(S)(S s,
 
                 // spatial
             case `at`:                assert(s == `atlocation`);   return atLocation;
-
             case `in`:
             case `foundin`:
             case `existsat`:
@@ -662,6 +662,7 @@ Rel decodeRelation(S)(S s,
             case `latitudelongitude`:
             case `incountry`:
             case `actsin`:                                         return atLocation;
+            case `movedto`:                                        return movedTo;
 
             case `locationof`:                   reversion = true; return atLocation;
             case `locatedwithin`:                                  return atLocation;
@@ -697,8 +698,9 @@ Rel decodeRelation(S)(S s,
             case `motivatedbygoal`:                                return motivatedByGoal;
             case `obstructedby`:                                   return obstructedBy;
             case `desires`:                                        return desires;
+            case `preyson`:                                        return eats;
             case `causesdesire`:                                   return causesDesire;
-            case `desireof`:                                       return desireOf;
+            case `desireof`:                     reversion = true; return desires;
 
             case `hired`:                        reversion = true; return hiredBy;
             case `hiredBy`:                                        return hiredBy;
@@ -866,6 +868,7 @@ bool specializes(Rel special,
                                                diedAtLocation,
                                                hasOfficeIn,
                                                headquarteredIn);
+            case desires: return special.of(eats);
             default: return special == general;
         }
     }
@@ -880,6 +883,9 @@ bool generalizes(T)(T general,
 
 @safe @nogc pure nothrow
 {
+    /* TODO Used to infer that
+       - X and Y are sisters => (hasSister(X,Y) && hasSister(Y,X))
+    */
     bool isSymmetric(const Rel rel)
     {
         with (Rel)
@@ -1000,7 +1006,6 @@ enum Thematic:ubyte
 /*             case obstructedBy: return Thematic.causal; */
 /*             case desires: return Thematic.affective; */
 /*             case causesDesire: return Thematic.affective; */
-/*             case desireOf: return Thematic.affective; */
 
 /*             case createdBy: return Thematic.agents; */
 /*             case receivesAction: return Thematic.agents; */
