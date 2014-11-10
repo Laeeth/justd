@@ -102,7 +102,9 @@ enum Rel:ubyte
                  member meronym relation in WordNet. */
     memberOfEconomicSector,
     participateIn,
+    attends,
     worksFor,
+    writesForPublication,
     leaderOf,
     ceoOf,
     playsIn,
@@ -141,6 +143,8 @@ enum Rel:ubyte
     entails = causes, /* TODO same as causes? */
     leadsTo = causes,
 
+    decreasesRiskOf,
+
     hasSubevent, /* A and B are events, and B happens as a subevent of A. */
 
     hasFirstSubevent, /* A is an event that begins with subevent B. */
@@ -156,6 +160,7 @@ enum Rel:ubyte
     hasColor,
     hasAge,
     hasJobPosition, hasEmployment = hasJobPosition,
+    hasCapital,
 
     attribute,
 
@@ -601,26 +606,31 @@ Rel decodeRelation(S)(S s,
             default: break;
         }
 
-        enum nellAgents = ["object", "product", "concept", "food", "building", "disease",
-                           "agent", "team", "item", "person", "writer",
-                           "athlete",
-                           "journalist", "thing", "bodypart", "sportschool",
-                           "sportfans", "sport", "event", "scene", "school",
-                           "vegetable",
-                           "bankbank", // TODO bug in NELL?
-                           "airport", "bank", "hotel", "port",
+        enum nellAgents = [`object`, `product`, `concept`, `food`, `building`, `disease`,
+                           `agent`, `team`, `item`, `person`, `writer`,
+                           `athlete`,
+                           `journalist`, `thing`, `bodypart`, `sportschool`,
+                           `sportfans`, `sport`, `event`, `scene`, `school`,
+                           `vegetable`,
+                           `bankbank`, // TODO bug in NELL?
+                           `airport`, `bank`, `hotel`, `port`,
 
-                           "skiarea", "area", "room", "hall", "island", "city", "country",
-                           "stateorprovince", "state", "province", // TODO specialize from spatialregion
-                           "headquarter",
+                           `skiarea`, `area`, `room`, `hall`, `island`, `city`, `country`,
+                           `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
+                           `headquarter`,
 
-                           "geopoliticalorganization", "politicalorganization", "organization",
-                           "league", "university", "action", "room", "animal",
-                           "location", "creativework", "equipment", "profession", "tool",
-                           "company",
+                           `geopoliticalorganization`, `politicalorganization`, `organization`,
+                           `league`, `university`, `action`, `room`, `animal`, `arthropod`,
+                           `location`, `creativework`, `equipment`, `profession`, `tool`,
+                           `company`,
             ];
         S t = s;
         t.skipOverNELLNouns(nellAgents);
+
+        if (t.skipOver(`not`))
+        {
+            reversion = true;
+        }
 
         switch (t.toLower)
         {
@@ -628,7 +638,6 @@ Rel decodeRelation(S)(S s,
 
             case `isa`:                                            return isA;
             case `istypeof`:                                       return isA;
-            case `notisa`:                      negation = true;   return isA;
 
             case `partof`:                                         return partOf;
 
@@ -636,10 +645,15 @@ Rel decodeRelation(S)(S s,
             case `belongsto`:                                      return memberOf;
             case `topmemberof`:                                    return topMemberOf;
 
+            case `animalsuchasfish`:             reversion = true; return memberOf;
+
             case `participatein`:
             case `participatedin`:                                 return participateIn; // TODO past tense
 
+            case `attends`:
             case `worksfor`:                                       return worksFor;
+            case `writesforpublication`:                           return writesForPublication;
+
             case `ceoof`:                                          return ceoOf;
             case `playsin`:                                        return playsIn;
             case `playsfor`:                                       return playsFor;
@@ -678,8 +692,10 @@ Rel decodeRelation(S)(S s,
             case `causes`:                                         return causes;
             case `cancause`:                                       return causes;
             case `leadsto`:                                        return causes;
-            case `leadto`:                                        return causes;
+            case `leadto`:                                         return causes;
             case `entails`:                                        return entails;
+
+            case `decreasestheriskof`:                             return decreasesRiskOf;
 
                 // time
             case `hassubevent`:                                    return hasSubevent;
@@ -698,7 +714,9 @@ Rel decodeRelation(S)(S s,
             case `motivatedbygoal`:                                return motivatedByGoal;
             case `obstructedby`:                                   return obstructedBy;
             case `desires`:                                        return desires;
-            case `preyson`:                                        return eats;
+            case `preyson`:
+            case `eat`:                                            return eats;
+            case `eats`:                                           return eats;
             case `causesdesire`:                                   return causesDesire;
             case `desireof`:                     reversion = true; return desires;
 
@@ -710,6 +728,7 @@ Rel decodeRelation(S)(S s,
 
             case `receivesaction`:                                 return receivesAction;
 
+            case `called`:                                         return synonymFor;
             case `synonym`:                                        return synonymFor;
             case `alsoknownas`:                                    return synonymFor;
 
@@ -733,14 +752,6 @@ Rel decodeRelation(S)(S s,
             case `similarto`:                                      return similarTo;
             case `haspainintensity`:                               return hasPainIntensity;
             case `haspaincharacter`:                               return hasPainCharacter;
-
-            case `notmadeof`:                   negation = true;   return madeOf;
-            case `notusedfor`:                  negation = true;   return usedFor;
-            case `nothasa`:                     negation = true;   return hasA;
-            case `notdesires`:                  negation = true;   return desires;
-            case `notcauses`:                   negation = true;   return causes;
-            case `notcapableof`:                negation = true;   return capableOf;
-            case `nothasproperty`:              negation = true;   return hasProperty;
 
             case `wordnet/adjectivepertainsto`: negation = true;   return adjectivePertainsTo;
             case `wordnet/adverbpertainsto`:    negation = true;   return adverbPertainsTo;
@@ -799,6 +810,8 @@ Rel decodeRelation(S)(S s,
             case `graduatedfrom`:                                  return graduatedFrom;
 
             case `competeswith`:                                   return competesWith;
+            case `playsagainst`:                                   return competesWith;
+
             case `involvedwith`:                                   return involvedWith;
             case `collaborateswith`:                               return collaboratesWith;
 
@@ -813,6 +826,24 @@ Rel decodeRelation(S)(S s,
             case `marriedin`:                                      return marriedIn;
             case `diedin`:                                         return diedIn;
             case `diedatage`:                                      return diedAtAge;
+
+            case `istallerthan`:                                   return isTallerThan;
+            case `isshorterthan`:                reversion = true; return isTallerThan;
+
+            case `islargerthan`:                                   return isLargerThan;
+            case `issmallerthan`:                reversion = true; return isLargerThan;
+
+            case `isheavierthan`:                                  return isHeavierThan;
+            case `islighterthan`:                reversion = true; return isHeavierThan;
+
+            case `isolderthan`:                                    return isOlderThan;
+            case `isyoungerthan`:                reversion = true; return isOlderThan;
+
+            case `aremorethan`:                                    return areMoreThan;
+            case `arefewerthan`:                 reversion = true; return areMoreThan;
+
+            case `hascapital`:                                     return hasCapital;
+            case `capitalof`:                    reversion = true; return hasCapital;
 
             default:
                 dln(`Unknown relationString `, t, ` originally `, s);
@@ -851,13 +882,15 @@ bool specializes(Rel special,
                                              hasDaugther);
             case isA: return !special.of(isA,
                                          relatedTo);
-            case worksFor: return special.of(ceoOf);
+            case worksFor: return special.of(ceoOf,
+                                             writesForPublication);
             case leaderOf: return special.of(ceoOf);
             case memberOf: return special.of(participateIn,
                                              worksFor,
                                              playsFor,
                                              memberOfEconomicSector,
-                                             topMemberOf);
+                                             topMemberOf,
+                                             attends);
             case hasProperty: return special.of(hasAge,
                                                 hasColor,
                                                 hasShape,
@@ -895,10 +928,13 @@ bool generalizes(T)(T general,
                           antonymFor,
                           similarSize,
                           similarTo,
+                          hasRelative,
                           hasFamilyMember,
+                          hasSpouse,
                           hasSibling,
                           hasBrother,
-                          hasSister);
+                          hasSister,
+                          competesWith);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
@@ -911,7 +947,8 @@ bool generalizes(T)(T general,
     {
         with (Rel)
             return (rel.isSymmetric &&
-                    rel.of(partOf,
+                    rel.of(generalizes,
+                           partOf,
                            isA,
                            memberOf,
                            hasA,
@@ -921,8 +958,7 @@ bool generalizes(T)(T general,
                            causes,
                            entails,
                            hasSubevent,
-                           hasPrerequisite,
-                           hasRelative));
+                           hasPrerequisite));
     }
 
     /** Return true if $(D rel) is a strong.
