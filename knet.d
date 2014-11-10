@@ -97,8 +97,10 @@ enum Rel:ubyte
 
     partOf, /* A is a part of B. This is the part meronym relation in
                WordNet. /r/PartOf /c/en/gearshift /c/en/car */
+
     memberOf, /* A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
+    memberOfEconomicSector,
     participateIn,
     worksFor,
     leaderOf,
@@ -106,6 +108,7 @@ enum Rel:ubyte
     playsIn,
     playsFor,
     contributedTo,
+    topMemberOf, // TODO Infers leads
 
     hasA, /* B belongs to A, either as an inherent part or due to a social
              construct of possession. HasA is often the reverse of PartOf. /r/HasA
@@ -397,6 +400,25 @@ string toHumanLang(const Rel rel,
                             default: return "have" ~ neg ~ " member";
                         }
                     }
+                case topMemberOf:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "är" ~ neg ~ " huvudmedlem av";
+                            case en:
+                            default: return "is" ~ neg ~ " the top member of";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "har" ~ neg ~ " toppmedlem";
+                            case en:
+                            default: return "have" ~ neg ~ " top member";
+                        }
+                    }
                 case participateIn:
                     if (linkDir == RelDir.forward)
                     {
@@ -543,7 +565,8 @@ void skipOverNELLPrefixes(R, A)(ref R s, in A agents)
 {
     foreach (agent; agents)
     {
-        if (s.skipOver(agent)) { break; }
+        if (s.length > agent.length &&
+            s.skipOver(agent)) { break; }
     }
 }
 
@@ -551,7 +574,8 @@ void skipOverNELLSuffixes(R, A)(ref R s, in A agents)
 {
     foreach (agent; agents)
     {
-        if (s.endsWith(agent)) { s = s[0 .. $ - agent.length]; break; }
+        if (s.length > agent.length &&
+            s.endsWith(agent)) { s = s[0 .. $ - agent.length]; break; }
     }
 }
 
@@ -567,27 +591,36 @@ Rel decodeRelation(S)(S s,
                       out bool negation,
                       out bool reversion) if (isSomeString!S)
 {
-    enum nellAgents = ["object", "product", "concept", "food", "building", "disease",
-                       "agent", "team", "item", "person", "writer",
-                       "athlete",
-                       "journalist", "thing", "bodypart", "sportschool",
-                       "sportfans", "sport", "event", "scene", "school",
-                       "vegetable",
-                       "bankbank", // TODO bug in NELL?
-                       "airport", "bank", "hotel", "port",
-
-                       "skiarea", "area", "room", "hall", "island", "city", "country",
-                       "state", "province", "stateorprovince", // TODO specialize from spatialregion
-                       "headquarter",
-
-                       "geopoliticalorganization", "politicalorganization", "organization",
-                       "league", "university", "action", "room", "animal",
-                       "location", "creativework", "equipment", "profession", "tool"];
-    S t = s;
-    t.skipOverNELLNouns(nellAgents);
-
     with (Rel)
     {
+        switch (s)
+        {
+            case `companyeconomicsector`: return memberOfEconomicSector;
+            case `headquarteredin`: return headquarteredIn;
+            default: break;
+        }
+
+        enum nellAgents = ["object", "product", "concept", "food", "building", "disease",
+                           "agent", "team", "item", "person", "writer",
+                           "athlete",
+                           "journalist", "thing", "bodypart", "sportschool",
+                           "sportfans", "sport", "event", "scene", "school",
+                           "vegetable",
+                           "bankbank", // TODO bug in NELL?
+                           "airport", "bank", "hotel", "port",
+
+                           "skiarea", "area", "room", "hall", "island", "city", "country",
+                           "state", "province", "stateorprovince", // TODO specialize from spatialregion
+                           "headquarter",
+
+                           "geopoliticalorganization", "politicalorganization", "organization",
+                           "league", "university", "action", "room", "animal",
+                           "location", "creativework", "equipment", "profession", "tool",
+                           "company",
+            ];
+        S t = s;
+        t.skipOverNELLNouns(nellAgents);
+
         switch (t.toLower)
         {
             case `relatedto`:                                      return relatedTo;
@@ -600,6 +633,7 @@ Rel decodeRelation(S)(S s,
 
             case `memberof`:
             case `belongsto`:                                      return memberOf;
+            case `topmemberof`:                                    return topMemberOf;
 
             case `participatein`:
             case `participatedin`:                                 return participateIn; // TODO past tense
@@ -675,6 +709,8 @@ Rel decodeRelation(S)(S s,
             case `receivesaction`:                                 return receivesAction;
 
             case `synonym`:                                        return synonymFor;
+            case `alsoknownas`:                                    return synonymFor;
+
             case `antonym`:                                        return antonymFor;
             case `retronym`:                                       return retronymFor;
 
@@ -817,7 +853,9 @@ bool specializes(Rel special,
             case leaderOf: return special.of(ceoOf);
             case memberOf: return special.of(participateIn,
                                              worksFor,
-                                             playsFor);
+                                             playsFor,
+                                             memberOfEconomicSector,
+                                             topMemberOf);
             case hasProperty: return special.of(hasAge,
                                                 hasColor,
                                                 hasShape,
@@ -846,12 +884,15 @@ bool generalizes(T)(T general,
     {
         with (Rel)
             return rel.of(relatedTo,
-                               translationOf,
-                               synonymFor,
-                               antonymFor,
-                               similarSize,
-                               similarTo,
-                               hasFamilyMember, hasSibling);
+                          translationOf,
+                          synonymFor,
+                          antonymFor,
+                          similarSize,
+                          similarTo,
+                          hasFamilyMember,
+                          hasSibling,
+                          hasBrother,
+                          hasSister);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
@@ -863,22 +904,19 @@ bool generalizes(T)(T general,
     bool isTransitive(const Rel rel)
     {
         with (Rel)
-            return rel.of(partOf,
-                          relatedTo,
-                          isA,
-                          memberOf,
-                          hasA,
-                          atLocation,
-                          hasContext,
-                          locatedNear,
-                          causes,
-                          entails,
-                          hasSubevent,
-                          synonymFor,
-                          hasPrerequisite,
-                          translationOf,
-
-                          hasRelative, hasFamilyMember, hasSibling, hasBrother, hasSister);
+            return (rel.isSymmetric &&
+                    rel.of(partOf,
+                           isA,
+                           memberOf,
+                           hasA,
+                           atLocation,
+                           hasContext,
+                           locatedNear,
+                           causes,
+                           entails,
+                           hasSubevent,
+                           hasPrerequisite,
+                           hasRelative));
     }
 
     /** Return true if $(D rel) is a strong.
