@@ -45,6 +45,7 @@ import std.uni: isWhite, toLower;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy;
+import porter;
 import dbg;
 
 /* version = msgpack; */
@@ -169,16 +170,21 @@ enum Rel:ubyte
     obstructedBy, /* A is a goal that can be prevented by B; B is an obstacle in
                      the way of A. */
 
+    causesDesire,
+
     desires, /* A is a conscious entity that typically wants B. Many assertions
                 of this type use the appropriate language's word for "person" as
                 A. /r/Desires /c/en/person /c/en/love */
     eats,
 
-    causesDesire,
-
+    buys,
+    acquires,
     hiredBy,
-    createdBy, /* B is a process that creates A. /r/CreatedBy /c/en/cake
-                  /c/en/bake */
+
+    creates, /* B is a process that creates A. /r/CreatedBy /c/en/cake
+                /c/en/bake */
+    writes,
+
     receivesAction,
 
     synonymFor, /* A and B have very similar meanings. This is the synonym relation
@@ -603,6 +609,8 @@ Rel decodeRelation(S)(S s,
         {
             case `companyeconomicsector`: return memberOfEconomicSector;
             case `headquarteredin`: return headquarteredIn;
+            case `animalsuchasfish`: reversion = true; return memberOf;
+            case `bookwriter`: reversion = true; return writes;
             default: break;
         }
 
@@ -644,8 +652,6 @@ Rel decodeRelation(S)(S s,
             case `memberof`:
             case `belongsto`:                                      return memberOf;
             case `topmemberof`:                                    return topMemberOf;
-
-            case `animalsuchasfish`:             reversion = true; return memberOf;
 
             case `participatein`:
             case `participatedin`:                                 return participateIn; // TODO past tense
@@ -713,18 +719,26 @@ Rel decodeRelation(S)(S s,
 
             case `motivatedbygoal`:                                return motivatedByGoal;
             case `obstructedby`:                                   return obstructedBy;
+
             case `desires`:                                        return desires;
+            case `desireof`:                     reversion = true; return desires;
+
             case `preyson`:
             case `eat`:                                            return eats;
             case `eats`:                                           return eats;
             case `causesdesire`:                                   return causesDesire;
-            case `desireof`:                     reversion = true; return desires;
+
+            case `buy`:                                            return buys;
+            case `buys`:                                           return buys;
+            case `buyed`:                                          return buys;
+            case `acquires`:                                       return acquires;
+            case `acquired`:                                       return acquires;
 
             case `hired`:                        reversion = true; return hiredBy;
             case `hiredBy`:                                        return hiredBy;
 
-            case `created`:                      reversion = true; return createdBy;
-            case `createdby`:                                      return createdBy;
+            case `created`:                                        return creates;
+            case `createdby`:                    reversion = true; return creates;
 
             case `receivesaction`:                                 return receivesAction;
 
@@ -884,6 +898,7 @@ bool specializes(Rel special,
                                          relatedTo);
             case worksFor: return special.of(ceoOf,
                                              writesForPublication);
+            case creates: return special.of(writes);
             case leaderOf: return special.of(ceoOf);
             case memberOf: return special.of(participateIn,
                                              worksFor,
@@ -901,7 +916,8 @@ bool specializes(Rel special,
                                                diedAtLocation,
                                                hasOfficeIn,
                                                headquarteredIn);
-            case desires: return special.of(eats);
+            case buys: return special.of(acquires);
+            case desires: return special.of(eats, buys, acquires);
             default: return special == general;
         }
     }
