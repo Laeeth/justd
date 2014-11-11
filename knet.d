@@ -105,12 +105,16 @@ enum Rel:ubyte
     participateIn,
     attends,
     worksFor,
+    worksInAcademicField,
     writesForPublication,
     leaderOf,
     ceoOf,
     represents,
+
+    plays,
     playsIn,
     playsFor,
+
     contributedTo,
     topMemberOf, // TODO Infers leads
 
@@ -128,10 +132,12 @@ enum Rel:ubyte
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
+    hasCitizenship, livesIn = hasCitizenship,
+    hasResidenceIn,
+
     bornAtLocation,
-    hasCitizenship,
-    livesIn = hasCitizenship,
     diedAtLocation,
+
     hasOfficeIn,
     headquarteredIn,
 
@@ -155,6 +161,8 @@ enum Rel:ubyte
 
     hasPrerequisite, /* In order for A to happen, B needs to happen; B is a
                         dependency of A. /r/HasPrerequisite/ /c/en/drive/ /c/en/get_in_car/ */
+
+    endedAt,
 
     hasProperty, /* A has B as a property; A can be described as
                     B. /r/HasProperty /c/en/ice /c/en/solid */
@@ -184,6 +192,8 @@ enum Rel:ubyte
 
     creates, /* B is a process that creates A. /r/CreatedBy /c/en/cake
                 /c/en/bake */
+    develops,
+    produces,
     writes,
 
     receivesAction,
@@ -225,8 +235,6 @@ enum Rel:ubyte
 
     inheritsFrom,
 
-    similarSize,
-
     // comparison. TODO generalize using adjectives and three way link
     isTallerThan,
     isLargerThan,
@@ -237,6 +245,9 @@ enum Rel:ubyte
     symbolOf,
 
     similarTo,
+    similarSizeTo,
+    similarAppearanceTo,
+    looksLike = similarAppearanceTo,
 
     hasPainIntensity,
     hasPainCharacter,
@@ -340,7 +351,7 @@ string toHumanLang(const Rel rel,
                         case en:
                         default: return "is" ~ neg ~ " the opposite of";
                     }
-                case similarSize:
+                case similarSizeTo:
                     switch (lang)
                     {
                         case sv: return "är" ~ neg ~ " lika stor som";
@@ -353,6 +364,13 @@ string toHumanLang(const Rel rel,
                         case sv: return "är" ~ neg ~ " likvärdig med";
                         case en:
                         default: return "is" ~ neg ~ " similar to";
+                    }
+                case looksLike:
+                    switch (lang)
+                    {
+                        case sv: return "ser" ~ neg ~ " ut som";
+                        case en:
+                        default: return "looks" ~ neg ~ " like";
                     }
                 case isA:
                     if (linkDir == RelDir.forward)
@@ -630,7 +648,10 @@ Rel decodeRelation(S)(S s,
             case `companyeconomicsector`: return memberOfEconomicSector;
             case `headquarteredin`: return headquarteredIn;
             case `animalsuchasfish`: reversion = true; return memberOf;
+            case `animalsuchasinsect`: reversion = true; return memberOf;
+            case `animalsuchasinvertebrate`: reversion = true; return memberOf;
             case `bookwriter`: reversion = true; return writes;
+            case `politicianholdsoffice`: return hasJobPosition;
             default: break;
         }
 
@@ -639,7 +660,7 @@ Rel decodeRelation(S)(S s,
                            `athlete`,
                            `journalist`, `thing`, `bodypart`, `sportschool`,
                            `sportfans`, `sport`, `event`, `scene`, `school`,
-                           `vegetable`,
+                           `vegetable`, `beverage`,
                            `bankbank`, // TODO bug in NELL?
                            `airport`, `bank`, `hotel`, `port`,
 
@@ -647,13 +668,19 @@ Rel decodeRelation(S)(S s,
                            `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
                            `headquarter`,
 
-                           `geopoliticalorganization`, `politicalorganization`, `organization`,
-                           `league`, `university`, `action`, `room`, `animal`, `arthropod`,
+                           `geopoliticallocation`,
+                           `geopoliticalorganization`,
+                           `politicalorganization`,
+                           `organization`,
+
+                           `league`, `university`, `action`, `room`, `animal`, `arthropod`, `insect`, `invertebrate`,
                            `location`, `creativework`, `equipment`, `profession`, `tool`,
                            `company`, `politician`,
             ];
         S t = s;
         t.skipOverNELLNouns(nellAgents);
+
+        t.skipOver(`that`);
 
         if (t.skipOver(`not`))
         {
@@ -679,10 +706,15 @@ Rel decodeRelation(S)(S s,
             case `attends`:
             case `worksfor`:                                       return worksFor;
             case `writesforpublication`:                           return writesForPublication;
+            case `inacademicfield`:                                return worksInAcademicField;
 
             case `ceoof`:                                          return ceoOf;
+            case `plays`:                                          return plays;
             case `playsin`:                                        return playsIn;
             case `playsfor`:                                       return playsFor;
+            case `competeswith`:
+            case `playsagainst`:                                   return competesWith;
+
             case `contributedto`:                                  return contributedTo;
 
             case `hasa`:                                           return hasA;
@@ -713,8 +745,8 @@ Rel decodeRelation(S)(S s,
 
                 // membership
             case `hascitizenship`:                                 return hasCitizenship;
+            case `hasresidencein`:                                 return hasResidenceIn;
 
-                // cause and effect
             case `causes`:                                         return causes;
             case `cancause`:                                       return causes;
             case `leadsto`:                                        return causes;
@@ -745,6 +777,7 @@ Rel decodeRelation(S)(S s,
 
             case `preyson`:
             case `eat`:                                            return eats;
+            case `feedon`:                                         return eats;
             case `eats`:                                           return eats;
             case `causesdesire`:                                   return causesDesire;
 
@@ -759,6 +792,8 @@ Rel decodeRelation(S)(S s,
 
             case `created`:                                        return creates;
             case `createdby`:                    reversion = true; return creates;
+            case `develop`:                                        return develops;
+            case `produces`:                                       return produces;
 
             case `receivesaction`:                                 return receivesAction;
 
@@ -780,10 +815,12 @@ Rel decodeRelation(S)(S s,
             case `definedas`:                                      return definedAs;
             case `instanceof`:                                     return instanceOf;
             case `madeof`:                                         return madeOf;
+            case `madefrom`:                                       return madeOf;
             case `inheritsfrom`:                                   return inheritsFrom;
-            case `similarsize`:                                    return similarSize;
+            case `similarsize`:                                    return similarSizeTo;
             case `symbolof`:                                       return symbolOf;
             case `similarto`:                                      return similarTo;
+            case `lookslike`:                                      return looksLike;
             case `haspainintensity`:                               return hasPainIntensity;
             case `haspaincharacter`:                               return hasPainCharacter;
 
@@ -835,6 +872,7 @@ Rel decodeRelation(S)(S s,
             case `containsbodypart`: reversion = true;             return partOf;
 
             case `atdate`:                                         return atDate;
+            case `dissolvedatdate`:                                return endedAt;
             case `proxyfor`:                                       return proxyFor;
             case `mutualproxyfor`:                                 return mutualProxyFor;
 
@@ -842,9 +880,6 @@ Rel decodeRelation(S)(S s,
 
             case `graduated`:
             case `graduatedfrom`:                                  return graduatedFrom;
-
-            case `competeswith`:                                   return competesWith;
-            case `playsagainst`:                                   return competesWith;
 
             case `involvedwith`:                                   return involvedWith;
             case `collaborateswith`:                               return collaboratesWith;
@@ -918,8 +953,11 @@ bool specializes(Rel special,
             case isA: return !special.of(isA,
                                          relatedTo);
             case worksFor: return special.of(ceoOf,
-                                             writesForPublication);
-            case creates: return special.of(writes);
+                                             writesForPublication,
+                                             worksInAcademicField);
+            case creates: return special.of(writes,
+                                            develops,
+                                            produces);
             case leaderOf: return special.of(ceoOf);
             case memberOf: return special.of(participateIn,
                                              worksFor,
@@ -934,11 +972,14 @@ bool specializes(Rel special,
             case derivedFrom: return special.of(acronymFor);
             case atLocation: return special.of(bornAtLocation,
                                                hasCitizenship,
+                                               hasResidenceIn,
                                                diedAtLocation,
                                                hasOfficeIn,
                                                headquarteredIn);
             case buys: return special.of(acquires);
             case desires: return special.of(eats, buys, acquires);
+            case similarTo: return special.of(similarSizeTo,
+                                              similarAppearanceTo);
             default: return special == general;
         }
     }
@@ -963,8 +1004,9 @@ bool generalizes(T)(T general,
                           translationOf,
                           synonymFor,
                           antonymFor,
-                          similarSize,
+                          similarSizeTo,
                           similarTo,
+                          similarAppearanceTo,
                           hasRelative,
                           hasFamilyMember,
                           hasSpouse,
@@ -1097,7 +1139,7 @@ enum Thematic:ubyte
 /*             case instanceOf: return Thematic.things; */
 /*             case madeOf: return Thematic.things; */
 /*             case inheritsFrom: return Thematic.things; */
-/*             case similarSize: return Thematic.things; */
+/*             case similarSizeTo: return Thematic.things; */
 /*             case symbolOf: return Thematic.kLines; */
 /*             case similarTo: return Thematic.kLines; */
 /*             case hasPainIntensity: return Thematic.kLines; */
