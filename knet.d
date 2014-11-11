@@ -154,6 +154,7 @@ enum Rel:ubyte
     causes, /* A and B are events, and it is typical for A to cause B. */
     entails = causes, /* TODO same as causes? */
     leadsTo = causes,
+    causesSideEffect,
 
     decreasesRiskOf,
 
@@ -179,6 +180,7 @@ enum Rel:ubyte
     hasTournament,
     hasCapital,
     hasExpert,
+    hasLanguage,
 
     attribute,
 
@@ -687,6 +689,14 @@ Rel decodeRelation(S)(S s,
             case `politicsbillconcernsissue`: return concerns;
             case `politicsbillsponsoredbypoliticianus`: reversion = true; return sponsors;
             case `booksuchasbook`: reversion = true; return instanceOf;
+            case `jobpositionusesacademicfield`: return memberOf;
+            case `academicprogramatuniversity`: return partOf; // TODO Ok?
+            case `academicfieldsuchasacademicfield`: return relatedTo;
+            case `academicfieldhassubfield`: reversion = true; return partOf;
+            case `academicfieldconcernssubject`: reversion = true; return partOf; // TODO Ok?
+            case `academicfieldusedbyeconomicsector`: reversion = true; return usedFor;
+            case `languageofcountry`: reversion = true; return hasLanguage;
+            case `drughassideeffect`: return causesSideEffect;
             default: break;
         }
 
@@ -1014,8 +1024,12 @@ bool specializes(Rel special,
                                                 hasColor,
                                                 hasShape,
                                                 hasTeamPosition,
+                                                hasTournament,
+                                                hasCapital,
+                                                hasExpert,
                                                 hasJobPosition,
-                                                hasOfficialWebsite);
+                                                hasOfficialWebsite,
+                                                hasLanguage);
             case derivedFrom: return special.of(acronymFor);
             case atLocation: return special.of(bornAtLocation,
                                                hasCitizenship,
@@ -1027,6 +1041,7 @@ bool specializes(Rel special,
             case desires: return special.of(eats, buys, acquires);
             case similarTo: return special.of(similarSizeTo,
                                               similarAppearanceTo);
+            case causes: return special.of(causesSideEffect);
             default: return special == general;
         }
     }
