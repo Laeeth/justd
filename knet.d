@@ -108,6 +108,7 @@ enum Rel:ubyte
     writesForPublication,
     leaderOf,
     ceoOf,
+    represents,
     playsIn,
     playsFor,
     contributedTo,
@@ -526,6 +527,25 @@ string toHumanLang(const Rel rel,
                             default: return "is lead " ~ neg ~ " by";
                         }
                     }
+                case represents:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "representerar" ~ neg;
+                            case en:
+                            default: return "represents" ~ neg;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "representeras " ~ neg ~ " av";
+                            case en:
+                            default: return "is represented " ~ neg ~ " by";
+                        }
+                    }
                 case ceoOf:
                     if (linkDir == RelDir.forward)
                     {
@@ -623,14 +643,14 @@ Rel decodeRelation(S)(S s,
                            `bankbank`, // TODO bug in NELL?
                            `airport`, `bank`, `hotel`, `port`,
 
-                           `skiarea`, `area`, `room`, `hall`, `island`, `city`, `country`,
+                           `skiarea`, `area`, `room`, `hall`, `island`, `city`, `country`, `office`,
                            `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
                            `headquarter`,
 
                            `geopoliticalorganization`, `politicalorganization`, `organization`,
                            `league`, `university`, `action`, `room`, `animal`, `arthropod`,
                            `location`, `creativework`, `equipment`, `profession`, `tool`,
-                           `company`,
+                           `company`, `politician`,
             ];
         S t = s;
         t.skipOverNELLNouns(nellAgents);
@@ -832,6 +852,7 @@ Rel decodeRelation(S)(S s,
             case `contains`: reversion = true;                     return partOf;
             case `controls`:                                       return controls;
             case `leads`: reversion = true;                        return leaderOf;
+            case `represents`:                                     return represents;
             case `chargedwithcrime`:                               return chargedWithCrime;
 
             case `wasbornin`:                                      return bornIn;
