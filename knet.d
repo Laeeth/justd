@@ -110,12 +110,16 @@ enum Rel:ubyte
     leaderOf,
     ceoOf,
     represents,
+    concerns, // TODO relate
+
+    writtenAboutInPublication,
 
     plays,
+    playsInstrument,
     playsIn,
     playsFor,
 
-    contributedTo,
+    contributesTo,
     topMemberOf, // TODO Infers leads
 
     hasA, /* B belongs to A, either as an inherent part or due to a social
@@ -169,8 +173,12 @@ enum Rel:ubyte
     hasShape,
     hasColor,
     hasAge,
+    hasOfficialWebsite,
     hasJobPosition, hasEmployment = hasJobPosition,
+    hasTeamPosition,
+    hasTournament,
     hasCapital,
+    hasExpert,
 
     attribute,
 
@@ -188,7 +196,9 @@ enum Rel:ubyte
 
     buys,
     acquires,
-    hiredBy,
+
+    hires,
+    sponsors, // TODO related
 
     creates, /* B is a process that creates A. /r/CreatedBy /c/en/cake
                 /c/en/bake */
@@ -507,23 +517,42 @@ string toHumanLang(const Rel rel,
                             default: return "have " ~ neg ~ " player";
                         }
                     }
-                case contributedTo:
+                case plays:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "bidrog" ~ neg ~ " till";
+                            case sv: return "spelar" ~ neg;
                             case en:
-                            default: return "contributed" ~ neg ~ " to";
+                            default: return "plays" ~ neg;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "hade " ~ neg ~ " bidragare";
+                            case sv: return "spelas " ~ neg ~ " av";
                             case en:
-                            default: return "had " ~ neg ~ " contributor";
+                            default: return "played " ~ neg ~ " by";
+                        }
+                    }
+                case contributesTo:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "bidrar" ~ neg ~ " till";
+                            case en:
+                            default: return "contributes" ~ neg ~ " to";
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "har " ~ neg ~ " bidragare";
+                            case en:
+                            default: return "has " ~ neg ~ " contributor";
                         }
                     }
                 case leaderOf:
@@ -650,13 +679,19 @@ Rel decodeRelation(S)(S s,
             case `animalsuchasfish`: reversion = true; return memberOf;
             case `animalsuchasinsect`: reversion = true; return memberOf;
             case `animalsuchasinvertebrate`: reversion = true; return memberOf;
+            case `musicianinmusicartist`: return memberOf;
             case `bookwriter`: reversion = true; return writes;
             case `politicianholdsoffice`: return hasJobPosition;
+            case `sporthassportsteamposition`: return hasTeamPosition;
+            case `awardtrophytournamentisthechampionshipgameofthenationalsport`: reversion = true; return hasTournament;
+            case `politicsbillconcernsissue`: return concerns;
+            case `politicsbillsponsoredbypoliticianus`: reversion = true; return sponsors;
+            case `booksuchasbook`: reversion = true; return instanceOf;
             default: break;
         }
 
         enum nellAgents = [`object`, `product`, `concept`, `food`, `building`, `disease`,
-                           `agent`, `team`, `item`, `person`, `writer`,
+                           `agent`, `team`, `item`, `person`, `writer`, `musician`,
                            `athlete`,
                            `journalist`, `thing`, `bodypart`, `sportschool`,
                            `sportfans`, `sport`, `event`, `scene`, `school`,
@@ -690,6 +725,7 @@ Rel decodeRelation(S)(S s,
         switch (t.toLower)
         {
             case `relatedto`:                                      return relatedTo;
+            case `andother`:                                      return relatedTo;
 
             case `isa`:                                            return isA;
             case `istypeof`:                                       return isA;
@@ -710,12 +746,14 @@ Rel decodeRelation(S)(S s,
 
             case `ceoof`:                                          return ceoOf;
             case `plays`:                                          return plays;
+            case `playsinstrument`:                                return playsInstrument;
             case `playsin`:                                        return playsIn;
             case `playsfor`:                                       return playsFor;
             case `competeswith`:
             case `playsagainst`:                                   return competesWith;
 
-            case `contributedto`:                                  return contributedTo;
+            case `contributesto`:                                  return contributesTo;
+            case `contributedto`:                                  return contributesTo; // TODO past tense
 
             case `hasa`:                                           return hasA;
             case `usedfor`:                                        return usedFor;
@@ -767,6 +805,7 @@ Rel decodeRelation(S)(S s,
             case `hasshape`:                                       return hasShape;
             case `hascolor`:                                       return hasColor;
             case `hasage`:                                         return hasAge;
+            case `hasofficialwebsite`:                             return hasOfficialWebsite;
             case `attribute`:                                      return attribute;
 
             case `motivatedbygoal`:                                return motivatedByGoal;
@@ -783,21 +822,21 @@ Rel decodeRelation(S)(S s,
 
             case `buy`:                                            return buys;
             case `buys`:                                           return buys;
-            case `buyed`:                                          return buys;
+            case `buyed`:                                          return buys; // TODO past tense
             case `acquires`:                                       return acquires;
-            case `acquired`:                                       return acquires;
+            case `acquired`:                                       return acquires; // TODO past tense
 
-            case `hired`:                        reversion = true; return hiredBy;
-            case `hiredBy`:                                        return hiredBy;
+            case `hired`:                                          return hires; // TODO past tense
+            case `hiredBy`:                      reversion = true; return hires; // TODO past tense
 
-            case `created`:                                        return creates;
+            case `created`:                                        return creates; // TODO past tense
             case `createdby`:                    reversion = true; return creates;
             case `develop`:                                        return develops;
             case `produces`:                                       return produces;
 
             case `receivesaction`:                                 return receivesAction;
 
-            case `called`:                                         return synonymFor;
+            case `called`:                                         return synonymFor; // TODO past tense
             case `synonym`:                                        return synonymFor;
             case `alsoknownas`:                                    return synonymFor;
 
@@ -878,8 +917,8 @@ Rel decodeRelation(S)(S s,
 
             case `hasjobposition`:                                 return hasJobPosition;
 
-            case `graduated`:
-            case `graduatedfrom`:                                  return graduatedFrom;
+            case `graduated`: // TODO past tense
+            case `graduatedfrom`:                                  return graduatedFrom; // TODO past tense
 
             case `involvedwith`:                                   return involvedWith;
             case `collaborateswith`:                               return collaboratesWith;
@@ -914,6 +953,11 @@ Rel decodeRelation(S)(S s,
 
             case `hascapital`:                                     return hasCapital;
             case `capitalof`:                    reversion = true; return hasCapital;
+
+            case `writtenaboutinpublication`:                      return writtenAboutInPublication;
+
+            case `hasexpert`:
+            case `mlareaexpert`:                                   return hasExpert;
 
             default:
                 dln(`Unknown relationString `, t, ` originally `, s);
@@ -959,6 +1003,7 @@ bool specializes(Rel special,
                                             develops,
                                             produces);
             case leaderOf: return special.of(ceoOf);
+            case plays: return special.of(playsInstrument);
             case memberOf: return special.of(participateIn,
                                              worksFor,
                                              playsFor,
@@ -968,7 +1013,9 @@ bool specializes(Rel special,
             case hasProperty: return special.of(hasAge,
                                                 hasColor,
                                                 hasShape,
-                                                hasJobPosition);
+                                                hasTeamPosition,
+                                                hasJobPosition,
+                                                hasOfficialWebsite);
             case derivedFrom: return special.of(acronymFor);
             case atLocation: return special.of(bornAtLocation,
                                                hasCitizenship,
