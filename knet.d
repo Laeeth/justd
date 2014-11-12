@@ -313,6 +313,8 @@ enum Rel:ubyte
     chargedWithCrime,
 
     movedTo, // TODO infers atLocation
+
+    servedWith,
 }
 
 /** Relation Direction. */
@@ -700,7 +702,7 @@ Rel decodeRelation(S)(S s,
             default: break;
         }
 
-        enum nellAgents = [`object`, `product`, `concept`, `food`, `building`, `disease`,
+        enum nellAgents = [`object`, `product`, `concept`, `food`, `building`, `disease`, `bakedgood`,
                            `agent`, `team`, `item`, `person`, `writer`, `musician`,
                            `athlete`,
                            `journalist`, `thing`, `bodypart`, `sportschool`,
@@ -968,6 +970,8 @@ Rel decodeRelation(S)(S s,
 
             case `hasexpert`:
             case `mlareaexpert`:                                   return hasExpert;
+
+            case `servedwith`:                                     return servedWith;
 
             default:
                 dln(`Unknown relationString `, t, ` originally `, s);
@@ -1247,6 +1251,7 @@ enum Origin:ubyte
     wordnet30,
     verbosity,
     nell,
+    manual,
 }
 
 auto pageSize() @trusted
@@ -1374,26 +1379,26 @@ class Net(bool useArray = true,
     {
         return inLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                                  (a._negation == b._negation &&
-                                                  a._relation == b._relation));
+                                                  a._rel == b._rel));
     }
     auto outLinksGroupedByRelation(in Concept concept)
     {
         return outLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                                   (a._negation == b._negation &&
-                                                   a._relation == b._relation));
+                                                   a._rel == b._rel));
     }
 
     auto insByRelation(in Concept concept)
     {
         return insOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                              (a[0]._negation == b[0]._negation &&
-                                              a[0]._relation == b[0]._relation));
+                                              a[0]._rel == b[0]._rel));
     }
     auto outsByRelation(in Concept concept)
     {
         return outsOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                               (a[0]._negation == b[0]._negation &&
-                                               a[0]._relation == b[0]._relation));
+                                               a[0]._rel == b[0]._rel));
     }
 
     static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
@@ -1410,7 +1415,7 @@ class Net(bool useArray = true,
         this(Rel rel,
              Origin origin = Origin.unknown)
         {
-            this._relation = rel;
+            this._rel = rel;
             this._origin = origin;
         }
 
@@ -1442,7 +1447,7 @@ class Net(bool useArray = true,
 
         Weight _weight;
 
-        Rel _relation;
+        Rel _rel;
         bool _negation; // relation negation
 
         Origin _origin;
@@ -1478,7 +1483,7 @@ class Net(bool useArray = true,
 
         WordNet!(true, true) _wordnet;
 
-        size_t[Rel.max + 1] _relationCounts;
+        size_t[Rel.max + 1] _relCounts;
         size_t[Origin.max + 1] _linkSourceCounts;
         size_t[HLang.max + 1] _hlangCounts;
         size_t[WordKind.max + 1] _kindCounts;
@@ -1614,8 +1619,8 @@ class Net(bool useArray = true,
 
     /** Lookup Previous or Store New $(D concept) at $(D lemma) index.
      */
-    ConceptIx lookupOrStore(in Lemma lemma,
-                            Concept concept)
+    ConceptIx lookupOrStoreConcept(in Lemma lemma,
+                                   Concept concept)
     {
         if (lemma in _conceptIxByLemma)
         {
@@ -1625,18 +1630,18 @@ class Net(bool useArray = true,
         assert(_concepts.length <= Ix.max);
         const cix = ConceptIx(cast(Ix)_concepts.length);
         _concepts ~= concept; // .. new concept that is stored
-        _conceptIxByLemma[lemma] = cix; // lookupOrStore index to ..
+        _conceptIxByLemma[lemma] = cix; // lookupOrStoreConcept index to ..
         _conceptStringLengthSum += lemma.words.length;
         return cix;
     }
 
     /** Lookup or Store Concept named $(D words) in language $(D lang). */
-    ConceptIx lookupOrStore(Words words,
+    ConceptIx lookupOrStoreConcept(Words words,
                             HLang lang,
                             WordKind kind,
                             CategoryIx categoryIx)
     {
-        return lookupOrStore(Lemma(words, lang, kind, categoryIx),
+        return lookupOrStoreConcept(Lemma(words, lang, kind, categoryIx),
                              Concept(words, lang, kind, categoryIx));
     }
 
@@ -1644,21 +1649,37 @@ class Net(bool useArray = true,
     LinkIx connect(ConceptIx srcIx,
                    Rel rel,
                    ConceptIx dstIx,
-                   Origin origin,
+                   Origin origin = Origin.unknown,
                    real weight = 1.0,
                    bool negation = false,
                    bool reversion = false)
     {
-        LinkIx linkIx = LinkIx(cast(Ix)_links.length);
-        auto link = Link(Rel.isA, Origin.nell);
+        if (false)
+        {
+            LinkIx eix = areRelated(srcIx, dstIx); // existing Link Index
+            if (eix != LinkIx.undefined)
+            {
+                auto existingLink = linkByIx(eix);
+                if (existingLink._rel == rel)
+                {
+                    dln("warning: Concepts ",
+                        conceptByIx(srcIx), " and ",
+                        conceptByIx(dstIx), " already related as ",
+                        rel);
+                }
+            }
+        }
+
+        auto lix  = LinkIx(cast(Ix)_links.length);
+        auto link = Link(rel, origin);
 
         link._srcIx = reversion ? dstIx : srcIx;
         link._dstIx = reversion ? srcIx : dstIx;
 
-        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= linkIx; _connectednessSum++;
-        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= linkIx; _connectednessSum++;
+        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; _connectednessSum++;
+        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; _connectednessSum++;
 
-        ++_relationCounts[rel];
+        ++_relCounts[rel];
         ++_linkSourceCounts[origin];
 
         if (origin == Origin.cn5)
@@ -1677,7 +1698,7 @@ class Net(bool useArray = true,
         propagateLinkConcepts(link);
 
         _links ~= link;
-        return linkIx; // _links.back;
+        return lix; // _links.back;
     }
     alias relate = connect;
 
@@ -1711,7 +1732,7 @@ class Net(bool useArray = true,
         }
         ++_kindCounts[wordKind];
 
-        return lookupOrStore(word, hlang, wordKind, anyCategory);
+        return lookupOrStoreConcept(word, hlang, wordKind, anyCategory);
     }
 
     import std.algorithm: splitter;
@@ -1730,7 +1751,6 @@ class Net(bool useArray = true,
         auto categoryIx = anyCategory;
 
         LinkIx entityCategoryLink;
-        auto valueLink = Link(Origin.nell);
         auto mainLink = Link(Origin.nell);
 
         bool show = false;
@@ -1783,9 +1803,9 @@ class Net(bool useArray = true,
                     /* name */
                     immutable entityName = entity.front.idup; entity.popFront;
 
-                    entityCategoryLink = connect(entityIx = lookupOrStore(entityName, lang, kind, categoryIx),
+                    entityCategoryLink = connect(entityIx = lookupOrStoreConcept(entityName, lang, kind, categoryIx),
                                                  Rel.isA,
-                                                 entityCategoryIx = lookupOrStore(categoryName, lang, kind, categoryIx),
+                                                 entityCategoryIx = lookupOrStoreConcept(categoryName, lang, kind, categoryIx),
                                                  Origin.nell, 1.0);
 
                     break;
@@ -2006,7 +2026,7 @@ class Net(bool useArray = true,
         writeln(`Rel Count by Type:`);
         foreach (rel; Rel.min .. Rel.max)
         {
-            const count = _relationCounts[rel];
+            const count = _relCounts[rel];
             if (count)
             {
                 writeln(`- `, rel.to!string, `: `, count);
@@ -2163,7 +2183,7 @@ class Net(bool useArray = true,
 
             foreach (inGroup; insByRelation(concept))
             {
-                showLinkRelation(inGroup.front[0]._relation, RelDir.backward);
+                showLinkRelation(inGroup.front[0]._rel, RelDir.backward);
                 foreach (inLink, inConcept; inGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
@@ -2173,7 +2193,7 @@ class Net(bool useArray = true,
 
             foreach (outGroup; outsByRelation(concept))
             {
-                showLinkRelation(outGroup.front[0]._relation, RelDir.backward);
+                showLinkRelation(outGroup.front[0]._rel, RelDir.backward);
                 foreach (outLink, outConcept; outGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
                     showConcept(outConcept, outLink.normalizedWeight);
@@ -2185,7 +2205,7 @@ class Net(bool useArray = true,
             /* { */
             /*     const link = linkByIx(ix); */
             /*     showLinkConcept(conceptByIx(link._dstIx), */
-            /*                     link._relation, */
+            /*                     link._rel, */
             /*                     link.normalizedWeight, */
             /*                     RelDir.backward); */
             /* } */
@@ -2193,7 +2213,7 @@ class Net(bool useArray = true,
             /* { */
             /*     const link = linkByIx(ix); */
             /*     showLinkConcept(conceptByIx(link._srcIx), */
-            /*                     link._relation, */
+            /*                     link._rel, */
             /*                     link.normalizedWeight, */
             /*                     RelDir.forward); */
             /* } */
