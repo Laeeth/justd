@@ -145,7 +145,9 @@ enum Rel:ubyte
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
     hasCitizenship, livesIn = hasCitizenship,
+    hasEthnicity,
     hasResidenceIn,
+    hasHome,
     languageSchoolInCity,
 
     bornAtLocation,
@@ -260,6 +262,7 @@ enum Rel:ubyte
     instanceOf,
 
     madeOf, // TODO Unite with instanceOf
+    madeAt,
 
     inheritsFrom,
 
@@ -288,6 +291,10 @@ enum Rel:ubyte
 
     hasRelative,
     hasFamilyMember, // can be a dog
+
+    hasFriend, // opposite of hasFriend
+    hasTeamMate,
+    hasEnemy,
 
     hasSpouse,
     hasWife,
@@ -336,6 +343,7 @@ enum Rel:ubyte
 
     cookedWith,
     servedWith,
+    wornWith,
 }
 
 /** Relation Direction. */
@@ -716,12 +724,18 @@ Rel decodeRelation(S)(S s,
             case `bookwriter`: reversion = true; return writes;
             case `politicianholdsoffice`: return hasJobPosition;
 
+            case `attractionofcity`: return atLocation;
+
             case `sportsgamedate`: return atDate;
             case `sportsgamesport`: return plays;
             case `sportsgamewinner`: reversion = true; return wins;
             case `sportsgameloser`: reversion = true; return loses;
             case `sportsgameteam`: reversion = true; return participatesIn;
-            case `sporthassportsteamposition`: return hasTeamPosition;
+
+            case `teammate`: return hasTeamMate;
+
+            case `sporthassportsteamposition`:
+            case `athleteplayssportsteamposition`: return hasTeamPosition;
 
             case `sportsgamescore`: return hasScore;
             case `sportsgameloserscore`: return hasLoserScore;
@@ -752,17 +766,23 @@ Rel decodeRelation(S)(S s,
             default: break;
         }
 
-        enum nellAgents = [`object`, `agriculturalproduct`, `product`, `chemical`, `drug`, `concept`, `food`, `building`, `disease`, `bakedgood`,
+        enum nellAgents = [`object`, `agriculturalproduct`, `product`, `chemical`, `drug`, `concept`, `food`, `buildingmaterial`, `disease`, `bakedgood`,
+                           `landscapefeatures`,
+                           `economicsector`,
+                           `vehicle`, `clothing`, `weapon`,
                            `vegetableproduction`,
                            `agent`, `team`, `item`, `person`, `writer`, `musician`,
                            `athlete`,
                            `journalist`, `thing`, `bodypart`, `artery`, `sportschool`,
                            `sportfans`, `sport`, `event`, `scene`, `school`,
-                           `vegetable`, `beverage`,
+                           `vegetable`, `beverage`, `protein`,
                            `bankbank`, // TODO bug in NELL?
-                           `airport`, `bank`, `hotel`, `port`, `park`,
+                           `officebuildingroom`,
+                           `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `building`, `material`,
 
                            `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`,
+                           `attraction`, `museum`, `aquarium`, `zoo`, `stadium`,
+                           `newspaper`, `shoppingmall`, `restaurant`,  `bar`, `televisionstation`, `radiostation`, `transportation`,
                            `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
                            `headquarter`,
 
@@ -848,6 +868,7 @@ Rel decodeRelation(S)(S s,
 
             case `locationof`:                   reversion = true; return atLocation;
             case `locatedwithin`:                                  return atLocation;
+            case `home`:                                           return hasHome;
 
             case `hascontext`:                                     return hasContext;
             case `locatednear`:                                    return locatedNear;
@@ -857,6 +878,7 @@ Rel decodeRelation(S)(S s,
 
                 // membership
             case `hascitizenship`:                                 return hasCitizenship;
+            case `personhasethnicity`:                             return hasEthnicity;
             case `hasresidencein`:                                 return hasResidenceIn;
 
             case `causes`:                                         return causes;
@@ -935,6 +957,8 @@ Rel decodeRelation(S)(S s,
             case `comingfrom`:
             case `camefrom`:                                       return madeOf;
 
+            case `madein`:                                         return madeAt;
+
             case `inheritsfrom`:                                   return inheritsFrom;
             case `similarsize`:                                    return similarSizeTo;
             case `symbolof`:                                       return symbolOf;
@@ -990,6 +1014,7 @@ Rel decodeRelation(S)(S s,
             case `usesstadium`:                                    return uses;
             case `containsbodypart`: reversion = true;             return partOf;
 
+            case `date`:
             case `atdate`:                                         return atDate;
             case `dissolvedatdate`:                                return endedAt;
             case `proxyfor`:                                       return proxyFor;
@@ -1003,16 +1028,20 @@ Rel decodeRelation(S)(S s,
             case `involvedwith`:                                   return involvedWith;
             case `collaborateswith`:                               return collaboratesWith;
 
+            case `contain`:
             case `contains`: reversion = true;                     return partOf;
             case `controls`:                                       return controls;
             case `leads`: reversion = true;                        return leaderOf;
             case `represents`:                                     return represents;
             case `chargedwithcrime`:                               return chargedWithCrime;
 
-            case `wasbornin`:                                      return bornIn;
-            case `bornin`:                                         return bornIn;
+            case `wasbornin`:
+            case `bornin`:
+            case `birthdate`:                                      return bornIn;
+
             case `marriedinyear`:
             case `marriedin`:                                      return marriedIn;
+
             case `diedin`:                                         return diedIn;
             case `diedatage`:                                      return diedAtAge;
 
@@ -1036,11 +1065,14 @@ Rel decodeRelation(S)(S s,
 
             case `writtenaboutinpublication`:                      return writtenAboutInPublication;
 
+            case `toattract`:                    reversion = true; return desires;
+
             case `hasexpert`:
             case `mlareaexpert`:                                   return hasExpert;
 
             case `cookedwith`:                                     return cookedWith;
             case `servedwith`:                                     return servedWith;
+            case `togowith`:                                       return wornWith;
 
             default:
                 dln(`Unknown relationString `, t, ` originally `, s);
@@ -1094,7 +1126,8 @@ bool specializes(Rel special,
                                              playsFor,
                                              memberOfEconomicSector,
                                              topMemberOf,
-                                             attends);
+                                             attends,
+                                             hasEthnicity);
             case hasProperty: return special.of(hasAge,
                                                 hasColor,
                                                 hasShape,
@@ -1111,10 +1144,12 @@ bool specializes(Rel special,
             case atLocation: return special.of(bornAtLocation,
                                                hasCitizenship,
                                                hasResidenceIn,
+                                               hasHome,
                                                diedAtLocation,
                                                hasOfficeIn,
                                                headquarteredIn,
-                                               languageSchoolInCity);
+                                               languageSchoolInCity,
+                                               hasTeamPosition);
             case buys: return special.of(acquires);
             case desires: return special.of(eats, buys, acquires);
             case similarTo: return special.of(similarSizeTo,
@@ -1150,12 +1185,18 @@ bool generalizes(T)(T general,
                           similarSizeTo,
                           similarTo,
                           similarAppearanceTo,
+
+                          hasFriend,
+                          hasTeamMate,
+                          hasEnemy,
+
                           hasRelative,
                           hasFamilyMember,
                           hasSpouse,
                           hasSibling,
                           hasBrother,
                           hasSister,
+
                           competesWith,
                           cookedWith,
                           servedWith,
@@ -1186,6 +1227,15 @@ bool generalizes(T)(T general,
                            hasSubevent,
                            hasPrerequisite));
     }
+
+    bool oppositeOf(const Rel a,
+                    const Rel b)
+    {
+        with (Rel)
+            return (a == hasEnemy  && b == hasFriend ||
+                    a == hasFriend && b == hasEnemy);
+    }
+    alias areOpposites = oppositeOf;
 
     /** Return true if $(D rel) is a strong.
         TODO Where is strength decided and what purpose does it have?
@@ -1678,7 +1728,7 @@ class Net(bool useArray = true,
         _wordnet = new WordNet!(true, true)([HLang.en]);
 
         // NELL
-        readNELLFile("~/Knowledge/nell/NELL.08m.880.esv.csv".expandTilde
+        readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
                                                             .buildNormalizedPath,
                      maxCount);
 
