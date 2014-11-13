@@ -114,6 +114,8 @@ enum Rel:ubyte
     represents,
     concerns, // TODO relate
 
+    multipleOf,
+
     writtenAboutInPublication,
 
     plays,
@@ -766,6 +768,7 @@ Rel decodeRelation(S)(S s,
                            `animal`, `mammal`, `arthropod`, `insect`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`,
                            `location`, `creativework`, `equipment`, `profession`, `tool`,
                            `company`, `politician`,
+                           `geometricshape`,
             ];
         S t = s;
         t.skipOverNELLNouns(nellAgents);
@@ -785,13 +788,18 @@ Rel decodeRelation(S)(S s,
             case `isa`:                                            return isA;
             case `istypeof`:                                       return isA;
 
+            case `ismultipleof`:                                   return multipleOf;
+
             case `partof`:                                         return partOf;
 
             case `memberof`:
             case `belongsto`:                                      return memberOf;
-            case `topmemberof`:                                    return topMemberOf;
 
+            case `include`:
+            case `including`:
             case `suchas`:                       reversion = true; return memberOf;
+
+            case `topmemberof`:                                    return topMemberOf;
 
             case `participatein`:
             case `participatedin`:                                 return participatesIn; // TODO past tense
