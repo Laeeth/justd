@@ -329,6 +329,7 @@ enum Rel:ubyte
 
     movedTo, // TODO infers atLocation
 
+    cookedWith,
     servedWith,
 }
 
@@ -742,7 +743,8 @@ Rel decodeRelation(S)(S s,
             default: break;
         }
 
-        enum nellAgents = [`object`, `product`, `chemical`, `drug`, `concept`, `food`, `building`, `disease`, `bakedgood`,
+        enum nellAgents = [`object`, `agriculturalproduct`, `product`, `chemical`, `drug`, `concept`, `food`, `building`, `disease`, `bakedgood`,
+                           `vegetableproduction`,
                            `agent`, `team`, `item`, `person`, `writer`, `musician`,
                            `athlete`,
                            `journalist`, `thing`, `bodypart`, `artery`, `sportschool`,
@@ -760,7 +762,8 @@ Rel decodeRelation(S)(S s,
                            `politicalorganization`,
                            `organization`,
 
-                           `league`, `university`, `action`, `room`, `animal`, `mammal`, `arthropod`, `insect`, `invertebrate`, `fish`, `mollusk`,
+                           `league`, `university`, `action`, `room`,
+                           `animal`, `mammal`, `arthropod`, `insect`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`,
                            `location`, `creativework`, `equipment`, `profession`, `tool`,
                            `company`, `politician`,
             ];
@@ -787,6 +790,8 @@ Rel decodeRelation(S)(S s,
             case `memberof`:
             case `belongsto`:                                      return memberOf;
             case `topmemberof`:                                    return topMemberOf;
+
+            case `suchas`:                       reversion = true; return memberOf;
 
             case `participatein`:
             case `participatedin`:                                 return participatesIn; // TODO past tense
@@ -1012,6 +1017,7 @@ Rel decodeRelation(S)(S s,
             case `hasexpert`:
             case `mlareaexpert`:                                   return hasExpert;
 
+            case `cookedwith`:                                     return cookedWith;
             case `servedwith`:                                     return servedWith;
 
             default:
@@ -1127,6 +1133,7 @@ bool generalizes(T)(T general,
                           hasBrother,
                           hasSister,
                           competesWith,
+                          cookedWith,
                           servedWith,
                           physicallyConnectedWith);
     }
