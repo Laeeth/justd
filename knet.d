@@ -740,7 +740,9 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
 
 /** Decode Relation $(D s) together with its possible $(D negation) and
     $(D reversion). */
-Rel decodeRelation(S)(S s,
+Rel decodeRelation(S)(S predicate,
+                      const S entity,
+                      const S value,
                       const Origin origin,
                       out bool negation,
                       out bool reversion,
@@ -748,7 +750,7 @@ Rel decodeRelation(S)(S s,
 {
     with (Rel)
     {
-        switch (s)
+        switch (predicate)
         {
             case `companyeconomicsector`: return memberOfEconomicSector;
             case `headquarteredin`: tense = Tense.pastMoment; return headquarteredIn;
@@ -866,7 +868,7 @@ Rel decodeRelation(S)(S s,
                            `geometricshape`,
             ];
 
-        S t = s;
+        S t = predicate;
 
         if (origin == Origin.nell)
         {
@@ -926,7 +928,7 @@ Rel decodeRelation(S)(S s,
             case `capableof`:                                      return capableOf;
 
                 // spatial
-            case `at`:                assert(s == `atlocation`);   return atLocation;
+            case `at`:                                             return atLocation;
 
             case `locatedin`:
             case `foundin`:
@@ -1159,7 +1161,7 @@ Rel decodeRelation(S)(S s,
             case `togowith`:                                       return wornWith;
 
             default:
-                dln(`Unknown relationString `, t, ` originally `, s);
+                dln(`Unknown relationString `, t, ` originally `, predicate);
                                                                    return relatedTo;
         }
     }
@@ -2046,6 +2048,7 @@ class Net(bool useArray = true,
         ConceptIx valueIx;
 
         string entityCategoryName;
+        string relationName;
         string valueCategoryName;
 
         auto ignored = false;
@@ -2073,20 +2076,25 @@ class Net(bool useArray = true,
                     else
                         if (show) dln("TODO Handle non-concept predicate ", predicate);
 
-                    rel = predicate.front.decodeRelation(Origin.nell,
-                                                         negation, reversion, tense);
-                    ignored = (rel == Rel.wikipediaURL);
+                    relationName = predicate.front.idup;
 
                     break;
                 case 2:
-                    if (rel == Rel.atLocation)
+                    if (relationName == "haswikipediaurl")
                     {
-                        const loc = part.findSplit(",");
-                        if (!loc[1].empty)
+                        ignored = true;
+                    }
+                    else
+                    {
+                        if (relationName == "latitudelongitude")
                         {
-                            setLocation(entityIx,
-                                        Location(loc[0].to!double,
-                                                 loc[2].to!double));
+                            const loc = part.findSplit(",");
+                            if (!loc[1].empty)
+                            {
+                                setLocation(entityIx,
+                                            Location(loc[0].to!double,
+                                                     loc[2].to!double));
+                            }
                         }
                         else
                         {
@@ -2094,6 +2102,20 @@ class Net(bool useArray = true,
                             valueIx = value[0];
                             if (!valueIx.defined) { return; }
                             valueCategoryName = value[1];
+
+                            /* dln("before: ", relationName, " ", entityCategoryName, " ", valueCategoryName); */
+                            relationName.skipOver(entityCategoryName); // strip dumb prefix
+                            // strip dump suffix
+                            if (relationName.endsWith(valueCategoryName))
+                            {
+                                relationName = relationName[0 .. $ - valueCategoryName.length];
+                            }
+                            /* dln("after: ", relationName); */
+
+                            rel = relationName.decodeRelation(entityCategoryName,
+                                                              valueCategoryName,
+                                                              Origin.nell,
+                                                              negation, reversion, tense);
                         }
                     }
                     break;
@@ -2186,7 +2208,7 @@ class Net(bool useArray = true,
             {
                 case 1:
                     // TODO Handle case when part matches /r/_wordnet/X
-                    rel = part[3..$].decodeRelation(Origin.cn5,
+                    rel = part[3..$].decodeRelation(null, null, Origin.cn5,
                                                     negation, reversion, tense);
                     break;
                 case 2:         // source concept
