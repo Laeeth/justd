@@ -46,6 +46,7 @@ import std.uni: isWhite, toLower;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy;
+import skip_ex: skipOverBack;
 import porter;
 import dbg;
 
@@ -714,28 +715,32 @@ string toHumanLang(const Rel rel,
     }
 }
 
-void skipOverNELLPrefixes(R, A)(ref R s, in A agents)
+/** Drop $(D prefixes) in $(D s).
+    TODO Use multi-argument skipOver when it becomes available http://forum.dlang.org/thread/bug-12335-3@https.d.puremagic.com%2Fissues%2F
+ */
+void skipOverPrefixes(R, A)(ref R s, in A prefixes)
 {
-    foreach (agent; agents)
+    foreach (prefix; prefixes)
     {
-        if (s.length > agent.length &&
-            s.skipOver(agent)) { break; }
+        if (s.length > prefix.length &&
+            s.skipOver(prefix)) { break; }
     }
 }
 
-void skipOverNELLSuffixes(R, A)(ref R s, in A agents)
+/** Drop $(D suffixes) in $(D s). */
+void skipOverSuffixes(R, A)(ref R s, in A suffixes)
 {
-    foreach (agent; agents)
+    foreach (suffix; suffixes)
     {
-        if (s.length > agent.length &&
-            s.endsWith(agent)) { s = s[0 .. $ - agent.length]; break; }
+        if (s.length > suffix.length &&
+            s.endsWith(suffix)) { s = s[0 .. $ - suffix.length]; break; }
     }
 }
 
 void skipOverNELLNouns(R, A)(ref R s, in A agents)
 {
-    s.skipOverNELLPrefixes(agents);
-    s.skipOverNELLSuffixes(agents);
+    s.skipOverPrefixes(agents);
+    s.skipOverSuffixes(agents);
 }
 
 /** Decode Relation $(D s) together with its possible $(D negation) and
@@ -2103,14 +2108,8 @@ class Net(bool useArray = true,
                             if (!valueIx.defined) { return; }
                             valueCategoryName = value[1];
 
-                            /* dln("before: ", relationName, " ", entityCategoryName, " ", valueCategoryName); */
                             relationName.skipOver(entityCategoryName); // strip dumb prefix
-                            // strip dump suffix
-                            if (relationName.endsWith(valueCategoryName))
-                            {
-                                relationName = relationName[0 .. $ - valueCategoryName.length];
-                            }
-                            /* dln("after: ", relationName); */
+                            relationName.skipOverBack(valueCategoryName); // strip dumb suffix
 
                             rel = relationName.decodeRelation(entityCategoryName,
                                                               valueCategoryName,
