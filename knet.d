@@ -700,6 +700,7 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
 /** Decode Relation $(D s) together with its possible $(D negation) and
     $(D reversion). */
 Rel decodeRelation(S)(S s,
+                      const Origin origin,
                       out bool negation,
                       out bool reversion) if (isSomeString!S)
 {
@@ -797,10 +798,14 @@ Rel decodeRelation(S)(S s,
                            `company`, `politician`,
                            `geometricshape`,
             ];
-        S t = s;
-        t.skipOverNELLNouns(nellAgents);
 
-        t.skipOver(`that`);
+        S t = s;
+
+        if (origin == Origin.nell)
+        {
+            t.skipOverNELLNouns(nellAgents);
+            t.skipOver(`that`);
+        }
 
         if (t.skipOver(`not`))
         {
@@ -1977,7 +1982,9 @@ class Net(bool useArray = true,
                     else
                         if (show) dln("TODO Handle non-concept predicate ", predicate);
 
-                    rel = predicate.front.decodeRelation(negation, reversion);
+                    rel = predicate.front.decodeRelation(Origin.nell,
+                                                         negation,
+                                                         reversion);
                     ignored = (rel == Rel.wikipediaURL);
 
                     break;
@@ -2086,7 +2093,10 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 1:
-                    rel = part[3..$].decodeRelation(negation, reversion); // TODO Handle case when part matches /r/_wordnet/X
+                    // TODO Handle case when part matches /r/_wordnet/X
+                    rel = part[3..$].decodeRelation(Origin.cn5,
+                                                    negation,
+                                                    reversion);
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
