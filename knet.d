@@ -157,6 +157,7 @@ enum Rel:ubyte
     hasContext,
 
     locatedNear,
+    borderedBy,
 
     controls,
 
@@ -851,6 +852,7 @@ Rel decodeRelation(S)(S s,
             case `hascontext`:                                     return hasContext;
             case `locatednear`:                                    return locatedNear;
             case `lieson`:                                         return locatedNear;
+            case `isborderedby`:                                   return borderedBy;
             case `hasofficein`:                                    return hasOfficeIn;
 
                 // membership
@@ -1120,6 +1122,7 @@ bool specializes(Rel special,
             case causes: return special.of(causesSideEffect);
             case uses: return special.of(usesLanguage);
             case physicallyConnectedWith: return special.of(arisesFrom);
+            case locatedNear: return special.of(borderedBy);
             default: return special == general;
         }
     }
@@ -1177,6 +1180,7 @@ bool generalizes(T)(T general,
                            atLocation,
                            hasContext,
                            locatedNear,
+                           borderedBy,
                            causes,
                            entails,
                            hasSubevent,
