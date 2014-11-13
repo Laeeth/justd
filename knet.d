@@ -166,6 +166,7 @@ enum Rel:ubyte
     causesSideEffect,
 
     decreasesRiskOf,
+    treats,
 
     hasSubevent, /* A and B are events, and B happens as a subevent of A. */
 
@@ -190,6 +191,7 @@ enum Rel:ubyte
     hasCapital,
     hasExpert,
     hasLanguage,
+    hasCurrency,
 
     attribute,
 
@@ -735,12 +737,16 @@ Rel decodeRelation(S)(S s,
             case `academicfieldconcernssubject`: reversion = true; return partOf; // TODO Ok?
             case `academicfieldusedbyeconomicsector`: reversion = true; return uses;
             case `languageofcountry`: reversion = true; return hasLanguage;
+            case `countrycurrency`: return hasCurrency;
             case `drughassideeffect`: return causesSideEffect;
 
             case `languageofcity`: reversion = true; return usesLanguage;
             case `languageofuniversity`: reversion = true; return usesLanguage;
             case `languageschoolincity`: return languageSchoolInCity;
+
             case `emotionassociatedwithdisease`: return relatedTo;
+            case `drugpossiblytreatsphysiologicalcondition`: return treats; // TODO possibly
+
             case `bacteriaisthecausativeagentofphysiologicalcondition`: return causes;
             default: break;
         }
@@ -753,9 +759,9 @@ Rel decodeRelation(S)(S s,
                            `sportfans`, `sport`, `event`, `scene`, `school`,
                            `vegetable`, `beverage`,
                            `bankbank`, // TODO bug in NELL?
-                           `airport`, `bank`, `hotel`, `port`,
+                           `airport`, `bank`, `hotel`, `port`, `park`,
 
-                           `skiarea`, `area`, `room`, `hall`, `island`, `city`, `country`, `office`,
+                           `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`,
                            `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
                            `headquarter`,
 
@@ -765,7 +771,7 @@ Rel decodeRelation(S)(S s,
                            `organization`,
 
                            `league`, `university`, `action`, `room`,
-                           `animal`, `mammal`, `arthropod`, `insect`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`,
+                           `animal`, `mammal`, `arthropod`, `insect`, `vertebrate`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`,
                            `location`, `creativework`, `equipment`, `profession`, `tool`,
                            `company`, `politician`,
                            `geometricshape`,
@@ -844,6 +850,7 @@ Rel decodeRelation(S)(S s,
 
             case `hascontext`:                                     return hasContext;
             case `locatednear`:                                    return locatedNear;
+            case `lieson`:                                         return locatedNear;
             case `hasofficein`:                                    return hasOfficeIn;
 
                 // membership
@@ -857,6 +864,7 @@ Rel decodeRelation(S)(S s,
             case `entails`:                                        return entails;
 
             case `decreasestheriskof`:                             return decreasesRiskOf;
+            case `treats`:                                         return treats;
 
                 // time
             case `hassubevent`:                                    return hasSubevent;
@@ -919,8 +927,12 @@ Rel decodeRelation(S)(S s,
             case `translationof`:                                  return translationOf;
             case `definedas`:                                      return definedAs;
             case `instanceof`:                                     return instanceOf;
-            case `madeof`:                                         return madeOf;
-            case `madefrom`:                                       return madeOf;
+
+            case `madeof`:
+            case `madefrom`:
+            case `comingfrom`:
+            case `camefrom`:                                       return madeOf;
+
             case `inheritsfrom`:                                   return inheritsFrom;
             case `similarsize`:                                    return similarSizeTo;
             case `symbolof`:                                       return symbolOf;
@@ -1091,7 +1103,8 @@ bool specializes(Rel special,
                                                 hasJobPosition,
                                                 hasOfficialWebsite,
                                                 hasScore, hasLoserScore, hasWinnerScore,
-                                                hasLanguage);
+                                                hasLanguage,
+                                                hasCurrency);
             case derivedFrom: return special.of(acronymFor);
             case atLocation: return special.of(bornAtLocation,
                                                hasCitizenship,
