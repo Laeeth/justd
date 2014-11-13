@@ -109,7 +109,9 @@ enum Rel:ubyte
     worksFor,
     worksInAcademicField,
     writesForPublication,
+
     leaderOf,
+    coaches,
     ceoOf,
     represents,
     concerns, // TODO relate
@@ -122,6 +124,10 @@ enum Rel:ubyte
     playsInstrument,
     playsIn,
     playsFor,
+
+    shapes,
+    cutsInto,
+    breaksInto,
 
     wins,
     loses,
@@ -149,6 +155,8 @@ enum Rel:ubyte
     hasResidenceIn,
     hasHome,
     languageSchoolInCity,
+    grownAtLocation,
+    producedAtLocation,
 
     bornAtLocation,
     diedAtLocation,
@@ -172,21 +180,21 @@ enum Rel:ubyte
     treats,
 
     hasSubevent, /* A and B are events, and B happens as a subevent of A. */
-
     hasFirstSubevent, /* A is an event that begins with subevent B. */
-
     hasLastSubevent, /* A is an event that concludes with subevent B. */
 
     hasPrerequisite, /* In order for A to happen, B needs to happen; B is a
                         dependency of A. /r/HasPrerequisite/ /c/en/drive/ /c/en/get_in_car/ */
 
-    endedAt,
+    beganAtTime,
+    endedAtTime,
 
     hasProperty, /* A has B as a property; A can be described as
                     B. /r/HasProperty /c/en/ice /c/en/solid */
     hasShape,
     hasColor,
     hasAge,
+    hasWebsite,
     hasOfficialWebsite,
     hasJobPosition, hasEmployment = hasJobPosition,
     hasTeamPosition,
@@ -209,9 +217,22 @@ enum Rel:ubyte
                 of this type use the appropriate language's word for "person" as
                 A. /r/Desires /c/en/person /c/en/love */
     eats,
+    owns,
 
-    buys,
+    starts,
+    begins = starts,
+
+    ends,
+    finishes = ends,
+    terminates = ends,
+    kills,
+
+    injures,
+    selfinjures,
+
+    buys, // TODO buys => owns
     acquires,
+    affiliatesWith,
 
     hires,
     sponsors, // TODO related
@@ -239,8 +260,8 @@ enum Rel:ubyte
     acronymFor,
 
     physicallyConnectedWith,
-
     arisesFrom,
+    emptiesInto,
 
     derivedFrom, /* A is a word or phrase that appears within B and contributes
                     to B's meaning. /r/DerivedFrom /c/en/pocketbook /c/en/book
@@ -321,7 +342,7 @@ enum Rel:ubyte
 
     wikipediaURL,
 
-    atDate,
+    atTime,
     proxyFor,
     mutualProxyFor,
 
@@ -332,6 +353,7 @@ enum Rel:ubyte
     graduatedFrom,
     agentCreated,
 
+    createdAtDate,
     bornIn,
     marriedIn,
     diedIn,
@@ -607,6 +629,25 @@ string toHumanLang(const Rel rel,
                             default: return "is lead " ~ neg ~ " by";
                         }
                     }
+                case coaches:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "coachar" ~ neg;
+                            case en:
+                            default: return "coaches" ~ neg;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: return "coachad " ~ neg ~ " av";
+                            case en:
+                            default: return "coached " ~ neg ~ " by";
+                        }
+                    }
                 case represents:
                     if (linkDir == RelDir.forward)
                     {
@@ -702,14 +743,15 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
 Rel decodeRelation(S)(S s,
                       const Origin origin,
                       out bool negation,
-                      out bool reversion) if (isSomeString!S)
+                      out bool reversion,
+                      out Tense tense) if (isSomeString!S)
 {
     with (Rel)
     {
         switch (s)
         {
             case `companyeconomicsector`: return memberOfEconomicSector;
-            case `headquarteredin`: return headquarteredIn;
+            case `headquarteredin`: tense = Tense.pastMoment; return headquarteredIn;
 
             case `animalsuchasfish`: reversion = true; return memberOf;
             case `animalsuchasinsect`: reversion = true; return memberOf;
@@ -727,16 +769,25 @@ Rel decodeRelation(S)(S s,
 
             case `attractionofcity`: return atLocation;
 
-            case `sportsgamedate`: return atDate;
+            case `sportsgamedate`: return atTime;
             case `sportsgamesport`: return plays;
+
             case `sportsgamewinner`: reversion = true; return wins;
+            case `athletewinsawardtrophytournament`: return wins;
+
             case `sportsgameloser`: reversion = true; return loses;
             case `sportsgameteam`: reversion = true; return participatesIn;
 
+            case `teamwontrophy`: reversion = true; tense = Tense.pastMoment; return wins;
+
             case `teammate`: return hasTeamMate;
+
+            case `coachesteam`: return coaches;
 
             case `sporthassportsteamposition`:
             case `athleteplayssportsteamposition`: return hasTeamPosition;
+
+            case `personhasethnicity`: return hasEthnicity;
 
             case `sportsgamescore`: return hasScore;
             case `sportsgameloserscore`: return hasLoserScore;
@@ -764,10 +815,26 @@ Rel decodeRelation(S)(S s,
             case `drugpossiblytreatsphysiologicalcondition`: return treats; // TODO possibly
 
             case `bacteriaisthecausativeagentofphysiologicalcondition`: return causes;
+
+            case `organizationterminatedperson`: return terminates;
+
+            case `athleteledsportsteam`: reversion = true; tense = Tense.pastMoment; return leaderOf;
+            case `persondeathdate`: return diedIn;
+
+            case `athleteinjuredhisbodypart`: tense = Tense.pastMoment; return selfinjures;
+
+            case `organizationcreatedatdate`: tense = Tense.pastMoment; return createdAtDate;
+
+            case `drugworkedonbyagent`: tense = Tense.pastMoment; reversion = true; return develops;
+
+            case `agriculturalproductcutintogeometricshape`: return cutsInto;
+
             default: break;
         }
 
-        enum nellAgents = [`object`, `agriculturalproduct`, `product`, `chemical`, `drug`, `concept`, `food`, `buildingmaterial`, `disease`, `bakedgood`,
+        enum nellAgents = [`object`, `agriculturalproduct`, `product`, `chemical`, `drug`, `concept`, `food`,
+                           `buildingfeature`, `buildingmaterial`, `furniture`,
+                           `disease`, `bakedgood`,
                            `landscapefeatures`,
                            `economicsector`,
                            `vehicle`, `clothing`, `weapon`,
@@ -782,7 +849,7 @@ Rel decodeRelation(S)(S s,
                            `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `building`, `material`,
 
                            `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`,
-                           `attraction`, `museum`, `aquarium`, `zoo`, `stadium`,
+                           `touristattraction`, `tourist`, `attraction`, `museum`, `aquarium`, `zoo`, `stadium`,
                            `newspaper`, `shoppingmall`, `restaurant`,  `bar`, `televisionstation`, `radiostation`, `transportation`,
                            `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
                            `headquarter`,
@@ -815,7 +882,7 @@ Rel decodeRelation(S)(S s,
         switch (t.toLower)
         {
             case `relatedto`:                                      return relatedTo;
-            case `andother`:                                      return relatedTo;
+            case `andother`:                                       return relatedTo;
 
             case `isa`:                                            return isA;
             case `istypeof`:                                       return isA;
@@ -834,7 +901,7 @@ Rel decodeRelation(S)(S s,
             case `topmemberof`:                                    return topMemberOf;
 
             case `participatein`:
-            case `participatedin`:                                 return participatesIn; // TODO past tense
+            case `participatedin`: tense = Tense.pastMoment; return participatesIn;
 
             case `attends`:
             case `worksfor`:                                       return worksFor;
@@ -850,26 +917,30 @@ Rel decodeRelation(S)(S s,
             case `playsagainst`:                                   return competesWith;
 
             case `contributesto`:                                  return contributesTo;
-            case `contributedto`:                                  return contributesTo; // TODO past tense
+            case `contributedto`: tense = Tense.pastMoment; return contributesTo;
 
             case `hasa`:                                           return hasA;
-            case `usedfor`:                      reversion = true; return uses;
+            case `usedfor`: reversion = true; tense = Tense.pastMoment; return uses;
             case `use`:
             case `uses`:                                           return uses;
             case `capableof`:                                      return capableOf;
 
                 // spatial
             case `at`:                assert(s == `atlocation`);   return atLocation;
-            case `in`:
-            case `foundin`:
-            case `existsat`:
+
             case `locatedin`:
+            case `foundin`:
+            case `headquarteredin`: tense = Tense.pastMoment; return atLocation;
+
+            case `in`:
+            case `existsat`:
             case `attractionof`:
-            case `headquarteredin`:
             case `latitudelongitude`:
             case `incountry`:
             case `actsin`:                                         return atLocation;
-            case `movedto`:                                        return movedTo;
+            case `grownin`:                                        return grownAtLocation;
+            case `producedin`: tense = Tense.pastMoment; return producedAtLocation;
+            case `movedto`: tense = Tense.pastMoment; return movedTo;
 
             case `locationof`:                   reversion = true; return atLocation;
             case `locatedwithin`:                                  return atLocation;
@@ -883,7 +954,6 @@ Rel decodeRelation(S)(S s,
 
                 // membership
             case `hascitizenship`:                                 return hasCitizenship;
-            case `personhasethnicity`:                             return hasEthnicity;
             case `hasresidencein`:                                 return hasResidenceIn;
 
             case `causes`:                                         return causes;
@@ -907,11 +977,12 @@ Rel decodeRelation(S)(S s,
             case `hasshape`:                                       return hasShape;
             case `hascolor`:                                       return hasColor;
             case `hasage`:                                         return hasAge;
+            case `haswebsite`:                                     return hasWebsite;
             case `hasofficialwebsite`:                             return hasOfficialWebsite;
             case `attribute`:                                      return attribute;
 
             case `motivatedbygoal`:                                return motivatedByGoal;
-            case `obstructedby`:                                   return obstructedBy;
+            case `obstructedby`: tense = Tense.pastMoment; return obstructedBy;
 
             case `desires`:                                        return desires;
             case `desireof`:                     reversion = true; return desires;
@@ -920,25 +991,30 @@ Rel decodeRelation(S)(S s,
             case `eat`:                                            return eats;
             case `feedon`:                                         return eats;
             case `eats`:                                           return eats;
+            case `causedesire`:                                    return causesDesire;
             case `causesdesire`:                                   return causesDesire;
+            case `causeddesire`: tense = Tense.pastMoment; return causesDesire;
 
-            case `buy`:                                            return buys;
-            case `buys`:                                           return buys;
-            case `buyed`:                                          return buys; // TODO past tense
-            case `acquires`:                                       return acquires;
-            case `acquired`:                                       return acquires; // TODO past tense
+            case `buy`:
+            case `buys`:
+            case `buyed`: tense = Tense.pastMoment; return buys;
+            case `acquires`:
+            case `acquired`: tense = Tense.pastMoment; return acquires;
+            case `affiliatedwith`: tense = Tense.pastMoment; return affiliatesWith;
 
-            case `hired`:                                          return hires; // TODO past tense
-            case `hiredBy`:                      reversion = true; return hires; // TODO past tense
+            case `owns`:                                           return owns;
 
-            case `created`:                                        return creates; // TODO past tense
+            case `hired`: tense = Tense.pastMoment; return hires;
+            case `hiredBy`: reversion = true; tense = Tense.pastMoment; return hires;
+
+            case `created`: tense = Tense.pastMoment; return creates;
             case `createdby`:                    reversion = true; return creates;
             case `develop`:                                        return develops;
             case `produces`:                                       return produces;
 
             case `receivesaction`:                                 return receivesAction;
 
-            case `called`:                                         return synonymFor; // TODO past tense
+            case `called`: tense = Tense.pastMoment; return synonymFor;
             case `synonym`:                                        return synonymFor;
             case `alsoknownas`:                                    return synonymFor;
 
@@ -948,8 +1024,9 @@ Rel decodeRelation(S)(S s,
             case `acronymhasname`:
             case `acronymfor`:                                     return acronymFor;
 
-            case `derivedfrom`:                                    return derivedFrom;
+            case `derivedfrom`: tense = Tense.pastMoment; return derivedFrom;
             case `arisesfrom`:                                     return arisesFrom;
+            case `emptiesinto`:                                    return emptiesInto;
 
             case `compoundderivedfrom`:                            return compoundDerivedFrom;
             case `etymologicallyderivedfrom`:                      return etymologicallyDerivedFrom;
@@ -1020,17 +1097,17 @@ Rel decodeRelation(S)(S s,
             case `containsbodypart`: reversion = true;             return partOf;
 
             case `date`:
-            case `atdate`:                                         return atDate;
-            case `dissolvedatdate`:                                return endedAt;
+            case `atdate`:                                         return atTime;
+            case `dissolvedatdate`: tense = Tense.pastMoment; return endedAtTime;
             case `proxyfor`:                                       return proxyFor;
             case `mutualproxyfor`:                                 return mutualProxyFor;
 
             case `hasjobposition`:                                 return hasJobPosition;
 
-            case `graduated`: // TODO past tense
-            case `graduatedfrom`:                                  return graduatedFrom; // TODO past tense
+            case `graduated`:
+            case `graduatedfrom`: tense = Tense.pastMoment; return graduatedFrom;
 
-            case `involvedwith`:                                   return involvedWith;
+            case `involvedwith`: tense = Tense.pastMoment; return involvedWith;
             case `collaborateswith`:                               return collaboratesWith;
 
             case `contain`:
@@ -1044,11 +1121,13 @@ Rel decodeRelation(S)(S s,
             case `bornin`:
             case `birthdate`:                                      return bornIn;
 
-            case `marriedinyear`:
-            case `marriedin`:                                      return marriedIn;
+            case `growingin`: return growsIn;
 
-            case `diedin`:                                         return diedIn;
-            case `diedatage`:                                      return diedAtAge;
+            case `marriedinyear`:
+            case `marriedin`: tense = Tense.pastMoment; return marriedIn;
+
+            case `diedin`: tense = Tense.pastMoment; return diedIn;
+            case `diedatage`: tense = Tense.pastMoment; return diedAtAge;
 
             case `istallerthan`:                                   return isTallerThan;
             case `isshorterthan`:                reversion = true; return isTallerThan;
@@ -1075,8 +1154,8 @@ Rel decodeRelation(S)(S s,
             case `hasexpert`:
             case `mlareaexpert`:                                   return hasExpert;
 
-            case `cookedwith`:                                     return cookedWith;
-            case `servedwith`:                                     return servedWith;
+            case `cookedwith`: tense = Tense.pastMoment; return cookedWith;
+            case `servedwith`: tense = Tense.pastMoment; return servedWith;
             case `togowith`:                                       return wornWith;
 
             default:
@@ -1141,6 +1220,7 @@ bool specializes(Rel special,
                                                 hasCapital,
                                                 hasExpert,
                                                 hasJobPosition,
+                                                hasWebsite,
                                                 hasOfficialWebsite,
                                                 hasScore, hasLoserScore, hasWinnerScore,
                                                 hasLanguage,
@@ -1154,15 +1234,22 @@ bool specializes(Rel special,
                                                hasOfficeIn,
                                                headquarteredIn,
                                                languageSchoolInCity,
-                                               hasTeamPosition);
+                                               hasTeamPosition,
+                                               grownAtLocation,
+                                               producedAtLocation);
             case buys: return special.of(acquires);
+            case shapes: return special.of(cutsInto, breaksInto);
             case desires: return special.of(eats, buys, acquires);
             case similarTo: return special.of(similarSizeTo,
                                               similarAppearanceTo);
+            case injures: return special.of(selfinjures);
             case causes: return special.of(causesSideEffect);
             case uses: return special.of(usesLanguage);
             case physicallyConnectedWith: return special.of(arisesFrom);
             case locatedNear: return special.of(borderedBy);
+            case hasWebsite: return special.of(hasOfficialWebsite);
+            case hasSubevent: return special.of(hasFirstSubevent,
+                                                hasLastSubevent);
             default: return special == general;
         }
     }
@@ -1877,7 +1964,7 @@ class Net(bool useArray = true,
     import std.algorithm: splitter;
 
     /** Read NELL Entity from $(D part). */
-    Tuple!(ConceptIx, LinkIx) readNELLEntity(S)(const S part)
+    Tuple!(ConceptIx, string, LinkIx) readNELLEntity(S)(const S part)
     {
         const show = false;
 
@@ -1937,6 +2024,7 @@ class Net(bool useArray = true,
                                              categoryIx);
 
         return tuple(entityIx,
+                     categoryName,
                      connect(entityIx,
                              Rel.isA,
                              lookupOrStoreConcept(categoryName,
@@ -1949,18 +2037,20 @@ class Net(bool useArray = true,
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readNELLLine(R, N)(R line, N lnr)
     {
-        Rel rel = Rel.any;
-        bool negation = false;
-        bool reversion = false;
+        auto rel = Rel.any;
+        auto negation = false;
+        auto reversion = false;
+        auto tense = Tense.unknown;
 
         ConceptIx entityIx;
         ConceptIx valueIx;
 
-        bool ignored = false;
+        string entityCategoryName;
+        string valueCategoryName;
 
+        auto ignored = false;
         auto mainLink = Link(Origin.nell);
-
-        bool show = false;
+        auto show = false;
 
         auto parts = line.splitter('\t');
         size_t ix;
@@ -1971,6 +2061,7 @@ class Net(bool useArray = true,
                 case 0:
                     auto entity = readNELLEntity(part);
                     entityIx = entity[0];
+                    entityCategoryName = entity[1];
                     if (!entityIx.defined) { return; }
 
                     break;
@@ -1983,8 +2074,7 @@ class Net(bool useArray = true,
                         if (show) dln("TODO Handle non-concept predicate ", predicate);
 
                     rel = predicate.front.decodeRelation(Origin.nell,
-                                                         negation,
-                                                         reversion);
+                                                         negation, reversion, tense);
                     ignored = (rel == Rel.wikipediaURL);
 
                     break;
@@ -2003,6 +2093,7 @@ class Net(bool useArray = true,
                             auto value = readNELLEntity(part);
                             valueIx = value[0];
                             if (!valueIx.defined) { return; }
+                            valueCategoryName = value[1];
                         }
                     }
                     break;
@@ -2077,14 +2168,15 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
     LinkIx readCN5Line(R, N)(R line, N lnr)
     {
-        Rel rel = Rel.any;
-        bool negation = false;
-        bool reversion = false;
+        auto rel = Rel.any;
+        auto negation = false;
+        auto reversion = false;
+        auto tense = Tense.unknown;
 
         ConceptIx src;
         ConceptIx dst;
         real weight;
-        Origin origin = Origin.unknown;
+        auto origin = Origin.unknown;
 
         auto parts = line.splitter('\t');
         size_t ix;
@@ -2095,8 +2187,7 @@ class Net(bool useArray = true,
                 case 1:
                     // TODO Handle case when part matches /r/_wordnet/X
                     rel = part[3..$].decodeRelation(Origin.cn5,
-                                                    negation,
-                                                    reversion);
+                                                    negation, reversion, tense);
                     break;
                 case 2:         // source concept
                     if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
