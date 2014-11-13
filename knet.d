@@ -104,6 +104,7 @@ enum Rel:ubyte
                  member meronym relation in WordNet. */
     memberOfEconomicSector,
     participatesIn,
+    growsIn,
     attends,
     worksFor,
     worksInAcademicField,
@@ -229,6 +230,10 @@ enum Rel:ubyte
     retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
 
     acronymFor,
+
+    physicallyConnectedWith,
+
+    arisesFrom,
 
     derivedFrom, /* A is a word or phrase that appears within B and contributes
                     to B's meaning. /r/DerivedFrom /c/en/pocketbook /c/en/book
@@ -690,9 +695,17 @@ Rel decodeRelation(S)(S s,
         {
             case `companyeconomicsector`: return memberOfEconomicSector;
             case `headquarteredin`: return headquarteredIn;
+
             case `animalsuchasfish`: reversion = true; return memberOf;
             case `animalsuchasinsect`: reversion = true; return memberOf;
             case `animalsuchasinvertebrate`: reversion = true; return memberOf;
+            case `archaeasuchasarchaea`: reversion = true; return memberOf;
+
+            case `plantincludeplant`: reversion = true; return memberOf;
+            case `plantgrowinginplant`: return growsIn;
+
+            case `plantrepresentemotion`: return represents;
+
             case `musicianinmusicartist`: return memberOf;
             case `bookwriter`: reversion = true; return writes;
             case `politicianholdsoffice`: return hasJobPosition;
@@ -725,13 +738,14 @@ Rel decodeRelation(S)(S s,
             case `languageofuniversity`: reversion = true; return usesLanguage;
             case `languageschoolincity`: return languageSchoolInCity;
             case `emotionassociatedwithdisease`: return relatedTo;
+            case `bacteriaisthecausativeagentofphysiologicalcondition`: return causes;
             default: break;
         }
 
-        enum nellAgents = [`object`, `product`, `concept`, `food`, `building`, `disease`, `bakedgood`,
+        enum nellAgents = [`object`, `product`, `chemical`, `drug`, `concept`, `food`, `building`, `disease`, `bakedgood`,
                            `agent`, `team`, `item`, `person`, `writer`, `musician`,
                            `athlete`,
-                           `journalist`, `thing`, `bodypart`, `sportschool`,
+                           `journalist`, `thing`, `bodypart`, `artery`, `sportschool`,
                            `sportfans`, `sport`, `event`, `scene`, `school`,
                            `vegetable`, `beverage`,
                            `bankbank`, // TODO bug in NELL?
@@ -746,7 +760,7 @@ Rel decodeRelation(S)(S s,
                            `politicalorganization`,
                            `organization`,
 
-                           `league`, `university`, `action`, `room`, `animal`, `arthropod`, `insect`, `invertebrate`,
+                           `league`, `university`, `action`, `room`, `animal`, `mammal`, `arthropod`, `insect`, `invertebrate`, `fish`, `mollusk`,
                            `location`, `creativework`, `equipment`, `profession`, `tool`,
                            `company`, `politician`,
             ];
@@ -885,6 +899,7 @@ Rel decodeRelation(S)(S s,
             case `acronymfor`:                                     return acronymFor;
 
             case `derivedfrom`:                                    return derivedFrom;
+            case `arisesfrom`:                                     return arisesFrom;
 
             case `compoundderivedfrom`:                            return compoundDerivedFrom;
             case `etymologicallyderivedfrom`:                      return etymologicallyDerivedFrom;
@@ -1077,6 +1092,7 @@ bool specializes(Rel special,
                                               similarAppearanceTo);
             case causes: return special.of(causesSideEffect);
             case uses: return special.of(usesLanguage);
+            case physicallyConnectedWith: return special.of(arisesFrom);
             default: return special == general;
         }
     }
@@ -1111,7 +1127,8 @@ bool generalizes(T)(T general,
                           hasBrother,
                           hasSister,
                           competesWith,
-                          servedWith);
+                          servedWith,
+                          physicallyConnectedWith);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
