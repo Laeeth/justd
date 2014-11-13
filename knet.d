@@ -103,7 +103,7 @@ enum Rel:ubyte
     memberOf, /* A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
     memberOfEconomicSector,
-    participateIn,
+    participatesIn,
     attends,
     worksFor,
     worksInAcademicField,
@@ -120,6 +120,8 @@ enum Rel:ubyte
     playsIn,
     playsFor,
 
+    wins,
+
     contributesTo,
     topMemberOf, // TODO Infers leads
 
@@ -127,8 +129,9 @@ enum Rel:ubyte
              construct of possession. HasA is often the reverse of PartOf. /r/HasA
              /c/en/bird /c/en/wing ; /r/HasA /c/en/pen /c/en/ink */
 
-    usedFor, /* A is used for B; the purpose of A is B. /r/UsedFor /c/en/bridge
+    uses, /* reverse of usedFor: A is used for B; the purpose of A is B. /r/UsedFor /c/en/bridge
                 /c/en/cross_water */
+    usesLanguage,
 
     capableOf, /* Something that A can typically do is B. /r/CapableOf
                   /c/en/knife /c/en/cut */
@@ -139,6 +142,7 @@ enum Rel:ubyte
                    /c/en/boston /c/en/massachusetts */
     hasCitizenship, livesIn = hasCitizenship,
     hasResidenceIn,
+    languageSchoolInCity,
 
     bornAtLocation,
     diedAtLocation,
@@ -465,7 +469,7 @@ string toHumanLang(const Rel rel,
                             default: return "have" ~ neg ~ " top member";
                         }
                     }
-                case participateIn:
+                case participatesIn:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
@@ -687,6 +691,10 @@ Rel decodeRelation(S)(S s,
             case `musicianinmusicartist`: return memberOf;
             case `bookwriter`: reversion = true; return writes;
             case `politicianholdsoffice`: return hasJobPosition;
+            case `sportsgamedate`: return atDate;
+            case `sportsgamesport`: return plays;
+            case `sportsgamewinner`: reversion = true; return wins;
+            case `sportsgameteam`: reversion = true; return participatesIn;
             case `sporthassportsteamposition`: return hasTeamPosition;
             case `awardtrophytournamentisthechampionshipgameofthenationalsport`: reversion = true; return hasTournament;
             case `politicsbillconcernsissue`: return concerns;
@@ -697,9 +705,14 @@ Rel decodeRelation(S)(S s,
             case `academicfieldsuchasacademicfield`: return relatedTo;
             case `academicfieldhassubfield`: reversion = true; return partOf;
             case `academicfieldconcernssubject`: reversion = true; return partOf; // TODO Ok?
-            case `academicfieldusedbyeconomicsector`: reversion = true; return usedFor;
+            case `academicfieldusedbyeconomicsector`: reversion = true; return uses;
             case `languageofcountry`: reversion = true; return hasLanguage;
             case `drughassideeffect`: return causesSideEffect;
+
+            case `languageofcity`: reversion = true; return usesLanguage;
+            case `languageofuniversity`: reversion = true; return usesLanguage;
+            case `languageschoolincity`: return languageSchoolInCity;
+            case `emotionassociatedwithdisease`: return relatedTo;
             default: break;
         }
 
@@ -750,7 +763,7 @@ Rel decodeRelation(S)(S s,
             case `topmemberof`:                                    return topMemberOf;
 
             case `participatein`:
-            case `participatedin`:                                 return participateIn; // TODO past tense
+            case `participatedin`:                                 return participatesIn; // TODO past tense
 
             case `attends`:
             case `worksfor`:                                       return worksFor;
@@ -769,9 +782,9 @@ Rel decodeRelation(S)(S s,
             case `contributedto`:                                  return contributesTo; // TODO past tense
 
             case `hasa`:                                           return hasA;
-            case `usedfor`:                                        return usedFor;
+            case `usedfor`:                      reversion = true; return uses;
             case `use`:
-            case `uses`:                         reversion = true; return usedFor;
+            case `uses`:                                           return uses;
             case `capableof`:                                      return capableOf;
 
                 // spatial
@@ -919,8 +932,8 @@ Rel decodeRelation(S)(S s,
             case `generalizations`:                                return generalizes;
             case `specializationof`: reversion = true;             return generalizes;
             case `conceptprerequisiteof`: reversion = true;        return hasPrerequisite;
-            case `usesequipment`: reversion = true;                return usedFor;
-            case `usesstadium`: reversion = true;                  return usedFor;
+            case `usesequipment`:                                  return uses;
+            case `usesstadium`:                                    return uses;
             case `containsbodypart`: reversion = true;             return partOf;
 
             case `atdate`:                                         return atDate;
@@ -1019,7 +1032,7 @@ bool specializes(Rel special,
                                             produces);
             case leaderOf: return special.of(ceoOf);
             case plays: return special.of(playsInstrument);
-            case memberOf: return special.of(participateIn,
+            case memberOf: return special.of(participatesIn,
                                              worksFor,
                                              playsFor,
                                              memberOfEconomicSector,
@@ -1041,12 +1054,14 @@ bool specializes(Rel special,
                                                hasResidenceIn,
                                                diedAtLocation,
                                                hasOfficeIn,
-                                               headquarteredIn);
+                                               headquarteredIn,
+                                               languageSchoolInCity);
             case buys: return special.of(acquires);
             case desires: return special.of(eats, buys, acquires);
             case similarTo: return special.of(similarSizeTo,
                                               similarAppearanceTo);
             case causes: return special.of(causesSideEffect);
+            case uses: return special.of(usesLanguage);
             default: return special == general;
         }
     }
