@@ -493,6 +493,8 @@ unittest
     assert(stemmer.stem("disabled") == "disabl");
     assert(stemmer.stem("gentle") == "gentl");
     assert(stemmer.stem("gently") == "gentli");
+    assert(stemmer.stem("served") == "serv");
+    assert(stemmer.stem("competes") == "compet");
 
     assert(stemmer.stem("fullnessful") == "fullness");
     assert(stemmer.stem(stemmer.stem("fullnessful")) == "full");
