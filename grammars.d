@@ -543,6 +543,7 @@ enum TokenId:ubyte
 enum Tense:ubyte
 {
     unknown,
+
     pastMoment,
     presentMoment, // plays
     futureMoment, // [will|is going to|intends to] play
