@@ -21,6 +21,7 @@
     See also: http://www.eturner.net/omcsnetcpp/
 
     TODO Make use of stealFront and stealBack
+    TODO Make LinkIx, ConceptIx inherit Nullable!(Ix, Ix.max)
 
     TODO ansiktstvätt => facial_wash
     TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
@@ -1079,7 +1080,8 @@ bool generalizes(T)(T general,
                           hasSibling,
                           hasBrother,
                           hasSister,
-                          competesWith);
+                          competesWith,
+                          servedWith);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
@@ -1287,16 +1289,16 @@ class Net(bool useArray = true,
     struct LinkIx
     {
         @safe @nogc pure nothrow:
-        static LinkIx undefined() { return LinkIx(Ix.max); }
-        bool defined() const { return this != LinkIx.undefined; }
+        static LinkIx asUndefined() { return LinkIx(Ix.max); }
+        bool defined() const { return this != LinkIx.asUndefined; }
     private:
         Ix _lIx = Ix.max;
     }
     struct ConceptIx
     {
         @safe @nogc pure nothrow:
-        static ConceptIx undefined() { return ConceptIx(Ix.max); }
-        bool defined() const { return this != ConceptIx.undefined; }
+        static ConceptIx asUndefined() { return ConceptIx(Ix.max); }
+        bool defined() const { return this != ConceptIx.asUndefined; }
     private:
         Ix _cIx = Ix.max;
     }
@@ -1314,8 +1316,8 @@ class Net(bool useArray = true,
     struct CategoryIx
     {
         @safe @nogc pure nothrow:
-        static CategoryIx undefined() { return CategoryIx(ushort.max); }
-        bool defined() const { return this != CategoryIx.undefined; }
+        static CategoryIx asUndefined() { return CategoryIx(ushort.max); }
+        bool defined() const { return this != CategoryIx.asUndefined; }
     private:
         ushort _cIx = ushort.max;
     }
@@ -1624,25 +1626,28 @@ class Net(bool useArray = true,
     {
         if (lemma in _conceptIxByLemma)
         {
-            return _conceptIxByLemma[lemma];
+            return _conceptIxByLemma[lemma]; // lookup
         }
-        // store Concept
-        assert(_concepts.length <= Ix.max);
-        const cix = ConceptIx(cast(Ix)_concepts.length);
-        _concepts ~= concept; // .. new concept that is stored
-        _conceptIxByLemma[lemma] = cix; // lookupOrStoreConcept index to ..
-        _conceptStringLengthSum += lemma.words.length;
-        return cix;
+        else
+        {
+            // store
+            assert(_concepts.length <= Ix.max);
+            const cix = ConceptIx(cast(Ix)_concepts.length);
+            _concepts ~= concept; // .. new concept that is stored
+            _conceptIxByLemma[lemma] = cix; // lookupOrStoreConcept index to ..
+            _conceptStringLengthSum += lemma.words.length;
+            return cix;
+        }
     }
 
     /** Lookup or Store Concept named $(D words) in language $(D lang). */
     ConceptIx lookupOrStoreConcept(Words words,
-                            HLang lang,
-                            WordKind kind,
-                            CategoryIx categoryIx)
+                                   HLang lang,
+                                   WordKind kind,
+                                   CategoryIx categoryIx)
     {
         return lookupOrStoreConcept(Lemma(words, lang, kind, categoryIx),
-                             Concept(words, lang, kind, categoryIx));
+                                    Concept(words, lang, kind, categoryIx));
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight). */
@@ -1657,7 +1662,7 @@ class Net(bool useArray = true,
         if (false)
         {
             LinkIx eix = areRelated(srcIx, dstIx); // existing Link Index
-            if (eix != LinkIx.undefined)
+            if (eix != LinkIx.asUndefined)
             {
                 auto existingLink = linkByIx(eix);
                 if (existingLink._rel == rel)
@@ -1705,7 +1710,7 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
     */
-    ConceptIx readCN5ConceptURI(T)(T part)
+    ConceptIx readCN5ConceptURI(T)(const T part)
     {
         auto items = part.splitter('/');
 
@@ -1737,6 +1742,76 @@ class Net(bool useArray = true,
 
     import std.algorithm: splitter;
 
+    /** Read NELL Entity from $(D part). */
+    Tuple!(ConceptIx, LinkIx) readNELLEntity(S)(const S part)
+    {
+        const show = false;
+
+        auto entity = part.splitter(':');
+
+        if (entity.front == "concept")
+        {
+            entity.popFront; // ignore no-meaningful information
+        }
+
+        if (show) dln("ENTITY:", entity);
+
+        auto personCategorySplit = entity.front.findSplitAfter("person");
+        if (!personCategorySplit[0].empty)
+        {
+            /* dln(personCategorySplit, " livesIn ", personCategorySplit[1]); */
+            /* lookupOrStoreCategory(personCategorySplit[0]); */
+        }
+        else
+        {
+            /* lookupOrStoreCategory(entity.front); */
+        }
+
+        /* category */
+        immutable categoryName = entity.front.idup; entity.popFront;
+        auto categoryIx = anyCategory;
+        if (categoryName in _categoryIxByName)
+        {
+            categoryIx = _categoryIxByName[categoryName];
+        }
+        else
+        {
+            assert(_categoryIxCounter != _categoryIxCounter.max);
+            categoryIx._cIx = _categoryIxCounter++;
+            _categoryNameByIx[categoryIx] = categoryName;
+            _categoryIxByName[categoryName] = categoryIx;
+        }
+
+        if (entity.empty)
+        {
+            return typeof(return).init;
+        }
+
+        const lang = HLang.unknown;
+        const kind = WordKind.noun;
+
+        /* name */
+        // clean cases such as concept:language:english_language
+        immutable entityName = (entity.front.endsWith("_" ~ categoryName) ?
+                                entity.front[0 .. $ - (categoryName.length + 1)] :
+                                entity.front).idup;
+        entity.popFront;
+
+        auto entityIx = lookupOrStoreConcept(entityName,
+                                             lang,
+                                             kind,
+                                             categoryIx);
+
+        return tuple(entityIx,
+                     connect(entityIx,
+                             Rel.isA,
+                             lookupOrStoreConcept(categoryName,
+                                                  lang,
+                                                  kind,
+                                                  categoryIx),
+                             Origin.nell, 1.0));
+    }
+
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
     void readNELLLine(R, N)(R line, N lnr)
     {
@@ -1745,12 +1820,10 @@ class Net(bool useArray = true,
         bool reversion = false;
 
         ConceptIx entityIx;
-        ConceptIx entityCategoryIx;
+        ConceptIx valueIx;
 
         bool ignored = false;
-        auto categoryIx = anyCategory;
 
-        LinkIx entityCategoryLink;
         auto mainLink = Link(Origin.nell);
 
         bool show = false;
@@ -1762,51 +1835,9 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 0:
-                    auto entity = part.splitter(':');
-                    /* writeln(entity); */
-
-                    if (entity.front == "concept")
-                    {
-                        entity.popFront; // ignore no-meaningful information
-                    }
-                    else
-                    {
-                        writeln("Columns ", parts);
-                        return;
-                    }
-
-                    if (show) dln("ENTITY:", entity);
-
-                    /* category */
-                    immutable categoryName = entity.front.idup; entity.popFront;
-                    if (categoryName in _categoryIxByName)
-                    {
-                        categoryIx = _categoryIxByName[categoryName];
-                    }
-                    else
-                    {
-                        assert(_categoryIxCounter != _categoryIxCounter.max);
-                        categoryIx._cIx = _categoryIxCounter++;
-                        _categoryNameByIx[categoryIx] = categoryName;
-                        _categoryIxByName[categoryName] = categoryIx;
-                    }
-
-                    if (entity.empty)
-                    {
-                        if (show) dln("TODO Handle category-only ", entity);
-                        return;
-                    }
-
-                    const lang = HLang.unknown;
-                    const kind = WordKind.noun;
-
-                    /* name */
-                    immutable entityName = entity.front.idup; entity.popFront;
-
-                    entityCategoryLink = connect(entityIx = lookupOrStoreConcept(entityName, lang, kind, categoryIx),
-                                                 Rel.isA,
-                                                 entityCategoryIx = lookupOrStoreConcept(categoryName, lang, kind, categoryIx),
-                                                 Origin.nell, 1.0);
+                    auto entity = readNELLEntity(part);
+                    entityIx = entity[0];
+                    if (!entityIx.defined) { return; }
 
                     break;
                 case 1:
@@ -1833,17 +1864,9 @@ class Net(bool useArray = true,
                         }
                         else
                         {
-                            auto value = part.splitter(':');
-                            dln("connect(src, Rel.atLocation, dst): ", value);
-                            if (value.front == "concept")
-                            {
-                                value.popFront; // ignore no-meaningful information
-                            }
-                            else
-                            {
-                                if (show) dln("TODO Handle non-concept value ", value);
-                            }
-
+                            auto value = readNELLEntity(part);
+                            valueIx = value[0];
+                            if (!valueIx.defined) { return; }
                         }
                     }
                     break;
@@ -1966,7 +1989,7 @@ class Net(bool useArray = true,
         }
         else
         {
-            return LinkIx.undefined;
+            return LinkIx.asUndefined;
         }
     }
 
@@ -2099,7 +2122,7 @@ class Net(bool useArray = true,
                 return outIx;
             }
         }
-        return typeof(return).undefined;
+        return typeof(return).asUndefined;
     }
 
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkIx.max.
@@ -2108,7 +2131,7 @@ class Net(bool useArray = true,
                       ConceptIx b)
     {
         const ab = areRelatedInOrder(a, b);
-        if (ab != typeof(return).undefined)
+        if (ab != typeof(return).asUndefined)
         {
             return ab;
         }
@@ -2128,7 +2151,7 @@ class Net(bool useArray = true,
             return areRelated(_conceptIxByLemma[a],
                               _conceptIxByLemma[b]);
         }
-        return typeof(return).undefined;
+        return typeof(return).asUndefined;
     }
 
     void showLinkRelation(Rel rel,
