@@ -2053,7 +2053,7 @@ class Net(bool useArray = true,
         ConceptIx valueIx;
 
         string entityCategoryName;
-        string relationName;
+        char[] relationName;
         string valueCategoryName;
 
         auto ignored = false;
@@ -2081,7 +2081,7 @@ class Net(bool useArray = true,
                     else
                         if (show) dln("TODO Handle non-concept predicate ", predicate);
 
-                    relationName = predicate.front.idup;
+                    relationName = predicate.front;
 
                     break;
                 case 2:
