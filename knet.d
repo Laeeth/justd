@@ -121,6 +121,7 @@ enum Rel:ubyte
     playsFor,
 
     wins,
+    loses,
 
     contributesTo,
     topMemberOf, // TODO Infers leads
@@ -296,6 +297,10 @@ enum Rel:ubyte
     hasSon,
     hasDaugther,
     hasPet, // TODO dst concept is animal
+
+    hasScore,
+    hasLoserScore,
+    hasWinnerScore,
 
     wikipediaURL,
 
@@ -691,11 +696,18 @@ Rel decodeRelation(S)(S s,
             case `musicianinmusicartist`: return memberOf;
             case `bookwriter`: reversion = true; return writes;
             case `politicianholdsoffice`: return hasJobPosition;
+
             case `sportsgamedate`: return atDate;
             case `sportsgamesport`: return plays;
             case `sportsgamewinner`: reversion = true; return wins;
+            case `sportsgameloser`: reversion = true; return loses;
             case `sportsgameteam`: reversion = true; return participatesIn;
             case `sporthassportsteamposition`: return hasTeamPosition;
+
+            case `sportsgamescore`: return hasScore;
+            case `sportsgameloserscore`: return hasLoserScore;
+            case `sportsgamewinnerscore`: return hasWinnerScore;
+
             case `awardtrophytournamentisthechampionshipgameofthenationalsport`: reversion = true; return hasTournament;
             case `politicsbillconcernsissue`: return concerns;
             case `politicsbillsponsoredbypoliticianus`: reversion = true; return sponsors;
@@ -1022,6 +1034,8 @@ bool specializes(Rel special,
                                               hasMother);
             case hasChild: return special.of(hasSon,
                                              hasDaugther);
+            case hasScore: return special.of(hasLoserScore,
+                                             hasWinnerScore);
             case isA: return !special.of(isA,
                                          relatedTo);
             case worksFor: return special.of(ceoOf,
@@ -1047,6 +1061,7 @@ bool specializes(Rel special,
                                                 hasExpert,
                                                 hasJobPosition,
                                                 hasOfficialWebsite,
+                                                hasScore, hasLoserScore, hasWinnerScore,
                                                 hasLanguage);
             case derivedFrom: return special.of(acronymFor);
             case atLocation: return special.of(bornAtLocation,
