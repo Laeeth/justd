@@ -3,8 +3,7 @@
 module skip_ex;
 
 import std.functional : binaryFun;
-import std.range: back, save, empty, popBack;
-import std.range: hasSlicing;
+import std.range: back, save, empty, popBack, hasSlicing;
 
 /**
    If $(D startsWith(r1, r2)), consume the corresponding elements off $(D
