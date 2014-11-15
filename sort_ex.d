@@ -6,7 +6,7 @@
 
 module sort_ex;
 
-import std.traits: isAggregateType, isIntegral;
+import std.traits: isAggregateType, isIntegral, isSomeString, isArray;
 import std.range: ElementType, isRandomAccessRange, isInputRange;
 
 private template xtorFun(alias xtor)
@@ -114,12 +114,25 @@ void rsortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
 /** Return a Sorted copy of $(D r).
     See also: http://forum.dlang.org/thread/tnrvudehinmkvbifovwo@forum.dlang.org#post-tnrvudehinmkvbifovwo:40forum.dlang.org
  */
-auto sorted(R)(const R r) if (isInputRange!R)
+auto sorted(R)(const R r) if (isInputRange!R &&
+                              !(isArray!R))
 {
     alias E = ElementType!R;
     import std.algorithm: sort, copy;
     auto s = new E[r.length];
     r.copy(s);
+    s.sort;
+    return s;
+}
+
+/** Return a Sorted copy of $(D r).
+    See also: http://forum.dlang.org/thread/tnrvudehinmkvbifovwo@forum.dlang.org#post-tnrvudehinmkvbifovwo:40forum.dlang.org
+*/
+R sorted(R)(const R r) if (isArray!R)
+{
+    import std.algorithm: sort;
+    import std.typecons: Unqual;
+    Unqual!R s = r.dup;
     s.sort;
     return s;
 }
@@ -131,3 +144,11 @@ unittest
     auto y = x.dup; y.sort;
     assert(x.sorted == y);
 }
+
+/* unittest */
+/* { */
+/*     import std.algorithm: sort; */
+/*     auto x = "åäö"; */
+/*     auto y = x.dup; y.sort; */
+/*     assert(x.sorted == y); */
+/* } */
