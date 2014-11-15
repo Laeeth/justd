@@ -39,13 +39,14 @@ module knet;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array;
 import std.container: Array;
 import std.string: tr;
 import std.uni: isWhite, toLower;
+import std.utf: byDchar;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
-import sort_ex: sortBy, rsortBy;
+import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack;
 import porter;
 import dbg;
@@ -2495,8 +2496,6 @@ class Net(bool useArray = true,
 
         if (normalizedLine == "palindrome")
         {
-            import std.algorithm: filter;
-            import std.utf: byDchar;
             foreach (palindromeConcept; _concepts.filter!(concept => concept.words.isPalindrome(3)))
             {
                 showLinkConcept(palindromeConcept,
@@ -2505,6 +2504,13 @@ class Net(bool useArray = true,
                                 RelDir.backward);
             }
         }
+    }
+
+    ConceptIx[] anagramsOf(S)(S word) if (isSomeString!S)
+    {
+        // TODO use sort_ex.sorted instead of array.sort
+        const lsWord = word.array.sort; // letter-sorted word
+        return _concepts.filter!(concept => lsWord == concept.array.sort);
     }
 
     /** ConceptNet Relatedness.
