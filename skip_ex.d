@@ -36,7 +36,7 @@ bool skipOverBack(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2) if (is(typeof
 import std.typecons: tuple, Tuple;
 
 /** Skip Over First Matching prefix in $(D needles) that prefixes $(D haystack). */
-Tuple!(bool, size_t) skipOverFirstOf(alias pred = "a == b", R, R2...)(ref R haystack, R2 needles)
+Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, R2 needles)
 {
     import std.algorithm: find;
     import std.range: front;
@@ -46,15 +46,15 @@ Tuple!(bool, size_t) skipOverFirstOf(alias pred = "a == b", R, R2...)(ref R hays
     const ok = (match[1] != 0 && // match[1]:th needle matched
                 match[0].front is haystack.front); // match at beginning of haystack
 
-    // get needle lengths
-    size_t[needles.length] lengths;
-    foreach (ix, needle; needles)
-    {
-        lengths[ix] = needle.length;
-    }
-
     if (ok)
     {
+        // get needle lengths
+        size_t[needles.length] lengths;
+        foreach (ix, needle; needles)
+        {
+            lengths[ix] = needle.length;
+        }
+
         import std.range: popFrontN;
         haystack.popFrontN(lengths[match[1] - 1]);
     }
@@ -73,7 +73,7 @@ Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R ha
 {
     import std.algorithm: find;
     auto x = "beta version";
-    assert(x.skipOverFirstOf("beta", "be") == tuple(true, 2));
+    assert(x.skipOverShortestOf("beta", "be") == tuple(true, 2));
     assert(x == "ta version");
 }
 
@@ -81,6 +81,6 @@ Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R ha
 {
     import std.algorithm: find;
     auto x = "beta version";
-    assert(x.skipOverFirstOf("be", "beta") == tuple(true, 1));
+    assert(x.skipOverShortestOf("be", "beta") == tuple(true, 1));
     assert(x == "ta version");
 }
