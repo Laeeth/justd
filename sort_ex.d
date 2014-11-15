@@ -111,15 +111,27 @@ void rsortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
                   X(0, 1, 2) ]);
 }
 
-/** Return a Sorted copy of $(D r).
+/** Return a Sorted Copy of $(D r).
     See also: http://forum.dlang.org/thread/tnrvudehinmkvbifovwo@forum.dlang.org#post-tnrvudehinmkvbifovwo:40forum.dlang.org
  */
-auto sorted(R)(const R r) if (!(isArray!R))
+auto sorted(R)(R r) if (!(isArray!R))
 {
     alias E = ElementType!R;
     import std.algorithm: sort, copy;
-    auto s = new E[r.length]; // TODO length is probably not available here
-    r[].copy(s);
+    import std.range: hasLength;
+    static if (hasLength!R)
+    {
+        auto s = new E[r.length];
+        r[].copy(s);
+    }
+    else
+    {
+        E[] s;
+        foreach (e; r[]) // TODO optimize?
+        {
+            s ~= e;
+        }
+    }
     s.sort;
     return s;
 }
@@ -131,7 +143,14 @@ unittest
     assert(x.sorted == [1, 2, 3]);
 }
 
-/** Return a Sorted copy of $(D r).
+unittest
+{
+    import std.container: SList;
+    auto x = SList!int(3, 2, 1);
+    assert(x.sorted == [1, 2, 3]);
+}
+
+/** Return a Sorted Copy of $(D r).
     See also: http://forum.dlang.org/thread/tnrvudehinmkvbifovwo@forum.dlang.org#post-tnrvudehinmkvbifovwo:40forum.dlang.org
 */
 R sorted(R)(const R r) if (isArray!R)
