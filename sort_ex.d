@@ -111,6 +111,9 @@ void rsortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
                   X(0, 1, 2) ]);
 }
 
+/** Return a Sorted copy of $(D r).
+    See also: http://forum.dlang.org/thread/tnrvudehinmkvbifovwo@forum.dlang.org#post-tnrvudehinmkvbifovwo:40forum.dlang.org
+ */
 auto sorted(R)(const R r) if (isInputRange!R)
 {
     alias E = ElementType!R;
