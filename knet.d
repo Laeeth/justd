@@ -47,7 +47,7 @@ import std.utf: byDchar;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy, sorted;
-import skip_ex: skipOverBack;
+import skip_ex: skipOverBack, skipOverShortestOf;
 import porter;
 import dbg;
 
@@ -882,7 +882,14 @@ Rel decodeRelation(S)(S predicate,
 
         if (origin == Origin.nell)
         {
-            t.skipOverNELLNouns(nellAgents);
+            t.skipOverShortestOf(`object`, `item`, `agent`, `organization`,
+                                 `animal`, `scene`, `event`, `food`, `vegetable`,
+                                 `person`, `creativework`);
+            if (t != predicate)
+            {
+                writeln("Skipped from ", predicate, " to ", t);
+            }
+            /* t.skipOverNELLNouns(nellAgents); */
             t.skipOver(`that`);
         }
 
@@ -2513,7 +2520,8 @@ class Net(bool useArray = true,
     auto anagramsOf(S)(S word) if (isSomeString!S)
     {
         const lsWord = word.sorted; // letter-sorted word
-        return _concepts.filter!(concept => lsWord == concept.words.sorted);
+        return _concepts.filter!(concept => (lsWord != concept.words && // don't include one-self
+                                             lsWord == concept.words.sorted));
     }
 
     /** ConceptNet Relatedness.
