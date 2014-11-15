@@ -119,7 +119,7 @@ auto sorted(R)(const R r) if (isInputRange!R &&
 {
     alias E = ElementType!R;
     import std.algorithm: sort, copy;
-    auto s = new E[r.length];
+    auto s = new E[r.length]; // TODO length is probably not available here
     r.copy(s);
     s.sort;
     return s;
@@ -145,10 +145,15 @@ unittest
     assert(x.sorted == y);
 }
 
-/* unittest */
-/* { */
-/*     import std.algorithm: sort; */
-/*     auto x = "åäö"; */
-/*     auto y = x.dup; y.sort; */
-/*     assert(x.sorted == y); */
-/* } */
+unittest
+{
+    import std.algorithm: sort;
+    import std.array: array;
+    auto x = "äöå";
+    auto y = x.dup; y.sort;
+    import std.stdio;
+    writeln(x);
+    writeln(x.array);
+    writeln(x.array.sort);
+    /* assert(x.sorted == y); */
+}
