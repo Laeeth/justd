@@ -40,6 +40,7 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
 {
     import std.algorithm: find;
     import std.range: front;
+    import std.traits: isSomeChar;
 
     // do match
     const match = haystack.find(needles);
@@ -52,7 +53,25 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
         size_t[needles.length] lengths;
         foreach (ix, needle; needles)
         {
-            lengths[ix] = needle.length;
+            import std.range: ElementType;
+            alias Needle = typeof(needle);
+            static if (is(R == Needle))
+            {
+                lengths[ix] = needle.length;
+            }
+            else static if (isSomeChar!(ElementType!R) &&
+                            isSomeChar!Needle)
+            {
+                lengths[ix] = 1;
+            }
+            else static if (is(ElementType!R == Needle))
+            {
+                lengths[ix] = 1;
+            }
+            else
+            {
+                static assert(false, "Cannot handle needle of type " ~ Needle.stringof ~ " when haystack is of type " ~ (ElementType!R).stringof);
+            }
         }
 
         import std.range: popFrontN;
@@ -65,7 +84,7 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
 /** Skip Over Longest Matching prefix in $(D needles) that prefixes $(D haystack). */
 Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R haystack, R2 needles)
 {
-    // TODO CTFE-sort needles on length
+    // TODO figure out which needles that are prefixes of other needles
     return haystack.skipOverBack(needles);
 }
 
@@ -83,4 +102,12 @@ Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R ha
     auto x = "beta version";
     assert(x.skipOverShortestOf("be", "beta") == tuple(true, 1));
     assert(x == "ta version");
+}
+
+@safe pure unittest
+{
+    import std.algorithm: find;
+    auto x = "beta version";
+    assert(x.skipOverShortestOf('b', "be", "beta") == tuple(true, 1));
+    assert(x == "eta version");
 }
