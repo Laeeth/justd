@@ -114,15 +114,21 @@ void rsortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
 /** Return a Sorted copy of $(D r).
     See also: http://forum.dlang.org/thread/tnrvudehinmkvbifovwo@forum.dlang.org#post-tnrvudehinmkvbifovwo:40forum.dlang.org
  */
-auto sorted(R)(const R r) if (isInputRange!R &&
-                              !(isArray!R))
+auto sorted(R)(const R r) if (!(isArray!R))
 {
     alias E = ElementType!R;
     import std.algorithm: sort, copy;
     auto s = new E[r.length]; // TODO length is probably not available here
-    r.copy(s);
+    r[].copy(s);
     s.sort;
     return s;
+}
+
+unittest
+{
+    import std.container: Array;
+    auto x = Array!int(3, 2, 1);
+    assert(x.sorted == [1, 2, 3]);
 }
 
 /** Return a Sorted copy of $(D r).
