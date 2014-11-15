@@ -136,7 +136,7 @@ R sorted(R)(const R r) if (isArray!R)
     return s;
 }
 
-unittest
+@safe pure unittest
 {
     import std.algorithm: sort;
     auto x = [3, 2, 1];
@@ -144,15 +144,11 @@ unittest
     assert(x.sorted == y);
 }
 
-unittest
+@safe pure unittest
 {
     import std.algorithm: sort;
     import std.array: array;
     auto x = "äöå";
     auto y = x.dup; y.sort;
-    import std.stdio;
-    writeln(x);
-    writeln(x.array);
-    writeln(x.array.sort);
     /* assert(x.sorted == y); */
 }
