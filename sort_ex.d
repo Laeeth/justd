@@ -164,7 +164,7 @@ auto sorted(R)(const R r) if (isArray!R)
 @safe pure unittest
 {
     import std.algorithm: sort;
-    auto x = [3, 2, 1];
+    immutable x = [3, 2, 1];
     auto y = x.dup; y.sort;
     assert(x.sorted == y);
 }
@@ -173,7 +173,7 @@ auto sorted(R)(const R r) if (isArray!R)
 {
     import std.algorithm: sort;
     import std.array: array;
-    auto x = "äaöbå";
+    immutable x = "äaöbå";
     auto y = x.dup; y.sort;
     assert(x.sorted == y);
     assert(x.sorted != x);
