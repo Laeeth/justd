@@ -54,7 +54,8 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
         foreach (ix, needle; needles)
         {
             import std.range: ElementType;
-            alias Needle = typeof(needle);
+            import std.typecons: Unqual;
+            alias Needle = Unqual!(typeof(needle));
             static if (is(R == Needle))
             {
                 lengths[ix] = needle.length;
