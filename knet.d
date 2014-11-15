@@ -2481,23 +2481,6 @@ class Net(bool useArray = true,
                 }
                 writeln();
             }
-
-            /* foreach (ix; concept.inIxes) */
-            /* { */
-            /*     const link = linkByIx(ix); */
-            /*     showLinkConcept(conceptByIx(link._dstIx), */
-            /*                     link._rel, */
-            /*                     link.normalizedWeight, */
-            /*                     RelDir.backward); */
-            /* } */
-            /* foreach (ix; concept.outIxes) */
-            /* { */
-            /*     const link = linkByIx(ix); */
-            /*     showLinkConcept(conceptByIx(link._srcIx), */
-            /*                     link._rel, */
-            /*                     link.normalizedWeight, */
-            /*                     RelDir.forward); */
-            /* } */
         }
 
         if (normalizedLine == "palindrome")
