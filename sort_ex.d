@@ -153,10 +153,10 @@ unittest
 /** Return a Sorted Copy of $(D r).
     See also: http://forum.dlang.org/thread/tnrvudehinmkvbifovwo@forum.dlang.org#post-tnrvudehinmkvbifovwo:40forum.dlang.org
 */
-R sorted(R)(const R r) if (isArray!R)
+auto sorted(R)(const R r) if (isArray!R)
 {
     import std.algorithm: sort;
-    R s = r.dup;
+    auto s = r.dup;
     s.sort;
     return s;
 }
@@ -173,7 +173,7 @@ R sorted(R)(const R r) if (isArray!R)
 {
     import std.algorithm: sort;
     import std.array: array;
-    auto x = "äöå";
+    auto x = "äaöbå";
     auto y = x.dup; y.sort;
-    /* assert(x.sorted == y); */
+    assert(x.sorted == y);
 }
