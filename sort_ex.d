@@ -177,4 +177,6 @@ auto sorted(R)(const R r) if (isArray!R)
     auto y = x.dup; y.sort;
     assert(x.sorted == y);
     assert(x.sorted != x);
+    /* pragma(msg, typeof(x)); */
+    /* pragma(msg, typeof(x.array.sort)); */
 }
