@@ -131,8 +131,7 @@ auto sorted(R)(const R r) if (isInputRange!R &&
 R sorted(R)(const R r) if (isArray!R)
 {
     import std.algorithm: sort;
-    import std.typecons: Unqual;
-    Unqual!R s = r.dup;
+    R s = r.dup;
     s.sort;
     return s;
 }
