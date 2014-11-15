@@ -124,9 +124,9 @@ Tuple!(bool, size_t) skipOverBackShortestOf(alias pred = "a == b", R, R2...)(ref
     return retroHit;
 }
 
-@safe pure unittest
-{
-    auto x = "ab";
-    assert(x.skipOverBackShortestOf('b') == tuple(true, 1));
-    assert(x == "a");
-}
+/* @safe pure unittest */
+/* { */
+/*     auto x = "ab"; */
+/*     assert(x.skipOverBackShortestOf('b') == tuple(true, 1)); */
+/*     assert(x == "a"); */
+/* } */
