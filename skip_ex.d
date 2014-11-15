@@ -36,7 +36,7 @@ bool skipOverBack(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2) if (is(typeof
 import std.typecons: tuple, Tuple;
 
 /** Skip Over First Matching prefix in $(D needles) that prefixes $(D haystack). */
-Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, R2 needles)
+Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
 {
     import std.algorithm: find;
     import std.range: front;
@@ -55,7 +55,9 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
         {
             import std.range: ElementType;
             import std.typecons: Unqual;
+
             alias Needle = Unqual!(typeof(needle));
+
             static if (is(R == Needle))
             {
                 lengths[ix] = needle.length;
@@ -83,7 +85,7 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
 }
 
 /** Skip Over Longest Matching prefix in $(D needles) that prefixes $(D haystack). */
-Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R haystack, R2 needles)
+Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
 {
     // TODO figure out which needles that are prefixes of other needles
     return haystack.skipOverBack(needles);
