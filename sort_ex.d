@@ -176,4 +176,5 @@ auto sorted(R)(const R r) if (isArray!R)
     auto x = "äaöbå";
     auto y = x.dup; y.sort;
     assert(x.sorted == y);
+    assert(x.sorted != x);
 }
