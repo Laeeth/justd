@@ -127,7 +127,7 @@ auto sorted(R)(R r) if (!(isArray!R))
     else
     {
         E[] s;
-        foreach (e; r[]) // TODO optimize?
+        foreach (const ref e; r[]) // TODO optimize?
         {
             s ~= e;
         }
