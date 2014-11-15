@@ -7,7 +7,7 @@
 module sort_ex;
 
 import std.traits: isAggregateType, isIntegral;
-import std.range: ElementType, isRandomAccessRange;
+import std.range: ElementType, isRandomAccessRange, isInputRange;
 
 private template xtorFun(alias xtor)
 {
@@ -109,4 +109,22 @@ void rsortBy(alias xtor, R)(R r) if (isRandomAccessRange!R &&
     assert(r == [ X(2, 0, 0),
                   X(1, 2, 1),
                   X(0, 1, 2) ]);
+}
+
+auto sorted(R)(const R r) if (isInputRange!R)
+{
+    alias E = ElementType!R;
+    import std.algorithm: sort, copy;
+    auto s = new E[r.length];
+    r.copy(s);
+    s.sort;
+    return s;
+}
+
+unittest
+{
+    import std.algorithm: sort;
+    auto x = [3, 2, 1];
+    auto y = x.dup; y.sort;
+    assert(x.sorted == y);
 }
