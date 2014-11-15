@@ -160,8 +160,8 @@ enum Rel:ubyte
     grownAtLocation,
     producedAtLocation,
 
-    bornAtLocation,
-    diedAtLocation,
+    bornInLocation,
+    diedInLocation,
 
     hasOfficeIn,
     headquarteredIn,
@@ -837,41 +837,45 @@ Rel decodeRelation(S)(S predicate,
 
             case `agriculturalproductcutintogeometricshape`: return cutsInto;
 
+            case `borninlocation`: return bornInLocation;
+
             default: break;
         }
 
-        enum nellAgents = [`object`, `agriculturalproduct`, `product`, `chemical`, `drug`, `concept`, `food`,
-                           `buildingfeature`, `buildingmaterial`, `furniture`,
-                           `disease`, `bakedgood`,
-                           `landscapefeatures`,
-                           `economicsector`,
-                           `vehicle`, `clothing`, `weapon`,
-                           `vegetableproduction`,
-                           `agent`, `team`, `item`, `person`, `writer`, `musician`,
-                           `athlete`,
-                           `journalist`, `thing`, `bodypart`, `artery`, `sportschool`,
-                           `sportfans`, `sport`, `event`, `scene`, `school`,
-                           `vegetable`, `beverage`, `protein`,
-                           `bankbank`, // TODO bug in NELL?
-                           `officebuildingroom`,
-                           `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `building`, `material`,
+        enum nellAgents = [`object`, `item`, `agent`, `organization`, `animal`, `scene`, `event`, `food`, `vegetable`,
+                           `person`, `creativework`];
 
-                           `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`,
-                           `touristattraction`, `tourist`, `attraction`, `museum`, `aquarium`, `zoo`, `stadium`,
-                           `newspaper`, `shoppingmall`, `restaurant`,  `bar`, `televisionstation`, `radiostation`, `transportation`,
-                           `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
-                           `headquarter`,
+        enum nellOldAgents = [`agriculturalproduct`, `product`, `chemical`, `drug`, `concept`,
+                              `buildingfeature`, `buildingmaterial`, `furniture`,
+                              `disease`, `bakedgood`,
+                              `landscapefeatures`,
+                              `economicsector`,
+                              `vehicle`, `clothing`, `weapon`,
+                              `vegetableproduction`,
+                              `team`, `writer`, `musician`,
+                              `athlete`,
+                              `journalist`, `thing`, `bodypart`, `artery`, `sportschool`,
+                              `sportfans`, `sport`, `school`,
+                              `beverage`, `protein`,
+                              `bankbank`, // TODO bug in NELL?
+                              `officebuildingroom`,
+                              `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `building`, `material`,
 
-                           `geopoliticallocation`,
-                           `geopoliticalorganization`,
-                           `politicalorganization`,
-                           `organization`,
+                              `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`,
+                              `touristattraction`, `tourist`, `attraction`, `museum`, `aquarium`, `zoo`, `stadium`,
+                              `newspaper`, `shoppingmall`, `restaurant`,  `bar`, `televisionstation`, `radiostation`, `transportation`,
+                              `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
+                              `headquarter`,
 
-                           `league`, `university`, `action`, `room`,
-                           `animal`, `mammal`, `arthropod`, `insect`, `vertebrate`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`,
-                           `location`, `creativework`, `equipment`, `profession`, `tool`,
-                           `company`, `politician`,
-                           `geometricshape`,
+                              `geopoliticallocation`,
+                              `geopoliticalorganization`,
+                              `politicalorganization`,
+
+                              `league`, `university`, `action`, `room`,
+                              `mammal`, `arthropod`, `insect`, `vertebrate`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`,
+                              `location`, `equipment`, `profession`, `tool`,
+                              `company`, `politician`,
+                              `geometricshape`,
             ];
 
         S t = predicate;
@@ -897,6 +901,7 @@ Rel decodeRelation(S)(S predicate,
 
             case `ismultipleof`:                                   return multipleOf;
 
+            case `of`:
             case `partof`:                                         return partOf;
 
             case `memberof`:
@@ -934,7 +939,8 @@ Rel decodeRelation(S)(S predicate,
             case `capableof`:                                      return capableOf;
 
                 // spatial
-            case `at`:                                             return atLocation;
+            case `at`:
+            case `atlocation`:                                     return atLocation;
 
             case `locatedin`:
             case `foundin`:
@@ -1234,11 +1240,11 @@ bool specializes(Rel special,
                                                 hasLanguage,
                                                 hasCurrency);
             case derivedFrom: return special.of(acronymFor);
-            case atLocation: return special.of(bornAtLocation,
+            case atLocation: return special.of(bornInLocation,
                                                hasCitizenship,
                                                hasResidenceIn,
                                                hasHome,
-                                               diedAtLocation,
+                                               diedInLocation,
                                                hasOfficeIn,
                                                headquarteredIn,
                                                languageSchoolInCity,
@@ -2523,9 +2529,8 @@ class Net(bool useArray = true,
 
     auto anagramsOf(S)(S word) if (isSomeString!S)
     {
-        // TODO use sort_ex.sorted instead of array.sort
-        const lsWord = word.array.sort; // letter-sorted word
-        return _concepts.filter!(concept => lsWord == concept.words.array.sort);
+        const lsWord = word.sorted; // letter-sorted word
+        return _concepts.filter!(concept => lsWord == concept.words.sorted);
     }
 
     /** ConceptNet Relatedness.
