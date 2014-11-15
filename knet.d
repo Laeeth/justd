@@ -2504,13 +2504,28 @@ class Net(bool useArray = true,
                                 RelDir.backward);
             }
         }
+        else if (normalizedLine.skipOver("anagramsof("))
+        {
+            auto split = normalizedLine.findSplitBefore(")");
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                foreach (anagramConcept; anagramsOf(arg))
+                {
+                    showLinkConcept(anagramConcept,
+                                    Rel.instanceOf,
+                                    real.infinity,
+                                    RelDir.backward);
+                }
+            }
+        }
     }
 
-    ConceptIx[] anagramsOf(S)(S word) if (isSomeString!S)
+    auto anagramsOf(S)(S word) if (isSomeString!S)
     {
         // TODO use sort_ex.sorted instead of array.sort
         const lsWord = word.array.sort; // letter-sorted word
-        return _concepts.filter!(concept => lsWord == concept.array.sort);
+        return _concepts.filter!(concept => lsWord == concept.words.array.sort);
     }
 
     /** ConceptNet Relatedness.
