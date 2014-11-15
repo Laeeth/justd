@@ -4,6 +4,7 @@ module skip_ex;
 
 import std.functional : binaryFun;
 import std.range: back, save, empty, popBack;
+import std.range: hasSlicing;
 
 /**
    If $(D startsWith(r1, r2)), consume the corresponding elements off $(D
@@ -35,7 +36,7 @@ bool skipOverBack(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2) if (is(typeof
 
 import std.typecons: tuple, Tuple;
 
-/** Skip Over First Matching prefix in $(D needles) that prefixes $(D haystack). */
+/** Skip Over Shortest Matching prefix in $(D needles) that prefixes $(D haystack). */
 Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
 {
     import std.algorithm: find;
@@ -84,16 +85,8 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
     return typeof(return)(ok, match[1]);
 }
 
-/** Skip Over Longest Matching prefix in $(D needles) that prefixes $(D haystack). */
-Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
-{
-    // TODO figure out which needles that are prefixes of other needles
-    return haystack.skipOverBack(needles);
-}
-
 @safe pure unittest
 {
-    import std.algorithm: find;
     auto x = "beta version";
     assert(x.skipOverShortestOf("beta", "be") == tuple(true, 2));
     assert(x == "ta version");
@@ -101,7 +94,6 @@ Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R ha
 
 @safe pure unittest
 {
-    import std.algorithm: find;
     auto x = "beta version";
     assert(x.skipOverShortestOf("be", "beta") == tuple(true, 1));
     assert(x == "ta version");
@@ -109,8 +101,32 @@ Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R ha
 
 @safe pure unittest
 {
-    import std.algorithm: find;
     auto x = "beta version";
     assert(x.skipOverShortestOf('b', "be", "beta") == tuple(true, 1));
     assert(x == "eta version");
+}
+
+/** Skip Over Longest Matching prefix in $(D needles) that prefixes $(D haystack). */
+Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
+{
+    // TODO figure out which needles that are prefixes of other needles
+    return haystack.skipOverShortestOf(needles);
+}
+
+Tuple!(bool, size_t) skipOverBackShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
+{
+    import std.range: retro;
+    import std.algorithm: array;
+    auto retroHaystack = haystack.retro.array;
+    pragma(msg, typeof(retroHaystack));
+    const retroHit = retroHaystack.skipOverShortestOf(needles);
+    haystack = haystack[0.. $ - (haystack.length - retroHaystack.length)];
+    return retroHit;
+}
+
+@safe pure unittest
+{
+    auto x = "ab";
+    assert(x.skipOverBackShortestOf('b') == tuple(true, 1));
+    assert(x == "a");
 }
