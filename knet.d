@@ -1743,8 +1743,9 @@ class Net(bool useArray = true,
 
         string[CategoryIx] _categoryNameByIx; /** Ontology Category Names by Index. */
         CategoryIx[string] _categoryIxByName; /** Ontology Category Indexes by Name. */
-        enum anyCategory = CategoryIx(0);
-        ushort _categoryIxCounter = 1;
+
+        enum anyCategory = CategoryIx(0); // reserve 0 for anyCategory (unknown)
+        ushort _categoryIxCounter = 1; // 1 because 0 is reserved for anyCategory (unknown)
 
         WordNet!(true, true) _wordnet;
 
@@ -1788,10 +1789,11 @@ class Net(bool useArray = true,
 
     Concept[] foo(S)(S words,
                      HLang hlang = HLang.unknown,
-                     WordKind wordKind = WordKind.unknown) if (isSomeString!S)
+                     WordKind wordKind = WordKind.unknown,
+                     CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
-        auto lemma = Lemma(words, hlang, wordKind, anyCategory);
+        auto lemma = Lemma(words, hlang, wordKind, category);
         if (lemma in _conceptIxByLemma) // if hashed lookup possible
         {
             concepts = [conceptByIx(_conceptIxByLemma[lemma])]; // use it
@@ -1802,9 +1804,9 @@ class Net(bool useArray = true,
             if (wordsSplit.length >= 2)
             {
                 const wordsFixed = wordsSplit.joiner("_").to!S;
-                dln("wordsFixed: ", wordsFixed, " in ", hlang, " as ", wordKind);
+                /* dln("wordsFixed: ", wordsFixed, " in ", hlang, " as ", wordKind); */
                 // TODO: Functionize
-                auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind, anyCategory);
+                auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind, category);
                 if (lemmaFixed in _conceptIxByLemma)
                 {
                     concepts = [conceptByIx(_conceptIxByLemma[lemmaFixed])];
@@ -1820,13 +1822,15 @@ class Net(bool useArray = true,
     */
     Concept[] conceptsByWords(S)(S words,
                                  HLang hlang = HLang.unknown,
-                                 WordKind wordKind = WordKind.unknown) if (isSomeString!S)
+                                 WordKind wordKind = WordKind.unknown,
+                                 CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
         if (hlang != HLang.unknown &&
-            wordKind != WordKind.unknown)
+            wordKind != WordKind.unknown &&
+            category != anyCategory)
         {
-            return foo(words, hlang, wordKind);
+            return foo(words, hlang, wordKind, category);
         }
         else
         {
@@ -1838,7 +1842,13 @@ class Net(bool useArray = true,
                     {
                         if (_kindCounts[wordKindGuess])
                         {
-                            concepts ~= foo(words, hlangGuess, wordKindGuess/* , categoryIx */);
+                            foreach (ushort categoryIxCountGuess; 1.._categoryIxCounter) // for each category
+                            {
+                                concepts ~= foo(words,
+                                                hlangGuess,
+                                                wordKindGuess,
+                                                CategoryIx(categoryIxCountGuess));
+                            }
                         }
                     }
                 }
@@ -1858,7 +1868,7 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
-        bool quick = true;
+        bool quick = false;
         const maxCount = quick ? 1000 : size_t.max;
 
         // WordNet
