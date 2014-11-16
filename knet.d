@@ -1690,13 +1690,14 @@ class Net(bool useArray = true,
         /** Set ConceptNet5 Weight $(weigth). */
         void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
         {
-            // pack from 0..about10 to Weight 0.255 to save memory
+            // pack from 0..about10 to Weight to save memory
             _weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
         }
 
         /** Set NELL Probability Weight $(weight). */
         void setNELLWeight(T)(T weight) if (isFloatingPoint!T)
         {
+            // pack from 0..1 to Weight to save memory
             _weight = cast(Weight)(weight.clamp(0, 1)*Weight.max);
         }
 
@@ -1755,10 +1756,14 @@ class Net(bool useArray = true,
         size_t _connectednessSum = 0;
 
         // is there a Phobos structure for this?
-        real _weightMin = real.max;
-        real _weightMax = real.min_normal;
-        real _weightSum = 0; // Sum of all link weights.
-    }
+        real _weightMinCN5 = real.max;
+        real _weightMaxCN5 = real.min_normal;
+        real _weightSumCN5 = 0; // Sum of all link weights.
+
+        real _weightMinNELL = real.max;
+        real _weightMaxNELL = real.min_normal;
+        real _weightSumNELL = 0; // Sum of all link weights.
+}
 
     @safe pure nothrow
     {
@@ -1951,14 +1956,17 @@ class Net(bool useArray = true,
         if (origin == Origin.cn5)
         {
             link.setCN5Weight(weight);
-            _weightSum += weight;
-            _weightMin = min(weight, _weightMin);
-            _weightMax = max(weight, _weightMax);
+            _weightSumCN5 += weight;
+            _weightMinCN5 = min(weight, _weightMinCN5);
+            _weightMaxCN5 = max(weight, _weightMaxCN5);
             _assertionCount++;
         }
         else
         {
             link.setNELLWeight(weight);
+            _weightSumNELL += weight;
+            _weightMinNELL = min(weight, _weightMinNELL);
+            _weightMaxNELL = max(weight, _weightMaxNELL);
         }
 
         propagateLinkConcepts(link);
@@ -2371,8 +2379,8 @@ class Net(bool useArray = true,
         }
 
         writeln(`Stats:`);
-        writeln(`- Weights Min,Max,Average: `,
-                _weightMin, ',', _weightMax, ',', cast(real)_weightSum/_links.length);
+        writeln(`- CN5 Weights Min,Max,Average: `, _weightMinCN5, ',', _weightMaxCN5, ',', cast(real)_weightSumCN5/_links.length);
+        writeln(`- NELL Weights Min,Max,Average: `, _weightMinNELL, ',', _weightMaxNELL, ',', cast(real)_weightSumNELL/_links.length);
         writeln(`- Number of assertions: `, _assertionCount);
         writeln(`- Concept Count: `, _concepts.length);
         writeln(`- Link Count: `, _links.length);
