@@ -80,7 +80,7 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
             {
                 static assert(false,
                               "Cannot handle needle of type " ~ Needle.stringof ~
-                              " when haystack is of type " ~ (ElementType!R).stringof);
+                              " when haystack has ElementType " ~ (ElementType!R).stringof);
             }
         }
 
