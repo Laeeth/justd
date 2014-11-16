@@ -908,10 +908,10 @@ Rel decodeRelation(S)(S predicate,
 
         switch (t.toLower)
         {
+            case ``:            // TODO check original
             case `relatedto`:
             case `andother`:                                       return relatedTo;
 
-            case ``:
             case `isa`:
             case `istypeof`:                                       return isA;
 
