@@ -51,7 +51,7 @@ import std.typecons: Nullable, Tuple, tuple;
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy, sorted;
-import skip_ex: skipOverBack, skipOverShortestOf;
+import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
 import porter;
 import dbg;
 import grammars;
@@ -884,9 +884,10 @@ Rel decodeRelation(S)(S predicate,
         if (origin == Origin.nell)
         {
             t.skipOverShortestOf(nellAgents.expand);
+            t.skipOverBackShortestOf(nellAgents.expand);
             if (t != predicate)
             {
-                writeln("Skipped from ", predicate, " to ", t);
+                /* writeln("Skipped from ", predicate, " to ", t); */
             }
             t.skipOver(`that`);
         }
