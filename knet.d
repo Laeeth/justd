@@ -1701,6 +1701,7 @@ class Net(bool useArray = true,
             _weight = cast(Weight)(weight.clamp(0, 1)*Weight.max);
         }
 
+        /** Get Normalized Link Weight. */
         @property real normalizedWeight() const
         {
             return cast(real)_weight/(cast(real)Weight.max/10);
@@ -1837,7 +1838,7 @@ class Net(bool useArray = true,
                     {
                         if (_kindCounts[wordKindGuess])
                         {
-                            concepts ~= foo(words, hlangGuess, wordKindGuess);
+                            concepts ~= foo(words, hlangGuess, wordKindGuess/* , categoryIx */);
                         }
                     }
                 }
@@ -1858,7 +1859,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         bool quick = true;
-        const maxCount = quick ? 10000 : size_t.max;
+        const maxCount = quick ? 1000 : size_t.max;
 
         // WordNet
         _wordnet = new WordNet!(true, true)([HLang.en]);
@@ -2009,6 +2010,23 @@ class Net(bool useArray = true,
 
     import std.algorithm: splitter;
 
+    CategoryIx categoryByName(S)(S name) if (isSomeString!S)
+    {
+        auto categoryIx = anyCategory;
+        if (name in _categoryIxByName)
+        {
+            categoryIx = _categoryIxByName[name];
+        }
+        else
+        {
+            assert(_categoryIxCounter != _categoryIxCounter.max);
+            categoryIx._cIx = _categoryIxCounter++;
+            _categoryNameByIx[categoryIx] = name;
+            _categoryIxByName[name] = categoryIx;
+        }
+        return categoryIx;
+    }
+
     /** Read NELL Entity from $(D part). */
     Tuple!(ConceptIx, string, LinkIx) readNELLEntity(S)(const S part)
     {
@@ -2036,18 +2054,7 @@ class Net(bool useArray = true,
 
         /* category */
         immutable categoryName = entity.front.idup; entity.popFront;
-        auto categoryIx = anyCategory;
-        if (categoryName in _categoryIxByName)
-        {
-            categoryIx = _categoryIxByName[categoryName];
-        }
-        else
-        {
-            assert(_categoryIxCounter != _categoryIxCounter.max);
-            categoryIx._cIx = _categoryIxCounter++;
-            _categoryNameByIx[categoryIx] = categoryName;
-            _categoryIxByName[categoryName] = categoryIx;
-        }
+        const categoryIx = categoryByName(categoryName);
 
         if (entity.empty)
         {
@@ -2327,9 +2334,10 @@ class Net(bool useArray = true,
         foreach (line; File(path).byLine)
         {
             readNELLLine(line, lnr);
-
+            if (++lnr >= maxCount) break;
         }
         writeln("Read NELL ", path, ` having `, lnr, ` lines`);
+        showRelations;
     }
 
     /** Show Network Relations.
@@ -2378,11 +2386,18 @@ class Net(bool useArray = true,
 
         writeln(`Stats:`);
 
-        writeln(`- CN5 Weights Min,Max,Average: `, _weightMinCN5, ',', _weightMaxCN5, ',', cast(real)_weightSumCN5/_links.length);
-        writeln(`- NELL Weights Min,Max,Average: `, _weightMinNELL, ',', _weightMaxNELL, ',', cast(real)_weightSumNELL/_links.length);
+        if (_weightSumCN5)
+        {
+            writeln(`- CN5 Weights Min,Max,Average: `, _weightMinCN5, ',', _weightMaxCN5, ',', cast(real)_weightSumCN5/_links.length);
+        }
+        if (_weightSumNELL)
+        {
+            writeln(`- NELL Weights Min,Max,Average: `, _weightMinNELL, ',', _weightMaxNELL, ',', cast(real)_weightSumNELL/_links.length);
+        }
 
         writeln(`- Concept Count: `, _concepts.length);
         writeln(`- Link Count: `, _links.length);
+
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
         writeln(`- Concept String Length Average: `, cast(real)_conceptStringLengthSum/_concepts.length);
         writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/2/_concepts.length);
