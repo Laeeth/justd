@@ -36,9 +36,9 @@ bool skipOverBack(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2) if (is(typeof
 import std.typecons: tuple, Tuple;
 
 /** Skip Over Shortest Matching prefix in $(D needles) that prefixes $(D haystack).
-
     TODO Make return value a specific type that has bool conversion so we can
-    call it as if (r.skipOverShortestOf(...)) { ... }
+    call it as
+        if (r.skipOverShortestOf(...)) { ... }
  */
 Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
 {
@@ -48,6 +48,7 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
 
     // do match
     const match = haystack.find(needles);
+
     const ok = (match[1] != 0 && // match[1]:th needle matched
                 match[0].front is haystack.front); // match at beginning of haystack
 
@@ -62,7 +63,13 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
 
             alias Needle = Unqual!(typeof(needle));
 
-            static if (is(R == Needle))
+            static if (is(Unqual!R ==
+                          Needle))
+            {
+                lengths[ix] = needle.length;
+            }
+            else static if (is(Unqual!(ElementType!R) ==
+                               Unqual!(ElementType!Needle)))
             {
                 lengths[ix] = needle.length;
             }
@@ -76,7 +83,8 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
             {
                 lengths[ix] = 1;
             }
-            else static if (is(ElementType!R == Needle))
+            else static if (is(Unqual!(ElementType!R) ==
+                               Needle))
             {
                 lengths[ix] = 1;
             }
@@ -119,24 +127,49 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
 /** Skip Over Longest Matching prefix in $(D needles) that prefixes $(D haystack). */
 Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
 {
-    // TODO figure out which needles that are prefixes of other needles
+    // TODO figure out which needles that are prefixes of other needles by first
+    // sorting them and then use some adjacent filtering algorithm
     return haystack.skipOverShortestOf(needles);
 }
 
 Tuple!(bool, size_t) skipOverBackShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
+@trusted // TODO We cannot prove that cast(ubyte[]) of a type that have no directions is safe
 {
-    import std.range: retro;
+    import std.range: retro, ElementType;
+    import std.traits: hasIndirections;
     import std.algorithm: array;
-    auto retroHaystack = haystack.retro.array;
-    pragma(msg, typeof(retroHaystack));
-    const retroHit = retroHaystack.skipOverShortestOf(needles);
-    haystack = haystack[0.. $ - (haystack.length - retroHaystack.length)];
-    return retroHit;
+    import std.typetuple: staticMap, TypeTuple;
+    import traits_ex: allSame;
+
+    static if ((!hasIndirections!(ElementType!R)) && // previously isSomeString
+               allSame!(R, R2))
+    {
+        auto retroHaystack = (cast(ubyte[])haystack).retro.array;
+        alias Retro(R) = typeof((ubyte[]).init.retro.array);
+        TypeTuple!(staticMap!(Retro, R2)) retroNeedles;
+        foreach (ix, needle; needles)
+        {
+            retroNeedles[ix] = (cast(ubyte[])needle).retro.array;
+        }
+        pragma(msg, typeof(retroHaystack));
+        pragma(msg, typeof(retroNeedles));
+
+        const retroHit = retroHaystack.skipOverShortestOf(retroNeedles);
+        haystack = haystack[0.. $ - (haystack.length - retroHaystack.length)];
+        return retroHit;
+    }
+    else
+    {
+        static assert(false, "Unsupported combination of haystack type " ~ R.stringof ~
+                      " with needle types " ~ R2.stringof);
+    }
+
+    return tuple(false, 0UL);
 }
 
-/* @safe pure unittest */
-/* { */
-/*     auto x = "ab"; */
-/*     assert(x.skipOverBackShortestOf('b') == tuple(true, 1)); */
-/*     assert(x == "a"); */
-/* } */
+@safe pure unittest
+{
+    auto x = "alpha_beta";
+    assert(x.skipOverBackShortestOf("beta") == tuple(true, 1));
+    assert(x == "alpha_");
+}
