@@ -145,6 +145,7 @@ enum Rel:ubyte
     uses, /* reverse of usedFor: A is used for B; the purpose of A is B. /r/UsedFor /c/en/bridge
                 /c/en/cross_water */
     usesLanguage,
+    usesTool,
 
     capableOf, /* Something that A can typically do is B. /r/CapableOf
                   /c/en/knife /c/en/cut */
@@ -160,6 +161,7 @@ enum Rel:ubyte
     languageSchoolInCity,
     grownAtLocation,
     producedAtLocation,
+    inRoom,
 
     bornInLocation,
     diedInLocation,
@@ -775,7 +777,9 @@ Rel decodeRelation(S)(S predicate,
 
             case `musicianinmusicartist`: return memberOf;
             case `bookwriter`: reversion = true; return writes;
-            case `politicianholdsoffice`: return hasJobPosition;
+
+            case `politicianholdsoffice`:
+            case `holdsoffice`: return hasJobPosition;
 
             case `attractionofcity`: return atLocation;
 
@@ -828,7 +832,9 @@ Rel decodeRelation(S)(S predicate,
 
             case `organizationterminatedperson`: return terminates;
 
+            case `led`:
             case `athleteledsportsteam`: reversion = true; tense = Tense.pastMoment; return leaderOf;
+
             case `persondeathdate`: return diedIn;
 
             case `athleteinjuredhisbodypart`: tense = Tense.pastMoment; return selfinjures;
@@ -839,46 +845,48 @@ Rel decodeRelation(S)(S predicate,
 
             case `agriculturalproductcutintogeometricshape`: return cutsInto;
 
+            case `locationlocatedwithinlocation`: return atLocation;
+
             case `borninlocation`: return bornInLocation;
 
             default: break;
         }
 
         enum nellAgents = tuple(`object`, `thing`, `item`, `agent`, `organization`, `animal`, `scene`, `event`, `food`, `vegetable`,
-                                `person`, `creativework`, `building`, `school`, `bodypart`);
+                                `person`, `writer`, `creativework`, `building`, `school`, `bodypart`, `beverage`, `product`, `profession`);
 
-        enum nellOldAgents = [`agriculturalproduct`, `product`, `chemical`, `drug`, `concept`,
-                              `buildingfeature`, `buildingmaterial`, `furniture`,
-                              `disease`, `bakedgood`,
-                              `landscapefeatures`,
-                              `economicsector`,
-                              `vehicle`, `clothing`, `weapon`,
-                              `vegetableproduction`,
-                              `team`, `writer`, `musician`,
-                              `athlete`,
-                              `journalist`, `artery`, `sportschool`,
-                              `sportfans`, `sport`,
-                              `beverage`, `protein`,
-                              `bankbank`, // TODO bug in NELL?
-                              `officebuildingroom`,
-                              `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `material`,
+        /* enum nellOldAgents = [`agriculturalproduct`, `chemical`, `drug`, `concept`, */
+        /*                       `buildingfeature`, `buildingmaterial`, `furniture`, */
+        /*                       `disease`, `bakedgood`, */
+        /*                       `landscapefeatures`, */
+        /*                       `economicsector`, */
+        /*                       `vehicle`, `clothing`, `weapon`, */
+        /*                       `vegetableproduction`, */
+        /*                       `team`, `musician`, */
+        /*                       `athlete`, */
+        /*                       `journalist`, `artery`, `sportschool`, */
+        /*                       `sportfans`, `sport`, */
+        /*                       `protein`, */
+        /*                       `bankbank`, // TODO bug in NELL? */
+        /*                       `officebuildingroom`, */
+        /*                       `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `material`, */
 
-                              `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`,
-                              `touristattraction`, `tourist`, `attraction`, `museum`, `aquarium`, `zoo`, `stadium`,
-                              `newspaper`, `shoppingmall`, `restaurant`,  `bar`, `televisionstation`, `radiostation`, `transportation`,
-                              `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion
-                              `headquarter`,
+        /*                       `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`, */
+        /*                       `touristattraction`, `tourist`, `attraction`, `museum`, `aquarium`, `zoo`, `stadium`, */
+        /*                       `newspaper`, `shoppingmall`, `restaurant`,  `bar`, `televisionstation`, `radiostation`, `transportation`, */
+        /*                       `stateorprovince`, `state`, `province`, // TODO specialize from spatialregion */
+        /*                       `headquarter`, */
 
-                              `geopoliticallocation`,
-                              `geopoliticalorganization`,
-                              `politicalorganization`,
+        /*                       `geopoliticallocation`, */
+        /*                       `geopoliticalorganization`, */
+        /*                       `politicalorganization`, */
 
-                              `league`, `university`, `action`, `room`,
-                              `mammal`, `arthropod`, `insect`, `vertebrate`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`,
-                              `location`, `equipment`, `profession`, `tool`,
-                              `company`, `politician`,
-                              `geometricshape`,
-            ];
+        /*                       `league`, `university`, `action`, `room`, */
+        /*                       `mammal`, `arthropod`, `insect`, `vertebrate`, `invertebrate`, `fish`, `mollusk`, `amphibian`, `arachnids`, */
+        /*                       `location`, `equipment`, `tool`, */
+        /*                       `company`, `politician`, */
+        /*                       `geometricshape`, */
+        /*     ]; */
 
         S t = predicate;
 
@@ -932,8 +940,13 @@ Rel decodeRelation(S)(S predicate,
             case `ceoof`:                                          return ceoOf;
             case `plays`:                                          return plays;
             case `playsinstrument`:                                return playsInstrument;
-            case `playsin`:                                        return playsIn;
-            case `playsfor`:                                       return playsFor;
+
+            case `playsin`:
+            case `playsinleague`:                                  return playsIn;
+
+            case `playsfor`:
+            case `playsforteam`:                                   return playsFor;
+
             case `competeswith`:
             case `playsagainst`:                                   return competesWith;
 
@@ -945,6 +958,8 @@ Rel decodeRelation(S)(S predicate,
             case `usedfor`: reversion = true; tense = Tense.pastMoment; return uses;
             case `use`:
             case `uses`:                                           return uses;
+            case `usestool`:                                       return usesTool;
+            case `useslanguage`:                                   return usesLanguage;
             case `capableof`:                                      return capableOf;
 
                 // spatial
@@ -954,6 +969,7 @@ Rel decodeRelation(S)(S predicate,
             case `locatedin`:
             case `foundin`:
             case `headquarteredin`: tense = Tense.pastMoment; return atLocation;
+            case `foundinroom`: tense = Tense.pastMoment; return inRoom;
 
             case `in`:
             case `existsat`:
@@ -1182,7 +1198,7 @@ Rel decodeRelation(S)(S predicate,
             case `togowith`:                                       return wornWith;
 
             default:
-                dln(`Unknown relationString `, t, ` originally `, predicate);
+                /* dln(`Unknown relationString `, t, ` originally `, predicate); */
                                                                    return relatedTo;
         }
     }
@@ -1259,7 +1275,8 @@ bool specializes(Rel special,
                                                languageSchoolInCity,
                                                hasTeamPosition,
                                                grownAtLocation,
-                                               producedAtLocation);
+                                               producedAtLocation,
+                                               inRoom);
             case buys: return special.of(acquires);
             case shapes: return special.of(cutsInto, breaksInto);
             case desires: return special.of(eats, buys, acquires);
@@ -1267,7 +1284,8 @@ bool specializes(Rel special,
                                               similarAppearanceTo);
             case injures: return special.of(selfinjures);
             case causes: return special.of(causesSideEffect);
-            case uses: return special.of(usesLanguage);
+            case uses: return special.of(usesLanguage,
+                                         usesTool);
             case physicallyConnectedWith: return special.of(arisesFrom);
             case locatedNear: return special.of(borderedBy);
             case hasWebsite: return special.of(hasOfficialWebsite);
