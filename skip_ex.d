@@ -45,22 +45,21 @@ import std.algorithm: startsWith;
 size_t skipOverShortestOf(alias pred = "a == b",
                           Range,
                           Ranges...)(ref Range haystack,
-                                     const Ranges needles)
-if (Ranges.length > 1 && is(typeof(startsWith!pred(haystack, needles))))
+                                     Ranges needles) if (Ranges.length > 1 && is(typeof(startsWith!pred(haystack, needles))))
 {
-    import std.traits: isSomeString, isSomeChar;
-
-    // do match
-    const size_t hit = startsWith!pred(haystack, needles);
+    const hit = startsWith!pred(haystack, needles);
     if (hit)
     {
         // get needle lengths
         size_t[needles.length] lengths;
         foreach (ix, needle; needles)
         {
+            import std.traits: isSomeString, isSomeChar;
             import std.range: ElementType;
             import std.typecons: Unqual;
+
             alias Needle = Unqual!(typeof(needle));
+
             static if (is(Unqual!Range ==
                           Needle))
             {
@@ -124,15 +123,16 @@ if (Ranges.length > 1 && is(typeof(startsWith!pred(haystack, needles))))
 }
 
 /** Skip Over Longest Matching prefix in $(D needles) that prefixes $(D haystack). */
-Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
+Tuple!(bool, size_t) skipOverLongestOf(alias pred = "a == b", Range, Ranges...)(ref Range haystack, Ranges needles)
 {
     // TODO figure out which needles that are prefixes of other needles by first
     // sorting them and then use some adjacent filtering algorithm
     return haystack.skipOverShortestOf(needles);
 }
 
-Tuple!(bool, size_t) skipOverBackShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
-@trusted // TODO We cannot prove that cast(ubyte[]) of a type that have no directions is safe
+size_t skipOverBackShortestOf(alias pred = "a == b", Range, Ranges...)(ref Range haystack, Ranges needles)
+// TODO We cannot prove that cast(ubyte[]) of a type that have no directions is safe
+    @trusted if (Ranges.length > 1 && is(typeof(startsWith!pred(haystack, needles))))
 {
     import std.range: retro, ElementType;
     import std.traits: hasIndirections;
@@ -140,35 +140,33 @@ Tuple!(bool, size_t) skipOverBackShortestOf(alias pred = "a == b", R, R2...)(ref
     import std.typetuple: staticMap, TypeTuple;
     import traits_ex: allSame;
 
-    static if ((!hasIndirections!(ElementType!R)) && // previously isSomeString
-               allSame!(R, R2))
+    static if ((!hasIndirections!(ElementType!Range)) && // previously isSomeString
+               allSame!(Range, Ranges))
     {
-        auto retroHaystack = (cast(ubyte[])haystack).retro.array;
-        alias Retro(R) = typeof((ubyte[]).init.retro.array);
-        TypeTuple!(staticMap!(Retro, R2)) retroNeedles;
+        auto retroHaystack = (cast(ubyte[])haystack).retro;
+
+        alias Retro(Range) = typeof((ubyte[]).init.retro);
+        TypeTuple!(staticMap!(Retro, Ranges)) retroNeedles;
         foreach (ix, needle; needles)
         {
-            retroNeedles[ix] = (cast(ubyte[])needle).retro.array;
+            retroNeedles[ix] = (cast(ubyte[])needle).retro;
         }
-        pragma(msg, typeof(retroHaystack));
-        pragma(msg, typeof(retroNeedles));
 
         const retroHit = retroHaystack.skipOverShortestOf(retroNeedles);
         haystack = haystack[0.. $ - (haystack.length - retroHaystack.length)];
+
         return retroHit;
     }
     else
     {
-        static assert(false, "Unsupported combination of haystack type " ~ R.stringof ~
-                      " with needle types " ~ R2.stringof);
+        static assert(false, "Unsupported combination of haystack type " ~ Range.stringof ~
+                      " with needle types " ~ Ranges.stringof);
     }
-
-    return tuple(false, 0UL);
 }
 
-/* @safe pure unittest */
-/* { */
-/*     auto x = "alpha_beta"; */
-/*     assert(x.skipOverBackShortestOf("beta") == tuple(true, 1)); */
-/*     assert(x == "alpha_"); */
-/* } */
+@safe pure unittest
+{
+    auto x = "alpha_beta";
+    assert(x.skipOverBackShortestOf("x", "beta") == 2);
+    assert(x == "alpha_");
+}
