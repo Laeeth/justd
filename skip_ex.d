@@ -35,24 +35,24 @@ bool skipOverBack(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2) if (is(typeof
 
 import std.typecons: tuple, Tuple;
 
+import std.algorithm: startsWith;
+
 /** Skip Over Shortest Matching prefix in $(D needles) that prefixes $(D haystack).
     TODO Make return value a specific type that has bool conversion so we can
     call it as
-        if (r.skipOverShortestOf(...)) { ... }
+    if (auto hit = r.skipOverShortestOf(...)) { ... }
  */
-Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
+size_t skipOverShortestOf(alias pred = "a == b",
+                          Range,
+                          Ranges...)(ref Range haystack,
+                                     const Ranges needles)
+if (Ranges.length > 1 && is(typeof(startsWith!pred(haystack, needles))))
 {
-    import std.algorithm: find;
-    import std.range: front;
     import std.traits: isSomeString, isSomeChar;
 
     // do match
-    const match = haystack.find(needles);
-
-    const ok = (match[1] != 0 && // match[1]:th needle matched
-                match[0].front is haystack.front); // match at beginning of haystack
-
-    if (ok)
+    const size_t hit = startsWith!pred(haystack, needles);
+    if (hit)
     {
         // get needle lengths
         size_t[needles.length] lengths;
@@ -60,30 +60,28 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
         {
             import std.range: ElementType;
             import std.typecons: Unqual;
-
             alias Needle = Unqual!(typeof(needle));
-
-            static if (is(Unqual!R ==
+            static if (is(Unqual!Range ==
                           Needle))
             {
                 lengths[ix] = needle.length;
             }
-            else static if (is(Unqual!(ElementType!R) ==
+            else static if (is(Unqual!(ElementType!Range) ==
                                Unqual!(ElementType!Needle)))
             {
                 lengths[ix] = needle.length;
             }
-            else static if (isSomeString!R &&
+            else static if (isSomeString!Range &&
                             isSomeString!Needle)
             {
                 lengths[ix] = needle.length;
             }
-            else static if (isSomeChar!(ElementType!R) &&
+            else static if (isSomeChar!(ElementType!Range) &&
                             isSomeChar!Needle)
             {
                 lengths[ix] = 1;
             }
-            else static if (is(Unqual!(ElementType!R) ==
+            else static if (is(Unqual!(ElementType!Range) ==
                                Needle))
             {
                 lengths[ix] = 1;
@@ -92,35 +90,36 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
             {
                 static assert(false,
                               "Cannot handle needle of type " ~ Needle.stringof ~
-                              " when haystack has ElementType " ~ (ElementType!R).stringof);
+                              " when haystack has ElementType " ~ (ElementType!Range).stringof);
             }
         }
 
         import std.range: popFrontN;
-        haystack.popFrontN(lengths[match[1] - 1]);
+        haystack.popFrontN(lengths[hit - 1]);
     }
 
-    return typeof(return)(ok, match[1]);
+    return hit;
+
 }
 
 @safe pure unittest
 {
     auto x = "beta version";
-    assert(x.skipOverShortestOf("beta", "be") == tuple(true, 2));
+    assert(x.skipOverShortestOf("beta", "be") == 2);
     assert(x == "ta version");
 }
 
 @safe pure unittest
 {
     auto x = "beta version";
-    assert(x.skipOverShortestOf("be", "beta") == tuple(true, 1));
+    assert(x.skipOverShortestOf("be", "beta") == 1);
     assert(x == "ta version");
 }
 
 @safe pure unittest
 {
     auto x = "beta version";
-    assert(x.skipOverShortestOf('b', "be", "beta") == tuple(true, 1));
+    assert(x.skipOverShortestOf('b', "be", "beta") == 1);
     assert(x == "eta version");
 }
 
