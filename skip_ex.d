@@ -40,7 +40,7 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
 {
     import std.algorithm: find;
     import std.range: front;
-    import std.traits: isSomeChar;
+    import std.traits: isSomeString, isSomeChar;
 
     // do match
     const match = haystack.find(needles);
@@ -62,6 +62,11 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
             {
                 lengths[ix] = needle.length;
             }
+            else static if (isSomeString!R &&
+                            isSomeString!Needle)
+            {
+                lengths[ix] = needle.length;
+            }
             else static if (isSomeChar!(ElementType!R) &&
                             isSomeChar!Needle)
             {
@@ -73,7 +78,9 @@ Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R h
             }
             else
             {
-                static assert(false, "Cannot handle needle of type " ~ Needle.stringof ~ " when haystack is of type " ~ (ElementType!R).stringof);
+                static assert(false,
+                              "Cannot handle needle of type " ~ Needle.stringof ~
+                              " when haystack is of type " ~ (ElementType!R).stringof);
             }
         }
 
