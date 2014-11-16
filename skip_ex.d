@@ -136,7 +136,6 @@ size_t skipOverBackShortestOf(alias pred = "a == b", Range, Ranges...)(ref Range
 {
     import std.range: retro, ElementType;
     import std.traits: hasIndirections;
-    import std.algorithm: array;
     import std.typetuple: staticMap, TypeTuple;
     import traits_ex: allSame;
 
