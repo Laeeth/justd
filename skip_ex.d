@@ -170,3 +170,10 @@ size_t skipOverBackShortestOf(alias pred = "a == b", Range, Ranges...)(ref Range
     assert(x.skipOverBackShortestOf("x", "beta") == 2);
     assert(x == "alpha_");
 }
+
+@safe pure unittest
+{
+    auto x = "alpha_beta";
+    assert(x.skipOverBackShortestOf("a", "beta") == 1);
+    assert(x == "alpha_bet");
+}
