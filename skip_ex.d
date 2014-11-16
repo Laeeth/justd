@@ -136,11 +136,12 @@ size_t skipOverBackShortestOf(alias pred = "a == b", Range, Ranges...)(ref Range
 {
     import std.range: retro, ElementType;
     import std.traits: hasIndirections;
+    import std.typecons: Unqual;
     import std.typetuple: staticMap, TypeTuple;
     import traits_ex: allSame;
 
-    static if ((!hasIndirections!(ElementType!Range)) &&
-               allSame!(Range, Ranges))
+    static if ((!hasIndirections!(ElementType!Range))/*  && */
+               /* allSame!(Unqual!Range, staticMap!(Unqual, Ranges)) */)
     {
         auto retroHaystack = (cast(ubyte[])haystack).retro;
 
