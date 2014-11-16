@@ -759,6 +759,7 @@ Rel decodeRelation(S)(S predicate,
     {
         switch (predicate)
         {
+            case `economicsector`:
             case `companyeconomicsector`: return memberOfEconomicSector;
             case `headquarteredin`: tense = Tense.pastMoment; return headquarteredIn;
 
@@ -843,8 +844,8 @@ Rel decodeRelation(S)(S predicate,
             default: break;
         }
 
-        enum nellAgents = tuple(`object`, `item`, `agent`, `organization`, `animal`, `scene`, `event`, `food`, `vegetable`,
-                                `person`, `creativework`);
+        enum nellAgents = tuple(`object`, `thing`, `item`, `agent`, `organization`, `animal`, `scene`, `event`, `food`, `vegetable`,
+                                `person`, `creativework`, `building`, `school`, `bodypart`);
 
         enum nellOldAgents = [`agriculturalproduct`, `product`, `chemical`, `drug`, `concept`,
                               `buildingfeature`, `buildingmaterial`, `furniture`,
@@ -855,12 +856,12 @@ Rel decodeRelation(S)(S predicate,
                               `vegetableproduction`,
                               `team`, `writer`, `musician`,
                               `athlete`,
-                              `journalist`, `thing`, `bodypart`, `artery`, `sportschool`,
-                              `sportfans`, `sport`, `school`,
+                              `journalist`, `artery`, `sportschool`,
+                              `sportfans`, `sport`,
                               `beverage`, `protein`,
                               `bankbank`, // TODO bug in NELL?
                               `officebuildingroom`,
-                              `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `building`, `material`,
+                              `farm`, `zipcode`, `street`, `mountain`, `lake`, `hospital`, `airport`, `bank`, `hotel`, `port`, `park`, `material`,
 
                               `skiarea`, `area`, `room`, `hall`, `island`, `city`, `river`, `country`, `office`,
                               `touristattraction`, `tourist`, `attraction`, `museum`, `aquarium`, `zoo`, `stadium`,
@@ -899,10 +900,11 @@ Rel decodeRelation(S)(S predicate,
 
         switch (t.toLower)
         {
-            case `relatedto`:                                      return relatedTo;
+            case `relatedto`:
             case `andother`:                                       return relatedTo;
 
-            case `isa`:                                            return isA;
+            case ``:
+            case `isa`:
             case `istypeof`:                                       return isA;
 
             case `ismultipleof`:                                   return multipleOf;
@@ -938,6 +940,7 @@ Rel decodeRelation(S)(S predicate,
             case `contributesto`:                                  return contributesTo;
             case `contributedto`: tense = Tense.pastMoment; return contributesTo;
 
+            case `has`:
             case `hasa`:                                           return hasA;
             case `usedfor`: reversion = true; tense = Tense.pastMoment; return uses;
             case `use`:
@@ -957,7 +960,7 @@ Rel decodeRelation(S)(S predicate,
             case `attractionof`:
             case `latitudelongitude`:
             case `incountry`:
-            case `actsin`:                                         return atLocation;
+            case `actsinlocation`:                                 return atLocation;
             case `grownin`:                                        return grownAtLocation;
             case `producedin`: tense = Tense.pastMoment; return producedAtLocation;
             case `movedto`: tense = Tense.pastMoment; return movedTo;
