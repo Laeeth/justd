@@ -1751,7 +1751,6 @@ class Net(bool useArray = true,
         size_t[Origin.max + 1] _linkSourceCounts;
         size_t[HLang.max + 1] _hlangCounts;
         size_t[WordKind.max + 1] _kindCounts;
-        size_t _assertionCount = 0;
         size_t _conceptStringLengthSum = 0;
         size_t _connectednessSum = 0;
 
@@ -1959,7 +1958,6 @@ class Net(bool useArray = true,
             _weightSumCN5 += weight;
             _weightMinCN5 = min(weight, _weightMinCN5);
             _weightMaxCN5 = max(weight, _weightMaxCN5);
-            _assertionCount++;
         }
         else
         {
@@ -2379,9 +2377,10 @@ class Net(bool useArray = true,
         }
 
         writeln(`Stats:`);
+
         writeln(`- CN5 Weights Min,Max,Average: `, _weightMinCN5, ',', _weightMaxCN5, ',', cast(real)_weightSumCN5/_links.length);
         writeln(`- NELL Weights Min,Max,Average: `, _weightMinNELL, ',', _weightMaxNELL, ',', cast(real)_weightSumNELL/_links.length);
-        writeln(`- Number of assertions: `, _assertionCount);
+
         writeln(`- Concept Count: `, _concepts.length);
         writeln(`- Link Count: `, _links.length);
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
