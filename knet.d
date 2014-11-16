@@ -2010,6 +2010,7 @@ class Net(bool useArray = true,
 
     import std.algorithm: splitter;
 
+    /** Lookup Category by $(D name). */
     CategoryIx categoryByName(S)(S name) if (isSomeString!S)
     {
         auto categoryIx = anyCategory;
@@ -2133,6 +2134,8 @@ class Net(bool useArray = true,
                 case 2:
                     if (relationName == "haswikipediaurl")
                     {
+                        // TODO check if url is special compared to entity and
+                        // store it only if it's not
                         ignored = true;
                     }
                     else
