@@ -53,6 +53,8 @@ alias isOdd = unaryFun!(a => (a & 1) == 1); // Limit to Integers?
 alias lessThan = binaryFun!((a, b) => a < b);
 alias greaterThan = binaryFun!((a, b) => a > b);
 
+enum isValueType(T) = !hasIndirections!T;
+
 enum isString (T) = is(T == string);
 enum isWString(T) = is(T == wstring);
 enum isDString(T) = is(T == dstring);
