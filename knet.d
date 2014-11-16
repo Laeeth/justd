@@ -36,6 +36,8 @@
  */
 module knet;
 
+/* version = msgpack; */
+
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
@@ -44,15 +46,14 @@ import std.container: Array;
 import std.string: tr;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar;
+import std.typecons: Nullable, Tuple, tuple;
+
 import algorithm_ex: isPalindrome;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf;
 import porter;
 import dbg;
-
-/* version = msgpack; */
-
 import grammars;
 import rcstring;
 version(msgpack) import msgpack;
@@ -842,8 +843,8 @@ Rel decodeRelation(S)(S predicate,
             default: break;
         }
 
-        enum nellAgents = [`object`, `item`, `agent`, `organization`, `animal`, `scene`, `event`, `food`, `vegetable`,
-                           `person`, `creativework`];
+        enum nellAgents = tuple(`object`, `item`, `agent`, `organization`, `animal`, `scene`, `event`, `food`, `vegetable`,
+                                `person`, `creativework`);
 
         enum nellOldAgents = [`agriculturalproduct`, `product`, `chemical`, `drug`, `concept`,
                               `buildingfeature`, `buildingmaterial`, `furniture`,
@@ -882,14 +883,11 @@ Rel decodeRelation(S)(S predicate,
 
         if (origin == Origin.nell)
         {
-            t.skipOverShortestOf(`object`, `item`, `agent`, `organization`,
-                                 `animal`, `scene`, `event`, `food`, `vegetable`,
-                                 `person`, `creativework`);
+            t.skipOverShortestOf(nellAgents.expand);
             if (t != predicate)
             {
                 writeln("Skipped from ", predicate, " to ", t);
             }
-            /* t.skipOverNELLNouns(nellAgents); */
             t.skipOver(`that`);
         }
 
@@ -1518,7 +1516,6 @@ class Net(bool useArray = true,
 {
     import std.algorithm, std.range, std.path, std.array;
     import wordnet: WordNet;
-    import std.typecons: Nullable;
 
     /** Ix Precision.
         Set this to $(D uint) if we get low on memory.
