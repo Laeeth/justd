@@ -35,7 +35,11 @@ bool skipOverBack(alias pred = "a == b", R1, R2)(ref R1 r1, R2 r2) if (is(typeof
 
 import std.typecons: tuple, Tuple;
 
-/** Skip Over Shortest Matching prefix in $(D needles) that prefixes $(D haystack). */
+/** Skip Over Shortest Matching prefix in $(D needles) that prefixes $(D haystack).
+
+    TODO Make return value a specific type that has bool conversion so we can
+    call it as if (r.skipOverShortestOf(...)) { ... }
+ */
 Tuple!(bool, size_t) skipOverShortestOf(alias pred = "a == b", R, R2...)(ref R haystack, const R2 needles)
 {
     import std.algorithm: find;
