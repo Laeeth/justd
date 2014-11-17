@@ -911,12 +911,9 @@ Rel decodeRelation(S)(S predicate,
         {
             t = t.toLower;
         }
-        catch (core.exception.UnicodeException e)
-        {
-            // ok to not be able to downcase
-        }
+        catch (core.exception.UnicodeException e) { /* ok to not be able to downcase */ }
 
-        switch (t.toLower)
+        switch (t)
         {
             case ``:            // TODO check original
             case `relatedto`:
