@@ -38,6 +38,7 @@ module knet;
 
 /* version = msgpack; */
 
+import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to;
 import std.stdio;
@@ -904,6 +905,15 @@ Rel decodeRelation(S)(S predicate,
         if (t.skipOver(`not`))
         {
             reversion = true;
+        }
+
+        try
+        {
+            t = t.toLower;
+        }
+        catch (core.exception.UnicodeException e)
+        {
+            // ok to not be able to downcase
         }
 
         switch (t.toLower)
@@ -1868,8 +1878,8 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
-        bool quick = false;
-        const maxCount = quick ? 1000 : size_t.max;
+        bool quick = true;
+        const maxCount = quick ? 10000 : size_t.max;
 
         // WordNet
         _wordnet = new WordNet!(true, true)([HLang.en]);
