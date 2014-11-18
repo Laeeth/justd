@@ -1844,7 +1844,6 @@ class Net(bool useArray = true,
         }
         else
         {
-            dln("words: ", words);
             foreach (hlangGuess; EnumMembers!HLang) // for each language
             {
                 if (_hlangCounts[hlangGuess])
@@ -1932,10 +1931,11 @@ class Net(bool useArray = true,
     ConceptIx lookupOrStoreConcept(Words words,
                                    HLang lang,
                                    WordKind kind,
-                                   CategoryIx categoryIx)
+                                   CategoryIx categoryIx,
+                                   Origin origin)
     {
         return lookupOrStoreConcept(Lemma(words, lang, kind, categoryIx),
-                                    Concept(words, lang, kind, categoryIx));
+                                    Concept(words, lang, kind, categoryIx, origin));
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight). */
@@ -2027,7 +2027,7 @@ class Net(bool useArray = true,
         }
         ++_kindCounts[wordKind];
 
-        return lookupOrStoreConcept(word, hlang, wordKind, anyCategory);
+        return lookupOrStoreConcept(word, hlang, wordKind, anyCategory, Origin.cn5);
     }
 
     import std.algorithm: splitter;
@@ -2097,7 +2097,8 @@ class Net(bool useArray = true,
         auto entityIx = lookupOrStoreConcept(entityName,
                                              lang,
                                              kind,
-                                             categoryIx);
+                                             categoryIx,
+                                             Origin.nell);
 
         return tuple(entityIx,
                      categoryName,
@@ -2106,7 +2107,8 @@ class Net(bool useArray = true,
                              lookupOrStoreConcept(categoryName,
                                                   lang,
                                                   kind,
-                                                  categoryIx),
+                                                  categoryIx,
+                                                  Origin.nell),
                              Origin.nell, 1.0));
     }
 
@@ -2496,10 +2498,19 @@ class Net(bool useArray = true,
     void showConcept(in Concept concept, real weight)
     {
         if (concept.words) write(` `, concept.words.tr("_", " "));
-        write(`(`);
-        if (concept.lang) write(concept.lang);
-        if (concept.lemmaKind) write("-", concept.lemmaKind);
-        writef(`,W:%.2f,O:%s),`, weight, concept.origin);
+
+        write(`(`); // open
+
+        if (concept.lang != HLang.unknown)
+        {
+            write(concept.lang);
+        }
+        if (concept.lemmaKind != WordKind.unknown)
+        {
+            write("-", concept.lemmaKind);
+        }
+
+        writef(`,W:%.2f,O:%s),`, weight, concept.origin); // close
     }
 
     void showLinkConcept(in Concept concept,
