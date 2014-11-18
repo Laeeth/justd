@@ -1794,10 +1794,13 @@ class Net(bool useArray = true,
         }
     }
 
-    Concept[] foo(S)(S words,
-                     HLang hlang = HLang.unknown,
-                     WordKind wordKind = WordKind.unknown,
-                     CategoryIx category = anyCategory) if (isSomeString!S)
+    /** Try to Get Single Concept related to $(D word) in the interpretation
+        (semantic context) $(D wordKind).
+    */
+    Concept[] conceptByWordsMaybe(S)(S words,
+                                     HLang hlang = HLang.unknown,
+                                     WordKind wordKind = WordKind.unknown,
+                                     CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
         auto lemma = Lemma(words, hlang, wordKind, category);
@@ -1823,8 +1826,8 @@ class Net(bool useArray = true,
         return concepts;
     }
 
-    /** Get Concepts related to $(D word) in the interpretation (semantic
-        context) $(D wordKind).
+    /** Get All Possible Concepts related to $(D word) in the interpretation
+        (semantic context) $(D wordKind).
         If no wordKind given return all possible.
     */
     Concept[] conceptsByWords(S)(S words,
@@ -1837,10 +1840,11 @@ class Net(bool useArray = true,
             wordKind != WordKind.unknown &&
             category != anyCategory)
         {
-            return foo(words, hlang, wordKind, category);
+            return conceptByWordsMaybe(words, hlang, wordKind, category);
         }
         else
         {
+            dln("words: ", words);
             foreach (hlangGuess; EnumMembers!HLang) // for each language
             {
                 if (_hlangCounts[hlangGuess])
@@ -1849,12 +1853,13 @@ class Net(bool useArray = true,
                     {
                         if (_kindCounts[wordKindGuess])
                         {
-                            foreach (ushort categoryIxCountGuess; 1.._categoryIxCounter) // for each category
+                            foreach (ushort categoryCountGuess;
+                                     0.._categoryIxCounter) // for each category including unknown
                             {
-                                concepts ~= foo(words,
-                                                hlangGuess,
-                                                wordKindGuess,
-                                                CategoryIx(categoryIxCountGuess));
+                                concepts ~= conceptByWordsMaybe(words,
+                                                                hlangGuess,
+                                                                wordKindGuess,
+                                                                CategoryIx(categoryCountGuess));
                             }
                         }
                     }
@@ -2494,7 +2499,7 @@ class Net(bool useArray = true,
         write(`(`);
         if (concept.lang) write(concept.lang);
         if (concept.lemmaKind) write("-", concept.lemmaKind);
-        writef(`:%.2f),`, weight);
+        writef(`,W:%.2f,O:%s),`, weight, concept.origin);
     }
 
     void showLinkConcept(in Concept concept,
