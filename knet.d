@@ -1946,7 +1946,10 @@ class Net(bool useArray = true,
                    real weight = 1.0,
                    bool negation = false,
                    bool reversion = false)
+    body
     {
+        if (srcIx == dstIx) { return LinkIx.asUndefined; } // don't allow self-reference for now
+
         if (false)
         {
             LinkIx eix = areRelated(srcIx, dstIx); // existing Link Index
@@ -2307,7 +2310,8 @@ class Net(bool useArray = true,
             ix++;
         }
 
-        if (src.defined && dst.defined)
+        if (src.defined &&
+            dst.defined)
         {
             return connect(src, rel, dst, origin, weight, negation, reversion);
         }
