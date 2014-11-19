@@ -1683,9 +1683,11 @@ class Net(bool useArray = true,
         @safe @nogc pure nothrow:
 
         this(Rel rel,
+             bool negation,
              Origin origin = Origin.unknown)
         {
             this._rel = rel;
+            this._negation = negation;
             this._origin = origin;
         }
 
@@ -1967,7 +1969,7 @@ class Net(bool useArray = true,
         }
 
         auto lix  = LinkIx(cast(Ix)_links.length);
-        auto link = Link(rel, origin);
+        auto link = Link(rel, negation, origin);
 
         link._srcIx = reversion ? dstIx : srcIx;
         link._dstIx = reversion ? srcIx : dstIx;
@@ -1995,7 +1997,8 @@ class Net(bool useArray = true,
 
         propagateLinkConcepts(link);
 
-        _links ~= link;
+        _links ~= link; // TODO Avoid copying here
+
         return lix; // _links.back;
     }
     alias relate = connect;
