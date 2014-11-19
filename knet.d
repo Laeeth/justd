@@ -40,7 +40,7 @@ module knet;
 
 import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
-import std.conv: to;
+import std.conv: to, emplace;
 import std.stdio;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array;
 import std.container: Array;
@@ -1524,6 +1524,7 @@ enum Origin:ubyte
     nell,
     manual,
 }
+bool defined(Origin origin) @safe @nogc pure nothrow { return origin != Origin.unknown; }
 
 auto pageSize() @trusted
 {
@@ -2239,12 +2240,12 @@ class Net(bool useArray = true,
     bool propagateLinkConcepts(ref Link link)
     {
         bool done = false;
-        if (link._origin != Origin.unknown)
+        if (!link._origin.defined)
         {
             // TODO prevent duplicate lookups to conceptByIx
-            if (conceptByIx(link._srcIx).origin != Origin.unknown)
+            if (!conceptByIx(link._srcIx).origin.defined)
                 conceptByIx(link._srcIx).origin = link._origin;
-            if (conceptByIx(link._dstIx).origin != Origin.unknown)
+            if (!conceptByIx(link._dstIx).origin.defined)
                 conceptByIx(link._dstIx).origin = link._origin;
             done = true;
         }
