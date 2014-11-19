@@ -1593,6 +1593,7 @@ class Net(bool useArray = true,
     /** Concept Lemma. */
     struct Lemma
     {
+        @safe @nogc pure nothrow:
         Words words;
         /* The following three are used to disambiguate different semantics
          * meanings of the same word in different languages. */
@@ -1604,6 +1605,7 @@ class Net(bool useArray = true,
     /** Concept Node/Vertex. */
     struct Concept
     {
+        /* @safe @nogc pure nothrow: */
         this(Words words,
              HLang lang,
              WordKind lemmaKind,
@@ -2550,8 +2552,7 @@ class Net(bool useArray = true,
                                           wordKind))
         {
             write(`- in `, concept.lang.toName);
-            write(` of sense `, concept.lemmaKind);
-            writeln(` relates to `);
+            writeln(` of sense `, concept.lemmaKind);
 
             foreach (inGroup; insByRelation(concept))
             {
