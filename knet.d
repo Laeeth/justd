@@ -2137,7 +2137,7 @@ class Net(bool useArray = true,
         string valueCategoryName;
 
         auto ignored = false;
-        auto mainLink = Link(Origin.nell);
+        real mainWeight;
         auto show = false;
 
         auto parts = line.splitter('\t');
@@ -2201,7 +2201,7 @@ class Net(bool useArray = true,
                     }
                     break;
                 case 4:
-                    mainLink.setNELLWeight(part.to!real);
+                    mainWeight = part.to!real;
                     break;
                 default:
                     if (ix < 5 && !ignored)
@@ -2213,8 +2213,12 @@ class Net(bool useArray = true,
             ++ix;
         }
 
-        /* propagateLinkConcepts(mainLink); */
-        /* _links ~= mainLink; */
+        if (entityIx.defined &&
+            valueIx.defined)
+        {
+            auto mainLinkIx = connect(entityIx, rel, valueIx,
+                                      Origin.nell, mainWeight, negation, reversion);
+        }
 
         if (show) writeln();
     }
