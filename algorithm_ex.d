@@ -1405,7 +1405,7 @@ auto len(T)(in T a) @safe @nogc pure nothrow
 
 unittest
 {
-    import std.range: map;
+    import std.algorithm: map;
     import std.array: array;
     assert(([42].map!str).array == ["42"]);
 }
