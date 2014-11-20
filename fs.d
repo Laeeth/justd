@@ -150,7 +150,7 @@ import codec;
 import csunits;
 alias Bytes64 = Bytes!ulong;
 import arsd.terminal;
-import sregex;
+import symbolic;
 import bitset;
 import dbg;
 import tempfs;
@@ -1709,12 +1709,12 @@ class GStats
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
 
-        txtFKinds ~= new FKind("Comma-separated values", [], ["csv"], [], 0, [], [], // TODO decribe with sregex
+        txtFKinds ~= new FKind("Comma-separated values", [], ["csv"], [], 0, [], [], // TODO decribe with symbolic
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
 
-        txtFKinds ~= new FKind("Tab-separated values", [], ["tsv"], [], 0, [], [], // TODO describe with sregex
+        txtFKinds ~= new FKind("Tab-separated values", [], ["tsv"], [], 0, [], [], // TODO describe with symbolic
                                defaultCommentDelims,
                                defaultStringDelims,
                                FileContent.text, FileKindDetection.equalsNameAndContents);
@@ -2484,7 +2484,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.scriptCode);
         txtFKinds ~= new FKind("Mason", [], ["mas", "mhtml", "mpl", "mtxt"], [], 0, [], [],
-                               [], // TODO Need sregex
+                               [], // TODO Need symbolic
                                defaultStringDelims,
                                FileContent.scriptCode);
 
@@ -2846,7 +2846,7 @@ class GStats
                                defaultStringDelims,
                                FileContent.media);
 
-        // TODO Support RIFF....WAVEfmt using sregex seq(lit("RIFF"), any(4), lit("WAVEfmt"))
+        // TODO Support RIFF....WAVEfmt using symbolic seq(lit("RIFF"), any(4), lit("WAVEfmt"))
         binFKinds ~= new FKind("WAV", [], ["wav", "wave"], "RIFF", 0, [], [],
                                [], // N/A
                                defaultStringDelims,

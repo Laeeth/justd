@@ -49,7 +49,7 @@ import std.uni: isWhite, toLower;
 import std.utf: byDchar;
 import std.typecons: Nullable, Tuple, tuple;
 
-import algorithm_ex: isPalindrome;
+import algorithm_ex: isPalindrome, either;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
@@ -1132,18 +1132,16 @@ class Net(bool useArray = true,
     {
         if (srcIx == dstIx) { return LinkIx.asUndefined; } // don't allow self-reference for now
 
-        if (false)
+        if (true)
         {
-            if (auto existingIx = areConnected(srcIx, dstIx))
+            if (auto existingIx = areConnectedAs(srcIx, rel, dstIx,
+                                                 negation, reversion)) // TODO warn about negation and reversion on existing rels
             {
-                const existingLink = linkByIx(existingIx);
-                if (existingLink._rel == rel)
-                {
-                    dln("warning: Concepts ",
-                        conceptByIx(srcIx), " and ",
-                        conceptByIx(dstIx), " already related as ",
-                        rel);
-                }
+                dln("warning: Concepts ",
+                    conceptByIx(srcIx), " and ",
+                    conceptByIx(dstIx), " already related as ",
+                    rel);
+                return LinkIx.asUndefined;
             }
         }
 
@@ -1622,11 +1620,11 @@ class Net(bool useArray = true,
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
      */
-    LinkIx areRelatedInOrder(ConceptIx a,
-                             ConceptIx b)
+    LinkIx areConnectedInOrder(ConceptIx a,
+                               ConceptIx b)
     {
-        const cA = conceptByIx(a);
-        const cB = conceptByIx(b);
+        const cA = conceptByIx(a); // TODO ref?
+        const cB = conceptByIx(b); // TODO use
         foreach (inIx; cA.inIxes)
         {
             const inLink = linkByIx(inIx);
@@ -1651,28 +1649,21 @@ class Net(bool useArray = true,
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkIx.max.
      */
     LinkIx areConnected(ConceptIx a,
-                      ConceptIx b)
+                        ConceptIx b)
     {
-        const ab = areRelatedInOrder(a, b);
-        if (ab != typeof(return).asUndefined)
-        {
-            return ab;
-        }
-        else
-        {
-            return areRelatedInOrder(b, a);
-        }
+        return either(areConnectedInOrder(a, b),
+                      areConnectedInOrder(b, a));
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     LinkIx areConnected(in Lemma a,
-                      in Lemma b)
+                        in Lemma b)
     {
         if (a in _conceptIxByLemma &&
             b in _conceptIxByLemma)
         {
             return areConnected(_conceptIxByLemma[a],
-                              _conceptIxByLemma[b]);
+                                _conceptIxByLemma[b]);
         }
         return typeof(return).asUndefined;
     }

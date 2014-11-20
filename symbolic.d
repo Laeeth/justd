@@ -7,7 +7,7 @@
    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
    Authors: $(WEB Per Nordlöw)
 
-   Namings borrowed from Emacs' 'sregex'.
+   Namings borrowed from Emacs' 'symbolic'.
 
    TODO
    Overload operators || (or), && (and), ! (not), ~ (seq), | (alt)
@@ -32,7 +32,7 @@
    TODO Make returns from factory functions immutable.
    TODO Reuse return patterns from Lit
  */
-module sregex;
+module symbolic;
 import std.algorithm: find, all, map, reduce, min, max;
 import std.range: empty;
 import algorithm_ex;
