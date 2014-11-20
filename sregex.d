@@ -1,13 +1,33 @@
 #!/usr/bin/env rdmd-dev-module
 
 /**
-   Symbolic Regular Expressions.
+   Symbolic Regular Expressions and Predicate Logic.
 
    Copyright: Per Nordlöw 2014-.
    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
    Authors: $(WEB Per Nordlöw)
 
    Namings borrowed from Emacs' 'sregex'.
+
+   TODO
+   Overload operators || (or), && (and), ! (not), ~ (seq), | (alt)
+
+   TODO
+   Variables are either
+   - _ (ignore)
+   - _"x", _"y", etc
+   - _'x', _'y'
+   - _!0, _!1, ..., _!(n-1)
+
+   infer(rel!"desire"(_!"x", _!"y") &&
+         rel!"madeOf"(_!"z", _!"y"),
+         rel!"desire"(_!"x", _!"z"))
+
+   TODO Support variables of specific types and inference using predicate logic:
+        infer(and(fact(var!"x", rel"desire", var!"y"),
+                  fact(var!"z", opt(rel"madeOf",
+                              rel"instanceOf"), var!"y"))),
+              pred(var!"x", rel"desire", var!"z"))
 
    TODO Make returns from factory functions immutable.
    TODO Reuse return patterns from Lit
@@ -285,6 +305,7 @@ auto any(Args...)(Args args) { return new Any(args); } // maker
 abstract class SPatt : Patt
 {
     this(Patt[] subs_) { this._subs = subs_; }
+
     this(Args...)(Args subs_)
     {
         import std.traits: isAssignable;
@@ -307,7 +328,25 @@ abstract class SPatt : Patt
             sub._parent = this;
         }
     }
+
+    Seq opBinary(string op)(SPatt rhs)
+    {
+        static if (op == "~")
+        {
+            return seq(this, rhs);
+        }
+        else
+        {
+            static assert(false, "Unsupported binary operator " ~ op);
+        }
+    }
+
     protected Patt[] _subs;
+}
+
+unittest
+{
+    const s = lit("al") ~ lit("pha");
 }
 
 /** Sequence of Patterns.
