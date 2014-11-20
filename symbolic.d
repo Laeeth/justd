@@ -60,6 +60,18 @@ class Patt
         return matchU(haystack.representation, soff);
     }
 
+    Seq opBinary(string op)(SPatt rhs)
+    {
+        static if (op == "~")
+        {
+            return seq(this, rhs);
+        }
+        else
+        {
+            static assert(false, "Unsupported binary operator " ~ op);
+        }
+    }
+
     final size_t at(in string haystack, size_t soff = 0) const nothrow
     // TODO Activate this
     /* out (hit) { */
@@ -111,6 +123,12 @@ class Patt
 
     protected Patt _parent; /// Parenting (Super) Pattern.
     bool greedy = false; // Scan as far as possible if true
+}
+
+unittest
+{
+    const s = lit("al") ~ lit("pha");
+    pragma(msg, typeof(s));
 }
 
 /** Literal Pattern with Cached Binary Byte Histogram.
@@ -329,24 +347,7 @@ abstract class SPatt : Patt
         }
     }
 
-    Seq opBinary(string op)(SPatt rhs)
-    {
-        static if (op == "~")
-        {
-            return seq(this, rhs);
-        }
-        else
-        {
-            static assert(false, "Unsupported binary operator " ~ op);
-        }
-    }
-
     protected Patt[] _subs;
-}
-
-unittest
-{
-    const s = lit("al") ~ lit("pha");
 }
 
 /** Sequence of Patterns.
