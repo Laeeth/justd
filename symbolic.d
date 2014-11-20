@@ -60,7 +60,7 @@ class Patt
         return matchU(haystack.representation, soff);
     }
 
-    Seq opBinary(string op)(SPatt rhs)
+    Seq opBinary(string op)(Patt rhs)
     {
         static if (op == "~")
         {
