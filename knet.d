@@ -733,6 +733,7 @@ class Net(bool useArray = true,
         @safe @nogc pure nothrow:
         static LinkIx asUndefined() { return LinkIx(Ix.max); }
         bool defined() const { return this != LinkIx.asUndefined; }
+        auto opCast(T : bool)() { return defined; }
     private:
         Ix _lIx = Ix.max;
     }
@@ -741,6 +742,7 @@ class Net(bool useArray = true,
         @safe @nogc pure nothrow:
         static ConceptIx asUndefined() { return ConceptIx(Ix.max); }
         bool defined() const { return this != ConceptIx.asUndefined; }
+        auto opCast(T : bool)() { return defined; }
     private:
         Ix _cIx = Ix.max;
     }
@@ -760,6 +762,7 @@ class Net(bool useArray = true,
         @safe @nogc pure nothrow:
         static CategoryIx asUndefined() { return CategoryIx(ushort.max); }
         bool defined() const { return this != CategoryIx.asUndefined; }
+        auto opCast(T : bool)() { return defined; }
     private:
         ushort _cIx = ushort.max;
     }
@@ -774,6 +777,7 @@ class Net(bool useArray = true,
         HLang lang;
         WordKind wordKind;
         CategoryIx categoryIx;
+        auto opCast(T : bool)() { return words !is null; }
     }
 
     /** Concept Node/Vertex. */
@@ -1058,7 +1062,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         bool quick = true;
-        const maxCount = quick ? 10000 : size_t.max;
+        const maxCount = quick ? 100000 : size_t.max;
 
         // WordNet
         _wordnet = new WordNet!(true, true)([HLang.en]);
@@ -1130,10 +1134,9 @@ class Net(bool useArray = true,
 
         if (false)
         {
-            LinkIx eix = areRelated(srcIx, dstIx); // existing Link Index
-            if (eix != LinkIx.asUndefined)
+            if (auto existingIx = areConnected(srcIx, dstIx))
             {
-                auto existingLink = linkByIx(eix);
+                const existingLink = linkByIx(existingIx);
                 if (existingLink._rel == rel)
                 {
                     dln("warning: Concepts ",
@@ -1647,7 +1650,7 @@ class Net(bool useArray = true,
 
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkIx.max.
      */
-    LinkIx areRelated(ConceptIx a,
+    LinkIx areConnected(ConceptIx a,
                       ConceptIx b)
     {
         const ab = areRelatedInOrder(a, b);
@@ -1662,13 +1665,13 @@ class Net(bool useArray = true,
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
-    LinkIx areRelated(in Lemma a,
+    LinkIx areConnected(in Lemma a,
                       in Lemma b)
     {
         if (a in _conceptIxByLemma &&
             b in _conceptIxByLemma)
         {
-            return areRelated(_conceptIxByLemma[a],
+            return areConnected(_conceptIxByLemma[a],
                               _conceptIxByLemma[b]);
         }
         return typeof(return).asUndefined;
