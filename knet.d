@@ -1134,8 +1134,8 @@ class Net(bool useArray = true,
 
         if (true)
         {
-            if (auto existingIx = areConnectedAs(srcIx, rel, dstIx,
-                                                 negation, reversion)) // TODO warn about negation and reversion on existing rels
+            if (auto existingIx = areConnected(srcIx, rel, dstIx,
+                                               negation, reversion)) // TODO warn about negation and reversion on existing rels
             {
                 dln("warning: Concepts ",
                     conceptByIx(srcIx), " and ",
@@ -1621,15 +1621,19 @@ class Net(bool useArray = true,
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
      */
     LinkIx areConnectedInOrder(ConceptIx a,
-                               ConceptIx b)
+                               Rel rel,
+                               ConceptIx b,
+                               bool negation = false,
+                               bool reversion = false)
     {
         const cA = conceptByIx(a); // TODO ref?
         const cB = conceptByIx(b); // TODO use
         foreach (inIx; cA.inIxes)
         {
             const inLink = linkByIx(inIx);
-            if (inLink._srcIx == b ||
-                inLink._dstIx == b)
+            if ((inLink._srcIx == b ||
+                 inLink._dstIx == b) &&
+                inLink.rel = rel)
             {
                 return inIx;
             }
@@ -1649,21 +1653,29 @@ class Net(bool useArray = true,
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkIx.max.
      */
     LinkIx areConnected(ConceptIx a,
-                        ConceptIx b)
+                        Rel rel,
+                        ConceptIx b,
+                        bool negation = false,
+                        bool reversion = false)
     {
-        return either(areConnectedInOrder(a, b),
-                      areConnectedInOrder(b, a));
+        return either(areConnectedInOrder(a, rel, b, negation, reversion),
+                      areConnectedInOrder(b, rel, a, negation, reversion));
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     LinkIx areConnected(in Lemma a,
-                        in Lemma b)
+                        Rel rel,
+                        in Lemma b,
+                        bool negation = false,
+                        bool reversion = false)
     {
-        if (a in _conceptIxByLemma &&
+        if (a in _conceptIxByLemma && // both lemmas exist
             b in _conceptIxByLemma)
         {
             return areConnected(_conceptIxByLemma[a],
-                                _conceptIxByLemma[b]);
+                                rel,
+                                _conceptIxByLemma[b],
+                                negation, reversion);
         }
         return typeof(return).asUndefined;
     }
