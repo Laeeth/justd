@@ -125,12 +125,6 @@ class Patt
     bool greedy = false; // Scan as far as possible if true
 }
 
-unittest
-{
-    const s = lit("al") ~ lit("pha");
-    pragma(msg, typeof(s));
-}
-
 /** Literal Pattern with Cached Binary Byte Histogram.
  */
 class Lit : Patt
@@ -393,6 +387,9 @@ unittest
 {
     const s = seq(lit("al"),
                   lit("pha"));
+    const t = lit("al") ~ lit("pha");
+    assert(s !is t);
+
     immutable haystack = "alpha";
     assert(s.isFixed);
     assert(s.isConstant);
