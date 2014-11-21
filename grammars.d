@@ -910,7 +910,7 @@ bool specializes(WordKind special,
         {
             /* TODO Use static foreach over all enum members to generate all
              * relevant cases: */
-            case unknown: return special != unknown;
+            case unknown: return true;
             case noun: return special.isNoun || special.isPronoun;
             case nounNumeric: return special.isNounNumeric;
             case nounName: return special.isNounName;
