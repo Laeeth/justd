@@ -302,7 +302,7 @@ enum RelDir
 }
 
 auto toHumanLang(const Rel rel,
-                 const RelDir linkDir,
+                 const RelDir dir,
                  const bool negation = false,
                  const HLang lang = HLang.en)
     @safe pure
@@ -374,7 +374,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case isA:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -396,7 +396,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case partOf:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -417,7 +417,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case memberOf:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -439,7 +439,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case topMemberOf:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -459,7 +459,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case participatesIn:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -479,7 +479,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case worksFor:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -501,7 +501,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case playsIn:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -523,7 +523,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case plays:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -544,7 +544,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case contributesTo:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -564,7 +564,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case leaderOf:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -584,7 +584,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case coaches:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -604,7 +604,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case represents:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -624,7 +624,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case ceoOf:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -644,7 +644,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case hasA:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -665,7 +665,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case atLocation:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -685,7 +685,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case causes:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -705,7 +705,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case creates:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -726,7 +726,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case generalizes:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -745,8 +745,28 @@ auto toHumanLang(const Rel rel,
                         }
                     }
                     break;
+                case eats:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["äter", not]; break;
+                            case en:
+                            default: words = ["does", not, "eat"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "ätas av"]; break;
+                            case en:
+                            default: words = ["can", not, "be eaten by"]; break;
+                        }
+                    }
+                    break;
                 case atTime:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -766,7 +786,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case capableOf:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -786,7 +806,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case definedAs:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -806,7 +826,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case derivedFrom:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -826,7 +846,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case compoundDerivedFrom:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -846,7 +866,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case hasProperty:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -866,7 +886,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case causesDesire:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -886,7 +906,7 @@ auto toHumanLang(const Rel rel,
                     }
                     break;
                 case proxyFor:
-                    if (linkDir == RelDir.forward)
+                    if (dir == RelDir.forward)
                     {
                         switch (lang)
                         {
@@ -915,9 +935,9 @@ auto toHumanLang(const Rel rel,
                     break;
                 default:
                     import std.conv: to;
-                    words = [((!rel.isSymmetric) && linkDir == RelDir.forward ? `<` : ``) ~
+                    words = [((!rel.isSymmetric) && dir == RelDir.forward ? `<` : ``) ~
                              `-` ~ rel.to!(string) ~ `-` ~
-                             ((!rel.isSymmetric) && linkDir == RelDir.backward ? `>` : ``)];
+                             ((!rel.isSymmetric) && dir == RelDir.backward ? `>` : ``)];
                     break;
             }
         }
