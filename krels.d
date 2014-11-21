@@ -633,7 +633,7 @@ string toHumanLang(const Rel rel,
                         }
                     }
                 default:
-import std.conv: to, emplace;
+                    import std.conv: to;
                     return (((!rel.isSymmetric) && linkDir == RelDir.forward ? `<` : ``) ~
                             `-` ~ rel.to!(typeof(return)) ~ `-` ~
                             ((!rel.isSymmetric) && linkDir == RelDir.backward ? `>` : ``));
