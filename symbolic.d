@@ -321,18 +321,16 @@ abstract class SPatt : Patt
         foreach (sub; subs_)
         {
             alias Sub = typeof(sub);
-            static if (isAssignable!(Patt, typeof(sub))) // if sub is of has base-class Patt
-            {
-                _subs ~= sub;
-            }
-            else static if (is(Sub == string) ||
-                            is(Sub == uchar))
+
+            // TODO functionize to patternFromBuiltinType() or to!Patt
+            static if (is(Sub == string) ||
+                       is(Sub == char))
             {
                 _subs ~= new Lit(sub);
             }
             else
             {
-                static assert(false);
+                _subs ~= sub;
             }
             sub._parent = this;
         }
