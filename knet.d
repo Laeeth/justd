@@ -389,7 +389,7 @@ Rel decodeRelation(S)(S predicate,
             case `hasage`:                                         return hasAge;
             case `haswebsite`:                                     return hasWebsite;
             case `hasofficialwebsite`:                             return hasOfficialWebsite;
-            case `attribute`:                                      return attribute;
+            case `attribute`:                                      return hasAttribute;
 
             case `motivatedbygoal`:                                return motivatedByGoal;
             case `obstructedby`: tense = Tense.pastMoment; return obstructedBy;
@@ -1793,6 +1793,15 @@ class Net(bool useArray = true,
         const lsWord = word.sorted; // letter-sorted word
         return _concepts.filter!(concept => (lsWord != concept.words && // don't include one-self
                                              lsWord == concept.words.sorted));
+    }
+
+    /** Get Synonyms of $(D word).
+        Set withSameSyllableCount to true to get synonyms which can be used to
+        help in translating songs with same rhythm.
+     */
+    void synonymsOf(S)(S word,
+                       bool withSameSyllableCount = false) if (isSomeString!S)
+    {
     }
 
     /** ConceptNet Relatedness.
