@@ -6,6 +6,7 @@ module wordnet;
 
 import grammars;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
+import std.algorithm: canFind;
 import std.container: Array;
 import rcstring;
 import dbg;
@@ -606,17 +607,14 @@ class WordNet(bool useArray = true,
                     const WordKind kind,
                     const HLang[] langs = []) if (isSomeString!S)
     {
-        import std.algorithm: canFind;
-        auto meanings = meaningsOf(lemma, langs);
-        return meanings.canFind!(meaning => meaning.kind.memberOf(kind));
+        return meaningsOf(lemma, langs).canFind!(meaning =>
+                                                 meaning.kind.memberOf(kind));
     }
 
     bool canMeanSomething(S)(const S lemma,
                              const HLang[] langs = []) if (isSomeString!S)
     {
-        import std.algorithm: canFind;
-        auto meanings = meaningsOf(lemma, langs);
-        return !meanings.empty;
+        return !meaningsOf(lemma, langs).empty;
     }
 
     /** Check if $(D first) and $(D second) are meaningful. */
