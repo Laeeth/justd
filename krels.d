@@ -315,63 +315,63 @@ auto toHumanLang(const Rel rel,
     {
         with (HLang)
         {
-            auto neg = negation ? negationIn(lang) : null;
+            auto not = negation ? negationIn(lang) : null;
             switch (rel)
             {
                 case relatedTo:
                     switch (lang)
                     {
-                        case sv: words = ["är", neg, "relaterat till"]; break;
+                        case sv: words = ["är", not, "relaterat till"]; break;
                         case en:
-                        default: words = ["is", neg, "related to"]; break;
+                        default: words = ["is", not, "related to"]; break;
                     }
                     break;
                 case translationOf:
                     switch (lang)
                     {
-                        case sv: words = ["kan", neg, "översättas till"]; break;
+                        case sv: words = ["kan", not, "översättas till"]; break;
                         case en:
-                        default: words = ["is", neg, "translated to"]; break;
+                        default: words = ["is", not, "translated to"]; break;
                     }
                     break;
                 case synonymFor:
                     switch (lang)
                     {
-                        case sv: words = ["är", neg, "synonym med"]; break;
+                        case sv: words = ["är", not, "synonym med"]; break;
                         case en:
-                        default: words = ["is", neg, "synonymous with"]; break;
+                        default: words = ["is", not, "synonymous with"]; break;
                     }
                     break;
                 case antonymFor:
                     switch (lang)
                     {
-                        case sv: words = ["är", neg, "motsatsen till"]; break;
+                        case sv: words = ["är", not, "motsatsen till"]; break;
                         case en:
-                        default: words = ["is", neg, "the opposite of"]; break;
+                        default: words = ["is", not, "the opposite of"]; break;
                     }
                     break;
                 case similarSizeTo:
                     switch (lang)
                     {
-                        case sv: words = ["är", neg, "lika stor som"]; break;
+                        case sv: words = ["är", not, "lika stor som"]; break;
                         case en:
-                        default: words = ["is", neg, "similar in size to"]; break;
+                        default: words = ["is", not, "similar in size to"]; break;
                     }
                     break;
                 case similarTo:
                     switch (lang)
                     {
-                        case sv: words = ["är", neg, "likvärdig med"]; break;
+                        case sv: words = ["är", not, "likvärdig med"]; break;
                         case en:
-                        default: words = ["is", neg, "similar to"]; break;
+                        default: words = ["is", not, "similar to"]; break;
                     }
                     break;
                 case looksLike:
                     switch (lang)
                     {
-                        case sv: words = ["ser", neg, "ut som"]; break;
+                        case sv: words = ["ser", not, "ut som"]; break;
                         case en:
-                        default: words = ["looks", neg, "like"]; break;
+                        default: words = ["does", not, "look like"]; break;
                     }
                     break;
                 case isA:
@@ -379,20 +379,20 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["är", neg, "en"]; break;
-                            case de: words = ["ist", neg, "ein"]; break;
+                            case sv: words = ["är", not, "en"]; break;
+                            case de: words = ["ist", not, "ein"]; break;
                             case en:
-                            default: words = ["is", neg, "a"]; break;
+                            default: words = ["is", not, "a"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["kan", neg, "vara en"]; break;
-                            case de: words = ["can", neg, "sein ein"]; break;
+                            case sv: words = ["kan", not, "vara en"]; break;
+                            case de: words = ["can", not, "sein ein"]; break;
                             case en:
-                            default: words = ["can", neg, "be a"]; break;
+                            default: words = ["can", not, "be a"]; break;
                         }
                     }
                     break;
@@ -401,18 +401,19 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["är", neg, "en del av"]; break;
+                            case sv: words = ["är", not, "en del av"]; break;
                             case en:
-                            default: words = ["is", neg, "a part of"]; break;
+                            default: words = ["is", not, "a part of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["innehåller", neg]; break;
+                            case sv: words = ["innehåller", not]; break;
+                            case de: words = ["enthält", not]; break;
                             case en:
-                            default: words = [neg, "contains"]; break;
+                            default: words = [not, "contains"]; break;
                         }
                     }
                     break;
@@ -421,18 +422,20 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["är", neg, "en medlem av"]; break;
+                            case sv: words = ["är", not, "en medlem av"]; break;
+                            case de: words = ["ist", not, "ein Mitglied von"]; break;
                             case en:
-                            default: words = ["is", neg, "a member of"]; break;
+                            default: words = ["is", not, "a member of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", neg, "medlem"]; break;
+                            case sv: words = ["har", not, "medlem"]; break;
+                            case de: words = ["hat", not, "Mitgleid"]; break;
                             case en:
-                            default: words = ["have", neg, "member"]; break;
+                            default: words = ["have", not, "member"]; break;
                         }
                     }
                     break;
@@ -441,18 +444,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["är", neg, "huvudmedlem av"]; break;
+                            case sv: words = ["är", not, "huvudmedlem av"]; break;
                             case en:
-                            default: words = ["is", neg, "the top member of"]; break;
+                            default: words = ["is", not, "the top member of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", neg, "toppmedlem"]; break;
+                            case sv: words = ["har", not, "toppmedlem"]; break;
                             case en:
-                            default: words = ["have", neg, "top member"]; break;
+                            default: words = ["have", not, "top member"]; break;
                         }
                     }
                     break;
@@ -461,18 +464,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["deltog", neg, "i"]; break;
+                            case sv: words = ["deltog", not, "i"]; break;
                             case en:
-                            default: words = ["participate", neg, "in"]; break;
+                            default: words = ["participate", not, "in"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", neg, "deltagare"]; break;
+                            case sv: words = ["har", not, "deltagare"]; break;
                             case en:
-                            default: words = ["have", neg, "participant"]; break;
+                            default: words = ["have", not, "participant"]; break;
                         }
                     }
                     break;
@@ -481,18 +484,20 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["arbetar", neg, "för"]; break;
+                            case sv: words = ["arbetar", not, "för"]; break;
+                            case de: words = ["arbeitet", not, "für"]; break;
                             case en:
-                            default: words = ["works", neg, "for"]; break;
+                            default: words = ["works", not, "for"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", neg, "arbetar"]; break;
+                            case sv: words = ["har", not, "arbetare"]; break;
+                            case de: words = ["hat", not, "Arbeiter"]; break;
                             case en:
-                            default: words = ["has", neg, "employee"]; break;
+                            default: words = ["has", not, "employee"]; break;
                         }
                     }
                     break;
@@ -501,18 +506,20 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["spelar", neg, "i"]; break;
+                            case sv: words = ["spelar", not, "i"]; break;
+                            case de: words = ["spielt", not, "in"]; break;
                             case en:
-                            default: words = ["plays", neg, "in"]; break;
+                            default: words = ["plays", not, "in"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", neg, "spelare"]; break;
+                            case sv: words = ["har", not, "spelare"]; break;
+                            case de: words = ["hat", not, "Spieler"]; break;
                             case en:
-                            default: words = ["have", neg, "player"]; break;
+                            default: words = ["have", not, "player"]; break;
                         }
                     }
                     break;
@@ -521,18 +528,19 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["spelar", neg]; break;
+                            case sv: words = ["spelar", not]; break;
+                            case de: words = ["spielt", not]; break;
                             case en:
-                            default: words = ["plays", neg]; break;
+                            default: words = ["plays", not]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["spelas", neg, "av"]; break;
+                            case sv: words = ["spelas", not, "av"]; break;
                             case en:
-                            default: words = ["played", neg, "by"]; break;
+                            default: words = ["played", not, "by"]; break;
                         }
                     }
                     break;
@@ -541,18 +549,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["bidrar", neg, "till"]; break;
+                            case sv: words = ["bidrar", not, "till"]; break;
                             case en:
-                            default: words = ["contributes", neg, "to"]; break;
+                            default: words = ["contributes", not, "to"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", neg, "bidragare"]; break;
+                            case sv: words = ["har", not, "bidragare"]; break;
                             case en:
-                            default: words = ["has", neg, "contributor"]; break;
+                            default: words = ["has", not, "contributor"]; break;
                         }
                     }
                     break;
@@ -561,18 +569,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["leder", neg]; break;
+                            case sv: words = ["leder", not]; break;
                             case en:
-                            default: words = ["leads", neg]; break;
+                            default: words = ["leads", not]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["leds", neg, "av"]; break;
+                            case sv: words = ["leds", not, "av"]; break;
                             case en:
-                            default: words = ["is lead", neg, "by"]; break;
+                            default: words = ["is lead", not, "by"]; break;
                         }
                     }
                     break;
@@ -581,18 +589,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["coachar", neg]; break;
+                            case sv: words = ["coachar", not]; break;
                             case en:
-                            default: words = ["coaches", neg]; break;
+                            default: words = ["does", not, "coache"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["coachad", neg, "av"]; break;
+                            case sv: words = ["coachad", not, "av"]; break;
                             case en:
-                            default: words = ["coached", neg, "by"]; break;
+                            default: words = ["is", not, "coached", "by"]; break;
                         }
                     }
                     break;
@@ -601,18 +609,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["representerar", neg]; break;
+                            case sv: words = ["representerar", not]; break;
                             case en:
-                            default: words = ["represents", neg]; break;
+                            default: words = ["does", not, "represents"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["representeras", neg, "av"]; break;
+                            case sv: words = ["representeras", not, "av"]; break;
                             case en:
-                            default: words = ["is represented", neg, "by"]; break;
+                            default: words = ["is represented", not, "by"]; break;
                         }
                     }
                     break;
@@ -621,18 +629,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["är", neg, "VD för"]; break;
+                            case sv: words = ["är", not, "VD för"]; break;
                             case en:
-                            default: words = ["is", neg, "CEO of"]; break;
+                            default: words = ["is", not, "CEO of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["is", neg, "led by"]; break;
+                            case sv: words = ["is", not, "led by"]; break;
                             case en:
-                            default: words = ["leds", neg, "av"]; break;
+                            default: words = ["leds", not, "av"]; break;
                         }
                     }
                     break;
@@ -641,18 +649,19 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", neg, "en"]; break;
+                            case sv: words = ["har", not, "en"]; break;
+                            case de: words = ["hat", not, "ein"]; break;
                             case en:
-                            default: words = ["has", neg, "a"]; break;
+                            default: words = ["has", not, "a"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["tillhör", neg]; break;
+                            case sv: words = ["tillhör", not]; break;
                             case en:
-                            default: words = [neg, "belongs to"]; break;
+                            default: words = ["does", not, "belongs to"]; break;
                         }
                     }
                     break;
@@ -661,18 +670,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["kan hittas", neg, "vid"]; break;
+                            case sv: words = ["kan hittas", not, "vid"]; break;
                             case en:
-                            default: words = ["can", neg, "be found at location"]; break;
+                            default: words = ["can", not, "be found at location"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["kan", neg, "innehålla"]; break;
+                            case sv: words = ["kan", not, "innehålla"]; break;
                             case en:
-                            default: words = ["may", neg, "contain"]; break;
+                            default: words = ["may", not, "contain"]; break;
                         }
                     }
                     break;
@@ -681,18 +690,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["leder", neg, "till"]; break;
+                            case sv: words = ["leder", not, "till"]; break;
                             case en:
-                            default: words = ["causes", neg]; break;
+                            default: words = ["does", not, "cause"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["kan", neg, "orsakas av"]; break;
+                            case sv: words = ["kan", not, "orsakas av"]; break;
                             case en:
-                            default: words = ["can", neg, "be caused by"]; break;
+                            default: words = ["can", not, "be caused by"]; break;
                         }
                     }
                     break;
@@ -701,18 +710,18 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = [neg, "kapabel till"]; break;
+                            case sv: words = ["är ", not, "kapabel till"]; break;
                             case en:
-                            default: words = [neg, "capable of"]; break;
+                            default: words = ["is", not, "capable of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["kan", neg, "orsakas av"]; break;
+                            case sv: words = ["kan", not, "orsakas av"]; break;
                             case en:
-                            default: words = ["can", neg, "be caused by"]; break;
+                            default: words = ["can", not, "be caused by"]; break;
                         }
                     }
                     break;
@@ -721,19 +730,47 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["definieras", neg, "som"]; break;
+                            case sv: words = ["definieras", not, "som"]; break;
                             case en:
-                            default: words = [neg, "defined as"]; break;
+                            default: words = [not, "defined as"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: words = ["kan", neg, "definiera"]; break;
+                            case sv: words = ["kan", not, "definiera"]; break;
                             case en:
-                            default: words = ["can", neg, "define"]; break;
+                            default: words = ["can", not, "define"]; break;
                         }
+                    }
+                    break;
+                case derivedFrom:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["härleds", not, "från"]; break;
+                            case en:
+                            default: words = ["is", not, "derived from"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["härleder", not]; break;
+                            case en:
+                            default: words = ["does", not, "derive"]; break;
+                        }
+                    }
+                    break;
+                case mutualProxyFor:
+                    switch (lang)
+                    {
+                        case sv: words = ["är", not, "en ömsesidig proxy för"]; break;
+                        case en:
+                        default: words = ["is ", not, "a mutual proxy for"]; break;
                     }
                     break;
                 default:
@@ -878,7 +915,9 @@ bool generalizes(T)(T general,
                           competesWith,
                           cookedWith,
                           servedWith,
-                          physicallyConnectedWith);
+                          physicallyConnectedWith,
+
+                          mutualProxyFor);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
