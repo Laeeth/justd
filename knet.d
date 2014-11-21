@@ -1121,28 +1121,28 @@ class Net(bool useArray = true,
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight). */
-    LinkIx connect(ConceptIx srcIx,
-                   Rel rel,
-                   ConceptIx dstIx,
-                   Origin origin = Origin.unknown,
-                   real weight = 1.0,
-                   bool negation = false,
-                   bool reversion = false)
+    LinkIx lookupOrConnectLink(ConceptIx srcIx,
+                               Rel rel,
+                               ConceptIx dstIx,
+                               Origin origin = Origin.unknown,
+                               real weight = 1.0,
+                               bool negation = false,
+                               bool reversion = false)
     body
     {
         if (srcIx == dstIx) { return LinkIx.asUndefined; } // don't allow self-reference for now
 
-        if (true)
+        if (auto existingIx = areConnected(srcIx, rel, dstIx,
+                                           negation, reversion)) // TODO warn about negation and reversion on existing rels
         {
-            if (auto existingIx = areConnected(srcIx, rel, dstIx,
-                                               negation, reversion)) // TODO warn about negation and reversion on existing rels
+            if (false)
             {
                 dln("warning: Concepts ",
                     conceptByIx(srcIx), " and ",
                     conceptByIx(dstIx), " already related as ",
                     rel);
-                return LinkIx.asUndefined;
             }
+            return existingIx;
         }
 
         auto lix  = LinkIx(cast(Ix)_links.length);
@@ -1178,7 +1178,7 @@ class Net(bool useArray = true,
 
         return lix; // _links.back;
     }
-    alias relate = connect;
+    alias relate = lookupOrConnectLink;
 
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
@@ -1285,14 +1285,14 @@ class Net(bool useArray = true,
 
         return tuple(entityIx,
                      categoryName,
-                     connect(entityIx,
-                             Rel.isA,
-                             lookupOrStoreConcept(categoryName,
-                                                  lang,
-                                                  kind,
-                                                  categoryIx,
-                                                  Origin.nell),
-                             Origin.nell, 1.0));
+                     lookupOrConnectLink(entityIx,
+                                         Rel.isA,
+                                         lookupOrStoreConcept(categoryName,
+                                                              lang,
+                                                              kind,
+                                                              categoryIx,
+                                                              Origin.nell),
+                                         Origin.nell, 1.0));
     }
 
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -1390,8 +1390,8 @@ class Net(bool useArray = true,
         if (entityIx.defined &&
             valueIx.defined)
         {
-            auto mainLinkIx = connect(entityIx, rel, valueIx,
-                                      Origin.nell, mainWeight, negation, reversion);
+            auto mainLinkIx = lookupOrConnectLink(entityIx, rel, valueIx,
+                                                  Origin.nell, mainWeight, negation, reversion);
         }
 
         if (show) writeln();
@@ -1497,7 +1497,7 @@ class Net(bool useArray = true,
         if (src.defined &&
             dst.defined)
         {
-            return connect(src, rel, dst, origin, weight, negation, reversion);
+            return lookupOrConnectLink(src, rel, dst, origin, weight, negation, reversion);
         }
         else
         {
@@ -1627,24 +1627,26 @@ class Net(bool useArray = true,
                                bool reversion = false)
     {
         const cA = conceptByIx(a); // TODO ref?
-        const cB = conceptByIx(b); // TODO use
-        foreach (inIx; cA.inIxes)
+        foreach (ix; cA.inIxes)
         {
-            const inLink = linkByIx(inIx);
-            if ((inLink._srcIx == b ||
-                 inLink._dstIx == b) &&
-                inLink.rel = rel)
+            const link = linkByIx(ix);
+            if ((link._srcIx == b ||
+                 link._dstIx == b) &&
+                link._rel == rel &&
+                link._negation == negation)
             {
-                return inIx;
+                return ix;
             }
         }
-        foreach (outIx; cA.outIxes)
+        foreach (ix; cA.outIxes)
         {
-            const outLink = linkByIx(outIx);
-            if (outLink._srcIx == b ||
-                outLink._dstIx == b)
+            const link = linkByIx(ix);
+            if ((link._srcIx == b ||
+                 link._dstIx == b) &&
+                link._rel == rel &&
+                link._negation == negation)
             {
-                return outIx;
+                return ix;
             }
         }
         return typeof(return).asUndefined;
