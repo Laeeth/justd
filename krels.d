@@ -738,9 +738,10 @@ auto toHumanLang(const Rel rel,
                     break;
                 default:
                     import std.conv: to;
-                    return [((!rel.isSymmetric) && linkDir == RelDir.forward ? `<` : ``),
-                            `-`, rel.to!(string), `-`,
-                            ((!rel.isSymmetric) && linkDir == RelDir.backward ? `>` : ``)].joiner(" ");
+                    words = [((!rel.isSymmetric) && linkDir == RelDir.forward ? `<` : ``) ~
+                             `-` ~ rel.to!(string) ~ `-` ~
+                             ((!rel.isSymmetric) && linkDir == RelDir.backward ? `>` : ``)];
+                    break;
             }
         }
     }
