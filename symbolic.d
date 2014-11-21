@@ -60,16 +60,13 @@ class Patt
         return matchU(haystack.representation, soff);
     }
 
-    Seq opBinary(string op)(Patt rhs)
+    Seq opBinary(string op)(Patt rhs) if (op == "~") // template can't be overridden
     {
-        static if (op == "~")
-        {
-            return seq(this, rhs);
-        }
-        else
-        {
-            static assert(false, "Unsupported binary operator " ~ op);
-        }
+        return opCatImpl(rhs);
+    }
+    Seq opCatImpl(Patt rhs) // can be overridden
+    {
+        return seq(this, rhs);
     }
 
     final size_t at(in string haystack, size_t soff = 0) const nothrow
