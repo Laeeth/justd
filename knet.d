@@ -1687,7 +1687,7 @@ class Net(bool useArray = true,
                           bool negation = false,
                           HLang lang = HLang.en)
     {
-        write(` - `, rel.toHumanLang(linkDir, negation, lang));
+        write(` - `, rel.toHumanLang(linkDir, negation, lang), `: `);
     }
 
     void showConcept(in Concept concept, real weight)
