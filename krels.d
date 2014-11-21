@@ -885,10 +885,30 @@ auto toHumanLang(const Rel rel,
                         }
                     }
                     break;
+                case proxyFor:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "en ställföreträdare för"]; break;
+                            case en:
+                            default: words = ["is ", not, "a mutual proxy for"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "ställföreträdare"]; break;
+                            case en:
+                            default: words = ["does", not, "have proxy"]; break;
+                        }
+                    }
+                    break;
                 case mutualProxyFor:
                     switch (lang)
                     {
-                        case sv: words = ["är", not, "en ömsesidig proxy för"]; break;
+                        case sv: words = ["är", not, "en ömsesidig ställföreträdare för"]; break;
                         case en:
                         default: words = ["is ", not, "a mutual proxy for"]; break;
                     }
