@@ -118,6 +118,7 @@ enum Rel:ubyte
 
     hasProperty, /* A has B as a property; A can be described as
                     B. /r/HasProperty /c/en/ice /c/en/solid */
+    hasAttribute = hasProperty,
     hasShape,
     hasColor,
     hasAge,
@@ -130,8 +131,6 @@ enum Rel:ubyte
     hasExpert,
     hasLanguage,
     hasCurrency,
-
-    attribute,
 
     motivatedByGoal, /* Someone does A because they want result B; A is a step
                         toward accomplishing the goal B. */
@@ -705,6 +704,67 @@ auto toHumanLang(const Rel rel,
                         }
                     }
                     break;
+                case creates:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["skapar", not]; break;
+                            case de: words = ["schafft", not]; break;
+                            case en:
+                            default: words = ["does", not, "create"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "skapas av"]; break;
+                            case en:
+                            default: words = ["can", not, "be created by"]; break;
+                        }
+                    }
+                    break;
+                case generalizes:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["generaliserar", not]; break;
+                            case en:
+                            default: words = ["does", not, "generalize"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "generaliseras av"]; break;
+                            case en:
+                            default: words = ["can", not, "be generalized by"]; break;
+                        }
+                    }
+                    break;
+                case atTime:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["inträffar", not, "vid tidpunkt"]; break;
+                            case en:
+                            default: words = [not, "at time"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "händelse"]; break;
+                            case en:
+                            default: words = ["has", not, "event"]; break;
+                        }
+                    }
+                    break;
                 case capableOf:
                     if (linkDir == RelDir.forward)
                     {
@@ -762,6 +822,66 @@ auto toHumanLang(const Rel rel,
                             case sv: words = ["härleder", not]; break;
                             case en:
                             default: words = ["does", not, "derive"]; break;
+                        }
+                    }
+                    break;
+                case compoundDerivedFrom:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["härleds sammansatt", not, "från"]; break;
+                            case en:
+                            default: words = ["is", not, "compound derived from"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["härleder sammansatt", not]; break;
+                            case en:
+                            default: words = ["does", not, "compound derive"]; break;
+                        }
+                    }
+                    break;
+                case hasProperty:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "egenskap"]; break;
+                            case en:
+                            default: words = ["has", not, "property"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "egenskap av"]; break;
+                            case en:
+                            default: words = ["is", not, "property of"]; break;
+                        }
+                    }
+                    break;
+                case causesDesire:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["skapar", not, "begär"]; break;
+                            case en:
+                            default: words = ["does", not, "cause", "desire"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = [not, "begär skapad av"]; break;
+                            case en:
+                            default: words = ["desire", not, "caused by"]; break;
                         }
                     }
                     break;
@@ -833,7 +953,8 @@ bool specializes(Rel special,
                                              topMemberOf,
                                              attends,
                                              hasEthnicity);
-            case hasProperty: return special.of(hasAge,
+            case hasProperty: return special.of(hasAttribute,
+                                                hasAge,
                                                 hasColor,
                                                 hasShape,
                                                 hasTeamPosition,
