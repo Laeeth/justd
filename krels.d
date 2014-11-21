@@ -302,344 +302,450 @@ enum RelDir
     forward
 }
 
-string toHumanLang(const Rel rel,
-                   const RelDir linkDir,
-                   const bool negation = false,
-                   const HLang lang = HLang.en)
+auto toHumanLang(const Rel rel,
+                 const RelDir linkDir,
+                 const bool negation = false,
+                 const HLang lang = HLang.en)
     @safe pure
 {
+    string[] words;
+    import std.algorithm: joiner;
+
     with (Rel)
     {
         with (HLang)
         {
-            auto neg = negation ? " " ~ negationIn(lang) : "";
+            auto neg = negation ? negationIn(lang) : null;
             switch (rel)
             {
                 case relatedTo:
                     switch (lang)
                     {
-                        case sv: return "är" ~ neg ~ " relaterat till";
+                        case sv: words = ["är", neg, "relaterat till"]; break;
                         case en:
-                        default: return "is" ~ neg ~ " related to";
+                        default: words = ["is", neg, "related to"]; break;
                     }
+                    break;
                 case translationOf:
                     switch (lang)
                     {
-                        case sv: return "kan" ~ neg ~ " översättas till";
+                        case sv: words = ["kan", neg, "översättas till"]; break;
                         case en:
-                        default: return "is" ~ neg ~ " translated to";
+                        default: words = ["is", neg, "translated to"]; break;
                     }
+                    break;
                 case synonymFor:
                     switch (lang)
                     {
-                        case sv: return "är" ~ neg ~ " synonym med";
+                        case sv: words = ["är", neg, "synonym med"]; break;
                         case en:
-                        default: return "is" ~ neg ~ " synonymous with";
+                        default: words = ["is", neg, "synonymous with"]; break;
                     }
+                    break;
                 case antonymFor:
                     switch (lang)
                     {
-                        case sv: return "är" ~ neg ~ " motsatsen till";
+                        case sv: words = ["är", neg, "motsatsen till"]; break;
                         case en:
-                        default: return "is" ~ neg ~ " the opposite of";
+                        default: words = ["is", neg, "the opposite of"]; break;
                     }
+                    break;
                 case similarSizeTo:
                     switch (lang)
                     {
-                        case sv: return "är" ~ neg ~ " lika stor som";
+                        case sv: words = ["är", neg, "lika stor som"]; break;
                         case en:
-                        default: return "is" ~ neg ~ " similar in size to";
+                        default: words = ["is", neg, "similar in size to"]; break;
                     }
+                    break;
                 case similarTo:
                     switch (lang)
                     {
-                        case sv: return "är" ~ neg ~ " likvärdig med";
+                        case sv: words = ["är", neg, "likvärdig med"]; break;
                         case en:
-                        default: return "is" ~ neg ~ " similar to";
+                        default: words = ["is", neg, "similar to"]; break;
                     }
+                    break;
                 case looksLike:
                     switch (lang)
                     {
-                        case sv: return "ser" ~ neg ~ " ut som";
+                        case sv: words = ["ser", neg, "ut som"]; break;
                         case en:
-                        default: return "looks" ~ neg ~ " like";
+                        default: words = ["looks", neg, "like"]; break;
                     }
+                    break;
                 case isA:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "är" ~ neg ~ " en";
-                            case de: return "ist" ~ neg ~ " ein";
+                            case sv: words = ["är", neg, "en"]; break;
+                            case de: words = ["ist", neg, "ein"]; break;
                             case en:
-                            default: return "is" ~ neg ~ " a";
+                            default: words = ["is", neg, "a"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "kan" ~ neg ~ " vara en";
-                            case de: return "can" ~ neg ~ " sein ein";
+                            case sv: words = ["kan", neg, "vara en"]; break;
+                            case de: words = ["can", neg, "sein ein"]; break;
                             case en:
-                            default: return "can" ~ neg ~ " be a";
+                            default: words = ["can", neg, "be a"]; break;
                         }
                     }
+                    break;
                 case partOf:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "är" ~ neg ~ " en del av";
+                            case sv: words = ["är", neg, "en del av"]; break;
                             case en:
-                            default: return "is" ~ neg ~ " a part of";
+                            default: words = ["is", neg, "a part of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "innehåller" ~ neg;
+                            case sv: words = ["innehåller", neg]; break;
                             case en:
-                            default: return neg ~ "contains";
+                            default: words = [neg, "contains"]; break;
                         }
                     }
+                    break;
                 case memberOf:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "är" ~ neg ~ " en medlem av";
+                            case sv: words = ["är", neg, "en medlem av"]; break;
                             case en:
-                            default: return "is" ~ neg ~ " a member of";
+                            default: words = ["is", neg, "a member of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "har" ~ neg ~ " medlem";
+                            case sv: words = ["har", neg, "medlem"]; break;
                             case en:
-                            default: return "have" ~ neg ~ " member";
+                            default: words = ["have", neg, "member"]; break;
                         }
                     }
+                    break;
                 case topMemberOf:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "är" ~ neg ~ " huvudmedlem av";
+                            case sv: words = ["är", neg, "huvudmedlem av"]; break;
                             case en:
-                            default: return "is" ~ neg ~ " the top member of";
+                            default: words = ["is", neg, "the top member of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "har" ~ neg ~ " toppmedlem";
+                            case sv: words = ["har", neg, "toppmedlem"]; break;
                             case en:
-                            default: return "have" ~ neg ~ " top member";
+                            default: words = ["have", neg, "top member"]; break;
                         }
                     }
+                    break;
                 case participatesIn:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "deltog" ~ neg ~ " i";
+                            case sv: words = ["deltog", neg, "i"]; break;
                             case en:
-                            default: return "participate" ~ neg ~ " in";
+                            default: words = ["participate", neg, "in"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "har" ~ neg ~ " deltagare";
+                            case sv: words = ["har", neg, "deltagare"]; break;
                             case en:
-                            default: return "have" ~ neg ~ " participant";
+                            default: words = ["have", neg, "participant"]; break;
                         }
                     }
+                    break;
                 case worksFor:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "arbetar" ~ neg ~ " för";
+                            case sv: words = ["arbetar", neg, "för"]; break;
                             case en:
-                            default: return "works" ~ neg ~ " for";
+                            default: words = ["works", neg, "for"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "har " ~ neg ~ " arbetar";
+                            case sv: words = ["har", neg, "arbetar"]; break;
                             case en:
-                            default: return "has " ~ neg ~ " employee";
+                            default: words = ["has", neg, "employee"]; break;
                         }
                     }
+                    break;
                 case playsIn:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "spelar" ~ neg ~ " i";
+                            case sv: words = ["spelar", neg, "i"]; break;
                             case en:
-                            default: return "plays" ~ neg ~ " in";
+                            default: words = ["plays", neg, "in"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "har " ~ neg ~ " spelare";
+                            case sv: words = ["har", neg, "spelare"]; break;
                             case en:
-                            default: return "have " ~ neg ~ " player";
+                            default: words = ["have", neg, "player"]; break;
                         }
                     }
+                    break;
                 case plays:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "spelar" ~ neg;
+                            case sv: words = ["spelar", neg]; break;
                             case en:
-                            default: return "plays" ~ neg;
+                            default: words = ["plays", neg]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "spelas " ~ neg ~ " av";
+                            case sv: words = ["spelas", neg, "av"]; break;
                             case en:
-                            default: return "played " ~ neg ~ " by";
+                            default: words = ["played", neg, "by"]; break;
                         }
                     }
+                    break;
                 case contributesTo:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "bidrar" ~ neg ~ " till";
+                            case sv: words = ["bidrar", neg, "till"]; break;
                             case en:
-                            default: return "contributes" ~ neg ~ " to";
+                            default: words = ["contributes", neg, "to"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "har " ~ neg ~ " bidragare";
+                            case sv: words = ["har", neg, "bidragare"]; break;
                             case en:
-                            default: return "has " ~ neg ~ " contributor";
+                            default: words = ["has", neg, "contributor"]; break;
                         }
                     }
+                    break;
                 case leaderOf:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "leder" ~ neg;
+                            case sv: words = ["leder", neg]; break;
                             case en:
-                            default: return "leads" ~ neg;
+                            default: words = ["leads", neg]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "leds " ~ neg ~ " av";
+                            case sv: words = ["leds", neg, "av"]; break;
                             case en:
-                            default: return "is lead " ~ neg ~ " by";
+                            default: words = ["is lead", neg, "by"]; break;
                         }
                     }
+                    break;
                 case coaches:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "coachar" ~ neg;
+                            case sv: words = ["coachar", neg]; break;
                             case en:
-                            default: return "coaches" ~ neg;
+                            default: words = ["coaches", neg]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "coachad " ~ neg ~ " av";
+                            case sv: words = ["coachad", neg, "av"]; break;
                             case en:
-                            default: return "coached " ~ neg ~ " by";
+                            default: words = ["coached", neg, "by"]; break;
                         }
                     }
+                    break;
                 case represents:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "representerar" ~ neg;
+                            case sv: words = ["representerar", neg]; break;
                             case en:
-                            default: return "represents" ~ neg;
+                            default: words = ["represents", neg]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "representeras " ~ neg ~ " av";
+                            case sv: words = ["representeras", neg, "av"]; break;
                             case en:
-                            default: return "is represented " ~ neg ~ " by";
+                            default: words = ["is represented", neg, "by"]; break;
                         }
                     }
+                    break;
                 case ceoOf:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "är" ~ neg ~ " VD för";
+                            case sv: words = ["är", neg, "VD för"]; break;
                             case en:
-                            default: return "is" ~ neg ~ " CEO of";
+                            default: words = ["is", neg, "CEO of"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "is " ~ neg ~ " led by";
+                            case sv: words = ["is", neg, "led by"]; break;
                             case en:
-                            default: return "leds " ~ neg ~ " av";
+                            default: words = ["leds", neg, "av"]; break;
                         }
                     }
+                    break;
                 case hasA:
                     if (linkDir == RelDir.forward)
                     {
                         switch (lang)
                         {
-                            case sv: return "har" ~ neg ~ " en";
+                            case sv: words = ["har", neg, "en"]; break;
                             case en:
-                            default: return "has" ~ neg ~ " a";
+                            default: words = ["has", neg, "a"]; break;
                         }
                     }
                     else
                     {
                         switch (lang)
                         {
-                            case sv: return "tillhör" ~ neg;
+                            case sv: words = ["tillhör", neg]; break;
                             case en:
-                            default: return neg ~ "belongs to";
+                            default: words = [neg, "belongs to"]; break;
                         }
                     }
+                    break;
+                case atLocation:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan hittas", neg, "vid"]; break;
+                            case en:
+                            default: words = ["can", neg, "be found at location"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", neg, "innehålla"]; break;
+                            case en:
+                            default: words = ["may", neg, "contain"]; break;
+                        }
+                    }
+                    break;
+                case causes:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["leder", neg, "till"]; break;
+                            case en:
+                            default: words = ["causes", neg]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", neg, "orsakas av"]; break;
+                            case en:
+                            default: words = ["can", neg, "be caused by"]; break;
+                        }
+                    }
+                    break;
+                case capableOf:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = [neg, "kapabel till"]; break;
+                            case en:
+                            default: words = [neg, "capable of"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", neg, "orsakas av"]; break;
+                            case en:
+                            default: words = ["can", neg, "be caused by"]; break;
+                        }
+                    }
+                    break;
+                case definedAs:
+                    if (linkDir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["definieras", neg, "som"]; break;
+                            case en:
+                            default: words = [neg, "defined as"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", neg, "definiera"]; break;
+                            case en:
+                            default: words = ["can", neg, "define"]; break;
+                        }
+                    }
+                    break;
                 default:
                     import std.conv: to;
-                    return (((!rel.isSymmetric) && linkDir == RelDir.forward ? `<` : ``) ~
-                            `-` ~ rel.to!(typeof(return)) ~ `-` ~
-                            ((!rel.isSymmetric) && linkDir == RelDir.backward ? `>` : ``));
+                    return [((!rel.isSymmetric) && linkDir == RelDir.forward ? `<` : ``),
+                            `-`, rel.to!(string), `-`,
+                            ((!rel.isSymmetric) && linkDir == RelDir.backward ? `>` : ``)].joiner(" ");
             }
         }
     }
+
+    return words.joiner(" ");
 }
 
 /** Return true if $(D special) is a more specialized relation than $(D general).
