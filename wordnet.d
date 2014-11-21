@@ -852,6 +852,23 @@ unittest
 
     if (netLangs.canFind(HLang.sv))
     {
+        const langs = [HLang.sv];
+        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs) == [`kärnkrafts`, `avfalls`, `hink`]);
+        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs, false, 2, false) == [`kärnkraft`, `sav`, `falls`, `hink`]);
+        assert(wn.findWordsSplit(`papperskorg`, langs) == [`pappers`, `korg`]);
+        assert(wn.findWordsSplit(``, langs) == [``]);
+        assert(wn.findWordsSplit(`i`, langs) == [`i`]);
+        assert(wn.findWordsSplit(`biltvätt`, langs) == [`bil`, `tvätt`]);
+        assert(wn.findWordsSplit(`trötthet`, langs) == [`trött`, `het`]);
+        assert(wn.findWordsSplit(`paprikabit`, langs) == [`paprika`, `bit`]);
+        assert(wn.findWordsSplit(`funktionsteori`, langs) == [`funktions`, `teori`]);
+        assert(wn.findWordsSplit(`nyhetstorka`, langs) == [`nyhets`, `torka`]);
+        assert(wn.findWordsSplit(`induktionsbevis`, langs) == [`induktions`, `bevis`]);
+        assert(wn.findWordsSplit(`kärnkraftsavfall`, langs) == [`kärnkrafts`, `avfall`]);
+    }
+
+    if (netLangs.canFind(HLang.sv))
+    {
         assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
         assert(wn.canMean(`måndag`, WordKind.noun, [HLang.sv]));
         assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
@@ -875,23 +892,6 @@ unittest
         assert(wn.findWordsSplit(`physicsexam`, langs) == [`physics`, `exam`]);
         assert(wn.findWordsSplit(`carwash`, langs) == [`car`, `wash`]);
         assert(wn.findWordsSplit(`biltvätt`, langs) == [`biltvätt`]);
-    }
-
-    if (netLangs.canFind(HLang.sv))
-    {
-        const langs = [HLang.sv];
-        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs) == [`kärnkrafts`, `avfalls`, `hink`]);
-        assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs, false, 2, false) == [`kärnkraft`, `sav`, `falls`, `hink`]);
-        assert(wn.findWordsSplit(`papperskorg`, langs) == [`pappers`, `korg`]);
-        assert(wn.findWordsSplit(``, langs) == [``]);
-        assert(wn.findWordsSplit(`i`, langs) == [`i`]);
-        assert(wn.findWordsSplit(`biltvätt`, langs) == [`bil`, `tvätt`]);
-        assert(wn.findWordsSplit(`trötthet`, langs) == [`trött`, `het`]);
-        assert(wn.findWordsSplit(`paprikabit`, langs) == [`paprika`, `bit`]);
-        assert(wn.findWordsSplit(`funktionsteori`, langs) == [`funktions`, `teori`]);
-        assert(wn.findWordsSplit(`nyhetstorka`, langs) == [`nyhets`, `torka`]);
-        assert(wn.findWordsSplit(`induktionsbevis`, langs) == [`induktions`, `bevis`]);
-        assert(wn.findWordsSplit(`kärnkraftsavfall`, langs) == [`kärnkrafts`, `avfall`]);
     }
 
     if (netLangs.canFind(HLang.en))
