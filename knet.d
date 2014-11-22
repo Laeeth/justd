@@ -1735,7 +1735,7 @@ class Net(bool useArray = true,
             write("-", concept.lemmaKind);
         }
 
-        writef(`,W:%.2f,O:%s),`, weight, concept.origin); // close
+        writef(`:%.2f@%s),`, weight, concept.origin); // close
     }
 
     void showLinkConcept(in Concept concept,
