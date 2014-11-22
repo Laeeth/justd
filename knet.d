@@ -1209,6 +1209,15 @@ class Net(bool useArray = true,
     }
     alias relate = lookupOrConnectLink;
 
+    auto correctCN5Lemma(S)(S s) if (isSomeString!S)
+    {
+        switch (s)
+        {
+            case "honey_be": return "honey_bee";
+            default: return s;
+        }
+    }
+
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
     */
@@ -1219,8 +1228,8 @@ class Net(bool useArray = true,
         const hlang = items.front.decodeHumanLang; items.popFront;
         ++_hlangCounts[hlang];
 
-        static if (useRCString) { immutable word = items.front; }
-        else                    { immutable word = items.front.idup; }
+        static if (useRCString) { immutable words = items.front; }
+        else                    { immutable words = items.front.idup; }
 
         items.popFront;
         auto wordKind = WordKind.unknown;
@@ -1232,14 +1241,10 @@ class Net(bool useArray = true,
             {
                 dln(`Unknown WordKind code `, items.front);
             }
-            /* if (wordKind != WordKind.unknown) */
-            /* { */
-            /*     dln(word, ` has kind `, wordKind); */
-            /* } */
         }
         ++_kindCounts[wordKind];
 
-        return lookupOrStoreConcept(word, hlang, wordKind, anyCategory, Origin.cn5);
+        return lookupOrStoreConcept(correctCN5Lemma(words), hlang, wordKind, anyCategory, Origin.cn5);
     }
 
     import std.algorithm: splitter;
