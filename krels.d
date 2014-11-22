@@ -885,6 +885,72 @@ auto toHumanLang(const Rel rel,
                         }
                     }
                     break;
+                case hasBrother:
+                    switch (lang)
+                    {
+                        case sv: words = ["har", not, "bror"]; break;
+                        case de: words = ["hat", not, "Bruder"]; break;
+                        case en:
+                        default: words = ["has", not, "brother"]; break;
+                    }
+                    break;
+                case hasSister:
+                    switch (lang)
+                    {
+                        case sv: words = ["har", not, "syster"]; break;
+                        case de: words = ["hat", not, "Schwester"]; break;
+                        case en:
+                        default: words = ["has", not, "sister"]; break;
+                    }
+                    break;
+                case hasSpouse:
+                    switch (lang)
+                    {
+                        case sv: words = ["har", not, "gemål"]; break;
+                        case en:
+                        default: words = ["has", not, "spouse"]; break;
+                    }
+                    break;
+                case hasHusband:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "make"]; break;
+                            case en:
+                            default: words = ["has", not, "husband"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "make till"]; break;
+                            case en:
+                            default: words = ["is", not, "husband of"]; break;
+                        }
+                    }
+                    break;
+                case hasWife:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "maka"]; break;
+                            case en:
+                            default: words = ["has", not, "wife"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "maka till"]; break;
+                            case en:
+                            default: words = ["is", not, "wife of"]; break;
+                        }
+                    }
+                    break;
                 case causesDesire:
                     if (dir == RelDir.forward)
                     {
