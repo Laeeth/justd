@@ -308,7 +308,7 @@ auto toHumanLang(const Rel rel,
     @safe pure
 {
     string[] words;
-    import std.algorithm: joiner;
+    import std.algorithm: array, filter, joiner;
 
     with (Rel)
     {
@@ -1009,7 +1009,7 @@ auto toHumanLang(const Rel rel,
         }
     }
 
-    return words.joiner(" ");
+    return words.filter!(word => word !is null).joiner(" ");
 }
 
 /** Return true if $(D special) is a more specialized relation than $(D general).
