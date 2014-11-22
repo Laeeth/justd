@@ -1,0 +1,14 @@
+brd=Black Rider Group Abbreviation
+cls=CLASS Group Abbreviation
+dagger=Dagger Group Abbreviation
+dev=DEViANCE Group Abbreviation
+deviance=DEViANCE Group Abbreviation
+dgr=Dagger Group Abbreviation
+flt=FAiRLiGHT Group Abbreviation
+fltdox=FAiRLiGHT Group Abbreviation
+ims=iMMERSiON Group Abbreviation
+imsdox=iMMERSiON Group Abbreviation
+lol=LOL Group Abbreviation
+razor=Razor 1911 Group Abbreviation
+rld=RELOADED Group Abbreviation
+rzr=Razor 1911 Group Abbreviation

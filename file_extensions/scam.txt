@@ -1,0 +1,5 @@
+drg=I-Doser Audio
+mfk=Mafuka Audio
+ripxr=RipXR Archive
+winzix=WinZix Archive
+zix=WinZix Archive
