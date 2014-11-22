@@ -943,7 +943,7 @@ class Net(bool useArray = true,
         enum anyCategory = CategoryIx(0); // reserve 0 for anyCategory (unknown)
         ushort _categoryIxCounter = 1; // 1 because 0 is reserved for anyCategory (unknown)
 
-        size_t _multiWordConceptCount = 0; // number of concepts that whose lemma contain several words
+        size_t _multiWordConceptLemmaCount = 0; // number of concepts that whose lemma contain several words
 
         WordNet!(true, true) _wordnet;
 
@@ -1001,13 +1001,7 @@ class Net(bool useArray = true,
         }
         else
         {
-            auto sentenceSplit = words.findSplit("_");
-            if (!sentenceSplit[1].empty) // TODO add implicit bool conversion to return
-            {
-                ++_multiWordConceptCount;
-            }
-
-            // split words on meaning
+            // try to lookup parts of word
             auto wordsSplit = _wordnet.findWordsSplit(words, [hlang]); // split in parts
             if (wordsSplit.length >= 2)
             {
@@ -1115,6 +1109,12 @@ class Net(bool useArray = true,
         }
         else
         {
+            auto wordsSplit = lemma.words.findSplit("_");
+            if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
+            {
+                ++_multiWordConceptLemmaCount;
+            }
+
             // store
             assert(_concepts.length <= Ix.max);
             const cix = ConceptIx(cast(Ix)_concepts.length);
@@ -1189,6 +1189,19 @@ class Net(bool useArray = true,
         }
 
         propagateLinkConcepts(link);
+
+        /* if ((conceptByIx(link._srcIx).words == "wasp" && */
+        /*      conceptByIx(link._dstIx).words == "arthropod") || */
+        /*     (conceptByIx(link._dstIx).words == "wasp" && */
+        /*      conceptByIx(link._srcIx).words == "arthropod")) */
+        /* { */
+        /*     dln("src: ", conceptByIx(link._srcIx).words, */
+        /*         "dst: ", conceptByIx(link._dstIx).words, */
+        /*         " rel:", rel, */
+        /*         " origin:", origin, */
+        /*         " negation:", negation, */
+        /*         " reversion:", reversion); */
+        /* } */
 
         _links ~= link; // TODO Avoid copying here
 
@@ -1627,7 +1640,7 @@ class Net(bool useArray = true,
         }
 
         writeln(`- Concept Count: `, _concepts.length);
-        writeln(`- Multi Word Concept Count: `, _multiWordConceptCount);
+        writeln(`- Multi Word Concept Count: `, _multiWordConceptLemmaCount);
         writeln(`- Link Count: `, _links.length);
 
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
@@ -1757,22 +1770,24 @@ class Net(bool useArray = true,
             write(`- in `, concept.lang.toName);
             writeln(` of sense `, concept.lemmaKind);
 
-            foreach (inGroup; insByRelation(concept))
+            // show forwards
+            foreach (group; insByRelation(concept))
             {
-                showLinkRelation(inGroup.front[0]._rel, RelDir.backward);
-                foreach (inLink, inConcept; inGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
+                showLinkRelation(group.front[0]._rel, RelDir.forward);
+                foreach (forwardLink, forwardConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
-                    showConcept(inConcept, inLink.normalizedWeight);
+                    showConcept(forwardConcept, forwardLink.normalizedWeight);
                 }
                 writeln();
             }
 
-            foreach (outGroup; outsByRelation(concept))
+            // show backwards
+            foreach (group; outsByRelation(concept))
             {
-                showLinkRelation(outGroup.front[0]._rel, RelDir.backward);
-                foreach (outLink, outConcept; outGroup) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
+                showLinkRelation(group.front[0]._rel, RelDir.backward);
+                foreach (backwardLink, backwardConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
-                    showConcept(outConcept, outLink.normalizedWeight);
+                    showConcept(backwardConcept, backwardLink.normalizedWeight);
                 }
                 writeln();
             }
