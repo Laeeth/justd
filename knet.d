@@ -42,7 +42,7 @@ import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to, emplace;
 import std.stdio;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind;
 import std.container: Array;
 import std.string: tr;
 import std.uni: isWhite, toLower;
@@ -712,6 +712,12 @@ auto pageSize() @trusted
     }
 }
 
+/** Check if $(D s) contains more than one word. */
+bool isMultiWord(S)(S s) if (isSomeString!S)
+{
+    return s.canFind("_", " ") >= 1;
+}
+
 /** Main Knowledge Network.
 */
 class Net(bool useArray = true,
@@ -937,6 +943,8 @@ class Net(bool useArray = true,
         enum anyCategory = CategoryIx(0); // reserve 0 for anyCategory (unknown)
         ushort _categoryIxCounter = 1; // 1 because 0 is reserved for anyCategory (unknown)
 
+        size_t _multiWordConceptCount = 0; // number of concepts that whose lemma contain several words
+
         WordNet!(true, true) _wordnet;
 
         size_t[Rel.max + 1] _relCounts;
@@ -954,7 +962,7 @@ class Net(bool useArray = true,
         real _weightMinNELL = real.max;
         real _weightMaxNELL = real.min_normal;
         real _weightSumNELL = 0; // Sum of all link weights.
-}
+    }
 
     @safe pure nothrow
     {
@@ -993,6 +1001,13 @@ class Net(bool useArray = true,
         }
         else
         {
+            auto sentenceSplit = words.findSplit("_");
+            if (!sentenceSplit[1].empty) // TODO add implicit bool conversion to return
+            {
+                ++_multiWordConceptCount;
+            }
+
+            // split words on meaning
             auto wordsSplit = _wordnet.findWordsSplit(words, [hlang]); // split in parts
             if (wordsSplit.length >= 2)
             {
@@ -1612,6 +1627,7 @@ class Net(bool useArray = true,
         }
 
         writeln(`- Concept Count: `, _concepts.length);
+        writeln(`- Multi Word Concept Count: `, _multiWordConceptCount);
         writeln(`- Link Count: `, _links.length);
 
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
