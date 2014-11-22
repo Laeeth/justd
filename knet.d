@@ -726,8 +726,7 @@ class Net(bool useArray = true,
     */
     alias Ix = uint; // TODO Change this to size_t when we have more _concepts and memory.
 
-    /* These LinkIx and ConceptIx are structs intead of aliases for type-safe
-     * indexing. */
+    /** Type-safe Index to $(D Link). */
     struct LinkIx
     {
         @safe @nogc pure nothrow:
@@ -737,6 +736,8 @@ class Net(bool useArray = true,
     private:
         Ix _lIx = Ix.max;
     }
+
+    /** Type-safe Index to $(D Concept). */
     struct ConceptIx
     {
         @safe @nogc pure nothrow:
