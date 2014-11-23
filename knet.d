@@ -53,7 +53,7 @@ import algorithm_ex: isPalindrome, either;
 import range_ex: stealFront, stealBack;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
-import porter;
+import stemming;
 import dbg;
 import grammars;
 import rcstring;
