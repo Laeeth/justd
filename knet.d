@@ -46,7 +46,7 @@ import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort,
 import std.container: Array;
 import std.string: tr;
 import std.uni: isWhite, toLower;
-import std.utf: byDchar;
+import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
 
 import algorithm_ex: isPalindrome, either;
@@ -1071,7 +1071,7 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
-        bool quick = true;
+        const quick = false;
         const maxCount = quick ? 100000 : size_t.max;
 
         // WordNet
@@ -1080,7 +1080,7 @@ class Net(bool useArray = true,
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
                                                             .buildNormalizedPath,
-                     maxCount);
+                     1000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1136,29 +1136,37 @@ class Net(bool useArray = true,
                                     Concept(words, lang, kind, categoryIx, origin));
     }
 
-    /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight). */
+    /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight).
+
+        TODO checkExisting is currently set to false because searching
+        existing links is currently too slow
+     */
     LinkIx lookupOrConnectLink(ConceptIx srcIx,
                                Rel rel,
                                ConceptIx dstIx,
                                Origin origin = Origin.unknown,
                                real weight = 1.0,
                                bool negation = false,
-                               bool reversion = false)
+                               bool reversion = false,
+                               bool checkExisting = false)
     body
     {
         if (srcIx == dstIx) { return LinkIx.asUndefined; } // don't allow self-reference for now
 
-        if (auto existingIx = areConnected(srcIx, rel, dstIx,
-                                           negation, reversion)) // TODO warn about negation and reversion on existing rels
+        if (checkExisting)
         {
-            if (false)
+            if (auto existingIx = areConnected(srcIx, rel, dstIx,
+                                               negation)) // TODO warn about negation and reversion on existing rels
             {
-                dln("warning: Concepts ",
-                    conceptByIx(srcIx), " and ",
-                    conceptByIx(dstIx), " already related as ",
-                    rel);
+                if (false)
+                {
+                    dln("warning: Concepts ",
+                        conceptByIx(srcIx), " and ",
+                        conceptByIx(dstIx), " already related as ",
+                        rel);
+                }
+                return existingIx;
             }
-            return existingIx;
         }
 
         auto lix  = LinkIx(cast(Ix)_links.length);
@@ -1209,7 +1217,7 @@ class Net(bool useArray = true,
     }
     alias relate = lookupOrConnectLink;
 
-    auto correctCN5Lemma(S)(S s) if (isSomeString!S)
+    auto ref correctCN5Lemma(S)(S s) if (isSomeString!S)
     {
         switch (s)
         {
@@ -1488,8 +1496,7 @@ class Net(bool useArray = true,
         auto reversion = false;
         auto tense = Tense.unknown;
 
-        ConceptIx src;
-        ConceptIx dst;
+        ConceptIx src, dst;
         real weight;
         auto origin = Origin.unknown;
 
@@ -1505,8 +1512,18 @@ class Net(bool useArray = true,
                                                     negation, reversion, tense);
                     break;
                 case 2:         // source concept
-                    if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
-                    else { /* dln("TODO ", part); */ }
+                    try
+                    {
+                        if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
+                        else { /* dln("TODO ", part); */ }
+                        /* dln(part); */
+                    }
+                    catch (std.utf.UTFException e)
+                    {
+                        /* dln("UTFException when reading line:", line, */
+                        /*     " part:", part, */
+                        /*     " lnr:", lnr); */
+                    }
                     break;
                 case 3:         // destination concept
                     if (part.skipOver(`/c/`)) { dst = readCN5ConceptURI(part); }
@@ -1658,21 +1675,22 @@ class Net(bool useArray = true,
     LinkIx areConnectedInOrder(ConceptIx a,
                                Rel rel,
                                ConceptIx b,
-                               bool negation = false,
-                               bool reversion = false)
+                               bool negation = false)
     {
         const cA = conceptByIx(a); // TODO ref?
+
         foreach (ix; cA.inIxes)
         {
             const link = linkByIx(ix);
             if ((link._srcIx == b ||
                  link._dstIx == b) &&
                 link._rel == rel &&
-                link._negation == negation)
+                link._negation == negation) // no need to check reversion here because all links are bidirectional
             {
                 return ix;
             }
         }
+
         foreach (ix; cA.outIxes)
         {
             const link = linkByIx(ix);
@@ -1684,6 +1702,7 @@ class Net(bool useArray = true,
                 return ix;
             }
         }
+
         return typeof(return).asUndefined;
     }
 
@@ -1692,19 +1711,17 @@ class Net(bool useArray = true,
     LinkIx areConnected(ConceptIx a,
                         Rel rel,
                         ConceptIx b,
-                        bool negation = false,
-                        bool reversion = false)
+                        bool negation = false)
     {
-        return either(areConnectedInOrder(a, rel, b, negation, reversion),
-                      areConnectedInOrder(b, rel, a, negation, reversion));
+        return either(areConnectedInOrder(a, rel, b, negation),
+                      areConnectedInOrder(b, rel, a, negation));
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     LinkIx areConnected(in Lemma a,
                         Rel rel,
                         in Lemma b,
-                        bool negation = false,
-                        bool reversion = false)
+                        bool negation = false)
     {
         if (a in _conceptIxByLemma && // both lemmas exist
             b in _conceptIxByLemma)
@@ -1712,7 +1729,7 @@ class Net(bool useArray = true,
             return areConnected(_conceptIxByLemma[a],
                                 rel,
                                 _conceptIxByLemma[b],
-                                negation, reversion);
+                                negation);
         }
         return typeof(return).asUndefined;
     }
