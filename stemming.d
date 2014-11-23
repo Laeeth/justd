@@ -599,6 +599,16 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
+        enum iserad = `iserad`;
+        if (s.endsWith(iserad))
+        {
+            const t = s[0 .. $ - iserad.length];
+            if (!t.endsWith(`n`))
+                return t;
+        }
+    }
+
+    {
         enum ning = `ning`;
         if (s.endsWith(ning))
         {
@@ -702,6 +712,8 @@ unittest
     assert("roa".stemSwedish == "roa");
 
     assert("fullt".stemSwedish == "full");
+
+    assert("kanaliserad".stemSwedish == "kanal");
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
