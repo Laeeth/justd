@@ -525,11 +525,19 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
+        enum ern = `ern`;
+        if (s.endsWith(ern))
+        {
+            return s[0 .. $ - 1];
+        }
+    }
+
+    {
         enum an = `an`;
         if (s.endsWith(an))
         {
             const t = s[0 .. $ - an.length];
-            if (t.endsWith(`ck`))
+            if (t.endsWith(`ck`, `n`))
                 return s[0 ..$ - 1];
             return t;
         }
@@ -644,6 +652,10 @@ unittest
     assert("sockan".stemSwedish == "socka");
     assert("rockan".stemSwedish == "rocka");
     assert("rock".stemSwedish == "rock");
+
+    assert("brodern".stemSwedish == "broder");
+
+    assert("kärnan".stemSwedish == "kärna");
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
