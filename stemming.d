@@ -609,6 +609,19 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
+        enum ande = `ande`;
+        if (s.endsWith(ande))
+        {
+            const t = s[0 .. $ - ande.length];
+            if (t.empty)
+                return s;
+            else if (t[$ - 1].isSwedishConsonant)
+                return s[0 .. $ - 3];
+            return t;
+        }
+    }
+
+    {
         enum ning = `ning`;
         if (s.endsWith(ning))
         {
@@ -714,6 +727,14 @@ unittest
     assert("fullt".stemSwedish == "full");
 
     assert("kanaliserad".stemSwedish == "kanal");
+    assert("roande".stemSwedish == "ro");
+
+    assert("ande".stemSwedish == "ande");
+
+    assert("störande".stemSwedish == "störa");
+    assert("nekande".stemSwedish == "neka");
+    assert("jagande".stemSwedish == "jaga");
+    assert("stimulerande".stemSwedish == "stimulera");
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
