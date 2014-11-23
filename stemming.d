@@ -540,6 +540,8 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
             const t = s[0 .. $ - an.length];
             if (t.endsWith(`ck`, `n`))
                 return s[0 ..$ - 1];
+            else if (t.length < 3)
+                return s;
             return t;
         }
     }
@@ -627,8 +629,6 @@ unittest
     assert("husen".stemSwedish == "hus");
     assert("dunken".stemSwedish == "dunk");
 
-    assert("sanning".stemSwedish == "sann");
-
     assert("skalet".stemSwedish == "skal");
     assert("karet".stemSwedish == "kar");
     assert("taket".stemSwedish == "tak");
@@ -653,10 +653,15 @@ unittest
     assert("kortare".stemSwedish == "kort");
     assert("kortast".stemSwedish == "kort");
 
+    assert("rolig".stemSwedish == "rolig");
+    assert("roligare".stemSwedish == "rolig");
+    assert("roligast".stemSwedish == "rolig");
+
     assert("dum".stemSwedish == "dum");
     assert("dummare".stemSwedish == "dum");
     assert("dummast".stemSwedish == "dum");
 
+    assert("sanning".stemSwedish == "sann");
     assert("sann".stemSwedish == "sann");
     assert("sannare".stemSwedish == "sann");
     assert("sannare".stemSwedish == "sann");
@@ -666,6 +671,13 @@ unittest
 
     assert("täcket".stemSwedish == "täcke");
     assert("räcket".stemSwedish == "räcke");
+
+    assert("van".stemSwedish == "van");
+    assert("dan".stemSwedish == "dan");
+    assert("man".stemSwedish == "man");
+    assert("ovan".stemSwedish == "ovan");
+    assert("stan".stemSwedish == "stan");
+    assert("klan".stemSwedish == "klan");
 
     assert("klockan".stemSwedish == "klocka");
     assert("sockan".stemSwedish == "socka");
