@@ -832,26 +832,26 @@ class Net(bool useArray = true,
     /** Get Outgoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
     auto outsOf(in Concept concept) { return outLinksOf(concept).map!(link => tuple(link, src(link))); }
 
-    auto inLinksGroupedByRelation(in Concept concept)
+    auto inLinksGroupedByRel(in Concept concept)
     {
         return inLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                                  (a._negation == b._negation &&
                                                   a._rel == b._rel));
     }
-    auto outLinksGroupedByRelation(in Concept concept)
+    auto outLinksGroupedByRel(in Concept concept)
     {
         return outLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                                   (a._negation == b._negation &&
                                                    a._rel == b._rel));
     }
 
-    auto insByRelation(in Concept concept)
+    auto insByRel(in Concept concept)
     {
         return insOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                              (a[0]._negation == b[0]._negation &&
                                               a[0]._rel == b[0]._rel));
     }
-    auto outsByRelation(in Concept concept)
+    auto outsByRel(in Concept concept)
     {
         return outsOf(concept).array.groupBy!((a, b) => // TODO array needed?
                                               (a[0]._negation == b[0]._negation &&
@@ -1080,7 +1080,7 @@ class Net(bool useArray = true,
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
                                                             .buildNormalizedPath,
-                     1000);
+                     10000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1161,8 +1161,8 @@ class Net(bool useArray = true,
                 if (false)
                 {
                     dln("warning: Concepts ",
-                        conceptByIx(srcIx), " and ",
-                        conceptByIx(dstIx), " already related as ",
+                        conceptByIx(srcIx).words, " and ",
+                        conceptByIx(dstIx).words, " already related as ",
                         rel);
                 }
                 return existingIx;
@@ -1334,7 +1334,8 @@ class Net(bool useArray = true,
                                                               kind,
                                                               categoryIx,
                                                               Origin.nell),
-                                         Origin.nell, 1.0));
+                                         Origin.nell, 1.0, false, false,
+                                         true)); // need to check duplicates here
     }
 
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -1793,23 +1794,23 @@ class Net(bool useArray = true,
             writeln(` of sense `, concept.lemmaKind);
 
             // show forwards
-            foreach (group; insByRelation(concept))
+            foreach (group; insByRel(concept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.forward);
-                foreach (forwardLink, forwardConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
+                foreach (inLink, inConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
-                    showConcept(forwardConcept, forwardLink.normalizedWeight);
+                    showConcept(inConcept, inLink.normalizedWeight);
                 }
                 writeln();
             }
 
             // show backwards
-            foreach (group; outsByRelation(concept))
+            foreach (group; outsByRel(concept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.backward);
-                foreach (backwardLink, backwardConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
+                foreach (outLink, outConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
                 {
-                    showConcept(backwardConcept, backwardLink.normalizedWeight);
+                    showConcept(outConcept, outLink.normalizedWeight);
                 }
                 writeln();
             }

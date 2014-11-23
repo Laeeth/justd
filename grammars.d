@@ -12,7 +12,7 @@ import std.array: array;
 import std.conv;
 import predicates: of;
 
-/** (Human) Language Code according to ISO 639-1.
+/** Language Code according to ISO 639-1 plus computer languages.
     See also: http://www.mathguide.de/info/tools/languagecode.html
     See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
     See also: http://msdn.microsoft.com/en-us/library/ms533052(v=vs.85).aspx
@@ -156,6 +156,12 @@ enum HLang:ubyte
     wa,                       /// Waloon
     yi,                       /// Yiddish
     faroese,                  /// Faroese
+
+    c,                          /// C
+    cxx,                        /// C++
+    objectiveC,                 /// Objective-C
+    d,                          /// D
+    java,                       /// Java
 }
 
 bool hasCase(HLang hlang) @safe pure @nogc nothrow
@@ -277,6 +283,11 @@ string toName(HLang hlang) @safe pure @nogc nothrow
             case wa: return `Waloon`;
             case yi: return `Yiddish`;
             case faroese: return `Faroese`;
+            case c: return `C`;
+            case cxx: return `C++`;
+            case objectiveC: return `Objective-C`;
+            case d: return `D`;
+            case java: return `Java`;
         }
     }
 
