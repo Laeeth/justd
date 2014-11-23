@@ -605,6 +605,7 @@ unittest
     assert("skalet".stemSwedish == "skal");
     assert("karet".stemSwedish == "kar");
     assert("taket".stemSwedish == "tak");
+    assert("stinget".stemSwedish == "sting");
 
     assert("äpplet".stemSwedish == "äpple");
 
@@ -636,11 +637,13 @@ unittest
     assert("stare".stemSwedish == "stare");
     assert("kvast".stemSwedish == "kvast");
 
-    assertEqual("täcket".stemSwedish, "täcke");
+    assert("täcket".stemSwedish == "täcke");
     assert("räcket".stemSwedish == "räcke");
 
     assert("klockan".stemSwedish == "klocka");
     assert("sockan".stemSwedish == "socka");
+    assert("rockan".stemSwedish == "rocka");
+    assert("rock".stemSwedish == "rock");
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
