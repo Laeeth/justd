@@ -5,6 +5,7 @@ import std.algorithm: endsWith, canFind;
 import std.range: empty;
 import std.traits: isSomeString;
 
+import predicates: of;
 import grammars: isEnglishVowel, isSwedishVowel, isSwedishConsonant, isEnglishConsonant;
 import skip_ex: skipOverBack;
 
@@ -521,7 +522,12 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         enum en = `en`;
         if (s.endsWith(en))
         {
-            return s[0 .. $ - en.length];
+            const t = s[0 .. $ - en.length];
+            if (t.of(`sann`))
+                return t;
+            else if (t.endsWith(`mm`, `nn`))
+                return t[0 .. $ - 1];
+            return t;
         }
     }
 
@@ -583,7 +589,9 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         if (s.endsWith(are, ast))
         {
             const t = s[0 .. $ - are.length];
-            if (t.endsWith(`mm`))
+            if (t.of(`sann`))
+                return t;
+            if (t.endsWith(`mm`, `nn`))
                 return t[0 .. $ - 1];
             if (t.canFind!(a => a.isSwedishVowel))
                 return t;
@@ -628,6 +636,7 @@ unittest
     assert("busen".stemSwedish == "bus");
     assert("husen".stemSwedish == "hus");
     assert("dunken".stemSwedish == "dunk");
+    assert("männen".stemSwedish == "män");
 
     assert("skalet".stemSwedish == "skal");
     assert("karet".stemSwedish == "kar");
