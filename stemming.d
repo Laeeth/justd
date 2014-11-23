@@ -2,6 +2,7 @@
 module stemming;
 
 import std.algorithm: endsWith, canFind;
+import std.range: empty;
 import std.traits: isSomeString;
 
 import grammars: isEnglishVowel, isSwedishVowel, isSwedishConsonant, isEnglishConsonant;
@@ -544,6 +545,16 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
+        enum na = `na`;
+        if (s.endsWith(na))
+        {
+            const t = s[0 .. $ - na.length];
+            if (!t.empty && t[0].isSwedishConsonant)
+                return t;
+        }
+    }
+
+    {
         enum et = `et`;
         if (s.endsWith(et))
         {
@@ -654,8 +665,12 @@ unittest
     assert("rock".stemSwedish == "rock");
 
     assert("brodern".stemSwedish == "broder");
-
     assert("kärnan".stemSwedish == "kärna");
+
+    assert("skorna".stemSwedish == "skor");
+    assert("kullarna".stemSwedish == "kullar");
+
+    assert("roa".stemSwedish == "roa");
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
