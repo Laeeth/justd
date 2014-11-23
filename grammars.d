@@ -17,7 +17,7 @@ import predicates: of;
     See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
     See also: http://msdn.microsoft.com/en-us/library/ms533052(v=vs.85).aspx
  */
-enum HLang:ubyte
+enum Lang:ubyte
 {
     unknown,                    /// Unknown
     en,                       /// English
@@ -157,27 +157,40 @@ enum HLang:ubyte
     yi,                       /// Yiddish
     faroese,                  /// Faroese
 
-    c,                          /// C
-    cxx,                        /// C++
-    objectiveC,                 /// Objective-C
-    d,                          /// D
-    java,                       /// Java
+    c,
+    firstFormal = c,
+    cxx,
+    objectiveC,
+    objectiveCxx,
+    d,
+    java,
+    ada,
+    rust,
+    swift,
 }
 
-bool hasCase(HLang hlang) @safe pure @nogc nothrow
+/** Return true if $(D lang) is case-sensitive. */
+bool hasCase(Lang lang) @safe pure @nogc nothrow
 {
-    return hlang != HLang.bg;
+    with (Lang) return lang.of(bg, ada);
 }
+alias isCaseSensitive = hasCase;
 
+/** Return true if $(D lang) is a formal (computer) language. */
+bool isFormal(Lang lang) @safe pure @nogc nothrow
+{
+    with (Lang) return (lang >= firstFormal);
+}
+alias forMachines = isFormal;
 
 /** TODO Remove when __traits(documentation is merged */
-string toName(HLang hlang) @safe pure @nogc nothrow
+string toName(Lang lang) @safe pure @nogc nothrow
 {
-    with (HLang)
+    with (Lang)
     {
-        final switch (hlang)
+        final switch (lang)
         {
-            case unknown: return `Unknown`;
+            case unknown: return `??`;
             case en: return `English`; // 英語
             case en_US: return `American English`;
             case en_GB: return `British English`;
@@ -286,35 +299,39 @@ string toName(HLang hlang) @safe pure @nogc nothrow
             case c: return `C`;
             case cxx: return `C++`;
             case objectiveC: return `Objective-C`;
+            case objectiveCxx: return `Objective-C++`;
             case d: return `D`;
             case java: return `Java`;
+            case ada: return `Ada`;
+            case rust: return `Rust`;
+            case swift: return `Swift`;
         }
     }
 
 }
 
-HLang decodeHumanLang(S)(S hlang) @safe pure nothrow if (isSomeString!S)
+Lang decodeLang(S)(S lang) @safe pure nothrow if (isSomeString!S)
 {
-    if (hlang == `is`)
+    if (lang == `is`)
     {
-        return HLang.is_;
+        return Lang.is_;
     }
     else
     {
         try
         {
-            return hlang.to!HLang;
+            return lang.to!Lang;
         }
         catch (Exception a)
         {
-            return HLang.unknown;
+            return Lang.unknown;
         }
     }
 }
 
 unittest
 {
-    assert(`sv`.to!HLang == HLang.sv);
+    assert(`sv`.to!Lang == Lang.sv);
 }
 
 /* LANGUAGES = { */
@@ -394,42 +411,21 @@ unittest
 /*     '日本語': 'ja' */
 /* } */
 
-/* /\** Programming Language. *\/ */
-enum Lang:ubyte
-{
-    unknown,                    // Unknown: ?
-    c,                          // C
-    cxx,                        // C++
-    objective_c,                // Objective-C
-    d,                          // D
-    java,                       // Java
-}
-
 unittest
 {
-    assert(Lang.init.toTag == `?`);
-    assert(Lang.c.toTag == `C`);
-    assert(Lang.cxx.toTag == `C++`);
-    assert(Lang.d.toTag == `D`);
-    assert(Lang.java.toTag == `Java`);
-}
-
-string toTag(Lang lang) @safe @nogc pure nothrow
-{
-    final switch (lang)
+    with (Lang)
     {
-        case Lang.unknown: return `?`;
-        case Lang.c: return `C`;
-        case Lang.cxx: return `C++`;
-        case Lang.d: return `D`;
-        case Lang.java: return `Java`;
-        case Lang.objective_c: return `Objective-C`;
+        assert(unknown.toName == `??`);
+        assert(c.toName == `C`);
+        assert(cxx.toName == `C++`);
+        assert(d.toName == `D`);
+        assert(java.toName == `Java`);
     }
 }
 
 string toHTML(Lang lang) @safe @nogc pure nothrow
 {
-    return lang.toTag;
+    return lang.toName;
 }
 
 string toMathML(Lang lang) @safe @nogc pure nothrow
@@ -443,7 +439,7 @@ Lang language(string name)
     {
         case `C`:    return Lang.c;
         case `C++`:  return Lang.cxx;
-        case `Objective-C`:  return Lang.objective_c;
+        case `Objective-C`:  return Lang.objectiveC;
         case `D`:    return Lang.d;
         case `Java`: return Lang.java;
         default:     return Lang.unknown;
@@ -694,7 +690,7 @@ struct WordSense(Links = uint[])
     WordKind kind;
     ubyte synsetCount; // Number of senses (meanings).
     Links links;
-    HLang hlang;
+    Lang lang;
 }
 
 /** Decode character $(D kindCode) into a $(D WordKind). */
@@ -1383,10 +1379,10 @@ unittest
     }
 }
 
-string negationIn(HLang lang = HLang.en)
+string negationIn(Lang lang = Lang.en)
     @safe pure nothrow
 {
-    with (HLang)
+    with (Lang)
         switch (lang)
         {
             case en: return "not";

@@ -1,6 +1,6 @@
 import krels;
 
-import grammars: HLang, negationIn;
+import grammars: Lang, negationIn;
 import std.conv: to;
 import predicates: of;
 
@@ -304,7 +304,7 @@ enum RelDir
 auto toHumanLang(const Rel rel,
                  const RelDir dir,
                  const bool negation = false,
-                 const HLang lang = HLang.en)
+                 const Lang lang = Lang.en)
     @safe pure
 {
     string[] words;
@@ -312,7 +312,7 @@ auto toHumanLang(const Rel rel,
 
     with (Rel)
     {
-        with (HLang)
+        with (Lang)
         {
             auto not = negation ? negationIn(lang) : null;
             switch (rel)

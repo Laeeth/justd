@@ -407,6 +407,8 @@ class FKind
 
                                    FileContent content_ = FileContent.unknown,
                                    FileKindDetection detection_ = FileKindDetection.equalsWhatsGiven,
+                                   Lang lang_ = Lang.unknown,
+
                                    FKind superKind = null,
                                    FKind[] subKinds = [],
                                    string description = null,
@@ -470,6 +472,7 @@ class FKind
         {
             this.detection = detection_;
         }
+        this.lang = lang_;
 
         this.superKind = superKind;
         this.subKinds = subKinds;
@@ -520,6 +523,7 @@ class FKind
     ubyte[] refPattern; // Reference pattern.
     const FileContent content;
     const FileKindDetection detection;
+    Lang lang; // Language if any
 
     // Volatile Statistics:
     private SHA1Digest _behaviourDigest;
@@ -1812,7 +1816,9 @@ class GStats
                                keywordsC,
                                cCommentDelims,
                                defaultStringDelims,
-                               FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+                               FileContent.sourceCode,
+                               FileKindDetection.equalsWhatsGiven,
+                               Lang.c);
         txtFKinds ~= kindC;
         kindC.operations ~= tuple(FOp.checkSyntax, `gcc -x c -fsyntax-only -c`);
         kindC.operations ~= tuple(FOp.checkSyntax, `clang -x c -fsyntax-only -c`);
@@ -1861,7 +1867,9 @@ class GStats
                                  keywordsCxx,
                                  cCommentDelims,
                                  defaultStringDelims,
-                                 FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+                                 FileContent.sourceCode,
+                                 FileKindDetection.equalsWhatsGiven,
+                                 Lang.cxx);
         kindCxx.operations ~= tuple(FOp.checkSyntax, `gcc -x c++ -fsyntax-only -c`);
         kindCxx.operations ~= tuple(FOp.checkSyntax, `clang -x c++ -fsyntax-only -c`);
         kindCxx.operations ~= tuple(FOp.preprocess, `cpp`);
@@ -2063,14 +2071,17 @@ class GStats
                                keywordsObjectiveC,
                                cCommentDelims,
                                defaultStringDelims,
-                               FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+                               FileContent.sourceCode, FileKindDetection.equalsWhatsGiven,
+                               Lang.objectiveC);
 
         static immutable keywordsObjectiveCxx = keywordsCxx ~ keywordsNewObjectiveC;
         txtFKinds ~= new FKind("Objective-C++", [], ["mm", "h"], [], 0, [],
                                keywordsObjectiveCxx,
                                defaultCommentDelims,
                                defaultStringDelims,
-                               FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+                               FileContent.sourceCode,
+                               FileKindDetection.equalsWhatsGiven,
+                               Lang.objectiveCxx);
 
         static immutable keywordsSwift = ["break", "class", "continue", "default", "do", "else", "for", "func", "if", "import",
                               "in", "let", "return", "self", "struct", "super", "switch", "unowned", "var", "weak", "while",
@@ -2081,7 +2092,9 @@ class GStats
                                    keywordsSwift,
                                    cCommentDelims,
                                    defaultStringDelims,
-                                   FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+                                   FileContent.sourceCode,
+                                   FileKindDetection.equalsWhatsGiven,
+                                   Lang.swift);
         kindSwift.builtins = builtinsSwift;
         kindSwift.opers = opersOverflowSwift;
         txtFKinds ~= kindSwift;
@@ -2215,7 +2228,8 @@ class GStats
                                dCommentDelims,
                                defaultStringDelims,
                                FileContent.sourceCode,
-                               FileKindDetection.equalsNameOrContents);
+                               FileKindDetection.equalsNameOrContents,
+                               Lang.d);
         kindD.operations ~= tuple(FOp.checkSyntax, `gdc -fsyntax-only`);
         kindD.operations ~= tuple(FOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO Include paths
         txtFKinds ~= kindD;
@@ -2227,7 +2241,8 @@ class GStats
                                 dCommentDelims,
                                 defaultStringDelims,
                                 FileContent.sourceCode,
-                                FileKindDetection.equalsNameOrContents);
+                                FileKindDetection.equalsNameOrContents,
+                                Lang.d);
         kindDi.operations ~= tuple(FOp.checkSyntax, `gdc -fsyntax-only`);
         kindDi.operations ~= tuple(FOp.checkSyntax, `dmd -debug -wi -c -o-`); // TODO Include paths
         txtFKinds ~= kindDi;
@@ -2245,7 +2260,8 @@ class GStats
                                   cCommentDelims,
                                   defaultStringDelims,
                                   FileContent.sourceCode,
-                                  FileKindDetection.equalsNameOrContents);
+                                  FileKindDetection.equalsNameOrContents,
+                                  Lang.rust);
         txtFKinds ~= kindRust;
 
         static immutable keywordsFortran77 = ["if", "else"];

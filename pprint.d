@@ -19,7 +19,8 @@
 */
 module pprint;
 
-import std.range: isInputRange, map, repeat;
+import std.algorithm: map;
+import std.range: isInputRange, repeat;
 import std.traits: isInstanceOf, isSomeString, isSomeChar, isAggregateType, Unqual, isArray, isIterable;
 import std.stdio: stdout;
 import std.conv: to;

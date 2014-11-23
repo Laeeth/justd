@@ -59,7 +59,7 @@ class WordNet(bool useArray = true,
 
     /** Normalize Lemma $(D lemma). */
     Tuple!(S, bool) normalize(S)(S lemma,
-                                 HLang lang = HLang.unknown) if (isSomeString!S)
+                                 Lang lang = Lang.unknown) if (isSomeString!S)
     {
         // TODO: Use Walter's new decoder functions
         if (!lang.hasCase) // to many exceptions are thrown for languages such as Bulgarian
@@ -78,7 +78,7 @@ class WordNet(bool useArray = true,
 
     /** Formalize Sentence $(D sentence). */
     SentencePart[] formalize(Words)(const Words words,
-                                    const HLang[] langs = []) if (isSomeString!(ElementType!Words))
+                                    const Lang[] langs = []) if (isSomeString!(ElementType!Words))
     {
         typeof(return) roles;
         if (canMean(words[0], WordKind.noun, langs) &&
@@ -91,14 +91,14 @@ class WordNet(bool useArray = true,
     }
 
     SentencePart[] formalize(S)(const S sentence,
-                                const HLang[] langs = []) if (isSomeString!S)
+                                const Lang[] langs = []) if (isSomeString!S)
     {
         auto roles = formalize(sentence.split!isWhite, langs); // TODO splitter
         return roles;
     }
 
     void readUNIXDict(const string fileName,
-                      HLang lang,
+                      Lang lang,
                       WordKind kindAll = WordKind.unknown)
     {
         size_t lnr = 0;
@@ -106,7 +106,7 @@ class WordNet(bool useArray = true,
         Lemma lemmaOld;
         foreach (lemma; File(fileName).byLine)
         {
-            if (lang == HLang.sv &&
+            if (lang == Lang.sv &&
                 lemma.startsWith(lemmaOld) &&
                 lemma.length == lemmaOld.length + 1 &&
                 lemma.back == 's') // Swedish genitive noun or passive verb form
@@ -140,7 +140,7 @@ class WordNet(bool useArray = true,
     {
         const dictDir = dirName.expandTilde;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
-        const lang = HLang.en;
+        const lang = Lang.en;
         readIndex(dictDir.nPath(`index.adj`), false, lang);
         readIndex(dictDir.nPath(`index.adv`), false, lang);
         readIndex(dictDir.nPath(`index.noun`), false, lang);
@@ -177,17 +177,17 @@ class WordNet(bool useArray = true,
 
         foreach (e; [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`])
         {
-            addWord(e, WordKind.coordinatingConjunction, 0, HLang.en);
+            addWord(e, WordKind.coordinatingConjunction, 0, Lang.en);
         }
 
         foreach (e; [`och`, `eller`, `men`, `så`, `för`, `ännu`])
         {
-            addWord(e, WordKind.coordinatingConjunction, 0, HLang.sv);
+            addWord(e, WordKind.coordinatingConjunction, 0, Lang.sv);
         }
 
         foreach (e; [`since`, `ago`, `before`, `past`])
         {
-            addWord(e, WordKind.prepositionTime, 0, HLang.en);
+            addWord(e, WordKind.prepositionTime, 0, Lang.en);
         }
 
         // TODO Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
@@ -198,121 +198,121 @@ class WordNet(bool useArray = true,
                      `by`, `out of`, `towards`, `through`, `across`,
                      `above`, `over`, `below`, `under`, `next to`, `beside`])
         {
-            addWord(e, WordKind.preposition, 0, HLang.en);
+            addWord(e, WordKind.preposition, 0, Lang.en);
         }
 
         /* undefinite articles */
         foreach (e; [`a`, `an`]) {
-            addWord(e, WordKind.articleUndefinite, 0, HLang.en);
+            addWord(e, WordKind.articleUndefinite, 0, Lang.en);
         }
         foreach (e; [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`]) {
-            addWord(e, WordKind.articleUndefinite, 0, HLang.de);
+            addWord(e, WordKind.articleUndefinite, 0, Lang.de);
         }
         foreach (e; [`un`, `une`, `des`]) {
-            addWord(e, WordKind.articleUndefinite, 0, HLang.fr);
+            addWord(e, WordKind.articleUndefinite, 0, Lang.fr);
         }
         foreach (e; [`en`, `ena`, `ett`]) {
-            addWord(e, WordKind.articleUndefinite, 0, HLang.sv);
+            addWord(e, WordKind.articleUndefinite, 0, Lang.sv);
         }
 
         /* definite articles */
         foreach (e; [`the`]) {
-            addWord(e, WordKind.articleDefinite, 0, HLang.en);
+            addWord(e, WordKind.articleDefinite, 0, Lang.en);
         }
         foreach (e; [`der`, `die`, `das`, `des`, `dem`, `den`]) {
-            addWord(e, WordKind.articleDefinite, 0, HLang.de);
+            addWord(e, WordKind.articleDefinite, 0, Lang.de);
         }
         foreach (e; [`le`, `la`, `l'`, `les`]) {
-            addWord(e, WordKind.articleDefinite, 0, HLang.fr);
+            addWord(e, WordKind.articleDefinite, 0, Lang.fr);
         }
         foreach (e; [`den`, `det`]) {
-            addWord(e, WordKind.articleDefinite, 0, HLang.sv);
+            addWord(e, WordKind.articleDefinite, 0, Lang.sv);
         }
 
         /* partitive articles */
         foreach (e; [`some`]) {
-            addWord(e, WordKind.articlePartitive, 0, HLang.en);
+            addWord(e, WordKind.articlePartitive, 0, Lang.en);
         }
         foreach (e; [`du`, `de`, `la`, `de`, `l'`, `des`]) {
-            addWord(e, WordKind.articlePartitive, 0, HLang.fr);
+            addWord(e, WordKind.articlePartitive, 0, Lang.fr);
         }
 
         /* personal pronoun */
         foreach (e; [`I`, `me`,  `you`, `it`]) {
-            addWord(e, WordKind.pronounPersonalSingular, 0, HLang.en);
+            addWord(e, WordKind.pronounPersonalSingular, 0, Lang.en);
         }
         foreach (e; [`he`, `him`]) {
-            addWord(e, WordKind.pronounPersonalSingularMale, 0, HLang.en);
+            addWord(e, WordKind.pronounPersonalSingularMale, 0, Lang.en);
         }
         foreach (e; [`she`, `her`]) {
-            addWord(e, WordKind.pronounPersonalSingularFemale, 0, HLang.en);
+            addWord(e, WordKind.pronounPersonalSingularFemale, 0, Lang.en);
         }
 
         foreach (e; [`jag`, `mig`, // 1st person
                      `du`, `dig`, // 2nd person
                      `den`, `det`]) { // 3rd person
-            addWord(e, WordKind.pronounPersonalSingular, 0, HLang.sv);
+            addWord(e, WordKind.pronounPersonalSingular, 0, Lang.sv);
         }
         foreach (e; [`han`, `honom`]) {
-            addWord(e, WordKind.pronounPersonalSingularMale, 0, HLang.sv);
+            addWord(e, WordKind.pronounPersonalSingularMale, 0, Lang.sv);
         }
         foreach (e; [`hon`, `henne`]) {
-            addWord(e, WordKind.pronounPersonalSingularFemale, 0, HLang.sv);
+            addWord(e, WordKind.pronounPersonalSingularFemale, 0, Lang.sv);
         }
 
         foreach (e; [`we`, `us`, // 1st person
                      `you`, // 2nd person
                      `they`, `them`]) // 3rd person
         {
-            addWord(e, WordKind.pronounPersonalPlural, 0, HLang.en);
+            addWord(e, WordKind.pronounPersonalPlural, 0, Lang.en);
         }
         foreach (e; [`vi`, `oss`, // 1st person
                      `ni`, // 2nd person
                      `de`, `dem`]) // 3rd person
         {
-            addWord(e, WordKind.pronounPersonalPlural, 0, HLang.sv);
+            addWord(e, WordKind.pronounPersonalPlural, 0, Lang.sv);
         }
 
         /* TODO near/far in distance/time , singular, plural */
         foreach (e; [`this`, `that`,
                      `these`, `those`]) {
-            addWord(e, WordKind.pronounDemonstrative, 0, HLang.en);
+            addWord(e, WordKind.pronounDemonstrative, 0, Lang.en);
         }
 
         /* TODO near/far in distance/time , singular, plural */
         foreach (e; [`den här`, `den där`,
                      `de här`, `de där`]) {
-            addWord(e, WordKind.pronounDemonstrative, 0, HLang.sv);
+            addWord(e, WordKind.pronounDemonstrative, 0, Lang.sv);
         }
 
         foreach (e; [`my`, `your`]) {
-            addWord(e, WordKind.adjectivePossessiveSingular, 0, HLang.en);
+            addWord(e, WordKind.adjectivePossessiveSingular, 0, Lang.en);
         }
         foreach (e; [`our`, `their`]) {
-            addWord(e, WordKind.adjectivePossessivePlural, 0, HLang.en);
+            addWord(e, WordKind.adjectivePossessivePlural, 0, Lang.en);
         }
 
         foreach (e; [`mine`, `yours`]) /* 1st person */ {
-            addWord(e, WordKind.pronounPossessiveSingular, 0, HLang.en);
+            addWord(e, WordKind.pronounPossessiveSingular, 0, Lang.en);
         }
         foreach (e; [`his`]) {
-            addWord(e, WordKind.pronounPossessiveSingularMale, 0, HLang.en);
+            addWord(e, WordKind.pronounPossessiveSingularMale, 0, Lang.en);
         }
         foreach (e; [`hers`]) {
-            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, HLang.en);
+            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, Lang.en);
         }
 
         foreach (e; [`min`, /* 1st person */ `din`, /* 2nd person */ ]) {
-            addWord(e, WordKind.pronounPossessiveSingular, 0, HLang.sv);
+            addWord(e, WordKind.pronounPossessiveSingular, 0, Lang.sv);
         }
         foreach (e; [`hans`]) {
-            addWord(e, WordKind.pronounPossessiveSingularMale, 0, HLang.sv);
+            addWord(e, WordKind.pronounPossessiveSingularMale, 0, Lang.sv);
         }
         foreach (e; [`hennes`]) {
-            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, HLang.sv);
+            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, Lang.sv);
         }
         foreach (e; [`dens`, `dets`, /* 3rd person */ ]) {
-            addWord(e, WordKind.pronounPossessiveSingularNeutral, 0, HLang.sv);
+            addWord(e, WordKind.pronounPossessiveSingularNeutral, 0, Lang.sv);
         }
 
         foreach (e; [`ours`, // 1st person
@@ -320,7 +320,7 @@ class WordNet(bool useArray = true,
                      `theirs` // 3rd person
                      ])
         {
-            addWord(e, WordKind.pronounPossessivePlural, 0, HLang.en);
+            addWord(e, WordKind.pronounPossessivePlural, 0, Lang.en);
         }
 
         foreach (e; [`vår`, // 1st person
@@ -328,35 +328,35 @@ class WordNet(bool useArray = true,
                      `deras` // 3rd person
                      ])
         {
-            addWord(e, WordKind.pronounPossessivePlural, 0, HLang.sv);
+            addWord(e, WordKind.pronounPossessivePlural, 0, Lang.sv);
         }
         foreach (e; [`who`, `whom`, `what`, `which`, `whose`,
                      `whoever`, `whatever`, `whichever`]) {
-            addWord(e, WordKind.pronounInterrogative, 0, HLang.sv);
+            addWord(e, WordKind.pronounInterrogative, 0, Lang.sv);
         }
         foreach (e; [`vem`, `som`, `vad`, `vilken`, `vems`]) {
-            addWord(e, WordKind.pronounInterrogative, 0, HLang.sv);
+            addWord(e, WordKind.pronounInterrogative, 0, Lang.sv);
         }
 
         foreach (e; [`myself`, `yourself`, `himself`, `herself`, `itself`]) {
-            addWord(e, WordKind.pronounReflexiveSingular, 0, HLang.en);
+            addWord(e, WordKind.pronounReflexiveSingular, 0, Lang.en);
         }
         foreach (e; [`mig själv`, `dig själv`, `han själv`, `henne själv`, `den själv`]) {
-            addWord(e, WordKind.pronounReflexiveSingular, 0, HLang.sv);
+            addWord(e, WordKind.pronounReflexiveSingular, 0, Lang.sv);
         }
 
         foreach (e; [`ourselves`, `yourselves`, `themselves`]) {
-            addWord(e, WordKind.pronounReflexivePlural, 0, HLang.en);
+            addWord(e, WordKind.pronounReflexivePlural, 0, Lang.en);
         }
         foreach (e; [`oss själva`, `er själva`, `dem själva`]) {
-            addWord(e, WordKind.pronounReflexivePlural, 0, HLang.sv);
+            addWord(e, WordKind.pronounReflexivePlural, 0, Lang.sv);
         }
 
         foreach (e; [`each other`, `one another`]) {
-            addWord(e, WordKind.pronounReciprocal, 0, HLang.en);
+            addWord(e, WordKind.pronounReciprocal, 0, Lang.en);
         }
         foreach (e; [`varandra`]) {
-            addWord(e, WordKind.pronounReciprocal, 0, HLang.sv);
+            addWord(e, WordKind.pronounReciprocal, 0, Lang.sv);
         }
 
         foreach (e; [`another`, `anybody`, `anyone`, `anything`, `each`, `either`, `enough`,
@@ -364,15 +364,15 @@ class WordNet(bool useArray = true,
                      `nobody`, `noone`, `one`, `other`,
                      `somebody`, `someone`,
                      `something`, `you`]) {
-            addWord(e, WordKind.pronounIndefiniteSingular, 0, HLang.en);
+            addWord(e, WordKind.pronounIndefiniteSingular, 0, Lang.en);
         }
 
         foreach (e; [`both`, `few`, `fewer`, `many`, `others`, `several`, `they`]) {
-            addWord(e, WordKind.pronounIndefinitePlural, 0, HLang.en);
+            addWord(e, WordKind.pronounIndefinitePlural, 0, Lang.en);
         }
 
         foreach (e; [`all`, `any`, `more`, `most`, `none`, `some`, `such`]) {
-            addWord(e, WordKind.pronounIndefinite, 0, HLang.en);
+            addWord(e, WordKind.pronounIndefinite, 0, Lang.en);
         }
 
         foreach (e; [`who`, `whom`, // generally only for people
@@ -380,7 +380,7 @@ class WordNet(bool useArray = true,
                      `which`, // things
                      `that` // things and people
                      ]) {
-            addWord(e, WordKind.pronounRelative, 0, HLang.en);
+            addWord(e, WordKind.pronounRelative, 0, Lang.en);
         }
 
         foreach (e; [`after`, `although`, `as`, `as if`, `as long as`,
@@ -389,7 +389,7 @@ class WordNet(bool useArray = true,
                      `though`, `till`, `unless`, `until`, `what`,
                      `when`, `whenever`, `wherever`, `whether`, `while`])
         {
-            addWord(e, WordKind.subordinatingConjunction, 0, HLang.en);
+            addWord(e, WordKind.subordinatingConjunction, 0, Lang.en);
         }
 
         foreach (e; [`accordingly`, `additionally`, `again`, `almost`,
@@ -408,129 +408,129 @@ class WordNet(bool useArray = true,
                      `for example`, `for instance`, `of course`, `on the contrary`,
                      `so far`, `until now`, `thus` ])
         {
-            addWord(e, WordKind.conjunctiveAdverb, 0, HLang.en);
+            addWord(e, WordKind.conjunctiveAdverb, 0, Lang.en);
         }
 
         foreach (e; [`no`, `not`, `never`, `nowhere`, `none`, `nothing`])
         {
-            addWord(e, WordKind.negatingAdverb, 0, HLang.en);
+            addWord(e, WordKind.negatingAdverb, 0, Lang.en);
         }
 
         foreach (e; [`yes`, `yeah`])
         {
-            addWord(e, WordKind.affirmingAdverb, 0, HLang.en);
+            addWord(e, WordKind.affirmingAdverb, 0, Lang.en);
         }
 
         foreach (e; [`ej`, `inte`, `icke`])
         {
-            addWord(e, WordKind.negatingAdverb, 0, HLang.sv);
+            addWord(e, WordKind.negatingAdverb, 0, Lang.sv);
         }
 
         /* weekdays */
         foreach (e; [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
                      `saturday`, `sunday`]) {
-            addWord(e, WordKind.nounWeekday, 0, HLang.en);
+            addWord(e, WordKind.nounWeekday, 0, Lang.en);
         }
         foreach (e; [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`,
                      `samstag`, `sonntag`]) {
-            addWord(e, WordKind.nounWeekday, 0, HLang.de);
+            addWord(e, WordKind.nounWeekday, 0, Lang.de);
         }
         foreach (e; [`måndag`, `tisdag`, `onsdag`, `torsdag`, `fredag`,
                      `lördag`, `söndag`]) {
-            addWord(e, WordKind.nounWeekday, 0, HLang.sv);
+            addWord(e, WordKind.nounWeekday, 0, Lang.sv);
         }
 
         /* months */
         foreach (e; [`januari`, `februari`, `mars`, `april`, `maj`, `juni`,
                      `juli`, `augusti`, `september`, `oktober`, `november`, `december`]) {
-            addWord(e, WordKind.nounMonth, 0, HLang.sv);
+            addWord(e, WordKind.nounMonth, 0, Lang.sv);
         }
         foreach (e; [`january`, `february`, `mars`, `april`, `may`, `june`,
                      `july`, `august`, `september`, `oktober`, `november`, `december`]) {
-            addWord(e, WordKind.nounMonth, 0, HLang.en);
+            addWord(e, WordKind.nounMonth, 0, Lang.en);
         }
     }
 
-    void readDicts(const HLang[] langs = [HLang.en, HLang.sv],
+    void readDicts(const Lang[] langs = [Lang.en, Lang.sv],
                    bool allLangs = false)
     {
         const dictDir = `~/Knowledge/dict`.expandTilde;
 
         // See also: https://packages.debian.org/sv/sid/wordlist
-        if (allLangs || langs.canFind(HLang.sv))
-            readUNIXDict(dictDir.nPath(`swedish`), HLang.sv); // TODO apt:wswedish, NOTE iso-latin-1
-        if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath(`ogerman`), HLang.de); // TODO old german
-        if (allLangs || langs.canFind(HLang.pl))
-            readUNIXDict(dictDir.nPath(`polish`), HLang.pl);
-        if (allLangs || langs.canFind(HLang.pt))
-            readUNIXDict(dictDir.nPath(`portuguese`), HLang.pt);
-        if (allLangs || langs.canFind(HLang.es))
-            readUNIXDict(dictDir.nPath(`spanish`), HLang.es);
-        if (allLangs || langs.canFind(HLang.fr_ch))
-            readUNIXDict(dictDir.nPath(`swiss`), HLang.fr_ch);
-        if (allLangs || langs.canFind(HLang.uk))
-            readUNIXDict(dictDir.nPath(`ukrainian`), HLang.uk);
+        if (allLangs || langs.canFind(Lang.sv))
+            readUNIXDict(dictDir.nPath(`swedish`), Lang.sv); // TODO apt:wswedish, NOTE iso-latin-1
+        if (allLangs || langs.canFind(Lang.de))
+            readUNIXDict(dictDir.nPath(`ogerman`), Lang.de); // TODO old german
+        if (allLangs || langs.canFind(Lang.pl))
+            readUNIXDict(dictDir.nPath(`polish`), Lang.pl);
+        if (allLangs || langs.canFind(Lang.pt))
+            readUNIXDict(dictDir.nPath(`portuguese`), Lang.pt);
+        if (allLangs || langs.canFind(Lang.es))
+            readUNIXDict(dictDir.nPath(`spanish`), Lang.es);
+        if (allLangs || langs.canFind(Lang.fr_ch))
+            readUNIXDict(dictDir.nPath(`swiss`), Lang.fr_ch);
+        if (allLangs || langs.canFind(Lang.uk))
+            readUNIXDict(dictDir.nPath(`ukrainian`), Lang.uk);
 
-        if (allLangs || langs.canFind(HLang.en))
-            readUNIXDict(dictDir.nPath(`words`), HLang.en); // TODO apt:dictionaries-common
-        if (allLangs || langs.canFind(HLang.en_GB))
-            readUNIXDict(dictDir.nPath(`british-english-insane`), HLang.en_GB); // TODO apt:wbritish-insane
-        if (allLangs || langs.canFind(HLang.en_GB))
-            readUNIXDict(dictDir.nPath(`british-english-huge`), HLang.en_GB); // TODO apt:wbritish-huge
-        if (allLangs || langs.canFind(HLang.en_GB))
-            readUNIXDict(dictDir.nPath(`british-english`), HLang.en_GB); // TODO apt:wbritish
+        if (allLangs || langs.canFind(Lang.en))
+            readUNIXDict(dictDir.nPath(`words`), Lang.en); // TODO apt:dictionaries-common
+        if (allLangs || langs.canFind(Lang.en_GB))
+            readUNIXDict(dictDir.nPath(`british-english-insane`), Lang.en_GB); // TODO apt:wbritish-insane
+        if (allLangs || langs.canFind(Lang.en_GB))
+            readUNIXDict(dictDir.nPath(`british-english-huge`), Lang.en_GB); // TODO apt:wbritish-huge
+        if (allLangs || langs.canFind(Lang.en_GB))
+            readUNIXDict(dictDir.nPath(`british-english`), Lang.en_GB); // TODO apt:wbritish
 
-        if (allLangs || langs.canFind(HLang.en_US))
-            readUNIXDict(dictDir.nPath(`american-english-insane`), HLang.en_US); // TODO apt:wamerican-insane
-        if (allLangs || langs.canFind(HLang.en_US))
-            readUNIXDict(dictDir.nPath(`american-english-huge`), HLang.en_US); // TODO apt:wamerican-huge
-        if (allLangs || langs.canFind(HLang.en_US))
-            readUNIXDict(dictDir.nPath(`american-english`), HLang.en_US); // TODO apt:wamerican
+        if (allLangs || langs.canFind(Lang.en_US))
+            readUNIXDict(dictDir.nPath(`american-english-insane`), Lang.en_US); // TODO apt:wamerican-insane
+        if (allLangs || langs.canFind(Lang.en_US))
+            readUNIXDict(dictDir.nPath(`american-english-huge`), Lang.en_US); // TODO apt:wamerican-huge
+        if (allLangs || langs.canFind(Lang.en_US))
+            readUNIXDict(dictDir.nPath(`american-english`), Lang.en_US); // TODO apt:wamerican
 
-        if (allLangs || langs.canFind(HLang.pt_BR))
-            readUNIXDict(dictDir.nPath(`brazilian`), HLang.pt_BR); // TODO apt:wbrazilian, NOTE iso-latin-1
+        if (allLangs || langs.canFind(Lang.pt_BR))
+            readUNIXDict(dictDir.nPath(`brazilian`), Lang.pt_BR); // TODO apt:wbrazilian, NOTE iso-latin-1
 
-        if (allLangs || langs.canFind(HLang.pt_BR))
-            readUNIXDict(dictDir.nPath(`bulgarian`), HLang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
+        if (allLangs || langs.canFind(Lang.pt_BR))
+            readUNIXDict(dictDir.nPath(`bulgarian`), Lang.bg); // TODO apt:wbulgarian, NOTE ISO-8859
 
-        if (allLangs || langs.canFind(HLang.en_CA))
-            readUNIXDict(dictDir.nPath(`canadian-english-insane`), HLang.en_CA);
+        if (allLangs || langs.canFind(Lang.en_CA))
+            readUNIXDict(dictDir.nPath(`canadian-english-insane`), Lang.en_CA);
 
-        if (allLangs || langs.canFind(HLang.da))
-            readUNIXDict(dictDir.nPath(`danish`), HLang.da);
+        if (allLangs || langs.canFind(Lang.da))
+            readUNIXDict(dictDir.nPath(`danish`), Lang.da);
 
-        if (allLangs || langs.canFind(HLang.nl))
-            readUNIXDict(dictDir.nPath(`dutch`), HLang.nl);
+        if (allLangs || langs.canFind(Lang.nl))
+            readUNIXDict(dictDir.nPath(`dutch`), Lang.nl);
 
-        if (allLangs || langs.canFind(HLang.fr))
-            readUNIXDict(dictDir.nPath(`french`), HLang.fr);
+        if (allLangs || langs.canFind(Lang.fr))
+            readUNIXDict(dictDir.nPath(`french`), Lang.fr);
 
-        if (allLangs || langs.canFind(HLang.faroese))
-            readUNIXDict(dictDir.nPath(`faroese`), HLang.faroese);
+        if (allLangs || langs.canFind(Lang.faroese))
+            readUNIXDict(dictDir.nPath(`faroese`), Lang.faroese);
 
-        if (allLangs || langs.canFind(HLang.gl))
-            readUNIXDict(dictDir.nPath(`galician-minimos`), HLang.gl);
+        if (allLangs || langs.canFind(Lang.gl))
+            readUNIXDict(dictDir.nPath(`galician-minimos`), Lang.gl);
 
-        if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath(`german-medical`), HLang.de); // TODO medical german
+        if (allLangs || langs.canFind(Lang.de))
+            readUNIXDict(dictDir.nPath(`german-medical`), Lang.de); // TODO medical german
 
-        if (allLangs || langs.canFind(HLang.it))
-            readUNIXDict(dictDir.nPath(`italian`), HLang.it);
+        if (allLangs || langs.canFind(Lang.it))
+            readUNIXDict(dictDir.nPath(`italian`), Lang.it);
 
-        if (allLangs || langs.canFind(HLang.de))
-            readUNIXDict(dictDir.nPath(`ngerman`), HLang.de); // new german
+        if (allLangs || langs.canFind(Lang.de))
+            readUNIXDict(dictDir.nPath(`ngerman`), Lang.de); // new german
 
-        if (allLangs || langs.canFind(HLang.no))
-            readUNIXDict(dictDir.nPath(`nynorsk`), HLang.no);
+        if (allLangs || langs.canFind(Lang.no))
+            readUNIXDict(dictDir.nPath(`nynorsk`), Lang.no);
 
-        if (allLangs || langs.canFind(HLang.en))
+        if (allLangs || langs.canFind(Lang.en))
             readWordNet(); // put this last to specialize existing lemma
     }
 
     /** Create a WordNet of languages $(D langs).
      */
-    this(const HLang[] langs = [HLang.en, HLang.sv],
+    this(const Lang[] langs = [Lang.en, Lang.sv],
          bool allLangs = false)
     {
         readDicts(langs, allLangs);
@@ -554,7 +554,7 @@ class WordNet(bool useArray = true,
         Return true if a new word was added, false if word was specialized.
      */
     bool addWord(S)(const S lemma, WordKind kind, ubyte synsetCount,
-                    HLang lang = HLang.unknown)
+                    Lang lang = Lang.unknown)
     {
         static if (useRCString) { const Lemma lemmaFixed = lemma; }
         else                    { immutable lemmaFixed = lemma; }
@@ -582,7 +582,7 @@ class WordNet(bool useArray = true,
         TODO filter on langs if langs is non-empty.
      */
     WordSense!Links[] meaningsOf(S)(const S lemma,
-                                    const HLang[] langs = [])
+                                    const Lang[] langs = [])
     {
         typeof(return) senses;
 
@@ -594,7 +594,7 @@ class WordNet(bool useArray = true,
             senses = _words[lowLemma];
             if (!langs.empty)
             {
-                senses = senses.filter!(sense => !langs.find(sense.hlang).empty).array;
+                senses = senses.filter!(sense => !langs.find(sense.lang).empty).array;
             }
         }
         return senses;
@@ -605,21 +605,21 @@ class WordNet(bool useArray = true,
     */
     auto canMean(S)(const S lemma,
                     const WordKind kind,
-                    const HLang[] langs = []) if (isSomeString!S)
+                    const Lang[] langs = []) if (isSomeString!S)
     {
         return meaningsOf(lemma, langs).canFind!(meaning =>
                                                  meaning.kind.memberOf(kind));
     }
 
     bool canMeanSomething(S)(const S lemma,
-                             const HLang[] langs = []) if (isSomeString!S)
+                             const Lang[] langs = []) if (isSomeString!S)
     {
         return !meaningsOf(lemma, langs).empty;
     }
 
     /** Check if $(D first) and $(D second) are meaningful. */
     S[] tryWordSplit(S)(S first, S second,
-                        const HLang[] langs = [],
+                        const Lang[] langs = [],
                         const bool crossLanguage = false,
                         const size_t minSize = 2,
                         bool backwards = true) if (isSomeString!S)
@@ -666,7 +666,7 @@ class WordNet(bool useArray = true,
         such, for instance, Swedish å, ä, ö
      */
     S[] findWordsSplit(S)(const S word,
-                          const HLang[] langs = [],
+                          const Lang[] langs = [],
                           const bool crossLanguage = false,
                           const size_t minSize = 2,
                           bool backwards = true) if (isSomeString!S)
@@ -706,7 +706,7 @@ class WordNet(bool useArray = true,
         languages $(D langs).
     */
     S[][] findWordsSplits(S)(const S word,
-                             const HLang[] langs = [],
+                             const Lang[] langs = [],
                              const bool crossLanguage = false,
                              const size_t minSize = 2) if (isSomeString!S)
     {
@@ -716,14 +716,14 @@ class WordNet(bool useArray = true,
 
     auto canMean(S)(S lemma,
                     WordKind kind,
-                    HLang lang = HLang.unknown) if (isSomeString!S)
+                    Lang lang = Lang.unknown) if (isSomeString!S)
     {
-        return canMean(lemma, kind, lang == HLang.unknown ? [] : [lang]);
+        return canMean(lemma, kind, lang == Lang.unknown ? [] : [lang]);
     }
 
     void readIndexLine(R, N)(const R line,
                              const N lnr,
-                             const HLang lang = HLang.unknown,
+                             const Lang lang = Lang.unknown,
                              const bool useMmFile = false)
     {
         if (!line.empty &&
@@ -772,7 +772,7 @@ class WordNet(bool useArray = true,
         Manual page: wndb
     */
     void readIndex(string fileName, bool useMmFile = false,
-                   HLang lang = HLang.unknown)
+                   Lang lang = Lang.unknown)
     {
         size_t lnr;
         /* TODO Functionize and merge with conceptnet5.readCSV */
@@ -806,8 +806,8 @@ class WordNet(bool useArray = true,
 }
 
 auto ref makeWordNet(bool useArray = true,
-                     bool useRCString = true)(HLang[] langs = [HLang.en,
-                                                               HLang.sv])
+                     bool useRCString = true)(Lang[] langs = [Lang.en,
+                                                               Lang.sv])
 {
     return new WordNet!(useArray, useRCString)(langs);
 }
@@ -827,9 +827,9 @@ unittest
     enum useArray = true;
     enum useRCString = false;
 
-    const netLangs = [HLang.en,
-                      HLang.de,
-                      HLang.sv];
+    const netLangs = [Lang.en,
+                      Lang.de,
+                      Lang.sv];
 
     auto wn = new WordNet!(useArray, useRCString)(netLangs);
 
@@ -840,17 +840,17 @@ unittest
     /*             wn.meaningsOf(word).map!(wordSense => wordSense.kind.to!string).joiner(`, `)); */
     /* } */
 
-    if (netLangs.canFind(HLang.en))
+    if (netLangs.canFind(Lang.en))
     {
-        assert(wn.canMean(`car`, WordKind.noun, [HLang.en]));
-        assert(wn.canMean(`car`, WordKind.noun, HLang.en));
-        assert(!wn.canMean(`longing`, WordKind.verb, [HLang.en]));
-        assert(wn.canMean(`january`, WordKind.nounMonth, [HLang.en]));
+        assert(wn.canMean(`car`, WordKind.noun, [Lang.en]));
+        assert(wn.canMean(`car`, WordKind.noun, Lang.en));
+        assert(!wn.canMean(`longing`, WordKind.verb, [Lang.en]));
+        assert(wn.canMean(`january`, WordKind.nounMonth, [Lang.en]));
     }
 
-    if (netLangs.canFind(HLang.sv))
+    if (netLangs.canFind(Lang.sv))
     {
-        const langs = [HLang.sv];
+        const langs = [Lang.sv];
         assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs) == [`kärnkrafts`, `avfalls`, `hink`]);
         assert(wn.findWordsSplit(`kärnkraftsavfallshink`, langs, false, 2, false) == [`kärnkraft`, `sav`, `falls`, `hink`]);
         assert(wn.findWordsSplit(`papperskorg`, langs) == [`pappers`, `korg`]);
@@ -865,26 +865,26 @@ unittest
         assert(wn.findWordsSplit(`kärnkraftsavfall`, langs) == [`kärnkrafts`, `avfall`]);
     }
 
-    if (netLangs.canFind(HLang.sv))
+    if (netLangs.canFind(Lang.sv))
     {
-        assert(wn.canMean(`måndag`, WordKind.nounWeekday, [HLang.sv]));
-        assert(wn.canMean(`måndag`, WordKind.noun, [HLang.sv]));
-        assert(wn.canMean(`bil`, WordKind.unknown, [HLang.sv]));
-        assert(wn.canMean(`tvätt`, WordKind.unknown, [HLang.sv]));
-        assert(!wn.canMean(`måndag`, WordKind.verb, [HLang.sv]));
-        assert(!wn.canMean(`måndag`, WordKind.adjective, [HLang.sv]));
-        assert(wn.canMean(`januari`, WordKind.nounMonth, [HLang.sv]));
-        assert(wn.canMean(`sopstation`, WordKind.unknown, [HLang.sv]));
+        assert(wn.canMean(`måndag`, WordKind.nounWeekday, [Lang.sv]));
+        assert(wn.canMean(`måndag`, WordKind.noun, [Lang.sv]));
+        assert(wn.canMean(`bil`, WordKind.unknown, [Lang.sv]));
+        assert(wn.canMean(`tvätt`, WordKind.unknown, [Lang.sv]));
+        assert(!wn.canMean(`måndag`, WordKind.verb, [Lang.sv]));
+        assert(!wn.canMean(`måndag`, WordKind.adjective, [Lang.sv]));
+        assert(wn.canMean(`januari`, WordKind.nounMonth, [Lang.sv]));
+        assert(wn.canMean(`sopstation`, WordKind.unknown, [Lang.sv]));
     }
 
-    if (netLangs.canFind(HLang.de))
+    if (netLangs.canFind(Lang.de))
     {
-        assert(wn.canMean(`fenster`, WordKind.unknown, [HLang.de]));
+        assert(wn.canMean(`fenster`, WordKind.unknown, [Lang.de]));
     }
 
-    if (netLangs.canFind(HLang.en))
+    if (netLangs.canFind(Lang.en))
     {
-        const langs = [HLang.en];
+        const langs = [Lang.en];
         assert(wn.findWordsSplit(`hashusband`, langs, false, 2, false) == [`has`, `husband`]);
         assert(wn.findWordsSplit(`physicalaction`, langs) == [`physical`, `action`]);
         assert(wn.findWordsSplit(`physicsexam`, langs) == [`physics`, `exam`]);
@@ -892,9 +892,9 @@ unittest
         assert(wn.findWordsSplit(`biltvätt`, langs) == [`biltvätt`]);
     }
 
-    if (netLangs.canFind(HLang.en))
+    if (netLangs.canFind(Lang.en))
     {
-        const langs = [HLang.en];
+        const langs = [Lang.en];
         assert(wn.formalize(`Jack run`, langs) == [SentencePart.subject,
                                                    SentencePart.predicate]);
         assert(wn.formalize(`Men swim`, langs) == [SentencePart.subject,
@@ -903,25 +903,25 @@ unittest
 
     if (false) // TODO Activate
     {
-        assert(wn.formalize(`Does jack run?`, [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
+        assert(wn.formalize(`Does jack run?`, [Lang.en]) == [SentencePart.subject, // TODO Wrap in Question()
                                                               SentencePart.predicate]);
 
-        assert(wn.formalize(`Does men swim?`, [HLang.en]) == [SentencePart.subject, // TODO Wrap in Question()
+        assert(wn.formalize(`Does men swim?`, [Lang.en]) == [SentencePart.subject, // TODO Wrap in Question()
                                                               SentencePart.predicate]);
 
-        assert(wn.formalize(`Jack and Jill`, [HLang.en]), [SentencePart.subject]);
-        assert(wn.formalize(`Men can drive`, [HLang.en]), [SentencePart.subject,
+        assert(wn.formalize(`Jack and Jill`, [Lang.en]), [SentencePart.subject]);
+        assert(wn.formalize(`Men can drive`, [Lang.en]), [SentencePart.subject,
                                                            SentencePart.predicate]);
-        assert(wn.formalize(`Women can also drive`, [HLang.en]), [SentencePart.subject,
+        assert(wn.formalize(`Women can also drive`, [Lang.en]), [SentencePart.subject,
                                                                   SentencePart.predicate]);
 
-        assert(wn.formalize(`The big blue car`, [HLang.en]) == [SentencePart.subject]);
-        assert(wn.formalize(`A big blue car`, [HLang.en]) == [SentencePart.subject]);
+        assert(wn.formalize(`The big blue car`, [Lang.en]) == [SentencePart.subject]);
+        assert(wn.formalize(`A big blue car`, [Lang.en]) == [SentencePart.subject]);
 
-        assert(wn.formalize(`Jag spelar tennis`, [HLang.sv]) == [SentencePart.subject,
+        assert(wn.formalize(`Jag spelar tennis`, [Lang.sv]) == [SentencePart.subject,
                                                                  SentencePart.predicate,
                                                                  SentencePart.object]);
-        assert(wn.formalize(`Biltvätt`, [HLang.sv]) == [SentencePart.subject]);
+        assert(wn.formalize(`Biltvätt`, [Lang.sv]) == [SentencePart.subject]);
     }
 
     /* write(`Press enter to continue: `); */

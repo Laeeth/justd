@@ -781,7 +781,7 @@ class Net(bool useArray = true,
         Words words;
         /* The following three are used to disambiguate different semantics
          * meanings of the same word in different languages. */
-        HLang lang;
+        Lang lang;
         WordKind wordKind;
         CategoryIx categoryIx;
         auto opCast(T : bool)() { return words !is null; }
@@ -792,7 +792,7 @@ class Net(bool useArray = true,
     {
         /* @safe @nogc pure nothrow: */
         this(Words words,
-             HLang lang,
+             Lang lang,
              WordKind lemmaKind,
              CategoryIx categoryIx,
              Origin origin = Origin.unknown,
@@ -815,7 +815,7 @@ class Net(bool useArray = true,
 
         // TODO Make this Lemma
         Words words;
-        HLang lang;
+        Lang lang;
         WordKind lemmaKind;
         CategoryIx categoryIx;
 
@@ -949,7 +949,7 @@ class Net(bool useArray = true,
 
         size_t[Rel.max + 1] _relCounts;
         size_t[Origin.max + 1] _linkSourceCounts;
-        size_t[HLang.max + 1] _hlangCounts;
+        size_t[Lang.max + 1] _hlangCounts;
         size_t[WordKind.max + 1] _kindCounts;
         size_t _conceptStringLengthSum = 0;
         size_t _connectednessSum = 0;
@@ -989,12 +989,12 @@ class Net(bool useArray = true,
         (semantic context) $(D wordKind).
     */
     Concept[] conceptByWordsMaybe(S)(S words,
-                                     HLang hlang = HLang.unknown,
+                                     Lang lang = Lang.unknown,
                                      WordKind wordKind = WordKind.unknown,
                                      CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
-        auto lemma = Lemma(words, hlang, wordKind, category);
+        auto lemma = Lemma(words, lang, wordKind, category);
         if (lemma in _conceptIxByLemma) // if hashed lookup possible
         {
             concepts = [conceptByIx(_conceptIxByLemma[lemma])]; // use it
@@ -1002,13 +1002,13 @@ class Net(bool useArray = true,
         else
         {
             // try to lookup parts of word
-            auto wordsSplit = _wordnet.findWordsSplit(words, [hlang]); // split in parts
+            auto wordsSplit = _wordnet.findWordsSplit(words, [lang]); // split in parts
             if (wordsSplit.length >= 2)
             {
                 const wordsFixed = wordsSplit.joiner("_").to!S;
-                /* dln("wordsFixed: ", wordsFixed, " in ", hlang, " as ", wordKind); */
+                /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", wordKind); */
                 // TODO: Functionize
-                auto lemmaFixed = Lemma(wordsFixed, hlang, wordKind, category);
+                auto lemmaFixed = Lemma(wordsFixed, lang, wordKind, category);
                 if (lemmaFixed in _conceptIxByLemma)
                 {
                     concepts = [conceptByIx(_conceptIxByLemma[lemmaFixed])];
@@ -1023,20 +1023,20 @@ class Net(bool useArray = true,
         If no wordKind given return all possible.
     */
     Concept[] conceptsByWords(S)(S words,
-                                 HLang hlang = HLang.unknown,
+                                 Lang lang = Lang.unknown,
                                  WordKind wordKind = WordKind.unknown,
                                  CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
-        if (hlang != HLang.unknown &&
+        if (lang != Lang.unknown &&
             wordKind != WordKind.unknown &&
             category != anyCategory)
         {
-            return conceptByWordsMaybe(words, hlang, wordKind, category);
+            return conceptByWordsMaybe(words, lang, wordKind, category);
         }
         else
         {
-            foreach (hlangGuess; EnumMembers!HLang) // for each language
+            foreach (hlangGuess; EnumMembers!Lang) // for each language
             {
                 if (_hlangCounts[hlangGuess])
                 {
@@ -1062,7 +1062,7 @@ class Net(bool useArray = true,
             writeln(`Lookup translation of individual words; bil_tvätt => car-wash`);
             foreach (word; words.splitter(`_`))
             {
-                writeln(`Translate word "`, word, `" from `, hlang, ` to English`);
+                writeln(`Translate word "`, word, `" from `, lang, ` to English`);
             }
         }
         return concepts;
@@ -1075,7 +1075,7 @@ class Net(bool useArray = true,
         const maxCount = quick ? 100000 : size_t.max;
 
         // WordNet
-        _wordnet = new WordNet!(true, true)([HLang.en]);
+        _wordnet = new WordNet!(true, true)([Lang.en]);
 
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
@@ -1127,7 +1127,7 @@ class Net(bool useArray = true,
 
     /** Lookup or Store Concept named $(D words) in language $(D lang). */
     ConceptIx lookupOrStoreConcept(Words words,
-                                   HLang lang,
+                                   Lang lang,
                                    WordKind kind,
                                    CategoryIx categoryIx,
                                    Origin origin)
@@ -1233,8 +1233,8 @@ class Net(bool useArray = true,
     {
         auto items = part.splitter('/');
 
-        const hlang = items.front.decodeHumanLang; items.popFront;
-        ++_hlangCounts[hlang];
+        const lang = items.front.decodeLang; items.popFront;
+        ++_hlangCounts[lang];
 
         static if (useRCString) { immutable words = items.front; }
         else                    { immutable words = items.front.idup; }
@@ -1252,7 +1252,7 @@ class Net(bool useArray = true,
         }
         ++_kindCounts[wordKind];
 
-        return lookupOrStoreConcept(correctCN5Lemma(words), hlang, wordKind, anyCategory, Origin.cn5);
+        return lookupOrStoreConcept(correctCN5Lemma(words), lang, wordKind, anyCategory, Origin.cn5);
     }
 
     import std.algorithm: splitter;
@@ -1309,7 +1309,7 @@ class Net(bool useArray = true,
             return typeof(return).init;
         }
 
-        const lang = HLang.unknown;
+        const lang = Lang.unknown;
         const kind = WordKind.noun;
 
         /* name */
@@ -1632,12 +1632,12 @@ class Net(bool useArray = true,
         }
 
         writeln(`Concept Count by Language:`);
-        foreach (hlang; HLang.min..HLang.max)
+        foreach (lang; Lang.min..Lang.max)
         {
-            const count = _hlangCounts[hlang];
+            const count = _hlangCounts[lang];
             if (count)
             {
-                writeln(`- `, hlang.toName, ` (`, hlang.to!string, `) : `, count);
+                writeln(`- `, lang.toName, ` (`, lang.to!string, `) : `, count);
             }
         }
 
@@ -1738,7 +1738,7 @@ class Net(bool useArray = true,
     void showLinkRelation(Rel rel,
                           RelDir linkDir,
                           bool negation = false,
-                          HLang lang = HLang.en)
+                          Lang lang = Lang.en)
     {
         write(` - `, rel.toHumanLang(linkDir, negation, lang), `: `);
     }
@@ -1749,7 +1749,7 @@ class Net(bool useArray = true,
 
         write(`(`); // open
 
-        if (concept.lang != HLang.unknown)
+        if (concept.lang != Lang.unknown)
         {
             write(concept.lang);
         }
@@ -1773,7 +1773,7 @@ class Net(bool useArray = true,
 
     /** Show concepts and their relations matching content in $(D line). */
     void showConcepts(S)(S line,
-                         HLang hlang = HLang.unknown,
+                         Lang lang = Lang.unknown,
                          WordKind wordKind = WordKind.unknown,
                          S lineSeparator = "_") if (isSomeString!S)
     {
@@ -1787,7 +1787,7 @@ class Net(bool useArray = true,
 
         writeln(`Line `, normalizedLine);
         foreach (concept; conceptsByWords(normalizedLine,
-                                          hlang,
+                                          lang,
                                           wordKind))
         {
             write(`- in `, concept.lang.toName);
