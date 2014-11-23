@@ -1,7 +1,7 @@
 /** Porter stemming algorithm */
 module stemming;
 
-import std.algorithm: endsWith;
+import std.algorithm: endsWith, canFind;
 import std.traits: isSomeString;
 
 import grammars: isEnglishVowel, isSwedishVowel, isSwedishConsonant, isEnglishConsonant;
@@ -491,6 +491,10 @@ unittest
     assert(stemmer.stem("relational") == "relat");
     assert(stemmer.stem("intricate") == "intric");
 
+    assert(stemmer.stem("connection") == "connect");
+    assert(stemmer.stem("connective") == "connect");
+    assert(stemmer.stem("connecting") == "connect");
+
     assert(stemmer.stem("agreed") == "agre");
     assert(stemmer.stem("disabled") == "disabl");
     assert(stemmer.stem("gentle") == "gentl");
@@ -508,6 +512,8 @@ unittest
     assert(stemmer.stem("hardrock") == "hardrock");
 }
 
+import dbg;
+
 auto ref stemSwedish(S)(S s) if (isSomeString!S)
 {
     {
@@ -519,20 +525,47 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum ing = `et`;
-        if (s.endsWith(ing))
+        enum an = `an`;
+        if (s.endsWith(an))
         {
-            S t = s[0 .. $ - ing.length];
-            if (t.length >= 3)
-            {
-                if (t[$ - 3].isSwedishConsonant &&
-                    t[$ - 2].isSwedishConsonant &&
-                    t[$ - 1].isSwedishConsonant)
-                {
-                    return s[0 .. $ - 1];
-                }
-            }
+            const t = s[0 .. $ - an.length];
+            if (t.endsWith(`ck`))
+                return s[0 ..$ - 1];
             return t;
+        }
+    }
+
+    {
+        enum et = `et`;
+        if (s.endsWith(et))
+        {
+            const t = s[0 .. $ - et.length];
+            if (t.length >= 3 &&
+                t[$ - 3].isSwedishConsonant &&
+                t[$ - 2].isSwedishConsonant &&
+                t[$ - 1].isSwedishConsonant)
+            {
+                return s[0 .. $ - 1];
+            }
+            else if (t.endsWith(`ck`))
+            {
+                return s[0 .. $ - 1];
+            }
+
+            return t;
+        }
+    }
+
+    {
+        enum are = `are`;
+        enum ast = `ast`;
+        if (s.endsWith(are, ast))
+        {
+            const t = s[0 .. $ - are.length];
+            if (t.endsWith(`mm`))
+                return t[0 .. $ - 1];
+            if (t.canFind!(a => a.isSwedishVowel))
+                return t;
         }
     }
 
@@ -540,7 +573,7 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         enum ning = `ning`;
         if (s.endsWith(ning))
         {
-            S t = s[0 .. $ - ning.length];
+            const t = s[0 .. $ - ning.length];
             if (!t.endsWith(`n`) &&
                 t != `tid`)
                 return t;
@@ -558,6 +591,8 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     return s;
 }
 
+import assert_ex;
+
 unittest
 {
     assert("grenen".stemSwedish == "gren");
@@ -574,6 +609,38 @@ unittest
     assert("äpplet".stemSwedish == "äpple");
 
     assert("jakt".stemSwedish == "jakt");
+
+    assert("sot".stemSwedish == "sot");
+    assert("sotare".stemSwedish == "sot");
+
+    assert("klok".stemSwedish == "klok");
+    assert("klokare".stemSwedish == "klok");
+    assert("klokast".stemSwedish == "klok");
+
+    assert("stark".stemSwedish == "stark");
+    assert("starkare".stemSwedish == "stark");
+    assert("starkast".stemSwedish == "stark");
+
+    assert("kort".stemSwedish == "kort");
+    assert("kortare".stemSwedish == "kort");
+    assert("kortast".stemSwedish == "kort");
+
+    assert("dum".stemSwedish == "dum");
+    assert("dummare".stemSwedish == "dum");
+    assert("dummast".stemSwedish == "dum");
+
+    assert("sann".stemSwedish == "sann");
+    assert("sannare".stemSwedish == "sann");
+    assert("sannare".stemSwedish == "sann");
+
+    assert("stare".stemSwedish == "stare");
+    assert("kvast".stemSwedish == "kvast");
+
+    assertEqual("täcket".stemSwedish, "täcke");
+    assert("räcket".stemSwedish == "räcke");
+
+    assert("klockan".stemSwedish == "klocka");
+    assert("sockan".stemSwedish == "socka");
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
