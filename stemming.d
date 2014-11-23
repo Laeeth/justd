@@ -607,6 +607,14 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         }
     }
 
+    {
+        enum llt = `llt`;
+        if (s.endsWith(llt))
+        {
+            return s[0 .. $ - 1];
+        }
+    }
+
     return s;
 }
 
@@ -671,6 +679,8 @@ unittest
     assert("kullarna".stemSwedish == "kullar");
 
     assert("roa".stemSwedish == "roa");
+
+    assert("fullt".stemSwedish == "full");
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
