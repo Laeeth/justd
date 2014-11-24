@@ -389,7 +389,7 @@ class Seq : SPatt
     override const(ubyte[]) getConstant() const { return []; }
 }
 
-auto seq(Args...)(Args args) { return new Seq(args); } // instantiator
+auto seq(Args...)(Args args) @safe pure nothrow { return new Seq(args); } // instantiator
 
 pure unittest
 {
