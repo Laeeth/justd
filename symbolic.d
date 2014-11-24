@@ -572,11 +572,11 @@ auto alt(Args...)(Args args) @safe pure nothrow { return new Alt(args); } // ins
 
 @safe pure nothrow unittest
 {
-    immutable a_b = alt(lit("a"),
-                        lit("b"));
+    immutable a_b = alt("a".lit,
+                        "b".lit);
 
-    immutable a__b = (lit("a") |
-                      lit("b"));
+    immutable a__b = ("a".lit |
+                      "b".lit);
 
     assert(a_b.isFixed);
     assert(!a_b.isConstant);
