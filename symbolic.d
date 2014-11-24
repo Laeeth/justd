@@ -916,6 +916,45 @@ Seq kwd(Arg)(Arg arg) { return seq(bow(), arg, eow()); }
     /* TODO assert(!x.at(" int", 0)); */
 }
 
+/** Pattern Paired with Prefix and Suffix.
+ */
+class Paired : Seq
+{
+    @safe pure nothrow:
+
+    this(Patt prefix_,
+         Patt suffix_,
+         Patt[] subs_)
+    {
+        super(subs_);
+        this.prefix = prefix_;
+        this.suffix = suffix_;
+    }
+
+    this(Args...)(Patt prefix_,
+                  Patt suffix_,
+                  Args subs_)
+    {
+        super(subs_);
+        this.prefix = prefix_;
+        this.suffix = suffix_;
+    }
+
+    Patt prefix, suffix;
+}
+
+Paired paired(Args...)(Patt prefix, Patt suffix, Args args) { return new Paired(prefix, suffix, args); }
+Paired parend(Args...)(Args args) { return new Paired(lit('('), lit(')'), args); }
+Paired hooked(Args...)(Args args) { return new Paired(lit('['), lit(']'), args); }
+Paired braced(Args...)(Args args) { return new Paired(lit('{'), lit('}'), args); }
+
+@safe pure nothrow unittest
+{
+    auto p = parend(lit("alpha"));
+    auto h = hooked(lit("alpha"));
+    auto b = braced(lit("alpha"));
+}
+
 /** Create Matcher for a UNIX Shell $(LUCKY Shebang) Pattern.
     Example: #!/bin/env rdmd
     See also: https://en.wikipedia.org/wiki/Shebang_(Unix)
