@@ -575,8 +575,7 @@ auto alt(Args...)(Args args) @safe pure nothrow { return new Alt(args); } // ins
     immutable a_b = alt("a".lit,
                         "b".lit);
 
-    immutable a__b = ("a".lit |
-                      "b".lit);
+    immutable a__b = ("a".lit | "b".lit);
 
     assert(a_b.isFixed);
     assert(!a_b.isConstant);
