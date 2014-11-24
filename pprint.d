@@ -6,8 +6,6 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
-    TODO Make printers members of Viz.
-
     TODO Remove all restrictions on pp.*Raw.* and call them using ranges such as repeat
 
     TODO Use "alias this" on wrapper structures and test!
@@ -157,6 +155,12 @@ enum SolarizedLightColorTheme
     gree    = "859900"
 }
 
+/** HTML tags with no side-effect when its arguments is empty.
+    See also: http://www.w3schools.com/html/html_formatting.asp
+*/
+enum nonStateHTMLTags = [`b`, `i`, `strong`, `em`, `sub`, `sup`, `small`, `ins`, `del`, `mark`
+                         `code`, `kbd`, `samp`, `samp`, `var`, `pre`];
+
 /** Visual Backend. */
 class Viz
 {
@@ -267,9 +271,898 @@ tr:nth-child(2n+1) { background: #` ~ SolarizedLightColorTheme.base3 ~ `; }
     {
         if (form == VizForm.HTML)
         {
-            ppRaw(this, "</body>\n</html>");
+            ppRaw("</body>\n</html>");
         }
     }
+
+    /** Put $(D arg) to $(D this) without any conversion nor coloring. */
+    void ppRaw(T...)(T args) @trusted
+    {
+        foreach (arg; args)
+        {
+            if (outFile == stdout)
+                (*term).write(arg);
+            else
+            outFile.write(arg);
+        }
+    }
+
+    /** Put $(D arg) to $(D this) without any conversion nor coloring. */
+    void pplnRaw(T...)(T args) @trusted
+    {
+        foreach (arg; args)
+        {
+            if (outFile == stdout)
+                if (flushNewlines)
+                    (*term).writeln(arg);
+                else
+                    (*term).write(arg, '\n');
+            else
+            if (flushNewlines)
+                outFile.writeln(arg);
+            else
+            outFile.write(arg, '\n');
+        }
+    }
+
+    void ppTagOpen(T, P...)(T tag, P params) @trusted
+    {
+        if (form == VizForm.HTML)
+        {
+            ppRaw(`<` ~ tag);
+            foreach (param; params)
+            {
+                ppRaw(' ', param);
+            }
+            ppRaw(`>`);
+        }
+    }
+
+    void ppTagClose(T)(T tag) @trusted
+    {
+        immutable arg = (form == VizForm.HTML) ? `</` ~ tag ~ `>` : tag;
+        ppRaw(arg);
+    }
+
+    void pplnTagOpen(T)(T tag) @trusted
+    {
+        immutable arg = (form == VizForm.HTML) ? `<` ~ tag ~ `>` : tag;
+        if (newlinedTags)
+            pplnRaw(arg);
+        else
+            ppRaw(arg);
+    }
+
+    void pplnTagClose(T)(T tag) @trusted
+    {
+        immutable arg = (form == VizForm.HTML) ? `</` ~ tag ~ `>` : tag;
+        if (newlinedTags)
+            pplnRaw(arg);
+        else
+            ppRaw(arg);
+    }
+
+    /** Put $(D arg) to $(D viz) possibly with conversion. */
+    void ppPut(T)(T arg,
+                  bool nbsp = true) @trusted
+    {
+        if (outFile == stdout)
+            (*term).write(arg);
+        else
+        {
+            if (form == VizForm.HTML)
+                outFile.write(arg.encodeHTML(nbsp));
+            else
+            outFile.write(arg);
+        }
+    }
+
+    /** Put $(D arg) to $(D viz) possibly with conversion. */
+    void ppPut(T)(Face!Color face,
+                  T arg,
+                  bool nbsp = true) @trusted
+    {
+        (*term).setFace(face, colorFlag);
+        ppPut(arg, nbsp);
+    }
+
+    void ppTaggedN(Tag, Args...)(in Tag tag, Args args)
+        @trusted if (isSomeString!Tag)
+    {
+        import std.algorithm: find;
+        static if (args.length == 1 &&
+                   isSomeString!(typeof(args[0])))
+        {
+            if (form == VizForm.HTML &&
+                args[0].empty &&
+                !nonStateHTMLTags.find(tag).empty)
+            {
+                return;         // skip HTML tags with no content
+            }
+        }
+        if (form == VizForm.HTML) { ppRaw(`<` ~ tag ~ `>`); }
+        ppN(args);
+        if (form == VizForm.HTML) { ppRaw(`</` ~ tag ~ `>`); }
+    }
+
+    void pplnTaggedN(Tag, Args...)(in Tag tag, Args args)
+        @trusted if (isSomeString!Tag)
+    {
+        ppTaggedN(tag, args);
+        if (newlinedTags)
+            pplnRaw(``);
+    }
+
+    /** Pretty-Print Single Argument $(D arg) to Terminal $(D term). */
+    void pp1(Arg)(int depth,
+                  Arg arg)
+        @trusted
+    {
+        static if (is(typeof(ppMathML(arg))))
+        {
+            if (form == VizForm.HTML)
+            {
+                return ppMathML(arg);
+            }
+        }
+        static if (is(typeof(arg.toMathML)))
+        {
+            if (form == VizForm.HTML)
+            {
+                // TODO Check for MathML support on backend
+                return ppRaw(arg.toMathML);
+            }
+        }
+        static if (is(typeof(arg.toHTML)))
+        {
+            if (form == VizForm.HTML)
+            {
+                return ppRaw(arg.toHTML);
+            }
+        }
+        static if (is(typeof(arg.toLaTeX)))
+        {
+            if (form == VizForm.LaTeX)
+            {
+                return ppRaw(arg.toLaTeX);
+            }
+        }
+
+        /* TODO Check if any member has mmber toMathML if so call it otherwise call
+         * toString. */
+
+        static if (isInstanceOf!(AsWords, Arg))
+        {
+            foreach (ix, subArg; arg.args)
+            {
+                static if (ix >= 1)
+                    ppRaw(` `); // separator
+                pp1(depth + 1, subArg);
+            }
+        }
+        else static if (isInstanceOf!(AsCSL, Arg))
+        {
+            foreach (ix, subArg; arg.args)
+            {
+                static if (ix >= 1)
+                    pp1(depth + 1, `,`); // separator
+                static if (isInputRange!(typeof(subArg)))
+                {
+                    foreach (subsubArg; subArg)
+                    {
+                        ppN(subsubArg, `,`);
+                    }
+                }
+            }
+        }
+        else static if (isInstanceOf!(AsBold, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`b`, arg.args);
+            }
+            else if (form == VizForm.Markdown)
+            {
+                ppRaw(`**`);
+                ppN(arg.args);
+                ppRaw(`**`);
+            }
+        }
+        else static if (isInstanceOf!(AsItalic, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`i`, arg.args);
+            }
+            else if (form == VizForm.Markdown)
+            {
+                ppRaw(`*`);
+                ppN(arg.args);
+                ppRaw(`*`);
+            }
+        }
+        else static if (isInstanceOf!(AsMonospaced, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`tt`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`{{`);
+                ppN(arg.args);
+                ppRaw(`}}`);
+            }
+            else if (form == VizForm.Markdown)
+            {
+                ppRaw('`');
+                ppN(arg.args);
+                ppRaw('`');
+            }
+        }
+        else static if (isInstanceOf!(AsCode, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                /* TODO Use arg.language member to highlight using fs tokenizers
+                 * which must be moved out of fs. */
+                ppTaggedN(`code`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(arg.language ? `{code:` ~ arg.language ~ `}` : `{code}`);
+                ppN(arg.args);
+                ppRaw(`{code}`);
+            }
+        }
+        else static if (isInstanceOf!(AsEmphasized, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`em`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`_`);
+                ppN(arg.args);
+                ppRaw(`_`);
+            }
+            else if (form == VizForm.Markdown)
+            {
+                ppRaw(`_`);
+                ppN(arg.args);
+                ppRaw(`_`);
+            }
+        }
+        else static if (isInstanceOf!(AsStronglyEmphasized, Arg))
+        {
+            if (form == VizForm.Markdown)
+            {
+                ppRaw(`__`);
+                ppN(arg.args);
+                ppRaw(`__`);
+            }
+        }
+        else static if (isInstanceOf!(AsStrong, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`strong`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`*`);
+                ppN(arg.args);
+                ppRaw(`*`);
+            }
+        }
+        else static if (isInstanceOf!(AsCitation, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`cite`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`??`);
+                ppN(arg.args);
+                ppRaw(`??`);
+            }
+        }
+        else static if (isInstanceOf!(AsDeleted, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`deleted`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`-`);
+                ppN(arg.args);
+                ppRaw(`-`);
+            }
+        }
+        else static if (isInstanceOf!(AsInserted, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`inserted`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`+`);
+                ppN(arg.args);
+                ppRaw(`+`);
+            }
+        }
+        else static if (isInstanceOf!(AsSuperscript, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`sup`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`^`);
+                ppN(arg.args);
+                ppRaw(`^`);
+            }
+        }
+        else static if (isInstanceOf!(AsSubscript, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                ppTaggedN(`sub`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`~`);
+                ppN(arg.args);
+                ppRaw(`~`);
+            }
+        }
+        else static if (isInstanceOf!(AsPreformatted, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                pplnTagOpen(`pre`);
+                ppN(arg.args);
+                pplnTagClose(`pre`);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                pplnRaw(`{noformat}`);
+                ppN(arg.args);
+                pplnRaw(`{noformat}`);
+            }
+        }
+        else static if (isInstanceOf!(AsHeader, Arg))
+        {
+            if      (form == VizForm.HTML)
+            {
+                pplnTaggedN(`h` ~ to!string(arg.level),
+                                arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`h` ~ to!string(arg.level) ~ `. `);
+                ppN(arg.args);
+                pplnRaw(``);
+            }
+            else if (form == VizForm.Markdown)
+            {
+                ppN(`#`.repeat(arg.level), ` `, arg.args);
+                pplnRaw(``);
+            }
+            else if (form == VizForm.textAsciiDoc ||
+                     form == VizForm.textAsciiDocUTF8)
+            {
+                ppRaw('\n');
+                ppN(`=`.repeat(arg.level),
+                        ' ',
+                        arg.args,
+                        ' ',
+                        `=`.repeat(arg.level));
+                ppRaw('\n');
+            }
+        }
+        else static if (isInstanceOf!(AsParagraph, Arg))
+        {
+            if (form == VizForm.HTML)
+            {
+                pplnTaggedN(`p`, arg.args);
+            }
+            else if (form == VizForm.LaTeX)
+            {
+                ppRaw(`\par `);
+                pplnTaggedN(arg.args);
+            }
+            else if (form == VizForm.textAsciiDoc ||
+                     form == VizForm.textAsciiDocUTF8)
+            {
+                ppRaw('\n');
+                ppN(`=`.repeat(arg.level),
+                        ` `, arg.args,
+                        ` `, tag, '\n');
+            }
+        }
+        else static if (isInstanceOf!(AsBlockquote, Arg))
+        {
+            if (form == VizForm.HTML)
+            {
+                pplnTaggedN(`blockquote`, arg.args);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                pplnRaw(`{quote}`);
+                pplnRaw(arg.args);
+                pplnRaw(`{quote}`);
+            }
+            else if (form == VizForm.Markdown)
+            {
+                foreach (subArg; arg.args)
+                {
+                    pplnRaw(`> `, subArg); // TODO Iterate for each line in subArg
+                }
+            }
+        }
+        else static if (isInstanceOf!(AsBlockquoteSP, Arg))
+        {
+            if (form == VizForm.jiraWikiMarkup)
+            {
+                ppRaw(`bq. `);
+                ppN(arg.args);
+                pplnRaw(``);
+            }
+        }
+        else static if (is(HorizontalRuler == Arg))
+        {
+            if (form == VizForm.HTML)
+            {
+                pplnTagOpen(`hr`);
+            }
+            if (form == VizForm.jiraWikiMarkup)
+            {
+                pplnRaw(`----`);
+            }
+        }
+        else static if (isInstanceOf!(MDash, Arg))
+        {
+            if (form == VizForm.HTML)
+            {
+                ppRaw(`&mdash;`);
+            }
+            if (form == VizForm.jiraWikiMarkup ||
+                form == VizForm.Markdown ||
+                form == VizForm.LaTeX)
+            {
+                pplnRaw(`---`);
+            }
+        }
+        else static if (isInstanceOf!(AsUList, Arg))
+        {
+            if (form == VizForm.HTML) { pplnTagOpen(`ul`); }
+            else if (form == VizForm.LaTeX) { pplnRaw(`\begin{enumerate}`); }
+            ppN(arg.args);
+            if (form == VizForm.HTML) { pplnTagClose(`ul`); }
+            else if (form == VizForm.LaTeX) { pplnRaw(`\end{enumerate}`); }
+        }
+        else static if (isInstanceOf!(AsOList, Arg))
+        {
+            if (form == VizForm.HTML) { pplnTagOpen(`ol`); }
+            else if (form == VizForm.LaTeX) { pplnRaw(`\begin{itemize}`); }
+            ppN(arg.args);
+            if (form == VizForm.HTML) { pplnTagClose(`ol`); }
+            else if (form == VizForm.LaTeX) { pplnRaw(`\end{itemize}`); }
+        }
+        else static if (isInstanceOf!(AsDescription, Arg)) // if args .length == 1 && an InputRange of 2-tuples pairs
+        {
+            if (form == VizForm.HTML) { pplnTagOpen(`dl`); } // TODO TERM <dt>, DEFINITION <dd>
+            else if (form == VizForm.LaTeX) { pplnRaw(`\begin{description}`); } // TODO \item[TERM] DEFINITION
+            ppN(arg.args);
+            if (form == VizForm.HTML) { pplnTagClose(`dl`); }
+            else if (form == VizForm.LaTeX) { pplnRaw(`\end{description}`); }
+        }
+        else static if (isInstanceOf!(AsTable, Arg))
+        {
+            if (form == VizForm.HTML)
+            {
+                const border = (arg.border ? ` border=` ~ arg.border : ``);
+                pplnTagOpen(`table` ~ border);
+            }
+            else if (form == VizForm.LaTeX)
+            {
+                pplnRaw(`\begin{tabular}`);
+            }
+
+            static if (arg.args.length == 1 &&
+                       isIterable!(typeof(arg.args[0])))
+            {
+                auto rows = arg.args[0].asRows();
+                rows.recurseFlag = arg.recurseFlag; // propagate
+                rows.rowNr = arg.rowNr;
+                pp(rows);
+            }
+            else
+            {
+                ppN(arg.args);
+            }
+
+            if (form == VizForm.HTML)
+            {
+                pplnTagClose(`table`);
+            }
+            else if (form == VizForm.LaTeX)
+            {
+                pplnRaw(`\end{tabular}`);
+            }
+        }
+        else static if (isInstanceOf!(AsRows, Arg) &&
+                        arg.args.length == 1 &&
+                        isIterable!(typeof(arg.args[0])))
+        {
+            bool capitalizeHeadings = true;
+
+            /* See also: http://forum.dlang.org/thread/wjksldfpkpenoskvhsqa@forum.dlang.org#post-jwfildowqrbwtamywsmy:40forum.dlang.org */
+
+            // use aggregate members as header
+            alias Front = ElementType!(typeof(arg.args[0])); // elementtype of Iteratable
+            static if (isAggregateType!Front)
+            {
+                /* TODO When __traits(documentation,x)
+                   here https://github.com/D-Programming-Language/dmd/pull/3531
+                   get merged use it! */
+                // pplnTaggedN(`tr`, subArg.asCols); // TODO asItalic
+                // Use __traits(allMembers, T) instead
+                // Can we lookup file and line of user defined types aswell?
+
+                // member names header.
+                if (form == VizForm.HTML) { pplnTagOpen(`tr`); } // TODO Functionize
+
+                // index column
+                if      (arg.rowNr == RowNr.offsetZero) pplnTaggedN(`td`, "0-Offset");
+                else if (arg.rowNr == RowNr.offsetOne)  pplnTaggedN(`td`, "1-Offset");
+                foreach (ix, Member; typeof(Front.tupleof))
+                {
+                    import std.ascii: isUpper; // D symbols cannot have unicode
+                    import std.string: capitalize;
+                    import std.algorithm: joiner;
+
+                    enum idName = __traits(identifier, Front.tupleof[ix]).preSlicer!isUpper.map!capitalize.joiner(" ");
+                    enum typeName = Unqual!(Member).stringof; // constness of no interest hee
+
+                    static      if (is(Memb == struct))    enum qual = `struct `;
+                    else static if (is(Memb == class))     enum qual = `class `;
+                    else static if (is(Memb == enum))      enum qual = `enum `;
+                    else static if (is(Memb == interface)) enum qual = `interface `;
+                    else                                   enum qual = ``; // TODO Are there more qualifiers
+
+                    pplnTaggedN(`td`,
+                                    idName.asItalic.asBold,
+                                    `<br>`,
+                                    qual.asKeyword,
+                                    typeName.asType);
+                }
+                if (form == VizForm.HTML) { pplnTagClose(`tr`); }
+            }
+
+            size_t ix = 0;
+            foreach (subArg; arg.args[0]) // for each table row
+            {
+                auto cols = subArg.asCols();
+                cols.recurseFlag = arg.recurseFlag; // propagate
+                cols.rowNr = arg.rowNr;
+                cols.rowIx = ix;
+                pplnTaggedN(`tr`, cols); // print columns
+                ix++;
+            }
+        }
+        else static if (isInstanceOf!(AsCols, Arg))
+        {
+            if (arg.args.length == 1 &&
+                isAggregateType!(typeof(arg.args[0])))
+            {
+                auto args0 = arg.args[0];
+                if (form == VizForm.jiraWikiMarkup)
+                {
+                    /* if (args0.length >= 1) { ppRaw(`|`); } */
+                }
+                if      (arg.rowNr == RowNr.offsetZero)
+                    pplnTaggedN(`td`, arg.rowIx + 0);
+                else if (arg.rowNr == RowNr.offsetOne)
+                    pplnTaggedN(`td`, arg.rowIx + 1);
+                foreach (subArg; args0.tupleof) // for each table column
+                {
+                    if (form == VizForm.HTML)
+                    {
+                        pplnTaggedN(`td`, subArg); // each element in aggregate as a column
+                    }
+                    else if (form == VizForm.jiraWikiMarkup)
+                    {
+                        /* pp1(subArg); ppRaw(`|`); */
+                    }
+                }
+            }
+            else
+            {
+                pplnTaggedN(`tr`, arg.args);
+            }
+        }
+        else static if (isInstanceOf!(AsRow, Arg))
+        {
+            string spanArg;
+            static if (arg.args.length == 1 &&
+                       isInstanceOf!(Span, typeof(arg.args[0])))
+            {
+                spanArg ~= ` rowspan="` ~ to!string(arg._span) ~ `"`;
+            }
+            if (form == VizForm.HTML) { pplnTagOpen(`tr` ~ spanArg); }
+            ppN(arg.args);
+            if (form == VizForm.HTML) { pplnTagClose(`tr`); }
+        }
+        else static if (isInstanceOf!(AsCell, Arg))
+        {
+            string spanArg;
+            static if (arg.args.length >= 1 &&
+                       isInstanceOf!(Span, typeof(arg.args[0])))
+            {
+                spanArg ~= ` colspan="` ~ to!string(arg._span) ~ `"`;
+            }
+            if (form == VizForm.HTML) { ppTagOpen(`td` ~ spanArg); }
+            ppN(arg.args);
+            if (form == VizForm.HTML) { pplnTagClose(`td`); }
+        }
+        else static if (isInstanceOf!(AsTHeading, Arg))
+        {
+            if (form == VizForm.HTML)
+            {
+                pplnTagOpen(`th`);
+                ppN(arg.args);
+                pplnTagClose(`th`);
+            }
+            else if (form == VizForm.jiraWikiMarkup)
+            {
+                if (args.length >= 1)
+                {
+                    ppRaw(`||`);
+                }
+                foreach (subArg; args)
+                {
+                    pp1(subArg);
+                    ppRaw(`||`);
+                }
+            }
+        }
+        else static if (isInstanceOf!(AsItem, Arg))
+        {
+            if (form == VizForm.HTML) { ppTagOpen(`li`); }
+            else if (form == VizForm.textAsciiDoc) { ppRaw(` - `); } // if inside ordered list use . instead of -
+            else if (form == VizForm.LaTeX) { ppRaw(`\item `); }
+            else if (form == VizForm.textAsciiDocUTF8) { ppRaw(` • `); }
+            else if (form == VizForm.Markdown) { ppRaw(`* `); } // TODO Alternatively +,-,*, or 1. TODO Need counter for ordered lists
+            ppN(arg.args);
+            if (form == VizForm.HTML) { pplnTagClose(`li`); }
+            else if (form == VizForm.LaTeX) { pplnRaw(``); }
+            else if (form == VizForm.textAsciiDoc ||
+                     form == VizForm.textAsciiDocUTF8 ||
+                     form == VizForm.Markdown) { pplnRaw(``); }
+        }
+        else static if (isInstanceOf!(AsPath, Arg) ||
+                        isInstanceOf!(AsURL, Arg))
+        {
+            auto vizArg = this;
+            vizArg.treeFlag = false;
+
+            enum isString = isSomeString!(typeof(arg.arg)); // only create hyperlink if arg is a string
+
+            static if (isString)
+            {
+                if (form == VizForm.HTML)
+                {
+                    static if (isInstanceOf!(AsPath, Arg))
+                    {
+                        ppTagOpen(`a href="file://` ~ arg.arg ~ `"`);
+                    }
+                    else static if (isInstanceOf!(AsURL, Arg))
+                    {
+                        ppTagOpen(`a href="` ~ arg.arg ~ `"`);
+                    }
+                }
+            }
+
+            vizArg.pp1(depth + 1, arg.arg);
+
+            static if (isString)
+            {
+                if (form == VizForm.HTML)
+                {
+                    ppTagClose(`a`);
+                }
+            }
+        }
+        else static if (isInstanceOf!(AsName, Arg))
+        {
+            auto vizArg = viz;
+            vizArg.treeFlag = true;
+            pp1(term, vizArg, depth + 1, arg.arg);
+        }
+        else static if (isInstanceOf!(AsHit, Arg))
+        {
+            const ixs = to!string(arg.ix);
+            if (form == VizForm.HTML) { ppTagOpen(`hit` ~ ixs); }
+            pp1(depth + 1, arg.args);
+            if (form == VizForm.HTML) { ppTagClose(`hit` ~ ixs); }
+        }
+        else static if (isInstanceOf!(AsCtx, Arg))
+        {
+            if (form == VizForm.HTML) { ppTagOpen(`hit_context`); }
+            pp1(depth + 1, arg.args);
+            if (form == VizForm.HTML) { ppTagClose(`hit_context`); }
+        }
+        else static if (isArray!Arg &&
+                        !isSomeString!Arg)
+        {
+            ppRaw(`[`);
+            foreach (ix, subArg; arg)
+            {
+                if (ix >= 1)
+                    ppRaw(`,`); // separator
+                pp1(depth + 1, subArg);
+            }
+            ppRaw(`]`);
+        }
+        else static if (isInputRange!Arg)
+        {
+            foreach (subArg; arg)
+            {
+                pp1(depth + 1, subArg);
+            }
+        }
+        else static if (__traits(hasMember, arg, "parent")) // TODO Use isFile = File or NonNull!File
+        {
+            if (form == VizForm.HTML)
+            {
+                ppRaw(`<a href="file://`);
+                ppPut(arg.path);
+                ppRaw(`">`);
+            }
+
+            if (!treeFlag)
+            {
+                // write parent path
+                foreach (parent; arg.parents)
+                {
+                    ppPut(dirSeparator);
+                    if (form == VizForm.HTML) { ppTagOpen(`b`); }
+                    ppPut(dirFace, parent.name);
+                    if (form == VizForm.HTML) { ppTagClose(`b`); }
+                }
+                ppPut(dirSeparator);
+            }
+
+            // write name
+            static if (__traits(hasMember, arg, "isRoot")) // TODO Use isDir = Dir or NonNull!Dir
+            {
+                immutable name = arg.isRoot ? dirSeparator : arg.name ~ dirSeparator;
+            }
+            else
+            {
+                immutable name = arg.name;
+            }
+
+            if (form == VizForm.HTML)
+            {
+                static      if (isSymlink!Arg) { ppTagOpen(`i`); }
+                else static if (isDir!Arg) { ppTagOpen(`b`); }
+            }
+
+            ppPut(arg.getFace(), name);
+
+            if (form == VizForm.HTML)
+            {
+                static      if (isSymlink!Arg) { ppTagClose(`i`); }
+                else static if (isDir!Arg) { ppTagClose(`b`); }
+            }
+
+            if (form == VizForm.HTML) { ppTagClose(`a`); }
+        }
+        else
+        {
+            static if (__traits(hasMember, arg, "path"))
+            {
+                const arg_string = arg.path;
+            }
+            else
+            {
+                const arg_string = to!string(arg);
+            }
+
+            static if (__traits(hasMember, arg, "face") &&
+                       __traits(hasMember, arg.face, "tagsHTML"))
+            {
+                if (form == VizForm.HTML)
+                {
+                    foreach (tag; arg.face.tagsHTML)
+                    {
+                        outFile.write(`<`, tag, `>`);
+                    }
+                }
+            }
+
+            // write
+            (*term).setFace(arg.getFace(), colorFlag);
+            if (outFile == stdout)
+            {
+                (*term).write(arg_string);
+            }
+            else
+            {
+                ppPut(arg.getFace(), arg_string);
+            }
+
+            static if (__traits(hasMember, arg, "face") &&
+                       __traits(hasMember, arg.face, "tagsHTML"))
+            {
+                if (form == VizForm.HTML)
+                {
+                    foreach (tag; arg.face.tagsHTML)
+                    {
+                        outFile.write(`</`, tag, `>`);
+                    }
+                }
+            }
+        }
+    }
+
+    /** Pretty-Print Multiple Arguments $(D args) to Terminal $(D term). */
+    void ppN(Args...)(Args args) @trusted
+    {
+        foreach (arg; args)
+        {
+            pp1(0, arg);
+        }
+    }
+
+    /** Pretty-Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
+    void pp(Args...)(Args args) @trusted
+    {
+        ppN(args);
+        if (outFile == stdout)
+        {
+            (*term).flush();
+        }
+    }
+
+    /** Pretty-Print Arguments $(D args) including final line termination. */
+    void ppln(Args...)(Args args) @trusted
+    {
+        ppN(args);
+        if (outFile == stdout)
+        {
+            (*term).writeln(lbr(form == VizForm.HTML));
+            (*term).flush();
+        }
+        else
+        {
+            outFile.writeln(lbr(form == VizForm.HTML));
+        }
+    }
+
+    /** Pretty-Print Arguments $(D args) each including a final line termination. */
+    void pplns(Args...)(Args args) @trusted
+    {
+        foreach (arg; args)
+        {
+            ppln(args);
+        }
+    }
+
+    /** Print End of Line to Terminal $(D term). */
+    void ppendl() @trusted
+    {
+        ppln(``);
+    }
+
 }
 
 struct Face(Color)
@@ -343,105 +1236,6 @@ void setFace(Term, Face)(ref Term term, Face face, bool colorFlag) @trusted
                    face.bg);
 }
 
-/** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void ppRaw(T...)(Viz viz,
-                 T args) @trusted
-{
-    foreach (arg; args)
-    {
-        if (viz.outFile == stdout)
-            (*viz.term).write(arg);
-        else
-            viz.outFile.write(arg);
-    }
-}
-
-/** Put $(D arg) to $(D viz) without any conversion nor coloring. */
-void pplnRaw(T...)(Viz viz,
-                   T args) @trusted
-{
-    foreach (arg; args)
-    {
-        if (viz.outFile == stdout)
-            if (viz.flushNewlines)
-                (*viz.term).writeln(arg);
-            else
-                (*viz.term).write(arg, '\n');
-        else
-            if (viz.flushNewlines)
-                viz.outFile.writeln(arg);
-            else
-                viz.outFile.write(arg, '\n');
-    }
-}
-
-void ppTagOpen(T, P...)(Viz viz,
-                        T tag, P params) @trusted
-{
-    if (viz.form == VizForm.HTML)
-    {
-        viz.ppRaw(`<` ~ tag);
-        foreach (param; params)
-        {
-            viz.ppRaw(' ', param);
-        }
-        viz.ppRaw(`>`);
-    }
-}
-
-void ppTagClose(T)(Viz viz,
-                   T tag) @trusted
-{
-    immutable arg = (viz.form == VizForm.HTML) ? `</` ~ tag ~ `>` : tag;
-    viz.ppRaw(arg);
-}
-
-void pplnTagOpen(T)(Viz viz,
-                    T tag) @trusted
-{
-    immutable arg = (viz.form == VizForm.HTML) ? `<` ~ tag ~ `>` : tag;
-    if (viz.newlinedTags)
-        viz.pplnRaw(arg);
-    else
-        viz.ppRaw(arg);
-}
-
-void pplnTagClose(T)(Viz viz,
-                     T tag) @trusted
-{
-    immutable arg = (viz.form == VizForm.HTML) ? `</` ~ tag ~ `>` : tag;
-    if (viz.newlinedTags)
-        viz.pplnRaw(arg);
-    else
-        viz.ppRaw(arg);
-}
-
-/** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(T)(Viz viz,
-              T arg,
-              bool nbsp = true) @trusted
-{
-    if (viz.outFile == stdout)
-        (*viz.term).write(arg);
-    else
-    {
-        if (viz.form == VizForm.HTML)
-            viz.outFile.write(arg.encodeHTML(nbsp));
-        else
-            viz.outFile.write(arg);
-    }
-}
-
-/** Put $(D arg) to $(D viz) possibly with conversion. */
-void ppPut(T)(Viz viz,
-              Face!Color face,
-              T arg,
-              bool nbsp = true) @trusted
-{
-    (*viz.term).setFace(face, viz.colorFlag);
-    viz.ppPut(arg, nbsp);
-}
-
 /** Fazed (Rich) Text. */
 struct Fazed(T)
 {
@@ -487,817 +1281,4 @@ auto getFace(Arg)(in Arg arg) @safe pure nothrow
     {
         return stdFace;
     }
-}
-
-/** HTML tags with no side-effect when its arguments is empty.
-    See also: http://www.w3schools.com/html/html_formatting.asp
- */
-static immutable nonStateHTMLTags = [`b`, `i`, `strong`, `em`, `sub`, `sup`, `small`, `ins`, `del`, `mark`
-                                     `code`, `kbd`, `samp`, `samp`, `var`, `pre`];
-
-void ppTaggedN(Tag, Args...)(Viz viz,
-                             in Tag tag,
-                             Args args)
-    @trusted if (isSomeString!Tag)
-{
-    import std.algorithm: find;
-    static if (args.length == 1 &&
-               isSomeString!(typeof(args[0])))
-    {
-        if (viz.form == VizForm.HTML &&
-            args[0].empty &&
-            !nonStateHTMLTags.find(tag).empty)
-        {
-            return;         // skip HTML tags with no content
-        }
-    }
-    if (viz.form == VizForm.HTML) { viz.ppRaw(`<` ~ tag ~ `>`); }
-    viz.ppN(args);
-    if (viz.form == VizForm.HTML) { viz.ppRaw(`</` ~ tag ~ `>`); }
-}
-
-
-void pplnTaggedN(Tag, Args...)(Viz viz,
-                               in Tag tag,
-                               Args args)
-    @trusted if (isSomeString!Tag)
-{
-    viz.ppTaggedN(tag, args);
-    if (viz.newlinedTags)
-        viz.pplnRaw(``);
-}
-
-/** Pretty-Print Single Argument $(D arg) to Terminal $(D term). */
-void pp1(Arg)(Viz viz,
-              int depth,
-              Arg arg)
-    @trusted
-{
-    static if (is(typeof(viz.ppMathML(arg))))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            return viz.ppMathML(arg);
-        }
-    }
-    static if (is(typeof(arg.toMathML)))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            // TODO Check for MathML support on backend
-            return viz.ppRaw(arg.toMathML);
-        }
-    }
-    static if (is(typeof(arg.toHTML)))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            return viz.ppRaw(arg.toHTML);
-        }
-    }
-    static if (is(typeof(arg.toLaTeX)))
-    {
-        if (viz.form == VizForm.LaTeX)
-        {
-            return viz.ppRaw(arg.toLaTeX);
-        }
-    }
-
-    /* TODO Check if any member has mmber toMathML if so call it otherwise call
-     * toString. */
-
-    static if (isInstanceOf!(AsWords, Arg))
-    {
-        foreach (ix, subArg; arg.args)
-        {
-            static if (ix >= 1)
-                viz.ppRaw(` `); // separator
-            viz.pp1(depth + 1, subArg);
-        }
-    }
-    else static if (isInstanceOf!(AsCSL, Arg))
-    {
-        foreach (ix, subArg; arg.args)
-        {
-            static if (ix >= 1)
-                viz.pp1(depth + 1, `,`); // separator
-            static if (isInputRange!(typeof(subArg)))
-            {
-                foreach (subsubArg; subArg)
-                {
-                    viz.ppN(subsubArg, `,`);
-                }
-            }
-        }
-    }
-    else static if (isInstanceOf!(AsBold, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`b`, arg.args);
-        }
-        else if (viz.form == VizForm.Markdown)
-        {
-            viz.ppRaw(`**`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`**`);
-        }
-    }
-    else static if (isInstanceOf!(AsItalic, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`i`, arg.args);
-        }
-        else if (viz.form == VizForm.Markdown)
-        {
-            viz.ppRaw(`*`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`*`);
-        }
-    }
-    else static if (isInstanceOf!(AsMonospaced, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`tt`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`{{`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`}}`);
-        }
-        else if (viz.form == VizForm.Markdown)
-        {
-            viz.ppRaw('`');
-            viz.ppN(arg.args);
-            viz.ppRaw('`');
-        }
-    }
-    else static if (isInstanceOf!(AsCode, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            /* TODO Use arg.language member to highlight using fs tokenizers
-             * which must be moved out of fs. */
-            viz.ppTaggedN(`code`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(arg.language ? `{code:` ~ arg.language ~ `}` : `{code}`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`{code}`);
-        }
-    }
-    else static if (isInstanceOf!(AsEmphasized, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`em`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`_`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`_`);
-        }
-        else if (viz.form == VizForm.Markdown)
-        {
-            viz.ppRaw(`_`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`_`);
-        }
-    }
-    else static if (isInstanceOf!(AsStronglyEmphasized, Arg))
-    {
-        if (viz.form == VizForm.Markdown)
-        {
-            viz.ppRaw(`__`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`__`);
-        }
-    }
-    else static if (isInstanceOf!(AsStrong, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`strong`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`*`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`*`);
-        }
-    }
-    else static if (isInstanceOf!(AsCitation, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`cite`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`??`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`??`);
-        }
-    }
-    else static if (isInstanceOf!(AsDeleted, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`deleted`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`-`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`-`);
-        }
-    }
-    else static if (isInstanceOf!(AsInserted, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`inserted`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`+`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`+`);
-        }
-    }
-    else static if (isInstanceOf!(AsSuperscript, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`sup`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`^`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`^`);
-        }
-    }
-    else static if (isInstanceOf!(AsSubscript, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.ppTaggedN(`sub`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`~`);
-            viz.ppN(arg.args);
-            viz.ppRaw(`~`);
-        }
-    }
-    else static if (isInstanceOf!(AsPreformatted, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.pplnTagOpen(`pre`);
-            viz.ppN(arg.args);
-            viz.pplnTagClose(`pre`);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.pplnRaw(`{noformat}`);
-            viz.ppN(arg.args);
-            viz.pplnRaw(`{noformat}`);
-        }
-    }
-    else static if (isInstanceOf!(AsHeader, Arg))
-    {
-        if      (viz.form == VizForm.HTML)
-        {
-            viz.pplnTaggedN(`h` ~ to!string(arg.level),
-                            arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`h` ~ to!string(arg.level) ~ `. `);
-            viz.ppN(arg.args);
-            viz.pplnRaw(``);
-        }
-        else if (viz.form == VizForm.Markdown)
-        {
-            viz.ppN(`#`.repeat(arg.level), ` `, arg.args);
-            viz.pplnRaw(``);
-        }
-        else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8)
-        {
-            viz.ppRaw('\n');
-            viz.ppN(`=`.repeat(arg.level),
-                    ' ',
-                    arg.args,
-                    ' ',
-                    `=`.repeat(arg.level));
-            viz.ppRaw('\n');
-        }
-    }
-    else static if (isInstanceOf!(AsParagraph, Arg))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            viz.pplnTaggedN(`p`, arg.args);
-        }
-        else if (viz.form == VizForm.LaTeX)
-        {
-            viz.ppRaw(`\par `);
-            viz.pplnTaggedN(arg.args);
-        }
-        else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8)
-        {
-            viz.ppRaw('\n');
-            viz.ppN(`=`.repeat(arg.level),
-                    ` `, arg.args,
-                    ` `, tag, '\n');
-        }
-    }
-    else static if (isInstanceOf!(AsBlockquote, Arg))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            viz.pplnTaggedN(`blockquote`, arg.args);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.pplnRaw(`{quote}`);
-            viz.pplnRaw(arg.args);
-            viz.pplnRaw(`{quote}`);
-        }
-        else if (viz.form == VizForm.Markdown)
-        {
-            foreach (subArg; arg.args)
-            {
-                viz.pplnRaw(`> `, subArg); // TODO Iterate for each line in subArg
-            }
-        }
-    }
-    else static if (isInstanceOf!(AsBlockquoteSP, Arg))
-    {
-        if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.ppRaw(`bq. `);
-            viz.ppN(arg.args);
-            viz.pplnRaw(``);
-        }
-    }
-    else static if (is(HorizontalRuler == Arg))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            viz.pplnTagOpen(`hr`);
-        }
-        if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            viz.pplnRaw(`----`);
-        }
-    }
-    else static if (isInstanceOf!(MDash, Arg))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            viz.ppRaw(`&mdash;`);
-        }
-        if (viz.form == VizForm.jiraWikiMarkup ||
-            viz.form == VizForm.Markdown ||
-            viz.form == VizForm.LaTeX)
-        {
-            viz.pplnRaw(`---`);
-        }
-    }
-    else static if (isInstanceOf!(AsUList, Arg))
-    {
-        if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`ul`); }
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{enumerate}`); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.pplnTagClose(`ul`); }
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{enumerate}`); }
-    }
-    else static if (isInstanceOf!(AsOList, Arg))
-    {
-        if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`ol`); }
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{itemize}`); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.pplnTagClose(`ol`); }
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{itemize}`); }
-    }
-    else static if (isInstanceOf!(AsDescription, Arg)) // if args .length == 1 && an InputRange of 2-tuples pairs
-    {
-        if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`dl`); } // TODO TERM <dt>, DEFINITION <dd>
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\begin{description}`); } // TODO \item[TERM] DEFINITION
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.pplnTagClose(`dl`); }
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(`\end{description}`); }
-    }
-    else static if (isInstanceOf!(AsTable, Arg))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            const border = (arg.border ? ` border=` ~ arg.border : ``);
-            viz.pplnTagOpen(`table` ~ border);
-        }
-        else if (viz.form == VizForm.LaTeX)
-        {
-            viz.pplnRaw(`\begin{tabular}`);
-        }
-
-        static if (arg.args.length == 1 &&
-                   isIterable!(typeof(arg.args[0])))
-        {
-            auto rows = arg.args[0].asRows();
-            rows.recurseFlag = arg.recurseFlag; // propagate
-            rows.rowNr = arg.rowNr;
-            viz.pp(rows);
-        }
-        else
-        {
-            viz.ppN(arg.args);
-        }
-
-        if (viz.form == VizForm.HTML)
-        {
-            viz.pplnTagClose(`table`);
-        }
-        else if (viz.form == VizForm.LaTeX)
-        {
-            viz.pplnRaw(`\end{tabular}`);
-        }
-    }
-    else static if (isInstanceOf!(AsRows, Arg) &&
-                    arg.args.length == 1 &&
-                    isIterable!(typeof(arg.args[0])))
-    {
-        bool capitalizeHeadings = true;
-
-        /* See also: http://forum.dlang.org/thread/wjksldfpkpenoskvhsqa@forum.dlang.org#post-jwfildowqrbwtamywsmy:40forum.dlang.org */
-
-        // use aggregate members as header
-        alias Front = ElementType!(typeof(arg.args[0])); // elementtype of Iteratable
-        static if (isAggregateType!Front)
-        {
-            /* TODO When __traits(documentation,x)
-               here https://github.com/D-Programming-Language/dmd/pull/3531
-               get merged use it! */
-            // viz.pplnTaggedN(`tr`, subArg.asCols); // TODO asItalic
-            // Use __traits(allMembers, T) instead
-            // Can we lookup file and line of user defined types aswell?
-
-            // member names header.
-            if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr`); } // TODO Functionize
-
-            // index column
-            if      (arg.rowNr == RowNr.offsetZero) viz.pplnTaggedN(`td`, "0-Offset");
-            else if (arg.rowNr == RowNr.offsetOne)  viz.pplnTaggedN(`td`, "1-Offset");
-            foreach (ix, Member; typeof(Front.tupleof))
-            {
-                import std.ascii: isUpper; // D symbols cannot have unicode
-                import std.string: capitalize;
-                import std.algorithm: joiner;
-
-                enum idName = __traits(identifier, Front.tupleof[ix]).preSlicer!isUpper.map!capitalize.joiner(" ");
-                enum typeName = Unqual!(Member).stringof; // constness of no interest hee
-
-                static      if (is(Memb == struct))    enum qual = `struct `;
-                else static if (is(Memb == class))     enum qual = `class `;
-                else static if (is(Memb == enum))      enum qual = `enum `;
-                else static if (is(Memb == interface)) enum qual = `interface `;
-                else                                   enum qual = ``; // TODO Are there more qualifiers
-
-                viz.pplnTaggedN(`td`,
-                                idName.asItalic.asBold,
-                                `<br>`,
-                                qual.asKeyword,
-                                typeName.asType);
-            }
-            if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
-        }
-
-        size_t ix = 0;
-        foreach (subArg; arg.args[0]) // for each table row
-        {
-            auto cols = subArg.asCols();
-            cols.recurseFlag = arg.recurseFlag; // propagate
-            cols.rowNr = arg.rowNr;
-            cols.rowIx = ix;
-            viz.pplnTaggedN(`tr`, cols); // print columns
-            ix++;
-        }
-    }
-    else static if (isInstanceOf!(AsCols, Arg))
-    {
-        if (arg.args.length == 1 &&
-            isAggregateType!(typeof(arg.args[0])))
-        {
-            auto args0 = arg.args[0];
-            if (viz.form == VizForm.jiraWikiMarkup)
-            {
-                /* if (args0.length >= 1) { viz.ppRaw(`|`); } */
-            }
-            if      (arg.rowNr == RowNr.offsetZero)
-                viz.pplnTaggedN(`td`, arg.rowIx + 0);
-            else if (arg.rowNr == RowNr.offsetOne)
-                viz.pplnTaggedN(`td`, arg.rowIx + 1);
-            foreach (subArg; args0.tupleof) // for each table column
-            {
-                if (viz.form == VizForm.HTML)
-                {
-                    viz.pplnTaggedN(`td`, subArg); // each element in aggregate as a column
-                }
-                else if (viz.form == VizForm.jiraWikiMarkup)
-                {
-                    /* viz.pp1(subArg); viz.ppRaw(`|`); */
-                }
-            }
-        }
-        else
-        {
-            viz.pplnTaggedN(`tr`, arg.args);
-        }
-    }
-    else static if (isInstanceOf!(AsRow, Arg))
-    {
-        string spanArg;
-        static if (arg.args.length == 1 &&
-                   isInstanceOf!(Span, typeof(arg.args[0])))
-        {
-            spanArg ~= ` rowspan="` ~ to!string(arg._span) ~ `"`;
-        }
-        if (viz.form == VizForm.HTML) { viz.pplnTagOpen(`tr` ~ spanArg); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.pplnTagClose(`tr`); }
-    }
-    else static if (isInstanceOf!(AsCell, Arg))
-    {
-        string spanArg;
-        static if (arg.args.length >= 1 &&
-                   isInstanceOf!(Span, typeof(arg.args[0])))
-        {
-            spanArg ~= ` colspan="` ~ to!string(arg._span) ~ `"`;
-        }
-        if (viz.form == VizForm.HTML) { viz.ppTagOpen(`td` ~ spanArg); }
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.pplnTagClose(`td`); }
-    }
-    else static if (isInstanceOf!(AsTHeading, Arg))
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            viz.pplnTagOpen(`th`);
-            viz.ppN(arg.args);
-            viz.pplnTagClose(`th`);
-        }
-        else if (viz.form == VizForm.jiraWikiMarkup)
-        {
-            if (args.length >= 1)
-            {
-                viz.ppRaw(`||`);
-            }
-            foreach (subArg; args)
-            {
-                viz.pp1(subArg);
-                viz.ppRaw(`||`);
-            }
-        }
-    }
-    else static if (isInstanceOf!(AsItem, Arg))
-    {
-        if (viz.form == VizForm.HTML) { viz.ppTagOpen(`li`); }
-        else if (viz.form == VizForm.textAsciiDoc) { viz.ppRaw(` - `); } // if inside ordered list use . instead of -
-        else if (viz.form == VizForm.LaTeX) { viz.ppRaw(`\item `); }
-        else if (viz.form == VizForm.textAsciiDocUTF8) { viz.ppRaw(` • `); }
-        else if (viz.form == VizForm.Markdown) { viz.ppRaw(`* `); } // TODO Alternatively +,-,*, or 1. TODO Need counter for ordered lists
-        viz.ppN(arg.args);
-        if (viz.form == VizForm.HTML) { viz.pplnTagClose(`li`); }
-        else if (viz.form == VizForm.LaTeX) { viz.pplnRaw(``); }
-        else if (viz.form == VizForm.textAsciiDoc ||
-                 viz.form == VizForm.textAsciiDocUTF8 ||
-                 viz.form == VizForm.Markdown) { viz.pplnRaw(``); }
-    }
-    else static if (isInstanceOf!(AsPath, Arg) ||
-                    isInstanceOf!(AsURL, Arg))
-    {
-        auto vizArg = viz;
-        vizArg.treeFlag = false;
-
-        enum isString = isSomeString!(typeof(arg.arg)); // only create hyperlink if arg is a string
-
-        static if (isString)
-        {
-            if (viz.form == VizForm.HTML)
-            {
-                static if (isInstanceOf!(AsPath, Arg))
-                {
-                    viz.ppTagOpen(`a href="file://` ~ arg.arg ~ `"`);
-                }
-                else static if (isInstanceOf!(AsURL, Arg))
-                {
-                    viz.ppTagOpen(`a href="` ~ arg.arg ~ `"`);
-                }
-            }
-        }
-
-        pp1(vizArg, depth + 1, arg.arg);
-
-        static if (isString)
-        {
-            if (viz.form == VizForm.HTML)
-            {
-                viz.ppTagClose(`a`);
-            }
-        }
-    }
-    else static if (isInstanceOf!(AsName, Arg))
-    {
-        auto vizArg = viz;
-        vizArg.treeFlag = true;
-        pp1(term, vizArg, depth + 1, arg.arg);
-    }
-    else static if (isInstanceOf!(AsHit, Arg))
-    {
-        const ixs = to!string(arg.ix);
-        if (viz.form == VizForm.HTML) { viz.ppTagOpen(`hit` ~ ixs); }
-        viz.pp1(depth + 1, arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppTagClose(`hit` ~ ixs); }
-    }
-    else static if (isInstanceOf!(AsCtx, Arg))
-    {
-        if (viz.form == VizForm.HTML) { viz.ppTagOpen(`hit_context`); }
-        viz.pp1(depth + 1, arg.args);
-        if (viz.form == VizForm.HTML) { viz.ppTagClose(`hit_context`); }
-    }
-    else static if (isArray!Arg &&
-                    !isSomeString!Arg)
-    {
-        viz.ppRaw(`[`);
-        foreach (ix, subArg; arg)
-        {
-            if (ix >= 1)
-                viz.ppRaw(`,`); // separator
-            viz.pp1(depth + 1, subArg);
-        }
-        viz.ppRaw(`]`);
-    }
-    else static if (isInputRange!Arg)
-    {
-        foreach (subArg; arg)
-        {
-            viz.pp1(depth + 1, subArg);
-        }
-    }
-    else static if (__traits(hasMember, arg, "parent")) // TODO Use isFile = File or NonNull!File
-    {
-        if (viz.form == VizForm.HTML)
-        {
-            viz.ppRaw(`<a href="file://`);
-            viz.ppPut(arg.path);
-            viz.ppRaw(`">`);
-        }
-
-        if (!viz.treeFlag)
-        {
-            // write parent path
-            foreach (parent; arg.parents)
-            {
-                viz.ppPut(dirSeparator);
-                if (viz.form == VizForm.HTML) { viz.ppTagOpen(`b`); }
-                viz.ppPut(dirFace, parent.name);
-                if (viz.form == VizForm.HTML) { viz.ppTagClose(`b`); }
-            }
-            viz.ppPut(dirSeparator);
-        }
-
-        // write name
-        static if (__traits(hasMember, arg, "isRoot")) // TODO Use isDir = Dir or NonNull!Dir
-        {
-            immutable name = arg.isRoot ? dirSeparator : arg.name ~ dirSeparator;
-        }
-        else
-        {
-            immutable name = arg.name;
-        }
-
-        if (viz.form == VizForm.HTML)
-        {
-            static      if (isSymlink!Arg) { viz.ppTagOpen(`i`); }
-            else static if (isDir!Arg) { viz.ppTagOpen(`b`); }
-        }
-
-        viz.ppPut(arg.getFace(), name);
-
-        if (viz.form == VizForm.HTML)
-        {
-            static      if (isSymlink!Arg) { viz.ppTagClose(`i`); }
-            else static if (isDir!Arg) { viz.ppTagClose(`b`); }
-        }
-
-        if (viz.form == VizForm.HTML) { viz.ppTagClose(`a`); }
-    }
-    else
-    {
-        static if (__traits(hasMember, arg, "path"))
-        {
-            const arg_string = arg.path;
-        }
-        else
-        {
-            const arg_string = to!string(arg);
-        }
-
-        static if (__traits(hasMember, arg, "face") &&
-                   __traits(hasMember, arg.face, "tagsHTML"))
-        {
-            if (viz.form == VizForm.HTML)
-            {
-                foreach (tag; arg.face.tagsHTML)
-                {
-                    viz.outFile.write(`<`, tag, `>`);
-                }
-            }
-        }
-
-        // write
-        (*viz.term).setFace(arg.getFace(), viz.colorFlag);
-        if (viz.outFile == stdout)
-        {
-            (*viz.term).write(arg_string);
-        }
-        else
-        {
-            viz.ppPut(arg.getFace(), arg_string);
-        }
-
-        static if (__traits(hasMember, arg, "face") &&
-                   __traits(hasMember, arg.face, "tagsHTML"))
-        {
-            if (viz.form == VizForm.HTML)
-            {
-                foreach (tag; arg.face.tagsHTML)
-                {
-                    viz.outFile.write(`</`, tag, `>`);
-                }
-            }
-        }
-    }
-}
-
-/** Pretty-Print Multiple Arguments $(D args) to Terminal $(D term). */
-void ppN(Args...)(Viz viz,
-                  Args args) @trusted
-{
-    foreach (arg; args)
-    {
-        viz.pp1(0, arg);
-    }
-}
-
-/** Pretty-Print Arguments $(D args) to Terminal $(D term) without Line Termination. */
-void pp(Args...)(Viz viz,
-                 Args args) @trusted
-{
-    viz.ppN(args);
-    if (viz.outFile == stdout)
-    {
-        (*viz.term).flush();
-    }
-}
-
-/** Pretty-Print Arguments $(D args) including final line termination. */
-void ppln(Args...)(Viz viz,
-                   Args args) @trusted
-{
-    viz.ppN(args);
-    if (viz.outFile == stdout)
-    {
-        (*viz.term).writeln(lbr(viz.form == VizForm.HTML));
-        (*viz.term).flush();
-    }
-    else
-    {
-        viz.outFile.writeln(lbr(viz.form == VizForm.HTML));
-    }
-}
-
-/** Pretty-Print Arguments $(D args) each including a final line termination. */
-void pplns(Args...)(Viz viz,
-                    Args args) @trusted
-{
-    foreach (arg; args)
-    {
-        viz.ppln(args);
-    }
-}
-
-/** Print End of Line to Terminal $(D term). */
-void ppendl(Viz viz) @trusted
-{
-    viz.ppln(``);
 }
