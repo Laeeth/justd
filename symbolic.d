@@ -434,7 +434,7 @@ class Alt : SPatt
         return atU(haystack.representation, soff, alt_hix);
     }
 
-    @property auto ref inout (Patt[]) alts() inout { return super._subs; }
+    @property inout(Patt[]) alts() inout { return super._subs; }
 
     /** Get Length of hit at index soff in haystack or size_t.max if none.
      */
@@ -461,6 +461,7 @@ class Alt : SPatt
     override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
     {
         assert(!alts.empty);    // TODO Move to in contract?
+
         if        (alts.length == 1)
         {
             return alts[0].findAtU(haystack, soff); // recurse to it
