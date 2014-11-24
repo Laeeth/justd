@@ -165,6 +165,7 @@ import mathml;
 import mangling;
 import grammars;
 import attributes;
+import find_ex;
 
 import elf;
 import typedoc;

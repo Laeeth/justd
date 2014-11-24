@@ -803,6 +803,7 @@ unittest
 
     assert("samtida".stemSwedish == "samtid");
 
+    /* assert("kullar".stemSwedish == "kull"); */
     /* assert("kullar".stemSwedish == "kulle"); */
     /* assert("kullarna".stemSwedish == "kulle"); */
 

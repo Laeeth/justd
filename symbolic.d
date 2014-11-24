@@ -24,19 +24,20 @@
          rel!"desire"(_!"x", _!"z"))
 
    TODO Support variables of specific types and inference using predicate logic:
-        infer(and(fact(var!"x", rel"desire", var!"y"),
-                  fact(var!"z", opt(rel"madeOf",
-                              rel"instanceOf"), var!"y"))),
-              pred(var!"x", rel"desire", var!"z"))
+        infer(and(fact(var!'x', rel'desire', var!'y'),
+                  fact(var!'z', opt(rel'madeOf',
+                              rel'instanceOf'), var!'y'))),
+              pred(var!'x', rel'desire', var!'z'
+              ))
 
    TODO Make returns from factory functions immutable.
    TODO Reuse return patterns from Lit
  */
 module symbolic;
+
 import std.algorithm: find, all, map, reduce, min, max;
 import std.range: empty;
-import algorithm_ex;
-import assert_ex;
+import find_ex: findAcronymAt, FindContext;
 import dbg;
 import bitset;
 import std.string: representation;
@@ -510,6 +511,7 @@ class Alt : SPatt
         // TODO Merge these loops using tuple algorithm.
         auto mins = _subs.map!(a => a.minLength);
         auto maxs = _subs.map!(a => a.maxLength);
+        import predicates: allEqual;
         return (mins.allEqual &&
                 maxs.allEqual);
     }
