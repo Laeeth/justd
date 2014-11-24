@@ -185,7 +185,7 @@ class Lit : Patt
 
 auto lit(Args...)(Args args) @safe pure nothrow { return new Lit(args); } // instantiator
 
-unittest
+pure unittest
 {
     immutable ab = "ab";
     assert(lit('b').at("ab", 1) == 1);
@@ -291,7 +291,7 @@ auto insac(Args...)(Args args) { return new Acronym(args, FindContext.inSymbol);
 auto aswac(Args...)(Args args) { return new Acronym(args, FindContext.asWord); } // word acronym
 auto assac(Args...)(Args args) { return new Acronym(args, FindContext.asSymbol); } // symbol acronym
 
-unittest
+pure unittest
 {
     assert(inwac("a").at("a") == 1);
     assert(inwac("ab").at("ab") == 2);
@@ -391,7 +391,7 @@ class Seq : SPatt
 
 auto seq(Args...)(Args args) { return new Seq(args); } // instantiator
 
-unittest
+pure unittest
 {
     const s = seq(lit("al"),
                   lit("pha"));
@@ -545,9 +545,9 @@ class Alt : SPatt
     }
 }
 
-auto alt(Args...)(Args args) { return new Alt(args); } // instantiator
+auto alt(Args...)(Args args) @safe pure nothrow { return new Alt(args); } // instantiator
 
-unittest
+pure unittest
 {
     immutable a_b = alt(lit("a"),
                         lit("b"));
@@ -601,11 +601,14 @@ unittest
 class Space : Patt
 {
     @safe pure nothrow:
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
+    {
         import std.ascii: isWhite;
         return soff < haystack.length && isWhite(haystack[soff]) ? 1 : size_t.max;
     }
-    @property nothrow:
+
+    @property:
     override size_t maxLength() const { return 1; }
     override bool isFixed() const { return true; }
     override bool isConstant() const { return false; }
@@ -613,7 +616,7 @@ class Space : Patt
 
 auto ws() @safe pure nothrow { return new Space(); } // instantiator
 
-unittest
+pure unittest
 {
     assert(ws().at(" ") == 1);
     assert(ws().at("\t") == 1);
@@ -642,12 +645,14 @@ class Opt : SPatt1
 
     this(Patt sub) { super(sub); }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
+    {
         assert(soff <= haystack.length); // include equality because haystack might be empty and size zero
         const hit = sub.atU(haystack[soff..$]);
         return hit == size_t.max ? 0 : hit;
     }
-    @property nothrow:
+
+    @property:
     override size_t minLength() const { return 0; }
     override size_t maxLength() const { return sub.maxLength; }
     override bool isFixed() const { return false; }
@@ -656,7 +661,7 @@ class Opt : SPatt1
 
 auto opt(Args...)(Args args) { return new Opt(args); } // optional
 
-unittest
+pure unittest
 {
     assert(opt(lit("a")).at("b") == 0);
     assert(opt(lit("a")).at("a") == 1);
@@ -684,7 +689,8 @@ class Rep : SPatt1
         this.countOpt = countMax - countMin;
     }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
+    {
         size_t sum = 0;
         size_t off = soff;
         /* mandatory */
@@ -721,7 +727,7 @@ auto rep(Args...)(Args args) { return new Rep(args); } // repetition
 auto zom(Args...)(Args args) { return new Rep(args, 0, size_t.max); } // zero or more
 auto oom(Args...)(Args args) { return new Rep(args, 1, size_t.max); } // one or more
 
-unittest
+pure unittest
 {
     auto l = lit('a');
 
@@ -817,7 +823,7 @@ Seq line(Args...)(Args args) { return seq(bol(), args, eol()); }
 Seq sym(Args...)(Args args) { return seq(bos(), args, eos()); }
 Seq word(Args...)(Args args) { return seq(bow(), args, eow()); }
 
-unittest
+pure unittest
 {
     const bob_ = bob();
     const eob_ = eob();
@@ -896,7 +902,7 @@ auto ref shebangLine(Patt interpreter) @safe pure nothrow
                oom(ws()),
                interpreter);
 }
-unittest
+pure unittest
 {
     assert(shebangLine(lit("rdmd")).
            at("#!/bin/env rdmd") ==
