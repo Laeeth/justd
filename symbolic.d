@@ -462,66 +462,77 @@ class Alt : SPatt
     {
         assert(!alts.empty);    // TODO Move to in contract?
 
-        if        (alts.length == 1)
+        import dbg;
+
+        switch (alts.length)
         {
-            return alts[0].findAtU(haystack, soff); // recurse to it
+            case 1:
+                const a0 = alts[0].getConstant;
+                if (!a0.empty)
+                {
+                    auto hit = haystack[soff..$].find(a0); // Use: second argument to return alt_hix
+                    return hit;
+                }
+                else
+                {
+                    return alts[0].findAtU(haystack, soff); // recurse to it
+                }
+            case 2:
+                const a0 = alts[0].getConstant;
+                const a1 = alts[1].getConstant;
+                if (!a0.empty &&
+                    !a1.empty)
+                {
+                    auto hit = haystack[soff..$].find(a0, a1); // Use: second argument to return alt_hix
+                    return hit[0];
+                }
+                break;
+            case 3:
+                const a0 = alts[0].getConstant;
+                const a1 = alts[1].getConstant;
+                const a2 = alts[2].getConstant;
+                if (!a0.empty &&
+                    !a1.empty &&
+                    !a2.empty)
+                {
+                    auto hit = haystack[soff..$].find(a0, a1, a2); // Use: second argument to return alt_hix
+                    return hit[0];
+                }
+                break;
+            case 4:
+                const a0 = alts[0].getConstant;
+                const a1 = alts[1].getConstant;
+                const a2 = alts[2].getConstant;
+                const a3 = alts[3].getConstant;
+                if (!a0.empty &&
+                    !a1.empty &&
+                    !a2.empty &&
+                    !a3.empty)
+                {
+                    auto hit = haystack[soff..$].find(a0, a1, a2, a3); // Use: second argument to return alt_hix
+                    return hit[0];
+                }
+                break;
+            case 5:
+                const a0 = alts[0].getConstant;
+                const a1 = alts[1].getConstant;
+                const a2 = alts[2].getConstant;
+                const a3 = alts[3].getConstant;
+                const a4 = alts[4].getConstant;
+                if (!a0.empty &&
+                    !a1.empty &&
+                    !a2.empty &&
+                    !a3.empty &&
+                    !a4.empty)
+                {
+                    auto hit = haystack[soff..$].find(a0, a1, a2, a3, a4); // Use: second argument to return alt_hix
+                    return hit[0];
+                }
+                break;
+            default:
+                break;
         }
-        else if (alts.length == 2)
-        {
-            const a0 = alts[0].getConstant;
-            const a1 = alts[1].getConstant;
-            if (!a0.empty &&
-                !a1.empty)
-            {
-                auto hit = haystack[soff..$].find(a0, a1); // Use: second argument to return alt_hix
-                return hit[0];
-            }
-        }
-        else if (alts.length == 3)
-        {
-            const a0 = alts[0].getConstant;
-            const a1 = alts[1].getConstant;
-            const a2 = alts[2].getConstant;
-            if (!a0.empty &&
-                !a1.empty &&
-                !a2.empty)
-            {
-                auto hit = haystack[soff..$].find(a0, a1, a2); // Use: second argument to return alt_hix
-                return hit[0];
-            }
-        }
-        else if (alts.length == 4)
-        {
-            const a0 = alts[0].getConstant;
-            const a1 = alts[1].getConstant;
-            const a2 = alts[2].getConstant;
-            const a3 = alts[3].getConstant;
-            if (!a0.empty &&
-                !a1.empty &&
-                !a2.empty &&
-                !a3.empty)
-            {
-                auto hit = haystack[soff..$].find(a0, a1, a2, a3); // Use: second argument to return alt_hix
-                return hit[0];
-            }
-        }
-        else if (alts.length == 5)
-        {
-            const a0 = alts[0].getConstant;
-            const a1 = alts[1].getConstant;
-            const a2 = alts[2].getConstant;
-            const a3 = alts[3].getConstant;
-            const a4 = alts[4].getConstant;
-            if (!a0.empty &&
-                !a1.empty &&
-                !a2.empty &&
-                !a3.empty &&
-                !a4.empty)
-            {
-                auto hit = haystack[soff..$].find(a0, a1, a2, a3, a4); // Use: second argument to return alt_hix
-                return hit[0];
-            }
-        }
+
         return super.findAtU(haystack, soff); // revert to base case
     }
 
