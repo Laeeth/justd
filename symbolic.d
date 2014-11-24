@@ -123,8 +123,10 @@ class Patt
     @property:
     size_t minLength() const { return maxLength; } /// Returns: minimum possible instance length.
     size_t maxLength() const { assert(false); } /// Returns: maximum possible instance length.
+
     bool isFixed() const { assert(false); } /// Returns: true if all possible instances have same length.
     bool isConstant() const { return false; } /// Returns: true if all possible instances have same length.
+
     final bool isVariable() const { return !isFixed; } /// Returns: true if all possible instances have different length.
     const(ubyte[]) getConstant() const { return []; } /// Returns: data if literal otherwise empty array.
 
@@ -796,10 +798,10 @@ class Ctx : Patt
 
             /* symbol */
         case Type.bos: ok = ((soff == 0         || (!haystack[soff - 1].isAlphaNum &&
-                                                   haystack[soff - 1] != '_')) && // TODO Make '_' language-dependent
+                                                    haystack[soff - 1] != '_')) && // TODO Make '_' language-dependent
                              (soff < haystack.length &&  haystack[soff].isAlphaNum)) ; break;
         case Type.eos: ok = ((soff == haystack.length || (!haystack[soff].isAlphaNum &&
-                                                    haystack[soff] != '_')) && // TODO Make '_' language-dependent
+                                                          haystack[soff] != '_')) && // TODO Make '_' language-dependent
                              (soff >= 1          &&  haystack[soff - 1].isAlphaNum)) ; break;
 
             /* word */
@@ -897,6 +899,17 @@ Seq word(Args...)(Args args) { return seq(bow(), args, eow()); }
     assert(bos_.findAt("a").ptr != null);
     assert(eos_.findAt("a") == []);
     // TODO This fails assert(eos_.findAt("a").ptr != null);
+}
+
+/** Keyword $(D arg). */
+Seq kwd(Arg)(Arg arg) { return seq(bow(), arg, eow()); }
+
+@safe pure nothrow unittest
+{
+    auto x = kwd("alpha".lit);
+    assert(x.at("int", 0));
+    assert(x.at(" int", 1));
+    /* TODO assert(!x.at(" int", 0)); */
 }
 
 /** Create Matcher for a UNIX Shell $(LUCKY Shebang) Pattern.
