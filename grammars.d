@@ -162,11 +162,13 @@ enum Lang:ubyte
     cxx,
     objectiveC,
     objectiveCxx,
+    cSharp,
     d,
     java,
     ada,
     rust,
     swift,
+    fortran,
 }
 
 /** Return true if $(D lang) is case-sensitive. */
@@ -305,6 +307,7 @@ string toName(Lang lang) @safe pure @nogc nothrow
             case ada: return `Ada`;
             case rust: return `Rust`;
             case swift: return `Swift`;
+            case fortran: return `Fortran`;
         }
     }
 
