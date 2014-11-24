@@ -584,6 +584,17 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
+        enum ar = `ar`;
+        enum er = `er`;
+        if (s.endsWith(ar, er))
+        {
+            const t = s[0 .. $ - ar.length];
+            if (t.canFind!(a => a.isSwedishVowel))
+                return t;
+        }
+    }
+
+    {
         enum are = `are`;
         enum ast = `ast`;
         if (s.endsWith(are, ast))
@@ -609,26 +620,21 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum ande = `ande`;
-        if (s.endsWith(ande))
+        enum de = `de`;
+        if (s.endsWith(de))
         {
-            const t = s[0 .. $ - ande.length];
-            if (t.empty)
-                return s;
-            else if (t[$ - 1].isSwedishConsonant)
-                return s[0 .. $ - 3];
-            return t;
-        }
-    }
-
-    {
-        enum ning = `ning`;
-        if (s.endsWith(ning))
-        {
-            const t = s[0 .. $ - ning.length];
-            if (!t.endsWith(`n`) &&
-                t != `tid`)
+            enum ande = `ande`;
+            if (s.endsWith(ande))
+            {
+                const t = s[0 .. $ - ande.length];
+                if (t.empty)
+                    return s;
+                else if (t[$ - 1].isSwedishConsonant)
+                    return s[0 .. $ - 3];
                 return t;
+            }
+            const t = s[0 .. $ - de.length];
+            return t;
         }
     }
 
@@ -636,6 +642,14 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         enum ing = `ing`;
         if (s.endsWith(ing))
         {
+            enum ning = `ning`;
+            if (s.endsWith(ning))
+            {
+                const t = s[0 .. $ - ning.length];
+                if (!t.endsWith(`n`) &&
+                    t != `tid`)
+                    return t;
+            }
             return s[0 .. $ - ing.length];
         }
     }
@@ -723,6 +737,7 @@ unittest
     assert("kullarna".stemSwedish == "kullar");
 
     assert("roa".stemSwedish == "roa");
+    assert("roade".stemSwedish == "roa");
 
     assert("fullt".stemSwedish == "full");
 
@@ -735,6 +750,11 @@ unittest
     assert("nekande".stemSwedish == "neka");
     assert("jagande".stemSwedish == "jaga");
     assert("stimulerande".stemSwedish == "stimulera");
+
+    assert("lagar".stemSwedish == "lag");
+
+    /* assert("ämnar".stemSwedish == "ämna"); */
+    /* assert("lämnar".stemSwedish == "lämna"); */
 }
 
 auto ref stemNorvegian(S)(S s) if (isSomeString!S)
