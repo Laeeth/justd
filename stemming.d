@@ -525,7 +525,9 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
             if (s.endsWith(en))
             {
                 const t = s[0 .. $ - en.length];
-                if (t.of(`sann`))
+                if (s.of(`även`))
+                    return s;
+                else if (t.of(`sann`))
                     return t;
                 else if (t.endsWith(`mm`, `nn`))
                     return t[0 .. $ - 1];
@@ -693,6 +695,7 @@ unittest
     assert("grenen".stemSwedish == "gren");
     assert("busen".stemSwedish == "bus");
     assert("husen".stemSwedish == "hus");
+    assert("räven".stemSwedish == "räv");
     assert("dunken".stemSwedish == "dunk");
     assert("männen".stemSwedish == "män");
 
@@ -782,6 +785,8 @@ unittest
     assert("sina".stemSwedish == "sin");
     assert("dina".stemSwedish == "din");
     assert("mina".stemSwedish == "min");
+
+    assert("även".stemSwedish == "även");
 
     /* assert("damma".stemSwedish == "damm"); */
 
