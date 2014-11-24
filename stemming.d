@@ -773,7 +773,6 @@ unittest
     assert("kärnan".stemSwedish == "kärna");
 
     assert("skorna".stemSwedish == "skor");
-    assert("kullarna".stemSwedish == "kullar");
 
     assert("inträffade".stemSwedish == "inträffa");
     assert("roa".stemSwedish == "roa");
@@ -803,6 +802,9 @@ unittest
     assert("även".stemSwedish == "även");
 
     assert("samtida".stemSwedish == "samtid");
+
+    /* assert("kullar".stemSwedish == "kulle"); */
+    /* assert("kullarna".stemSwedish == "kulle"); */
 
     /* assert("mamma".stemSwedish == "mamma"); */
     /* assert("damma".stemSwedish == "damm"); */
