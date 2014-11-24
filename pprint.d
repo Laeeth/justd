@@ -45,18 +45,6 @@ import traits_ex: isCallableWith;
 
 import rational;
 
-// TODO Check for MathML support on backend
-@property @trusted void ppMathML(T)(Viz viz,
-                                    Rational!T arg)
-{
-    viz.ppTagOpen(`math`);
-    viz.ppTagOpen(`mfrac`);
-    viz.ppTaggedN(`mi`, arg.numerator);
-    viz.ppTaggedN(`mi`, arg.denominator);
-    viz.ppTagClose(`mfrac`);
-    viz.ppTagClose(`math`);
-}
-
 import core.time: Duration;
 
 /** Returns: Duration $(D dur) in a Level-Of-Detail (LOD) string
@@ -391,6 +379,17 @@ tr:nth-child(2n+1) { background: #` ~ SolarizedLightColorTheme.base3 ~ `; }
         ppTaggedN(tag, args);
         if (newlinedTags)
             pplnRaw(``);
+    }
+
+    // TODO Check for MathML support on backend
+    @property @trusted void ppMathML(T)(Rational!T arg)
+    {
+        ppTagOpen(`math`);
+        ppTagOpen(`mfrac`);
+        ppTaggedN(`mi`, arg.numerator);
+        ppTaggedN(`mi`, arg.denominator);
+        ppTagClose(`mfrac`);
+        ppTagClose(`math`);
     }
 
     /** Pretty-Print Single Argument $(D arg) to Terminal $(D term). */
