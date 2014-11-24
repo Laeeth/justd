@@ -37,7 +37,8 @@ auto encodeForwardDifference(R)(R r) if (isInputRange!R)
 unittest
 {
     import std.range: dropOne;
-    import std.exception: assertThrown, AssertError;
+    import core.exception: AssertError;
+    import std.exception: assertThrown;
     import msgpack;
     import dbg: dln;
 
