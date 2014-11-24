@@ -906,9 +906,13 @@ Seq kwd(Arg)(Arg arg) { return seq(bow(), arg, eow()); }
 
 @safe pure nothrow unittest
 {
-    auto x = kwd("alpha".lit);
-    assert(x.at("int", 0));
-    assert(x.at(" int", 1));
+    const str = "int";
+    auto x = str.lit.kwd;
+
+    assert(x.at(str, 0));
+    /* TODO assert(!x.at(str, 1)); */
+
+    assert(x.at(" " ~ str, 1));
     /* TODO assert(!x.at(" int", 0)); */
 }
 
