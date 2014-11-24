@@ -518,37 +518,38 @@ import dbg;
 
 auto ref stemSwedish(S)(S s) if (isSomeString!S)
 {
+    if (s.endsWith(`n`))
     {
-        enum en = `en`;
-        if (s.endsWith(en))
         {
-            const t = s[0 .. $ - en.length];
-            if (t.of(`sann`))
+            enum en = `en`;
+            if (s.endsWith(en))
+            {
+                const t = s[0 .. $ - en.length];
+                if (t.of(`sann`))
+                    return t;
+                else if (t.endsWith(`mm`, `nn`))
+                    return t[0 .. $ - 1];
                 return t;
-            else if (t.endsWith(`mm`, `nn`))
-                return t[0 .. $ - 1];
-            return t;
+            }
         }
-    }
-
-    {
-        enum ern = `ern`;
-        if (s.endsWith(ern))
         {
-            return s[0 .. $ - 1];
+            enum ern = `ern`;
+            if (s.endsWith(ern))
+            {
+                return s[0 .. $ - 1];
+            }
         }
-    }
-
-    {
-        enum an = `an`;
-        if (s.endsWith(an))
         {
-            const t = s[0 .. $ - an.length];
-            if (t.endsWith(`ck`, `n`))
-                return s[0 ..$ - 1];
-            else if (t.length < 3)
-                return s;
-            return t;
+            enum an = `an`;
+            if (s.endsWith(an))
+            {
+                const t = s[0 .. $ - an.length];
+                if (t.endsWith(`ck`, `n`))
+                    return s[0 ..$ - 1];
+                else if (t.length < 3)
+                    return s;
+                return t;
+            }
         }
     }
 
@@ -556,6 +557,10 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         enum na = `na`;
         if (s.endsWith(na))
         {
+            if (s.of(`sina`, `dina`, `mina`))
+            {
+                return s[0 .. $ - 1];
+            }
             const t = s[0 .. $ - na.length];
             if (!t.empty && t[0].isSwedishConsonant)
                 return t;
@@ -589,6 +594,20 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         if (s.endsWith(ar, er))
         {
             const t = s[0 .. $ - ar.length];
+            if (t.canFind!(a => a.isSwedishVowel))
+                return t;
+        }
+    }
+
+    {
+        enum aste = `aste`;
+        if (s.endsWith(aste))
+        {
+            const t = s[0 .. $ - aste.length];
+            if (t.of(`sann`))
+                return t;
+            if (t.endsWith(`mm`, `nn`))
+                return t[0 .. $ - 1];
             if (t.canFind!(a => a.isSwedishVowel))
                 return t;
         }
@@ -708,6 +727,8 @@ unittest
     assert("dum".stemSwedish == "dum");
     assert("dummare".stemSwedish == "dum");
     assert("dummast".stemSwedish == "dum");
+    assert("dummaste".stemSwedish == "dum");
+    assert("senaste".stemSwedish == "sen");
 
     assert("sanning".stemSwedish == "sann");
     assert("sann".stemSwedish == "sann");
@@ -738,9 +759,11 @@ unittest
     assert("skorna".stemSwedish == "skor");
     assert("kullarna".stemSwedish == "kullar");
 
+    assert("inträffade".stemSwedish == "inträffa");
     assert("roa".stemSwedish == "roa");
     assert("roade".stemSwedish == "roa");
     assert("hade".stemSwedish == "hade");
+    assert("hades".stemSwedish == "hades");
 
     assert("fullt".stemSwedish == "full");
 
@@ -755,6 +778,13 @@ unittest
     assert("stimulerande".stemSwedish == "stimulera");
 
     assert("lagar".stemSwedish == "lag");
+
+    assert("sina".stemSwedish == "sin");
+    assert("dina".stemSwedish == "din");
+    assert("mina".stemSwedish == "min");
+
+    /* assert("krya".stemSwedish == "kry"); */
+    /* assert("nya".stemSwedish == "ny"); */
 
     /* assert("ämnar".stemSwedish == "ämna"); */
     /* assert("lämnar".stemSwedish == "lämna"); */
