@@ -6,6 +6,8 @@
     License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
     Authors: $(WEB Per Nordlöw)
 
+    TODO Make printers members of Viz.
+
     TODO Remove all restrictions on pp.*Raw.* and call them using ranges such as repeat
 
     TODO Use "alias this" on wrapper structures and test!
