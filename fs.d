@@ -2104,7 +2104,9 @@ class GStats
         txtFKinds ~= new FKind("C#", [], ["cs"], [], 0, [], keywordsCSharp,
                                cCommentDelims,
                                defaultStringDelims,
-                               FileContent.sourceCode, FileKindDetection.equalsWhatsGiven);
+                               FileContent.sourceCode,
+                               FileKindDetection.equalsWhatsGiven,
+                               Lang.cSharp);
 
         static immutable keywordsOCaml = ["and", "as", "assert", "begin", "class",
                               "constraint", "do", "done", "downto", "else",
@@ -2270,7 +2272,9 @@ class GStats
         auto kindFortan = new FKind("Fortran", [], ["f", "fortran", "f77", "f90", "f95", "f03", "for", "ftn", "fpp"], [], 0, [], keywordsFortran77,
                                     [Delim("^C")], // TODO Need beginning of line instead ^. seq(bol(), alt(lit('C'), lit('c'))); // TODO Add chars chs("cC");
                                     defaultStringDelims,
-                                    FileContent.sourceCode);
+                                    FileContent.sourceCode,
+                                    FileKindDetection.equalsNameOrContents,
+                                    Lang.fortran);
         kindFortan.operations ~= tuple(FOp.checkSyntax, `gcc -x fortran -fsyntax-only`);
         txtFKinds ~= kindFortan;
 
