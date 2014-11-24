@@ -120,7 +120,7 @@ class Patt
         return [];
     }
 
-    @property nothrow:
+    @property:
     size_t minLength() const { return maxLength; } /// Returns: minimum possible instance length.
     size_t maxLength() const { assert(false); } /// Returns: maximum possible instance length.
     bool isFixed() const { assert(false); } /// Returns: true if all possible instances have same length.
@@ -143,7 +143,8 @@ class Lit : Patt
     this(ubyte[] bytes_) { this._bytes = bytes_; }
     this(immutable ubyte[] bytes_) { this._bytes = bytes_.dup; }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
+    {
         const l = _bytes.length;
         return (soff + l <= haystack.length && // fits in haystack and
                 _bytes[] == haystack[soff..soff + l]) ? l : size_t.max; // same contents
@@ -154,7 +155,7 @@ class Lit : Patt
         return haystack[soff..$].find(_bytes); // reuse std.algorithm: find!
     }
 
-    @property nothrow:
+    @property:
 
     override size_t maxLength() const { return _bytes.length; }
     override bool isFixed() const { return true; }
@@ -168,7 +169,7 @@ class Lit : Patt
     alias BitSet!(2^^ubyte.sizeof) SinglesHist;
 
     /// Get (Cached) (Binary) Histogram over single elements contained in this $(D Lit).
-    SinglesHist singlesHist() nothrow
+    SinglesHist singlesHist()
     {
         if (!_bytes.empty &&
             _singlesHist.allZero)
@@ -310,14 +311,15 @@ class Acronym : Patt
  */
 class Any : Patt
 {
-    @safe pure:
+    @safe pure nothrow:
     this() {}
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
+    {
         return soff < haystack.length ? 1 : size_t.max;
     }
 
-    @property nothrow:
+    @property:
     override size_t maxLength() const { return 1; }
     override bool isFixed() const { return true; }
     override bool isConstant() const { return false; }
@@ -366,9 +368,9 @@ class Seq : SPatt
     this(Patt[] subs_) { super(subs_); }
     this(Args...)(Args subs_) { super(subs_); }
 
-    @property auto ref inout (Patt[]) elms() inout nothrow { return super._subs; }
+    @property auto ref inout (Patt[]) elms() inout { return super._subs; }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
     {
         assert(!elms.empty); // TODO Move to in contract?
         const c = getConstant;
@@ -389,7 +391,7 @@ class Seq : SPatt
         return sum;
     }
 
-    @property nothrow:
+    @property:
     override size_t maxLength() const { assert(false); }
     override bool isFixed() const { return _subs.all!(a => a.isFixed); }
     override bool isConstant() const { return _subs.all!(a => a.isConstant); }
@@ -520,7 +522,7 @@ class Alt : SPatt
         return super.findAtU(haystack, soff); // revert to base case
     }
 
-    @property nothrow:
+    @property:
     override size_t minLength() const { return reduce!min(size_t.max,
                                                           _subs.map!(a => a.minLength)); }
     override size_t maxLength() const { return reduce!max(size_t.min,
@@ -719,7 +721,7 @@ class Rep : SPatt1
         return sum;
     }
 
-    @property nothrow:
+    @property:
     override size_t minLength() const { return countReq*sub.maxLength; }
     override size_t maxLength() const { return (countReq + countOpt)*sub.maxLength; }
     override bool isFixed() const { return minLength == maxLength && sub.isFixed; }
