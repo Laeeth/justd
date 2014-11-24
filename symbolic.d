@@ -325,6 +325,8 @@ auto any(Args...)(Args args) { return new Any(args); } // instantiator
  */
 abstract class SPatt : Patt
 {
+    @safe pure nothrow:
+
     this(Patt[] subs_) { this._subs = subs_; }
 
     this(Args...)(Args subs_)
@@ -355,10 +357,11 @@ abstract class SPatt : Patt
  */
 class Seq : SPatt
 {
+    @safe pure nothrow:
+
     this(Patt[] subs_) { super(subs_); }
     this(Args...)(Args subs_) { super(subs_); }
 
-    @safe pure:
     @property auto ref inout (Patt[]) elms() inout nothrow { return super._subs; }
 
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
