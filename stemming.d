@@ -518,6 +518,13 @@ import dbg;
 
 auto ref stemSwedish(S)(S s) if (isSomeString!S)
 {
+    switch (s)
+    {
+        case `samtida`:
+            return `samtid`;
+        default: break;
+    }
+
     if (s.endsWith(`n`))
     {
         {
@@ -795,7 +802,12 @@ unittest
 
     assert("även".stemSwedish == "även");
 
+    assert("samtida".stemSwedish == "samtid");
+
+    /* assert("mamma".stemSwedish == "mamma"); */
     /* assert("damma".stemSwedish == "damm"); */
+    /* assert("ramma".stemSwedish == "ram"); */
+    /* assert("kamma".stemSwedish == "kam"); */
 
     /* assert("krya".stemSwedish == "kry"); */
     /* assert("nya".stemSwedish == "ny"); */
