@@ -633,6 +633,8 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
                     return s[0 .. $ - 3];
                 return t;
             }
+            if (s.of(`hade`))
+                return s;
             const t = s[0 .. $ - de.length];
             return t;
         }
@@ -738,6 +740,7 @@ unittest
 
     assert("roa".stemSwedish == "roa");
     assert("roade".stemSwedish == "roa");
+    assert("hade".stemSwedish == "hade");
 
     assert("fullt".stemSwedish == "full");
 
