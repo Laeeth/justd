@@ -783,10 +783,13 @@ unittest
     assert("dina".stemSwedish == "din");
     assert("mina".stemSwedish == "min");
 
+    /* assert("damma".stemSwedish == "damm"); */
+
     /* assert("krya".stemSwedish == "kry"); */
     /* assert("nya".stemSwedish == "ny"); */
 
     /* assert("ämnar".stemSwedish == "ämna"); */
+    /* assert("rämnar".stemSwedish == "rämna"); */
     /* assert("lämnar".stemSwedish == "lämna"); */
 }
 
