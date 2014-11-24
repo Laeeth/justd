@@ -5,6 +5,8 @@
 
    Syntax is similar to Emacs' sregex, rx.
 
+   String patterns are matched by their raw bytes.
+
    Copyright: Per Nordlöw 2014-.
    License: $(WEB boost.org/LICENSE_1_0.txt, Boost License 1.0).
    Authors: $(WEB Per Nordlöw)
@@ -168,7 +170,7 @@ class Lit : Patt
     private ubyte[] _bytes;
     alias _bytes this;
 
-    alias BitSet!(2^^ubyte.sizeof) SinglesHist;
+    alias SinglesHist = BitSet!(2^^ubyte.sizeof);
 
     /// Get (Cached) (Binary) Histogram over single elements contained in this $(D Lit).
     SinglesHist singlesHist()
@@ -274,7 +276,7 @@ class Acronym : Patt
         return size_t.max; // no hit
     }
 
-    template Tuple(E...) { alias E Tuple; }
+    template Tuple(E...) { alias Tuple = E; }
 
     override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
         import std.string: CaseSensitive;
@@ -455,8 +457,6 @@ class Alt : SPatt
     }
 
     /** Find $(D this) in $(D haystack) at Offset $(D soff).
-        TODO Add findAt() and detect case when all alternatives full isConstant
-        (cached them) and use variadic version of std.algorithm:find.
     */
     override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
     {
@@ -472,7 +472,7 @@ class Alt : SPatt
             if (!a0.empty &&
                 !a1.empty)
             {
-                auto hit = find(haystack[soff..$], a0, a1); // Use: second argument to return alt_hix
+                auto hit = haystack[soff..$].find(a0, a1); // Use: second argument to return alt_hix
                 return hit[0];
             }
         }
@@ -485,7 +485,7 @@ class Alt : SPatt
                 !a1.empty &&
                 !a2.empty)
             {
-                auto hit = find(haystack[soff..$], a0, a1, a2); // Use: second argument to return alt_hix
+                auto hit = haystack[soff..$].find(a0, a1, a2); // Use: second argument to return alt_hix
                 return hit[0];
             }
         }
@@ -500,7 +500,7 @@ class Alt : SPatt
                 !a2.empty &&
                 !a3.empty)
             {
-                auto hit = find(haystack[soff..$], a0, a1, a2, a3); // Use: second argument to return alt_hix
+                auto hit = haystack[soff..$].find(a0, a1, a2, a3); // Use: second argument to return alt_hix
                 return hit[0];
             }
         }
@@ -517,7 +517,7 @@ class Alt : SPatt
                 !a3.empty &&
                 !a4.empty)
             {
-                auto hit = find(haystack[soff..$], a0, a1, a2, a3, a4); // Use: second argument to return alt_hix
+                auto hit = haystack[soff..$].find(a0, a1, a2, a3, a4); // Use: second argument to return alt_hix
                 return hit[0];
             }
         }
@@ -918,7 +918,7 @@ Seq kwd(Arg)(Arg arg) { return seq(bow(), arg, eow()); }
 
 /** Pattern Paired with Prefix and Suffix.
  */
-class Paired : Seq
+class Clause : Seq
 {
     @safe pure nothrow:
 
@@ -943,16 +943,25 @@ class Paired : Seq
     Patt prefix, suffix;
 }
 
-Paired paired(Args...)(Patt prefix, Patt suffix, Args args) { return new Paired(prefix, suffix, args); }
-Paired parend(Args...)(Args args) { return new Paired(lit('('), lit(')'), args); }
-Paired hooked(Args...)(Args args) { return new Paired(lit('['), lit(']'), args); }
-Paired braced(Args...)(Args args) { return new Paired(lit('{'), lit('}'), args); }
+Clause paired(Args...)(Patt prefix, Patt suffix, Args args) { return new Clause(prefix, suffix, args); }
+Clause parend(Args...)(Args args) { return new Clause(lit('('), lit(')'), args); }
+Clause hooked(Args...)(Args args) { return new Clause(lit('['), lit(']'), args); }
+Clause braced(Args...)(Args args) { return new Clause(lit('{'), lit('}'), args); }
+
+import assert_ex;
 
 @safe pure nothrow unittest
 {
-    auto p = parend(lit("alpha"));
-    auto h = hooked(lit("alpha"));
-    auto b = braced(lit("alpha"));
+    /* auto p = "[alpha]".lit.parend; */
+    /* assert(p.at("([alpha])") == 7); */
+
+    /* auto h = "[alpha]".lit.hooked; */
+    /* assert(h.at("[[alpha]]") == 7); */
+
+    /* auto b = "[alpha]".lit.braced; */
+    /* assert(b.at("{[alpha]}") == 7); */
+
+    /* auto pb = "[alpha]".lit.parend; */
 }
 
 /** Create Matcher for a UNIX Shell $(LUCKY Shebang) Pattern.
@@ -983,5 +992,4 @@ auto ref shebangLine(Patt interpreter) @safe pure nothrow
            19);
     const x = shebangLine(alt(lit("rdmd"),
                               lit("gdmd")));
-    /* assert(x.findAt("   #!/usr/bin/env rdmd-dev")); */
 }
