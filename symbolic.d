@@ -37,10 +37,11 @@ module symbolic;
 
 import std.algorithm: find, all, map, reduce, min, max;
 import std.range: empty;
+import std.string: representation;
+
 import find_ex: findAcronymAt, FindContext;
 import dbg;
 import bitset;
-import std.string: representation;
 
 /** Base Pattern.
  */
@@ -176,7 +177,9 @@ class Lit : Patt
     }
     private SinglesHist _singlesHist;
 }
-auto lit(Args...)(Args args) { return new Lit(args); } // maker
+
+auto lit(Args...)(Args args) { return new Lit(args); } // instantiator
+
 unittest
 {
     immutable ab = "ab";
@@ -277,10 +280,12 @@ class Acronym : Patt
     private ubyte[] _acros;
     FindContext _ctx;
 }
+
 auto inwac(Args...)(Args args) { return new Acronym(args, FindContext.inWord); } // word acronym
 auto insac(Args...)(Args args) { return new Acronym(args, FindContext.inSymbol); } // symbol acronym
 auto aswac(Args...)(Args args) { return new Acronym(args, FindContext.asWord); } // word acronym
 auto assac(Args...)(Args args) { return new Acronym(args, FindContext.asSymbol); } // symbol acronym
+
 unittest
 {
     assert(inwac("a").at("a") == 1);
@@ -308,7 +313,8 @@ class Any : Patt
     override bool isFixed() const { return true; }
     override bool isConstant() const { return false; }
 }
-auto any(Args...)(Args args) { return new Any(args); } // maker
+
+auto any(Args...)(Args args) { return new Any(args); } // instantiator
 
 /** Abstract Super Pattern.
  */
@@ -377,7 +383,8 @@ class Seq : SPatt
     override bool isConstant() const { return _subs.all!(a => a.isConstant); }
     override const(ubyte[]) getConstant() const { return []; }
 }
-auto seq(Args...)(Args args) { return new Seq(args); } // maker
+
+auto seq(Args...)(Args args) { return new Seq(args); } // instantiator
 
 unittest
 {
@@ -532,7 +539,9 @@ class Alt : SPatt
         }
     }
 }
-auto alt(Args...)(Args args) { return new Alt(args); } // maker
+
+auto alt(Args...)(Args args) { return new Alt(args); } // instantiator
+
 unittest
 {
     immutable a_b = alt(lit("a"),
@@ -592,7 +601,9 @@ class Space : Patt
     override bool isFixed() const { return true; }
     override bool isConstant() const { return false; }
 }
-auto ws() { return new Space(); } // maker
+
+auto ws() { return new Space(); } // instantiator
+
 unittest
 {
     assert(ws().at(" ") == 1);
@@ -629,7 +640,9 @@ class Opt : SPatt1
     override bool isFixed() const { return false; }
     override bool isConstant() const { return false; }
 }
+
 auto opt(Args...)(Args args) { return new Opt(args); } // optional
+
 unittest
 {
     assert(opt(lit("a")).at("b") == 0);
@@ -682,9 +695,11 @@ class Rep : SPatt1
     size_t countReq; // Required.
     size_t countOpt; // Optional.
 }
+
 auto rep(Args...)(Args args) { return new Rep(args); } // repetition
 auto zom(Args...)(Args args) { return new Rep(args, 0, size_t.max); } // zero or more
 auto oom(Args...)(Args args) { return new Rep(args, 1, size_t.max); } // one or more
+
 unittest
 {
     auto l = lit('a');
@@ -766,6 +781,7 @@ class Ctx : Patt
 
     protected Type type;
 }
+
 Ctx bob(Args...)(Args args) { return new Ctx(args, Ctx.Type.bob); }
 Ctx eob(Args...)(Args args) { return new Ctx(args, Ctx.Type.eob); }
 Ctx bol(Args...)(Args args) { return new Ctx(args, Ctx.Type.bol); }
@@ -778,6 +794,7 @@ Seq buf(Args...)(Args args) { return seq(bob(), args, eob()); }
 Seq line(Args...)(Args args) { return seq(bol(), args, eol()); }
 Seq sym(Args...)(Args args) { return seq(bos(), args, eos()); }
 Seq word(Args...)(Args args) { return seq(bow(), args, eow()); }
+
 unittest
 {
     const bob_ = bob();
