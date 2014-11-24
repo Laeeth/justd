@@ -136,12 +136,9 @@ class Patt
  */
 class Lit : Patt
 {
-    pure:
+    @safe pure nothrow:
 
     this(string bytes_) { assert(!bytes_.empty); this(bytes_.representation); }
-
-    @safe:
-
     this(ubyte ch) { this._bytes ~= ch; }
     this(ubyte[] bytes_) { this._bytes = bytes_; }
     this(immutable ubyte[] bytes_) { this._bytes = bytes_.dup; }
@@ -186,7 +183,7 @@ class Lit : Patt
     private SinglesHist _singlesHist;
 }
 
-auto lit(Args...)(Args args) { return new Lit(args); } // instantiator
+auto lit(Args...)(Args args) @safe pure nothrow { return new Lit(args); } // instantiator
 
 unittest
 {
@@ -309,7 +306,7 @@ unittest
  */
 class Any : Patt
 {
-    @safe: pure:
+    @safe pure:
     this() {}
 
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
@@ -361,7 +358,7 @@ class Seq : SPatt
     this(Patt[] subs_) { super(subs_); }
     this(Args...)(Args subs_) { super(subs_); }
 
-    @safe: pure:
+    @safe pure:
     @property auto ref inout (Patt[]) elms() inout nothrow { return super._subs; }
 
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
@@ -603,7 +600,7 @@ unittest
 
 class Space : Patt
 {
-    @safe: pure:
+    @safe pure nothrow:
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
         import std.ascii: isWhite;
         return soff < haystack.length && isWhite(haystack[soff]) ? 1 : size_t.max;
@@ -614,7 +611,7 @@ class Space : Patt
     override bool isConstant() const { return false; }
 }
 
-auto ws() { return new Space(); } // instantiator
+auto ws() @safe pure nothrow { return new Space(); } // instantiator
 
 unittest
 {
@@ -627,6 +624,8 @@ unittest
  */
 abstract class SPatt1 : Patt
 {
+    @safe pure nothrow:
+
     this(Patt sub)
     {
         this.sub = sub;
@@ -639,8 +638,10 @@ abstract class SPatt1 : Patt
  */
 class Opt : SPatt1
 {
+    @safe pure nothrow:
+
     this(Patt sub) { super(sub); }
-    @safe: pure:
+
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
         assert(soff <= haystack.length); // include equality because haystack might be empty and size zero
         const hit = sub.atU(haystack[soff..$]);
@@ -665,16 +666,24 @@ unittest
  */
 class Rep : SPatt1
 {
-    this(Patt sub, size_t count) { super(sub);
+    @safe pure nothrow:
+
+    this(Patt sub, size_t count) in { assert(count >= 2); }
+    body
+    {
+        super(sub);
         this.countReq = count;
         this.countOpt = 0;
     }
-    this(Patt sub, size_t countMin, size_t countMax) in { assert(countMin <= countMax); } body {
+
+    this(Patt sub, size_t countMin, size_t countMax) in { assert(countMin <= countMax); }
+    body
+    {
         super(sub);
         this.countReq = countMin;
         this.countOpt = countMax - countMin;
     }
-    @safe: pure:
+
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow {
         size_t sum = 0;
         size_t off = soff;
@@ -749,10 +758,11 @@ class Ctx : Patt
         eow,            /// End       Of \em Word. @b Emacs: "\>"
     }
 
-    @safe pure:
-        this(Type type) { this.type = type; }
+    @safe pure nothrow:
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    this(Type type) { this.type = type; }
+
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
     {
         assert(soff <= haystack.length); // include equality because haystack might be empty and size zero
         bool ok = false;
@@ -878,7 +888,7 @@ unittest
     Example: #!/bin/env rdmd
     See also: https://en.wikipedia.org/wiki/Shebang_(Unix)
  */
-auto ref shebangLine(Patt interpreter)
+auto ref shebangLine(Patt interpreter) @safe pure nothrow
 {
     return seq(lit("#!"),
                opt(lit("/usr")),
