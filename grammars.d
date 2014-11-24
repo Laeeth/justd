@@ -300,6 +300,7 @@ string toName(Lang lang) @safe pure @nogc nothrow
             case faroese: return `Faroese`;
             case c: return `C`;
             case cxx: return `C++`;
+            case cSharp: return `C#`;
             case objectiveC: return `Objective-C`;
             case objectiveCxx: return `Objective-C++`;
             case d: return `D`;

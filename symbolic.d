@@ -38,7 +38,6 @@ module symbolic;
 import std.algorithm: find, all, map, reduce, min, max;
 import std.range: empty;
 import std.string: representation;
-
 import find_ex: findAcronymAt, FindContext;
 import dbg;
 import bitset;
@@ -69,6 +68,15 @@ class Patt
     Seq opCatImpl(Patt rhs) // can be overridden
     {
         return seq(this, rhs);
+    }
+
+    Alt opBinary(string op)(Patt rhs) if (op == "||") // template can't be overridden
+    {
+        return opAltImpl(rhs);
+    }
+    Alt opAltImpl(Patt rhs) // can be overridden
+    {
+        return alt(this, rhs);
     }
 
     final size_t at(in string haystack, size_t soff = 0) const nothrow
@@ -546,6 +554,10 @@ unittest
 {
     immutable a_b = alt(lit("a"),
                         lit("b"));
+
+    immutable a__b = (lit("a") ||
+                      lit("b"));
+
     assert(a_b.isFixed);
     assert(!a_b.isConstant);
     assert(a_b.at("a"));

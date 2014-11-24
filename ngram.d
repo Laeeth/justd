@@ -19,7 +19,8 @@ import std.traits: isSomeChar, isUnsigned, isIntegral, isFloatingPoint, Unqual, 
 import std.stdint: uint64_t;
 import std.typecons: Tuple, tuple;
 import dbg: dln;
-import algorithm_ex: allZero, allEqualTo, denseness;
+import algorithm_ex: allZero, allEqualTo;
+import nesses: denseness;
 import rational: Rational;
 import msgpack;
 import std.numeric: dotProduct;

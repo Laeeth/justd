@@ -777,7 +777,7 @@ struct BitSet(size_t len, Block = size_t)
 
 unittest
 {
-    import algorithm_ex: denseness, sparseness;
+    import nesses: denseness, sparseness;
     alias Q = Rational!ulong;
 
     enum m = 256, n = 256;

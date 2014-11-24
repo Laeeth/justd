@@ -194,4 +194,16 @@ unittest {
     assert(!v1.zeroed);
 }
 
-// ==============================================================================================
+/** Returns: true iff $(D a) is set to the default/initial value of its type $(D T).
+ */
+bool defaulted(T)(in T a) @safe pure nothrow @nogc
+{
+    import std.traits: isInstanceOf;
+    import std.typecons: Nullable;
+    static if (isInstanceOf!(Nullable, T))
+        return a.isNull;
+    else
+    return a == T.init;
+}
+alias untouched = defaulted;
+alias inited = defaulted;
