@@ -902,6 +902,7 @@ auto ref shebangLine(Patt interpreter) @safe pure nothrow
                oom(ws()),
                interpreter);
 }
+
 pure unittest
 {
     assert(shebangLine(lit("rdmd")).
