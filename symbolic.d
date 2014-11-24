@@ -10,7 +10,7 @@
    Authors: $(WEB Per Nordlöw)
 
    TODO
-   Overload operators || (or), && (and), ! (not), ~ (seq), | (alt)
+   Overload operators || (or), && (and), ! (not),
 
    TODO
    Variables are either
@@ -70,7 +70,7 @@ class Patt
         return seq(this, rhs);
     }
 
-    Alt opBinary(string op)(Patt rhs) if (op == "||") // template can't be overridden
+    Alt opBinary(string op)(Patt rhs) if (op == "|") // template can't be overridden
     {
         return opAltImpl(rhs);
     }
@@ -561,7 +561,7 @@ auto alt(Args...)(Args args) @safe pure nothrow { return new Alt(args); } // ins
     immutable a_b = alt(lit("a"),
                         lit("b"));
 
-    immutable a__b = (lit("a") ||
+    immutable a__b = (lit("a") |
                       lit("b"));
 
     assert(a_b.isFixed);
