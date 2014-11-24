@@ -185,7 +185,7 @@ class Lit : Patt
 
 auto lit(Args...)(Args args) @safe pure nothrow { return new Lit(args); } // instantiator
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     immutable ab = "ab";
     assert(lit('b').at("ab", 1) == 1);
@@ -239,7 +239,7 @@ class Acronym : Patt
         this._ctx = ctx;
     }
 
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
     {
         auto offs = new size_t[_acros.length]; // hit offsets
         size_t a = 0;         // acronym index
@@ -278,7 +278,7 @@ class Acronym : Patt
         return haystack.findAcronymAt(_acros, _ctx, CaseSensitive.yes, soff)[0];
     }
 
-    @property nothrow:
+    @property:
     override size_t minLength() const { return _acros.length; }
     override size_t maxLength() const { return size_t.max; }
     override bool isFixed() const { return false; }
@@ -295,7 +295,7 @@ class Acronym : Patt
     auto assac(Args...)(Args args) { return new Acronym(args, FindContext.asSymbol); } // symbol acronym
 }
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     assert(inwac("a").at("a") == 1);
     assert(inwac("ab").at("ab") == 2);
@@ -398,7 +398,7 @@ class Seq : SPatt
 
 auto seq(Args...)(Args args) @safe pure nothrow { return new Seq(args); } // instantiator
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     const s = seq(lit("al"),
                   lit("pha"));
@@ -554,7 +554,7 @@ class Alt : SPatt
 
 auto alt(Args...)(Args args) @safe pure nothrow { return new Alt(args); } // instantiator
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     immutable a_b = alt(lit("a"),
                         lit("b"));
@@ -623,7 +623,7 @@ class Space : Patt
 
 auto ws() @safe pure nothrow { return new Space(); } // instantiator
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     assert(ws().at(" ") == 1);
     assert(ws().at("\t") == 1);
@@ -668,7 +668,7 @@ class Opt : SPatt1
 
 auto opt(Args...)(Args args) { return new Opt(args); } // optional
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     assert(opt(lit("a")).at("b") == 0);
     assert(opt(lit("a")).at("a") == 1);
@@ -734,7 +734,7 @@ auto rep(Args...)(Args args) { return new Rep(args); } // repetition
 auto zom(Args...)(Args args) { return new Rep(args, 0, size_t.max); } // zero or more
 auto oom(Args...)(Args args) { return new Rep(args, 1, size_t.max); } // one or more
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     auto l = lit('a');
 
@@ -830,7 +830,7 @@ Seq line(Args...)(Args args) { return seq(bol(), args, eol()); }
 Seq sym(Args...)(Args args) { return seq(bos(), args, eos()); }
 Seq word(Args...)(Args args) { return seq(bow(), args, eow()); }
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     const bob_ = bob();
     const eob_ = eob();
@@ -910,7 +910,7 @@ auto ref shebangLine(Patt interpreter) @safe pure nothrow
                interpreter);
 }
 
-@safe pure unittest
+@safe pure nothrow unittest
 {
     assert(shebangLine(lit("rdmd")).
            at("#!/bin/env rdmd") ==
