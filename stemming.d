@@ -692,12 +692,15 @@ import assert_ex;
 
 unittest
 {
+    assert("karl".stemSwedish == "karl");
+
     assert("grenen".stemSwedish == "gren");
     assert("busen".stemSwedish == "bus");
     assert("husen".stemSwedish == "hus");
     assert("räven".stemSwedish == "räv");
     assert("dunken".stemSwedish == "dunk");
     assert("männen".stemSwedish == "män");
+    assert("manen".stemSwedish == "man");
 
     assert("skalet".stemSwedish == "skal");
     assert("karet".stemSwedish == "kar");
@@ -756,6 +759,9 @@ unittest
     assert("rockan".stemSwedish == "rocka");
     assert("rock".stemSwedish == "rock");
 
+    assert("agenter".stemSwedish == "agent");
+    assert("regenter".stemSwedish == "regent");
+
     assert("brodern".stemSwedish == "broder");
     assert("kärnan".stemSwedish == "kärna");
 
@@ -780,6 +786,7 @@ unittest
     assert("jagande".stemSwedish == "jaga");
     assert("stimulerande".stemSwedish == "stimulera");
 
+    assert("karlar".stemSwedish == "karl");
     assert("lagar".stemSwedish == "lag");
 
     assert("sina".stemSwedish == "sin");
