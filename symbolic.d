@@ -46,17 +46,17 @@ import bitset;
  */
 class Patt
 {
-    @safe pure:
+    @safe pure nothrow:
 
     /** Match $(D this) with $(D haystack) at Offset $(D soff).
      Returns: Matched slice or [] if not match.
     */
-    final auto ref matchU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    final auto ref matchU(in ubyte[] haystack, size_t soff = 0) const
     {
         const hit = atU(haystack, soff);
         return hit != hit.max ? haystack[0..hit] : [];
     }
-    final auto ref match(in string haystack, size_t soff = 0) const nothrow
+    final auto ref match(in string haystack, size_t soff = 0) const
     {
         return matchU(haystack.representation, soff);
     }
@@ -79,7 +79,7 @@ class Patt
         return alt(this, rhs);
     }
 
-    final size_t at(in string haystack, size_t soff = 0) const nothrow
+    final size_t at(in string haystack, size_t soff = 0) const
     // TODO Activate this
     /* out (hit) { */
     /*     assert((!hit) || hit >= minLength); // TODO Is this needed? */
@@ -88,7 +88,7 @@ class Patt
     {
         return atU(haystack.representation, soff);
     }
-    size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    size_t atU(in ubyte[] haystack, size_t soff = 0) const
     {
         assert(false);
     }
@@ -185,7 +185,7 @@ class Lit : Patt
 
 auto lit(Args...)(Args args) @safe pure nothrow { return new Lit(args); } // instantiator
 
-pure unittest
+@safe pure unittest
 {
     immutable ab = "ab";
     assert(lit('b').at("ab", 1) == 1);
@@ -219,13 +219,14 @@ pure unittest
  */
 class Acronym : Patt
 {
-    pure:
-        this(string bytes_, FindContext ctx = FindContext.inSymbol)
+    @safe pure nothrow:
+
+    this(string bytes_, FindContext ctx = FindContext.inSymbol)
     {
         assert(!bytes_.empty);
         this(bytes_.representation, ctx);
     }
-    @safe:
+
     this(ubyte ch) { this._acros ~= ch; }
     this(ubyte[] bytes_, FindContext ctx = FindContext.inSymbol)
     {
@@ -286,12 +287,15 @@ class Acronym : Patt
     FindContext _ctx;
 }
 
-auto inwac(Args...)(Args args) { return new Acronym(args, FindContext.inWord); } // word acronym
-auto insac(Args...)(Args args) { return new Acronym(args, FindContext.inSymbol); } // symbol acronym
-auto aswac(Args...)(Args args) { return new Acronym(args, FindContext.asWord); } // word acronym
-auto assac(Args...)(Args args) { return new Acronym(args, FindContext.asSymbol); } // symbol acronym
+@safe pure nothrow
+{
+    auto inwac(Args...)(Args args) { return new Acronym(args, FindContext.inWord); } // word acronym
+    auto insac(Args...)(Args args) { return new Acronym(args, FindContext.inSymbol); } // symbol acronym
+    auto aswac(Args...)(Args args) { return new Acronym(args, FindContext.asWord); } // word acronym
+    auto assac(Args...)(Args args) { return new Acronym(args, FindContext.asSymbol); } // symbol acronym
+}
 
-pure unittest
+@safe pure unittest
 {
     assert(inwac("a").at("a") == 1);
     assert(inwac("ab").at("ab") == 2);
@@ -394,7 +398,7 @@ class Seq : SPatt
 
 auto seq(Args...)(Args args) @safe pure nothrow { return new Seq(args); } // instantiator
 
-pure unittest
+@safe pure unittest
 {
     const s = seq(lit("al"),
                   lit("pha"));
@@ -414,21 +418,21 @@ pure unittest
  */
 class Alt : SPatt
 {
+    @safe pure nothrow:
+
     this(Patt[] subs_) { super(subs_); }
     this(Args...)(Args subs_) { super(subs_); }
 
-    pure:
-    size_t atIx(in string haystack, size_t soff, out size_t alt_hix) const nothrow
+    size_t atIx(in string haystack, size_t soff, out size_t alt_hix) const
     {
         return atU(haystack.representation, soff, alt_hix);
     }
 
-    @safe:
-    @property auto ref inout (Patt[]) alts() inout nothrow { return super._subs; }
+    @property auto ref inout (Patt[]) alts() inout { return super._subs; }
 
     /** Get Length of hit at index soff in haystack or size_t.max if none.
      */
-    size_t atU(in ubyte[] haystack, size_t soff, out size_t alt_hix) const nothrow
+    size_t atU(in ubyte[] haystack, size_t soff, out size_t alt_hix) const
     {
         assert(!alts.empty);    // TODO Move to in contract?
         size_t hit = 0;
@@ -440,7 +444,7 @@ class Alt : SPatt
         }
         return hit;
     }
-    override size_t atU(in ubyte[] haystack, size_t soff = 0) const nothrow
+    override size_t atU(in ubyte[] haystack, size_t soff = 0) const
     {
         size_t alt_hix;
         return atU(haystack, soff, alt_hix);
@@ -550,7 +554,7 @@ class Alt : SPatt
 
 auto alt(Args...)(Args args) @safe pure nothrow { return new Alt(args); } // instantiator
 
-pure unittest
+@safe pure unittest
 {
     immutable a_b = alt(lit("a"),
                         lit("b"));
@@ -619,7 +623,7 @@ class Space : Patt
 
 auto ws() @safe pure nothrow { return new Space(); } // instantiator
 
-pure unittest
+@safe pure unittest
 {
     assert(ws().at(" ") == 1);
     assert(ws().at("\t") == 1);
@@ -664,7 +668,7 @@ class Opt : SPatt1
 
 auto opt(Args...)(Args args) { return new Opt(args); } // optional
 
-pure unittest
+@safe pure unittest
 {
     assert(opt(lit("a")).at("b") == 0);
     assert(opt(lit("a")).at("a") == 1);
@@ -730,7 +734,7 @@ auto rep(Args...)(Args args) { return new Rep(args); } // repetition
 auto zom(Args...)(Args args) { return new Rep(args, 0, size_t.max); } // zero or more
 auto oom(Args...)(Args args) { return new Rep(args, 1, size_t.max); } // one or more
 
-pure unittest
+@safe pure unittest
 {
     auto l = lit('a');
 
@@ -826,7 +830,7 @@ Seq line(Args...)(Args args) { return seq(bol(), args, eol()); }
 Seq sym(Args...)(Args args) { return seq(bos(), args, eos()); }
 Seq word(Args...)(Args args) { return seq(bow(), args, eow()); }
 
-pure unittest
+@safe pure unittest
 {
     const bob_ = bob();
     const eob_ = eob();
@@ -906,7 +910,7 @@ auto ref shebangLine(Patt interpreter) @safe pure nothrow
                interpreter);
 }
 
-pure unittest
+@safe pure unittest
 {
     assert(shebangLine(lit("rdmd")).
            at("#!/bin/env rdmd") ==
