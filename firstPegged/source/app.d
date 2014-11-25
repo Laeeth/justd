@@ -294,16 +294,13 @@ mixin(parserC);
 
 void main(string[] args)
 {
-    writeln(parserA);
-
+    /* writeln(parserA); */
     enum parseTree1 = A("1 + 2 - (3*x-5)*6");
     // pragma(msg, parseTree1.matches);
     assert(parseTree1.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
     writeln(parseTree1);
 
     /* writeln(parserC); */
-
-    // TODO is it possible to prune non-terminal single child nodes?
-    enum cTree = C(`int x;`);
+    enum cTree = C(`int x;`);    // TODO is it possible to prune non-terminal single child nodes?
     writeln(cTree);
 }
