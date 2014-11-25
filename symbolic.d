@@ -67,19 +67,13 @@ class Patt
     {
         return opCatImpl(rhs);
     }
-    Seq opCatImpl(Patt rhs) // can be overridden
-    {
-        return seq(this, rhs);
-    }
+    Seq opCatImpl(Patt rhs) { return seq(this, rhs); } // can be overridden
 
     Alt opBinary(string op)(Patt rhs) if (op == "|") // template can't be overridden
     {
         return opAltImpl(rhs);
     }
-    Alt opAltImpl(Patt rhs) // can be overridden
-    {
-        return alt(this, rhs);
-    }
+    Alt opAltImpl(Patt rhs) { return alt(this, rhs); } // can be overridden
 
     final size_t at(in string haystack, size_t soff = 0) const
     // TODO Activate this
@@ -90,6 +84,7 @@ class Patt
     {
         return atU(haystack.representation, soff);
     }
+
     size_t atU(in ubyte[] haystack, size_t soff = 0) const
     {
         assert(false);
@@ -450,6 +445,7 @@ class Alt : SPatt
         }
         return hit;
     }
+
     override size_t atU(in ubyte[] haystack, size_t soff = 0) const
     {
         size_t alt_hix;
