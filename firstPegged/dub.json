@@ -1,0 +1,12 @@
+{
+    "name": "firstPegged",
+    "copyright": "Copyright © 2014, Per Nordlöw",
+    "authors": ["Per Nordlöw"],
+    "dependencies": {
+        "pegged": "~master"
+    },
+    "buildRequirements": ["allowWarnings"],
+    "importPaths": [ ".." ],
+    "sourceFiles": [ "../dbg.d"
+                   ]
+}
