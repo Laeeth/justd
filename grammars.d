@@ -960,10 +960,13 @@ enum Number { singular, plural }
 enum Person { first, second, third }
 
 /** Subject Gender. */
-enum Gender { unknown,
-              male, /// maskulinum in Swedish
-              female, /// femininum in Swedish
-              neutral }
+enum Gender {
+    unknown,
+    male, maskulinum = male,
+    female, femininum = female,
+    neutral, neutrum = neutral, // human or alive, for example: "något"
+    reale, utrum = reale // non-human/alive, for example: "någon"
+}
 
 /* Number number(string x, WordKind wc) {} */
 /* Person person(string x, WordKind wc) {} */
@@ -971,7 +974,7 @@ enum Gender { unknown,
 
 /** English Negation Prefixes.
     See also: http://www.english-for-students.com/Negative-Prefixes.html
- */
+*/
 static immutable englishNegationPrefixes = [ `un`, `non`, `dis`, `im`, `in`, `il`, `ir`, ];
 
 static immutable swedishNegationPrefixes = [ `icke`, `o`, ];
