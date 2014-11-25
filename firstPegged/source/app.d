@@ -6,7 +6,7 @@ import pegged.grammar;
 
 import dbg;
 
-mixin(grammar(`
+enum grammarA = `
 A:
     Term     < Factor (Add / Sub)*
     Add      < "+" Factor
@@ -19,9 +19,12 @@ A:
     Neg      < "-" Primary
     Number   < ~([0-9]+)
     Variable <- identifier
-`));
+`;
 
-enum Cgrammar = `
+enum parserA = grammar(grammarA);
+mixin(parserA);
+
+enum grammarC = `
 C:
 
 TranslationUnit <- ExternalDeclaration (:Spacing ExternalDeclaration)*
@@ -286,15 +289,21 @@ FloatLiteral <~ Sign? Integer "." Integer? (("e" / "E") Sign? Integer)?
 Sign <- "-" / "+"
 `;
 
-mixin(grammar(Cgrammar));
+enum parserC = grammar(grammarC);
+mixin(parserC);
 
 void main(string[] args)
 {
+    writeln(parserA);
+
     enum parseTree1 = A("1 + 2 - (3*x-5)*6");
     // pragma(msg, parseTree1.matches);
     assert(parseTree1.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
     writeln(parseTree1);
 
-    enum cTree = C(`int x=32; int y=16;`);
+    /* writeln(parserC); */
+
+    // TODO is it possible to prune non-terminal single child nodes?
+    enum cTree = C(`int x;`);
     writeln(cTree);
 }
