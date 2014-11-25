@@ -4,8 +4,10 @@ import std.stdio;
 import pegged.peg;
 import pegged.grammar;
 
+import dbg;
+
 mixin(grammar(`
-Arithmetic:
+A:
     Term     < Factor (Add / Sub)*
     Add      < "+" Factor
     Sub      < "-" Factor
@@ -21,7 +23,7 @@ Arithmetic:
 
 void main(string[] args)
 {
-    enum parseTree1 = Arithmetic("1 + 2 - (3*x-5)*6");
+    enum parseTree1 = A("1 + 2 - (3*x-5)*6");
     // pragma(msg, parseTree1.matches);
     assert(parseTree1.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
     writeln(parseTree1);
