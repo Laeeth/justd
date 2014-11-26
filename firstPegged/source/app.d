@@ -3,6 +3,7 @@
 import std.stdio;
 import pegged.peg;
 import pegged.grammar;
+import std.typecons: tuple;
 
 import dbg;
 
@@ -13,23 +14,23 @@ enum grammarPath_A = "grammar_A.peg";
 
 static if (__traits(compiles, { enum string _ = import(parserPath_A); })) // TODO faster way?
 {
-    pragma(msg, "Loaded " ~ parserPath_A);
+    pragma(msg, "Loaded cached parser " ~ parserPath_A);
     enum parserCached_A = import(parserPath_A);
 }
 else
 {
-    pragma(msg, "Skipped " ~ parserPath_A);
+    pragma(msg, "Skipped cached parser " ~ parserPath_A);
     enum parserCached_A = [];
 }
 
 static if (__traits(compiles, { enum string _ = import(grammarPath_A); })) // TODO faster way?
 {
-    pragma(msg, "Loaded " ~ grammarPath_A);
+    pragma(msg, "Loaded cached grammar " ~ grammarPath_A);
     enum grammarCached_A = import(grammarPath_A);
 }
 else
 {
-    pragma(msg, "Skipped " ~ grammarPath_A);
+    pragma(msg, "Skipped cached grammar " ~ grammarPath_A);
     enum grammarCached_A = [];
 }
 
@@ -48,6 +49,8 @@ A:
     Variable <- identifier
 `;
 
+/* shared Tuple!(string, string)[] fileWrites; */
+
 static if (grammar_A == grammarCached_A)
 {
     pragma(msg, "Unchanged grammar " ~ grammarPath_A);
@@ -57,6 +60,8 @@ else
 {
     pragma(msg, "Grammar " ~ grammarPath_A ~ " has changed");
     enum parser_A = grammar(grammar_A);
+    /* fileWrites ~= tuple(grammarPath_A, grammar_A); */
+    /* fileWrites ~= tuple(parserPath_A, parser_A); */
 }
 
 mixin(parser_A);
@@ -331,16 +336,19 @@ Sign <- "-" / "+"
 enum parserC = grammar(grammarC);
 mixin(parserC);
 
-void main(string[] args)
+shared static this()
 {
     import std.file: write;
     import std.path: buildNormalizedPath;
-
     write(buildNormalizedPath("generated_source", parserPath_A), parser_A);
     write(buildNormalizedPath("generated_source/", grammarPath_A), grammar_A);
+}
 
+void main(string[] args)
+{
     /* writeln(parser_A); */
     auto parseTree1 = A("1 + 2 - (3*x-5)*6");
+    ParseTree f;
     // pragma(msg, parseTree1.matches);
     assert(parseTree1.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
     writeln(parseTree1);
