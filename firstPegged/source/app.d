@@ -6,32 +6,34 @@ import pegged.grammar;
 
 import dbg;
 
-enum parserA_path = "parserA.d";
-static if (__traits(compiles, { enum string _ = import(parserA_path); }))
+/*  ========================= A grammar ==================================== */
+
+enum parserPath_A = "parser_A.d";
+enum grammarPath_A = "grammar_A.peg";
+
+static if (__traits(compiles, { enum string _ = import(parserPath_A); })) // TODO faster way?
 {
-    pragma(msg, "Loaded " ~ parserA_path);
-    enum string parserACached = import(parserA_path);
+    pragma(msg, "Loaded " ~ parserPath_A);
+    enum parserCached_A = import(parserPath_A);
 }
 else
 {
-    pragma(msg, "Skipped " ~ parserA_path);
-    enum string parserACached = [];
+    pragma(msg, "Skipped " ~ parserPath_A);
+    enum parserCached_A = [];
 }
 
-enum parserA_sha1_path = "grammarA.sha1";
-
-static if (__traits(compiles, { enum string _ = import(parserA_sha1_path); }))
+static if (__traits(compiles, { enum string _ = import(grammarPath_A); })) // TODO faster way?
 {
-    pragma(msg, "Loaded " ~ parserA_sha1_path);
-    enum string parserA_sha1 = import(parserA_sha1_path);
+    pragma(msg, "Loaded " ~ grammarPath_A);
+    enum grammarCached_A = import(grammarPath_A);
 }
 else
 {
-    pragma(msg, "Skipped " ~ parserA_sha1_path);
-    enum string parserA_sha1 = [];
+    pragma(msg, "Skipped " ~ grammarPath_A);
+    enum grammarCached_A = [];
 }
 
-enum grammarA = `
+enum grammar_A = `
 A:
     Term     < Factor (Add / Sub)*
     Add      < "+" Factor
@@ -46,8 +48,20 @@ A:
     Variable <- identifier
 `;
 
-enum parserA = grammar(grammarA);
-mixin(parserA);
+static if (grammar_A == grammarCached_A)
+{
+    pragma(msg, "Unchanged grammar " ~ grammarPath_A);
+    enum parser_A = parserCached_A;
+}
+else
+{
+    pragma(msg, "Grammar " ~ grammarPath_A ~ " has changed");
+    enum parser_A = grammar(grammar_A);
+}
+
+mixin(parser_A);
+
+/*  ========================= C grammar ==================================== */
 
 enum grammarC = `
 C:
@@ -319,13 +333,18 @@ mixin(parserC);
 
 void main(string[] args)
 {
-    /* writeln(parserA); */
-    enum parseTree1 = A("1 + 2 - (3*x-5)*6");
+    import std.file: write;
+
+    write("generated_source/" ~ parserPath_A, parser_A);
+    write("generated_source/" ~ grammarPath_A, grammar_A);
+
+    /* writeln(parser_A); */
+    auto parseTree1 = A("1 + 2 - (3*x-5)*6");
     // pragma(msg, parseTree1.matches);
     assert(parseTree1.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
     writeln(parseTree1);
 
     /* writeln(parserC); */
-    enum cTree = C(`int x;`);    // TODO is it possible to prune non-terminal single child nodes?
+    auto cTree = C(`int x;`);    // TODO is it possible to prune non-terminal single child nodes?
     writeln(cTree);
 }
