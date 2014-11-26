@@ -8,5 +8,6 @@
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
     "sourceFiles": [ "../dbg.d"
-                   ]
+                   ],
+    "dflags-dmd": ["-J."]
 }
