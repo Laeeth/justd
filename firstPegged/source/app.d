@@ -334,9 +334,10 @@ mixin(parserC);
 void main(string[] args)
 {
     import std.file: write;
+    import std.path: buildNormalizedPath;
 
-    write("generated_source/" ~ parserPath_A, parser_A);
-    write("generated_source/" ~ grammarPath_A, grammar_A);
+    write(buildNormalizedPath("generated_source", parserPath_A), parser_A);
+    write(buildNormalizedPath("generated_source/", grammarPath_A), grammar_A);
 
     /* writeln(parser_A); */
     auto parseTree1 = A("1 + 2 - (3*x-5)*6");
