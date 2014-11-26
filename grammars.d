@@ -964,7 +964,7 @@ enum Gender {
     unknown,
     male, maskulinum = male,
     female, femininum = female,
-    neutral, neutrum = neutral, // human or alive, for example: "något"
+    neutral, neutrum = neutral, // human or alive, for example: "något"G
     reale, utrum = reale // non-human/alive, for example: "någon"
 }
 
