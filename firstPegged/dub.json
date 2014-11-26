@@ -9,5 +9,5 @@
     "importPaths": [ ".." ],
     "sourceFiles": [ "../dbg.d"
                    ],
-    "dflags-dmd": ["-J."]
+    "dflags-dmd": ["-J.", "-Jsource"]
 }
