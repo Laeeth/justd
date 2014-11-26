@@ -6,6 +6,31 @@ import pegged.grammar;
 
 import dbg;
 
+enum parserA_path = "parserA.d";
+static if (__traits(compiles, { enum string _ = import(parserA_path); }))
+{
+    pragma(msg, "Loaded " ~ parserA_path);
+    enum string parserACached = import(parserA_path);
+}
+else
+{
+    pragma(msg, "Skipped " ~ parserA_path);
+    enum string parserACached = [];
+}
+
+enum parserA_sha1_path = "grammarA.sha1";
+
+static if (__traits(compiles, { enum string _ = import(parserA_sha1_path); }))
+{
+    pragma(msg, "Loaded " ~ parserA_sha1_path);
+    enum string parserA_sha1 = import(parserA_sha1_path);
+}
+else
+{
+    pragma(msg, "Skipped " ~ parserA_sha1_path);
+    enum string parserA_sha1 = [];
+}
+
 enum grammarA = `
 A:
     Term     < Factor (Add / Sub)*
