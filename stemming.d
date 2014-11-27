@@ -6,7 +6,7 @@ import std.range: empty;
 import std.traits: isSomeString;
 
 import predicates: of;
-import grammars: isEnglishVowel, isSwedishVowel, isSwedishConsonant, isEnglishConsonant;
+import grammars: Lang, isEnglishVowel, isSwedishVowel, isSwedishConsonant, isEnglishConsonant;
 import skip_ex: skipOverBack;
 
 public class Stemmer(S) if (isSomeString!S)

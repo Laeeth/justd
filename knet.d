@@ -1786,9 +1786,13 @@ class Net(bool useArray = true,
         auto normalizedLine = line.strip.tr(std.ascii.whitespace, "_", "s").toLower;
 
         writeln(`Line `, normalizedLine);
-        foreach (concept; conceptsByWords(normalizedLine,
-                                          lang,
-                                          wordKind))
+
+        auto concepts = conceptsByWords(normalizedLine,
+                                        lang,
+                                        wordKind);
+
+        // as is
+        foreach (concept; concepts)
         {
             write(`- in `, concept.lang.toName);
             writeln(` of sense `, concept.lemmaKind);
@@ -1813,6 +1817,21 @@ class Net(bool useArray = true,
                     showConcept(outConcept, outLink.normalizedWeight);
                 }
                 writeln();
+            }
+        }
+
+        // stemmed
+        if (concepts.empty)
+        {
+            const stemmedLine = normalizedLine.stem(lang);
+            if (!stemmedLine.empty &&
+                stemmedLine != normalizedLine)
+            {
+                writeln(`Stemmed to `, stemmedLine);
+                showConcepts(stemmedLine,
+                             lang,
+                             wordKind,
+                             lineSeparator);
             }
         }
 
