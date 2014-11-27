@@ -1849,17 +1849,11 @@ class Net(bool useArray = true,
         // stemmed
         if (concepts.empty)
         {
-            do
+            while (normalizedLine.stemize(lang))
             {
-                auto previousLine = normalizedLine;
-                normalizedLine = previousLine.stem(lang);
-                if (!normalizedLine.empty && // stem result non-empty and
-                    normalizedLine != previousLine) // stemming did cut away a suffix
-                {
-                    writeln(`Stemmed to `, normalizedLine);
-                    showConcepts(normalizedLine, lang, sense, lineSeparator);
-                }
-            } while (!normalizedLine.empty);
+                writeln(`Stemmed to `, normalizedLine);
+                showConcepts(normalizedLine, lang, sense, lineSeparator);
+            }
         }
     }
 

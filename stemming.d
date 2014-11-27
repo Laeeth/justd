@@ -844,3 +844,11 @@ auto ref stem(S)(S s, Lang lang = Lang.unknown) if (isSomeString!S)
         }
     }
 }
+
+/** Destructively Stem $(D s) in Language $(D lang). */
+bool stemize(S)(ref S s, Lang lang = Lang.unknown) if (isSomeString!S)
+{
+    const n = s.length;
+    s = s.stem(lang);
+    return n != s.length;
+}
