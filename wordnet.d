@@ -14,6 +14,15 @@ import assert_ex;
 
 alias nPath = buildNormalizedPath;
 
+/** Word Sense/Meaning/Interpretation. */
+struct Entry(Links = uint[])
+{
+    Sense kind;
+    ubyte synsetCount; // Number of senses (meanings).
+    Links links;
+    Lang lang;
+}
+
 /** WordNet
     TODO represent dictionaries with a Trie instead of a hash table
     TODO aspell -d sv dump master > my.dict
@@ -574,14 +583,14 @@ class WordNet(bool useArray = true,
         }
 
         Links links;
-        _words[lemmaFixed] ~= WordSense!Links(kind, synsetCount, links, lang);
+        _words[lemmaFixed] ~= Entry!Links(kind, synsetCount, links, lang);
         return true;
     }
 
     /** Get Possible Meanings of $(D lemma) in all $(D langs).
         TODO filter on langs if langs is non-empty.
      */
-    WordSense!Links[] meaningsOf(S)(const S lemma,
+    Entry!Links[] meaningsOf(S)(const S lemma,
                                     const Lang[] langs = [])
     {
         typeof(return) senses;
@@ -748,7 +757,7 @@ class WordNet(bool useArray = true,
             const synset_off   = words[6+p_cnt].to!uint;
             static if (useArray) { auto links = Links(words[6+p_cnt..$].map!(a => a.to!uint)); }
             else                 { auto links = words[6+p_cnt..$].map!(a => a.to!uint).array; }
-            auto meaning = WordSense!Links(words[1].front.decodeWordKind,
+            auto meaning = Entry!Links(words[1].front.decodeWordKind,
                                            words[2].to!ubyte, links, lang);
             debug assert(synset_cnt == sense_cnt);
             _words[lemma] ~= meaning;
@@ -802,7 +811,7 @@ class WordNet(bool useArray = true,
         writeln(`Read `, lnr, ` words from `, fileName);
     }
 
-    WordSense!Links[][Lemma] _words;
+    Entry!Links[][Lemma] _words;
 }
 
 auto ref makeWordNet(bool useArray = true,
@@ -815,7 +824,7 @@ auto ref makeWordNet(bool useArray = true,
 /** Decode Ambiguous Meaning(s) of string $(D s). */
 version(none)
 // TODO This gives error. Fix.
-private auto to(T: WordSense[], S)(S x) if (isSomeString!S ||
+private auto to(T: Entry[], S)(S x) if (isSomeString!S ||
                                             isSomeChar!S)
 {
     T meanings;

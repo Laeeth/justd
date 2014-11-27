@@ -573,7 +573,7 @@ enum Tense:ubyte
     futureDuration,
 }
 
-/** Human Word Kind (Category). */
+/** Human Word Sense Kind (Category). */
 enum Sense:ubyte
 {
     unknown,
@@ -687,15 +687,6 @@ enum Article { unindefinite, definite,  partitive }
 class Subject : Part
 {
     Article article;
-}
-
-/** Word Sense/Meaning/Interpretation. */
-struct WordSense(Links = uint[])
-{
-    Sense kind;
-    ubyte synsetCount; // Number of senses (meanings).
-    Links links;
-    Lang lang;
 }
 
 /** Decode character $(D kindCode) into a $(D Sense). */
@@ -1012,12 +1003,6 @@ static immutable jobTitleSuffixes = [ `or`, // traitor
 
 /** English Word Suffixes. */
 static immutable wordSuffixes = [ allNounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;
-
-/** Get English Word Base of $(D x). */
-auto wordBase(S)(S lemma, WordSense wordSense) if (isSomeString!S)
-{
-    doit;
-}
 
 Gender getGender(S)(S lemma, Sense kind) if (isSomeString!S)
 {
