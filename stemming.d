@@ -825,3 +825,22 @@ auto ref stemNorvegian(S)(S s) if (isSomeString!S)
     s.skipOverBack(`ede`);
     return s;
 }
+
+/** Stem $(D s) in Language $(D lang). */
+auto ref stem(S)(S s, Lang lang = Lang.unknown) if (isSomeString!S)
+{
+    with (Lang)
+    {
+        switch (lang)
+        {
+            case sv:
+                return s.stemSwedish;
+            case no:
+                return s.stemNorvegian;
+            case en:
+            default:
+                auto stemmer = new Stemmer!string();
+                return stemmer.stem(s);
+        }
+    }
+}
