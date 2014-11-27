@@ -1787,6 +1787,32 @@ class Net(bool useArray = true,
 
         writeln(`Line `, normalizedLine);
 
+        if (normalizedLine == "palindrome")
+        {
+            foreach (palindromeConcept; _concepts.filter!(concept => concept.words.isPalindrome(3)))
+            {
+                showLinkConcept(palindromeConcept,
+                                Rel.instanceOf,
+                                real.infinity,
+                                RelDir.backward);
+            }
+        }
+        else if (normalizedLine.skipOver("anagramsof("))
+        {
+            auto split = normalizedLine.findSplitBefore(")");
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                foreach (anagramConcept; anagramsOf(arg))
+                {
+                    showLinkConcept(anagramConcept,
+                                    Rel.instanceOf,
+                                    real.infinity,
+                                    RelDir.backward);
+                }
+            }
+        }
+
         auto concepts = conceptsByWords(normalizedLine,
                                         lang,
                                         wordKind);
@@ -1823,42 +1849,20 @@ class Net(bool useArray = true,
         // stemmed
         if (concepts.empty)
         {
-            const stemmedLine = normalizedLine.stem(lang);
-            if (!stemmedLine.empty &&
-                stemmedLine != normalizedLine)
+            do
             {
-                writeln(`Stemmed to `, stemmedLine);
-                showConcepts(stemmedLine,
-                             lang,
-                             wordKind,
-                             lineSeparator);
-            }
-        }
-
-        if (normalizedLine == "palindrome")
-        {
-            foreach (palindromeConcept; _concepts.filter!(concept => concept.words.isPalindrome(3)))
-            {
-                showLinkConcept(palindromeConcept,
-                                Rel.instanceOf,
-                                real.infinity,
-                                RelDir.backward);
-            }
-        }
-        else if (normalizedLine.skipOver("anagramsof("))
-        {
-            auto split = normalizedLine.findSplitBefore(")");
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                foreach (anagramConcept; anagramsOf(arg))
+                auto previousLine = normalizedLine;
+                normalizedLine = previousLine.stem(lang);
+                if (!normalizedLine.empty && // stem result non-empty and
+                    normalizedLine != previousLine) // stemming did cut away a suffix
                 {
-                    showLinkConcept(anagramConcept,
-                                    Rel.instanceOf,
-                                    real.infinity,
-                                    RelDir.backward);
+                    writeln(`Stemmed to `, normalizedLine);
+                    showConcepts(normalizedLine,
+                                 lang,
+                                 wordKind,
+                                 lineSeparator);
                 }
-            }
+            } while (!normalizedLine.empty);
         }
     }
 
