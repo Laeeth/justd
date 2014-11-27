@@ -81,8 +81,8 @@ class WordNet(bool useArray = true,
                                     const Lang[] langs = []) if (isSomeString!(ElementType!Words))
     {
         typeof(return) roles;
-        if (canMean(words[0], WordKind.noun, langs) &&
-            canMean(words[1], WordKind.verb, langs))
+        if (canMean(words[0], Sense.noun, langs) &&
+            canMean(words[1], Sense.verb, langs))
         {
             roles = [SentencePart.subject,
                      SentencePart.predicate];
@@ -99,7 +99,7 @@ class WordNet(bool useArray = true,
 
     void readUNIXDict(const string fileName,
                       Lang lang,
-                      WordKind kindAll = WordKind.unknown)
+                      Sense kindAll = Sense.unknown)
     {
         size_t lnr = 0;
         size_t exceptionCount = 0;
@@ -115,12 +115,12 @@ class WordNet(bool useArray = true,
             }
             else
             {
-                WordKind kind;
+                Sense kind;
                 auto split = lemma.findSplit(`'`);
                 if (!split[1].empty)
                 {
                     lemma = split[0]; // exclude genitive ending 's
-                    kind = WordKind.noun;
+                    kind = Sense.noun;
                 }
                 const normalizedLemma = normalize(lemma, lang);
                 if (normalizedLemma[1])
@@ -177,17 +177,17 @@ class WordNet(bool useArray = true,
 
         foreach (e; [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`])
         {
-            addWord(e, WordKind.coordinatingConjunction, 0, Lang.en);
+            addWord(e, Sense.coordinatingConjunction, 0, Lang.en);
         }
 
         foreach (e; [`och`, `eller`, `men`, `så`, `för`, `ännu`])
         {
-            addWord(e, WordKind.coordinatingConjunction, 0, Lang.sv);
+            addWord(e, Sense.coordinatingConjunction, 0, Lang.sv);
         }
 
         foreach (e; [`since`, `ago`, `before`, `past`])
         {
-            addWord(e, WordKind.prepositionTime, 0, Lang.en);
+            addWord(e, Sense.prepositionTime, 0, Lang.en);
         }
 
         // TODO Use all at http://www.ego4u.com/en/cram-up/grammar/prepositions
@@ -198,121 +198,121 @@ class WordNet(bool useArray = true,
                      `by`, `out of`, `towards`, `through`, `across`,
                      `above`, `over`, `below`, `under`, `next to`, `beside`])
         {
-            addWord(e, WordKind.preposition, 0, Lang.en);
+            addWord(e, Sense.preposition, 0, Lang.en);
         }
 
         /* undefinite articles */
         foreach (e; [`a`, `an`]) {
-            addWord(e, WordKind.articleUndefinite, 0, Lang.en);
+            addWord(e, Sense.articleUndefinite, 0, Lang.en);
         }
         foreach (e; [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`]) {
-            addWord(e, WordKind.articleUndefinite, 0, Lang.de);
+            addWord(e, Sense.articleUndefinite, 0, Lang.de);
         }
         foreach (e; [`un`, `une`, `des`]) {
-            addWord(e, WordKind.articleUndefinite, 0, Lang.fr);
+            addWord(e, Sense.articleUndefinite, 0, Lang.fr);
         }
         foreach (e; [`en`, `ena`, `ett`]) {
-            addWord(e, WordKind.articleUndefinite, 0, Lang.sv);
+            addWord(e, Sense.articleUndefinite, 0, Lang.sv);
         }
 
         /* definite articles */
         foreach (e; [`the`]) {
-            addWord(e, WordKind.articleDefinite, 0, Lang.en);
+            addWord(e, Sense.articleDefinite, 0, Lang.en);
         }
         foreach (e; [`der`, `die`, `das`, `des`, `dem`, `den`]) {
-            addWord(e, WordKind.articleDefinite, 0, Lang.de);
+            addWord(e, Sense.articleDefinite, 0, Lang.de);
         }
         foreach (e; [`le`, `la`, `l'`, `les`]) {
-            addWord(e, WordKind.articleDefinite, 0, Lang.fr);
+            addWord(e, Sense.articleDefinite, 0, Lang.fr);
         }
         foreach (e; [`den`, `det`]) {
-            addWord(e, WordKind.articleDefinite, 0, Lang.sv);
+            addWord(e, Sense.articleDefinite, 0, Lang.sv);
         }
 
         /* partitive articles */
         foreach (e; [`some`]) {
-            addWord(e, WordKind.articlePartitive, 0, Lang.en);
+            addWord(e, Sense.articlePartitive, 0, Lang.en);
         }
         foreach (e; [`du`, `de`, `la`, `de`, `l'`, `des`]) {
-            addWord(e, WordKind.articlePartitive, 0, Lang.fr);
+            addWord(e, Sense.articlePartitive, 0, Lang.fr);
         }
 
         /* personal pronoun */
         foreach (e; [`I`, `me`,  `you`, `it`]) {
-            addWord(e, WordKind.pronounPersonalSingular, 0, Lang.en);
+            addWord(e, Sense.pronounPersonalSingular, 0, Lang.en);
         }
         foreach (e; [`he`, `him`]) {
-            addWord(e, WordKind.pronounPersonalSingularMale, 0, Lang.en);
+            addWord(e, Sense.pronounPersonalSingularMale, 0, Lang.en);
         }
         foreach (e; [`she`, `her`]) {
-            addWord(e, WordKind.pronounPersonalSingularFemale, 0, Lang.en);
+            addWord(e, Sense.pronounPersonalSingularFemale, 0, Lang.en);
         }
 
         foreach (e; [`jag`, `mig`, // 1st person
                      `du`, `dig`, // 2nd person
                      `den`, `det`]) { // 3rd person
-            addWord(e, WordKind.pronounPersonalSingular, 0, Lang.sv);
+            addWord(e, Sense.pronounPersonalSingular, 0, Lang.sv);
         }
         foreach (e; [`han`, `honom`]) {
-            addWord(e, WordKind.pronounPersonalSingularMale, 0, Lang.sv);
+            addWord(e, Sense.pronounPersonalSingularMale, 0, Lang.sv);
         }
         foreach (e; [`hon`, `henne`]) {
-            addWord(e, WordKind.pronounPersonalSingularFemale, 0, Lang.sv);
+            addWord(e, Sense.pronounPersonalSingularFemale, 0, Lang.sv);
         }
 
         foreach (e; [`we`, `us`, // 1st person
                      `you`, // 2nd person
                      `they`, `them`]) // 3rd person
         {
-            addWord(e, WordKind.pronounPersonalPlural, 0, Lang.en);
+            addWord(e, Sense.pronounPersonalPlural, 0, Lang.en);
         }
         foreach (e; [`vi`, `oss`, // 1st person
                      `ni`, // 2nd person
                      `de`, `dem`]) // 3rd person
         {
-            addWord(e, WordKind.pronounPersonalPlural, 0, Lang.sv);
+            addWord(e, Sense.pronounPersonalPlural, 0, Lang.sv);
         }
 
         /* TODO near/far in distance/time , singular, plural */
         foreach (e; [`this`, `that`,
                      `these`, `those`]) {
-            addWord(e, WordKind.pronounDemonstrative, 0, Lang.en);
+            addWord(e, Sense.pronounDemonstrative, 0, Lang.en);
         }
 
         /* TODO near/far in distance/time , singular, plural */
         foreach (e; [`den här`, `den där`,
                      `de här`, `de där`]) {
-            addWord(e, WordKind.pronounDemonstrative, 0, Lang.sv);
+            addWord(e, Sense.pronounDemonstrative, 0, Lang.sv);
         }
 
         foreach (e; [`my`, `your`]) {
-            addWord(e, WordKind.adjectivePossessiveSingular, 0, Lang.en);
+            addWord(e, Sense.adjectivePossessiveSingular, 0, Lang.en);
         }
         foreach (e; [`our`, `their`]) {
-            addWord(e, WordKind.adjectivePossessivePlural, 0, Lang.en);
+            addWord(e, Sense.adjectivePossessivePlural, 0, Lang.en);
         }
 
         foreach (e; [`mine`, `yours`]) /* 1st person */ {
-            addWord(e, WordKind.pronounPossessiveSingular, 0, Lang.en);
+            addWord(e, Sense.pronounPossessiveSingular, 0, Lang.en);
         }
         foreach (e; [`his`]) {
-            addWord(e, WordKind.pronounPossessiveSingularMale, 0, Lang.en);
+            addWord(e, Sense.pronounPossessiveSingularMale, 0, Lang.en);
         }
         foreach (e; [`hers`]) {
-            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, Lang.en);
+            addWord(e, Sense.pronounPossessiveSingularFemale, 0, Lang.en);
         }
 
         foreach (e; [`min`, /* 1st person */ `din`, /* 2nd person */ ]) {
-            addWord(e, WordKind.pronounPossessiveSingular, 0, Lang.sv);
+            addWord(e, Sense.pronounPossessiveSingular, 0, Lang.sv);
         }
         foreach (e; [`hans`]) {
-            addWord(e, WordKind.pronounPossessiveSingularMale, 0, Lang.sv);
+            addWord(e, Sense.pronounPossessiveSingularMale, 0, Lang.sv);
         }
         foreach (e; [`hennes`]) {
-            addWord(e, WordKind.pronounPossessiveSingularFemale, 0, Lang.sv);
+            addWord(e, Sense.pronounPossessiveSingularFemale, 0, Lang.sv);
         }
         foreach (e; [`dens`, `dets`, /* 3rd person */ ]) {
-            addWord(e, WordKind.pronounPossessiveSingularNeutral, 0, Lang.sv);
+            addWord(e, Sense.pronounPossessiveSingularNeutral, 0, Lang.sv);
         }
 
         foreach (e; [`ours`, // 1st person
@@ -320,7 +320,7 @@ class WordNet(bool useArray = true,
                      `theirs` // 3rd person
                      ])
         {
-            addWord(e, WordKind.pronounPossessivePlural, 0, Lang.en);
+            addWord(e, Sense.pronounPossessivePlural, 0, Lang.en);
         }
 
         foreach (e; [`vår`, // 1st person
@@ -328,35 +328,35 @@ class WordNet(bool useArray = true,
                      `deras` // 3rd person
                      ])
         {
-            addWord(e, WordKind.pronounPossessivePlural, 0, Lang.sv);
+            addWord(e, Sense.pronounPossessivePlural, 0, Lang.sv);
         }
         foreach (e; [`who`, `whom`, `what`, `which`, `whose`,
                      `whoever`, `whatever`, `whichever`]) {
-            addWord(e, WordKind.pronounInterrogative, 0, Lang.sv);
+            addWord(e, Sense.pronounInterrogative, 0, Lang.sv);
         }
         foreach (e; [`vem`, `som`, `vad`, `vilken`, `vems`]) {
-            addWord(e, WordKind.pronounInterrogative, 0, Lang.sv);
+            addWord(e, Sense.pronounInterrogative, 0, Lang.sv);
         }
 
         foreach (e; [`myself`, `yourself`, `himself`, `herself`, `itself`]) {
-            addWord(e, WordKind.pronounReflexiveSingular, 0, Lang.en);
+            addWord(e, Sense.pronounReflexiveSingular, 0, Lang.en);
         }
         foreach (e; [`mig själv`, `dig själv`, `han själv`, `henne själv`, `den själv`]) {
-            addWord(e, WordKind.pronounReflexiveSingular, 0, Lang.sv);
+            addWord(e, Sense.pronounReflexiveSingular, 0, Lang.sv);
         }
 
         foreach (e; [`ourselves`, `yourselves`, `themselves`]) {
-            addWord(e, WordKind.pronounReflexivePlural, 0, Lang.en);
+            addWord(e, Sense.pronounReflexivePlural, 0, Lang.en);
         }
         foreach (e; [`oss själva`, `er själva`, `dem själva`]) {
-            addWord(e, WordKind.pronounReflexivePlural, 0, Lang.sv);
+            addWord(e, Sense.pronounReflexivePlural, 0, Lang.sv);
         }
 
         foreach (e; [`each other`, `one another`]) {
-            addWord(e, WordKind.pronounReciprocal, 0, Lang.en);
+            addWord(e, Sense.pronounReciprocal, 0, Lang.en);
         }
         foreach (e; [`varandra`]) {
-            addWord(e, WordKind.pronounReciprocal, 0, Lang.sv);
+            addWord(e, Sense.pronounReciprocal, 0, Lang.sv);
         }
 
         foreach (e; [`another`, `anybody`, `anyone`, `anything`, `each`, `either`, `enough`,
@@ -364,15 +364,15 @@ class WordNet(bool useArray = true,
                      `nobody`, `noone`, `one`, `other`,
                      `somebody`, `someone`,
                      `something`, `you`]) {
-            addWord(e, WordKind.pronounIndefiniteSingular, 0, Lang.en);
+            addWord(e, Sense.pronounIndefiniteSingular, 0, Lang.en);
         }
 
         foreach (e; [`both`, `few`, `fewer`, `many`, `others`, `several`, `they`]) {
-            addWord(e, WordKind.pronounIndefinitePlural, 0, Lang.en);
+            addWord(e, Sense.pronounIndefinitePlural, 0, Lang.en);
         }
 
         foreach (e; [`all`, `any`, `more`, `most`, `none`, `some`, `such`]) {
-            addWord(e, WordKind.pronounIndefinite, 0, Lang.en);
+            addWord(e, Sense.pronounIndefinite, 0, Lang.en);
         }
 
         foreach (e; [`who`, `whom`, // generally only for people
@@ -380,7 +380,7 @@ class WordNet(bool useArray = true,
                      `which`, // things
                      `that` // things and people
                      ]) {
-            addWord(e, WordKind.pronounRelative, 0, Lang.en);
+            addWord(e, Sense.pronounRelative, 0, Lang.en);
         }
 
         foreach (e; [`after`, `although`, `as`, `as if`, `as long as`,
@@ -389,7 +389,7 @@ class WordNet(bool useArray = true,
                      `though`, `till`, `unless`, `until`, `what`,
                      `when`, `whenever`, `wherever`, `whether`, `while`])
         {
-            addWord(e, WordKind.subordinatingConjunction, 0, Lang.en);
+            addWord(e, Sense.subordinatingConjunction, 0, Lang.en);
         }
 
         foreach (e; [`accordingly`, `additionally`, `again`, `almost`,
@@ -408,46 +408,46 @@ class WordNet(bool useArray = true,
                      `for example`, `for instance`, `of course`, `on the contrary`,
                      `so far`, `until now`, `thus` ])
         {
-            addWord(e, WordKind.conjunctiveAdverb, 0, Lang.en);
+            addWord(e, Sense.conjunctiveAdverb, 0, Lang.en);
         }
 
         foreach (e; [`no`, `not`, `never`, `nowhere`, `none`, `nothing`])
         {
-            addWord(e, WordKind.negatingAdverb, 0, Lang.en);
+            addWord(e, Sense.negatingAdverb, 0, Lang.en);
         }
 
         foreach (e; [`yes`, `yeah`])
         {
-            addWord(e, WordKind.affirmingAdverb, 0, Lang.en);
+            addWord(e, Sense.affirmingAdverb, 0, Lang.en);
         }
 
         foreach (e; [`ej`, `inte`, `icke`])
         {
-            addWord(e, WordKind.negatingAdverb, 0, Lang.sv);
+            addWord(e, Sense.negatingAdverb, 0, Lang.sv);
         }
 
         /* weekdays */
         foreach (e; [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
                      `saturday`, `sunday`]) {
-            addWord(e, WordKind.nounWeekday, 0, Lang.en);
+            addWord(e, Sense.nounWeekday, 0, Lang.en);
         }
         foreach (e; [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`,
                      `samstag`, `sonntag`]) {
-            addWord(e, WordKind.nounWeekday, 0, Lang.de);
+            addWord(e, Sense.nounWeekday, 0, Lang.de);
         }
         foreach (e; [`måndag`, `tisdag`, `onsdag`, `torsdag`, `fredag`,
                      `lördag`, `söndag`]) {
-            addWord(e, WordKind.nounWeekday, 0, Lang.sv);
+            addWord(e, Sense.nounWeekday, 0, Lang.sv);
         }
 
         /* months */
         foreach (e; [`januari`, `februari`, `mars`, `april`, `maj`, `juni`,
                      `juli`, `augusti`, `september`, `oktober`, `november`, `december`]) {
-            addWord(e, WordKind.nounMonth, 0, Lang.sv);
+            addWord(e, Sense.nounMonth, 0, Lang.sv);
         }
         foreach (e; [`january`, `february`, `mars`, `april`, `may`, `june`,
                      `july`, `august`, `september`, `oktober`, `november`, `december`]) {
-            addWord(e, WordKind.nounMonth, 0, Lang.en);
+            addWord(e, Sense.nounMonth, 0, Lang.en);
         }
     }
 
@@ -553,7 +553,7 @@ class WordNet(bool useArray = true,
     /** Store $(D lemma) as $(D kind) in language $(D lang).
         Return true if a new word was added, false if word was specialized.
      */
-    bool addWord(S)(const S lemma, WordKind kind, ubyte synsetCount,
+    bool addWord(S)(const S lemma, Sense kind, ubyte synsetCount,
                     Lang lang = Lang.unknown)
     {
         static if (useRCString) { const Lemma lemmaFixed = lemma; }
@@ -563,7 +563,7 @@ class WordNet(bool useArray = true,
             auto existing = _words[lemmaFixed];
             foreach (ref e; existing) // for each possible more general kind
             {
-                if (e.kind == WordKind.init ||
+                if (e.kind == Sense.init ||
                     (kind != e.kind &&
                      kind.memberOf(e.kind)))
                 {
@@ -604,7 +604,7 @@ class WordNet(bool useArray = true,
         langs).
     */
     auto canMean(S)(const S lemma,
-                    const WordKind kind,
+                    const Sense kind,
                     const Lang[] langs = []) if (isSomeString!S)
     {
         return meaningsOf(lemma, langs).canFind!(meaning =>
@@ -715,7 +715,7 @@ class WordNet(bool useArray = true,
     }
 
     auto canMean(S)(S lemma,
-                    WordKind kind,
+                    Sense kind,
                     Lang lang = Lang.unknown) if (isSomeString!S)
     {
         return canMean(lemma, kind, lang == Lang.unknown ? [] : [lang]);
@@ -842,10 +842,10 @@ unittest
 
     if (netLangs.canFind(Lang.en))
     {
-        assert(wn.canMean(`car`, WordKind.noun, [Lang.en]));
-        assert(wn.canMean(`car`, WordKind.noun, Lang.en));
-        assert(!wn.canMean(`longing`, WordKind.verb, [Lang.en]));
-        assert(wn.canMean(`january`, WordKind.nounMonth, [Lang.en]));
+        assert(wn.canMean(`car`, Sense.noun, [Lang.en]));
+        assert(wn.canMean(`car`, Sense.noun, Lang.en));
+        assert(!wn.canMean(`longing`, Sense.verb, [Lang.en]));
+        assert(wn.canMean(`january`, Sense.nounMonth, [Lang.en]));
     }
 
     if (netLangs.canFind(Lang.sv))
@@ -867,19 +867,19 @@ unittest
 
     if (netLangs.canFind(Lang.sv))
     {
-        assert(wn.canMean(`måndag`, WordKind.nounWeekday, [Lang.sv]));
-        assert(wn.canMean(`måndag`, WordKind.noun, [Lang.sv]));
-        assert(wn.canMean(`bil`, WordKind.unknown, [Lang.sv]));
-        assert(wn.canMean(`tvätt`, WordKind.unknown, [Lang.sv]));
-        assert(!wn.canMean(`måndag`, WordKind.verb, [Lang.sv]));
-        assert(!wn.canMean(`måndag`, WordKind.adjective, [Lang.sv]));
-        assert(wn.canMean(`januari`, WordKind.nounMonth, [Lang.sv]));
-        assert(wn.canMean(`sopstation`, WordKind.unknown, [Lang.sv]));
+        assert(wn.canMean(`måndag`, Sense.nounWeekday, [Lang.sv]));
+        assert(wn.canMean(`måndag`, Sense.noun, [Lang.sv]));
+        assert(wn.canMean(`bil`, Sense.unknown, [Lang.sv]));
+        assert(wn.canMean(`tvätt`, Sense.unknown, [Lang.sv]));
+        assert(!wn.canMean(`måndag`, Sense.verb, [Lang.sv]));
+        assert(!wn.canMean(`måndag`, Sense.adjective, [Lang.sv]));
+        assert(wn.canMean(`januari`, Sense.nounMonth, [Lang.sv]));
+        assert(wn.canMean(`sopstation`, Sense.unknown, [Lang.sv]));
     }
 
     if (netLangs.canFind(Lang.de))
     {
-        assert(wn.canMean(`fenster`, WordKind.unknown, [Lang.de]));
+        assert(wn.canMean(`fenster`, Sense.unknown, [Lang.de]));
     }
 
     if (netLangs.canFind(Lang.en))

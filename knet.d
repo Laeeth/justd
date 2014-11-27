@@ -782,7 +782,7 @@ class Net(bool useArray = true,
         /* The following three are used to disambiguate different semantics
          * meanings of the same word in different languages. */
         Lang lang;
-        WordKind wordKind;
+        Sense sense;
         CategoryIx categoryIx;
         auto opCast(T : bool)() { return words !is null; }
     }
@@ -793,7 +793,7 @@ class Net(bool useArray = true,
         /* @safe @nogc pure nothrow: */
         this(Words words,
              Lang lang,
-             WordKind lemmaKind,
+             Sense lemmaKind,
              CategoryIx categoryIx,
              Origin origin = Origin.unknown,
              LinkIxes inIxes = LinkIxes.init,
@@ -816,7 +816,7 @@ class Net(bool useArray = true,
         // TODO Make this Lemma
         Words words;
         Lang lang;
-        WordKind lemmaKind;
+        Sense lemmaKind;
         CategoryIx categoryIx;
 
         Origin origin;
@@ -950,7 +950,7 @@ class Net(bool useArray = true,
         size_t[Rel.max + 1] _relCounts;
         size_t[Origin.max + 1] _linkSourceCounts;
         size_t[Lang.max + 1] _hlangCounts;
-        size_t[WordKind.max + 1] _kindCounts;
+        size_t[Sense.max + 1] _kindCounts;
         size_t _conceptStringLengthSum = 0;
         size_t _connectednessSum = 0;
 
@@ -986,15 +986,15 @@ class Net(bool useArray = true,
     }
 
     /** Try to Get Single Concept related to $(D word) in the interpretation
-        (semantic context) $(D wordKind).
+        (semantic context) $(D sense).
     */
     Concept[] conceptByWordsMaybe(S)(S words,
                                      Lang lang = Lang.unknown,
-                                     WordKind wordKind = WordKind.unknown,
+                                     Sense sense = Sense.unknown,
                                      CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
-        auto lemma = Lemma(words, lang, wordKind, category);
+        auto lemma = Lemma(words, lang, sense, category);
         if (lemma in _conceptIxByLemma) // if hashed lookup possible
         {
             concepts = [conceptByIx(_conceptIxByLemma[lemma])]; // use it
@@ -1006,9 +1006,9 @@ class Net(bool useArray = true,
             if (wordsSplit.length >= 2)
             {
                 const wordsFixed = wordsSplit.joiner("_").to!S;
-                /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", wordKind); */
+                /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
                 // TODO: Functionize
-                auto lemmaFixed = Lemma(wordsFixed, lang, wordKind, category);
+                auto lemmaFixed = Lemma(wordsFixed, lang, sense, category);
                 if (lemmaFixed in _conceptIxByLemma)
                 {
                     concepts = [conceptByIx(_conceptIxByLemma[lemmaFixed])];
@@ -1019,20 +1019,20 @@ class Net(bool useArray = true,
     }
 
     /** Get All Possible Concepts related to $(D word) in the interpretation
-        (semantic context) $(D wordKind).
-        If no wordKind given return all possible.
+        (semantic context) $(D sense).
+        If no sense given return all possible.
     */
     Concept[] conceptsByWords(S)(S words,
                                  Lang lang = Lang.unknown,
-                                 WordKind wordKind = WordKind.unknown,
+                                 Sense sense = Sense.unknown,
                                  CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
         if (lang != Lang.unknown &&
-            wordKind != WordKind.unknown &&
+            sense != Sense.unknown &&
             category != anyCategory)
         {
-            return conceptByWordsMaybe(words, lang, wordKind, category);
+            return conceptByWordsMaybe(words, lang, sense, category);
         }
         else
         {
@@ -1040,16 +1040,16 @@ class Net(bool useArray = true,
             {
                 if (_hlangCounts[hlangGuess])
                 {
-                    foreach (wordKindGuess; EnumMembers!WordKind) // for each meaning
+                    foreach (senseGuess; EnumMembers!Sense) // for each meaning
                     {
-                        if (_kindCounts[wordKindGuess])
+                        if (_kindCounts[senseGuess])
                         {
                             foreach (ushort categoryCountGuess;
                                      0.._categoryIxCounter) // for each category including unknown
                             {
                                 concepts ~= conceptByWordsMaybe(words,
                                                                 hlangGuess,
-                                                                wordKindGuess,
+                                                                senseGuess,
                                                                 CategoryIx(categoryCountGuess));
                             }
                         }
@@ -1128,7 +1128,7 @@ class Net(bool useArray = true,
     /** Lookup or Store Concept named $(D words) in language $(D lang). */
     ConceptIx lookupOrStoreConcept(Words words,
                                    Lang lang,
-                                   WordKind kind,
+                                   Sense kind,
                                    CategoryIx categoryIx,
                                    Origin origin)
     {
@@ -1240,19 +1240,19 @@ class Net(bool useArray = true,
         else                    { immutable words = items.front.idup; }
 
         items.popFront;
-        auto wordKind = WordKind.unknown;
+        auto sense = Sense.unknown;
         if (!items.empty)
         {
             const item = items.front;
-            wordKind = item.decodeWordKind;
-            if (wordKind == WordKind.unknown && item != `_`)
+            sense = item.decodeWordKind;
+            if (sense == Sense.unknown && item != `_`)
             {
-                dln(`Unknown WordKind code `, items.front);
+                dln(`Unknown Sense code `, items.front);
             }
         }
-        ++_kindCounts[wordKind];
+        ++_kindCounts[sense];
 
-        return lookupOrStoreConcept(correctCN5Lemma(words), lang, wordKind, anyCategory, Origin.cn5);
+        return lookupOrStoreConcept(correctCN5Lemma(words), lang, sense, anyCategory, Origin.cn5);
     }
 
     import std.algorithm: splitter;
@@ -1310,7 +1310,7 @@ class Net(bool useArray = true,
         }
 
         const lang = Lang.unknown;
-        const kind = WordKind.noun;
+        const kind = Sense.noun;
 
         /* name */
         // clean cases such as concept:language:english_language
@@ -1642,12 +1642,12 @@ class Net(bool useArray = true,
         }
 
         writeln(`Concept Count by Word Kind:`);
-        foreach (wordKind; WordKind.min..WordKind.max)
+        foreach (sense; Sense.min..Sense.max)
         {
-            const count = _kindCounts[wordKind];
+            const count = _kindCounts[sense];
             if (count)
             {
-                writeln(`- `, wordKind, ` (`, wordKind.to!string, `) : `, count);
+                writeln(`- `, sense, ` (`, sense.to!string, `) : `, count);
             }
         }
 
@@ -1753,7 +1753,7 @@ class Net(bool useArray = true,
         {
             write(concept.lang);
         }
-        if (concept.lemmaKind != WordKind.unknown)
+        if (concept.lemmaKind != Sense.unknown)
         {
             write("-", concept.lemmaKind);
         }
@@ -1774,7 +1774,7 @@ class Net(bool useArray = true,
     /** Show concepts and their relations matching content in $(D line). */
     void showConcepts(S)(S line,
                          Lang lang = Lang.unknown,
-                         WordKind wordKind = WordKind.unknown,
+                         Sense sense = Sense.unknown,
                          S lineSeparator = "_") if (isSomeString!S)
     {
         import std.ascii: whitespace;
@@ -1815,7 +1815,7 @@ class Net(bool useArray = true,
 
         auto concepts = conceptsByWords(normalizedLine,
                                         lang,
-                                        wordKind);
+                                        sense);
 
         // as is
         foreach (concept; concepts)
@@ -1857,10 +1857,7 @@ class Net(bool useArray = true,
                     normalizedLine != previousLine) // stemming did cut away a suffix
                 {
                     writeln(`Stemmed to `, normalizedLine);
-                    showConcepts(normalizedLine,
-                                 lang,
-                                 wordKind,
-                                 lineSeparator);
+                    showConcepts(normalizedLine, lang, sense, lineSeparator);
                 }
             } while (!normalizedLine.empty);
         }
