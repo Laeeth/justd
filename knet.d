@@ -41,7 +41,7 @@ module knet;
 import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers;
 import std.conv: to, emplace;
-import std.stdio;
+import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind;
 import std.container: Array;
 import std.string: tr;
