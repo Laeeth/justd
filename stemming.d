@@ -521,7 +521,7 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     enum ar = `ar`;
     enum or = `or`;
     enum er = `er`;
-    enum yr = `yr`;
+    enum ya = `ya`;
 
     enum en = `en`;
     enum ern = `ern`;
@@ -538,179 +538,162 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
 
     switch (s)
     {
-        case `samtida`:
-            return `samtid`;
+        case `samtida`: return `samtid`;
         default: break;
     }
 
     if (s.endsWith(`n`))
     {
+        if (s.endsWith(en))
         {
-            if (s.endsWith(en))
-            {
-                const t = s[0 .. $ - en.length];
-                if (s.of(`även`))
-                    return s;
-                else if (t.of(`sann`))
-                    return t;
-                else if (t.endsWith(`mm`, `nn`))
-                    return t[0 .. $ - 1];
+            const t = s[0 .. $ - en.length];
+            if (s.of(`även`))
+                return s;
+            else if (t.of(`sann`))
                 return t;
-            }
+            else if (t.endsWith(`mm`, `nn`))
+                return t[0 .. $ - 1];
+            return t;
         }
+        if (s.endsWith(ern))
         {
-            if (s.endsWith(ern))
-            {
-                return s[0 .. $ - 1];
-            }
+            return s[0 .. $ - 1];
         }
+        if (s.endsWith(an))
         {
-            if (s.endsWith(an))
-            {
-                const t = s[0 .. $ - an.length];
-                if (t.endsWith(`ck`, `n`))
-                    return s[0 ..$ - 1];
-                else if (t.length < 3)
-                    return s;
-                return t;
-            }
+            const t = s[0 .. $ - an.length];
+            if (t.endsWith(`ck`, `n`))
+                return s[0 ..$ - 1];
+            else if (t.length < 3)
+                return s;
+            return t;
         }
     }
 
+    if (s.endsWith(ya))
     {
-        if (s.endsWith(na))
+        return s[0 .. $ - 1];
+    }
+
+    if (s.endsWith(na))
+    {
+        if (s.of(`sina`, `dina`, `mina`))
         {
-            if (s.of(`sina`, `dina`, `mina`))
+            return s[0 .. $ - 1];
+        }
+        auto t = s[0 .. $ - na.length];
+        if (t.endsWith(`r`))
+        {
+            if (t.endsWith(ar, or, er))
             {
-                return s[0 .. $ - 1];
-            }
-            auto t = s[0 .. $ - na.length];
-            if (t.endsWith(`r`))
-            {
-                if (t.endsWith(ar, or, er, yr))
+                const u = t[0 .. $ - ar.length];
+                if (u.canFind!(a => a.isSwedishVowel))
+                    return u;
+                else
                 {
-                    const u = t[0 .. $ - ar.length];
-                    if (u.canFind!(a => a.isSwedishVowel))
-                        return u;
-                    else
-                    {
-                        return t[0 .. $ - 1];
-                    }
+                    return t[0 .. $ - 1];
                 }
             }
         }
     }
 
+    if (s.endsWith(et))
     {
-        if (s.endsWith(et))
-        {
-            const t = s[0 .. $ - et.length];
-            if (t.length >= 3 &&
-                t[$ - 3].isSwedishConsonant &&
-                t[$ - 2].isSwedishConsonant &&
-                t[$ - 1].isSwedishConsonant)
-            {
-                return s[0 .. $ - 1];
-            }
-            else if (t.endsWith(`ck`))
-            {
-                return s[0 .. $ - 1];
-            }
-
-            return t;
-        }
-    }
-
-    {
-        if (s.endsWith(ar, or, er, yr))
-        {
-            const t = s[0 .. $ - ar.length];
-            if (t.canFind!(a => a.isSwedishVowel))
-            {
-                return t;
-            }
-            else
-            {
-                return s[0 .. $ - 1];
-            }
-        }
-    }
-
-    {
-        if (s.endsWith(aste))
-        {
-            const t = s[0 .. $ - aste.length];
-            if (t.of(`sann`))
-                return t;
-            if (t.endsWith(`mm`, `nn`))
-                return t[0 .. $ - 1];
-            if (t.canFind!(a => a.isSwedishVowel))
-                return t;
-        }
-    }
-
-    {
-        if (s.endsWith(are, ast))
-        {
-            const t = s[0 .. $ - are.length];
-            if (t.of(`sann`))
-                return t;
-            if (t.endsWith(`mm`, `nn`))
-                return t[0 .. $ - 1];
-            if (t.canFind!(a => a.isSwedishVowel))
-                return t;
-        }
-    }
-
-    {
-        if (s.endsWith(iserad))
-        {
-            const t = s[0 .. $ - iserad.length];
-            if (!t.endsWith(`n`))
-                return t;
-        }
-    }
-
-    {
-        if (s.endsWith(de))
-        {
-            enum ande = `ande`;
-            if (s.endsWith(ande))
-            {
-                const t = s[0 .. $ - ande.length];
-                if (t.empty)
-                    return s;
-                else if (t[$ - 1].isSwedishConsonant)
-                    return s[0 .. $ - 3];
-                return t;
-            }
-            if (s.of(`hade`))
-                return s;
-            const t = s[0 .. $ - de.length];
-            return t;
-        }
-    }
-
-    {
-        if (s.endsWith(ing))
-        {
-            enum ning = `ning`;
-            if (s.endsWith(ning))
-            {
-                const t = s[0 .. $ - ning.length];
-                if (!t.endsWith(`n`) &&
-                    t != `tid`)
-                    return t;
-            }
-            return s[0 .. $ - ing.length];
-        }
-    }
-
-    {
-        if (s.endsWith(llt))
+        const t = s[0 .. $ - et.length];
+        if (t.length >= 3 &&
+            t[$ - 3].isSwedishConsonant &&
+            t[$ - 2].isSwedishConsonant &&
+            t[$ - 1].isSwedishConsonant)
         {
             return s[0 .. $ - 1];
         }
+        else if (t.endsWith(`ck`))
+        {
+            return s[0 .. $ - 1];
+        }
+
+        return t;
+    }
+
+    if (s.endsWith(ar, or, er))
+    {
+        const t = s[0 .. $ - ar.length];
+        if (t.canFind!(a => a.isSwedishVowel))
+        {
+            if (t.endsWith(`mm`, `nn`))
+                return t[0 .. $ - 1];
+            else
+                return t;
+        }
+        else
+        {
+            return s[0 .. $ - 1];
+        }
+    }
+
+    if (s.endsWith(aste))
+    {
+        const t = s[0 .. $ - aste.length];
+        if (t.of(`sann`))
+            return t;
+        if (t.endsWith(`mm`, `nn`))
+            return t[0 .. $ - 1];
+        if (t.canFind!(a => a.isSwedishVowel))
+            return t;
+    }
+
+    if (s.endsWith(are, ast))
+    {
+        const t = s[0 .. $ - are.length];
+        if (t.of(`sann`))
+            return t;
+        if (t.endsWith(`mm`, `nn`))
+            return t[0 .. $ - 1];
+        if (t.canFind!(a => a.isSwedishVowel))
+            return t;
+    }
+
+    if (s.endsWith(iserad))
+    {
+        const t = s[0 .. $ - iserad.length];
+        if (!t.endsWith(`n`))
+            return t;
+    }
+
+    if (s.endsWith(de))
+    {
+        enum ande = `ande`;
+        if (s.endsWith(ande))
+        {
+            const t = s[0 .. $ - ande.length];
+            if (t.empty)
+                return s;
+            else if (t[$ - 1].isSwedishConsonant)
+                return s[0 .. $ - 3];
+            return t;
+        }
+        if (s.of(`hade`))
+            return s;
+        const t = s[0 .. $ - de.length];
+        return t;
+    }
+
+    if (s.endsWith(ing))
+    {
+        enum ning = `ning`;
+        if (s.endsWith(ning))
+        {
+            const t = s[0 .. $ - ning.length];
+            if (!t.endsWith(`n`) &&
+                t != `tid`)
+                return t;
+        }
+        return s[0 .. $ - ing.length];
+    }
+
+    if (s.endsWith(llt))
+    {
+        return s[0 .. $ - 1];
     }
 
     return s;
@@ -849,10 +832,14 @@ unittest
 
     assert("mamma".stemSwedish == "mamma");
 
-    /* assert("krya".stemSwedish == "kry"); */
-    /* assert("nya".stemSwedish == "ny"); */
+    assert("bestyr".stemSwedish == "bestyr");
 
-    /* assert("ämnar".stemSwedish == "ämna"); */
+    assert("krya".stemSwedish == "kry");
+    assert("nya".stemSwedish == "ny");
+
+    assert("lemmar".stemSwedish == "lem");
+
+    /* assertEqual("ämnar".stemSwedish, "ämna"); */
     /* assert("rämnar".stemSwedish == "rämna"); */
     /* assert("lämnar".stemSwedish == "lämna"); */
 }
