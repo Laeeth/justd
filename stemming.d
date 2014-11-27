@@ -1,4 +1,4 @@
-/** Porter stemming algorithm */
+/** Stemming algorithms */
 module stemming;
 
 import std.algorithm: endsWith, canFind;
@@ -518,6 +518,24 @@ import dbg;
 
 auto ref stemSwedish(S)(S s) if (isSomeString!S)
 {
+    enum ar = `ar`;
+    enum or = `or`;
+    enum er = `er`;
+    enum yr = `yr`;
+
+    enum en = `en`;
+    enum ern = `ern`;
+    enum an = `an`;
+    enum na = `na`;
+    enum et = `et`;
+    enum aste = `aste`;
+    enum are = `are`;
+    enum ast = `ast`;
+    enum iserad = `iserad`;
+    enum de = `de`;
+    enum ing = `ing`;
+    enum llt = `llt`;
+
     switch (s)
     {
         case `samtida`:
@@ -528,7 +546,6 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     if (s.endsWith(`n`))
     {
         {
-            enum en = `en`;
             if (s.endsWith(en))
             {
                 const t = s[0 .. $ - en.length];
@@ -542,14 +559,12 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
             }
         }
         {
-            enum ern = `ern`;
             if (s.endsWith(ern))
             {
                 return s[0 .. $ - 1];
             }
         }
         {
-            enum an = `an`;
             if (s.endsWith(an))
             {
                 const t = s[0 .. $ - an.length];
@@ -563,21 +578,30 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum na = `na`;
         if (s.endsWith(na))
         {
             if (s.of(`sina`, `dina`, `mina`))
             {
                 return s[0 .. $ - 1];
             }
-            const t = s[0 .. $ - na.length];
-            if (!t.empty && t[0].isSwedishConsonant)
-                return t;
+            auto t = s[0 .. $ - na.length];
+            if (t.endsWith(`r`))
+            {
+                if (t.endsWith(ar, or, er, yr))
+                {
+                    const u = t[0 .. $ - ar.length];
+                    if (u.canFind!(a => a.isSwedishVowel))
+                        return u;
+                    else
+                    {
+                        return t[0 .. $ - 1];
+                    }
+                }
+            }
         }
     }
 
     {
-        enum et = `et`;
         if (s.endsWith(et))
         {
             const t = s[0 .. $ - et.length];
@@ -598,18 +622,21 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum ar = `ar`;
-        enum er = `er`;
-        if (s.endsWith(ar, er))
+        if (s.endsWith(ar, or, er, yr))
         {
             const t = s[0 .. $ - ar.length];
             if (t.canFind!(a => a.isSwedishVowel))
+            {
                 return t;
+            }
+            else
+            {
+                return s[0 .. $ - 1];
+            }
         }
     }
 
     {
-        enum aste = `aste`;
         if (s.endsWith(aste))
         {
             const t = s[0 .. $ - aste.length];
@@ -623,8 +650,6 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum are = `are`;
-        enum ast = `ast`;
         if (s.endsWith(are, ast))
         {
             const t = s[0 .. $ - are.length];
@@ -638,7 +663,6 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum iserad = `iserad`;
         if (s.endsWith(iserad))
         {
             const t = s[0 .. $ - iserad.length];
@@ -648,7 +672,6 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum de = `de`;
         if (s.endsWith(de))
         {
             enum ande = `ande`;
@@ -669,7 +692,6 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum ing = `ing`;
         if (s.endsWith(ing))
         {
             enum ning = `ning`;
@@ -685,7 +707,6 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     }
 
     {
-        enum llt = `llt`;
         if (s.endsWith(llt))
         {
             return s[0 .. $ - 1];
@@ -708,6 +729,7 @@ unittest
     assert("dunken".stemSwedish == "dunk");
     assert("männen".stemSwedish == "män");
     assert("manen".stemSwedish == "man");
+    assert("mannen".stemSwedish == "man");
 
     assert("skalet".stemSwedish == "skal");
     assert("karet".stemSwedish == "kar");
@@ -762,17 +784,20 @@ unittest
     assert("klan".stemSwedish == "klan");
 
     assert("klockan".stemSwedish == "klocka");
+    assert("klockande".stemSwedish == "klocka");
     assert("sockan".stemSwedish == "socka");
     assert("rockan".stemSwedish == "rocka");
     assert("rock".stemSwedish == "rock");
 
     assert("agenter".stemSwedish == "agent");
+    assert("agenterna".stemSwedish == "agent");
     assert("regenter".stemSwedish == "regent");
+    assert("regenterna".stemSwedish == "regent");
 
     assert("brodern".stemSwedish == "broder");
     assert("kärnan".stemSwedish == "kärna");
 
-    assert("skorna".stemSwedish == "skor");
+    assert("skorna".stemSwedish == "sko");
 
     assert("inträffade".stemSwedish == "inträffa");
     assert("roa".stemSwedish == "roa");
@@ -783,7 +808,12 @@ unittest
     assert("fullt".stemSwedish == "full");
 
     assert("kanaliserad".stemSwedish == "kanal");
+    assert("alkoholiserad".stemSwedish == "alkohol");
+
     assert("roande".stemSwedish == "ro");
+
+    /* assertEqual("ror".stemSwedish, "ro"); */
+    /* assertEqual("öbor".stemSwedish, "öbo"); */
 
     assert("ande".stemSwedish == "ande");
 
@@ -803,14 +833,21 @@ unittest
 
     assert("samtida".stemSwedish == "samtid");
 
-    /* assert("kullar".stemSwedish == "kull"); */
-    /* assert("kullar".stemSwedish == "kulle"); */
-    /* assert("kullarna".stemSwedish == "kulle"); */
+    assert("trattar".stemSwedish == "tratt");
 
-    /* assert("mamma".stemSwedish == "mamma"); */
-    /* assert("damma".stemSwedish == "damm"); */
-    /* assert("ramma".stemSwedish == "ram"); */
-    /* assert("kamma".stemSwedish == "kam"); */
+    assert("katter".stemSwedish == "katt");
+    assert("dagar".stemSwedish == "dag");
+    assert("öar".stemSwedish == "ö");
+    assert("åar".stemSwedish == "å");
+    assert("ängar".stemSwedish == "äng");
+
+    assert("spelar".stemSwedish == "spel");
+    assert("drar".stemSwedish == "dra");
+
+    assert("kullar".stemSwedish == "kull");
+    assert("kullarna".stemSwedish == "kull");
+
+    assert("mamma".stemSwedish == "mamma");
 
     /* assert("krya".stemSwedish == "kry"); */
     /* assert("nya".stemSwedish == "ny"); */
