@@ -1,4 +1,4 @@
-import krels;
+module krels;
 
 import grammars: Lang, negationIn;
 import std.conv: to;
