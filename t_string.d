@@ -1,6 +1,9 @@
 #!/usr/bin/env rdmd-dev-module
 
-import all;
+import std.stdio;
+import std.range: retro, array;
+import std.utf;
+import std.uni;
 
 void main(string[] args)
 {
