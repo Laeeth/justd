@@ -822,15 +822,43 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
+    // TODO templatize these on RelDir.[forward, backward]
+
     /** Get Ingoing Links of $(D concept). */
-    auto  inLinksOf(in Concept concept) { return concept. inIxes[].map!(ix => linkByIx(ix)); }
+    auto  inLinksOf(in Concept concept,
+                    Rel rel = Rel.any,
+                    bool negation = false)
+    {
+        return concept. inIxes[].map!(ix => linkByIx(ix)).filter!(link =>
+                                                                  (link._rel == rel &&
+                                                                   link._negation == negation));
+    }
+
     /** Get Outgoing Links of $(D concept). */
-    auto outLinksOf(in Concept concept) { return concept.outIxes[].map!(ix => linkByIx(ix)); }
+    auto outLinksOf(in Concept concept,
+                    Rel rel = Rel.any,
+                    bool negation = false)
+    {
+        return concept. outIxes[].map!(ix => linkByIx(ix)).filter!(link =>
+                                                                   (link._rel == rel &&
+                                                                    link._negation == negation));
+    }
 
     /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto  insOf(in Concept concept) { return  inLinksOf(concept).map!(link => tuple(link, dst(link))); }
+    auto  insOf(in Concept concept,
+                Rel rel = Rel.any,
+                bool negation = false)
+    {
+        return  inLinksOf(concept, rel, negation).map!(link => tuple(link, dst(link)));
+    }
+
     /** Get Outgoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto outsOf(in Concept concept) { return outLinksOf(concept).map!(link => tuple(link, src(link))); }
+    auto outsOf(in Concept concept,
+                Rel rel = Rel.any,
+                bool negation = false)
+    {
+        return outLinksOf(concept, rel, negation).map!(link => tuple(link, src(link)));
+    }
 
     auto inLinksGroupedByRel(in Concept concept)
     {
@@ -838,6 +866,7 @@ class Net(bool useArray = true,
                                                  (a._negation == b._negation &&
                                                   a._rel == b._rel));
     }
+
     auto outLinksGroupedByRel(in Concept concept)
     {
         return outLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
@@ -851,6 +880,7 @@ class Net(bool useArray = true,
                                              (a[0]._negation == b[0]._negation &&
                                               a[0]._rel == b[0]._rel));
     }
+
     auto outsByRel(in Concept concept)
     {
         return outsOf(concept).array.groupBy!((a, b) => // TODO array needed?
@@ -1812,6 +1842,36 @@ class Net(bool useArray = true,
                 }
             }
         }
+        else if (normalizedLine.skipOver("synonymsOf("))
+        {
+            auto split = normalizedLine.findSplitBefore(")");
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                foreach (synonymConcept; synonymsOf(arg))
+                {
+                    showLinkConcept(synonymConcept,
+                                    Rel.instanceOf,
+                                    real.infinity,
+                                    RelDir.backward);
+                }
+            }
+        }
+        else if (normalizedLine.skipOver("translationsOf("))
+        {
+            auto split = normalizedLine.findSplitBefore(")");
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                foreach (translationConcept; translationsOf(arg))
+                {
+                    showLinkConcept(translationConcept,
+                                    Rel.instanceOf,
+                                    real.infinity,
+                                    RelDir.backward);
+                }
+            }
+        }
 
         auto concepts = conceptsByWords(normalizedLine,
                                         lang,
@@ -1857,20 +1917,50 @@ class Net(bool useArray = true,
         }
     }
 
-    auto anagramsOf(S)(S word) if (isSomeString!S)
+    auto anagramsOf(S)(S words) if (isSomeString!S)
     {
-        const lsWord = word.sorted; // letter-sorted word
+        const lsWord = words.sorted; // letter-sorted words
         return _concepts.filter!(concept => (lsWord != concept.words && // don't include one-self
                                              lsWord == concept.words.sorted));
     }
 
-    /** Get Synonyms of $(D word).
+    /** Get Synonyms of $(D word) optionally with Matching Syllable Count.
         Set withSameSyllableCount to true to get synonyms which can be used to
         help in translating songs with same rhythm.
      */
-    void synonymsOf(S)(S word,
+    auto synonymsOf(S)(S words,
+                       Lang lang = Lang.unknown,
+                       Sense sense = Sense.unknown,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
+        auto concepts = conceptsByWords(words,
+                                        lang,
+                                        sense);
+        // TODO tranverse over concepts synonyms
+        return concepts;
+    }
+
+    /** Get Translations of $(D word) in language $(D lang).
+        If several $(D toLangs) are specified pick the closest match (highest
+        relation weight).
+    */
+    auto translationsOf(S)(S words,
+                           Lang lang = Lang.unknown,
+                           Sense sense = Sense.unknown,
+                           Lang[] toLangs = []) if (isSomeString!S)
+    {
+        auto concepts = conceptsByWords(words,
+                                        lang,
+                                        sense);
+        const rel = Rel.translationOf;
+        // TODO Use synonym transitivity and possibly traverse over synonyms
+        // en => sv:
+        // en-en => sv-sv
+        auto ins = concepts.map!(concept =>
+                                 insOf(concept, rel, false))/* .joiner */;
+        auto outs = concepts.map!(concept =>
+                                  outsOf(concept, rel, false))/* .joiner */;
+        return concepts;
     }
 
     /** ConceptNet Relatedness.
