@@ -569,12 +569,12 @@ enum Tense:ubyte
 {
     unknown,
 
-    present, presens = present, // nutid
-    past, preteritum = past, imperfekt = past, // dåtid
+    present, presens = present, // sv:nutid
+    past, preteritum = past, imperfekt = past, // sv:dåtid, https://en.wikipedia.org/wiki/Past_tense
     future, futurum = future, // framtid
 
     pastMoment,
-    presentMoment, // plays
+    presentMoment, // sv:plays
     futureMoment, // [will|is going to|intends to] play
 
     pastPeriod,
@@ -610,13 +610,26 @@ enum Sense:ubyte
     nounWeekday,
     nounMonth,
 
+    /* Verb */
+
     verb,
     verbImperative,
-    verbInfinitive, verbBase = verbInfinitive,
+
+    verbInfinitive,
+    verbBase = verbInfinitive,
+
     verbPresent,
+
     verbPast,
+    verbImperfect = verbPast, /// https://en.wikipedia.org/wiki/Imperfect
+
+    verbPastParticiple,
+    verbSupinum = verbPastParticiple,
+
     verbFuture,
-    verbPastParticiple, verbSupinum = verbPastParticiple,
+    verbFuturum = verbFuture,
+
+    /* Adjective */
 
     adjective,
     adjectiveNominative,
