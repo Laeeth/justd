@@ -1203,10 +1203,10 @@ class Net(bool useArray = true,
     {
         const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        connect(Rel.any,
-                store(infinitive, lang, Sense.verbInfinitive, category, origin),
-                store(past, lang, Sense.verbPast, category, origin),
-                store(pastParticiple, lang, Sense.verbPastParticiple, category, origin));
+        connectMtoM(Rel.any,
+                    [store(infinitive, lang, Sense.verbInfinitive, category, origin),
+                     store(past, lang, Sense.verbPast, category, origin),
+                     store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)]);
     }
 
     /** Learn Swedish Irregular Verb.
@@ -1221,12 +1221,12 @@ class Net(bool useArray = true,
     {
         const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        connectNtoN(Rel.any,
-                    store(imperative, lang, Sense.verbImperative, category, origin),
-                    store(infinitive, lang, Sense.verbInfinitive, category, origin),
-                    store(present, lang, Sense.verbPresent, category, origin),
-                    store(past, lang, Sense.verbPast, category, origin),
-                    store(pastParticiple, lang, Sense.verbPastParticiple, category, origin));
+        connectMtoM(Rel.any,
+                    [store(imperative, lang, Sense.verbImperative, category, origin),
+                     store(infinitive, lang, Sense.verbInfinitive, category, origin),
+                     store(present, lang, Sense.verbPresent, category, origin),
+                     store(past, lang, Sense.verbPast, category, origin),
+                     store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)]);
     }
 
     /** Lookup-or-Store $(D Concept) at $(D lemma) index.
