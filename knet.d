@@ -685,6 +685,7 @@ enum Thematic:ubyte
 
 /* } */
 
+/** Knowledge Origin. */
 enum Origin:ubyte
 {
     unknown,
@@ -939,7 +940,7 @@ class Net(bool useArray = true,
         Weight _weight;
 
         Rel _rel;
-        bool _negation; // relation negation
+        bool _negation; /// relation negation
 
         Origin _origin;
     }
@@ -1123,15 +1124,96 @@ class Net(bool useArray = true,
             readCN5File(file, false, maxCount);
         }
 
+        // Manual: English Irregular Verbs
+
+        // Manual: Swedish Irregular Verbs
+        readSwedishIrregularVerb(Lang.sv, "ge", "ge", "ger", "gav", "gett/givit");
+        readSwedishIrregularVerb(Lang.sv, "ange", "ange", "anger", "angav", "angett/angivit");
+        readSwedishIrregularVerb(Lang.sv, "anse", "anse", "anser", "ansåg", "ansett");
+        readSwedishIrregularVerb(Lang.sv, "avgör", "avgöra", "avgör", "avgjorde", "avgjort");
+        readSwedishIrregularVerb(Lang.sv, "avstå", "avstå", "avstår", "avstod", "avstått");
+        readSwedishIrregularVerb(Lang.sv, "be", "be", "ber", "bad", "bett");
+        readSwedishIrregularVerb(Lang.sv, "bestå", "bestå", "består", "bestod", "bestått");
+        readSwedishIrregularVerb(Lang.sv, [], [], "bör", "borde", "bort");
+        readSwedishIrregularVerb(Lang.sv, "dra", "dra", "drar", "drog", "dragit");
+        readSwedishIrregularVerb(Lang.sv, [], "duga", "duger", "dög/dugde", "dugit");
+        readSwedishIrregularVerb(Lang.sv, "dyk", "dyka", "dyker", "dök/dykte", "dykit");
+        readSwedishIrregularVerb(Lang.sv, "dö", "dö", "dör", "dog", "dött");
+        readSwedishIrregularVerb(Lang.sv, "dölj", "dölja", "döljer", "dolde", "dolt");
+        readSwedishIrregularVerb(Lang.sv, "ersätt", "ersätta", "ersätter", "ersatte", "ersatt");
+        readSwedishIrregularVerb(Lang.sv, "fortsätt", "fortsätta", "fortsätter", "fortsatte", "fortsatt");
+        readSwedishIrregularVerb(Lang.sv, "framstå", "framstå", "framstår", "framstod", "framstått");
+        readSwedishIrregularVerb(Lang.sv, "få", "få", "får", "fick", "fått");
+        readSwedishIrregularVerb(Lang.sv, "förstå", "förstå", "förstår", "förstod", "förstått");
+        readSwedishIrregularVerb(Lang.sv, "förutsätt", "förutsätta", "förutsätter", "förutsatte", "förutsatt");
+        readSwedishIrregularVerb(Lang.sv, "gläd", "glädja", "gläder", "gladde", "glatt");
+        readSwedishIrregularVerb(Lang.sv, "gå", "gå", "går", "gick", "gått");
+        readSwedishIrregularVerb(Lang.sv, "gör", "göra", "gör", "gjorde", "gjort");
+        readSwedishIrregularVerb(Lang.sv, "ha", "ha", "har", "hade", "haft");
+        readSwedishIrregularVerb(Lang.sv, [], "heta", "heter", "hette", "hetat");
+        readSwedishIrregularVerb(Lang.sv, [], "ingå", "ingår", "ingick", "ingått");
+        readSwedishIrregularVerb(Lang.sv, "inse", "inse", "inser", "insåg", "insett");
+        readSwedishIrregularVerb(Lang.sv, "kom", "komma", "kommer", "kom", "kommit");
+        readSwedishIrregularVerb(Lang.sv, [], "kunna", "kan", "kunde", "kunnat");
+        readSwedishIrregularVerb(Lang.sv, "le", "le", "ler", "log", "lett");
+        readSwedishIrregularVerb(Lang.sv, "lev", "leva", "lever", "levde", "levt");
+        readSwedishIrregularVerb(Lang.sv, "ligg", "ligga", "ligger", "låg", "legat");
+        readSwedishIrregularVerb(Lang.sv, "lägg", "lägga", "lägger", "la", "lagt");
+        readSwedishIrregularVerb(Lang.sv, "missförstå", "missförstå", "missförstår", "missförstod", "missförstått");
+        readSwedishIrregularVerb(Lang.sv, [], [], "måste", "var tvungen", "varit tvungen");
+        readSwedishIrregularVerb(Lang.sv, "se", "se", "ser", "såg", "sett");
+        readSwedishIrregularVerb(Lang.sv, "skilj", "skilja", "skiljer", "skilde", "skilt");
+        readSwedishIrregularVerb(Lang.sv, [], [], "ska", "skulle", []);
+        readSwedishIrregularVerb(Lang.sv, "smaksätt", "smaksätta", "smaksätter", "smaksatte", "smaksatt");
+        readSwedishIrregularVerb(Lang.sv, "sov", "sova", "sover", "sov", "sovit");
+        readSwedishIrregularVerb(Lang.sv, "sprid", "sprida", "sprider", "spred", "spridit");
+        readSwedishIrregularVerb(Lang.sv, "stjäl", "stjäla", "stjäl", "stal", "stulit");
+        readSwedishIrregularVerb(Lang.sv, "stå", "stå", "står", "stod", "stått");
+        readSwedishIrregularVerb(Lang.sv, "stöd", "stödja", "stöder", "stödde", "stött");
+        readSwedishIrregularVerb(Lang.sv, "svälj", "svälja", "sväljer", "svalde", "svalt");
+        readSwedishIrregularVerb(Lang.sv, "säg", "säga", "säger", "sa", "sagt");
+        readSwedishIrregularVerb(Lang.sv, "sälj", "sälja", "säljer", "sålde", "sålt");
+        readSwedishIrregularVerb(Lang.sv, "sätt", "sätta", "sätter", "satte", "satt");
+        readSwedishIrregularVerb(Lang.sv, "ta", "ta", "tar", "tog", "tagit");
+        readSwedishIrregularVerb(Lang.sv, "tillsätt", "tillsätta", "tillsätter", "tillsatte", "tillsatt");
+        readSwedishIrregularVerb(Lang.sv, "umgås", "umgås", "umgås", "umgicks", "umgåtts");
+        readSwedishIrregularVerb(Lang.sv, "uppge", "uppge", "uppger", "uppgav", "uppgivit");
+        readSwedishIrregularVerb(Lang.sv, "utgå", "utgå", "utgår", "utgick", "utgått");
+        readSwedishIrregularVerb(Lang.sv, "var", "vara", "är", "var", "varit");
+        readSwedishIrregularVerb(Lang.sv, [], "veta", "vet", "visste", "vetat");
+        readSwedishIrregularVerb(Lang.sv, "vik", "vika", "viker", "vek", "vikt");
+        readSwedishIrregularVerb(Lang.sv, [], "vilja", "vill", "ville", "velat");
+        readSwedishIrregularVerb(Lang.sv, "välj", "välja", "väljer", "valde", "valt");
+        readSwedishIrregularVerb(Lang.sv, "vänj", "vänja", "vänjer", "vande", "vant");
+        readSwedishIrregularVerb(Lang.sv, "väx", "växa", "växer", "växte", "växt");
+        readSwedishIrregularVerb(Lang.sv, "återge", "återge", "återger", "återgav", "återgivit");
+        readSwedishIrregularVerb(Lang.sv, "översätt", "översätta", "översätter", "översatte", "översatt");
+
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
         /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
     }
 
+    /** See also: http://www.lardigsvenska.com/2010/10/oregelbundna-verb.html */
+    void readSwedishIrregularVerb(Lang lang,
+                                  string imperative, // imperativ
+                                  string infinitive, // infinitiv
+                                  string present,
+                                  string past,
+                                  string supinum) // supinum
+    {
+        connect(Rel.any,
+                store(imperative, lang, Sense.verbImperative, CategoryIx.asUndefined, Origin.manual),
+                store(infinitive, lang, Sense.verbInfinitive, CategoryIx.asUndefined, Origin.manual),
+                store(present, lang, Sense.verbPresent, CategoryIx.asUndefined, Origin.manual),
+                store(past, lang, Sense.verbPast, CategoryIx.asUndefined, Origin.manual),
+                store(supinum, lang, Sense.verbPastParticiple, CategoryIx.asUndefined, Origin.manual));
+    }
+
     /** Lookup Previous or Store New $(D concept) at $(D lemma) index.
      */
-    ConceptIx lookupOrStoreConcept(in Lemma lemma,
-                                   Concept concept)
+    ConceptIx store(in Lemma lemma,
+                    Concept concept)
     {
         if (lemma in _conceptIxByLemma)
         {
@@ -1149,21 +1231,21 @@ class Net(bool useArray = true,
             assert(_concepts.length <= Ix.max);
             const cix = ConceptIx(cast(Ix)_concepts.length);
             _concepts ~= concept; // .. new concept that is stored
-            _conceptIxByLemma[lemma] = cix; // lookupOrStoreConcept index to ..
+            _conceptIxByLemma[lemma] = cix; // store index to ..
             _conceptStringLengthSum += lemma.words.length;
             return cix;
         }
     }
 
     /** Lookup or Store Concept named $(D words) in language $(D lang). */
-    ConceptIx lookupOrStoreConcept(Words words,
-                                   Lang lang,
-                                   Sense kind,
-                                   CategoryIx categoryIx,
-                                   Origin origin)
+    ConceptIx store(Words words,
+                    Lang lang,
+                    Sense kind,
+                    CategoryIx categoryIx,
+                    Origin origin)
     {
-        return lookupOrStoreConcept(Lemma(words, lang, kind, categoryIx),
-                                    Concept(words, lang, kind, categoryIx, origin));
+        return store(Lemma(words, lang, kind, categoryIx),
+                     Concept(words, lang, kind, categoryIx, origin));
     }
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight).
@@ -1171,14 +1253,14 @@ class Net(bool useArray = true,
         TODO checkExisting is currently set to false because searching
         existing links is currently too slow
      */
-    LinkIx lookupOrConnectLink(ConceptIx srcIx,
-                               Rel rel,
-                               ConceptIx dstIx,
-                               Origin origin = Origin.unknown,
-                               real weight = 1.0,
-                               bool negation = false,
-                               bool reversion = false,
-                               bool checkExisting = false)
+    LinkIx connect(ConceptIx srcIx,
+                   Rel rel,
+                   ConceptIx dstIx,
+                   Origin origin = Origin.unknown,
+                   real weight = 1.0,
+                   bool negation = false,
+                   bool reversion = false,
+                   bool checkExisting = false)
     body
     {
         if (srcIx == dstIx) { return LinkIx.asUndefined; } // don't allow self-reference for now
@@ -1245,7 +1327,7 @@ class Net(bool useArray = true,
 
         return lix; // _links.back;
     }
-    alias relate = lookupOrConnectLink;
+    alias relate = connect;
 
     auto ref correctCN5Lemma(S)(S s) if (isSomeString!S)
     {
@@ -1282,7 +1364,7 @@ class Net(bool useArray = true,
         }
         ++_kindCounts[sense];
 
-        return lookupOrStoreConcept(correctCN5Lemma(words), lang, sense, anyCategory, Origin.cn5);
+        return store(correctCN5Lemma(words), lang, sense, anyCategory, Origin.cn5);
     }
 
     import std.algorithm: splitter;
@@ -1349,23 +1431,23 @@ class Net(bool useArray = true,
                                 entity.front).idup;
         entity.popFront;
 
-        auto entityIx = lookupOrStoreConcept(entityName,
-                                             lang,
-                                             kind,
-                                             categoryIx,
-                                             Origin.nell);
+        auto entityIx = store(entityName,
+                              lang,
+                              kind,
+                              categoryIx,
+                              Origin.nell);
 
         return tuple(entityIx,
                      categoryName,
-                     lookupOrConnectLink(entityIx,
-                                         Rel.isA,
-                                         lookupOrStoreConcept(categoryName,
-                                                              lang,
-                                                              kind,
-                                                              categoryIx,
-                                                              Origin.nell),
-                                         Origin.nell, 1.0, false, false,
-                                         true)); // need to check duplicates here
+                     connect(entityIx,
+                             Rel.isA,
+                             store(categoryName,
+                                   lang,
+                                   kind,
+                                   categoryIx,
+                                   Origin.nell),
+                             Origin.nell, 1.0, false, false,
+                             true)); // need to check duplicates here
     }
 
     /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -1463,7 +1545,7 @@ class Net(bool useArray = true,
         if (entityIx.defined &&
             valueIx.defined)
         {
-            auto mainLinkIx = lookupOrConnectLink(entityIx, rel, valueIx,
+            auto mainLinkIx = connect(entityIx, rel, valueIx,
                                                   Origin.nell, mainWeight, negation, reversion);
         }
 
@@ -1579,7 +1661,7 @@ class Net(bool useArray = true,
         if (src.defined &&
             dst.defined)
         {
-            return lookupOrConnectLink(src, rel, dst, origin, weight, negation, reversion);
+            return connect(src, rel, dst, origin, weight, negation, reversion);
         }
         else
         {

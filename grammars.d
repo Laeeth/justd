@@ -548,13 +548,30 @@ enum TokenId:ubyte
     operator,
 }
 
+/** Verb Form. */
+enum VerbForm
+{
+    unknown,
+
+    imperative,
+    infinitive, base = infinitive, // sv:infinitiv,grundform
+    present, // sv:presens
+    past, preteritum = past, // sv:imperfekt
+    supinum, pastParticiple = supinum,
+}
+
 /** English Tense.
+    Tempus on Swedish.
     See also: http://www.ego4u.com/en/cram-up/grammar/tenses-graphic
     See also: http://www.ego4u.com/en/cram-up/grammar/tenses-examples
 */
 enum Tense:ubyte
 {
     unknown,
+
+    present, presens = present, // nutid
+    past, preteritum = past, imperfekt = past, // dåtid
+    future, futurum = future, // framtid
 
     pastMoment,
     presentMoment, // plays
@@ -594,9 +611,12 @@ enum Sense:ubyte
     nounMonth,
 
     verb,
+    verbImperative,
+    verbInfinitive, verbBase = verbInfinitive,
     verbPresent,
     verbPast,
     verbFuture,
+    verbPastParticiple, verbSupinum = verbPastParticiple,
 
     adjective,
     adjectiveNominative,
@@ -780,9 +800,12 @@ unittest
     {
         with (Sense)
             return kind.of(verb,
+                           verbImperative,
+                           verbInfinitive,
                            verbPresent,
                            verbPast,
-                           verbFuture);
+                           verbFuture,
+                           verbPastParticiple);
     }
     bool isAdjective(Sense kind)
     {
