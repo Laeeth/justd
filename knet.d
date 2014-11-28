@@ -1125,6 +1125,167 @@ class Net(bool useArray = true,
         }
 
         // Manual: English Irregular Verbs
+        arise / arose / arisen
+        awake / awoke / awoken, awaked
+
+        be / was, were / been
+        bear / bore / born, borne
+        beat / beat / beaten
+        become / became / become
+        begin / began / begun
+        bend / bent / bent
+        bet / bet / bet
+        bid / bade, bid / bidden, bid
+        bind / bound / bound
+        bite / bit / bitten
+        bleed / bled / bled
+        blow / blew / blown
+        break / broke / broken
+        breed / bred / bred
+        bring / brought / brought
+        build / built / built
+        burn / burned, burnt / burned, burnt
+        burst / burst / burst
+        buy / bought / bought
+
+        cast / cast / cast
+        catch / caught / caught
+                         choose / chose / chosen
+                         come / came / come
+                         cost / cost / cost
+                         creep / crept / crept
+                         cut / cut / cut
+
+                         deal / dealt / dealt
+                         dig / dug / dug
+                         dive / dived, dove / dived
+                         do / did / done
+                              draw / drew / drawn
+                              dream / dreamed, dreamt / dreamed, dreamt
+                              drink / drank / drunk
+                              drive / drove / driven
+                              dwell / dwelt / dwelt
+
+                              eat / ate / eaten
+
+                              fall / fell / fallen
+                              feed / fed / fed
+                              fight / fought / fought
+                              find / found / found
+                              flee / fled / fled
+                              fly / flew / flown
+                              forbid / forbade, forbad / forbidden
+                              forget / forgot / forgotten
+                              forgive / forgave / forgiven
+                              forsake / forsook / forsaken
+                              freeze / froze / frozen
+
+                              get / got / gotten, got
+                              give / gave / given
+                              go / went / gone
+                              grind / ground / ground
+                              grow / grew / grown
+
+                              hang / hanged, hung / hanged, hung
+                              have / had / had
+                              hear / heard / heard
+                              hide / hid / hidden
+                              hit / hit / hit
+                              hold / held / held
+                              hurt / hurt / hurt
+
+                              keep / kept / kept
+                              kneel / knelt / knelt
+                              knit / knitted, knit / knitted, knit
+                              know / knew / known
+
+                              lay / laid / laid
+                              lead / led / led
+                              lean / leaned, leant /
+                              leaned, leant
+                              leap / leaped, leapt /
+                              leaped, leapt
+                              learn / learned, learnt / learned, learnt
+                              leave / left / left
+                              lend / lent / lent
+                              let / let / let
+                              lie / lay / lain
+                              light / lighted, lit / lighted, lit
+                              lose / lost / lost
+
+                              make / made / made
+                              mean / meant / meant
+                              meet / met / met
+                              mistake / mistook / mistaken
+
+                              partake / partook / partaken
+                              pay / paid / paid
+                              put / put / put
+
+                              read / read / read
+                              rend / rent / rent
+                              rid / rid / rid
+                              ride / rode / ridden
+                              rise / rose / risen
+                              run / ran / run
+
+                              say / said / said
+                              see / saw / seen
+                              seek / sought / sought
+                              sell / sold / sold
+                              send / sent / sent
+                              set / set / set
+                              shake / shook / shaken
+                              shed / shed / shed
+                              shine / shone / shone
+                              shoot / shot / shot
+                              shrink / shrank / shrunk
+                              shut / shut / shut
+                              sing / sang / sung
+                              sink / sank / sank
+                              sit / sat / sat
+                              slay / slew / slain
+                              sleep / slept / slept
+                              slide / slid / slid, slidden
+                              sling / slung / slung
+                              slit / slit / slit
+                              speak / spoke / spoken
+                              speed / sped, speeded / sped, speeded
+                              spin / spun / spun
+                              spit / spat / spat
+                              split / split / split
+                              spring / sprang / sprung
+                              stand / stood / stood
+                              steal / stole / stolen
+                              stick / stuck / stuck
+                              sting / stung / stung
+                              stink / stank / stunk
+                              stride / strode / stridden
+                              strive / strove / striven
+                              swear / swore / sworn
+                              sweep / swept / swept
+                              swim / swam / swum
+                              swing / swung / swung
+
+                              take / took / taken
+                              teach / taught / taught
+                              tear / tore / torn
+                              tell / told / told
+                              think / thought / thought
+                              throw / threw / thrown
+                              tread / trod / trodden, trod
+
+                              understand / understood / understood
+                              upset / upset / upset
+
+                              wake / woke / woken, waked
+                              wear / wore / worn
+                              weave / wove / woven
+                              weep / wept / wept
+                              win / won / won
+                              wind / wound / wound
+                              wring / wrung / wrung
+                              write / wrote / written
 
         // Manual: Swedish Irregular Verbs
         learnSwedishIrregularVerb(Lang.sv, "ge", "ge", "ger", "gav", "gett/givit");
@@ -1263,6 +1424,8 @@ class Net(bool useArray = true,
                     CategoryIx categoryIx,
                     Origin origin)
     {
+        if (words.empty)
+            return ConceptIx.asUndefined; // propagate emptyness
         return store(Lemma(words, lang, kind, categoryIx),
                      Concept(words, lang, kind, categoryIx, origin));
     }
