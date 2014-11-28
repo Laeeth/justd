@@ -571,7 +571,7 @@ enum Tense:ubyte
 
     present, presens = present, // sv:nutid
     past, preteritum = past, imperfekt = past, // sv:dåtid, https://en.wikipedia.org/wiki/Past_tense
-    future, futurum = future, // framtid
+    future, futurum = future, // framtid, https://en.wikipedia.org/wiki/Future_tense
 
     pastMoment,
     presentMoment, // sv:plays
@@ -626,8 +626,10 @@ enum Sense:ubyte
     verbPastParticiple,
     verbSupinum = verbPastParticiple,
 
-    verbFuture,
+    verbFuture, /// https://en.wikipedia.org/wiki/Future_tense
     verbFuturum = verbFuture,
+    verbFuturumI,
+    verbFuturumII,
 
     /* Adjective */
 
