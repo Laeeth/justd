@@ -1105,6 +1105,9 @@ class Net(bool useArray = true,
         const quick = false;
         const maxCount = quick ? 100000 : size_t.max;
 
+        // WordNet
+        _wordnet = new WordNet!(true, true)([Lang.en]);
+
         // Manual: English Irregular Verbs
         /* arise / arose / arisen */
         /* awake / awoke / awoken, awaked */
@@ -1330,9 +1333,6 @@ class Net(bool useArray = true,
         learnSwedishIrregularVerb(Lang.sv, "väx", "växa", "växer", "växte", "växt");
         learnSwedishIrregularVerb(Lang.sv, "återge", "återge", "återger", "återgav", "återgivit");
         learnSwedishIrregularVerb(Lang.sv, "översätt", "översätta", "översätter", "översatte", "översatt");
-
-        // WordNet
-        _wordnet = new WordNet!(true, true)([Lang.en]);
 
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
