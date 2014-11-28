@@ -1127,90 +1127,109 @@ class Net(bool useArray = true,
         // Manual: English Irregular Verbs
 
         // Manual: Swedish Irregular Verbs
-        readSwedishIrregularVerb(Lang.sv, "ge", "ge", "ger", "gav", "gett/givit");
-        readSwedishIrregularVerb(Lang.sv, "ange", "ange", "anger", "angav", "angett/angivit");
-        readSwedishIrregularVerb(Lang.sv, "anse", "anse", "anser", "ansåg", "ansett");
-        readSwedishIrregularVerb(Lang.sv, "avgör", "avgöra", "avgör", "avgjorde", "avgjort");
-        readSwedishIrregularVerb(Lang.sv, "avstå", "avstå", "avstår", "avstod", "avstått");
-        readSwedishIrregularVerb(Lang.sv, "be", "be", "ber", "bad", "bett");
-        readSwedishIrregularVerb(Lang.sv, "bestå", "bestå", "består", "bestod", "bestått");
-        readSwedishIrregularVerb(Lang.sv, [], [], "bör", "borde", "bort");
-        readSwedishIrregularVerb(Lang.sv, "dra", "dra", "drar", "drog", "dragit");
-        readSwedishIrregularVerb(Lang.sv, [], "duga", "duger", "dög/dugde", "dugit");
-        readSwedishIrregularVerb(Lang.sv, "dyk", "dyka", "dyker", "dök/dykte", "dykit");
-        readSwedishIrregularVerb(Lang.sv, "dö", "dö", "dör", "dog", "dött");
-        readSwedishIrregularVerb(Lang.sv, "dölj", "dölja", "döljer", "dolde", "dolt");
-        readSwedishIrregularVerb(Lang.sv, "ersätt", "ersätta", "ersätter", "ersatte", "ersatt");
-        readSwedishIrregularVerb(Lang.sv, "fortsätt", "fortsätta", "fortsätter", "fortsatte", "fortsatt");
-        readSwedishIrregularVerb(Lang.sv, "framstå", "framstå", "framstår", "framstod", "framstått");
-        readSwedishIrregularVerb(Lang.sv, "få", "få", "får", "fick", "fått");
-        readSwedishIrregularVerb(Lang.sv, "förstå", "förstå", "förstår", "förstod", "förstått");
-        readSwedishIrregularVerb(Lang.sv, "förutsätt", "förutsätta", "förutsätter", "förutsatte", "förutsatt");
-        readSwedishIrregularVerb(Lang.sv, "gläd", "glädja", "gläder", "gladde", "glatt");
-        readSwedishIrregularVerb(Lang.sv, "gå", "gå", "går", "gick", "gått");
-        readSwedishIrregularVerb(Lang.sv, "gör", "göra", "gör", "gjorde", "gjort");
-        readSwedishIrregularVerb(Lang.sv, "ha", "ha", "har", "hade", "haft");
-        readSwedishIrregularVerb(Lang.sv, [], "heta", "heter", "hette", "hetat");
-        readSwedishIrregularVerb(Lang.sv, [], "ingå", "ingår", "ingick", "ingått");
-        readSwedishIrregularVerb(Lang.sv, "inse", "inse", "inser", "insåg", "insett");
-        readSwedishIrregularVerb(Lang.sv, "kom", "komma", "kommer", "kom", "kommit");
-        readSwedishIrregularVerb(Lang.sv, [], "kunna", "kan", "kunde", "kunnat");
-        readSwedishIrregularVerb(Lang.sv, "le", "le", "ler", "log", "lett");
-        readSwedishIrregularVerb(Lang.sv, "lev", "leva", "lever", "levde", "levt");
-        readSwedishIrregularVerb(Lang.sv, "ligg", "ligga", "ligger", "låg", "legat");
-        readSwedishIrregularVerb(Lang.sv, "lägg", "lägga", "lägger", "la", "lagt");
-        readSwedishIrregularVerb(Lang.sv, "missförstå", "missförstå", "missförstår", "missförstod", "missförstått");
-        readSwedishIrregularVerb(Lang.sv, [], [], "måste", "var tvungen", "varit tvungen");
-        readSwedishIrregularVerb(Lang.sv, "se", "se", "ser", "såg", "sett");
-        readSwedishIrregularVerb(Lang.sv, "skilj", "skilja", "skiljer", "skilde", "skilt");
-        readSwedishIrregularVerb(Lang.sv, [], [], "ska", "skulle", []);
-        readSwedishIrregularVerb(Lang.sv, "smaksätt", "smaksätta", "smaksätter", "smaksatte", "smaksatt");
-        readSwedishIrregularVerb(Lang.sv, "sov", "sova", "sover", "sov", "sovit");
-        readSwedishIrregularVerb(Lang.sv, "sprid", "sprida", "sprider", "spred", "spridit");
-        readSwedishIrregularVerb(Lang.sv, "stjäl", "stjäla", "stjäl", "stal", "stulit");
-        readSwedishIrregularVerb(Lang.sv, "stå", "stå", "står", "stod", "stått");
-        readSwedishIrregularVerb(Lang.sv, "stöd", "stödja", "stöder", "stödde", "stött");
-        readSwedishIrregularVerb(Lang.sv, "svälj", "svälja", "sväljer", "svalde", "svalt");
-        readSwedishIrregularVerb(Lang.sv, "säg", "säga", "säger", "sa", "sagt");
-        readSwedishIrregularVerb(Lang.sv, "sälj", "sälja", "säljer", "sålde", "sålt");
-        readSwedishIrregularVerb(Lang.sv, "sätt", "sätta", "sätter", "satte", "satt");
-        readSwedishIrregularVerb(Lang.sv, "ta", "ta", "tar", "tog", "tagit");
-        readSwedishIrregularVerb(Lang.sv, "tillsätt", "tillsätta", "tillsätter", "tillsatte", "tillsatt");
-        readSwedishIrregularVerb(Lang.sv, "umgås", "umgås", "umgås", "umgicks", "umgåtts");
-        readSwedishIrregularVerb(Lang.sv, "uppge", "uppge", "uppger", "uppgav", "uppgivit");
-        readSwedishIrregularVerb(Lang.sv, "utgå", "utgå", "utgår", "utgick", "utgått");
-        readSwedishIrregularVerb(Lang.sv, "var", "vara", "är", "var", "varit");
-        readSwedishIrregularVerb(Lang.sv, [], "veta", "vet", "visste", "vetat");
-        readSwedishIrregularVerb(Lang.sv, "vik", "vika", "viker", "vek", "vikt");
-        readSwedishIrregularVerb(Lang.sv, [], "vilja", "vill", "ville", "velat");
-        readSwedishIrregularVerb(Lang.sv, "välj", "välja", "väljer", "valde", "valt");
-        readSwedishIrregularVerb(Lang.sv, "vänj", "vänja", "vänjer", "vande", "vant");
-        readSwedishIrregularVerb(Lang.sv, "väx", "växa", "växer", "växte", "växt");
-        readSwedishIrregularVerb(Lang.sv, "återge", "återge", "återger", "återgav", "återgivit");
-        readSwedishIrregularVerb(Lang.sv, "översätt", "översätta", "översätter", "översatte", "översatt");
+        learnSwedishIrregularVerb(Lang.sv, "ge", "ge", "ger", "gav", "gett/givit");
+        learnSwedishIrregularVerb(Lang.sv, "ange", "ange", "anger", "angav", "angett/angivit");
+        learnSwedishIrregularVerb(Lang.sv, "anse", "anse", "anser", "ansåg", "ansett");
+        learnSwedishIrregularVerb(Lang.sv, "avgör", "avgöra", "avgör", "avgjorde", "avgjort");
+        learnSwedishIrregularVerb(Lang.sv, "avstå", "avstå", "avstår", "avstod", "avstått");
+        learnSwedishIrregularVerb(Lang.sv, "be", "be", "ber", "bad", "bett");
+        learnSwedishIrregularVerb(Lang.sv, "bestå", "bestå", "består", "bestod", "bestått");
+        learnSwedishIrregularVerb(Lang.sv, [], [], "bör", "borde", "bort");
+        learnSwedishIrregularVerb(Lang.sv, "dra", "dra", "drar", "drog", "dragit");
+        learnSwedishIrregularVerb(Lang.sv, [], "duga", "duger", "dög/dugde", "dugit");
+        learnSwedishIrregularVerb(Lang.sv, "dyk", "dyka", "dyker", "dök/dykte", "dykit");
+        learnSwedishIrregularVerb(Lang.sv, "dö", "dö", "dör", "dog", "dött");
+        learnSwedishIrregularVerb(Lang.sv, "dölj", "dölja", "döljer", "dolde", "dolt");
+        learnSwedishIrregularVerb(Lang.sv, "ersätt", "ersätta", "ersätter", "ersatte", "ersatt");
+        learnSwedishIrregularVerb(Lang.sv, "fortsätt", "fortsätta", "fortsätter", "fortsatte", "fortsatt");
+        learnSwedishIrregularVerb(Lang.sv, "framstå", "framstå", "framstår", "framstod", "framstått");
+        learnSwedishIrregularVerb(Lang.sv, "få", "få", "får", "fick", "fått");
+        learnSwedishIrregularVerb(Lang.sv, "förstå", "förstå", "förstår", "förstod", "förstått");
+        learnSwedishIrregularVerb(Lang.sv, "förutsätt", "förutsätta", "förutsätter", "förutsatte", "förutsatt");
+        learnSwedishIrregularVerb(Lang.sv, "gläd", "glädja", "gläder", "gladde", "glatt");
+        learnSwedishIrregularVerb(Lang.sv, "gå", "gå", "går", "gick", "gått");
+        learnSwedishIrregularVerb(Lang.sv, "gör", "göra", "gör", "gjorde", "gjort");
+        learnSwedishIrregularVerb(Lang.sv, "ha", "ha", "har", "hade", "haft");
+        learnSwedishIrregularVerb(Lang.sv, [], "heta", "heter", "hette", "hetat");
+        learnSwedishIrregularVerb(Lang.sv, [], "ingå", "ingår", "ingick", "ingått");
+        learnSwedishIrregularVerb(Lang.sv, "inse", "inse", "inser", "insåg", "insett");
+        learnSwedishIrregularVerb(Lang.sv, "kom", "komma", "kommer", "kom", "kommit");
+        learnSwedishIrregularVerb(Lang.sv, [], "kunna", "kan", "kunde", "kunnat");
+        learnSwedishIrregularVerb(Lang.sv, "le", "le", "ler", "log", "lett");
+        learnSwedishIrregularVerb(Lang.sv, "lev", "leva", "lever", "levde", "levt");
+        learnSwedishIrregularVerb(Lang.sv, "ligg", "ligga", "ligger", "låg", "legat");
+        learnSwedishIrregularVerb(Lang.sv, "lägg", "lägga", "lägger", "la", "lagt");
+        learnSwedishIrregularVerb(Lang.sv, "missförstå", "missförstå", "missförstår", "missförstod", "missförstått");
+        learnSwedishIrregularVerb(Lang.sv, [], [], "måste", "var tvungen", "varit tvungen");
+        learnSwedishIrregularVerb(Lang.sv, "se", "se", "ser", "såg", "sett");
+        learnSwedishIrregularVerb(Lang.sv, "skilj", "skilja", "skiljer", "skilde", "skilt");
+        learnSwedishIrregularVerb(Lang.sv, [], [], "ska", "skulle", []);
+        learnSwedishIrregularVerb(Lang.sv, "smaksätt", "smaksätta", "smaksätter", "smaksatte", "smaksatt");
+        learnSwedishIrregularVerb(Lang.sv, "sov", "sova", "sover", "sov", "sovit");
+        learnSwedishIrregularVerb(Lang.sv, "sprid", "sprida", "sprider", "spred", "spridit");
+        learnSwedishIrregularVerb(Lang.sv, "stjäl", "stjäla", "stjäl", "stal", "stulit");
+        learnSwedishIrregularVerb(Lang.sv, "stå", "stå", "står", "stod", "stått");
+        learnSwedishIrregularVerb(Lang.sv, "stöd", "stödja", "stöder", "stödde", "stött");
+        learnSwedishIrregularVerb(Lang.sv, "svälj", "svälja", "sväljer", "svalde", "svalt");
+        learnSwedishIrregularVerb(Lang.sv, "säg", "säga", "säger", "sa", "sagt");
+        learnSwedishIrregularVerb(Lang.sv, "sälj", "sälja", "säljer", "sålde", "sålt");
+        learnSwedishIrregularVerb(Lang.sv, "sätt", "sätta", "sätter", "satte", "satt");
+        learnSwedishIrregularVerb(Lang.sv, "ta", "ta", "tar", "tog", "tagit");
+        learnSwedishIrregularVerb(Lang.sv, "tillsätt", "tillsätta", "tillsätter", "tillsatte", "tillsatt");
+        learnSwedishIrregularVerb(Lang.sv, "umgås", "umgås", "umgås", "umgicks", "umgåtts");
+        learnSwedishIrregularVerb(Lang.sv, "uppge", "uppge", "uppger", "uppgav", "uppgivit");
+        learnSwedishIrregularVerb(Lang.sv, "utgå", "utgå", "utgår", "utgick", "utgått");
+        learnSwedishIrregularVerb(Lang.sv, "var", "vara", "är", "var", "varit");
+        learnSwedishIrregularVerb(Lang.sv, [], "veta", "vet", "visste", "vetat");
+        learnSwedishIrregularVerb(Lang.sv, "vik", "vika", "viker", "vek", "vikt");
+        learnSwedishIrregularVerb(Lang.sv, [], "vilja", "vill", "ville", "velat");
+        learnSwedishIrregularVerb(Lang.sv, "välj", "välja", "väljer", "valde", "valt");
+        learnSwedishIrregularVerb(Lang.sv, "vänj", "vänja", "vänjer", "vande", "vant");
+        learnSwedishIrregularVerb(Lang.sv, "väx", "växa", "växer", "växte", "växt");
+        learnSwedishIrregularVerb(Lang.sv, "återge", "återge", "återger", "återgav", "återgivit");
+        learnSwedishIrregularVerb(Lang.sv, "översätt", "översätta", "översätter", "översatte", "översatt");
 
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
         /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
     }
 
-    /** See also: http://www.lardigsvenska.com/2010/10/oregelbundna-verb.html */
-    void readSwedishIrregularVerb(Lang lang,
-                                  string imperative, // imperativ
-                                  string infinitive, // infinitiv
-                                  string present,
-                                  string past,
-                                  string supinum) // supinum
+    /** Learn English Irregular Verb.
+    */
+    void learnEnglishIrregularVerb(Lang lang,
+                                   string infinitive,
+                                   string past,
+                                   string pastParticiple)
     {
+        const category = CategoryIx.asUndefined;
+        const origin = Origin.manual;
         connect(Rel.any,
-                store(imperative, lang, Sense.verbImperative, CategoryIx.asUndefined, Origin.manual),
-                store(infinitive, lang, Sense.verbInfinitive, CategoryIx.asUndefined, Origin.manual),
-                store(present, lang, Sense.verbPresent, CategoryIx.asUndefined, Origin.manual),
-                store(past, lang, Sense.verbPast, CategoryIx.asUndefined, Origin.manual),
-                store(supinum, lang, Sense.verbPastParticiple, CategoryIx.asUndefined, Origin.manual));
+                store(infinitive, lang, Sense.verbInfinitive, category, origin),
+                store(past, lang, Sense.verbPast, category, origin),
+                store(pastParticiple, lang, Sense.verbPastParticiple, category, origin));
     }
 
-    /** Lookup Previous or Store New $(D concept) at $(D lemma) index.
+    /** Learn Swedish Irregular Verb.
+        See also: http://www.lardigsvenska.com/2010/10/oregelbundna-verb.html
+    */
+    void learnSwedishIrregularVerb(Lang lang,
+                                   string imperative,
+                                   string infinitive,
+                                   string present,
+                                   string past,
+                                   string pastParticiple) // pastParticiple
+    {
+        const category = CategoryIx.asUndefined;
+        const origin = Origin.manual;
+        connectNtoN(Rel.any,
+                    store(imperative, lang, Sense.verbImperative, category, origin),
+                    store(infinitive, lang, Sense.verbInfinitive, category, origin),
+                    store(present, lang, Sense.verbPresent, category, origin),
+                    store(past, lang, Sense.verbPast, category, origin),
+                    store(pastParticiple, lang, Sense.verbPastParticiple, category, origin));
+    }
+
+    /** Lookup-or-Store $(D Concept) at $(D lemma) index.
      */
     ConceptIx store(in Lemma lemma,
                     Concept concept)
@@ -1237,7 +1256,7 @@ class Net(bool useArray = true,
         }
     }
 
-    /** Lookup or Store Concept named $(D words) in language $(D lang). */
+    /** Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
     ConceptIx store(Words words,
                     Lang lang,
                     Sense kind,
@@ -1247,6 +1266,24 @@ class Net(bool useArray = true,
         return store(Lemma(words, lang, kind, categoryIx),
                      Concept(words, lang, kind, categoryIx, origin));
     }
+
+    /** Fully Connect Every-to-Every in $(D all). */
+    void connectMtoM(Rel rel, ConceptIx[] all)
+    {
+    }
+    alias connectFully = connectMtoM;
+
+    /** Fan-Out Connect $(D first) to Every in $(D rest). */
+    void connect1toM(Rel rel, ConceptIx first, ConceptIx[] rest)
+    {
+    }
+    alias connectFanOut = connect1toM;
+
+    /** Cyclic Connect Every in $(D all). */
+    void connectCycle(Rel rel, ConceptIx[] all)
+    {
+    }
+    alias connectCircle = connectCycle;
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight).
 
