@@ -14,18 +14,18 @@ void main(string[] args)
 {
     import std.conv: to;
 
-    pragma(msg, "ParseTree.sizeof: " ~ ParseTree.sizeof.to!string);
+    pragma(msg, `ParseTree.sizeof: ` ~ ParseTree.sizeof.to!string);
 
     /* A */
-    auto ptA = A("1 + 2 - (3*x-5)*6");
-    assert(ptA.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
-    writeln("Original Packed Size: ", ptA.pack.length);
+    auto ptA = A(`1 + 2 - (3*x-5)*6`);
+    assert(ptA.matches == [`1`, `+`, `2`, `-`, `(`, `3`, `*`, `x`, `-`, `5`, `)`, `*`, `6`]);
+    writeln(`Original Packed Size: `, ptA.pack.length);
 
     auto decA = A.decimateTree(ptA);
 
     const srcC = `int x;`;
-    writeln("C Source Size: ", srcC.length);
+    writeln(`C Source Size: `, srcC.length);
     auto treeC = C(srcC);
-    writeln("C ParseTree Size: ", treeC.pack.length);
+    writeln(`C ParseTree Size: `, treeC.pack.length);
     writeln(treeC);
 }
