@@ -1105,25 +1105,6 @@ class Net(bool useArray = true,
         const quick = false;
         const maxCount = quick ? 100000 : size_t.max;
 
-        // WordNet
-        _wordnet = new WordNet!(true, true)([Lang.en]);
-
-        // NELL
-        readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
-                                                            .buildNormalizedPath,
-                     10000);
-
-        // ConceptNet
-        // GC.disabled had no noticeble effect here: import core.memory: GC;
-        const fixedPath = dirPath.expandTilde
-                                 .buildNormalizedPath;
-        import std.file: dirEntries, SpanMode;
-        foreach (file; fixedPath.dirEntries(SpanMode.shallow)
-                                .filter!(name => name.extension == `.csv`))
-        {
-            readCN5File(file, false, maxCount);
-        }
-
         // Manual: English Irregular Verbs
         /* arise / arose / arisen */
         /* awake / awoke / awoken, awaked */
@@ -1349,6 +1330,25 @@ class Net(bool useArray = true,
         learnSwedishIrregularVerb(Lang.sv, "väx", "växa", "växer", "växte", "växt");
         learnSwedishIrregularVerb(Lang.sv, "återge", "återge", "återger", "återgav", "återgivit");
         learnSwedishIrregularVerb(Lang.sv, "översätt", "översätta", "översätter", "översatte", "översatt");
+
+        // WordNet
+        _wordnet = new WordNet!(true, true)([Lang.en]);
+
+        // NELL
+        readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
+                                                            .buildNormalizedPath,
+                     10000);
+
+        // ConceptNet
+        // GC.disabled had no noticeble effect here: import core.memory: GC;
+        const fixedPath = dirPath.expandTilde
+                                 .buildNormalizedPath;
+        import std.file: dirEntries, SpanMode;
+        foreach (file; fixedPath.dirEntries(SpanMode.shallow)
+                                .filter!(name => name.extension == `.csv`))
+        {
+            readCN5File(file, false, maxCount);
+        }
 
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
