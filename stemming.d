@@ -850,13 +850,21 @@ auto ref stemNorvegian(S)(S s) if (isSomeString!S)
     return s;
 }
 
-/** Stem $(D s) in Language $(D lang). */
-auto ref stem(S)(S s, Lang lang = Lang.unknown) if (isSomeString!S)
+/** Stem $(D s) in Language $(D lang).
+    If lang is unknown try each known language until failure.
+ */
+S stem(S)(S s, Lang lang = Lang.unknown) if (isSomeString!S)
 {
     with (Lang)
     {
         switch (lang)
         {
+            case unknown:
+                S t;
+                t = s.stem(en); if (t.length != s.length) return t;
+                t = s.stem(sv); if (t.length != s.length) return t;
+                t = s.stem(no); if (t.length != s.length) return t;
+                return s;
             case sv:
                 return s.stemSwedish;
             case no:
