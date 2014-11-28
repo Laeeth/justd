@@ -1,7 +1,7 @@
 /**
    Arithmetic Pegged Grammar.
  */
-module grammarA;
+module lang_A;
 
 import pegged.grammar;
 

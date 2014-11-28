@@ -7,14 +7,16 @@ import std.typecons: tuple;
 import msgpack;
 import dbg;
 
-import grammarA;
-import grammarC;
+import lang_A;
+import lang_C;
+import lang_Ada;
 
 void main(string[] args)
 {
     import std.conv: to;
 
-    pragma(msg, `ParseTree.sizeof: ` ~ ParseTree.sizeof.to!string);
+    pragma(msg, (`ParseTree.sizeof: ` ~
+                 ParseTree.sizeof.to!string));
 
     /* A */
     auto ptA = A(`1 + 2 - (3*x-5)*6`);
