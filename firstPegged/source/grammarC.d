@@ -1,8 +1,8 @@
-module grammarC;
+module lang_Ada;
 
 import pegged.grammar;
 
-enum grammar_C = `
+enum grammar_Ada = `
 C:
 
 TranslationUnit <- ExternalDeclaration (:Spacing ExternalDeclaration)*
@@ -236,7 +236,7 @@ Keyword <- "auto" / "break" / "case" / "char" / "const" / "continue"
          / "register" / "restrict" / "return" / "short" / "signed"
          / "sizeof" / "static" / "struct" / "switch" / "typedef" / "union"
          / "unsigned" / "void" / "volatile" / "while"
-         / "_Bool" / "_Complex" / "_Imaginary"
+         / "_Bool" / "_Adaomplex" / "_Imaginary"
 
 Spacing <~ (space / endOfLine / Comment)*
 
@@ -267,48 +267,48 @@ FloatLiteral <~ Sign? Integer "." Integer? (("e" / "E") Sign? Integer)?
 Sign <- "-" / "+"
 `;
 
-enum parserPath_C = "parser_C.d";
-enum grammarPath_C = "grammar_C.peg";
+enum parserPath_Ada = "parser_Ada.d";
+enum grammarPath_Ada = "grammar_Ada.peg";
 
-static if (__traits(compiles, { enum string _ = import(parserPath_C); })) // TODO faster way?
+static if (__traits(compiles, { enum string _ = import(parserPath_Ada); })) // TODO faster way?
 {
-    pragma(msg, "Loaded cached parser " ~ parserPath_C);
-    enum parserCached_C = import(parserPath_C);
+    pragma(msg, "Loaded cached parser " ~ parserPath_Ada);
+    enum parserCached_Ada = import(parserPath_Ada);
 }
 else
 {
-    pragma(msg, "Skipped cached parser " ~ parserPath_C);
-    enum parserCached_C = [];
+    pragma(msg, "Skipped cached parser " ~ parserPath_Ada);
+    enum parserCached_Ada = [];
 }
 
-static if (__traits(compiles, { enum string _ = import(grammarPath_C); })) // TODO faster way?
+static if (__traits(compiles, { enum string _ = import(grammarPath_Ada); })) // TODO faster way?
 {
-    pragma(msg, "Loaded cached grammar " ~ grammarPath_C);
-    enum grammarCached_C = import(grammarPath_C);
+    pragma(msg, "Loaded cached grammar " ~ grammarPath_Ada);
+    enum grammarCached_Ada = import(grammarPath_Ada);
 }
 else
 {
-    pragma(msg, "Skipped cached grammar " ~ grammarPath_C);
-    enum grammarCached_C = [];
+    pragma(msg, "Skipped cached grammar " ~ grammarPath_Ada);
+    enum grammarCached_Ada = [];
 }
 
-static if (grammar_C == grammarCached_C)
+static if (grammar_Ada == grammarCached_Ada)
 {
-    pragma(msg, "Unchanged grammar " ~ grammarPath_C ~ ", reusing existing cached parser");
-    enum parser_C = parserCached_C;
+    pragma(msg, "Unchanged grammar " ~ grammarPath_Ada ~ ", reusing existing cached parser");
+    enum parser_Ada = parserCached_Ada;
 }
 else
 {
-    pragma(msg, "Grammar " ~ grammarPath_C ~ " has changed, regenerating parser");
-    enum parser_C = grammar(grammar_C);
+    pragma(msg, "Grammar " ~ grammarPath_Ada ~ " has changed, regenerating parser");
+    enum parser_Ada = grammar(grammar_Ada);
 }
 
-mixin(parser_C);
+mixin(parser_Ada);
 
 shared static this()
 {
     import std.file: write;
     import std.path: buildNormalizedPath;
-    write(buildNormalizedPath("generated_source", parserPath_C), parser_C);
-    write(buildNormalizedPath("generated_source/", grammarPath_C), grammar_C);
+    write(buildNormalizedPath("generated_source", parserPath_Ada), parser_Ada);
+    write(buildNormalizedPath("generated_source/", grammarPath_Ada), grammar_Ada);
 }
