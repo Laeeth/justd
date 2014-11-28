@@ -7,7 +7,7 @@
     },
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
-    "sourceFiles": [ "../dbg.d"
+    "sourceFiles": [ "../dbg.d", "../msgpack.d"
                    ],
     "dflags-dmd": ["-Jgenerated_source"]
 }

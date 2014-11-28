@@ -4,6 +4,7 @@ import std.stdio;
 import pegged.peg;
 import pegged.grammar;
 import std.typecons: tuple;
+import msgpack;
 
 import dbg;
 
@@ -346,12 +347,15 @@ shared static this()
 
 void main(string[] args)
 {
-    /* writeln(parser_A); */
-    auto parseTree1 = A("1 + 2 - (3*x-5)*6");
+    pragma(msg, ParseTree.sizeof);
+
+    auto ptA = A("1 + 2 - (3*x-5)*6");
+    writeln("Original Packed Size: ", ptA.pack.length);
+
     ParseTree f;
-    // pragma(msg, parseTree1.matches);
-    assert(parseTree1.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
-    writeln(parseTree1);
+    assert(ptA.matches == ["1", "+", "2", "-", "(", "3", "*", "x", "-", "5", ")", "*", "6"]);
+
+    auto decA = A.decimateTree(ptA);
 
     /* writeln(parserC); */
     auto cTree = C(`int x;`);    // TODO is it possible to prune non-terminal single child nodes?
