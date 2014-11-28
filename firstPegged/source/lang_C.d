@@ -1,7 +1,9 @@
+/** Pegged Generated C Parser. */
 module lang_C;
 
 import pegged.grammar;
 
+/** Pegged C Grammar. */
 enum grammar_C = `
 C:
 

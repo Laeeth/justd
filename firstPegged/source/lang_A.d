@@ -1,10 +1,9 @@
-/**
-   Arithmetic Pegged Grammar.
- */
+/** Pegged Generated Arithmetic Parser. */
 module lang_A;
 
 import pegged.grammar;
 
+/** Pegged Arithmetic Grammar. */
 enum grammar_A = `
 A:
     Term     < Factor (Add / Sub)*

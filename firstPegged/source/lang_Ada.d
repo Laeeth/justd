@@ -1,7 +1,9 @@
+/** Pegged Generated Ada Parser. */
 module lang_Ada;
 
 import pegged.grammar;
 
+/** Pegged Ada Grammar. */
 enum grammar_Ada = `
 Ada:
 
