@@ -8,7 +8,7 @@
 */
 module traits_ex;
 import std.traits: isArray, isAssignable, ParameterTypeTuple, isStaticArray, isDynamicArray, isSomeString;
-import std.range: ElementType;
+import std.range: ElementType, isForwardRange, isRandomAccessRange, isInputRange, isBidirectionalRange, isOutputRange;
 
 /** Returns: true iff $(D ptr) is handled by the garbage collector (GC). */
 bool isGCPointer(void* ptr){
@@ -42,7 +42,9 @@ unittest {
     assert(isArrayOf!(R, string));
 }
 
+alias isSource = isForwardRange;
 alias isSourceOf = isForwardRangeOf;
+alias isSource = isOutputRange;
 alias isSinkOf = isOutputRangeOf;
 
 import std.functional: unaryFun, binaryFun;

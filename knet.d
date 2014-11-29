@@ -51,6 +51,7 @@ import std.typecons: Nullable, Tuple, tuple;
 
 import algorithm_ex: isPalindrome, either;
 import range_ex: stealFront, stealBack;
+import traits_ex: isSourceOf;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
 import stemming;
@@ -1363,11 +1364,10 @@ der", "spred", "spridit");
     {
         const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        connectMtoM(Rel.any,
-                    [store(infinitive, lang, Sense.verbInfinitive, category, origin),
-                     store(past, lang, Sense.verbPast, category, origin),
-                     store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)],
-                    origin);
+        auto all = [store(infinitive, lang, Sense.verbInfinitive, category, origin),
+                    store(past, lang, Sense.verbPast, category, origin),
+                    store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        connectMtoM(Rel.any, all.filter!(a => a.defined), origin);
     }
 
     /** Learn Swedish Irregular Verb.
@@ -1382,13 +1382,12 @@ der", "spred", "spridit");
     {
         const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        connectMtoM(Rel.any,
-                    [store(imperative, lang, Sense.verbImperative, category, origin),
-                     store(infinitive, lang, Sense.verbInfinitive, category, origin),
-                     store(present, lang, Sense.verbPresent, category, origin),
-                     store(past, lang, Sense.verbPast, category, origin),
-                     store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)],
-                    origin);
+        auto all = [store(imperative, lang, Sense.verbImperative, category, origin),
+                    store(infinitive, lang, Sense.verbInfinitive, category, origin),
+                    store(present, lang, Sense.verbPresent, category, origin),
+                    store(past, lang, Sense.verbPast, category, origin),
+                    store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        connectMtoM(Rel.any, all.filter!(a => a.defined), origin);
     }
 
     /** Lookup-or-Store $(D Concept) at $(D lemma) index.
@@ -1432,7 +1431,10 @@ der", "spred", "spridit");
     }
 
     /** Fully Connect Every-to-Every in $(D all). */
-    LinkIx[] connectMtoM(Rel rel, ConceptIx[] all, Origin origin, real weight = 1.0)
+    LinkIx[] connectMtoM(R)(Rel rel,
+                            R all,
+                            Origin origin,
+                            real weight = 1.0) if (isSourceOf!(R, ConceptIx))
     {
         typeof(return) linkIxes;
         foreach (me; all)
@@ -1450,7 +1452,10 @@ der", "spred", "spridit");
     alias connectFully = connectMtoM;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
-    LinkIx[] connect1toM(Rel rel, ConceptIx first, ConceptIx[] rest, Origin origin, real weight = 1.0)
+    LinkIx[] connect1toM(R)(Rel rel,
+                            ConceptIx first,
+                            R rest,
+                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptIx))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -1465,7 +1470,7 @@ der", "spred", "spridit");
     alias connectFanOut = connect1toM;
 
     /** Cyclic Connect Every in $(D all). */
-    void connectCycle(Rel rel, ConceptIx[] all)
+    void connectCycle(R)(Rel rel, R all) if (isSourceOf!(R, ConceptIx))
     {
     }
     alias connectCircle = connectCycle;
