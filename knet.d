@@ -823,8 +823,6 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
-    // TODO templatize these on RelDir.[forward, backward]
-
     /** Get Ingoing Links of $(D concept). */
     auto  inLinksOf(in Concept concept,
                     Rel rel = Rel.any,
@@ -1311,7 +1309,8 @@ class Net(bool useArray = true,
         learnSwedishIrregularVerb(Lang.sv, [], [], "ska", "skulle", []);
         learnSwedishIrregularVerb(Lang.sv, "smaksätt", "smaksätta", "smaksätter", "smaksatte", "smaksatt");
         learnSwedishIrregularVerb(Lang.sv, "sov", "sova", "sover", "sov", "sovit");
-        learnSwedishIrregularVerb(Lang.sv, "sprid", "sprida", "sprider", "spred", "spridit");
+        learnSwedishIrregularVerb(Lang.sv, "sprid", "sprida", "spri
+der", "spred", "spridit");
         learnSwedishIrregularVerb(Lang.sv, "stjäl", "stjäla", "stjäl", "stal", "stulit");
         learnSwedishIrregularVerb(Lang.sv, "stå", "stå", "står", "stod", "stått");
         learnSwedishIrregularVerb(Lang.sv, "stöd", "stödja", "stöder", "stödde", "stött");
