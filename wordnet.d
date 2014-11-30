@@ -11,6 +11,7 @@ import std.container: Array;
 import rcstring;
 import dbg;
 import assert_ex;
+import krels;
 
 alias nPath = buildNormalizedPath;
 

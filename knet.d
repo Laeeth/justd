@@ -896,6 +896,7 @@ class Net(bool useArray = true,
     struct Link
     {
         alias Weight = ubyte; // link weight pack type
+        alias WeightHistogram = size_t[Weight];
 
         @safe @nogc pure nothrow:
 
@@ -917,26 +918,27 @@ class Net(bool useArray = true,
         void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..about10 to Weight to save memory
-            _weight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
+            packedWeight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
         }
 
         /** Set NELL Probability Weight $(weight). */
         void setNELLWeight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..1 to Weight to save memory
-            _weight = cast(Weight)(weight.clamp(0, 1)*Weight.max);
+            packedWeight = cast(Weight)(weight.clamp(0, 1)*Weight.max);
         }
 
         /** Get Normalized Link Weight. */
         @property real normalizedWeight() const
         {
-            return cast(real)_weight/(cast(real)Weight.max/10);
+            return cast(typeof(return))packedWeight/(cast(typeof(return))Weight.max/10);
         }
+
     private:
         ConceptIx _srcIx;
         ConceptIx _dstIx;
 
-        Weight _weight;
+        Weight packedWeight;
 
         Rel _rel;
         bool _negation; /// relation negation
@@ -977,21 +979,23 @@ class Net(bool useArray = true,
 
         WordNet!(true, true) _wordnet;
 
-        size_t[Rel.max + 1] _relCounts;
-        size_t[Origin.max + 1] _linkSourceCounts;
-        size_t[Lang.max + 1] _hlangCounts;
-        size_t[Sense.max + 1] _kindCounts;
-        size_t _conceptStringLengthSum = 0;
-        size_t _connectednessSum = 0;
+        size_t[Rel.max + 1] relCounts;
+        size_t[Origin.max + 1] linkSourceCounts;
+        size_t[Lang.max + 1] hlangCounts;
+        size_t[Sense.max + 1] kindCounts;
+        size_t conceptStringLengthSum = 0;
+        size_t connectednessSum = 0;
 
         // is there a Phobos structure for this?
-        real _weightMinCN5 = real.max;
-        real _weightMaxCN5 = real.min_normal;
-        real _weightSumCN5 = 0; // Sum of all link weights.
+        real weightMinCN5 = real.max;
+        real weightMaxCN5 = real.min_normal;
+        real weightSumCN5 = 0; // Sum of all link weights.
+        Link.WeightHistogram packedWeightHistogramCN5; // CN5 Packed Weight Histogram
 
-        real _weightMinNELL = real.max;
-        real _weightMaxNELL = real.min_normal;
-        real _weightSumNELL = 0; // Sum of all link weights.
+        real weightMinNELL = real.max;
+        real weightMaxNELL = real.min_normal;
+        real weightSumNELL = 0; // Sum of all link weights.
+        Link.WeightHistogram packedWeightHistogramNELL; // NELL Packed Weight Histogram
     }
 
     @safe pure nothrow
@@ -1068,11 +1072,11 @@ class Net(bool useArray = true,
         {
             foreach (hlangGuess; EnumMembers!Lang) // for each language
             {
-                if (_hlangCounts[hlangGuess])
+                if (hlangCounts[hlangGuess])
                 {
                     foreach (senseGuess; EnumMembers!Sense) // for each meaning
                     {
-                        if (_kindCounts[senseGuess])
+                        if (kindCounts[senseGuess])
                         {
                             foreach (ushort categoryCountGuess;
                                      0.._categoryIxCounter) // for each category including unknown
@@ -1367,7 +1371,7 @@ der", "spred", "spridit");
         auto all = [store(infinitive, lang, Sense.verbInfinitive, category, origin),
                     store(past, lang, Sense.verbPast, category, origin),
                     store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        connectMtoM(Rel.any, all.filter!(a => a.defined), origin);
+        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
     }
 
     /** Learn Swedish Irregular Verb.
@@ -1387,7 +1391,7 @@ der", "spred", "spridit");
                     store(present, lang, Sense.verbPresent, category, origin),
                     store(past, lang, Sense.verbPast, category, origin),
                     store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        connectMtoM(Rel.any, all.filter!(a => a.defined), origin);
+        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
     }
 
     /** Lookup-or-Store $(D Concept) at $(D lemma) index.
@@ -1412,7 +1416,7 @@ der", "spred", "spridit");
             const cix = ConceptIx(cast(Ix)_concepts.length);
             _concepts ~= concept; // .. new concept that is stored
             _conceptIxByLemma[lemma] = cix; // store index to ..
-            _conceptStringLengthSum += lemma.words.length;
+            conceptStringLengthSum += lemma.words.length;
             return cix;
         }
     }
@@ -1514,25 +1518,27 @@ der", "spred", "spridit");
         link._srcIx = reversion ? dstIx : srcIx;
         link._dstIx = reversion ? srcIx : dstIx;
 
-        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; _connectednessSum++;
-        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; _connectednessSum++;
+        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
+        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
 
-        ++_relCounts[rel];
-        ++_linkSourceCounts[origin];
+        ++relCounts[rel];
+        ++linkSourceCounts[origin];
 
         if (origin == Origin.cn5)
         {
             link.setCN5Weight(weight);
-            _weightSumCN5 += weight;
-            _weightMinCN5 = min(weight, _weightMinCN5);
-            _weightMaxCN5 = max(weight, _weightMaxCN5);
+            weightSumCN5 += weight;
+            weightMinCN5 = min(weight, weightMinCN5);
+            weightMaxCN5 = max(weight, weightMaxCN5);
+            ++packedWeightHistogramCN5[link.packedWeight];
         }
         else
         {
             link.setNELLWeight(weight);
-            _weightSumNELL += weight;
-            _weightMinNELL = min(weight, _weightMinNELL);
-            _weightMaxNELL = max(weight, _weightMaxNELL);
+            weightSumNELL += weight;
+            weightMinNELL = min(weight, weightMinNELL);
+            weightMaxNELL = max(weight, weightMaxNELL);
+            ++packedWeightHistogramNELL[link.packedWeight];
         }
 
         propagateLinkConcepts(link);
@@ -1573,7 +1579,7 @@ der", "spred", "spridit");
         auto items = part.splitter('/');
 
         const lang = items.front.decodeLang; items.popFront;
-        ++_hlangCounts[lang];
+        ++hlangCounts[lang];
 
         static if (useRCString) { immutable words = items.front; }
         else                    { immutable words = items.front.idup; }
@@ -1589,7 +1595,7 @@ der", "spred", "spridit");
                 dln(`Unknown Sense code `, items.front);
             }
         }
-        ++_kindCounts[sense];
+        ++kindCounts[sense];
 
         return store(correctCN5Lemma(words), lang, sense, anyCategory, Origin.cn5);
     }
@@ -1953,7 +1959,7 @@ der", "spred", "spridit");
         writeln(`Rel Count by Type:`);
         foreach (rel; Rel.min .. Rel.max)
         {
-            const count = _relCounts[rel];
+            const count = relCounts[rel];
             if (count)
             {
                 writeln(`- `, rel.to!string, `: `, count);
@@ -1963,7 +1969,7 @@ der", "spred", "spridit");
         writeln(`Concept Count by Origin:`);
         foreach (source; Origin.min..Origin.max)
         {
-            const count = _linkSourceCounts[source];
+            const count = linkSourceCounts[source];
             if (count)
             {
                 writeln(`- `, source.to!string, `: `, count);
@@ -1973,7 +1979,7 @@ der", "spred", "spridit");
         writeln(`Concept Count by Language:`);
         foreach (lang; Lang.min..Lang.max)
         {
-            const count = _hlangCounts[lang];
+            const count = hlangCounts[lang];
             if (count)
             {
                 writeln(`- `, lang.toName, ` (`, lang.to!string, `) : `, count);
@@ -1983,7 +1989,7 @@ der", "spred", "spridit");
         writeln(`Concept Count by Word Kind:`);
         foreach (sense; Sense.min..Sense.max)
         {
-            const count = _kindCounts[sense];
+            const count = kindCounts[sense];
             if (count)
             {
                 writeln(`- `, sense, ` (`, sense.to!string, `) : `, count);
@@ -1992,13 +1998,13 @@ der", "spred", "spridit");
 
         writeln(`Stats:`);
 
-        if (_weightSumCN5)
+        if (weightSumCN5)
         {
-            writeln(`- CN5 Weights Min,Max,Average: `, _weightMinCN5, ',', _weightMaxCN5, ',', cast(real)_weightSumCN5/_links.length);
+            writeln(`- CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(real)weightSumCN5/_links.length);
         }
-        if (_weightSumNELL)
+        if (weightSumNELL)
         {
-            writeln(`- NELL Weights Min,Max,Average: `, _weightMinNELL, ',', _weightMaxNELL, ',', cast(real)_weightSumNELL/_links.length);
+            writeln(`- NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/_links.length);
         }
 
         writeln(`- Concept Count: `, _concepts.length);
@@ -2006,8 +2012,8 @@ der", "spred", "spridit");
         writeln(`- Link Count: `, _links.length);
 
         writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
-        writeln(`- Concept String Length Average: `, cast(real)_conceptStringLengthSum/_concepts.length);
-        writeln(`- Concept Connectedness Average: `, cast(real)_connectednessSum/2/_concepts.length);
+        writeln(`- Concept String Length Average: `, cast(real)conceptStringLengthSum/_concepts.length);
+        writeln(`- Concept Connectedness Average: `, cast(real)connectednessSum/2/_concepts.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
@@ -2196,7 +2202,7 @@ der", "spred", "spridit");
             foreach (group; insByRel(concept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.forward);
-                foreach (inLink, inConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
+                foreach (inLink, inConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
                 }
@@ -2207,7 +2213,7 @@ der", "spred", "spridit");
             foreach (group; outsByRel(concept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.backward);
-                foreach (outLink, outConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0]._weight)
+                foreach (outLink, outConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
                 {
                     showConcept(outConcept, outLink.normalizedWeight);
                 }

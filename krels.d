@@ -234,6 +234,9 @@ enum Rel:ubyte
     adverbPertainsTo,
     participleOf,
 
+    wordForm,
+    verbForm,
+
     generalizes, // TODO Merge with other enumerator?
 
     hasRelative,
@@ -1100,6 +1103,7 @@ bool specializes(Rel special,
             case hasWebsite: return special.of(hasOfficialWebsite);
             case hasSubevent: return special.of(hasFirstSubevent,
                                                 hasLastSubevent);
+            case wordForm: return special.of(verbForm);
             default: return special == general;
         }
     }

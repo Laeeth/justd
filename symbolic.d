@@ -90,14 +90,15 @@ class Patt
         assert(false);
     }
 
-    /** Find $(D this) in $(D haystack) at Offset $(D soff). */
+    /** Find $(D this) in String $(D haystack) at Offset $(D soff). */
     final const(ubyte[]) findAt(in string haystack, size_t soff = 0) const
     {
-        return findAtU(haystack.representation, soff);
+        return findRawAt(haystack.representation, soff, []); // TODO this is ugly
     }
 
-    /** Find $(D this) in $(D haystack) at Offset $(D soff). */
-    const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
+    /** Find $(D this) in Raw Bytes $(D haystack) at Offset $(D soff). */
+    const(ubyte[]) findRawAt(in ubyte[] haystack, size_t soff = 0,
+                             in Patt[] enders = []) const
     {
         auto i = soff;
         while (i < haystack.length) // while bytes left at i
@@ -149,7 +150,8 @@ class Lit : Patt
                 _bytes[] == haystack[soff..soff + l]) ? l : size_t.max; // same contents
     }
 
-    override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
+    override const(ubyte[]) findRawAt(in ubyte[] haystack, size_t soff = 0,
+                                      in Patt[] enders = []) const
     {
         return haystack[soff..$].find(_bytes); // reuse std.algorithm: find!
     }
@@ -273,7 +275,9 @@ class Acronym : Patt
 
     template Tuple(E...) { alias Tuple = E; }
 
-    override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const {
+    override const(ubyte[]) findRawAt(in ubyte[] haystack, size_t soff = 0,
+                                      in Patt[] enders = []) const
+    {
         import std.string: CaseSensitive;
         return haystack.findAcronymAt(_acros, _ctx, CaseSensitive.yes, soff)[0];
     }
@@ -454,7 +458,8 @@ class Alt : SPatt
 
     /** Find $(D this) in $(D haystack) at Offset $(D soff).
     */
-    override const(ubyte[]) findAtU(in ubyte[] haystack, size_t soff = 0) const
+    override const(ubyte[]) findRawAt(in ubyte[] haystack, size_t soff = 0,
+                                      in Patt[] enders = []) const
     {
         assert(!alts.empty);    // TODO Move to in contract?
 
@@ -471,7 +476,7 @@ class Alt : SPatt
                 }
                 else
                 {
-                    return alts[0].findAtU(haystack, soff); // recurse to it
+                    return alts[0].findRawAt(haystack, soff, enders); // recurse to it
                 }
             case 2:
                 const a0 = alts[0].getConstant;
@@ -529,7 +534,7 @@ class Alt : SPatt
                 break;
         }
 
-        return super.findAtU(haystack, soff); // revert to base case
+        return super.findRawAt(haystack, soff, enders); // revert to base case
     }
 
     @property:
@@ -925,26 +930,24 @@ Seq kwd(Arg)(Arg arg) { return seq(bow(), arg, eow()); }
 
 /** Pattern Paired with Prefix and Suffix.
  */
-class Clause : Seq
+class Clause : SPatt1
 {
     @safe pure nothrow:
 
     this(Patt prefix_,
          Patt suffix_,
-         Patt[] subs_)
+         Patt sub)
     {
-        super(subs_);
+        super(sub);
         this.prefix = prefix_;
         this.suffix = suffix_;
     }
 
-    this(Args...)(Patt prefix_,
-                  Patt suffix_,
-                  Args subs_)
+    override const(ubyte[]) findRawAt(in ubyte[] haystack, size_t soff = 0,
+                                      in Patt[] enders = []) const
     {
-        super(subs_);
-        this.prefix = prefix_;
-        this.suffix = suffix_;
+        const prefixHit = prefix.findRawAt(haystack, soff);
+        sub.findRawAt(haystack, soff, enders ~ [suffix]);
     }
 
     Patt prefix, suffix;
