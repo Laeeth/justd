@@ -20,6 +20,9 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
+    TODO Make link have array of concepts
+    TODO Conceptix and LinkIx and should be nullable size max where top bit is for reverse
+
     TODO Make use of stealFront and stealBack
     TODO Make LinkIx, ConceptIx inherit Nullable!(Ix, Ix.max)
 
