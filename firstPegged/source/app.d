@@ -11,6 +11,8 @@ import lang_A;
 import lang_C;
 import lang_Ada;
 
+// TODO Use template mixins in pegged automation as done here
+// http://forum.dlang.org/thread/bzzwikiplqydlzmphllp@forum.dlang.org
 void main(string[] args)
 {
     import std.conv: to;
