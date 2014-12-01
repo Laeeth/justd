@@ -989,12 +989,13 @@ class Net(bool useArray = true,
         size_t conceptStringLengthSum = 0;
         size_t connectednessSum = 0;
 
-        // is there a Phobos structure for this?
+        // TODO Group to WeightsStatistics
         real weightMinCN5 = real.max;
         real weightMaxCN5 = real.min_normal;
         real weightSumCN5 = 0; // Sum of all link weights.
         Link.WeightHistogram packedWeightHistogramCN5; // CN5 Packed Weight Histogram
 
+        // TODO Group to WeightsStatistics
         real weightMinNELL = real.max;
         real weightMaxNELL = real.min_normal;
         real weightSumNELL = 0; // Sum of all link weights.
@@ -1535,7 +1536,7 @@ der", "spred", "spridit");
             weightMaxCN5 = max(weight, weightMaxCN5);
             ++packedWeightHistogramCN5[link.packedWeight];
         }
-        else
+        else if (origin == Origin.nell)
         {
             link.setNELLWeight(weight);
             weightSumNELL += weight;
@@ -2004,10 +2005,12 @@ der", "spred", "spridit");
         if (weightSumCN5)
         {
             writeln(`- CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(real)weightSumCN5/_links.length);
+            writeln(`- CN5 Packed Weights Histogram: `, packedWeightHistogramCN5);
         }
         if (weightSumNELL)
         {
             writeln(`- NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/_links.length);
+            writeln(`- NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
         }
 
         writeln(`- Concept Count: `, _concepts.length);
