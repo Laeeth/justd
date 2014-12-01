@@ -1109,8 +1109,8 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
-        const quick = false;
-        const maxCount = quick ? 100000 : size_t.max;
+        const quick = true;
+        const maxCount = quick ? 100 : size_t.max;
 
         // WordNet
         _wordnet = new WordNet!(true, true)([Lang.en]);
@@ -1345,7 +1345,7 @@ der", "spred", "spridit");
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
                                                             .buildNormalizedPath,
-                     10000);
+                     maxCount);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1372,9 +1372,9 @@ der", "spred", "spridit");
     {
         const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        auto all = [store(infinitive, lang, Sense.verbInfinitive, category, origin),
-                    store(past, lang, Sense.verbPast, category, origin),
-                    store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        auto all = [tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
+                    tryStore(past, lang, Sense.verbPast, category, origin),
+                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
         connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
     }
 
@@ -1390,18 +1390,19 @@ der", "spred", "spridit");
     {
         const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        auto all = [store(imperative, lang, Sense.verbImperative, category, origin),
-                    store(infinitive, lang, Sense.verbInfinitive, category, origin),
-                    store(present, lang, Sense.verbPresent, category, origin),
-                    store(past, lang, Sense.verbPast, category, origin),
-                    store(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        auto all = [tryStore(imperative, lang, Sense.verbImperative, category, origin),
+                    tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
+                    tryStore(present, lang, Sense.verbPresent, category, origin),
+                    tryStore(past, lang, Sense.verbPast, category, origin),
+                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
         connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
     }
 
     /** Lookup-or-Store $(D Concept) at $(D lemma) index.
      */
     ConceptIx store(in Lemma lemma,
-                    Concept concept)
+                    Concept concept) in { assert(!lemma.words.empty); }
+    body
     {
         if (lemma in _conceptIxByLemma)
         {
@@ -1430,12 +1431,24 @@ der", "spred", "spridit");
                     Lang lang,
                     Sense kind,
                     CategoryIx categoryIx,
-                    Origin origin)
+                    Origin origin) in { assert(!words.empty); }
+    body
     {
-        if (words.empty)
-            return ConceptIx.asUndefined; // propagate emptyness
         return store(Lemma(words, lang, kind, categoryIx),
                      Concept(words, lang, kind, categoryIx, origin));
+    }
+
+    /** Try to Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
+    ConceptIx tryStore(Words words,
+                       Lang lang,
+                       Sense kind,
+                       CategoryIx categoryIx,
+                       Origin origin)
+    body
+    {
+        if (words.empty)
+            return ConceptIx.asUndefined;
+        return store(words, lang, kind, categoryIx, origin);
     }
 
     /** Fully Connect Every-to-Every in $(D all). */
@@ -1547,18 +1560,12 @@ der", "spred", "spridit");
 
         propagateLinkConcepts(link);
 
-        /* if ((conceptByIx(link._srcIx).words == "wasp" && */
-        /*      conceptByIx(link._dstIx).words == "arthropod") || */
-        /*     (conceptByIx(link._dstIx).words == "wasp" && */
-        /*      conceptByIx(link._srcIx).words == "arthropod")) */
-        /* { */
-        /*     dln("src: ", conceptByIx(link._srcIx).words, */
-        /*         "dst: ", conceptByIx(link._dstIx).words, */
-        /*         " rel:", rel, */
-        /*         " origin:", origin, */
-        /*         " negation:", negation, */
-        /*         " reversion:", reversion); */
-        /* } */
+        dln("src: ", conceptByIx(link._srcIx).words,
+            "dst: ", conceptByIx(link._dstIx).words,
+            " rel:", rel,
+            " origin:", origin,
+            " negation:", negation,
+            " reversion:", reversion);
 
         _links ~= link; // TODO Avoid copying here
 
@@ -1783,7 +1790,7 @@ der", "spred", "spridit");
             valueIx.defined)
         {
             auto mainLinkIx = connect(entityIx, rel, valueIx,
-                                                  Origin.nell, mainWeight, negation, reversion);
+                                      Origin.nell, mainWeight, negation, reversion);
         }
 
         if (show) writeln();
