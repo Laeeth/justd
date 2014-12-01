@@ -2,6 +2,8 @@
 
 /** Generic Language Constructs.
     See also: https://en.wikipedia.org/wiki/Predicate_(grammar)
+
+    Note that ! and ? are more definite sentence enders than .
  */
 module grammars;
 
