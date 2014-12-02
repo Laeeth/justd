@@ -1122,6 +1122,70 @@ class Net(bool useArray = true,
         // WordNet
         _wordnet = new WordNet!(true, true)([Lang.en]);
 
+        // Learn trusthful things before untrusted machine generated data is read
+        learnTrustfulThings();
+
+        // NELL
+        readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
+                                                            .buildNormalizedPath,
+                     maxCount);
+
+        // ConceptNet
+        // GC.disabled had no noticeble effect here: import core.memory: GC;
+        const fixedPath = dirPath.expandTilde
+                                 .buildNormalizedPath;
+        import std.file: dirEntries, SpanMode;
+        foreach (file; fixedPath.dirEntries(SpanMode.shallow)
+                                .filter!(name => name.extension == `.csv`))
+        {
+            readCN5File(file, false, maxCount);
+        }
+
+        // TODO msgpack fails to pack
+        /* auto bytes = this.pack; */
+        /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
+    }
+
+    /** Learn English Irregular Verb.
+    */
+    void learnEnglishIrregularVerb(Lang lang,
+                                   string infinitive,
+                                   string past,
+                                   string pastParticiple)
+    {
+        const category = CategoryIx.asUndefined;
+        const origin = Origin.manual;
+        auto all = [tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
+                    tryStore(past, lang, Sense.verbPast, category, origin),
+                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
+    }
+
+    /** Learn Swedish Irregular Verb.
+        See also: http://www.lardigsvenska.com/2010/10/oregelbundna-verb.html
+    */
+    void learnSwedishIrregularVerb(Lang lang,
+                                   string imperative,
+                                   string infinitive,
+                                   string present,
+                                   string past,
+                                   string pastParticiple) // pastParticiple
+    {
+        const category = CategoryIx.asUndefined;
+        const origin = Origin.manual;
+        auto all = [tryStore(imperative, lang, Sense.verbImperative, category, origin),
+                    tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
+                    tryStore(present, lang, Sense.verbPresent, category, origin),
+                    tryStore(past, lang, Sense.verbPast, category, origin),
+                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
+    }
+
+    /** Learn English Irregular Verbs.
+     */
+    void learnEnglishIrregularVerbs()
+    {
+
         // Manual: English Irregular Verbs
         /* arise / arose / arisen */
         /* awake / awoke / awoken, awaked */
@@ -1284,7 +1348,22 @@ class Net(bool useArray = true,
         /*                       wind / wound / wound */
         /*                       wring / wrung / wrung */
         /*                       write / wrote / written */
+    }
 
+    /** Learn Trustful Thing.
+     */
+    void learnTrustfulThings()
+    {
+        learnEnglishIrregularVerbs();
+        learnEnglishUncountableNouns();
+
+        learnSwedishIrregularVerbs();
+    }
+
+    /** Learn Swedish Irregular Verbs.
+    */
+    void learnSwedishIrregularVerbs()
+    {
         // Manual: Swedish Irregular Verbs
         learnSwedishIrregularVerb(Lang.sv, "ge", "ge", "ger", "gav", "gett/givit");
         learnSwedishIrregularVerb(Lang.sv, "ange", "ange", "anger", "angav", "angett/angivit");
@@ -1348,61 +1427,31 @@ der", "spred", "spridit");
         learnSwedishIrregularVerb(Lang.sv, "väx", "växa", "växer", "växte", "växt");
         learnSwedishIrregularVerb(Lang.sv, "återge", "återge", "återger", "återgav", "återgivit");
         learnSwedishIrregularVerb(Lang.sv, "översätt", "översätta", "översätter", "översatte", "översatt");
-
-        // NELL
-        readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
-                                                            .buildNormalizedPath,
-                     maxCount);
-
-        // ConceptNet
-        // GC.disabled had no noticeble effect here: import core.memory: GC;
-        const fixedPath = dirPath.expandTilde
-                                 .buildNormalizedPath;
-        import std.file: dirEntries, SpanMode;
-        foreach (file; fixedPath.dirEntries(SpanMode.shallow)
-                                .filter!(name => name.extension == `.csv`))
-        {
-            readCN5File(file, false, maxCount);
-        }
-
-        // TODO msgpack fails to pack
-        /* auto bytes = this.pack; */
-        /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
     }
 
-    /** Learn English Irregular Verb.
-    */
-    void learnEnglishIrregularVerb(Lang lang,
-                                   string infinitive,
-                                   string past,
-                                   string pastParticiple)
+    /* TODO Add logic describing which Sense.nounX and CategoryIx that fulfills
+     * isUncountable() and use it here. */
+    void learnEnglishUncountableNouns()
     {
-        const category = CategoryIx.asUndefined;
+        const lang = Lang.en;
+        const sense = Sense.nounUncountable;
+        const categoryIx = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        auto all = [tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
-                    tryStore(past, lang, Sense.verbPast, category, origin),
-                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
-    }
-
-    /** Learn Swedish Irregular Verb.
-        See also: http://www.lardigsvenska.com/2010/10/oregelbundna-verb.html
-    */
-    void learnSwedishIrregularVerb(Lang lang,
-                                   string imperative,
-                                   string infinitive,
-                                   string present,
-                                   string past,
-                                   string pastParticiple) // pastParticiple
-    {
-        const category = CategoryIx.asUndefined;
-        const origin = Origin.manual;
-        auto all = [tryStore(imperative, lang, Sense.verbImperative, category, origin),
-                    tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
-                    tryStore(present, lang, Sense.verbPresent, category, origin),
-                    tryStore(past, lang, Sense.verbPast, category, origin),
-                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
+        enum words = ["music", "art", "love", "happiness",
+                      "math", "physics",
+                      "advice", "information", "news",
+                      "furniture", "luggage",
+                      "rice", "sugar", "butter", // generalize to seed (grödor) or substance
+                      "water", "rain", // generalize to fluids
+                      "coffee", "wine", "beer", "whiskey", "milk", // generalize to beverage
+                      "electricity", "gas", "power"
+                      "money", "currency",
+                      "crockery", "cutlery",
+                      "luggage", "baggage", "glass", "sand"];
+        connectMto1(words.map!(word => store(word, lang, sense, categoryIx, origin)),
+                    Rel.isA,
+                    store("uncountable_noun", lang, sense, categoryIx, origin),
+                    origin);
     }
 
     /** Lookup-or-Store $(D Concept) at $(D lemma) index.
@@ -1480,8 +1529,8 @@ der", "spred", "spridit");
     alias connectFully = connectMtoM;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
-    LinkIx[] connect1toM(R)(Rel rel,
-                            ConceptIx first,
+    LinkIx[] connect1toM(R)(ConceptIx first,
+                            Rel rel,
                             R rest,
                             Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptIx))
     {
@@ -1496,6 +1545,24 @@ der", "spred", "spridit");
         return linkIxes;
     }
     alias connectFanOut = connect1toM;
+
+    /** Fan-In Connect $(D first) to Every in $(D rest). */
+    LinkIx[] connectMto1(R)(R rest,
+                            Rel rel,
+                            ConceptIx first,
+                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptIx))
+    {
+        typeof(return) linkIxes;
+        foreach (you; rest)
+        {
+            if (first != you)
+            {
+                linkIxes ~= connect(you, rel, first, origin, weight);
+            }
+        }
+        return linkIxes;
+    }
+    alias connectFanIn = connectMto1;
 
     /** Cyclic Connect Every in $(D all). */
     void connectCycle(R)(Rel rel, R all) if (isSourceOf!(R, ConceptIx))

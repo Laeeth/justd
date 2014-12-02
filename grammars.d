@@ -612,6 +612,8 @@ enum Sense:ubyte
     nounWeekday,
     nounMonth,
 
+    nounUncountable,
+
     /* Verb */
 
     verb,
@@ -794,7 +796,8 @@ unittest
                             nounIrrationalNumber,
                             nounComplexNumber,
                             nounWeekday,
-                            nounMonth) ||
+                            nounMonth,
+                            nounUncountable) ||
                     kind.isNounName);
     }
     bool isNounNumeric(Sense kind)
@@ -1016,7 +1019,10 @@ static immutable swedishNegationPrefixes = [ `icke`, `o`, ];
 static immutable adjectiveNounSuffixes = [ `ness`, `ity`, `ment`, `ance` ];
 static immutable verbNounSuffixes = [ `tion`, `sion`, `ment`, `ence` ];
 static immutable nounNounSuffixes = [ `ship`, `hood` ];
-static immutable allNounSuffixes = adjectiveNounSuffixes ~ verbNounSuffixes ~ nounNounSuffixes ~ [ `s`, `ses`, `xes`, `zes`, `ches`, `shes`, `men`, `ies`, ];
+static immutable allNounSuffixes = (adjectiveNounSuffixes ~
+                                    verbNounSuffixes ~
+                                    nounNounSuffixes ~
+                                    [ `s`, `ses`, `xes`, `zes`, `ches`, `shes`, `men`, `ies`, ]);
 
 /** English Verb Suffixes. */
 static immutable verbSuffixes = [ `s`, `ies`, `es`, `es`, `ed`, `ed`, `ing`, `ing`, ];
