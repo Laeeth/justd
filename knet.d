@@ -987,7 +987,8 @@ class Net(bool useArray = true,
 
         WordNet!(true, true) _wordnet;
 
-        size_t[Rel.max + 1] relCounts;
+        size_t[Rel.max + 1] relCounts; /// Relation Counts.
+        size_t symmetricRelCount = 0; /// Symmetric Relation Count.
         size_t[Origin.max + 1] linkSourceCounts;
         size_t[Lang.max + 1] hlangCounts;
         size_t[Sense.max + 1] kindCounts;
@@ -1544,6 +1545,7 @@ der", "spred", "spridit");
         assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
         assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
 
+        symmetricRelCount += rel.isSymmetric;
         ++relCounts[rel];
         ++linkSourceCounts[origin];
 
@@ -1973,6 +1975,7 @@ der", "spred", "spridit");
      */
     void showRelations()
     {
+        writeln(`Number of Symmetric Relations: `, symmetricRelCount);
         writeln(`Rel Count by Type:`);
         foreach (rel; Rel.min .. Rel.max)
         {
