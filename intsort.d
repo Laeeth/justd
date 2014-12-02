@@ -93,9 +93,9 @@ void radixSortImpl(R,
                    alias fun = "a",
                    bool fastDigitDiscardal = false)(R x,
                                                     const bool descending = false,
-                                                    bool doInPlace = false,
-                                                    ElementType!R elementMin = ElementType!(R).max,
-                                                    ElementType!R elementMax = ElementType!(R).min) @trusted pure nothrow
+                                                    bool doInPlace = false/* , */
+                                                    /* ElementType!R elementMin = ElementType!(R).max, */
+                                                    /* ElementType!R elementMax = ElementType!(R).min */) @trusted pure nothrow
     if (isRandomAccessRange!R &&
         (isNumeric!(ElementType!R)))
 {
