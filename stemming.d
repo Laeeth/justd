@@ -884,3 +884,45 @@ bool stemize(S)(ref S s, Lang lang = Lang.unknown) if (isSomeString!S)
     s = s.stem(lang);
     return n != s.length;
 }
+
+/** Return Stem of $(D s) using Porter's algorithm
+    See also: https://en.wikipedia.org/wiki/I_m_still_remembering
+    See also: https://en.wikipedia.org/wiki/Martin_Porter
+    See also: https://www.youtube.com/watch?v=2s7f8mBwnko&list=PL6397E4B26D00A269&index=4.
+*/
+S alternativePorterStemEnglish(S)(S s) if (isSomeString!S)
+{
+    /* Step 1a */
+    if      (s.endsWith(`sses`)) { s = s[0 .. $-2]; }
+    else if (s.endsWith(`ies`))  { s = s[0 .. $-2]; }
+    else if (s.endsWith(`ss`))   { }
+    else if (s.endsWith(`s`))    { s = s[0 .. $-1]; }
+
+    /* Step 2 */
+    if      (s.endsWith(`ational`)) { s = s[0 .. $-7] ~ `ate`; }
+    else if (s.endsWith(`izer`))    { s = s[0 .. $-1]; }
+    else if (s.endsWith(`ator`))    { s = s[0 .. $-2] ~ `e`; }
+
+    /* Step 3 */
+    else if (s.endsWith(`al`)) { s = s[0 .. $-2] ~ `e`; }
+    else if (s.endsWith(`able`)) { s = s[0 .. $-4]; }
+    else if (s.endsWith(`ate`)) { s = s[0 .. $-3] ~ `e`; }
+
+    return s;
+}
+
+unittest
+{
+    assert(`caresses`.alternativePorterStemEnglish == `caress`);
+    assert(`ponies`.alternativePorterStemEnglish == `poni`);
+    assert(`caress`.alternativePorterStemEnglish == `caress`);
+    assert(`cats`.alternativePorterStemEnglish == `cat`);
+
+    assert(`relational`.alternativePorterStemEnglish == `relate`);
+    assert(`digitizer`.alternativePorterStemEnglish == `digitize`);
+    assert(`operator`.alternativePorterStemEnglish == `operate`);
+
+    assert(`revival`.alternativePorterStemEnglish == `revive`);
+    assert(`adjustable`.alternativePorterStemEnglish == `adjust`);
+    assert(`activate`.alternativePorterStemEnglish == `active`);
+}

@@ -1203,48 +1203,6 @@ S lemmatize(S)(S s) if (isSomeString!S)
     else return s;
 }
 
-/** Return Stem of $(D s) using Porter's algorithm
-    See also: https://en.wikipedia.org/wiki/I_m_still_remembering
-    See also: https://en.wikipedia.org/wiki/Martin_Porter
-    See also: https://www.youtube.com/watch?v=2s7f8mBwnko&list=PL6397E4B26D00A269&index=4.
-*/
-S porterStemEnglish(S)(S s) if (isSomeString!S)
-{
-    /* Step 1a */
-    if      (s.endsWith(`sses`)) { s = s[0 .. $-2]; }
-    else if (s.endsWith(`ies`))  { s = s[0 .. $-2]; }
-    else if (s.endsWith(`ss`))   { }
-    else if (s.endsWith(`s`))    { s = s[0 .. $-1]; }
-
-    /* Step 2 */
-    if      (s.endsWith(`ational`)) { s = s[0 .. $-7] ~ `ate`; }
-    else if (s.endsWith(`izer`))    { s = s[0 .. $-1]; }
-    else if (s.endsWith(`ator`))    { s = s[0 .. $-2] ~ `e`; }
-
-    /* Step 3 */
-    else if (s.endsWith(`al`)) { s = s[0 .. $-2] ~ `e`; }
-    else if (s.endsWith(`able`)) { s = s[0 .. $-4]; }
-    else if (s.endsWith(`ate`)) { s = s[0 .. $-3] ~ `e`; }
-
-    return s;
-}
-
-unittest
-{
-    assert(`caresses`.porterStemEnglish == `caress`);
-    assert(`ponies`.porterStemEnglish == `poni`);
-    assert(`caress`.porterStemEnglish == `caress`);
-    assert(`cats`.porterStemEnglish == `cat`);
-
-    assert(`relational`.porterStemEnglish == `relate`);
-    assert(`digitizer`.porterStemEnglish == `digitize`);
-    assert(`operator`.porterStemEnglish == `operate`);
-
-    assert(`revival`.porterStemEnglish == `revive`);
-    assert(`adjustable`.porterStemEnglish == `adjust`);
-    assert(`activate`.porterStemEnglish == `active`);
-}
-
 import std.traits: isIntegral;
 
 /** Convert the number $(D number) to its English textual representation.
