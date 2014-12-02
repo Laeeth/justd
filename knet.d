@@ -987,8 +987,9 @@ class Net(bool useArray = true,
 
         WordNet!(true, true) _wordnet;
 
-        size_t[Rel.max + 1] relCounts; /// Relation Counts.
+        size_t[Rel.max + 1] linkCountsByRel; /// Link Counts by Relation Type.
         size_t symmetricRelCount = 0; /// Symmetric Relation Count.
+        size_t transitiveRelCount = 0; /// Transitive Relation Count.
         size_t[Origin.max + 1] linkSourceCounts;
         size_t[Lang.max + 1] hlangCounts;
         size_t[Sense.max + 1] kindCounts;
@@ -1546,7 +1547,8 @@ der", "spred", "spridit");
         assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
-        ++relCounts[rel];
+        transitiveRelCount += rel.isTransitive;
+        ++linkCountsByRel[rel];
         ++linkSourceCounts[origin];
 
         if (origin == Origin.cn5)
@@ -1976,10 +1978,11 @@ der", "spred", "spridit");
     void showRelations()
     {
         writeln(`Number of Symmetric Relations: `, symmetricRelCount);
-        writeln(`Rel Count by Type:`);
+        writeln(`Number of Transitive Relations: `, transitiveRelCount);
+        writeln(`Link Count by Relation Type:`);
         foreach (rel; Rel.min .. Rel.max)
         {
-            const count = relCounts[rel];
+            const count = linkCountsByRel[rel];
             if (count)
             {
                 writeln(`- `, rel.to!string, `: `, count);
