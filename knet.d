@@ -20,7 +20,7 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
-    TODO Make link have array of concepts
+    TODO Make link have array of Concepts
     TODO Conceptix and LinkIx and should be nullable size max where top bit is for reverse
 
     TODO Make use of stealFront and stealBack
@@ -903,10 +903,15 @@ class Net(bool useArray = true,
 
         @safe @nogc pure nothrow:
 
-        this(Rel rel,
+        this(ConceptIx srcIx,
+             Rel rel,
+             ConceptIx dstIx,
              bool negation,
-             Origin origin = Origin.unknown)
+             Origin origin = Origin.unknown) in { assert(srcIx.defined && dstIx.defined); }
+        body
         {
+            this._srcIx = srcIx;
+            this._dstIx = dstIx;
             this._rel = rel;
             this._negation = negation;
             this._origin = origin;
@@ -1530,10 +1535,11 @@ der", "spred", "spridit");
         }
 
         auto lix  = LinkIx(cast(Ix)_links.length);
-        auto link = Link(rel, negation, origin);
-
-        link._srcIx = reversion ? dstIx : srcIx;
-        link._dstIx = reversion ? srcIx : dstIx;
+        auto link = Link(reversion ? dstIx : srcIx,
+                         rel,
+                         reversion ? srcIx : dstIx,
+                         negation,
+                         origin);
 
         assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
         assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
@@ -2250,6 +2256,12 @@ der", "spred", "spridit");
         const lsWord = words.sorted; // letter-sorted words
         return _concepts.filter!(concept => (lsWord != concept.words && // don't include one-self
                                              lsWord == concept.words.sorted));
+    }
+
+    /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
+    auto derangeAnagramsOf(S)(S words) if (isSomeString!S)
+    {
+        return anagramsOf(words);
     }
 
     /** Get Synonyms of $(D word) optionally with Matching Syllable Count.
