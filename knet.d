@@ -2296,7 +2296,7 @@ der", "spred", "spridit");
         if (normalizedLine.empty)
             return;
 
-        writeln(`Line `, normalizedLine);
+        writeln(`> Line `, normalizedLine);
 
         if (normalizedLine == `palindrome`)
         {
@@ -2364,11 +2364,15 @@ der", "spred", "spridit");
         // as is
         foreach (lineConcept; lineConcepts)
         {
-            write(`- in `, lineConcept.lang.toName);
-            writeln(` of sense `, lineConcept.lemmaKind);
+            writeln(`  - in `, lineConcept.lang.toName,
+                    ` of sense `, lineConcept.lemmaKind);
 
+            /* DEBUG */
             writeln("ins: ", lineConcept.inIxes.length);
-            writeln("outs: ", lineConcept.outIxes.length);
+            if (!lineConcept.inIxes.empty)
+                writeln(linkByIx(lineConcept.inIxes[0]));
+            writeln("insByRel: ", insByRel(lineConcept));
+            /* DEBUG */
 
             // show forwards
             foreach (group; insByRel(lineConcept))
