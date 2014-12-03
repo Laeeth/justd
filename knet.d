@@ -833,7 +833,8 @@ class Net(bool useArray = true,
                     bool negation = false)
     {
         return concept. inIxes[].map!(ix => linkByIx(ix)).filter!(link =>
-                                                                  (link._rel == rel &&
+                                                                  ((link._rel == rel ||
+                                                                    link._rel.specializes(rel)) &&
                                                                    link._negation == negation));
     }
 
@@ -843,7 +844,8 @@ class Net(bool useArray = true,
                     bool negation = false)
     {
         return concept. outIxes[].map!(ix => linkByIx(ix)).filter!(link =>
-                                                                   (link._rel == rel &&
+                                                                   ((link._rel == rel ||
+                                                                     link._rel.specializes(rel)) &&
                                                                     link._negation == negation));
     }
 
@@ -2110,17 +2112,21 @@ der", "spred", "spridit");
 
     /** Show Network Relations.
      */
-    void showRelations()
+    void showRelations(uint indent_depth = 2)
     {
         writeln(`Number of Symmetric Relations: `, symmetricRelCount);
         writeln(`Number of Transitive Relations: `, transitiveRelCount);
         writeln(`Link Count by Relation Type:`);
+
+        import std.range: cycle;
+        auto indent = `- `; // TODO use clever range plus indent_depth
+
         foreach (rel; Rel.min .. Rel.max)
         {
             const count = linkCountsByRel[rel];
             if (count)
             {
-                writeln(`- `, rel.to!string, `: `, count);
+                writeln(indent, rel.to!string, `: `, count);
             }
         }
 
@@ -2130,7 +2136,7 @@ der", "spred", "spridit");
             const count = linkSourceCounts[source];
             if (count)
             {
-                writeln(`- `, source.to!string, `: `, count);
+                writeln(indent, source.to!string, `: `, count);
             }
         }
 
@@ -2140,7 +2146,7 @@ der", "spred", "spridit");
             const count = hlangCounts[lang];
             if (count)
             {
-                writeln(`- `, lang.toName, ` (`, lang.to!string, `) : `, count);
+                writeln(indent, lang.toName, ` (`, lang.to!string, `) : `, count);
             }
         }
 
@@ -2150,7 +2156,7 @@ der", "spred", "spridit");
             const count = kindCounts[sense];
             if (count)
             {
-                writeln(`- `, sense, ` (`, sense.to!string, `) : `, count);
+                writeln(indent, sense, ` (`, sense.to!string, `) : `, count);
             }
         }
 
@@ -2158,26 +2164,26 @@ der", "spred", "spridit");
 
         if (weightSumCN5)
         {
-            writeln(`- CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(real)weightSumCN5/allLinks.length);
-            writeln(`- CN5 Packed Weights Histogram: `, packedWeightHistogramCN5);
+            writeln(indent, `CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(real)weightSumCN5/allLinks.length);
+            writeln(indent, `CN5 Packed Weights Histogram: `, packedWeightHistogramCN5);
         }
         if (weightSumNELL)
         {
-            writeln(`- NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/allLinks.length);
-            writeln(`- NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
+            writeln(indent, `ELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/allLinks.length);
+            writeln(indent, `ELL Packed Weights Histogram: `, packedWeightHistogramNELL);
         }
 
-        writeln(`- Concept Count (All/Multi-Word): `,
+        writeln(indent, `Concept Count (All/Multi-Word): `,
                 allConcepts.length,
                 `/`,
                 multiWordConceptLemmaCount);
-        writeln(`- Link Count: `, allLinks.length);
+        writeln(indent, `Link Count: `, allLinks.length);
 
-        writeln(`- Lemmas by Words Count: `, lemmasByWords.length);
+        writeln(indent, `Lemmas by Words Count: `, lemmasByWords.length);
 
-        writeln(`- Concept Indexes by Lemma Count: `, conceptIxByLemma.length);
-        writeln(`- Concept String Length Average: `, cast(real)conceptStringLengthSum/allConcepts.length);
-        writeln(`- Concept Connectedness Average: `, cast(real)connectednessSum/2/allConcepts.length);
+        writeln(indent, `Concept Indexes by Lemma Count: `, conceptIxByLemma.length);
+        writeln(indent, `Concept String Length Average: `, cast(real)conceptStringLengthSum/allConcepts.length);
+        writeln(indent, `Concept Connectedness Average: `, cast(real)connectednessSum/2/allConcepts.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
@@ -2249,7 +2255,8 @@ der", "spred", "spridit");
                           bool negation = false,
                           Lang lang = Lang.en)
     {
-        write(` - `, rel.toHumanLang(linkDir, negation, lang), `: `);
+        auto indent = `    - `;
+        write(indent, rel.toHumanLang(linkDir, negation, lang), `: `);
     }
 
     void showConcept(in Concept concept, real weight)
@@ -2366,13 +2373,6 @@ der", "spred", "spridit");
         {
             writeln(`  - in `, lineConcept.lang.toName,
                     ` of sense `, lineConcept.lemmaKind);
-
-            /* DEBUG */
-            writeln("ins: ", lineConcept.inIxes.length);
-            if (!lineConcept.inIxes.empty)
-                writeln(linkByIx(lineConcept.inIxes[0]));
-            writeln("insByRel: ", insByRel(lineConcept));
-            /* DEBUG */
 
             // show forwards
             foreach (group; insByRel(lineConcept))

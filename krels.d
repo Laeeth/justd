@@ -1003,6 +1003,22 @@ auto toHumanLang(const Rel rel,
                         default: words = ["is ", not, "a mutual proxy for"]; break;
                     }
                     break;
+                case verbForm:
+                    switch (lang)
+                    {
+                        case sv: words = ["har", not, "verb böjning"]; break;
+                        case en:
+                        default: words = ["has", not, "verb form"]; break;
+                    }
+                    break;
+                case wordForm:
+                    switch (lang)
+                    {
+                        case sv: words = ["har", not, "ord böjning"]; break;
+                        case en:
+                        default: words = ["has ", not, "word form"]; break;
+                    }
+                    break;
                 default:
                     import std.conv: to;
                     words = [((!rel.isSymmetric) && dir == RelDir.forward ? `<` : ``) ~
@@ -1151,7 +1167,10 @@ bool generalizes(T)(T general,
                           servedWith,
                           physicallyConnectedWith,
 
-                          mutualProxyFor);
+                          mutualProxyFor,
+
+                          verbForm,
+                          wordForm);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
