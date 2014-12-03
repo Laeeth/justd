@@ -184,6 +184,7 @@ enum Rel:ubyte
     retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
 
     acronymFor,
+    abbreviationFor,
 
     physicallyConnectedWith,
     arisesFrom,
@@ -1076,7 +1077,9 @@ bool specializes(Rel special,
                                                 hasScore, hasLoserScore, hasWinnerScore,
                                                 hasLanguage,
                                                 hasCurrency);
-            case derivedFrom: return special.of(acronymFor);
+            case derivedFrom: return special.of(acronymFor,
+                                                abbreviationFor);
+            case abbreviationFor: return special.of(acronymFor);
             case atLocation: return special.of(bornInLocation,
                                                hasCitizenship,
                                                hasResidenceIn,
