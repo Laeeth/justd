@@ -1036,9 +1036,9 @@ class Net(bool useArray = true,
         (semantic context) $(D sense).
     */
     Concepts conceptsByWordsMaybe(S)(S words,
-                                     Lang lang = Lang.unknown,
-                                     Sense sense = Sense.unknown,
-                                     CategoryIx category = anyCategory) if (isSomeString!S)
+                                     Lang lang,
+                                     Sense sense,
+                                     CategoryIx category) if (isSomeString!S)
     {
         typeof(return) concepts;
         auto lemma = Lemma(words, lang, sense, category);
@@ -1120,6 +1120,7 @@ class Net(bool useArray = true,
                                 CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
+
         if (lang != Lang.unknown &&
             sense != Sense.unknown &&
             category != anyCategory) // if exact Lemma key can be used
@@ -1131,6 +1132,7 @@ class Net(bool useArray = true,
             auto ret = conceptsByWordsOnly(words);
             concepts = ret.array;
         }
+
         if (concepts.empty)
         {
             writeln(`Lookup translation of individual words; bil_tvätt => car-wash`);
@@ -2166,8 +2168,10 @@ der", "spred", "spridit");
             writeln(`- NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
         }
 
-        writeln(`- Concept Count: `, allConcepts.length);
-        writeln(`- Multi Word Concept Count: `, multiWordConceptLemmaCount);
+        writeln(`- Concept Count (All/Multi-Word): `,
+                allConcepts.length,
+                `/`,
+                multiWordConceptLemmaCount);
         writeln(`- Link Count: `, allLinks.length);
 
         writeln(`- Lemmas by Words: `, lemmasByWords.length);
@@ -2251,7 +2255,7 @@ der", "spred", "spridit");
 
     void showConcept(in Concept concept, real weight)
     {
-        if (concept.words) write(` `, concept.words.tr("_", " "));
+        if (concept.words) write(` `, concept.words.tr(`_`, ` `));
 
         write(`(`); // open
 
@@ -2261,7 +2265,7 @@ der", "spred", "spridit");
         }
         if (concept.lemmaKind != Sense.unknown)
         {
-            write("-", concept.lemmaKind);
+            write(`-`, concept.lemmaKind);
         }
 
         writef(`:%.2f@%s),`, weight, concept.origin); // close
@@ -2281,7 +2285,7 @@ der", "spred", "spridit");
     void showConcepts(S)(S line,
                          Lang lang = Lang.unknown,
                          Sense sense = Sense.unknown,
-                         S lineSeparator = "_") if (isSomeString!S)
+                         S lineSeparator = `_`) if (isSomeString!S)
     {
         import std.ascii: whitespace;
         import std.algorithm: splitter;
@@ -2289,11 +2293,11 @@ der", "spred", "spridit");
 
         // auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
-        auto normalizedLine = line.strip.tr(std.ascii.whitespace, "_", "s").toLower;
+        auto normalizedLine = line.strip.tr(std.ascii.whitespace, `_`, `s`).toLower;
 
         writeln(`Line `, normalizedLine);
 
-        if (normalizedLine == "palindrome")
+        if (normalizedLine == `palindrome`)
         {
             foreach (palindromeConcept; allConcepts.filter!(concept => concept.words.isPalindrome(3)))
             {
@@ -2303,9 +2307,9 @@ der", "spred", "spridit");
                                 RelDir.backward);
             }
         }
-        else if (normalizedLine.skipOver("anagramsof("))
+        else if (normalizedLine.skipOver(`anagramsof(`))
         {
-            auto split = normalizedLine.findSplitBefore(")");
+            auto split = normalizedLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -2318,9 +2322,9 @@ der", "spred", "spridit");
                 }
             }
         }
-        else if (normalizedLine.skipOver("synonymsOf("))
+        else if (normalizedLine.skipOver(`synonymsOf(`))
         {
-            auto split = normalizedLine.findSplitBefore(")");
+            auto split = normalizedLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -2333,9 +2337,9 @@ der", "spred", "spridit");
                 }
             }
         }
-        else if (normalizedLine.skipOver("translationsOf("))
+        else if (normalizedLine.skipOver(`translationsOf(`))
         {
-            auto split = normalizedLine.findSplitBefore(")");
+            auto split = normalizedLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
