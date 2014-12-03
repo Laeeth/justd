@@ -15,7 +15,7 @@ debug auto trustedPureDebugCall(alias fn, A...) (A args) pure
     debug return fn(args);
 }
 
-@safe pure nothrow:
+pure nothrow:
 
 void debug_writeln(string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__, T...)(T t)
 {

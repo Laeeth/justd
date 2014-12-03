@@ -42,7 +42,7 @@ module knet;
 /* version = msgpack; */
 
 import core.exception: UnicodeException;
-import std.traits: isSomeString, isFloatingPoint, EnumMembers;
+import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind;
@@ -735,7 +735,7 @@ class Net(bool useArray = true,
         Set this to $(D uint) if we get low on memory.
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
-    alias Ix = uint; // TODO Change this to size_t when we have more _concepts and memory.
+    alias Ix = uint; // TODO Change this to size_t when we have more allConcepts and memory.
 
     /** Type-safe Index to $(D Link). */
     struct LinkIx
@@ -968,24 +968,29 @@ class Net(bool useArray = true,
     /* else                 { alias Concepts = Concept[]; } */
     alias Concepts = Concept[]; // no need to use std.container.Array here
 
+    static if (false) { alias Lemmas = Array!Lemma; }
+    else                 { alias Lemmas = Lemma[]; }
+
     static if (useArray) { alias Links = Array!Link; }
     else                 { alias Links = Link[]; }
 
     private
     {
-        ConceptIx[Lemma] _conceptIxByLemma;
-        Concepts _concepts;
-        Links _links;
+        ConceptIx[Lemma] conceptIxByLemma;
+        Concepts allConcepts;
+        Links allLinks;
 
-        string[CategoryIx] _categoryNameByIx; /** Ontology Category Names by Index. */
-        CategoryIx[string] _categoryIxByName; /** Ontology Category Indexes by Name. */
+        Lemmas[string] lemmasByWords;
+
+        string[CategoryIx] categoryNameByIx; /** Ontology Category Names by Index. */
+        CategoryIx[string] categoryIxByName; /** Ontology Category Indexes by Name. */
 
         enum anyCategory = CategoryIx(0); // reserve 0 for anyCategory (unknown)
-        ushort _categoryIxCounter = 1; // 1 because 0 is reserved for anyCategory (unknown)
+        ushort categoryIxCounter = 1; // 1 because 0 is reserved for anyCategory (unknown)
 
-        size_t _multiWordConceptLemmaCount = 0; // number of concepts that whose lemma contain several words
+        size_t multiWordConceptLemmaCount = 0; // number of concepts that whose lemma contain several words
 
-        WordNet!(true, true) _wordnet;
+        WordNet!(true, true) wordnet;
 
         size_t[Rel.max + 1] linkCountsByRel; /// Link Counts by Relation Type.
         size_t symmetricRelCount = 0; /// Symmetric Relation Count.
@@ -1011,18 +1016,18 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) linkByIx(LinkIx ix) inout { return _links[ix._lIx]; }
+        ref inout(Link) linkByIx(LinkIx ix) inout { return allLinks[ix._lIx]; }
         ref inout(Link)  opIndex(LinkIx ix) inout { return linkByIx(ix); }
 
-        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return _concepts[ix._cIx]; }
+        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return allConcepts[ix._cIx]; }
         ref inout(Concept)     opIndex(ConceptIx ix) inout @nogc { return conceptByIx(ix); }
     }
 
     Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
     {
-        if (lemma in _conceptIxByLemma)
+        if (lemma in conceptIxByLemma)
         {
-            return typeof(return)(conceptByIx(_conceptIxByLemma[lemma]));
+            return typeof(return)(conceptByIx(conceptIxByLemma[lemma]));
         }
         else
         {
@@ -1040,27 +1045,59 @@ class Net(bool useArray = true,
     {
         typeof(return) concepts;
         auto lemma = Lemma(words, lang, sense, category);
-        if (lemma in _conceptIxByLemma) // if hashed lookup possible
+        if (lemma in conceptIxByLemma) // if hashed lookup possible
         {
-            concepts = [conceptByIx(_conceptIxByLemma[lemma])]; // use it
+            concepts = [conceptByIx(conceptIxByLemma[lemma])]; // use it
         }
         else
         {
             // try to lookup parts of word
-            auto wordsSplit = _wordnet.findWordsSplit(words, [lang]); // split in parts
+            auto wordsSplit = wordnet.findWordsSplit(words, [lang]); // split in parts
             if (wordsSplit.length >= 2)
             {
                 const wordsFixed = wordsSplit.joiner("_").to!S;
                 /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
                 // TODO: Functionize
                 auto lemmaFixed = Lemma(wordsFixed, lang, sense, category);
-                if (lemmaFixed in _conceptIxByLemma)
+                if (lemmaFixed in conceptIxByLemma)
                 {
-                    concepts = [conceptByIx(_conceptIxByLemma[lemmaFixed])];
+                    concepts = [conceptByIx(conceptIxByLemma[lemmaFixed])];
                 }
             }
         }
         return concepts;
+    }
+
+    /** Get All Possible Lemmas related to $(D word).
+     */
+    Lemmas lemmasOf(S)(S words) if (isSomeString!S)
+    {
+        return words in lemmasByWords ? lemmasByWords[words] : [];
+    }
+
+    /** Learn $(D Lemma) of $(D words).
+     */
+    bool learnLemma(S)(S words, Lemma lemma) if (isSomeString!S)
+    {
+        if (words in lemmasByWords)
+        {
+            auto lemmas = lemmasByWords[words];
+            if (!lemmas[].canFind(lemma)) // TODO Make use of binary search
+            {
+                lemmas ~= lemma;
+                return true;
+            }
+        }
+        else
+        {
+            static if (!isDynamicArray!Lemmas)
+            {
+                // TODO fix std.container.Array so this explicit init is not needed
+                lemmasByWords[words] = Lemmas.init;
+            }
+            lemmasByWords[words] ~= lemma;
+        }
+        return false;
     }
 
     /** Get All Possible Concepts related to $(D word) in the interpretation
@@ -1081,16 +1118,17 @@ class Net(bool useArray = true,
         }
         else
         {
+            // TODO auto lemmas = lemmasOf(words);
             foreach (hlangGuess; EnumMembers!Lang) // for each language
             {
                 if (hlangCounts[hlangGuess])
                 {
-                    foreach (senseGuess; EnumMembers!Sense) // for each meaning
+                    foreach (senseGuess; EnumMembers!Sense) // for each meaning.
                     {
                         if (kindCounts[senseGuess])
                         {
                             foreach (ushort categoryCountGuess;
-                                     0.._categoryIxCounter) // for each category including unknown
+                                     0..categoryIxCounter) // for each category including unknown
                             {
                                 concepts ~= conceptByWordsMaybe(words,
                                                                 hlangGuess,
@@ -1120,7 +1158,7 @@ class Net(bool useArray = true,
         const maxCount = quick ? 100 : size_t.max;
 
         // WordNet
-        _wordnet = new WordNet!(true, true)([Lang.en]);
+        wordnet = new WordNet!(true, true)([Lang.en]);
 
         // Learn trusthful things before untrusted machine generated data is read
         learnTrustfulThings();
@@ -1465,24 +1503,27 @@ der", "spred", "spridit");
                     Concept concept) in { assert(!lemma.words.empty); }
     body
     {
-        if (lemma in _conceptIxByLemma)
+        if (lemma in conceptIxByLemma)
         {
-            return _conceptIxByLemma[lemma]; // lookup
+            return conceptIxByLemma[lemma]; // lookup
         }
         else
         {
             auto wordsSplit = lemma.words.findSplit("_");
             if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
             {
-                ++_multiWordConceptLemmaCount;
+                ++multiWordConceptLemmaCount;
             }
 
             // store
-            assert(_concepts.length <= Ix.max);
-            const cix = ConceptIx(cast(Ix)_concepts.length);
-            _concepts ~= concept; // .. new concept that is stored
-            _conceptIxByLemma[lemma] = cix; // store index to ..
+            assert(allConcepts.length <= Ix.max);
+            const cix = ConceptIx(cast(Ix)allConcepts.length);
+            allConcepts ~= concept; // .. new concept that is stored
+            conceptIxByLemma[lemma] = cix; // store index to ..
             conceptStringLengthSum += lemma.words.length;
+
+            learnLemma(lemma.words, lemma);
+
             return cix;
         }
     }
@@ -1608,15 +1649,15 @@ der", "spred", "spridit");
             }
         }
 
-        auto lix  = LinkIx(cast(Ix)_links.length);
+        auto lix  = LinkIx(cast(Ix)allLinks.length);
         auto link = Link(reversion ? dstIx : srcIx,
                          rel,
                          reversion ? srcIx : dstIx,
                          negation,
                          origin);
 
-        assert(_links.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
-        assert(_links.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
@@ -1649,9 +1690,9 @@ der", "spred", "spridit");
             " negation:", negation,
             " reversion:", reversion);
 
-        _links ~= link; // TODO Avoid copying here
+        allLinks ~= link; // TODO Avoid copying here
 
-        return lix; // _links.back;
+        return lix; // allLinks.back;
     }
     alias relate = connect;
 
@@ -1699,16 +1740,16 @@ der", "spred", "spridit");
     CategoryIx categoryByName(S)(S name) if (isSomeString!S)
     {
         auto categoryIx = anyCategory;
-        if (name in _categoryIxByName)
+        if (name in categoryIxByName)
         {
-            categoryIx = _categoryIxByName[name];
+            categoryIx = categoryIxByName[name];
         }
         else
         {
-            assert(_categoryIxCounter != _categoryIxCounter.max);
-            categoryIx._cIx = _categoryIxCounter++;
-            _categoryNameByIx[categoryIx] = name;
-            _categoryIxByName[name] = categoryIx;
+            assert(categoryIxCounter != categoryIxCounter.max);
+            categoryIx._cIx = categoryIxCounter++;
+            categoryNameByIx[categoryIx] = name;
+            categoryIxByName[name] = categoryIx;
         }
         return categoryIx;
     }
@@ -1885,13 +1926,13 @@ der", "spred", "spridit");
     }
 
     /** Concept Locations. */
-    Location[ConceptIx] _locations;
+    Location[ConceptIx] locations;
 
     /** Set Location of Concept $(D cix) to $(D location) */
     void setLocation(ConceptIx cix, in Location location)
     {
-        assert (cix !in _locations);
-        _locations[cix] = location;
+        assert (cix !in locations);
+        locations[cix] = location;
     }
 
     /** If $(D link) concept origins unknown propagate them from $(D link)
@@ -1946,7 +1987,7 @@ der", "spred", "spridit");
             switch (ix)
             {
                 case 1:
-                    // TODO Handle case when part matches /r/_wordnet/X
+                    // TODO Handle case when part matches /r/wordnet/X
                     rel = part[3..$].decodeRelation(null, null, Origin.cn5,
                                                     negation, reversion, tense);
                     break;
@@ -2002,7 +2043,7 @@ der", "spred", "spridit");
     {
         writeln("Reading ConceptNet from ", path, " ...");
         size_t lnr = 0;
-        /* TODO Functionize and merge with _wordnet.readIx */
+        /* TODO Functionize and merge with wordnet.readIx */
         if (useMmFile)
         {
             version(none)
@@ -2095,22 +2136,24 @@ der", "spred", "spridit");
 
         if (weightSumCN5)
         {
-            writeln(`- CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(real)weightSumCN5/_links.length);
+            writeln(`- CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(real)weightSumCN5/allLinks.length);
             writeln(`- CN5 Packed Weights Histogram: `, packedWeightHistogramCN5);
         }
         if (weightSumNELL)
         {
-            writeln(`- NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/_links.length);
+            writeln(`- NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/allLinks.length);
             writeln(`- NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
         }
 
-        writeln(`- Concept Count: `, _concepts.length);
-        writeln(`- Multi Word Concept Count: `, _multiWordConceptLemmaCount);
-        writeln(`- Link Count: `, _links.length);
+        writeln(`- Concept Count: `, allConcepts.length);
+        writeln(`- Multi Word Concept Count: `, multiWordConceptLemmaCount);
+        writeln(`- Link Count: `, allLinks.length);
 
-        writeln(`- Concept Indexes by Lemma Count: `, _conceptIxByLemma.length);
-        writeln(`- Concept String Length Average: `, cast(real)conceptStringLengthSum/_concepts.length);
-        writeln(`- Concept Connectedness Average: `, cast(real)connectednessSum/2/_concepts.length);
+        writeln(`- Lemmas by Words: `, lemmasByWords.length);
+
+        writeln(`- Concept Indexes by Lemma Count: `, conceptIxByLemma.length);
+        writeln(`- Concept String Length Average: `, cast(real)conceptStringLengthSum/allConcepts.length);
+        writeln(`- Concept Connectedness Average: `, cast(real)connectednessSum/2/allConcepts.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
@@ -2166,12 +2209,12 @@ der", "spred", "spridit");
                         in Lemma b,
                         bool negation = false)
     {
-        if (a in _conceptIxByLemma && // both lemmas exist
-            b in _conceptIxByLemma)
+        if (a in conceptIxByLemma && // both lemmas exist
+            b in conceptIxByLemma)
         {
-            return areConnected(_conceptIxByLemma[a],
+            return areConnected(conceptIxByLemma[a],
                                 rel,
-                                _conceptIxByLemma[b],
+                                conceptIxByLemma[b],
                                 negation);
         }
         return typeof(return).asUndefined;
@@ -2231,7 +2274,7 @@ der", "spred", "spridit");
 
         if (normalizedLine == "palindrome")
         {
-            foreach (palindromeConcept; _concepts.filter!(concept => concept.words.isPalindrome(3)))
+            foreach (palindromeConcept; allConcepts.filter!(concept => concept.words.isPalindrome(3)))
             {
                 showLinkConcept(palindromeConcept,
                                 Rel.instanceOf,
@@ -2285,9 +2328,13 @@ der", "spred", "spridit");
             }
         }
 
+        dln(`Line `, normalizedLine);
+
         auto concepts = conceptsByWords(normalizedLine,
                                         lang,
                                         sense);
+
+        dln(`Concepts `, concepts);
 
         // as is
         foreach (concept; concepts)
@@ -2332,7 +2379,7 @@ der", "spred", "spridit");
     auto anagramsOf(S)(S words) if (isSomeString!S)
     {
         const lsWord = words.sorted; // letter-sorted words
-        return _concepts.filter!(concept => (lsWord != concept.words && // don't include one-self
+        return allConcepts.filter!(concept => (lsWord != concept.words && // don't include one-self
                                              lsWord == concept.words.sorted));
     }
 
