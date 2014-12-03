@@ -1131,6 +1131,7 @@ class Net(bool useArray = true,
         {
             auto ret = conceptsByWordsOnly(words);
             concepts = ret.array;
+            dln(concepts);
         }
 
         if (concepts.empty)
@@ -1148,7 +1149,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         const quick = true;
-        const maxCount = quick ? 100 : size_t.max;
+        const maxCount = quick ? 1000 : size_t.max;
 
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
@@ -2174,7 +2175,7 @@ der", "spred", "spridit");
                 multiWordConceptLemmaCount);
         writeln(`- Link Count: `, allLinks.length);
 
-        writeln(`- Lemmas by Words: `, lemmasByWords.length);
+        writeln(`- Lemmas by Words Count: `, lemmasByWords.length);
 
         writeln(`- Concept Indexes by Lemma Count: `, conceptIxByLemma.length);
         writeln(`- Concept String Length Average: `, cast(real)conceptStringLengthSum/allConcepts.length);
