@@ -1188,6 +1188,8 @@ class Net(bool useArray = true,
      */
     void learnTrustfulThings()
     {
+        learnEnglishComputerAcronyms();
+
         learnEnglishIrregularVerbs();
         learnEnglishUncountableNouns();
 
@@ -1196,9 +1198,9 @@ class Net(bool useArray = true,
 
     /** Learn English Irregular Verb.
      */
-    void learnEnglishIrregularVerb(string infinitive,
-                                   string past,
-                                   string pastParticiple)
+    LinkIx[] learnEnglishIrregularVerb(string infinitive,
+                                       string past,
+                                       string pastParticiple)
     {
         const lang = Lang.en;
         const category = CategoryIx.asUndefined;
@@ -1206,7 +1208,31 @@ class Net(bool useArray = true,
         auto all = [tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
                     tryStore(past, lang, Sense.verbPast, category, origin),
                     tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
+        return connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
+    }
+
+    /** Learn English Acronym.
+     */
+    LinkIx learnEnglishAcronym(string acronym,
+                               string words)
+    {
+        const lang = Lang.en;
+        const sense = Sense.unknown;
+        const category = CategoryIx.asUndefined;
+        const origin = Origin.manual;
+        return connect(store(acronym, lang, sense, category, origin),
+                       Rel.acronymFor,
+                       store(words, lang, sense, category, origin));
+    }
+
+    /** Learn English Computer Acronyms.
+     */
+    void learnEnglishComputerAcronyms()
+    {
+        learnEnglishAcronym("IETF", "internet_engineering_task_force");
+        learnEnglishAcronym("RFC", "request_for_comments");
+        learnEnglishAcronym("FYI", "for_your_information");
+        learnEnglishAcronym("BCP", "best_current_practise");
     }
 
     /** Learn English Irregular Verbs.
@@ -1683,8 +1709,8 @@ der", "spred", "spridit");
 
         propagateLinkConcepts(link);
 
-        dln("src: ", conceptByIx(link._srcIx).words,
-            "dst: ", conceptByIx(link._dstIx).words,
+        dln(" src:", conceptByIx(link._srcIx).words,
+            " dst:", conceptByIx(link._dstIx).words,
             " rel:", rel,
             " origin:", origin,
             " negation:", negation,
