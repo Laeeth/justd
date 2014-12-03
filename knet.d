@@ -1035,10 +1035,10 @@ class Net(bool useArray = true,
     /** Try to Get Single Concept related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    Concepts conceptsByWordsMaybe(S)(S words,
-                                     Lang lang,
-                                     Sense sense,
-                                     CategoryIx category) if (isSomeString!S)
+    Concepts conceptsByLemma(S)(S words,
+                                Lang lang,
+                                Sense sense,
+                                CategoryIx category) if (isSomeString!S)
     {
         typeof(return) concepts;
         auto lemma = Lemma(words, lang, sense, category);
@@ -1125,13 +1125,11 @@ class Net(bool useArray = true,
             sense != Sense.unknown &&
             category != anyCategory) // if exact Lemma key can be used
         {
-            return conceptsByWordsMaybe(words, lang, sense, category); // fast hash lookup
+            return conceptsByLemma(words, lang, sense, category); // fast hash lookup
         }
         else
         {
-            auto ret = conceptsByWordsOnly(words);
-            concepts = ret.array;
-            dln(concepts);
+            concepts = conceptsByWordsOnly(words).array; // TODO avoid array herex
         }
 
         if (concepts.empty)
@@ -2295,6 +2293,8 @@ der", "spred", "spridit");
         // auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
         auto normalizedLine = line.strip.tr(std.ascii.whitespace, `_`, `s`).toLower;
+        if (normalizedLine.empty)
+            return;
 
         writeln(`Line `, normalizedLine);
 
@@ -2354,6 +2354,9 @@ der", "spred", "spridit");
             }
         }
 
+        if (normalizedLine.empty)
+            return;
+
         auto lineConcepts = conceptsByWords(normalizedLine,
                                             lang,
                                             sense);
@@ -2363,6 +2366,9 @@ der", "spred", "spridit");
         {
             write(`- in `, lineConcept.lang.toName);
             writeln(` of sense `, lineConcept.lemmaKind);
+
+            writeln("ins: ", lineConcept.inIxes.length);
+            writeln("outs: ", lineConcept.outIxes.length);
 
             // show forwards
             foreach (group; insByRel(lineConcept))
