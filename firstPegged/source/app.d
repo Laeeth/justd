@@ -50,9 +50,20 @@ void main(string[] args)
 
     auto decA = A.decimateTree(ptA);
 
-    const srcC = `int x;`;
+    const srcC = "int x, y;";
     writeln(`C Source Size: `, srcC.length);
+
     auto treeC = C(srcC);
+    auto decC = C.decimateTree(treeC);
+
+    writeln();
     writeln(`C ParseTree Size: `, treeC.pack.length);
     writeln(treeC);
+
+    if (treeC != decC)
+    {
+        writeln();
+        writeln(`C Decimated ParseTree Size: `, decC.pack.length);
+        writeln(decC);
+    }
 }
