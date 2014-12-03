@@ -772,11 +772,11 @@ class Net(bool useArray = true,
     struct CategoryIx
     {
         @safe @nogc pure nothrow:
-        static CategoryIx asUndefined() { return CategoryIx(ushort.max); }
+        static CategoryIx asUndefined() { return CategoryIx(0); }
         bool defined() const { return this != CategoryIx.asUndefined; }
         auto opCast(T : bool)() { return defined; }
     private:
-        ushort _cIx = ushort.max;
+        ushort _cIx = 0;
     }
 
     /** Concept Lemma. */
@@ -891,9 +891,6 @@ class Net(bool useArray = true,
                                                a[0]._rel == b[0]._rel));
     }
 
-    static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
-    else                 { alias ConceptIxes = ConceptIx[]; }
-
     /** Many-Concepts-to-Many-Concepts Link (Edge).
      */
     struct Link
@@ -985,8 +982,8 @@ class Net(bool useArray = true,
         string[CategoryIx] categoryNameByIx; /** Ontology Category Names by Index. */
         CategoryIx[string] categoryIxByName; /** Ontology Category Indexes by Name. */
 
-        enum anyCategory = CategoryIx(0); // reserve 0 for anyCategory (unknown)
-        ushort categoryIxCounter = 1; // 1 because 0 is reserved for anyCategory (unknown)
+        enum anyCategory = CategoryIx.asUndefined; // reserve 0 for anyCategory (unknown)
+        ushort categoryIxCounter = CategoryIx.asUndefined._cIx + 1; // 1 because 0 is reserved for anyCategory (unknown)
 
         size_t multiWordConceptLemmaCount = 0; // number of concepts that whose lemma contain several words
 
@@ -1038,7 +1035,7 @@ class Net(bool useArray = true,
     /** Try to Get Single Concept related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    Concept[] conceptByWordsMaybe(S)(S words,
+    Concepts conceptsByWordsMaybe(S)(S words,
                                      Lang lang = Lang.unknown,
                                      Sense sense = Sense.unknown,
                                      CategoryIx category = anyCategory) if (isSomeString!S)
@@ -1066,6 +1063,19 @@ class Net(bool useArray = true,
             }
         }
         return concepts;
+    }
+
+    /** Get All Concept Indexes Indexed by a Lemma having words $(D words). */
+    auto conceptIxesByWordsOnly(S)(S words) if (isSomeString!S)
+    {
+        auto lemmas = lemmasOf(words);
+        return lemmas.map!(lemma => conceptIxByLemma[lemma]);
+    }
+
+    /** Get All Concepts Indexed by a Lemma having words $(D words). */
+    auto conceptsByWordsOnly(S)(S words) if (isSomeString!S)
+    {
+        return conceptIxesByWordsOnly(words).map!(conceptIx => conceptByIx(conceptIx));
     }
 
     /** Get All Possible Lemmas related to $(D word).
@@ -1104,41 +1114,22 @@ class Net(bool useArray = true,
         (semantic context) $(D sense).
         If no sense given return all possible.
     */
-    Concept[] conceptsByWords(S)(S words,
-                                 Lang lang = Lang.unknown,
-                                 Sense sense = Sense.unknown,
-                                 CategoryIx category = anyCategory) if (isSomeString!S)
+    Concepts conceptsByWords(S)(S words,
+                                Lang lang = Lang.unknown,
+                                Sense sense = Sense.unknown,
+                                CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) concepts;
         if (lang != Lang.unknown &&
             sense != Sense.unknown &&
-            category != anyCategory)
+            category != anyCategory) // if exact Lemma key can be used
         {
-            return conceptByWordsMaybe(words, lang, sense, category);
+            return conceptsByWordsMaybe(words, lang, sense, category); // fast hash lookup
         }
         else
         {
-            // TODO auto lemmas = lemmasOf(words);
-            foreach (hlangGuess; EnumMembers!Lang) // for each language
-            {
-                if (hlangCounts[hlangGuess])
-                {
-                    foreach (senseGuess; EnumMembers!Sense) // for each meaning.
-                    {
-                        if (kindCounts[senseGuess])
-                        {
-                            foreach (ushort categoryCountGuess;
-                                     0..categoryIxCounter) // for each category including unknown
-                            {
-                                concepts ~= conceptByWordsMaybe(words,
-                                                                hlangGuess,
-                                                                senseGuess,
-                                                                CategoryIx(categoryCountGuess));
-                            }
-                        }
-                    }
-                }
-            }
+            auto ret = conceptsByWordsOnly(words);
+            concepts = ret.array;
         }
         if (concepts.empty)
         {
@@ -1710,12 +1701,15 @@ der", "spred", "spridit");
 
         propagateLinkConcepts(link);
 
-        dln(" src:", conceptByIx(link._srcIx).words,
-            " dst:", conceptByIx(link._dstIx).words,
-            " rel:", rel,
-            " origin:", origin,
-            " negation:", negation,
-            " reversion:", reversion);
+        if (false)
+        {
+            dln(" src:", conceptByIx(link._srcIx).words,
+                " dst:", conceptByIx(link._dstIx).words,
+                " rel:", rel,
+                " origin:", origin,
+                " negation:", negation,
+                " reversion:", reversion);
+        }
 
         allLinks ~= link; // TODO Avoid copying here
 
@@ -2355,14 +2349,9 @@ der", "spred", "spridit");
             }
         }
 
-        dln(`Line `, normalizedLine);
-        dln(`allConcepts.length `, allConcepts.length);
-
         auto lineConcepts = conceptsByWords(normalizedLine,
                                             lang,
                                             sense);
-
-        dln(`LineConcepts `, lineConcepts);
 
         // as is
         foreach (lineConcept; lineConcepts)
@@ -2449,10 +2438,13 @@ der", "spred", "spridit");
         // TODO Use synonym transitivity and possibly traverse over synonyms
         // en => sv:
         // en-en => sv-sv
-        auto ins = concepts.map!(concept =>
-                                 insOf(concept, rel, false))/* .joiner */;
-        auto outs = concepts.map!(concept =>
-                                  outsOf(concept, rel, false))/* .joiner */;
+        if (false)
+        {
+            auto ins = concepts.map!(concept =>
+                                     insOf(concept, rel, false))/* .joiner */;
+            auto outs = concepts.map!(concept =>
+                                      outsOf(concept, rel, false))/* .joiner */;
+        }
         return concepts;
     }
 
