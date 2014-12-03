@@ -1222,7 +1222,8 @@ class Net(bool useArray = true,
         const origin = Origin.manual;
         return connect(store(acronym, lang, sense, category, origin),
                        Rel.acronymFor,
-                       store(words, lang, sense, category, origin));
+                       store(words, lang, sense, category, origin),
+                       origin);
     }
 
     /** Learn English Computer Acronyms.
@@ -1651,7 +1652,7 @@ der", "spred", "spridit");
                    Rel rel,
                    ConceptIx dstIx,
                    Origin origin = Origin.unknown,
-                   real weight = 1.0,
+                   real weight = 1.0, // 1.0 means absolutely true for Origin manual
                    bool negation = false,
                    bool reversion = false,
                    bool checkExisting = false)
