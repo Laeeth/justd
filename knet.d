@@ -2356,21 +2356,22 @@ der", "spred", "spridit");
         }
 
         dln(`Line `, normalizedLine);
+        dln(`allConcepts.length `, allConcepts.length);
 
-        auto concepts = conceptsByWords(normalizedLine,
-                                        lang,
-                                        sense);
+        auto lineConcepts = conceptsByWords(normalizedLine,
+                                            lang,
+                                            sense);
 
-        dln(`Concepts `, concepts);
+        dln(`LineConcepts `, lineConcepts);
 
         // as is
-        foreach (concept; concepts)
+        foreach (lineConcept; lineConcepts)
         {
-            write(`- in `, concept.lang.toName);
-            writeln(` of sense `, concept.lemmaKind);
+            write(`- in `, lineConcept.lang.toName);
+            writeln(` of sense `, lineConcept.lemmaKind);
 
             // show forwards
-            foreach (group; insByRel(concept))
+            foreach (group; insByRel(lineConcept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.forward);
                 foreach (inLink, inConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
@@ -2381,7 +2382,7 @@ der", "spred", "spridit");
             }
 
             // show backwards
-            foreach (group; outsByRel(concept))
+            foreach (group; outsByRel(lineConcept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.backward);
                 foreach (outLink, outConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
@@ -2393,7 +2394,7 @@ der", "spred", "spridit");
         }
 
         // stemmed
-        if (concepts.empty)
+        if (lineConcepts.empty)
         {
             while (normalizedLine.stemize(lang))
             {
