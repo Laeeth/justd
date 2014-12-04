@@ -47,7 +47,7 @@ import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind;
 import std.container: Array;
-import std.string: tr;
+import std.string: tr, toLower, toUpper;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
@@ -704,6 +704,25 @@ enum Origin:ubyte
 }
 bool defined(Origin origin) @safe @nogc pure nothrow { return origin != Origin.unknown; }
 
+string toNice(Origin origin) @safe pure
+{
+    with (Origin)
+    {
+        final switch (origin)
+        {
+            case unknown: return "Unknown";
+            case cn5: return "CN5";
+            case dbpedia37: return "DBpedia37";
+            case dbpedia39umbel: return "DBpedia39Umbel";
+            case dbpediaEn: return "DBpediaEnglish";
+            case wordnet30: return "WordNet30";
+            case verbosity: return "Verbosity";
+            case nell: return "NELL";
+            case manual: return "Manual";
+        }
+    }
+}
+
 auto pageSize() @trusted
 {
     version(linux)
@@ -1149,7 +1168,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         const quick = true;
-        const maxCount = quick ? 1000 : size_t.max;
+        const maxCount = quick ? 100000 : size_t.max;
 
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
@@ -2274,7 +2293,7 @@ der", "spred", "spridit");
             write(`-`, concept.lemmaKind);
         }
 
-        writef(`:%.2f@%s),`, weight, concept.origin); // close
+        writef(`:%.2f@%s),`, weight, concept.origin.toNice); // close
     }
 
     void showLinkConcept(in Concept concept,
