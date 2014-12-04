@@ -23,7 +23,6 @@
     TODO Make link have array of Concepts
 
     TODO Make use of stealFront and stealBack
-    TODO Make LinkIx, ConceptIx inherit Nullable!(Ix, Ix.max)
 
     TODO ansiktstvätt => facial_wash
     TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
@@ -768,17 +767,17 @@ class Net(bool useArray = true,
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
     alias Ix = uint; // TODO Change this to size_t when we have more allConcepts and memory.
-    enum undefinedConceptIx = Ix.max >> 1;
-    enum undefinedLinkIx = Ix.max;
+    enum undefinedConceptRef = Ix.max >> 1;
+    enum undefinedLinkRef = Ix.max;
 
-    /** Type-safe Index to $(D Concept). */
-    struct ConceptIx
+    /** Type-safe Reference to $(D Concept). */
+    struct ConceptRef
     {
         import bitop_ex: setTopBit, getTopBit, resetTopBit;
         @safe @nogc pure nothrow:
-        this(Ix ix = undefinedConceptIx,
+        this(Ix ix = undefinedConceptRef,
              bool reversion = false)
-        in { assert(ix <= undefinedConceptIx); }
+        in { assert(ix <= undefinedConceptRef); }
         body
         {
             _cIx = ix;
@@ -788,8 +787,8 @@ class Net(bool useArray = true,
             }
         }
 
-        static const(ConceptIx) asUndefined() { return ConceptIx(undefinedConceptIx); }
-        bool defined() const { return _cIx != undefinedConceptIx; }
+        static const(ConceptRef) asUndefined() { return ConceptRef(undefinedConceptRef); }
+        bool defined() const { return _cIx != undefinedConceptRef; }
         auto opCast(T : bool)() { return defined(); }
 
         /** Get Index. */
@@ -798,28 +797,28 @@ class Net(bool useArray = true,
         /** Get Direction. */
         const(RelDir) dir() const { return _cIx.getTopBit ? RelDir.backward : RelDir.forward; }
     private:
-        Ix _cIx = undefinedConceptIx;
+        Ix _cIx = undefinedConceptRef;
     }
 
-    /** Type-safe Index to $(D Link). */
-    struct LinkIx
+    /** Type-Safe Reference to $(D Link). */
+    struct LinkRef
     {
         @safe @nogc pure nothrow:
-        static LinkIx asUndefined() { return LinkIx(undefinedLinkIx); }
-        bool defined() const { return _lIx != undefinedLinkIx; }
+        static LinkRef asUndefined() { return LinkRef(undefinedLinkRef); }
+        bool defined() const { return _lIx != undefinedLinkRef; }
         auto opCast(T : bool)() { return defined(); }
     private:
-        Ix _lIx = undefinedLinkIx;
+        Ix _lIx = undefinedLinkRef;
     }
 
     /** String Storage */
     static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
     else                    { alias Words = immutable string; }
 
-    static if (useArray) { alias ConceptIxes = Array!ConceptIx; }
-    else                 { alias ConceptIxes = ConceptIx[]; }
-    static if (useArray) { alias LinkIxes = Array!LinkIx; }
-    else                 { alias LinkIxes = LinkIx[]; }
+    static if (useArray) { alias ConceptRefes = Array!ConceptRef; }
+    else                 { alias ConceptRefes = ConceptRef[]; }
+    static if (useArray) { alias LinkRefes = Array!LinkRef; }
+    else                 { alias LinkRefes = LinkRef[]; }
 
     /** Ontology Category Index (currently from NELL). */
     struct CategoryIx
@@ -854,8 +853,8 @@ class Net(bool useArray = true,
              Sense lemmaKind,
              CategoryIx categoryIx,
              Origin origin = Origin.unknown,
-             LinkIxes inIxes = LinkIxes.init,
-             LinkIxes outIxes = LinkIxes.init)
+             LinkRefes inIxes = LinkRefes.init,
+             LinkRefes outIxes = LinkRefes.init)
         {
             this.words = words;
             this.lang = lang;
@@ -868,8 +867,8 @@ class Net(bool useArray = true,
             this.outIxes = outIxes;
         }
     private:
-        LinkIxes inIxes;
-        LinkIxes outIxes;
+        LinkRefes inIxes;
+        LinkRefes outIxes;
 
         // TODO Make this Lemma
         Words words;
@@ -955,9 +954,9 @@ class Net(bool useArray = true,
 
         @safe @nogc pure nothrow:
 
-        this(ConceptIx srcIx,
+        this(ConceptRef srcIx,
              Rel rel,
-             ConceptIx dstIx,
+             ConceptRef dstIx,
              bool negation,
              Origin origin = Origin.unknown) in { assert(srcIx.defined && dstIx.defined); }
         body
@@ -995,8 +994,8 @@ class Net(bool useArray = true,
         }
 
     private:
-        ConceptIx _srcIx;
-        ConceptIx _dstIx;
+        ConceptRef _srcIx;
+        ConceptRef _dstIx;
 
         Weight packedWeight;
 
@@ -1012,8 +1011,8 @@ class Net(bool useArray = true,
     pragma(msg, `Words.sizeof: `, Words.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
     pragma(msg, `Concept.sizeof: `, Concept.sizeof);
-    pragma(msg, `LinkIxes.sizeof: `, LinkIxes.sizeof);
-    pragma(msg, `ConceptIxes.sizeof: `, ConceptIxes.sizeof);
+    pragma(msg, `LinkRefes.sizeof: `, LinkRefes.sizeof);
+    pragma(msg, `ConceptRefes.sizeof: `, ConceptRefes.sizeof);
     pragma(msg, `Link.sizeof: `, Link.sizeof);
 
     /* static if (useArray) { alias Concepts = Array!Concept; } */
@@ -1028,7 +1027,7 @@ class Net(bool useArray = true,
 
     private
     {
-        ConceptIx[Lemma] conceptIxByLemma;
+        ConceptRef[Lemma] conceptIxByLemma;
         Concepts allConcepts;
         Links allLinks;
 
@@ -1068,11 +1067,11 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) linkByIx(LinkIx ix) inout { return allLinks[ix._lIx]; }
-        ref inout(Link)  opIndex(LinkIx ix) inout { return linkByIx(ix); }
+        ref inout(Link) linkByIx(LinkRef ix) inout { return allLinks[ix._lIx]; }
+        ref inout(Link)  opIndex(LinkRef ix) inout { return linkByIx(ix); }
 
-        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return allConcepts[ix.ix]; }
-        ref inout(Concept)     opIndex(ConceptIx ix) inout @nogc { return conceptByIx(ix); }
+        ref inout(Concept) conceptByIx(ConceptRef ix) inout @nogc { return allConcepts[ix.ix]; }
+        ref inout(Concept)     opIndex(ConceptRef ix) inout @nogc { return conceptByIx(ix); }
     }
 
     Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
@@ -1245,7 +1244,7 @@ class Net(bool useArray = true,
 
     /** Learn English Irregular Verb.
      */
-    LinkIx[] learnEnglishIrregularVerb(string infinitive,
+    LinkRef[] learnEnglishIrregularVerb(string infinitive,
                                        string past,
                                        string pastParticiple)
     {
@@ -1260,7 +1259,7 @@ class Net(bool useArray = true,
 
     /** Learn English Acronym.
      */
-    LinkIx learnEnglishAcronym(string acronym,
+    LinkRef learnEnglishAcronym(string acronym,
                                string words)
     {
         const lang = Lang.en;
@@ -1573,7 +1572,7 @@ der", "spred", "spridit");
 
     /** Lookup-or-Store $(D Concept) at $(D lemma) index.
      */
-    ConceptIx store(in Lemma lemma,
+    ConceptRef store(in Lemma lemma,
                     Concept concept) in { assert(!lemma.words.empty); }
     body
     {
@@ -1590,8 +1589,8 @@ der", "spred", "spridit");
             }
 
             // store
-            assert(allConcepts.length <= undefinedConceptIx);
-            const cix = ConceptIx(cast(Ix)allConcepts.length);
+            assert(allConcepts.length <= undefinedConceptRef);
+            const cix = ConceptRef(cast(Ix)allConcepts.length);
             allConcepts ~= concept; // .. new concept that is stored
             conceptIxByLemma[lemma] = cix; // store index to ..
             conceptStringLengthSum += lemma.words.length;
@@ -1603,7 +1602,7 @@ der", "spred", "spridit");
     }
 
     /** Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
-    ConceptIx store(Words words,
+    ConceptRef store(Words words,
                     Lang lang,
                     Sense kind,
                     CategoryIx categoryIx,
@@ -1615,7 +1614,7 @@ der", "spred", "spridit");
     }
 
     /** Try to Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
-    ConceptIx tryStore(Words words,
+    ConceptRef tryStore(Words words,
                        Lang lang,
                        Sense kind,
                        CategoryIx categoryIx,
@@ -1623,15 +1622,15 @@ der", "spred", "spridit");
     body
     {
         if (words.empty)
-            return ConceptIx.asUndefined;
+            return ConceptRef.asUndefined;
         return store(words, lang, kind, categoryIx, origin);
     }
 
     /** Fully Connect Every-to-Every in $(D all). */
-    LinkIx[] connectMtoM(R)(Rel rel,
+    LinkRef[] connectMtoM(R)(Rel rel,
                             R all,
                             Origin origin,
-                            real weight = 1.0) if (isSourceOf!(R, ConceptIx))
+                            real weight = 1.0) if (isSourceOf!(R, ConceptRef))
     {
         typeof(return) linkIxes;
         foreach (me; all)
@@ -1649,10 +1648,10 @@ der", "spred", "spridit");
     alias connectFully = connectMtoM;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
-    LinkIx[] connect1toM(R)(ConceptIx first,
+    LinkRef[] connect1toM(R)(ConceptRef first,
                             Rel rel,
                             R rest,
-                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptIx))
+                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -1667,10 +1666,10 @@ der", "spred", "spridit");
     alias connectFanOut = connect1toM;
 
     /** Fan-In Connect $(D first) to Every in $(D rest). */
-    LinkIx[] connectMto1(R)(R rest,
+    LinkRef[] connectMto1(R)(R rest,
                             Rel rel,
-                            ConceptIx first,
-                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptIx))
+                            ConceptRef first,
+                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -1685,7 +1684,7 @@ der", "spred", "spridit");
     alias connectFanIn = connectMto1;
 
     /** Cyclic Connect Every in $(D all). */
-    void connectCycle(R)(Rel rel, R all) if (isSourceOf!(R, ConceptIx))
+    void connectCycle(R)(Rel rel, R all) if (isSourceOf!(R, ConceptRef))
     {
     }
     alias connectCircle = connectCycle;
@@ -1695,9 +1694,9 @@ der", "spred", "spridit");
         TODO checkExisting is currently set to false because searching
         existing links is currently too slow
      */
-    LinkIx connect(ConceptIx srcIx,
+    LinkRef connect(ConceptRef srcIx,
                    Rel rel,
-                   ConceptIx dstIx,
+                   ConceptRef dstIx,
                    Origin origin = Origin.unknown,
                    real weight = 1.0, // 1.0 means absolutely true for Origin manual
                    bool negation = false,
@@ -1705,7 +1704,7 @@ der", "spred", "spridit");
                    bool checkExisting = false)
     body
     {
-        if (srcIx == dstIx) { return LinkIx.asUndefined; } // don't allow self-reference for now
+        if (srcIx == dstIx) { return LinkRef.asUndefined; } // don't allow self-reference for now
 
         if (checkExisting)
         {
@@ -1723,15 +1722,15 @@ der", "spred", "spridit");
             }
         }
 
-        auto lix  = LinkIx(cast(Ix)allLinks.length);
+        auto lix  = LinkRef(cast(Ix)allLinks.length);
         auto link = Link(reversion ? dstIx : srcIx,
                          rel,
                          reversion ? srcIx : dstIx,
                          negation,
                          origin);
 
-        assert(allLinks.length <= undefinedLinkIx); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
-        assert(allLinks.length <= undefinedLinkIx); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= undefinedLinkRef); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= undefinedLinkRef); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
@@ -1785,7 +1784,7 @@ der", "spred", "spridit");
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
     */
-    ConceptIx readCN5ConceptURI(T)(const T part)
+    ConceptRef readCN5ConceptURI(T)(const T part)
     {
         auto items = part.splitter('/');
 
@@ -1832,7 +1831,7 @@ der", "spred", "spridit");
     }
 
     /** Read NELL Entity from $(D part). */
-    Tuple!(ConceptIx, string, LinkIx) readNELLEntity(S)(const S part)
+    Tuple!(ConceptRef, string, LinkRef) readNELLEntity(S)(const S part)
     {
         const show = false;
 
@@ -1902,8 +1901,8 @@ der", "spred", "spridit");
         auto reversion = false;
         auto tense = Tense.unknown;
 
-        ConceptIx entityIx;
-        ConceptIx valueIx;
+        ConceptRef entityIx;
+        ConceptRef valueIx;
 
         string entityCategoryName;
         char[] relationName;
@@ -1989,7 +1988,7 @@ der", "spred", "spridit");
         if (entityIx.defined &&
             valueIx.defined)
         {
-            auto mainLinkIx = connect(entityIx, rel, valueIx,
+            auto mainLinkRef = connect(entityIx, rel, valueIx,
                                       Origin.nell, mainWeight, negation, reversion);
         }
 
@@ -2003,10 +2002,10 @@ der", "spred", "spridit");
     }
 
     /** Concept Locations. */
-    Location[ConceptIx] locations;
+    Location[ConceptRef] locations;
 
     /** Set Location of Concept $(D cix) to $(D location) */
-    void setLocation(ConceptIx cix, in Location location)
+    void setLocation(ConceptRef cix, in Location location)
     {
         assert (cix !in locations);
         locations[cix] = location;
@@ -2046,14 +2045,14 @@ der", "spred", "spridit");
     }
 
     /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
-    LinkIx readCN5Line(R, N)(R line, N lnr)
+    LinkRef readCN5Line(R, N)(R line, N lnr)
     {
         auto rel = Rel.any;
         auto negation = false;
         auto reversion = false;
         auto tense = Tense.unknown;
 
-        ConceptIx src, dst;
+        ConceptRef src, dst;
         real weight;
         auto origin = Origin.unknown;
 
@@ -2109,7 +2108,7 @@ der", "spred", "spridit");
         }
         else
         {
-            return LinkIx.asUndefined;
+            return LinkRef.asUndefined;
         }
     }
 
@@ -2239,11 +2238,11 @@ der", "spred", "spridit");
         writeln(indent, `Concept Connectedness Average: `, cast(real)connectednessSum/2/allConcepts.length);
     }
 
-    /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkIx.max.
+    /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkRef.max.
      */
-    LinkIx areConnectedInOrder(ConceptIx a,
+    LinkRef areConnectedInOrder(ConceptRef a,
                                Rel rel,
-                               ConceptIx b,
+                               ConceptRef b,
                                bool negation = false)
     {
         const cA = conceptByIx(a); // TODO ref?
@@ -2275,11 +2274,11 @@ der", "spred", "spridit");
         return typeof(return).asUndefined;
     }
 
-    /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkIx.max.
+    /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkRef.max.
      */
-    LinkIx areConnected(ConceptIx a,
+    LinkRef areConnected(ConceptRef a,
                         Rel rel,
-                        ConceptIx b,
+                        ConceptRef b,
                         bool negation = false)
     {
         return either(areConnectedInOrder(a, rel, b, negation),
@@ -2287,7 +2286,7 @@ der", "spred", "spridit");
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
-    LinkIx areConnected(in Lemma a,
+    LinkRef areConnected(in Lemma a,
                         Rel rel,
                         in Lemma b,
                         bool negation = false)
@@ -2520,8 +2519,8 @@ der", "spred", "spridit");
         Sum of all paths relating a to b where each path is the path weight
         product.
     */
-    real relatedness(ConceptIx a,
-                     ConceptIx b) const @safe @nogc pure nothrow
+    real relatedness(ConceptRef a,
+                     ConceptRef b) const @safe @nogc pure nothrow
     {
         typeof(return) value;
         return value;
