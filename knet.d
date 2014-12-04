@@ -21,7 +21,6 @@
     See also: http://www.eturner.net/omcsnetcpp/
 
     TODO Make link have array of Concepts
-    TODO Conceptix and LinkIx and should be nullable size max where top bit is for reverse
 
     TODO Make use of stealFront and stealBack
     TODO Make LinkIx, ConceptIx inherit Nullable!(Ix, Ix.max)
@@ -702,6 +701,7 @@ enum Origin:ubyte
     nell,
     manual,
 }
+
 bool defined(Origin origin) @safe @nogc pure nothrow { return origin != Origin.unknown; }
 
 string toNice(Origin origin) @safe pure
@@ -742,6 +742,19 @@ bool isMultiWord(S)(S s) if (isSomeString!S)
     return s.canFind("_", " ") >= 1;
 }
 
+struct CIx
+{
+
+    import std.bitmanip : bitfields;
+    mixin(bitfields!(
+              bool, "caseSensitive",  1,
+              bool, "bundling", 1,
+              bool, "passThrough", 1,
+              bool, "stopOnFirstNonOption", 1,
+              bool, "required", 1,
+              ubyte, "", 3));
+}
+
 /** Main Knowledge Network.
 */
 class Net(bool useArray = true,
@@ -755,27 +768,45 @@ class Net(bool useArray = true,
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
     alias Ix = uint; // TODO Change this to size_t when we have more allConcepts and memory.
+    enum undefinedConceptIx = Ix.max >> 1;
+    enum undefinedLinkIx = Ix.max;
+
+    /** Type-safe Index to $(D Concept). */
+    struct ConceptIx
+    {
+        import bitop_ex: setTopBit, getTopBit, resetTopBit;
+        @safe @nogc pure nothrow:
+        this(Ix ix = undefinedConceptIx,
+             bool reversion = false)
+        in { assert(ix <= undefinedConceptIx); }
+        body
+        {
+            _cIx = ix;
+            if (reversion)
+            {
+                _cIx.setTopBit;
+            }
+        }
+
+        static const(ConceptIx) asUndefined() { return ConceptIx(undefinedConceptIx); }
+        bool defined() const { return _cIx != undefinedConceptIx; }
+        auto opCast(T : bool)() { return defined(); }
+
+        const(Ix) cix() const { Ix ixCopy = _cIx; ixCopy.resetTopBit; return ixCopy; }
+        const(RelDir) dir() const { return _cIx.getTopBit ? RelDir.backward : RelDir.forward; }
+    private:
+        Ix _cIx = undefinedConceptIx;
+    }
 
     /** Type-safe Index to $(D Link). */
     struct LinkIx
     {
         @safe @nogc pure nothrow:
-        static LinkIx asUndefined() { return LinkIx(Ix.max); }
-        bool defined() const { return this != LinkIx.asUndefined; }
-        auto opCast(T : bool)() { return defined; }
+        static LinkIx asUndefined() { return LinkIx(undefinedLinkIx); }
+        bool defined() const { return _lIx != undefinedLinkIx; }
+        auto opCast(T : bool)() { return defined(); }
     private:
-        Ix _lIx = Ix.max;
-    }
-
-    /** Type-safe Index to $(D Concept). */
-    struct ConceptIx
-    {
-        @safe @nogc pure nothrow:
-        static ConceptIx asUndefined() { return ConceptIx(Ix.max); }
-        bool defined() const { return this != ConceptIx.asUndefined; }
-        auto opCast(T : bool)() { return defined; }
-    private:
-        Ix _cIx = Ix.max;
+        Ix _lIx = undefinedLinkIx;
     }
 
     /** String Storage */
@@ -1037,7 +1068,7 @@ class Net(bool useArray = true,
         ref inout(Link) linkByIx(LinkIx ix) inout { return allLinks[ix._lIx]; }
         ref inout(Link)  opIndex(LinkIx ix) inout { return linkByIx(ix); }
 
-        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return allConcepts[ix._cIx]; }
+        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return allConcepts[ix.cix]; }
         ref inout(Concept)     opIndex(ConceptIx ix) inout @nogc { return conceptByIx(ix); }
     }
 
@@ -1556,7 +1587,7 @@ der", "spred", "spridit");
             }
 
             // store
-            assert(allConcepts.length <= Ix.max);
+            assert(allConcepts.length <= undefinedConceptIx);
             const cix = ConceptIx(cast(Ix)allConcepts.length);
             allConcepts ~= concept; // .. new concept that is stored
             conceptIxByLemma[lemma] = cix; // store index to ..
@@ -1696,8 +1727,8 @@ der", "spred", "spridit");
                          negation,
                          origin);
 
-        assert(allLinks.length <= Ix.max); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
-        assert(allLinks.length <= Ix.max); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= undefinedLinkIx); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= undefinedLinkIx); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
@@ -2270,12 +2301,12 @@ der", "spred", "spridit");
     }
 
     void showLinkRelation(Rel rel,
-                          RelDir linkDir,
+                          RelDir dir,
                           bool negation = false,
                           Lang lang = Lang.en)
     {
         auto indent = `    - `;
-        write(indent, rel.toHumanLang(linkDir, negation, lang), `: `);
+        write(indent, rel.toHumanLang(dir, negation, lang), `: `);
     }
 
     void showConcept(in Concept concept, real weight)
@@ -2299,9 +2330,9 @@ der", "spred", "spridit");
     void showLinkConcept(in Concept concept,
                          Rel rel,
                          real weight,
-                         RelDir linkDir)
+                         RelDir dir)
     {
-        showLinkRelation(rel, linkDir);
+        showLinkRelation(rel, dir);
         showConcept(concept, weight);
         writeln();
     }

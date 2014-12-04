@@ -148,6 +148,18 @@ void resetBit(T, I...)(ref T a, I bixs) @trusted @nogc pure nothrow if ((!(isInt
     (*(cast(U*)&a)) &= ~makeBit!U(bixs); // reuse integer variant
 }
 
+void resetLowestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
+{
+    resetBit(a, 0);
+}
+alias resetBottomBit = resetLowestBit;
+
+void resetHighestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
+{
+    resetBit(a, 8*T.sizeof - 1);
+}
+alias resetTopBit = resetHighestBit;
+
 alias btr = resetBit;
 
 unittest
