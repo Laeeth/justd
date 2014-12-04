@@ -54,12 +54,19 @@ bool getBit(T, I)(in T a, I bix) @trusted @nogc pure nothrow if ((!(isIntegral!T
     return (*(cast(UnsignedOfSameSizeAs!T*)&a)).getBit(bix); // reuse integer variant
 }
 alias bt = getBit;
-void testGetBit(T)() {
+void testGetBit(T)()
+{
     const mn = T.min, mx = T.max;
     enum nBits = 8*T.sizeof;
-    foreach (ix; 0..nBits-1) { assert(!mn.bt(ix)); }
+    foreach (ix; 0..nBits-1)
+    {
+        assert(!mn.bt(ix));
+    }
     assert(mn.bt(nBits - 1));
-    foreach (ix; 0..T.sizeof) { assert(mx.bt(ix)); }
+    foreach (ix; 0..T.sizeof)
+    {
+        assert(mx.bt(ix));
+    }
 }
 unittest {
     testGetBit!byte;
@@ -72,12 +79,14 @@ unittest {
     Returns: A non-zero value if the bit was set, and a zero if it was clear.
 */
 void setBit(T, I...)(ref T a, I bixs) @safe @nogc pure nothrow if (isIntegral!T &&
-                                                                   allSatisfy!(isIntegral, I)) {
+                                                                   allSatisfy!(isIntegral, I))
+{
     a |= makeBit!T(bixs);
 }
 /** Returns: Check if all $(D bix):th Bits Of $(D a) are set. */
 void setBit(T, I...)(ref T a, I bixs) @trusted @nogc pure nothrow if ((!(isIntegral!T)) &&
-                                                                      allSatisfy!(isIntegral, I)) {
+                                                                      allSatisfy!(isIntegral, I))
+{
     alias U = UnsignedOfSameSizeAs!T;
     (*(cast(U*)&a)) |= makeBit!U(bixs); // reuse integer variant
 }
@@ -109,3 +118,15 @@ unittest {
 
 /* alias btc = complementBit; */
 /* alias btr = resetBit; */
+
+void setHighestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
+{
+    setBit(a, 8*T.sizeof - 1);
+}
+alias setTopBit = setHighestBit;
+
+void setLowestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
+{
+    setBit(a, 0);
+}
+alias setBottomBit = setLowestBit;
