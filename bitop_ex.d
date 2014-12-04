@@ -83,6 +83,7 @@ void setBit(T, I...)(ref T a, I bixs) @safe @nogc pure nothrow if (isIntegral!T 
 {
     a |= makeBit!T(bixs);
 }
+
 /** Returns: Check if all $(D bix):th Bits Of $(D a) are set. */
 void setBit(T, I...)(ref T a, I bixs) @trusted @nogc pure nothrow if ((!(isIntegral!T)) &&
                                                                       allSatisfy!(isIntegral, I))
@@ -90,34 +91,17 @@ void setBit(T, I...)(ref T a, I bixs) @trusted @nogc pure nothrow if ((!(isInteg
     alias U = UnsignedOfSameSizeAs!T;
     (*(cast(U*)&a)) |= makeBit!U(bixs); // reuse integer variant
 }
-alias bts = setBit;
-unittest {
-    alias T = int;
-    enum nBits = 8*T.sizeof;
-    T x = 0;
-    x.bts(0); assert(x == 1);
-    x.bts(1); assert(x == 3);
-    x.bts(2); assert(x == 7);
 
-    T b = 0;
-    b.bts(nBits - 1);
-    assert(b == T.min);
-}
-void testSetBit(T)() {
-    enum nBits = 8*T.sizeof;
-    T x = 0;
-    x.bts(0);
-    /* import dbg: dln; */
-    /* dln(x); */
-    /* dln(T.epsilon); */
-}
-unittest {
-    testSetBit!float;
-    testSetBit!double;
-}
+alias bts = setBit;
 
 /* alias btc = complementBit; */
 /* alias btr = resetBit; */
+
+void setLowestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
+{
+    setBit(a, 0);
+}
+alias setBottomBit = setLowestBit;
 
 void setHighestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
 {
@@ -125,8 +109,78 @@ void setHighestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
 }
 alias setTopBit = setHighestBit;
 
-void setLowestBit(T)(ref T a) @safe @nogc pure nothrow if (isIntegral!T)
+bool getLowBit(T)(T a) @safe @nogc pure nothrow if (isIntegral!T)
 {
-    setBit(a, 0);
+    return (a & (1 << 0)) != 0;
 }
-alias setBottomBit = setLowestBit;
+alias getBottomBit = getLowBit;
+
+bool getHighBit(T)(T a) @safe @nogc pure nothrow if (isIntegral!T)
+{
+    return (a & (1 << 8*T.sizeof - 1)) != 0;
+}
+alias getTopBit = getHighBit;
+
+unittest
+{
+    const ubyte x = 1;
+    assert(!x.getTopBit);
+    assert(x.getLowBit);
+}
+
+unittest
+{
+    const ubyte x = 128;
+    assert(x.getTopBit);
+    assert(!x.getLowBit);
+}
+
+void resetBit(T, I...)(ref T a, I bixs) @safe @nogc pure nothrow if (isIntegral!T &&
+                                                                   allSatisfy!(isIntegral, I))
+{
+    a &= ~makeBit!T(bixs);
+}
+
+void resetBit(T, I...)(ref T a, I bixs) @trusted @nogc pure nothrow if ((!(isIntegral!T)) &&
+                                                                      allSatisfy!(isIntegral, I))
+{
+    alias U = UnsignedOfSameSizeAs!T;
+    (*(cast(U*)&a)) &= ~makeBit!U(bixs); // reuse integer variant
+}
+
+alias btr = resetBit;
+
+unittest
+{
+    alias T = int;
+    enum nBits = 8*T.sizeof;
+    T a = 0;
+
+    a.bts(0); assert(a == 1);
+    a.bts(1); assert(a == 3);
+    a.bts(2); assert(a == 7);
+
+    a.btr(0); assert(a == 6);
+    a.btr(1); assert(a == 4);
+    a.btr(2); assert(a == 0);
+
+    a.bts(8*T.sizeof - 1); assert(a != 0);
+    a.btr(8*T.sizeof - 1); assert(a == 0);
+
+    T b = 0;
+    b.bts(nBits - 1);
+    assert(b == T.min);
+}
+
+unittest
+{
+    static void test(T)()
+    {
+        enum nBits = 8*T.sizeof;
+        T x = 0;
+        x.bts(0);
+    }
+
+    test!float;
+    test!double;
+}
