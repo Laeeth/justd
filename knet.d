@@ -792,7 +792,10 @@ class Net(bool useArray = true,
         bool defined() const { return _cIx != undefinedConceptIx; }
         auto opCast(T : bool)() { return defined(); }
 
-        const(Ix) cix() const { Ix ixCopy = _cIx; ixCopy.resetTopBit; return ixCopy; }
+        /** Get Index. */
+        const(Ix) ix() const { Ix ixCopy = _cIx; ixCopy.resetTopBit; return ixCopy; }
+
+        /** Get Direction. */
         const(RelDir) dir() const { return _cIx.getTopBit ? RelDir.backward : RelDir.forward; }
     private:
         Ix _cIx = undefinedConceptIx;
@@ -1068,7 +1071,7 @@ class Net(bool useArray = true,
         ref inout(Link) linkByIx(LinkIx ix) inout { return allLinks[ix._lIx]; }
         ref inout(Link)  opIndex(LinkIx ix) inout { return linkByIx(ix); }
 
-        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return allConcepts[ix.cix]; }
+        ref inout(Concept) conceptByIx(ConceptIx ix) inout @nogc { return allConcepts[ix.ix]; }
         ref inout(Concept)     opIndex(ConceptIx ix) inout @nogc { return conceptByIx(ix); }
     }
 
