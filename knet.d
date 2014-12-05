@@ -849,14 +849,7 @@ class Net(bool useArray = true,
     private:
         LinkRefs inIxes;
         LinkRefs outIxes;
-
-        // TODO Make this Lemma
         Lemma lemma;
-        /* Words words; */
-        /* Lang lang; */
-        /* Sense sense; */
-        /* CategoryIx categoryIx; */
-
         Origin origin;
     }
 
