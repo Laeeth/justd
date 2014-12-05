@@ -766,7 +766,7 @@ class Net(bool useArray = true,
         Set this to $(D uint) if we get low on memory.
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
-    alias Ix = uint; // TODO Change this to size_t when we have more allConcepts and memory.
+    alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
     enum undefinedConceptRef = Ix.max >> 1;
     enum undefinedLinkRef = Ix.max;
 
@@ -775,29 +775,29 @@ class Net(bool useArray = true,
     {
         import bitop_ex: setTopBit, getTopBit, resetTopBit;
         @safe @nogc pure nothrow:
+
         this(Ix ix = undefinedConceptRef,
-             bool reversion = false)
-        in { assert(ix <= undefinedConceptRef); }
+             bool reversion = false) in { assert(ix <= undefinedConceptRef); }
         body
         {
-            _cIx = ix;
+            _ix = ix;
             if (reversion)
             {
-                _cIx.setTopBit;
+                _ix.setTopBit;
             }
         }
 
         static const(ConceptRef) asUndefined() { return ConceptRef(undefinedConceptRef); }
-        bool defined() const { return _cIx != undefinedConceptRef; }
+        bool defined() const { return _ix != undefinedConceptRef; }
         auto opCast(T : bool)() { return defined(); }
 
         /** Get Index. */
-        const(Ix) ix() const { Ix ixCopy = _cIx; ixCopy.resetTopBit; return ixCopy; }
+        const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
 
         /** Get Direction. */
-        const(RelDir) dir() const { return _cIx.getTopBit ? RelDir.backward : RelDir.forward; }
+        const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
     private:
-        Ix _cIx = undefinedConceptRef;
+        Ix _ix = undefinedConceptRef;
     }
 
     /** Type-Safe Reference to $(D Link). */
@@ -815,10 +815,10 @@ class Net(bool useArray = true,
     static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
     else                    { alias Words = immutable string; }
 
-    static if (useArray) { alias ConceptRefes = Array!ConceptRef; }
-    else                 { alias ConceptRefes = ConceptRef[]; }
-    static if (useArray) { alias LinkRefes = Array!LinkRef; }
-    else                 { alias LinkRefes = LinkRef[]; }
+    static if (useArray) { alias ConceptRefs = Array!ConceptRef; }
+    else                 { alias ConceptRefs = ConceptRef[]; }
+    static if (useArray) { alias LinkRefs = Array!LinkRef; }
+    else                 { alias LinkRefs = LinkRef[]; }
 
     /** Ontology Category Index (currently from NELL). */
     struct CategoryIx
@@ -828,7 +828,7 @@ class Net(bool useArray = true,
         bool defined() const { return this != CategoryIx.asUndefined; }
         auto opCast(T : bool)() { return defined; }
     private:
-        ushort _cIx = 0;
+        ushort _ix = 0;
     }
 
     /** Concept Lemma. */
@@ -853,8 +853,8 @@ class Net(bool useArray = true,
              Sense lemmaKind,
              CategoryIx categoryIx,
              Origin origin = Origin.unknown,
-             LinkRefes inIxes = LinkRefes.init,
-             LinkRefes outIxes = LinkRefes.init)
+             LinkRefs inIxes = LinkRefs.init,
+             LinkRefs outIxes = LinkRefs.init)
         {
             this.words = words;
             this.lang = lang;
@@ -867,8 +867,8 @@ class Net(bool useArray = true,
             this.outIxes = outIxes;
         }
     private:
-        LinkRefes inIxes;
-        LinkRefes outIxes;
+        LinkRefs inIxes;
+        LinkRefs outIxes;
 
         // TODO Make this Lemma
         Words words;
@@ -1011,8 +1011,8 @@ class Net(bool useArray = true,
     pragma(msg, `Words.sizeof: `, Words.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
     pragma(msg, `Concept.sizeof: `, Concept.sizeof);
-    pragma(msg, `LinkRefes.sizeof: `, LinkRefes.sizeof);
-    pragma(msg, `ConceptRefes.sizeof: `, ConceptRefes.sizeof);
+    pragma(msg, `LinkRefs.sizeof: `, LinkRefs.sizeof);
+    pragma(msg, `ConceptRefs.sizeof: `, ConceptRefs.sizeof);
     pragma(msg, `Link.sizeof: `, Link.sizeof);
 
     /* static if (useArray) { alias Concepts = Array!Concept; } */
@@ -1037,7 +1037,7 @@ class Net(bool useArray = true,
         CategoryIx[string] categoryIxByName; /** Ontology Category Indexes by Name. */
 
         enum anyCategory = CategoryIx.asUndefined; // reserve 0 for anyCategory (unknown)
-        ushort categoryIxCounter = CategoryIx.asUndefined._cIx + 1; // 1 because 0 is reserved for anyCategory (unknown)
+        ushort categoryIxCounter = CategoryIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyCategory (unknown)
 
         size_t multiWordConceptLemmaCount = 0; // number of concepts that whose lemma contain several words
 
@@ -1823,7 +1823,7 @@ der", "spred", "spridit");
         else
         {
             assert(categoryIxCounter != categoryIxCounter.max);
-            categoryIx._cIx = categoryIxCounter++;
+            categoryIx._ix = categoryIxCounter++;
             categoryNameByIx[categoryIx] = name;
             categoryIxByName[name] = categoryIx;
         }
@@ -2464,7 +2464,7 @@ der", "spred", "spridit");
     {
         const lsWord = words.sorted; // letter-sorted words
         return allConcepts.filter!(concept => (lsWord != concept.words && // don't include one-self
-                                             lsWord == concept.words.sorted));
+                                               lsWord == concept.words.sorted));
     }
 
     /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
