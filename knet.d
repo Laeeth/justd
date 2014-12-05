@@ -836,21 +836,13 @@ class Net(bool useArray = true,
     struct Concept
     {
         /* @safe @nogc pure nothrow: */
-        this(Words words,
-             Lang lang,
-             Sense lemmaKind,
-             CategoryIx categoryIx,
+        this(in Lemma lemma,
              Origin origin = Origin.unknown,
              LinkRefs inIxes = LinkRefs.init,
              LinkRefs outIxes = LinkRefs.init)
         {
-            this.words = words;
-            this.lang = lang;
-            this.lemmaKind = lemmaKind;
-            this.categoryIx = categoryIx;
-
+            this.lemma = lemma;
             this.origin = origin;
-
             this.inIxes = inIxes;
             this.outIxes = outIxes;
         }
@@ -859,10 +851,11 @@ class Net(bool useArray = true,
         LinkRefs outIxes;
 
         // TODO Make this Lemma
-        Words words;
-        Lang lang;
-        Sense lemmaKind;
-        CategoryIx categoryIx;
+        Lemma lemma;
+        /* Words words; */
+        /* Lang lang; */
+        /* Sense sense; */
+        /* CategoryIx categoryIx; */
 
         Origin origin;
     }
@@ -1597,8 +1590,8 @@ der", "spred", "spridit");
                      Origin origin) in { assert(!words.empty); }
     body
     {
-        return store(Lemma(words, lang, kind, categoryIx),
-                     Concept(words, lang, kind, categoryIx, origin));
+        const lemma = Lemma(words, lang, kind, categoryIx);
+        return store(lemma, Concept(lemma, origin));
     }
 
     /** Try to Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
@@ -1702,8 +1695,8 @@ der", "spred", "spridit");
                 if (false)
                 {
                     dln("warning: Concepts ",
-                        conceptByIx(srcIx).words, " and ",
-                        conceptByIx(dstIx).words, " already related as ",
+                        conceptByIx(srcIx).lemma.words, " and ",
+                        conceptByIx(dstIx).lemma.words, " already related as ",
                         rel);
                 }
                 return existingIx;
@@ -1746,8 +1739,8 @@ der", "spred", "spridit");
 
         if (false)
         {
-            dln(" src:", conceptByIx(link._srcIx).words,
-                " dst:", conceptByIx(link._dstIx).words,
+            dln(" src:", conceptByIx(link._srcIx).lemma.words,
+                " dst:", conceptByIx(link._dstIx).lemma.words,
                 " rel:", rel,
                 " origin:", origin,
                 " negation:", negation,
@@ -2301,17 +2294,17 @@ der", "spred", "spridit");
 
     void showConcept(in Concept concept, real weight)
     {
-        if (concept.words) write(` `, concept.words.tr(`_`, ` `));
+        if (concept.lemma.words) write(` `, concept.lemma.words.tr(`_`, ` `));
 
         write(`(`); // open
 
-        if (concept.lang != Lang.unknown)
+        if (concept.lemma.lang != Lang.unknown)
         {
-            write(concept.lang);
+            write(concept.lemma.lang);
         }
-        if (concept.lemmaKind != Sense.unknown)
+        if (concept.lemma.sense != Sense.unknown)
         {
-            write(`-`, concept.lemmaKind);
+            write(`-`, concept.lemma.sense);
         }
 
         writef(`:%.2f@%s),`, weight, concept.origin.toNice); // close
@@ -2347,7 +2340,8 @@ der", "spred", "spridit");
 
         if (normalizedLine == `palindrome`)
         {
-            foreach (palindromeConcept; allConcepts.filter!(concept => concept.words.isPalindrome(3)))
+            foreach (palindromeConcept; allConcepts.filter!(concept =>
+                                                            concept.lemma.words.isPalindrome(3)))
             {
                 showLinkConcept(palindromeConcept,
                                 Rel.instanceOf,
@@ -2411,8 +2405,8 @@ der", "spred", "spridit");
         // as is
         foreach (lineConcept; lineConcepts)
         {
-            writeln(`  - in `, lineConcept.lang.toName,
-                    ` of sense `, lineConcept.lemmaKind);
+            writeln(`  - in `, lineConcept.lemma.lang.toName,
+                    ` of sense `, lineConcept.lemma.sense);
 
             // show forwards
             foreach (group; insByRel(lineConcept))
@@ -2451,8 +2445,8 @@ der", "spred", "spridit");
     auto anagramsOf(S)(S words) if (isSomeString!S)
     {
         const lsWord = words.sorted; // letter-sorted words
-        return allConcepts.filter!(concept => (lsWord != concept.words && // don't include one-self
-                                               lsWord == concept.words.sorted));
+        return allConcepts.filter!(concept => (lsWord != concept.lemma.words && // don't include one-self
+                                               lsWord == concept.lemma.words.sorted));
     }
 
     /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
