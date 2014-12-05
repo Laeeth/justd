@@ -777,6 +777,8 @@ class Net(bool useArray = true,
         import bitop_ex: setTopBit, getTopBit, resetTopBit;
         @safe @nogc pure nothrow:
 
+        alias type = T;
+
         this(Ix ix_ = undefinedIx,
              bool reversion = true) in { assert(ix_ <= undefinedIx); }
         body
