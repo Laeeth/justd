@@ -851,7 +851,7 @@ class Net(bool useArray = true,
     private:
         LinkRefs inIxes;
         LinkRefs outIxes;
-        Lemma lemma;
+        const(Lemma) lemma;
         Origin origin;
     }
 
