@@ -767,28 +767,24 @@ class Net(bool useArray = true,
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
     alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
-    enum undefinedConceptRef = Ix.max >> 1;
-    enum undefinedLinkRef = Ix.max;
+    enum undefinedRef = Ix.max >> 1;
 
-    /** Type-safe Reference to $(D Concept). */
-    struct ConceptRef
+    /** Type-Safe Directed Reference to $(D T). */
+    struct Ref(T)
     {
         import bitop_ex: setTopBit, getTopBit, resetTopBit;
         @safe @nogc pure nothrow:
 
-        this(Ix ix = undefinedConceptRef,
-             bool reversion = false) in { assert(ix <= undefinedConceptRef); }
+        this(Ix ix = undefinedRef,
+             bool reversion = false) in { assert(ix <= undefinedRef); }
         body
         {
             _ix = ix;
-            if (reversion)
-            {
-                _ix.setTopBit;
-            }
+            if (reversion) { _ix.setTopBit; }
         }
 
-        static const(ConceptRef) asUndefined() { return ConceptRef(undefinedConceptRef); }
-        bool defined() const { return _ix != undefinedConceptRef; }
+        static const(Ref) asUndefined() { return Ref(undefinedRef); }
+        bool defined() const { return _ix != undefinedRef; }
         auto opCast(T : bool)() { return defined(); }
 
         /** Get Index. */
@@ -797,19 +793,11 @@ class Net(bool useArray = true,
         /** Get Direction. */
         const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
     private:
-        Ix _ix = undefinedConceptRef;
+        Ix _ix = undefinedRef;
     }
 
-    /** Type-Safe Reference to $(D Link). */
-    struct LinkRef
-    {
-        @safe @nogc pure nothrow:
-        static LinkRef asUndefined() { return LinkRef(undefinedLinkRef); }
-        bool defined() const { return _lIx != undefinedLinkRef; }
-        auto opCast(T : bool)() { return defined(); }
-    private:
-        Ix _lIx = undefinedLinkRef;
-    }
+    alias ConceptRef = Ref!Concept;
+    alias LinkRef    = Ref!Link;
 
     /** String Storage */
     static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
@@ -1067,11 +1055,11 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) linkByIx(LinkRef ix) inout { return allLinks[ix._lIx]; }
-        ref inout(Link)  opIndex(LinkRef ix) inout { return linkByIx(ix); }
+        ref inout(Link) linkByIx(LinkRef lref) inout { return allLinks[lref.ix]; }
+        ref inout(Link)  opIndex(LinkRef lref) inout { return linkByIx(lref); }
 
-        ref inout(Concept) conceptByIx(ConceptRef ix) inout @nogc { return allConcepts[ix.ix]; }
-        ref inout(Concept)     opIndex(ConceptRef ix) inout @nogc { return conceptByIx(ix); }
+        ref inout(Concept) conceptByIx(ConceptRef cref) inout @nogc { return allConcepts[cref.ix]; }
+        ref inout(Concept)     opIndex(ConceptRef cref) inout @nogc { return conceptByIx(cref); }
     }
 
     Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
@@ -1573,7 +1561,7 @@ der", "spred", "spridit");
     /** Lookup-or-Store $(D Concept) at $(D lemma) index.
      */
     ConceptRef store(in Lemma lemma,
-                    Concept concept) in { assert(!lemma.words.empty); }
+                     Concept concept) in { assert(!lemma.words.empty); }
     body
     {
         if (lemma in conceptIxByLemma)
@@ -1589,7 +1577,7 @@ der", "spred", "spridit");
             }
 
             // store
-            assert(allConcepts.length <= undefinedConceptRef);
+            assert(allConcepts.length <= undefinedRef);
             const cix = ConceptRef(cast(Ix)allConcepts.length);
             allConcepts ~= concept; // .. new concept that is stored
             conceptIxByLemma[lemma] = cix; // store index to ..
@@ -1603,10 +1591,10 @@ der", "spred", "spridit");
 
     /** Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
     ConceptRef store(Words words,
-                    Lang lang,
-                    Sense kind,
-                    CategoryIx categoryIx,
-                    Origin origin) in { assert(!words.empty); }
+                     Lang lang,
+                     Sense kind,
+                     CategoryIx categoryIx,
+                     Origin origin) in { assert(!words.empty); }
     body
     {
         return store(Lemma(words, lang, kind, categoryIx),
@@ -1615,10 +1603,10 @@ der", "spred", "spridit");
 
     /** Try to Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
     ConceptRef tryStore(Words words,
-                       Lang lang,
-                       Sense kind,
-                       CategoryIx categoryIx,
-                       Origin origin)
+                        Lang lang,
+                        Sense kind,
+                        CategoryIx categoryIx,
+                        Origin origin)
     body
     {
         if (words.empty)
@@ -1729,8 +1717,8 @@ der", "spred", "spridit");
                          negation,
                          origin);
 
-        assert(allLinks.length <= undefinedLinkRef); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
-        assert(allLinks.length <= undefinedLinkRef); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= undefinedRef); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= undefinedRef); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
