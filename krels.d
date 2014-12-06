@@ -301,6 +301,7 @@ enum Rel:ubyte
 /** Relation Direction. */
 enum RelDir
 {
+    any,                        /// Any direction wildcard.
     backward,
     forward
 }
