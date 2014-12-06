@@ -28,6 +28,12 @@ void main(string[] args)
     static assert("ab" ~ null == "ab");
     static assert("ab" ~ [] == "ab");
 
+    static assert("é".length == 2);
+    static assert("é".byCodeUnit.length == 2);
+    static assert("é".byCodePoint.length == 2);
+    pragma(msg, "é"[0]);
+    pragma(msg, "é"[1]);
+
     writeln("åäö".length);
     writeln("åäö".retro);
     writeln("åäö".byCodeUnit.retro);
