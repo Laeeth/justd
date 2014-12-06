@@ -769,7 +769,7 @@ class Net(bool useArray = true,
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
     alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
-    enum undefinedIx = Ix.max >> 1;
+    enum nullIx = Ix.max >> 1;
 
     /** Type-Safe Directed Reference to $(D T). */
     struct Ref(T)
@@ -779,16 +779,16 @@ class Net(bool useArray = true,
 
         alias type = T;
 
-        this(Ix ix_ = undefinedIx,
-             bool reversion = true) in { assert(ix_ <= undefinedIx); }
+        this(Ix ix_ = nullIx,
+             bool reversion = true) in { assert(ix_ <= nullIx); }
         body
         {
             _ix = ix_;
             if (reversion) { _ix.setTopBit; }
         }
 
-        static const(Ref) asUndefined() { return Ref(undefinedIx); }
-        bool defined() const { return this.ix != undefinedIx; }
+        static const(Ref) asUndefined() { return Ref(nullIx); }
+        bool defined() const { return this.ix != nullIx; }
         auto opCast(T : bool)() { return defined(); }
 
         /** Get Index. */
@@ -797,7 +797,7 @@ class Net(bool useArray = true,
         /** Get Direction. */
         const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
     private:
-        Ix _ix = undefinedIx;
+        Ix _ix = nullIx;
     }
 
     alias ConceptRef = Ref!Concept;
@@ -1567,7 +1567,7 @@ der", "spred", "spridit");
             }
 
             // store
-            assert(allConcepts.length <= undefinedIx);
+            assert(allConcepts.length <= nullIx);
             const cix = ConceptRef(cast(Ix)allConcepts.length);
             allConcepts ~= concept; // .. new concept that is stored
             conceptIxByLemma[lemma] = cix; // store index to ..
@@ -1707,8 +1707,8 @@ der", "spred", "spridit");
                          negation,
                          origin);
 
-        assert(allLinks.length <= undefinedIx); conceptByIx(link._srcIx).inIxes ~= linkRef; connectednessSum++;
-        assert(allLinks.length <= undefinedIx); conceptByIx(link._dstIx).outIxes ~= linkRef; connectednessSum++;
+        assert(allLinks.length <= nullIx); conceptByIx(link._srcIx).inIxes ~= linkRef; connectednessSum++;
+        assert(allLinks.length <= nullIx); conceptByIx(link._dstIx).outIxes ~= linkRef; connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
