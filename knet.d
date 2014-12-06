@@ -1673,13 +1673,13 @@ der", "spred", "spridit");
         existing links is currently too slow
      */
     LinkRef connect(ConceptRef srcIx,
-                   Rel rel,
-                   ConceptRef dstIx,
-                   Origin origin = Origin.unknown,
-                   real weight = 1.0, // 1.0 means absolutely true for Origin manual
-                   bool negation = false,
-                   bool reversion = false,
-                   bool checkExisting = false)
+                    Rel rel,
+                    ConceptRef dstIx,
+                    Origin origin = Origin.unknown,
+                    real weight = 1.0, // 1.0 means absolutely true for Origin manual
+                    bool negation = false,
+                    bool reversion = false,
+                    bool checkExisting = false)
     body
     {
         if (srcIx == dstIx) { return LinkRef.asUndefined; } // don't allow self-reference for now
@@ -1700,15 +1700,15 @@ der", "spred", "spridit");
             }
         }
 
-        auto lix  = LinkRef(cast(Ix)allLinks.length);
+        auto linkRef  = LinkRef(cast(Ix)allLinks.length);
         auto link = Link(reversion ? dstIx : srcIx,
                          rel,
                          reversion ? srcIx : dstIx,
                          negation,
                          origin);
 
-        assert(allLinks.length <= undefinedIx); conceptByIx(link._srcIx).inIxes ~= lix; connectednessSum++;
-        assert(allLinks.length <= undefinedIx); conceptByIx(link._dstIx).outIxes ~= lix; connectednessSum++;
+        assert(allLinks.length <= undefinedIx); conceptByIx(link._srcIx).inIxes ~= linkRef; connectednessSum++;
+        assert(allLinks.length <= undefinedIx); conceptByIx(link._dstIx).outIxes ~= linkRef; connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
@@ -1746,7 +1746,7 @@ der", "spred", "spridit");
 
         allLinks ~= link; // TODO Avoid copying here
 
-        return lix; // allLinks.back;
+        return linkRef; // allLinks.back;
     }
     alias relate = connect;
 
