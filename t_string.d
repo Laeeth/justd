@@ -3,9 +3,10 @@
 import std.stdio;
 import std.range: retro, array;
 import std.algorithm: walkLength;
-import std.utf;
-import std.uni;
+import std.utf: byCodeUnit, byWchar, byDchar;
+import std.uni: byCodePoint, byGrapheme;
 import std.conv: to;
+import algorithm_ex: isPalindrome;
 
 void main(string[] args)
 {
@@ -35,6 +36,7 @@ void main(string[] args)
     static assert("é".byCodePoint.length == 2);
 
     assert("é".byGrapheme.walkLength == 1);
+    /* assert("é".byGrapheme.isPalindrome); */
 
     writeln("åäö".length);
     writeln("åäö".retro);
@@ -45,6 +47,5 @@ void main(string[] args)
     writeln("åäö".byWchar.array.length);
     writeln("åäö".byDchar.array.length);
 
-    import algorithm_ex: isPalindrome;
     writeln("åäå".isPalindrome);
 }

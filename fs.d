@@ -2463,9 +2463,9 @@ class GStats
                                FileContent.sourceCode);
 
         static immutable keywordsJavascript = ["break", "case", "catch", "continue", "debugger", "default", "delete",
-                                   "do", "else", "finally", "for", "function", "if", "in", "instanceof",
-                                   "new", "return", "switch", "this", "throw", "try", "typeof", "var",
-                                   "void", "while", "with" ];
+                                               "do", "else", "finally", "for", "function", "if", "in", "instanceof",
+                                               "new", "return", "switch", "this", "throw", "try", "typeof", "var",
+                                               "void", "while", "with" ];
         txtFKinds ~= new FKind("JavaScript", [], ["js"],
                                [], 0, [],
                                keywordsJavascript,
@@ -2513,6 +2513,27 @@ class GStats
                                [], // N/A
                                defaultStringDelims,
                                FileContent.scriptCode);
+
+        // Simulation
+        static immutable keywordsModelica = ["algorithm", "discrete", "false", "loop", "pure",
+                                             "and", "each", "final", "model", "record",
+                                             "annotation", "else", "flow", "not", "redeclare",
+                                             "elseif", "for", "operator", "replaceable",
+                                             "block", "elsewhen", "function", "or", "return",
+                                             "break", "encapsulated", "if", "outer", "stream",
+                                             "class", "end", "import", "output", "then",
+                                             "connect", "enumeration", "impure", "package", "true",
+                                             "connector", "equation", "in", "parameter", "type",
+                                             "constant", "expandable", "initial", "partial", "when",
+                                             "constrainedby", "extends", "inner", "protected", "while",
+                                             "der", "external", "input", "public", "within"];
+        auto kindModelica = new FKind("Modelica", [], ["mo"], [], 0, [],
+                                      keywordsModelica,
+                                      cCommentDelims,
+                                      defaultStringDelims,
+                                      FileContent.sourceCode,
+                                      FileKindDetection.equalsWhatsGiven,
+                                      Lang.modelica);
 
         // Numerical Computing
 

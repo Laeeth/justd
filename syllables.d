@@ -4,6 +4,7 @@ module syllables;
 
 import grammars: Lang;
 import std.traits: isSomeString;
+import std.uni: byGrapheme;
 
 /** Count Number of Syllables in $(D s) interpreted in language $(D lang).
     See also: http://eayd.in/?p=232

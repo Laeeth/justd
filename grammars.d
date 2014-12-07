@@ -171,6 +171,7 @@ enum Lang:ubyte
     rust,
     swift,
     fortran,
+    modelica,
 }
 
 /** Return true if $(D lang) is case-sensitive. */
@@ -311,6 +312,7 @@ string toName(Lang lang) @safe pure @nogc nothrow
             case rust: return `Rust`;
             case swift: return `Swift`;
             case fortran: return `Fortran`;
+            case modelica: return `Modelica`;
         }
     }
 
