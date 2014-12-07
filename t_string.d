@@ -2,8 +2,10 @@
 
 import std.stdio;
 import std.range: retro, array;
+import std.algorithm: walkLength;
 import std.utf;
 import std.uni;
+import std.conv: to;
 
 void main(string[] args)
 {
@@ -31,8 +33,8 @@ void main(string[] args)
     static assert("é".length == 2);
     static assert("é".byCodeUnit.length == 2);
     static assert("é".byCodePoint.length == 2);
-    pragma(msg, "é"[0]);
-    pragma(msg, "é"[1]);
+
+    assert("é".byGrapheme.walkLength == 1);
 
     writeln("åäö".length);
     writeln("åäö".retro);
