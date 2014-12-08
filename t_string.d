@@ -38,6 +38,8 @@ void main(string[] args)
     assert("é".byGrapheme.walkLength == 1);
     /* assert("é".byGrapheme.isPalindrome); */
 
+    writefln(`"é".length: `, "é".length, " bytes: %(%x)", cast(ubyte[])"é");
+
     writeln("åäö".length);
     writeln("åäö".retro);
     writeln("åäö".byCodeUnit.retro);
