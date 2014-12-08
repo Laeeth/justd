@@ -493,15 +493,57 @@ unittest
     assert('é'.isEnglishAccentedVowel);
 }
 
-/** Swedish Vowels. */
-enum swedishVowels = ['a', 'o', 'u', 'å', 'e', 'i', 'y', 'ä', 'ö'];
+/** Swedish Hard Vowels. */
+enum swedishHardVowels = ['a', 'o', 'u', 'å'];
 
-/** Check if $(D c) is a Vowel. */
+/** Swedish Soft Vowels. */
+enum swedishSoftVowels = ['e', 'i', 'y', 'ä', 'ö'];
+
+/** Swedish Vowels. */
+enum swedishVowels = (swedishHardVowels ~
+                      swedishSoftVowels);
+
+/** Check if $(D c) is a Swedish Vowel. */
 bool isSwedishVowel(C)(C c) if (isSomeChar!C)
 {
     // TODO Reuse swedishVowels and hash-table
     return c.of('a', 'o', 'u', 'å',
                 'e', 'i', 'y', 'ä', 'ö');
+}
+
+/** Spanish Accented Vowels. */
+enum spanishAccentedVowels = ['é', 'í', 'ó', 'ú', 'ü', 'ñ', 'ü'];
+
+/** Check if $(D c) is a Spanish Accented Vowel. */
+bool isSpanishAccentedVowel(C)(C c) if (isSomeChar!C)
+{
+    return c.of(spanishAccentedVowels);
+}
+
+/** Check if $(D c) is a Spanish Vowel. */
+bool isSpanishVowel(C)(C c) if (isSomeChar!C)
+{
+    return (c.isEnglishVowel ||
+            c.isSpanishAccentedVowel);
+}
+
+unittest
+{
+    assert('é'.isSpanishVowel);
+}
+
+/** Check if $(D c) is a Vowel in language $(D lang). */
+bool isVowel(C)(C c, Lang lang) if (isSomeChar!C)
+{
+    with (Lang)
+    {
+        switch (lang)
+        {
+            case en: return c.isEnglishVowel;
+            case sv: return c.isSwedishVowel;
+            default: return c.isEnglishVowel;
+        }
+    }
 }
 
 unittest
