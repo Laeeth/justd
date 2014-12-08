@@ -302,8 +302,8 @@ enum Rel:ubyte
 enum RelDir
 {
     any,                        /// Any direction wildcard.
-    backward,
-    forward
+    backward,                   /// Forward.
+    forward                     /// Backward.
 }
 
 auto toHumanLang(const Rel rel,
