@@ -7,6 +7,58 @@ import std.traits: isSomeString;
 import std.uni: byGrapheme;
 
 /** Count Number of Syllables in $(D s) interpreted in language $(D lang).
+
+    The Algorithm:
+
+    - If number of letters <= 3 : return 1. Incorrect for Ira
+
+    - If doesn’t end with “ted” or “tes” or “ses” or “ied” or “ies”, discard
+      “es” and “ed” at the end. If it has only 1 vowel or 1 set of consecutive
+      vowels, discard. (like “speed”, “fled” etc.)
+
+     - Discard trailing “e”, except where ending is “le” and isn’t in the
+       le_except array
+
+    - Check if consecutive vowels exists, triplets or pairs, count them as one.
+
+    - Count remaining vowels in the word.
+
+    - Add one if begins with “mc”
+
+    - Add one if ends with “y” but is not surrouned by vowel. (ex. “mickey”)
+
+    - Add one if “y” is surrounded by non-vowels and is not in the last
+      word. (ex. “python”)
+
+    - If begins with “tri-” or “bi-” and is followed by a vowel, add one. (so
+      that “ia” at “triangle” won’t be mistreated by step 4)
+
+    - If ends with “-ian”, should be counted as two syllables, except for
+      “-tian” and “-cian”. (ex. “indian” and “politician” should be handled
+      differently and shouldn’t be mistreated by step 4)
+
+    - If begins with “co-” and is followed by a vowel, check if it exists in the
+      double syllable dictionary, if not, check if in single dictionary and act
+      accordingly. (co_one and co_two dictionaries handle it. Ex. “coach” and
+      “coapt” shouldn’t be treated equally by step 4)
+
+    - If starts with “pre-” and is followed by a vowel, check if exists in the
+      double syllable dictionary, if not, check if in single dictionary and act
+      accordingly. (similar to step 11, but very weak dictionary for the moment)
+
+    - Check for “-n’t” and cross match with dictionary to add
+      syllable. (ex. “doesn’t”, “couldn’t”)
+
+    - Handling the exceptional words. (ex. “serious”, “fortunately”)
+
+    Like I said earlier, this isn’t perfect, so there are some steps to add or
+    modify, but it works just “fine”. Some exceptions should be added such as
+    “evacuate”, “ambulances”, “shuttled”, “anyone” etc… Also it can’t handle
+    some compund words like “facebook”. Counting only “face” would result
+    correctly “1″, and “book” would also come out correct, but due to the “e”
+    letter not being detected as a “silent e”, “facebook” will return “3
+    syllables.”
+
     See also: http://eayd.in/?p=232
     See also: http://forum.dlang.org/thread/ovzcetxbrdblpmyizdjr@forum.dlang.org#post-ovzcetxbrdblpmyizdjr:40forum.dlang.org
  */
