@@ -470,17 +470,27 @@ enum Usage:ubyte
     call
 }
 
-/** English Vowel. */
-enum EnglishVowel { a, o, u, e, i, y }
-
 /** English Vowels. */
 enum englishVowels = ['a', 'o', 'u', 'e', 'i', 'y'];
 
 /** Check if $(D c) is a Vowel. */
 bool isEnglishVowel(C)(C c) if (isSomeChar!C)
 {
-    // TODO Reuse englishVowels and hash-table
-    return c.of('a', 'o', 'u', 'e', 'i', 'y');
+    return c.of('a', 'o', 'u', 'e', 'i', 'y'); // TODO Reuse englishVowels and hash-table
+}
+
+/** English Accented Vowels. */
+enum englishAccentedVowels = ['é'];
+
+/** Check if $(D c) is an Accented Vowel. */
+bool isEnglishAccentedVowel(C)(C c) if (isSomeChar!C)
+{
+    return c.of(['é']); // TODO Reuse englishAccentedVowels and hash-table
+}
+
+unittest
+{
+    assert('é'.isEnglishAccentedVowel);
 }
 
 /** Swedish Vowels. */
