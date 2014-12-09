@@ -2,7 +2,7 @@
 
 import std.stdio, std.algorithm, std.range;
 
-int main(string[] args)
+unittest
 {
     alias wln = writeln;
 
@@ -53,6 +53,4 @@ int main(string[] args)
     assert(!ns);
     assert(s[0..0]);
     assert(s[$..$]);
-
-    return 0;
 }
