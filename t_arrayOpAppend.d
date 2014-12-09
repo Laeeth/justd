@@ -11,8 +11,8 @@ unittest
     alias A = Array!E; // array type
     A[K] x;
 
-    x["a"] ~= 42;
+    // x["a"] = A.init; // this line prevents RangeError
+    x["a"] ~= 42; // this triggers RangeError
 
-    x["a"] = A.init;
     writeln(x);
 }
