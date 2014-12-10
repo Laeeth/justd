@@ -871,7 +871,7 @@ class Net(bool useArray = true,
     auto  linksOf(in Concept concept, //
                   RelDir dir = RelDir.any,
                   Rel rel = Rel.any,
-                  bool negation = false) // previously inLinksOf, outLinksOf
+                  bool negation = false)
     {
         return concept.links[]
                       .filter!(linkRef => dir.of(RelDir.any, linkRef.dir)) // TODO functionize to match
@@ -890,7 +890,7 @@ class Net(bool useArray = true,
     }
 
     /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto  friendsOf(in Concept concept, // previously insOf, outsOf
+    auto  friendsOf(in Concept concept,
                     RelDir dir = RelDir.any,
                     Rel rel = Rel.any,
                     bool negation = false)
