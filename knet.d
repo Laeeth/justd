@@ -802,7 +802,7 @@ class Net(bool useArray = true,
 
         static const(Ref) asUndefined() { return Ref(nullIx); }
         bool defined() const { return this.ix != nullIx; }
-        auto opCast(T : bool)() { return defined(); }
+        auto opCast(U : bool)() { return defined(); }
 
         /** Get Index. */
         const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
@@ -876,10 +876,9 @@ class Net(bool useArray = true,
         return concept.links[]
                       .filter!(linkRef => dir.of(RelDir.any, linkRef.dir)) // TODO functionize to match
                       .map!(linkRef => linkByRef(linkRef))
-                      .filter!(link =>
-                               ((link._rel == rel ||
-                                 link._rel.specializes(rel)) && // TODO functionize to match
-                                link._negation == negation));
+                      .filter!(link => ((link._rel == rel ||
+                                         link._rel.specializes(rel)) && // TODO functionize to match
+                                        link._negation == negation));
     }
 
     auto linksGroupedByRel(in Concept concept,
