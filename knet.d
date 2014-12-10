@@ -53,8 +53,8 @@ import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
 
 import algorithm_ex: isPalindrome, either;
-import range_ex: stealFront, stealBack;
-import traits_ex: isSourceOf;
+import range_ex: stealFront, stealBack, ElementType;
+import traits_ex: isSourceOf, isSourceOfSomeString;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
 import stemming;
@@ -787,6 +787,19 @@ class Net(bool useArray = true,
             if (reversion) { _ix.setTopBit; }
         }
 
+        this(Ref rhs, RelDir dir)
+        {
+            this._ix = rhs.ix;
+            if (dir == RelDir.backward) // TODO functionize to setDir()
+            {
+                _ix.setTopBit;
+            }
+            else
+            {
+                _ix.resetTopBit;
+            }
+        }
+
         static const(Ref) asUndefined() { return Ref(nullIx); }
         bool defined() const { return this.ix != nullIx; }
         auto opCast(T : bool)() { return defined(); }
@@ -842,85 +855,56 @@ class Net(bool useArray = true,
         /* @safe @nogc pure nothrow: */
         this(in Lemma lemma,
              Origin origin = Origin.unknown,
-             LinkRefs inIxes = LinkRefs.init,
-             LinkRefs outIxes = LinkRefs.init)
+             LinkRefs links = LinkRefs.init)
         {
             this.lemma = lemma;
             this.origin = origin;
-            this.inIxes = inIxes;
-            this.outIxes = outIxes;
+            this.links = links;
         }
     private:
-        LinkRefs inIxes;
-        LinkRefs outIxes;
+        LinkRefs links;
         const(Lemma) lemma;
         Origin origin;
     }
 
-    /** Get Ingoing Links of $(D concept). */
-    auto  inLinksOf(in Concept concept,
-                    Rel rel = Rel.any,
-                    bool negation = false)
+    /** Get Links of $(D concept). */
+    auto  linksOf(in Concept concept, //
+                  RelDir dir = RelDir.any,
+                  Rel rel = Rel.any,
+                  bool negation = false) // previously inLinksOf, outLinksOf
     {
-        return concept. inIxes[].map!(ix => linkByIx(ix)).filter!(link =>
-                                                                  ((link._rel == rel ||
-                                                                    link._rel.specializes(rel)) &&
-                                                                   link._negation == negation));
+        return concept.links[]
+                      .filter!(lref => dir.of(RelDir.any, lref.dir)) // TODO functionize to match
+                      .map!(ix => linkByIx(ix))
+                      .filter!(link =>
+                               ((link._rel == rel ||
+                                 link._rel.specializes(rel)) && // TODO functionize to match
+                                link._negation == negation));
     }
 
-    /** Get Outgoing Links of $(D concept). */
-    auto outLinksOf(in Concept concept,
-                    Rel rel = Rel.any,
-                    bool negation = false)
+    auto linksGroupedByRel(in Concept concept,
+                           RelDir dir = RelDir.any)
     {
-        return concept. outIxes[].map!(ix => linkByIx(ix)).filter!(link =>
-                                                                   ((link._rel == rel ||
-                                                                     link._rel.specializes(rel)) &&
-                                                                    link._negation == negation));
+        return linksOf(concept, dir).array.groupBy!((a, b) => // TODO array needed?
+                                                    (a._negation == b._negation &&
+                                                     a._rel == b._rel));
     }
 
     /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto  insOf(in Concept concept,
-                Rel rel = Rel.any,
-                bool negation = false)
+    auto  friendsOf(in Concept concept, // previously insOf, outsOf
+                    RelDir dir = RelDir.any,
+                    Rel rel = Rel.any,
+                    bool negation = false)
     {
-        return  inLinksOf(concept, rel, negation).map!(link => tuple(link, dst(link)));
+        return  linksOf(concept, dir, rel, negation).map!(link => tuple(link, dst(link)));
     }
 
-    /** Get Outgoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto outsOf(in Concept concept,
-                Rel rel = Rel.any,
-                bool negation = false)
+    auto friendsByRel(in Concept concept,
+                      RelDir dir = RelDir.any)
     {
-        return outLinksOf(concept, rel, negation).map!(link => tuple(link, src(link)));
-    }
-
-    auto inLinksGroupedByRel(in Concept concept)
-    {
-        return inLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
-                                                 (a._negation == b._negation &&
-                                                  a._rel == b._rel));
-    }
-
-    auto outLinksGroupedByRel(in Concept concept)
-    {
-        return outLinksOf(concept).array.groupBy!((a, b) => // TODO array needed?
-                                                  (a._negation == b._negation &&
-                                                   a._rel == b._rel));
-    }
-
-    auto insByRel(in Concept concept)
-    {
-        return insOf(concept).array.groupBy!((a, b) => // TODO array needed?
-                                             (a[0]._negation == b[0]._negation &&
-                                              a[0]._rel == b[0]._rel));
-    }
-
-    auto outsByRel(in Concept concept)
-    {
-        return outsOf(concept).array.groupBy!((a, b) => // TODO array needed?
-                                              (a[0]._negation == b[0]._negation &&
-                                               a[0]._rel == b[0]._rel));
+        return friendsOf(concept, dir).array.groupBy!((a, b) => // TODO array needed?
+                                                      (a[0]._negation == b[0]._negation &&
+                                                       a[0]._rel == b[0]._rel));
     }
 
     /** Many-Concepts-to-Many-Concepts Link (Edge).
@@ -939,8 +923,8 @@ class Net(bool useArray = true,
              Origin origin = Origin.unknown) in { assert(srcIx.defined && dstIx.defined); }
         body
         {
-            this._srcIx = srcIx;
-            this._dstIx = dstIx;
+            this._srcRef = srcIx;
+            this._dstRef = dstIx;
             this._rel = rel;
             this._negation = negation;
             this._origin = origin;
@@ -972,8 +956,8 @@ class Net(bool useArray = true,
         }
 
     private:
-        ConceptRef _srcIx;
-        ConceptRef _dstIx;
+        ConceptRef _srcRef;
+        ConceptRef _dstRef;
 
         Weight packedWeight;
 
@@ -983,8 +967,8 @@ class Net(bool useArray = true,
         Origin _origin;
     }
 
-    Concept src(Link link) { return conceptByIx(link._srcIx); }
-    Concept dst(Link link) { return conceptByIx(link._dstIx); }
+    Concept src(Link link) { return conceptByRef(link._srcRef); }
+    Concept dst(Link link) { return conceptByRef(link._dstRef); }
 
     pragma(msg, `Words.sizeof: `, Words.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
@@ -1046,17 +1030,17 @@ class Net(bool useArray = true,
     @safe pure nothrow
     {
         ref inout(Link) linkByIx(LinkRef lref) inout { return allLinks[lref.ix]; }
-        ref inout(Link)  opIndex(LinkRef lref) inout { return linkByIx(lref); }
+        /* ref inout(Link)  opIndex(LinkRef lref) inout { return linkByIx(lref); } */
 
-        ref inout(Concept) conceptByIx(ConceptRef cref) inout @nogc { return allConcepts[cref.ix]; }
-        ref inout(Concept)     opIndex(ConceptRef cref) inout @nogc { return conceptByIx(cref); }
+        ref inout(Concept) conceptByRef(ConceptRef cref) inout @nogc { return allConcepts[cref.ix]; }
+        /* ref inout(Concept)      opIndex(ConceptRef cref) inout @nogc { return conceptByRef(cref); } */
     }
 
     Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
     {
         if (lemma in conceptIxByLemma)
         {
-            return typeof(return)(conceptByIx(conceptIxByLemma[lemma]));
+            return typeof(return)(conceptByRef(conceptIxByLemma[lemma]));
         }
         else
         {
@@ -1076,7 +1060,7 @@ class Net(bool useArray = true,
         auto lemma = Lemma(words, lang, sense, category);
         if (lemma in conceptIxByLemma) // if hashed lookup possible
         {
-            concepts = [conceptByIx(conceptIxByLemma[lemma])]; // use it
+            concepts = [conceptByRef(conceptIxByLemma[lemma])]; // use it
         }
         else
         {
@@ -1090,7 +1074,7 @@ class Net(bool useArray = true,
                 auto lemmaFixed = Lemma(wordsFixed, lang, sense, category);
                 if (lemmaFixed in conceptIxByLemma)
                 {
-                    concepts = [conceptByIx(conceptIxByLemma[lemmaFixed])];
+                    concepts = [conceptByRef(conceptIxByLemma[lemmaFixed])];
                 }
             }
         }
@@ -1107,7 +1091,7 @@ class Net(bool useArray = true,
     /** Get All Concepts Indexed by a Lemma having words $(D words). */
     auto conceptsByWordsOnly(S)(S words) if (isSomeString!S)
     {
-        return conceptIxesByWordsOnly(words).map!(conceptIx => conceptByIx(conceptIx));
+        return conceptIxesByWordsOnly(words).map!(conceptIx => conceptByRef(conceptIx));
     }
 
     /** Get All Possible Lemmas related to $(D word).
@@ -1692,8 +1676,8 @@ der", "spred", "spridit");
                 if (false)
                 {
                     dln("warning: Concepts ",
-                        conceptByIx(srcIx).lemma.words, " and ",
-                        conceptByIx(dstIx).lemma.words, " already related as ",
+                        conceptByRef(srcIx).lemma.words, " and ",
+                        conceptByRef(dstIx).lemma.words, " already related as ",
                         rel);
                 }
                 return existingIx;
@@ -1707,8 +1691,8 @@ der", "spred", "spridit");
                          negation,
                          origin);
 
-        assert(allLinks.length <= nullIx); conceptByIx(link._srcIx).inIxes ~= linkRef; connectednessSum++;
-        assert(allLinks.length <= nullIx); conceptByIx(link._dstIx).outIxes ~= linkRef; connectednessSum++;
+        assert(allLinks.length <= nullIx); conceptByRef(link._srcRef).inIxes ~= LinkRef(linkRef, RelDir.forward); connectednessSum++;
+        assert(allLinks.length <= nullIx); conceptByRef(link._dstRef).outIxes ~= LinkRef(linkRef, RelDir.backward); connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
@@ -1736,8 +1720,8 @@ der", "spred", "spridit");
 
         if (false)
         {
-            dln(" src:", conceptByIx(link._srcIx).lemma.words,
-                " dst:", conceptByIx(link._dstIx).lemma.words,
+            dln(" src:", conceptByRef(link._srcRef).lemma.words,
+                " dst:", conceptByRef(link._dstRef).lemma.words,
                 " rel:", rel,
                 " origin:", origin,
                 " negation:", negation,
@@ -1996,11 +1980,11 @@ der", "spred", "spridit");
         bool done = false;
         if (!link._origin.defined)
         {
-            // TODO prevent duplicate lookups to conceptByIx
-            if (!conceptByIx(link._srcIx).origin.defined)
-                conceptByIx(link._srcIx).origin = link._origin;
-            if (!conceptByIx(link._dstIx).origin.defined)
-                conceptByIx(link._dstIx).origin = link._origin;
+            // TODO prevent duplicate lookups to conceptByRef
+            if (!conceptByRef(link._srcRef).origin.defined)
+                conceptByRef(link._srcRef).origin = link._origin;
+            if (!conceptByRef(link._dstRef).origin.defined)
+                conceptByRef(link._dstRef).origin = link._origin;
             done = true;
         }
         return done;
@@ -2219,17 +2203,17 @@ der", "spred", "spridit");
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkRef.max.
      */
     LinkRef areConnectedInOrder(ConceptRef a,
-                               Rel rel,
-                               ConceptRef b,
-                               bool negation = false)
+                                Rel rel,
+                                ConceptRef b,
+                                bool negation = false)
     {
-        const cA = conceptByIx(a); // TODO ref?
+        const cA = conceptByRef(a); // TODO ref?
 
         foreach (ix; cA.inIxes)
         {
             const link = linkByIx(ix);
-            if ((link._srcIx == b ||
-                 link._dstIx == b) &&
+            if ((link._srcRef == b ||
+                 link._dstRef == b) &&
                 link._rel == rel &&
                 link._negation == negation) // no need to check reversion here because all links are bidirectional
             {
@@ -2240,8 +2224,8 @@ der", "spred", "spridit");
         foreach (ix; cA.outIxes)
         {
             const link = linkByIx(ix);
-            if ((link._srcIx == b ||
-                 link._dstIx == b) &&
+            if ((link._srcRef == b ||
+                 link._dstRef == b) &&
                 link._rel == rel &&
                 link._negation == negation)
             {
@@ -2513,4 +2497,13 @@ der", "spred", "spridit");
         return typeof(return).init;
     }
     alias topicOf = contextOf;
+
+    /** Guess Language of $(D text).
+    */
+    Lang guessLanguageOf(T)(R text) if (isSourceOfSomeString!R)
+    {
+        auto lang = Lang.unknown;
+        return lang;
+    }
+
 }
