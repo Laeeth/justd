@@ -874,8 +874,8 @@ class Net(bool useArray = true,
                   bool negation = false) // previously inLinksOf, outLinksOf
     {
         return concept.links[]
-                      .filter!(lref => dir.of(RelDir.any, lref.dir)) // TODO functionize to match
-                      .map!(ix => linkByIx(ix))
+                      .filter!(linkRef => dir.of(RelDir.any, linkRef.dir)) // TODO functionize to match
+                      .map!(ix => linkByRef(ix))
                       .filter!(link =>
                                ((link._rel == rel ||
                                  link._rel.specializes(rel)) && // TODO functionize to match
@@ -899,8 +899,8 @@ class Net(bool useArray = true,
         return  linksOf(concept, dir, rel, negation).map!(link => tuple(link, dst(link)));
     }
 
-    auto friendsByRel(in Concept concept,
-                      RelDir dir = RelDir.any)
+    auto friendsGroupedByRel(in Concept concept,
+                             RelDir dir = RelDir.any)
     {
         return friendsOf(concept, dir).array.groupBy!((a, b) => // TODO array needed?
                                                       (a[0]._negation == b[0]._negation &&
@@ -1029,8 +1029,8 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) linkByIx(LinkRef lref) inout { return allLinks[lref.ix]; }
-        /* ref inout(Link)  opIndex(LinkRef lref) inout { return linkByIx(lref); } */
+        ref inout(Link) linkByRef(LinkRef linkRef) inout { return allLinks[linkRef.ix]; }
+        /* ref inout(Link)  opIndex(LinkRef linkRef) inout { return linkByRef(linkRef); } */
 
         ref inout(Concept) conceptByRef(ConceptRef cref) inout @nogc { return allConcepts[cref.ix]; }
         /* ref inout(Concept)      opIndex(ConceptRef cref) inout @nogc { return conceptByRef(cref); } */
@@ -1710,7 +1710,7 @@ der", "spred", "spridit");
 
         // TODO group these
         assert(allLinks.length <= nullIx);
-        auto linkRef  = LinkRef(cast(Ix)allLinks.length);
+        auto linkRef = LinkRef(cast(Ix)allLinks.length);
 
         auto link = Link(reversion ? dstIx : srcIx,
                          rel,
@@ -1718,8 +1718,9 @@ der", "spred", "spridit");
                          negation,
                          origin);
 
-        conceptByRef(link._srcRef).inIxes ~= LinkRef(linkRef, RelDir.forward); connectednessSum++;
-        conceptByRef(link._dstRef).outIxes ~= LinkRef(linkRef, RelDir.backward); connectednessSum++;
+        conceptByRef(link._srcRef).links ~= LinkRef(linkRef, RelDir.forward);
+        conceptByRef(link._dstRef).links ~= LinkRef(linkRef, RelDir.backward);
+        connectednessSum += 2;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
@@ -2234,29 +2235,15 @@ der", "spred", "spridit");
                                 ConceptRef b,
                                 bool negation = false)
     {
-        const cA = conceptByRef(a); // TODO ref?
-
-        foreach (ix; cA.inIxes)
+        foreach (linkRef; conceptByRef(a).links)
         {
-            const link = linkByIx(ix);
+            const link = linkByRef(linkRef);
             if ((link._srcRef == b ||
                  link._dstRef == b) &&
                 link._rel == rel &&
                 link._negation == negation) // no need to check reversion here because all links are bidirectional
             {
-                return ix;
-            }
-        }
-
-        foreach (ix; cA.outIxes)
-        {
-            const link = linkByIx(ix);
-            if ((link._srcRef == b ||
-                 link._dstRef == b) &&
-                link._rel == rel &&
-                link._negation == negation)
-            {
-                return ix;
+                return linkRef;
             }
         }
 
@@ -2266,9 +2253,9 @@ der", "spred", "spridit");
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkRef.max.
      */
     LinkRef areConnected(ConceptRef a,
-                        Rel rel,
-                        ConceptRef b,
-                        bool negation = false)
+                         Rel rel,
+                         ConceptRef b,
+                         bool negation = false)
     {
         return either(areConnectedInOrder(a, rel, b, negation),
                       areConnectedInOrder(b, rel, a, negation));
@@ -2416,24 +2403,12 @@ der", "spred", "spridit");
             writeln(`  - in `, lineConcept.lemma.lang.toName,
                     ` of sense `, lineConcept.lemma.sense);
 
-            // show forwards
-            foreach (group; insByRel(lineConcept))
+            foreach (group; friendsGroupedByRel(lineConcept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.forward);
                 foreach (inLink, inConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
                 {
                     showConcept(inConcept, inLink.normalizedWeight);
-                }
-                writeln();
-            }
-
-            // show backwards
-            foreach (group; outsByRel(lineConcept))
-            {
-                showLinkRelation(group.front[0]._rel, RelDir.backward);
-                foreach (outLink, outConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
-                {
-                    showConcept(outConcept, outLink.normalizedWeight);
                 }
                 writeln();
             }
@@ -2497,10 +2472,7 @@ der", "spred", "spridit");
         // en-en => sv-sv
         if (false)
         {
-            auto ins = concepts.map!(concept =>
-                                     insOf(concept, rel, false))/* .joiner */;
-            auto outs = concepts.map!(concept =>
-                                      outsOf(concept, rel, false))/* .joiner */;
+            auto translations = concepts.map!(concept => linksOf(concept, RelDir.any, rel, false))/* .joiner */;
         }
         return concepts;
     }
