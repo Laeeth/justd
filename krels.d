@@ -307,6 +307,7 @@ enum RelDir
     forward                     /// Backward.
 }
 
+/** Convert $(D rel) to Human Language Representation. */
 auto toHumanLang(const Rel rel,
                  const RelDir dir,
                  const bool negation = false,
@@ -1031,7 +1032,8 @@ auto toHumanLang(const Rel rel,
         }
     }
 
-    return words.filter!(word => word !is null).joiner(" ");
+    return words.filter!(word => word !is null) // strip not
+                .joiner(" "); // add space
 }
 
 /** Return true if $(D special) is a more specialized relation than $(D general).
