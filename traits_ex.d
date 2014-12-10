@@ -46,6 +46,7 @@ alias isSource = isForwardRange;
 alias isSourceOf = isForwardRangeOf;
 alias isSource = isOutputRange;
 alias isSinkOf = isOutputRangeOf;
+enum isSourceOfSomeString(R) = (isSource!R && isSomeString!(ElementType!R));
 
 import std.functional: unaryFun, binaryFun;
 
