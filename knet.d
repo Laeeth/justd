@@ -916,15 +916,15 @@ class Net(bool useArray = true,
 
         @safe @nogc pure nothrow:
 
-        this(ConceptRef srcIx,
+        this(ConceptRef srcRef,
              Rel rel,
-             ConceptRef dstIx,
+             ConceptRef dstRef,
              bool negation,
-             Origin origin = Origin.unknown) in { assert(srcIx.defined && dstIx.defined); }
+             Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
         {
-            this._srcRef = srcIx;
-            this._dstRef = dstIx;
+            this._srcRef = srcRef;
+            this._dstRef = dstRef;
             this._rel = rel;
             this._negation = negation;
             this._origin = origin;
@@ -1680,9 +1680,9 @@ der", "spred", "spridit");
         TODO checkExisting is currently set to false because searching
         existing links is currently too slow
      */
-    LinkRef connect(ConceptRef srcIx,
+    LinkRef connect(ConceptRef srcRef,
                     Rel rel,
-                    ConceptRef dstIx,
+                    ConceptRef dstRef,
                     Origin origin = Origin.unknown,
                     real weight = 1.0, // 1.0 means absolutely true for Origin manual
                     bool negation = false,
@@ -1690,18 +1690,18 @@ der", "spred", "spridit");
                     bool checkExisting = false)
     body
     {
-        if (srcIx == dstIx) { return LinkRef.asUndefined; } // don't allow self-reference for now
+        if (srcRef == dstRef) { return LinkRef.asUndefined; } // don't allow self-reference for now
 
         if (checkExisting)
         {
-            if (auto existingIx = areConnected(srcIx, rel, dstIx,
+            if (auto existingIx = areConnected(srcRef, rel, dstRef,
                                                negation)) // TODO warn about negation and reversion on existing rels
             {
                 if (false)
                 {
                     dln("warning: Concepts ",
-                        conceptByRef(srcIx).lemma.words, " and ",
-                        conceptByRef(dstIx).lemma.words, " already related as ",
+                        conceptByRef(srcRef).lemma.words, " and ",
+                        conceptByRef(dstRef).lemma.words, " already related as ",
                         rel);
                 }
                 return existingIx;
@@ -1712,9 +1712,9 @@ der", "spred", "spridit");
         assert(allLinks.length <= nullIx);
         auto linkRef = LinkRef(cast(Ix)allLinks.length);
 
-        auto link = Link(reversion ? dstIx : srcIx,
+        auto link = Link(reversion ? dstRef : srcRef,
                          rel,
-                         reversion ? srcIx : dstIx,
+                         reversion ? srcRef : dstRef,
                          negation,
                          origin);
 
@@ -2408,6 +2408,7 @@ der", "spred", "spridit");
                 showLinkRelation(group.front[0]._rel, RelDir.forward);
                 foreach (inLink, inConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
                 {
+                    writeln(inConcept);
                     showConcept(inConcept, inLink.normalizedWeight);
                 }
                 writeln();
