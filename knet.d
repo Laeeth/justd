@@ -896,6 +896,7 @@ class Net(bool useArray = true,
                     Rel rel = Rel.any,
                     bool negation = false)
     {
+        // TODO Don't use dst but instead those that don't equal input conceptRef
         return  linksOf(concept, dir, rel, negation).map!(link => tuple(link, dst(link)));
     }
 
@@ -967,8 +968,8 @@ class Net(bool useArray = true,
         Origin _origin;
     }
 
-    Concept src(Link link) { return conceptByRef(link._srcRef); }
-    Concept dst(Link link) { return conceptByRef(link._dstRef); }
+    ref Concept src(Link link) { return conceptByRef(link._srcRef); }
+    ref Concept dst(Link link) { return conceptByRef(link._dstRef); }
 
     pragma(msg, `Words.sizeof: `, Words.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
@@ -2211,8 +2212,8 @@ der", "spred", "spridit");
         }
         if (weightSumNELL)
         {
-            writeln(indent, `ELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/allLinks.length);
-            writeln(indent, `ELL Packed Weights Histogram: `, packedWeightHistogramNELL);
+            writeln(indent, `NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/allLinks.length);
+            writeln(indent, `NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
         }
 
         writeln(indent, `Concept Count (All/Multi-Word): `,
