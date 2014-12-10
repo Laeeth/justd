@@ -989,7 +989,7 @@ class Net(bool useArray = true,
 
     private
     {
-        ConceptRef[Lemma] conceptIxByLemma;
+        ConceptRef[Lemma] conceptRefByLemma;
         Concepts allConcepts;
         Links allLinks;
 
@@ -1038,9 +1038,9 @@ class Net(bool useArray = true,
 
     Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
     {
-        if (lemma in conceptIxByLemma)
+        if (lemma in conceptRefByLemma)
         {
-            return typeof(return)(conceptByRef(conceptIxByLemma[lemma]));
+            return typeof(return)(conceptByRef(conceptRefByLemma[lemma]));
         }
         else
         {
@@ -1058,9 +1058,9 @@ class Net(bool useArray = true,
     {
         typeof(return) concepts;
         auto lemma = Lemma(words, lang, sense, category);
-        if (lemma in conceptIxByLemma) // if hashed lookup possible
+        if (lemma in conceptRefByLemma) // if hashed lookup possible
         {
-            concepts = [conceptByRef(conceptIxByLemma[lemma])]; // use it
+            concepts = [conceptByRef(conceptRefByLemma[lemma])]; // use it
         }
         else
         {
@@ -1072,9 +1072,9 @@ class Net(bool useArray = true,
                 /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
                 // TODO: Functionize
                 auto lemmaFixed = Lemma(wordsFixed, lang, sense, category);
-                if (lemmaFixed in conceptIxByLemma)
+                if (lemmaFixed in conceptRefByLemma)
                 {
-                    concepts = [conceptByRef(conceptIxByLemma[lemmaFixed])];
+                    concepts = [conceptByRef(conceptRefByLemma[lemmaFixed])];
                 }
             }
         }
@@ -1085,7 +1085,7 @@ class Net(bool useArray = true,
     auto conceptIxesByWordsOnly(S)(S words) if (isSomeString!S)
     {
         auto lemmas = lemmasOf(words);
-        return lemmas.map!(lemma => conceptIxByLemma[lemma]);
+        return lemmas.map!(lemma => conceptRefByLemma[lemma]);
     }
 
     /** Get All Concepts Indexed by a Lemma having words $(D words). */
@@ -1562,9 +1562,9 @@ der", "spred", "spridit");
                      Concept concept) in { assert(!lemma.words.empty); }
     body
     {
-        if (lemma in conceptIxByLemma)
+        if (lemma in conceptRefByLemma)
         {
-            return conceptIxByLemma[lemma]; // lookup
+            return conceptRefByLemma[lemma]; // lookup
         }
         else
         {
@@ -1578,7 +1578,7 @@ der", "spred", "spridit");
             assert(allConcepts.length <= nullIx);
             const cix = ConceptRef(cast(Ix)allConcepts.length);
             allConcepts ~= concept; // .. new concept that is stored
-            conceptIxByLemma[lemma] = cix; // store index to ..
+            conceptRefByLemma[lemma] = cix; // store index to ..
             conceptStringLengthSum += lemma.words.length;
 
             learnLemma(lemma.words, lemma);
@@ -1690,7 +1690,7 @@ der", "spred", "spridit");
                     bool checkExisting = false)
     body
     {
-        if (srcRef == dstRef) { return LinkRef.asUndefined; } // don't allow self-reference for now
+        if (srcRef == dstRef) { return LinkRef.asUndefined; } // Don't allow self-reference for now
 
         if (checkExisting)
         {
@@ -2223,7 +2223,7 @@ der", "spred", "spridit");
 
         writeln(indent, `Lemmas by Words Count: `, lemmasByWords.length);
 
-        writeln(indent, `Concept Indexes by Lemma Count: `, conceptIxByLemma.length);
+        writeln(indent, `Concept Indexes by Lemma Count: `, conceptRefByLemma.length);
         writeln(indent, `Concept String Length Average: `, cast(real)conceptStringLengthSum/allConcepts.length);
         writeln(indent, `Concept Connectedness Average: `, cast(real)connectednessSum/2/allConcepts.length);
     }
@@ -2267,12 +2267,12 @@ der", "spred", "spridit");
                         in Lemma b,
                         bool negation = false)
     {
-        if (a in conceptIxByLemma && // both lemmas exist
-            b in conceptIxByLemma)
+        if (a in conceptRefByLemma && // both lemmas exist
+            b in conceptRefByLemma)
         {
-            return areConnected(conceptIxByLemma[a],
+            return areConnected(conceptRefByLemma[a],
                                 rel,
-                                conceptIxByLemma[b],
+                                conceptRefByLemma[b],
                                 negation);
         }
         return typeof(return).asUndefined;
@@ -2406,10 +2406,9 @@ der", "spred", "spridit");
             foreach (group; friendsGroupedByRel(lineConcept))
             {
                 showLinkRelation(group.front[0]._rel, RelDir.forward);
-                foreach (inLink, inConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
+                foreach (link, otherConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
                 {
-                    writeln(inConcept);
-                    showConcept(inConcept, inLink.normalizedWeight);
+                    showConcept(otherConcept, link.normalizedWeight);
                 }
                 writeln();
             }
