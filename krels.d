@@ -998,6 +998,26 @@ auto toHumanLang(const Rel rel,
                         }
                     }
                     break;
+                case instanceOf:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "en instans av"]; break;
+                            case en:
+                            default: words = ["is ", not, "an instance of"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "instance"]; break;
+                            case en:
+                            default: words = ["does", not, "have instance"]; break;
+                        }
+                    }
+                    break;
                 case mutualProxyFor:
                     switch (lang)
                     {
