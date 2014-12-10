@@ -2489,18 +2489,19 @@ der", "spred", "spridit");
         return value;
     }
 
-    /** Get Concept with strongest relatedness to $(D keywords).
+    /** Get Concept with strongest relatedness to $(D text).
         TODO Compare with function Context() in ConceptNet API.
      */
-    Concept contextOf(string[] keywords) const @safe @nogc pure nothrow
+    Concept contextOf(R)(R text) const if (isSourceOfSomeString!R)
     {
-        return typeof(return).init;
+        auto concept = typeof(return).init;
+        return concept;
     }
     alias topicOf = contextOf;
 
     /** Guess Language of $(D text).
     */
-    Lang guessLanguageOf(T)(R text) if (isSourceOfSomeString!R)
+    Lang guessLanguageOf(T)(R text) const if (isSourceOfSomeString!R)
     {
         auto lang = Lang.unknown;
         return lang;
