@@ -1201,7 +1201,31 @@ class Net(bool useArray = true,
         learnEnglishIrregularVerbs();
         learnEnglishUncountableNouns();
 
+        learnEnglishReversions();
+
         learnSwedishIrregularVerbs();
+    }
+
+    void learnEnglishReversions()
+    {
+        // TODO Copy all from krels.toHumanLang
+        learnEnglishReversion("is a", "can be");
+        learnEnglishReversion("leads to", "can infer");
+        learnEnglishReversion("is part of", "contains");
+        learnEnglishReversion("is member of", "has member");
+    }
+
+    /** Learn English Reversion.
+     */
+    LinkRef[] learnEnglishReversion(string forward,
+                                    string backward)
+    {
+        const lang = Lang.en;
+        const category = CategoryIx.asUndefined;
+        const origin = Origin.manual;
+        auto all = [tryStore(forward, lang, Sense.verbInfinitive, category, origin),
+                    tryStore(backward, lang, Sense.verbPastParticiple, category, origin)];
+        return connectMtoM(Rel.reversionOf, all.filter!(a => a.defined), origin);
     }
 
     /** Learn English Irregular Verb.
@@ -1684,15 +1708,18 @@ der", "spred", "spridit");
             }
         }
 
+        // TODO group these
+        assert(allLinks.length <= nullIx);
         auto linkRef  = LinkRef(cast(Ix)allLinks.length);
+
         auto link = Link(reversion ? dstIx : srcIx,
                          rel,
                          reversion ? srcIx : dstIx,
                          negation,
                          origin);
 
-        assert(allLinks.length <= nullIx); conceptByRef(link._srcRef).inIxes ~= LinkRef(linkRef, RelDir.forward); connectednessSum++;
-        assert(allLinks.length <= nullIx); conceptByRef(link._dstRef).outIxes ~= LinkRef(linkRef, RelDir.backward); connectednessSum++;
+        conceptByRef(link._srcRef).inIxes ~= LinkRef(linkRef, RelDir.forward); connectednessSum++;
+        conceptByRef(link._dstRef).outIxes ~= LinkRef(linkRef, RelDir.backward); connectednessSum++;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;

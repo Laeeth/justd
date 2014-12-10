@@ -180,6 +180,7 @@ enum Rel:ubyte
                 must be quite similar before people consider them antonyms. This
                 is the antonym relation in WordNet as well. /r/Antonym
                 /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
+    reversionOf,
 
     retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
 
@@ -1148,6 +1149,7 @@ bool generalizes(T)(T general,
                           translationOf,
                           synonymFor,
                           antonymFor,
+                          reversionOf,
                           similarSizeTo,
                           similarTo,
                           similarAppearanceTo,
