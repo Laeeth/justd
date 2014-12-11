@@ -1444,7 +1444,6 @@ class Net(bool useArray = true,
     {
         enum lang = Lang.sv;
 
-        // Manual: Swedish Irregular Verbs
         learnSwedishIrregularVerb("ge", "ge", "ger", "gav", "gett/givit");
         learnSwedishIrregularVerb("ange", "ange", "anger", "angav", "angett/angivit");
         learnSwedishIrregularVerb("anse", "anse", "anser", "ansåg", "ansett");
