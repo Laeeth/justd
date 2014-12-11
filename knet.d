@@ -20,8 +20,6 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
-    TODO Make link have array of Concepts
-
     TODO Make use of stealFront and stealBack
 
     TODO ansiktstvätt => facial_wash
