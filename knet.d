@@ -812,7 +812,7 @@ class Net(bool useArray = true,
     }
 
     alias NodeRef = Ref!Node;
-    alias LinkRef    = Ref!Link;
+    alias LinkRef = Ref!Link;
 
     /** String Storage */
     static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
@@ -1029,7 +1029,7 @@ class Net(bool useArray = true,
     /** Try to Get Single Node related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    Nodes nodesByLemma(S)(S words,
+    NodeRefs nodeRefsByLemma(S)(S words,
                                 Lang lang,
                                 Sense sense,
                                 CategoryIx category) if (isSomeString!S)
@@ -1038,7 +1038,7 @@ class Net(bool useArray = true,
         auto lemma = Lemma(words, lang, sense, category);
         if (lemma in nodeRefByLemma) // if hashed lookup possible
         {
-            nodes = [nodeByRef(nodeRefByLemma[lemma])]; // use it
+            nodes ~= nodeRefByLemma[lemma]; // use it
         }
         else
         {
@@ -1052,7 +1052,7 @@ class Net(bool useArray = true,
                 auto lemmaFixed = Lemma(wordsFixed, lang, sense, category);
                 if (lemmaFixed in nodeRefByLemma)
                 {
-                    nodes = [nodeByRef(nodeRefByLemma[lemmaFixed])];
+                    nodes ~= nodeRefByLemma[lemmaFixed];
                 }
             }
         }
@@ -1060,16 +1060,10 @@ class Net(bool useArray = true,
     }
 
     /** Get All Node Indexes Indexed by a Lemma having words $(D words). */
-    auto nodeIxesByWordsOnly(S)(S words) if (isSomeString!S)
+    auto nodeRefsByWordsOnly(S)(S words) if (isSomeString!S)
     {
         auto lemmas = lemmasOf(words);
         return lemmas.map!(lemma => nodeRefByLemma[lemma]);
-    }
-
-    /** Get All Nodes Indexed by a Lemma having words $(D words). */
-    auto nodesByWordsOnly(S)(S words) if (isSomeString!S)
-    {
-        return nodeIxesByWordsOnly(words).map!(nodeIx => nodeByRef(nodeIx));
     }
 
     /** Get All Possible Lemmas related to $(D word).
@@ -1108,7 +1102,7 @@ class Net(bool useArray = true,
         (semantic context) $(D sense).
         If no sense given return all possible.
     */
-    Nodes nodesByWords(S)(S words,
+    NodeRefs nodeRefsByWords(S)(S words,
                                 Lang lang = Lang.unknown,
                                 Sense sense = Sense.unknown,
                                 CategoryIx category = anyCategory) if (isSomeString!S)
@@ -1119,11 +1113,11 @@ class Net(bool useArray = true,
             sense != Sense.unknown &&
             category != anyCategory) // if exact Lemma key can be used
         {
-            return nodesByLemma(words, lang, sense, category); // fast hash lookup
+            return nodeRefsByLemma(words, lang, sense, category); // fast hash lookup
         }
         else
         {
-            nodes = nodesByWordsOnly(words).array; // TODO avoid array herex
+            nodes = NodeRefs(nodeRefsByWordsOnly(words).array); // TODO avoid allocations
         }
 
         if (nodes.empty)
@@ -2287,9 +2281,9 @@ class Net(bool useArray = true,
     }
 
     void showLinkNode(in Node node,
-                         Rel rel,
-                         real weight,
-                         RelDir dir)
+                      Rel rel,
+                      real weight,
+                      RelDir dir)
     {
         showLinkRelation(rel, dir);
         showNode(node, weight);
@@ -2306,28 +2300,28 @@ class Net(bool useArray = true,
         import std.algorithm: splitter;
         import std.string: strip;
 
-        // auto normalizedLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
+        // auto normLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
-        auto normalizedLine = line.strip.tr(std.ascii.whitespace, `_`, `s`).toLower;
-        if (normalizedLine.empty)
+        auto normLine = line.strip.tr(std.ascii.whitespace, `_`, `s`).toLower;
+        if (normLine.empty)
             return;
 
-        writeln(`> Line `, normalizedLine);
+        writeln(`> Line `, normLine);
 
-        if (normalizedLine == `palindrome`)
+        if (normLine == `palindrome`)
         {
             foreach (palindromeNode; allNodes.filter!(node =>
-                                                            node.lemma.words.isPalindrome(3)))
+                                                      node.lemma.words.isPalindrome(3)))
             {
                 showLinkNode(palindromeNode,
-                                Rel.instanceOf,
-                                real.infinity,
-                                RelDir.backward);
+                             Rel.instanceOf,
+                             real.infinity,
+                             RelDir.backward);
             }
         }
-        else if (normalizedLine.skipOver(`anagramsof(`))
+        else if (normLine.skipOver(`anagramsof(`))
         {
-            auto split = normalizedLine.findSplitBefore(`)`);
+            auto split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -2340,44 +2334,42 @@ class Net(bool useArray = true,
                 }
             }
         }
-        else if (normalizedLine.skipOver(`synonymsOf(`))
+        else if (normLine.skipOver(`synonymsOf(`))
         {
-            auto split = normalizedLine.findSplitBefore(`)`);
+            auto split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
                 foreach (synonymNode; synonymsOf(arg))
                 {
                     showLinkNode(synonymNode,
-                                    Rel.instanceOf,
-                                    real.infinity,
-                                    RelDir.backward);
+                                 Rel.instanceOf,
+                                 real.infinity,
+                                 RelDir.backward);
                 }
             }
         }
-        else if (normalizedLine.skipOver(`translationsOf(`))
+        else if (normLine.skipOver(`translationsOf(`))
         {
-            auto split = normalizedLine.findSplitBefore(`)`);
+            auto split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
                 foreach (translationNode; translationsOf(arg))
                 {
                     showLinkNode(translationNode,
-                                    Rel.instanceOf,
-                                    real.infinity,
-                                    RelDir.backward);
+                                 Rel.instanceOf,
+                                 real.infinity,
+                                 RelDir.backward);
                 }
             }
         }
 
-        if (normalizedLine.empty)
+        if (normLine.empty)
             return;
 
         // queried line nodes
-        auto lineNodes = nodesByWords(normalizedLine,
-                                            lang,
-                                            sense);
+        auto lineNodes = nodeRefsByWords(normLine, lang, sense);
 
         // as is
         foreach (lineNode; lineNodes)
@@ -2395,8 +2387,9 @@ class Net(bool useArray = true,
                                                           b.normalizedWeight)))
                 {
                     foreach (linkedNode; link.actors[]
-                                                /* .filter!(actorNode => actorNode.ix != lineNode.ix) // don't self reference */
-                                                .map!(nodeRef => nodeByRef(nodeRef)))
+                                             .filter!(actorNode => (actorNode.ix !=
+                                                                    lineNode.ix)) // don't self reference
+                                             .map!(nodeRef => nodeByRef(nodeRef)))
                     {
                         showNode(linkedNode,
                                     link.normalizedWeight);
@@ -2409,10 +2402,10 @@ class Net(bool useArray = true,
         // stemmed
         if (lineNodes.empty)
         {
-            while (normalizedLine.stemize(lang))
+            while (normLine.stemize(lang))
             {
-                writeln(`Stemmed to `, normalizedLine);
-                showNodes(normalizedLine, lang, sense, lineSeparator);
+                writeln(`Stemmed to `, normLine);
+                showNodes(normLine, lang, sense, lineSeparator);
             }
         }
     }
@@ -2439,9 +2432,9 @@ class Net(bool useArray = true,
                        Sense sense = Sense.unknown,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto nodes = nodesByWords(words,
-                                        lang,
-                                        sense);
+        auto nodes = nodeRefsByWords(words,
+                                  lang,
+                                  sense);
         // TODO tranverse over nodes synonyms
         return nodes;
     }
@@ -2455,7 +2448,7 @@ class Net(bool useArray = true,
                            Sense sense = Sense.unknown,
                            Lang[] toLangs = []) if (isSomeString!S)
     {
-        auto nodes = nodesByWords(words,
+        auto nodes = nodeRefsByWords(words,
                                         lang,
                                         sense);
         const rel = Rel.translationOf;
@@ -2464,8 +2457,7 @@ class Net(bool useArray = true,
         // en-en => sv-sv
         if (false)
         {
-            auto translations = nodes.map!(node =>
-                                              linksOf(node, RelDir.any, rel, false))/* .joiner */;
+            auto translations = nodes.map!(node => linksOf(node, RelDir.any, rel, false))/* .joiner */;
         }
         return nodes;
     }

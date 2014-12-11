@@ -24,20 +24,23 @@ enum PlanetaryClassification
 
 void readChoice(T)(ref T x)
 {
-    write("Enter ", T.stringof,  ": "); stdout.flush;
-    string line;
-    if ((line = readln()) !is null)
-    readln(x);
+    write("Enter ", T.stringof,  ": "); stdout.flush; // prompt
+    string line = readln();
 }
 
 import std.stdio, std.range, std.algorithm;
 
 import etc.linux.memoryerror;
 
-unittest
+int main(string[] args)
 {
     SolarSystem solarSystem;
     readChoice(solarSystem);
+
+    PlanetaryClassification planetaryClassification;
+    readChoice(planetaryClassification);
+
+    return 0;
 }
 
 /* PLANET SPECIFICATOINS */

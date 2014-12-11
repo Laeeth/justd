@@ -1,0 +1,8 @@
+{
+    "name": "Martins World",
+    "copyright": "Copyright © 2014, Per Nordlöw",
+    "authors": ["Per Nordlöw"],
+    "buildRequirements": ["allowWarnings"],
+    "importPaths": [ ".." ],
+    "dflags-dmd": ["-Jgenerated_source"]
+}
