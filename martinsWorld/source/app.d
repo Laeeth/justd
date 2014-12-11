@@ -1,7 +1,7 @@
 /*
   UFCS: Unifor Call Syntax
-  - Dice:
-  - Sort:
+  IFTI: Implicit Function Template Instantiation
+  AA: Associative Array
 */
 
 /** Solar System */
@@ -30,25 +30,66 @@ enum PlanetaryClassification
     classM = earth,
 }
 
-import std.stdio, std.range, std.algorithm, std.string, std.conv, std.random;
+enum Map
+{
+    pangea,
+    continents,
+    archipelagos, islands = archipelagos
+}
 
-void readChoice(T)(ref T x)
+enum Climate
+{
+    cold, hot, dry, wet
+}
+
+enum Topography
+{
+    mountain, plain, valley, swamp,
+    trench, beach, coast, river, delta,
+    ocean, bay, lake, pond,
+}
+
+alias TopographyProbs = double[Topography]; // AA
+
+/*  */
+/* DAY CYCLE	GRAVITY	ATMOSPHERE	FLOOD AND TIDE */
+
+/* enum PlanetSpecificatoins */
+/* { */
+/*     day_cycle, */
+/* } */
+
+import std.stdio, std.range, std.algorithm, std.string, std.conv, std.random, std.traits;
+
+void input(T)(ref T x,
+              ref Random gen,
+              string typeName = [])
 {
     enum N = T.stringof;
-    write("Enter ", N,  " (empty to randomize): ");
+    if (typeName.empty)
+        typeName = N;
+
+    write("$ Enter ", typeName,  " (empty to randomize): ");
     stdout.flush; // prompt
 
     auto line = readln();
     auto fixedLine = line.strip;
     if (fixedLine.empty) // UFCS
     {
-        x = uniform!T; // implicit function template instantiation
-        writeln("Randomized instance of ", N, " to ", x);
+        static if (isFloatingPoint!T)
+        {
+            x = uniform01!T(gen);
+        }
+        else
+        {
+            x = uniform!T(gen); // IFTI
+        }
+        writeln("> Randomized ", typeName, " to ", x);
     }
     else
     {
         x = fixedLine.to!T;
-        writeln("You entered ", fixedLine, " which was decode to ", x);
+        writeln("> You entered ", fixedLine, " which was decode to ", x);
     }
 }
 
@@ -56,28 +97,33 @@ import etc.linux.memoryerror;
 
 int main(string[] args)
 {
+    auto ran = Random(unpredictableSeed);
+
     SolarSystem solarSystem;
-    readChoice(solarSystem);
+    input(solarSystem, ran);
 
     PlanetaryClassification planetaryClassification;
-    readChoice(planetaryClassification);
+    input(planetaryClassification, ran);
+
+    Map map;
+    input(map, ran);
+
+    Climate climate;
+    input(climate, ran);
+
+    /* uint dayCycle; */
+    /* input(dayCycle); */
+
+    TopographyProbs topographyProbs;
+    foreach (key; EnumMembers!Topography) // TODO deduce key type from TopographyProbs
+    {
+        double prob;
+        input(prob, ran, key.to!string);
+        topographyProbs[key] = prob;
+    }
 
     return 0;
 }
-
-/* PLANET SPECIFICATOINS */
-/* DAY CYCLE	GRAVITY	ATMOSPHERE	FLOOD AND TIDE */
-
-/* MAP */
-/* PANGEA	CONTINENT	ARCHIPELAGO (islands) */
-
-/*     TOPOGRAPHY */
-/*     MOUNTAINS	PLAINS	VALLEY	SWAMP */
-/*     TRENCH	BEACH/COAST	RIVERS	DELTA */
-/*     OCEAN	BAY	LAKE	POND */
-
-/*     CLIMATE */
-/*     COLD	HOT	DRY	WET */
 
 /*     LIFE */
 /*     FLORA	FAUNA		CREATURES WITH IQ */
