@@ -163,8 +163,6 @@ void input(T)(ref T x,
     }
 }
 
-import etc.linux.memoryerror;
-
 int main(string[] args)
 {
     auto ran = Random(unpredictableSeed);
