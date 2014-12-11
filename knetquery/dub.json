@@ -1,7 +1,7 @@
 {
     "name": "knetquery",
     "targetType": "executable",
-    "description": "A Conceptnet Command Line Query tool.",
+    "description": "A Knowledge Network/Graph Command Line Query tool.",
     "copyright": "Copyright © 2014, Per Nordlöw",
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
