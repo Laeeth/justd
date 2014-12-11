@@ -1,4 +1,5 @@
 /*
+  UFCS: Unifor Call Syntax
   - Dice:
   - Sort:
 */
@@ -16,19 +17,40 @@ enum SolarSystem
 /** Planetary Classification */
 enum PlanetaryClassification
 {
-    planetoid_moon, classD = planetoid_moon,
-    pressure_dome, classK = pressure_dome,
-    vegetation, classL = vegetation,
-    earth, classM = earth,
+    planetoid_moon,
+    classD = planetoid_moon,
+
+    pressure_dome,
+    classK = pressure_dome,
+
+    vegetation,
+    classL = vegetation,
+
+    earth,
+    classM = earth,
 }
+
+import std.stdio, std.range, std.algorithm, std.string, std.conv, std.random;
 
 void readChoice(T)(ref T x)
 {
-    write("Enter ", T.stringof,  ": "); stdout.flush; // prompt
-    string line = readln();
-}
+    enum N = T.stringof;
+    write("Enter ", N,  " (empty to randomize): ");
+    stdout.flush; // prompt
 
-import std.stdio, std.range, std.algorithm;
+    auto line = readln();
+    auto fixedLine = line.strip;
+    if (fixedLine.empty) // UFCS
+    {
+        x = uniform!T; // implicit function template instantiation
+        writeln("Randomized instance of ", N, " to ", x);
+    }
+    else
+    {
+        x = fixedLine.to!T;
+        writeln("You entered ", fixedLine, " which was decode to ", x);
+    }
+}
 
 import etc.linux.memoryerror;
 
