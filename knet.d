@@ -1484,8 +1484,7 @@ class Net(bool useArray = true,
         learnSwedishIrregularVerb([], [], "ska", "skulle", []);
         learnSwedishIrregularVerb("smaksätt", "smaksätta", "smaksätter", "smaksatte", "smaksatt");
         learnSwedishIrregularVerb("sov", "sova", "sover", "sov", "sovit");
-        learnSwedishIrregularVerb("sprid", "sprida", "spri
-der", "spred", "spridit");
+        learnSwedishIrregularVerb("sprid", "sprida", "sprider", "spred", "spridit");
         learnSwedishIrregularVerb("stjäl", "stjäla", "stjäl", "stal", "stulit");
         learnSwedishIrregularVerb("stå", "stå", "står", "stod", "stått");
         learnSwedishIrregularVerb("stöd", "stödja", "stöder", "stödde", "stött");
@@ -2376,6 +2375,7 @@ der", "spred", "spridit");
         if (normalizedLine.empty)
             return;
 
+        // queried line concepts
         auto lineConcepts = conceptsByWords(normalizedLine,
                                             lang,
                                             sense);
