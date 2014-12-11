@@ -811,15 +811,15 @@ class Net(bool useArray = true,
         Ix _ix = nullIx;
     }
 
-    alias ConceptRef = Ref!Concept;
+    alias NodeRef = Ref!Node;
     alias LinkRef    = Ref!Link;
 
     /** String Storage */
     static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
     else                    { alias Words = immutable string; }
 
-    static if (useArray) { alias ConceptRefs = Array!ConceptRef; }
-    else                 { alias ConceptRefs = ConceptRef[]; }
+    static if (useArray) { alias NodeRefs = Array!NodeRef; }
+    else                 { alias NodeRefs = NodeRef[]; }
     static if (useArray) { alias LinkRefs = Array!LinkRef; }
     else                 { alias LinkRefs = LinkRef[]; }
 
@@ -834,7 +834,7 @@ class Net(bool useArray = true,
         ushort _ix = 0;
     }
 
-    /** Concept Lemma. */
+    /** Node Concept Lemma. */
     struct Lemma
     {
         @safe @nogc pure nothrow:
@@ -848,7 +848,7 @@ class Net(bool useArray = true,
     }
 
     /** Concept Node/Vertex. */
-    struct Concept
+    struct Node
     {
         /* @safe @nogc pure nothrow: */
         this(in Lemma lemma,
@@ -865,13 +865,13 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
-    /** Get Links of $(D concept) with direction $(D dir). */
-    auto  linksOf(in Concept concept, //
+    /** Get Links of $(D node) with direction $(D dir). */
+    auto  linksOf(in Node node, //
                   RelDir dir = RelDir.any,
                   Rel rel = Rel.any,
                   bool negation = false)
     {
-        return concept.links[]
+        return node.links[]
                       .filter!(linkRef => dir.of(RelDir.any, linkRef.dir)) // TODO functionize to match
                       .map!(linkRef => linkByRef(linkRef))
                       .filter!(link => ((link.rel == rel ||
@@ -879,15 +879,15 @@ class Net(bool useArray = true,
                                         link.negation == negation));
     }
 
-    auto linksGroupedByRel(in Concept concept,
+    auto linksGroupedByRel(in Node node,
                            RelDir dir = RelDir.any)
     {
-        return linksOf(concept, dir).array.groupBy!((a, b) => // TODO array needed?
+        return linksOf(node, dir).array.groupBy!((a, b) => // TODO array needed?
                                                     (a.negation == b.negation &&
                                                      a.rel == b.rel));
     }
 
-    /** Many-Concepts-to-Many-Concepts Link (Edge).
+    /** Many-Nodes-to-Many-Nodes Link (Edge).
      */
     struct Link
     {
@@ -896,15 +896,15 @@ class Net(bool useArray = true,
 
         /* @safe @nogc pure nothrow: */
 
-        this(ConceptRef srcRef,
+        this(NodeRef srcRef,
              Rel rel,
-             ConceptRef dstRef,
+             NodeRef dstRef,
              bool negation,
              Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
         {
-            this.actors ~= ConceptRef(srcRef, RelDir.backward);
-            this.actors ~= ConceptRef(dstRef, RelDir.backward);
+            this.actors ~= NodeRef(srcRef, RelDir.backward);
+            this.actors ~= NodeRef(dstRef, RelDir.backward);
             this.rel = rel;
             this.negation = negation;
             this.origin = origin;
@@ -936,7 +936,7 @@ class Net(bool useArray = true,
         }
 
     private:
-        ConceptRefs actors;
+        NodeRefs actors;
 
         Weight packedWeight;
 
@@ -946,21 +946,21 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
-    auto ins(in Link link) { return link.actors[].filter!(conceptRef =>
-                                                          conceptRef.dir() == RelDir.backward); }
-    auto outs(in Link link) { return link.actors[].filter!(conceptRef =>
-                                                           conceptRef.dir() == RelDir.forward); }
+    auto ins(in Link link) { return link.actors[].filter!(nodeRef =>
+                                                          nodeRef.dir() == RelDir.backward); }
+    auto outs(in Link link) { return link.actors[].filter!(nodeRef =>
+                                                           nodeRef.dir() == RelDir.forward); }
 
     pragma(msg, `Words.sizeof: `, Words.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
-    pragma(msg, `Concept.sizeof: `, Concept.sizeof);
+    pragma(msg, `Node.sizeof: `, Node.sizeof);
     pragma(msg, `LinkRefs.sizeof: `, LinkRefs.sizeof);
-    pragma(msg, `ConceptRefs.sizeof: `, ConceptRefs.sizeof);
+    pragma(msg, `NodeRefs.sizeof: `, NodeRefs.sizeof);
     pragma(msg, `Link.sizeof: `, Link.sizeof);
 
-    /* static if (useArray) { alias Concepts = Array!Concept; } */
-    /* else                 { alias Concepts = Concept[]; } */
-    alias Concepts = Concept[]; // no need to use std.container.Array here
+    /* static if (useArray) { alias Nodes = Array!Node; } */
+    /* else                 { alias Nodes = Node[]; } */
+    alias Nodes = Node[]; // no need to use std.container.Array here
 
     static if (false) { alias Lemmas = Array!Lemma; }
     else                 { alias Lemmas = Lemma[]; }
@@ -970,8 +970,8 @@ class Net(bool useArray = true,
 
     private
     {
-        ConceptRef[Lemma] conceptRefByLemma;
-        Concepts allConcepts;
+        NodeRef[Lemma] nodeRefByLemma;
+        Nodes allNodes;
         Links allLinks;
 
         Lemmas[string] lemmasByWords;
@@ -982,7 +982,7 @@ class Net(bool useArray = true,
         enum anyCategory = CategoryIx.asUndefined; // reserve 0 for anyCategory (unknown)
         ushort categoryIxCounter = CategoryIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyCategory (unknown)
 
-        size_t multiWordConceptLemmaCount = 0; // number of concepts that whose lemma contain several words
+        size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several words
 
         WordNet!(true, true) wordnet;
 
@@ -992,7 +992,7 @@ class Net(bool useArray = true,
         size_t[Origin.max + 1] linkSourceCounts;
         size_t[Lang.max + 1] hlangCounts;
         size_t[Sense.max + 1] kindCounts;
-        size_t conceptStringLengthSum = 0;
+        size_t nodeStringLengthSum = 0;
         size_t connectednessSum = 0;
 
         // TODO Group to WeightsStatistics
@@ -1011,14 +1011,14 @@ class Net(bool useArray = true,
     @safe pure nothrow
     {
         ref inout(Link) linkByRef(LinkRef linkRef) inout { return allLinks[linkRef.ix]; }
-        ref inout(Concept) conceptByRef(ConceptRef cref) inout @nogc { return allConcepts[cref.ix]; }
+        ref inout(Node) nodeByRef(NodeRef cref) inout @nogc { return allNodes[cref.ix]; }
     }
 
-    Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
+    Nullable!Node nodeByLemmaMaybe(in Lemma lemma)
     {
-        if (lemma in conceptRefByLemma)
+        if (lemma in nodeRefByLemma)
         {
-            return typeof(return)(conceptByRef(conceptRefByLemma[lemma]));
+            return typeof(return)(nodeByRef(nodeRefByLemma[lemma]));
         }
         else
         {
@@ -1026,19 +1026,19 @@ class Net(bool useArray = true,
         }
     }
 
-    /** Try to Get Single Concept related to $(D word) in the interpretation
+    /** Try to Get Single Node related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    Concepts conceptsByLemma(S)(S words,
+    Nodes nodesByLemma(S)(S words,
                                 Lang lang,
                                 Sense sense,
                                 CategoryIx category) if (isSomeString!S)
     {
-        typeof(return) concepts;
+        typeof(return) nodes;
         auto lemma = Lemma(words, lang, sense, category);
-        if (lemma in conceptRefByLemma) // if hashed lookup possible
+        if (lemma in nodeRefByLemma) // if hashed lookup possible
         {
-            concepts = [conceptByRef(conceptRefByLemma[lemma])]; // use it
+            nodes = [nodeByRef(nodeRefByLemma[lemma])]; // use it
         }
         else
         {
@@ -1050,26 +1050,26 @@ class Net(bool useArray = true,
                 /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
                 // TODO: Functionize
                 auto lemmaFixed = Lemma(wordsFixed, lang, sense, category);
-                if (lemmaFixed in conceptRefByLemma)
+                if (lemmaFixed in nodeRefByLemma)
                 {
-                    concepts = [conceptByRef(conceptRefByLemma[lemmaFixed])];
+                    nodes = [nodeByRef(nodeRefByLemma[lemmaFixed])];
                 }
             }
         }
-        return concepts;
+        return nodes;
     }
 
-    /** Get All Concept Indexes Indexed by a Lemma having words $(D words). */
-    auto conceptIxesByWordsOnly(S)(S words) if (isSomeString!S)
+    /** Get All Node Indexes Indexed by a Lemma having words $(D words). */
+    auto nodeIxesByWordsOnly(S)(S words) if (isSomeString!S)
     {
         auto lemmas = lemmasOf(words);
-        return lemmas.map!(lemma => conceptRefByLemma[lemma]);
+        return lemmas.map!(lemma => nodeRefByLemma[lemma]);
     }
 
-    /** Get All Concepts Indexed by a Lemma having words $(D words). */
-    auto conceptsByWordsOnly(S)(S words) if (isSomeString!S)
+    /** Get All Nodes Indexed by a Lemma having words $(D words). */
+    auto nodesByWordsOnly(S)(S words) if (isSomeString!S)
     {
-        return conceptIxesByWordsOnly(words).map!(conceptIx => conceptByRef(conceptIx));
+        return nodeIxesByWordsOnly(words).map!(nodeIx => nodeByRef(nodeIx));
     }
 
     /** Get All Possible Lemmas related to $(D word).
@@ -1104,29 +1104,29 @@ class Net(bool useArray = true,
         return false;
     }
 
-    /** Get All Possible Concepts related to $(D word) in the interpretation
+    /** Get All Possible Nodes related to $(D word) in the interpretation
         (semantic context) $(D sense).
         If no sense given return all possible.
     */
-    Concepts conceptsByWords(S)(S words,
+    Nodes nodesByWords(S)(S words,
                                 Lang lang = Lang.unknown,
                                 Sense sense = Sense.unknown,
                                 CategoryIx category = anyCategory) if (isSomeString!S)
     {
-        typeof(return) concepts;
+        typeof(return) nodes;
 
         if (lang != Lang.unknown &&
             sense != Sense.unknown &&
             category != anyCategory) // if exact Lemma key can be used
         {
-            return conceptsByLemma(words, lang, sense, category); // fast hash lookup
+            return nodesByLemma(words, lang, sense, category); // fast hash lookup
         }
         else
         {
-            concepts = conceptsByWordsOnly(words).array; // TODO avoid array herex
+            nodes = nodesByWordsOnly(words).array; // TODO avoid array herex
         }
 
-        if (concepts.empty)
+        if (nodes.empty)
         {
             /* writeln(`Lookup translation of individual words; bil_tvätt => car-wash`); */
             /* foreach (word; words.splitter(`_`)) */
@@ -1134,7 +1134,7 @@ class Net(bool useArray = true,
             /*     writeln(`Translate word "`, word, `" from `, lang, ` to English`); */
             /* } */
         }
-        return concepts;
+        return nodes;
     }
 
     /** Construct Network */
@@ -1209,8 +1209,8 @@ class Net(bool useArray = true,
     /** Learn English Irregular Verb.
      */
     LinkRef[] learnEnglishIrregularVerb(string infinitive,
-                                       string past,
-                                       string pastParticiple)
+                                        string past,
+                                        string pastParticiple)
     {
         const lang = Lang.en;
         const category = CategoryIx.asUndefined;
@@ -1532,30 +1532,30 @@ class Net(bool useArray = true,
                     origin);
     }
 
-    /** Lookup-or-Store $(D Concept) at $(D lemma) index.
+    /** Lookup-or-Store $(D Node) at $(D lemma) index.
      */
-    ConceptRef store(in Lemma lemma,
-                     Concept concept) in { assert(!lemma.words.empty); }
+    NodeRef store(in Lemma lemma,
+                     Node node) in { assert(!lemma.words.empty); }
     body
     {
-        if (lemma in conceptRefByLemma)
+        if (lemma in nodeRefByLemma)
         {
-            return conceptRefByLemma[lemma]; // lookup
+            return nodeRefByLemma[lemma]; // lookup
         }
         else
         {
             auto wordsSplit = lemma.words.findSplit("_");
             if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
             {
-                ++multiWordConceptLemmaCount;
+                ++multiWordNodeLemmaCount;
             }
 
             // store
-            assert(allConcepts.length <= nullIx);
-            const cix = ConceptRef(cast(Ix)allConcepts.length);
-            allConcepts ~= concept; // .. new concept that is stored
-            conceptRefByLemma[lemma] = cix; // store index to ..
-            conceptStringLengthSum += lemma.words.length;
+            assert(allNodes.length <= nullIx);
+            const cix = NodeRef(cast(Ix)allNodes.length);
+            allNodes ~= node; // .. new node that is stored
+            nodeRefByLemma[lemma] = cix; // store index to ..
+            nodeStringLengthSum += lemma.words.length;
 
             learnLemma(lemma.words, lemma);
 
@@ -1563,8 +1563,8 @@ class Net(bool useArray = true,
         }
     }
 
-    /** Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
-    ConceptRef store(Words words,
+    /** Lookup-or-Store $(D Node) named $(D words) in language $(D lang). */
+    NodeRef store(Words words,
                      Lang lang,
                      Sense kind,
                      CategoryIx categoryIx,
@@ -1572,11 +1572,11 @@ class Net(bool useArray = true,
     body
     {
         const lemma = Lemma(words, lang, kind, categoryIx);
-        return store(lemma, Concept(lemma, origin));
+        return store(lemma, Node(lemma, origin));
     }
 
-    /** Try to Lookup-or-Store $(D Concept) named $(D words) in language $(D lang). */
-    ConceptRef tryStore(Words words,
+    /** Try to Lookup-or-Store $(D Node) named $(D words) in language $(D lang). */
+    NodeRef tryStore(Words words,
                         Lang lang,
                         Sense kind,
                         CategoryIx categoryIx,
@@ -1584,7 +1584,7 @@ class Net(bool useArray = true,
     body
     {
         if (words.empty)
-            return ConceptRef.asUndefined;
+            return NodeRef.asUndefined;
         return store(words, lang, kind, categoryIx, origin);
     }
 
@@ -1592,7 +1592,7 @@ class Net(bool useArray = true,
     LinkRef[] connectMtoM(R)(Rel rel,
                             R all,
                             Origin origin,
-                            real weight = 1.0) if (isSourceOf!(R, ConceptRef))
+                            real weight = 1.0) if (isSourceOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (me; all)
@@ -1610,10 +1610,10 @@ class Net(bool useArray = true,
     alias connectFully = connectMtoM;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
-    LinkRef[] connect1toM(R)(ConceptRef first,
+    LinkRef[] connect1toM(R)(NodeRef first,
                             Rel rel,
                             R rest,
-                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptRef))
+                            Origin origin, real weight = 1.0) if (isSourceOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -1630,8 +1630,8 @@ class Net(bool useArray = true,
     /** Fan-In Connect $(D first) to Every in $(D rest). */
     LinkRef[] connectMto1(R)(R rest,
                             Rel rel,
-                            ConceptRef first,
-                            Origin origin, real weight = 1.0) if (isSourceOf!(R, ConceptRef))
+                            NodeRef first,
+                            Origin origin, real weight = 1.0) if (isSourceOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -1646,7 +1646,7 @@ class Net(bool useArray = true,
     alias connectFanIn = connectMto1;
 
     /** Cyclic Connect Every in $(D all). */
-    void connectCycle(R)(Rel rel, R all) if (isSourceOf!(R, ConceptRef))
+    void connectCycle(R)(Rel rel, R all) if (isSourceOf!(R, NodeRef))
     {
     }
     alias connectCircle = connectCycle;
@@ -1656,9 +1656,9 @@ class Net(bool useArray = true,
         TODO checkExisting is currently set to false because searching
         existing links is currently too slow
      */
-    LinkRef connect(ConceptRef srcRef,
+    LinkRef connect(NodeRef srcRef,
                     Rel rel,
-                    ConceptRef dstRef,
+                    NodeRef dstRef,
                     Origin origin = Origin.unknown,
                     real weight = 1.0, // 1.0 means absolutely true for Origin manual
                     bool negation = false,
@@ -1675,9 +1675,9 @@ class Net(bool useArray = true,
             {
                 if (false)
                 {
-                    dln("warning: Concepts ",
-                        conceptByRef(srcRef).lemma.words, " and ",
-                        conceptByRef(dstRef).lemma.words, " already related as ",
+                    dln("warning: Nodes ",
+                        nodeByRef(srcRef).lemma.words, " and ",
+                        nodeByRef(dstRef).lemma.words, " already related as ",
                         rel);
                 }
                 return existingIx;
@@ -1694,8 +1694,8 @@ class Net(bool useArray = true,
                          negation,
                          origin);
 
-        conceptByRef(srcRef).links ~= LinkRef(linkRef, RelDir.forward);
-        conceptByRef(dstRef).links ~= LinkRef(linkRef, RelDir.backward);
+        nodeByRef(srcRef).links ~= LinkRef(linkRef, RelDir.forward);
+        nodeByRef(dstRef).links ~= LinkRef(linkRef, RelDir.backward);
         connectednessSum += 2;
 
         symmetricRelCount += rel.isSymmetric;
@@ -1720,12 +1720,12 @@ class Net(bool useArray = true,
             ++packedWeightHistogramNELL[link.packedWeight];
         }
 
-        propagateLinkConcepts(link, srcRef, dstRef);
+        propagateLinkNodes(link, srcRef, dstRef);
 
         if (false)
         {
-            dln(" src:", conceptByRef(srcRef).lemma.words,
-                " dst:", conceptByRef(dstRef).lemma.words,
+            dln(" src:", nodeByRef(srcRef).lemma.words,
+                " dst:", nodeByRef(dstRef).lemma.words,
                 " rel:", rel,
                 " origin:", origin,
                 " negation:", negation,
@@ -1750,7 +1750,7 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
     */
-    ConceptRef readCN5ConceptURI(T)(const T part)
+    NodeRef readCN5ConceptURI(T)(const T part)
     {
         auto items = part.splitter('/');
 
@@ -1797,7 +1797,7 @@ class Net(bool useArray = true,
     }
 
     /** Read NELL Entity from $(D part). */
-    Tuple!(ConceptRef, string, LinkRef) readNELLEntity(S)(const S part)
+    Tuple!(NodeRef, string, LinkRef) readNELLEntity(S)(const S part)
     {
         const show = false;
 
@@ -1867,8 +1867,8 @@ class Net(bool useArray = true,
         auto reversion = false;
         auto tense = Tense.unknown;
 
-        ConceptRef entityIx;
-        ConceptRef valueIx;
+        NodeRef entityIx;
+        NodeRef valueIx;
 
         string entityCategoryName;
         char[] relationName;
@@ -1967,30 +1967,30 @@ class Net(bool useArray = true,
         double longitude;
     }
 
-    /** Concept Locations. */
-    Location[ConceptRef] locations;
+    /** Node Locations. */
+    Location[NodeRef] locations;
 
-    /** Set Location of Concept $(D cix) to $(D location) */
-    void setLocation(ConceptRef cix, in Location location)
+    /** Set Location of Node $(D cix) to $(D location) */
+    void setLocation(NodeRef cix, in Location location)
     {
         assert (cix !in locations);
         locations[cix] = location;
     }
 
-    /** If $(D link) concept origins unknown propagate them from $(D link)
+    /** If $(D link) node origins unknown propagate them from $(D link)
         itself. */
-    bool propagateLinkConcepts(ref Link link,
-                               ConceptRef srcRef,
-                               ConceptRef dstRef)
+    bool propagateLinkNodes(ref Link link,
+                               NodeRef srcRef,
+                               NodeRef dstRef)
     {
         bool done = false;
         if (!link.origin.defined)
         {
-            // TODO prevent duplicate lookups to conceptByRef
-            if (!conceptByRef(srcRef).origin.defined)
-                conceptByRef(srcRef).origin = link.origin;
-            if (!conceptByRef(dstRef).origin.defined)
-                conceptByRef(dstRef).origin = link.origin;
+            // TODO prevent duplicate lookups to nodeByRef
+            if (!nodeByRef(srcRef).origin.defined)
+                nodeByRef(srcRef).origin = link.origin;
+            if (!nodeByRef(dstRef).origin.defined)
+                nodeByRef(dstRef).origin = link.origin;
             done = true;
         }
         return done;
@@ -2020,7 +2020,7 @@ class Net(bool useArray = true,
         auto reversion = false;
         auto tense = Tense.unknown;
 
-        ConceptRef src, dst;
+        NodeRef src, dst;
         real weight;
         auto origin = Origin.unknown;
 
@@ -2150,7 +2150,7 @@ class Net(bool useArray = true,
             }
         }
 
-        writeln(`Concept Count by Origin:`);
+        writeln(`Node Count by Origin:`);
         foreach (source; Origin.min..Origin.max)
         {
             const count = linkSourceCounts[source];
@@ -2160,7 +2160,7 @@ class Net(bool useArray = true,
             }
         }
 
-        writeln(`Concept Count by Language:`);
+        writeln(`Node Count by Language:`);
         foreach (lang; Lang.min..Lang.max)
         {
             const count = hlangCounts[lang];
@@ -2170,7 +2170,7 @@ class Net(bool useArray = true,
             }
         }
 
-        writeln(`Concept Count by Word Kind:`);
+        writeln(`Node Count by Word Kind:`);
         foreach (sense; Sense.min..Sense.max)
         {
             const count = kindCounts[sense];
@@ -2193,34 +2193,34 @@ class Net(bool useArray = true,
             writeln(indent, `NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
         }
 
-        writeln(indent, `Concept Count (All/Multi-Word): `,
-                allConcepts.length,
+        writeln(indent, `Node Count (All/Multi-Word): `,
+                allNodes.length,
                 `/`,
-                multiWordConceptLemmaCount);
+                multiWordNodeLemmaCount);
         writeln(indent, `Link Count: `, allLinks.length);
 
         writeln(indent, `Lemmas by Words Count: `, lemmasByWords.length);
 
-        writeln(indent, `Concept Indexes by Lemma Count: `, conceptRefByLemma.length);
-        writeln(indent, `Concept String Length Average: `, cast(real)conceptStringLengthSum/allConcepts.length);
-        writeln(indent, `Concept Connectedness Average: `, cast(real)connectednessSum/2/allConcepts.length);
+        writeln(indent, `Node Indexes by Lemma Count: `, nodeRefByLemma.length);
+        writeln(indent, `Node String Length Average: `, cast(real)nodeStringLengthSum/allNodes.length);
+        writeln(indent, `Node Connectedness Average: `, cast(real)connectednessSum/2/allNodes.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkRef.max.
      */
-    LinkRef areConnectedInOrder(ConceptRef a,
+    LinkRef areConnectedInOrder(NodeRef a,
                                 Rel rel,
-                                ConceptRef b,
+                                NodeRef b,
                                 bool negation = false)
     {
         const bDir = (rel.isSymmetric ?
                       RelDir.any :
                       RelDir.forward);
-        foreach (aLinkRef; conceptByRef(a).links)
+        foreach (aLinkRef; nodeByRef(a).links)
         {
             const aLink = linkByRef(aLinkRef);
             if ((aLink.actors[]
-                      .canFind(ConceptRef(b, bDir))) &&
+                      .canFind(NodeRef(b, bDir))) &&
                 aLink.rel == rel &&
                 aLink.negation == negation) // no need to check reversion here because all links are bidirectional
             {
@@ -2233,9 +2233,9 @@ class Net(bool useArray = true,
 
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkRef.max.
      */
-    LinkRef areConnected(ConceptRef a,
+    LinkRef areConnected(NodeRef a,
                          Rel rel,
-                         ConceptRef b,
+                         NodeRef b,
                          bool negation = false)
     {
         return either(areConnectedInOrder(a, rel, b, negation),
@@ -2248,12 +2248,12 @@ class Net(bool useArray = true,
                         in Lemma b,
                         bool negation = false)
     {
-        if (a in conceptRefByLemma && // both lemmas exist
-            b in conceptRefByLemma)
+        if (a in nodeRefByLemma && // both lemmas exist
+            b in nodeRefByLemma)
         {
-            return areConnected(conceptRefByLemma[a],
+            return areConnected(nodeRefByLemma[a],
                                 rel,
-                                conceptRefByLemma[b],
+                                nodeRefByLemma[b],
                                 negation);
         }
         return typeof(return).asUndefined;
@@ -2268,36 +2268,36 @@ class Net(bool useArray = true,
         write(indent, rel.toHumanLang(dir, negation, lang), `: `);
     }
 
-    void showConcept(in Concept concept, real weight)
+    void showNode(in Node node, real weight)
     {
-        if (concept.lemma.words) write(` `, concept.lemma.words.tr(`_`, ` `));
+        if (node.lemma.words) write(` `, node.lemma.words.tr(`_`, ` `));
 
         write(`(`); // open
 
-        if (concept.lemma.lang != Lang.unknown)
+        if (node.lemma.lang != Lang.unknown)
         {
-            write(concept.lemma.lang);
+            write(node.lemma.lang);
         }
-        if (concept.lemma.sense != Sense.unknown)
+        if (node.lemma.sense != Sense.unknown)
         {
-            write(`-`, concept.lemma.sense);
+            write(`-`, node.lemma.sense);
         }
 
-        writef(`:%.2f@%s),`, weight, concept.origin.toNice); // close
+        writef(`:%.2f@%s),`, weight, node.origin.toNice); // close
     }
 
-    void showLinkConcept(in Concept concept,
+    void showLinkNode(in Node node,
                          Rel rel,
                          real weight,
                          RelDir dir)
     {
         showLinkRelation(rel, dir);
-        showConcept(concept, weight);
+        showNode(node, weight);
         writeln();
     }
 
-    /** Show concepts and their relations matching content in $(D line). */
-    void showConcepts(S)(S line,
+    /** Show nodes and their relations matching content in $(D line). */
+    void showNodes(S)(S line,
                          Lang lang = Lang.unknown,
                          Sense sense = Sense.unknown,
                          S lineSeparator = `_`) if (isSomeString!S)
@@ -2316,10 +2316,10 @@ class Net(bool useArray = true,
 
         if (normalizedLine == `palindrome`)
         {
-            foreach (palindromeConcept; allConcepts.filter!(concept =>
-                                                            concept.lemma.words.isPalindrome(3)))
+            foreach (palindromeNode; allNodes.filter!(node =>
+                                                            node.lemma.words.isPalindrome(3)))
             {
-                showLinkConcept(palindromeConcept,
+                showLinkNode(palindromeNode,
                                 Rel.instanceOf,
                                 real.infinity,
                                 RelDir.backward);
@@ -2331,9 +2331,9 @@ class Net(bool useArray = true,
             const arg = split[0];
             if (!arg.empty)
             {
-                foreach (anagramConcept; anagramsOf(arg))
+                foreach (anagramNode; anagramsOf(arg))
                 {
-                    showLinkConcept(anagramConcept,
+                    showLinkNode(anagramNode,
                                     Rel.instanceOf,
                                     real.infinity,
                                     RelDir.backward);
@@ -2346,9 +2346,9 @@ class Net(bool useArray = true,
             const arg = split[0];
             if (!arg.empty)
             {
-                foreach (synonymConcept; synonymsOf(arg))
+                foreach (synonymNode; synonymsOf(arg))
                 {
-                    showLinkConcept(synonymConcept,
+                    showLinkNode(synonymNode,
                                     Rel.instanceOf,
                                     real.infinity,
                                     RelDir.backward);
@@ -2361,9 +2361,9 @@ class Net(bool useArray = true,
             const arg = split[0];
             if (!arg.empty)
             {
-                foreach (translationConcept; translationsOf(arg))
+                foreach (translationNode; translationsOf(arg))
                 {
-                    showLinkConcept(translationConcept,
+                    showLinkNode(translationNode,
                                     Rel.instanceOf,
                                     real.infinity,
                                     RelDir.backward);
@@ -2374,29 +2374,31 @@ class Net(bool useArray = true,
         if (normalizedLine.empty)
             return;
 
-        // queried line concepts
-        auto lineConcepts = conceptsByWords(normalizedLine,
+        // queried line nodes
+        auto lineNodes = nodesByWords(normalizedLine,
                                             lang,
                                             sense);
 
         // as is
-        foreach (lineConcept; lineConcepts)
+        foreach (lineNode; lineNodes)
         {
-            writeln(`  - in `, lineConcept.lemma.lang.toName,
-                    ` of sense `, lineConcept.lemma.sense);
+            writeln(`  - in `, lineNode.lemma.lang.toName,
+                    ` of sense `, lineNode.lemma.sense);
 
-            foreach (linkGroup; linksGroupedByRel(lineConcept))
+            foreach (linkGroup; linksGroupedByRel(lineNode))
             {
                 showLinkRelation(linkGroup.front.rel,
                                  RelDir.forward, // TODO fix this relation
                                  linkGroup.front.negation);
-                foreach (link; linkGroup.array.sort!((a, b) => (a.normalizedWeight >
-                                                                b.normalizedWeight)))
+                foreach (link; linkGroup.array
+                                        .sort!((a, b) => (a.normalizedWeight >
+                                                          b.normalizedWeight)))
                 {
-                    foreach (linkedConcept; link.actors[]
-                                                .map!(conceptRef => conceptByRef(conceptRef)))
+                    foreach (linkedNode; link.actors[]
+                                                /* .filter!(actorNode => actorNode.ix != lineNode.ix) // don't self reference */
+                                                .map!(nodeRef => nodeByRef(nodeRef)))
                     {
-                        showConcept(linkedConcept,
+                        showNode(linkedNode,
                                     link.normalizedWeight);
                     }
                     writeln();
@@ -2405,12 +2407,12 @@ class Net(bool useArray = true,
         }
 
         // stemmed
-        if (lineConcepts.empty)
+        if (lineNodes.empty)
         {
             while (normalizedLine.stemize(lang))
             {
                 writeln(`Stemmed to `, normalizedLine);
-                showConcepts(normalizedLine, lang, sense, lineSeparator);
+                showNodes(normalizedLine, lang, sense, lineSeparator);
             }
         }
     }
@@ -2418,8 +2420,8 @@ class Net(bool useArray = true,
     auto anagramsOf(S)(S words) if (isSomeString!S)
     {
         const lsWord = words.sorted; // letter-sorted words
-        return allConcepts.filter!(concept => (lsWord != concept.lemma.words && // don't include one-self
-                                               lsWord == concept.lemma.words.sorted));
+        return allNodes.filter!(node => (lsWord != node.lemma.words && // don't include one-self
+                                               lsWord == node.lemma.words.sorted));
     }
 
     /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
@@ -2437,11 +2439,11 @@ class Net(bool useArray = true,
                        Sense sense = Sense.unknown,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto concepts = conceptsByWords(words,
+        auto nodes = nodesByWords(words,
                                         lang,
                                         sense);
-        // TODO tranverse over concepts synonyms
-        return concepts;
+        // TODO tranverse over nodes synonyms
+        return nodes;
     }
 
     /** Get Translations of $(D word) in language $(D lang).
@@ -2453,7 +2455,7 @@ class Net(bool useArray = true,
                            Sense sense = Sense.unknown,
                            Lang[] toLangs = []) if (isSomeString!S)
     {
-        auto concepts = conceptsByWords(words,
+        auto nodes = nodesByWords(words,
                                         lang,
                                         sense);
         const rel = Rel.translationOf;
@@ -2462,30 +2464,30 @@ class Net(bool useArray = true,
         // en-en => sv-sv
         if (false)
         {
-            auto translations = concepts.map!(concept =>
-                                              linksOf(concept, RelDir.any, rel, false))/* .joiner */;
+            auto translations = nodes.map!(node =>
+                                              linksOf(node, RelDir.any, rel, false))/* .joiner */;
         }
-        return concepts;
+        return nodes;
     }
 
-    /** ConceptNet Relatedness.
+    /** Relatedness.
         Sum of all paths relating a to b where each path is the path weight
         product.
     */
-    real relatedness(ConceptRef a,
-                     ConceptRef b) const @safe @nogc pure nothrow
+    real relatedness(NodeRef a,
+                     NodeRef b) const @safe @nogc pure nothrow
     {
         typeof(return) value;
         return value;
     }
 
-    /** Get Concept with strongest relatedness to $(D text).
+    /** Get Node with strongest relatedness to $(D text).
         TODO Compare with function Context() in ConceptNet API.
      */
-    Concept contextOf(R)(R text) const if (isSourceOfSomeString!R)
+    Node contextOf(R)(R text) const if (isSourceOfSomeString!R)
     {
-        auto concept = typeof(return).init;
-        return concept;
+        auto node = typeof(return).init;
+        return node;
     }
     alias topicOf = contextOf;
 
