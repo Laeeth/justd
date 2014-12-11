@@ -11,7 +11,7 @@ int main(string[] args)
     registerMemoryErrorHandler();
 
     auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
-    net.showConcepts(`car_wash`);
+    net.showNodes(`car_wash`);
 
     while (true)
     {
@@ -19,7 +19,7 @@ int main(string[] args)
         string line;
         if ((line = readln()) !is null)
         {
-            net.showConcepts(line);
+            net.showNodes(line);
         }
         else
         {
