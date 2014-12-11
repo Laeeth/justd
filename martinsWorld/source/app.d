@@ -51,6 +51,76 @@ enum Topography
 
 alias TopographyProbs = double[Topography]; // AA
 
+enum Life
+{
+    flora, fauna, creatures_with_iq
+}
+
+alias LifeProbs = double[Life]; // AA
+
+enum Society
+{
+    clan, village, city, metropolis
+}
+
+enum Nation
+{
+    zero, one, two, multi
+}
+
+enum Technology
+{
+    gathering_hunting,
+    material_processing,
+    synthetic,
+    biology
+}
+
+enum Religion
+{
+    elements, polytheism, montheism, philosophic
+}
+
+enum Government
+{
+    dictatorship, monarchy, republic, police_military_state
+}
+
+enum Law_And_Order
+{
+    restrictions, punishment, preventing_system, rehabilitation
+}
+
+enum ResourceDistribution
+{
+    healthcare, education, infrastructure, military
+}
+
+enum TradingSystem
+{
+    business, currency, natural_resources, technical_resources
+}
+
+enum ArchitectureFunction
+{
+    defensive, offensive, maintenance, construction
+}
+
+enum ArchitectureAesthetics
+{
+    power, education, navigation, art_style
+}
+
+enum LocalBusinessAndFacilities
+{
+    product, service, social
+}
+
+enum PlacesOfGathering
+{
+    public_, private_, educational, entertainment
+}
+
 /*  */
 /* DAY CYCLE	GRAVITY	ATMOSPHERE	FLOOD AND TIDE */
 
@@ -59,7 +129,7 @@ alias TopographyProbs = double[Topography]; // AA
 /*     day_cycle, */
 /* } */
 
-import std.stdio, std.range, std.algorithm, std.string, std.conv, std.random, std.traits;
+import std.stdio, std.range, std.algorithm, std.string, std.conv, std.random, std.traits, std.typetuple;
 
 void input(T)(ref T x,
               ref Random gen,
@@ -114,6 +184,7 @@ int main(string[] args)
     /* uint dayCycle; */
     /* input(dayCycle); */
 
+    /* TODO functionize */
     TopographyProbs topographyProbs;
     foreach (key; EnumMembers!Topography) // TODO deduce key type from TopographyProbs
     {
@@ -122,47 +193,34 @@ int main(string[] args)
         topographyProbs[key] = prob;
     }
 
+    /* TODO functionize */
+    LifeProbs lifeProbs;
+    foreach (key; EnumMembers!Life) // TODO deduce key type from LifeProbs
+    {
+        double prob;
+        input(prob, ran, key.to!string);
+        lifeProbs[key] = prob;
+    }
+
+    foreach (type; TypeTuple!(Society,
+                              Nation,
+                              Technology,
+                              Religion,
+                              Government,
+                              Law_And_Order,
+                              ResourceDistribution,
+                              TradingSystem,
+                              ArchitectureFunction,
+                              ArchitectureAesthetics,
+                              LocalBusinessAndFacilities,
+                              PlacesOfGathering))
+    {
+        enum code = "{" ~ type.stringof ~ " society; input(society, ran);" ~ "}";
+        mixin(code);
+    }
+
     return 0;
 }
-
-/*     LIFE */
-/*     FLORA	FAUNA		CREATURES WITH IQ */
-
-/*     SOCIETY */
-/*     CLAN	VILLAGE	CITY	METROPOLIS */
-
-/*     NATION */
-/*     ZERO NATION	ONE NATION	TWO NATION	MULTI-NATION */
-
-/*     TECHNOLOGY */
-/*     GATHERING & HUNTING	MATERIAL PROCESSING	SYNTHETIC	BIOLOGY */
-
-/*     RELIGION */
-/*     ELEMENTS	POLYTHEISM	MONTHEISM	PHILOSOPHIC */
-
-/* GOVERNMENT */
-/* DICTATORSHIP	MONARCHY	REPUBLIC	POLICE-/MILITARYSTATE */
-
-/* LAW & ORDER */
-/* RESTRICTIONS	PUNISHMENT	PREVENTIVING SYSTEM	REHABILITATION */
-
-/* RESOURCE DISTRUBTION */
-/* HEALTHCARE	EDUCATION	INFRASTRUCTURE	MILITARY */
-
-/* TRADING SYSTEM */
-/* BUSINESS	CURRENCY	NATURAL RESOURCES	TECHNICAL RESOURCES */
-
-/* ARCHITECTURE FUNCTION */
-/* DEFENSIVE	OFFENSIVE	MAINTENANCE	CONSTRUCTION */
-
-/* ARCHITECTURE AESTHETICS */
-/* POWER	EDUCATION	NAVIGATION	ART-STYLE */
-
-/* LOCAL BUSINESS & FACILITIES */
-/* PRODUCT 	SERVICE	SOCIAL */
-
-/* PLACES OF GATHERING */
-/* PUBLIC	PRIVATE	EDUCATIONAL	ENTERTAINMENT */
 
 /* GUILDS & UNIONS */
 /* MEMBERSHIP	ORGANIZATIONAL STRUCTRE	HIDDEN	WELL-KNOWN */
