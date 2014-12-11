@@ -13,7 +13,6 @@ enum Rel:ubyte
                 * between A and B, but ConceptNet can't determine what that * relationship
                 is based on the data. This was called * "ConceptuallyRelatedTo" in
                 ConceptNet 2 through 4.  */
-    conceptuallyRelatedTo = relatedTo,
     any = relatedTo,
 
     isA, /* A is a subtype or a specific instance of B; every A is a B. (We do
