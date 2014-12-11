@@ -790,11 +790,13 @@ class Net(bool useArray = true,
         this(Ref rhs, RelDir dir)
         {
             this._ix = rhs.ix;
-            if (dir == RelDir.backward) // TODO functionize to setDir()
+
+            // TODO functionize to setDir()
+            if (dir == RelDir.backward)
             {
                 _ix.setTopBit;
             }
-            else
+            else if (dir == RelDir.forward)
             {
                 _ix.resetTopBit;
             }
@@ -867,7 +869,7 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
-    /** Get Links of $(D concept). */
+    /** Get Links of $(D concept) with direction $(D dir). */
     auto  linksOf(in Concept concept, //
                   RelDir dir = RelDir.any,
                   Rel rel = Rel.any,
@@ -876,35 +878,17 @@ class Net(bool useArray = true,
         return concept.links[]
                       .filter!(linkRef => dir.of(RelDir.any, linkRef.dir)) // TODO functionize to match
                       .map!(linkRef => linkByRef(linkRef))
-                      .filter!(link => ((link._rel == rel ||
-                                         link._rel.specializes(rel)) && // TODO functionize to match
-                                        link._negation == negation));
+                      .filter!(link => ((link.rel == rel ||
+                                         link.rel.specializes(rel)) && // TODO functionize to match
+                                        link.negation == negation));
     }
 
     auto linksGroupedByRel(in Concept concept,
                            RelDir dir = RelDir.any)
     {
         return linksOf(concept, dir).array.groupBy!((a, b) => // TODO array needed?
-                                                    (a._negation == b._negation &&
-                                                     a._rel == b._rel));
-    }
-
-    /** Get Ingoing Relations of (range of tuple(Link, Concept)) of $(D concept). */
-    auto  friendsOf(in Concept concept,
-                    RelDir dir = RelDir.any,
-                    Rel rel = Rel.any,
-                    bool negation = false)
-    {
-        // TODO Don't use dst but instead those that don't equal input conceptRef
-        return  linksOf(concept, dir, rel, negation).map!(link => tuple(link, dst(link)));
-    }
-
-    auto friendsGroupedByRel(in Concept concept,
-                             RelDir dir = RelDir.any)
-    {
-        return friendsOf(concept, dir).array.groupBy!((a, b) => // TODO array needed?
-                                                      (a[0]._negation == b[0]._negation &&
-                                                       a[0]._rel == b[0]._rel));
+                                                    (a.negation == b.negation &&
+                                                     a.rel == b.rel));
     }
 
     /** Many-Concepts-to-Many-Concepts Link (Edge).
@@ -914,7 +898,7 @@ class Net(bool useArray = true,
         alias Weight = ubyte; // link weight pack type
         alias WeightHistogram = size_t[Weight];
 
-        @safe @nogc pure nothrow:
+        /* @safe @nogc pure nothrow: */
 
         this(ConceptRef srcRef,
              Rel rel,
@@ -923,16 +907,16 @@ class Net(bool useArray = true,
              Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
         {
-            this._srcRef = srcRef;
-            this._dstRef = dstRef;
-            this._rel = rel;
-            this._negation = negation;
-            this._origin = origin;
+            this.actors ~= ConceptRef(srcRef, RelDir.backward);
+            this.actors ~= ConceptRef(dstRef, RelDir.backward);
+            this.rel = rel;
+            this.negation = negation;
+            this.origin = origin;
         }
 
         this(Origin origin = Origin.unknown)
         {
-            this._origin = origin;
+            this.origin = origin;
         }
 
         /** Set ConceptNet5 Weight $(weigth). */
@@ -956,19 +940,20 @@ class Net(bool useArray = true,
         }
 
     private:
-        ConceptRef _srcRef;
-        ConceptRef _dstRef;
+        ConceptRefs actors;
 
         Weight packedWeight;
 
-        Rel _rel;
-        bool _negation; /// relation negation
+        Rel rel;
+        bool negation; /// relation negation
 
-        Origin _origin;
+        Origin origin;
     }
 
-    ref Concept src(Link link) { return conceptByRef(link._srcRef); }
-    ref Concept dst(Link link) { return conceptByRef(link._dstRef); }
+    auto ins(in Link link) { return link.actors[].filter!(conceptRef =>
+                                                          conceptRef.dir() == RelDir.backward); }
+    auto outs(in Link link) { return link.actors[].filter!(conceptRef =>
+                                                           conceptRef.dir() == RelDir.forward); }
 
     pragma(msg, `Words.sizeof: `, Words.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
@@ -1030,10 +1015,7 @@ class Net(bool useArray = true,
     @safe pure nothrow
     {
         ref inout(Link) linkByRef(LinkRef linkRef) inout { return allLinks[linkRef.ix]; }
-        /* ref inout(Link)  opIndex(LinkRef linkRef) inout { return linkByRef(linkRef); } */
-
         ref inout(Concept) conceptByRef(ConceptRef cref) inout @nogc { return allConcepts[cref.ix]; }
-        /* ref inout(Concept)      opIndex(ConceptRef cref) inout @nogc { return conceptByRef(cref); } */
     }
 
     Nullable!Concept conceptByLemmaMaybe(in Lemma lemma)
@@ -1150,11 +1132,11 @@ class Net(bool useArray = true,
 
         if (concepts.empty)
         {
-            writeln(`Lookup translation of individual words; bil_tvätt => car-wash`);
-            foreach (word; words.splitter(`_`))
-            {
-                writeln(`Translate word "`, word, `" from `, lang, ` to English`);
-            }
+            /* writeln(`Lookup translation of individual words; bil_tvätt => car-wash`); */
+            /* foreach (word; words.splitter(`_`)) */
+            /* { */
+            /*     writeln(`Translate word "`, word, `" from `, lang, ` to English`); */
+            /* } */
         }
         return concepts;
     }
@@ -1174,7 +1156,7 @@ class Net(bool useArray = true,
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
                                                             .buildNormalizedPath,
-                     maxCount);
+                     10000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1718,8 +1700,8 @@ der", "spred", "spridit");
                          negation,
                          origin);
 
-        conceptByRef(link._srcRef).links ~= LinkRef(linkRef, RelDir.forward);
-        conceptByRef(link._dstRef).links ~= LinkRef(linkRef, RelDir.backward);
+        conceptByRef(srcRef).links ~= LinkRef(linkRef, RelDir.forward);
+        conceptByRef(dstRef).links ~= LinkRef(linkRef, RelDir.backward);
         connectednessSum += 2;
 
         symmetricRelCount += rel.isSymmetric;
@@ -1744,12 +1726,12 @@ der", "spred", "spridit");
             ++packedWeightHistogramNELL[link.packedWeight];
         }
 
-        propagateLinkConcepts(link);
+        propagateLinkConcepts(link, srcRef, dstRef);
 
         if (false)
         {
-            dln(" src:", conceptByRef(link._srcRef).lemma.words,
-                " dst:", conceptByRef(link._dstRef).lemma.words,
+            dln(" src:", conceptByRef(srcRef).lemma.words,
+                " dst:", conceptByRef(dstRef).lemma.words,
                 " rel:", rel,
                 " origin:", origin,
                 " negation:", negation,
@@ -2003,16 +1985,18 @@ der", "spred", "spridit");
 
     /** If $(D link) concept origins unknown propagate them from $(D link)
         itself. */
-    bool propagateLinkConcepts(ref Link link)
+    bool propagateLinkConcepts(ref Link link,
+                               ConceptRef srcRef,
+                               ConceptRef dstRef)
     {
         bool done = false;
-        if (!link._origin.defined)
+        if (!link.origin.defined)
         {
             // TODO prevent duplicate lookups to conceptByRef
-            if (!conceptByRef(link._srcRef).origin.defined)
-                conceptByRef(link._srcRef).origin = link._origin;
-            if (!conceptByRef(link._dstRef).origin.defined)
-                conceptByRef(link._dstRef).origin = link._origin;
+            if (!conceptByRef(srcRef).origin.defined)
+                conceptByRef(srcRef).origin = link.origin;
+            if (!conceptByRef(dstRef).origin.defined)
+                conceptByRef(dstRef).origin = link.origin;
             done = true;
         }
         return done;
@@ -2235,15 +2219,18 @@ der", "spred", "spridit");
                                 ConceptRef b,
                                 bool negation = false)
     {
-        foreach (linkRef; conceptByRef(a).links)
+        const bDir = (rel.isSymmetric ?
+                      RelDir.any :
+                      RelDir.forward);
+        foreach (aLinkRef; conceptByRef(a).links)
         {
-            const link = linkByRef(linkRef);
-            if ((link._srcRef == b ||
-                 link._dstRef == b) &&
-                link._rel == rel &&
-                link._negation == negation) // no need to check reversion here because all links are bidirectional
+            const aLink = linkByRef(aLinkRef);
+            if ((aLink.actors[]
+                      .canFind(ConceptRef(b, bDir))) &&
+                aLink.rel == rel &&
+                aLink.negation == negation) // no need to check reversion here because all links are bidirectional
             {
-                return linkRef;
+                return aLinkRef;
             }
         }
 
@@ -2403,14 +2390,22 @@ der", "spred", "spridit");
             writeln(`  - in `, lineConcept.lemma.lang.toName,
                     ` of sense `, lineConcept.lemma.sense);
 
-            foreach (group; friendsGroupedByRel(lineConcept))
+            foreach (linkGroup; linksGroupedByRel(lineConcept))
             {
-                showLinkRelation(group.front[0]._rel, RelDir.forward);
-                foreach (link, otherConcept; group) // TODO sort on descending weights: .array.rsortBy!(a => a[0].packedWeight)
+                showLinkRelation(linkGroup.front.rel,
+                                 RelDir.forward, // TODO fix this relation
+                                 linkGroup.front.negation);
+                foreach (link; linkGroup.array.sort!((a, b) => (a.normalizedWeight >
+                                                                b.normalizedWeight)))
                 {
-                    showConcept(otherConcept, link.normalizedWeight);
+                    foreach (linkedConcept; link.actors[]
+                                                .map!(conceptRef => conceptByRef(conceptRef)))
+                    {
+                        showConcept(linkedConcept,
+                                    link.normalizedWeight);
+                    }
+                    writeln();
                 }
-                writeln();
             }
         }
 
@@ -2472,7 +2467,8 @@ der", "spred", "spridit");
         // en-en => sv-sv
         if (false)
         {
-            auto translations = concepts.map!(concept => linksOf(concept, RelDir.any, rel, false))/* .joiner */;
+            auto translations = concepts.map!(concept =>
+                                              linksOf(concept, RelDir.any, rel, false))/* .joiner */;
         }
         return concepts;
     }
