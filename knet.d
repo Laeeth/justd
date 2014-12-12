@@ -1607,7 +1607,7 @@ class Net(bool useArray = true,
                              Lang lang,
                              Origin origin,
                              NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
-        in { assert(rel.isTransitive); }
+        in { assert(rel.isSymmetric); }
     body
     {
         typeof(return) linkIxes;
