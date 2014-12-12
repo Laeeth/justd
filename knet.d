@@ -1607,17 +1607,24 @@ class Net(bool useArray = true,
                              Lang lang,
                              Origin origin,
                              NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
+        in { assert(rel.isTransitive); }
+    body
     {
         typeof(return) linkIxes;
+        size_t i = 0;
         foreach (me; all)
         {
+            size_t j = 0;
             foreach (you; all)
             {
-                if (me != you)
+                if (j >= i)
                 {
-                    linkIxes ~= connect(me, rel, you, lang, origin, weight);
+                    break;
                 }
+                linkIxes ~= connect(me, rel, you, lang, origin, weight);
+                ++j;
             }
+            ++i;
         }
         return linkIxes;
     }
@@ -1627,7 +1634,7 @@ class Net(bool useArray = true,
     LinkRef[] connect1toM(R)(NodeRef first,
                              Rel rel,
                              R rest,
-                             Origin origin, NWeight weight = 1.0) if (isSourceOf!(R, NodeRef))
+                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
