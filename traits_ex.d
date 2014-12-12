@@ -8,7 +8,7 @@
 */
 module traits_ex;
 import std.traits: isArray, isAssignable, ParameterTypeTuple, isStaticArray, isDynamicArray, isSomeString;
-import std.range: ElementType, isForwardRange, isRandomAccessRange, isInputRange, isBidirectionalRange, isOutputRange;
+import std.range: ElementType, isForwardRange, isRandomAccessRange, isInputRange, isBidirectionalRange, isOutputRange, isIterable;
 
 /** Returns: true iff $(D ptr) is handled by the garbage collector (GC). */
 bool isGCPointer(void* ptr){
@@ -31,15 +31,27 @@ template allSame(T...)
     }
 }
 
+enum isIterableOf(R, E) = isIterable!R && is(ElementType!R == E);
+
+unittest
+{
+    alias E = string;
+    alias I = int;
+    alias R = typeof(["a", "b"]);
+    static assert(isIterableOf!(R, E));
+    static assert(!isIterableOf!(R, I));
+}
+
 enum isRandomAccessRangeOf(R, E) = isRandomAccessRange!R && is(ElementType!R == E);
 enum isForwardRangeOf(R, E) = isForwardRange!R && is(ElementType!R == E);
 enum isInputRangeOf(R, E) = isInputRange!R && is(ElementType!R == E);
 enum isBidirectionalRangeOf(R, E) = isBidirectionalRange!R && is(ElementType!R == E);
 enum isOutputRangeOf(R, E) = isOutputRange!R && is(ElementType!R == E);
 enum isArrayOf(R, E) = isArray!R && is(ElementType!R == E);
-unittest {
+unittest
+{
     alias R = typeof(["a", "b"]);
-    assert(isArrayOf!(R, string));
+    static assert(isArrayOf!(R, string));
 }
 
 alias isSource = isForwardRange;
