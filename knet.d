@@ -1045,10 +1045,10 @@ class Net(bool useArray = true,
     /** Try to Get Single Node related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    NodeRefs nodeRefsByLemma(S)(S expr,
-                                Lang lang,
-                                Sense sense,
-                                CategoryIx category) if (isSomeString!S)
+    NodeRefs nodeRefsByLemmaDirect(S)(S expr,
+                                      Lang lang,
+                                      Sense sense,
+                                      CategoryIx category) if (isSomeString!S)
     {
         typeof(return) nodes;
         auto lemma = Lemma(expr, lang, sense, category);
@@ -1076,10 +1076,9 @@ class Net(bool useArray = true,
     }
 
     /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
-    auto nodeRefsByExprOnly(S)(S expr) if (isSomeString!S)
+    auto nodeRefsOf(S)(S expr) if (isSomeString!S)
     {
-        auto lemmas = lemmasOf(expr);
-        return lemmas.map!(lemma => nodeRefByLemma[lemma]);
+        return lemmasOf(expr).map!(lemma => nodeRefByLemma[lemma]);
     }
 
     /** Get All Possible Lemmas related to $(D word).
@@ -1091,36 +1090,32 @@ class Net(bool useArray = true,
 
     /** Learn $(D Lemma) of $(D expr).
      */
-    bool learnLemma(S)(S expr, Lemma lemma) if (isSomeString!S)
+    void learnLemma(S)(S expr, Lemma lemma) if (isSomeString!S)
     {
         if (expr in lemmasByExpr)
         {
-            auto lemmas = lemmasByExpr[expr];
-            if (!lemmas[].canFind(lemma)) // TODO Make use of binary search
+            if (!lemmasByExpr[expr][].canFind(lemma)) // TODO Make use of binary search
             {
-                lemmas ~= lemma;
-                return true;
+                lemmasByExpr[expr] ~= lemma;
             }
         }
         else
         {
             static if (!isDynamicArray!Lemmas)
             {
-                // TODO fix std.container.Array so this explicit init is not needed
-                lemmasByExpr[expr] = Lemmas.init;
+                lemmasByExpr[expr] = Lemmas.init; // TODO fix std.container.Array
             }
             lemmasByExpr[expr] ~= lemma;
         }
-        return false;
     }
 
     /** Get All Possible Nodes related to $(D word) in the interpretation
         (semantic context) $(D sense).
         If no sense given return all possible.
     */
-    NodeRefs nodeRefsByExpr(S)(S expr,
-                               Lang lang = Lang.unknown,
-                               Sense sense = Sense.unknown,
+    NodeRefs nodeRefsOf(S)(S expr,
+                               Lang lang,
+                               Sense sense,
                                CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) nodes;
@@ -1129,11 +1124,11 @@ class Net(bool useArray = true,
             sense != Sense.unknown &&
             category != anyCategory) // if exact Lemma key can be used
         {
-            return nodeRefsByLemma(expr, lang, sense, category); // fast hash lookup
+            return nodeRefsByLemmaDirect(expr, lang, sense, category); // fast hash lookup
         }
         else
         {
-            nodes = NodeRefs(nodeRefsByExprOnly(expr).array); // TODO avoid allocations
+            nodes = NodeRefs(nodeRefsOf(expr).array); // TODO avoid allocations
         }
 
         if (nodes.empty)
@@ -2506,8 +2501,9 @@ class Net(bool useArray = true,
         // queried line nodes
         dln("allNodes lie count: ", allNodes.filter!(node => node.lemma.expr == "lie").count);
         dln(lang, sense);
-        auto lineNodeRefs = nodeRefsByExpr(normLine, lang, sense);
-        dln("nodeRefsByExpr count: ", lineNodeRefs.length);
+        auto lineNodeRefs = nodeRefsOf(normLine, lang, sense);
+        dln("nodeRefsOf count: ", lineNodeRefs.length);
+        dln("nodeRefsOf count: ", nodeRefsOf("lie").count);
 
         // as is
         foreach (lineNodeRef; lineNodeRefs)
@@ -2571,9 +2567,9 @@ class Net(bool useArray = true,
                        Sense sense = Sense.unknown,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto nodes = nodeRefsByExpr(expr,
-                                     lang,
-                                     sense);
+        auto nodes = nodeRefsOf(expr,
+                                lang,
+                                sense);
         // TODO tranverse over nodes synonyms
         return nodes;
     }
@@ -2587,9 +2583,9 @@ class Net(bool useArray = true,
                            Sense sense = Sense.unknown,
                            Lang[] toLangs = []) if (isSomeString!S)
     {
-        auto nodes = nodeRefsByExpr(expr,
-                                    lang,
-                                    sense);
+        auto nodes = nodeRefsOf(expr,
+                                lang,
+                                sense);
         const rel = Rel.translationOf;
         // TODO Use synonym transitivity and possibly traverse over synonyms
         // en => sv:
