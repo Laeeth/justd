@@ -1,40 +1,40 @@
 #!/usr/bin/env rdmd-dev-module
 
-/** Knowledge Graph Database.
+   /** Knowledge Graph Database.
 
-    Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
-    Wikidata, WikiTaxonomy into a Knowledge Graph.
+       Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
+       Wikidata, WikiTaxonomy into a Knowledge Graph.
 
-    See also: www.oneacross.com/crosswords for inspiring applications
+       See also: www.oneacross.com/crosswords for inspiring applications
 
-    Data: http://conceptnet5.media.mit.edu/downloads/current/
-    Data: http://wiki.dbpedia.org/DBpediaAsTables
-    Data: http://icon.shef.ac.uk/Moby/
-    Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
-    Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
-    Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
+       Data: http://conceptnet5.media.mit.edu/downloads/current/
+       Data: http://wiki.dbpedia.org/DBpediaAsTables
+       Data: http://icon.shef.ac.uk/Moby/
+       Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
+       Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
+       Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
 
-    See also: http://programmers.stackexchange.com/q/261163/38719
-    See also: https://en.wikipedia.org/wiki/Hypergraph
-    See also: https://github.com/commonsense/conceptnet5/wiki
-    See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
-    See also: http://www.eturner.net/omcsnetcpp/
+       See also: http://programmers.stackexchange.com/q/261163/38719
+       See also: https://en.wikipedia.org/wiki/Hypergraph
+       See also: https://github.com/commonsense/conceptnet5/wiki
+       See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
+       See also: http://www.eturner.net/omcsnetcpp/
 
-    BUG "lie" shows relation "stand up" but not the opposite
+       BUG "lie" shows relation "stand up" but not the opposite
 
-    TODO Make use of stealFront and stealBack
+       TODO Make use of stealFront and stealBack
 
-    TODO ansiktstvätt => facial_wash
-    TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
-    TODO promote equal splits through weigthing sum_over_i(x[i].length^)2
+       TODO ansiktstvätt => facial_wash
+       TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
+       TODO promote equal splits through weigthing sum_over_i(x[i].length^)2
 
-    TODO Template on NodeData and rename Concept to Node. Instantiate with
-    NodeData begin Concept and break out Concept outside.
+       TODO Template on NodeData and rename Concept to Node. Instantiate with
+       NodeData begin Concept and break out Concept outside.
 
-    TODO Profile read
-    TODO Use containers.HashMap
-    TODO Call GC.disable/enable around construction and search.
- */
+       TODO Profile read
+       TODO Use containers.HashMap
+       TODO Call GC.disable/enable around construction and search.
+   */
 module knet;
 
 /* version = msgpack; */
@@ -88,7 +88,7 @@ static if (__VERSION__ < 2067)
 
 /** Drop $(D prefixes) in $(D s).
     TODO Use multi-argument skipOver when it becomes available http://forum.dlang.org/thread/bug-12335-3@https.d.puremagic.com%2Fissues%2F
- */
+*/
 void skipOverPrefixes(R, A)(ref R s, in A prefixes)
 {
     foreach (prefix; prefixes)
@@ -572,7 +572,7 @@ Rel decodeRelationPredicate(S)(S predicate,
 
             default:
                 /* dln(`Unknown relationString `, t, ` originally `, predicate); */
-                                                                   return relatedTo;
+                return relatedTo;
         }
     }
 }
@@ -592,7 +592,7 @@ enum Thematic:ubyte
     synonym,
     antonym,
     retronym,
-}
+    }
 
 /* Thematic toThematic(Rel rel) */
 /*     @safe @nogc pure nothrow */
@@ -1250,50 +1250,50 @@ class Net(bool useArray = true,
     {
         learnEnglishIrregularVerb("arise", "arose", "arisen");
         learnEnglishIrregularVerb("rise", "rose", "risen");
-        learnEnglishIrregularVerb("rise", "rose", "risen");
+        learnEnglishIrregularVerb("wake", ["woke", "awaked"], "woken");
+        learnEnglishIrregularVerb("be", ["was", "were"], "been");
+        learnEnglishIrregularVerb("bear", ["bore", "born"], "borne");
+        learnEnglishIrregularVerb("beat", "beat", "beaten");
+        learnEnglishIrregularVerb("become", "became", "become");
+        learnEnglishIrregularVerb("begin", "began", "begun");
+        learnEnglishIrregularVerb("bend", "bent", "bent");
+        learnEnglishIrregularVerb("bet", "bet", "bet");
+        learnEnglishIrregularVerb("bid", ["bid", "bade"], ["bid", "bidden"]);
+        learnEnglishIrregularVerb("bind", "bound", "bound");
+        learnEnglishIrregularVerb("bite", "bit", "bitten");
+        learnEnglishIrregularVerb("bleed", "bled", "bled");
+        learnEnglishIrregularVerb("blow", "blew", "blown");
+        learnEnglishIrregularVerb("break", "broke", "broken");
+        learnEnglishIrregularVerb("breed", "bred", "bred");
+        learnEnglishIrregularVerb("bring", "brought", "brought");
 
-        learnEnglishIrregularVerb("wake", "woke", "woken");
-        learnEnglishIrregularVerb("awake", "awoke", "woken"); // TODO awaked
+        learnEnglishIrregularVerbs("build", "built", "built");
+        learnEnglishIrregularVerbs("burn", ["burnt", "burned"], ["burnt", "burned"]);
 
-        // Manual: English Irregular Verbs
-        /* awake / awoke / awoken, awaked */
+        learnEnglishIrregularVerbs("burst", "burst", "burst");
+        learnEnglishIrregularVerbs("buy", "bought", "bought");
 
-        /* be / was, were / been */
-        /* bear / bore / born, borne */
-        /* beat / beat / beaten */
-        /* become / became / become */
-        /* begin / began / begun */
-        /* bend / bent / bent */
-        /* bet / bet / bet */
-        /* bid / bade, bid / bidden, bid */
-        /* bind / bound / bound */
-        /* bite / bit / bitten */
-        /* bleed / bled / bled */
-        /* blow / blew / blown */
-        /* break / broke / broken */
-        /* breed / bred / bred */
-        /* bring / brought / brought */
-        /* build / built / built */
-        /* burn / burned, burnt / burned, burnt */
-        /* burst / burst / burst */
-        /* buy / bought / bought */
+        learnEnglishIrregularVerbs("cast", "cast", "cast");
 
-        /* cast / cast / cast */
-        /* catch / caught / caught */
-        /*                  choose / chose / chosen */
-        /*                  come / came / come */
-        /*                  cost / cost / cost */
-        /*                  creep / crept / crept */
-        /*                  cut / cut / cut */
+        learnEnglishIrregularVerbs("catch", "caught", "caught");
 
-        /*                  deal / dealt / dealt */
-        /*                  dig / dug / dug */
-        /*                  dive / dived, dove / dived */
-        /*                  do / did / done */
-        /*                       draw / drew / drawn */
+        learnEnglishIrregularVerbs("choose", "chose", "chosen");
+        learnEnglishIrregularVerbs("come", "came", "come");
+
+        learnEnglishIrregularVerbs("cost", "cost", "cost");
+
+        learnEnglishIrregularVerbs("creep", "crept", "crept");
+
+        learnEnglishIrregularVerbs("cut", "cut", "cut");
+
+        learnEnglishIrregularVerbs("deal", "dealt", "dealt");
+        learnEnglishIrregularVerbs("dig", "dug", "dug");
+        learnEnglishIrregularVerbs("dive", ["dived", "dove"], "dived");
+        learnEnglishIrregularVerbs("do", "did", "done");
+        learnEnglishIrregularVerbs("draw", "drew", "drawn");
         /*                       dream / dreamed, dreamt / dreamed, dreamt */
-        /*                       drink / drank / drunk */
-        /*                       drive / drove / driven */
+        learnEnglishIrregularVerbs("drink", "drank", "drunk");
+        learnEnglishIrregularVerbs("drive", "drove", "driven");
         /*                       dwell / dwelt / dwelt */
 
         /*                       eat / ate / eaten */
