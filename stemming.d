@@ -4,6 +4,7 @@ module stemming;
 import std.algorithm: endsWith, canFind;
 import std.range: empty;
 import std.traits: isSomeString;
+import std.typecons: Tuple, tuple;
 
 import predicates: of;
 import grammars: Lang, isEnglishVowel, isSwedishVowel, isSwedishConsonant, isEnglishConsonant;
@@ -853,36 +854,38 @@ auto ref stemNorvegian(S)(S s) if (isSomeString!S)
 /** Stem $(D s) in Language $(D lang).
     If lang is unknown try each known language until failure.
  */
-S stem(S)(S s, Lang lang = Lang.unknown) if (isSomeString!S)
+Tuple!(S, Lang) stemIn(S)(S s,
+                        Lang lang = Lang.unknown) if (isSomeString!S)
 {
+    typeof(return) t;
     with (Lang)
     {
         switch (lang)
         {
             case unknown:
-                S t;
-                t = s.stem(en); if (t.length != s.length) return t;
-                t = s.stem(sv); if (t.length != s.length) return t;
-                t = s.stem(no); if (t.length != s.length) return t;
-                return s;
-            case sv:
-                return s.stemSwedish;
-            case no:
-                return s.stemNorvegian;
+                t = s.stemIn(en); if (t[0].length != s.length) return t;
+                t = s.stemIn(sv); if (t[0].length != s.length) return t;
+                t = s.stemIn(no); if (t[0].length != s.length) return t;
+                break;
+            case sv: t = tuple(s.stemSwedish, sv); break;
+            case no: t = tuple(s.stemNorvegian, no); break;
             case en:
             default:
                 auto stemmer = new Stemmer!string();
-                return stemmer.stem(s);
+                t = tuple(stemmer.stem(s), lang);
         }
     }
+    return t;
 }
 
 /** Destructively Stem $(D s) in Language $(D lang). */
-bool stemize(S)(ref S s, Lang lang = Lang.unknown) if (isSomeString!S)
+Tuple!(bool, Lang) stemize(S)(ref S s,
+                              Lang lang = Lang.unknown) if (isSomeString!S)
 {
     const n = s.length;
-    s = s.stem(lang);
-    return n != s.length;
+    auto t = s.stemIn(lang);
+    s = t[0];
+    return tuple(n != s.length, t[1]);
 }
 
 /** Return Stem of $(D s) using Porter's algorithm

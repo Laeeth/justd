@@ -1146,7 +1146,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         const quick = true;
-        const maxCount = quick ? 100000 : size_t.max;
+        const maxCount = quick ? 200000 : size_t.max;
 
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
@@ -2519,9 +2519,12 @@ class Net(bool useArray = true,
         // stemmed
         if (lineNodeRefs.empty)
         {
-            while (normLine.stemize(lang))
+            while (true)
             {
-                writeln(`Stemmed to `, normLine);
+                const stemStatus = normLine.stemize(lang);
+                if (!stemStatus[0])
+                    break;
+                writeln(`> Stemmed to `, normLine, " in language ", stemStatus[1]);
                 showNodes(normLine, lang, sense, lineSeparator);
             }
         }
