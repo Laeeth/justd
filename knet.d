@@ -20,7 +20,7 @@
        See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
        See also: http://www.eturner.net/omcsnetcpp/
 
-       BUG "lie" shows relation "stand up" but not the opposite
+       BUG part_07.csv: lie <=Antonym=> stand_up. Not shown in prompt
 
        TODO Make use of stealFront and stealBack
 
@@ -832,7 +832,7 @@ class Net(bool useArray = true,
         @safe @nogc pure nothrow:
         static CategoryIx asUndefined() { return CategoryIx(0); }
         bool defined() const { return this != CategoryIx.asUndefined; }
-        auto opCast(T : bool)() { return defined; }
+        /* auto opCast(T : bool)() { return defined; } */
     private:
         ushort _ix = 0;
     }
@@ -847,7 +847,7 @@ class Net(bool useArray = true,
         Lang lang;
         Sense sense;
         CategoryIx categoryIx;
-        auto opCast(T : bool)() { return expr !is null; }
+        /* auto opCast(T : bool)() { return expr !is null; } */
     }
 
     /** Concept Node/Vertex. */
@@ -876,7 +876,7 @@ class Net(bool useArray = true,
     {
         return node.links[]
                       .filter!(linkRef => dir.of(RelDir.any, linkRef.dir)) // TODO functionize to match
-                      .map!(linkRef => linkByRef(linkRef))
+                      .map!(linkRef => linkAt(linkRef))
                       .filter!(link => ((link.rel == rel ||
                                          link.rel.specializes(rel)) && // TODO functionize to match
                                         link.negation == negation));
@@ -1024,15 +1024,17 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) linkByRef(LinkRef linkRef) inout { return allLinks[linkRef.ix]; }
-        ref inout(Node) nodeByRef(NodeRef cref) inout @nogc { return allNodes[cref.ix]; }
+        ref inout(Link) linkAt(LinkRef linkRef) inout { return allLinks[linkRef.ix]; }
+        ref inout(Node) nodeAt(NodeRef cref) inout @nogc { return allNodes[cref.ix]; }
+        alias linkByRef = linkAt;
+        alias nodeByRef = nodeAt;
     }
 
     Nullable!Node nodeByLemmaMaybe(in Lemma lemma)
     {
         if (lemma in nodeRefByLemma)
         {
-            return typeof(return)(nodeByRef(nodeRefByLemma[lemma]));
+            return typeof(return)(nodeAt(nodeRefByLemma[lemma]));
         }
         else
         {
@@ -1185,7 +1187,20 @@ class Net(bool useArray = true,
         learnEnglishComputerAcronyms();
 
         learnEnglishIrregularVerbs();
-        learnEnglishUncountableNouns();
+        learnUncountableNouns(Lang.en,
+                              ["music", "art", "love", "happiness",
+                                        "math", "physics",
+                                        "advice", "information", "news",
+                                        "furniture", "luggage",
+                                        "rice", "sugar", "butter", // generalize to seed (grödor) or substance
+                                        "water", "rain", // generalize to fluids
+                                        "coffee", "wine", "beer", "whiskey", "milk", // generalize to beverage
+                                        "electricity", "gas", "power"
+                                        "money", "currency",
+                                        "crockery", "cutlery",
+                                        "luggage", "baggage", "glass", "sand"]);
+        learnUncountableNouns(Lang.sv,
+                              ["apotek", "hypotek", "bibliotek", "fonotek", "filmotek", "pinaotek", "videotek", "diskotek", "mediatek", "datortek", "glyptotek"]);
 
         learnEnglishReversions();
 
@@ -1508,24 +1523,12 @@ class Net(bool useArray = true,
 
     /* TODO Add logic describing which Sense.nounX and CategoryIx that fulfills
      * isUncountable() and use it here. */
-    void learnEnglishUncountableNouns()
+    void learnUncountableNouns(R)(Lang lang, R nouns) if (isSourceOf!(R, string))
     {
-        const lang = Lang.en;
         const sense = Sense.nounUncountable;
         const categoryIx = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        enum expr = ["music", "art", "love", "happiness",
-                      "math", "physics",
-                      "advice", "information", "news",
-                      "furniture", "luggage",
-                      "rice", "sugar", "butter", // generalize to seed (grödor) or substance
-                      "water", "rain", // generalize to fluids
-                      "coffee", "wine", "beer", "whiskey", "milk", // generalize to beverage
-                      "electricity", "gas", "power"
-                      "money", "currency",
-                      "crockery", "cutlery",
-                      "luggage", "baggage", "glass", "sand"];
-        connectMto1(expr.map!(word => store(word, lang, sense, categoryIx, origin)),
+        connectMto1(nouns.map!(word => store(word, lang, sense, categoryIx, origin)),
                     Rel.isA,
                     store("uncountable_noun", lang, sense, categoryIx, origin),
                     lang, origin);
@@ -1678,9 +1681,9 @@ class Net(bool useArray = true,
         TODO checkExisting is currently set to false because searching
         existing links is currently too slow
      */
-    LinkRef connect(NodeRef srcRef,
+    LinkRef connect(NodeRef src,
                     Rel rel,
-                    NodeRef dstRef,
+                    NodeRef dst,
                     Lang lang = Lang.unknown,
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
@@ -1689,37 +1692,51 @@ class Net(bool useArray = true,
                     bool checkExisting = false)
     body
     {
-        if (srcRef == dstRef) { return LinkRef.asUndefined; } // Don't allow self-reference for now
+        if (src == dst) { return LinkRef.asUndefined; } // Don't allow self-reference for now
 
         if (checkExisting)
         {
-            if (auto existingIx = areConnected(srcRef, rel, dstRef,
+            if (auto existingIx = areConnected(src, rel, dst,
                                                negation)) // TODO warn about negation and reversion on existing rels
             {
                 if (false)
                 {
                     dln("warning: Nodes ",
-                        nodeByRef(srcRef).lemma.expr, " and ",
-                        nodeByRef(dstRef).lemma.expr, " already related as ",
+                        nodeAt(src).lemma.expr, " and ",
+                        nodeAt(dst).lemma.expr, " already related as ",
                         rel);
                 }
                 return existingIx;
             }
         }
 
+        if (nodeAt(src).lemma.expr.of("lie", "stand_up") &&
+            nodeAt(dst).lemma.expr.of("lie", "stand_up"))
+        {
+            dln("xxx: lie and stand_up");
+        }
+        else if (nodeAt(src).lemma.expr.of("lie", "stand_up"))
+        {
+            dln("xxx: src");
+        }
+        else if (nodeAt(dst).lemma.expr.of("lie", "stand_up"))
+        {
+            dln("xxx: dst");
+        }
+
         // TODO group these
         assert(allLinks.length <= nullIx);
         auto linkRef = LinkRef(cast(Ix)allLinks.length);
 
-        auto link = Link(reversion ? dstRef : srcRef,
+        auto link = Link(reversion ? dst : src,
                          rel,
-                         reversion ? srcRef : dstRef,
+                         reversion ? src : dst,
                          negation,
                          lang,
                          origin);
 
-        nodeByRef(srcRef).links ~= LinkRef(linkRef, RelDir.forward);
-        nodeByRef(dstRef).links ~= LinkRef(linkRef, RelDir.backward);
+        nodeAt(src).links ~= LinkRef(linkRef, RelDir.forward);
+        nodeAt(dst).links ~= LinkRef(linkRef, RelDir.backward);
         connectednessSum += 2;
 
         symmetricRelCount += rel.isSymmetric;
@@ -1748,12 +1765,12 @@ class Net(bool useArray = true,
             link.setManualWeight(weight);
         }
 
-        propagateLinkNodes(link, srcRef, dstRef);
+        propagateLinkNodes(link, src, dst);
 
         if (false)
         {
-            dln(" src:", nodeByRef(srcRef).lemma.expr,
-                " dst:", nodeByRef(dstRef).lemma.expr,
+            dln(" src:", nodeAt(src).lemma.expr,
+                " dst:", nodeAt(dst).lemma.expr,
                 " rel:", rel,
                 " origin:", origin,
                 " negation:", negation,
@@ -2016,11 +2033,11 @@ class Net(bool useArray = true,
         bool done = false;
         if (!link.origin.defined)
         {
-            // TODO prevent duplicate lookups to nodeByRef
-            if (!nodeByRef(srcRef).origin.defined)
-                nodeByRef(srcRef).origin = link.origin;
-            if (!nodeByRef(dstRef).origin.defined)
-                nodeByRef(dstRef).origin = link.origin;
+            // TODO prevent duplicate lookups to nodeAt
+            if (!nodeAt(srcRef).origin.defined)
+                nodeAt(srcRef).origin = link.origin;
+            if (!nodeAt(dstRef).origin.defined)
+                nodeAt(dstRef).origin = link.origin;
             done = true;
         }
         return done;
@@ -2325,9 +2342,9 @@ class Net(bool useArray = true,
         const bDir = (rel.isSymmetric ?
                       RelDir.any :
                       RelDir.forward);
-        foreach (aLinkRef; nodeByRef(a).links)
+        foreach (aLinkRef; nodeAt(a).links)
         {
-            const aLink = linkByRef(aLinkRef);
+            const aLink = linkAt(aLinkRef);
             if ((aLink.actors[]
                       .canFind(NodeRef(b, bDir))) &&
                 aLink.rel == rel &&
@@ -2457,7 +2474,7 @@ class Net(bool useArray = true,
             {
                 foreach (synonymNode; synonymsOf(arg))
                 {
-                    showLinkNode(nodeByRef(synonymNode),
+                    showLinkNode(nodeAt(synonymNode),
                                  Rel.instanceOf,
                                  NWeight.infinity,
                                  RelDir.backward);
@@ -2472,7 +2489,7 @@ class Net(bool useArray = true,
             {
                 foreach (translationNode; translationsOf(arg))
                 {
-                    showLinkNode(nodeByRef(translationNode),
+                    showLinkNode(nodeAt(translationNode),
                                  Rel.instanceOf,
                                  NWeight.infinity,
                                  RelDir.backward);
@@ -2484,12 +2501,14 @@ class Net(bool useArray = true,
             return;
 
         // queried line nodes
+        dln(allNodes.filter!(node => node.lemma.expr == "lie"));
         auto lineNodeRefs = nodeRefsByExpr(normLine, lang, sense);
+        dln(lineNodeRefs.length);
 
         // as is
         foreach (lineNodeRef; lineNodeRefs)
         {
-            const lineNode = nodeByRef(lineNodeRef);
+            const lineNode = nodeAt(lineNodeRef);
             writeln(`  - in `, lineNode.lemma.lang.toName,
                     ` of sense `, lineNode.lemma.sense);
 
@@ -2505,7 +2524,7 @@ class Net(bool useArray = true,
                     foreach (linkedNode; link.actors[]
                                              .filter!(actorNodeRef => (actorNodeRef.ix !=
                                                                        lineNodeRef.ix)) // don't self reference
-                                             .map!(nodeRef => nodeByRef(nodeRef)))
+                                             .map!(nodeRef => nodeAt(nodeRef)))
                     {
                         showNode(linkedNode,
                                     link.normalizedWeight);
