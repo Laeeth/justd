@@ -112,15 +112,15 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
     s.skipOverSuffixes(agents);
 }
 
-/** Decode Relation $(D s) together with its possible $(D negation) and
+/** Decode Relation $(D predicate) together with its possible $(D negation) and
     $(D reversion). */
-Rel decodeRelation(S)(S predicate,
-                      const S entity,
-                      const S value,
-                      const Origin origin,
-                      out bool negation,
-                      out bool reversion,
-                      out Tense tense) if (isSomeString!S)
+Rel decodePredicate(S)(S predicate,
+                       const S entity,
+                       const S value,
+                       const Origin origin,
+                       out bool negation,
+                       out bool reversion,
+                       out Tense tense) if (isSomeString!S)
 {
     with (Rel)
     {
@@ -1916,7 +1916,7 @@ class Net(bool useArray = true,
                             relationName.skipOver(entityCategoryName); // strip dumb prefix
                             relationName.skipOverBack(valueCategoryName); // strip dumb suffix
 
-                            rel = relationName.decodeRelation(entityCategoryName,
+                            rel = relationName.decodePredicate(entityCategoryName,
                                                               valueCategoryName,
                                                               Origin.nell,
                                                               negation, reversion, tense);
@@ -1989,6 +1989,7 @@ class Net(bool useArray = true,
 
         bool fromDBPedia = false;
         bool fromWordNet = false;
+        bool fromWiktionary = false;
         bool fromSite = false;
 
         size_t ix = 0;
@@ -2009,6 +2010,7 @@ class Net(bool useArray = true,
                     {
                         case "dbpedia": fromDBPedia = true; break;
                         case "wordnet": fromWordNet = true; break;
+                        case "wiktionary": fromWiktionary = true; break;
                         case "site": fromSite = true; break;
                         default: break;
                     }
@@ -2035,6 +2037,15 @@ class Net(bool useArray = true,
         }
     }
 
+    Rel decodeCN5Relation(S)(S relation,
+                             out bool negation,
+                             out bool reversion,
+                             out Tense tense) if (isSomeString!S)
+    {
+        return relation[3..$].decodePredicate(null, null, Origin.cn5,
+                                              negation, reversion, tense);
+    }
+
     /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
     LinkRef readCN5Line(R, N)(R line, N lnr)
     {
@@ -2054,9 +2065,7 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 1:
-                    // TODO Handle case when part matches /r/wordnet/X
-                    rel = part[3..$].decodeRelation(null, null, Origin.cn5,
-                                                    negation, reversion, tense);
+                    rel = part.decodeCN5Relation(negation, reversion, tense);
                     break;
                 case 2:         // source concept
                     try
