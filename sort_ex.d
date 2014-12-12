@@ -157,7 +157,7 @@ auto sorted(R)(const R r) if (isArray!R)
 {
     import std.algorithm: sort;
     auto s = r.dup;
-    sort(s);
+    s.sort;
     return s;
 }
 

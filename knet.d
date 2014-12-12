@@ -883,8 +883,8 @@ class Net(bool useArray = true,
                            RelDir dir = RelDir.any)
     {
         return linksOf(node, dir).array.groupBy!((a, b) => // TODO array needed?
-                                                    (a.negation == b.negation &&
-                                                     a.rel == b.rel));
+                                                 (a.negation == b.negation &&
+                                                  a.rel == b.rel));
     }
 
     /** Many-Nodes-to-Many-Nodes Link (Edge).
@@ -2328,9 +2328,9 @@ class Net(bool useArray = true,
                 foreach (anagramNode; anagramsOf(arg))
                 {
                     showLinkNode(anagramNode,
-                                    Rel.instanceOf,
-                                    real.infinity,
-                                    RelDir.backward);
+                                 Rel.instanceOf,
+                                 real.infinity,
+                                 RelDir.backward);
                 }
             }
         }
@@ -2342,7 +2342,7 @@ class Net(bool useArray = true,
             {
                 foreach (synonymNode; synonymsOf(arg))
                 {
-                    showLinkNode(synonymNode,
+                    showLinkNode(nodeByRef(synonymNode),
                                  Rel.instanceOf,
                                  real.infinity,
                                  RelDir.backward);
@@ -2357,7 +2357,7 @@ class Net(bool useArray = true,
             {
                 foreach (translationNode; translationsOf(arg))
                 {
-                    showLinkNode(translationNode,
+                    showLinkNode(nodeByRef(translationNode),
                                  Rel.instanceOf,
                                  real.infinity,
                                  RelDir.backward);
@@ -2369,11 +2369,12 @@ class Net(bool useArray = true,
             return;
 
         // queried line nodes
-        auto lineNodes = nodeRefsByWords(normLine, lang, sense);
+        auto lineNodeRefs = nodeRefsByWords(normLine, lang, sense);
 
         // as is
-        foreach (lineNode; lineNodes)
+        foreach (lineNodeRef; lineNodeRefs)
         {
+            const lineNode = nodeByRef(lineNodeRef);
             writeln(`  - in `, lineNode.lemma.lang.toName,
                     ` of sense `, lineNode.lemma.sense);
 
@@ -2387,8 +2388,8 @@ class Net(bool useArray = true,
                                                           b.normalizedWeight)))
                 {
                     foreach (linkedNode; link.actors[]
-                                             .filter!(actorNode => (actorNode.ix !=
-                                                                    lineNode.ix)) // don't self reference
+                                             .filter!(actorNodeRef => (actorNodeRef.ix !=
+                                                                       lineNodeRef.ix)) // don't self reference
                                              .map!(nodeRef => nodeByRef(nodeRef)))
                     {
                         showNode(linkedNode,
@@ -2400,7 +2401,7 @@ class Net(bool useArray = true,
         }
 
         // stemmed
-        if (lineNodes.empty)
+        if (lineNodeRefs.empty)
         {
             while (normLine.stemize(lang))
             {
@@ -2414,11 +2415,11 @@ class Net(bool useArray = true,
     {
         const lsWord = words.sorted; // letter-sorted words
         return allNodes.filter!(node => (lsWord != node.lemma.words && // don't include one-self
-                                               lsWord == node.lemma.words.sorted));
+                                         lsWord == node.lemma.words.sorted));
     }
 
     /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
-    auto derangeAnagramsOf(S)(S words) if (isSomeString!S)
+    auto derangedAnagramsOf(S)(S words) if (isSomeString!S)
     {
         return anagramsOf(words);
     }
@@ -2433,8 +2434,8 @@ class Net(bool useArray = true,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
         auto nodes = nodeRefsByWords(words,
-                                  lang,
-                                  sense);
+                                     lang,
+                                     sense);
         // TODO tranverse over nodes synonyms
         return nodes;
     }
@@ -2457,7 +2458,7 @@ class Net(bool useArray = true,
         // en-en => sv-sv
         if (false)
         {
-            auto translations = nodes.map!(node => linksOf(node, RelDir.any, rel, false))/* .joiner */;
+            /* auto translations = nodes.map!(node => linksOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         }
         return nodes;
     }
