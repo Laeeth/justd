@@ -40,7 +40,7 @@ module knet;
 /* version = msgpack; */
 
 import core.exception: UnicodeException;
-import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray;
+import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind;
@@ -52,7 +52,7 @@ import std.typecons: Nullable, Tuple, tuple;
 
 import algorithm_ex: isPalindrome, either;
 import range_ex: stealFront, stealBack, ElementType;
-import traits_ex: isSourceOf, isSourceOfSomeString;
+import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
 import stemming;
@@ -761,6 +761,8 @@ class Net(bool useArray = true,
     import std.algorithm, std.range, std.path, std.array;
     import wordnet: WordNet;
 
+    alias NWeight = real; // normalized weight
+
     /** Ix Precision.
         Set this to $(D uint) if we get low on memory.
         Set this to $(D ulong) when number of link nodes exceed Ix.
@@ -815,9 +817,9 @@ class Net(bool useArray = true,
     alias NodeRef = Ref!Node;
     alias LinkRef = Ref!Link;
 
-    /** String Storage */
-    static if (useRCString) { alias Words = RCXString!(immutable char, 24-1); }
-    else                    { alias Words = immutable string; }
+    /** Expression (String). */
+    static if (useRCString) { alias Expr = RCXString!(immutable char, 24-1); }
+    else                    { alias Expr = immutable string; }
 
     static if (useArray) { alias NodeRefs = Array!NodeRef; }
     else                 { alias NodeRefs = NodeRef[]; }
@@ -839,13 +841,13 @@ class Net(bool useArray = true,
     struct Lemma
     {
         @safe @nogc pure nothrow:
-        Words words;
+        Expr expr;
         /* The following three are used to disambiguate different semantics
          * meanings of the same word in different languages. */
         Lang lang;
         Sense sense;
         CategoryIx categoryIx;
-        auto opCast(T : bool)() { return words !is null; }
+        auto opCast(T : bool)() { return expr !is null; }
     }
 
     /** Concept Node/Vertex. */
@@ -892,8 +894,8 @@ class Net(bool useArray = true,
      */
     struct Link
     {
-        alias Weight = ubyte; // link weight pack type
-        alias WeightHistogram = size_t[Weight];
+        alias PWeight = ubyte; // link weight pack type
+        alias WeightHistogram = size_t[PWeight];
 
         /* @safe @nogc pure nothrow: */
 
@@ -917,30 +919,38 @@ class Net(bool useArray = true,
             this.origin = origin;
         }
 
-        /** Set ConceptNet5 Weight $(weight). */
+        /** Set ConceptNet5 PWeight $(weight). */
         void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
         {
-            // pack from 0..about10 to Weight to save memory
-            packedWeight = cast(Weight)(weight.clamp(0,10)/10*Weight.max);
+            // pack from 0..about10 to PWeight to save memory
+            packedWeight = cast(PWeight)(weight.clamp(0,10)/10*PWeight.max);
         }
 
-        /** Set NELL Probability Weight $(weight). */
+        /** Set NELL Probability PWeight $(weight). */
         void setNELLWeight(T)(T weight) if (isFloatingPoint!T)
         {
-            // pack from 0..1 to Weight to save memory
-            packedWeight = cast(Weight)(weight.clamp(0, 1)*Weight.max);
+            // pack from 0..1 to PWeight to save memory
+            packedWeight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
         }
 
-        /** Get Normalized Link Weight. */
-        @property real normalizedWeight() const
+        /** Set Manual Probability PWeight $(weight). */
+        void setManualWeight(T)(T weight) if (isFloatingPoint!T)
         {
-            return cast(typeof(return))packedWeight/(cast(typeof(return))Weight.max/10);
+            // pack from 0..1 to PWeight to save memory
+            packedWeight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
+        }
+
+        /** Get Normalized Link PWeight. */
+        @property NWeight normalizedWeight() const
+        {
+            return ((cast(typeof(return))packedWeight)/
+                    (cast(typeof(return))PWeight.max));
         }
 
     private:
         NodeRefs actors;
 
-        Weight packedWeight;
+        PWeight packedWeight;
 
         Rel rel;
         bool negation; /// relation negation
@@ -955,7 +965,7 @@ class Net(bool useArray = true,
     auto outs(in Link link) { return link.actors[].filter!(nodeRef =>
                                                            nodeRef.dir() == RelDir.forward); }
 
-    pragma(msg, `Words.sizeof: `, Words.sizeof);
+    pragma(msg, `Expr.sizeof: `, Expr.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
     pragma(msg, `Node.sizeof: `, Node.sizeof);
     pragma(msg, `LinkRefs.sizeof: `, LinkRefs.sizeof);
@@ -967,7 +977,7 @@ class Net(bool useArray = true,
     alias Nodes = Node[]; // no need to use std.container.Array here
 
     static if (false) { alias Lemmas = Array!Lemma; }
-    else                 { alias Lemmas = Lemma[]; }
+    else              { alias Lemmas = Lemma[]; }
 
     static if (useArray) { alias Links = Array!Link; }
     else                 { alias Links = Link[]; }
@@ -978,7 +988,7 @@ class Net(bool useArray = true,
         Nodes allNodes;
         Links allLinks;
 
-        Lemmas[string] lemmasByWords;
+        Lemmas[string] lemmasByExpr;
 
         string[CategoryIx] categoryNameByIx; /** Ontology Category Names by Index. */
         CategoryIx[string] categoryIxByName; /** Ontology Category Indexes by Name. */
@@ -986,7 +996,7 @@ class Net(bool useArray = true,
         enum anyCategory = CategoryIx.asUndefined; // reserve 0 for anyCategory (unknown)
         ushort categoryIxCounter = CategoryIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyCategory (unknown)
 
-        size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several words
+        size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
 
         WordNet!(true, true) wordnet;
 
@@ -1000,15 +1010,15 @@ class Net(bool useArray = true,
         size_t connectednessSum = 0;
 
         // TODO Group to WeightsStatistics
-        real weightMinCN5 = real.max;
-        real weightMaxCN5 = real.min_normal;
-        real weightSumCN5 = 0; // Sum of all link weights.
+        NWeight weightMinCN5 = NWeight.max;
+        NWeight weightMaxCN5 = NWeight.min_normal;
+        NWeight weightSumCN5 = 0; // Sum of all link weights.
         Link.WeightHistogram packedWeightHistogramCN5; // CN5 Packed Weight Histogram
 
         // TODO Group to WeightsStatistics
-        real weightMinNELL = real.max;
-        real weightMaxNELL = real.min_normal;
-        real weightSumNELL = 0; // Sum of all link weights.
+        NWeight weightMinNELL = NWeight.max;
+        NWeight weightMaxNELL = NWeight.min_normal;
+        NWeight weightSumNELL = 0; // Sum of all link weights.
         Link.WeightHistogram packedWeightHistogramNELL; // NELL Packed Weight Histogram
     }
 
@@ -1033,13 +1043,13 @@ class Net(bool useArray = true,
     /** Try to Get Single Node related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    NodeRefs nodeRefsByLemma(S)(S words,
+    NodeRefs nodeRefsByLemma(S)(S expr,
                                 Lang lang,
                                 Sense sense,
                                 CategoryIx category) if (isSomeString!S)
     {
         typeof(return) nodes;
-        auto lemma = Lemma(words, lang, sense, category);
+        auto lemma = Lemma(expr, lang, sense, category);
         if (lemma in nodeRefByLemma) // if hashed lookup possible
         {
             nodes ~= nodeRefByLemma[lemma]; // use it
@@ -1047,7 +1057,7 @@ class Net(bool useArray = true,
         else
         {
             // try to lookup parts of word
-            auto wordsSplit = wordnet.findWordsSplit(words, [lang]); // split in parts
+            auto wordsSplit = wordnet.findWordsSplit(expr, [lang]); // split in parts
             if (wordsSplit.length >= 2)
             {
                 const wordsFixed = wordsSplit.joiner("_").to!S;
@@ -1063,27 +1073,27 @@ class Net(bool useArray = true,
         return nodes;
     }
 
-    /** Get All Node Indexes Indexed by a Lemma having words $(D words). */
-    auto nodeRefsByWordsOnly(S)(S words) if (isSomeString!S)
+    /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
+    auto nodeRefsByExprOnly(S)(S expr) if (isSomeString!S)
     {
-        auto lemmas = lemmasOf(words);
+        auto lemmas = lemmasOf(expr);
         return lemmas.map!(lemma => nodeRefByLemma[lemma]);
     }
 
     /** Get All Possible Lemmas related to $(D word).
      */
-    Lemmas lemmasOf(S)(S words) if (isSomeString!S)
+    Lemmas lemmasOf(S)(S expr) if (isSomeString!S)
     {
-        return words in lemmasByWords ? lemmasByWords[words] : [];
+        return expr in lemmasByExpr ? lemmasByExpr[expr] : [];
     }
 
-    /** Learn $(D Lemma) of $(D words).
+    /** Learn $(D Lemma) of $(D expr).
      */
-    bool learnLemma(S)(S words, Lemma lemma) if (isSomeString!S)
+    bool learnLemma(S)(S expr, Lemma lemma) if (isSomeString!S)
     {
-        if (words in lemmasByWords)
+        if (expr in lemmasByExpr)
         {
-            auto lemmas = lemmasByWords[words];
+            auto lemmas = lemmasByExpr[expr];
             if (!lemmas[].canFind(lemma)) // TODO Make use of binary search
             {
                 lemmas ~= lemma;
@@ -1095,9 +1105,9 @@ class Net(bool useArray = true,
             static if (!isDynamicArray!Lemmas)
             {
                 // TODO fix std.container.Array so this explicit init is not needed
-                lemmasByWords[words] = Lemmas.init;
+                lemmasByExpr[expr] = Lemmas.init;
             }
-            lemmasByWords[words] ~= lemma;
+            lemmasByExpr[expr] ~= lemma;
         }
         return false;
     }
@@ -1106,10 +1116,10 @@ class Net(bool useArray = true,
         (semantic context) $(D sense).
         If no sense given return all possible.
     */
-    NodeRefs nodeRefsByWords(S)(S words,
-                                Lang lang = Lang.unknown,
-                                Sense sense = Sense.unknown,
-                                CategoryIx category = anyCategory) if (isSomeString!S)
+    NodeRefs nodeRefsByExpr(S)(S expr,
+                               Lang lang = Lang.unknown,
+                               Sense sense = Sense.unknown,
+                               CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) nodes;
 
@@ -1117,17 +1127,17 @@ class Net(bool useArray = true,
             sense != Sense.unknown &&
             category != anyCategory) // if exact Lemma key can be used
         {
-            return nodeRefsByLemma(words, lang, sense, category); // fast hash lookup
+            return nodeRefsByLemma(expr, lang, sense, category); // fast hash lookup
         }
         else
         {
-            nodes = NodeRefs(nodeRefsByWordsOnly(words).array); // TODO avoid allocations
+            nodes = NodeRefs(nodeRefsByExprOnly(expr).array); // TODO avoid allocations
         }
 
         if (nodes.empty)
         {
-            /* writeln(`Lookup translation of individual words; bil_tvätt => car-wash`); */
-            /* foreach (word; words.splitter(`_`)) */
+            /* writeln(`Lookup translation of individual expr; bil_tvätt => car-wash`); */
+            /* foreach (word; expr.splitter(`_`)) */
             /* { */
             /*     writeln(`Translate word "`, word, `" from `, lang, ` to English`); */
             /* } */
@@ -1193,8 +1203,8 @@ class Net(bool useArray = true,
 
     /** Learn English Reversion.
      */
-    LinkRef[] learnEnglishReversion(string forward,
-                                    string backward)
+    LinkRef[] learnEnglishReversion(S)(S forward,
+                                       S backward) if (isSomeString!S)
     {
         const lang = Lang.en;
         const category = CategoryIx.asUndefined;
@@ -1206,23 +1216,24 @@ class Net(bool useArray = true,
 
     /** Learn English Irregular Verb.
      */
-    LinkRef[] learnEnglishIrregularVerb(string infinitive,
-                                        string past,
-                                        string pastParticiple)
+    LinkRef[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive,
+                                                    S2 past,
+                                                    S3 pastParticiple)
     {
         const lang = Lang.en;
         const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        auto all = [tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
-                    tryStore(past, lang, Sense.verbPast, category, origin),
-                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        NodeRef[] all;
+        all ~= tryStore(infinitive, lang, Sense.verbInfinitive, category, origin);
+        all ~= tryStore(past, lang, Sense.verbPast, category, origin);
+        all ~= tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin);
         return connectMtoM(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn English Acronym.
      */
-    LinkRef learnEnglishAcronym(string acronym,
-                               string words)
+    LinkRef learnEnglishAcronym(S)(S acronym,
+                                   S expr) if (isSomeString!S)
     {
         const lang = Lang.en;
         const sense = Sense.unknown;
@@ -1230,7 +1241,7 @@ class Net(bool useArray = true,
         const origin = Origin.manual;
         return connect(store(acronym, lang, sense, category, origin),
                        Rel.acronymFor,
-                       store(words, lang, sense, category, origin),
+                       store(expr, lang, sense, category, origin),
                        lang, origin);
     }
 
@@ -1409,11 +1420,11 @@ class Net(bool useArray = true,
     /** Learn Swedish Irregular Verb.
         See also: http://www.lardigsvenska.com/2010/10/oregelbundna-verb.html
     */
-    void learnSwedishIrregularVerb(string imperative,
-                                   string infinitive,
-                                   string present,
-                                   string past,
-                                   string pastParticiple) // pastParticiple
+    void learnSwedishIrregularVerb(S)(S imperative,
+                                      S infinitive,
+                                      S present,
+                                      S past,
+                                      S pastParticiple) if (isSomeString!S) // pastParticiple
     {
         const lang = Lang.sv;
         const category = CategoryIx.asUndefined;
@@ -1503,7 +1514,7 @@ class Net(bool useArray = true,
         const sense = Sense.nounUncountable;
         const categoryIx = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        enum words = ["music", "art", "love", "happiness",
+        enum expr = ["music", "art", "love", "happiness",
                       "math", "physics",
                       "advice", "information", "news",
                       "furniture", "luggage",
@@ -1514,7 +1525,7 @@ class Net(bool useArray = true,
                       "money", "currency",
                       "crockery", "cutlery",
                       "luggage", "baggage", "glass", "sand"];
-        connectMto1(words.map!(word => store(word, lang, sense, categoryIx, origin)),
+        connectMto1(expr.map!(word => store(word, lang, sense, categoryIx, origin)),
                     Rel.isA,
                     store("uncountable_noun", lang, sense, categoryIx, origin),
                     lang, origin);
@@ -1523,7 +1534,7 @@ class Net(bool useArray = true,
     /** Lookup-or-Store $(D Node) at $(D lemma) index.
      */
     NodeRef store(in Lemma lemma,
-                     Node node) in { assert(!lemma.words.empty); }
+                     Node node) in { assert(!lemma.expr.empty); }
     body
     {
         if (lemma in nodeRefByLemma)
@@ -1532,7 +1543,7 @@ class Net(bool useArray = true,
         }
         else
         {
-            auto wordsSplit = lemma.words.findSplit("_");
+            auto wordsSplit = lemma.expr.findSplit("_");
             if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
             {
                 ++multiWordNodeLemmaCount;
@@ -1543,37 +1554,51 @@ class Net(bool useArray = true,
             const cix = NodeRef(cast(Ix)allNodes.length);
             allNodes ~= node; // .. new node that is stored
             nodeRefByLemma[lemma] = cix; // store index to ..
-            nodeStringLengthSum += lemma.words.length;
+            nodeStringLengthSum += lemma.expr.length;
 
-            learnLemma(lemma.words, lemma);
+            learnLemma(lemma.expr, lemma);
 
             return cix;
         }
     }
 
-    /** Lookup-or-Store $(D Node) named $(D words) in language $(D lang). */
-    NodeRef store(Words words,
-                     Lang lang,
-                     Sense kind,
-                     CategoryIx categoryIx,
-                     Origin origin) in { assert(!words.empty); }
+    /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
+    NodeRef store(Expr expr,
+                  Lang lang,
+                  Sense kind,
+                  CategoryIx categoryIx,
+                  Origin origin) in { assert(!expr.empty); }
     body
     {
-        const lemma = Lemma(words, lang, kind, categoryIx);
+        const lemma = Lemma(expr, lang, kind, categoryIx);
         return store(lemma, Node(lemma, origin));
     }
 
-    /** Try to Lookup-or-Store $(D Node) named $(D words) in language $(D lang). */
-    NodeRef tryStore(Words words,
-                        Lang lang,
-                        Sense kind,
-                        CategoryIx categoryIx,
-                        Origin origin)
-    body
+    /** Try to Lookup-or-Store $(D Node) named $(D expr) in language $(D lang).
+     */
+    NodeRef tryStore(Expr expr,
+                     Lang lang,
+                     Sense kind,
+                     CategoryIx categoryIx,
+                     Origin origin)
     {
-        if (words.empty)
+        if (expr.empty)
             return NodeRef.asUndefined;
-        return store(words, lang, kind, categoryIx, origin);
+        return store(expr, lang, kind, categoryIx, origin);
+    }
+
+    NodeRef[] tryStore(Exprs)(Exprs exprs,
+                              Lang lang,
+                              Sense kind,
+                              CategoryIx categoryIx,
+                              Origin origin) if (isIterable!(Exprs))
+    {
+        typeof(return) nodeRefs;
+        foreach (expr; exprs)
+        {
+            nodeRefs ~= store(expr, lang, kind, categoryIx, origin);
+        }
+        return nodeRefs;
     }
 
     /** Fully Connect Every-to-Every in $(D all). */
@@ -1581,7 +1606,7 @@ class Net(bool useArray = true,
                              R all,
                              Lang lang,
                              Origin origin,
-                             real weight = 1.0) if (isSourceOf!(R, NodeRef))
+                             NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (me; all)
@@ -1600,9 +1625,9 @@ class Net(bool useArray = true,
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
     LinkRef[] connect1toM(R)(NodeRef first,
-                            Rel rel,
-                            R rest,
-                            Origin origin, real weight = 1.0) if (isSourceOf!(R, NodeRef))
+                             Rel rel,
+                             R rest,
+                             Origin origin, NWeight weight = 1.0) if (isSourceOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -1621,7 +1646,7 @@ class Net(bool useArray = true,
                              Rel rel,
                              NodeRef first,
                              Lang lang,
-                             Origin origin, real weight = 1.0) if (isSourceOf!(R, NodeRef))
+                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -1636,7 +1661,7 @@ class Net(bool useArray = true,
     alias connectFanIn = connectMto1;
 
     /** Cyclic Connect Every in $(D all). */
-    void connectCycle(R)(Rel rel, R all) if (isSourceOf!(R, NodeRef))
+    void connectCycle(R)(Rel rel, R all) if (isIterableOf!(R, NodeRef))
     {
     }
     alias connectCircle = connectCycle;
@@ -1651,7 +1676,7 @@ class Net(bool useArray = true,
                     NodeRef dstRef,
                     Lang lang = Lang.unknown,
                     Origin origin = Origin.unknown,
-                    real weight = 1.0, // 1.0 means absolutely true for Origin manual
+                    NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
                     bool negation = false,
                     bool reversion = false,
                     bool checkExisting = false)
@@ -1667,8 +1692,8 @@ class Net(bool useArray = true,
                 if (false)
                 {
                     dln("warning: Nodes ",
-                        nodeByRef(srcRef).lemma.words, " and ",
-                        nodeByRef(dstRef).lemma.words, " already related as ",
+                        nodeByRef(srcRef).lemma.expr, " and ",
+                        nodeByRef(dstRef).lemma.expr, " already related as ",
                         rel);
                 }
                 return existingIx;
@@ -1711,13 +1736,17 @@ class Net(bool useArray = true,
             weightMaxNELL = max(weight, weightMaxNELL);
             ++packedWeightHistogramNELL[link.packedWeight];
         }
+        else
+        {
+            link.setManualWeight(weight);
+        }
 
         propagateLinkNodes(link, srcRef, dstRef);
 
         if (false)
         {
-            dln(" src:", nodeByRef(srcRef).lemma.words,
-                " dst:", nodeByRef(dstRef).lemma.words,
+            dln(" src:", nodeByRef(srcRef).lemma.expr,
+                " dst:", nodeByRef(dstRef).lemma.expr,
                 " rel:", rel,
                 " origin:", origin,
                 " negation:", negation,
@@ -1749,8 +1778,8 @@ class Net(bool useArray = true,
         const lang = items.front.decodeLang; items.popFront;
         ++hlangCounts[lang];
 
-        static if (useRCString) { immutable words = items.front; }
-        else                    { immutable words = items.front.idup; }
+        static if (useRCString) { immutable expr = items.front; }
+        else                    { immutable expr = items.front.idup; }
 
         items.popFront;
         auto sense = Sense.unknown;
@@ -1765,7 +1794,7 @@ class Net(bool useArray = true,
         }
         ++kindCounts[sense];
 
-        return store(correctCN5Lemma(words), lang, sense, anyCategory, Origin.cn5);
+        return store(correctCN5Lemma(expr), lang, sense, anyCategory, Origin.cn5);
     }
 
     import std.algorithm: splitter;
@@ -1868,7 +1897,7 @@ class Net(bool useArray = true,
         string valueCategoryName;
 
         auto ignored = false;
-        real mainWeight;
+        NWeight mainWeight;
         auto show = false;
 
         auto parts = line.splitter('\t');
@@ -1932,7 +1961,7 @@ class Net(bool useArray = true,
                     }
                     break;
                 case 4:
-                    mainWeight = part.to!real;
+                    mainWeight = part.to!NWeight;
                     break;
                 default:
                     if (ix < 5 && !ignored)
@@ -2078,7 +2107,7 @@ class Net(bool useArray = true,
         auto tense = Tense.unknown;
 
         NodeRef src, dst;
-        real weight;
+        NWeight weight;
         auto lang = Lang.unknown;
         auto origin = Origin.unknown;
 
@@ -2113,7 +2142,7 @@ class Net(bool useArray = true,
                     if (part != `/ctx/all`) { /* dln("TODO ", part); */ }
                     break;
                 case 5:
-                    weight = part.to!real;
+                    weight = part.to!NWeight;
                     break;
                 case 6:
                     origin = decodeCN5OriginPath(part, lang, origin);
@@ -2257,12 +2286,12 @@ class Net(bool useArray = true,
 
         if (weightSumCN5)
         {
-            writeln(indent, `CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(real)weightSumCN5/allLinks.length);
+            writeln(indent, `CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(NWeight)weightSumCN5/allLinks.length);
             writeln(indent, `CN5 Packed Weights Histogram: `, packedWeightHistogramCN5);
         }
         if (weightSumNELL)
         {
-            writeln(indent, `NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(real)weightSumNELL/allLinks.length);
+            writeln(indent, `NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(NWeight)weightSumNELL/allLinks.length);
             writeln(indent, `NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
         }
 
@@ -2272,11 +2301,11 @@ class Net(bool useArray = true,
                 multiWordNodeLemmaCount);
         writeln(indent, `Link Count: `, allLinks.length);
 
-        writeln(indent, `Lemmas by Words Count: `, lemmasByWords.length);
+        writeln(indent, `Lemmas by Expr Count: `, lemmasByExpr.length);
 
         writeln(indent, `Node Indexes by Lemma Count: `, nodeRefByLemma.length);
-        writeln(indent, `Node String Length Average: `, cast(real)nodeStringLengthSum/allNodes.length);
-        writeln(indent, `Node Connectedness Average: `, cast(real)connectednessSum/2/allNodes.length);
+        writeln(indent, `Node String Length Average: `, cast(NWeight)nodeStringLengthSum/allNodes.length);
+        writeln(indent, `Node Connectedness Average: `, cast(NWeight)connectednessSum/2/allNodes.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkRef.max.
@@ -2341,9 +2370,9 @@ class Net(bool useArray = true,
         write(indent, rel.toHumanLang(dir, negation, lang), `: `);
     }
 
-    void showNode(in Node node, real weight)
+    void showNode(in Node node, NWeight weight)
     {
-        if (node.lemma.words) write(` `, node.lemma.words.tr(`_`, ` `));
+        if (node.lemma.expr) write(` `, node.lemma.expr.tr(`_`, ` `));
 
         write(`(`); // open
 
@@ -2361,7 +2390,7 @@ class Net(bool useArray = true,
 
     void showLinkNode(in Node node,
                       Rel rel,
-                      real weight,
+                      NWeight weight,
                       RelDir dir)
     {
         showLinkRelation(rel, dir);
@@ -2390,11 +2419,11 @@ class Net(bool useArray = true,
         if (normLine == `palindrome`)
         {
             foreach (palindromeNode; allNodes.filter!(node =>
-                                                      node.lemma.words.isPalindrome(3)))
+                                                      node.lemma.expr.isPalindrome(3)))
             {
                 showLinkNode(palindromeNode,
                              Rel.instanceOf,
-                             real.infinity,
+                             NWeight.infinity,
                              RelDir.backward);
             }
         }
@@ -2408,7 +2437,7 @@ class Net(bool useArray = true,
                 {
                     showLinkNode(anagramNode,
                                  Rel.instanceOf,
-                                 real.infinity,
+                                 NWeight.infinity,
                                  RelDir.backward);
                 }
             }
@@ -2423,7 +2452,7 @@ class Net(bool useArray = true,
                 {
                     showLinkNode(nodeByRef(synonymNode),
                                  Rel.instanceOf,
-                                 real.infinity,
+                                 NWeight.infinity,
                                  RelDir.backward);
                 }
             }
@@ -2438,7 +2467,7 @@ class Net(bool useArray = true,
                 {
                     showLinkNode(nodeByRef(translationNode),
                                  Rel.instanceOf,
-                                 real.infinity,
+                                 NWeight.infinity,
                                  RelDir.backward);
                 }
             }
@@ -2448,7 +2477,7 @@ class Net(bool useArray = true,
             return;
 
         // queried line nodes
-        auto lineNodeRefs = nodeRefsByWords(normLine, lang, sense);
+        auto lineNodeRefs = nodeRefsByExpr(normLine, lang, sense);
 
         // as is
         foreach (lineNodeRef; lineNodeRefs)
@@ -2490,29 +2519,29 @@ class Net(bool useArray = true,
         }
     }
 
-    auto anagramsOf(S)(S words) if (isSomeString!S)
+    auto anagramsOf(S)(S expr) if (isSomeString!S)
     {
-        const lsWord = words.sorted; // letter-sorted words
-        return allNodes.filter!(node => (lsWord != node.lemma.words && // don't include one-self
-                                         lsWord == node.lemma.words.sorted));
+        const lsWord = expr.sorted; // letter-sorted expr
+        return allNodes.filter!(node => (lsWord != node.lemma.expr && // don't include one-self
+                                         lsWord == node.lemma.expr.sorted));
     }
 
     /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
-    auto derangedAnagramsOf(S)(S words) if (isSomeString!S)
+    auto derangedAnagramsOf(S)(S expr) if (isSomeString!S)
     {
-        return anagramsOf(words);
+        return anagramsOf(expr);
     }
 
     /** Get Synonyms of $(D word) optionally with Matching Syllable Count.
         Set withSameSyllableCount to true to get synonyms which can be used to
         help in translating songs with same rhythm.
      */
-    auto synonymsOf(S)(S words,
+    auto synonymsOf(S)(S expr,
                        Lang lang = Lang.unknown,
                        Sense sense = Sense.unknown,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto nodes = nodeRefsByWords(words,
+        auto nodes = nodeRefsByExpr(expr,
                                      lang,
                                      sense);
         // TODO tranverse over nodes synonyms
@@ -2523,14 +2552,14 @@ class Net(bool useArray = true,
         If several $(D toLangs) are specified pick the closest match (highest
         relation weight).
     */
-    auto translationsOf(S)(S words,
+    auto translationsOf(S)(S expr,
                            Lang lang = Lang.unknown,
                            Sense sense = Sense.unknown,
                            Lang[] toLangs = []) if (isSomeString!S)
     {
-        auto nodes = nodeRefsByWords(words,
-                                        lang,
-                                        sense);
+        auto nodes = nodeRefsByExpr(expr,
+                                    lang,
+                                    sense);
         const rel = Rel.translationOf;
         // TODO Use synonym transitivity and possibly traverse over synonyms
         // en => sv:
