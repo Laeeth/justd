@@ -1266,154 +1266,144 @@ class Net(bool useArray = true,
         learnEnglishIrregularVerb("break", "broke", "broken");
         learnEnglishIrregularVerb("breed", "bred", "bred");
         learnEnglishIrregularVerb("bring", "brought", "brought");
+        learnEnglishIrregularVerb("build", "built", "built");
+        learnEnglishIrregularVerb("burn", ["burnt", "burned"], ["burnt", "burned"]);
+        learnEnglishIrregularVerb("burst", "burst", "burst");
+        learnEnglishIrregularVerb("buy", "bought", "bought");
+        learnEnglishIrregularVerb("cast", "cast", "cast");
+        learnEnglishIrregularVerb("catch", "caught", "caught");
+        learnEnglishIrregularVerb("choose", "chose", "chosen");
+        learnEnglishIrregularVerb("come", "came", "come");
+        learnEnglishIrregularVerb("cost", "cost", "cost");
+        learnEnglishIrregularVerb("creep", "crept", "crept");
+        learnEnglishIrregularVerb("cut", "cut", "cut");
+        learnEnglishIrregularVerb("deal", "dealt", "dealt");
+        learnEnglishIrregularVerb("dig", "dug", "dug");
+        learnEnglishIrregularVerb("dive", ["dived", "dove"], "dived");
+        learnEnglishIrregularVerb("do", "did", "done");
+        learnEnglishIrregularVerb("draw", "drew", "drawn");
+        learnEnglishIrregularVerb("dream", ["dreamt", "dreamed"], ["dreamt", "dreamed"]);
+        learnEnglishIrregularVerb("drink", "drank", "drunk");
+        learnEnglishIrregularVerb("drive", "drove", "driven");
+        learnEnglishIrregularVerb("dwell", "dwelt", "dwelt");
+        learnEnglishIrregularVerb("eat", "ate", "eaten");
+        learnEnglishIrregularVerb("fall", "fell", "fallen");
+        learnEnglishIrregularVerb("feed", "fed", "fed");
+        learnEnglishIrregularVerb("fight", "fought", "fought");
+        learnEnglishIrregularVerb("find", "found", "found");
+        learnEnglishIrregularVerb("flee", "fled", "fled");
+        learnEnglishIrregularVerb("fly", "flew", "flown");
+        learnEnglishIrregularVerb("forbid", ["forbade", "forbad"], "forbidden");
+        learnEnglishIrregularVerb("forget", "forgot", "forgotten");
+        learnEnglishIrregularVerb("forgive", "forgave", "forgiven");
+        learnEnglishIrregularVerb("forsake", "forsook", "forsaken");
+        learnEnglishIrregularVerb("freeze", "froze", "frozen");
 
-        learnEnglishIrregularVerbs("build", "built", "built");
-        learnEnglishIrregularVerbs("burn", ["burnt", "burned"], ["burnt", "burned"]);
+        learnEnglishIrregularVerb("get", "got", ["gotten", "got"]);
+        learnEnglishIrregularVerb("give", "gave", "given");
+        learnEnglishIrregularVerb("go", "went", "gone");
+        learnEnglishIrregularVerb("grind", "ground", "ground");
+        learnEnglishIrregularVerb("grow", "grew", "grown");
 
-        learnEnglishIrregularVerbs("burst", "burst", "burst");
-        learnEnglishIrregularVerbs("buy", "bought", "bought");
+        learnEnglishIrregularVerb("hang", ["hanged", "hung"], ["hanged", "hung"]);
+        learnEnglishIrregularVerb("have", "had", "had");
+        learnEnglishIrregularVerb("hear", "heard", "heard");
+        learnEnglishIrregularVerb("hide", "hid", "hidden");
+        learnEnglishIrregularVerb("hit", "hit", "hit");
+        learnEnglishIrregularVerb("hold", "held", "held");
+        learnEnglishIrregularVerb("hurt", "hurt", "hurt");
 
-        learnEnglishIrregularVerbs("cast", "cast", "cast");
+        learnEnglishIrregularVerb("keep", "kept", "kept");
+        learnEnglishIrregularVerb("kneel", "knelt", "knelt");
+        learnEnglishIrregularVerb("knit", ["knit", "knitted"], ["knit", "knitted"]);
+        learnEnglishIrregularVerb("know", "knew", "known");
 
-        learnEnglishIrregularVerbs("catch", "caught", "caught");
+        learnEnglishIrregularVerb("lay", "laid", "laid");
+        learnEnglishIrregularVerb("lead", "led", "led");
 
-        learnEnglishIrregularVerbs("choose", "chose", "chosen");
-        learnEnglishIrregularVerbs("come", "came", "come");
+        learnEnglishIrregularVerb("lean", ["leaned", "leant"], ["leaned", "leant"]);
+        learnEnglishIrregularVerb("leap", ["leaped", "leapt"], ["leaped", "leapt"]);
 
-        learnEnglishIrregularVerbs("cost", "cost", "cost");
+        learnEnglishIrregularVerb("learn", ["learned", "learnt"], ["learned", "learnt"]);
+        learnEnglishIrregularVerb("leave", "left", "left");
+        learnEnglishIrregularVerb("lend", "lent", "lent");
+        learnEnglishIrregularVerb("let", "let", "let");
+        learnEnglishIrregularVerb("lie", "lay", "lain");
+        learnEnglishIrregularVerb("light", ["lighted", "lit"], ["lighted", "lit"]);
+        learnEnglishIrregularVerb("lose", "lost", "lost");
 
-        learnEnglishIrregularVerbs("creep", "crept", "crept");
+        learnEnglishIrregularVerb("make", "made", "made");
+        learnEnglishIrregularVerb("mean", "meant", "meant");
+        learnEnglishIrregularVerb("meet", "met", "met");
+        learnEnglishIrregularVerb("mistake", "mistook", "mistaken");
 
-        learnEnglishIrregularVerbs("cut", "cut", "cut");
+        learnEnglishIrregularVerb("partake", "partook", "partaken");
+        learnEnglishIrregularVerb("pay", "paid", "paid");
+        learnEnglishIrregularVerb("put", "put", "put");
 
-        learnEnglishIrregularVerbs("deal", "dealt", "dealt");
-        learnEnglishIrregularVerbs("dig", "dug", "dug");
-        learnEnglishIrregularVerbs("dive", ["dived", "dove"], "dived");
-        learnEnglishIrregularVerbs("do", "did", "done");
-        learnEnglishIrregularVerbs("draw", "drew", "drawn");
-        /*                       dream / dreamed, dreamt / dreamed, dreamt */
-        learnEnglishIrregularVerbs("drink", "drank", "drunk");
-        learnEnglishIrregularVerbs("drive", "drove", "driven");
-        /*                       dwell / dwelt / dwelt */
+        learnEnglishIrregularVerb("read", "read", "read");
+        learnEnglishIrregularVerb("rend", "rent", "rent");
+        learnEnglishIrregularVerb("rid", "rid", "rid");
+        learnEnglishIrregularVerb("ride", "rode", "ridden");
+        learnEnglishIrregularVerb("run", "ran", "run");
 
-        /*                       eat / ate / eaten */
+        learnEnglishIrregularVerb("say", "said", "said");
+        learnEnglishIrregularVerb("see", "saw", "seen");
+        learnEnglishIrregularVerb("seek", "sought", "sought");
+        learnEnglishIrregularVerb("sell", "sold", "sold");
+        learnEnglishIrregularVerb("send", "sent", "sent");
+        learnEnglishIrregularVerb("set", "set", "set");
+        learnEnglishIrregularVerb("shake", "shook", "shaken");
+        learnEnglishIrregularVerb("shed", "shed", "shed");
+        learnEnglishIrregularVerb("shine", "shone", "shone");
+        learnEnglishIrregularVerb("shoot", "shot", "shot");
+        learnEnglishIrregularVerb("shrink", "shrank", "shrunk");
+        learnEnglishIrregularVerb("shut", "shut", "shut");
+        learnEnglishIrregularVerb("sing", "sang", "sung");
+        learnEnglishIrregularVerb("sink", "sank", "sank");
+        learnEnglishIrregularVerb("sit", "sat", "sat");
+        learnEnglishIrregularVerb("slay", "slew", "slain");
+        learnEnglishIrregularVerb("sleep", "slept", "slept");
+        learnEnglishIrregularVerb("sling", "slung", "slung");
+        learnEnglishIrregularVerb("slit", "slit", "slit");
+        learnEnglishIrregularVerb("speak", "spoke", "spoken");
+        learnEnglishIrregularVerb("spin", "spun", "spun");
+        learnEnglishIrregularVerb("spit", "spat", "spat");
+        learnEnglishIrregularVerb("split", "split", "split");
+        learnEnglishIrregularVerb("spring", "sprang", "sprung");
+        learnEnglishIrregularVerb("stand", "stood", "stood");
+        learnEnglishIrregularVerb("steal", "stole", "stolen");
+        learnEnglishIrregularVerb("stick", "stuck", "stuck");
+        learnEnglishIrregularVerb("sting", "stung", "stung");
+        learnEnglishIrregularVerb("stink", "stank", "stunk");
+        learnEnglishIrregularVerb("stride", "strode", "stridden");
+        learnEnglishIrregularVerb("strive", "strove", "striven");
+        learnEnglishIrregularVerb("swear", "swore", "sworn");
+        learnEnglishIrregularVerb("sweep", "swept", "swept");
+        learnEnglishIrregularVerb("swim", "swam", "swum");
+        learnEnglishIrregularVerb("swing", "swung", "swung");
 
-        /*                       fall / fell / fallen */
-        /*                       feed / fed / fed */
-        /*                       fight / fought / fought */
-        /*                       find / found / found */
-        /*                       flee / fled / fled */
-        /*                       fly / flew / flown */
-        /*                       forbid / forbade, forbad / forbidden */
-        /*                       forget / forgot / forgotten */
-        /*                       forgive / forgave / forgiven */
-        /*                       forsake / forsook / forsaken */
-        /*                       freeze / froze / frozen */
+        learnEnglishIrregularVerb("slide", "slid", ["slid", "slidden"]);
+        learnEnglishIrregularVerb("speed", ["sped", "speeded"], ["sped", "speeded"]);
+        learnEnglishIrregularVerb("tread", "trod", ["trodden", "trod"]);
 
-        /*                       get / got / gotten, got */
-        /*                       give / gave / given */
-        /*                       go / went / gone */
-        /*                       grind / ground / ground */
-        /*                       grow / grew / grown */
+        learnEnglishIrregularVerb("take", "took", "taken");
+        learnEnglishIrregularVerb("teach", "taught", "taught");
+        learnEnglishIrregularVerb("tear", "tore", "torn");
+        learnEnglishIrregularVerb("tell", "told", "told");
+        learnEnglishIrregularVerb("think", "thought", "thought");
+        learnEnglishIrregularVerb("throw", "threw", "thrown");
 
-        /*                       hang / hanged, hung / hanged, hung */
-        /*                       have / had / had */
-        /*                       hear / heard / heard */
-        /*                       hide / hid / hidden */
-        /*                       hit / hit / hit */
-        /*                       hold / held / held */
-        /*                       hurt / hurt / hurt */
+        learnEnglishIrregularVerb("understand", "understood", "understood");
+        learnEnglishIrregularVerb("upset", "upset", "upset");
 
-        /*                       keep / kept / kept */
-        /*                       kneel / knelt / knelt */
-        /*                       knit / knitted, knit / knitted, knit */
-        /*                       know / knew / known */
-
-        /*                       lay / laid / laid */
-        /*                       lead / led / led */
-        /*                       lean / leaned, leant / */
-        /*                       leaned, leant */
-        /*                       leap / leaped, leapt / */
-        /*                       leaped, leapt */
-        /*                       learn / learned, learnt / learned, learnt */
-        /*                       leave / left / left */
-        /*                       lend / lent / lent */
-        /*                       let / let / let */
-        /*                       lie / lay / lain */
-        /*                       light / lighted, lit / lighted, lit */
-        /*                       lose / lost / lost */
-
-        /*                       make / made / made */
-        /*                       mean / meant / meant */
-        /*                       meet / met / met */
-        /*                       mistake / mistook / mistaken */
-
-        /*                       partake / partook / partaken */
-        /*                       pay / paid / paid */
-        /*                       put / put / put */
-
-        /*                       read / read / read */
-        /*                       rend / rent / rent */
-        /*                       rid / rid / rid */
-        /*                       ride / rode / ridden */
-        /*                       run / ran / run */
-
-        /*                       say / said / said */
-        /*                       see / saw / seen */
-        /*                       seek / sought / sought */
-        /*                       sell / sold / sold */
-        /*                       send / sent / sent */
-        /*                       set / set / set */
-        /*                       shake / shook / shaken */
-        /*                       shed / shed / shed */
-        /*                       shine / shone / shone */
-        /*                       shoot / shot / shot */
-        /*                       shrink / shrank / shrunk */
-        /*                       shut / shut / shut */
-        /*                       sing / sang / sung */
-        /*                       sink / sank / sank */
-        /*                       sit / sat / sat */
-        /*                       slay / slew / slain */
-        /*                       sleep / slept / slept */
-        /*                       slide / slid / slid, slidden */
-        /*                       sling / slung / slung */
-        /*                       slit / slit / slit */
-        /*                       speak / spoke / spoken */
-        /*                       speed / sped, speeded / sped, speeded */
-        /*                       spin / spun / spun */
-        /*                       spit / spat / spat */
-        /*                       split / split / split */
-        /*                       spring / sprang / sprung */
-        /*                       stand / stood / stood */
-        /*                       steal / stole / stolen */
-        /*                       stick / stuck / stuck */
-        /*                       sting / stung / stung */
-        /*                       stink / stank / stunk */
-        /*                       stride / strode / stridden */
-        /*                       strive / strove / striven */
-        /*                       swear / swore / sworn */
-        /*                       sweep / swept / swept */
-        /*                       swim / swam / swum */
-        /*                       swing / swung / swung */
-
-        /*                       take / took / taken */
-        /*                       teach / taught / taught */
-        /*                       tear / tore / torn */
-        /*                       tell / told / told */
-        /*                       think / thought / thought */
-        /*                       throw / threw / thrown */
-        /*                       tread / trod / trodden, trod */
-
-        /*                       understand / understood / understood */
-        /*                       upset / upset / upset */
-
-        /*                       wear / wore / worn */
-        /*                       weave / wove / woven */
-        /*                       weep / wept / wept */
-        /*                       win / won / won */
-        /*                       wind / wound / wound */
-        /*                       wring / wrung / wrung */
-        /*                       write / wrote / written */
+        learnEnglishIrregularVerb("wear", "wore", "worn");
+        learnEnglishIrregularVerb("weave", "wove", "woven");
+        learnEnglishIrregularVerb("weep", "wept", "wept");
+        learnEnglishIrregularVerb("win", "won", "won");
+        learnEnglishIrregularVerb("wind", "wound", "wound");
+        learnEnglishIrregularVerb("wring", "wrung", "wrung");
+        learnEnglishIrregularVerb("write", "wrote", "written");
     }
 
     /** Learn Swedish Irregular Verb.
