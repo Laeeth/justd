@@ -695,7 +695,9 @@ enum Origin:ubyte
     dbpediaEn,
     wordnet30,
     verbosity,
+    wiktionary,
     nell,
+    yago,
     manual,
 }
 
@@ -714,7 +716,9 @@ string toNice(Origin origin) @safe pure
             case dbpediaEn: return "DBpediaEnglish";
             case wordnet30: return "WordNet30";
             case verbosity: return "Verbosity";
+            case wiktionary: return "Wiktionary";
             case nell: return "NELL";
+            case yago: return "Yago";
             case manual: return "Manual";
         }
     }
@@ -737,19 +741,6 @@ auto pageSize() @trusted
 bool isMultiWord(S)(S s) if (isSomeString!S)
 {
     return s.canFind("_", " ") >= 1;
-}
-
-struct CIx
-{
-
-    import std.bitmanip : bitfields;
-    mixin(bitfields!(
-              bool, "caseSensitive",  1,
-              bool, "bundling", 1,
-              bool, "passThrough", 1,
-              bool, "stopOnFirstNonOption", 1,
-              bool, "required", 1,
-              ubyte, "", 3));
 }
 
 /** Main Knowledge Network.
@@ -915,7 +906,7 @@ class Net(bool useArray = true,
             this.origin = origin;
         }
 
-        /** Set ConceptNet5 Weight $(weigth). */
+        /** Set ConceptNet5 Weight $(weight). */
         void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..about10 to Weight to save memory
@@ -1993,16 +1984,54 @@ class Net(bool useArray = true,
     /** Decode ConceptNet5 Origin $(D origin). */
     Origin decodeCN5Origin(char[] origin)
     {
-        // TODO Use part.splitter('/')
+        bool fromSource = false;
+        bool fromDictionary = false;
+
+        bool fromDBPedia = false;
+        bool fromWordNet = false;
+        bool fromSite = false;
+
+        size_t ix = 0;
+        foreach (part; origin.splitter('/'))
+        {
+            switch (ix)
+            {
+                case 0:
+                    switch (part)
+                    {
+                        case "s": fromSource = true; break;
+                        case "d": fromDictionary = true; break;
+                        default: break;
+                    }
+                    break;
+                case 1:
+                    switch (part)
+                    {
+                        case "dbpedia": fromDBPedia = true; break;
+                        case "wordnet": fromWordNet = true; break;
+                        case "site": fromSite = true; break;
+                        default: break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            ++ix;
+        }
+
         switch (origin)
         {
             case `/s/dbpedia/3.7`: return Origin.dbpedia37;
             case `/s/dbpedia/3.9/umbel`: return Origin.dbpedia39umbel;
+
             case `/d/dbpedia/en`:  return Origin.dbpediaEn;
             case `/d/wordnet/3.0`: return Origin.wordnet30;
+
             case `/s/wordnet/3.0`: return Origin.wordnet30;
             case `/s/site/verbosity`: return Origin.verbosity;
-            default: return Origin.cn5; /* dln("Handle ", part); */
+            default:
+                /* dln("Handle ", origin); */
+                return Origin.cn5;
         }
     }
 
@@ -2395,8 +2424,8 @@ class Net(bool useArray = true,
                         showNode(linkedNode,
                                     link.normalizedWeight);
                     }
-                    writeln();
                 }
+                writeln();
             }
         }
 
