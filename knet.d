@@ -43,7 +43,7 @@ import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind, count;
 import std.container: Array;
 import std.string: tr, toLower, toUpper;
 import std.uni: isWhite, toLower;
@@ -2260,8 +2260,6 @@ class Net(bool useArray = true,
      */
     void showRelations(uint indent_depth = 2)
     {
-        writeln(`Number of Symmetric Relations: `, symmetricRelCount);
-        writeln(`Number of Transitive Relations: `, transitiveRelCount);
         writeln(`Link Count by Relation Type:`);
 
         import std.range: cycle;
@@ -2275,6 +2273,8 @@ class Net(bool useArray = true,
                 writeln(indent, rel.to!string, `: `, count);
             }
         }
+
+        writeln(`Node Count: `, allNodes.length);
 
         writeln(`Node Count by Origin:`);
         foreach (source; Origin.min..Origin.max)
@@ -2324,6 +2324,9 @@ class Net(bool useArray = true,
                 `/`,
                 multiWordNodeLemmaCount);
         writeln(indent, `Link Count: `, allLinks.length);
+        writeln(indent, `Link Count By Group:`);
+        writeln(indent, `- Symmetric: `, symmetricRelCount);
+        writeln(indent, `- Transitive: `, transitiveRelCount);
 
         writeln(indent, `Lemmas by Expr Count: `, lemmasByExpr.length);
 
@@ -2424,9 +2427,9 @@ class Net(bool useArray = true,
 
     /** Show nodes and their relations matching content in $(D line). */
     void showNodes(S)(S line,
-                         Lang lang = Lang.unknown,
-                         Sense sense = Sense.unknown,
-                         S lineSeparator = `_`) if (isSomeString!S)
+                      Lang lang = Lang.unknown,
+                      Sense sense = Sense.unknown,
+                      S lineSeparator = `_`) if (isSomeString!S)
     {
         import std.ascii: whitespace;
         import std.algorithm: splitter;
@@ -2501,9 +2504,10 @@ class Net(bool useArray = true,
             return;
 
         // queried line nodes
-        dln(allNodes.filter!(node => node.lemma.expr == "lie"));
+        dln("allNodes lie count: ", allNodes.filter!(node => node.lemma.expr == "lie").count);
+        dln(lang, sense);
         auto lineNodeRefs = nodeRefsByExpr(normLine, lang, sense);
-        dln(lineNodeRefs.length);
+        dln("nodeRefsByExpr count: ", lineNodeRefs.length);
 
         // as is
         foreach (lineNodeRef; lineNodeRefs)
