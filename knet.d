@@ -1705,20 +1705,6 @@ class Net(bool useArray = true,
             }
         }
 
-        if (nodeAt(src).lemma.expr.of("lie", "stand_up") &&
-            nodeAt(dst).lemma.expr.of("lie", "stand_up"))
-        {
-            dln("xxx: lie and stand_up");
-        }
-        else if (nodeAt(src).lemma.expr.of("lie", "stand_up"))
-        {
-            dln("xxx: src");
-        }
-        else if (nodeAt(dst).lemma.expr.of("lie", "stand_up"))
-        {
-            dln("xxx: dst");
-        }
-
         // TODO group these
         assert(allLinks.length <= nullIx);
         auto linkRef = LinkRef(cast(Ix)allLinks.length);
@@ -2499,11 +2485,7 @@ class Net(bool useArray = true,
             return;
 
         // queried line nodes
-        dln("allNodes lie count: ", allNodes.filter!(node => node.lemma.expr == "lie").count);
-        dln(lang, sense);
         auto lineNodeRefs = nodeRefsOf(normLine, lang, sense);
-        dln("nodeRefsOf count: ", lineNodeRefs.length);
-        dln("nodeRefsOf count: ", nodeRefsOf("lie").count);
 
         // as is
         foreach (lineNodeRef; lineNodeRefs)
