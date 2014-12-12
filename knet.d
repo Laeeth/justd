@@ -20,6 +20,8 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
+    BUG "lie" shows relation "stand up" but not the opposite
+
     TODO Make use of stealFront and stealBack
 
     TODO ansiktstvätt => facial_wash
@@ -114,13 +116,13 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
 
 /** Decode Relation $(D predicate) together with its possible $(D negation) and
     $(D reversion). */
-Rel decodePredicate(S)(S predicate,
-                       const S entity,
-                       const S value,
-                       const Origin origin,
-                       out bool negation,
-                       out bool reversion,
-                       out Tense tense) if (isSomeString!S)
+Rel decodeRelationPredicate(S)(S predicate,
+                               const S entity,
+                               const S value,
+                               const Origin origin,
+                               out bool negation,
+                               out bool reversion,
+                               out Tense tense) if (isSomeString!S)
 {
     with (Rel)
     {
@@ -688,16 +690,23 @@ enum Thematic:ubyte
 /** Knowledge Origin. */
 enum Origin:ubyte
 {
-    unknown,
+    unknown, any = unknown,
     cn5,
+
+    dbpedia,
     dbpedia37,
     dbpedia39umbel,
     dbpediaEn,
+
+    wordnet,
     wordnet30,
+
     verbosity,
     wiktionary,
     nell,
     yago,
+    globalmind,
+
     manual,
 }
 
@@ -706,22 +715,23 @@ bool defined(Origin origin) @safe @nogc pure nothrow { return origin != Origin.u
 string toNice(Origin origin) @safe pure
 {
     with (Origin)
-    {
         final switch (origin)
         {
             case unknown: return "Unknown";
             case cn5: return "CN5";
+            case dbpedia: return "DBpedia";
             case dbpedia37: return "DBpedia37";
             case dbpedia39umbel: return "DBpedia39Umbel";
             case dbpediaEn: return "DBpediaEnglish";
+            case wordnet: return "WordNet";
             case wordnet30: return "WordNet30";
             case verbosity: return "Verbosity";
             case wiktionary: return "Wiktionary";
             case nell: return "NELL";
             case yago: return "Yago";
+            case globalmind: return "GlobalMind";
             case manual: return "Manual";
         }
-    }
 }
 
 auto pageSize() @trusted
@@ -891,6 +901,7 @@ class Net(bool useArray = true,
              Rel rel,
              NodeRef dstRef,
              bool negation,
+             Lang lang = Lang.unknown,
              Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
         {
@@ -933,6 +944,8 @@ class Net(bool useArray = true,
 
         Rel rel;
         bool negation; /// relation negation
+
+        Lang lang;
 
         Origin origin;
     }
@@ -1188,7 +1201,7 @@ class Net(bool useArray = true,
         const origin = Origin.manual;
         auto all = [tryStore(forward, lang, Sense.verbInfinitive, category, origin),
                     tryStore(backward, lang, Sense.verbPastParticiple, category, origin)];
-        return connectMtoM(Rel.reversionOf, all.filter!(a => a.defined), origin);
+        return connectMtoM(Rel.reversionOf, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn English Irregular Verb.
@@ -1203,7 +1216,7 @@ class Net(bool useArray = true,
         auto all = [tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
                     tryStore(past, lang, Sense.verbPast, category, origin),
                     tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        return connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
+        return connectMtoM(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn English Acronym.
@@ -1218,7 +1231,7 @@ class Net(bool useArray = true,
         return connect(store(acronym, lang, sense, category, origin),
                        Rel.acronymFor,
                        store(words, lang, sense, category, origin),
-                       origin);
+                       lang, origin);
     }
 
     /** Learn English Computer Acronyms.
@@ -1420,7 +1433,7 @@ class Net(bool useArray = true,
                     tryStore(present, lang, Sense.verbPresent, category, origin),
                     tryStore(past, lang, Sense.verbPast, category, origin),
                     tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), origin);
+        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn Swedish Irregular Verbs.
@@ -1514,7 +1527,7 @@ class Net(bool useArray = true,
         connectMto1(words.map!(word => store(word, lang, sense, categoryIx, origin)),
                     Rel.isA,
                     store("uncountable_noun", lang, sense, categoryIx, origin),
-                    origin);
+                    lang, origin);
     }
 
     /** Lookup-or-Store $(D Node) at $(D lemma) index.
@@ -1575,9 +1588,10 @@ class Net(bool useArray = true,
 
     /** Fully Connect Every-to-Every in $(D all). */
     LinkRef[] connectMtoM(R)(Rel rel,
-                            R all,
-                            Origin origin,
-                            real weight = 1.0) if (isSourceOf!(R, NodeRef))
+                             R all,
+                             Lang lang,
+                             Origin origin,
+                             real weight = 1.0) if (isSourceOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (me; all)
@@ -1586,7 +1600,7 @@ class Net(bool useArray = true,
             {
                 if (me != you)
                 {
-                    linkIxes ~= connect(me, rel, you, origin, weight);
+                    linkIxes ~= connect(me, rel, you, lang, origin, weight);
                 }
             }
         }
@@ -1614,16 +1628,17 @@ class Net(bool useArray = true,
 
     /** Fan-In Connect $(D first) to Every in $(D rest). */
     LinkRef[] connectMto1(R)(R rest,
-                            Rel rel,
-                            NodeRef first,
-                            Origin origin, real weight = 1.0) if (isSourceOf!(R, NodeRef))
+                             Rel rel,
+                             NodeRef first,
+                             Lang lang,
+                             Origin origin, real weight = 1.0) if (isSourceOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
         {
             if (first != you)
             {
-                linkIxes ~= connect(you, rel, first, origin, weight);
+                linkIxes ~= connect(you, rel, first, lang, origin, weight);
             }
         }
         return linkIxes;
@@ -1644,6 +1659,7 @@ class Net(bool useArray = true,
     LinkRef connect(NodeRef srcRef,
                     Rel rel,
                     NodeRef dstRef,
+                    Lang lang = Lang.unknown,
                     Origin origin = Origin.unknown,
                     real weight = 1.0, // 1.0 means absolutely true for Origin manual
                     bool negation = false,
@@ -1677,6 +1693,7 @@ class Net(bool useArray = true,
                          rel,
                          reversion ? srcRef : dstRef,
                          negation,
+                         lang,
                          origin);
 
         nodeByRef(srcRef).links ~= LinkRef(linkRef, RelDir.forward);
@@ -1840,6 +1857,7 @@ class Net(bool useArray = true,
                                    kind,
                                    categoryIx,
                                    Origin.nell),
+                             lang,
                              Origin.nell, 1.0, false, false,
                              true)); // need to check duplicates here
     }
@@ -1916,7 +1934,7 @@ class Net(bool useArray = true,
                             relationName.skipOver(entityCategoryName); // strip dumb prefix
                             relationName.skipOverBack(valueCategoryName); // strip dumb suffix
 
-                            rel = relationName.decodePredicate(entityCategoryName,
+                            rel = relationName.decodeRelationPredicate(entityCategoryName,
                                                               valueCategoryName,
                                                               Origin.nell,
                                                               negation, reversion, tense);
@@ -1940,7 +1958,8 @@ class Net(bool useArray = true,
             valueIx.defined)
         {
             auto mainLinkRef = connect(entityIx, rel, valueIx,
-                                      Origin.nell, mainWeight, negation, reversion);
+                                       Lang.en,
+                                       Origin.nell, mainWeight, negation, reversion);
         }
 
         if (show) writeln();
@@ -1981,23 +2000,45 @@ class Net(bool useArray = true,
         return done;
     }
 
-    /** Decode ConceptNet5 Origin $(D origin). */
-    Origin decodeCN5Origin(char[] origin)
+    Origin decodeCN5OriginDirect(char[] path, out Lang lang,
+                                 Origin currentOrigin)
     {
+        with (Origin)
+            switch (path)
+            {
+                case `/s/dbpedia/3.7`: return dbpedia37;
+                case `/s/dbpedia/3.9/umbel`: return dbpedia39umbel;
+                case `/d/dbpedia/en`: lang = Lang.en; return dbpediaEn;
+                case `/d/wordnet/3.0`: return wordnet30;
+                case `/s/wordnet/3.0`: return wordnet30;
+                case `/s/site/verbosity`: return verbosity;
+                default: /* dln("Handle ", path); */ return unknown;
+            }
+    }
+
+    /** Decode ConceptNet5 Origin $(D path). */
+    Origin decodeCN5OriginPath(char[] path, out Lang lang,
+                               Origin currentOrigin)
+    {
+        auto origin = decodeCN5OriginDirect(path, lang,
+                                            currentOrigin);
+        if (origin != Origin.unknown)
+        {
+            return origin;
+        }
+
         bool fromSource = false;
         bool fromDictionary = false;
-
-        bool fromDBPedia = false;
-        bool fromWordNet = false;
-        bool fromWiktionary = false;
         bool fromSite = false;
 
         size_t ix = 0;
-        foreach (part; origin.splitter('/'))
+        foreach (part; path.splitter('/'))
         {
             switch (ix)
             {
                 case 0:
+                    break;
+                case 1:
                     switch (part)
                     {
                         case "s": fromSource = true; break;
@@ -2005,15 +2046,19 @@ class Net(bool useArray = true,
                         default: break;
                     }
                     break;
-                case 1:
-                    switch (part)
-                    {
-                        case "dbpedia": fromDBPedia = true; break;
-                        case "wordnet": fromWordNet = true; break;
-                        case "wiktionary": fromWiktionary = true; break;
-                        case "site": fromSite = true; break;
-                        default: break;
-                    }
+                case 2:
+                    with (Origin)
+                        switch (part)
+                        {
+                            case "dbpedia": origin = dbpedia; break;
+                            case "wordnet": origin = wordnet; break;
+                            case "wiktionary": origin = wiktionary; break;
+                            case "globalmind": origin = globalmind; break;
+                            case "conceptnet": origin = cn5; break;
+                            case "verbosity": origin = verbosity; break;
+                            case "site": fromSite = true; break;
+                            default: break;
+                        }
                     break;
                 default:
                     break;
@@ -2021,29 +2066,17 @@ class Net(bool useArray = true,
             ++ix;
         }
 
-        switch (origin)
-        {
-            case `/s/dbpedia/3.7`: return Origin.dbpedia37;
-            case `/s/dbpedia/3.9/umbel`: return Origin.dbpedia39umbel;
-
-            case `/d/dbpedia/en`:  return Origin.dbpediaEn;
-            case `/d/wordnet/3.0`: return Origin.wordnet30;
-
-            case `/s/wordnet/3.0`: return Origin.wordnet30;
-            case `/s/site/verbosity`: return Origin.verbosity;
-            default:
-                /* dln("Handle ", origin); */
-                return Origin.cn5;
-        }
+        return origin;
     }
 
-    Rel decodeCN5Relation(S)(S relation,
-                             out bool negation,
-                             out bool reversion,
-                             out Tense tense) if (isSomeString!S)
+    /** Decode ConceptNet5 Relation $(D path). */
+    Rel decodeCN5RelationPath(S)(S path,
+                                 out bool negation,
+                                 out bool reversion,
+                                 out Tense tense) if (isSomeString!S)
     {
-        return relation[3..$].decodePredicate(null, null, Origin.cn5,
-                                              negation, reversion, tense);
+        return path[3..$].decodeRelationPredicate(null, null, Origin.cn5,
+                                          negation, reversion, tense);
     }
 
     /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
@@ -2056,6 +2089,7 @@ class Net(bool useArray = true,
 
         NodeRef src, dst;
         real weight;
+        auto lang = Lang.unknown;
         auto origin = Origin.unknown;
 
         auto parts = line.splitter('\t');
@@ -2065,7 +2099,7 @@ class Net(bool useArray = true,
             switch (ix)
             {
                 case 1:
-                    rel = part.decodeCN5Relation(negation, reversion, tense);
+                    rel = decodeCN5RelationPath(part, negation, reversion, tense);
                     break;
                 case 2:         // source concept
                     try
@@ -2092,7 +2126,19 @@ class Net(bool useArray = true,
                     weight = part.to!real;
                     break;
                 case 6:
-                    origin = decodeCN5Origin(part);
+                    origin = decodeCN5OriginPath(part, lang, origin);
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    if (origin.of(Origin.any)) // if still nothing special
+                    {
+                        origin = decodeCN5OriginPath(part, lang, origin);
+                    }
+                    if (origin.of(Origin.any)) // if still nothing special
+                    {
+                        dln("Could not decode relation ", part);
+                    }
                     break;
                 default:
                     break;
@@ -2101,10 +2147,15 @@ class Net(bool useArray = true,
             ix++;
         }
 
+        if (origin.of(Origin.any)) // if still nothing special
+        {
+            origin = Origin.cn5;
+        }
+
         if (src.defined &&
             dst.defined)
         {
-            return connect(src, rel, dst, origin, weight, negation, reversion);
+            return connect(src, rel, dst, lang, origin, weight, negation, reversion);
         }
         else
         {
