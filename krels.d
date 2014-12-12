@@ -1206,7 +1206,7 @@ bool generalizes(T)(T general,
     bool isTransitive(const Rel rel)
     {
         with (Rel)
-            return (rel.isSymmetric &&
+            return (rel.isSymmetric ||
                     rel.of(generalizes,
                            partOf,
                            isA,
