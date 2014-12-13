@@ -16,7 +16,7 @@ int main(string[] args)
     while (true)
     {
         write("_____________\n" ~
-              "< Concept(s): "); stdout.flush;
+              "< Concept(s) or ? for help: "); stdout.flush;
         string line;
         if ((line = readln()) !is null)
         {
