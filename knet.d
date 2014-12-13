@@ -35,6 +35,54 @@
        TODO Use containers.HashMap
        TODO Call GC.disable/enable around construction and search.
    */
+
+/* TODO
+   spouse(X, Y)             :-  married(X, Y).
+   husband(X, Y)            :-  male(X),       married(X, Y).
+   wife(X, Y)               :-  female(X),     married(X, Y).
+   father(X, Y)             :-  male(X),       parent(X, Y).
+   mother(X, Y)             :-  female(X),     parent(X, Y).
+   sibling(X, Y)            :-  father(Z, X),  father(Z, Y),
+   mother(W, X),  mother(W, Y),    not(X = Y).
+   brother(X, Y)            :-  male(X),       sibling(X, Y).
+   sister(X, Y)             :-  female(X),     sibling(X, Y).
+   grandparent(X, Z)        :-  parent(X, Y),  parent(Y, Z).
+   grandfather(X, Z)        :-  male(X),       grandparent(X, Z).
+   grandmother(X, Z)        :-  female(X),     grandparent(X, Z).
+   grandchild(X, Z)         :-  grandparent(Z, X).
+   grandson(X, Z)           :-  male(X),       grandchild(X, Z).
+   granddaughter(X, Z)      :-  female(X),     grandchild(X, Z).
+   ancestor(X,Y)            :-  parent(X,Y).
+   ancestor(X,Y)           :-  parent(X, Z),  ancestor(Z, Y).
+   child(Y, X)              :-  parent(X, Y).
+   son(Y, X)                :-  male(Y),       child(Y, X).
+   daughter(Y, X)           :-  female(Y),     child(Y, X).
+   descendent(Y, X)         :-  ancestor(X, Y).
+   auntOrUncle(X, W)        :-  sibling(X, Y), parent(Y, W).
+   auntOrUncle(X, Z)        :-  married(X,Y),  sibling(Y,W),    parent(W,Z).
+   uncle(X, W)              :-  male(X),       auntOrUncle(X, W).
+   aunt(X, W)               :-  female(X),     auntOrUncle(X, W).
+   cousin(X, Y)             :-  parent(Z, X),  auntOrUncle(Z, Y).
+   nieceOrNephew(X, Y)      :-  parent(Z, X),  sibling(Z, Y).
+   nephew(X, Y)             :-  male(X),       nieceOrNephew(X, Y).
+   niece(X, Y)              :-  female(X),     nieceOrNephew(X, Y).
+   greatGrandParent(X, Z)   :-  parent(X, Y),  grandparent(Y, Z).
+   greatGrandFather(X, Z)   :-  male(X),       greatGrandParent(X, Z).
+   greatGrandMother(X, Z)   :-  female(X),     greatGrandParent(X, Z).
+   greatGrandChild(X, Z)    :-  child(X, Y),   grandchild(Y, Z).
+   greatgrandson(X, Z)      :-  male(X),       greatGrandChild(X, Z).
+   greatgranddaughter(X, Z) :-  female(X),     greatGrandChild(X, Z).
+   parentInLaw(X, Y)        :-  married(Y, Z), parent(X, Z).
+   fatherInLaw(X, Y)        :-  male(X),       parentInLaw(X, Y).
+   motherInLaw(X, Y)        :-  female(X),     parentInLaw(X, Y).
+   siblingInLaw(X, Y)       :-  married(Y, Z), sibling(X, Z).
+   brotherInLaw(X, Y)       :-  male(X),       siblingInLaw(X, Y).
+   sisterInLaw(X, Y)        :-  female(X),     siblingInLaw(X, Y).
+   childInLaw(X, Y)         :-  married(X, Z), child(Z, Y).
+   sonInLaw(X, Y)           :-  male(X),       childInLaw(X, Y).
+   daughterInLaw(X, Y)      :-  female(X),     childInLaw(X, Y).
+*/
+
 module knet;
 
 /* version = msgpack; */
@@ -65,6 +113,7 @@ version(msgpack) import msgpack;
 /* import stdx.allocator; */
 /* import memory.allocators; */
 /* import containers: HashMap; */
+
 
 static if (__VERSION__ < 2067)
 {
