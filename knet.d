@@ -1648,7 +1648,9 @@ class Net(bool useArray = true,
         return nodeRefs;
     }
 
-    /** Fully Connect Every-to-Every in $(D all). */
+    /** Fully Connect Every-to-Every in $(D all).
+        See also: http://forum.dlang.org/thread/iqkybajwdzcvdytakgvw@forum.dlang.org#post-iqkybajwdzcvdytakgvw:40forum.dlang.org
+     */
     LinkRef[] connectMtoM(R)(Rel rel,
                              R all,
                              Lang lang,
