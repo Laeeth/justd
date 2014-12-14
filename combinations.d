@@ -3,6 +3,7 @@
 /**
    All Unordered Pairs (2-Element Subsets) of a Range.
    TODO Relax restrictions to ForwardRange
+   See also: http://forum.dlang.org/thread/iqkybajwdzcvdytakgvw@forum.dlang.org#post-vhufbwsqbssyqwfxxbuu:40forum.dlang.org
    See also: https://issues.dlang.org/show_bug.cgi?id=6788
    See also: https://issues.dlang.org/show_bug.cgi?id=7128
 */
