@@ -1240,18 +1240,19 @@ class Net(bool useArray = true,
         learnEnglishIrregularVerbs();
         learnUncountableNouns(Lang.en,
                               ["music", "art", "love", "happiness",
-                                        "math", "physics",
-                                        "advice", "information", "news",
-                                        "furniture", "luggage",
-                                        "rice", "sugar", "butter", // generalize to seed (grödor) or substance
-                                        "water", "rain", // generalize to fluids
-                                        "coffee", "wine", "beer", "whiskey", "milk", // generalize to beverage
-                                        "electricity", "gas", "power"
-                                        "money", "currency",
-                                        "crockery", "cutlery",
-                                        "luggage", "baggage", "glass", "sand"]);
+                               "math", "physics",
+                               "advice", "information", "news",
+                               "furniture", "luggage",
+                               "rice", "sugar", "butter", // generalize to seed (grödor) or substance
+                               "water", "rain", // generalize to fluids
+                               "coffee", "wine", "beer", "whiskey", "milk", // generalize to beverage
+                               "electricity", "gas", "power"
+                               "money", "currency",
+                               "crockery", "cutlery",
+                               "luggage", "baggage", "glass", "sand"]);
         learnUncountableNouns(Lang.sv,
-                              ["apotek", "hypotek", "bibliotek", "fonotek", "filmotek", "pinaotek", "videotek", "diskotek", "mediatek", "datortek", "glyptotek"]);
+                              ["apotek", "hypotek", "bibliotek", "fonotek", "filmotek",
+                               "pinaotek", "videotek", "diskotek", "mediatek", "datortek", "glyptotek"]);
 
         learnEnglishReversions();
 
