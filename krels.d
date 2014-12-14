@@ -1063,8 +1063,9 @@ auto toHumanLang(const Rel rel,
                     break;
                 default:
                     import std.conv: to;
-                    auto prefix = ((!rel.isSymmetric) && dir == RelDir.backward ? `<` : ``);
-                    auto suffix = ((!rel.isSymmetric) && dir == RelDir.forward ? `>` : ``);
+                    const ordered = !rel.isSymmetric;
+                    const prefix = (ordered && dir == RelDir.backward ? `<` : ``);
+                    const suffix = (ordered && dir == RelDir.forward ? `>` : ``);
                     words = [prefix ~ `-` ~ rel.to!(string) ~ `-` ~ suffix];
                     break;
             }
