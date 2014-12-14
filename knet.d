@@ -1211,7 +1211,7 @@ class Net(bool useArray = true,
         learnTrustfulThings();
 
         // NELL
-        readNELLFile("~/Knowledge/nell/NELL.08m.885.esv.csv".expandTilde
+        readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
                                                             .buildNormalizedPath,
                      10000);
 
