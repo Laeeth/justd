@@ -2994,11 +2994,12 @@ class Net(bool useArray = true,
         {
             const lineNode = nodeAt(lineNodeRef);
 
-            writeln(`  - in `, lineNode.lemma.lang.toName);
+            write(`  - in `, lineNode.lemma.lang.toName);
             if (lineNode.lemma.sense != Sense.unknown)
             {
-                writeln(` of sense `, lineNode.lemma.sense);
+                write(` of sense `, lineNode.lemma.sense);
             }
+            writeln();
 
             foreach (linkGroup; linksGroupedByRel(lineNode))
             {
