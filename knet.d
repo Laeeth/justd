@@ -855,6 +855,9 @@ class Net(bool useArray = true,
             }
         }
 
+        Ref forward() { return Ref(this, RelDir.forward); }
+        Ref backward() { return Ref(this, RelDir.backward); }
+
         static const(Ref) asUndefined() { return Ref(nullIx); }
         bool defined() const { return this.ix != nullIx; }
         auto opCast(U : bool)() { return defined(); }
