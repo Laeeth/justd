@@ -1313,7 +1313,7 @@ class Net(bool useArray = true,
         // TODO should we store acronym in lowercase or not?
         return connect(store(acronym.toLower, lang, sense, category, origin),
                        Rel.acronymFor,
-                       store(expr, lang, sense, category, origin),
+                       store(expr.toLower, lang, sense, category, origin),
                        lang, origin, weight);
     }
 
@@ -2693,7 +2693,7 @@ class Net(bool useArray = true,
         if (normLine == `palindrome`)
         {
             foreach (palindromeNode; allNodes.filter!(node =>
-                                                      node.lemma.expr.isPalindrome(3)))
+                                                      node.lemma.expr.toLower.isPalindrome(3)))
             {
                 showLinkNode(palindromeNode,
                              Rel.instanceOf,
@@ -2799,8 +2799,8 @@ class Net(bool useArray = true,
     auto anagramsOf(S)(S expr) if (isSomeString!S)
     {
         const lsWord = expr.sorted; // letter-sorted expr
-        return allNodes.filter!(node => (lsWord != node.lemma.expr && // don't include one-self
-                                         lsWord == node.lemma.expr.sorted));
+        return allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
+                                         lsWord == node.lemma.expr.toLower.sorted));
     }
 
     /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
