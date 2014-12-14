@@ -8,8 +8,8 @@ struct Pairwise(Range)
     import std.traits: Unqual;
 
     alias R = Unqual!Range;
-    alias Pair = Tuple!(ForeachType!R, "a",
-                        ForeachType!R, "b");
+    alias E = ForeachType!R;
+    alias Pair = Tuple!(E, E);
 
     R _input;
     size_t i, j;
@@ -55,8 +55,8 @@ void main()
 {
     import std.stdio: writeln;
     (new int[0]).pairwise.writeln;
-    [10].pairwise.writeln;
-    [10, 20].pairwise.writeln;
-    [10, 20, 30].pairwise.writeln;
-    [10, 20, 30, 40].pairwise.writeln;
+    [1].pairwise.writeln;
+    [1, 2].pairwise.writeln;
+    [1, 2, 3].pairwise.writeln;
+    [1, 2, 3, 4].pairwise.writeln;
 }
