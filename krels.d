@@ -871,6 +871,26 @@ auto toHumanLang(const Rel rel,
                         }
                     }
                     break;
+                case etymologicallyDerivedFrom:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["härleds", not, "etymologiskt från"]; break;
+                            case en:
+                            default: words = ["is", not, "etymologically derived from"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["härleder etymologiskt", not]; break;
+                            case en:
+                            default: words = ["does", not, "etymologically derive"]; break;
+                        }
+                    }
+                    break;
                 case hasProperty:
                     if (dir == RelDir.forward)
                     {
