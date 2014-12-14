@@ -1264,7 +1264,7 @@ class Net(bool useArray = true,
 
     void learnEnglishReversions()
     {
-        // TODO Copy all from krels.toHumanLang
+        // TODO Copy all from krels.toHuman
         learnEnglishReversion("is a", "can be");
         learnEnglishReversion("leads to", "can infer");
         learnEnglishReversion("is part of", "contains");
@@ -2641,7 +2641,7 @@ class Net(bool useArray = true,
                           Lang lang = Lang.en)
     {
         auto indent = `    - `;
-        write(indent, rel.toHumanLang(dir, negation, lang), `: `);
+        write(indent, rel.toHuman(dir, negation, lang), `: `);
     }
 
     void showNode(in Node node, NWeight weight)

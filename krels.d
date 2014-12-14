@@ -307,10 +307,10 @@ enum RelDir
 }
 
 /** Convert $(D rel) to Human Language Representation. */
-auto toHumanLang(const Rel rel,
-                 const RelDir dir,
-                 const bool negation = false,
-                 const Lang lang = Lang.en)
+auto toHuman(const Rel rel,
+             const RelDir dir,
+             const bool negation = false,
+             const Lang lang = Lang.en)
     @safe pure
 {
     string[] words;
