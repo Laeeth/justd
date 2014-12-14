@@ -668,6 +668,8 @@ enum Sense:ubyte
 
     nounUncountable,
 
+    nounAcronym,
+
     /* Verb */
 
     verb,
