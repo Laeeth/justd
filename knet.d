@@ -1321,7 +1321,7 @@ class Net(bool useArray = true,
      */
     void learnEnglishComputerAcronyms()
     {
-        // TODO Context: computer
+        // TODO Context: Computer
         learnEnglishAcronym("IETF", "Internet Engineering Task Force");
         learnEnglishAcronym("RFC", "Request For Comments");
         learnEnglishAcronym("FYI", "For Your Information");
@@ -1331,7 +1331,7 @@ class Net(bool useArray = true,
         learnEnglishAcronym("AJAX", "Asynchronous Javascript And XML", 1.0); // 5-star
         learnEnglishAcronym("AJAX", "Associação De Jogadores Amadores De Xadrez", 0.2); // 1-star
 
-        // TODO Context: Oracle Database
+        // TODO Context: (Orakel) Computer
         learnEnglishAcronym("3NF", "Third Normal Form");
         learnEnglishAcronym("ACID", "Atomicity, Consistency, Isolation, and Durability");
         learnEnglishAcronym("ACL", "Access Control List");
