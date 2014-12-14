@@ -863,15 +863,21 @@ class Net(bool useArray = true,
         Ix _ix = nullIx;
     }
 
+    /// Reference to Node.
     alias NodeRef = Ref!Node;
+
+    /// Reference to Link.
     alias LinkRef = Ref!Link;
 
     /** Expression (String). */
     static if (useRCString) { alias Expr = RCXString!(immutable char, 24-1); }
     else                    { alias Expr = immutable string; }
 
+    /// References to Nodes.
     static if (useArray) { alias NodeRefs = Array!NodeRef; }
     else                 { alias NodeRefs = NodeRef[]; }
+
+    /// References to Links.
     static if (useArray) { alias LinkRefs = Array!LinkRef; }
     else                 { alias LinkRefs = LinkRef[]; }
 
@@ -931,6 +937,7 @@ class Net(bool useArray = true,
                                         link.negation == negation));
     }
 
+    /** Get Relation-Grouped Links of $(D node) with direction $(D dir). */
     auto linksGroupedByRel(in Node node,
                            RelDir dir = RelDir.any)
     {
@@ -1650,6 +1657,7 @@ class Net(bool useArray = true,
 
     /** Fully Connect Every-to-Every in $(D all).
         See also: http://forum.dlang.org/thread/iqkybajwdzcvdytakgvw@forum.dlang.org#post-iqkybajwdzcvdytakgvw:40forum.dlang.org
+        See also: https://issues.dlang.org/show_bug.cgi?id=6788
      */
     LinkRef[] connectMtoM(R)(Rel rel,
                              R all,
@@ -1661,6 +1669,7 @@ class Net(bool useArray = true,
     {
         typeof(return) linkIxes;
         size_t i = 0;
+        // TODO Reuse cartesianProduct or pairwise at https://issues.dlang.org/show_bug.cgi?id=6788
         foreach (me; all)
         {
             size_t j = 0;
