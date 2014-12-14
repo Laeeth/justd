@@ -108,6 +108,7 @@ import dbg;
 import grammars;
 import rcstring;
 import krels;
+import combinations;
 version(msgpack) import msgpack;
 
 /* import stdx.allocator; */
@@ -1670,7 +1671,7 @@ class Net(bool useArray = true,
     {
         typeof(return) linkIxes;
         size_t i = 0;
-        // TODO Reuse cartesianProduct or pairwise at https://issues.dlang.org/show_bug.cgi?id=6788
+        // TODO use combinations.pairwise() when ForwardRange support has been addded
         foreach (me; all)
         {
             size_t j = 0;
