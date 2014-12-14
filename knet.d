@@ -822,6 +822,8 @@ class Net(bool useArray = true,
     alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
     enum nullIx = Ix.max >> 1;
 
+    enum expressionWordSeparator = "_"; // Lemma Expression Separator.
+
     /** Type-Safe Directed Reference to $(D T). */
     struct Ref(T)
     {
@@ -1068,6 +1070,8 @@ class Net(bool useArray = true,
         size_t nodeStringLengthSum = 0;
         size_t connectednessSum = 0;
 
+        size_t exprWordCountSum = 0;
+
         // TODO Group to WeightsStatistics
         NWeight weightMinCN5 = NWeight.max;
         NWeight weightMaxCN5 = NWeight.min_normal;
@@ -1311,7 +1315,7 @@ class Net(bool useArray = true,
         const lang = Lang.en;
         const category = CategoryIx.asUndefined;
         // TODO should we store acronym in lowercase or not?
-        return connect(store(acronym.toLower, lang, sense, category, origin),
+        return connect(store(acronym.toLower, lang, Sense.nounAcronym, category, origin),
                        Rel.acronymFor,
                        store(expr.toLower, lang, sense, category, origin),
                        lang, origin, weight);
@@ -1525,6 +1529,236 @@ class Net(bool useArray = true,
         learnEnglishAcronym("Approximate CSCN", "Approximate Commit System Change Number");
         learnEnglishAcronym("mDNS", "Multicast Domain Name Server");
         learnEnglishAcronym("row LCR", "Row Logical Change Record");
+
+        /* Use: atLocation (US) */
+
+        /* Context: Non-animal methods for toxicity testing */
+
+        learnEnglishAcronym("3D","three dimensional");
+        learnEnglishAcronym("3RS","Replacement, Reduction, Refinement");
+        learnEnglishAcronym("AALAS","American Association for Laboratory Animal Science");
+        learnEnglishAcronym("ADI","Acceptable Daily Intake [human]");
+        learnEnglishAcronym("AFIP","Armed Forces Institute of Pathology");
+        learnEnglishAcronym("AHI","Animal Health Institute (US)");
+        learnEnglishAcronym("AIDS","Acquired Immune Deficiency Syndrome");
+        learnEnglishAcronym("ANDA","Abbreviated New Drug Application (US FDA)");
+        learnEnglishAcronym("AOP","Adverse Outcome Pathway");
+        learnEnglishAcronym("APHIS","Animal and Plant Health Inspection Service (USDA)");
+        learnEnglishAcronym("ARDF","Alternatives Research and Development Foundation");
+        learnEnglishAcronym("ATLA","Alternatives to Laboratory Animals");
+        learnEnglishAcronym("ATSDR","Agency for Toxic Substances and Disease Registry (US CDC)");
+        learnEnglishAcronym("BBMO","Biosensors Based on Membrane Organization to Replace Animal Testing");
+        learnEnglishAcronym("BCOP","Bovine Corneal Opacity and Permeability assay");
+        learnEnglishAcronym("BFR","German Federal Institute for Risk Assessment");
+        learnEnglishAcronym("BLA","Biological License Application (US FDA)");
+        learnEnglishAcronym("BRD","Background Review Document (ICCVAM)");
+        learnEnglishAcronym("BSC","Board of Scientific Counselors (US NTP)");
+        learnEnglishAcronym("BSE","Bovine Spongiform Encephalitis");
+        learnEnglishAcronym("CAAI","University of California Center for Animal Alternatives Information");
+        learnEnglishAcronym("CAAT","Johns Hopkins Center for Alternatives to Animal Testing");
+        learnEnglishAcronym("CAMVA","Chorioallantoic Membrane Vascularization Assay");
+        learnEnglishAcronym("CBER","Center for Biologics Evaluation and Research (US FDA)");
+        learnEnglishAcronym("CDC","Centers for Disease Control and Prevention (US)");
+        learnEnglishAcronym("CDER","Center for Drug Evaluation and Research (US FDA)");
+        learnEnglishAcronym("CDRH","Center for Devices and Radiological Health (US FDA)");
+        learnEnglishAcronym("CERHR","Center for the Evaluation of Risks to Human Reproduction (US NTP)");
+        learnEnglishAcronym("CFR","Code of Federal Regulations (US)");
+        learnEnglishAcronym("CFSAN","Center for Food Safety and Applied Nutrition (US FDA)");
+        learnEnglishAcronym("CHMP","Committees for Medicinal Products for Human Use");
+        learnEnglishAcronym("CMR","Carcinogenic, Mutagenic and Reprotoxic");
+        learnEnglishAcronym("CO2","Carbon Dioxide");
+        learnEnglishAcronym("COLIPA","European Cosmetic Toiletry & Perfumery Association");
+        learnEnglishAcronym("COMP","Committee for Orphan Medicinal Products");
+        learnEnglishAcronym("CORDIS","Community Research & Development Information Service");
+        learnEnglishAcronym("CORRELATE","European Reference Laboratory for Alternative Tests");
+        learnEnglishAcronym("CPCP","Chemical Prioritization Community of Practice (US EPA)");
+        learnEnglishAcronym("CPSC","Consumer Product Safety Commission (US)");
+        learnEnglishAcronym("CTA","Cell Transformation Assays");
+        learnEnglishAcronym("CVB","Center for Veterinary Biologics (USDA)");
+        learnEnglishAcronym("CVM","Center for Veterinary Medicine (US FDA)");
+        learnEnglishAcronym("CVMP","Committee for Medicinal Products for Veterinary Use");
+        learnEnglishAcronym("DARPA","Defense Advanced Research Projects Agency (US)");
+        learnEnglishAcronym("DG","Directorate General");
+        learnEnglishAcronym("DOD","Department of Defense (US)");
+        learnEnglishAcronym("DOT","Department of Transportation (US)");
+        learnEnglishAcronym("DRP","Detailed Review Paper (OECD)");
+        learnEnglishAcronym("EC","European Commission");
+        learnEnglishAcronym("ECB","European Chemicals Bureau");
+        learnEnglishAcronym("ECHA","European Chemicals Agency");
+        learnEnglishAcronym("ECOPA","European Consensus Platform for Alternatives");
+        learnEnglishAcronym("ECVAM","European Centre for the Validation of Alternative Methods");
+        learnEnglishAcronym("ED","Endocrine Disrupters");
+        learnEnglishAcronym("EDQM","European Directorate for Quality of Medicines & HealthCare");
+        learnEnglishAcronym("EEC","European Economic Commission");
+        learnEnglishAcronym("EFPIA","European Federation of Pharmaceutical Industries and Associations");
+        learnEnglishAcronym("EFSA","European Food Safety Authority");
+        learnEnglishAcronym("EFSAPPR","European Food Safety Authority Panel on plant protection products and their residues");
+        learnEnglishAcronym("EFTA","European Free Trade Association");
+        learnEnglishAcronym("ELINCS","European List of Notified Chemical Substances");
+        learnEnglishAcronym("ELISA","Enzyme-Linked ImmunoSorbent Assay");
+        learnEnglishAcronym("EMEA","European Medicines Agency");
+        learnEnglishAcronym("ENVI","European Parliament Committee on the Environment, Public Health and Food Safety");
+        learnEnglishAcronym("EO","Executive Orders (US)");
+        learnEnglishAcronym("EPA","Environmental Protection Agency (US)");
+        learnEnglishAcronym("EPAA","European Partnership for Alternative Approaches to Animal Testing");
+        learnEnglishAcronym("ESACECVAM","Scientific Advisory Committee (EU)");
+        learnEnglishAcronym("ESOCOC","Economic and Social Council (UN)");
+        learnEnglishAcronym("EU","European Union");
+        learnEnglishAcronym("EURL","ECVAM European Union Reference Laboratory on Alternatives to Animal Testing");
+        learnEnglishAcronym("EWG","Expert Working group");
+
+        learnEnglishAcronym("FAO","Food and Agriculture Organization of the United Nations");
+        learnEnglishAcronym("FDA","Food and Drug Administration (US)");
+        learnEnglishAcronym("FFDCA","Federal Food, Drug, and Cosmetic Act (US)");
+        learnEnglishAcronym("FHSA","Federal Hazardous Substances Act (US)");
+        learnEnglishAcronym("FIFRA","Federal Insecticide, Fungicide, and Rodenticide Act (US)");
+        learnEnglishAcronym("FP","Framework Program");
+        learnEnglishAcronym("FRAME","Fund for the Replacement of Animals in Medical Experiments");
+        learnEnglishAcronym("GCCP","Good Cell Culture Practice");
+        learnEnglishAcronym("GCP","Good Clinical Practice");
+        learnEnglishAcronym("GHS","Globally Harmonized System for Classification and Labeling of Chemicals");
+        learnEnglishAcronym("GJIC","Gap Junction Intercellular Communication [assay]");
+        learnEnglishAcronym("GLP","Good Laboratory Practice");
+        learnEnglishAcronym("GMO","Genetically Modified Organism");
+        learnEnglishAcronym("GMP","Good Manufacturing Practice");
+        learnEnglishAcronym("GPMT","Guinea Pig Maximization Test");
+        learnEnglishAcronym("HCE","Human corneal epithelial cells");
+        learnEnglishAcronym("HCE","T Human corneal epithelial cells");
+        learnEnglishAcronym("HESI","ILSI Health and Environmental Sciences Institute");
+        learnEnglishAcronym("HET","CAM Hen’s Egg Test – Chorioallantoic Membrane assay");
+        learnEnglishAcronym("HHS","Department of Health and Human Services (US)");
+        learnEnglishAcronym("HIV","Human Immunodeficiency Virus");
+        learnEnglishAcronym("HMPC","Committee on Herbal Medicinal Products");
+        learnEnglishAcronym("HPV","High Production Volume");
+        learnEnglishAcronym("HSUS","The Humane Society of the United States");
+        learnEnglishAcronym("HTS","High Throughput Screening");
+        learnEnglishAcronym("HGP","Human Genome Project");
+        learnEnglishAcronym("IARC","International Agency for Research on Cancer (WHO)");
+        learnEnglishAcronym("ICAPO","International Council for Animal Protection in OECD");
+        learnEnglishAcronym("ICCVAM","Interagency Coordinating Committee on the Validation of Alternative Methods (US)");
+        learnEnglishAcronym("ICE","Isolated Chicken Eye");
+        learnEnglishAcronym("ICH","International Conference on Harmonization of Technical Requirements for Registration of Pharmaceuticals for Human Use");
+        learnEnglishAcronym("ICSC","International Chemical Safety Cards");
+        learnEnglishAcronym("IFAH","EUROPE International Federation for Animal Health Europe");
+        learnEnglishAcronym("IFPMA","International Federation of Pharmaceutical Manufacturers & Associations");
+        learnEnglishAcronym("IIVS","Institute for In Vitro Sciences");
+        learnEnglishAcronym("ILAR","Institute for Laboratory Animal Research");
+        learnEnglishAcronym("ILO","International Labour Organization");
+        learnEnglishAcronym("ILSI","International Life Sciences Institute");
+        learnEnglishAcronym("IND","Investigational New Drug (US FDA)");
+        learnEnglishAcronym("INVITROM","International Society for In Vitro Methods");
+        learnEnglishAcronym("IOMC","Inter-Organization Programme for the Sound Management of Chemicals (WHO)");
+        learnEnglishAcronym("IPCS","International Programme on Chemical Safety (WHO)");
+        learnEnglishAcronym("IQF","International QSAR Foundation to Reduce Animal Testing");
+        learnEnglishAcronym("IRB","Institutional review board");
+        learnEnglishAcronym("IRE","Isolated rabbit eye");
+        learnEnglishAcronym("IWG","Immunotoxicity Working Group (ICCVAM)");
+        learnEnglishAcronym("JACVAM","Japanese Center for the Validation of Alternative Methods");
+        learnEnglishAcronym("JAVB","Japanese Association of Veterinary Biologics");
+        learnEnglishAcronym("JECFA","Joint FAO/WHO Expert Committee on Food Additives");
+        learnEnglishAcronym("JMAFF","Japanese Ministry of Agriculture, Forestry and Fisheries");
+        learnEnglishAcronym("JPMA","Japan Pharmaceutical Manufacturers Association");
+        learnEnglishAcronym("JRC","Joint Research Centre (EU)");
+        learnEnglishAcronym("JSAAE","Japanese Society for Alternatives to Animal Experiments");
+        learnEnglishAcronym("JVPA","Japanese Veterinary Products Association");
+
+        learnEnglishAcronym("KOCVAM","Korean Center for the Validation of Alternative Method");
+        learnEnglishAcronym("LIINTOP","Liver Intestine Optimization");
+        learnEnglishAcronym("LLNA","Local Lymph Node Assay");
+        learnEnglishAcronym("MAD","Mutual Acceptance of Data (OECD)");
+        learnEnglishAcronym("MEIC","Multicenter Evaluation of In Vitro Cytotoxicity");
+        learnEnglishAcronym("MEMOMEIC","Monographs on Time-Related Human Lethal Blood Concentrations");
+        learnEnglishAcronym("MEPS","Members of the European Parliament");
+        learnEnglishAcronym("MG","Milligrams [a unit of weight]");
+        learnEnglishAcronym("MHLW","Ministry of Health, Labour and Welfare (Japan)");
+        learnEnglishAcronym("MLI","Molecular Libraries Initiative (US NIH)");
+        learnEnglishAcronym("MSDS","Material Safety Data Sheets");
+
+        learnEnglishAcronym("MW","Molecular Weight");
+        learnEnglishAcronym("NC3RSUK","National Center for the Replacement, Refinement and Reduction of Animals in Research");
+        learnEnglishAcronym("NKCA","Netherlands Knowledge Centre on Alternatives to animal use");
+        learnEnglishAcronym("NCBI","National Center for Biotechnology Information (US)");
+        learnEnglishAcronym("NCEH","National Center for Environmental Health (US CDC)");
+        learnEnglishAcronym("NCGCNIH","Chemical Genomics Center (US)");
+        learnEnglishAcronym("NCI","National Cancer Institute (US NIH)");
+        learnEnglishAcronym("NCPDCID","National Center for Preparedness, Detection and Control of Infectious Diseases");
+        learnEnglishAcronym("NCCT","National Center for Computational Toxicology (US EPA)");
+        learnEnglishAcronym("NCTR","National Center for Toxicological Research (US FDA)");
+        learnEnglishAcronym("NDA","New Drug Application (US FDA)");
+        learnEnglishAcronym("NGO","Non-Governmental Organization");
+        learnEnglishAcronym("NIAID","National Institute of Allergy and Infectious Diseases");
+        learnEnglishAcronym("NICA","Nordic Information Center for Alternative Methods");
+        learnEnglishAcronym("NICEATM","National Toxicology Program Interagency Center for Evaluation of Alternative Toxicological Methods (US)");
+        learnEnglishAcronym("NIEHS","National Institute of Environmental Health Sciences (US NIH)");
+        learnEnglishAcronym("NIH","National Institutes of Health (US)");
+        learnEnglishAcronym("NIHS","National Institute of Health Sciences (Japan)");
+        learnEnglishAcronym("NIOSH","National Institute for Occupational Safety and Health (US CDC)");
+        learnEnglishAcronym("NITR","National Institute of Toxicological Research (Korea)");
+        learnEnglishAcronym("NOAEL","No-Observed Adverse Effect Level");
+        learnEnglishAcronym("NOEL","No-Observed Effect Level");
+        learnEnglishAcronym("NPPTAC","National Pollution Prevention and Toxics Advisory Committee (US EPA)");
+        learnEnglishAcronym("NRC","National Research Council");
+        learnEnglishAcronym("NTP","National Toxicology Program (US)");
+        learnEnglishAcronym("OECD","Organisation for Economic Cooperation and Development");
+        learnEnglishAcronym("OMCLS","Official Medicines Control Laboratories");
+        learnEnglishAcronym("OPPTS","Office of Prevention, Pesticides and Toxic Substances (US EPA)");
+        learnEnglishAcronym("ORF","open reading frame");
+        learnEnglishAcronym("OSHA","Occupational Safety and Health Administration (US)");
+        learnEnglishAcronym("OSIRIS","Optimized Strategies for Risk Assessment of Industrial Chemicals through the Integration of Non-test and Test Information");
+        learnEnglishAcronym("OT","Cover-the-counter [drug]");
+
+        learnEnglishAcronym("PBPK","Physiologically-Based Pharmacokinetic (modeling)");
+        learnEnglishAcronym("P&G"," Procter & Gamble");
+        learnEnglishAcronym("PHRMA","Pharmaceutical Research and Manufacturers of America");
+        learnEnglishAcronym("PL","Public Law");
+        learnEnglishAcronym("POPS","Persistent Organic Pollutants");
+        learnEnglishAcronym("QAR", "Quantitative Structure Activity Relationship");
+        learnEnglishAcronym("QSM","Quality, Safety and Efficacy of Medicines (WHO)");
+        learnEnglishAcronym("RA","Regulatory Acceptance");
+        learnEnglishAcronym("REACH","Registration, Evaluation, Authorization and Restriction of Chemicals");
+        learnEnglishAcronym("RHE","Reconstructed Human Epidermis");
+        learnEnglishAcronym("RIPSREACH","Implementation Projects");
+        learnEnglishAcronym("RNAI","RNA Interference");
+        learnEnglishAcronym("RLLNA","Reduced Local Lymph Node Assay");
+        learnEnglishAcronym("SACATM","Scientific Advisory Committee on Alternative Toxicological Methods (US)");
+        learnEnglishAcronym("SAICM","Strategic Approach to International Chemical Management (WHO)");
+        learnEnglishAcronym("SANCO","Health and Consumer Protection Directorate General");
+        learnEnglishAcronym("SCAHAW","Scientific Committee on Animal Health and Animal Welfare");
+        learnEnglishAcronym("SCCP","Scientific Committee on Consumer Products");
+        learnEnglishAcronym("SCENIHR","Scientific Committee on Emerging and Newly Identified Health Risks");
+        learnEnglishAcronym("SCFCAH","Standing Committee on the Food Chain and Animal Health");
+        learnEnglishAcronym("SCHER","Standing Committee on Health and Environmental Risks");
+        learnEnglishAcronym("SEPS","Special Emphasis Panels (US NTP)");
+        learnEnglishAcronym("SIDS","Screening Information Data Sets");
+        learnEnglishAcronym("SOT","Society of Toxicology");
+        learnEnglishAcronym("SPORT","Strategic Partnership on REACH Testing");
+        learnEnglishAcronym("TBD","To Be Determined");
+        learnEnglishAcronym("TDG","Transport of Dangerous Goods (UN committee)");
+        learnEnglishAcronym("TER","Transcutaneous Electrical Resistance");
+        learnEnglishAcronym("TEWG","Technical Expert Working Group");
+        learnEnglishAcronym("TG","Test Guideline (OECD)");
+        learnEnglishAcronym("TOBI","Toxin Binding Inhibition");
+        learnEnglishAcronym("TSCA","Toxic Substances Control Act (US)");
+        learnEnglishAcronym("TTC","Threshold of Toxicological Concern");
+
+        learnEnglishAcronym("UC","University of California");
+        learnEnglishAcronym("UCD","University of California Davis");
+        learnEnglishAcronym("UK","United Kingdom");
+        learnEnglishAcronym("UN","United Nations");
+        learnEnglishAcronym("UNECE","United Nations Economic Commission for Europe");
+        learnEnglishAcronym("UNEP","United Nations Environment Programme");
+        learnEnglishAcronym("UNITAR","United Nations Institute for Training and Research");
+        learnEnglishAcronym("USAMRICD","US Army Medical Research Institute of Chemical Defense");
+        learnEnglishAcronym("USAMRIID","US Army Medical Research Institute of Infectious Diseases");
+        learnEnglishAcronym("USAMRMC","US Army Medical Research and Material Command");
+        learnEnglishAcronym("USDA","United States Department of Agriculture");
+        learnEnglishAcronym("USUHS","Uniformed Services University of the Health Sciences");
+        learnEnglishAcronym("UV","ultraviolet");
+        learnEnglishAcronym("VCCEP","Voluntary Children’s Chemical Evaluation Program (US EPA)");
+        learnEnglishAcronym("VICH","International Cooperation on Harmonization of Technical Requirements for Registration of Veterinary Products");
+        learnEnglishAcronym("WHO","World Health Organization");
+        learnEnglishAcronym("WRAIR","Walter Reed Army Institute of Research");
+        learnEnglishAcronym("ZEBET","Centre for Documentation and Evaluation of Alternative Methods to Animal Experiments (Germany)");
     }
 
     /** Learn English Irregular Verbs.
@@ -1803,10 +2037,11 @@ class Net(bool useArray = true,
         }
         else
         {
-            auto wordsSplit = lemma.expr.findSplit("_");
+            auto wordsSplit = lemma.expr.findSplit(expressionWordSeparator);
             if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
             {
                 ++multiWordNodeLemmaCount;
+                exprWordCountSum += max(0, lemma.expr.count(expressionWordSeparator) - 1);
             }
 
             // store
@@ -2570,6 +2805,7 @@ class Net(bool useArray = true,
                 allNodes.length,
                 `/`,
                 multiWordNodeLemmaCount);
+        writeln(indent, `Lemma Expression Word Length Average: `, exprWordCountSum/nodeRefByLemma.length);
         writeln(indent, `Link Count: `, allLinks.length);
         writeln(indent, `Link Count By Group:`);
         writeln(indent, `- Symmetric: `, symmetricRelCount);
@@ -2757,8 +2993,12 @@ class Net(bool useArray = true,
         foreach (lineNodeRef; lineNodeRefs)
         {
             const lineNode = nodeAt(lineNodeRef);
-            writeln(`  - in `, lineNode.lemma.lang.toName,
-                    ` of sense `, lineNode.lemma.sense);
+
+            writeln(`  - in `, lineNode.lemma.lang.toName);
+            if (lineNode.lemma.sense != Sense.unknown)
+            {
+                writeln(` of sense `, lineNode.lemma.sense);
+            }
 
             foreach (linkGroup; linksGroupedByRel(lineNode))
             {
