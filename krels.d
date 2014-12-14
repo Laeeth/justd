@@ -1037,6 +1037,26 @@ auto toHumanLang(const Rel rel,
                         }
                     }
                     break;
+                case acronymFor:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "en acronym för"]; break;
+                            case en:
+                            default: words = ["is", not, "an acronym for"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "acronym"]; break;
+                            case en:
+                            default: words = ["does", not, "have acronym"]; break;
+                        }
+                    }
+                    break;
                 case mutualProxyFor:
                     switch (lang)
                     {
@@ -1066,7 +1086,7 @@ auto toHumanLang(const Rel rel,
                     const ordered = !rel.isSymmetric;
                     const prefix = (ordered && dir == RelDir.backward ? `<` : ``);
                     const suffix = (ordered && dir == RelDir.forward ? `>` : ``);
-                    words = [prefix ~ `-` ~ rel.to!(string) ~ `-` ~ suffix];
+                    words = [prefix ~ `-` ~ rel.to!string ~ `-` ~ suffix];
                     break;
             }
         }
