@@ -1011,9 +1011,29 @@ auto toHumanLang(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["har", not, "instance"]; break;
+                            case sv: words = ["har", not, "instans"]; break;
                             case en:
                             default: words = ["does", not, "have instance"]; break;
+                        }
+                    }
+                    break;
+                case desires:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["önskar", not]; break;
+                            case en:
+                            default: words = ["does", not, "desire"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["önskas", not, "av"]; break;
+                            case en:
+                            default: words = ["is", not, "desired by"]; break;
                         }
                     }
                     break;
