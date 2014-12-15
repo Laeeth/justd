@@ -561,7 +561,6 @@ unittest
 {
     string[int] x;
     x[0] = "a";
-    import std.algorithm: equal;
     import std.typecons: tuple;
-    assert(equal(x.pairs, [tuple(0, "a")]));
+    assert(x.pairs == [tuple(0, "a")]);
 }
