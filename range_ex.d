@@ -542,6 +542,9 @@ static if (__VERSION__ < 2067)
 /*     assert(equal(x.Pair), [tuple(0, "a")]); */
 /* } */
 
+/* Return Array of Key-Value Pairs of Associative Array $(D aa).
+   See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
+*/
 auto pairs(K,V)(V[K] aa)
 {
     import std.typecons: Tuple, tuple;
