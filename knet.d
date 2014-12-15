@@ -2863,13 +2863,19 @@ class Net(bool useArray = true,
         return typeof(return).asUndefined;
     }
 
-    void showLinkRelation(Rel rel,
-                          RelDir dir,
-                          bool negation = false,
-                          Lang lang = Lang.en)
+    void showLink(Rel rel,
+                  RelDir dir,
+                  bool negation = false,
+                  Lang lang = Lang.en)
     {
         auto indent = `    - `;
         write(indent, rel.toHuman(dir, negation, lang), `: `);
+    }
+
+    void showLinkRef(LinkRef linkRef)
+    {
+        auto link = linkAt(linkRef);
+        showLink(link.rel, linkRef.dir, link.negation, link.lang);
     }
 
     void showNode(in Node node, NWeight weight)
@@ -2895,7 +2901,7 @@ class Net(bool useArray = true,
                       NWeight weight,
                       RelDir dir)
     {
-        showLinkRelation(rel, dir);
+        showLink(rel, dir);
         showNode(node, weight);
         writeln();
     }
@@ -2993,22 +2999,19 @@ class Net(bool useArray = true,
             }
             writeln();
 
-            LinkRefs linkRefs = linkRefsOf(lineNode);
+            LinkRefs linkRefs = linkRefsOf(lineNode); // TODO why is this needed for Array?
             linkRefs[].sort!((a, b) => (linkAt(a).normalizedWeight >
                                         linkAt(b).normalizedWeight));
             foreach (linkRef; linkRefs)
             {
                 auto link = linkAt(linkRef);
-                showLinkRelation(link.rel,
-                                 linkRef.dir,
-                                 link.negation);
+                showLinkRef(linkRef);
                 foreach (linkedNode; link.actors[]
                                          .filter!(actorNodeRef => (actorNodeRef.ix !=
                                                                    lineNodeRef.ix)) // don't self reference
                                          .map!(nodeRef => nodeAt(nodeRef)))
                 {
-                    showNode(linkedNode,
-                             link.normalizedWeight);
+                    showNode(linkedNode, link.normalizedWeight);
                 }
                 writeln();
             }
