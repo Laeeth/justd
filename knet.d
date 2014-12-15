@@ -960,6 +960,8 @@ class Net(bool useArray = true,
              Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
         {
+            // http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org#post-zhndpadqtfareymbnfis:40forum.dlang.org
+            this.actors.reserve(this.actors.length + 2);
             this.actors ~= srcRef.backward;
             this.actors ~= dstRef.forward;
             this.rel = rel;
