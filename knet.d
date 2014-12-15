@@ -1169,9 +1169,9 @@ class Net(bool useArray = true,
         If no sense given return all possible.
     */
     NodeRefs nodeRefsOf(S)(S expr,
-                               Lang lang,
-                               Sense sense,
-                               CategoryIx category = anyCategory) if (isSomeString!S)
+                           Lang lang,
+                           Sense sense,
+                           CategoryIx category = anyCategory) if (isSomeString!S)
     {
         typeof(return) nodes;
 
@@ -1201,7 +1201,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         const quick = true;
-        const maxCount = quick ? 200000 : size_t.max;
+        const maxCount = quick ? 200*1000 : size_t.max;
 
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
@@ -1212,7 +1212,7 @@ class Net(bool useArray = true,
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
                                                             .buildNormalizedPath,
-                     10000);
+                     1000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -2906,6 +2906,43 @@ class Net(bool useArray = true,
         writeln();
     }
 
+    void showNodeRefs(R)(R nodeRefs,
+                         Rel rel = Rel.any,
+                         bool negation = false)
+    {
+        foreach (nodeRef; nodeRefs)
+        {
+            const lineNode = nodeAt(nodeRef);
+
+            write(`  - in `, lineNode.lemma.lang.toName);
+            if (lineNode.lemma.sense != Sense.unknown)
+            {
+                write(` of sense `, lineNode.lemma.sense);
+            }
+            writeln();
+
+            LinkRefs linkRefs = linkRefsOf(lineNode,
+                                           RelDir.any,
+                                           rel,
+                                           negation); // TODO why is this needed for Array?
+            linkRefs[].sort!((a, b) => (linkAt(a).normalizedWeight >
+                                        linkAt(b).normalizedWeight));
+            foreach (linkRef; linkRefs)
+            {
+                auto link = linkAt(linkRef);
+                showLinkRef(linkRef);
+                foreach (linkedNode; link.actors[]
+                                         .filter!(actorNodeRef => (actorNodeRef.ix !=
+                                                                   nodeRef.ix)) // don't self reference
+                                         .map!(nodeRef => nodeAt(nodeRef)))
+                {
+                    showNode(linkedNode, link.normalizedWeight);
+                }
+                writeln();
+            }
+        }
+    }
+
     /** Show nodes and their relations matching content in $(D line). */
     void showNodes(S)(S line,
                       Lang lang = Lang.unknown,
@@ -2988,34 +3025,7 @@ class Net(bool useArray = true,
         auto lineNodeRefs = nodeRefsOf(normLine, lang, sense);
 
         // as is
-        foreach (lineNodeRef; lineNodeRefs)
-        {
-            const lineNode = nodeAt(lineNodeRef);
-
-            write(`  - in `, lineNode.lemma.lang.toName);
-            if (lineNode.lemma.sense != Sense.unknown)
-            {
-                write(` of sense `, lineNode.lemma.sense);
-            }
-            writeln();
-
-            LinkRefs linkRefs = linkRefsOf(lineNode); // TODO why is this needed for Array?
-            linkRefs[].sort!((a, b) => (linkAt(a).normalizedWeight >
-                                        linkAt(b).normalizedWeight));
-            foreach (linkRef; linkRefs)
-            {
-                auto link = linkAt(linkRef);
-                showLinkRef(linkRef);
-                foreach (linkedNode; link.actors[]
-                                         .filter!(actorNodeRef => (actorNodeRef.ix !=
-                                                                   lineNodeRef.ix)) // don't self reference
-                                         .map!(nodeRef => nodeAt(nodeRef)))
-                {
-                    showNode(linkedNode, link.normalizedWeight);
-                }
-                writeln();
-            }
-        }
+        showNodeRefs(lineNodeRefs);
 
         // stemmed
         if (lineNodeRefs.empty)
@@ -3056,7 +3066,7 @@ class Net(bool useArray = true,
         auto nodes = nodeRefsOf(expr,
                                 lang,
                                 sense);
-        // TODO tranverse over nodes synonyms
+        showNodeRefs(nodes, Rel.synonymFor); // TODO traverse synonyms
         return nodes;
     }
 
@@ -3072,14 +3082,10 @@ class Net(bool useArray = true,
         auto nodes = nodeRefsOf(expr,
                                 lang,
                                 sense);
-        const rel = Rel.translationOf;
-        // TODO Use synonym transitivity and possibly traverse over synonyms
+        showNodeRefs(nodes, Rel.translationOf); // TODO traverse synonyms and translations
         // en => sv:
         // en-en => sv-sv
-        if (false)
-        {
-            /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
-        }
+        /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         return nodes;
     }
 
