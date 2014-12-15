@@ -523,3 +523,41 @@ static if (__VERSION__ < 2067)
     }
 
 }
+
+/* Iterate Associative Array $(D aa) by Key.
+  See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
+*/
+/* auto byPair(K,V)(V[K] aa) */
+/* { */
+/*     import std.algorithm: map; */
+/*     import std.typecons: tuple; */
+/*     return aa.byKey.map!(key => tuple(key, aa[key])); */
+/* } */
+
+/* unittest */
+/* { */
+/*     string[int] x; */
+/*     x[0] = "a"; */
+/*     import std.algorithm: equal; */
+/*     assert(equal(x.Pair), [tuple(0, "a")]); */
+/* } */
+
+auto pairs(K,V)(V[K] aa)
+{
+    import std.typecons: Tuple, tuple;
+    Tuple!(K,V)[] arr;
+    foreach (key; aa.byKey)
+    {
+        arr ~= tuple(key, aa[key]);
+    }
+    return arr;
+}
+
+unittest
+{
+    string[int] x;
+    x[0] = "a";
+    import std.algorithm: equal;
+    import std.typecons: tuple;
+    assert(equal(x.pairs, [tuple(0, "a")]));
+}
