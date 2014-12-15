@@ -183,8 +183,8 @@ enum Rel:ubyte
 
     retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
 
-    acronymFor,
     abbreviationFor,
+    acronymFor,
 
     physicallyConnectedWith,
     arisesFrom,
