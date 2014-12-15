@@ -931,27 +931,16 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
-    /** Get Links of $(D node) with direction $(D dir). */
-    auto  linksOf(in Node node, //
-                  RelDir dir = RelDir.any,
-                  Rel rel = Rel.any,
-                  bool negation = false)
+    /** Get Links Refs of $(D node) with direction $(D dir). */
+    auto linkRefsOf(in Node node,
+                    RelDir dir = RelDir.any,
+                    Rel rel = Rel.any,
+                    bool negation = false)
     {
-        return node.links[]
-                      .filter!(linkRef => dir.of(RelDir.any, linkRef.dir)) // TODO functionize to match
-                      .map!(linkRef => linkAt(linkRef))
-                      .filter!(link => ((link.rel == rel ||
-                                         link.rel.specializes(rel)) && // TODO functionize to match
-                                        link.negation == negation));
-    }
-
-    /** Get Relation-Grouped Links of $(D node) with direction $(D dir). */
-    auto linksGroupedByRel(in Node node,
-                           RelDir dir = RelDir.any)
-    {
-        return linksOf(node, dir).array.groupBy!((a, b) => // TODO array needed?
-                                                 (a.negation == b.negation &&
-                                                  a.rel == b.rel));
+        return node.links[].filter!(linkRef => (dir.of(RelDir.any, linkRef.dir) &&  // TODO functionize to match(RelDir, RelDir)
+                                                (linkAt(linkRef).rel == rel ||
+                                                 linkAt(linkRef).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
+                                                linkAt(linkRef).negation == negation));
     }
 
     /** Many-Nodes-to-Many-Nodes Link (Edge).
@@ -971,8 +960,8 @@ class Net(bool useArray = true,
              Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
         {
-            this.actors ~= NodeRef(srcRef, RelDir.backward);
-            this.actors ~= NodeRef(dstRef, RelDir.forward);
+            this.actors ~= srcRef.backward;
+            this.actors ~= dstRef.forward;
             this.rel = rel;
             this.negation = negation;
             this.origin = origin;
@@ -2220,8 +2209,8 @@ class Net(bool useArray = true,
                          lang,
                          origin);
 
-        nodeAt(src).links ~= LinkRef(linkRef, RelDir.forward);
-        nodeAt(dst).links ~= LinkRef(linkRef, RelDir.backward);
+        nodeAt(src).links ~= linkRef.forward;
+        nodeAt(dst).links ~= linkRef.backward;
         connectednessSum += 2;
 
         symmetricRelCount += rel.isSymmetric;
@@ -3004,23 +2993,22 @@ class Net(bool useArray = true,
             }
             writeln();
 
-            foreach (linkGroup; linksGroupedByRel(lineNode))
+            LinkRefs linkRefs = linkRefsOf(lineNode);
+            linkRefs[].sort!((a, b) => (linkAt(a).normalizedWeight >
+                                        linkAt(b).normalizedWeight));
+            foreach (linkRef; linkRefs)
             {
-                showLinkRelation(linkGroup.front.rel,
-                                 RelDir.forward, // TODO fix this relation
-                                 linkGroup.front.negation);
-                foreach (link; linkGroup.array
-                                        .sort!((a, b) => (a.normalizedWeight >
-                                                          b.normalizedWeight)))
+                auto link = linkAt(linkRef);
+                showLinkRelation(link.rel,
+                                 linkRef.dir,
+                                 link.negation);
+                foreach (linkedNode; link.actors[]
+                                         .filter!(actorNodeRef => (actorNodeRef.ix !=
+                                                                   lineNodeRef.ix)) // don't self reference
+                                         .map!(nodeRef => nodeAt(nodeRef)))
                 {
-                    foreach (linkedNode; link.actors[]
-                                             .filter!(actorNodeRef => (actorNodeRef.ix !=
-                                                                       lineNodeRef.ix)) // don't self reference
-                                             .map!(nodeRef => nodeAt(nodeRef)))
-                    {
-                        showNode(linkedNode,
-                                    link.normalizedWeight);
-                    }
+                    showNode(linkedNode,
+                             link.normalizedWeight);
                 }
                 writeln();
             }
@@ -3087,7 +3075,7 @@ class Net(bool useArray = true,
         // en-en => sv-sv
         if (false)
         {
-            /* auto translations = nodes.map!(node => linksOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
+            /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         }
         return nodes;
     }
