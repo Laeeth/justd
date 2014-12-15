@@ -545,10 +545,10 @@ static if (__VERSION__ < 2067)
 /* Return Array of Key-Value Pairs of Associative Array $(D aa).
    See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
 */
-auto pairs(K,V)(V[K] aa)
+auto pairs(Key,Value)(Value[Key] aa)
 {
     import std.typecons: Tuple, tuple;
-    Tuple!(K,V)[] arr;
+    Tuple!(Key,Value)[] arr;
     arr.reserve(aa.length);
     foreach (key; aa.byKey)
     {
