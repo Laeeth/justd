@@ -1201,7 +1201,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         const quick = true;
-        const maxCount = quick ? 200*1000 : size_t.max;
+        const maxCount = quick ? 1000 : size_t.max;
 
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
@@ -2987,7 +2987,7 @@ class Net(bool useArray = true,
                 }
             }
         }
-        else if (normLine.skipOver(`synonymsOf(`))
+        else if (normLine.skipOver(`synonymsof(`))
         {
             auto split = normLine.findSplitBefore(`)`);
             const arg = split[0];
@@ -3002,7 +3002,7 @@ class Net(bool useArray = true,
                 }
             }
         }
-        else if (normLine.skipOver(`translationsOf(`))
+        else if (normLine.skipOver(`translationsof(`))
         {
             auto split = normLine.findSplitBefore(`)`);
             const arg = split[0];
@@ -3015,6 +3015,16 @@ class Net(bool useArray = true,
                                  NWeight.infinity,
                                  RelDir.backward);
                 }
+            }
+        }
+        else if (normLine.skipOver(`languagesof(`))
+        {
+            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            auto split = normLine.findSplitBefore(`)`);
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                languagesOfWord(arg);
             }
         }
 
@@ -3068,6 +3078,24 @@ class Net(bool useArray = true,
                                 sense);
         showNodeRefs(nodes, Rel.synonymFor); // TODO traverse synonyms
         return nodes;
+    }
+
+    /** Get Languages of $(D word).
+    */
+    NWeight[Lang] languagesOfWord(S)(S expr,
+                                     Sense sense = Sense.unknown) if (isSomeString!S)
+    {
+        dln(expr);
+        typeof(return) hist;
+        foreach (lemma; lemmasOf(expr))
+        {
+            ++hist[lemma.lang];
+        }
+        dln(hist);
+        /* foreach (key; hist.byKeys) */
+        /* { */
+        /* } */
+        return hist;
     }
 
     /** Get Translations of $(D word) in language $(D lang).
