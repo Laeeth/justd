@@ -1753,6 +1753,640 @@ class Net(bool useArray = true,
         learnEnglishAcronym("WHO","World Health Organization");
         learnEnglishAcronym("WRAIR","Walter Reed Army Institute of Research");
         learnEnglishAcronym("ZEBET","Centre for Documentation and Evaluation of Alternative Methods to Animal Experiments (Germany)");
+
+        // TODO Context: Digital Communications
+    	learnEnglishAcronym("AAMOF", "as a matter of fact");
+	learnEnglishAcronym("ABFL", "a big fat lady");
+	learnEnglishAcronym("ABT", "about");
+	learnEnglishAcronym("ADN", "any day now");
+	learnEnglishAcronym("AFAIC", "as far as I’m concerned");
+	learnEnglishAcronym("AFAICT", "as far as I can tell");
+	learnEnglishAcronym("AFAICS", "as far as I can see");
+	learnEnglishAcronym("AFAIK", "as far as I know");
+	learnEnglishAcronym("AFAYC", "as far as you’re concerned");
+	learnEnglishAcronym("AFK", "away from keyboard");
+	learnEnglishAcronym("AH", "asshole");
+	learnEnglishAcronym("AISI", "as I see it");
+	learnEnglishAcronym("AIUI", "as I understand it");
+	learnEnglishAcronym("AKA", "also known as");
+	learnEnglishAcronym("AML", "all my love");
+	learnEnglishAcronym("ANFSCD", "and now for something completely different");
+	learnEnglishAcronym("ASAP", "as soon as possible");
+	learnEnglishAcronym("ASL", "assistant section leader");
+	learnEnglishAcronym("ASL", "age, sex, location");
+	learnEnglishAcronym("ASLP", "age, sex, location, picture");
+	learnEnglishAcronym("A/S/L", "age/sex/location");
+	learnEnglishAcronym("ASOP", "assistant system operator");
+	learnEnglishAcronym("ATM", "at this moment");
+	learnEnglishAcronym("AWA", "as well as");
+	learnEnglishAcronym("AWHFY", "are we having fun yet?");
+	learnEnglishAcronym("AWGTHTGTTA", "are we going to have to go trough this again?");
+	learnEnglishAcronym("AWOL", "absent without leave");
+	learnEnglishAcronym("AWOL", "away without leave");
+	learnEnglishAcronym("AYOR", "at your own risk");
+	learnEnglishAcronym("AYPI", "?	and your point is?");
+
+	learnEnglishAcronym("B4", "before");
+	learnEnglishAcronym("BAC", "back at computer");
+	learnEnglishAcronym("BAG", "busting a gut");
+	learnEnglishAcronym("BAK", "back at the keyboard");
+	learnEnglishAcronym("BBIAB", "be back in a bit");
+	learnEnglishAcronym("BBL", "be back later");
+	learnEnglishAcronym("BBLBNTSBO", "be back later but not to soon because of");
+	learnEnglishAcronym("BBR", "burnt beyond repair");
+	learnEnglishAcronym("BBS", "be back soon");
+	learnEnglishAcronym("BBS", "bulletin board system");
+	learnEnglishAcronym("BC", "be cool");
+	learnEnglishAcronym("B", "/C	because");
+	learnEnglishAcronym("BCnU", "be seeing you");
+	learnEnglishAcronym("BEG", "big evil grin");
+	learnEnglishAcronym("BF", "boyfriend");
+	learnEnglishAcronym("B/F", "boyfriend");
+	learnEnglishAcronym("BFN", "bye for now");
+	learnEnglishAcronym("BG", "big grin");
+	learnEnglishAcronym("BION", "believe it or not");
+	learnEnglishAcronym("BIOYIOB", "blow it out your I/O port");
+	learnEnglishAcronym("BITMT", "but in the meantime");
+	learnEnglishAcronym("BM", "bite me");
+	learnEnglishAcronym("BMB", "bite my bum");
+	learnEnglishAcronym("BMTIPG", "brilliant minds think in parallel gutters");
+	learnEnglishAcronym("BKA", "better known as");
+	learnEnglishAcronym("BL", "belly laughing");
+	learnEnglishAcronym("BOB", "back off bastard");
+	learnEnglishAcronym("BOL", "be on later");
+	learnEnglishAcronym("BOM", "bitch of mine");
+	learnEnglishAcronym("BOT", "back on topic");
+	learnEnglishAcronym("BRB", "be right back");
+	learnEnglishAcronym("BRBB", "be right back bitch");
+	learnEnglishAcronym("BRBS", "be right back soon");
+	learnEnglishAcronym("BRH", "be right here");
+	learnEnglishAcronym("BRS", "big red switch");
+	learnEnglishAcronym("BS", "big smile");
+	learnEnglishAcronym("BS", "bull shit");
+	learnEnglishAcronym("BSF", "but seriously folks");
+	learnEnglishAcronym("BST", "but seriously though");
+	learnEnglishAcronym("BTA", "but then again");
+	learnEnglishAcronym("BTAIM", "be that as it may");
+	learnEnglishAcronym("BTDT", "been there done that");
+	learnEnglishAcronym("BTOBD", "be there or be dead");
+	learnEnglishAcronym("BTOBS", "be there or be square");
+	learnEnglishAcronym("BTSOOM", "beats the shit out of me");
+	learnEnglishAcronym("BTW", "by the way");
+	learnEnglishAcronym("BUDWEISER", "because you deserve what every individual should ever receive");
+	learnEnglishAcronym("BWQ", "buzz word quotient");
+	learnEnglishAcronym("BWTHDIK", "but what the heck do I know");
+	learnEnglishAcronym("BYOB", "bring your own bottle");
+	learnEnglishAcronym("BYOH", "Bat You Onna Head");
+
+	learnEnglishAcronym("C&G", "chuckle and grin");
+	learnEnglishAcronym("CAD", "ctrl-alt-delete");
+	learnEnglishAcronym("CADET", "can’t add, doesn’t even try");
+	learnEnglishAcronym("CDIWY", "couldn’t do it without you");
+	learnEnglishAcronym("CFV", "call for votes");
+	learnEnglishAcronym("CFS", "care for secret?");
+	learnEnglishAcronym("CFY", "calling for you");
+	learnEnglishAcronym("CID", "crying in disgrace");
+	learnEnglishAcronym("CIM", "CompuServe information manager");
+	learnEnglishAcronym("CLM", "career limiting move");
+	learnEnglishAcronym("CM@TW", "catch me at the web");
+	learnEnglishAcronym("CMIIW", "correct me if I’m wrong");
+	learnEnglishAcronym("CNP", "continue in next post");
+	learnEnglishAcronym("CO", "conference");
+	learnEnglishAcronym("CRAFT", "can’t remember a f**king thing");
+	learnEnglishAcronym("CRS", "can’t remember shit");
+	learnEnglishAcronym("CSG", "chuckle snicker grin");
+	learnEnglishAcronym("CTS", "changing the subject");
+	learnEnglishAcronym("CU", "see you");
+	learnEnglishAcronym("CU2", "see you too");
+	learnEnglishAcronym("CUL", "see you later");
+	learnEnglishAcronym("CUL8R", "see you later");
+	learnEnglishAcronym("CWOT", "complete waste of time");
+	learnEnglishAcronym("CWYL", "chat with you later");
+	learnEnglishAcronym("CYA", "see ya");
+	learnEnglishAcronym("CYA", "cover your ass");
+	learnEnglishAcronym("CYAL8R", "see ya later");
+	learnEnglishAcronym("CYO", "see you online");
+
+	learnEnglishAcronym("DBA", "doing business as");
+	learnEnglishAcronym("DCed", "disconnected");
+	learnEnglishAcronym("DFLA", "disenhanced four-letter acronym");
+	learnEnglishAcronym("DH", "darling husband");
+	learnEnglishAcronym("DIIK", "darn if i know");
+	learnEnglishAcronym("DGA", "digital guardian angel");
+	learnEnglishAcronym("DGARA", "don’t give a rats ass");
+	learnEnglishAcronym("DIKU", "do I know you?");
+	learnEnglishAcronym("DIRTFT", "do it right the first time");
+	learnEnglishAcronym("DITYID", "did I tell you I’m distressed");
+	learnEnglishAcronym("DIY", "do it yourself");
+	learnEnglishAcronym("DL", "download");
+	learnEnglishAcronym("DL", "dead link");
+	learnEnglishAcronym("DLTBBB", "don’t let the bad bugs bite");
+	learnEnglishAcronym("DMMGH", "don’t make me get hostile");
+	learnEnglishAcronym("DQMOT", "don’t quote me on this");
+	learnEnglishAcronym("DND", "do not disturb");
+	learnEnglishAcronym("DTC", "damn this computer");
+	learnEnglishAcronym("DTRT", "do the right thing");
+	learnEnglishAcronym("DUCT", "did you see that?");
+	learnEnglishAcronym("DWAI", "don’t worry about it");
+	learnEnglishAcronym("DWIM", "do what I mean");
+	learnEnglishAcronym("DWIMC", "do what I mean, correctly");
+	learnEnglishAcronym("DWISNWID", "do what I say, not what I do");
+	learnEnglishAcronym("DYJHIW", "don’t you just hate it when...");
+	learnEnglishAcronym("DYK", "do you know");
+
+	learnEnglishAcronym("EAK", "eating at keyboard");
+	learnEnglishAcronym("EIE", "enough is enough");
+	learnEnglishAcronym("EG", "evil grin");
+	learnEnglishAcronym("EMFBI", "excuse me for butting in");
+	learnEnglishAcronym("EMFJI", "excuse me for jumping in");
+	learnEnglishAcronym("EMSG", "email message");
+	learnEnglishAcronym("EOD", "end of discussion");
+	learnEnglishAcronym("EOF", "end of file");
+	learnEnglishAcronym("EOL", "end of lecture");
+	learnEnglishAcronym("EOM", "end of message");
+	learnEnglishAcronym("EOS", "end of story");
+	learnEnglishAcronym("EOT", "end of thread");
+	learnEnglishAcronym("ETLA", "extended three letter acronym");
+	learnEnglishAcronym("EYC", "excitable, yet calm");
+
+	learnEnglishAcronym("F", "female");
+	learnEnglishAcronym("F/F", "face to face");
+	learnEnglishAcronym("F2F", "face to face");
+	learnEnglishAcronym("FAQ", "frequently asked questions");
+	learnEnglishAcronym("FAWC", "for anyone who cares");
+	learnEnglishAcronym("FBOW", "for better or worse");
+	learnEnglishAcronym("FBTW", "fine, be that way");
+	learnEnglishAcronym("FCFS", "first come, first served");
+	learnEnglishAcronym("FCOL", "for crying out loud");
+	learnEnglishAcronym("FIFO", "first in, first out");
+	learnEnglishAcronym("FISH", "first in, still here");
+	learnEnglishAcronym("FLA", "four-letter acronym");
+	learnEnglishAcronym("FOAD", "f**k off and die");
+	learnEnglishAcronym("FOAF", "friend of a friend");
+	learnEnglishAcronym("FOB", "f**k off bitch");
+	learnEnglishAcronym("FOC", "free of charge");
+	learnEnglishAcronym("FOCL", "falling of chair laughing");
+	learnEnglishAcronym("FOFL", "falling on the floor laughing");
+	learnEnglishAcronym("FOS", "freedom of speech");
+	learnEnglishAcronym("FOTCL", "falling of the chair laughing");
+	learnEnglishAcronym("FTF", "face to face");
+	learnEnglishAcronym("FTTT", "from time to time");
+	learnEnglishAcronym("FU", "f**ked up");
+	learnEnglishAcronym("FUBAR", "f**ked up beyond all recognition");
+	learnEnglishAcronym("FUDFUCT", "fear, uncertainty and doubt");
+	learnEnglishAcronym("FUCT", "failed under continuas testing");
+	learnEnglishAcronym("FURTB", "full up ready to burst (about hard disk drives)");
+	learnEnglishAcronym("FW", "freeware");
+	learnEnglishAcronym("FWIW", "for what it’s worth");
+	learnEnglishAcronym("FYA", "for your amusement");
+	learnEnglishAcronym("FYE", "for your entertainment");
+	learnEnglishAcronym("FYEO", "for your eyes only");
+	learnEnglishAcronym("FYI", "for your information");
+
+	learnEnglishAcronym("G", "grin");
+	learnEnglishAcronym("G2B","going to bed");
+	learnEnglishAcronym("G&BIT", "grin & bear it");
+        learnEnglishAcronym("G2G", "got to go");
+        learnEnglishAcronym("G2GGS2D", "got to go get something to drink");
+	learnEnglishAcronym("G2GTAC", "got to go take a crap");
+        learnEnglishAcronym("G2GTAP", "got to go take a pee");
+	learnEnglishAcronym("GA", "go ahead");
+	learnEnglishAcronym("GA", "good afternoon");
+	learnEnglishAcronym("GAFIA", "get away from it all");
+	learnEnglishAcronym("GAL", "get a life");
+	learnEnglishAcronym("GAS", "greetings and salutations");
+	learnEnglishAcronym("GBH", "great big hug");
+	learnEnglishAcronym("GBH&K", "great big huh and kisses");
+	learnEnglishAcronym("GBR", "garbled beyond recovery");
+	learnEnglishAcronym("GBY", "god bless you");
+	learnEnglishAcronym("GD", "&H	grinning, ducking and hiding");
+	learnEnglishAcronym("GD&R", "grinning, ducking and running");
+	learnEnglishAcronym("GD&RAFAP", "grinning, ducking and running as fast as possible");
+	learnEnglishAcronym("GD&REF&F", "grinning, ducking and running even further and faster");
+	learnEnglishAcronym("GD&RF", "grinning, ducking and running fast");
+	learnEnglishAcronym("GD&RVF", "grinning, ducking and running very");
+	learnEnglishAcronym("GD&W", "grin, duck and wave");
+	learnEnglishAcronym("GDW", "grin, duck and wave");
+	learnEnglishAcronym("GE", "good evening");
+	learnEnglishAcronym("GF", "girlfriend");
+	learnEnglishAcronym("GFETE", "grinning from ear to ear");
+	learnEnglishAcronym("GFN", "gone for now");
+	learnEnglishAcronym("GFU", "good for you");
+	learnEnglishAcronym("GG", "good game");
+	learnEnglishAcronym("GGU", "good game you two");
+	learnEnglishAcronym("GIGO", "garbage in garbage out");
+	learnEnglishAcronym("GJ", "good job");
+	learnEnglishAcronym("GL", "good luck");
+	learnEnglishAcronym("GL&GH", "good luck and good hunting");
+	learnEnglishAcronym("GM", "good morning / good move / good match");
+	learnEnglishAcronym("GMAB", "give me a break");
+	learnEnglishAcronym("GMAO", "giggling my ass off");
+	learnEnglishAcronym("GMBO", "giggling my butt off");
+	learnEnglishAcronym("GMTA", "great minds think alike");
+	learnEnglishAcronym("GN", "good night");
+	learnEnglishAcronym("GOK", "god only knows");
+	learnEnglishAcronym("GOWI", "get on with it");
+	learnEnglishAcronym("GPF", "general protection fault");
+	learnEnglishAcronym("GR8", "great");
+	learnEnglishAcronym("GR&D", "grinning, running and ducking");
+	learnEnglishAcronym("GtG", "got to go");
+	learnEnglishAcronym("GTSY", "glad to see you");
+
+	learnEnglishAcronym("H", "hug");
+	learnEnglishAcronym("H/O", "hold on");
+	learnEnglishAcronym("H&K", "hug and kiss");
+	learnEnglishAcronym("HAK", "hug and kiss");
+	learnEnglishAcronym("HAGD", "have a good day");
+	learnEnglishAcronym("HAGN", "have a good night");
+	learnEnglishAcronym("HAGS", "have a good summer");
+	learnEnglishAcronym("HAG1", "have a good one");
+	learnEnglishAcronym("HAHA", "having a heart attack");
+	learnEnglishAcronym("HAND", "have a nice day");
+	learnEnglishAcronym("HB", "hug back");
+	learnEnglishAcronym("HB", "hurry back");
+	learnEnglishAcronym("HDYWTDT", "how do you work this dratted thing");
+	learnEnglishAcronym("HF", "have fun");
+	learnEnglishAcronym("HH", "holding hands");
+	learnEnglishAcronym("HHIS", "hanging head in shame");
+	learnEnglishAcronym("HHJK", "ha ha, just kidding");
+	learnEnglishAcronym("HHOJ", "ha ha, only joking");
+	learnEnglishAcronym("HHOK", "ha ha, only kidding");
+	learnEnglishAcronym("HHOS", "ha ha, only seriously");
+	learnEnglishAcronym("HIH", "hope it helps");
+	learnEnglishAcronym("HILIACACLO", "help I lapsed into a coma and can’t log off");
+	learnEnglishAcronym("HIWTH", "hate it when that happens");
+	learnEnglishAcronym("HLM", "he loves me");
+	learnEnglishAcronym("HMS", "home made smiley");
+	learnEnglishAcronym("HMS", "hanging my self");
+	learnEnglishAcronym("HMT", "here’s my try");
+	learnEnglishAcronym("HMWK", "homework");
+	learnEnglishAcronym("HOAS", "hold on a second");
+	learnEnglishAcronym("HSIK", "how should i know");
+	learnEnglishAcronym("HTH", "hope this helps");
+	learnEnglishAcronym("HTHBE", "hope this has been enlightening");
+	learnEnglishAcronym("HYLMS", "hate you like my sister");
+
+	learnEnglishAcronym("IAAA", "I am an accountant");
+	learnEnglishAcronym("IAAL", "I am a lawyer");
+	learnEnglishAcronym("IAC", "in any case");
+	learnEnglishAcronym("IC", "I see");
+	learnEnglishAcronym("IAE", "in any event");
+	learnEnglishAcronym("IAG", "it’s all good");
+	learnEnglishAcronym("IAG", "I am gay");
+	learnEnglishAcronym("IAIM", "in an Irish minute");
+	learnEnglishAcronym("IANAA", "I am not an accountant");
+	learnEnglishAcronym("IANAL", "I am not a lawyer");
+	learnEnglishAcronym("IBN", "I’m bucked naked");
+	learnEnglishAcronym("ICOCBW", "I could of course be wrong");
+	learnEnglishAcronym("IDC", "I don’t care");
+	learnEnglishAcronym("IDGI", "I don’t get it");
+	learnEnglishAcronym("IDGARA", "I don’t give a rat’s ass");
+	learnEnglishAcronym("IDGW", "in a good way");
+	learnEnglishAcronym("IDI", "I doubt it");
+	learnEnglishAcronym("IDK", "I don’t know");
+	learnEnglishAcronym("IDTT", "I’ll drink to that");
+	learnEnglishAcronym("IFVB", "I feel very bad");
+	learnEnglishAcronym("IGP", "I gotta pee");
+	learnEnglishAcronym("IGTP", "I get the point");
+	learnEnglishAcronym("IHTFP", "I hate this f**king place");
+	learnEnglishAcronym("IHTFP", "I have truly found paradise");
+	learnEnglishAcronym("IHU", "I hate you");
+	learnEnglishAcronym("IHY", "I hate you");
+	learnEnglishAcronym("II", "I’m impressed");
+	learnEnglishAcronym("IIT", "I’m impressed too");
+	learnEnglishAcronym("IIR", "if I recall");
+	learnEnglishAcronym("IIRC", "if I recall correctly");
+	learnEnglishAcronym("IJWTK", "I just want to know");
+	learnEnglishAcronym("IJWTS", "I just want to say");
+	learnEnglishAcronym("IK", "I know");
+	learnEnglishAcronym("IKWUM", "I know what you mean");
+	learnEnglishAcronym("ILBCNU", "I’ll be seeing you");
+	learnEnglishAcronym("ILU", "I love you");
+	learnEnglishAcronym("ILY", "I love you");
+	learnEnglishAcronym("ILYFAE", "I love you forever and ever");
+	learnEnglishAcronym("IMAO", "in my arrogant opinion");
+	learnEnglishAcronym("IMFAO", "in my f***ing arrogant opinion");
+	learnEnglishAcronym("IMBO", "in my bloody opinion");
+	learnEnglishAcronym("IMCO", "in my considered opinion");
+	learnEnglishAcronym("IME", "in my experience");
+	learnEnglishAcronym("IMHO", "in my humble opinion");
+	learnEnglishAcronym("IMNSHO", "in my, not so humble opinion");
+	learnEnglishAcronym("IMO", "in my opinion");
+	learnEnglishAcronym("IMOBO", "in my own biased opinion");
+	learnEnglishAcronym("IMPOV", "in my point of view");
+	learnEnglishAcronym("IMP", "I might be pregnant");
+	learnEnglishAcronym("INAL", "I’m not a lawyer");
+	learnEnglishAcronym("INPO", "in no particular order");
+	learnEnglishAcronym("IOIT", "I’m on Irish Time");
+	learnEnglishAcronym("IOW", "in other words");
+	learnEnglishAcronym("IRL", "in real life");
+	learnEnglishAcronym("IRMFI", "I reply merely for information");
+	learnEnglishAcronym("IRSTBO", "it really sucks the big one");
+	learnEnglishAcronym("IS", "I’m sorry");
+	learnEnglishAcronym("ISEN", "internet search environment number");
+	learnEnglishAcronym("ISTM", "it seems to me");
+	learnEnglishAcronym("ISTR", "I seem to recall");
+	learnEnglishAcronym("ISWYM", "I see what you mean");
+	learnEnglishAcronym("ITFA", "in the final analysis");
+	learnEnglishAcronym("ITRO", "in the reality of");
+	learnEnglishAcronym("ITRW", "in the real world");
+	learnEnglishAcronym("ITSFWI", "if the shoe fits, wear it");
+	learnEnglishAcronym("IVL", "in virtual live");
+	learnEnglishAcronym("IWALY", "I will always love you");
+	learnEnglishAcronym("IWBNI", "it would be nice if");
+	learnEnglishAcronym("IYKWIM", "if you know what I mean");
+	learnEnglishAcronym("IYSWIM", "if you see what I mean");
+
+	learnEnglishAcronym("JAM", "just a minute");
+	learnEnglishAcronym("JAS", "just a second");
+	learnEnglishAcronym("JASE", "just another system error");
+	learnEnglishAcronym("JAWS", "just another windows shell");
+	learnEnglishAcronym("JIC", "just in case");
+	learnEnglishAcronym("JJWY", "just joking with you");
+	learnEnglishAcronym("JK", "just kidding");
+	learnEnglishAcronym("J/K", "just kidding");
+	learnEnglishAcronym("JMHO", "just my humble opinion");
+	learnEnglishAcronym("JMO", "just my opinion");
+	learnEnglishAcronym("JP", "just playing");
+	learnEnglishAcronym("J/P", "just playing");
+	learnEnglishAcronym("JTLYK", "just to let you know");
+	learnEnglishAcronym("JW", "just wondering");
+
+	learnEnglishAcronym("K", "OK");
+	learnEnglishAcronym("K", "kiss");
+	learnEnglishAcronym("KHYF", "know how you feel");
+	learnEnglishAcronym("KB", "kiss back");
+	learnEnglishAcronym("KISS", "keep it simple sister");
+	learnEnglishAcronym("KIS(S)", "keep it simple (stupid)");
+	learnEnglishAcronym("KISS", "keeping it sweetly simple");
+	learnEnglishAcronym("KIT", "keep in touch");
+	learnEnglishAcronym("KMA", "kiss my ass");
+	learnEnglishAcronym("KMB", "kiss my butt");
+	learnEnglishAcronym("KMSMA", "kiss my shiny metal ass");
+	learnEnglishAcronym("KOTC", "kiss on the cheek");
+	learnEnglishAcronym("KOTL", "kiss on the lips");
+	learnEnglishAcronym("KUTGW", "keep up the good work");
+	learnEnglishAcronym("KWIM", "know what I mean?");
+
+	learnEnglishAcronym("L", "laugh");
+	learnEnglishAcronym("L8R", "later");
+	learnEnglishAcronym("L8R", "G8R	later gator");
+	learnEnglishAcronym("LAB", "life’s a bitch");
+	learnEnglishAcronym("LAM", "leave a message");
+	learnEnglishAcronym("LBR", "little boys room");
+	learnEnglishAcronym("LD", "long distance");
+	learnEnglishAcronym("LIMH", "laughing in my head");
+	learnEnglishAcronym("LG", "lovely greetings");
+	learnEnglishAcronym("LIMH", "laughing in my head");
+	learnEnglishAcronym("LGR", "little girls room");
+	learnEnglishAcronym("LHM", "Lord help me");
+	learnEnglishAcronym("LHU", "Lord help us");
+	learnEnglishAcronym("LL&P", "live long & prosper");
+	learnEnglishAcronym("LNK", "love and kisses");
+	learnEnglishAcronym("LMA", "leave me alone");
+	learnEnglishAcronym("LMABO", "laughing my ass back on");
+	learnEnglishAcronym("LMAO", "laughing my ass off");
+	learnEnglishAcronym("MBO", "laughing my butt off");
+	learnEnglishAcronym("LMHO", "laughing my head off");
+	learnEnglishAcronym("LMFAO", "laughing my fat ass off");
+	learnEnglishAcronym("LMK", "let me know");
+	learnEnglishAcronym("LOL", "laughing out loud");
+	learnEnglishAcronym("LOL", "lots of love");
+	learnEnglishAcronym("LOL", "lots of luck");
+	learnEnglishAcronym("LOLA", "laughing out loud again");
+	learnEnglishAcronym("LOML", "light of my life (or love of my life)");
+	learnEnglishAcronym("LOMLILY", "light of my life, I love you");
+	learnEnglishAcronym("LOOL", "laughing out outrageously loud");
+	learnEnglishAcronym("LSHIPMP", "laughing so hard I pissed my pants");
+	learnEnglishAcronym("LSHMBB", "laughing so hard my belly is bouncing");
+	learnEnglishAcronym("LSHMBH", "laughing so hard my belly hurts");
+	learnEnglishAcronym("LTNS", "long time no see");
+	learnEnglishAcronym("LTR", "long term relationship");
+	learnEnglishAcronym("LTS", "laughing to self");
+	learnEnglishAcronym("LULAS", "love you like a sister");
+	learnEnglishAcronym("LUWAMH", "love you with all my heart");
+	learnEnglishAcronym("LY", "love ya");
+	learnEnglishAcronym("LYK", "let you know");
+	learnEnglishAcronym("LYL", "love ya lots");
+	learnEnglishAcronym("LYLAB", "love ya like a brother");
+	learnEnglishAcronym("LYLAS", "love ya like a sister");
+
+	learnEnglishAcronym("M", "male");
+	learnEnglishAcronym("MB", "maybe");
+	learnEnglishAcronym("MYOB", "mind your own business");
+	learnEnglishAcronym("M8", "mate");
+
+	learnEnglishAcronym("N", "in");
+	learnEnglishAcronym("N2M", "not too much");
+	learnEnglishAcronym("N/C", "not cool");
+	learnEnglishAcronym("NE1", "anyone");
+	learnEnglishAcronym("NETUA", "nobody ever tells us anything");
+	learnEnglishAcronym("NFI", "no f***ing idea");
+	learnEnglishAcronym("NL", "not likely");
+	learnEnglishAcronym("NM", "never mind / nothing much");
+	learnEnglishAcronym("N/M", "never mind / nothing much");
+	learnEnglishAcronym("NMH", "not much here");
+	learnEnglishAcronym("NMJC", "nothing much, just chillin’");
+	learnEnglishAcronym("NOM", "no offense meant");
+	learnEnglishAcronym("NOTTOMH", "not of the top of my mind");
+	learnEnglishAcronym("NOYB", "none of your business");
+	learnEnglishAcronym("NOYFB", "none of your f***ing business");
+	learnEnglishAcronym("NP", "no problem");
+	learnEnglishAcronym("NPS", "no problem sweet(ie)");
+	learnEnglishAcronym("NTA", "non-technical acronym");
+	learnEnglishAcronym("N/S", "no shit");
+	learnEnglishAcronym("NVM", "nevermind");
+
+	learnEnglishAcronym("OBTW", "oh, by the way");
+	learnEnglishAcronym("OIC", "oh, I see");
+	learnEnglishAcronym("OF", "on fire");
+	learnEnglishAcronym("OFIS", "on floor with stitches");
+	learnEnglishAcronym("OK", "abbreviation of oll korrect (all correct)");
+	learnEnglishAcronym("OL", "old lady (wife, girlfriend)");
+	learnEnglishAcronym("OM", "old man (husband, boyfriend)");
+	learnEnglishAcronym("OMG", "oh my god / gosh / goodness");
+	learnEnglishAcronym("OOC", "out of character");
+	learnEnglishAcronym("OT", "Off topic / other topic");
+	learnEnglishAcronym("OTOH", "on the other hand");
+	learnEnglishAcronym("OTTOMH", "off the top of my head");
+
+	learnEnglishAcronym("P@H", "parents at home");
+	learnEnglishAcronym("PAH", "parents at home");
+	learnEnglishAcronym("PAW", "parents are watching");
+	learnEnglishAcronym("PDS", "please don’t shoot");
+	learnEnglishAcronym("PEBCAK", "problem exists between chair and keyboard");
+	learnEnglishAcronym("PIZ", "parents in room");
+	learnEnglishAcronym("PLZ", "please");
+	learnEnglishAcronym("PM", "private message");
+	learnEnglishAcronym("PMJI", "pardon my jumping in (Another way for PMFJI)");
+	learnEnglishAcronym("PMFJI", "pardon me for jumping in");
+	learnEnglishAcronym("PMP", "peed my pants");
+	learnEnglishAcronym("POAHF", "put on a happy face");
+	learnEnglishAcronym("POOF", "I have left the chat");
+	learnEnglishAcronym("POTB", "pats on the back");
+	learnEnglishAcronym("POS", "parents over shoulder");
+	learnEnglishAcronym("PPL", "people");
+	learnEnglishAcronym("PS", "post script");
+	learnEnglishAcronym("PSA", "public show of affection");
+
+	learnEnglishAcronym("Q4U", "question for you");
+	learnEnglishAcronym("QSL", "reply");
+	learnEnglishAcronym("QSO", "conversation");
+	learnEnglishAcronym("QT", "cutie");
+
+	learnEnglishAcronym("RCed", "reconnected");
+	learnEnglishAcronym("RE", "hi again (same as re’s)");
+	learnEnglishAcronym("RME", "rolling my eyses");
+	learnEnglishAcronym("ROFL", "rolling on floor laughing");
+	learnEnglishAcronym("ROFLAPMP", "rolling on floor laughing and peed my pants");
+	learnEnglishAcronym("ROFLMAO", "rolling on floor laughing my ass off");
+	learnEnglishAcronym("ROFLOLAY", "rolling on floor laughing out loud at you");
+	learnEnglishAcronym("ROFLOLTSDMC", "rolling on floor laughing out loud tears streaming down my cheeks");
+	learnEnglishAcronym("ROFLOLWTIME", "rolling on floor laughing out loud with tears in my eyes");
+	learnEnglishAcronym("ROFLOLUTS", "rolling on floor laughing out loud unable to speak");
+	learnEnglishAcronym("ROTFL", "rolling on the floor laughing");
+	learnEnglishAcronym("RVD", "really very dumb");
+	learnEnglishAcronym("RUTTM", "are you talking to me");
+	learnEnglishAcronym("RTF", "read the FAQ");
+	learnEnglishAcronym("RTFM", "read the f***ing manual");
+	learnEnglishAcronym("RTSM", "read the stupid manual");
+
+	learnEnglishAcronym("S2R", "send to receive");
+	learnEnglishAcronym("SAMAGAL", "stop annoying me and get a live");
+	learnEnglishAcronym("SCNR", "sorry, could not resist");
+	learnEnglishAcronym("SETE", "smiling ear to ear");
+	learnEnglishAcronym("SH", "so hot");
+	learnEnglishAcronym("SH", "same here");
+	learnEnglishAcronym("SHICPMP", "so happy I could piss my pants");
+	learnEnglishAcronym("SHID", "slaps head in disgust");
+	learnEnglishAcronym("SHMILY", "see how much I love you");
+	learnEnglishAcronym("SNAFU", "situation normal, all F***ed up");
+	learnEnglishAcronym("SO", "significant other");
+	learnEnglishAcronym("SOHF", "sense of humor failure");
+	learnEnglishAcronym("SOMY", "sick of me yet?");
+	learnEnglishAcronym("SPAM", "stupid persons’ advertisement");
+	learnEnglishAcronym("SRY", "sorry");
+	learnEnglishAcronym("SSDD", "same shit different day");
+	learnEnglishAcronym("STBY", "sucks to be you");
+	learnEnglishAcronym("STFU", "shut the f*ck up");
+	learnEnglishAcronym("STI", "stick(ing) to it");
+	learnEnglishAcronym("STW", "search the web");
+	learnEnglishAcronym("SWAK", "sealed with a kiss");
+	learnEnglishAcronym("SWALK", "sweet, with all love, kisses");
+	learnEnglishAcronym("SWL", "screaming with laughter");
+	learnEnglishAcronym("SIM", "shit, it’s Monday");
+	learnEnglishAcronym("SITWB", "sorry, in the wrong box");
+	learnEnglishAcronym("S/U", "shut up");
+	learnEnglishAcronym("SYS", "see you soon");
+	learnEnglishAcronym("SYSOP", "system operator");
+
+	learnEnglishAcronym("TA", "thanks again");
+	learnEnglishAcronym("TCO", "taken care of");
+	learnEnglishAcronym("TGIF", "thank god its Friday");
+	learnEnglishAcronym("THTH", "to hot to handle");
+	learnEnglishAcronym("THX", "thanks");
+	learnEnglishAcronym("TIA", "thanks in advance");
+	learnEnglishAcronym("TIIC", "the idiots in charge");
+	learnEnglishAcronym("TJM", "that’s just me");
+	learnEnglishAcronym("TLA", "three-letter acronym");
+	learnEnglishAcronym("TMA", "take my advice");
+	learnEnglishAcronym("TMI", "to much information");
+	learnEnglishAcronym("TMS", "to much showing");
+	learnEnglishAcronym("TNSTAAFL", "there’s no such thing as a free lunch");
+	learnEnglishAcronym("TNX", "thanks");
+	learnEnglishAcronym("TOH", "to other half");
+	learnEnglishAcronym("TOY", "thinking of you");
+	learnEnglishAcronym("TPTB", "the powers that be");
+	learnEnglishAcronym("TSDMC", "tears streaming down my cheeks");
+	learnEnglishAcronym("TT2T", "to tired to talk");
+	learnEnglishAcronym("TTFN", "ta ta for now");
+	learnEnglishAcronym("TTT", "thought that, too");
+	learnEnglishAcronym("TTUL", "talk to you later");
+	learnEnglishAcronym("TTYIAM", "talk to you in a minute");
+	learnEnglishAcronym("TTYL", "talk to you later");
+	learnEnglishAcronym("TTYLMF", "talk to you later my friend");
+	learnEnglishAcronym("TU", "thank you");
+	learnEnglishAcronym("TWMA", "till we meet again");
+	learnEnglishAcronym("TX", "thanx");
+	learnEnglishAcronym("TY", "thank you");
+	learnEnglishAcronym("TYVM", "thank you very much");
+
+	learnEnglishAcronym("U2", "you too");
+	learnEnglishAcronym("UAPITA", "you’re a pain in the ass");
+	learnEnglishAcronym("UR", "your");
+	learnEnglishAcronym("UW", "you’re welcom");
+	learnEnglishAcronym("URAQT!", "you are a cutie!");
+
+	learnEnglishAcronym("VBG", "very big grin");
+	learnEnglishAcronym("VBS", "very big smile");
+
+	learnEnglishAcronym("W8", "wait");
+	learnEnglishAcronym("W8AM", "wait a minute");
+	learnEnglishAcronym("WAY", "what about you");
+	learnEnglishAcronym("WAY", "who are you");
+	learnEnglishAcronym("WB", "welcome back");
+	learnEnglishAcronym("WBS", "write back soon");
+	learnEnglishAcronym("WDHLM", "why doesn’t he love me");
+	learnEnglishAcronym("WDYWTTA", "What Do You Want To Talk About");
+	learnEnglishAcronym("WE", "whatever");
+	learnEnglishAcronym("W/E", "whatever");
+	learnEnglishAcronym("WFM", "works for me");
+	learnEnglishAcronym("WNDITWB", "we never did it this way before");
+	learnEnglishAcronym("WP", "wrong person");
+	learnEnglishAcronym("WRT", "with respect to");
+	learnEnglishAcronym("WTF", "what/who the F***?");
+	learnEnglishAcronym("WTG", "way to go");
+	learnEnglishAcronym("WTGP", "want to go private?");
+	learnEnglishAcronym("WTH", "what/who the heck?");
+	learnEnglishAcronym("WTMI", "way to much information");
+	learnEnglishAcronym("WU", "what’s up?");
+	learnEnglishAcronym("WUD", "what’s up dog?");
+	learnEnglishAcronym("WUF", "where are you from?");
+	learnEnglishAcronym("WUWT", "whats up with that");
+	learnEnglishAcronym("WYMM", "will you marry me?");
+	learnEnglishAcronym("WYSIWYG", "what you see is what you get");
+
+	learnEnglishAcronym("XTLA", "extended three letter acronym");
+
+	learnEnglishAcronym("Y", "why?");
+	learnEnglishAcronym("Y2K", "you’re too kind");
+	learnEnglishAcronym("YATB", "you are the best");
+	learnEnglishAcronym("YBS", "you’ll be sorry");
+	learnEnglishAcronym("YG", "young gentleman");
+	learnEnglishAcronym("YHBBYBD", "you’d have better bet your bottom dollar");
+	learnEnglishAcronym("YKYWTKM", "you know you want to kiss me");
+	learnEnglishAcronym("YL", "young lady");
+	learnEnglishAcronym("YL", "you ’ll live");
+	learnEnglishAcronym("YM", "you mean");
+	learnEnglishAcronym("YM", "young man");
+	learnEnglishAcronym("YMMD", "you’ve made my day");
+	learnEnglishAcronym("YMMV", "your mileage may vary");
+	learnEnglishAcronym("YVM", "you’re very welcome");
+	learnEnglishAcronym("YW", "you’re welcome");
+	learnEnglishAcronym("YWIA", "you’re welcome in advance");
+	learnEnglishAcronym("YWTHM", "you want to hug me");
+	learnEnglishAcronym("YWTLM", "you want to love me");
+	learnEnglishAcronym("YWTKM", "you want to kiss me");
+	learnEnglishAcronym("YOYO", "you’re on your own");
+	learnEnglishAcronym("YY4U", "two wise for you");
+
+	learnEnglishAcronym("?", "huh?");
+	learnEnglishAcronym("?4U", "question for you");
+	learnEnglishAcronym(">U", "screw you!");
+	learnEnglishAcronym("/myB", "kick my boobs");
+	learnEnglishAcronym("2U2", "to you too");
+	learnEnglishAcronym("2MFM", "to much for me");
+	learnEnglishAcronym("4AYN", "for all you know");
+	learnEnglishAcronym("4COL", "for crying out loud");
+	learnEnglishAcronym("4SALE", "for sale");
+	learnEnglishAcronym("4U", "for you");
+	learnEnglishAcronym("=w=", "whatever");
+	learnEnglishAcronym("*G*", "giggle or grin");
+	learnEnglishAcronym("*H*", "hug");
+	learnEnglishAcronym("*K*", "kiss");
+	learnEnglishAcronym("*S*", "smile");
+	learnEnglishAcronym("*T*", "tickle");
+	learnEnglishAcronym("*W*", "wink");
     }
 
     /** Learn English Irregular Verbs.
@@ -2768,7 +3402,7 @@ class Net(bool useArray = true,
             const count = hlangCounts[lang];
             if (count)
             {
-                writeln(indent, lang.toName, ` (`, lang.to!string, `) : `, count);
+                writeln(indent, lang.toHuman, ` (`, lang.to!string, `) : `, count);
             }
         }
 
@@ -2916,7 +3550,7 @@ class Net(bool useArray = true,
         {
             const lineNode = nodeAt(nodeRef);
 
-            write(`  - in `, lineNode.lemma.lang.toName);
+            write(`  - in `, lineNode.lemma.lang.toHuman);
             if (lineNode.lemma.sense != Sense.unknown)
             {
                 write(` of sense `, lineNode.lemma.sense);
@@ -3026,7 +3660,8 @@ class Net(bool useArray = true,
             const arg = split[0];
             if (!arg.empty)
             {
-                languagesOfWord(arg);
+                auto hist = languagesOfWord(arg);
+                showLanguages(hist);
             }
         }
 
@@ -3087,17 +3722,26 @@ class Net(bool useArray = true,
     NWeight[Lang] languagesOfWord(S)(S expr,
                                      Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        dln(expr);
         typeof(return) hist;
         foreach (lemma; lemmasOf(expr))
         {
             ++hist[lemma.lang];
         }
-        dln(hist);
-        /* foreach (key; hist.byKeys) */
-        /* { */
-        /* } */
         return hist;
+    }
+
+    void showLanguages(NWeight[Lang] hist)
+    {
+        Tuple!(Lang, NWeight)[] x;
+        foreach (key; hist.byKey)
+        {
+            x ~= tuple(key, hist[key]);
+        }
+        x.sort!((a, b) => (a[1] > b[1]));
+        foreach (lang; x.map!(a => a[0].toHuman))
+        {
+            writeln(lang, ", ");
+        }
     }
 
     /** Get Translations of $(D word) in language $(D lang).
