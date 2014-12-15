@@ -455,7 +455,8 @@ private:
     void step5()
     {
         _j = _k;
-        if (_b[_k] == 'e')
+        if (_b[_k] == 'e' &&
+            !_b[0 .. _k].of(`false`))
         {
             auto a = m();
             if (a > 1 || (a == 1 && !cvc(_k - 1)))
@@ -513,6 +514,8 @@ unittest
     assert(stemmer.stem("dogs") == "dog");
     assert(stemmer.stem("churches") == "church");
     assert(stemmer.stem("hardrock") == "hardrock");
+
+    assert(stemmer.stem("false") == "false");
 }
 
 import dbg;
