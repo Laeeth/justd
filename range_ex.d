@@ -546,6 +546,7 @@ auto pairs(K,V)(V[K] aa)
 {
     import std.typecons: Tuple, tuple;
     Tuple!(K,V)[] arr;
+    arr.reserve(aa.length);
     foreach (key; aa.byKey)
     {
         arr ~= tuple(key, aa[key]);
