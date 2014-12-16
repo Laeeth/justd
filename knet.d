@@ -20,6 +20,8 @@
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
 
+    TODO See checkExisting in connect() to true only for Origin.manual
+
     TODO Application: Translate text to use age-relevant words. Use pre-train child book word histogram for specific ages.
 
     TODO Convert '_' to ' ' before storing Lemma
@@ -1287,11 +1289,11 @@ class Net(bool useArray = true,
      */
     LinkRef[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive,
                                                     S2 past,
-                                                    S3 pastParticiple)
+                                                    S3 pastParticiple,
+                                                    Origin origin = Origin.manual)
     {
-        const lang = Lang.en;
+        enum lang = Lang.en;
         const category = CategoryIx.asUndefined;
-        const origin = Origin.manual;
         NodeRef[] all;
         all ~= tryStore(infinitive, lang, Sense.verbInfinitive, category, origin);
         all ~= tryStore(past, lang, Sense.verbPast, category, origin);
@@ -1304,14 +1306,30 @@ class Net(bool useArray = true,
     LinkRef learnEnglishAcronym(S)(S acronym,
                                    S expr,
                                    NWeight weight = 1.0,
-                                   Sense sense = Sense.noun,
+                                   Sense sense = Sense.unknown,
                                    Origin origin = Origin.manual) if (isSomeString!S)
     {
-        const lang = Lang.en;
+        enum lang = Lang.en;
         const category = CategoryIx.asUndefined;
         // TODO should we store acronym in lowercase or not?
         return connect(store(acronym.toLower, lang, Sense.nounAcronym, category, origin),
                        Rel.acronymFor,
+                       store(expr.toLower, lang, sense, category, origin),
+                       lang, origin, weight);
+    }
+
+    /** Learn English Emoticon.
+     */
+    LinkRef learnEnglishEmoticon(S)(S emoticon,
+                                    S expr,
+                                    NWeight weight = 1.0,
+                                    Sense sense = Sense.unknown,
+                                    Origin origin = Origin.manual) if (isSomeString!S)
+    {
+        enum lang = Lang.en;
+        const category = CategoryIx.asUndefined;
+        return connect(store(emoticon.toLower, lang, Sense.unknown, category, origin),
+                       Rel.emoticonFor,
                        store(expr.toLower, lang, sense, category, origin),
                        lang, origin, weight);
     }
@@ -1339,18 +1357,18 @@ class Net(bool useArray = true,
         learnEnglishAcronym("ADR", "Automatic Diagnostic Repository");
         learnEnglishAcronym("ASM", "Automatic Storage Management");
         learnEnglishAcronym("AWR", "Automatic Workload Repository");
-        learnEnglishAcronym("AWT", "asynchronous writethrough");
-        learnEnglishAcronym("BGP", "basic graph pattern");
+        learnEnglishAcronym("AWT", "Asynchronous WriteThrough");
+        learnEnglishAcronym("BGP", "Basic Graph Pattern");
         learnEnglishAcronym("BLOB", "Binary Large Object");
         learnEnglishAcronym("CBC", "Cipher Block Chaining");
         learnEnglishAcronym("CCA", "Control Center Agent");
-        learnEnglishAcronym("CDATA", "character data");
+        learnEnglishAcronym("CDATA", "Character DATA");
         learnEnglishAcronym("CDS", "Cell Directory Services");
         learnEnglishAcronym("CFS", "Cluster File System");
         learnEnglishAcronym("CIDR", "Classless Inter-Domain Routing");
-        learnEnglishAcronym("CLOB", "character large object");
-        learnEnglishAcronym("CMADMIN", "Oracle Connection Manager Administration");
-        learnEnglishAcronym("CMGW", "Oracle Connection Manager gateway");
+        learnEnglishAcronym("CLOB", "Character Large OBject");
+        learnEnglishAcronym("CMADMIN", "Connection Manager Administration");
+        learnEnglishAcronym("CMGW", "Connection Manager GateWay");
         learnEnglishAcronym("COM", "Component Object Model");
         learnEnglishAcronym("CORBA", "Common Object Request Broker API");
         learnEnglishAcronym("CORE", "Common Oracle Runtime Environment");
@@ -1361,24 +1379,24 @@ class Net(bool useArray = true,
         learnEnglishAcronym("CVU", "Cluster Verification Utility");
         learnEnglishAcronym("CWM", "Common Warehouse Metadata");
         learnEnglishAcronym("DAS", "Direct Attached Storage");
-        learnEnglishAcronym("DBA", "database administrator");
-        learnEnglishAcronym("DBMS", "database management system");
-        learnEnglishAcronym("DBPITR", "database point-in-time recovery");
-        learnEnglishAcronym("DBW", "database writer");
+        learnEnglishAcronym("DBA", "DataBase Administrator");
+        learnEnglishAcronym("DBMS", "DataBase Management System");
+        learnEnglishAcronym("DBPITR", "Database Point-In-Time Recovery");
+        learnEnglishAcronym("DBW", "Database Writer");
         learnEnglishAcronym("DCE", "Distributed Computing Environment");
         learnEnglishAcronym("DCOM", "Distributed Component Object Model");
         learnEnglishAcronym("DDL LCR", "DDL Logical Change Record");
         learnEnglishAcronym("DHCP", "Dynamic Host Configuration Protocol");
         learnEnglishAcronym("DICOM", "Digital Imaging and Communications in Medicine");
-        learnEnglishAcronym("DIT", "directory information tree");
-        learnEnglishAcronym("DLL", "dynamic-link library");
-        learnEnglishAcronym("DN", "distinguished name");
+        learnEnglishAcronym("DIT", "Directory Information Tree");
+        learnEnglishAcronym("DLL", "Dynamic-Link Library");
+        learnEnglishAcronym("DN", "Distinguished Name");
         learnEnglishAcronym("DNS", "Domain Name System");
         learnEnglishAcronym("DOM", "Document Object Model");
         learnEnglishAcronym("DTD", "Document Type Definition");
         learnEnglishAcronym("DTP", "Distributed Transaction Processing");
-        learnEnglishAcronym("Dnnn", "dispatcher process");
-        learnEnglishAcronym("DoS", "denial-of-service");
+        learnEnglishAcronym("Dnnn", "Dispatcher Process");
+        learnEnglishAcronym("DoS", "Denial-Of-Service");
         learnEnglishAcronym("EJB", "Enterprise JavaBean");
         learnEnglishAcronym("EMCA", "Enterprise Manager Configuration Assistant");
         learnEnglishAcronym("ETL", "Extraction, Transformation, and Loading");
@@ -1390,19 +1408,19 @@ class Net(bool useArray = true,
         learnEnglishAcronym("GCS", "Global Cache Service");
         learnEnglishAcronym("GDS", "Global Directory Service");
         learnEnglishAcronym("GES", "Global Enqueue Service");
-        learnEnglishAcronym("GIS", "geographic information system");
+        learnEnglishAcronym("GIS", "Geographic Information System");
         learnEnglishAcronym("GNS", "Grid Naming Service");
-        learnEnglishAcronym("GNSD", "Oracle Grid Naming Service Daemon");
+        learnEnglishAcronym("GNSD", "Grid Naming Service Daemon");
         learnEnglishAcronym("GPFS", "General Parallel File System");
         learnEnglishAcronym("GSD", "Global Services Daemon");
         learnEnglishAcronym("GV$", "global dynamic performance views");
         learnEnglishAcronym("HACMP", "High Availability Cluster Multi-Processing");
-        learnEnglishAcronym("HBA", "host bus adapter");
+        learnEnglishAcronym("HBA", "Host Bus Adapter");
         learnEnglishAcronym("IDE", "Integrated Development Environment");
         learnEnglishAcronym("IPC", "Interprocess Communication");
         learnEnglishAcronym("IPv4", "IP Version 4");
         learnEnglishAcronym("IPv6", "IP Version 6");
-        learnEnglishAcronym("ITL", "interested transaction list");
+        learnEnglishAcronym("ITL", "Interested Transaction List");
         learnEnglishAcronym("J2EE", "Java 2 Platform, Enterprise Edition");
         learnEnglishAcronym("JAXB", "Java Architecture for XML Binding");
         learnEnglishAcronym("JAXP", "Java API for XML Processing");
@@ -1415,20 +1433,20 @@ class Net(bool useArray = true,
         learnEnglishAcronym("JVM","Java Virtual Machine");
         learnEnglishAcronym("KDC","Key Distribution Center");
         learnEnglishAcronym("KWIC", "Key Word in Context");
-        learnEnglishAcronym("LCR", "logical change record");
+        learnEnglishAcronym("LCR", "Logical Change Record");
         learnEnglishAcronym("LDAP", "Lightweight Directory Access Protocol");
         learnEnglishAcronym("LDIF", "Lightweight Directory Interchange Format");
-        learnEnglishAcronym("LGWR", "log writer");
+        learnEnglishAcronym("LGWR", "LoG WRiter");
         learnEnglishAcronym("LMD", "Global Enqueue Service Daemon");
         learnEnglishAcronym("LMON", "Global Enqueue Service Monitor");
         learnEnglishAcronym("LMSn", "Global Cache Service Processes");
-        learnEnglishAcronym("LOB", "large object");
+        learnEnglishAcronym("LOB", "Large OBject");
         learnEnglishAcronym("LOBs", "Large Objects");
         learnEnglishAcronym("LRS Segment", "Geometric Segment");
         learnEnglishAcronym("LUN", "Logical Unit Number");
-        learnEnglishAcronym("LUNs", "logical unit numbers");
-        learnEnglishAcronym("LVM", "logical volume manager");
-        learnEnglishAcronym("MAPI", "messaging application programming interface");
+        learnEnglishAcronym("LUNs", "Logical Unit Numbers");
+        learnEnglishAcronym("LVM", "Logical Volume Manager");
+        learnEnglishAcronym("MAPI", "Messaging Application Programming Interface");
         learnEnglishAcronym("MBR", "Master Boot Record");
         learnEnglishAcronym("MS DTC", "Microsoft Distributed Transaction Coordinator");
         learnEnglishAcronym("MTTR", "Mean Time To Recover");
@@ -1462,8 +1480,8 @@ class Net(bool useArray = true,
         learnEnglishAcronym("OSI", "Open Systems Interconnection");
         learnEnglishAcronym("OUI", "Oracle Universal Installer");
         learnEnglishAcronym("OraMTS", "Oracle Services for Microsoft Transaction Server");
-        learnEnglishAcronym("Oracle ASM", "Oracle Automatic Storage Management");
-        learnEnglishAcronym("Oracle RAC", "Oracle Real Application Clusters");
+        learnEnglishAcronym("ASM", "Automatic Storage Management");
+        learnEnglishAcronym("RAC", "Real Application Clusters");
         learnEnglishAcronym("PCDATA", "Parsed Character Data");
         learnEnglishAcronym("PGA", "Program Global Area");
         learnEnglishAcronym("PKI", "Public Key Infrastructure");
@@ -1484,7 +1502,7 @@ class Net(bool useArray = true,
         learnEnglishAcronym("SGA", "System Global Area");
         learnEnglishAcronym("SGML", "Structured Generalized Markup Language");
         learnEnglishAcronym("SHA", "Secure Hash Algorithm");
-        learnEnglishAcronym("SID", "Oracle system identifier");
+        learnEnglishAcronym("SID", "System IDentifier");
         learnEnglishAcronym("SKOS", "Simple Knowledge Organization System");
         learnEnglishAcronym("SOA", "Service-Oriented Architecture");
         learnEnglishAcronym("SOAP", "Simple Object Access Protocol");
@@ -1502,17 +1520,17 @@ class Net(bool useArray = true,
         learnEnglishAcronym("TSPITR", "Tablespace Point-In-Time Recovery");
         learnEnglishAcronym("TTC", "Two-Task Common");
         learnEnglishAcronym("UGA", "User Global Area");
-        learnEnglishAcronym("UID", "Unique Identifier");
+        learnEnglishAcronym("UID", "Unique IDentifier");
         learnEnglishAcronym("UIX", "User Interface XML");
         learnEnglishAcronym("UNC", "Universal Naming Convention");
         learnEnglishAcronym("UTC", "Coordinated Universal Time");
-        learnEnglishAcronym("VPD", "Oracle Virtual Private Database");
+        learnEnglishAcronym("VPD", "Virtual Private Database");
         learnEnglishAcronym("VSS", "Volume Shadow Copy Service");
         learnEnglishAcronym("W3C", "World Wide Web Consortium");
         learnEnglishAcronym("WG", "Working Group");
         learnEnglishAcronym("WebDAV", "World Wide Web Distributed Authoring and Versioning");
         learnEnglishAcronym("Winsock", "Windows sockets");
-        learnEnglishAcronym("XDK", "Oracle XML Developer's Kit");
+        learnEnglishAcronym("XDK", "XML Developer's Kit");
         learnEnglishAcronym("XIDs","Transaction Identifiers");
         learnEnglishAcronym("XML","eXtensible Markup Language");
         learnEnglishAcronym("XQuery","XML Query");
