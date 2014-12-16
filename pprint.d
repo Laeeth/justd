@@ -48,11 +48,11 @@ import rational;
 import core.time: Duration;
 
 /// See also: http://forum.dlang.org/thread/fihymjelvnwfevegwryt@forum.dlang.org#post-fihymjelvnwfevegwryt:40forum.dlang.org
-template Consise(Tuple)
+template Concise(Tuple)
 {
     static if(isTuple!Tuple)
     {
-        struct Consise(Tuple)
+        struct Concise(Tuple)
         {
             Tuple tup;
             alias tup this;
@@ -61,11 +61,11 @@ template Consise(Tuple)
             {
                 auto app = appender!string();
                 app.put("(");
-                app.put(to!string(consise(tuple[0])));
+                app.put(to!string(concise(tuple[0])));
                 foreach(t; tuple.expand[1 .. $])
                 {
                     app.put(", ");
-                    app.put(to!string(consise(t)));
+                    app.put(to!string(concise(t)));
                 }
                 app.put(")");
                 return app.data;
@@ -73,10 +73,10 @@ template Consise(Tuple)
         }
     }
     else
-    alias Consise = Tuple;
+    alias Concise = Tuple;
 }
 
-auto consise(T)(T t) { return Consise!T(t); }
+auto concise(T)(T t) { return Concise!T(t); }
 
 /** Returns: Duration $(D dur) in a Level-Of-Detail (LOD) string
     representation.
