@@ -533,6 +533,7 @@ static if (__VERSION__ < 2067)
 /*     import std.typecons: tuple; */
 /*     return aa.byKey.map!(key => tuple(key, aa[key])); */
 /* } */
+/* alias byItem = byPair; */
 
 /* unittest */
 /* { */
@@ -556,6 +557,7 @@ auto pairs(Key, Value)(Value[Key] aa)
     }
     return arr;
 }
+alias items = pairs; // TODO Isn't this Python-style naming ax better name
 
 unittest
 {
