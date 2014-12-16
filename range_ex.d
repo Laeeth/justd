@@ -525,13 +525,22 @@ static if (__VERSION__ < 2067)
 }
 
 /** Iterate Associative Array $(D aa) by Key-Value Pair.
+    See also: https://github.com/D-Programming-Language/druntime/pull/574
     See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
 */
 auto byPair(K,V)(V[K] aa)
 {
-    import std.algorithm: map;
-    import std.typecons: tuple;
-    return aa.byKey.map!(key => tuple(key, aa[key]));
+    static if (true)
+    {
+        import std.range: zip;
+        return zip(aa.byKey, aa.byValue);
+    }
+    else
+    {
+        import std.algorithm: map;
+        import std.typecons: tuple;
+        return aa.byKey.map!(key => tuple(key, aa[key]));
+    }
 }
 alias byItem = byPair; // TODO Is this Python-style naming better?
 
@@ -545,6 +554,7 @@ unittest
 }
 
 /** Return Array of Key-Value Pairs of Associative Array $(D aa).
+    See also: https://github.com/D-Programming-Language/druntime/pull/574
     See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
 */
 auto pairs(Key, Value)(Value[Key] aa)
