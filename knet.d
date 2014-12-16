@@ -1,42 +1,42 @@
 #!/usr/bin/env rdmd-dev-module
 
-   /** Knowledge Graph Database.
+/** Knowledge Graph Database.
 
-       Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
-       Wikidata, WikiTaxonomy into a Knowledge Graph.
+    Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
+    Wikidata, WikiTaxonomy into a Knowledge Graph.
 
-       See also: www.oneacross.com/crosswords for inspiring applications
+    See also: www.oneacross.com/crosswords for inspiring applications
 
-       Data: http://conceptnet5.media.mit.edu/downloads/current/
-       Data: http://wiki.dbpedia.org/DBpediaAsTables
-       Data: http://icon.shef.ac.uk/Moby/
-       Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
-       Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
-       Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
+    Data: http://conceptnet5.media.mit.edu/downloads/current/
+    Data: http://wiki.dbpedia.org/DBpediaAsTables
+    Data: http://icon.shef.ac.uk/Moby/
+    Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
+    Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
+    Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
 
-       See also: http://programmers.stackexchange.com/q/261163/38719
-       See also: https://en.wikipedia.org/wiki/Hypergraph
-       See also: https://github.com/commonsense/conceptnet5/wiki
-       See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
-       See also: http://www.eturner.net/omcsnetcpp/
+    See also: http://programmers.stackexchange.com/q/261163/38719
+    See also: https://en.wikipedia.org/wiki/Hypergraph
+    See also: https://github.com/commonsense/conceptnet5/wiki
+    See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
+    See also: http://www.eturner.net/omcsnetcpp/
 
-       BUG part_07.csv: lie <=Antonym=> stand_up. Not shown in prompt
+    TODO Application: Translate text to use age-relevant words. Use pre-train child book word histogram for specific ages.
 
-       TODO Convert '_' to ' ' before storing Lemma
+    TODO Convert '_' to ' ' before storing Lemma
 
-       TODO Make use of stealFront and stealBack
+    TODO Make use of stealFront and stealBack
 
-       TODO ansiktstvätt => facial_wash
-       TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
-       TODO promote equal splits through weigthing sum_over_i(x[i].length^)2
+    TODO ansiktstvätt => facial_wash
+    TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
+    TODO promote equal splits through weigthing sum_over_i(x[i].length^)2
 
-       TODO Template on NodeData and rename Concept to Node. Instantiate with
-       NodeData begin Concept and break out Concept outside.
+    TODO Template on NodeData and rename Concept to Node. Instantiate with
+    NodeData begin Concept and break out Concept outside.
 
-       TODO Profile read
-       TODO Use containers.HashMap
-       TODO Call GC.disable/enable around construction and search.
-   */
+    TODO Profile read
+    TODO Use containers.HashMap
+    TODO Call GC.disable/enable around construction and search.
+*/
 
 /* TODO
    spouse(X, Y)             :-  married(X, Y).
@@ -3755,6 +3755,7 @@ class Net(bool useArray = true,
                                 lang,
                                 sense);
         showNodeRefs(nodes, Rel.translationOf); // TODO traverse synonyms and translations
+
         // en => sv:
         // en-en => sv-sv
         /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
