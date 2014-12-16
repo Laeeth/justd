@@ -187,6 +187,7 @@ enum Rel:ubyte
 
     abbreviationFor,
     acronymFor,
+    emoticonFor,
 
     physicallyConnectedWith,
     arisesFrom,
@@ -1180,8 +1181,9 @@ bool specializes(Rel special,
                                                 hasLanguage,
                                                 hasCurrency);
             case derivedFrom: return special.of(acronymFor,
-                                                abbreviationFor);
-            case abbreviationFor: return special.of(acronymFor);
+                                                abbreviationFor,
+                                                emoticonFor);
+            case abbreviationFor: return special.of(acronymFor, emoticonFor);
             case atLocation: return special.of(bornInLocation,
                                                hasCitizenship,
                                                hasResidenceIn,
