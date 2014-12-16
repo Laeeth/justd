@@ -188,7 +188,10 @@ alias XGram = NGram!(ubyte, NGramOrder, ngram.Kind.saturated, ngram.Storage.spar
 
 /* Need for signal handling */
 import core.stdc.stdlib;
-version(linux) import std.c.linux.linux;
+version(linux) import core.sys.posix.sys.stat;
+version(linux) import core.sys.posix.signal;
+//version(linux) import std.c.linux.linux;
+
 /* TODO Set global state.
    http://forum.dlang.org/thread/cu9fgg$28mr$1@digitaldaemon.com
 */
