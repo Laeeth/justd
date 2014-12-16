@@ -3736,9 +3736,6 @@ class Net(bool useArray = true,
     /** Show Languages Sorted By Falling Weight. */
     void showTopLanguages(NWeight[Lang] hist)
     {
-        // TODO functionize to byPair(V[K] aa) and pairs(V[K] aa) (when .array is appended)
-        // TODO http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=1
-        // TODO also see https://issues.dlang.org/show_bug.cgi?id=5466
         foreach (e; hist.pairs.sort!((a, b) => (a[1] > b[1])))
         {
             writeln("  - ", e[0].toHuman, ": ", e[1], " #hits");
