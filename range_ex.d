@@ -527,21 +527,22 @@ static if (__VERSION__ < 2067)
 /* Iterate Associative Array $(D aa) by Key.
   See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
 */
-/* auto byPair(K,V)(V[K] aa) */
-/* { */
-/*     import std.algorithm: map; */
-/*     import std.typecons: tuple; */
-/*     return aa.byKey.map!(key => tuple(key, aa[key])); */
-/* } */
-/* alias byItem = byPair; */
+auto byPair(K,V)(V[K] aa)
+{
+    import std.algorithm: map;
+    import std.typecons: tuple;
+    return aa.byKey.map!(key => tuple(key, aa[key]));
+}
+alias byItem = byPair;
 
-/* unittest */
-/* { */
-/*     string[int] x; */
-/*     x[0] = "a"; */
-/*     import std.algorithm: equal; */
-/*     assert(equal(x.Pair), [tuple(0, "a")]); */
-/* } */
+unittest
+{
+    string[int] x;
+    x[0] = "a";
+    import std.algorithm: equal;
+    import std.typecons: tuple;
+    assert(equal(x.byPair, [tuple(0, "a")]));
+}
 
 /* Return Array of Key-Value Pairs of Associative Array $(D aa).
    See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
