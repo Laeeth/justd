@@ -179,13 +179,6 @@ enum NGramOrder = 3;
 alias Bist  = NGram!(ubyte, 1, ngram.Kind.binary, ngram.Storage.denseStatic, ngram.Symmetry.ordered, void, immutable(ubyte)[]);
 alias XGram = NGram!(ubyte, NGramOrder, ngram.Kind.saturated, ngram.Storage.sparse, ngram.Symmetry.ordered, RequestedBinType, immutable(ubyte)[]);
 
-// Pegged
-/* import pegged.peg; */
-/* import pegged.grammar; */
-/* import pegged.examples.c; */
-/* mixin(grammar(Cgrammar)); */
-/* import pegged.dynamic.peg; */
-
 /* Need for signal handling */
 import core.stdc.stdlib;
 version(linux) import core.sys.posix.sys.stat;
