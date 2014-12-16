@@ -101,7 +101,7 @@ import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
 
 import algorithm_ex: isPalindrome, either;
-import range_ex: stealFront, stealBack, ElementType;
+import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
 import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
@@ -813,7 +813,8 @@ class Net(bool useArray = true,
     import std.algorithm, std.range, std.path, std.array;
     import wordnet: WordNet;
 
-    alias NWeight = real; // normalized weight
+    /// Normalized (Link) Weight.
+    alias NWeight = real;
 
     /** Ix Precision.
         Set this to $(D uint) if we get low on memory.
@@ -3660,8 +3661,8 @@ class Net(bool useArray = true,
             const arg = split[0];
             if (!arg.empty)
             {
-                auto hist = languagesOfWord(arg);
-                showLanguages(hist);
+                auto hist = languagesOf(arg.splitter(" "));
+                showTopLanguages(hist);
             }
         }
 
@@ -3717,30 +3718,30 @@ class Net(bool useArray = true,
         return nodes;
     }
 
-    /** Get Languages of $(D word).
-    */
-    NWeight[Lang] languagesOfWord(S)(S expr,
-                                     Sense sense = Sense.unknown) if (isSomeString!S)
+    /** Get Possible Languages of $(D text) sorted by falling strength. */
+    NWeight[Lang] languagesOf(R)(R text) if (isIterable!R &&
+                                             isSomeString!(ElementType!R))
     {
         typeof(return) hist;
-        foreach (lemma; lemmasOf(expr))
+        foreach (word; text)
         {
-            ++hist[lemma.lang];
+            foreach (lemma; lemmasOf(word))
+            {
+                ++hist[lemma.lang];
+            }
         }
         return hist;
     }
 
-    void showLanguages(NWeight[Lang] hist)
+    /** Show Languages Sorted By Falling Weight. */
+    void showTopLanguages(NWeight[Lang] hist)
     {
-        Tuple!(Lang, NWeight)[] x;
-        foreach (key; hist.byKey)
+        // TODO functionize to byPair(V[K] aa) and pairs(V[K] aa) (when .array is appended)
+        // TODO http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=1
+        // TODO also see https://issues.dlang.org/show_bug.cgi?id=5466
+        foreach (e; hist.pairs.sort!((a, b) => (a[1] > b[1])))
         {
-            x ~= tuple(key, hist[key]);
-        }
-        x.sort!((a, b) => (a[1] > b[1]));
-        foreach (lang; x.map!(a => a[0].toHuman))
-        {
-            writeln(lang, ", ");
+            writeln("  - ", e[0].toHuman, ": ", e[1], " #hits");
         }
     }
 

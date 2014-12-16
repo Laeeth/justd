@@ -143,7 +143,7 @@ class WordNet(bool useArray = true,
             }
             lemmaOld = lemma.idup;
         }
-        writeln(`Added `, lnr, ` new `, lang.toName, ` (`, exceptionCount, ` uncaseable) words from `, fileName);
+        writeln(`Added `, lnr, ` new `, lang.toHuman, ` (`, exceptionCount, ` uncaseable) words from `, fileName);
     }
 
     void readWordNet(const string dirName = `~/Knowledge/wordnet/WordNet-3.0/dict`)

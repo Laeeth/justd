@@ -172,6 +172,7 @@ enum Rel:ubyte
 
     synonymFor, /* A and B have very similar meanings. This is the synonym relation
                 in WordNet as well. */
+    synonym = synonymFor,
 
     antonymFor, oppositeOf = antonymFor, /* A and B are opposites in some relevant way, such as being
                 opposite ends of a scale, or fundamentally similar things with a
@@ -179,6 +180,7 @@ enum Rel:ubyte
                 must be quite similar before people consider them antonyms. This
                 is the antonym relation in WordNet as well. /r/Antonym
                 /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
+    antonym = antonymFor,
     reversionOf,
 
     retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym

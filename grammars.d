@@ -189,7 +189,7 @@ bool isFormal(Lang lang) @safe pure @nogc nothrow
 alias forMachines = isFormal;
 
 /** TODO Remove when __traits(documentation is merged */
-string toName(Lang lang) @safe pure @nogc nothrow
+string toHuman(Lang lang) @safe pure @nogc nothrow
 {
     with (Lang)
     {
@@ -423,17 +423,17 @@ unittest
 {
     with (Lang)
     {
-        assert(unknown.toName == `??`);
-        assert(c.toName == `C`);
-        assert(cxx.toName == `C++`);
-        assert(d.toName == `D`);
-        assert(java.toName == `Java`);
+        assert(unknown.toHuman == `??`);
+        assert(c.toHuman == `C`);
+        assert(cxx.toHuman == `C++`);
+        assert(d.toHuman == `D`);
+        assert(java.toHuman == `Java`);
     }
 }
 
 string toHTML(Lang lang) @safe @nogc pure nothrow
 {
-    return lang.toName;
+    return lang.toHuman;
 }
 
 string toMathML(Lang lang) @safe @nogc pure nothrow
