@@ -524,8 +524,8 @@ static if (__VERSION__ < 2067)
 
 }
 
-/* Iterate Associative Array $(D aa) by Key.
-  See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
+/** Iterate Associative Array $(D aa) by Key-Value Pair.
+    See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
 */
 auto byPair(K,V)(V[K] aa)
 {
@@ -533,7 +533,7 @@ auto byPair(K,V)(V[K] aa)
     import std.typecons: tuple;
     return aa.byKey.map!(key => tuple(key, aa[key]));
 }
-alias byItem = byPair;
+alias byItem = byPair; // TODO Is this Python-style naming better?
 
 unittest
 {
@@ -544,8 +544,8 @@ unittest
     assert(equal(x.byPair, [tuple(0, "a")]));
 }
 
-/* Return Array of Key-Value Pairs of Associative Array $(D aa).
-   See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
+/** Return Array of Key-Value Pairs of Associative Array $(D aa).
+    See also: http://forum.dlang.org/thread/dxotcrutrlmszlidufcr@forum.dlang.org?page=2#post-fhkgitmifgnompkqiscd:40forum.dlang.org
 */
 auto pairs(Key, Value)(Value[Key] aa)
 {
@@ -558,7 +558,7 @@ auto pairs(Key, Value)(Value[Key] aa)
     }
     return arr;
 }
-alias items = pairs; // TODO Isn't this Python-style naming ax better name
+alias items = pairs; // TODO Is this Python-style naming better?
 
 unittest
 {
