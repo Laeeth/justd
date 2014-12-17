@@ -16,7 +16,7 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
-    TODO Google for Henry Liebermann's Open CommonSense Knowledge base
+    TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
 
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: https://en.wikipedia.org/wiki/Hypergraph
@@ -42,6 +42,8 @@
     TODO Profile read
     TODO Use containers.HashMap
     TODO Call GC.disable/enable around construction and search.
+
+    TODO should we store acronyms and emoticons in lowercase or not?
 */
 
 /* TODO
@@ -1286,7 +1288,7 @@ class Net(bool useArray = true,
         const origin = Origin.manual;
         auto all = [tryStore(forward, lang, Sense.verbInfinitive, category, origin),
                     tryStore(backward, lang, Sense.verbPastParticiple, category, origin)];
-        return connectMtoM(Rel.reversionOf, all.filter!(a => a.defined), lang, origin);
+        return connectAll(Rel.reversionOf, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn English Irregular Verb.
@@ -1302,7 +1304,7 @@ class Net(bool useArray = true,
         all ~= tryStore(infinitive, lang, Sense.verbInfinitive, category, origin);
         all ~= tryStore(past, lang, Sense.verbPast, category, origin);
         all ~= tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin);
-        return connectMtoM(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
+        return connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn English Acronym.
@@ -1315,7 +1317,6 @@ class Net(bool useArray = true,
     {
         enum lang = Lang.en;
         const category = CategoryIx.asUndefined;
-        // TODO should we store acronym in lowercase or not?
         return connect(store(acronym.toLower, lang, Sense.nounAcronym, category, origin),
                        Rel.acronymFor,
                        store(expr.toLower, lang, sense, category, origin),
@@ -1324,18 +1325,18 @@ class Net(bool useArray = true,
 
     /** Learn English Emoticon.
      */
-    LinkRef learnEnglishEmoticon(S)(S emoticon,
-                                    S expr,
-                                    NWeight weight = 1.0,
-                                    Sense sense = Sense.unknown,
-                                    Origin origin = Origin.manual) if (isSomeString!S)
+    LinkRef[] learnEnglishEmoticon(S)(S[] emoticons,
+                                      S[] exprs,
+                                      NWeight weight = 1.0,
+                                      Sense sense = Sense.unknown,
+                                      Origin origin = Origin.manual) if (isSomeString!S)
     {
         enum lang = Lang.en;
         const category = CategoryIx.asUndefined;
-        return connect(store(emoticon.toLower, lang, Sense.unknown, category, origin),
-                       Rel.emoticonFor,
-                       store(expr.toLower, lang, sense, category, origin),
-                       lang, origin, weight);
+        return connectMtoN(tryStore(emoticons.map!toLower, lang, Sense.unknown, category, origin),
+                           Rel.emoticonFor,
+                           tryStore(exprs.map!toLower, lang, sense, category, origin),
+                           lang, origin, weight);
     }
 
     /** Learn English Computer Acronyms.
@@ -2595,7 +2596,7 @@ class Net(bool useArray = true,
                     tryStore(present, lang, Sense.verbPresent, category, origin),
                     tryStore(past, lang, Sense.verbPast, category, origin),
                     tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
-        connectMtoM(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
+        connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn Swedish Irregular Verbs.
@@ -2751,15 +2752,36 @@ class Net(bool useArray = true,
         return nodeRefs;
     }
 
-    /** Fully Connect Every-to-Every in $(D all).
+    /** Directed Connect Many Sources $(D srcs) to Many Destinations $(D dsts).
+     */
+    LinkRef[] connectMtoN(S, D)(S srcs,
+                                Rel rel,
+                                D dsts,
+                                Lang lang,
+                                Origin origin,
+                                NWeight weight = 1.0) if (isIterableOf!(S, NodeRef) &&
+                                                          isIterableOf!(D, NodeRef))
+    {
+        typeof(return) linkIxes;
+        foreach (src; srcs)
+        {
+            foreach (dst; dsts)
+            {
+                linkIxes ~= connect(src, rel, dst, lang, origin, weight);
+            }
+        }
+        return linkIxes;
+    }
+
+     /** Fully Connect Every-to-Every in $(D all).
         See also: http://forum.dlang.org/thread/iqkybajwdzcvdytakgvw@forum.dlang.org#post-iqkybajwdzcvdytakgvw:40forum.dlang.org
         See also: https://issues.dlang.org/show_bug.cgi?id=6788
-     */
-    LinkRef[] connectMtoM(R)(Rel rel,
-                             R all,
-                             Lang lang,
-                             Origin origin,
-                             NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
+    */
+    LinkRef[] connectAll(R)(Rel rel,
+                            R all,
+                            Lang lang,
+                            Origin origin,
+                            NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
         in { assert(rel.isSymmetric); }
     body
     {
@@ -2782,7 +2804,8 @@ class Net(bool useArray = true,
         }
         return linkIxes;
     }
-    alias connectFully = connectMtoM;
+    alias connectFully = connectAll;
+    alias connectStar = connectAll;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
     LinkRef[] connect1toM(R)(NodeRef first,
