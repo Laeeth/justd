@@ -1331,12 +1331,11 @@ class Net(bool useArray = true,
                                       Sense sense = Sense.unknown,
                                       Origin origin = Origin.manual) if (isSomeString!S)
     {
-        enum lang = Lang.en;
         const category = CategoryIx.asUndefined;
-        return connectMtoN(tryStore(emoticons.map!toLower, lang, Sense.unknown, category, origin),
+        return connectMtoN(tryStore(emoticons.map!toLower, Lang.any, Sense.unknown, category, origin),
                            Rel.emoticonFor,
-                           tryStore(exprs.map!toLower, lang, sense, category, origin),
-                           lang, origin, weight);
+                           tryStore(exprs.map!toLower, Lang.en, sense, category, origin),
+                           Lang.en, origin, weight);
     }
 
     /** Learn English Computer Acronyms.
