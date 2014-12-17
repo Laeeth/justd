@@ -22,6 +22,7 @@ import predicates: of;
 enum Lang:ubyte
 {
     unknown,                    /// Unknown
+    any = unknown,
     en,                       /// English
     en_US,                       /// American. English
     en_GB,                       /// British English

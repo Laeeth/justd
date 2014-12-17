@@ -761,6 +761,9 @@ enum Origin:ubyte
     wordnet,
     wordnet30,
 
+    umbel,                      ///< http://www.umbel.org/
+    jmdict,                     ///< http://www.edrdg.org/jmdict/j_jmdict.html
+
     verbosity,
     wiktionary,
     nell,
@@ -785,6 +788,10 @@ string toNice(Origin origin) @safe pure
             case dbpediaEn: return "DBpediaEnglish";
             case wordnet: return "WordNet";
             case wordnet30: return "WordNet30";
+
+            case umbel: return "umbel";
+            case jmdict: return "JMDict";
+
             case verbosity: return "Verbosity";
             case wiktionary: return "Wiktionary";
             case nell: return "NELL";
@@ -941,15 +948,40 @@ class Net(bool useArray = true,
     }
 
     /** Get Links Refs of $(D node) with direction $(D dir). */
-    auto linksOf(in Node node,
-                 RelDir dir = RelDir.any,
-                 Rel rel = Rel.any,
-                 bool negation = false)
+    auto linkRefsOf(in Node node,
+                    RelDir dir = RelDir.any,
+                    Rel rel = Rel.any,
+                    bool negation = false)
     {
         return node.links[].filter!(linkRef => (dir.of(RelDir.any, linkRef.dir) &&  // TODO functionize to match(RelDir, RelDir)
                                                 (linkAt(linkRef).rel == rel ||
                                                  linkAt(linkRef).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
                                                 linkAt(linkRef).negation == negation));
+    }
+
+    /** Network Traverser. */
+    class Traverser
+    {
+        this(NodeRef first_)
+        {
+            first = first_;
+            current = first;
+        }
+
+        auto front()
+        {
+            return linkRefsOf(nodeAt(current));
+        }
+
+        NodeRef first;
+        NodeRef current;
+        NWeight[NodeRef] dists;
+    }
+
+    Traverser traverse(in Node node)
+    {
+        typeof(return) trav;
+        return trav;
     }
 
     /** Many-Nodes-to-Many-Nodes Link (Edge).
@@ -1211,7 +1243,7 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
-        const quick = true;
+        const quick = false;
         const maxCount = quick ? 1000 : size_t.max;
 
         // WordNet
@@ -1223,7 +1255,7 @@ class Net(bool useArray = true,
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
                                                             .buildNormalizedPath,
-                     1000);
+                     10000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -3211,8 +3243,12 @@ class Net(bool useArray = true,
                 case `/s/dbpedia/3.7`: return dbpedia37;
                 case `/s/dbpedia/3.9/umbel`: return dbpedia39umbel;
                 case `/d/dbpedia/en`: lang = Lang.en; return dbpediaEn;
+
                 case `/d/wordnet/3.0`: return wordnet30;
                 case `/s/wordnet/3.0`: return wordnet30;
+                case `/d/umbel`: return umbel;
+                case `/d/jmdict`: return jmdict;
+
                 case `/s/site/verbosity`: return verbosity;
                 default: /* dln("Handle ", path); */ return unknown;
             }
@@ -3339,7 +3375,7 @@ class Net(bool useArray = true,
                     }
                     if (origin.of(Origin.any)) // if still nothing special
                     {
-                        dln("Could not decode relation ", part);
+                        dln("Could not decode origin ", part);
                     }
                     break;
                 default:
@@ -3606,7 +3642,9 @@ class Net(bool useArray = true,
             }
             writeln();
 
-            LinkRefs linkRefs = linksOf(lineNode, RelDir.any, rel, negation);
+            // TODO Why is cast needed here?
+            auto linkRefs = cast(LinkRefs)linkRefsOf(lineNode, RelDir.any, rel, negation);
+
             linkRefs[].sort!((a, b) => (linkAt(a).normalizedWeight >
                                         linkAt(b).normalizedWeight));
             foreach (linkRef; linkRefs)
@@ -3803,7 +3841,7 @@ class Net(bool useArray = true,
 
         // en => sv:
         // en-en => sv-sv
-        /* auto translations = nodes.map!(node => linksOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
+        /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         return nodes;
     }
 
