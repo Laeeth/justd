@@ -941,10 +941,10 @@ class Net(bool useArray = true,
     }
 
     /** Get Links Refs of $(D node) with direction $(D dir). */
-    auto linkRefsOf(in Node node,
-                    RelDir dir = RelDir.any,
-                    Rel rel = Rel.any,
-                    bool negation = false)
+    auto linksOf(in Node node,
+                 RelDir dir = RelDir.any,
+                 Rel rel = Rel.any,
+                 bool negation = false)
     {
         return node.links[].filter!(linkRef => (dir.of(RelDir.any, linkRef.dir) &&  // TODO functionize to match(RelDir, RelDir)
                                                 (linkAt(linkRef).rel == rel ||
@@ -3606,10 +3606,7 @@ class Net(bool useArray = true,
             }
             writeln();
 
-            LinkRefs linkRefs = linkRefsOf(lineNode,
-                                           RelDir.any,
-                                           rel,
-                                           negation); // TODO why is this needed for Array?
+            LinkRefs linkRefs = linksOf(lineNode, RelDir.any, rel, negation);
             linkRefs[].sort!((a, b) => (linkAt(a).normalizedWeight >
                                         linkAt(b).normalizedWeight));
             foreach (linkRef; linkRefs)
@@ -3806,7 +3803,7 @@ class Net(bool useArray = true,
 
         // en => sv:
         // en-en => sv-sv
-        /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
+        /* auto translations = nodes.map!(node => linksOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         return nodes;
     }
 
