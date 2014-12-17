@@ -16,6 +16,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Integrate Hits from Google: "list of word emotions"
+
     TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
 
     See also: http://programmers.stackexchange.com/q/261163/38719
@@ -44,6 +46,14 @@
     TODO Call GC.disable/enable around construction and search.
 
     TODO should we store acronyms and emoticons in lowercase or not?
+
+    BUG No manual learning has been done for cry <oppositeOf> laugh
+    > Line cry
+    - in English
+    - is the opposite of:  laugh(en:1.00@Manual),
+    - is the opposite of:  laugh(en-verb:1.00@CN5),
+    - is the opposite of:  laugh(en:1.00@Manual),
+
 */
 
 /* TODO
@@ -750,25 +760,26 @@ enum Thematic:ubyte
 /** Knowledge Origin. */
 enum Origin:ubyte
 {
-    unknown, any = unknown,
-    cn5,
+    unknown,
+    any = unknown,
 
-    dbpedia,
-    dbpedia37,
-    dbpedia39umbel,
-    dbpediaEn,
+    cn5,                        ///< ConceptNet5
 
-    wordnet,
-    wordnet30,
+    dbpedia,                    ///< DBPedia
+    // dbpedia37,
+    // dbpedia39Umbel,
+    // dbpediaEn,
+
+    wordnet,                    ///< WordNet
 
     umbel,                      ///< http://www.umbel.org/
     jmdict,                     ///< http://www.edrdg.org/jmdict/j_jmdict.html
 
-    verbosity,
-    wiktionary,
-    nell,
-    yago,
-    globalmind,
+    verbosity,                  ///< Verbosity
+    wiktionary,                 ///< Wiktionary
+    nell,                       ///< NELL
+    yago,                       ///< Yago
+    globalmind,                 ///< GlobalMind
 
     manual,
 }
@@ -783,11 +794,11 @@ string toNice(Origin origin) @safe pure
             case unknown: return "Unknown";
             case cn5: return "CN5";
             case dbpedia: return "DBpedia";
-            case dbpedia37: return "DBpedia37";
-            case dbpedia39umbel: return "DBpedia39Umbel";
-            case dbpediaEn: return "DBpediaEnglish";
+            // case dbpedia37: return "DBpedia37";
+            // case dbpedia39Umbel: return "DBpedia39Umbel";
+            // case dbpediaEn: return "DBpediaEnglish";
+
             case wordnet: return "WordNet";
-            case wordnet30: return "WordNet30";
 
             case umbel: return "umbel";
             case jmdict: return "JMDict";
@@ -1243,8 +1254,8 @@ class Net(bool useArray = true,
     /** Construct Network */
     this(string dirPath)
     {
-        const quick = false;
-        const maxCount = quick ? 1000 : size_t.max;
+        const quick = true;
+        const maxCount = quick ? 10000 : size_t.max;
 
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
@@ -3240,12 +3251,14 @@ class Net(bool useArray = true,
         with (Origin)
             switch (path)
             {
-                case `/s/dbpedia/3.7`: return dbpedia37;
-                case `/s/dbpedia/3.9/umbel`: return dbpedia39umbel;
-                case `/d/dbpedia/en`: lang = Lang.en; return dbpediaEn;
+                case `/s/dbpedia/3.7`:
+                case `/s/dbpedia/3.9/umbel`:
+                case `/d/dbpedia/en`:
+                    lang = Lang.en;
+                    return dbpedia;
 
-                case `/d/wordnet/3.0`: return wordnet30;
-                case `/s/wordnet/3.0`: return wordnet30;
+                case `/d/wordnet/3.0`: return wordnet;
+                case `/s/wordnet/3.0`: return wordnet;
                 case `/d/umbel`: return umbel;
                 case `/d/jmdict`: return jmdict;
 
