@@ -1080,6 +1080,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case emoticonFor:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "en emotikon för"]; break;
+                            case en:
+                            default: words = ["is", not, "an emoticon for"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "emotikon"]; break;
+                            case en:
+                            default: words = ["does", not, "have emoticon"]; break;
+                        }
+                    }
+                    break;
                 case mutualProxyFor:
                     switch (lang)
                     {
