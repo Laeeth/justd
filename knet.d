@@ -14,6 +14,10 @@
     Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
     Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
 
+    People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
+
+    TODO Google for Henry Liebermann's Open CommonSense Knowledge base
+
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: https://github.com/commonsense/conceptnet5/wiki
@@ -1239,7 +1243,7 @@ class Net(bool useArray = true,
      */
     void learnTrustfulThings()
     {
-        learnEnglishComputerAcronyms();
+        learnEnglishComputerKnowledge();
 
         learnEnglishIrregularVerbs();
         learnUncountableNouns(Lang.en,
@@ -1336,7 +1340,7 @@ class Net(bool useArray = true,
 
     /** Learn English Computer Acronyms.
      */
-    void learnEnglishComputerAcronyms()
+    void learnEnglishComputerKnowledge()
     {
         // TODO Context: Computer
         learnEnglishAcronym("IETF", "Internet Engineering Task Force");
@@ -2406,6 +2410,10 @@ class Net(bool useArray = true,
 	learnEnglishAcronym("*S*", "smile");
 	learnEnglishAcronym("*T*", "tickle");
 	learnEnglishAcronym("*W*", "wink");
+
+        // https://en.wikipedia.org/wiki/List_of_emoticons
+        learnEnglishEmoticon([":-)", ":)", ":)", ":o)", ":]", ":3", ":c)", ":>"],
+                             ["Smiley", "Happy"]);
     }
 
     /** Learn English Irregular Verbs.
