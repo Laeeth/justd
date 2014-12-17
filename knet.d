@@ -5,7 +5,17 @@
     Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
     Wikidata, WikiTaxonomy into a Knowledge Graph.
 
+    Applications:
+    - Emotion Detection
+    - Translate text to use age-relevant words. Use pre-train child book word
+      histogram for specific ages.
+
     See also: www.oneacross.com/crosswords for inspiring applications
+    See also: http://programmers.stackexchange.com/q/261163/38719
+    See also: https://en.wikipedia.org/wiki/Hypergraph
+    See also: https://github.com/commonsense/conceptnet5/wiki
+    See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
+    See also: http://www.eturner.net/omcsnetcpp/
 
     Data: http://conceptnet5.media.mit.edu/downloads/current/
     Data: http://wiki.dbpedia.org/DBpediaAsTables
@@ -16,19 +26,11 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
-    TODO Integrate Hits from Google: "list of word emotions"
+    TODO Integrate Hits from Google: "list of word emotions" using new relations hasEmotionLove
 
     TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
 
-    See also: http://programmers.stackexchange.com/q/261163/38719
-    See also: https://en.wikipedia.org/wiki/Hypergraph
-    See also: https://github.com/commonsense/conceptnet5/wiki
-    See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
-    See also: http://www.eturner.net/omcsnetcpp/
-
     TODO See checkExisting in connect() to true only for Origin.manual
-
-    TODO Application: Translate text to use age-relevant words. Use pre-train child book word histogram for specific ages.
 
     TODO Convert '_' to ' ' before storing Lemma
 
