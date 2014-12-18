@@ -1339,7 +1339,10 @@ class Net(bool useArray = true,
 
     void learnEmotions()
     {
-        learnEnglishEmotionWords(englishFeelingWords.splitter('\n'));
+        import std.file: readText;
+        learnEnglishWords(readText("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`);
+        learnEnglishWords(readText("../knowledge/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`);
+        learnEnglishWords(readText("../knowledge/negatives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`);
     }
 
     void learnEnglishReversions()
@@ -1396,19 +1399,22 @@ class Net(bool useArray = true,
                        lang, origin, weight);
     }
 
-    /** Learn English Emotions words $(D emotionWords).
+    /** Learn English Words $(D emotionWords) having attribute attributeWord.
      */
-    LinkRef[] learnEnglishEmotionWords(R)(R emotionWords,
-                                          NWeight weight = 1.0,
-                                          Sense sense = Sense.noun,
-                                          Origin origin = Origin.manual) if (isInputRange!R &&
-                                                                             (isSomeString!(ElementType!R)))
+    LinkRef[] learnEnglishWords(R, S)(R emotionWords,
+                                      Rel rel,
+                                      S attributeWord,
+                                      NWeight weight = 1.0,
+                                      Sense sense = Sense.noun,
+                                      Origin origin = Origin.manual) if (isInputRange!R &&
+                                                                         (isSomeString!(ElementType!R)) &&
+                                                                         isSomeString!S)
     {
         enum lang = Lang.en;
         const category = CategoryIx.asUndefined;
         return connectMto1(tryStore(emotionWords.map!toLower, lang, Sense.unknown, category, origin),
-                           Rel.isA,
-                           store("emotion", lang, sense, category, origin),
+                           rel,
+                           store(attributeWord.toLower, lang, sense, category, origin),
                            Lang.en, origin, weight);
     }
 
