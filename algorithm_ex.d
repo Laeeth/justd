@@ -1633,6 +1633,6 @@ unittest
     import std.stdio;
     int[] data;
     import std.range: only, iota;
-    append(data, 1, 2, only(1, 2, 3), iota(4, 9));
+    data.append(1, 2, only(1, 2, 3), iota(4, 9));
     assert(data == [1, 2, 1, 2, 3, 4, 5, 6, 7, 8]);
 }
