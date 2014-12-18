@@ -439,25 +439,25 @@ class WordNet(bool useArray = true,
         /* weekdays */
         foreach (e; [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
                      `saturday`, `sunday`]) {
-            addWord(e, Sense.nounWeekday, 0, Lang.en);
+            addWord(e, Sense.nounTimeWeekday, 0, Lang.en);
         }
         foreach (e; [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`,
                      `samstag`, `sonntag`]) {
-            addWord(e, Sense.nounWeekday, 0, Lang.de);
+            addWord(e, Sense.nounTimeWeekday, 0, Lang.de);
         }
         foreach (e; [`måndag`, `tisdag`, `onsdag`, `torsdag`, `fredag`,
                      `lördag`, `söndag`]) {
-            addWord(e, Sense.nounWeekday, 0, Lang.sv);
+            addWord(e, Sense.nounTimeWeekday, 0, Lang.sv);
         }
 
         /* months */
         foreach (e; [`januari`, `februari`, `mars`, `april`, `maj`, `juni`,
                      `juli`, `augusti`, `september`, `oktober`, `november`, `december`]) {
-            addWord(e, Sense.nounMonth, 0, Lang.sv);
+            addWord(e, Sense.nounTimeMonth, 0, Lang.sv);
         }
         foreach (e; [`january`, `february`, `mars`, `april`, `may`, `june`,
                      `july`, `august`, `september`, `oktober`, `november`, `december`]) {
-            addWord(e, Sense.nounMonth, 0, Lang.en);
+            addWord(e, Sense.nounTimeMonth, 0, Lang.en);
         }
     }
 
@@ -855,7 +855,7 @@ unittest
         assert(wn.canMean(`car`, Sense.noun, [Lang.en]));
         assert(wn.canMean(`car`, Sense.noun, Lang.en));
         assert(!wn.canMean(`longing`, Sense.verb, [Lang.en]));
-        assert(wn.canMean(`january`, Sense.nounMonth, [Lang.en]));
+        assert(wn.canMean(`january`, Sense.nounTimeMonth, [Lang.en]));
     }
 
     if (netLangs.canFind(Lang.sv))
@@ -877,13 +877,13 @@ unittest
 
     if (netLangs.canFind(Lang.sv))
     {
-        assert(wn.canMean(`måndag`, Sense.nounWeekday, [Lang.sv]));
+        assert(wn.canMean(`måndag`, Sense.nounTimeWeekday, [Lang.sv]));
         assert(wn.canMean(`måndag`, Sense.noun, [Lang.sv]));
         assert(wn.canMean(`bil`, Sense.unknown, [Lang.sv]));
         assert(wn.canMean(`tvätt`, Sense.unknown, [Lang.sv]));
         assert(!wn.canMean(`måndag`, Sense.verb, [Lang.sv]));
         assert(!wn.canMean(`måndag`, Sense.adjective, [Lang.sv]));
-        assert(wn.canMean(`januari`, Sense.nounMonth, [Lang.sv]));
+        assert(wn.canMean(`januari`, Sense.nounTimeMonth, [Lang.sv]));
         assert(wn.canMean(`sopstation`, Sense.unknown, [Lang.sv]));
     }
 

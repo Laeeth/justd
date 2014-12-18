@@ -587,10 +587,10 @@ enum Sense:ubyte
     nounPersonName,             // John
     nounOrganisationName,       // CIA
 
-    nounWeekday,
-    nounMonth,
-    nounDayOfMonth,
-    nounYear,
+    nounTimeWeekday,
+    nounTimeMonth,
+    nounTimeDayOfMonth,
+    nounTimeYear,
 
     nounUncountable,
 
@@ -777,10 +777,10 @@ unittest
                             nounRationalNumber,
                             nounIrrationalNumber,
                             nounComplexNumber,
-                            nounWeekday,
-                            nounMonth,
-                            nounDayOfMonth,
-                            nounYear,
+                            nounTimeWeekday,
+                            nounTimeMonth,
+                            nounTimeDayOfMonth,
+                            nounTimeYear,
                             nounUncountable) ||
                     kind.isNounName);
     }

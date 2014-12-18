@@ -26,6 +26,11 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO NodeRef getEmotion(nodeRef start, Rel[] overRels) { walkNodeRefs(); }
+
+    TODO Add randomness to traverser if normalized distance similarity between
+    traversed nodes is smaller than a randomnessThreshold
+
     TODO Integrate Hits from Google: "list of word emotions" using new relations hasEmotionLove
 
     TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
