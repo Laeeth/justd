@@ -1602,17 +1602,22 @@ alias smul = mulu;
 /** Append Arguments $(args) to $(D data).
     See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
  */
-ref T[] append(T, Args...)(ref T[] data, Args args)
+ref T[] append(T, Args...)(ref T[] data, auto ref Args args)
 {
     static size_t estimateLength(Args args)
     {
         size_t result;
-        foreach(e; args)
-            static if(hasLength!(typeof(e)))
+        foreach (e; args)
+        {
+            static if (hasLength!(typeof(e)))
+            {
                 result += e.length;
+            }
             else
-            result += 1;
-
+            {
+                result += 1;
+            }
+        }
         return result;
     }
 
@@ -1621,8 +1626,10 @@ ref T[] append(T, Args...)(ref T[] data, Args args)
     auto app = appender!(T[])(data);
     app.reserve(data.length + estimateLength(args));
 
-    foreach(e; args)
+    foreach (e; args)
+    {
         app.put(e);
+    }
     data = app.data;
 
     return data;
