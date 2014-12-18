@@ -61,6 +61,8 @@
          actors and context. We can then describe contextual knowledge.
          Perhaps Merge with NELL's CategoryIx.
 
+    BUG Searching for good gives incorrect oppositeOf relations
+
     BUG No manual learning has been done for cry <oppositeOf> laugh
     > Line cry
     - in English
@@ -1146,7 +1148,7 @@ class Net(bool useArray = true,
         size_t transitiveRelCount = 0; /// Transitive Relation Count.
         size_t[Origin.max + 1] linkSourceCounts;
         size_t[Lang.max + 1] hlangCounts;
-        size_t[Sense.max + 1] kindCounts;
+        size_t[Sense.max + 1] senseCounts;
         size_t nodeStringLengthSum = 0;
         size_t connectednessSum = 0;
 
@@ -1294,8 +1296,11 @@ class Net(bool useArray = true,
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
 
-        // Learn trusthful things before untrusted machine generated data is read
+        // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnAbsoluteThings();
+
+        // Learn Less Absolute Things
+        learnAssociativeThings();
 
         // NELL
         readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
@@ -1356,10 +1361,23 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/desserts.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dessert`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/countries.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `country`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dog`, Sense.noun, Sense.noun);
-        learnEnglishWords(readText("../knowledge/dentist.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `dentist`, Sense.unknown, Sense.noun);
-        learnEnglishWords(readText("../knowledge/driving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `drive`, Sense.unknown, Sense.verb);
+        learnEnglishWords(readText("../knowledge/amphibians.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `amphibian`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/animals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `animal`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `alliteration`, Sense.unknown, Sense.noun);
 
         learnEnglishChemicalElements();
+        learnEnglishOpposites();
+
+    }
+
+    void learnAssociativeThings()
+    {
+        // TODO lower weights on these are not absolute
+        learnEnglishWords(readText("../knowledge/dentist.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `dentist`, Sense.unknown, Sense.noun);
+        learnEnglishWords(readText("../knowledge/driving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `drive`, Sense.unknown, Sense.verb);
+        learnEnglishWords(readText("../knowledge/art.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `art`, Sense.unknown, Sense.noun);
+        learnEnglishWords(readText("../knowledge/astronomy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `astronomy`, Sense.unknown, Sense.noun);
+        learnEnglishWords(readText("../knowledge/autumn.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `autumn`, Sense.unknown, Sense.noun);
     }
 
     void learnEmotions()
@@ -1380,14 +1398,10 @@ class Net(bool useArray = true,
     {
         foreach (expr; File("../knowledge/chemical_elements.txt").byLine)
         {
-            if (expr.empty)
-            {
-                continue;
-            }
+            if (expr.empty) { continue; }
             enum separator = asciiUS;
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
-            auto name = split[0];
-            auto abbr = split[2];
+            const name = split[0], abbr = split[2];
             enum lang = Lang.en;
             enum origin = Origin.manual;
             NWeight weight = 1.0;
@@ -1398,9 +1412,29 @@ class Net(bool useArray = true,
                     store("chemical element", lang, Sense.noun, category, origin),
                     lang, origin, weight);
 
-            connect(store(abbr.idup, lang, Sense.noun, category, origin),
+            connect(store(abbr.idup, lang, Sense.noun, category, origin), // TODO store capitalized?
                     Rel.abbreviationFor,
-                    store(name.toLower.idup, lang, Sense.noun, category, origin),
+                    store(name.idup, lang, Sense.noun, category, origin),
+                    lang, origin, weight);
+        }
+    }
+
+    void learnEnglishOpposites()
+    {
+        foreach (expr; File("../knowledge/opposites.txt").byLine)
+        {
+            if (expr.empty) { continue; }
+            enum separator = asciiUS;
+            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            const first = split[0], second = split[2];
+            enum lang = Lang.en;
+            enum origin = Origin.manual;
+            NWeight weight = 1.0;
+            const category = CategoryIx.asUndefined;
+
+            connect(store(first.idup, lang, Sense.unknown, category, origin),
+                    Rel.oppositeOf,
+                    store(second.idup, lang, Sense.unknown, category, origin),
                     lang, origin, weight);
         }
     }
@@ -2893,12 +2927,12 @@ class Net(bool useArray = true,
     /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
     NodeRef store(Expr expr,
                   Lang lang,
-                  Sense kind,
+                  Sense sense,
                   CategoryIx categoryIx,
                   Origin origin) in { assert(!expr.empty); }
     body
     {
-        const lemma = Lemma(expr, lang, kind, categoryIx);
+        const lemma = Lemma(expr, lang, sense, categoryIx);
         return store(lemma, Node(lemma, origin));
     }
 
@@ -2906,25 +2940,25 @@ class Net(bool useArray = true,
      */
     NodeRef tryStore(Expr expr,
                      Lang lang,
-                     Sense kind,
+                     Sense sense,
                      CategoryIx categoryIx,
                      Origin origin)
     {
         if (expr.empty)
             return NodeRef.asUndefined;
-        return store(expr, lang, kind, categoryIx, origin);
+        return store(expr, lang, sense, categoryIx, origin);
     }
 
     NodeRef[] tryStore(Exprs)(Exprs exprs,
                               Lang lang,
-                              Sense kind,
+                              Sense sense,
                               CategoryIx categoryIx,
                               Origin origin) if (isIterable!(Exprs))
     {
         typeof(return) nodeRefs;
         foreach (expr; exprs)
         {
-            nodeRefs ~= store(expr, lang, kind, categoryIx, origin);
+            nodeRefs ~= store(expr, lang, sense, categoryIx, origin);
         }
         return nodeRefs;
     }
@@ -3153,7 +3187,7 @@ class Net(bool useArray = true,
                 dln(`Unknown Sense code `, items.front);
             }
         }
-        ++kindCounts[sense];
+        ++senseCounts[sense];
 
         return store(correctCN5Lemma(expr), lang, sense, anyCategory, Origin.cn5);
     }
@@ -3213,7 +3247,7 @@ class Net(bool useArray = true,
         }
 
         const lang = Lang.en;   // use English for now
-        const kind = Sense.noun;
+        const sense = Sense.noun;
 
         /* name */
         // clean cases such as concept:language:english_language
@@ -3224,7 +3258,7 @@ class Net(bool useArray = true,
 
         auto entityIx = store(entityName,
                               lang,
-                              kind,
+                              sense,
                               categoryIx,
                               Origin.nell);
 
@@ -3234,7 +3268,7 @@ class Net(bool useArray = true,
                              Rel.isA,
                              store(categoryName,
                                    lang,
-                                   kind,
+                                   sense,
                                    categoryIx,
                                    Origin.nell),
                              lang,
@@ -3642,7 +3676,7 @@ class Net(bool useArray = true,
         writeln(`Node Count by Word Kind:`);
         foreach (sense; Sense.min..Sense.max)
         {
-            const count = kindCounts[sense];
+            const count = senseCounts[sense];
             if (count)
             {
                 writeln(indent, sense, ` (`, sense.to!string, `) : `, count);
