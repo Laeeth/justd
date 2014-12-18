@@ -37,8 +37,6 @@
 
     TODO See checkExisting in connect() to true only for Origin.manual
 
-    TODO Convert '_' to ' ' before storing Lemma
-
     TODO Make use of stealFront and stealBack
 
     TODO ansiktstvätt => facial_wash
@@ -149,7 +147,6 @@ import dbg;
 import grammars;
 import rcstring;
 import krels;
-import emotions;
 import combinations;
 version(msgpack) import msgpack;
 
@@ -1340,9 +1337,10 @@ class Net(bool useArray = true,
     void learnEmotions()
     {
         import std.file: readText;
+        learnEnglishWords(readText("../knowledge/basic_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `basic emotion`);
         learnEnglishWords(readText("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`);
-        learnEnglishWords(readText("../knowledge/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`);
-        learnEnglishWords(readText("../knowledge/negatives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`);
+        learnEnglishWords(readText("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`);
+        learnEnglishWords(readText("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`);
     }
 
     void learnEnglishReversions()
@@ -3688,9 +3686,11 @@ class Net(bool useArray = true,
 
     void showNode(in Node node, NWeight weight)
     {
-        if (node.lemma.expr) write(` `, node.lemma.expr.tr(`_`, ` `));
+        if (node.lemma.expr)
+            write(` "`, node.lemma.expr, // .tr(`_`, ` `)
+                  `"`);
 
-        write(`(`); // open
+        write(` (`); // open
 
         if (node.lemma.lang != Lang.unknown)
         {
@@ -3762,11 +3762,11 @@ class Net(bool useArray = true,
 
         // auto normLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
-        auto normLine = line.strip.tr(std.ascii.whitespace, `_`, `s`).toLower;
+        auto normLine = line.strip.tr(std.ascii.whitespace, ` `, `s`).toLower;
         if (normLine.empty)
             return;
 
-        writeln(`> Line `, normLine);
+        writeln(`> Line "`, normLine, `"`);
 
         if (normLine == `palindrome`)
         {
