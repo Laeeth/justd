@@ -127,3 +127,25 @@ skeptical
 suspicious
 untrusted
 untrusting
+hungry
+cold
+hot
+warm
+chilly
+thirsty
+sick
+tired
+weak
+disgruntled
+terrible
+dreadful
+dirty
+ugly
+defeated
+foolish
+silly
+evil
+bashful
+sadistic
+hating
+taken aback

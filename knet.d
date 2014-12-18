@@ -136,6 +136,7 @@ import std.string: tr, toLower, toUpper;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
+import std.file: readText;
 
 import algorithm_ex: isPalindrome, either;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
@@ -1332,12 +1333,18 @@ class Net(bool useArray = true,
         learnSwedishAdjectives();
 
         learnEmotions();
+        learnFeelings();
     }
 
     void learnEmotions()
     {
-        import std.file: readText;
-        learnEnglishWords(readText("../knowledge/basic_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `basic emotion`);
+        learnEnglishWords(readText("../knowledge/basic_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `basic`);
+        learnEnglishWords(readText("../knowledge/positive_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`);
+        learnEnglishWords(readText("../knowledge/negative_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`);
+    }
+
+    void learnFeelings()
+    {
         learnEnglishWords(readText("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`);
         learnEnglishWords(readText("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`);
         learnEnglishWords(readText("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`);
