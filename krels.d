@@ -115,11 +115,28 @@ enum Rel:ubyte
     beganAtTime,
     endedAtTime,
 
+    beganBefore,
+    beganAfter,
+    endedBefore,
+    endedAfter,
+
     hasProperty, /* A has B as a property; A can be described as
-                    B. /r/HasProperty /c/en/ice /c/en/solid */
+                    B. /r/HasProperty /c/en/ice /c/en/solid
+                    See also: https://english.stackexchange.com/questions/150529/what-is-the-difference-between-property-and-attribute
+                    */
     hasAttribute = hasProperty,
     hasShape,
     hasColor,
+    hasSize,
+
+    hasDiameter,
+    hasArea,
+    hasLength,
+    hasHeight,
+    hasWidth,
+    hasThickness,
+    hasWeight,
+
     hasAge,
     hasWebsite,
     hasOfficialWebsite,
@@ -1217,10 +1234,19 @@ bool specializes(Rel special,
                                              topMemberOf,
                                              attends,
                                              hasEthnicity);
-            case hasProperty: return special.of(hasAttribute,
-                                                hasAge,
+            case hasProperty: return special.of(hasAge,
+
                                                 hasColor,
                                                 hasShape,
+
+                                                hasDiameter,
+                                                hasArea,
+                                                hasLength,
+                                                hasHeight,
+                                                hasWidth,
+                                                hasThickness,
+                                                hasWeight,
+
                                                 hasTeamPosition,
                                                 hasTournament,
                                                 hasCapital,

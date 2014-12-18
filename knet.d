@@ -138,7 +138,7 @@ import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
 import std.file: readText;
 
-import algorithm_ex: isPalindrome, either;
+import algorithm_ex: isPalindrome, either, append;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
 import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf;
 import sort_ex: sortBy, rsortBy, sorted;
@@ -1036,6 +1036,8 @@ class Net(bool useArray = true,
             this.actors.reserve(this.actors.length + 2);
             this.actors ~= srcRef.backward;
             this.actors ~= dstRef.forward;
+            // this.actors.append(srcRef.backward,
+            //                    dstRef.backward);
             this.rel = rel;
             this.negation = negation;
             this.origin = origin;
@@ -1334,20 +1336,22 @@ class Net(bool useArray = true,
 
         learnEmotions();
         learnFeelings();
+
+        learnEnglishWords(readText("../knowledge/adjectives.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
     }
 
     void learnEmotions()
     {
-        learnEnglishWords(readText("../knowledge/basic_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `basic`);
-        learnEnglishWords(readText("../knowledge/positive_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`);
-        learnEnglishWords(readText("../knowledge/negative_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`);
+        learnEnglishWords(readText("../knowledge/basic_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `basic`, Sense.noun, Sense.adjective);
+        learnEnglishWords(readText("../knowledge/positive_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.noun, Sense.adjective);
+        learnEnglishWords(readText("../knowledge/negative_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective);
     }
 
     void learnFeelings()
     {
-        learnEnglishWords(readText("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`);
-        learnEnglishWords(readText("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`);
-        learnEnglishWords(readText("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`);
+        learnEnglishWords(readText("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.noun, Sense.adjective);
+        learnEnglishWords(readText("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective);
     }
 
     void learnEnglishReversions()
@@ -1404,22 +1408,23 @@ class Net(bool useArray = true,
                        lang, origin, weight);
     }
 
-    /** Learn English Words $(D emotionWords) having attribute attributeWord.
+    /** Learn English Words $(D words) having attribute attribute.
      */
-    LinkRef[] learnEnglishWords(R, S)(R emotionWords,
+    LinkRef[] learnEnglishWords(R, S)(R words,
                                       Rel rel,
-                                      S attributeWord,
+                                      S attribute,
+                                      Sense wordSense = Sense.unknown,
+                                      Sense attributeSense = Sense.noun,
                                       NWeight weight = 1.0,
-                                      Sense sense = Sense.noun,
                                       Origin origin = Origin.manual) if (isInputRange!R &&
                                                                          (isSomeString!(ElementType!R)) &&
                                                                          isSomeString!S)
     {
         enum lang = Lang.en;
         const category = CategoryIx.asUndefined;
-        return connectMto1(tryStore(emotionWords.map!toLower, lang, Sense.unknown, category, origin),
+        return connectMto1(tryStore(words.map!toLower, lang, wordSense, category, origin),
                            rel,
-                           store(attributeWord.toLower, lang, sense, category, origin),
+                           store(attribute.toLower, lang, attributeSense, category, origin),
                            Lang.en, origin, weight);
     }
 
