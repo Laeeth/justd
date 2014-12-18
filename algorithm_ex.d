@@ -1598,3 +1598,41 @@ import core.checkedint: addu, subu, mulu;
 alias sadd = addu;
 alias ssub = subu;
 alias smul = mulu;
+
+/** Append Arguments $(args) to $(D data).
+    See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
+ */
+ref T[] append(T, Args...)(ref T[] data, Args args)
+{
+    static size_t estimateLength(Args args)
+    {
+        size_t result;
+        foreach(e; args)
+            static if(hasLength!(typeof(e)))
+                result += e.length;
+            else
+            result += 1;
+
+        return result;
+    }
+
+    import std.range: appender;
+
+    auto app = appender!(T[])(data);
+    app.reserve(data.length + estimateLength(args));
+
+    foreach(e; args)
+        app.put(e);
+    data = app.data;
+
+    return data;
+}
+
+unittest
+{
+    import std.stdio;
+    int[] data;
+    import std.range: only, iota;
+    append(data, 1, 2, only(1, 2, 3), iota(4, 9));
+    assert(data == [1, 2, 1, 2, 3, 4, 5, 6, 7, 8]);
+}
