@@ -1,0 +1,100 @@
+abstract dance
+acro
+allemande
+ballet
+ballroom dance
+barn dance
+beguine
+belly dance
+bolero
+bop
+bossa nova
+bourrée
+breakdance
+bunny hop
+cajun dance
+cakewalk
+can-can
+carioca
+cha-cha
+charleston
+classical dance
+clogging
+conga
+contra dance
+country-western
+courante
+dance
+disco
+dragon dance
+fandango
+flamenco
+folk dance
+foxtrot
+frug
+gavote
+gigue
+habanera
+highland fling
+hip hop
+hoedown
+hokey-pokey
+hop
+hula
+hustle
+ice dancing
+interpretive dance
+irish dance
+jazz dance
+jig
+jitterbug
+jive
+koftos
+krumping
+lambada
+latin dance
+limbo
+lindy
+line dance
+macarena
+malaguena
+mambo
+maypole dance
+mazurka
+merengue
+mexican hat dance
+minuet
+modern dance
+one-step
+pas de deux
+pasodoble
+pavane
+polka
+pop
+quadrille
+quickstep
+reel
+reggae
+rumba
+salsa
+scottish dance
+slow dance
+soft shoe
+sousta
+square dance
+step dance
+stomp
+swing
+tango
+tap dance
+tarantella
+time warp
+toe dance
+troika
+twist
+two step
+ukrainian dance
+viennese waltz
+waltz
+watusi
+zydeco
