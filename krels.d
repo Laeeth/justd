@@ -130,6 +130,7 @@ enum Rel:ubyte
     hasExpert,
     hasLanguage,
     hasCurrency,
+    hasEmotion,
 
     motivatedByGoal, /* Someone does A because they want result B; A is a step
                         toward accomplishing the goal B. */
@@ -240,6 +241,7 @@ enum Rel:ubyte
 
     wordForm,
     verbForm,
+    adjectiveForm,
 
     generalizes, // TODO Merge with other enumerator?
 
@@ -1108,6 +1110,14 @@ auto toHuman(const Rel rel,
                         default: words = ["is ", not, "a mutual proxy for"]; break;
                     }
                     break;
+                case wordForm:
+                    switch (lang)
+                    {
+                        case sv: words = ["har", not, "ord böjning"]; break;
+                        case en:
+                        default: words = ["has ", not, "word form"]; break;
+                    }
+                    break;
                 case verbForm:
                     switch (lang)
                     {
@@ -1116,12 +1126,12 @@ auto toHuman(const Rel rel,
                         default: words = ["has", not, "verb form"]; break;
                     }
                     break;
-                case wordForm:
+                case adjectiveForm:
                     switch (lang)
                     {
-                        case sv: words = ["har", not, "ord böjning"]; break;
+                        case sv: words = ["har", not, "adjektiv böjning"]; break;
                         case en:
-                        default: words = ["has ", not, "word form"]; break;
+                        default: words = ["has", not, "adjective form"]; break;
                     }
                     break;
                 default:
@@ -1230,7 +1240,8 @@ bool specializes(Rel special,
             case hasWebsite: return special.of(hasOfficialWebsite);
             case hasSubevent: return special.of(hasFirstSubevent,
                                                 hasLastSubevent);
-            case wordForm: return special.of(verbForm);
+            case wordForm: return special.of(verbForm,
+                                             adjectiveForm);
             default: return special == general;
         }
     }
@@ -1278,8 +1289,9 @@ bool generalizes(T)(T general,
 
                           mutualProxyFor,
 
+                          wordForm,
                           verbForm,
-                          wordForm);
+                          adjectiveForm);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
@@ -1304,7 +1316,9 @@ bool generalizes(T)(T general,
                            causes,
                            entails,
                            hasSubevent,
-                           hasPrerequisite));
+                           hasPrerequisite,
+                           hasShape,
+                           hasEmotion));
     }
 
     bool oppositeOf(const Rel a,
