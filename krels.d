@@ -71,6 +71,7 @@ enum Rel:ubyte
     capableOf, /* Something that A can typically do is B. /r/CapableOf
                   /c/en/knife /c/en/cut */
 
+    // or locatedNear?
     atLocation, /* A is a typical location for B, or A is the inherent location
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
@@ -92,7 +93,7 @@ enum Rel:ubyte
 
     hasContext,
 
-    locatedNear,
+    locatedNear,                // TODO or AtLocation?
     borderedBy,
 
     controls,

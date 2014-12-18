@@ -1230,7 +1230,7 @@ class Net(bool useArray = true,
      */
     Lemmas lemmasOf(S)(S expr) if (isSomeString!S)
     {
-        return expr in lemmasByExpr ? lemmasByExpr[expr] : [];
+        return expr in lemmasByExpr ? lemmasByExpr[expr] : typeof(return).init;
     }
 
     /** Learn $(D Lemma) of $(D expr).
@@ -1363,6 +1363,9 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dog`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/amphibians.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `amphibian`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/animals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `animal`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/foods.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `food`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/cars.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `car`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/carparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `car`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `alliteration`, Sense.unknown, Sense.noun);
 
         learnEnglishChemicalElements();
@@ -1378,6 +1381,8 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/art.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `art`, Sense.unknown, Sense.noun);
         learnEnglishWords(readText("../knowledge/astronomy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `astronomy`, Sense.unknown, Sense.noun);
         learnEnglishWords(readText("../knowledge/autumn.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `autumn`, Sense.unknown, Sense.noun);
+        learnEnglishWords(readText("../knowledge/near_yard.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `yard`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/baseball.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `baseball`, Sense.noun, Sense.noun);
     }
 
     void learnEmotions()
@@ -3706,7 +3711,7 @@ class Net(bool useArray = true,
         writeln(indent, `- Symmetric: `, symmetricRelCount);
         writeln(indent, `- Transitive: `, transitiveRelCount);
 
-        writeln(indent, `Lemmas by Expr Count: `, lemmasByExpr.length);
+        writeln(indent, `Lemmas Expression Count: `, lemmasByExpr.length);
 
         writeln(indent, `Node Indexes by Lemma Count: `, nodeRefByLemma.length);
         writeln(indent, `Node String Length Average: `, cast(NWeight)nodeStringLengthSum/allNodes.length);
