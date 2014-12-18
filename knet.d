@@ -54,6 +54,10 @@
 
     TODO should we store acronyms and emoticons in lowercase or not?
 
+    TODO Extend Link with an array of relation types (Rel) for all its
+         actors and context. We can then describe contextual knowledge.
+         Perhaps Merge with NELL's CategoryIx.
+
     BUG No manual learning has been done for cry <oppositeOf> laugh
     > Line cry
     - in English
@@ -61,6 +65,16 @@
     - is the opposite of:  laugh(en-verb:1.00@CN5),
     - is the opposite of:  laugh(en:1.00@Manual),
 
+    BUG hate is learned twice. Add duplicate detection.
+    < Concept(s) or ? for help: love
+    > Line love
+    - in English of sense nounUncountable
+    - is a:  uncountable noun(en-nounUncountable:1.00@Manual),
+    - in English
+    - is the opposite of:  hate(en:1.00@CN5),
+    - is the opposite of:  hate(en-verb:1.00@CN5),
+    - is the opposite of:  hatred(en-noun:1.00@CN5),
+    - is the opposite of:  hate(en:0.55@CN5),
 */
 
 /* TODO
@@ -135,6 +149,7 @@ import dbg;
 import grammars;
 import rcstring;
 import krels;
+import emotions;
 import combinations;
 version(msgpack) import msgpack;
 
@@ -1318,6 +1333,13 @@ class Net(bool useArray = true,
 
         learnSwedishVerbs();
         learnSwedishAdjectives();
+
+        learnEmotions();
+    }
+
+    void learnEmotions()
+    {
+        learnEnglishEmotionWords(englishFeelingWords.splitter('\n'));
     }
 
     void learnEnglishReversions()
@@ -1372,6 +1394,22 @@ class Net(bool useArray = true,
                        Rel.acronymFor,
                        store(expr.toLower, lang, sense, category, origin),
                        lang, origin, weight);
+    }
+
+    /** Learn English Emotions words $(D emotionWords).
+     */
+    LinkRef[] learnEnglishEmotionWords(R)(R emotionWords,
+                                          NWeight weight = 1.0,
+                                          Sense sense = Sense.noun,
+                                          Origin origin = Origin.manual) if (isInputRange!R &&
+                                                                             (isSomeString!(ElementType!R)))
+    {
+        enum lang = Lang.en;
+        const category = CategoryIx.asUndefined;
+        return connectMto1(tryStore(emotionWords.map!toLower, lang, Sense.unknown, category, origin),
+                           Rel.isA,
+                           store("emotion", lang, sense, category, origin),
+                           Lang.en, origin, weight);
     }
 
     /** Learn English Emoticon.
