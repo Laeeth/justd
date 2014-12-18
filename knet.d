@@ -16,6 +16,7 @@
     See also: https://github.com/commonsense/conceptnet5/wiki
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
+    See also: http://wwww.abbreviations.com
 
     Data: http://conceptnet5.media.mit.edu/downloads/current/
     Data: http://wiki.dbpedia.org/DBpediaAsTables
@@ -25,6 +26,9 @@
     Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
+
+    TODO Learn word meanings (WordNet) first. Then other higher rules can lookup these
+         meanings before they are added.
 
     TODO NodeRef getEmotion(nodeRef start, Rel[] overRels) { walkNodeRefs(); }
 
@@ -50,7 +54,8 @@
     TODO Use containers.HashMap
     TODO Call GC.disable/enable around construction and search.
 
-    TODO should we store acronyms and emoticons in lowercase or not?
+    TODO Should we store acronyms and emoticons in lowercase or not?
+    TODO Should we lowercase the key Lemma but not the Concept Lemma?
 
     TODO Extend Link with an array of relation types (Rel) for all its
          actors and context. We can then describe contextual knowledge.
@@ -152,6 +157,11 @@ import rcstring;
 import krels;
 import combinations;
 version(msgpack) import msgpack;
+
+enum char asciiUS = '';       // ASCII Unit Separator
+enum char asciiRS = '';       // ASCII Record Separator
+enum char asciiGS = '';       // ASCII Group Separator
+enum char asciiFS = '';       // ASCII File Separator
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
@@ -1339,10 +1349,17 @@ class Net(bool useArray = true,
         learnEmotions();
         learnFeelings();
 
-        learnEnglishWords(readText("../knowledge/adjectives.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
-        learnEnglishWords(readText("../knowledge/adverbs.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
-        learnEnglishWords(readText("../knowledge/dances.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `dance`, Sense.noun, Sense.noun);
-        learnEnglishWords(readText("../knowledge/landforms.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `landform`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/adjectives.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
+        learnEnglishWords(readText("../knowledge/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
+        learnEnglishWords(readText("../knowledge/dances.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dance`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/landforms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `landform`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/desserts.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dessert`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/countries.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `country`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dog`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/dentist.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `dentist`, Sense.unknown, Sense.noun);
+        learnEnglishWords(readText("../knowledge/driving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `drive`, Sense.unknown, Sense.verb);
+
+        learnEnglishChemicalElements();
     }
 
     void learnEmotions()
@@ -1357,6 +1374,35 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.noun, Sense.adjective);
         learnEnglishWords(readText("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective);
+    }
+
+    void learnEnglishChemicalElements()
+    {
+        foreach (expr; File("../knowledge/chemical_elements.txt").byLine)
+        {
+            if (expr.empty)
+            {
+                continue;
+            }
+            enum separator = asciiUS;
+            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            auto name = split[0];
+            auto abbr = split[2];
+            enum lang = Lang.en;
+            enum origin = Origin.manual;
+            NWeight weight = 1.0;
+            const category = CategoryIx.asUndefined;
+
+            connect(store(name.idup, lang, Sense.noun, category, origin),
+                    Rel.isA,
+                    store("chemical element", lang, Sense.noun, category, origin),
+                    lang, origin, weight);
+
+            connect(store(abbr.idup, lang, Sense.noun, category, origin),
+                    Rel.abbreviationFor,
+                    store(name.toLower.idup, lang, Sense.noun, category, origin),
+                    lang, origin, weight);
+        }
     }
 
     void learnEnglishReversions()
@@ -3166,7 +3212,7 @@ class Net(bool useArray = true,
             return typeof(return).init;
         }
 
-        const lang = Lang.unknown;
+        const lang = Lang.en;   // use English for now
         const kind = Sense.noun;
 
         /* name */

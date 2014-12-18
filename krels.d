@@ -1100,6 +1100,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case abbreviationFor:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "förkortning för"]; break;
+                            case en:
+                            default: words = ["is", not, "an abbreviation for"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "förkortning"]; break;
+                            case en:
+                            default: words = ["does", not, "have abbreviation"]; break;
+                        }
+                    }
+                    break;
                 case acronymFor:
                     if (dir == RelDir.forward)
                     {

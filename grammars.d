@@ -586,6 +586,7 @@ enum Sense:ubyte
     nounLocationName,           // Stockholm
     nounPersonName,             // John
     nounOrganisationName,       // CIA
+    nounCountry,                // Sweden
 
     nounTimeWeekday,
     nounTimeMonth,
@@ -594,6 +595,7 @@ enum Sense:ubyte
 
     nounUncountable,
 
+    nounAbbrevation,
     nounAcronym,
 
     /* Verb */
@@ -781,7 +783,9 @@ unittest
                             nounTimeMonth,
                             nounTimeDayOfMonth,
                             nounTimeYear,
-                            nounUncountable) ||
+                            nounUncountable,
+                            nounAbbrevation,
+                            nounAcronym) ||
                     kind.isNounName);
     }
     bool isNounNumeric(Sense kind)
@@ -798,7 +802,8 @@ unittest
             return kind.of(nounName,
                            nounLocationName,
                            nounPersonName,
-                           nounOrganisationName);
+                           nounOrganisationName,
+                           nounCountry);
     }
     bool isVerb(Sense kind)
     {
@@ -944,6 +949,7 @@ bool specializes(Sense special,
             case noun: return special.isNoun || special.isPronoun;
             case nounNumeric: return special.isNounNumeric;
             case nounName: return special.isNounName;
+            case nounAbbrevation: return special == nounAcronym;
             case verb: return special.isVerb;
             case adverb: return special.isAdverb;
             case adjective: return special.isAdjective;
