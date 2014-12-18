@@ -1338,6 +1338,7 @@ class Net(bool useArray = true,
         learnFeelings();
 
         learnEnglishWords(readText("../knowledge/adjectives.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
+        learnEnglishWords(readText("../knowledge/adverbs.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
     }
 
     void learnEmotions()
