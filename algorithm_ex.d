@@ -1601,6 +1601,7 @@ alias smul = mulu;
 
 /** Append Arguments $(args) to $(D data).
     TODO Add support for std.container.Array
+    TODO Add specialization for args being ElementType!T used here http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
     See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
  */
 ref T[] append(T, Args...)(ref T[] data, auto ref Args args)
