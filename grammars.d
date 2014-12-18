@@ -529,7 +529,7 @@ enum TokenId:ubyte
 }
 
 /** Verb Form. */
-enum VerbForm
+enum VerbForm:ubyte
 {
     unknown,
 
@@ -686,7 +686,7 @@ enum Sense:ubyte
 }
 
 /** Part of a Sentence. */
-enum SentencePart
+enum SentencePart:ubyte
 {
     subject,
     predicate,
@@ -703,7 +703,7 @@ class Predicate : Part
 }
 
 // TODO: Conversion to Sense
-enum Article { unindefinite, definite,  partitive }
+enum Article:ubyte { unindefinite, definite,  partitive }
 
 class Subject : Part
 {
@@ -972,13 +972,13 @@ unittest
 }
 
 /** Subject Count. */
-enum Number { singular, plural }
+enum Number:ubyte { singular, plural }
 
 /** Subject Person. */
-enum Person { first, second, third }
+enum Person:ubyte { first, second, third }
 
 /** Subject Gender. */
-enum Gender {
+enum Gender:ubyte {
     unknown,
     male, maskulinum = male,
     female, femininum = female,
