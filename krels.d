@@ -916,6 +916,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case hasEmotion:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "känsla"]; break;
+                            case en:
+                            default: words = ["has", not, "emotion"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "uttryckas med"]; break;
+                            case en:
+                            default: words = ["can", not, "be expressed by"]; break;
+                        }
+                    }
+                    break;
                 case hasBrother:
                     switch (lang)
                     {
@@ -1209,7 +1229,8 @@ bool specializes(Rel special,
                                                 hasOfficialWebsite,
                                                 hasScore, hasLoserScore, hasWinnerScore,
                                                 hasLanguage,
-                                                hasCurrency);
+                                                hasCurrency,
+                                                hasEmotion);
             case derivedFrom: return special.of(acronymFor,
                                                 abbreviationFor,
                                                 emoticonFor);
