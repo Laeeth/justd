@@ -1600,6 +1600,7 @@ alias ssub = subu;
 alias smul = mulu;
 
 /** Append Arguments $(args) to $(D data).
+    TODO Add support for std.container.Array
     See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
  */
 ref T[] append(T, Args...)(ref T[] data, auto ref Args args)
