@@ -130,7 +130,8 @@ enum Rel:ubyte
     hasExpert,
     hasLanguage,
     hasCurrency,
-    hasEmotion,
+
+    hasEmotion, // TODO remove this and use "love" isA "emotion"?
 
     motivatedByGoal, /* Someone does A because they want result B; A is a step
                         toward accomplishing the goal B. */
