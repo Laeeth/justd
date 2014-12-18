@@ -73,6 +73,8 @@
     - is the opposite of:  hate(en-verb:1.00@CN5),
     - is the opposite of:  hatred(en-noun:1.00@CN5),
     - is the opposite of:  hate(en:0.55@CN5),
+
+    TODO Why can't File.byLine be used instead of readText?
 */
 
 /* TODO
@@ -1339,6 +1341,8 @@ class Net(bool useArray = true,
 
         learnEnglishWords(readText("../knowledge/adjectives.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
         learnEnglishWords(readText("../knowledge/adverbs.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
+        learnEnglishWords(readText("../knowledge/dances.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `dance`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/landforms.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `landform`, Sense.noun, Sense.noun);
     }
 
     void learnEmotions()
