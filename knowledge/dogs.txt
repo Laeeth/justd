@@ -20,9 +20,9 @@ boxer
 breed
 briard
 brittany
+bull terrier
 bulldog
 bullmastiff
-bull terrier
 cairn terrier
 cape hunting dog
 chihuahua
@@ -101,11 +101,11 @@ scent hound
 schnauser
 scottish terrier
 search-and-rescue dog
-sled dog
 service dog
 setter
 siberian husky
 sighthound
+sled dog
 spaniel
 spitz
 springer spaniel

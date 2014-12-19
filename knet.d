@@ -27,6 +27,12 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Correct Room Namings
+    - bath_room => bathroom,
+    - bed_room => bedroom
+    - dining_room => dining_room
+    - livingroom => living_room
+
     TODO Learn word meanings (WordNet) first. Then other higher rules can lookup these
          meanings before they are added.
 
@@ -1364,6 +1370,9 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/landforms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `landform`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/desserts.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dessert`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/countries.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `country`, Sense.noun, Sense.noun);
+
+        learnEnglishWords(readText("../knowledge/birthday.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `birthday`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/biomes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `biome`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dog`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/birds.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `bird`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/amphibians.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `amphibian`, Sense.noun, Sense.noun);
@@ -1403,8 +1412,8 @@ class Net(bool useArray = true,
     void learnFeelings()
     {
         learnEnglishWords(readText("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`, Sense.noun, Sense.noun);
-        learnEnglishWords(readText("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.noun, Sense.adjective);
-        learnEnglishWords(readText("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective);
+        learnEnglishWords(readText("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.noun, Sense.adjective); // TODO ["positive", "pleasant"]
+        learnEnglishWords(readText("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective); // TODO ["negative", "unpleasant"]
     }
 
     void learnEnglishChemicalElements()

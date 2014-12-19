@@ -6,8 +6,8 @@ architecture
 art
 art gallery
 artist
-artistic
 artist's bridge
+artistic
 artwork
 assemblage
 bas-relief
@@ -20,9 +20,9 @@ calligraphy
 canvas
 cartoon
 carve
-ceramics
 casting
 cave drawing
+ceramics
 chalk
 charcoal
 chisel
@@ -30,8 +30,8 @@ clay
 cloisonné
 collage
 color
-colored pencil
 color wheel
+colored pencil
 compass
 composition
 contrast
@@ -111,10 +111,10 @@ oil paint
 old master
 op art
 paint
+paint roller
 paintbrush
 painter
 painting
-paint roller
 palette
 palette knife
 paper
@@ -160,6 +160,7 @@ stippling
 stone
 stonecutting
 style
+t-square
 tempera
 template
 textile art
@@ -167,7 +168,6 @@ tole painting
 tone
 tool
 trompe l'oeil
-t-square
 tube
 turpentine
 undertone
@@ -181,6 +181,6 @@ wax
 wheel
 wood
 wood carving
+wood engraving
 woodcut
 woodcut print
-wood engraving

@@ -1,11 +1,17 @@
 afghanistan
+akrotiri
 albania
 algeria
+american samoa
 andorra
 angola
+anguilla
+antarctica
 antigua and barbuda
 argentina
 armenia
+aruba
+ashmore and cartier islands
 australia
 austria
 azerbaijan
@@ -13,15 +19,20 @@ bahamas
 bahrain
 bangladesh
 barbados
+bassas da india
 belarus
 belgium
 belize
 benin
+bermuda
 bhutan
 bolivia
 bosnia and herzegovina
 botswana
+bouvet island
 brazil
+british indian ocean territory
+british virgin islands
 brunei
 bulgaria
 burkina faso
@@ -31,19 +42,29 @@ cambodia
 cameroon
 canada
 cape verde
+cayman islands
 central african republic
 chad
 chile
 china
+christmas island
+clipperton island
+cocos (keeling) islands
+colombia
 comoros
 congo
+cook islands
+coral sea islands
 costa rica
-côte d'ivoire
+cote d'ivoire
 croatia
 cuba
 cyprus
 czech republic
+côte d'ivoire
+democratic republic of the congo,
 denmark
+dhekelia
 djibouti
 dominica
 dominican republic
@@ -55,22 +76,38 @@ equatorial guinea
 eritrea
 estonia
 ethiopia
+europa island
+falkland islands (islas malvinas)
+faroe islands
+federated states of micronesia
 fiji
 finland
 france
+french guiana
+french polynesia
+french southern and antarctic lands
 gabon
-the gambia
+gaza strip
 georgia
 germany
 ghana
+gibraltar
+glorioso islands
 greece
+greenland
 grenada
+guadeloupe
+guam
 guatemala
+guernsey
 guinea
 guinea-bissau
 guyana
 haiti
+heard island and mcdonald islands
+holy see (vatican city)
 honduras
+hong kong
 hungary
 iceland
 india
@@ -78,16 +115,18 @@ indonesia
 iran
 iraq
 ireland
+isle of man
 israel
 italy
 jamaica
+jan mayen
 japan
+jersey
 jordan
+juan de nova island
 kazakhstan
 kenya
 kiribati
-north korea
-south korea
 kuwait
 kyrgyzstan
 laos
@@ -99,6 +138,7 @@ libya
 liechtenstein
 lithuania
 luxembourg
+macau
 macedonia
 madagascar
 malawi
@@ -107,48 +147,66 @@ maldives
 mali
 malta
 marshall islands
+martinique
 mauritania
 mauritius
+mayotte
 mexico
 micronesia
 moldova
 monaco
 mongolia
 montenegro
+montserrat
 morocco
 mozambique
 namibia
 nauru
+navassa island
 nepal
 netherlands
+netherlands antilles
+new caledonia
 new zealand
 nicaragua
 niger
 nigeria
+niue
+norfolk island
+north korea
+northern mariana islands
 norway
 oman
 pakistan
 palau
 panama
 papua new guinea
+paracel islands
 paraguay
 peru
 philippines
+pitcairn islands
 poland
 portugal
+puerto rico
 qatar
+republic of the congo
+reunion
 romania
 russia
 rwanda
+saint helena
 saint kitts and nevis
 saint lucia
+saint pierre and miquelon
 saint vincent and the grenadines
 samoa
 san marino
-são tomé and príncipe
+sao tome and principe
 saudi arabia
 senegal
 serbia
+serbia and montenegro
 seychelles
 sierra leone
 singapore
@@ -157,113 +215,55 @@ slovenia
 solomon islands
 somalia
 south africa
+south georgia and the south sandwich islands
+south korea
 spain
+spratly islands
 sri lanka
 sudan
 suriname
+svalbard
 swaziland
 sweden
 switzerland
 syria
+são tomé and príncipe
+taiwan
 tajikistan
 tanzania
 thailand
+the bahamas
+the gambia
+the gambia
+timor-leste
 togo
+tokelau
 tonga
 trinidad and tobago
+tromelin island
 tunisia
 turkey
 turkmenistan
+turks and caicos islands
 tuvalu
 uganda
 ukraine
 united arab emirates
 united kingdom
+united states
 united states of america
-usa
 uruguay
+usa
 uzbekistan
 vanuatu
 vatican city
 venezuela
 vietnam
-yemen
-zambia
-zimbabwe
-akrotiri
-american samoa
-anguilla
-antarctica
-aruba
-ashmore and cartier islands
-the bahamas
-bassas da india
-bermuda
-bouvet island
-british indian ocean territory
-british virgin islands
-cayman islands
-christmas island
-clipperton island
-cocos (keeling) islands
-colombia
-democratic republic of the congo,
-republic of the congo
-cook islands
-coral sea islands
-cote d'ivoire
-dhekelia
-europa island
-falkland islands (islas malvinas)
-faroe islands
-french guiana
-french polynesia
-french southern and antarctic lands
-the gambia
-gaza strip
-gibraltar
-glorioso islands
-greenland
-guadeloupe
-guam
-guernsey
-heard island and mcdonald islands
-holy see (vatican city)
-hong kong
-isle of man
-jan mayen
-jersey
-juan de nova island
-macau
-martinique
-mayotte
-federated states of micronesia
-montserrat
-navassa island
-netherlands antilles
-new caledonia
-niue
-norfolk island
-northern mariana islands
-paracel islands
-pitcairn islands
-puerto rico
-reunion
-saint helena
-saint pierre and miquelon
-sao tome and principe
-serbia and montenegro
-south georgia and the south sandwich islands
-spratly islands
-svalbard
-taiwan
-timor-leste
-tokelau
-tromelin island
-turks and caicos islands
-united states
 virgin islands
 wake island
 wallis and futuna
 west bank
 western sahara
+yemen
+zambia
+zimbabwe

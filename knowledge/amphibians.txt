@@ -17,8 +17,8 @@ dwarf siren
 eastern newt
 ensatina
 european toad
-fire-belly newt
 fire salamander
+fire-belly newt
 fork-tongued frog
 frog
 froglet
@@ -26,8 +26,8 @@ gerrothorax
 ghost frog
 giant salamander
 glass frog
-goliath frog
 gold frog
+goliath frog
 ground frog
 hellbender
 horned frog
@@ -41,8 +41,8 @@ long-toed salamander
 mantella frog
 mexican treefrog
 moss frog
-mudpuppy
 mud salamander
+mudpuppy
 narrow-mouthed frog
 natterjack
 newt
@@ -52,10 +52,10 @@ painted frog
 poison arrow frog
 poison dart frog
 pollywog
-red-legged frog
 red eft
-red-eyed tree frog
 red salamander
+red-eyed tree frog
+red-legged frog
 rice frog
 saddleback toad
 salamander
@@ -76,8 +76,8 @@ true frog
 true toad
 vietnamese tree frog
 warty newt
-waterdog
 water frog
+waterdog
 western toad
 wood frog
 woodlands salamander

@@ -1,8 +1,8 @@
 adult
 astronomical
 boundless
-broad
 brawny
+broad
 capacious
 chunky
 colossal
@@ -55,8 +55,8 @@ monsterous
 monumental
 mountainous
 multifarious
-multitude
 multiplicity
+multitude
 numerous
 obese
 outsized

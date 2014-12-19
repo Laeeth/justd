@@ -15,8 +15,8 @@ driveway
 edger
 fence
 flower
-flowerbed
 flower garden
+flowerbed
 front porch
 front stoop
 fruit tree
@@ -40,8 +40,8 @@ orchard
 path
 patio
 patio furniture
-planter
 plant pot
+planter
 pond
 pool
 porch

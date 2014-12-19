@@ -1,8 +1,8 @@
-fear
 anger
-sadness
-joy
-disgust
-trust
 anticipation
+disgust
+fear
+joy
+sadness
 surprise
+trust

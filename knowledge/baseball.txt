@@ -40,6 +40,7 @@ ground ball
 hardball
 helmet
 hits
+ho-hitter
 home
 home plate
 home team
@@ -59,7 +60,6 @@ mound
 mvp
 national league
 nine
-ho-hitter
 offense
 out
 outfield

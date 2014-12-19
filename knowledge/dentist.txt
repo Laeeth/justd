@@ -100,10 +100,10 @@ pain
 painful
 painless
 palate
-permanent teeth
 partial
 patient
 periodontal
+permanent teeth
 plaque
 premolar
 prevention
@@ -129,15 +129,15 @@ sweets
 teeth
 tissue
 tooth
+tooth fairy
 toothache
 toothbrush
-tooth fairy
 toothpaste
 toothpick
 treatment
 underbite
 white
 whiten
-wisdom tooth
 wisdom teeth
+wisdom tooth
 x-ray

@@ -56,8 +56,8 @@ fruit salad
 fudge
 gelatin
 gelato
-gingersnap
 gingerbread
+gingersnap
 honey
 hot-fudge sundae
 ice cream
@@ -97,14 +97,14 @@ praline
 pudding
 pumpkin pie
 quick bread
+raisin bread
 red velvet cake
 rhubarb pie
-raisin bread
 rice pudding
+s'mores
 scone
 sherbet
 shortbread
-s'mores
 snickerdoodle
 soda
 soda bread

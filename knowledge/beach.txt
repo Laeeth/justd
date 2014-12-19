@@ -42,9 +42,9 @@ kelp
 lagoon
 lake
 lakeshore
-lifeguard
 life jacket
 life preserver
+lifeguard
 limpet
 longboard
 low tide
@@ -66,16 +66,16 @@ sailboat
 salt water
 salt water taffy
 sand
+sand dollar
 sandals
 sandbar
 sandcastle
-sand dollar
 scuba
 sea
+sea star
 seagull
 seashell
 seashore
-sea star
 shark
 shell
 ship
@@ -87,10 +87,10 @@ soft serve ice cream
 spray
 starfish
 sun
+sun hat
 sunbathe
 sunburn
 sunglasses
-sun hat
 sunscreen
 suntan
 surf

@@ -31,8 +31,8 @@ faucet
 floss
 flush
 garbage can
-hairbrush
 hair dryer
+hairbrush
 hamper
 hand towel
 laundry hamper

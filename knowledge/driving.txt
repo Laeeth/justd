@@ -9,9 +9,9 @@ auto
 automatic transmission
 automobile
 avenue
-back-up
 back seat
 back seat driver
+back-up
 barrier
 bicycle
 bike
@@ -62,16 +62,16 @@ fast
 fast lane
 fender
 fill it up
-flat-bed truck
 flat tire
+flat-bed truck
 freeway
 fuel
 fuel efficiency
 fuel tank
 garage
 gas
-gasoline
 gas tank
+gasoline
 gear
 gearshift
 global positioning system
@@ -159,11 +159,11 @@ roadway
 rollover
 roundabout
 rush hour
+s-curve
 safety
 scenery
 scenic route
 school zone
-s-curve
 seatbelt
 semi
 shoulder
@@ -207,9 +207,9 @@ truck stop
 tunnel
 turn
 turn signal
+u-turn
 under construction
 underpass
-u-turn
 van pool
 vehicle
 warning

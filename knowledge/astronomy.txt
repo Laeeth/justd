@@ -27,8 +27,8 @@ comet
 conjunction
 constellation
 coriolis force
-cosmic rays
 corona
+cosmic rays
 cosmology
 cosmonaut
 cosmos
@@ -75,13 +75,13 @@ gravitation
 gravitational constant
 gravitational lens
 gravity
+h-r diagram
 half moon
 heliocentric
-hydrogen
 helium
-h-r diagram
 hubble telescope
 hubble's law
+hydrogen
 hyperbolic orbit
 hypernova
 ice giant
@@ -167,10 +167,10 @@ saturn
 scientific notation
 scintillation
 shooting star
-solar
 sidereal
 singularity
 sky
+solar
 solar system
 solar wind
 solstice
