@@ -35,9 +35,8 @@
 
     TODO Learn word meanings (WordNet) first. Then other higher rules can lookup these
          meanings before they are added.
-
     TODO For lemmas with Sense.unknown lookup its others lemmasOf. If only one
-    other Sense exists assume it be its meaning.
+    other non-unknown Sense exists assume it to be its meaning.
 
     TODO NodeRef getEmotion(nodeRef start, Rel[] overRels) { walkNodeRefs(); }
 
@@ -1364,8 +1363,12 @@ class Net(bool useArray = true,
         learnFeelings();
 
         // TODO functionize to learnGroup
+        learnEnglishWords(readText("../knowledge/nouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `noun`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/pronouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pronoun`, Sense.pronoun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `verb`, Sense.verb, Sense.noun);
         learnEnglishWords(readText("../knowledge/adjectives.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
         learnEnglishWords(readText("../knowledge/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
+        learnEnglishWords(readText("../knowledge/prepositions.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `preposition`, Sense.preposition, Sense.noun);
         learnEnglishWords(readText("../knowledge/colors.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `shape`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `fruit`, Sense.noun, Sense.noun);
@@ -1376,7 +1379,11 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/landforms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `landform`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/desserts.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dessert`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/countries.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `country`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/us_states.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `us_state`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/furniture.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `furniture`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/good_luck_symbols.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `good luck symbol`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/leaders.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `leader`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/measures.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `measurement`, Sense.noun, Sense.noun);
 
         learnEnglishWords(readText("../knowledge/birthday.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `birthday`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/biomes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `biome`, Sense.noun, Sense.noun);
@@ -1391,6 +1398,7 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/carparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `car`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/bodyparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `body`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `alliteration`, Sense.unknown, Sense.noun);
+        learnEnglishWords(readText("../knowledge/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.unknown, Sense.adjective);
 
         learnEnglishChemicalElements();
         learnEnglishOpposites();
@@ -1414,13 +1422,14 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/boat.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `boat`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/money.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `money`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/family.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `family`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/geography.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `geography`, Sense.unknown, Sense.noun);
     }
 
     void learnEmotions()
     {
         learnEnglishWords(readText("../knowledge/basic_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `basic`, Sense.noun, Sense.adjective);
-        learnEnglishWords(readText("../knowledge/positive_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.noun, Sense.adjective);
-        learnEnglishWords(readText("../knowledge/negative_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective);
+        learnEnglishWords(readText("../knowledge/positive_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive emotion`, Sense.noun, Sense.adjective);
+        learnEnglishWords(readText("../knowledge/negative_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative emotion`, Sense.noun, Sense.adjective);
     }
 
     void learnFeelings()
