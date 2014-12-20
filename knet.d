@@ -1387,6 +1387,7 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/quantity.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `quantity`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/language.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `language`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/insect.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `insect`, Sense.noun, Sense.noun);
+        learnEnglishWords(readText("../knowledge/musical_instrument.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `musical instrument`, Sense.noun, Sense.noun);
 
         learnEnglishWords(readText("../knowledge/birthday.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `birthday`, Sense.noun, Sense.noun);
         learnEnglishWords(readText("../knowledge/biomes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `biome`, Sense.noun, Sense.noun);
@@ -1430,6 +1431,7 @@ class Net(bool useArray = true,
         learnEnglishWords(readText("../knowledge/time.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `time`, Sense.unknown, Sense.noun);
         learnEnglishWords(readText("../knowledge/water.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `water`, Sense.unknown, Sense.noun);
         learnEnglishWords(readText("../knowledge/clothing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `clothing`, Sense.unknown, Sense.noun);
+        learnEnglishWords(readText("../knowledge/music_theory.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `music theory`, Sense.unknown, Sense.noun);
     }
 
     void learnEmotions()

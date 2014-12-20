@@ -1161,6 +1161,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case playsInstrument:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["spelar", not, "instrument"]; break;
+                            case en:
+                            default: words = ["does", not, "play instrument"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "ett instrument som spelas av"]; break;
+                            case en:
+                            default: words = ["is", not, "an instrument played by"]; break;
+                        }
+                    }
+                    break;
                 case mutualProxyFor:
                     switch (lang)
                     {
