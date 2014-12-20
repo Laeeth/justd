@@ -1,7 +1,7 @@
 acorn
 agriculture
 alfalfa
-alternate leaves
+alternate leaf
 angiosperm
 annual
 anther
@@ -42,7 +42,7 @@ deciduous
 dentate leaf
 dicot
 embryo
-emergents
+emergent
 endosperm
 entire
 epicotyl
@@ -100,7 +100,7 @@ needle
 netted
 node
 nut
-opposite leaves
+opposite leaf
 ovary
 palm
 palmate
@@ -127,10 +127,10 @@ rain forest
 reniform
 resin
 reticulate
-rings
+ring
 root
 root cap
-root hairs
+root hair
 root tip
 rootstock
 sage brush
@@ -158,7 +158,7 @@ stigma
 stipule
 stoma
 style
-succulents
+succulent
 sunlight
 tap root
 terminal bud
@@ -168,7 +168,7 @@ tree
 tree fern
 trunk
 tuber
-tumbleweeds
+tumbleweed
 twig
 understory
 undulate leaf margin

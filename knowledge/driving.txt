@@ -16,7 +16,7 @@ barrier
 bicycle
 bike
 boulevard
-brakes
+brake
 bridge
 bus
 car
@@ -37,7 +37,7 @@ cul-de-sac
 curve
 danger
 dead end
-defensive driving
+defensive drive
 dent
 detour
 diamond lane
@@ -82,7 +82,7 @@ green light
 gridlock
 gutter
 hairpin curve
-headlights
+headlight
 high-beam
 high-occupancy vehicle lane
 high-octane gas
@@ -98,7 +98,7 @@ insurance
 interchange
 intersection
 interstate highway
-jackknifing
+jackknife
 kilometer
 kilometers per hour
 kph
@@ -106,7 +106,7 @@ lane
 learner's permit
 left turn
 license
-lights
+light
 loop
 low-beam
 manual transmission
@@ -121,13 +121,13 @@ motor
 motorcycle
 motorway
 mph
-no parking
-no stopping
+no park
+no stop
 oil
 oncoming traffic
 one-way
 overpass
-parallel parking
+parallel park
 park
 parking lot
 parking meter
@@ -175,19 +175,19 @@ snow plow
 speed
 speed bump
 speed limit
-speeding
-speeding ticket
+speed
+speed ticket
 speedometer
 state patrol
 steer
-steering wheel
+steer wheel
 stop
 stop sign
 street
 street sign
 superhighway
 suv
-switchbacks
+switchback
 terrace
 test drive
 ticket

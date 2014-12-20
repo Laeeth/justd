@@ -593,6 +593,8 @@ enum Sense:ubyte
     nounTimeDayOfMonth,
     nounTimeYear,
 
+    nounSeason,
+
     nounUncountable,
 
     nounAbbrevation,
@@ -783,6 +785,7 @@ unittest
                             nounTimeMonth,
                             nounTimeDayOfMonth,
                             nounTimeYear,
+                            nounSeason,
                             nounUncountable,
                             nounAbbrevation,
                             nounAcronym) ||

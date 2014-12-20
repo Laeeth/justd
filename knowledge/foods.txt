@@ -1,5 +1,5 @@
 acorn squash
-alfalfa sprouts
+alfalfa sprout
 almond
 anchovy
 anise
@@ -15,23 +15,23 @@ bacon
 bagel
 bake
 baked alaska
-bamboo shoots
+bamboo shoot
 banana
 barbecue
 barley
 basil
 batter
 beancurd
-beans
+bean
 beef
 beet
 bell pepper
 berry
 biscuit
 bitter
-black beans
+black bean
 black tea
-black-eyed peas
+black-eyed pea
 blackberry
 bland
 blood orange
@@ -49,9 +49,9 @@ broil
 brown rice
 brownie
 brunch
-brussels sprouts
+brussels sprout
 buckwheat
-buns
+bun
 burrito
 butter
 butter bean
@@ -60,7 +60,7 @@ calorie
 candy
 candy apple
 cantaloupe
-capers
+caper
 caramel
 caramel apple
 carbohydrate
@@ -81,13 +81,13 @@ cheesecake
 chef
 cherry
 chew
-chick peas
+chick pea
 chicken
 chili
-chips
+chip
 chives
 chocolate
-chopsticks
+chopstick
 chow
 chutney
 cilantro
@@ -95,23 +95,23 @@ cinnamon
 citron
 citrus
 clam
-cloves
+clove
 cobbler
 coconut
 cod
 coffee
 coleslaw
-collard greens
-comestibles
+collard green
+comestible
 cook
 cookbook
 cookie
 corn
-cornflakes
+cornflake
 cornmeal
 cottage cheese
 crab
-crackers
+cracker
 cranberry
 cream
 cream cheese
@@ -123,16 +123,16 @@ cucumber
 cuisine
 cupboard
 cupcake
-curds
-currants
+curd
+currant
 curry
 custard
 daikon
 daily bread
 dairy
-dandelion greens
+dandelion green
 danish pastry
-dates
+date
 dessert
 diet
 digest
@@ -160,7 +160,7 @@ endive
 entree
 fast
 fat
-fava bans
+fava ban
 feast
 fed
 feed
@@ -174,10 +174,10 @@ flax
 flour
 food
 food pyramid
-foodstuffs
+foodstuff
 fork
 freezer
-french fries
+french frie
 fried
 fritter
 frosting
@@ -199,7 +199,7 @@ grated
 gravy
 green tea
 greenbean
-greens
+green
 grub
 guacamole
 guava
@@ -209,7 +209,7 @@ ham
 hamburger
 hash
 hazelnut
-herbs
+herb
 honey
 honeydew
 horseradish
@@ -227,10 +227,10 @@ jackfruit
 jalapeno
 jam
 jelly
-jellybeans
+jellybean
 jicama
 jimmies
-jordan almonds
+jordan almond
 jug
 juice
 julienne
@@ -240,7 +240,7 @@ kebab
 ketchup
 kettle
 kettle corn
-kidney beans
+kidney bean
 kitchen
 kiwi
 knife
@@ -250,13 +250,13 @@ ladle
 lamb
 lard
 lasagna
-legumes
+legume
 lemon
 lemonade
-lentils
+lentil
 lettuce
 licorice
-lima beans
+lima bean
 lime
 liver
 loaf
@@ -279,7 +279,7 @@ margarine
 marionberry
 marmalade
 marshmallow
-mashed potatoes
+mashed potato
 mayonnaise
 meat
 meatball
@@ -292,9 +292,8 @@ milk
 milkshake
 millet
 mincemeat
-minerals
+mineral
 mint
-mints
 mochi
 molasses
 mole sauce
@@ -305,13 +304,13 @@ munch
 mushroom
 mussels
 mustard
-mustard greens
+mustard green
 mutton
 napkin
 nectar
 nectarine
 nibble
-noodles
+noodle
 nosh
 nourish
 nourishment
@@ -321,7 +320,7 @@ nutrient
 nutrition
 nutritious
 oatmeal
-oats
+oat
 oil
 okra
 oleo
@@ -370,18 +369,18 @@ pomegranate
 pomelo
 pop
 popcorn
-popovers
+popover
 popsicle
 pork
-pork chops
+pork chop
 pot
 pot roast
 potato
-preserves
+preserve
 pretzel
 prime rib
 protein
-provisions
+provision
 prune
 pudding
 pumpernickel
@@ -392,15 +391,15 @@ quinoa
 radish
 raisin
 raspberry
-rations
+ration
 ravioli
 recipe
-refreshments
+refreshment
 refrigerator
 relish
 restaurant
 rhubarb
-ribs
+rib
 rice
 roast
 roll
@@ -420,12 +419,12 @@ sauce
 sauerkraut
 sausage
 savory
-scallops
+scallop
 scrambled
 seaweed
-seeds
+seed
 sesame seed
-shallots
+shallot
 sherbet
 shish kebab
 shrimp
@@ -443,20 +442,20 @@ soup
 sour
 sour cream
 soy
-soybeans
+soybean
 soysauce
 spaghetti
-spareribs
+sparerib
 spatula
-spices
+spice
 spicy
 spinach
-split peas
+split pea
 spoon
 spork
-sprinkles
-sprouts
-spuds
+sprinkle
+sprout
+spud
 squash
 squid
 steak
@@ -510,7 +509,7 @@ turmeric
 turnip
 ugli fruit
 unleavened
-utensils
+utensil
 vanilla
 veal
 vegetable

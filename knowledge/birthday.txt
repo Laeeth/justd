@@ -26,17 +26,17 @@ entertain
 event
 festive
 food
-friends
+friend
 frosting
 fun
-games
+game
 gathering
 get
 gift
 gift wrap
-goodie bags
+goodie bag
 greeting card
-guests
+guest
 happy birthday
 happyness
 hat
@@ -50,7 +50,7 @@ noise maker
 package
 paper plate
 party
-party favors
+party favor
 party hat
 pinata
 pizza
@@ -61,13 +61,13 @@ reception
 ribbon
 rsvp
 sparkler
-sweets
+sweet
 thank you
 thank you note
 throw a party
-toys
+toy
 treat
-treat bags
+treat bag
 wingding
 wish
 wrap

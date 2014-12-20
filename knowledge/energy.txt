@@ -112,7 +112,7 @@ pollution
 potential energy
 power
 power grid
-power lines
+power line
 power plant
 power station
 power transmission
@@ -141,10 +141,10 @@ therm
 thermal energy
 thermodynamics
 tidal power
-transmission lines
+transmission line
 transmit
 turbine
-utilities
+utility
 volt
 waste
 watt

@@ -25,7 +25,7 @@ chair
 chaise lounge
 chandelier
 chest
-chest of drawers
+chest of drawer
 china cabinet
 clothes valet
 club chair
@@ -39,7 +39,7 @@ crib
 cubbies
 cupboard
 curio
-curtains
+curtain
 cushion
 deck chair
 desk
@@ -49,7 +49,7 @@ director's chair
 display cabinet
 divan
 drapery
-drapes
+drape
 dresser
 easel
 easy chair
@@ -61,7 +61,7 @@ folding screen
 footrest
 footstool
 four-poster bed
-furnishings
+furnishing
 furniture
 futon
 game table

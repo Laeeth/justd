@@ -29,7 +29,7 @@ brass instruments
 bugle
 calliope
 carillon
-castanets
+castanet
 celesta
 cello
 chimes
@@ -48,7 +48,7 @@ cymbals
 didgeridoo
 double bass
 drum
-drumsticks
+drumstick
 dulcimer
 electric guitar
 electric organ
@@ -76,20 +76,19 @@ kettledrum
 keyboard
 lute
 lyre
-mallets
+mallet
 mandolin
 maracas
 marimba
 mellophone
 melodeon
 moog synthesizer
-musical instruments
 musical saw
 mute
 oboe
 ocarina
 organ
-pan pipes
+pan pipe
 penny whistle
 percussion
 piano
@@ -109,13 +108,13 @@ slide whistle
 snare drum
 sousaphone
 spinet
-spoons
+spoon
 steel drum
 steel drum
 steel guitar
 string bass
-string instruments
-strings
+string instrument
+string
 synthesizer
 tabla
 tambourine
@@ -128,7 +127,7 @@ triangle
 trombone
 trumpet
 tuba
-tubular bells
+tubular bell
 ukulele
 upright piano
 valve
@@ -141,7 +140,7 @@ vuvuzela
 washboard
 whistle
 wind chime
-wind instruments
-woodwind instruments
+wind instrument
+woodwind instrument
 xylophone
 zither

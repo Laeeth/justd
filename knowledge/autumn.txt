@@ -3,7 +3,7 @@ apple
 autumn
 autumnal equinox
 bale of hay
-chestnuts
+chestnut
 chilly
 cider
 cobweb
@@ -15,7 +15,7 @@ cranberry
 crisp
 deciduous
 fall
-falling leaves
+falling leaf
 feast
 football
 gourd
@@ -26,10 +26,10 @@ hay
 hayride
 haystack
 leaf
-leaves
+leaf
 maize
 november
-nuts
+nut
 october
 persimmon
 pine cone

@@ -31,7 +31,7 @@ forest
 freshwater biomes
 freshwater marsh
 glade
-grasslands
+grassland
 habitat
 hadal
 heath
@@ -89,7 +89,7 @@ temperate deciduous forest
 temperate rainforest
 terrestrial biomes
 terrestrial cave
-tide pools
+tide pool
 tropical rainforest
 tundra
 upland river

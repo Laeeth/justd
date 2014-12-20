@@ -8,7 +8,7 @@ american tree sparrow
 archaeopteryx
 arctic tern
 auk
-aves
+ave
 avian
 aviary
 avifauna
@@ -83,7 +83,7 @@ fledge
 fledgling
 flicker
 flight
-flight feathers
+flight feather
 flightless
 flock
 fly
@@ -208,7 +208,7 @@ shrike
 skylark
 snipe
 snow goose
-snowbirds
+snowbird
 snowy owl
 songbird
 sparrow

@@ -17,14 +17,14 @@ cooler
 coral
 cove
 crab
-currents
+current
 dive
 dock
 dune
 dune buggy
 ebb tide
 family
-fins
+fin
 fish
 fishing
 frisbee
@@ -49,7 +49,7 @@ limpet
 longboard
 low tide
 mangrove
-mussels
+mussel
 neap tide
 ocean
 paddleboat
@@ -67,7 +67,7 @@ salt water
 salt water taffy
 sand
 sand dollar
-sandals
+sandal
 sandbar
 sandcastle
 scuba
@@ -80,8 +80,8 @@ shark
 shell
 ship
 shore
-shorebirds
-snacks
+shorebird
+snack
 snorkel
 soft serve ice cream
 spray
@@ -90,13 +90,13 @@ sun
 sun hat
 sunbathe
 sunburn
-sunglasses
+sunglass
 sunscreen
 suntan
 surf
 surfboard
 swim
-swim fins
+swim fin
 swimming cap
 taffy
 tan
@@ -104,7 +104,7 @@ tide
 tide pool
 towel
 trip
-trunks
+trunk
 tsunami
 umbrella
 undertow
@@ -113,10 +113,10 @@ vacation
 volleyball
 water
 water bottle
-waves
+wave
 weekend
 wet
 wharf
-whitecaps
+whitecap
 yacht
-zoris
+zori

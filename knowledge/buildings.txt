@@ -11,7 +11,7 @@ arena
 armory
 assembly hall
 barn
-barracks
+barrack
 beach house
 boarding house
 boathouse
@@ -79,7 +79,7 @@ gymnasium
 hall
 hangar
 haunted house
-headquarters
+headquarter
 high-rise
 home
 hospital

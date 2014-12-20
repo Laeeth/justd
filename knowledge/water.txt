@@ -41,7 +41,7 @@ geyser
 gravity flow
 gully washer
 hail
-headwaters
+headwater
 hoarfrost
 humid
 humidity
@@ -49,8 +49,8 @@ hurricane
 hydrology
 hydropower
 ice
-ice crystals
-ice pellets
+ice crystal
+ice pellet
 icicle
 impermeable
 irrigate
@@ -123,9 +123,9 @@ waterspout
 watertight
 waterway
 waterwheel
-waterworks
+waterwork
 watery
-waves
+wave
 well
 wet
-wetlands
+wetland

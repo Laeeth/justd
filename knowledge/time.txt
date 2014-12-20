@@ -9,7 +9,7 @@ UTC
 Zulu time
 after
 afternoon
-afterwards
+afterward
 alarm clock
 analog clock
 annual
@@ -57,7 +57,7 @@ geologic time
 gnomon
 grandfather clock
 half-life
-hands
+hand
 high noon
 horology
 hour

@@ -94,7 +94,7 @@ music
 natural
 natural minor
 notation
-notes
+note
 octatonic
 octave
 opera
@@ -166,7 +166,7 @@ transposition
 treble
 triad
 trill
-triplets
+triplet
 tritone
 vibrato
 vivace

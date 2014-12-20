@@ -1,7 +1,7 @@
 antiseptic
 aspirin
 atomizer
-bandages
+bandage
 basin
 bath
 bath mat
@@ -11,17 +11,17 @@ bathtub
 bidet
 brush
 bubble bath
-bubbles
+bubble
 cleaning
 cologne
 comb
 conditioner
-cotton balls
-curlers
+cotton ball
+curler
 curling iron
 dental floss
 disinfectant
-droppers
+dropper
 dry
 eau de cologne
 emery board
@@ -40,29 +40,29 @@ lavatory
 loofah
 lotion
 make-up
-medications
+medication
 medicine
 medicine cabinet
 mirror
 moisturizer
 mouthwash
-nail clippers
+nail clipper
 nail file
 nail polish
-nail scissors
+nail scissor
 ointment
 paper towel
 perfume
 plumbing
 plunger
 powder
-q-tips
+q-tip
 razor
 razor blade
 restroom
 rug
 scale
-scissors
+scissor
 shampoo
 shave
 shaver
@@ -75,9 +75,9 @@ soap
 soap dish
 soap dispenser
 sponge
-swabs
+swab
 talcum power
-tissues
+tissue
 toilet
 toilet paper
 toilet seat
@@ -87,7 +87,7 @@ towel
 towel rack
 trash can
 tub
-tweezers
+tweezer
 urinal
 wash
 wash basin
@@ -97,4 +97,4 @@ water
 water closet
 wc
 whirlpool
-wipes
+wipe

@@ -48,7 +48,7 @@ cruise ship
 cruiser
 current
 cutter
-deackhands
+deackhand
 deck
 destroyer
 dinghy
@@ -112,7 +112,7 @@ leeward
 lifeboat
 lifeline
 limey
-lines
+line
 listing
 log
 mainmast

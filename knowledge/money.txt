@@ -10,7 +10,7 @@ bankrupt
 bankruptcy
 bargain
 bill
-bonds
+bond
 borrow
 bought
 budget
@@ -43,7 +43,7 @@ donation
 donor
 down payment
 earn
-earnings
+earning
 economics
 economist
 economy
@@ -92,13 +92,13 @@ rich
 risk
 sale
 save
-savings
+saving
 security
 sell
 seller
 sold
 spend
-stocks
+stock
 surplus
 swap
 tax

@@ -8,7 +8,7 @@ alarm
 all-wheel drive
 alternator
 antenna
-anti-lock brakes
+anti-lock brake
 armrest
 auto
 automatic transmission
@@ -16,13 +16,13 @@ automobile
 axle
 baby car seat
 baby seat
-back-up lights
+back-up light
 battery
 bench seat
 bonnet
 brake light
 brake pedal
-brakes
+brake
 bucket seat
 bumper
 camshaft
@@ -50,8 +50,8 @@ drive belt
 drive shaft
 driver's seat
 emergency brake
-emergency lights
-emissions
+emergency light
+emission
 engine
 engine block
 exhaust pipe
@@ -78,14 +78,14 @@ gear shift
 gear stick
 gearbox
 glove compartment
-gps
+GPS
 grille
 hand brake
 headlamp
 headlight
 headrest
 heater
-high-beam headlights
+high-beam headlight
 hood
 horn
 hubcap
@@ -97,9 +97,9 @@ internal combustion engine
 jack
 key
 license plate
-lights
+light
 lock
-low-beam headlights
+low-beam headlight
 lug bolt
 lug nut
 manifold
@@ -116,11 +116,11 @@ oil
 oil filter
 oil tank
 parking brake
-parking lights
+parking light
 passenger seat
 pedal
 piston
-power brakes
+power brake
 power steering
 power window switch
 radiator
@@ -129,7 +129,7 @@ rag top
 rear window defroster
 rear-view mirror
 reverse light
-rims
+rim
 roof
 roof rack
 rotary engine
@@ -137,7 +137,7 @@ seat
 seat belt
 shift
 shock absorber
-side airbags
+side airbag
 side mirror
 spare tire
 spark plug
@@ -165,7 +165,7 @@ turn signal
 undercarriage
 unleaded gas
 valve
-vents
+vent
 visor
 warning light
 wheel

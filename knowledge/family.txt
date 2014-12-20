@@ -49,7 +49,7 @@ first born
 first cousin
 first cousin once removed
 flesh and blood
-folks
+folk
 foster
 foster child
 foster father
@@ -60,7 +60,7 @@ fraternal twin
 friend
 genealogy
 grampa
-gramps
+gramp
 grandchild
 grandchildren
 granddaughter
@@ -146,7 +146,7 @@ quads
 quints
 quintuplets
 related
-relations
+relation
 relative
 second cousin
 senior
@@ -173,12 +173,12 @@ stepson
 support
 surrogate mother
 tribe
-triplets
+triplet
 trust
 trustworthy
 twin brother
 twin sister
-twins
+twin
 uncle
 value
 wed

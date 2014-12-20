@@ -272,7 +272,7 @@ incessantly
 incorrectly
 indeed
 independently
-indoors
+indoor
 indubitably
 inevitably
 infinitely
@@ -397,10 +397,10 @@ openly
 optimistically
 orderly
 ordinarily
-outdoors
+outdoor
 outrageously
 outwardly
-outwards
+outward
 overconfidently
 overseas
 painfully
@@ -520,7 +520,7 @@ solely
 solemnly
 solidly
 somehow
-sometimes
+sometime
 somewhat
 somewhere
 soon

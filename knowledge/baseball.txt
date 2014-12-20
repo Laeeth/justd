@@ -39,7 +39,7 @@ gear
 ground ball
 hardball
 helmet
-hits
+hit
 ho-hitter
 home
 home plate
@@ -72,7 +72,7 @@ rbi
 relief pitcher
 right field
 run
-saves
+save
 score
 scoreboard
 second

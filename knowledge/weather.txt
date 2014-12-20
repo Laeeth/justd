@@ -84,7 +84,7 @@ eye
 eye wall
 fair
 fall
-feeder bands
+feeder band
 firewhirl
 flash flood
 flood
@@ -125,8 +125,8 @@ hydrosphere
 hygrometer
 ice
 ice age
-ice crystals
-ice pellets
+ice crystal
+ice pellet
 ice storm
 icicle
 inversion
@@ -141,7 +141,7 @@ landspout
 leeward
 lightning
 low
-low clouds
+low cloud
 low pressure system
 macroburst
 mammatus cloud
@@ -178,7 +178,7 @@ radiation
 rain
 rain gauge
 rain shadow
-rainbands
+rainband
 rainbow
 relative humidity
 ridge
@@ -208,7 +208,7 @@ stationary front
 steam
 storm
 storm surge
-storm tracks
+storm track
 stratocumulus
 stratosphere
 stratus

@@ -1,6 +1,6 @@
 abdomen
 adam's apple
-adenoids
+adenoid
 adrenal gland
 anatomy
 ankle
@@ -16,12 +16,12 @@ belly button
 big toe
 bladder
 blood
-blood vessels
+blood vessel
 body
 bone
 brain
 breast
-buttocks
+buttock
 calf
 capillary
 carpal
@@ -44,10 +44,10 @@ endocrine system
 esophagus
 eye
 eyebrow
-eyelashes
+eyelash
 eyelid
 face
-fallopian tubes
+fallopian tube
 feet
 femur
 fibula
@@ -58,9 +58,9 @@ follicle
 foot
 forehead
 gallbladder
-glands
+gland
 groin
-gums
+gum
 hair
 hand
 head
@@ -71,7 +71,7 @@ humerus
 immune system
 index finger
 instep
-intestines
+intestine
 iris
 jaw
 kidney
@@ -83,7 +83,7 @@ lip
 liver
 lobe
 lumbar vertebrae
-lungs
+lung
 lymph node
 mandible
 metacarpal
@@ -94,17 +94,17 @@ muscle
 nail
 navel
 neck
-nerves
+nerve
 nipple
 nose
 nostril
-organs
+organ
 ovary
 palm
 pancreas
 patella
 pelvis
-phalanges
+phalange
 pharynx
 pinky
 pituitary
@@ -112,13 +112,13 @@ pore
 pupil
 radius
 rectum
-red blood cells
+red blood cell
 respiratory system
-ribs
+rib
 sacrum
 scalp
 scapula
-senses
+sense
 shin
 shoulder
 shoulder blade
@@ -135,7 +135,7 @@ stomach
 tarsal
 teeth
 tendon
-testes
+teste
 thigh
 thorax
 throat
@@ -146,7 +146,7 @@ tissue
 toe
 toenail
 tongue
-tonsils
+tonsil
 tooth
 torso
 trachea
@@ -159,5 +159,5 @@ uvula
 vein
 vertebra
 waist
-white blood cells
+white blood cell
 wrist

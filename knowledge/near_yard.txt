@@ -5,7 +5,7 @@ backyard
 basketball hoop
 bench
 birdbath
-bulbs
+bulb
 bush
 carport
 compost bin
@@ -28,7 +28,7 @@ gate
 grass
 gutter
 hammock
-hedges
+hedge
 herb garden
 hoe
 hose
@@ -47,7 +47,7 @@ pool
 porch
 porch swing
 rake
-rocks
+rock
 shed
 shovel
 shrub
@@ -66,6 +66,6 @@ vegetable garden
 vine
 wading pool
 walkway
-weeds
+weed
 welcome mat
 yard

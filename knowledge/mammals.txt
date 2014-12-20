@@ -109,7 +109,7 @@ golden lion tamarin
 gopher
 gorilla
 gray whale
-great apes
+great ape
 grizzly bear
 groundhog
 guinea pig
@@ -127,7 +127,7 @@ hyena
 hyrax
 ibex
 impala
-insectivores
+insectivore
 jaguar
 javelina
 kangaroo
@@ -150,7 +150,7 @@ mammal
 mammoth
 manatee
 mandrill
-marine mammals
+marine mammal
 marmoset
 marmot
 marsupial
@@ -167,7 +167,7 @@ mountain lion
 mouse
 musk ox
 muskrat
-mustelids
+mustelid
 nabarlek
 naked mole-rat
 narwhal
@@ -190,14 +190,14 @@ pangolin
 panther
 pig
 pika
-pinnipeds
-placental mammals
+pinniped
+placental mammal
 platybelodon
 platypus
 polar bear
 porcupine
 porpoise
-primates
+primate
 pronghorn
 puma
 quagga
@@ -236,7 +236,7 @@ tarsier
 three-toed sloth
 tiger
 tree shrew
-ungulates
+ungulate
 vampire bat
 wallaby
 walrus

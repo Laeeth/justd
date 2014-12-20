@@ -16,7 +16,7 @@ bombe
 boston cream pie
 bread pudding
 brownie
-buttercream frosting
+buttercream frost
 butterscotch
 cake
 cannoli
@@ -42,13 +42,13 @@ danish pastry
 dessert
 devil's food cake
 doughnut
-dumpling
+dumple
 eclair
 flan
 fortune cookie
 french toast
 fritter
-frosting
+frost
 frozen yogurt
 fruit cake
 fruit cocktail
@@ -62,7 +62,7 @@ honey
 hot-fudge sundae
 ice cream
 ice cream cake
-icing
+ice
 jam
 jelly
 jellyroll
@@ -74,7 +74,7 @@ macaroon
 marshmallow
 meringue
 milkshake
-molasses
+molass
 mousse
 muffin
 neapolitan ice cream
@@ -119,7 +119,7 @@ sugar cookie
 sundae
 sweet potato pie
 sweet roll
-sweets
+sweet
 tapioca pudding
 tart
 toasted marshmallow

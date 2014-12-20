@@ -25,7 +25,7 @@ Tropic of Capricorn
 Western Hemisphere
 altitude
 analemma
-antipodes
+antipode
 area
 atlas
 azimuth
@@ -46,7 +46,7 @@ degree of longitude
 east
 elevation
 equator
-geographic coordinates
+geographic coordinate
 geography
 global
 globe
@@ -54,7 +54,7 @@ great circle
 hemisphere
 island
 key
-kilometers
+kilometer
 land
 landform
 latitude
@@ -66,7 +66,7 @@ map projection
 map-maker
 map-making
 meridian
-miles
+mile
 mountain
 mountain range
 nation
@@ -101,7 +101,7 @@ title
 topographic map
 topography
 tributary
-tropics
+tropic
 weather map
 west
 world

@@ -13,7 +13,7 @@ astronomy
 axial tilt
 azimuth
 background radiation
-bailey's beads
+bailey's bead
 big bang theory
 binary star
 black body
@@ -28,7 +28,7 @@ conjunction
 constellation
 coriolis force
 corona
-cosmic rays
+cosmic ray
 cosmology
 cosmonaut
 cosmos
@@ -87,17 +87,17 @@ hypernova
 ice giant
 inclination
 inertia
-inferior planets
-inner planets
+inferior planet
+inner planet
 interstellar
 interstellar dust
 ionosphere
 jupiter
 kepler's laws
 kiloparsec
-kirkwood gaps
+kirkwood gap
 kuiper belt
-lagrange points
+lagrange point
 lens
 light-year
 local arm
@@ -132,7 +132,7 @@ opposition
 orbit
 orbital eccentricity
 orbital inclination
-outer planets
+outer planet
 parallax
 parsec
 partial eclipse
@@ -159,7 +159,7 @@ red giant
 red shift
 revolve
 right ascension
-rings
+ring
 roche limit
 rocket
 satellite
@@ -184,7 +184,7 @@ star
 starlight
 sun
 sunspot
-superior planets
+superior planet
 supernova
 synodic
 syzygy
@@ -196,7 +196,7 @@ total eclipse
 totality
 transit
 translunar
-transneptunians
+transneptunian
 twinkling
 umbra
 universe
@@ -210,7 +210,7 @@ visual magnitude
 waning
 wavelength
 waxing
-weightlessness
+weightless
 white dwarf
 white giant
 wormhole

@@ -73,7 +73,7 @@ gulch
 gulf
 gully
 headland
-headwaters
+headwater
 highland
 hill
 hillside
@@ -110,7 +110,7 @@ mountain pass
 mountain peak
 mouth
 mud flat
-narrows
+narrow
 natural arch
 neck
 oasis
@@ -130,7 +130,7 @@ pond
 prairie
 promontory
 range
-rapids
+rapid
 ravine
 reef
 ria
@@ -152,7 +152,7 @@ sea
 sea cave
 seabed
 seashore
-shallows
+shallow
 shoal
 shore
 shoreline
