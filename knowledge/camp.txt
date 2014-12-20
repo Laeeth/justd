@@ -26,7 +26,7 @@ gorp
 hammock
 hat
 hike
-hiking boots
+hiking boot
 hunt
 hut
 insect
@@ -42,7 +42,7 @@ national park
 natural
 nature
 oar
-outdoors
+outdoor
 outside
 paddle
 park
@@ -51,7 +51,7 @@ pup tent
 rope
 scenery
 sleeping bag
-stars
+star
 state park
 sun
 sunscreen
@@ -60,11 +60,11 @@ tent
 trail
 trail mix
 trailer
-trees
+tree
 trip
 vest
 walk
 water bottle
 waterfall
 wildlife
-woods
+wood

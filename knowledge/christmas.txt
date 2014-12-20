@@ -21,20 +21,20 @@ Rudolph
 Saint Nicholas
 Santa
 Santa Claus
-Santa's elves
-Santa's helpers
-Santa's list
+Santa's Elves
+Santa's Helpers
+Santa's List
 Santa's workshop
 Scrooge
 St. Nick
 Xmas
 angel
 artificial tree
-bells
+bell
 birth
 blizzard
 blustery
-boots
+boot
 bough
 bow
 box
@@ -43,14 +43,14 @@ candy
 candy cane
 cap
 card
-carolers
+caroler
 caroling
-carols
+carol
 celebrate
 celebration
 ceremony
 charity
-chestnuts
+chestnut
 chill
 chilly
 chimney
@@ -60,11 +60,11 @@ cold
 cookie
 creche
 decorate
-decorations
+decoration
 display
 eggnog
 elf
-elves
+elve
 eve
 evergreen
 exchange
@@ -91,7 +91,7 @@ gold
 goodwill
 goose
 green
-greetings
+greeting
 guest
 happy
 holiday
@@ -100,16 +100,16 @@ hope
 hot chocolate
 hot cider
 hug
-ice skates
+ice skate
 icicle
 icy
 ivy
-jingle bells
+jingle bell
 jolly
 joy
 joyful
-kings
-lights
+king
+light
 list
 log
 love
@@ -117,7 +117,7 @@ manger
 merry
 mince pie
 mistletoe
-mittens
+mitten
 myrrh
 nativity
 naughty
@@ -125,7 +125,7 @@ nice
 nippy
 nutcracker
 occasion
-ornaments
+ornament
 package
 pageant
 parade
@@ -137,7 +137,7 @@ pinecone
 plum pudding
 poinsettia
 popcorn string
-presents
+present
 receive
 red
 reindeer
@@ -145,15 +145,15 @@ rejoice
 reunion
 ribbon
 ritual
-sales
+sale
 scarf
 season
-season's greetings
+season's greeting
 shopping
 skate
 sled
 sleigh
-sleigh bells
+sleigh bell
 snow
 snowball
 snowbound
@@ -161,14 +161,14 @@ snowfall
 snowflake
 snowman
 snowy
-socks
+sock
 spirit
 star
 stocking
 stocking stuffer
 sugarplum
 sweater
-tidings
+tiding
 tinsel
 toboggan
 togetherness

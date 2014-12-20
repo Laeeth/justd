@@ -14,7 +14,7 @@ blanket
 bleak
 blizzard
 blustery
-boots
+boot
 brisk
 cap
 chill
@@ -34,7 +34,7 @@ drafty
 dreary
 duvet
 earflap hat
-earmuffs
+earmuff
 eggnog
 evergreen
 fire
@@ -43,7 +43,7 @@ firewood
 flannel
 fleece
 flu
-flurries
+flurry
 fog
 freezing
 freezing rain
@@ -61,7 +61,7 @@ gingerbread man
 gingerbread woman
 glacial
 glacier
-gloves
+glove
 gust
 hailstone
 harsh
@@ -79,7 +79,7 @@ ice dam
 ice fishing
 ice hockey
 ice scraper
-ice skates
+ice skate
 ice storm
 iceberg
 icicle
@@ -88,16 +88,16 @@ insulation
 jacket
 lake effect
 log
-longjohns
+longjohn
 luge
 melt
-mittens
+mitten
 muffler
 nippy
 nor'easter
 overcast
 overcoat
-overshoes
+overshoe
 parka
 pinecone
 polar
@@ -129,7 +129,7 @@ snowman
 snowplow
 snowstorm
 snowy
-socks
+sock
 solstice
 storm
 stove
@@ -148,5 +148,5 @@ wintertime
 wintry
 wood stove
 wool
-woolens
-zero degrees
+woolen
+zero degree
