@@ -57,12 +57,12 @@ eerie
 elf
 enchant
 evil
-eyeballs
+eyeball
 eyepatch
 face paint
 fairy
 fall
-fangs
+fang
 fantasy
 fear
 firefighter
@@ -79,7 +79,7 @@ ghostly
 ghoul
 ghoulish
 goblin
-goodies
+goodie
 gory
 gown
 grave
@@ -170,7 +170,7 @@ strange
 superhero
 supernatural
 superstition
-sweets
+sweet
 tarantula
 terrible
 terrify
@@ -181,7 +181,7 @@ toga
 tomb
 tombstone
 treat
-treats
+treat
 trick
 trick-or-treat
 troll

@@ -1,0 +1,70 @@
+adventure
+animal
+backpack
+boot
+cabin
+camp
+camper
+campfire
+campground
+canoe
+canteen
+cap
+caravan
+climb
+compass
+day pack
+dehydrated food
+dugout
+equipment
+evergreen
+fish
+flashlight
+forest
+gear
+gorp
+hammock
+hat
+hike
+hiking boots
+hunt
+hut
+insect
+insect repellent
+kayak
+knapsack
+lake
+lantern
+map
+moon
+mountain
+national park
+natural
+nature
+oar
+outdoors
+outside
+paddle
+park
+path
+pup tent
+rope
+scenery
+sleeping bag
+stars
+state park
+sun
+sunscreen
+tarp
+tent
+trail
+trail mix
+trailer
+trees
+trip
+vest
+walk
+water bottle
+waterfall
+wildlife
+woods

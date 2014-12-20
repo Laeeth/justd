@@ -13,7 +13,7 @@ bathroom
 bathtub
 beam
 bedroom
-blinds
+blind
 broom
 bunk bed
 carpet
@@ -31,7 +31,7 @@ counter
 crib
 cupboard
 curtain rod
-curtains
+curtain
 dining room
 dish washer
 doggie door
@@ -43,14 +43,14 @@ doorknob
 doorway
 dormer
 downspout
-downstairs
+downstair
 drain
-drapes
+drape
 driveway
 dryer
 duct
 dustpan
-eaves
+eave
 electrical outlet
 electrical system
 entrance
@@ -80,7 +80,7 @@ garden shed
 gate
 girder
 greenhouse
-gutters
+gutter
 hall
 hall closet
 hallway
@@ -144,7 +144,7 @@ shelf
 shelves
 shingle
 shower
-shutters
+shutter
 siding
 sill
 sink
@@ -152,9 +152,9 @@ skylight
 sliding glass door
 soffit
 staircase
-stairs
+stair
 stairway
-steps
+step
 stoop
 storage shed
 storm door
@@ -167,7 +167,7 @@ trash can
 trellis
 trim
 tub
-upstairs
+upstair
 vacuum cleaner
 vase
 vent

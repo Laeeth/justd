@@ -1,4 +1,4 @@
-Brussels sprouts
+Brussels sprout
 Chinese cabbage
 Lima bean
 Swiss chard
@@ -8,26 +8,26 @@ artichoke
 arugula
 asparagus
 avocado
-bamboo shoots
+bamboo shoot
 basil
-beans
-beets
+bean
+beet
 bell pepper
-black-eyed peas
+black-eyed pea
 broccoli
-capers
+caper
 carrot
 cauliflower
 celeriac
 celery
 chard
-chick peas
+chick pea
 chives
-collard greens
+collard green
 cress
 cucumber
 daikon
-dandelion greens
+dandelion green
 eggplant
 endive
 fava bean
@@ -37,18 +37,18 @@ ginger
 gourd
 greenbean
 greens
-hot chile peppers
+hot chile pepper
 iceberg lettuce
 jicama
 kale
 kohlrabi
 leek
-lentils
+lentil
 lettuce
 maize
 mung bean
 mushroom
-mustard greens
+mustard green
 okra
 olive
 onion
@@ -58,7 +58,7 @@ pattypan squash
 pea
 peanut
 peapod
-peppers
+pepper
 pickle
 potato
 pumpkin
@@ -77,8 +77,8 @@ shallot
 sorrel
 soybean
 spinach
-sprouts
-spuds
+sprout
+spud
 squash
 string bean
 succotash
