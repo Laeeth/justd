@@ -382,7 +382,7 @@ tougheasy
 toughtender
 transparentopaque
 truefalse
-truthflasehood
+truthfalsehood
 truthlie
 truthuntruth
 underover
