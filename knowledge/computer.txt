@@ -1,0 +1,233 @@
+CD
+CD-ROM
+CPU (central processing unit)
+D (cont.)
+DNS (domain name system)
+DVD (digital versatile disc)
+FAQ (frequently asked questions)
+IP address
+Internet
+Java
+QWERTY
+RAM (random access memory)
+ROM (read only memory)
+Trojan horse
+URL
+Unix
+WWW
+World Wide Web
+XML
+algorithm
+analog
+app
+application
+array
+backup
+bandwidth
+binary
+bit
+bite
+bitmap
+blog
+blogger
+bookmark
+boot
+broadband
+browser
+buffer
+bug
+bus
+byte
+cache
+caps lock
+captcha
+client
+clip art
+clip board
+cloud computing
+command
+compile
+compress
+computer
+computer program
+configure
+cookie
+copy
+cybercrime
+cyberspace
+dashboard
+data
+data mining
+database
+debug
+decompress
+delete
+desktop
+development
+digital
+disk
+document
+domain
+domain name
+dot
+dot matrix
+download
+drag
+dynamic
+email
+emoticon
+encrypt
+encryption
+enter
+exabyte
+file
+finder
+firewall
+firmware
+flaming
+flash
+flash drive
+floppy disk
+flowchart
+folder
+font
+format
+frame
+freeware
+gigabyte
+graphic
+graphical
+graphics
+hack
+hacker
+hardware
+home page
+host
+html
+hyperlink
+hypertext
+icon
+inbox
+integer
+interface
+iteration
+joystick
+junk mail
+kernel
+key
+keyboard
+keyword
+laptop
+laser printer
+link
+log out
+logic
+login
+lurking
+macro
+mainframe
+malware
+media
+memory
+mirror
+modem
+monitor
+motherboard
+mouse
+multimedia
+net
+network
+node
+notebook computer
+offline
+online
+open source
+operating system
+option
+output
+page
+password
+paste
+path
+phishing
+piracy
+pirate
+platform
+plug-in
+podcast
+pop-up
+portal
+print
+printer
+privacy
+process
+program
+programmer
+protocol
+queue
+real-time
+reboot
+resolution
+restore
+root
+router
+runtime
+save
+scan
+scanner
+screen
+screenshot
+script
+scroll
+scroll bar
+search engine
+security
+server
+shareware
+shell
+shift
+shift key
+snapshot
+social networking
+software
+spam
+spammer
+spreadsheet
+spyware
+status bar
+storage
+supercomputer
+surf
+syntax
+table
+tag
+teminal
+template
+terabyte
+text editor
+thread
+toolbar
+trash
+typeface
+undo
+upload
+user
+user interface
+username
+utility
+version
+virtual
+virtual memory
+virus
+web
+web host
+webmaster
+website
+widget
+wiki
+window
+wireless
+word processor
+workstation
+worm
+zip
