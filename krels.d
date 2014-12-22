@@ -446,6 +446,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case madeOf:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "gjord av"]; break;
+                            case en:
+                            default: words = ["is", not, "made of"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["används", not, "till att göra"]; break;
+                            case en:
+                            default: words = [not, "used to make"]; break;
+                        }
+                    }
+                    break;
                 case memberOf:
                     if (dir == RelDir.forward)
                     {

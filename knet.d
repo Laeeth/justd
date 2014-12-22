@@ -1472,15 +1472,19 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/music_theory.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `music theory`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/happiness.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `happiness`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/pirate.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `pirate`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/monster.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `monster`, Sense.unknown, Sense.noun);
+
         learnEnglishWords(rdT("../knowledge/halloween.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `halloween`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/christmas.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `christmas`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/thanksgiving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `thanksgiving`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/camp.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `camp`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/cooking.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `cooking`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/sewing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `sewing`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/military.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `military`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/science.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `science`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/computer.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `computer`, Sense.unknown, Sense.noun);
-    }
+        learnEnglishWords(rdT("../knowledge/transport.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `transport`, Sense.unknown, Sense.noun);
+   }
 
     void learnEmotions()
     {
@@ -2890,12 +2894,12 @@ class Net(bool useArray = true,
                     store("spice", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
 
-        connectMto1(store("herb", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+        connect1toM(store("herb", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
                     Rel.madeOf,
                     store(["leaf", "plant"], Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
 
-        connectMto1(store("spice", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+        connect1toM(store("spice", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
                     Rel.madeOf,
                     store(["root", "plant"], Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
@@ -3155,6 +3159,7 @@ class Net(bool useArray = true,
     LinkRef[] connect1toM(R)(NodeRef first,
                              Rel rel,
                              R rest,
+                             Lang lang,
                              Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
@@ -3162,7 +3167,7 @@ class Net(bool useArray = true,
         {
             if (first != you)
             {
-                linkIxes ~= connect(first, rel, you, origin, weight);
+                linkIxes ~= connect(first, rel, you, lang, origin, weight);
             }
         }
         return linkIxes;
