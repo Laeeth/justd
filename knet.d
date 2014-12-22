@@ -1300,7 +1300,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         const quick = true;
-        const maxCount = quick ? 200000 : size_t.max;
+        const maxCount = quick ? 10000 : size_t.max;
 
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
@@ -1340,14 +1340,7 @@ class Net(bool useArray = true,
 
         learnEnglishVerbs();
 
-        const category = CategoryIx.asUndefined;
-        connectMto1(store(["preserve food",
-                           "cure illness",
-                           "augment cosmetics"],
-                          Lang.en, Sense.noun, category, Origin.manual),
-                    Rel.uses,
-                    store("herb", Lang.en, Sense.noun, category, Origin.manual),
-                    Lang.en, Origin.manual, 1.0);
+        learnEnglishOther();
 
         learnUncountableNouns(Lang.en,
                               ["music", "art", "love", "happiness",
@@ -2877,6 +2870,37 @@ class Net(bool useArray = true,
         learnEnglishVerb("write", "wrote", "written");
     }
 
+    /** Learn English Irregular Verbs.
+     */
+    void learnEnglishOther()
+    {
+        connectMto1(store(["preserve food",
+                           "cure illness",
+                           "augment cosmetics"],
+                          Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Rel.uses,
+                    store("herb", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Lang.en, Origin.manual, 1.0);
+
+        connectMto1(store(["enrich taste of food",
+                           "improve taste of food",
+                           "increase taste of food"],
+                          Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Rel.uses,
+                    store("spice", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Lang.en, Origin.manual, 1.0);
+
+        connectMto1(store("herb", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Rel.madeOf,
+                    store(["leaf", "plant"], Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Lang.en, Origin.manual, 1.0);
+
+        connectMto1(store("spice", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Rel.madeOf,
+                    store(["root", "plant"], Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    Lang.en, Origin.manual, 1.0);
+    }
+
     /** Learn Swedish Irregular Verb.
         See also: http://www.lardigsvenska.com/2010/10/oregelbundna-verb.html
     */
@@ -4094,7 +4118,10 @@ class Net(bool useArray = true,
         return nodes;
     }
 
-    /** Get Possible Languages of $(D text) sorted by falling strength. */
+    /** Get Possible Languages of $(D text) sorted by falling strength.
+        TODO Weight hits with word node connectedness relative to average word
+        connectedness in that language.
+     */
     NWeight[Lang] languagesOf(R)(R text) if (isIterable!R &&
                                              isSomeString!(ElementType!R))
     {

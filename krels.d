@@ -1101,6 +1101,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case uses:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["använder", not]; break;
+                            case en:
+                            default: words = ["does", not, "use"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["används", not, "av"]; break;
+                            case en:
+                            default: words = ["is", not, "used by"]; break;
+                        }
+                    }
+                    break;
                 case abbreviationFor:
                     if (dir == RelDir.forward)
                     {
