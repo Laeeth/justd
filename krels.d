@@ -263,6 +263,7 @@ enum Rel:ubyte
     adjectiveForm,
 
     generalizes, // TODO Merge with other enumerator?
+    specializes, // TODO reversionOf generalizes
 
     hasRelative,
     hasFamilyMember, // can be a dog

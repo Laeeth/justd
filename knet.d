@@ -33,6 +33,8 @@
     - dining_room => dining_room
     - livingroom => living_room
 
+    TODO Infer: shampoo atLocation bathroom, shampoo stored in bottles => bottles atLocation bathroom
+
     TODO Learn word meanings (WordNet) first. Then other higher rules can lookup these
          meanings before they are added.
     TODO For lemmas with Sense.unknown lookup its others lemmasOf. If only one
@@ -173,6 +175,8 @@ enum char asciiUS = '';       // ASCII Unit Separator
 enum char asciiRS = '';       // ASCII Record Separator
 enum char asciiGS = '';       // ASCII Group Separator
 enum char asciiFS = '';       // ASCII File Separator
+
+enum separator = asciiUS;
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
@@ -1422,8 +1426,12 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/bodyparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `body`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `alliteration`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.unknown, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/mineral.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral group`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
 
-        learnEnglishChemicalElements();
+        learnChemicalElements();
+        learnSynonyms();
         learnEnglishOpposites();
 
     }
@@ -1483,7 +1491,13 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/military.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `military`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/science.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `science`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/computer.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `computer`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/math.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `math`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/transport.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `transport`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/rock.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `rock`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `St. Patrick's Day`, Sense.unknown, Sense.noun);
+
+
+        learnEnglishWords(rdT("../knowledge/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, `say`, Sense.verb, Sense.verb);
    }
 
     void learnEmotions()
@@ -1500,16 +1514,13 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective); // TODO ["negative", "unpleasant"]
     }
 
-    void learnEnglishChemicalElements()
+    void learnChemicalElements(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
         foreach (expr; File("../knowledge/chemical_elements.txt").byLine)
         {
             if (expr.empty) { continue; }
-            enum separator = asciiUS;
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const name = split[0], abbr = split[2];
-            enum lang = Lang.en;
-            enum origin = Origin.manual;
             NWeight weight = 1.0;
             const category = CategoryIx.asUndefined;
 
@@ -1525,16 +1536,30 @@ class Net(bool useArray = true,
         }
     }
 
-    void learnEnglishOpposites()
+    void learnSynonyms(Lang lang = Lang.en, Origin origin = Origin.manual)
+    {
+        foreach (expr; File("../knowledge/synonyms.txt").byLine)
+        {
+            if (expr.empty) { continue; }
+            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            const first = split[0], second = split[2];
+            NWeight weight = 1.0;
+            const category = CategoryIx.asUndefined;
+
+            connect(store(first.idup, lang, Sense.noun, category, origin), // TODO store capitalized?
+                    Rel.abbreviationFor,
+                    store(second.idup, lang, Sense.noun, category, origin),
+                    lang, origin, weight);
+        }
+    }
+
+    void learnEnglishOpposites(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
         foreach (expr; File("../knowledge/opposites.txt").byLine)
         {
             if (expr.empty) { continue; }
-            enum separator = asciiUS;
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
-            enum lang = Lang.en;
-            enum origin = Origin.manual;
             NWeight weight = 1.0;
             const category = CategoryIx.asUndefined;
 
