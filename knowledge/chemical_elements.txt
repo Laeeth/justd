@@ -89,6 +89,7 @@ silverag
 sodiumna
 strontiumsr
 sulfurs
+sulphurs
 tantalumta
 technetiumtc
 telluriumte

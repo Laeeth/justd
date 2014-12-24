@@ -5,3 +5,7 @@ LodestoneMagnetite
 NiobiteColumbite
 Niobite-TantaliteColumbite-Tantalite
 PumicitePumice
+SulfurSulphur
+SulfuricSulphuric
+SulfateSulphate
+SulfideSulphide
