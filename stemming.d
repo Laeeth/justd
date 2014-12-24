@@ -1,4 +1,6 @@
-/** Stemming algorithms */
+/** Stemming algorithms
+    BUG days => dai. Should stem to day instead.
+ */
 module stemming;
 
 import std.algorithm: endsWith, canFind;
@@ -263,7 +265,9 @@ private:
      */
     void step1c()
     {
-        if (endsWith("y") && hasVowelInStem())
+        if (endsWith("y") &&
+            !endsWith("day") &&
+            hasVowelInStem())
         {
             _b = _b[0.._k] ~ 'i' ~ _b[_k+1 .. _b.length];
         }
