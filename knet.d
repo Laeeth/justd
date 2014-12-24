@@ -18,6 +18,7 @@
     See also: http://www.eturner.net/omcsnetcpp/
     See also: http://wwww.abbreviations.com
 
+    Data: http://www.wordfrequency.info/
     Data: http://conceptnet5.media.mit.edu/downloads/current/
     Data: http://wiki.dbpedia.org/DBpediaAsTables
     Data: http://icon.shef.ac.uk/Moby/
@@ -26,6 +27,10 @@
     Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
+
+    TODO "holiday" etymologicallyDerivedFrom "holy day"
+
+    TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
     TODO Correct Room Namings
     - bath_room => bathroom,
@@ -1363,6 +1368,7 @@ class Net(bool useArray = true,
                                "pinaotek", "videotek", "diskotek", "mediatek", "datortek", "glyptotek"]);
 
         learnEnglishReversions();
+        learnEtymologicallyDerivedFroms();
 
         learnSwedishVerbs();
         learnSwedishAdjectives();
@@ -1376,6 +1382,8 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `people`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/pronouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pronoun`, Sense.pronoun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `verb`, Sense.verb, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/interjection.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `interjection`, Sense.interjection, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `conjunction`, Sense.conjunction, Sense.noun);
         learnEnglishWords(rdT("../knowledge/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `regular verb`, Sense.verb, Sense.noun);
         learnEnglishWords(rdT("../knowledge/adjectives.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
         learnEnglishWords(rdT("../knowledge/dolch_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dolch word`, Sense.unknown, Sense.noun);
@@ -1426,12 +1434,14 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/buildings.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `building`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/housing.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `housing`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/occupation.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `occupation`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/cooking_tool.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `cooking tool`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/tool.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `tool`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/carparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `car`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/bodyparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `body`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `alliteration`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.unknown, Sense.adjective);
         learnEnglishWords(rdT("../knowledge/mineral.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/metal.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `metal`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral group`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
 
@@ -1447,6 +1457,7 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/election.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `election`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/weather.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `weather`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/dentist.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `dentist`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/firefighting.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `fire fighting`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/driving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `drive`, Sense.unknown, Sense.verb);
         learnEnglishWords(rdT("../knowledge/art.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `art`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/astronomy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `astronomy`, Sense.unknown, Sense.noun);
@@ -1600,6 +1611,23 @@ class Net(bool useArray = true,
         auto all = [tryStore(forward, lang, Sense.verbInfinitive, category, origin),
                     tryStore(backward, lang, Sense.verbPastParticiple, category, origin)];
         return connectAll(Rel.reversionOf, all.filter!(a => a.defined), lang, origin);
+    }
+
+    void learnEtymologicallyDerivedFroms()
+    {
+        learnEtymologicallyDerivedFrom("holiday", "holy day", Lang.en, Sense.noun);
+    }
+
+    LinkRef learnEtymologicallyDerivedFrom(S)(S first,
+                                              S second,
+                                              Lang lang,
+                                              Sense sense) if (isSomeString!S)
+    {
+        const category = CategoryIx.asUndefined;
+        return connect(store(first, lang, Sense.noun, category, Origin.manual),
+                       Rel.etymologicallyDerivedFrom,
+                       store(second, lang, Sense.noun, category, Origin.manual),
+                       lang, Origin.manual, 1.0);
     }
 
     /** Learn English Irregular Verb.
