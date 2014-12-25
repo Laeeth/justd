@@ -1,5 +1,4 @@
 /** Stemming algorithms
-    BUG days => dai. Should stem to day instead.
  */
 module stemming;
 
