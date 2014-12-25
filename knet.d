@@ -28,8 +28,6 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
-    TODO "holiday" etymologicallyDerivedFrom "holy day"
-
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
     TODO Correct Room Namings
