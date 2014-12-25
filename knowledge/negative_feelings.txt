@@ -1,151 +1,258 @@
-abandoned
-abused
-accused
-afraid
-alone
-angry
-ashamed
-attacked
-bashful
-beaten down
-bitter
-blamed
-bored
-bossed around
-brushed off
-cheated
-chilly
-cold
-confused
-controlled
-criticized
-cut down
-cynical
-defeated
-defensive
-dehumanized
-dependent
-depressed
-dirty
-disappointed
-disapproved of
-disbelieved
-disconnected
-discouraged
-disgruntled
-disrespected
-dreadful
-dumb
-embarrassed
-empty
-evil
-falsely accused
-foolish
-forced
-frightened
-frozen
-frustrated
-guarded
-guilt-tripped
-guilty
-hated
-hating
-hopeless
-hot
-humiliated
-hungry
-hurt
-ignored
-imposed upon
-imprisoned
-inadequate
-incompetent
-inferior
-inhibited
-insecure
-insignificant
-insulted
-interrogated
-intimidated
-invaded
-invalidated
-invisible
-isolated
-judged
-labeled
-lectured to
-left out
-lethargic
-lied about
-lied to
-lonely
-lost
-manipulated
-misled
-misunderstood
-mocked
-needy
-neglected
-nervous
-numb
-obligated
-offended
-over-controlled
-over-protected
-over-ruled
-pessimistic
-powerless
-pressured
-punished
-put down
-rejected
-resentful
-restricted
-ridiculed
-robbed
-sad
-sadistic
-scared
-sick
-silly
-skeptical
-squelched
-stereotyped
-stupid
-suffocated
-suspicious
-taken aback
-teased
-tense
-terrible
-terrified
-thirsty
-threatened
-tired
-trapped
-ugly
-unappreciated
-unaware
-uncared about
-uncomfortable
-under-protected
-underestimated
-undeserving
-undesirable
-unheard
-unimportant
-uninformed
-unknown
-unlovable
-unloved
-unsafe
-unsupported
-untrusted
-untrusting
-unwanted
-unworthy
-violated
-warm
-weak
-worried
-worthless
+a sense of loss1
+abandoned1
+abominable1
+abused1
+accused1
+aching1
+afflicted1
+afraid2
+aggressive1
+agonized1
+alarmed1
+alienated1
+alone2
+angry1
+anguish1
+annoyed1
+anxious1
+appalled1
+ashamed2
+attacked1
+bad1
+bashful1
+beaten down1
+bitter2
+blamed1
+boiling1
+bored1
+bored1
+bossed around1
+brushed off1
+cheated1
+chilly1
+cold2
+confused1
+controlled1
+cowardly1
+criticized1
+cross1
+crushed1
+cut down1
+cynical1
+defeated1
+defensive1
+dehumanized1
+dejected1
+dependent1
+depressed1
+deprived1
+desolate1
+despair1
+desperate1
+despicable1
+detestable1
+diminished1
+dirty1
+disappointed2
+disapproved of1
+disbelieved1
+disconnected1
+discouraged2
+disgruntled1
+disgusting1
+disillusioned1
+disinterested1
+dismayed1
+disrespected1
+dissatisfied1
+distressed1
+distrustful1
+dominated1
+doubtful2
+dreadful1
+dull1
+dumb1
+embarrassed2
+empty1
+empty1
+enraged1
+evil1
+falsely accused1
+fatigued1
+fearful1
+foolish1
+forced2
+frightened2
+frozen1
+frustrated2
+fuming1
+grief1
+grieved1
+guarded1
+guilt-tripped1
+guilty2
+hated1
+hateful1
+hating1
+heartbroken1
+hesitant2
+hopeless1
+hostile1
+hot1
+humiliated2
+hungry1
+hurt1
+hurt1
+ignored1
+imposed upon1
+imprisoned1
+in a stew1
+in despair1
+inadequate1
+incapable1
+incensed1
+incompetent1
+indecisive1
+indifferent1
+indignant1
+inferior2
+inflamed1
+infuriated1
+inhibited1
+injured1
+insecure1
+insensitive1
+insignificant1
+insulted1
+insulting1
+interrogated1
+intimidated1
+invaded1
+invalidated1
+invisible1
+irritated1
+isolated1
+judged1
+labeled1
+lectured to1
+left out1
+lethargic1
+lied about1
+lied to1
+lifeless1
+lonely2
+lost2
+lousy1
+manipulated1
+menaced1
+miserable1
+misgiving1
+misled1
+misunderstood1
+mocked1
+mournful1
+needy1
+neglected1
+nervous2
+neutral1
+nonchalant1
+numb1
+obligated1
+offended2
+offensive1
+over-controlled1
+over-protected1
+over-ruled1
+pained1
+panic1
+paralyzed1
+pathetic1
+perplexed1
+pessimistic3
+powerless2
+preoccupied1
+pressured1
+provoked1
+punished1
+put down1
+quaking1
+rejected2
+repugnant1
+resentful2
+reserved1
+restless1
+restricted1
+ridiculed1
+robbed1
+sad2
+sadistic1
+scared2
+shaky1
+shy1
+sick1
+silly1
+skeptical2
+sore1
+sorrowful1
+squelched1
+stereotyped1
+stupefied1
+stupid1
+suffocated1
+sulky1
+suspicious2
+taken aback1
+tearful1
+teased1
+tense2
+terrible2
+terrified2
+thirsty1
+threatened2
+timid1
+tired1
+tormented1
+tortured1
+tragic1
+trapped1
+ugly1
+unappreciated1
+unaware1
+unbelieving1
+uncared about1
+uncertain1
+uncomfortable1
+under-protected1
+underestimated1
+undeserving1
+undesirable1
+uneasy1
+unhappy1
+unheard1
+unimportant1
+uninformed1
+unknown1
+unlovable1
+unloved1
+unpleasant1
+unsafe1
+unsupported1
+unsure1
+untrusted1
+untrusting1
+unwanted1
+unworthy1
+upset2
+useless1
+victimized1
+violated1
+vulnerable1
+warm1
+wary1
+weak1
+weary1
+woeful1
+worked up1
+worried2
+worthless1
+wronged1

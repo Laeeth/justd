@@ -1533,8 +1533,31 @@ class Net(bool useArray = true,
     void learnFeelings()
     {
         learnEnglishWords(rdT("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/positive_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.noun, Sense.adjective); // TODO ["positive", "pleasant"]
-        learnEnglishWords(rdT("../knowledge/negative_feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative`, Sense.noun, Sense.adjective); // TODO ["negative", "unpleasant"]
+        learnWeightedAssociations("../knowledge/positive_feelings.txt", Rel.hasProperty, `positive`, Sense.adjective, Sense.adjective); // TODO ["positive", "pleasant"]
+        learnWeightedAssociations("../knowledge/negative_feelings.txt", Rel.hasProperty, `negative`, Sense.adjective, Sense.adjective); // TODO ["negative", "unpleasant"]
+    }
+
+    void learnWeightedAssociations(S)(string path,
+                                      Rel rel,
+                                      S attribute,
+                                      Sense wordSense = Sense.unknown,
+                                      Sense attributeSense = Sense.noun,
+                                      Lang lang = Lang.en,
+                                      Origin origin = Origin.manual) if (isSomeString!S)
+    {
+        foreach (expr; File(path).byLine)
+        {
+            if (expr.empty) { continue; }
+            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            const name = split[0], weight = split[2];
+            const category = CategoryIx.asUndefined;
+            const w = weight.to!NWeight;
+            const nweight = w/(1 + w); // normalized weight
+            connect(store(name.idup, lang, wordSense, category, origin),
+                    Rel.isA,
+                    store(attribute, lang, attributeSense, category, origin),
+                    lang, origin, nweight);
+        }
     }
 
     void learnChemicalElements(Lang lang = Lang.en, Origin origin = Origin.manual)
@@ -1546,12 +1569,10 @@ class Net(bool useArray = true,
             const name = split[0], abbr = split[2];
             NWeight weight = 1.0;
             const category = CategoryIx.asUndefined;
-
             connect(store(name.idup, lang, Sense.noun, category, origin),
                     Rel.isA,
                     store("chemical element", lang, Sense.noun, category, origin),
                     lang, origin, weight);
-
             connect(store(abbr.idup, lang, Sense.noun, category, origin), // TODO store capitalized?
                     Rel.abbreviationFor,
                     store(name.idup, lang, Sense.noun, category, origin),
@@ -1568,7 +1589,6 @@ class Net(bool useArray = true,
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
             const category = CategoryIx.asUndefined;
-
             connect(store(first.idup, lang, Sense.noun, category, origin), // TODO store capitalized?
                     Rel.abbreviationFor,
                     store(second.idup, lang, Sense.noun, category, origin),
@@ -1585,7 +1605,6 @@ class Net(bool useArray = true,
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
             const category = CategoryIx.asUndefined;
-
             connect(store(first.idup, lang, Sense.unknown, category, origin),
                     Rel.oppositeOf,
                     store(second.idup, lang, Sense.unknown, category, origin),
@@ -1617,19 +1636,20 @@ class Net(bool useArray = true,
 
     void learnEtymologicallyDerivedFroms()
     {
-        learnEtymologicallyDerivedFrom("holiday", "holy day", Lang.en, Sense.noun);
+        learnEtymologicallyDerivedFrom("holiday", Lang.en, "holy day", Lang.en, Sense.noun);
+        learnEtymologicallyDerivedFrom("juletide", Lang.en, "juletid", Lang.sv, Sense.noun);
+        learnEtymologicallyDerivedFrom("smorgosbord", Lang.en, "smörgåsbord", Lang.sv, Sense.noun);
     }
 
-    LinkRef learnEtymologicallyDerivedFrom(S)(S first,
-                                              S second,
-                                              Lang lang,
+    LinkRef learnEtymologicallyDerivedFrom(S)(S first, Lang firstLang,
+                                              S second, Lang secondLang,
                                               Sense sense) if (isSomeString!S)
     {
         const category = CategoryIx.asUndefined;
-        return connect(store(first, lang, Sense.noun, category, Origin.manual),
+        return connect(store(first, firstLang, Sense.noun, category, Origin.manual),
                        Rel.etymologicallyDerivedFrom,
-                       store(second, lang, Sense.noun, category, Origin.manual),
-                       lang, Origin.manual, 1.0);
+                       store(second, secondLang, Sense.noun, category, Origin.manual),
+                       Lang.unknown, Origin.manual, 1.0);
     }
 
     /** Learn English Irregular Verb.

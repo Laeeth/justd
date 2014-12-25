@@ -1,81 +1,160 @@
-accepted
-acknowledged
-agreeable
-amazed
-animated
-appreciated
-attracted
-attractive
-aware
-beautiful
-better
-brave
-calm
-capable
-cheerful
-clean
-comfortable
-competent
-confident
-connected
-delightful
-deserving
-desirable
-eager
-empowered
-encouraged
-energetic
-engrossed
-enlightened
-excited
-faith
-festive
-focused
-fortunate
-free
-fulfilled
-gentle
-gorgeous
-great
-handsome
-happy
-hope
-independent
-intelligent
-involved
-jolly
-joyful
-kind
-lovable
-loved
-loving
-lucky
-moody
-motivated
-nice
-ok
-open
-optimistic
-peaceful
-playful
-proud
-relaxed
-reliable
-relieved
-respected
-safe
-satisfied
-secure
-serene
-smart
-strong
-supported
-supportive
-sweet
-thrilled
-understanding
-validated
-very well
-well
-wonderful
-worthy
+interested1
+love1
+positive1
+strong1
+absorbed1
+accepted1
+accepting1
+acknowledged1
+admiration1
+affected1
+affectionate1
+agreeable1
+amazed2
+animated2
+anxious1
+appreciated1
+at ease1
+attracted2
+attractive1
+aware1
+beautiful1
+better1
+blessed1
+bold1
+brave2
+bright1
+calm2
+capable1
+certain2
+challenged1
+cheerful2
+clean1
+clever1
+close1
+comfortable2
+comforted1
+competent1
+concerned1
+confident2
+connected1
+considerate1
+content1
+courageous1
+curious1
+daring1
+delighted1
+delightful1
+deserving1
+desirable1
+determined1
+devoted1
+drawn toward1
+dynamic1
+eager2
+earnest1
+easy1
+ecstatic1
+elated1
+empowered1
+encouraged2
+energetic2
+engrossed2
+enlightened1
+enthusiastic1
+excited2
+faith1
+fascinated1
+festive2
+focused1
+fortunate2
+free4
+free and easy1
+frisky1
+fulfilled1
+gay1
+gentle1
+glad1
+gleeful1
+gorgeous1
+great2
+handsome1
+happy1
+hardy1
+hope1
+hopeful1
+important1
+impulsive2
+independent1
+inquisitive1
+inspired1
+intelligent1
+intent1
+interested1
+intrigued1
+involved1
+jolly1
+joyful1
+joyous1
+jubilant1
+keen1
+kind2
+liberated1
+lovable1
+loved2
+loving2
+lucky2
+merry1
+moody1
+motivated1
+nice1
+nosy1
+ok1
+open1
+optimistic3
+overjoyed1
+passionate1
+peaceful2
+playful2
+pleased1
+proud1
+provocative1
+quiet1
+re-enforced1
+reassured1
+rebellious1
+receptive1
+relaxed2
+reliable2
+relieved1
+respected1
+safe1
+satisfied3
+secure2
+sensitive1
+serene2
+smart1
+snoopy1
+spirited1
+strong1
+sunny1
+supported1
+supportive1
+sure1
+surprised1
+sweet1
+sympathetic1
+sympathy1
+tenacious1
+tender1
+thankful1
+thrilled2
+touched1
+understanding2
+unique1
+validated1
+very well1
+warm1
+well1
+wonderful2
+worthy1
