@@ -44,7 +44,6 @@ blesscurse
 boldmeek
 boldtimid
 borrowlend
-borrowlend
 bottomtop
 boundfree
 boundunbound
@@ -235,7 +234,6 @@ lawfulillegal
 lawfulunlawful
 lazyindustrious
 leaderfollower
-leftright
 leftright
 lend borrow
 lengthenshorten
