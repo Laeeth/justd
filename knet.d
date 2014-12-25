@@ -36,7 +36,9 @@
     - dining_room => dining_room
     - livingroom => living_room
 
-    TODO Infer: shampoo atLocation bathroom, shampoo stored in bottles => bottles atLocation bathroom
+    TODO Infer:
+         - shampoo atLocation bathroom, shampoo stored in bottles => bottles atLocation bathroom
+         - sulfur synonymWith sulphur => sulfuric synonymWith sulphuric
 
     TODO Learn word meanings (WordNet) first. Then other higher rules can lookup these
          meanings before they are added.
