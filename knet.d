@@ -1454,6 +1454,7 @@ class Net(bool useArray = true,
     void learnAssociativeThings()
     {
         // TODO lower weights on these are not absolute
+        learnEnglishWords(rdT("../knowledge/constitution.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `constitution`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/election.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `election`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/weather.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `weather`, Sense.noun, Sense.noun);
         learnEnglishWords(rdT("../knowledge/dentist.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `dentist`, Sense.unknown, Sense.noun);
@@ -1516,6 +1517,7 @@ class Net(bool useArray = true,
         learnEnglishWords(rdT("../knowledge/rock.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `rock`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/doctor.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `doctor`, Sense.unknown, Sense.noun);
         learnEnglishWords(rdT("../knowledge/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `St. Patrick's Day`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `New Year's Eve`, Sense.unknown, Sense.noun);
 
 
         learnEnglishWords(rdT("../knowledge/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, `say`, Sense.verb, Sense.verb);
