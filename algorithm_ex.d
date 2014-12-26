@@ -1600,7 +1600,7 @@ alias ssub = subu;
 alias smul = mulu;
 
 /** Append Arguments $(args) to $(D data).
-    TODO Add support for std.container.Array
+    TODO Add support for other Random Access Ranges such as std.container.Array
     See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
  */
 ref T[] append(T, Args...)(ref T[] data,
@@ -1618,7 +1618,7 @@ ref T[] append(T, Args...)(ref T[] data,
     else static if (allSatisfy!(isElementType, Args))
     {
         data.length += args.length;
-        foreach (i, e; args)
+        foreach (i, ref e; args)
         {
             data[$ - args.length + i] = e;
         }
@@ -1628,7 +1628,7 @@ ref T[] append(T, Args...)(ref T[] data,
         static size_t estimateLength(Args args)
         {
             size_t result;
-            foreach (e; args)
+            foreach (ref e; args)
             {
                 static if (hasLength!(typeof(e)))
                 {
@@ -1647,7 +1647,7 @@ ref T[] append(T, Args...)(ref T[] data,
 
         app.reserve(data.length + estimateLength(args));
 
-        foreach (e; args)
+        foreach (ref e; args)
         {
             app.put(e);
         }
