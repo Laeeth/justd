@@ -122,7 +122,15 @@ auto sorted(R)(R r) if (!(isArray!R))
     static if (hasLength!R)
     {
         auto s = new E[r.length];
-        r[].copy(s);
+        import std.range: hasSlicing;
+        static if (is(typeof(r[])))
+        {
+            r[].copy(s);
+        }
+        else
+        {
+            r.copy(s);
+        }
     }
     else
     {

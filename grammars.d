@@ -678,6 +678,8 @@ enum Sense:ubyte
     pronounRelative, /// https://www.englishclub.com/grammar/pronouns-relative.htm
 
     determiner,
+    predeterminer,
+
     article,
     articleUndefinite,
     articleDefinite,
@@ -940,7 +942,7 @@ unittest
 }
 
 bool specializes(Sense special,
-              Sense general)
+                 Sense general)
     @safe @nogc pure nothrow
 {
     with (Sense) {
