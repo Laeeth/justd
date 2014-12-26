@@ -1601,38 +1601,58 @@ alias smul = mulu;
 
 /** Append Arguments $(args) to $(D data).
     TODO Add support for std.container.Array
-    TODO Add specialization for args being ElementType!T used here http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
     See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
  */
-ref T[] append(T, Args...)(ref T[] data, auto ref Args args)
+ref T[] append(T, Args...)(ref T[] data,
+                           auto ref Args args) if (args.length >= 1)
 {
-    static size_t estimateLength(Args args)
+    import std.traits: isAssignable;
+    enum isElementType(E) = isAssignable!(T, E);
+
+    import std.typetuple : allSatisfy;
+
+    static if (args.length == 1)
     {
-        size_t result;
+        data ~= args[0];     // inlined
+    }
+    else static if (allSatisfy!(isElementType, Args))
+    {
+        data.length += args.length;
+        foreach (i, e; args)
+        {
+            data[$ - args.length + i] = e;
+        }
+    }
+    else
+    {
+        static size_t estimateLength(Args args)
+        {
+            size_t result;
+            foreach (e; args)
+            {
+                static if (hasLength!(typeof(e)))
+                {
+                    result += e.length;
+                }
+                else
+                {
+                    result += 1;
+                }
+            }
+            return result;
+        }
+
+        import std.range: appender;
+        auto app = appender!(T[])(data);
+
+        app.reserve(data.length + estimateLength(args));
+
         foreach (e; args)
         {
-            static if (hasLength!(typeof(e)))
-            {
-                result += e.length;
-            }
-            else
-            {
-                result += 1;
-            }
+            app.put(e);
         }
-        return result;
+        data = app.data;
     }
-
-    import std.range: appender;
-
-    auto app = appender!(T[])(data);
-    app.reserve(data.length + estimateLength(args));
-
-    foreach (e; args)
-    {
-        app.put(e);
-    }
-    data = app.data;
 
     return data;
 }
@@ -1642,6 +1662,11 @@ unittest
     import std.stdio;
     int[] data;
     import std.range: only, iota;
-    data.append(1, 2, only(1, 2, 3), iota(4, 9));
-    assert(data == [1, 2, 1, 2, 3, 4, 5, 6, 7, 8]);
+    data.append(-1, 0, only(1, 2, 3), iota(4, 9));
+    assert(data == [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]);
+    data.append(9, 10);
+    assert(data == [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    data.append(11);
+    assert(data == [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    static assert(!__traits(compiles, { data.append(); }));
 }
