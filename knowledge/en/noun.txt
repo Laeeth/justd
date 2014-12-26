@@ -4,6 +4,7 @@ act
 address
 aim
 alert
+anaerobic digestion
 answer
 arrest
 attack
@@ -160,6 +161,7 @@ function
 garden
 gaze
 gel
+glossophobia
 glue
 good-for-nothing
 grate
@@ -212,6 +214,8 @@ joke
 judge
 jump
 keep
+ketogenic diet
+ketone
 kick
 kiss
 knit
@@ -238,6 +242,7 @@ love
 mail
 make
 man
+manger
 march
 mark
 match
@@ -261,6 +266,8 @@ notch
 note
 notice
 number
+nut job
+nutjob
 object
 offer
 oil
@@ -341,6 +348,7 @@ scratch
 screw
 search
 season
+selfie stick
 sense
 shampoo
 shape
@@ -415,6 +423,7 @@ time
 tip
 tire
 toast
+toe shoes
 touch
 tour
 tow
@@ -437,9 +446,11 @@ upstage
 use
 vacuum
 value
+vishing
 visit
 voice
 vote
+wack job
 wake
 walk
 waltz
@@ -447,6 +458,7 @@ watch
 water
 wave
 wear
+weather bomb
 whip
 whisper
 whistle
@@ -461,4 +473,3 @@ wreck
 yawn
 yield
 zone
-weather bomb

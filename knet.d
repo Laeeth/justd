@@ -25,6 +25,7 @@
     Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
     Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
     Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
+    Data: http://www.words-to-use.com/
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
@@ -1402,7 +1403,10 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `personal quality`, Sense.adjective, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/prepositions.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `preposition`, Sense.preposition, Sense.noun);
-        learnWords(Lang.en, rdT("../knowledge/en/colors.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.noun, Sense.noun);
+
+        learnWords(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.unknown, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/color_adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.adjective, Sense.noun); // TODO learn both adjective and color
+
         learnWords(Lang.en, rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `shape`, Sense.noun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `fruit`, Sense.noun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/plants.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `plant`, Sense.noun, Sense.noun);
@@ -1502,6 +1506,7 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/happy.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `happy`, Sense.adjective, Sense.adjective);
         learnWords(Lang.en, rdT("../knowledge/en/big.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `big`, Sense.adjective, Sense.adjective);
         learnWords(Lang.en, rdT("../knowledge/en/many.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `many`, Sense.adjective, Sense.adjective);
+        learnWords(Lang.en, rdT("../knowledge/en/easily_upset.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `easily upset`, Sense.adjective, Sense.adjective);
 
         learnWords(Lang.en, rdT("../knowledge/en/roadway.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `roadway`, Sense.noun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/baseball.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `baseball`, Sense.noun, Sense.noun);

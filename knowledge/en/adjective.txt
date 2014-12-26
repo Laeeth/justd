@@ -504,6 +504,7 @@ harsh
 hasty
 hateful
 haunting
+hazel
 healthy
 heartfelt
 hearty
@@ -817,6 +818,7 @@ overlooked
 palatable
 pale
 paltry
+paper-thin
 parallel
 parched
 partial
@@ -912,6 +914,7 @@ rapid
 rare
 rash
 raw
+razor-thin
 ready
 real
 realistic
@@ -1140,6 +1143,7 @@ that
 these
 thick
 thin
+thin-skinned
 third
 thirsty
 this
@@ -1260,6 +1264,7 @@ vital
 vivacious
 vivid
 voluminous
+wafer-thin
 wan
 warlike
 warm
