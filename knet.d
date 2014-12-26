@@ -1349,7 +1349,7 @@ class Net(bool useArray = true,
     {
         learnEnglishComputerKnowledge();
 
-        learnEnglishVerbs();
+        learnEnglishIrregularVerbs();
 
         learnEnglishOther();
 
@@ -2829,7 +2829,7 @@ class Net(bool useArray = true,
         TODO Move to irregular_verb.txt in format: bewas,werebeen
         TODO Merge with http://www.enchantedlearning.com/wordlist/irregularverbs.shtml
      */
-    void learnEnglishVerbs()
+    void learnEnglishIrregularVerbs()
     {
         learnEnglishIrregularVerb("arise", "arose", "arisen");
         learnEnglishIrregularVerb("rise", "rose", "risen");
