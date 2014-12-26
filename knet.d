@@ -1668,8 +1668,8 @@ class Net(bool useArray = true,
                                 Lang lang = Lang.unknown) if (isSomeString!S)
     {
         const origin = Origin.manual;
-        auto all = [tryStore(forward, lang, Sense.verbInfinitive, origin),
-                    tryStore(backward, lang, Sense.verbPastParticiple, origin)];
+        auto all = [store(forward, lang, Sense.verbInfinitive, origin),
+                    store(backward, lang, Sense.verbPastParticiple, origin)];
         return connectAll(Rel.reversionOf, all.filter!(a => a.defined), lang, origin);
     }
 
@@ -3890,7 +3890,7 @@ class Net(bool useArray = true,
         auto doc = new DocumentParser(str);
         doc.onStartTag["syn"] = (ElementParser elp)
         {
-            const level = elp.tag.attr["level"].to!real;
+            const level = elp.tag.attr["level"].to!real; // level on a scale from 1 to 5
             const weight = level/5.0; // normalized weight
             string w1, w2;
             elp.onEndTag["w1"] = (in Element e) { w1 = e.text; };
