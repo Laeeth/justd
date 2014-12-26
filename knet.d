@@ -1324,7 +1324,7 @@ class Net(bool useArray = true,
         wordnet = new WordNet!(true, true)([Lang.en]);
 
         // Read Synlex
-        readSynlexFile("~/Knowledge/synlex/synpairs.xml".expandTilde.buildNormalizedPath);
+        readSynlexFile("~/Knowledge/swesaurus/synpairs.xml".expandTilde.buildNormalizedPath);
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnAbsoluteThings();
