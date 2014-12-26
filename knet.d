@@ -37,6 +37,7 @@
     - livingroom => living_room
 
     TODO Infer:
+         - X opposite of Y, Sense can be inferred in both directions
          - shampoo atLocation bathroom, shampoo stored in bottles => bottles atLocation bathroom
          - sulfur synonymWith sulphur => sulfuric synonymWith sulphuric
 
@@ -182,6 +183,7 @@ enum char asciiGS = '';       // ASCII Group Separator
 enum char asciiFS = '';       // ASCII File Separator
 
 enum separator = asciiUS;
+enum weightSeparator = '#';
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
@@ -1525,16 +1527,25 @@ class Net(bool useArray = true,
 
     void learnEmotions()
     {
-        learnEnglishWords(rdT("../knowledge/basic_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `basic`, Sense.noun, Sense.adjective);
-        learnEnglishWords(rdT("../knowledge/positive_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive emotion`, Sense.noun, Sense.adjective);
-        learnEnglishWords(rdT("../knowledge/negative_emotions.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative emotion`, Sense.noun, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/basic_emotion.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `basic emotion`, Sense.noun, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/positive_emotion.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive emotion`, Sense.noun, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/negative_emotion.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative emotion`, Sense.noun, Sense.adjective);
     }
 
     void learnFeelings()
     {
-        learnEnglishWords(rdT("../knowledge/feelings.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `emotion`, Sense.noun, Sense.noun);
-        learnWeightedAssociations("../knowledge/positive_feelings.txt", Rel.hasProperty, `positive`, Sense.adjective, Sense.adjective); // TODO ["positive", "pleasant"]
-        learnWeightedAssociations("../knowledge/negative_feelings.txt", Rel.hasProperty, `negative`, Sense.adjective, Sense.adjective); // TODO ["negative", "unpleasant"]
+        learnEnglishWords(rdT("../knowledge/feeling.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `feeling`, Sense.noun, Sense.noun);
+
+        const feelings = ["afraid", "alive", "angry", "confused", "depressed", "good", "happy",
+                          "helpless", "hurt", "indifferent", "interested", "love",
+                          "negative", "unpleasant",
+                          "positive", "pleasant",
+                          "open", "sad", "strong"];
+        foreach (feeling; feelings)
+        {
+            learnWeightedAssociations("../knowledge/" ~ feeling ~ "_feeling.txt",
+                                      Rel.similarTo, feeling, Sense.adjective, Sense.adjective);
+        }
     }
 
     void learnWeightedAssociations(S)(string path,
@@ -1548,13 +1559,20 @@ class Net(bool useArray = true,
         foreach (expr; File(path).byLine)
         {
             if (expr.empty) { continue; }
-            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+
+            auto split = expr.findSplit([weightSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const name = split[0], weight = split[2];
+
+            NWeight nweight = 1.0;
+            if (!weight.empty)
+            {
+                const w = weight.to!NWeight;
+                nweight = w/(1 + w); // normalized weight
+            }
+
             const category = CategoryIx.asUndefined;
-            const w = weight.to!NWeight;
-            const nweight = w/(1 + w); // normalized weight
             connect(store(name.idup, lang, wordSense, category, origin),
-                    Rel.isA,
+                    rel,
                     store(attribute, lang, attributeSense, category, origin),
                     lang, origin, nweight);
         }
