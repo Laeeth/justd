@@ -6,9 +6,9 @@ beef
 beverage
 bill
 bistro
-boiled
+boil
 bowl
-braised
+braise
 bread
 breakfast
 brunch
@@ -28,7 +28,6 @@ cola
 cold
 condiment
 cook
-cooked
 course
 cream
 credit card
@@ -56,7 +55,7 @@ fruit
 glass
 gourmand
 gourmet
-grilled
+grill
 hamburger
 head waiter
 high tea
@@ -65,7 +64,6 @@ hostess
 hot
 ice
 ice cube
-iced
 ingredient
 ketchup
 kitchen
@@ -96,7 +94,7 @@ pop
 rare
 reservation
 restaurant
-roasted
+roast
 roll
 salad
 salt
@@ -104,7 +102,7 @@ sandwich
 sauce
 saucer
 seafood
-seared
+sear
 server
 side order
 silverware
