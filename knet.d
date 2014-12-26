@@ -835,6 +835,8 @@ enum Origin:ubyte
     yago,                       ///< Yago
     globalmind,                 ///< GlobalMind
 
+    synlex, ///< Folkets synonymlexikon Synlex http://lexikon.nada.kth.se/synlex.html
+
     manual,
 }
 
@@ -862,6 +864,7 @@ string toNice(Origin origin) @safe pure
             case nell: return "NELL";
             case yago: return "Yago";
             case globalmind: return "GlobalMind";
+            case synlex: return "Synlex";
             case manual: return "Manual";
         }
 }
@@ -1316,6 +1319,9 @@ class Net(bool useArray = true,
         // WordNet
         wordnet = new WordNet!(true, true)([Lang.en]);
 
+        // Read Synlex
+        readSynlexFile("~/Knowledge/synlex/synpairs.xml".expandTilde.buildNormalizedPath);
+
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnAbsoluteThings();
 
@@ -1529,9 +1535,12 @@ class Net(bool useArray = true,
     /// Learn Emotions.
     void learnEmotions()
     {
-        learnEnglishWords(rdT("../knowledge/basic_emotion.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `basic emotion`, Sense.noun, Sense.adjective);
-        learnEnglishWords(rdT("../knowledge/positive_emotion.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive emotion`, Sense.noun, Sense.adjective);
-        learnEnglishWords(rdT("../knowledge/negative_emotion.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `negative emotion`, Sense.noun, Sense.adjective);
+        const groups = ["basic", "positive", "negative", "strong", "medium", "light"];
+        foreach (group; groups)
+        {
+            learnEnglishWords(rdT("../knowledge/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
+                              Rel.isA, group ~ ` emotion`, Sense.unknown, Sense.noun);
+        }
     }
 
     /// Learn Feelings.
@@ -1546,7 +1555,7 @@ class Net(bool useArray = true,
         foreach (feeling; feelings)
         {
             const path = "../knowledge/" ~ feeling ~ "_feeling.txt";
-            learnAssociations(path, Rel.similarTo, feeling, Sense.adjective, Sense.adjective);
+            learnAssociations(path, Rel.similarTo, feeling.tr(`_`, ` `), Sense.adjective, Sense.adjective);
         }
     }
 
@@ -1573,10 +1582,9 @@ class Net(bool useArray = true,
                 nweight = w/(1 + w); // normalized weight
             }
 
-            const category = CategoryIx.asUndefined;
-            connect(store(name.idup, lang, wordSense, category, origin),
+            connect(store(name.idup, lang, wordSense, origin),
                     rel,
-                    store(attribute, lang, attributeSense, category, origin),
+                    store(attribute, lang, attributeSense, origin),
                     lang, origin, nweight);
         }
     }
@@ -1590,14 +1598,13 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const name = split[0], abbr = split[2];
             NWeight weight = 1.0;
-            const category = CategoryIx.asUndefined;
-            connect(store(name.idup, lang, Sense.noun, category, origin),
+            connect(store(name.idup, lang, Sense.noun, origin),
                     Rel.isA,
-                    store("chemical element", lang, Sense.noun, category, origin),
+                    store("chemical element", lang, Sense.noun, origin),
                     lang, origin, weight);
-            connect(store(abbr.idup, lang, Sense.noun, category, origin), // TODO store capitalized?
+            connect(store(abbr.idup, lang, Sense.noun, origin), // TODO store capitalized?
                     Rel.abbreviationFor,
-                    store(name.idup, lang, Sense.noun, category, origin),
+                    store(name.idup, lang, Sense.noun, origin),
                     lang, origin, weight);
         }
     }
@@ -1611,10 +1618,9 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
-            const category = CategoryIx.asUndefined;
-            connect(store(first.idup, lang, Sense.noun, category, origin), // TODO store capitalized?
+            connect(store(first.idup, lang, Sense.noun, origin), // TODO store capitalized?
                     Rel.abbreviationFor,
-                    store(second.idup, lang, Sense.noun, category, origin),
+                    store(second.idup, lang, Sense.noun, origin),
                     lang, origin, weight);
         }
     }
@@ -1628,10 +1634,9 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
-            const category = CategoryIx.asUndefined;
-            connect(store(first.idup, lang, Sense.unknown, category, origin),
+            connect(store(first.idup, lang, Sense.unknown, origin),
                     Rel.oppositeOf,
-                    store(second.idup, lang, Sense.unknown, category, origin),
+                    store(second.idup, lang, Sense.unknown, origin),
                     lang, origin, weight);
         }
     }
@@ -1651,10 +1656,9 @@ class Net(bool useArray = true,
                                 S backward,
                                 Lang lang = Lang.unknown) if (isSomeString!S)
     {
-        const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        auto all = [tryStore(forward, lang, Sense.verbInfinitive, category, origin),
-                    tryStore(backward, lang, Sense.verbPastParticiple, category, origin)];
+        auto all = [tryStore(forward, lang, Sense.verbInfinitive, origin),
+                    tryStore(backward, lang, Sense.verbPastParticiple, origin)];
         return connectAll(Rel.reversionOf, all.filter!(a => a.defined), lang, origin);
     }
 
@@ -1673,10 +1677,9 @@ class Net(bool useArray = true,
                                               S second, Lang secondLang,
                                               Sense sense) if (isSomeString!S)
     {
-        const category = CategoryIx.asUndefined;
-        return connect(store(first, firstLang, Sense.noun, category, Origin.manual),
+        return connect(store(first, firstLang, Sense.noun, Origin.manual),
                        Rel.etymologicallyDerivedFrom,
-                       store(second, secondLang, Sense.noun, category, Origin.manual),
+                       store(second, secondLang, Sense.noun, Origin.manual),
                        Lang.unknown, Origin.manual, 1.0);
     }
 
@@ -1688,11 +1691,10 @@ class Net(bool useArray = true,
                                                     Origin origin = Origin.manual)
     {
         enum lang = Lang.en;
-        const category = CategoryIx.asUndefined;
         NodeRef[] all;
-        all ~= store(infinitive, lang, Sense.verbInfinitive, category, origin);
-        all ~= store(past, lang, Sense.verbPast, category, origin);
-        all ~= store(pastParticiple, lang, Sense.verbPastParticiple, category, origin);
+        all ~= store(infinitive, lang, Sense.verbInfinitive, origin);
+        all ~= store(past, lang, Sense.verbPast, origin);
+        all ~= store(pastParticiple, lang, Sense.verbPastParticiple, origin);
         return connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
@@ -1705,10 +1707,9 @@ class Net(bool useArray = true,
                                    Origin origin = Origin.manual) if (isSomeString!S)
     {
         enum lang = Lang.en;
-        const category = CategoryIx.asUndefined;
-        return connect(store(acronym.toLower, lang, Sense.nounAcronym, category, origin),
+        return connect(store(acronym.toLower, lang, Sense.nounAcronym, origin),
                        Rel.acronymFor,
-                       store(expr.toLower, lang, sense, category, origin),
+                       store(expr.toLower, lang, sense, origin),
                        lang, origin, weight);
     }
 
@@ -1725,10 +1726,9 @@ class Net(bool useArray = true,
                                                                          isSomeString!S)
     {
         enum lang = Lang.en;
-        const category = CategoryIx.asUndefined;
-        return connectMto1(store(words.map!toLower, lang, wordSense, category, origin),
+        return connectMto1(store(words.map!toLower, lang, wordSense, origin),
                            rel,
-                           store(attribute.toLower, lang, attributeSense, category, origin),
+                           store(attribute.toLower, lang, attributeSense, origin),
                            Lang.en, origin, weight);
     }
 
@@ -1740,10 +1740,9 @@ class Net(bool useArray = true,
                                       Sense sense = Sense.unknown,
                                       Origin origin = Origin.manual) if (isSomeString!S)
     {
-        const category = CategoryIx.asUndefined;
-        return connectMtoN(store(emoticons.map!toLower, Lang.any, Sense.unknown, category, origin),
+        return connectMtoN(store(emoticons.map!toLower, Lang.any, Sense.unknown, origin),
                            Rel.emoticonFor,
-                           store(exprs.map!toLower, Lang.en, sense, category, origin),
+                           store(exprs.map!toLower, Lang.en, sense, origin),
                            Lang.en, origin, weight);
     }
 
@@ -2996,27 +2995,27 @@ class Net(bool useArray = true,
         connectMto1(store(["preserve food",
                            "cure illness",
                            "augment cosmetics"],
-                          Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                          Lang.en, Sense.noun, Origin.manual),
                     Rel.uses,
-                    store("herb", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    store("herb", Lang.en, Sense.noun, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
 
         connectMto1(store(["enrich taste of food",
                            "improve taste of food",
                            "increase taste of food"],
-                          Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                          Lang.en, Sense.noun, Origin.manual),
                     Rel.uses,
-                    store("spice", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    store("spice", Lang.en, Sense.noun, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
 
-        connect1toM(store("herb", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+        connect1toM(store("herb", Lang.en, Sense.noun, Origin.manual),
                     Rel.madeOf,
-                    store(["leaf", "plant"], Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    store(["leaf", "plant"], Lang.en, Sense.noun, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
 
-        connect1toM(store("spice", Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+        connect1toM(store("spice", Lang.en, Sense.noun, Origin.manual),
                     Rel.madeOf,
-                    store(["root", "plant"], Lang.en, Sense.noun, CategoryIx.asUndefined, Origin.manual),
+                    store(["root", "plant"], Lang.en, Sense.noun, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
     }
 
@@ -3030,13 +3029,12 @@ class Net(bool useArray = true,
                              S pastParticiple) if (isSomeString!S) // pastParticiple
     {
         const lang = Lang.sv;
-        const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        auto all = [tryStore(imperative, lang, Sense.verbImperative, category, origin),
-                    tryStore(infinitive, lang, Sense.verbInfinitive, category, origin),
-                    tryStore(present, lang, Sense.verbPresent, category, origin),
-                    tryStore(past, lang, Sense.verbPast, category, origin),
-                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, category, origin)];
+        auto all = [tryStore(imperative, lang, Sense.verbImperative, origin),
+                    tryStore(infinitive, lang, Sense.verbInfinitive, origin),
+                    tryStore(present, lang, Sense.verbPresent, origin),
+                    tryStore(past, lang, Sense.verbPast, origin),
+                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, origin)];
         connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
@@ -3115,11 +3113,10 @@ class Net(bool useArray = true,
                            S comparative,
                            S superlative) if (isSomeString!S)
     {
-        const category = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        auto all = [tryStore(nominative, lang, Sense.adjectiveNominative, category, origin),
-                    tryStore(comparative, lang, Sense.adjectiveComparative, category, origin),
-                    tryStore(superlative, lang, Sense.adjectiveSuperlative, category, origin)];
+        auto all = [tryStore(nominative, lang, Sense.adjectiveNominative, origin),
+                    tryStore(comparative, lang, Sense.adjectiveComparative, origin),
+                    tryStore(superlative, lang, Sense.adjectiveSuperlative, origin)];
         connectAll(Rel.adjectiveForm, all.filter!(a => a.defined), lang, origin);
     }
 
@@ -3136,11 +3133,10 @@ class Net(bool useArray = true,
     void learnUncountableNouns(R)(Lang lang, R nouns) if (isSourceOf!(R, string))
     {
         const sense = Sense.nounUncountable;
-        const categoryIx = CategoryIx.asUndefined;
         const origin = Origin.manual;
-        connectMto1(nouns.map!(word => store(word, lang, sense, categoryIx, origin)),
+        connectMto1(nouns.map!(word => store(word, lang, sense, origin)),
                     Rel.isA,
-                    store("uncountable_noun", lang, sense, categoryIx, origin),
+                    store("uncountable_noun", lang, sense, origin),
                     lang, origin);
     }
 
@@ -3180,8 +3176,8 @@ class Net(bool useArray = true,
     NodeRef store(Expr expr,
                   Lang lang,
                   Sense sense,
-                  CategoryIx categoryIx,
-                  Origin origin) in { assert(!expr.empty); }
+                  Origin origin,
+                  CategoryIx categoryIx = CategoryIx.asUndefined) in { assert(!expr.empty); }
     body
     {
         const lemma = Lemma(expr, lang, sense, categoryIx);
@@ -3193,24 +3189,24 @@ class Net(bool useArray = true,
     NodeRef tryStore(Expr expr,
                      Lang lang,
                      Sense sense,
-                     CategoryIx categoryIx,
-                     Origin origin)
+                     Origin origin,
+                     CategoryIx categoryIx = CategoryIx.asUndefined)
     {
         if (expr.empty)
             return NodeRef.asUndefined;
-        return store(expr, lang, sense, categoryIx, origin);
+        return store(expr, lang, sense, origin, categoryIx);
     }
 
     NodeRef[] store(Exprs)(Exprs exprs,
                            Lang lang,
                            Sense sense,
-                           CategoryIx categoryIx,
-                           Origin origin) if (isIterable!(Exprs))
+                           Origin origin,
+                           CategoryIx categoryIx = CategoryIx.asUndefined) if (isIterable!(Exprs))
     {
         typeof(return) nodeRefs;
         foreach (expr; exprs)
         {
-            nodeRefs ~= store(expr, lang, sense, categoryIx, origin);
+            nodeRefs ~= store(expr, lang, sense, origin, categoryIx);
         }
         return nodeRefs;
     }
@@ -3442,7 +3438,7 @@ class Net(bool useArray = true,
         }
         ++senseCounts[sense];
 
-        return store(correctCN5Lemma(expr), lang, sense, anyCategory, Origin.cn5);
+        return store(correctCN5Lemma(expr), lang, sense, Origin.cn5, anyCategory);
     }
 
     import std.algorithm: splitter;
@@ -3509,21 +3505,13 @@ class Net(bool useArray = true,
                                 entity.front).idup;
         entity.popFront;
 
-        auto entityIx = store(entityName,
-                              lang,
-                              sense,
-                              categoryIx,
-                              Origin.nell);
+        auto entityIx = store(entityName, lang, sense, Origin.nell, categoryIx);
 
         return tuple(entityIx,
                      categoryName,
                      connect(entityIx,
                              Rel.isA,
-                             store(categoryName,
-                                   lang,
-                                   sense,
-                                   categoryIx,
-                                   Origin.nell),
+                             store(categoryName, lang, sense, Origin.nell, categoryIx),
                              lang,
                              Origin.nell, 1.0, false, false,
                              true)); // need to check duplicates here
@@ -3871,7 +3859,41 @@ class Net(bool useArray = true,
         showRelations;
     }
 
-    /** Read NELL File $(D fileName) in CSV format.
+    /** Read SynLex Synonyms File $(D path) in XML format.
+     */
+    void readSynlexFile(string path, size_t maxCount = size_t.max)
+    {
+        import std.xml: DocumentParser, ElementParser, Element;
+        size_t lnr = 0;
+        writeln("Reading SynLex from ", path, " ...");
+
+        enum lang = Lang.sv;
+        enum origin = Origin.synlex;
+        // See also: http://dlang.org/phobos/std_xml.html#.ElementParser.onStartTag
+        const str = cast(string)std.file.read(path);
+        auto doc = new DocumentParser(str);
+        doc.onStartTag["syn"] = (ElementParser elp)
+        {
+            const level = elp.tag.attr["level"].to!real;
+            const weight = level/5.0; // normalized weight
+            string w1, w2;
+            elp.onEndTag["w1"] = (in Element e) { w1 = e.text(); };
+            elp.onEndTag["w2"] = (in Element e) { w2 = e.text(); };
+
+            elp.parse();
+
+            connect(store(w1.toLower, lang, Sense.unknown, origin),
+                    Rel.synonymFor,
+                    store(w2.toLower, lang, Sense.unknown, origin),
+                    lang, origin, weight);
+        };
+        doc.parse();
+
+        writeln("Read SynLex ", path, ` having `, lnr, ` lines`);
+        if (lnr >= 1) { showRelations; }
+    }
+
+    /** Read NELL File $(D path) in CSV format.
     */
     void readNELLFile(string path, size_t maxCount = size_t.max)
     {
@@ -3907,7 +3929,7 @@ class Net(bool useArray = true,
         writeln(`Node Count: `, allNodes.length);
 
         writeln(`Node Count by Origin:`);
-        foreach (source; Origin.min..Origin.max)
+        foreach (source; Origin.min .. Origin.max)
         {
             const count = linkSourceCounts[source];
             if (count)
