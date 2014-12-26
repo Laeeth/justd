@@ -123,7 +123,7 @@ auto sorted(R)(R r) if (!(isArray!R))
     {
         auto s = new E[r.length];
         import std.range: hasSlicing;
-        static if (is(typeof(r[])))
+        static if (is(typeof(r[]))) // TODO unpretty
         {
             r[].copy(s);
         }
