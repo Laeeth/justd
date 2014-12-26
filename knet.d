@@ -1385,73 +1385,73 @@ class Net(bool useArray = true,
         learnFeelings();
 
         // TODO functionize to learnGroup
-        learnEnglishWords(rdT("../knowledge/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `compound_word`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/nouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `noun`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `people`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/pronouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pronoun`, Sense.pronoun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `verb`, Sense.verb, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/interjection.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `interjection`, Sense.interjection, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `conjunction`, Sense.conjunction, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `regular verb`, Sense.verb, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/adjectives.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/dolch_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dolch word`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `personal quality`, Sense.adjective, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/prepositions.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `preposition`, Sense.preposition, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/colors.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `shape`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `fruit`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/plants.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `plant`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/trees.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `tree`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/shoes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `shoe`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/dances.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dance`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/landforms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `landform`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/desserts.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dessert`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/countries.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `country`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/us_states.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `us_state`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/furniture.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `furniture`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/good_luck_symbols.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `good luck symbol`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/leaders.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `leader`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/measurements.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `measurement`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/quantity.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `quantity`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/language.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `language`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/insect.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `insect`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/musical_instrument.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `musical instrument`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/weapon.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `weapon`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/hats.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `hat`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/rooms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `room`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/containers.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `container`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/virtues.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `virtue`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/vegetables.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `vegetable`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/flower.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `flower`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/reptile.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `reptile`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/pair.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pair`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/season.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `season`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/holiday.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `holiday`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `compound_word`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/nouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `noun`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `people`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/pronouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pronoun`, Sense.pronoun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `verb`, Sense.verb, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `interjection`, Sense.interjection, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `conjunction`, Sense.conjunction, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `regular verb`, Sense.verb, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/adjectives.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/dolch_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dolch word`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `personal quality`, Sense.adjective, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/prepositions.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `preposition`, Sense.preposition, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/colors.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `shape`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `fruit`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/plants.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `plant`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/trees.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `tree`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/shoes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `shoe`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/dances.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dance`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/landforms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `landform`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/desserts.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dessert`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/countries.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `country`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/us_states.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `us_state`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/furniture.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `furniture`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/good_luck_symbols.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `good luck symbol`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/leaders.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `leader`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/measurements.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `measurement`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/quantity.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `quantity`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/language.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `language`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/insect.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `insect`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/musical_instrument.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `musical instrument`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/weapon.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `weapon`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/hats.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `hat`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/rooms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `room`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/containers.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `container`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/virtues.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `virtue`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/vegetables.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `vegetable`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/flower.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `flower`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/reptile.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `reptile`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/pair.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pair`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/season.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `season`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/holiday.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `holiday`, Sense.noun, Sense.noun);
 
-        learnEnglishWords(rdT("../knowledge/birthday.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `birthday`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/biomes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `biome`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dog`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/fish.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `fish`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/birds.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `bird`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/amphibians.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `amphibian`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/animals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `animal`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/mammals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mammal`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/foods.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `food`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/cars.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `car`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/buildings.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `building`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/housing.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `housing`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/occupation.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `occupation`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/cooking_tool.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `cooking tool`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/tool.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `tool`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/carparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `car`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/bodyparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `body`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `alliteration`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.unknown, Sense.adjective);
-        learnEnglishWords(rdT("../knowledge/mineral.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/metal.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `metal`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral group`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/birthday.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `birthday`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/biomes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `biome`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dog`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/fish.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `fish`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/birds.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `bird`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/amphibians.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `amphibian`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/animals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `animal`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/mammals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mammal`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/foods.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `food`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/cars.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `car`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/buildings.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `building`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/housing.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `housing`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/occupation.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `occupation`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/cooking_tool.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `cooking tool`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/tool.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `tool`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/carparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `car`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/bodyparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, `body`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `alliteration`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, `positive`, Sense.unknown, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/en/mineral.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/metal.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `metal`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `mineral group`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
 
         learnChemicalElements();
         learnSynonyms();
@@ -1463,73 +1463,73 @@ class Net(bool useArray = true,
     void learnAssociativeThings()
     {
         // TODO lower weights on these are not absolute
-        learnEnglishWords(rdT("../knowledge/constitution.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `constitution`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/election.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `election`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/weather.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `weather`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/dentist.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `dentist`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/firefighting.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `fire fighting`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/driving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `drive`, Sense.unknown, Sense.verb);
-        learnEnglishWords(rdT("../knowledge/art.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `art`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/astronomy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `astronomy`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/constitution.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `constitution`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/election.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `election`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/weather.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `weather`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/dentist.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `dentist`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/firefighting.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `fire fighting`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/driving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `drive`, Sense.unknown, Sense.verb);
+        learnEnglishWords(rdT("../knowledge/en/art.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `art`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/astronomy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `astronomy`, Sense.unknown, Sense.noun);
 
-        learnEnglishWords(rdT("../knowledge/vacation.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `vacation`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/vacation.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `vacation`, Sense.unknown, Sense.noun);
 
-        learnEnglishWords(rdT("../knowledge/autumn.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `autumn`, Sense.unknown, Sense.nounSeason);
-        learnEnglishWords(rdT("../knowledge/winter.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `winter`, Sense.unknown, Sense.nounSeason);
-        learnEnglishWords(rdT("../knowledge/spring.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `spring`, Sense.unknown, Sense.nounSeason);
+        learnEnglishWords(rdT("../knowledge/en/autumn.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `autumn`, Sense.unknown, Sense.nounSeason);
+        learnEnglishWords(rdT("../knowledge/en/winter.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `winter`, Sense.unknown, Sense.nounSeason);
+        learnEnglishWords(rdT("../knowledge/en/spring.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `spring`, Sense.unknown, Sense.nounSeason);
 
-        learnEnglishWords(rdT("../knowledge/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `house`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `device`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/farm.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `farm`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/school.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `school`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/circus.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `circus`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/near_yard.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `yard`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/restaurant.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `restaurant`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `house`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `device`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/farm.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `farm`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/school.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `school`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/circus.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `circus`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/near_yard.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `yard`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/restaurant.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `restaurant`, Sense.noun, Sense.noun);
 
-        learnEnglishWords(rdT("../knowledge/bathroom.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `bathroom`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/house.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `house`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/kitchen.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `kitchen`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/bathroom.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `bathroom`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/house.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `house`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/kitchen.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `kitchen`, Sense.noun, Sense.noun);
 
-        learnEnglishWords(rdT("../knowledge/beach.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `beach`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/ocean.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `ocean`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/beach.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `beach`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/ocean.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, `ocean`, Sense.noun, Sense.noun);
 
-        learnEnglishWords(rdT("../knowledge/happy.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `happy`, Sense.adjective, Sense.adjective);
-        learnEnglishWords(rdT("../knowledge/big.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `big`, Sense.adjective, Sense.adjective);
-        learnEnglishWords(rdT("../knowledge/many.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `many`, Sense.adjective, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/en/happy.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `happy`, Sense.adjective, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/en/big.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `big`, Sense.adjective, Sense.adjective);
+        learnEnglishWords(rdT("../knowledge/en/many.txt").splitter('\n').filter!(w => !w.empty), Rel.similarTo, `many`, Sense.adjective, Sense.adjective);
 
-        learnEnglishWords(rdT("../knowledge/roadway.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `roadway`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/baseball.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `baseball`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/boat.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `boat`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/money.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `money`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/family.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `family`, Sense.noun, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/geography.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `geography`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/energy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `energy`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/time.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `time`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/water.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `water`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/clothing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `clothing`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/music_theory.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `music theory`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/happiness.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `happiness`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/pirate.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `pirate`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/monster.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `monster`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/roadway.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `roadway`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/baseball.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `baseball`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/boat.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `boat`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/money.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `money`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/family.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `family`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/geography.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `geography`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/energy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `energy`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/time.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `time`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/water.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `water`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/clothing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `clothing`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/music_theory.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `music theory`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/happiness.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `happiness`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/pirate.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `pirate`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/monster.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `monster`, Sense.unknown, Sense.noun);
 
-        learnEnglishWords(rdT("../knowledge/halloween.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `halloween`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/christmas.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `christmas`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/thanksgiving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `thanksgiving`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/camp.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `camp`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/cooking.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `cooking`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/sewing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `sewing`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/military.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `military`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/science.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `science`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/computer.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `computer`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/math.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `math`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/transport.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `transport`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/rock.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `rock`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/doctor.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `doctor`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `St. Patrick's Day`, Sense.unknown, Sense.noun);
-        learnEnglishWords(rdT("../knowledge/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `New Year's Eve`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/halloween.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `halloween`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/christmas.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `christmas`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/thanksgiving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `thanksgiving`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/camp.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `camp`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/cooking.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `cooking`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/sewing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `sewing`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/military.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `military`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/science.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `science`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/computer.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `computer`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/math.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `math`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/transport.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `transport`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/rock.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `rock`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/doctor.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `doctor`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `St. Patrick's Day`, Sense.unknown, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `New Year's Eve`, Sense.unknown, Sense.noun);
 
 
-        learnEnglishWords(rdT("../knowledge/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, `say`, Sense.verb, Sense.verb);
+        learnEnglishWords(rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, `say`, Sense.verb, Sense.verb);
    }
 
     /// Learn Emotions.
@@ -1538,7 +1538,7 @@ class Net(bool useArray = true,
         const groups = ["basic", "positive", "negative", "strong", "medium", "light"];
         foreach (group; groups)
         {
-            learnEnglishWords(rdT("../knowledge/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
+            learnEnglishWords(rdT("../knowledge/en/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
                               Rel.isA, group ~ ` emotion`, Sense.unknown, Sense.noun);
         }
     }
@@ -1546,7 +1546,7 @@ class Net(bool useArray = true,
     /// Learn Feelings.
     void learnFeelings()
     {
-        learnEnglishWords(rdT("../knowledge/feeling.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `feeling`, Sense.noun, Sense.noun);
+        learnEnglishWords(rdT("../knowledge/en/feeling.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `feeling`, Sense.noun, Sense.noun);
         const feelings = ["afraid", "alive", "angry", "confused", "depressed", "good", "happy",
                           "helpless", "hurt", "indifferent", "interested", "love",
                           "negative", "unpleasant",
@@ -1554,7 +1554,7 @@ class Net(bool useArray = true,
                           "open", "sad", "strong"];
         foreach (feeling; feelings)
         {
-            const path = "../knowledge/" ~ feeling ~ "_feeling.txt";
+            const path = "../knowledge/en/" ~ feeling ~ "_feeling.txt";
             learnAssociations(path, Rel.similarTo, feeling.tr(`_`, ` `) ~ ` feeling`, Sense.adjective, Sense.adjective);
         }
     }
@@ -1592,7 +1592,7 @@ class Net(bool useArray = true,
     /// Learn Chemical Elements.
     void learnChemicalElements(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
-        foreach (expr; File("../knowledge/chemical_elements.txt").byLine)
+        foreach (expr; File("../knowledge/en/chemical_elements.txt").byLine)
         {
             if (expr.empty) { continue; }
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
@@ -1612,7 +1612,7 @@ class Net(bool useArray = true,
     /// Learn Synonyms.
     void learnSynonyms(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
-        foreach (expr; File("../knowledge/synonyms.txt").byLine)
+        foreach (expr; File("../knowledge/en/synonyms.txt").byLine)
         {
             if (expr.empty) { continue; }
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
@@ -1628,7 +1628,7 @@ class Net(bool useArray = true,
     /// Learn Opposites.
     void learnOpposites(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
-        foreach (expr; File("../knowledge/opposites.txt").byLine)
+        foreach (expr; File("../knowledge/en/opposites.txt").byLine)
         {
             if (expr.empty) { continue; }
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
