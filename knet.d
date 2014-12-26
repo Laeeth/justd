@@ -1555,7 +1555,8 @@ class Net(bool useArray = true,
         foreach (feeling; feelings)
         {
             const path = "../knowledge/" ~ feeling ~ "_feeling.txt";
-            learnAssociations(path, Rel.similarTo, feeling.tr(`_`, ` `), Sense.adjective, Sense.adjective);
+            dln(path);
+            learnAssociations(path, Rel.similarTo, feeling.tr(`_`, ` `) ~ ` feeling`, Sense.adjective, Sense.adjective);
         }
     }
 
@@ -3311,7 +3312,6 @@ class Net(bool useArray = true,
     alias connectCircle = connectCycle;
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight).
-
         TODO checkExisting is currently set to false because searching
         existing links is currently too slow
      */
@@ -3323,7 +3323,12 @@ class Net(bool useArray = true,
                     NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
                     bool negation = false,
                     bool reversion = false,
-                    bool checkExisting = false)
+                    bool checkExisting = false) in {
+        assert(src != dst,
+               nodeAt(src).lemma.expr ~
+               " must not be equal to " ~
+               nodeAt(dst).lemma.expr);
+    }
     body
     {
         if (src == dst) { return LinkRef.asUndefined; } // Don't allow self-reference for now
@@ -3617,7 +3622,7 @@ class Net(bool useArray = true,
                                        Origin.nell, mainWeight, negation, reversion);
         }
 
-        if (show) writeln();
+        if (show) writeln;
     }
 
     struct Location
@@ -3814,7 +3819,8 @@ class Net(bool useArray = true,
         }
 
         if (src.defined &&
-            dst.defined)
+            dst.defined &&
+            src != dst)
         {
             return connect(src, rel, dst, lang, origin, weight, negation, reversion);
         }
@@ -3877,17 +3883,21 @@ class Net(bool useArray = true,
             const level = elp.tag.attr["level"].to!real;
             const weight = level/5.0; // normalized weight
             string w1, w2;
-            elp.onEndTag["w1"] = (in Element e) { w1 = e.text(); };
-            elp.onEndTag["w2"] = (in Element e) { w2 = e.text(); };
+            elp.onEndTag["w1"] = (in Element e) { w1 = e.text; };
+            elp.onEndTag["w2"] = (in Element e) { w2 = e.text; };
 
-            elp.parse();
+            elp.parse;
 
-            connect(store(w1.toLower, lang, Sense.unknown, origin),
-                    Rel.synonymFor,
-                    store(w2.toLower, lang, Sense.unknown, origin),
-                    lang, origin, weight);
+            if (w1 != w2) // there might be a bug in the xml...
+            {
+                connect(store(w1.toLower, lang, Sense.unknown, origin),
+                        Rel.synonymFor,
+                        store(w2.toLower, lang, Sense.unknown, origin),
+                        lang, origin, weight, false, false, true);
+                ++lnr;
+            }
         };
-        doc.parse();
+        doc.parse;
 
         writeln("Read SynLex ", path, ` having `, lnr, ` lines`);
         if (lnr >= 1) { showRelations; }
@@ -4073,7 +4083,7 @@ class Net(bool useArray = true,
             write(`-`, node.lemma.sense);
         }
 
-        writef(`:%.2f@%s),`, weight, node.origin.toNice); // close
+        writef(`:%2.0f%%-%s),`, 100*weight, node.origin.toNice); // close
     }
 
     void showLinkNode(in Node node,
@@ -4083,7 +4093,7 @@ class Net(bool useArray = true,
     {
         showLink(rel, dir);
         showNode(node, weight);
-        writeln();
+        writeln;
     }
 
     void showNodeRefs(R)(R nodeRefs,
@@ -4099,7 +4109,7 @@ class Net(bool useArray = true,
             {
                 write(` of sense `, lineNode.lemma.sense);
             }
-            writeln();
+            writeln;
 
             // TODO Why is cast needed here?
             auto linkRefs = cast(LinkRefs)linkRefsOf(lineNode, RelDir.any, rel, negation);
@@ -4117,7 +4127,7 @@ class Net(bool useArray = true,
                 {
                     showNode(linkedNode, link.normalizedWeight);
                 }
-                writeln();
+                writeln;
             }
         }
     }

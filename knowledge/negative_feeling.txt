@@ -234,7 +234,6 @@ uninformed#1
 unknown#1
 unlovable#1
 unloved#1
-unpleasant#1
 unsafe#1
 unsupported#1
 unsure#1
