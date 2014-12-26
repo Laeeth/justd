@@ -364,12 +364,20 @@ auto toHuman(const Rel rel,
                         default: words = ["is", not, "translated to"]; break;
                     }
                     break;
+                case reversionOf:
+                    switch (lang)
+                    {
+                        case sv: words = ["är", not, "en omvändning av"]; break;
+                        case en:
+                        default: words = ["is", not, "a reversion of"]; break;
+                    }
+                    break;
                 case synonymFor:
                     switch (lang)
                     {
                         case sv: words = ["är", not, "synonym med"]; break;
                         case en:
-                        default: words = ["is", not, "synonymous with"]; break;
+                        default: words = ["is", not, "a synonym for"]; break;
                     }
                     break;
                 case antonymFor:

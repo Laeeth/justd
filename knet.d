@@ -155,7 +155,7 @@ import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind, count;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind, count, setUnion, setIntersection;
 import std.container: Array;
 import std.string: tr, toLower, toUpper;
 import std.uni: isWhite, toLower;
@@ -1202,16 +1202,11 @@ class Net(bool useArray = true,
         alias nodeByRef = nodeAt;
     }
 
-    Nullable!Node nodeByLemmaMaybe(in Lemma lemma)
+    NodeRef nodeRefByLemmaMaybe(in Lemma lemma)
     {
-        if (lemma in nodeRefByLemma)
-        {
-            return typeof(return)(nodeAt(nodeRefByLemma[lemma]));
-        }
-        else
-        {
-            return typeof(return).init;
-        }
+        return (lemma in nodeRefByLemma ?
+                         nodeRefByLemma[lemma] :
+                         typeof(return).init);
     }
 
     /** Try to Get Single Node related to $(D word) in the interpretation
@@ -1391,14 +1386,18 @@ class Net(bool useArray = true,
 
         // TODO functionize to learnGroup
         learnWords(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `compound_word`, Sense.unknown, Sense.noun);
-        learnWords(Lang.en, rdT("../knowledge/en/nouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `noun`, Sense.noun, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `noun`, Sense.noun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `people`, Sense.noun, Sense.noun);
-        learnWords(Lang.en, rdT("../knowledge/en/pronouns.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pronoun`, Sense.pronoun, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pronoun`, Sense.pronoun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `verb`, Sense.verb, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `interjection`, Sense.interjection, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `conjunction`, Sense.conjunction, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `regular verb`, Sense.verb, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/adjectives.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adjective`, Sense.adjective, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `determiner`, Sense.determiner, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `predeterminer`, Sense.predeterminer, Sense.noun);
+
         learnWords(Lang.en, rdT("../knowledge/en/dolch_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `dolch word`, Sense.unknown, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `personal quality`, Sense.adjective, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `adverb`, Sense.adverb, Sense.noun);
@@ -1459,7 +1458,9 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
 
         learnChemicalElements();
-        learnSynonyms();
+        learnPairs("../knowledge/en/noun_synonym.txt", Sense.noun, Rel.synonymFor, Sense.noun);
+        learnPairs("../knowledge/en/adjective_synonym.txt", Sense.adjective, Rel.synonymFor, Sense.adjective);
+        learnPairs("../knowledge/en/acronym.txt", Sense.nounAcronym, Rel.acronymFor, Sense.unknown);
         learnOpposites();
 
     }
@@ -1551,7 +1552,7 @@ class Net(bool useArray = true,
     /// Learn English Feelings.
     void learnEnglishFeelings()
     {
-        learnWords(Lang.en, rdT("../knowledge/en/feeling.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `feeling`, Sense.noun, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/feeling.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `feeling`, Sense.adjective, Sense.noun);
         const feelings = ["afraid", "alive", "angry", "confused", "depressed", "good", "happy",
                           "helpless", "hurt", "indifferent", "interested", "love",
                           "negative", "unpleasant",
@@ -1620,20 +1621,31 @@ class Net(bool useArray = true,
         }
     }
 
-    /// Learn Synonyms.
-    void learnSynonyms(Lang lang = Lang.en, Origin origin = Origin.manual)
+    /// Learn Pairs of Words.
+    void learnPairs(string path,
+                    Sense firstSense,
+                    Rel rel,
+                    Sense secondSense,
+                    Lang lang = Lang.en,
+                    Origin origin = Origin.manual)
     {
-        foreach (expr; File("../knowledge/en/synonyms.txt").byLine)
+        foreach (expr; File(path).byLine)
         {
             if (expr.empty) { continue; }
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
-            connect(store(first.idup, lang, Sense.noun, origin), // TODO store capitalized?
-                    Rel.abbreviationFor,
-                    store(second.idup, lang, Sense.noun, origin),
+            connect(store(first.idup, lang, firstSense, origin), // TODO store capitalized?
+                    rel,
+                    store(second.idup, lang, secondSense, origin),
                     lang, origin, weight);
         }
+    }
+
+    /// Get Learn Possible Senses for $(D expr).
+    auto sensesOf(S)(S expr) if (isSomeString!S)
+    {
+        return lemmasOf(expr).map!(lemma => lemma.sense).filter!(sense => sense != Sense.unknown);
     }
 
     /// Learn Opposites.
@@ -1645,6 +1657,15 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
+            // TODO If first and second already are learned as both either Sense.noun or Sense.adjective (using specializes) reuse them
+            auto firstSenses = sensesOf(first).sorted;
+            auto secondSenses = sensesOf(second).sorted;
+            auto bothSenses = setIntersection(firstSenses,
+                                              secondSenses);
+            if (!bothSenses.empty)
+            {
+                dln("expr:", expr, ", first:", firstSenses, ", second:", secondSenses, ", both:", bothSenses);
+            }
             connect(store(first.idup, lang, Sense.unknown, origin),
                     Rel.oppositeOf,
                     store(second.idup, lang, Sense.unknown, origin),
@@ -3346,7 +3367,7 @@ class Net(bool useArray = true,
         if (checkExisting)
         {
             if (auto existingIx = areConnected(src, rel, dst,
-                                               negation)) // TODO warn about negation and reversion on existing rels
+                                               negation))
             {
                 if (false)
                 {
@@ -3422,7 +3443,7 @@ class Net(bool useArray = true,
     {
         switch (s)
         {
-            case "honey_be": return "honey_bee";
+            case "honey be": return "honey bee";
             default: return s;
         }
     }
@@ -3437,8 +3458,8 @@ class Net(bool useArray = true,
         const lang = items.front.decodeLang; items.popFront;
         ++hlangCounts[lang];
 
-        static if (useRCString) { immutable expr = items.front; }
-        else                    { immutable expr = items.front.idup; }
+        static if (useRCString) { immutable expr = items.front.tr("_", " "); }
+        else                    { immutable expr = items.front.tr("_", " ").idup; }
 
         items.popFront;
         auto sense = Sense.unknown;
@@ -4034,6 +4055,7 @@ class Net(bool useArray = true,
     }
 
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkRef.max.
+        TODO warn about negation and reversion on existing rels
      */
     LinkRef areConnected(NodeRef a,
                          Rel rel,
@@ -4046,9 +4068,9 @@ class Net(bool useArray = true,
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     LinkRef areConnected(in Lemma a,
-                        Rel rel,
-                        in Lemma b,
-                        bool negation = false)
+                         Rel rel,
+                         in Lemma b,
+                         bool negation = false)
     {
         if (a in nodeRefByLemma && // both lemmas exist
             b in nodeRefByLemma)
@@ -4093,7 +4115,7 @@ class Net(bool useArray = true,
             write(`-`, node.lemma.sense);
         }
 
-        writef(`:%2.0f%%-%s),`, 100*weight, node.origin.toNice); // close
+        writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
     }
 
     void showLinkNode(in Node node,

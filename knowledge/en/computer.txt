@@ -1,15 +1,27 @@
 CD
+CD-R
 CD-ROM
-CPU (central processing unit)
-DNS (domain name system)
-DVD (digital versatile disc)
-FAQ (frequently asked questions)
+CD-RW
+CD-video
+CDE
+CPU
+DNS
+DVD
+DVD-A
+DVD-R
+DVD-ROM
+DVD-RW
+EPROM
+FAQ
 IP address
 Internet
 Java
+Memory Stick
 QWERTY
-RAM (random access memory)
-ROM (read only memory)
+RAM
+ROM
+SD card
+SIMM
 Trojan horse
 URL
 Unix
@@ -29,8 +41,10 @@ bite
 bitmap
 blog
 blogger
+blu-ray
 bookmark
 boot
+boot disk
 broadband
 browser
 buffer
@@ -38,6 +52,7 @@ bug
 bus
 byte
 cache
+cache memory
 caps lock
 captcha
 client
@@ -45,18 +60,21 @@ clip art
 clip board
 cloud computing
 command
+compact disc
 compile
 compress
 computer
 computer program
 configure
+contact card
+contactless card
 cookie
 copy
 cybercrime
 cyberspace
 dashboard
 data
-data mining
+data miningg
 database
 debug
 decompress
@@ -64,12 +82,16 @@ delete
 desktop
 development
 digital
+disc
 disk
+diskette
 document
 domain
 domain name
 dot
 dot matrix
+double-density
+double-density adjective
 download
 drag
 dynamic
@@ -86,6 +108,7 @@ firmware
 flaming
 flash
 flash drive
+flash memory
 floppy disk
 flowchart
 folder
@@ -99,6 +122,8 @@ graphical
 graphics
 hack
 hacker
+hard disk
+hard drive
 hardware
 home page
 host
@@ -124,10 +149,13 @@ logic
 login
 lurking
 macro
+mailbox
 mainframe
 malware
 media
+medium
 memory
+memory bank
 mirror
 modem
 monitor
@@ -142,6 +170,7 @@ offline
 online
 open source
 operating system
+optical disk
 option
 output
 page
@@ -149,6 +178,7 @@ password
 paste
 path
 phishing
+photo CD
 piracy
 pirate
 platform
@@ -164,11 +194,15 @@ program
 programmer
 protocol
 queue
+random access memory
+read-only memory
 real-time
 reboot
 resolution
 restore
+rewritable adjective
 root
+root directory
 router
 runtime
 save
@@ -189,15 +223,20 @@ shift key
 snapshot
 social networking
 software
+space
 spam
 spammer
+spool
 spreadsheet
 spyware
+stack
 status bar
 storage
+subdirectory
 supercomputer
 surf
 syntax
+system disk
 table
 tag
 teminal
@@ -205,6 +244,7 @@ template
 terabyte
 text editor
 thread
+thumb drive
 toolbar
 trash
 typeface
@@ -216,6 +256,7 @@ username
 utility
 version
 virtual
+virtual disk
 virtual memory
 virus
 web

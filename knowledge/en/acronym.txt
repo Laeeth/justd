@@ -1,0 +1,6 @@
+ROMread only memory
+RAMrandom access memory
+FAQfrequently asked questions
+CPUcentral processing unit
+DNSdomain name system
+DVDdigital versatile disc

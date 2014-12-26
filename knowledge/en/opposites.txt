@@ -132,7 +132,6 @@ exteriorinterior
 externalinternal
 fadebrighten
 failsucceed
-falsetrue
 famousunknown
 farnear
 fastslow
@@ -245,7 +244,6 @@ likedislike
 likehate
 likelyunlikely
 limitedboundless
-littlebig
 longshort
 loosetight
 losefind

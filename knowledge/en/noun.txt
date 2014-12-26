@@ -29,8 +29,10 @@ bleach
 block
 bloom
 blow
+blu-ray
 board
 bomb
+boot disk
 bother
 bounce
 bow
@@ -43,6 +45,7 @@ brush
 bump
 burn
 buy
+cache memory
 cake
 call
 camp
@@ -139,6 +142,7 @@ fish
 fix
 flap
 flash
+flight capital
 float
 flood
 floss
@@ -171,6 +175,9 @@ guide
 hammer
 hand
 handle
+hard disk
+hard drive
+hard-on
 harm
 harness
 hate
@@ -346,6 +353,7 @@ sign
 signal
 silence
 sin
+sinusoid
 sip
 skate
 sketch
