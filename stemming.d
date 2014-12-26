@@ -475,6 +475,7 @@ import assert_ex;
 unittest
 {
     auto stemmer = new Stemmer!string();
+
     assert(stemmer.stem("") == "");
     assert(stemmer.stem("x") == "x");
     assert(stemmer.stem("xyz") == "xyz");
