@@ -1555,7 +1555,6 @@ class Net(bool useArray = true,
         foreach (feeling; feelings)
         {
             const path = "../knowledge/" ~ feeling ~ "_feeling.txt";
-            dln(path);
             learnAssociations(path, Rel.similarTo, feeling.tr(`_`, ` `) ~ ` feeling`, Sense.adjective, Sense.adjective);
         }
     }
