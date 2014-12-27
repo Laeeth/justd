@@ -1,143 +1,7452 @@
+A-Pucikwar
+Aari
+Aasáx
+Abadi
+Abaga
+Abai Sungai
+Abanyom
+Abau
+Abaza
+Abenaki, Eastern
+Abenaki, Western
+Abidji
+Abinomn
+Abipon
+Abishira
 Abkhaz
+Abom
+Abon
+Abron
+Abu
+Abua
+Abui
+Abun
+Abure
+Abureni
+Abé
+Aceh
+Achagua
+Achang
+Ache
+Acheron
+Achi
+Acholi
+Achterhoeks
+Achuar-Shiwiar
+Achumawi
+Aché
+Acipa, Eastern
+Acroá
+Adabe
+Adamorobe Sign Language
+Adang
+Adangbe
+Adap
+Adara
+Adasen
+Adele
+Adhola
+Adi
+Adi, Galo
+Adioukrou
+Adithinngithigh
+Adnyamathanha
+Adonara
+Aduge
+Adyghe
+Adzera
+Aeka
+Aekyom
+Aer
+Afade
+Afar
+Afghan Sign Language
+Afitti
 Afrikaans
+Afro-Seminole Creole
+Agarabi
+Agariya
+Agatu
+Agavotaguerra
+Aghem
+Aghu
+Aghu-Tharnggala
+Aghul
+Agi
+Agob
+Agoi
+Agta, Alabat Island
+Agta, Casiguran Dumagat
+Agta, Central Cagayan
+Agta, Dicamay
+Agta, Dupaninan
+Agta, Isarog
+Agta, Mt. Iraya
+Agta, Mt. Iriga
+Agta, Pahanan
+Agta, Umiray Dumaget
+Agta, Villa Viciosa
+Aguano
+Aguaruna
+Aguna
+Agutaynen
+Agwagwune
+Ahanta
+Aheu
+Ahirani
+Ahom
+Ahtena
+Ahwai
+Ai-Cham
+Aighon
+Aikanã
+Aiklep
+Aimaq
+Aimele
+Aimol
+Ainbai
+Ainu
+Aiome
+Airoran
+Aiton
+Aizi, Aproumu
+Aizi, Mobumrin
+Aizi, Tiagbamrin
+Aja
+Ajawa
+Ajiya
+Ajië
+Ajumbu
+Ajyíninka Apurucayali
+Ak
+Aka
+Aka-Bea
+Aka-Bo
+Aka-Cari
+Aka-Jeru
+Aka-Kede
+Aka-Kol
+Aka-Kora
+Akan
+Akar-Bale
+Akaselem
+Akateko
+Akawaio
+Ake
+Akebu
+Akei
+Akeu
+Akha
+Akhvakh
+Akolet
+Akoose
+Akoye
+Akpa
+Akpes
+Akukem
+Akuku
+Akum
+Akuntsu
+Akurio
+Akwa
+Al-Sayyid Bedouin Sign Language
+Alaba-K’abeena
+Alabama
+Alago
+Alagwa
+Alak
+Alamblak
+Alangan
+Alawa
 Albanian
+Albanian Sign Language
+Albanian, Arbëreshë
+Albanian, Arvanitika
+Albanian, Gheg
+Albanian, Tosk
+Alege
+Alekano
+Aleut
+Aleut, Mednyj
+Algerian Sign Language
+Algonquin
+Ali
+Alladian
+Allar
+Alngith
+Alor
+Alta, Northern
+Alta, Southern
+Altai, Northern
+Altai, Southern
+Alugu
+Alumu-Tesu
+Alune
+Aluo
+Alur
+Alutor
+Alviri-Vidari
+Alyawarr
+Ama
+Amahai
+Amahuaca
+Amaimon
+Amal
+Amami-Oshima, Northern
+Amami-Oshima, Southern
+Amanab
+Amanayé
+Amara
+Amarakaeri
+Amarasi
+Amba
+Ambae, East
+Ambae, West
+Ambai
+Ambakich
+Ambelau
+Ambele
+Amblong
+Ambo
+Ambrak
+Ambrym, North
+Ambrym, Southeast
+Ambul
+Ambulas
+Amdang
+Amele
+American Sign Language
 Amharic
+Ami
+Amio-Gelimi
+Amis
+Amis, Nataoran
+Amo
+Amol
+Ampanang
+Amri Karbi
+Amto
+Amundava
+Amurdak
+Amuzgo, Guerrero
+Amuzgo, Ipalapa
+Amuzgo, San Pedro Amuzgos
+Anaang
+Anakalangu
+Anal
+Anam
+Anambé
+Anamgura
+Anasi
+Andaandi
+Andai
+Andajin
+Andaman Creole Hindi
+Andaqui
+Andarum
+Andegerebinha
+Andh
+Andi
+Andio
+Andoa
+Andoque
+Andra-Hus
+Aneityum
+Anem
+Aneme Wake
+Anfillo
+Angaataha
+Angaité
+Angal
+Angal Enen
+Angal Heneng
+Angika
+Angkamuthi
+Angloromani
+Angolar
+Angor
+Angoram
+Anguthimri
+Anii
+Animere
+Anindilyakwa
+Anjam
+Ankave
+Anmatyerre
+Anong
+Anor
+Anserma
+Ansus
+Antakarinya
+Antigua and Barbuda Creole English
+Anuak
+Anufo
+Anuki
+Anus
+Anuta
+Anyin
+Anyin Morofo
+Aoheng
+Aore
+Ap Ma
+Apache, Jicarilla
+Apache, Kiowa
+Apache, Lipan
+Apache, Mescalero-Chiricahua
+Apache, Western
+Apalaí
+Apali
+Apatani
+Apiaká
+Apinayé
+Apma
+Apurinã
+Aputai
+Arabana
+Arabela
 Arabic
+Arabic, Algerian Saharan Spoken
+Arabic, Algerian Spoken
+Arabic, Babalia Creole
+Arabic, Baharna Spoken
+Arabic, Chadian Spoken
+Arabic, Cypriot Spoken
+Arabic, Dhofari Spoken
+Arabic, Eastern Egyptian Bedawi Spoken
+Arabic, Egyptian Spoken
+Arabic, Gulf Spoken
+Arabic, Hadrami Spoken
+Arabic, Hijazi Spoken
+Arabic, Judeo-Iraqi
+Arabic, Judeo-Moroccan
+Arabic, Judeo-Tripolitanian
+Arabic, Judeo-Tunisian
+Arabic, Judeo-Yemeni
+Arabic, Libyan Spoken
+Arabic, Mesopotamian Spoken
+Arabic, Moroccan Spoken
+Arabic, Najdi Spoken
+Arabic, North Levantine Spoken
+Arabic, North Mesopotamian Spoken
+Arabic, Omani Spoken
+Arabic, Sanaani Spoken
+Arabic, Sa’idi Spoken
+Arabic, Shihhi Spoken
+Arabic, South Levantine Spoken
+Arabic, Standard
+Arabic, Sudanese Creole
+Arabic, Sudanese Spoken
+Arabic, Tajiki Spoken
+Arabic, Ta’izzi-Adeni Spoken
+Arabic, Tunisian Spoken
+Arabic, Uzbeki Spoken
+Aragonese
+Araki
+Arakwal
+Aralle-Tabulahan
+Aramanik
+Arammba
+Aranadan
+Aranda, Lower Southern
+Arandai
+Araona
+Arapaho
+Arapaso
+Arapesh, Abu’
+Arapesh, Bumbita
+Ararandewára
+Arawak
+Araweté
+Arawum
+Arbore
+Archi
+Are
+Areba
+Arem
+Argentine Sign Language
+Argobba
+Arguni
+Arhuaco
+Arhâ
+Arhö
+Ari
+Aribwatsa
+Aribwaung
+Arigidi
+Arikapú
+Arikara
+Arikem
+Aringa
+Arma
 Armenian
+Armenian Sign Language
+Aromanian
+Arop-Lokep
+Arop-Sissano
+Arosi
+Arpitan
+Arrarnta, Western
+Arrernte, Eastern
+Arta
+Aruamu
+Aruek
+Aruop
+Arutani
+Aruá
+Arára, Mato Grosso
+Arára, Pará
+As
+Asaro’o
+Asas
+Ashe
+Ashkun
+Ashtiani
+Asháninka
+Ashéninka Pajonal
+Ashéninka Perené
+Ashéninka, Pichis
+Ashéninka, South Ucayali
+Ashéninka, Ucayali-Yurúa
+Asilulu
+Askopan
+Asmat, Casuarina Coast
+Asmat, Central
+Asmat, North
+Asmat, Yaosakor
+Asoa
 Assamese
+Assangori
+Assiniboine
+Assyrian Neo-Aramaic
+Asturian
+Asu
+Asumboa
+Asuri
+Asurini of Xingú
+Asurini, Tocantins
+Ata
+Atampaya
+Atayal
+Atemble
+Athpariya
+Ati
+Atikamekw
+Atohwaim
+Atong
+Atorada
+Atsam
+Atsugewi
+Atta, Faire
+Atta, Pamplona
+Atta, Pudtol
+Attié
+Au
+Aulua
+Aurá
+Aushi
+Aushiri
+Austral
+Australian Aborigines Sign Language
+Australian Sign Language
+Austrian Sign Language
+Auwe
+Auye
+Avar
+Avatime
+Avau
+Avava
+Avestan
+Avikam
+Avokaya
+Avá-Canoeiro
+Awa
+Awa-Cuaiquer
+Awabakal
+Awad Bing
+Awadhi
+Awak
+Awakateko
+Awar
+Awara
+Awbono
+Aweer
+Awera
+Awetí
+Awing
+Awiyaana
+Awjilah
+Awngi
+Awngthim
+Awtuw
+Awu
+Awun
+Awutu
+Awyi
+Awyu, Asue
+Awyu, Central
+Awyu, Edera
+Awyu, Jair
+Awyu, North
+Awyu, South
+Axamb
+Axi
+Ayabadhu
+Ayere
+Ayerrerenge
+Ayi
+Ayizi
+Aymara
+Aymara, Central
+Aymara, Southern
+Ayoreo
+Ayta, Abellen
+Ayta, Ambala
+Ayta, Mag-Indi
+Ayta, Mag-antsi
+Ayta, Magbukun
+Ayta, Sorsogon
+Ayta, Tayabas
+Ayu
+Azerbaijani
+Azerbaijani, North
+Azerbaijani, South
+Azha
+Azhe
+A’ou
+Baan
+Baangi
+Baatonum
+Baba
+Babango
+Babanki
+Babar, North
+Babar, Southeast
+Babatana
+Babine
+Babuza
+Bacama
+Bada
+Badaga
+Bade
+Badeshi
+Badimaya
+Badjiri
+Badui
+Badyara
+Baeggu
+Baelelea
+Baetora
+Bafanji
+Bafaw-Balong
+Bafia
+Bafut
+Baga Binari
+Baga Kaloum
+Baga Koga
+Baga Manduri
+Baga Mboteni
+Baga Sitemu
+Baga Sobané
+Bagheli
+Bagirmi
+Bago-Kusuntu
+Bagri
+Bagupi
+Bagusa
+Bagvalal
+Baham
+Bahamas Creole English
+Bahau
+Bahinemo
+Bahing
+Bahnar
+Bahonsuai
+Bai
+Bai, Central
+Bai, Lama
+Bai, Panyi
+Bai, Southern
+Baibai
+Baikeno
+Baima
+Baimak
+Bainouk-Gunyaamolo
+Bainouk-Gunyuño
+Bainouk-Samik
+Baiso
+Bajan
+Bajau, Indonesian
+Bajau, West Coast
+Bajelani
+Baka
+Bakairí
+Bakaka
+Bakati’
+Bakati’, Rara
+Bakati’, Sara
+Bakhtiâri
+Baki
+Bakoko
+Bakole
+Bakpinka
+Bakumpai
+Bakwé
+Balaesang
+Balangao
+Balanta-Ganja
+Balanta-Kentohe
+Balantak
+Balau
+Baldemu
+Bali
+Balkan Gagauz Turkish
+Balo
+Balochi, Eastern
+Balochi, Southern
+Balochi, Western
+Baloi
+Balti
+Baluan-Pam
+Baluchi
+Bamako Sign Language
+Bamali
+Bamanankan
+Bambalang
+Bambam
+Bambassi
+Bambili-Bambui
+Bamenyam
+Bamu
+Bamukumbit
+Bamun
+Bamunka
+Bamwe
+Ban Khor Sign Language
+Bana
+Banam Bay
+Banaro
+Banda
+Banda, Mid-Southern
+Banda, South Central
+Banda, Togbo-Vara
+Banda, West Central
+Banda-Bambari
+Banda-Banda
+Banda-Mbrès
+Banda-Ndélé
+Banda-Yangere
+Bandi
+Bandial
+Bandjalang
+Bangala
+Bangandu
+Bangba
+Banggai
+Bangi
+Bangime
+Bangka
+Bangolan
+Bangubangu
+Bangwinji
+Baniva
+Baniwa
+Banjar
+Bankagooma
+Bankal
+Bankon
+Bannoni
+Bantawa
+Bantayanon
+Bantik
+Bantoanon
+Baoulé
+Barababaraba
+Barai
+Baram
+Barama
+Barambu
+Baramu
+Barapasi
+Baras
+Barasana-Eduria
+Barbacoas
+Barbaram
+Barbareño
+Bardi
+Barein
+Bareli, Palya
+Bareli, Pauri
+Bareli, Rathwi
+Bargam
+Bari
+Bariai
+Bariji
+Barikanchi
+Barikewa
+Barngarla
+Barok
+Barombi
+Barrow Point
+Baruga
+Barwe
+Barzani Jewish Neo-Aramaic
+Baré
+Barí
+Basa
+Basa-Gumna
+Basa-Gurmana
+Basaa
+Basap
+Basay
+Bashkardi
+Bashkort
+Basketo
 Basque
+Bassa
+Bassa-Kontagora
+Bassossi
+Bata
+Batak
+Batak Alas-Kluet
+Batak Angkola
+Batak Dairi
+Batak Karo
+Batak Mandailing
+Batak Simalungun
+Batak Toba
+Batanga
+Batek
+Bateri
+Bathari
+Bati
+Bats
+Batu
+Batui
+Batuley
+Batyala
+Bau
+Bauchi
+Baure
+Bauria
+Bauwaki
+Bauzi
+Bavarian
+Bayali
+Baybayanon
+Baygo
+Bayono
+Bayot
+Bayungu
+Bazigar
+Beami
+Beaver
+Beba
+Bebele
+Bebeli
+Bebil
+Bedawiyet
+Bedjond
+Bedoanas
+Beeke
+Beele
+Beembe
+Beezen
+Befang
+Behoa
+Bekwarra
+Bekwel
+Belait
+Belanda Bor
+Belanda Viri
+Belarusan
 Belarusian
+Belhariya
+Beli
+Belize Kriol English
+Bella Coola
+Bellari
+Bemba
+Bembe
+Bena
+Benabena
+Bench
+Bende
+Bendi
+Beneraf
+Beng
+Benga
 Bengali
+Benggoi
+Bengkala Sign Language
+Bentong
+Benyadu’
+Bepour
+Bera
+Berakou
+Berawan, Central
+Berawan, East
+Berawan, West
 Berber
+Berbice Creole Dutch
+Berik
+Berinomo
+Berom
+Berta
+Berti
+Besme
+Betaf
+Betawi
+Bete
+Bete-Bendi
+Beti
+Bezhta
+Bhadrawahi
+Bhalay
+Bharia
+Bhatola
+Bhatri
+Bhattiyali
+Bhaya
+Bhele
+Bhilali
 Bhojpuri
+Bhujel
+Bhunjia
+Biafada
+Biage
+Biak
+Biali
+Biangai
+Biao
+Biao Mon
+Biao-Jiao Mien
+Bibbulman
+Bidayuh, Bau
+Bidayuh, Biatah
+Bidayuh, Bukar-Sadong
+Bidayuh, Tringgus-Sembaan
+Bidiyo
+Bidyara
+Bidyogo
+Biem
+Bierebo
+Bieria
+Biete
+Biga
+Bigambal
+Bijori
+Bikaru
+Bikol
+Bikol, Buhi’non
+Bikol, Central
+Bikol, Libon
+Bikol, Miraya
+Bikol, Northern Catanduanes
+Bikol, Rinconada
+Bikol, Southern Catanduanes
+Bikol, West Albay
+Bikya
+Bila
+Bilakura
+Bilaspuri
+Bilba
+Bilbil
+Bilen
+Bille
+Bilua
+Bima
+Bimin
+Bimoba
+Bina
+Binahari
+Binandere
+Bindal
+Bine
+Binji
+Bintauna
+Bintulu
+Binukid
+Binukidnon, Northern
+Binukidnon, Southern
+Binumarien
+Bipi
+Birao
+Birgit
+Birhor
+Biri
+Birifor, Malba
+Birifor, Southern
+Biritai
+Birked
+Birri
+Birrpayi
+Birwa
+Bisa
+Bisaya, Brunei
+Bisaya, Sabah
+Biseni
+Bishnupriya
+Bishuo
+Bisis
+Bislama
+Bisorio
+Bisu
+Bit
+Bitare
+Bitur
+Biwat
+Biyo
+Biyom
+Blaan, Koronadal
+Blaan, Sarangani
+Blablanga
+Blackfoot
+Blafe
+Blagar
+Blang
+Bo
+Bo-Rukul
+Bo-Ung
+Boano
+Bobo Madaré, Southern
+Bobongko
+Bobot
+Bodo
+Bodo Parja
+Bofi
+Boga
+Bogaya
+Boghom
+Boguru
+Bohtan Neo-Aramaic
+Boikin
+Bokha
+Boko
+Bokobaru
+Bokoto
+Bokyi
+Bola
+Bolango
+Bole
+Bolgo
+Bolia
+Bolinao
+Bolivian Sign Language
+Bolo
+Boloki
+Bolon
+Bolondo
+Bolongan
+Bolyu
+Bom
+Boma
+Bomboli
+Bomboma
+Bomitaba
+Bomu
+Bomwali
+Bon Gula
+Bonan
+Bondei
+Bondo
+Bonerate
+Bonggi
+Bonggo
+Bongili
+Bongo
+Bongu
+Bonjo
+Bonkeng
+Bonkiman
+Bontok
+Bontok, Central
+Bontok, Eastern
+Bontok, Northern
+Bontok, Southern
+Bontok, Southwestern
+Bookan
+Boon
+Boor
+Bora
+Borna
+Borong
+Boruca
+Borôro
+Boselewa
+Bosmun
 Bosnian
+Bote
+Botlikh
+Bouyei
+Bozaba
+Bozo, Jenaama
+Bozo, Kelengaxo
+Bozo, Tiemacèwè
+Bozo, Tiéyaxo
+Bragat
+Brahui
+Braj Bhasha
+Brazilian Sign Language
+Brem
+Breri
+Breton
+Bribri
+British Sign Language
+Brokkat
+Brokpake
+Brokskat
+Broome Pearling Lugger Pidgin
+Bru, Eastern
+Bru, Western
+Brunei
+Bu
+Bua
+Buamu
+Buang, Mangga
+Buang, Mapos
+Bube
+Bubi
+Bubia
+Budibud
+Budong-Budong
+Budu
+Budukh
+Buduma
+Budza
+Bugan
+Bugawac
+Bughotu
+Bugis
+Buglere
+Bugun
+Buhid
+Buhutu
+Bukat
+Bukharic
+Bukitan
+Bukiyip
+Buksa
+Bukwen
 Bulgarian
+Bulgarian Sign Language
+Bulgebi
+Buli
+Bullom So
+Bulu
+Bum
+Bumaji
+Bumang
+Bumthangkha
+Bun
+Buna
+Bunaba
+Bunak
+Bunama
+Bundeli
+Bung
+Bungain
+Bunganditj
+Bungku
+Bungu
+Bunu, Bu-Nao
+Bunu, Jiongnai
+Bunu, Wunai
+Bunu, Younuo
+Bunun
+Buol
+Bura-Pabir
+Burak
+Buraka
+Burarra
+Burate
+Burduna
+Bure
+Buriat
+Buriat, China
+Buriat, Mongolia
+Buriat, Russia
+Burji
 Burmese
+Burmeso
+Buru
+Burui
+Burumakok
+Burun
+Burunge
+Burushaski
+Burusu
+Buruwai
+Busa
+Busam
+Busami
+Bushi
+Bushoong
+Buso
+Busoa
+Bussa
+Busuu
+Butmas-Tur
+Butuanon
+Buwal
+Buya
+Buyang, Baha
+Buyang, E’ma
+Buyang, Langnian
+Buyu
+Bwa
+Bwaidoka
+Bwamu, Cwi
+Bwamu, Láá Láá
+Bwanabwana
+Bwatoo
+Bwela
+Bwile
+Bwisi
+Byangsi
+Byep
+Bété, Daloa
+Bété, Gagnoa
+Bété, Guiberoua
+Caac
+Cabiyarí
+Cabécar
+Cacaopera
+Cacua
+Caddo
+Cafundo Creole
+Cagua
+Cahuarano
+Cahuilla
+Caka
+Cakfem-Mushere
+Callawalla
+Caluyanun
+Caló
+Campalagian
+Camsá
+Camtho
+Candoshi-Shapra
+Canela
+Canichana
 Cantonese Chinese
+Cao Lan
+Cao Miao
+Capanahua
+Capiznon
+Cappadocian Greek
+Caquinte
+Cara
+Carabayo
+Caramanta
+Carapana
+Carib
+Carijona
+Carolinian
+Carrier
+Carrier, Southern
+Cashibo-Cacataibo
 Catalan
+Catalan Sign Language
+Catawba
+Cauca
+Cavineña
+Cayubaba
+Cayuga
+Cebuano
+Cemuhî
+Cen
+Centúúm
+Cerma
+Chachi
+Chadian Sign Language
+Chadong
+Chagatai
+Chaima
+Chak
+Chakali
+Chakma
+Chala
+Chaldean Neo-Aramaic
+Chalikha
+Cham, Eastern
+Cham, Western
+Chamacoco
+Chamalal
+Chamari
+Chambeali
+Chambri
+Chamicuro
+Chamling
+Chamorro
+Changriwa
+Changthang
+Chantyal
+Chara
+Chatino, Eastern Highland
+Chatino, Nopala
+Chatino, Tataltepec
+Chatino, Western Highland
+Chatino, Zacatepec
+Chatino, Zenzontepec
+Chaudangsi
+Chaura
+Chavacano
+Chayahuita
+Chechen
+Chehalis, Lower
+Chehalis, Upper
+Cheke Holo
+Chenapian
+Chenchu
+Chenoua
+Chepang
+Chepya
+Cheq Wong
+Cherepon
+Cherokee
+Chesu
+Chetco
+Chetti, Wayanad
+Cheyenne
+Chhattisgarhi
+Chhintang
+Chhulung
+Chiangmai Sign Language
+Chiapanec
 Chichewa
+Chichimeco-Jonaz
+Chichonyi-Chidzihana-Chikauma
+Chickasaw
+Chicomuceltec
+Chidigo
+Chiduruma
+Chiga
+Chilcotin
+Chilean Sign Language
+Chilisso
+Chimariko
+Chimila
+Chin, Anu-Hkongso
+Chin, Asho
+Chin, Bawm
+Chin, Bualkhaw
+Chin, Chinbon
+Chin, Daai
+Chin, Eastern Khumi
+Chin, Falam
+Chin, Haka
+Chin, Kaang
+Chin, Khumi
+Chin, Laitu
+Chin, Lautu
+Chin, Mara
+Chin, Matu
+Chin, Mro-Khimi
+Chin, Müün
+Chin, Ngawn
+Chin, Paite
+Chin, Rawngtu
+Chin, Rungtu
+Chin, Senthang
+Chin, Siyin
+Chin, Songlai
+Chin, Sumtu
+Chin, Tawr
+Chin, Tedim
+Chin, Thado
+Chin, Thaiphum
+Chin, Zotung
+Chin, Zyphe
+Chinali
+Chinantec, Chiltepec
+Chinantec, Comaltepec
+Chinantec, Lalana
+Chinantec, Lealao
+Chinantec, Ojitlán
+Chinantec, Ozumacín
+Chinantec, Palantla
+Chinantec, Quiotepec
+Chinantec, Sochiapam
+Chinantec, Tepetotutla
+Chinantec, Tepinapa
+Chinantec, Tlacoatzintepec
+Chinantec, Usila
+Chinantec, Valle Nacional
 Chinese
+Chinese Pidgin English
+Chinese Sign Language
+Chinese, Gan
+Chinese, Hakka
+Chinese, Huizhou
+Chinese, Jinyu
+Chinese, Mandarin
+Chinese, Min Bei
+Chinese, Min Dong
+Chinese, Min Nan
+Chinese, Min Zhong
+Chinese, Pu-Xian
+Chinese, Wu
+Chinese, Xiang
+Chinese, Yue
+Chini
+Chinook
+Chinook Wawa
+Chipaya
 Chipewyan
+Chipiajes
+Chippewa
+Chiquitano
+Chiru
+Chitimacha
+Chittagonian
+Chocangacakha
+Chocholtec
+Choctaw
+Chodri
+Chol
+Cholón
+Chong
+Choni
+Chontal, Highland Oaxaca
+Chontal, Lowland Oaxaca
+Chontal, Tabasco
+Chopi
+Chorote, Iyojwa’ja
+Chorote, Iyo’wujwa
+Chrau
+Chru
+Chuave
+Chug
+Chuj
+Chukchi
+Chukwa
+Chulym
+Chumburung
+Churahi
+Chut
+Chuukese
+Chuvash
+Chuwabu
+Chácobo
+Ch’orti’
+Cia-Cia
+Cibak
+Cicipu
+Cimbrian
+Cineni
+Cinta Larga
+Cishingini
+Citak
+Citak, Tamnim
+Ciwogai
+Clallam
+Cocama-Cocamilla
+Cochimi
+Cocopa
+Coeur d’Alene
+Cofán
+Cokwe
+Col
+Colombian Sign Language
+Colorado
+Columbia-Wenatchi
+Comanche
+Como Karim
+Comorian, Maore
+Comorian, Mwali
+Comorian, Ndzwani
+Comorian, Ngazidja
+Comox
+Con
+Coos
+Coptic
+Coquille
+Cora, El Nayar
+Cora, Santa Teresa
+Cori
+Cornish
+Corsican
+Costa Rican Sign Language
+Cowlitz
+Coxima
+Coyaima
 Cree
+Cree, Moose
+Cree, Northern East
+Cree, Plains
+Cree, Southern East
+Cree, Swampy
+Cree, Woods
+Crimean Tatar
+Crioulo, Upper Guinea
+Croatia Sign Language
 Croatian
+Crow
+Cruzeño
+Cua
+Cuba Sign Language
+Cubeo
+Cuiba
+Cuicatec, Tepeuxila
+Cuicatec, Teutila
+Cumanagoto
+Cumeral
+Cun
+Cung
+Cupeño
+Curripaco
+Cutchi-Swahili
+Cuvok
+Cuyonon
 Czech
+Czech Sign Language
+Côông
+C’lela
+Daakaka
+Daantanai’
+Daasanach
+Daba
+Dabarre
+Dabe
+Dadi Dadi
+Dadibi
+Dadiya
+Daga
+Dagaare, Southern
+Dagaari Dioula
+Dagara, Northern
+Dagba
+Dagbani
+Dagik
+Dagoman
+Dahalik
+Dahalo
+Daho-Doo
+Dai
+Dair
+Daju, Dar Daju
+Daju, Dar Fur
+Daju, Dar Sila
+Dakka
+Dakota
+Dakpakha
+Dalabon
+Dama
+Damakawa
+Damal
+Damar, East
+Damar, West
+Dambi
+Dameli
+Dampelas
+Dan
+Danaru
+Danau
+Dangaléat
+Dangme
+Dani, Lower Grand Valley
+Dani, Mid Grand Valley
+Dani, Upper Grand Valley
+Dani, Western
 Danish
+Danish Sign Language
+Dano
+Danu
+Danuwar
+Dao
+Daonda
+Darai
+Dargwa
+Dari
+Dari, Zoroastrian
+Darkinyung
+Darlong
+Darmiya
+Dass
+Datooga
+Daungwurrung
+Daur
+Davawenyo
+Dawawa
+Dawera-Daweloor
+Dawida
+Dawro
+Day
+Dayi
+Daza
+Dazaga
+Deccan
+Dedua
+Defaka
+Deg
+Degaru
+Degema
+Degenan
+Degexit’an
+Dehwari
+Dek
+Dela-Oenale
+Delaware
+Delaware, Pidgin
+Delo
+Dem
+Dema
+Demisa
+Dendi
+Dene
+Dengese
+Dengka
+Deno
+Denya
+Dení
+Deori
+Dera
+Desano
+Desiya
+Dewoin
+Dezfuli
+Dghwede
+Dhaiso
+Dhalandji
+Dhanki
+Dhao
+Dhargari
+Dharuk
+Dharumbal
+Dhatki
+Dhimal
+Dhimba
+Dhodia
+Dholuo
+Dhundari
+Dhungaloo
+Dhurga
+Dhuwal
+Dia
+Dibiyaso
+Dibo
+Dibole
+Dida, Lakota
+Dida, Yocoboué
+Didinga
+Dido
+Diebroud
+Dieri
+Digaro-Mishmi
+Dii
+Dikaka
+Dilling
+Dima
+Dimasa
+Dimbong
+Dime
+Dineor
+Ding
+Dinka
+Dinka, Northeastern
+Dinka, Northwestern
+Dinka, South Central
+Dinka, Southeastern
+Dinka, Southwestern
+Dirari
+Dirasha
+Diri
+Diriku
+Dirim
+Disa
+Ditammari
+Ditidaht
+Diuwe
+Dixon Reef
+Dizin
+Djabwurrung
+Djadjawurrung
+Djambarrpuyngu
+Djamindjung
+Djangu
+Djangun
+Djauan
+Djawi
+Djeebbana
+Djinang
+Djinba
+Djingili
+Djiwarli
+Dobel
+Dobu
+Doe
+Doga
+Doghoro
+Dogon, Ampari
+Dogon, Ana Tinga
+Dogon, Bankan Tey
+Dogon, Ben Tey
+Dogon, Bondum Dom
+Dogon, Bunoge
+Dogon, Dogul Dom
+Dogon, Donno So
+Dogon, Jamsay
+Dogon, Mombo
+Dogon, Nanga Dama
+Dogon, Tebul Ure
+Dogon, Tene Kan
+Dogon, Tiranige Diga
+Dogon, Tommo So
+Dogon, Tomo Kan
+Dogon, Toro So
+Dogon, Toro Tegu
+Dogon, Yanda Dom
+Dogoso
+Dogosé
+Dogri
+Dogrib
+Doka
+Doko-Uyanga
+Dolgan
+Dolpo
+Dom
+Domaaki
+Domari
+Dombe
+Dominican Sign Language
+Dompo
+Domu
+Domung
+Dondo
+Dong
+Dong, Northern
+Dong, Southern
+Dongo
+Dongotono
+Dongxiang
+Doondo
+Dorig
+Dori’o
+Doromu-Koki
+Dororo
+Dorze
+Doso
+Dotyali
+Doutai
+Doyayo
+Drehu
+Drents
+Drubea
+Drung
+Duala
+Duano
+Duau
+Dubli
+Dugun
+Duguri
+Dugwor
+Duhwa
+Duke
+Dulbu
+Duli
+Duma
+Dumagat, Remontado
+Dumi
+Dumpas
+Dumun
+Duna
+Dungan
+Dungmali
+Dungra Bhil
+Dungu
+Duoluo
+Dura
+Duri
+Duriankere
+Duruwa
+Dusner
+Dusun Deyah
+Dusun Malang
+Dusun Witu
+Dusun, Central
+Dusun, Sugut
+Dusun, Tambunan
+Dusun, Tempasuk
 Dutch
+Duungooma
+Duupa
+Duvle
+Duwai
+Duwet
+Duya
+Dwang
+Dyaabugay
+Dyaberdyaber
+Dyan
+Dyangadi
+Dyirbal
+Dyugun
+Dza
+Dzalakha
+Dzando
+Dzao Min
+Dzhidi
+Dzodinka
+Dzongkha
+Dzùùngoo
+Dâw
+Eastern Maroon Creole
+Ebira
+Ebrié
+Ebughu
+Ecuadorian Sign Language
+Ede Cabe
+Ede Ica
+Ede Idaca
+Ede Ije
+Ede Nago, Kura
+Edo
+Edolo
+Edopi
+Efai
+Efate, North
+Efate, South
+Efe
+Efik
+Efutop
+Ega
+Eggon
+Egypt Sign Language
+Ehueun
+Eipomek
+Eitiep
+Ejagham
+Ekajuk
+Ekari
+Ekegusii
+Eki
+Ekit
+Ekpeye
+El Hugeirat
+El Molo
+Eleme
+Elepi
+Elip
+Elkei
+Eloyi
+Elseng
+Elu
+Emae
+Emai-Iuleha-Ora
+Eman
+Embaloh
+Emberá, Northern
+Emberá-Baudó
+Emberá-Catío
+Emberá-Chamí
+Emberá-Tadó
+Emem
+Emerillon
+Emilian
+Emplawas
+En
+Enawené-Nawé
+Ende
+Enets, Forest
+Enets, Tundra
+Enga
+Engdewu
+Engenni
+Enggano
 English
+Enlhet
+Enrekang
+Enu
+Enwan
+Enxet
+Enya
+Epena
+Epie
+Equatorial Guinean Pidgin
+Eravallan
+Erave
+Ere
+Eritai
+Erokwanas
+Erre
+Erromintxela
+Ersu
+Eruwa
+Erzya
+Esan
+Ese
+Ese Ejja
+Eshtehardi
+Esimbi
+Esperanto
+Esselen
 Estonian
+Estonian Sign Language
+Estonian, Standard
+Etebi
+Ethiopian Sign Language
+Etkywan
+Eton
+Etulo
+Evant
+Even
+Evenki
+Eviya
+Ewage-Notu
+Ewondo
+Extremaduran
+Eyak
+Ezaa
+E’ñapa Woromaipu
+Fa d’Ambu
+Fagani
+Fagauvea
+Faita
+Faiwol
+Fala
+Fali
+Fali of Baissa
+Fali, North
+Fali, South
+Fam
+Fanamaket
+Fang
+Fania
+Farefare
+Faroese
 Faroese Fijian
+Fars, Northwestern
+Fars, Southwestern
+Fas
+Fasu
+Fataleka
+Fataluku
+Fayu
+Fedan
+Fembe
+Feroge
+Fe’fe’
+Fijian
+Fijian, Western
 Filipino
+Finland-Swedish Sign Language
 Finnish
+Finnish Sign Language
+Finnish, Kven
+Finnish, Tornedalen
+Finongan
+Fipa
+Firan
+Fiwaga
+Flaaitaal
+Flemish Sign Language
+Flinders Island
+Foau
+Foi
+Foia Foia
+Folopa
+Foma
+Fon
+Fongoro
+Foodo
+Forak
+Fordata
+Fore
+Fortsenal
+Frankish
 French
+French Belgian Sign Language
+French Sign Language
+French, Cajun
 Frisian
+Frisian, Northern
+Friulian
 Fula
+Fulah
+Fulfulde, Adamawa
+Fulfulde, Bagirmi
+Fulfulde, Borgu
+Fulfulde, Central-Eastern Niger
+Fulfulde, Maasina
+Fulfulde, Nigerian
+Fulfulde, Western Niger
+Fuliiru
+Fum
+Fungwa
+Fur
+Furu
+Futuna, East
+Futuna-Aniwa
+Fuyug
+Fwe
+Fwâi
+Fyam
+Fyer
+Ga
+Gaa
+Gaam
+Gabi-Gabi
+Gabri
+Gadaba, Bodo
+Gadaba, Mudhili
+Gadaba, Pottangi Ollar
+Gadang
+Gaddang
+Gaddi
+Gade
+Gadjerawang
+Gadsup
 Gaelic
+Gaelic, Scottish
+Gagadu
+Gagauz
+Gahri
+Gaikundi
+Gail
+Gaina
+Gal
+Galambu
+Galela
+Galeya
+Galice
+Galician
+Galolen
+Gambera
+Gamilaraay
+Gamit
+Gamkonora
+Gamo
+Gamo-Ningi
 Gan
+Gana
+Ganang
+Ganda
+Gane
+Ganggalida
+Ganglau
+Gangte
+Gangulu
+Gants
+Ganza
+Ganzi
+Gao
+Gapapaiwa
+Garasia, Adiwasi
+Garasia, Rajput
+Garhwali
+Garifuna
+Garig-Ilgar
+Garingbal
+Garlali
+Garo
+Garre
+Garrwa
+Garus
+Gata’
+Gavak
+Gavar
+Gavião do Jiparaná
+Gavião, Pará
+Gawar-Bati
+Gawwada
+Gayil
+Gayo
+Gazi
+Ga’anda
+Ga’dang
+Gbagyi
+Gban
+Gbanu
+Gbanziri
+Gbari
+Gbati-ri
+Gbaya
+Gbaya, Northwest
+Gbaya, Southwest
+Gbaya-Bossangoa
+Gbaya-Bozoum
+Gbaya-Mbodomo
+Gbayi
+Gbe, Ayizo
+Gbe, Ci
+Gbe, Defi
+Gbe, Eastern Xwla
+Gbe, Gbesi
+Gbe, Kotafon
+Gbe, Maxi
+Gbe, Saxwe
+Gbe, Tofin
+Gbe, Waci
+Gbe, Weme
+Gbe, Western Xwla
+Gbe, Xwela
+Gbii
+Gbiri-Niragu
+Ge
+Gebe
+Gedaged
+Gedeo
+Geez
+Geji
+Gela
+Gelao, Green
+Gelao, Red
+Geme
+Gen
+Gende
+Gengle
 Georgian
+Gepo
+Gera
 German
+German Sign Language
+German, Colonia Tovar
+German, Pennsylvania
+German, Standard
+German, Swiss
+Geruma
+Geser-Gorom
+Gey
+Ghadamès
+Ghale, Northern
+Ghale, Southern
+Ghanaian Pidgin English
+Ghanaian Sign Language
+Ghandruk Sign Language
+Ghanongga
+Ghari
+Ghayavi
+Ghera
+Ghodoberi
+Ghomara
+Ghomálá’
+Ghotuo
+Ghulfan
+Giangan
+Gibanawa
+Gichuka
+Gidar
+Giiwo
+Gikuyu
+Gikyode
+Gilaki
+Gilima
+Gilyak
+Gimi
+Gimme
+Gimnime
+Ginuman
+Ginyanga
+Girawa
+Githabul
+Gitua
+Gitxsan
+Giyug
+Giziga, North
+Giziga, South
+Gizrra
+Glaro-Twabo
+Glavda
+Glio-Oubi
+Gnau
+Goaria
+Gobasi
+Gobu
+Godié
+Godwari
+Goemai
+Gofa
+Gogo
+Gogodala
+Gokana
+Gola
+Golin
+Golpa
+Gondi
+Gondi, Northern
+Gondi, Southern
+Gone Dau
+Gongduk
+Gonja
+Goodenough, West
+Gooniyandi
+Gor
+Gorakor
+Gorap
+Goreng
+Gorontalo
+Gorovu
+Gorowa
+Goundo
+Gourmanchéma
+Gowlan
+Gowli
+Gowro
+Gozarkhani
+Grangali
+Great Andamanese, Mixed
+Grebo
+Grebo, Barclayville
+Grebo, Central
+Grebo, Gboloo
+Grebo, Northern
+Grebo, Southern
 Greek
+Greek Sign Language
+Greek, Ancient
+Grenadian Creole English
+Gresi
+Groma
+Gronings
+Gros Ventre
+Gua
+Guadeloupean Creole French
+Guahibo
+Guajajára
+Guajá
+Guambiano
+Guana
+Guanano
+Guarani
+Guaraní, Ava
+Guaraní, Eastern Bolivian
+Guaraní, Mbyá
+Guaraní, Paraguayan
+Guaraní, Western Bolivian
+Guarayu
+Guarequena
+Guatemalan Sign Language
+Guató
+Guayabero
+Gudang
+Gudanji
+Gude
+Gudu
+Guduf-Gava
+Gugadj
+Gugu Badhun
+Gugu Warra
+Gugubera
+Guguyimidjir
+Guhu-Samane
+Guianese Creole French
+Guinean Sign Language
+Guiqiong
 Gujarati
+Gujari
+Gula
+Gula Iro
+Gulay
+Gula’alaa
+Gule
+Guliguli
+Gumalu
+Gumatj
+Gumawana
+Gumuz
+Gun
+Gundi
+Gunditjmara
+Gundungurra
+Gungabula
+Gungu
+Guntai
+Gunwinggu
+Gunya
+Gupa-Abawa
+Gupapuyngu
+Guragone
+Guramalum
+Gurani
+Gurdjar
+Gureng Gureng
+Gurgula
+Guriaso
+Gurinji
+Gurmana
+Guro
+Gurung, Eastern
+Gurung, Western
+Guruntum-Mbaaru
+Gusan
+Gusilay
+Guwa
+Guwamu
+Guya
+Guyanese Creole English
+Guyani
+Gvoko
+Gwa
+Gwahatike
+Gwak
+Gwamhi-Wuri
+Gwandara
+Gweda
+Gweno
+Gwere
+Gwich’in
+Gyele
+Gyem
+Ha
+Habun
+Hadiyya
+Hadza
+Haeke
+Hahon
+Haida
+Haida, Northern
+Haida, Southern
+Haigwai
+Haiphong Sign Language
+Haisla
+Haitian
 Haitian Creole
+Haitian Vodoun Culture Language
+Haji
+Hajong
 Hakka
+Hakö
+Halang
+Halang Doan
+Halbi
+Halia
+Halkomelem
+Hamap
+Hamba
+Hamer-Banna
+Hamtai
+Han
+Hanga
+Hanga Hundi
+Hangaza
+Hani
+Hano
+Hanoi Sign Language
+Hanunoo
+Harari
+Haroi
+Haroti
+Harsusi
+Haruai
+Haruku
+Haryanvi
+Harzani
+Hasha
+Hassaniyya
+Hatam
 Hausa
+Hausa Sign Language
+Havasupai-Walapai-Yavapai
+Haveke
+Havu
+Hawaii Sign Language
 Hawaiian
+Hawai’i Pidgin
+Hawu
+Haya
+Hazaragi
+Hdi
 Hebrew
+Hebrew, Ancient
+Hehe
+Heiban
+Heiltsuk
+Helambu Sherpa
+Helong
+Hema
+Hemba
+Herdé
+Herero
+Hermit
+Hewa
+Heyo
+Hibito
+Hidatsa
+Higaonon
+Hijuk
+Hiligaynon
+Himarimã
 Hindi
+Hindi, Fiji
+Hindko, Northern
+Hindko, Southern
+Hinduri
+Hindustani, Caribbean
+Hinukh
+Hitu
+Hiw
+Hixkaryána
+Hlai
+Hlersu
+Hmar
 Hmong
+Hmong Daw
+Hmong Don
+Hmong Dô
+Hmong Njua
+Hmwaveke
+Ho
+Ho Chi Minh City Sign Language
+Ho-Chunk
+Hoava
+Hobyót
+Hoia Hoia
+Holikachuk
+Holiya
+Holma
+Holoholo
+Holu
+Homa
+Honduras Sign Language
+Hong Kong Sign Language
+Honi
+Hopi
+Horo
+Horom
+Horpa
+Hote
+Hoti
+Hovongan
+Hoyahoya
+Hozo
+Hpon
+Hrangkhol
+Hre
+Hruso
+Hu
+Huachipaeri
+Huambisa
+Huarijío
+Huastec
+Huaulu
+Huave, San Dionisio del Mar
+Huave, San Francisco del Mar
+Huave, San Mateo del Mar
+Huave, Santa María del Mar
+Huba
+Huichol
+Huilliche
+Huitoto, Minica
+Huitoto, Murui
+Huitoto, Nüpode
+Hukumina
+Hula
+Hulaulá
+Huli
+Hulung
+Humene
+Humla
+Hun-Saare
+Hunde
+Hung
+Hungana
 Hungarian
+Hungarian Sign Language
+Hungworo
+Hunjara-Kaina Ke
+Hunsrik
+Hunzib
+Hupa
+Hupdë
+Hupla
+Hutterisch
+Hwana
+Hya
+Hyam
+Hértevin
+Hõne
+I-wak
+Iaai
+Iamalele
+Iapama
+Iatmul
+Iatê
+Iau
+Ibaloi
+Iban
+Ibanag
+Ibani
+Ibatan
 Ibibio
+Ibino
+Ibu
+Ibuoro
 Icelandic
+Icelandic Sign Language
+Iceve-Maci
+Idaté
+Ida’an
+Idere
+Idesa
+Idi
+Idoma
+Idu-Mishmi
+Iduna
+Ifo
+Ifugao, Amganad
+Ifugao, Batad
+Ifugao, Mayoyao
+Ifugao, Tuwali
+Ifè
+Igala
+Igana
 Igbo
+Igede
+Ignaciano
+Igo
+Iguta
+Igwe
+Iha
+Iha Based Pidgin
+Ihievbe
+Ija-Zuba
+Ijo, Southeast
+Ik
+Ika
+Ikaranggal
+Ikizu
+Iko
+Ikobi
+Ikoma-Nata-Isenye
+Ikpeng
+Ikpeshi
+Ikposo
+Iku-Gora-Ankwa
+Ikulu
+Ikwere
+Ikwo
+Ila
+Ile Ape
+Ili Turki
+Ili’uun
+Ilocano
+Ilongot
+Ilue
+Imbongu
+Imeraguen
+Imonda
+Imroing
+Inabaknon
+Inakeanon
+Inapang
+Indian Sign Language
+Indo-Portuguese
+Indonesian
+Indonesian Sign Language
+Indonesian, Peranakan
+Indri
+Ineseño
+Inga
+Inga, Jungle
+Ingrian
+Ingush
+Inoke-Yate
+Inonhan
+Inor
+International Sign
+Intha
 Inuinnaqtun
 Inukitut
+Inuktitut
+Inuktitut, Eastern Canadian
+Inuktitut, Greenlandic
+Inupiaq
+Inupiatun, North Alaskan
+Inupiatun, Northwest Alaska
+Iowa-Oto
+Ipiko
+Ipili
+Ipulo
+Iquito
+Ir
+Iranun
+Iraqw
+Irarutu
+Iraya
+Irigwe
 Irish
+Irish Sign Language
+Irula
+Irántxe
+Isabi
+Isaka
+Isanzu
+Isconahua
+Isebe
+Isekiri
+Ishkashimi
+Isinai
+Isirawa
+Islander Creole English
+Isnag
+Isoko
+Israeli Sign Language
+Istriot
+Isu
 Italian
+Italian Sign Language
+Itawit
+Itelmen
+Iten
+Itene
+Iteri
+Itik
+Itneg, Banao
+Itneg, Binongan
+Itneg, Inlaod
+Itneg, Maeng
+Itneg, Masadiit
+Itneg, Moyadan
+Ito
+Itonama
+Itu Mbon Uzo
+Itza’
+Iu Mien
+Ivatan
+Ivbie North-Okpela-Arhe
+Iwaidja
+Iwal
+Iwam
+Iwam, Sepik
+Ixcatec
+Ixil
+Iyayu
+Iyive
+Iyo
+Izere
+Izii
+Izon
+Izora
+Iñapari
+Jabutí
+Jad
+Jadgali
+Jah Hut
+Jahanka
+Jaitmatang
+Jakalteko
+Jakati
+Jakun
+Jalkunan
+Jamaican Country Sign Language
+Jamaican Creole English
+Jamaican Sign Language
+Jamamadí
+Jandai
+Jandavra
+Jangkang
+Jangshung
+Janji
 Japanese
+Japanese Sign Language
+Japreria
+Jaqaru
+Jara
+Jarai
+Jarawa
+Jaru
+Jaunsari
 Javanese
+Javanese, Caribbean
+Javanese, New Caledonian
+Javindo
+Jawe
+Jaya
+Jebero
+Jeh
+Jehai
+Jemez
+Jeng
+Jere
+Jeri Kuo
+Jerung
+Jewish Babylonian Aramaic
+Jhankot Sign Language
+Jiamao
+Jiarong
+Jiba
+Jibu
+Jiiddu
+Jilbe
+Jilim
+Jimi
+Jina
+Jingpho
+Jinuo, Buyuan
+Jinuo, Youle
+Jirel
+Jiru
+Jita
+Jju
+Joba
+Jofotek-Bromnya
+Jola-Felupe
+Jola-Fonyi
+Jola-Kasa
+Jonkor Bourmataguil
+Jordanian Sign Language
+Jorto
+Jorá
+Jowulu
+Ju
+Juang
+Judeo-Arabic
+Judeo-Berber
+Judeo-Georgian
+Judeo-Italian
+Judeo-Tat
+Jukun Takum
+Jula
+Jumjum
+Jumla Sign Language
+Jumli
+Jur Modo
+Juray
+Jurúna
+Jutish
+Juwal
+Ju|’hoan
+Jwira-Pepesa
+Júma
+Kaamba
+Kaan
+Kaansa
+Kaapor
+Kaapor Sign Language
+Kaba
+Kaba Démé, Sara
+Kaba Naa, Sara
+Kabalai
+Kabardian
+Kabatei
+Kabixí
+Kabiyè
+Kabola
+Kaburi
+Kabutra
+Kabuverdianu
+Kabwa
+Kabwari
+Kabyle
+Kachama-Ganjule
+Kachari
+Kachchi
+Kacipo-Balesi
+Kaco’
+Kadai
+Kadar
+Kadaru
+Kadazan, Coastal
+Kadazan, Klias River
+Kadazan, Labuk-Kinabatangan
+Kadiwéu
+Kadu
+Kaduo
+Kafa
+Kafoa
+Kagate
+Kagayanen
+Kagoma
+Kagoro
+Kagulu
+Kahe
+Kahua
+Kaibobo
+Kaidipang
+Kaiep
+Kaikadi
+Kaike
+Kaiku
+Kaili, Da’a
+Kaili, Ledo
+Kaili, Unde
+Kaimbulawa
+Kaimbé
+Kaingang
+Kaingáng, São Paulo
+Kairak
+Kairiru
+Kairui-Midiki
+Kais
+Kaivi
+Kaiwá
+Kaiy
+Kajakse
+Kajali
+Kajaman
+Kakabai
+Kakabe
+Kakanda
+Kakauhua
+Kaki Ae
+Kakihum
+Kako
+Kakwa
+Kala
+Kala Lagaw Ya
+Kalaamaya
+Kalabakan
+Kalabari
+Kalabra
+Kalagan
+Kalagan, Kagan
+Kalam
+Kalami
+Kalamsé
+Kalanadi
+Kalanga
+Kalao
+Kalapuya
+Kalarko
+Kalasha
+Kalenjin
+Kalinga, Butbut
+Kalinga, Limos
+Kalinga, Lubuagan
+Kalinga, Mabaka Valley
+Kalinga, Majukayang
+Kalinga, Southern
+Kalinga, Tanudan
+Kalispel-Pend d’Oreille
+Kalkoti
+Kalkutung
+Kallahan, Kayapa
+Kallahan, Keley-i
+Kallahan, Tinoc
+Kalmyk-Oirat
+Kalou
+Kaluli
+Kalumpang
+Kam
+Kamakan
+Kamang
+Kamano
+Kamantan
+Kamar
+Kamara
+Kamarian
+Kamaru
+Kamas
+Kamasa
+Kamasau
+Kamayo
+Kamayurá
+Kamba
+Kambaata
+Kambaira
+Kambera
+Kamberau
+Kambiwá
+Kami
+Kamo
+Kamoro
+Kamu
+Kamuku
+Kamula
+Kamviri
+Kamwe
+Kanakanabu
+Kanamarí
+Kanan
+Kanashi
+Kanasi
+Kanauji
+Kandas
+Kandawo
+Kande
+Kanembu
+Kang
+Kanga
+Kangean
+Kanggape
+Kangjia
+Kango
+Kangri
+Kaniet
+Kanikkaran
+Kaningi
+Kaningkom-Nindem
+Kaningra
+Kaninuwa
+Kanite
+Kanjari
+Kanju
+Kankanaey
+Kankanay, Northern
 Kannada
+Kanoé
+Kansa
+Kantosi
+Kanu
+Kanufi
+Kanum, Bädi
+Kanum, Ngkâlmpw
+Kanum, Smärky
+Kanum, Sota
+Kanuri
+Kanuri, Bilma
+Kanuri, Central
+Kanuri, Manga
+Kanuri, Tumari
+Kanyok
+Kao
+Kaonde
+Kap
+Kapauri
+Kapin
+Kapinawá
+Kapingamarangi
+Kapriman
+Kaptiau
+Kapya
+Kaqchikel
+Kaqchikel-K’iche’ Mixed Language
+Kara
+Karaboro, Eastern
+Karaboro, Western
+Karachay-Balkar
+Karadjeri
+Karagas
+Karahawyana
+Karaim
+Karajá
+Karakalpak
+Karami
+Karang
+Karanga
+Karao
+Karas
+Karata
+Karawa
+Karbi
+Kare
+Karekare
+Karelian
+Karen, Bwe
+Karen, Geba
+Karen, Geko
+Karen, Mobwa
+Karen, Paku
+Karen, Phrae Pwo
+Karen, Pwo Eastern
+Karen, Pwo Northern
+Karen, Pwo Western
+Karen, S’gaw
+Karenggapa
+Karey
+Kari
+Karingani
+Karipuna
+Karipuna Creole French
+Karipúna
+Karirí-Xocó
+Karitiâna
+Kariya
+Kariyarra
+Karkar-Yuri
+Karko
+Karnai
+Karnic, Eastern
+Karo
+Karok
+Karon
+Karon Dori
+Karore
+Karranga
+Karuwali
+Kasanga
+Kasem
+Kashaya
+Kashinawa
+Kashkay
 Kashmiri
+Kashubian
+Kasiguranin
+Kaska
+Kasseng
+Kasua
+Kataang
+Katabaga
+Katawixi
+Katcha-Kadugli-Miri
+Kathu
+Kati
+Katkari
+Katla
+Kato
+Katso
+Katu, Eastern
+Katu, Western
+Katua
+Katukína
+Katukína, Panoan
+Kaulong
+Kaur
+Kaure
+Kauwera
+Kavalan
+Kavet
+Kawacha
+Kawaiisu
+Kawe
+Kaxararí
+Kaxuiâna
+Kayabí
+Kayagar
+Kayah, Eastern
+Kayah, Western
+Kayan
+Kayan Mahakam
+Kayan, Baram
+Kayan, Busang
+Kayan, Kayan River
+Kayan, Mendalam
+Kayan, Rejang
+Kayan, Wahau
+Kayapó
+Kayardild
+Kayaw
+Kayeli
+Kayong
+Kayort
+Kaytetye
+Kayupulau
 Kazakh
+Kazukuru
+Keak
+Keapara
+Kedang
+Kehu
+Kei
+Keiga
+Keijar
+Kein
+Keiyo
+Kela
+Kelabit
+Kele
+Keliko
+Kelo
+Kemak
+Kembayan
+Kemberano
+Kembra
+Kemedzung
+Kemiehua
+Kemtuik
+Kenati
+Kendayan
+Kendeje
+Kendem
+Kenga
+Keningau Murut
+Keninjal
+Kensiu
+Kenswei Nsei
+Kenyah, Mainstream
+Kenyah, Wahau
+Kenyan Sign Language
+Kenyang
+Kenye
+Keoru-Ahia
+Kepkiriwát
+Kepo’
+Kera
+Kerak
+Kereho
+Kerek
+Keres, Eastern
+Keres, Western
+Kerewe
+Kerewo
+Kerinci
+Kesawai
+Ket
+Ketangalan
+Kete
+Ketengban
+Ketum
+Kewa, East
+Kewa, West
+Keyagana
+Ke’o
+Kgalagadi
+Khakas
+Khalaj
+Khalaj, Turkic
+Khaling
+Kham, Eastern Parbate
+Kham, Gamale
+Kham, Sheshi
+Kham, Western Parbate
+Khamba
+Khamti
+Khamyang
+Khana
+Khandesi
+Khanty
+Khao
+Kharia
+Kharia Thar
+Khasi
+Khe
+Khehek
+Khengkha
+Khetrani
+Khinalugh
+Khirwar
+Khisa
+Khlor
+Khlula
 Khmer
+Khmer, Central
+Khmer, Northern
+Khmu
+Kholok
+Khorasani Turkish
+Khowar
+Kho’ini
+Khua
+Khuen
+Khunsari
+Khvarshi
+Khwe
+Kháng
+Khün
+Kibet
+Kibiri
+Kickapoo
+Kiembu
+Kigiryama
+Kikai
+Kilivila
+Kiliwa
+Kilmeri
+Kim
+Kim Mun
+Kimaghima
+Kimaragang
+Kimbu
+Kimbundu
+Kimki
+Kimré
+Kimîîru
+Kinabalian
+Kinabatangan, Upper
+Kinalakna
+Kinaray-a
+Kinga
+Kinnauri
+Kinnauri, Bhoti
+Kinnauri, Chitkuli
+Kinnauri, Pahari
+Kintaq
+Kinuku
+Kioko
+Kiong
+Kiorr
+Kiowa
+Kipfokomo
+Kipsigis
+Kiput
+Kir-Balar
+Kire
+Kiribati
+Kirike
+Kirikiri
+Kirya-Konzel
+Kis
+Kisan
+Kisankasa
+Kisar
+Kisi
+Kisi, Southern
+Kissi, Northern
+Kistane
+Kitharaka
+Kitja
+Kitsai
+Kituba
+Kiunum
+Kiwai, Northeast
+Kiwai, Southern
+Kiwilwana
+Kla-Dan
+Klamath-Modoc
+Klao
+Klon
+Ko
+Koalib
+Koasati
+Koba
+Kobiana
+Kobol
+Kobon
+Koch
+Koda
+Kodaku
+Kodava
+Kodeoha
+Kodi
+Kodia
+Koenoem
+Kofa
+Kofei
+Kofyar
+Kogi
+Kohin
+Kohistani, Indus
+Koho
+Kohumono
+Koi
+Koiali, Mountain
+Koiari, Grass
+Koireng
+Koitabu
+Koiwat
+Kok Borok
+Kok-Nar
+Kokata
+Koke
+Koko Babangk
+Kokoda
+Kokola
+Kokota
+Kol
+Kola
+Kolami, Northwestern
+Kolami, Southeastern
+Kolbila
+Koli, Kachi
+Koli, Parkari
+Koli, Wadiyara
+Koluwawa
+Kom
+Koma
+Komba
+Kombai
+Kombe
+Kombio
+Komering
+Komi
+Komi-Permyak
+Komi-Zyrian
+Kominimung
+Komo
+Komodo
+Kompane
+Komyandaret
+Kon Keu
+Konabéré
+Konai
+Konda
+Konda-Dora
+Koneraw
+Kongo
+Kongo, San Salvador
+Konjo, Coastal
+Konjo, Highland
+Konkani
+Konkani, Goan
+Konkomba
+Konni
+Kono
+Konomala
+Konongo
+Konso
+Konzo
+Koongo
+Koonzime
+Koorete
+Kopar
+Kopkaka
+Korafe-Yegha
+Koraga, Korra
+Koraga, Mudu
+Korak
+Korana
+Korandje
 Korean
+Korean Sign Language
+Koreguaje
+Koresh-e Rostam
+Korku
+Korlai Creole Portuguese
+Koro
+Koro Wachi
+Koromfé
+Koromira
+Koroni
+Korop
+Koropó
+Koroshi
+Korowai
+Korubo
+Korupun-Sela
+Korwa
+Koryak
+Kosare
+Kosena
+Koshin
+Kosraean
+Kota
+Kota Marudu Talantang
+Kota Marudu Tinagas
+Koti
+Kouya
+Kovai
+Kove
+Kowaki
+Kowiai
+Koy Sanjaq Surat
+Koya
+Koyaga
+Koyo
+Koyukon
+Kpagua
+Kpala
+Kpan
+Kpasham
+Kpati
+Kpatili
+Kpeego
+Kpelle
+Kpelle, Guinea
+Kpelle, Liberia
+Kpessi
+Kplang
+Krache
+Krahn, Eastern
+Krahn, Western
+Krahô
+Kraol
+Krenak
+Kreye
+Krikati-Timbira
+Krim
+Krimchak
+Krio
+Kriol
+Krobu
+Krongo
+Krumen, Plapo
+Krumen, Pye
+Krumen, Tepo
+Kru’ng 2
+Kryts
+Kua
+Kua-nsi
+Kuamasi
+Kuan
+Kuanhua
+Kuanua
+Kube
+Kubi
+Kubo
+Kubu
+Kuce
+Kucong
+Kudiya
+Kudmali
+Kudu-Camo
+Kugama
+Kugbo
+Kuhane
+Kui
+Kuijau
+Kuikúro-Kalapálo
+Kujarge
+Kuk
+Kukatja
+Kuke
+Kukele
+Kukna
+Kuku-Mangk
+Kuku-Muminh
+Kuku-Mu’inh
+Kuku-Ugbanh
+Kuku-Uwanh
+Kuku-Yalanji
+Kula
+Kulango, Bondoukou
+Kulango, Bouna
+Kulere
+Kulfa
+Kulina
+Kulina Pano
+Kulisusu
+Kulon-Pazeh
+Kulung
+Kumalu
+Kumam
+Kuman
+Kumaoni
+Kumarbhag Paharia
+Kumba
+Kumbainggar
+Kumbaran
+Kumbewaha
+Kumhali
+Kumiai
+Kumukio
+Kumyk
+Kumzari
+Kuna, Border
+Kuna, San Blas
+Kunama
+Kunbarlang
+Kunda
+Kundal Shahi
+Kunduvadi
+Kung
+Kung-Ekoka
+Kungarakany
+Kungardutyi
+Kunggara
+Kunggari
+Kungkari
+Kuni
+Kuni-Boazi
+Kunigami
+Kunimaipa
+Kunja
+Kunjen
+Kunyi
+Kunza
+Kuo
+Kuot
+Kupa
+Kupia
+Kupsapiiny
+Kur
+Kurama
+Kuranko
 Kurdish
+Kurdish, Central
+Kurdish, Northern
+Kurdish, Southern
+Kuri
+Kuria
+Kurichiya
+Kurmukar
+Kurnai
+Kurrama
+Kurti
+Kurtokha
+Kurudu
+Kurumba, Alu
+Kurumba, Attapady
+Kurumba, Betta
+Kurumba, Jennu
+Kurumba, Kannada
+Kurumba, Mullu
+Kurux
+Kurux, Nepali
+Kuruáya
+Kusaal
+Kusaghe
+Kushi
+Kuskokwim, Upper
+Kusu
+Kusunda
+Kutenai
+Kutep
+Kuthant
+Kutong
+Kutto
+Kutu
+Kuturmi
+Kuuk-Yak
+Kuuku-Ya’u
+Kuvi
+Kuwaa
+Kuwaataay
+Kuy
+Kwa
+Kwaami
+Kwadi
+Kwaio
+Kwaja
+Kwak
+Kwakiutl
+Kwakum
+Kwama
+Kwambi
+Kwamera
+Kwami
+Kwang
+Kwanga
+Kwangali
+Kwanja
+Kwara’ae
+Kwasio
+Kwaya
+Kwaza
+Kwa’
+Kwegu
+Kwer
+Kwerba
+Kwerba Mamberamo
+Kwere
+Kwerisa
+Kwese
+Kwesten
+Kwini
+Kwinsu
+Kwinti
+Kwoma
+Kwomtari
+Kw’adza
+Kyak
+Kyaka
+Kyanga
+Kyenele
+Kyerung
 Kyrgyz
+Kâte
+Kélé
+Kölsch
+K’iche’
+Laal
+Laalaa
+Laari
+Laba
+Label
+Labir
+Labu
+Lacandon
+Lachi
+Lachi, White
+Ladakhi
+Ladin
+Ladino
+Ladji Ladji
+Laeko-Libuat
+Lafofa
+Laghu
+Laghuu
+Lagwan
+Laha
+Lahanan
+Lahnda
+Lahta
+Lahu
+Lahu Shi
+Laimbue
+Laiyolo
+Lak
+Laka
+Lakalei
+Lakha
+Laki
+Lakkia
+Lakon
+Lakondê
+Lakota
+Lala
+Lala-Bisa
+Lala-Roba
+Lalia
+Lalo, Central
+Lalo, Dongshanba
+Lalu, Eastern
+Lalu, Western
+Lama
+Lamaholot
+Lamalera
+Lamang
+Lamatuka
+Lamba
+Lambadi
+Lamboya
+Lambya
+Lame
+Lamenu
+Lamet
+Lamja-Dengsa-Tola
+Lamkang
+Lamnso’
+Lamogai
+Lampung Api
+Lampung Nyo
+Lamu
+Lamu-Lamu
+Landoma
+Langam
+Langbashe
+Langi
+Lango
+Lang’e
+Lanima
+Lanoh
 Lao
+Laomian
+Laopang
+Laos Sign Language
+Laragia
+Lardil
+Larevat
+Lari
+Larike-Wakasihu
+Laro
+Larteh
+Laru
+Lasalimu
+Lasgerdi
+Lashi
+Lasi
+Latgalian
+Latin
+Latu
+Latundê
 Latvian
+Latvian Sign Language
+Latvian, Standard
+Lau
+Laua
+Lauan
+Lauje
+Laura
+Lavatbura-Lamusong
+Lave
+Laven
+Lavrung
+Lavukaleve
+Lawa, Eastern
+Lawa, Western
+Lawangan
+Lawu
+Lawunuia
+Layakha
+Laz
+La’bi
+Leco
+Leelau
+Lefa
+Lega-Mwenga
+Lega-Shabunda
+Legbo
+Legenyem
+Lehali
+Leipon
+Lelak
+Lele
+Lelemi
+Lelepa
+Lembata, South
+Lembata, West
+Lembena
+Lemerig
+Lemio
+Lemolang
+Lemoro
+Lenakel
+Lenca
+Lendu
+Lengilu
+Lengo
+Lengola
+Leningitij
+Lenje
+Lenkau
+Lenyima
+Lepcha
+Lepki
+Lere
+Lese
+Letemboi
+Leti
+Levuka
+Lewo
+Lewo Eleng
+Lewotobi
+Leyigha
+Lezgi
+Lhao Vo
+Lhokpu
+Lhomi
+Liabuku
+Liana-Seti
+Liberian English
+Libido
+Libinza
+Libyan Sign Language
+Ligbi
+Ligenza
+Ligurian
+Lihir
+Lijili
+Lika
+Liki
+Likila
+Likuba
+Likum
+Likwala
+Lilau
+Lillooet
+Limassa
+Limba, East
+Limba, West-Central
+Limbu
+Limbum
+Limburgish
+Limi
+Limilngan
+Lindu
+Lingala
+Lingao
+Lingkhim
+Lingua Franca
+Lipo
+Lisabata-Nuniali
+Lisela
+Lish
+Lishana Deni
+Lishanid Noshan
+Lishán Didán
+Lisu
+Lithuanian
+Lithuanian Sign Language
 Lithuanuan
+Litzlitz
+Liv
+Livvi-Karelian
+Li’o
+Lo-Toga
+Loarki
+Lobala
+Lobi
+Lobu, Lanas
+Lobu, Tampias
+Lodhi
+Logba
+Logo
+Logol
+Logorik
+Lohar, Gade
+Lohar, Lahul
+Lohorung
+Lokaa
+Loke
+Loko
+Lokoya
+Lola
+Lolak
+Lole
+Lolo
+Loloda
+Lolopo
+Lolopo, Southern
+Loma
+Lomaiviti
+Lomavren
+Lombard
+Lombi
+Lombo
+Lomwe
+Lomwe, Malawi
+Long Wat
+Longgu
+Longto
+Longuda
+Loniu
+Lonwolwol
+Lonzo
+Loo
+Lopa
+Lopi
+Lopit
+Lorang
+Lorediakarkar
+Lote
+Lotud
+Lou
+Louisiana Creole French
+Loun
+Lovono
+Lozi
+Luang
+Lua’
+Luba-Kasai
+Luba-Katanga
+Lubila
+Lubu
+Lubukusu
+Lucazi
+Lucumi
+Ludian
+Lufu
 Lugandan
+Lugbara
+Luguru
+Luhu
+Lui
+Luidakho-Luisukha-Lutirichi
+Luimbi
+Luiseño
+Lukabaras
+Lukpa
+Lulogooli
+Lumba-Yakkha
+Lumbee
+Lumbu
+Lumun
+Lun Bawang
+Luna
+Lunanakha
+Lunda
+Lungalunga
+Lungga
+Luo
+Luri
+Luri, Northern
+Luri, Southern
+Lusengo
+Lushootseed
+Lusi
+Lutachoni
+Lutos
+Luvale
+Luwati
+Luwo
 Luxembourgish
+Luyana
+Lwalu
+Lyngngam
+Lyons Sign Language
+Lyélé
+Löyöp
+Lü
+Ma
+Ma Manda
+Maa
+Maaka
+Maasai
+Maay
+Maba
+Mabaale
+Mabaan
+Mabire
+Macaguaje
+Macaguán
+Macanese
 Macedonian
+Machame
+Machiguenga
+Machinere
+Machinga
+Maco
+Macuna
+Macushi
+Mada
+Madagascar Sign Language
+Madak
+Maden
+Madhi Madhi
+Madi
+Madngele
+Madura
 Madurese
+Mae
+Maewo, Central
+Mafa
+Mafea
+Magahi
+Magar, Eastern
+Magar, Western
+Magiyi
+Magoma
+Magori
+Maguindanaon
+Mah Meri
+Mahali
+Mahongwe
+Mahou
+Mai Brat
+Maia
+Maiadomu
+Maiani
+Maidu, Northeast
+Maidu, Northwest
+Maidu, Valley
+Maii
+Mailu
+Maindo
+Mainfränkisch
+Mairasi
+Maisin
 Maithili
+Maiwa
+Maiwala
+Majang
+Majera
+Majhi
+Majhwar
+Mak
+Maka
+Makaa
+Makah
+Makasae
+Makasar
+Makayam
+Makhuwa
+Makhuwa-Marrevone
+Makhuwa-Meetto
+Makhuwa-Moniga
+Makhuwa-Saka
+Makhuwa-Shirima
+Makian, East
+Makian, West
+Maklew
+Makolkol
+Makonde
+Makuráp
+Makuva
+Makwe
+Mal
+Mal Paharia
+Mala
+Mala Malasar
+Malaccan Creole Malay
+Malaccan Creole Portuguese
 Malagasy
+Malagasy, Antankarana
+Malagasy, Bara
+Malagasy, Masikoro
+Malagasy, Northern Betsimisaraka
+Malagasy, Plateau
+Malagasy, Sakalava
+Malagasy, Southern Betsimisaraka
+Malagasy, Tandroy-Mahafaly
+Malagasy, Tanosy
+Malagasy, Tesaka
+Malagasy, Tsimihety
+Malalamai
+Malango
+Malankuravan
+Malapandaram
+Malaryan
+Malas
+Malasar
+Malavedan
+Malay
 Malay (or Maysian)
+Malay, Ambonese
+Malay, Baba
+Malay, Bacanese
+Malay, Balinese
+Malay, Banda
+Malay, Berau
+Malay, Bukit
+Malay, Central
+Malay, Cocos Islands
+Malay, Jambi
+Malay, Kedah
+Malay, Kota Bangun Kutai
+Malay, Kupang
+Malay, Larantuka
+Malay, Makassar
+Malay, Manado
+Malay, North Moluccan
+Malay, Papuan
+Malay, Pattani
+Malay, Sabah
+Malay, Standard
+Malay, Tenggarong Kutai
 Malayalam
+Malayic Dayak
+Malaynon
+Malayo
+Malaysian Sign Language
+Maldivian
+Male
+Malecite-Passamaquoddy
+Maleng
+Maleu-Kilenge
+Malgana
+Malgbe
+Mali
+Maligo
+Malila
+Malimba
+Malimpung
+Malo
+Malol
 Maltese
+Maltese Sign Language
+Malua Bay
+Malvi
+Malyangapa
+Maléku Jaíka
+Mam
+Mama
+Mamaa
+Mamaindé
+Mamanwa
+Mamasa
+Mambae
+Mambai
+Mambila, Cameroon
+Mambila, Nigeria
+Mamboru
+Mambwe-Lungu
+Mampruli
+Mamuju
+Mamusi
+Mamvu
+Man Met
+Manam
+Manambu
+Manangba
+Manangkari
+Manchu
+Manda
+Mandahuaca
+Mandaic
+Mandaic, Classical
+Mandan
+Mandandanyi
+Mandar
+Mandara
+Mandari
 Mandarin Chinese
+Mandaya
+Mandeali
+Mander
+Mandingo
+Mandinka
+Mandjak
+Mandobo Atas
+Mandobo Bawah
+Manem
+Mang
+Mangala
+Mangarayi
+Mangareva
+Mangas
+Mangayat
+Mangbetu
+Mangbutu
+Mangerr
+Mangetti Dune !Xung
+Manggarai
+Mango
+Mangole
+Mangseng
+Mangue
+Manide
+Manikion
+Maninka, Konyanka
+Maninka, Sankaran
+Maninkakan, Eastern
+Maninkakan, Kita
+Maninkakan, Western
+Manipa
+Mankanya
+Manna-Dora
+Mannan
+Mano
+Manobo, Agusan
+Manobo, Ata
+Manobo, Cotabato
+Manobo, Dibabawon
+Manobo, Ilianen
+Manobo, Kinamiging
+Manobo, Matigsalug
+Manobo, Obo
+Manobo, Rajah Kabunsuwan
+Manobo, Sarangani
+Manobo, Western Bukidnon
+Manombai
+Mansaka
+Mansi
+Mansoanka
+Manta
+Mantsi
+Manumanaw
+Manusela
+Manx
 Manx Gaelic
+Manya
+Manyawa
+Manyika
+Manza
+Maonan
 Maori
+Mape
+Mapena
+Mapia
+Mapidian
+Mapoyo
+Mapudungun
+Mapun
+Maquiritari
+Mara
+Maraghei
+Maragus
+Maramba
+Maranao
+Marangis
+Maranunggu
+Mararit
 Marathi
+Marau
+Marba
+Marenje
+Marfa
+Margany
+Marghi Central
+Marghi South
+Margu
+Mari
+Mari, Hill
+Mari, Meadow
+Maria
+Maria, Dandami
+Maricopa
+Maridan
+Maridjabin
+Marik
+Marimanindji
+Marind
+Marind, Bian
+Maring
+Maringarr
+Marino
+Mariri
+Marithiel
+Maritime Sign Language
+Maritsauá
+Mariyedi
+Marka
+Markweeta
+Marma
+Marovo
+Marquesan, North
+Marquesan, South
+Marriammu
+Marshallese
+Marti Ke
+Martu Wangka
+Martuyhunira
+Marwari
+Marúbo
+Masaaba
+Masalit
+Masana
+Masbatenyo
+Masela, Central
+Masela, East
+Masela, West
+Mashco Piro
+Mashi
+Masimasi
+Masiwang
+Maskelynes
+Maslam
+Masmaje
+Massalat
+Massep
+Matagalpa
+Matal
+Matbat
+Matengo
+Matepi
+Matipuhy
+Matlatzinca, Atzingo
+Matlatzinca, San Francisco
+Mato
+Matsés
+Mattokki
+Mattole
+Matukar
+Matumbi
+Matís
+Maung
+Mauritian Sign Language
+Mauwake
+Mawa
+Mawak
+Mawan
+Mawayana
+Mawchi
+Mawes
+Maxakalí
+Maya, Mopán
+Maya, Yucatec
+Mayaguduna
 Mayan
+Mayangna
+Mayawali
+Mayeka
+Mayi-Kulan
+Mayi-Thakurti
+Mayi-Yapi
+Mayo
+Mayogo
+Mazagway
+Mazahua, Central
+Mazahua, Michoacán
+Mazanderani
+Mazatec, Ayautla
+Mazatec, Chiquihuitlán
+Mazatec, Huautla
+Mazatec, Ixcatlán
+Mazatec, Jalapa de Díaz
+Mazatec, Mazatlán
+Mazatec, San Jerónimo Tecóatl
+Mazatec, Soyaltepec
+Ma’anyan
+Ma’di
+Ma’di, Southern
+Ma’ya
+Mba
+Mbala
+Mbalanhu
+Mbandja
+Mbangala
+Mbangi
+Mbangwe
+Mbara
+Mbariman-Gudhinma
+Mbat
+Mbati
+Mbato
+Mbay
+Mbe
+Mbelime
+Mbembe, Cross River
+Mbembe, Tigon
+Mbere
+Mbesa
+Mbo
+Mboi
+Mboko
+Mbole
+Mbonga
+Mbongno
+Mbore
+Mbosi
+Mbowe
+Mbo’
+Mbre
+Mbudum
+Mbugu
+Mbugwe
+Mbuko
+Mbukushu
+Mbula
+Mbula-Bwazza
+Mbule
+Mbulungish
+Mbum
+Mbunda
+Mbunga
+Mburku
+Mbwela
+Medebur
+Media Lengua
+Mediak
+Medumba
+Mefele
+Megam
+Mehek
+Mehináku
+Mehri
+Meitei
+Mekeo
+Mekmek
+Mekwei
+Melanau, Central
+Melanau, Daro-Matu
+Melanau, Kanowit-Tanjong
+Melanau, Sibu
+Mele-Fila
+Melo
+Melpa
+Memoni
+Mendankwe-Nkwen
+Mende
+Mengaka
+Mengen
+Mengisa
+Menka
+Menominee
+Mentawai
+Menya
+Meoswar
+Mer
+Meramera
+Merei
+Merey
+Meriam
+Merwari
+Mesaka
+Mesem
+Meskwaki
+Mesme
+Mesmes
+Mesqan
+Meta’
+Mewahang, Eastern
+Mewahang, Western
+Mewari
+Mewati
+Mexican Sign Language
+Meyah
+Me’en
+Me’phaa, Acatepec
+Me’phaa, Azoyú
+Me’phaa, Malinaltepec
+Me’phaa, Tlacoapa
+Mfinu
+Mfumte
+Mgbolizhia
+Miami
+Mian
+Miani
+Miao, Central Huishui
+Miao, Central Mashan
+Miao, Chuanqiandian Cluster
+Miao, Eastern Huishui
+Miao, Eastern Qiandong
+Miao, Eastern Xiangxi
+Miao, Horned
+Miao, Large Flowery
+Miao, Luopohe
+Miao, Northern Guiyang
+Miao, Northern Huishui
+Miao, Northern Mashan
+Miao, Northern Qiandong
+Miao, Small Flowery
+Miao, Southern Guiyang
+Miao, Southern Mashan
+Miao, Southern Qiandong
+Miao, Southwestern Guiyang
+Miao, Southwestern Huishui
+Miao, Western Mashan
+Miao, Western Xiangxi
+Michif
+Micmac
+Midob
+Migaama
+Migabac
+Migum
+Miji
+Miju-Mishmi
+Mikasuki
+Mili
+Miltu
 Min
+Mina
+Minang
+Minangkabau
+Minanibai
+Minaveha
+Minderico
+Mindiri
+Mingang Doso
+Mingrelian
+Miniafia Oyan
+Minidien
+Minigir
+Minjungbal
+Minokok
+Minriq
+Mintil
+Miqie
+Mirandese
+Mirgan
+Miriti
+Miriwung
+Miship
+Misima-Panaeati
+Mising
+Mittu
+Mituku
+Miu
+Miwa
+Miwok, Central Sierra
+Miwok, Coast
+Miwok, Lake
+Miwok, Northern Sierra
+Miwok, Plains
+Miwok, Southern Sierra
+Mixe, Coatlán
+Mixe, Isthmus
+Mixe, Juquila
+Mixe, Mazatlán
+Mixe, North Central
+Mixe, Quetzaltepec
+Mixe, Tlahuitoltepec
+Mixe, Totontepec
+Mixtec, Alacatlatzala
+Mixtec, Alcozauca
+Mixtec, Amoltepec
+Mixtec, Apasco-Apoala
+Mixtec, Atatláhuca
+Mixtec, Ayutla
+Mixtec, Cacaloxtepec
+Mixtec, Chayuco
+Mixtec, Chazumba
+Mixtec, Chigmecatitlán
+Mixtec, Coatzospan
+Mixtec, Cuyamecalco
+Mixtec, Diuxi-Tilantongo
+Mixtec, Huitepec
+Mixtec, Itundujia
+Mixtec, Ixtayutla
+Mixtec, Jamiltepec
+Mixtec, Juxtlahuaca
+Mixtec, Magdalena Peñasco
+Mixtec, Metlatónoc
+Mixtec, Mitlatongo
+Mixtec, Mixtepec
+Mixtec, Northern Tlaxiaco
+Mixtec, Northwest Oaxaca
+Mixtec, Ocotepec
+Mixtec, Peñoles
+Mixtec, Pinotepa Nacional
+Mixtec, San Juan Colorado
+Mixtec, San Juan Teita
+Mixtec, San Miguel Piedras
+Mixtec, San Miguel el Grande
+Mixtec, Santa Lucía Monteverde
+Mixtec, Santa María Zacatepec
+Mixtec, Silacayoapan
+Mixtec, Sindihui
+Mixtec, Sinicahua
+Mixtec, Southeastern Nochixtlán
+Mixtec, Southern Puebla
+Mixtec, Southwestern Tlaxiaco
+Mixtec, Soyaltepec
+Mixtec, Tacahua
+Mixtec, Tamazola
+Mixtec, Tezoatlán
+Mixtec, Tidaá
+Mixtec, Tijaltepec
+Mixtec, Tlazoyaltepec
+Mixtec, Tututepec
+Mixtec, Western Juxtlahuaca
+Mixtec, Yoloxóchitl
+Mixtec, Yosondúa
+Mixtec, Yucuañe
+Mixtec, Yutanduchi
+Miya
+Miyako
+Miyobe
+Mizo
+Mlabri
+Mlahsö
+Mlap
+Mlomp
+Mmaala
+Mmen
+Mnong, Central
+Mnong, Eastern
+Mnong, Southern
+Mo
+Moba
+Mochi
+Mocho
+Mocoví
+Modang
+Modole
+Moere
+Mofu, North
+Mofu-Gudur
+Mogholi
+Mogofin
+Mogum
+Mohave
+Mohawk
+Mohegan-Pequot
+Moi
+Moikodi
+Moingi
+Moji
+Mok
+Moken
+Mokerang
+Mokilese
+Moklen
+Mokole
+Mokpwe
+Moksela
+Moksha
+Molale
+Molbog
+Moldova Sign Language
 Moldovian
+Molengue
+Molima
+Molo
+Molof
+Moloko
+Mom Jango
+Moma
+Momare
+Mombum
+Momina
+Momuna
+Mon
+Mondropolon
+Mondé
+Mongo-Nkundu
+Mongol
 Mongolian
+Mongolian Sign Language
+Mongolian, Halh
+Mongolian, Peripheral
+Mongondow
+Moni
+Mono
+Monom
+Monpa, Kalaktang
+Monpa, Tawang
+Montagnais
 Montenegran
+Montol
+Monumbo
+Monzombo
+Moo
+Mor
+Moraid
+Morawa
+Morerebi
+Moresada
+Mori Atas
+Mori Bawah
+Morigi
+Morisyen
+Moro
+Moroccan Sign Language
+Morokodo
+Morom
+Moronene
+Morop
+Morori
+Morouas
+Mortlockese
+Moru
+Mosimo
+Mosiro
+Moskona
+Mota
+Motu
+Motu, Hiri
+Mouk-Aria
+Mouwase
+Movima
+Mozambican Sign Language
+Mo’da
+Mpade
+Mpalitjanh
+Mpi
+Mpiemo
+Mpoto
+Mpotovoro
+Mpumpong
+Mpuono
+Mpur
+Mru
+Mser
+Mualang
+Mubami
+Mubi
+Muda
+Mudburra
+Muduga
+Mufian
+Mugali
+Mugom
+Muinane
+Muji, Northern
+Muji, Qila
+Muji, Southern
+Mukha-Dora
+Mukulu
+Mulaha
+Mulam
+Mulao
+Mulgi
+Mullukmulluk
+Muluridyi
+Mum
+Mumuye
+Muna
+Munda
+Mundabli
+Mundang
+Mundani
+Mundari
+Mundat
+Mundurukú
+Mungaka
+Mungbam
+Munggui
+Mungkip
+Muniche
+Munit
+Munji
+Munsee
+Muong
+Mur Pano
+Muratayak
+Muria, Eastern
+Muria, Far Western
+Muria, Western
+Murik
+Murkim
+Murle
+Murrinh-Patha
+Mursi
+Murupi
+Muruwari
+Musak
+Musar
+Musasa
+Musey
+Musgu
+Mushungulu
+Musi
+Muskogee
+Muskum
+Musom
+Mussau-Emira
+Muthuvan
+Mutu
+Muya
+Muyang
+Muyu, North
+Muyu, South
+Muyuw
+Muzi
+Mvanip
+Mvuba
+Mwaghavul
+Mwan
+Mwani
+Mwatebu
+Mwera
+Mwerlap
+Mwimbi-Muthambi
+Mwotlap
+Myene
+Mághdì
+Ménik
+Mískito
+Mòoré
+Mócheno
+Mündü
+Na
+Naaba
+Naami
+Naasioi
+Naba
+Nabak
+Nabi
+Nachering
+Nadëb
+Nafaanra
+Nafi
+Nafri
+Nafusi
+Naga Pidgin
+Naga, Akyaung Ari
+Naga, Angami
+Naga, Ao
+Naga, Chang
+Naga, Chokri
+Naga, Chothe
+Naga, Inpui
+Naga, Kharam
+Naga, Khezha
+Naga, Khiamniungan
+Naga, Khoibu
+Naga, Koki
+Naga, Konyak
+Naga, Kyan-Karyaw
+Naga, Lao
+Naga, Leinong
+Naga, Liangmai
+Naga, Long Phuri
+Naga, Lotha
+Naga, Makuri
+Naga, Makyan
+Naga, Mao
+Naga, Maram
+Naga, Maring
+Naga, Monsang
+Naga, Moyon
+Naga, Mzieme
+Naga, Nocte
+Naga, Northern Rengma
+Naga, Para
+Naga, Phom
+Naga, Pochuri
+Naga, Ponyo-Gongwang
+Naga, Poumei
+Naga, Puimei
+Naga, Rongmei
+Naga, Sangtam
+Naga, Southern Rengma
+Naga, Sumi
+Naga, Tangkhul
+Naga, Tarao
+Naga, Tase
+Naga, Thangal
+Naga, Tutsa
+Naga, Wancho
+Naga, Yimchungru
+Naga, Zeme
+Nagarchal
+Nage
+Nago, Northern
+Nago, Southern
+Nagumi
+Nahali
+Nahari
+Nahavaq
+Naha’ai
+Nahuatl, Central
+Nahuatl, Central Huasteca
+Nahuatl, Central Puebla
+Nahuatl, Coatepec
+Nahuatl, Eastern Durango
+Nahuatl, Eastern Huasteca
+Nahuatl, Guerrero
+Nahuatl, Highland Puebla
+Nahuatl, Huaxcaleca
+Nahuatl, Isthmus-Cosoleacaque
+Nahuatl, Isthmus-Mecayapan
+Nahuatl, Isthmus-Pajapan
+Nahuatl, Michoacán
+Nahuatl, Morelos
+Nahuatl, Northern Oaxaca
+Nahuatl, Northern Puebla
+Nahuatl, Ometepec
+Nahuatl, Orizaba
+Nahuatl, Santa María la Alta
+Nahuatl, Sierra Negra
+Nahuatl, Southeastern Puebla
+Nahuatl, Tabasco
+Nahuatl, Temascaltepec
+Nahuatl, Tetelcingo
+Nahuatl, Tlamacazapa
+Nahuatl, Western Durango
+Nahuatl, Western Huasteca
+Nahuatl, Zacatlán-Ahuacatlán-Tepetzintla
+Nai
+Nakai
+Nakame
+Nakanai
+Nakara
+Naka’ela
+Nake
+Naki
+Nakwi
+Nalca
+Nali
+Nalik
+Nalu
+Naluo
+Nalögo
+Nama
+Namakura
+Namat
+Nambikuára, Southern
+Nambo
+Nambya
+Namia
+Namiae
+Namibian Sign Language
+Namla
+Namo
+Namonuito
+Namosi-Naitasiri-Serua
+Namuyi
+Nanai
+Nancere
+Nande
+Nandi
+Nankina
+Nanti
+Nanticoke
+Nanubae
+Napoletano-Calabrese
+Napu
+Nar Phu
+Nara
+Narak
+Narango
+Narau
+Nari Nari
+Narim
+Naro
+Narom
+Narragansett
+Narrinyeri
+Narua
+Narungga
+Nasal
+Nasarian
+Naskapi
+Nasu, Wumeng
+Nasu, Wusa
+Natagaimas
+Natanzi
+Natchez
+Nateni
+Nathembo
+Natioro
+Natügu
+Nauete
+Nauna
+Nauo
+Nauruan
+Navajo
+Navut
+Nawaru
+Nawdm
+Nawuri
+Naxi
+Nayi
+Nayini
+Ncane
+Nchumbulu
+Ndai
+Ndaka
+Ndaktup
+Ndali
+Ndam
+Ndamba
+Ndasa
+Ndau
+Nda’nda’
+Nde-Gbite
+Nde-Nsele-Nta
 Ndebele
+Ndemli
+Ndendeule
+Ndengereko
+Nding
+Ndo
+Ndobo
+Ndoe
+Ndogo
+Ndolo
+Ndom
+Ndombe
+Ndonde Hamba
+Ndonga
+Ndoola
+Ndra’ngith
+Nduga
+Ndumu
+Ndunda
+Ndunga
+Ndut
+Ndyuka-Trio Pidgin
+Nedebang
+Nefamese
+Negerhollands
+Negeri Sembilan Malay
+Negidal
+Nehan
+Nek
+Nekgini
+Neko
+Neku
+Neme
+Nemi
+Nen
+Nend
+Nenets
+Nengone
+Nepalese Sign Language
 Nepali
+Nete
+Neverver
+Neve’ei
+New Zealand Sign Language
+Newar
+Neyo
+Nez Perce
+Ngaanyatjarra
+Ngadjunmaya
+Ngadjuri
+Ngad’a
+Ngad’a, Eastern
+Ngaing
+Ngaju
+Ngala
+Ngalakan
+Ngalum
+Ngam
+Ngamambo
+Ngambay
+Ngamini
+Ngamo
+Nganakarti
+Nganasan
+Ngandi
+Ngando
+Ngandyera
+Ngangam
+Ngantangarra
+Nganyaywana
+Ngan’gityemerri
+Ngardi
+Ngarigu
+Ngarinman
+Ngarinyin
+Ngarla
+Ngarluma
+Ngas
+Ngasa
+Ngatik Men’s Creole
+Ngawun
+Ngayawung
+Ngbaka
+Ngbaka Manza
+Ngbaka Ma’bo
+Ngbandi, Northern
+Ngbandi, Southern
+Ngbee
+Ngbinda
+Ngbundu
+Ngelima
+Ngemba
+Ngeq
+Ngete
+Nggem
+Nggwahyi
+Ngie
+Ngiemboon
+Ngile
+Ngindo
+Ngiti
+Ngizim
+Ngom
+Ngomba
+Ngombale
+Ngombe
+Ngong
+Ngongo
+Ngoni
+Ngoreme
+Ngoshie
+Ngul
+Ngulu
+Nguluwan
+Ngunawal
+Ngundi
+Ngundu
+Ngungwel
+Ngurmbur
+Nguôn
+Ngwaba
+Ngwe
+Ngwo
+Ngäbere
+Ng’akarimojong
+Nhanda
+Nhengatu
+Nhirrpi
+Nhuwala
+Nias
+Nicaragua Creole English
+Nicaraguan Sign Language
+Nicobarese, Car
+Nicobarese, Central
+Nicobarese, Southern
+Niellim
+Nigerian Sign Language
+Nihali
+Nii
+Nijadali
+Niksek
+Nila
+Nilamba
+Nimadi
+Nimanbur
+Nimbari
+Nimboran
+Nimi
+Nimo
+Nimoa
+Ninam
+Ninde
+Nindi
+Ningera
+Ninggerum
+Ningil
+Ningye
+Ninzo
+Nipsan
+Nisa
+Nisenan
+Nisga’a
+Nisi
+Nisu, Eastern
+Nisu, Northern
+Nisu, Northwestern
+Nisu, Southern
+Nisu, Southwestern
+Niuafo’ou
+Niue
+Nivaclé
+Niwer Mil
+Njalgulgule
+Njebi
+Njen
+Njerep
+Njyem
+Nkami
+Nkangala
+Nkari
+Nkem-Nkum
+Nkongho
+Nkonya
+Nkoroo
+Nkoya
+Nkukoli
+Nkumbi
+Nkutu
+Nnam
+Nobiin
+Nobonob
+Nogai
+Noiri
+Nokuku
+Nomaande
+Nomane
+Nomatsiguenga
+Nomlaki
+Nomu
+Nonuya
+Nooksack
+Noon
+Noone
+Nora
 Northern Sotho
 Norwegian
+Norwegian Sign Language
+Norwegian, Traveller
+Notre
+Notsi
+Nottoway
+Noy
+Nsenga
+Nshi
+Ntcham
+Ntomba
+Nuaulu, North
+Nuaulu, South
+Nubaca
+Nubi
+Nubri
+Nuer
+Nugunu
+Nuk
+Nukak Makú
+Nukna
+Nukuini
+Nukumanu
+Nukunul
+Nukuoro
+Nukuria
+Numana-Nunku-Gbantu-Numbu
+Numanggang
+Numbami
+Nume
+Numèè
+Nung
+Nungali
+Nunggubuyu
+Nungu
+Nuni, Northern
+Nuni, Southern
+Nuosu
+Nupbikha
+Nupe-Nupe-Tako
+Nusa Laut
+Nusu
+Nuu-chah-nulth
+Nyabwa
+Nyaheun
+Nyahkur
+Nyakyusa-Ngonde
+Nyala
+Nyali
+Nyam
+Nyamal
+Nyambo
+Nyamusa-Molo
+Nyamwanga
+Nyamwezi
+Nyaneka
+Nyanga
+Nyanga-li
+Nyangatom
+Nyangbo
+Nyangga
+Nyangumarta
+Nyang’i
+Nyankore
+Nyankpa
+Nyaturu
+Nyaw
+Nyawaygi
+Nyelâyu
+Nyemba
+Nyengo
+Nyenkha
+Nyeu
+Nyigina
+Nyiha, Malawi
+Nyiha, Tanzania
+Nyika
+Nyika, Tanzania
+Nyindrou
+Nyindu
+Nyishi
+Nyiyaparli
+Nyokon
+Nyole
+Nyong
+Nyoro
+Nyulnyul
+Nyunga
+Nyungwe
+Nzakambay
+Nzakara
+Nzanyi
+Nzema
+N|u
+Ná-Meo
+Nêlêmwa-Nixumwak
+N’ko
+Obanliku
+Obispeño
+Oblo
+Obokuitai
+Obolo
+Obulom
+Ocaina
+Occitan
+Od
+Odiai
+Odoodee
+Odual
+Odut
+Ofayé
+Ogbah
+Ogbia
+Ogbogolo
+Ogbronuagum
+Ogea
+Ohlone, Northern
+Ohlone, Southern
+Oirata
+Ojibwa
+Ojibwa, Central
+Ojibwa, Eastern
+Ojibwa, Northwestern
+Ojibwa, Severn
+Ojibwa, Western
+Okanagan
+Oki-No-Erabu
+Okiek
+Okinawan, Central
+Oko-Eni-Osayen
+Oko-Juwoi
+Okobo
+Okolod
+Okpamheri
+Okpe
+Oksapmin
+Oku
+Olekha
+Olkol
+Olo
+Oloma
+Olrat
+Olukhayo
+Olulumo-Ikom
+Oluluyia
+Olumarachi
+Olumarama
+Olunyole
+Olushisa
+Olutsotso
+Oluwanga
+Olu’bo
+Omagua
+Omaha-Ponca
+Ombamba
+Ombo
+Omejes
+Omi
+Omotik
+Omurano
+Ona
+One, Inebu
+One, Kabore
+One, Kwamtim
+One, Molmo
+One, Northern
+One, Southern
+Oneida
+Ong
+Ongota
+Onin
+Onin Based Pidgin
+Oniyan
+Onjob
+Ono
+Onobasulu
+Onondaga
+Ontenu
+Ontong Java
+Oorlams
+Opao
+Opata
+Opuuo
+Orang Kanaq
+Orang Seletar
+Orejón
+Oring
 Oriya
+Oriya, Adivasi
+Orma
+Ormu
+Ormuri
+Oro
+Oro Win
+Oroch
+Oroha
+Orok
+Orokaiva
+Oroko
+Orokolo
 Oromo
+Oromo, Borana-Arsi-Guji
+Oromo, Eastern
+Oromo, West Central
+Oroqen
+Orowe
+Oruma
+Orya
+Osage
+Osatu
+Oshiwambo
+Osing
+Ososo
 Ossetian
+Ossetic
+Ot Danum
+Otank
+Oti
+Otomi, Eastern Highland
+Otomi, Estado de México
+Otomi, Ixtenco
+Otomi, Mezquital
+Otomi, Querétaro
+Otomi, Temoaya
+Otomi, Tenango
+Otomi, Texcatepec
+Otomi, Tilapa
+Otoro
+Ottawa
+Otuho
+Otuke
+Ouma
+Oune
+Owa
+Owenia
+Owiniga
+Oy
+Oya’oya
+Oyda
+O’chi’chi’
+O’du
+Pa Di
+Pa-Hng
+Paakantyi
+Paama
+Paasaal
+Pacahuara
+Pacoh
+Padoe
+Pagi
+Pagibete
+Pagu
+Pahari, Kullu
+Pahari, Mahasu
+Pahari-Potwari
+Pahi
+Pahlavani
+Pai Tavytera
+Paicî
+Paipai
+Paiute, Northern
+Paiwan
+Pak-Tong
+Pakanha
+Pakaásnovos
+Pakistan Sign Language
+Paku
+Pal
+Palauan
+Palaung, Ruching
+Palaung, Rumai
+Palaung, Shwe
+Palawano, Brooke’s Point
+Palawano, Central
+Palawano, Southwest
+Paleni
+Palenquero
+Pali
+Palikúr
+Paliyan
+Pallanganmiddang
+Palor
+Palpa
+Paluan
+Palula
+Palumata
+Palu’e
+Pam
+Pambia
+Pame, Central
+Pame, Northern
+Pame, Southern
+Pamona
+Pamosu
+Pampangan
+Pana
+Panamanian Sign Language
+Panará
+Panasuan
+Panawa
+Pancana
+Panchpargania
+Pande
+Pangasinan
+Pangkhua
+Pangseng
+Pangu
+Pangwa
+Pangwali
+Panim
+Paniya
+Panjabi, Eastern
+Panjabi, Mirpur
+Panjabi, Western
+Pankararé
+Pankararú
+Pannei
+Pano
+Panobo
+Pantar, Western
+Panytyima
+Pao
+Papapana
+Papar
+Papasena
+Papel
+Papi
+Papiamentu
+Papitalai
+Papora-Hoanya
+Papuma
+Parachi
+Paraguayan Sign Language
+Parakanã
+Paranan
+Paranawát
+Paraujano
+Parawen
+Pardhan
+Pardhi
+Pare
+Parecís
+Parenga
+Parkwa
+Parsi
+Parsi-Dari
+Parya
+Pashayi, Northeast
+Pashayi, Northwest
+Pashayi, Southeast
+Pashayi, Southwest
 Pashto
+Pashto, Central
+Pashto, Northern
+Pashto, Southern
+Pasi
+Patamona
+Patani
+Pataxó Hã-Ha-Hãe
+Patep
+Pathiya
+Patpatar
+Pattani
+Patwin
+Paulohi
+Paumarí
+Paunaka
+Pauserna
+Pawaia
+Pawnee
+Paynamar
+Pa’a
+Pa’o
+Pe
+Pear
+Pech
+Peere
+Pei
+Pekal
+Pela
+Pele-Ata
+Pelende
+Pemon
+Penan, Bah-Biau
+Penan, Eastern
+Penan, Western
+Penang Sign Language
+Penchal
+Pendau
+Pengo
+Penrhyn
+Perai
+Pero
 Persian
+Persian Sign Language
+Persian, Iranian
+Peruvian Sign Language
+Petats
+Petjo
+Pfaelzisch
+Phake
+Phala
+Phana’
+Phangduwali
+Phende
+Philippine Sign Language
+Phimbi
+Phola
+Phola, Alo
+Pholo
+Phong-Kniang
+Phowa, Ani
+Phowa, Hlepho
+Phowa, Labo
+Phu Thai
+Phuan
+Phudagi
+Phuie
+Phula
+Phuma
+Phunoi
+Phuong
+Phupa
+Phupha
+Phuza
+Piamatsina
+Piame
+Piapoco
+Piaroa
+Picard
+Pidgin Bantu
+Pidgin, Cameroon
+Pidgin, Nigerian
+Pidgin, Timor
+Piemontese
+Pijao
+Pije
+Pijin
+Pilagá
+Pima Bajo
+Pimbwe
+Pinai-Hagahai
+Pingelapese
+Pini
+Pinigura
+Pinjarup
+Pinji
+Pintiini
+Pintupi-Luritja
+Pinyin
+Pipil
+Pirahã
+Piratapuyo
+Pirlatapa
+Pirriya
+Pisabo
+Piscataway
+Pitcairn-Norfolk
+Piti
+Pitjantjatjara
+Pitta Pitta
+Piu
+Piya-Kwonci
+Plains Indian Sign Language
+Plautdietsch
+Playero
+Pnar
+Pogolo
+Pohnpeian
+Pokangá
+Poke
+Pol
+Polari
+Polci
 Polish
+Polish Sign Language
+Polonombauk
+Pom
+Pomo, Central
+Pomo, Eastern
+Pomo, Northeastern
+Pomo, Northern
+Pomo, Southeastern
+Pomo, Southern
+Ponam
+Ponares
+Ponosakan
+Pontic
+Popoloca, Coyotepec
+Popoloca, Mezontla
+Popoloca, San Felipe Otlaltepec
+Popoloca, San Juan Atzingo
+Popoloca, San Luís Temalacayuca
+Popoloca, San Marcos Tlalcoyalco
+Popoloca, Santa Inés Ahuatempan
+Popoluca, Highland
+Popoluca, Oluta
+Popoluca, Sayula
+Popoluca, Texistepec
+Poqomam
+Poqomchi’
+Porohanon
+Port Sandwich
+Port Vato
 Portuguese
+Portuguese Sign Language
+Potawatomi
+Potiguára
+Pouye
+Powari
+Powhatan
+Poyanáwa
+Prai
+Prasuni
+Pray 3
+Principense
+Providencia Sign Language
+Prussian
+Psikye
+Pu Ko
+Puare
+Puelche
+Puerto Rican Sign Language
+Puinave
+Pukapuka
+Pulaar
+Pulabu
+Pular
+Puluwatese
+Puma
+Pumi, Northern
+Pumi, Southern
+Pumé
+Punan Aput
+Punan Batu 1
+Punan Merah
+Punan Merap
+Punan Tubu
 Punjabi
+Punthamara
+Punu
+Puoc
+Puragi
+Purari
+Purepecha
+Purepecha, Western Highland
+Puri
+Purik
+Purisimeño
+Puroik
+Puruborá
+Purum
+Pushto
+Putai
+Putoh
+Puyuma
+Pwaamei
+Pwapwâ
+Pyapun
+Pyen
+Pyu
+Páez
+Pááfang
+Päri
+Pémono
+Pévé
+Pökoot
+Qabiao
+Qaqet
+Qau
+Qawasqar
+Qiang, Northern
+Qiang, Southern
+Qimant
+Quapaw
+Quebec Sign Language
+Quechan
 Quechua
+Quechua, Ambo-Pasco
+Quechua, Arequipa-La Unión
+Quechua, Ayacucho
+Quechua, Cajamarca
+Quechua, Cajatambo North Lima
+Quechua, Chachapoyas
+Quechua, Chaupihuaranga
+Quechua, Chilean
+Quechua, Chincha
+Quechua, Chiquián Ancash
+Quechua, Classical
+Quechua, Corongo Ancash
+Quechua, Cusco
+Quechua, Eastern Apurímac
+Quechua, Huallaga Huánuco
+Quechua, Huamalíes-Dos de Mayo Huánuco
+Quechua, Huaylas Ancash
+Quechua, Huaylla Wanca
+Quechua, Jauja Wanca
+Quechua, Lambayeque
+Quechua, Margos-Yarowilca-Lauricocha
+Quechua, Napo Lowland
+Quechua, North Bolivian
+Quechua, North Junín
+Quechua, Northern Conchucos Ancash
+Quechua, Pacaraos
+Quechua, Panao Huánuco
+Quechua, Puno
+Quechua, San Martín
+Quechua, Santa Ana de Tusi Pasco
+Quechua, Sihuas Ancash
+Quechua, South Bolivian
+Quechua, Southern Conchucos Ancash
+Quechua, Southern Pastaza
+Quechua, Yauyos
+Queyu
+Quichua, Calderón Highland
+Quichua, Cañar Highland
+Quichua, Chimborazo Highland
+Quichua, Imbabura Highland
+Quichua, Loja Highland
+Quichua, Northern Pastaza
+Quichua, Salasaca Highland
+Quichua, Santiago del Estero
+Quichua, Tena Lowland
+Quileute
+Quinault
+Quinqui
+Q’anjob’al
+Q’eqchi’
+Rabha
+Rade
+Rahambuu
+Rajasthani
+Rajbanshi
+Raji
+Rajong
+Rakahanga-Manihiki
+Rakhine
+Ralte
+Rama
+Ramoaaina
+Ramopa
+Rampi
+Rang
+Rangkas
+Ranglong
+Rangpuri
+Rao
+Rapa
+Rapa Nui
+Rapoisi
+Rapting
+Rarotongan
+Rasawa
+Ratagnon
+Ratahan
+Rathawi
+Raute
+Ravula
+Rawa
+Rawang
+Rawat
+Rawo
+Razajerdi
+Reel
+Rejang
+Reli
+Rema
+Rembarunga
+Rembong
+Remo
+Rempi
+Remun
+Rendille
+Rengao
+Rennell-Bellona
+Rennellese Sign Language
+Repanbitip
+Rer Bare
+Rerau
+Rerep
+Reshe
+Resígaro
+Reta
+Reyesano
+Riang
+Riantana
+Ribun
+Rien
+Rikbaktsa
+Rikou
+Ririo
+Ritarungo
+Riung
+Roglai, Cacgia
+Roglai, Northern
+Roglai, Southern
+Rogo
+Rohingya
+Roma
+Romagnol
+Romam
+Romani, Balkan
+Romani, Baltic
+Romani, Carpathian
+Romani, Kalo Finnish
+Romani, Sinte
+Romani, Tavringer
+Romani, Vlax
+Romani, Welsh
 Romanian
+Romanian Sign Language
+Romanian, Istro
+Romanian, Megleno
+Romano-Greek
+Romano-Serbian
+Romansch
+Romany
+Romblomanon
+Rombo
+Romkun
+Ron
+Ronga
+Rongga
+Rongpo
+Ronji
+Roon
+Roria
+Rotokas
+Rotuman
+Roviana
+Rudbari
+Rufiji
+Ruga
+Rukai
+Ruma
+Rumu
+Runa
+Rundi
+Runga
+Rungus
+Rungwa
 Russian
+Russian Sign Language
+Rusyn
+Rutul
+Ruuli
+Ruund
+Rwa
+Rwanda
+Réunion Creole French
+Sa
+Saafi-Saafi
+Saam
+Saami, Akkala
+Saami, Inari
+Saami, Kildin
+Saami, Lule
+Saami, North
+Saami, Pite
+Saami, Skolt
+Saami, South
+Saami, Ter
+Saami, Ume
+Saamia
+Saaroa
+Saba
+Sabanê
+Sabaot
+Sabüm
+Sadri
+Sadri, Oraon
+Saek
+Saep
+Safaliba
+Safeyoka
+Safwa
+Sagala
+Sagalla
+Saho
+Sahu
+Saint Lucian Creole French
+Saisiyat
+Sajau Basap
+Sakachep
+Sakao
+Sakapulteko
+Sakata
+Sake
+Sakirabiá
+Sala
+Salampasu
+Salar
+Salas
+Salchuq
+Saleman
+Saliba
+Salinan
+Salish, Southern Puget Sound
+Salish, Straits
+Sallands
+Salt-Yui
+Saluan
+Salumá
+Salvadoran Sign Language
+Sam
+Sama
+Sama, Balangingih
+Sama, Central
+Sama, Pangutaran
+Sama, Southern
+Samaritan
+Samaritan Aramaic
+Samarokena
+Samatao
+Samba
+Samba Daka
+Samba Leko
+Sambal
+Sambal, Botolan
+Sambalpuri
+Sambe
+Samberigi
+Samburu
+Samei
 Sami
+Samo
+Samo, Matya
+Samo, Maya
+Samo, Southern
+Samoan
+Samosa
+Sampang
+Samre
+Samtao
+Samvedi
+San Miguel Creole French
+Sanapaná
+Sandawe
+Sanga
+Sanggau
+Sangil
+Sangir
+Sangisari
+Sangkong
+Sanglechi
+Sango
+Sango, Riverain
+Sangu
+Sani
+Sanie
+Saniyo-Hiyewe
+Sansi
 Sanskrit
+Santhali
+Sanumá
+Saparua
+Sapo
+Saponi
+Saposa
+Sapuan
+Sapé
+Sar
+Sara Dunjo
+Sara Kaba
+Saramaccan
+Sarasira
+Saraveca
+Sardinian
+Sardinian, Campidanese
+Sardinian, Gallurese
+Sardinian, Logudorese
+Sardinian, Sassarese
+Sari
+Sarikoli
+Sarli
+Sarsi
+Sartang
+Sarua
+Sarudu
+Saruga
+Sasak
+Sasaru
+Satawalese
+Saterfriesisch
+Sateré-Mawé
+Saudi Arabian Sign Language
+Saurashtra
+Sauri
+Sauria Paharia
+Sause
+Sausi
+Savara
+Savi
+Savosavo
+Sawai
+Saweru
+Sawi
+Sawila
+Sawknah
+Saxon, East Frisian Low
+Saxon, Low
+Saxon, Upper
+Saya
+Sa’a
+Sa’ban
+Sa’och
+Scots
+Sea Island Creole English
+Seba
+Sebat Bet Gurage
+Seberuang
+Sebop
+Sebuyau
+Sechelt
+Secoya
+Sedang
+Sedoa
+Seeku
+Segai
+Segeju
+Seget
+Sehwi
+Seimat
+Seit-Kaitetu
+Sekak
+Sekani
+Sekapan
+Sekar
+Seke
+Seki
+Seko Padang
+Seko Tengah
+Sekpele
+Selangor Sign Language
+Selaru
+Selayar
+Selee
+Selepet
+Selkup
+Selungai Murut
+Seluwasan
+Semai
+Semandang
+Semaq Beri
+Sembakung Murut
+Semelai
+Semimi
+Semnam
+Semnani
+Sempan
+Sena
+Sena, Malawi
+Senaya
+Sene
+Seneca
+Sened
+Sengele
+Sengo
+Sengseng
+Senhaja Berber
+Sensi
+Sentani
+Sentinel
+Sepa
+Sera
+Seraiki
 Serbian
+Serbo-Croatian
+Sere
+Serer-Sine
+Seri
+Serili
+Seroa
+Serrano
+Seru
+Serua
+Serudung Murut
+Serui-Laut
+Seselwa Creole French
+Seta
+Setaman
+Seti
+Settla
+Sewa Bay
+Seze
+Sha
+Shabak
+Shabo
+Shahmirzadi
+Shahrudi
+Shall-Zwall
+Shama-Sambuga
+Shamang
+Shambala
+Shan
+Shanenawa
+Shanga
+Sharanahua
+Shark Bay
+Sharwa
+Shasta
+Shatt
+Shau
+Shawnee
+She
+Shehri
+Shekhawati
+Shekkacho
+Sheko
+Shelta
+Shendu
+Sheni
+Sherbro
+Sherdukpen
+Sherpa
+Shi
+Shiki
+Shilluk
+Shina
+Shina, Kohistani
+Shinabo
+Shipibo-Conibo
+Shixing
+Sholaga
+Shom Peng
 Shona
+Shoo-Minda-Nye
+Shor
+Shoshoni
+Shua
+Shuadit
+Shuar
+Shubi
+Shughni
+Shumashti
+Shumcho
+Shuswap
+Shuwa-Zamani
+Shwai
+Sialum
+Siamou
+Sian
+Siane
+Siang
+Siar-Lak
+Siawi
+Sibe
+Sicilian
+Sidamo
+Sie
+Sierra Leone Sign Language
+Sighu
 Sign Language (many nationalities)
+Sign Language of the Netherlands
+Sihan
+Sika
+Sikaiana
+Sikaritai
+Sikiana
+Sikkimese
+Sikule
+Sila
+Sileibi
+Silesian
+Silesian, Lower
+Silimo
+Siliput
+Silopi
+Silt’e
+Simaa
+Simba
+Simbali
+Simbari
+Simbo
+Simeku
+Simeulue
+Simte
+Sinagen
+Sinasina
+Sinaugoro
 Sindhi
+Sindhi Bhil
+Singa
+Singapore Sign Language
+Singpho
 Sinhala
+Sinicized Miao
+Sininkere
+Sinsauru
+Sinyar
+Sio
+Siona
+Sipakapense
+Sira
+Siraya
+Siri
+Siriano
+Sirionó
+Sirmauri
+Siroi
+Sisaala, Tumulung
+Sisaala, Western
+Sissala
+Sissano
+Siuslaw
+Sivandi
+Siwai
+Siwi
+Siwu
+Skagit
+Skepi Creole Dutch
+Skou
+Slave
+Slavey, North
+Slavey, South
+Slavomolisano
+Slavonic, Old Church
 Slovak
+Slovakian Sign Language
 Slovene
+Snohomish
+So
+Sobei
+Soga
+Soi
+Sok
+Sokoro
+Soli
+Solong
+Solos
+Som
 Somali
+Somba-Siawari
+Somrai
+Somray
+Somyev
+Sonaga
+Sonde
+Songa
+Songe
+Songhay, Humburi Senni
+Songhay, Koyra Chiini
+Songhay, Koyraboro Senni
+Songo
+Songomeno
+Songoora
+Sonha
+Sonia
+Soninke
+Sonsorol
+Soo
+Sop
+Soqotri
+Sora
+Sorbian, Lower
+Sorbian, Upper
+Sori-Harengan
+Sorkhei
+Sorsoganon, Northern
+Sorsoganon, Southern
+Sos Kundi
 Sotho
+Sotho, Northern
+Sotho, Southern
+Sou
+South African Sign Language
+Sowa
+Sowanda
+Sowari
+So’a
 Spanish
+Spanish Sign Language
+Spanish, Loreto-Ucayali
+Spiti Bhoti
+Spokane
+Squamish
+Sranan
 Sranan Tongo
+Sri Lankan Creole Malay
+Sri Lankan Sign Language
+Stellingwerfs
+Stieng, Budeh
+Stieng, Bulo
+Stod Bhoti
+Stoney
+Suabo
+Suarmin
+Suau
+Suba
+Suba-Simbiti
+Subanen, Central
+Subanen, Eastern
+Subanen, Northern
+Subanen, Southern
+Subanon, Kolibugan
+Subanon, Western
+Subi
+Subtiaba
+Sudest
+Suena
+Suga
+Suganga
+Sui
+Suki
+Suku
+Sukuma
+Sukur
+Sukurum
+Sula
+Sulka
+Sulod
+Suma
+Sumariup
+Sumau
+Sumbawa
+Sumbwa
+Sunam
 Sunda
+Sunum
+Sunwar
+Suoy
+Sur
+Surbakhal
+Surgujia
+Suri
+Surigaonon
+Surjapuri
+Sursurunga
+Suruahá
+Surubu
+Suruí
+Suruí do Pará
+Susu
+Susuami
+Suundi
+Suwawa
+Suyá
+Svan
+Swabian
 Swahili
+Swahili, Congo
 Swati
 Swedish
+Swedish Sign Language
+Swiss-French Sign Language
+Swiss-German Sign Language
+Swiss-Italian Sign Language
+Swo
+Sylheti
+Syriac
+Sáliba
+Sãotomense
+Sénoufo, Cebaara
+Sénoufo, Djimini
+Sénoufo, Mamara
+Sénoufo, Nanerigé
+Sénoufo, Nyarafolo
+Sénoufo, Palaka
+Sénoufo, Senara
+Sénoufo, Shempire
+Sénoufo, Supyire
+Sénoufo, Syenara
+Sénoufo, Sìcìté
+Sénoufo, Tagwana
+Sîshëë
+Sô
+Taabwa
+Tabaru
+Tabassaran
+Tabla
+Tabo
+Tabriak
+Tacana
+Tachawit
+Tachelhit
+Tadaksahak
+Tadyawan
+Tae’
+Tafi
+Tagabawa
+Tagakaulo
+Tagal Murut
+Tagalaka
 Tagalog
+Tagargrent
+Tagbanwa
+Tagbanwa, Calamian
+Tagbanwa, Central
+Tagbu
+Tagdal
+Tagin
+Tagish
+Tagoi
 Tahitian
+Tahltan
+Tai
+Tai Daeng
+Tai Dam
+Tai Do
+Tai Dón
+Tai Hang Tong
+Tai Hongjin
+Tai Laing
+Tai Loi
+Tai Long
+Tai Mène
+Tai Nüa
+Tai Pao
+Tai Thanh
+Tai Ya
+Taiap
+Taikat
+Tainae
+Taino
+Tairaha
+Tairora, North
+Tairora, South
+Tairuma
+Taiwan Sign Language
+Taje
 Tajik
+Tajiki
+Tajio
+Tajuasohn
+Takestani
+Takia
+Takua
+Takuu
+Takwane
+Tal
+Tala
+Talaud
+Taliabu
+Talieng
+Talinga-Bwisi
+Talise
+Talodi
+Taloki
+Talondo’
+Talu
+Talysh
+Tama
+Tamagario
+Tamahaq, Tahaggart
+Tamajaq, Tawallammat
+Tamajeq, Tayart
+Taman
+Tamanaku
+Tamang, Eastern
+Tamang, Eastern Gorkha
+Tamang, Northwestern
+Tamang, Southwestern
+Tamang, Western
+Tamashek
+Tamasheq
+Tamazight, Central Atlas
+Tamazight, Standard Moroccan
+Tamazight, Temacine
+Tamazight, Tidikelt
+Tambas
+Tambotalo
+Tami
 Tamil
+Tamki
+Tampuan
+Tampulma
+Tanacross
+Tanahmerah
+Tanaina
+Tanana, Lower
+Tanana, Upper
+Tanapag
+Tandaganon
+Tandia
+Tanema
+Tangale
+Tangchangya
+Tanggu
+Tangko
+Tanglang
+Tangoa
+Tanguat
+Tanibili
+Tanimuca-Retuarã
+Tanjijili
+Tanna, North
+Tanna, Southwest
+Tanzanian Sign Language
+Tapeba
+Tapei
+Tapirapé
+Tarahumara, Central
+Tarahumara, Northern
+Tarahumara, Southeastern
+Tarahumara, Southwestern
+Tarahumara, Western
+Tarangan, East
+Tarangan, West
+Tareng
+Tariana
+Tarifit
+Tarok
+Taroko
+Taromi, Upper
+Tarpia
+Tasawaq
+Tasmate
+Tat, Muslim
+Tatana
+Tatar
+Tatar, Siberian
+Tatuyo
+Tauade
+Taulil
+Taungyo
+Taupota
+Tause
+Taushiro
+Tausug
+Tauya
+Taveta
+Tavoyan
+Tawala
+Tawandê
+Tawara
+Tawbuid, Eastern
+Tawbuid, Western
+Tawoyan
+Tay Boi
+Tay Khang
+Tayo
+Taznatit
+Ta’oih, Lower
+Ta’oih, Upper
+Tboli
+Tchitchege
+Tchumbuli
+Teanu
+Tebi
+Tebul Sign Language
+Tedaga
+Tee
+Tefaro
+Tegali
+Tehit
+Tehuelche
+Teiwa
+Teke, Ibali
+Teke-Eboo
+Teke-Fuumu
+Teke-Kukuya
+Teke-Laali
+Teke-Nzikou
+Teke-Tege
+Teke-Tsaayi
+Teke-Tyee
+Tektiteko
+Tela-Masbuar
+Telefol
 Telugu
+Teluti
+Tem
+Tembo
+Tembé
+Teme
+Temein
+Temi
+Temiar
+Temoq
+Temuan
+Tengger
+Tenharim
+Tenino
+Tenis
+Tennet
+Teop
+Teor
+Tepecano
+Tepehua, Huehuetla
+Tepehua, Pisaflores
+Tepehua, Tlachichilco
+Tepehuan, Northern
+Tepehuan, Southeastern
+Tepehuan, Southwestern
+Tera
+Terebu
+Terei
+Teressa
+Tereweng
+Teribe
+Terik
+Termanu
+Ternate
+Ternateño
+Terêna
+Tese
+Teso
+Tetela
+Tetete
 Tetum
+Tetun
+Tetun Dili
+Tewa
+Tewe
+Te’un
+Tha
+Thachanadan
 Thai
+Thai Sign Language
+Thai Song
+Thai, Northeastern
+Thai, Northern
+Thai, Southern
+Thakali
+Thangmi
+Thao
+Tharu, Chitwania
+Tharu, Dangaura
+Tharu, Kathariya
+Tharu, Kochila
+Tharu, Rana
+Thawa
+Thayore
+Thaypan
+The
+Themne
+Thiin
+Tho
+Thompson
+Thopho
+Thu Lao
+Thudam
+Thulung
+Thurawal
+Thuri
+Tiale
+Tiang
+Tibea
 Tibetan
+Tibetan, Amdo
+Tibetan, Central
+Tibetan, Khams
+Tichurong
+Ticuna
+Tidong
+Tidore
+Tiene
+Tifal
+Tigak
+Tigrigna
+Tigré
+Tii
+Tikar
+Tikopia
+Tillamook
+Tilung
+Tima
+Timbe
+Timbisha
+Timugon Murut
+Tinani
+Tindi
+Tingui-Boto
+Tinigua
+Tinputz
+Tippera
+Tira
+Tirahi
+Tiruray
+Tita
+Titan
+Tiv
+Tiwa
+Tiwa, Northern
+Tiwa, Southern
+Tiwi
+Tiéfo
+Tjurruru
+Tlingit
+To
+Toaripi
+Toba
+Toba-Maskoy
+Tobagonian Creole English
+Tobanga
+Tobati
+Tobelo
+Tobian
+Tobilung
+Tobo
+Tocho
+Toda
+Todrah
+Tofanma
+Togoyo
+Tohono O’odham
+Tojolabal
 Tok Pisin
+Tokano
+Tokelauan
+Toku-No-Shima
+Tol
+Tolaki
+Tolomako
+Tolowa
+Toma
+Tomadino
+Tombelala
+Tombonuo
+Tombulu
+Tomedes
+Tomini
+Tomoip
+Tondano
+Tondi Songway Kiini
+Tonga
+Tongan
+Tongwe
+Tonjon
+Tonkawa
+Tonsawang
+Tonsea
+Tontemboan
+Tooro
+Topoiyo
+Toposa
+Toraja-Sa’dan
+Toram
+Torau
+Toro
+Toromono
+Torona
+Torres Strait Creole
+Torricelli
+Torwali
+Torá
+Totela
+Toto
+Totoli
+Totonac, Coyutla
+Totonac, Filomena Mata-Coahuitlán
+Totonac, Highland
+Totonac, Ozumatlán
+Totonac, Papantla
+Totonac, Tecpatlán
+Totonac, Upper Necaxa
+Totonac, Xicotepec de Juárez
+Totonac, Yecuatla
+Totoro
+Touo
+Toura
+Toussian, Northern
+Toussian, Southern
+Towei
+To’abaita
+Traveller Danish
+Traveller Scottish
+Tregami
+Tremembé
+Trieng
+Trimuris
+Tring
+Trinidad and Tobago Sign Language
+Trinidadian Creole English
+Trinitario
+Triqui, Chicahuaxtla
+Triqui, Copala
+Triqui, San Martín Itunyoso
+Trió
+Truká
+Trumai
+Tsaangi
+Tsakhur
+Tsakonian
+Tsamai
+Tsat
+Tsaukambo
+Tseku
+Tshangla
+Tsikimba
+Tsimané
+Tsimshian
+Tsishingini
+Tso
+Tsoa
+Tsogo
 Tsonga
+Tsou
+Tsum
+Tsuvadi
+Tsuvan
+Tswa
+Tswana
+Tswapong
+Ts’ün-Lao
+Tu
+Tuamotuan
+Tubar
+Tucano
+Tugen
+Tugun
+Tugutil
+Tujia, Northern
+Tujia, Southern
+Tukang Besi North
+Tukang Besi South
+Tuki
+Tukpa
+Tukudede
+Tukumanféd
+Tula
+Tulehu
+Tulishi
+Tulu
+Tulu-Bohuai
+Tuma-Irumu
+Tumak
+Tumbuka
+Tumi
+Tumleo
+Tumtum
+Tumzabt
+Tunebo, Angosturas
+Tunebo, Barro Negro
+Tunebo, Central
+Tunebo, Western
+Tunen
+Tungag
+Tunggare
+Tunia
+Tunica
+Tunisian Sign Language
+Tunjung
+Tunni
+Tunzuii
+Tuotomb
+Tuparí
+Tupinikin
+Tupuri
+Turaka
+Turi
+Turiwára
+Turka
+Turkana
 Turkish
+Turkish Sign Language
 Turkmen
+Turks and Caicos Creole English
+Turoyo
+Turumsa
+Turung
+Tuscarora
+Tutchone, Northern
+Tutchone, Southern
+Tutong
+Tutuba
+Tututni
+Tuva
+Tuvaluan
+Tuwari
+Tuwuli
+Tuxináwa
+Tuxá
+Tuyuca
+Twana
+Twendi
+Twents
 Twi
+Tyap
+Tyaraity
+Tzeltal
+Tzotzil
+Tz’utujil
+Tày
+Tày Sa Pa
+Tày Tac
+Téén
+Tîrî
+Tübatulabal
+T’en
+Uab Meto
+Uamué
+Uare
+Ubaghara
+Ubang
+Ubi
+Ubir
+Ubykh
+Uda
+Udi
+Udihe
+Udmurt
+Uduk
+Ufim
+Ugandan Sign Language
+Ughele
+Ugong
+Uhami
+Uisai
+Ujir
+Ukaan
+Ukhwejo
+Ukit
+Ukpe-Bayobiri
+Ukpet-Ehom
 Ukrainian
+Ukrainian Sign Language
+Ukue
+Ukuriguma
+Ukwa
+Ukwuani-Aboh-Ndoni
+Ulau-Suain
+Ulch
+Ulithian
+Ullatan
+Ulukwumi
+Ulumanda’
+Ulwa
+Uma
+Umanakaina
+Umatilla
+Uma’ Lasan
+Uma’ Lung
+Umbindhamu
+Umbu-Ungu
+Umbugarla
+Umbundu
+Umbuygamu
+Umeda
+Umiida
+Umon
+Umotína
+Umpila
+Una
+Unami
+Uneapa
+Uneme
+Unggaranggu
+Unggumi
+Unserdeutsch
+Unua
+Unubahe
+Uokha
+Ura
+Uradhi
+Urak Lawoi’
+Urali
+Urapmin
+Urarina
+Urat
 Urdu
+Urhobo
+Uri
+Urigina
+Urim
+Urimo
+Uripiv-Wala-Rano-Atchin
+Urningangg
+Uru
+Uru-Eu-Wau-Wau
+Uru-Pa-In
+Uruangnirin
+Uruava
+Uruguayan Sign Language
+Urum
+Urumi
+Usaghade
+Usan
+Usarufa
+Ushojo
+Usku
+Usoi
+Uspanteko
+Utarmbung
+Ute-Southern Paiute
+Utu
+Utugwang-Irungene-Afrike
+Uvbie
+Uya
+Uyajitaya
+Uyghur
 Uzbek
+Uzbek, Northern
+Uzbek, Southern
+Uzekwe
+Vaagri Booli
+Vaeakau-Taumako
+Vafsi
+Vaghat-Ya-Bijim-Legeri
+Vaghri
+Vaghua
+Vagla
+Vai
+Vaiphei
+Vale
+Valencian Sign Language
+Valman
+Valpei
+Vamale
+Vame
+Vangunu
+Vanimo
+Vanuma
+Vao
+Varhadi-Nagpuri
+Varisi
+Varli
+Vasavi
+Vasekela Bushman
+Veddah
+Vehes
+Veluws
+Vemgo-Mabas
 Venda
+Venetian
+Venezuelan Sign Language
+Vengo
+Ventureño
+Veps
+Vera’a
+Vidunda
+Viemo
 Vietnamese
+Viid
+Vilela
+Vili
+Vincentian Creole English
+Vinza
+Virgin Islands Creole English
+Vishavan
+Viti
+Vitou
+Vitu
+Vlaams
+Vod
+Vono
+Voro
+Vumbu
+Vunapu
+Vunjo
+Vurës
+Vute
+Vwanji
+Võro
+V’ënen Taut
+Wa, Parauk
+Wa, Vo
+Waama
+Waamwang
+Waata
+Wab
+Wabo
+Waboda
+Wadaginam
+Waddar
+Wadi Wadi
+Wadikali
+Wadjabangayi
+Wadjiginy
+Wadjigu
+Wae Rana
+Waffa
+Wagawaga
+Wagaya
+Wagdi
+Wageman
+Wagi
+Wahgi
+Wahgi, North
+Waigali
+Waigeo
+Wailaki
+Wailapa
+Waima
+Waimaha
+Waima’a
+Waimiri-Atroarí
+Waioli
+Waiwai
+Waja
+Wajarri
+Wajiara
+Wajuk
+Waka
+Wakabunga
+Wakawaka
+Wakhi
+Wakoná
+Wala
+Walak
+Walangama
+Wali
+Waling
+Walio
+Walla Walla
+Wallisian
+Walloon
+Walmajarri
+Walser
+Walungge
+Wamas
+Wambaya
+Wambon
+Wambule
+Wamey
+Wamin
+Wampanoag
+Wampar
+Wampur
+Wan
+Wanambre
+Wanap
+Wanda
+Wandala
+Wandamen
+Wandarang
+Wandji
+Waneci
+Wangaaybuwan-Ngiyambaa
+Wanggamala
+Wangganguru
+Wanggom
+Wangkayutyuru
+Wangkumara
+Wanman
+Wannu
+Wano
+Wantoat
+Wanukaka
+Wanyi
+Wané
+Waorani
+Wapan
+Wapishana
+Wappo
+War-Jaintia
+Wara
+Warao
+Warapu
+Waray
+Waray-Waray
+Wardaman
+Wardandi
+Warduji
+Warembori
+Wares
+Waris
+Waritai
+Wariyangga
+Warji
+Warkay-Bipim
+Warlmanpa
+Warlpiri
+Warluwara
+Warnang
+Waropen
+Warrgamay
+Warrwa
+Waru
+Warumungu
+Waruna
+Warungu
+Warwar Feni
+Wasa
+Wasco-Wishram
+Wasembo
+Washo
+Waskia
+Wasu
+Watakataui
+Wathawurrung
+Watiwa
+Watubela
+Watut, Middle
+Watut, North
+Watut, South
+Waube
+Waurá
+Wauyai
+Wawa
+Wawonii
+Waxianghua
+Wayampi
+Wayana
+Wayoró
+Wayu
+Wayuu
+Wa’ema
+Wedau
+Weh
+Wejewa
+Weliki
 Welsh
+Wemale
+Wemba Wemba
+Wergaia
+Weri
+Wersing
+Western Neo-Aramaic
+Westphalien
+Wewaw
+Weyto
+Whitesands
+Wiarumus
+Wichita
+Wichí Lhamtés Güisnay
+Wichí Lhamtés Nocten
+Wichí Lhamtés Vejoz
+Wik-Epa
+Wik-Iiyanh
+Wik-Keyangan
+Wik-Me’anha
+Wik-Mungkan
+Wik-Ngathana
+Wikalkan
+Wikngenchera
+Wilawila
+Wintu
+Winyé
+Wipi
+Wiradhuri
+Wiraféd
+Wirangu
+Wiru
+Wiyot
+Wogamusin
+Wogeo
+Woi
+Woiwurrung
+Wojenaka
+Wolane
+Wolani
+Wolaytta
+Woleaian
+Wolio
+Wolof
+Wolof, Gambian
+Wom
+Womo
+Wongo
+Woria
+Worimi
+Worodougou
+Worrorra
+Wotapuri-Katarqalai
+Wotjobaluk
+Wotu
+Woun Meu
 Wu
+Wudu
+Wuliwuli
+Wulna
+Wumboko
+Wumbvu
+Wunambal
+Wunumara
+Wurrugu
+Wushi
+Wusi
+Wutung
+Wutunhua
+Wuvulu-Aua
+Wuzlam
+Wyandot
+Wymysorys
+Wára
+Wãpha
+Wè Northern
+Wè Southern
+Wè Western
+Xaasongaxango
+Xakriabá
+Xamtanga
+Xavánte
+Xerénte
+Xetá
 Xhosa
 Xiang
+Xibe
+Xinca
+Xipaya
+Xipináwa
+Xiri
+Xiriâna
+Xokleng
+Xukurú
+Xârâcùù
+Xârâgurè
+Yaaku
+Yabarana
+Yabaâna
+Yabem
+Yaben
+Yabong
+Yabula Yabula
+Yace
+Yaeyama
+Yagara
+Yagaria
+Yagnobi
+Yagomi
+Yagua
+Yagwoia
+Yahadian
+Yahang
+Yahuna
+Yaka
+Yakaikeke
+Yakama
+Yakan
+Yakkha
+Yakoma
+Yakut
+Yala
+Yalahatan
+Yalarnnga
+Yale
+Yale, Kosarek
+Yaleba
+Yali, Angguruk
+Yali, Ninia
+Yali, Pass Valley
+Yalunka
+Yamap
+Yamba
+Yambes
+Yambeta
+Yamdena
+Yameo
+Yami
+Yaminahua
+Yamongeri
+Yamphu
+Yamphu, Southern
+Yan-nhangu
+Yanda
+Yandjibara
+Yandruwandha
+Yanesha’
+Yangben
+Yangho
+Yangkam
+Yangman
+Yango
+Yangulam
+Yangum Dey
+Yangum Gel
+Yangum Mon
+Yankunytjatjara
+Yanomamö
+Yanomámi
+Yansi
+Yanyuwa
+Yao
+Yaouré
+Yapese
+Yapunda
+Yaqay
+Yaqui
+Yarawata
+Yardliyawarra
+Yareba
+Yarluyandi
+Yarsun
+Yarí
+Yasa
+Yatay
+Yau
+Yaul
+Yauma
+Yaur
+Yavitero
+Yawa
+Yawalapití
+Yawanawa
+Yawarawarga
+Yaweyuha
+Yawijibaya
+Yawiyo
+Yawuru
+Yaygir
+Yazgulyam
+Yei
+Yekhee
+Yekora
+Yela
+Yele
+Yelmek
+Yelogu
+Yemba
+Yemsa
+Yendang
+Yeni
+Yeniche
+Yerakai
+Yeresiam
+Yeretuar
+Yerong
+Yerukula
+Yessan-Mayo
+Yetfa
+Yevanic
+Yeyi
+Yi, Wuding-Luquan
 Yiddish
+Yiddish Sign Language
+Yiddish, Eastern
+Yiddish, Western
+Yidgha
+Yidiny
+Yil
+Yimas
+Yinbaw
+Yinchia
+Yindjibarndi
+Yindjilandji
+Yine
+Yinggarda
+Yinhawangka
+Yiningayi
+Yintale
+Yinwum
+Yipma
+Yir Yoront
+Yirandali
+Yis
+Yitha Yitha
+Yiwom
+Yoba
+Yogad
+Yoidik
+Yoke
+Yokuts
+Yolngu Sign Language
+Yom
+Yombe
+Yonaguni
+Yong
+Yongkom
+Yopno
+Yora
+Yoron
+Yorta Yorta
 Yoruba
+Yotti
+Yout Wam
+Yoy
+Yuanga
+Yucatec Maya Sign Language
+Yuchi
+Yucuna
 Yue
+Yug
+Yugambal
+Yugoslavian Sign Language
+Yugul
+Yugur, East
+Yugur, West
+Yuhup
+Yukaghir, Northern
+Yukaghir, Southern
+Yuki
+Yukpa
+Yukuben
+Yulu
+Yupik, Central
+Yupik, Central Siberian
+Yupik, Naukan
+Yupik, Pacific Gulf
+Yupik, Sirenik
+Yuqui
+Yuracare
+Yurok
+Yuru
+Yuwana
+Yuyu
+Yámana
+Zabana
+Zaghawa
+Zaiwa
+Zakhring
+Zambian Sign Language
+Zan Gula
+Zanaki
+Zande
+Zangskari
+Zangwal
+Zapotec
+Zapotec, Aloápam
+Zapotec, Amatlán
+Zapotec, Asunción Mixtepec
+Zapotec, Ayoquesco
+Zapotec, Cajonos
+Zapotec, Chichicapan
+Zapotec, Choapan
+Zapotec, Coatecas Altas
+Zapotec, Coatlán
+Zapotec, El Alto
+Zapotec, Elotepec
+Zapotec, Guevea de Humboldt
+Zapotec, Güilá
+Zapotec, Isthmus
+Zapotec, Lachiguiri
+Zapotec, Lachixío
+Zapotec, Lapaguía-Guivini
+Zapotec, Loxicha
+Zapotec, Mazaltepec
+Zapotec, Miahuatlán
+Zapotec, Mitla
+Zapotec, Mixtepec
+Zapotec, Ocotlán
+Zapotec, Ozolotepec
+Zapotec, Petapa
+Zapotec, Quiavicuzas
+Zapotec, Quioquitani-Quierí
+Zapotec, Rincón
+Zapotec, San Agustín Mixtepec
+Zapotec, San Baltazar Loxicha
+Zapotec, San Juan Guelavía
+Zapotec, San Pedro Quiatoni
+Zapotec, San Vicente Coatlán
+Zapotec, Santa Catarina Albarradas
+Zapotec, Santa Inés Yatzechi
+Zapotec, Santa María Quiegolani
+Zapotec, Santiago Xanica
+Zapotec, Santo Domingo Albarradas
+Zapotec, Sierra de Juárez
+Zapotec, Southeastern Ixtlán
+Zapotec, Southern Rincon
+Zapotec, Tabaa
+Zapotec, Tejalapan
+Zapotec, Texmelucan
+Zapotec, Tilquiapan
+Zapotec, Tlacolulita
+Zapotec, Totomachapan
+Zapotec, Xadani
+Zapotec, Xanaguía
+Zapotec, Yalálag
+Zapotec, Yareni
+Zapotec, Yatee
+Zapotec, Yatzachi
+Zapotec, Yautepec
+Zapotec, Zaachila
+Zapotec, Zaniza
+Zapotec, Zoogocho
+Zaramo
+Zari
+Zarma
+Zarphatic
+Zauzou
+Zay
+Zayein
+Zaysete
+Zaza
+Zazaki, Northern
+Zazaki, Southern
+Zazao
+Zeem
+Zeeuws
+Zenag
+Zenaga
+Zerenkel
+Zhaba
+Zhire
+Zhoa
 Zhuang
+Zhuang, Central Hongshuihe
+Zhuang, Dai
+Zhuang, Eastern Hongshuihe
+Zhuang, Guibei
+Zhuang, Guibian
+Zhuang, Lianshan
+Zhuang, Liujiang
+Zhuang, Liuqian
+Zhuang, Minz
+Zhuang, Nong
+Zhuang, Qiubei
+Zhuang, Yang
+Zhuang, Yongbei
+Zhuang, Yongnan
+Zhuang, Youjiang
+Zhuang, Zuojiang
+Zia
+Zialo
+Zigula
+Zimakani
+Zimba
+Zimbabwe Sign Language
+Zinza
+Ziriya
+Zizilivakan
+Zo
+Zokhuo
+Zoque, Chimalapa
+Zoque, Copainalá
+Zoque, Francisco León
+Zoque, Rayón
+Zoque, Tabasco
+Zorop
+Zo’é
+Zulgo-Gemzek
 Zulu
+Zumaya
+Zumbun
+Zuni
+Záparo
+sTodsde
+ut-Ma’in
+|Gwi
+|Xam
+Àhàn
+Áncá
+Äiwoo
+Éwé
+Ñandeva
+Ömie
+Öñge
+’Are’are
+’Auhelawa
