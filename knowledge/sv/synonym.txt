@@ -797,9 +797,8 @@ ormfobirädd för ormar
 ornegalt - grisman alltså
 orunkeligorubblig
 orvskaft till lie
-osåmynning
-osron
-otidigotrevlig, kränkande
+os, aros, mynning, utloppåmynning
+otidigotrevlig, kränkande, oförskämd
 ovisshetatt inte veta
 ovulenovarsam slarvig
 oäveni uttrycket "inte oäven": inte så dålig, rätt bra
@@ -1269,7 +1268,6 @@ zlataneradominera
 ålderstigengammal, åldrad
 åledsentrött på, t ex jag är åledsen folk som inte kan tala riktig svenska.
 åliggat ex det åligger honom att... = det är hans uppgift att...
-åmynninggammalt ord
 ånyopå nytt
 åpetgirig
 åsamkavålla
@@ -1303,3 +1301,6 @@ zlataneradominera
 övligtsedvanligt, brukligt
 kung Borekung Vinter
 kung Borekung Frost
+serveralägga för, hälla upp, bära fram, duka fram, undfägna, bjuda, utspisa, bespisa
+serverapassa upp, uppassa, serva, betjäna
+serveratillhandahålla
