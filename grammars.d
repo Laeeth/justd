@@ -575,6 +575,8 @@ enum Sense:ubyte
 {
     unknown,
 
+    prefix,
+
     noun,
     nounNumeric,
     nounInteger,                // 11

@@ -1316,11 +1316,11 @@ class Net(bool useArray = true,
         const quick = true;
         const maxCount = quick ? 10000 : size_t.max;
 
-        // WordNet
+        // Supervised Knowledge
         wordnet = new WordNet!(true, true)([Lang.en]);
-
-        // Read Synlex
         readSynlexFile("~/Knowledge/swesaurus/synpairs.xml".expandTilde.buildNormalizedPath);
+        readFolketsFile("~/Knowledge/swesaurus/folkets_en_sv_public.xdxf".expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
+        readFolketsFile("~/Knowledge/swesaurus/folkets_sv_en_public.xdxf".expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnAbsoluteThings();
@@ -1405,7 +1405,6 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/prepositions.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `preposition`, Sense.preposition, Sense.noun);
 
         learnWords(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.unknown, Sense.noun);
-        learnWords(Lang.en, rdT("../knowledge/en/color_adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `color`, Sense.adjective, Sense.noun); // TODO learn both adjective and color
 
         learnWords(Lang.en, rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `shape`, Sense.noun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `fruit`, Sense.noun, Sense.noun);
@@ -1462,9 +1461,11 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
 
         learnChemicalElements();
-        learnPairs("../knowledge/en/noun_synonym.txt", Sense.noun, Rel.synonymFor, Sense.noun);
-        learnPairs("../knowledge/en/adjective_synonym.txt", Sense.adjective, Rel.synonymFor, Sense.adjective);
-        learnPairs("../knowledge/en/acronym.txt", Sense.nounAcronym, Rel.acronymFor, Sense.unknown);
+        learnPairs("../knowledge/en/noun_synonym.txt", Sense.noun, Rel.synonymFor, Sense.noun, Lang.en, Origin.manual, ["noun"]);
+        learnPairs("../knowledge/en/adjective_synonym.txt", Sense.adjective, Rel.synonymFor, Sense.adjective, Lang.en, Origin.manual, ["adjective"]);
+        learnPairs("../knowledge/en/acronym.txt", Sense.nounAcronym, Rel.acronymFor, Sense.unknown, Lang.en, Origin.manual, ["acronym"]);
+        learnPairs("../knowledge/en/color_adjective.txt", Sense.adjective, Rel.similarTo, Sense.unknown, Lang.en, Origin.manual, ["color", "adjective"]);
+
         learnOpposites();
 
     }
@@ -1632,7 +1633,8 @@ class Net(bool useArray = true,
                     Rel rel,
                     Sense secondSense,
                     Lang lang = Lang.en,
-                    Origin origin = Origin.manual)
+                    Origin origin = Origin.manual,
+                    string[] groupNames = [])
     {
         foreach (expr; File(path).byLine)
         {
@@ -1640,10 +1642,21 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
-            connect(store(first.idup, lang, firstSense, origin), // TODO store capitalized?
-                    rel,
-                    store(second.idup, lang, secondSense, origin),
-                    lang, origin, weight);
+
+            auto firstRef = store(first.idup, lang, firstSense, origin);
+            foreach (groupName; groupNames)
+            {
+                connect(firstRef,
+                        Rel.isA,
+                        store(groupName, lang, Sense.noun, origin),
+                        lang, origin, weight, false, false, true);
+            }
+
+            if (!second.empty)
+            {
+                auto secondRef = store(second.idup, lang, secondSense, origin);
+                connect(firstRef, rel, secondRef, lang, origin, weight, false, false, true);
+            }
         }
     }
 
@@ -3911,7 +3924,6 @@ class Net(bool useArray = true,
 
         enum lang = Lang.sv;
         enum origin = Origin.synlex;
-        // See also: http://dlang.org/phobos/std_xml.html#.ElementParser.onStartTag
         const str = cast(string)std.file.read(path);
         auto doc = new DocumentParser(str);
         doc.onStartTag["syn"] = (ElementParser elp)
@@ -3931,6 +3943,68 @@ class Net(bool useArray = true,
                         store(w2.toLower, lang, Sense.unknown, origin),
                         lang, origin, weight, false, false, true);
                 ++lnr;
+            }
+        };
+        doc.parse;
+
+        writeln("Read SynLex ", path, ` having `, lnr, ` lines`);
+        if (lnr >= 1) { showRelations; }
+    }
+
+    /** Read Folkets Lexikon Synonyms File $(D path) in XML format.
+     */
+    void readFolketsFile(string path,
+                         Lang srcLang,
+                         Lang dstLang,
+                         size_t maxCount = size_t.max)
+    {
+        import std.xml: DocumentParser, ElementParser, Element;
+        size_t lnr = 0;
+        writeln("Reading Folkets Lexikon from ", path, " ...");
+
+        enum origin = Origin.folketsLexikon;
+        const str = cast(string)std.file.read(path);
+        auto doc = new DocumentParser(str);
+        doc.onStartTag["ar"] = (ElementParser elp)
+        {
+            string src, gr;
+            string[] dsts;
+            elp.onEndTag["k"] = (in Element e) { src = e.text; };
+            elp.onEndTag["gr"] = (in Element e) { gr = e.text; };
+            elp.onEndTag["dtrn"] = (in Element e) { dsts ~= e.text; };
+
+            elp.parse;
+
+            auto sense = Sense.unknown;
+            switch (gr)
+            {
+                case "": break; // ok for unknown
+                case "prefix": sense = Sense.prefix; break;
+                case "pm": sense = Sense.nounName; break;
+                case "nn": sense = Sense.noun; break;
+                case "vb": sense = Sense.verb; break;
+                case "jj": sense = Sense.adjective; break;
+                case "ab": sense = Sense.adverb; break;
+                case "pp": sense = Sense.preposition; break;
+                case "pn": sense = Sense.pronoun; break;
+                case "kn": sense = Sense.conjunction; break;
+                case "in": sense = Sense.interjection; break;
+                case "abbrev": sense = Sense.nounAbbrevation; break;
+                case "article": sense = Sense.article; break;
+                default: dln("warning: TODO ", gr); break;
+            }
+
+            foreach (dst; dsts)
+            {
+                if (dst.empty)
+                {
+                    dln("warning: empty dst for ", src);
+                    continue;
+                }
+                connect(store(src, srcLang, sense, origin),
+                        Rel.translationOf,
+                        store(dst, dstLang, sense, origin),
+                        Lang.unknown, origin, 1.0, false, false, true);
             }
         };
         doc.parse;
