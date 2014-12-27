@@ -1465,35 +1465,39 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
 
         learnChemicalElements();
+
+        // English
         learnPairs("../knowledge/en/noun_synonym.txt",
                    Sense.noun, Lang.en,
                    Rel.synonymFor,
                    Sense.noun, Lang.en,
-                   Origin.manual, ["noun"]);
+                   Origin.manual, ["noun"], 1.0);
         learnPairs("../knowledge/en/adjective_synonym.txt",
                    Sense.adjective, Lang.en,
                    Rel.synonymFor,
                    Sense.adjective, Lang.en,
-                   Origin.manual, ["adjective"]);
+                   Origin.manual, ["adjective"], 1.0);
         learnPairs("../knowledge/en/acronym.txt",
                    Sense.nounAcronym, Lang.en,
                    Rel.acronymFor,
                    Sense.unknown, Lang.en,
-                   Origin.manual, ["acronym"]);
-        learnPairs("../knowledge/en/color_adjective.txt",
-                   Sense.adjective, Lang.en,
-                   Rel.similarTo,
-                   Sense.unknown, Lang.en,
-                   Origin.manual,
-                   ["color", "adjective"]);
+                   Origin.manual, ["acronym"], 1.0);
+
+        // Swedish
+        learnPairs("../knowledge/sv/synonym.txt",
+                   Sense.unknown, Lang.sv,
+                   Rel.synonymFor,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, [], 0.5);
+
+        // English-Swedish
         learnPairs("../knowledge/en-sv/noun_translation.txt",
                    Sense.noun, Lang.en,
                    Rel.translationOf,
                    Sense.noun, Lang.sv,
-                   Origin.manual);
+                   Origin.manual, [], 1.0);
 
         learnOpposites();
-
     }
 
     /// Learn Assocative Things.
@@ -1566,8 +1570,14 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `St. Patrick's Day`, Sense.unknown, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, `New Year's Eve`, Sense.unknown, Sense.noun);
 
-
         learnWords(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, `say`, Sense.verb, Sense.verb);
+
+        learnPairs("../knowledge/en/color_adjective.txt",
+                   Sense.adjective, Lang.en,
+                   Rel.similarTo,
+                   Sense.unknown, Lang.en,
+                   Origin.manual,
+                   ["color", "adjective"], 0.5);
    }
 
     /// Learn Emotions.
@@ -1659,14 +1669,14 @@ class Net(bool useArray = true,
                     Rel rel,
                     Sense secondSense, Lang secondLang,
                     Origin origin = Origin.manual,
-                    string[] groupNames = [])
+                    string[] groupNames = [],
+                    NWeight weight = 1.0)
     {
         foreach (expr; File(path).byLine)
         {
             if (expr.empty) { continue; }
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
-            NWeight weight = 1.0;
 
             auto firstRef = store(first.idup, firstLang, firstSense, origin);
             foreach (groupName; groupNames)
