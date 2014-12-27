@@ -1,0 +1,6 @@
+comedy
+drama
+romance
+satire
+tragedy
+tragicomedy
