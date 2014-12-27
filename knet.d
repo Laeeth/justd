@@ -3978,12 +3978,17 @@ class Net(bool useArray = true,
             auto sense = Sense.unknown;
             switch (gr)
             {
-                case "": break; // ok for unknown
+                case "":        // ok for unknown
+                case "latin":
+                    sense = Sense.unknown;
+                break;
                 case "prefix": sense = Sense.prefix; break;
                 case "pm": sense = Sense.nounName; break;
                 case "nn": sense = Sense.noun; break;
                 case "vb": sense = Sense.verb; break;
+                case "hjälpverb": sense = Sense.verbHelp; break;
                 case "jj": sense = Sense.adjective; break;
+                case "pc": sense = Sense.adjective; break; // TODO can be either adjective or verb
                 case "ab": sense = Sense.adverb; break;
                 case "pp": sense = Sense.preposition; break;
                 case "pn": sense = Sense.pronoun; break;
@@ -3991,7 +3996,7 @@ class Net(bool useArray = true,
                 case "in": sense = Sense.interjection; break;
                 case "abbrev": sense = Sense.nounAbbrevation; break;
                 case "article": sense = Sense.article; break;
-                default: dln("warning: TODO ", gr); break;
+                default: dln("warning: TODO ", src, " have sense ", gr); break;
             }
 
             foreach (dst; dsts)
