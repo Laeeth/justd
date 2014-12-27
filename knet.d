@@ -30,6 +30,9 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO At end of store() use convert Sense to string Rel.noun => "noun" and store it
+         connect(secondRef, Rel.isA, store(groupName, firstLang, Sense.noun, origin), firstLang, origin, weight, false, false, true);
+
     TODO Handle comma in .txt files
 
     TODO Learn: https://sv.wikipedia.org/wiki/Modalt_hj%C3%A4lpverb
@@ -1483,31 +1486,31 @@ class Net(bool useArray = true,
                    Sense.noun, Lang.en,
                    Rel.synonymFor,
                    Sense.noun, Lang.en,
-                   Origin.manual, ["noun"], 1.0);
+                   Origin.manual, 1.0);
         learnPairs("../knowledge/en/adjective_synonym.txt",
                    Sense.adjective, Lang.en,
                    Rel.synonymFor,
                    Sense.adjective, Lang.en,
-                   Origin.manual, ["adjective"], 1.0);
+                   Origin.manual, 1.0);
         learnPairs("../knowledge/en/acronym.txt",
                    Sense.nounAcronym, Lang.en,
                    Rel.acronymFor,
                    Sense.unknown, Lang.en,
-                   Origin.manual, ["acronym"], 1.0);
+                   Origin.manual, 1.0);
 
         // Swedish
         learnPairs("../knowledge/sv/synonym.txt",
                    Sense.unknown, Lang.sv,
                    Rel.synonymFor,
                    Sense.unknown, Lang.sv,
-                   Origin.manual, [], 0.5);
+                   Origin.manual, 0.5);
 
         // English-Swedish
         learnPairs("../knowledge/en-sv/noun_translation.txt",
                    Sense.noun, Lang.en,
                    Rel.translationOf,
                    Sense.noun, Lang.sv,
-                   Origin.manual, ["noun"], 1.0);
+                   Origin.manual, 1.0);
 
         learnOpposites();
     }
@@ -1588,8 +1591,7 @@ class Net(bool useArray = true,
                    Sense.adjective, Lang.en,
                    Rel.similarTo,
                    Sense.unknown, Lang.en,
-                   Origin.manual,
-                   ["color", "adjective"], 0.5);
+                   Origin.manual, 0.5);
    }
 
     /// Learn Emotions.
@@ -1598,8 +1600,9 @@ class Net(bool useArray = true,
         const groups = ["basic", "positive", "negative", "strong", "medium", "light"];
         foreach (group; groups)
         {
-            learnWords(Lang.en, rdT("../knowledge/en/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
-                              Rel.isA, group ~ ` emotion`, Sense.unknown, Sense.noun);
+            learnWords(Lang.en,
+                       rdT("../knowledge/en/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
+                       Rel.isA, group ~ ` emotion`, Sense.unknown, Sense.noun);
         }
     }
 
@@ -1622,7 +1625,9 @@ class Net(bool useArray = true,
     /// Learn Swedish Feelings.
     void learnSwedishFeelings()
     {
-        learnWords(Lang.sv, rdT("../knowledge/sv/känsla.txt").splitter('\n').filter!(word => !word.empty), Rel.isA, `känsla`, Sense.noun, Sense.noun);
+        learnWords(Lang.sv,
+                   rdT("../knowledge/sv/känsla.txt").splitter('\n').filter!(word => !word.empty),
+                   Rel.isA, `känsla`, Sense.noun, Sense.noun);
     }
 
     /// Read and Learn Assocations.
@@ -1681,8 +1686,7 @@ class Net(bool useArray = true,
                     Rel rel,
                     Sense secondSense, Lang secondLang,
                     Origin origin = Origin.manual,
-                    string[] groupNames = [],
-                    NWeight weight = 1.0)
+                    NWeight weight = 0.5)
     {
         foreach (expr; File(path).byLine)
         {
@@ -1691,25 +1695,11 @@ class Net(bool useArray = true,
             const first = split[0], second = split[2];
 
             auto firstRef = store(first.idup, firstLang, firstSense, origin);
-            foreach (groupName; groupNames)
-            {
-                connect(firstRef,
-                        Rel.isA,
-                        store(groupName, firstLang, Sense.noun, origin),
-                        firstLang, origin, weight, false, false, true);
-            }
 
             if (!second.empty)
             {
                 auto secondRef = store(second.idup, secondLang, secondSense, origin);
                 connect(firstRef, rel, secondRef, secondLang, origin, weight, false, false, true);
-                foreach (groupName; groupNames)
-                {
-                    connect(secondRef,
-                            Rel.isA,
-                            store(groupName, firstLang, Sense.noun, origin),
-                            firstLang, origin, weight, false, false, true);
-                }
             }
         }
     }

@@ -1594,7 +1594,8 @@ fresh
 fret-filled
 fretful
 fretting
-fried, fried out
+fried
+fried out
 friendless
 friendly
 fright
@@ -1867,7 +1868,9 @@ hyped-up
 hyper
 hyperactive
 hypervigilant
-hyphe, hyphee, hyphy
+hyphe
+hyphee
+hyphy
 hypnotic
 hypnotized
 hypocritical
@@ -3326,7 +3329,8 @@ shot-down
 shouted at
 shredded
 shrewd
-shrunk, shrunken
+shrunk
+shrunken
 shunned
 shut out
 shy

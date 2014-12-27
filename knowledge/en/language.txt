@@ -7,8 +7,8 @@ Abai Sungai
 Abanyom
 Abau
 Abaza
-Abenaki, Eastern
-Abenaki, Western
+Eastern Abenaki
+Western Abenaki
 Abidji
 Abinomn
 Abipon
@@ -35,7 +35,7 @@ Achterhoeks
 Achuar-Shiwiar
 Achumawi
 Aché
-Acipa, Eastern
+Eastern Acipa
 Acroá
 Adabe
 Adamorobe Sign Language
@@ -47,7 +47,7 @@ Adasen
 Adele
 Adhola
 Adi
-Adi, Galo
+Galo Adi
 Adioukrou
 Adithinngithigh
 Adnyamathanha

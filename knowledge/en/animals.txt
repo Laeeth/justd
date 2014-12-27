@@ -205,8 +205,8 @@ doedicurus
 dog
 dogfish
 dolphin
-dolphin, bottlenose
-dolphin, spotted
+bottlenose dolphin
+spotted dolphin
 donkey
 dory
 dove
@@ -523,8 +523,8 @@ oropendola
 orthacanthus
 oryx
 ostrich
-otter, river
-otter, sea
+river otter
+sea otter
 oviraptor
 owl
 ox
