@@ -29,6 +29,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Learn: https://sv.wikipedia.org/wiki/Modalt_hj%C3%A4lpverb
+
     TODO If "X Y" gives no hits try "X-Y"
 
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
@@ -1463,10 +1465,32 @@ class Net(bool useArray = true,
         learnWords(Lang.en, rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `major mineral group`, Sense.noun, Sense.noun);
 
         learnChemicalElements();
-        learnPairs("../knowledge/en/noun_synonym.txt", Sense.noun, Rel.synonymFor, Sense.noun, Lang.en, Origin.manual, ["noun"]);
-        learnPairs("../knowledge/en/adjective_synonym.txt", Sense.adjective, Rel.synonymFor, Sense.adjective, Lang.en, Origin.manual, ["adjective"]);
-        learnPairs("../knowledge/en/acronym.txt", Sense.nounAcronym, Rel.acronymFor, Sense.unknown, Lang.en, Origin.manual, ["acronym"]);
-        learnPairs("../knowledge/en/color_adjective.txt", Sense.adjective, Rel.similarTo, Sense.unknown, Lang.en, Origin.manual, ["color", "adjective"]);
+        learnPairs("../knowledge/en/noun_synonym.txt",
+                   Sense.noun, Lang.en,
+                   Rel.synonymFor,
+                   Sense.noun, Lang.en,
+                   Origin.manual, ["noun"]);
+        learnPairs("../knowledge/en/adjective_synonym.txt",
+                   Sense.adjective, Lang.en,
+                   Rel.synonymFor,
+                   Sense.adjective, Lang.en,
+                   Origin.manual, ["adjective"]);
+        learnPairs("../knowledge/en/acronym.txt",
+                   Sense.nounAcronym, Lang.en,
+                   Rel.acronymFor,
+                   Sense.unknown, Lang.en,
+                   Origin.manual, ["acronym"]);
+        learnPairs("../knowledge/en/color_adjective.txt",
+                   Sense.adjective, Lang.en,
+                   Rel.similarTo,
+                   Sense.unknown, Lang.en,
+                   Origin.manual,
+                   ["color", "adjective"]);
+        learnPairs("../knowledge/en-sv/noun_translation.txt",
+                   Sense.noun, Lang.en,
+                   Rel.translationOf,
+                   Sense.noun, Lang.sv,
+                   Origin.manual);
 
         learnOpposites();
 
@@ -1631,10 +1655,9 @@ class Net(bool useArray = true,
 
     /// Learn Pairs of Words.
     void learnPairs(string path,
-                    Sense firstSense,
+                    Sense firstSense, Lang firstLang,
                     Rel rel,
-                    Sense secondSense,
-                    Lang lang = Lang.en,
+                    Sense secondSense, Lang secondLang,
                     Origin origin = Origin.manual,
                     string[] groupNames = [])
     {
@@ -1645,19 +1668,19 @@ class Net(bool useArray = true,
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
 
-            auto firstRef = store(first.idup, lang, firstSense, origin);
+            auto firstRef = store(first.idup, firstLang, firstSense, origin);
             foreach (groupName; groupNames)
             {
                 connect(firstRef,
                         Rel.isA,
-                        store(groupName, lang, Sense.noun, origin),
-                        lang, origin, weight, false, false, true);
+                        store(groupName, firstLang, Sense.noun, origin),
+                        firstLang, origin, weight, false, false, true);
             }
 
             if (!second.empty)
             {
-                auto secondRef = store(second.idup, lang, secondSense, origin);
-                connect(firstRef, rel, secondRef, lang, origin, weight, false, false, true);
+                auto secondRef = store(second.idup, secondLang, secondSense, origin);
+                connect(firstRef, rel, secondRef, secondLang, origin, weight, false, false, true);
             }
         }
     }
