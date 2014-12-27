@@ -1,0 +1,101 @@
+action
+adventure
+animal
+art and design
+audiobook
+autobiography
+autobiography and memoir
+ballet
+biography
+business and finance
+chick lit
+children's
+christian
+classics
+comedy
+comic
+comics and graphic novel
+computing and the net
+cook book
+craft and hobby
+crime
+crime fiction
+cult classic
+disaster fiction
+drama
+dystopian fiction
+economic
+essay
+fable
+fairy
+fairy tale
+fantasy
+fiction
+fiction in verse
+film
+folklore
+food and drink
+foreign
+friendship
+funny book
+health
+health, mind and body
+historical fiction
+history
+hobby book
+horror
+house and garden
+humor
+independent
+indie
+kids'
+legend
+literary criticism
+memoir
+music
+mystery
+mythology
+narrative nonfiction
+non-fiction
+nonfiction
+paranormal romance
+philosophy
+photography
+picture book
+poetry
+politics
+realistic fiction
+reference
+reference and language
+religion
+romance
+school
+sci-fi
+science and nature
+science fiction
+self-help
+short story
+short story
+society
+special interest
+speech
+sport and leisure
+stage
+suspense
+tall tale
+technical
+teen book
+teen romance
+teenagers's
+teens
+textbook
+thriller
+travel
+travel guide
+travel writing
+true crime
+tv and radio
+vampire
+war
+war drama
+western

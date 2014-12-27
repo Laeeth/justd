@@ -1405,7 +1405,9 @@ class Net(bool useArray = true,
         learnSwedishFeelings();
 
         // TODO functionize to learnGroup
-        learnWords(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `compound_word`, Sense.unknown, Sense.noun);
+        learnWords(Lang.en, rdT("../knowledge/en/literary_genre.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `literary genre`, Sense.noun, Sense.noun);
+
+        learnWords(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `compound word`, Sense.unknown, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `noun`, Sense.noun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `people`, Sense.noun, Sense.noun);
         learnWords(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, `pronoun`, Sense.pronoun, Sense.noun);
