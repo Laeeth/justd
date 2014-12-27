@@ -29,6 +29,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO If "X Y" gives no hits try "X-Y"
+
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
     TODO Correct Room Namings
@@ -3986,7 +3988,7 @@ class Net(bool useArray = true,
                 case "pm": sense = Sense.nounName; break;
                 case "nn": sense = Sense.noun; break;
                 case "vb": sense = Sense.verb; break;
-                case "hjälpverb": sense = Sense.verbHelp; break;
+                case "hjälpverb": sense = Sense.auxiliaryVerb; break;
                 case "jj": sense = Sense.adjective; break;
                 case "pc": sense = Sense.adjective; break; // TODO can be either adjective or verb
                 case "ab": sense = Sense.adverb; break;
@@ -3995,15 +3997,18 @@ class Net(bool useArray = true,
                 case "kn": sense = Sense.conjunction; break;
                 case "in": sense = Sense.interjection; break;
                 case "abbrev": sense = Sense.nounAbbrevation; break;
+                case "nn, abbrev": sense = Sense.nounAbbrevation; break;
                 case "article": sense = Sense.article; break;
-                default: dln("warning: TODO ", src, " have sense ", gr); break;
+                case "rg": sense = Sense.nounInteger; break;
+                case "ro": sense = Sense.ordinalNumber; break;
+                default: dln(`warning: TODO "`, src, `" have sense "`, gr, `"`); break;
             }
 
             foreach (dst; dsts)
             {
                 if (dst.empty)
                 {
-                    dln("warning: empty dst for ", src);
+                    dln(`warning: empty dst for "`, src, `"`);
                     continue;
                 }
                 connect(store(src, srcLang, sense, origin),

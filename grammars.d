@@ -577,6 +577,8 @@ enum Sense:ubyte
 
     prefix,
 
+    ordinalNumber, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
+
     noun,
     nounNumeric,
     nounInteger,                // 11
@@ -622,6 +624,9 @@ enum Sense:ubyte
     verbFuturum = verbFuture,
     verbFuturumI,
     verbFuturumII,
+
+    auxiliaryVerb, /// https://en.wikipedia.org/wiki/Auxiliary_verb. "Hjälpverb" in Swedish
+    auxiliaryVerbModal, /// Modalt Hjälpverb
 
     /* Adjective */
 
