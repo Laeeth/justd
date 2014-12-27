@@ -872,7 +872,7 @@ string toNice(Origin origin) @safe pure
             case yago: return "Yago";
             case globalmind: return "GlobalMind";
             case synlex: return "Synlex";
-            case folketsLexikon: return "Folkets Lexikon";
+            case folketsLexikon: return "FolketsLexikon";
             case swesaurus: return "Swesaurus";
             case manual: return "Manual";
         }
