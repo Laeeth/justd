@@ -1050,6 +1050,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case hasOfficeIn:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "kontor i"]; break;
+                            case en:
+                            default: words = ["has", not, "office in"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "ett kontor för"]; break;
+                            case en:
+                            default: words = ["does", not, "have an office for"]; break;
+                        }
+                    }
+                    break;
                 case causesDesire:
                     if (dir == RelDir.forward)
                     {
