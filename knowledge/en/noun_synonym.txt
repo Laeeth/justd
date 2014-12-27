@@ -9,3 +9,5 @@ SulfurSulphur
 SulfuricSulphuric
 SulfateSulphate
 SulfideSulphide
+compoundcompound word
+book typegenre
