@@ -26,20 +26,18 @@
     Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
     Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
     Data: http://www.words-to-use.com/
+    Data: http://www.ethnologue.com/browse/names
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Handle comma in .txt files
+
     TODO Learn: https://sv.wikipedia.org/wiki/Modalt_hj%C3%A4lpverb
 
-    TODO If "X Y" gives no hits try "X-Y"
+    TODO If "X Y" gives no hits try "X-Y" then "XY"
+    TODO If "X-Y" gives no hits try "X Y" then "XY"
 
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
-
-    TODO Correct Room Namings
-    - bath_room => bathroom,
-    - bed_room => bedroom
-    - dining_room => dining_room
-    - livingroom => living_room
 
     TODO Infer:
          - X opposite of Y, Sense can be inferred in both directions
@@ -897,6 +895,20 @@ bool isMultiWord(S)(S s) if (isSomeString!S)
     return s.canFind("_", " ") >= 1;
 }
 
+/// Correct Formatting of Lemma Expression $(D s).
+auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
+{
+    switch (s)
+    {
+        case "honey be": return "honey bee";
+        case "bath room": return "bathroom";
+        case "bed room": return "bedroom";
+        case "diningroom": return "dining room";
+        case "livingroom": return "living room";
+        default: return s;
+    }
+}
+
 /** Main Knowledge Network.
 */
 class Net(bool useArray = true,
@@ -1495,7 +1507,7 @@ class Net(bool useArray = true,
                    Sense.noun, Lang.en,
                    Rel.translationOf,
                    Sense.noun, Lang.sv,
-                   Origin.manual, [], 1.0);
+                   Origin.manual, ["noun"], 1.0);
 
         learnOpposites();
     }
@@ -1691,6 +1703,13 @@ class Net(bool useArray = true,
             {
                 auto secondRef = store(second.idup, secondLang, secondSense, origin);
                 connect(firstRef, rel, secondRef, secondLang, origin, weight, false, false, true);
+                foreach (groupName; groupNames)
+                {
+                    connect(secondRef,
+                            Rel.isA,
+                            store(groupName, firstLang, Sense.noun, origin),
+                            firstLang, origin, weight, false, false, true);
+                }
             }
         }
     }
@@ -3492,15 +3511,6 @@ class Net(bool useArray = true,
     }
     alias relate = connect;
 
-    auto ref correctCN5Lemma(S)(S s) if (isSomeString!S)
-    {
-        switch (s)
-        {
-            case "honey be": return "honey bee";
-            default: return s;
-        }
-    }
-
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
     */
@@ -3527,7 +3537,7 @@ class Net(bool useArray = true,
         }
         ++senseCounts[sense];
 
-        return store(correctCN5Lemma(expr), lang, sense, Origin.cn5, anyCategory);
+        return store(expr.correctLemmaExpr, lang, sense, Origin.cn5, anyCategory);
     }
 
     import std.algorithm: splitter;
@@ -3594,13 +3604,13 @@ class Net(bool useArray = true,
                                 entity.front).idup;
         entity.popFront;
 
-        auto entityIx = store(entityName, lang, sense, Origin.nell, categoryIx);
+        auto entityIx = store(entityName.correctLemmaExpr, lang, sense, Origin.nell, categoryIx);
 
         return tuple(entityIx,
                      categoryName,
                      connect(entityIx,
                              Rel.isA,
-                             store(categoryName, lang, sense, Origin.nell, categoryIx),
+                             store(categoryName.correctLemmaExpr, lang, sense, Origin.nell, categoryIx),
                              lang,
                              Origin.nell, 1.0, false, false,
                              true)); // need to check duplicates here
@@ -3966,16 +3976,16 @@ class Net(bool useArray = true,
             const level = elp.tag.attr["level"].to!real; // level on a scale from 1 to 5
             const weight = level/5.0; // normalized weight
             string w1, w2;
-            elp.onEndTag["w1"] = (in Element e) { w1 = e.text; };
-            elp.onEndTag["w2"] = (in Element e) { w2 = e.text; };
+            elp.onEndTag["w1"] = (in Element e) { w1 = e.text.toLower.correctLemmaExpr; };
+            elp.onEndTag["w2"] = (in Element e) { w2 = e.text.toLower.correctLemmaExpr; };
 
             elp.parse;
 
             if (w1 != w2) // there might be a bug in the xml...
             {
-                connect(store(w1.toLower, lang, Sense.unknown, origin),
+                connect(store(w1, lang, Sense.unknown, origin),
                         Rel.synonymFor,
-                        store(w2.toLower, lang, Sense.unknown, origin),
+                        store(w2, lang, Sense.unknown, origin),
                         lang, origin, weight, false, false, true);
                 ++lnr;
             }
@@ -4004,8 +4014,8 @@ class Net(bool useArray = true,
         {
             string src, gr;
             string[] dsts;
-            elp.onEndTag["k"] = (in Element e) { src = e.text; };
-            elp.onEndTag["gr"] = (in Element e) { gr = e.text; };
+            elp.onEndTag["k"] = (in Element e) { src = e.text.correctLemmaExpr; };
+            elp.onEndTag["gr"] = (in Element e) { gr = e.text.correctLemmaExpr; };
             elp.onEndTag["dtrn"] = (in Element e) { dsts ~= e.text; };
 
             elp.parse;
