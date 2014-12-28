@@ -1,0 +1,187 @@
+and you?och du?
+at night [single future event]i natt
+bigstor
+bless you (when sneezing)prosit
+bon appetitsmaklig måltid
+bon voyagelycklig resa
+bon voyagetrevlig resa
+call an ambulans!ring ambulansen!
+call an ambulans!ring på ambulansen!
+call the police!ring polisen!
+can i help you?kan jag hjälpa dig?
+can you help me?kan du hjälpa mig?
+can you say it again?förlåt, vad sa du?
+can you speak slowly?kan du tala saktare?
+cheers!skål!
+come with mefölj med mig
+congratsgrattis
+congratulationsgrattis
+do you like it?gillar du den?
+do you speak {1}?pratar du {1}?
+don't worryoroa dig inte
+don't worry about thatdet gör inget
+enjoy [meals]smaklig måltid
+enjoy you mealsmaklig måltid
+excuse meursäkta
+excuse meursäkta mig
+excuse me!ursäkta!
+fire!det brinner!
+får jag lov?may i?)
+gesundheit!skål!
+get well soon!krya på dig!
+give me that!ge mig den!
+give me this!ge mig den!
+go straight ahead!gå rakt fram!
+go straight!gå rakt fram!
+goodbra
+good afternoongod eftermiddag
+good byehej då
+good eveninggod kväll
+good eveninggod middag
+good health!skål!
+good luck!lycka till!
+good morning!god morgon!
+good night!god natt!
+goodbyehej då
+happy birthdaygrattis på födelsedagen
+happy easterglad påsk
+happy new yeargott nytt år
+have a good journeylycklig resa
+have a good journeytrevlig resa
+have a good mealsmaklig måltid
+have a good dayha en bra dag!
+have a nice dayha en bra dag!
+have a nice dayha en trevlig dag!
+hellogod dag [formal]
+hellohallå [informal]
+hellohej [informal]
+hello!tja [informal]
+hello!tjena!
+help yourselfvar så god
+help!hjälp!
+here you govar så god
+hihej [informal]
+hold on pleasevänta en sekund
+how are you?hur mår du?
+how are you?hur är det med dig?
+how do you say {1} in {2}?hur säger man {1} på {2}?
+how's it goinghur går det?
+how much is it?hur mycket kostar det?
+how much is that?hur mycket blir det?
+how much is this?hur mycket kostar den här?
+how much is this?hur mycket kostar det här?
+how much is this?hur mycket kostar detta?
+how old are you?hur gammal är du?
+hurry upskynda på
+i don't knowjag vet inte
+i don't understandjag förstår inte
+i feel sickjag mår dåligt
+i have no ideajag har ingen aning
+i have to gojag måste gå
+i like swedishjag gillar svenska språket
+i live in the u.sjag bor i usa
+i live in {1}jag bor i {1}
+i love youjag älskar dig
+i missed you so muchjag har saknat dig
+i need to practice my {1}jag måste öva på min {1}
+i need {1}jag behöver {2}
+i really like itjag gillar den verkligen
+i really like itjag gillar det verkligen
+i was born injag är född i
+i was raised injag växte upp i
+i will be right backjag kommer strax tillbaka
+i work as {1}jag jobbar som {1}
+i'd like to visit {1} one dayjag skulle vilja besöka {1} en dag
+i'm an {1}jag är en {1}
+i'm finejag mår bra
+i'm fine, thanksbara bra tack
+i'm fromjag är från
+i'm from swedenjag är från sverige
+i'm from the u.s.jag är från usa
+i'm from {1}jag är från {1}
+i'm looking for johnjag letar efter john
+i'm lostjag har tappat bort mig
+i'm sorry? (if you don't hear something)förlåt?
+i'm {1}jag är {1}
+i'm {1} years oldjag är {1} år gammal
+i have been learning {1} for 1 monthjag har lärt mig {1} i en månad
+in the evening [single future event]i kväll
+in the morning [repeated]på morgonen
+in the morning [single future event]imorgon bitti
+it's {1}hon är {1}
+it's {1}klockan är {1}
+i'm from {1}jag kommer från {1}
+i'm from {1}jag är från {1}
+just a littlebara lite
+leave me alone!lämna mig ifred!
+long time no seedet var länge sedan vi sågs sist!
+lookkolla
+merry christmasgod jul
+merry christmas and happy new yeargod jul och gott nytt år
+missfröken
+mrherr
+mrsfru
+my name is {1}jag heter {1}
+my {1} is badmin {1} är dålig
+nice to meet youtrevligt att träffas
+no probleminga problem
+not so goodinte så bra
+nothing muchinte mycket
+oh that is goodoj det var bra
+one language is never enoughett språk är aldrig nog
+one moment pleaseett ögonblick
+please speak more slowlyvar snäll och tala långsammare
+please write it downskulle du kunna skriva ned det åt mig?
+pleased to meet youtrevligt att träffas, trevligt att råkas, angenämt (vfrm)
+practice my {1}öva på min {1}
+reallyverkligen
+responsetack (thanks) tack så mycket (thanks very much)
+say hi to john for mehälsa john från mig
+see you laterses senare
+smallliten
+so-sosådär
+sorryförlåt!
+sorry (for a mistake)ursäkta mig
+stop!stanna!
+sweet dreamsdröm sött
+thank youtack
+thank you very muchtack så mycket
+tomorrow morningimorgon bitti
+tomorrow/ yesterdayimorgon/ igår
+turn leftsväng vänster
+turn rightsväng höger
+tusen tack (a thousand thanks)
+we are {1} years oldvi är {1} gamla
+welcomevälkommen [singular]
+welcomevälkomna [plural]
+what do you do for a living?vad jobbar du med?
+what does "gato" mean in english?vad betyder ¡°saktare¡± på engelska?
+what's new?något nytt på gång?
+what's that called in {1}?vad heter det på {1}?
+what's that in {1}?vad heter det på {1}?
+what's the time?vad är klockan?
+what's this?vad är det där?
+what's up?nå't nytt?
+what's your name?vad heter du?
+what time is it?vad är klockan?
+what?vad?
+where are you from?
+where are you from?var kommer du ifrån?
+where are you from?varifrån kommer du?
+where do you live?var bor du någonstans?
+where do you live?var bor du?
+where's {1}?var är {1}?
+where's {1}?vart ligger {1}?
+where's {1}?vart är {1}?
+where?vart?
+why this phrase?min svävare är full med ål
+would you like to dance with me?vill du dansa med mig?
+write it down pleaseskriv ner det, är ni snäll
+yes, a littleja, lite grann
+you are very kinddu är väldigt vänlig
+don't mention itingen orsak
+you are welcomeingen orsak
+you are welcomevar så god
+see you!vi ses!
+see you soon!vi ses snart!
+see you later!vi ses senare!

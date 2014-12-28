@@ -1344,7 +1344,7 @@ class Net(bool useArray = true,
         readFolketsFile("~/Knowledge/swesaurus/folkets_sv_en_public.xdxf".expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
-        learnAbsoluteThings();
+        learnPreciseThings();
 
         // Learn Less Absolute Things
         learnAssociativeThings();
@@ -1370,9 +1370,9 @@ class Net(bool useArray = true,
         /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
     }
 
-    /** Learn Absolute Thing.
+    /** Learn Precise (Absolute) Thing.
      */
-    void learnAbsoluteThings()
+    void learnPreciseThings()
     {
         learnEnglishComputerKnowledge();
 
@@ -1484,6 +1484,11 @@ class Net(bool useArray = true,
         learnChemicalElements();
 
         // English
+        learnPairs("../knowledge/en/synonym.txt",
+                   Sense.unknown, Lang.en,
+                   Rel.synonymFor,
+                   Sense.unknown, Lang.en,
+                   Origin.manual, 1.0);
         learnPairs("../knowledge/en/noun_synonym.txt",
                    Sense.noun, Lang.en,
                    Rel.synonymFor,
@@ -1512,6 +1517,11 @@ class Net(bool useArray = true,
                    Sense.noun, Lang.en,
                    Rel.translationOf,
                    Sense.noun, Lang.sv,
+                   Origin.manual, 1.0);
+        learnPairs("../knowledge/en-sv/phrase_translation.txt",
+                   Sense.unknown, Lang.en,
+                   Rel.translationOf,
+                   Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
 
         learnOpposites();
