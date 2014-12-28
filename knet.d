@@ -30,12 +30,14 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
+
     BUG book gets incorrect printing "is property of" instead of "has property"
 
     TODO At end of store() use convert Sense to string Rel.noun => "noun" and store it
          connect(secondRef, Rel.isA, store(groupName, firstLang, Sense.noun, origin), firstLang, origin, weight, false, false, true);
 
-    TODO Handle comma in .txt files
+    TODO Replace comma in .txt files with some other ASCII separator
 
     TODO Learn: https://sv.wikipedia.org/wiki/Modalt_hj%C3%A4lpverb
 
@@ -60,8 +62,6 @@
     traversed nodes is smaller than a randomnessThreshold
 
     TODO Integrate Hits from Google: "list of word emotions" using new relations hasEmotionLove
-
-    TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
 
     TODO See checkExisting in connect() to true only for Origin.manual
 
