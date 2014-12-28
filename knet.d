@@ -1727,6 +1727,15 @@ class Net(bool useArray = true,
         return lemmasOf(expr).map!(lemma => lemma.sense).filter!(sense => sense != Sense.unknown);
     }
 
+    /// Get Possible Common Sense for $(D a) and $(D b).
+    Sense commonSense(S1, S2)(S1 a, S2 b) if (isSomeString!S1 &&
+                                              isSomeString!S2)
+    {
+        auto commonSenses = setIntersection(sensesOf(a).sorted,
+                                            sensesOf(b).sorted);
+        return commonSenses.count == 1 ? commonSenses.front : Sense.unknown;
+    }
+
     /// Learn Opposites.
     void learnOpposites(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
@@ -1736,13 +1745,10 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
-            auto commonSenses = setIntersection(sensesOf(first).sorted,
-                                                sensesOf(second).sorted);
-            // if only one common sense use it
-            const commonSense = commonSenses.count == 1 ? commonSenses.front : Sense.unknown;
-            connect(store(first.idup, lang, commonSense, origin),
+            const sense = commonSense(first, second);
+            connect(store(first.idup, lang, sense, origin),
                     Rel.oppositeOf,
-                    store(second.idup, lang, commonSense, origin),
+                    store(second.idup, lang, sense, origin),
                     lang, origin, weight);
         }
     }
