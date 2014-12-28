@@ -1727,7 +1727,7 @@ class Net(bool useArray = true,
         return lemmasOf(expr).map!(lemma => lemma.sense).filter!(sense => sense != Sense.unknown);
     }
 
-    /// Get Possible Common Sense for $(D a) and $(D b).
+    /// Get Possible Common Sense for $(D a) and $(D b). TODO N-ary
     Sense commonSense(S1, S2)(S1 a, S2 b) if (isSomeString!S1 &&
                                               isSomeString!S2)
     {
