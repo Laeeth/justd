@@ -576,6 +576,7 @@ enum Sense:ubyte
     unknown,
 
     prefix,
+    suffix,
 
     ordinalNumber, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
 
@@ -607,6 +608,8 @@ enum Sense:ubyte
     /* Verb */
 
     verb,
+    verbAbbrevation,
+
     verbImperative,
 
     verbInfinitive,
@@ -631,6 +634,8 @@ enum Sense:ubyte
     /* Adjective */
 
     adjective,
+    adjectiveAbbrevation,
+
     adjectiveNominative,
     adjectiveComparative,
     adjectiveSuperlative,
@@ -821,6 +826,7 @@ unittest
     {
         with (Sense)
             return kind.of(verb,
+                           verbAbbrevation,
                            verbImperative,
                            verbInfinitive,
                            verbPresent,
@@ -832,6 +838,7 @@ unittest
     {
         with (Sense)
             return kind.of(adjective,
+                           adjectiveAbbrevation,
                            adjectiveNominative,
                            adjectiveComparative,
                            adjectiveSuperlative,

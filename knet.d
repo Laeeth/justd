@@ -45,7 +45,7 @@
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
     TODO Infer:
-         - X opposite of Y, Sense can be inferred in both directions
+         - if X rel Y and assert(R.isSymmetric): Sense can be inferred in both directions if some Sense is unknown
          - shampoo atLocation bathroom, shampoo stored in bottles => bottles atLocation bathroom
          - sulfur synonymWith sulphur => sulfuric synonymWith sulphuric
 
@@ -1736,18 +1736,13 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
-            // TODO If first and second already are learned as both either Sense.noun or Sense.adjective (using specializes) reuse them
-            auto firstSenses = sensesOf(first).sorted;
-            auto secondSenses = sensesOf(second).sorted;
-            auto bothSenses = setIntersection(firstSenses,
-                                              secondSenses);
-            if (!bothSenses.empty)
-            {
-                dln("expr:", expr, ", first:", firstSenses, ", second:", secondSenses, ", both:", bothSenses);
-            }
-            connect(store(first.idup, lang, Sense.unknown, origin),
+            auto commonSenses = setIntersection(sensesOf(first).sorted,
+                                                sensesOf(second).sorted);
+            // if only one common sense use it
+            const commonSense = commonSenses.count == 1 ? commonSenses.front : Sense.unknown;
+            connect(store(first.idup, lang, commonSense, origin),
                     Rel.oppositeOf,
-                    store(second.idup, lang, Sense.unknown, origin),
+                    store(second.idup, lang, commonSense, origin),
                     lang, origin, weight);
         }
     }
@@ -4027,44 +4022,66 @@ class Net(bool useArray = true,
 
             elp.parse;
 
-            auto sense = Sense.unknown;
+            Sense[] senses;
             switch (gr)
             {
                 case "":        // ok for unknown
                 case "latin":
-                    sense = Sense.unknown;
+                    senses ~= Sense.unknown;
                 break;
-                case "prefix": sense = Sense.prefix; break;
-                case "pm": sense = Sense.nounName; break;
-                case "nn": sense = Sense.noun; break;
-                case "vb": sense = Sense.verb; break;
-                case "hjälpverb": sense = Sense.auxiliaryVerb; break;
-                case "jj": sense = Sense.adjective; break;
-                case "pc": sense = Sense.adjective; break; // TODO can be either adjective or verb
-                case "ab": sense = Sense.adverb; break;
-                case "pp": sense = Sense.preposition; break;
-                case "pn": sense = Sense.pronoun; break;
-                case "kn": sense = Sense.conjunction; break;
-                case "in": sense = Sense.interjection; break;
-                case "abbrev": sense = Sense.nounAbbrevation; break;
-                case "nn, abbrev": sense = Sense.nounAbbrevation; break;
-                case "article": sense = Sense.article; break;
-                case "rg": sense = Sense.nounInteger; break;
-                case "ro": sense = Sense.ordinalNumber; break;
+                case "prefix": senses ~= Sense.prefix; break;
+                case "suffix": senses ~= Sense.suffix; break;
+                case "pm": senses ~= Sense.nounName; break;
+                case "nn": senses ~= Sense.noun; break;
+                case "vb": senses ~= Sense.verb; break;
+                case "hjälpverb": senses ~= Sense.auxiliaryVerb; break;
+                case "jj": senses ~= Sense.adjective; break;
+                case "pc": senses ~= Sense.adjective; break; // TODO can be either adjective or verb
+                case "ab": senses ~= Sense.adverb; break;
+                case "pp": senses ~= Sense.preposition; break;
+                case "pn": senses ~= Sense.pronoun; break;
+                case "kn": senses ~= Sense.conjunction; break;
+                case "in": senses ~= Sense.interjection; break;
+                case "abbrev": senses ~= Sense.nounAbbrevation; break;
+                case "nn, abbrev":
+                case "abbrev, nn":
+                    senses ~= Sense.nounAbbrevation; break;
+                case "article": senses ~= Sense.article; break;
+                case "rg": senses ~= Sense.nounInteger; break;
+                case "ro": senses ~= Sense.ordinalNumber; break;
+                case "in, nn": senses ~= [Sense.interjection, Sense.noun]; break;
+                case "jj, nn": senses ~= [Sense.adjective, Sense.noun]; break;
+                case "jj, pp": senses ~= [Sense.adjective, Sense.preposition]; break;
+                case "nn, jj": senses ~= [Sense.noun, Sense.adjective]; break;
+                case "jj, nn, ab": senses ~= [Sense.adjective, Sense.noun, Sense.adverb]; break;
+                case "ab, jj": senses ~= [Sense.adverb, Sense.adjective]; break;
+                case "jj, ab": senses ~= [Sense.adjective, Sense.adverb]; break;
+                case "ab, pp": senses ~= [Sense.adverb, Sense.preposition]; break;
+                case "ab, pn": senses ~= [Sense.adverb, Sense.pronoun]; break;
+                case "pp, ab": senses ~= [Sense.preposition, Sense.adverb]; break;
+                case "pp, kn": senses ~= [Sense.preposition, Sense.conjunction]; break;
+                case "ab, kn": senses ~= [Sense.adverb, Sense.conjunction]; break;
+                case "vb, nn": senses ~= [Sense.verb, Sense.noun]; break;
+                case "nn, vb": senses ~= [Sense.noun, Sense.verb]; break;
+                case "vb, abbrev": senses ~= [Sense.verbAbbrevation]; break;
+                case "jj, abbrev": senses ~= [Sense.adjectiveAbbrevation]; break;
                 default: dln(`warning: TODO "`, src, `" have sense "`, gr, `"`); break;
             }
 
-            foreach (dst; dsts)
+            foreach (sense; senses)
             {
-                if (dst.empty)
+                foreach (dst; dsts)
                 {
-                    dln(`warning: empty dst for "`, src, `"`);
-                    continue;
+                    if (dst.empty)
+                    {
+                        dln(`warning: empty dst for "`, src, `"`);
+                        continue;
+                    }
+                    connect(store(src, srcLang, sense, origin),
+                            Rel.translationOf,
+                            store(dst, dstLang, sense, origin),
+                            Lang.unknown, origin, 1.0, false, false, true);
                 }
-                connect(store(src, srcLang, sense, origin),
-                        Rel.translationOf,
-                        store(dst, dstLang, sense, origin),
-                        Lang.unknown, origin, 1.0, false, false, true);
             }
         };
         doc.parse;
