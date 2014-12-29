@@ -173,6 +173,8 @@ enum Lang:ubyte
     swift,
     fortran,
     modelica,
+
+    math,                ///< "Mathematics is the only truly universal language"
 }
 
 /** Return true if $(D lang) is case-sensitive. */
@@ -188,6 +190,7 @@ bool isFormal(Lang lang) @safe pure @nogc nothrow
     with (Lang) return (lang >= firstFormal);
 }
 alias forMachines = isFormal;
+alias isProgrammingLanguage = isFormal;
 
 /** TODO Remove when __traits(documentation is merged */
 string toHuman(Lang lang) @safe pure @nogc nothrow
@@ -314,6 +317,7 @@ string toHuman(Lang lang) @safe pure @nogc nothrow
             case swift: return `Swift`;
             case fortran: return `Fortran`;
             case modelica: return `Modelica`;
+            case math: return `Mathematics`;
         }
     }
 
@@ -582,9 +586,15 @@ enum Sense:ubyte
 
     noun,
     nounNumeric,
+
     nounInteger,                // 11
+    nounIntegerPositive,        // 0,1, ...
+    nounIntegerNegative,        // ..., -1, 0
+
+    nounDecimal,                // 3.14
+
     nounRationalNumber,         // 1/3
-    nounIrrationalNumber,       // pi
+    nounIrrationalNumber,       // pi, e
     nounComplexNumber,          // 1+2i
 
     nounName,                   // proper name
@@ -789,12 +799,8 @@ unittest
     bool isNoun(Sense kind)
     {
         with (Sense)
-            return (kind.of(noun,
-                            nounNumeric,
-                            nounInteger,
-                            nounRationalNumber,
-                            nounIrrationalNumber,
-                            nounComplexNumber,
+            return (kind.isNounNumeric ||
+                    kind.of(noun,
                             nounTimeWeekday,
                             nounTimeMonth,
                             nounTimeDayOfMonth,
@@ -808,10 +814,19 @@ unittest
     bool isNounNumeric(Sense kind)
     {
         with (Sense)
-            return (kind.of(nounNumeric,
-                            nounInteger,
+            return (kind.isNounInteger ||
+                    kind.of(nounNumeric,
+                            nounDecimal,
                             nounRationalNumber,
+                            nounIrrationalNumber,
                             nounComplexNumber));
+    }
+    bool isNounInteger(Sense kind)
+    {
+        with (Sense)
+            return (kind.of(nounInteger,
+                            nounIntegerPositive,
+                            nounIntegerNegative));
     }
     bool isNounName(Sense kind)
     {

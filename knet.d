@@ -1378,6 +1378,8 @@ class Net(bool useArray = true,
 
         learnEnglishIrregularVerbs();
 
+        learnMath();
+
         learnEnglishOther();
 
         learnUncountableNouns(Lang.en,
@@ -3104,6 +3106,35 @@ class Net(bool useArray = true,
         learnEnglishIrregularVerb("wind", "wound", "wound");
         learnEnglishIrregularVerb("wring", "wrung", "wrung");
         learnEnglishIrregularVerb("write", "wrote", "written");
+    }
+
+    /** Learn Math.
+     */
+    void learnMath()
+    {
+        const origin = Origin.manual;
+
+        connect(store("π", Lang.math, Sense.nounIrrationalNumber, origin),
+                Rel.translationOf,
+                store("pi", Lang.en, Sense.nounIrrationalNumber, origin),
+                Lang.en, origin, 1.0);
+        connect(store("e", Lang.math, Sense.nounIrrationalNumber, origin),
+                Rel.translationOf,
+                store("e", Lang.en, Sense.nounIrrationalNumber, origin),
+                Lang.en, origin, 1.0);
+
+        /// http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
+        connect(store("π", Lang.math, Sense.nounIrrationalNumber, origin),
+                Rel.definedAs,
+                store("3.14159265358979323846264338327950288419716939937510",
+                      Lang.math, Sense.nounDecimal, origin),
+                Lang.en, origin, 1.0);
+
+        connect(store("e", Lang.math, Sense.nounIrrationalNumber, origin),
+                Rel.definedAs,
+                store("2.71828182845904523536028747135266249775724709369995",
+                      Lang.math, Sense.nounDecimal, origin),
+                Lang.en, origin, 1.0);
     }
 
     /** Learn English Irregular Verbs.
