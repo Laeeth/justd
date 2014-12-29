@@ -1613,8 +1613,8 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/classic_major_literary_genre.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `classic major literary genre`, Sense.noun, Sense.noun);
 
         // English Names
-        learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameMale, Sense.noun);
-        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameFemale, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun);
 
         // Swedish Names
         learnAttributes(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun);
