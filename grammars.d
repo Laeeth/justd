@@ -587,21 +587,23 @@ enum Sense:ubyte
     noun,
     nounNumeric,
 
-    nounInteger,                // 11
-    nounIntegerPositive,        // 0,1, ...
-    nounIntegerNegative,        // ..., -1, 0
+    nounInteger,                /// 11
+    nounIntegerPositive,        /// 0,1, ...
+    nounIntegerNegative,        /// ..., -1, 0
 
-    nounDecimal,                // 3.14
+    nounDecimal,                /// 3.14
 
-    nounRationalNumber,         // 1/3
-    nounIrrationalNumber,       // pi, e
-    nounComplexNumber,          // 1+2i
+    nounRationalNumber,         /// 1/3
+    nounIrrationalNumber,       /// pi, e
+    nounComplexNumber,          /// 1+2i
 
-    nounName,                   // proper name
-    nounLocationName,           // Stockholm
-    nounPersonName,             // John
-    nounOrganisationName,       // CIA
-    nounCountry,                // Sweden
+    nounName,                   /// proper name
+    nounNameMale,               /// proper name
+    nounNameFemale,             /// proper name
+    nounLocationName,           /// Stockholm
+    nounPersonName,             /// John
+    nounOrganisationName,       /// CIA
+    nounCountry,                /// Sweden
 
     nounTimeWeekday,
     nounTimeMonth,
@@ -832,6 +834,8 @@ unittest
     {
         with (Sense)
             return kind.of(nounName,
+                           nounNameMale,
+                           nounNameFemale,
                            nounLocationName,
                            nounPersonName,
                            nounOrganisationName,
