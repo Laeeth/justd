@@ -3116,11 +3116,11 @@ class Net(bool useArray = true,
 
         connect(store("π", Lang.math, Sense.nounIrrationalNumber, origin),
                 Rel.translationOf,
-                store("pi", Lang.en, Sense.nounIrrationalNumber, origin),
+                store("pi", Lang.en, Sense.nounIrrationalNumber, origin), // TODO other Langs?
                 Lang.en, origin, 1.0);
         connect(store("e", Lang.math, Sense.nounIrrationalNumber, origin),
                 Rel.translationOf,
-                store("e", Lang.en, Sense.nounIrrationalNumber, origin),
+                store("e", Lang.en, Sense.nounIrrationalNumber, origin), // TODO other Langs?
                 Lang.en, origin, 1.0);
 
         /// http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
