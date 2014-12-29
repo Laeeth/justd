@@ -190,6 +190,8 @@ enum Rel:ubyte
 
     receivesAction,
 
+    shorthandFor,
+
     synonymFor, /* A and B have very similar meanings. This is the synonym relation
                 in WordNet as well. */
     synonym = synonymFor,
@@ -1167,6 +1169,26 @@ auto toHuman(const Rel rel,
                             case sv: words = ["används", not, "av"]; break;
                             case en:
                             default: words = ["is", not, "used by"]; break;
+                        }
+                    }
+                    break;
+                case shorthandFor:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["är", not, "en ihopskrivning för"]; break;
+                            case en:
+                            default: words = ["is", not, "a shorthand for"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "ihopskrivning"]; break;
+                            case en:
+                            default: words = ["does", not, "have shorthand"]; break;
                         }
                     }
                     break;

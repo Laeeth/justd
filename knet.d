@@ -1484,6 +1484,11 @@ class Net(bool useArray = true,
         learnChemicalElements();
 
         // English
+        learnPairs("../knowledge/en/shorthand.txt",
+                   Sense.unknown, Lang.en,
+                   Rel.shorthandFor,
+                   Sense.unknown, Lang.en,
+                   Origin.manual, 1.0);
         learnPairs("../knowledge/en/synonym.txt",
                    Sense.unknown, Lang.en,
                    Rel.synonymFor,
