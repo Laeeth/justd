@@ -1611,6 +1611,8 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/literary_genre.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `literary genre`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/major_literary_form.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `major literary form`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/classic_major_literary_genre.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `classic major literary genre`, Sense.noun, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounName, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounName, Sense.noun);
 
         learnPairs("../knowledge/en/color_adjective.txt",
                    Sense.adjective, Lang.en,
