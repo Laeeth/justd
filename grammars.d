@@ -600,6 +600,8 @@ enum Sense:ubyte
     nounName,                   /// proper name
     nounNameMale,               /// proper name
     nounNameFemale,             /// proper name
+    nounNameSur,                /// proper surname
+
     nounLocationName,           /// Stockholm
     nounPersonName,             /// John
     nounOrganisationName,       /// CIA
@@ -836,6 +838,7 @@ unittest
             return kind.of(nounName,
                            nounNameMale,
                            nounNameFemale,
+                           nounNameSur,
                            nounLocationName,
                            nounPersonName,
                            nounOrganisationName,
