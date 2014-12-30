@@ -1633,7 +1633,7 @@ ref T[] append(T, Args...)(ref T[] data,
             {
                 alias A = typeof(arg);
                 static if (isArray!A &&
-                           is(T == ElementType!(A)) &&
+                           is(T == ElementType!A) &&
                            hasLength!A)
                 {
                     result += arg.length;
