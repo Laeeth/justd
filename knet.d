@@ -1462,6 +1462,7 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/birthday.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `birthday`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/biomes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `biome`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dog`, Sense.noun, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/rodent.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `rodent`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/fish.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `fish`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/birds.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `bird`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/amphibians.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `amphibian`, Sense.noun, Sense.noun);
@@ -4470,6 +4471,17 @@ class Net(bool useArray = true,
 
         // as is
         showNodeRefs(lineNodeRefs);
+
+        if (lineNodeRefs.empty)
+        {
+            auto parts = normLine.splitter(" ");
+            if (parts.count >= 2)
+            {
+                const joinedLine = parts.joiner.to!string;
+                writeln(`> Joined to `, joinedLine);
+                showNodes(joinedLine, lang, sense, lineSeparator);
+            }
+        }
 
         // stemmed
         if (lineNodeRefs.empty)

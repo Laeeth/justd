@@ -1,0 +1,20 @@
+mouse
+hamster
+vole
+guinea pig
+rat
+capybara
+squirrel
+jirds
+shrew
+degu
+mole
+jerboa
+beaver
+groundhog
+muskrat
+chipmunk
+prairie dog
+porcupine
+gerbil
+chinchilla
