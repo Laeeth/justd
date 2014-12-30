@@ -714,11 +714,12 @@ enum Sense:ubyte
     articleUndefinite,
     articleDefinite,
     articlePartitive,
-    interjection,
 
     conjunction,
     coordinatingConjunction,
     subordinatingConjunction,
+
+    interjection, exclamation = interjection,
 }
 
 /** Part of a Sentence. */
