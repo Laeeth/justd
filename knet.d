@@ -1488,7 +1488,7 @@ class Net(bool useArray = true,
 
         learnPairs("../knowledge/en/irregular_noun.txt",
                    Sense.nounSingular, Lang.en,
-                   Rel.verbForm,
+                   Rel.nounForm,
                    Sense.nounPlural, Lang.en,
                    Origin.manual, 1.0);
 

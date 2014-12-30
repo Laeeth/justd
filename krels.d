@@ -262,6 +262,7 @@ enum Rel:ubyte
 
     wordForm,
     verbForm,
+    nounForm,
     adjectiveForm,
 
     generalizes, // TODO Merge with other enumerator?
@@ -1305,7 +1306,7 @@ auto toHuman(const Rel rel,
                 case wordForm:
                     switch (lang)
                     {
-                        case sv: words = ["har", not, "ord böjning"]; break;
+                        case sv: words = ["har", not, "ord form"]; break;
                         case en:
                         default: words = ["has ", not, "word form"]; break;
                     }
@@ -1313,15 +1314,23 @@ auto toHuman(const Rel rel,
                 case verbForm:
                     switch (lang)
                     {
-                        case sv: words = ["har", not, "verb böjning"]; break;
+                        case sv: words = ["har", not, "verb form"]; break;
                         case en:
                         default: words = ["has", not, "verb form"]; break;
+                    }
+                    break;
+                case nounForm:
+                    switch (lang)
+                    {
+                        case sv: words = ["har", not, "substantiv form"]; break;
+                        case en:
+                        default: words = ["has", not, "noun form"]; break;
                     }
                     break;
                 case adjectiveForm:
                     switch (lang)
                     {
-                        case sv: words = ["har", not, "adjektiv böjning"]; break;
+                        case sv: words = ["har", not, "adjektiv form"]; break;
                         case en:
                         default: words = ["has", not, "adjective form"]; break;
                     }
@@ -1443,6 +1452,7 @@ bool specializes(Rel special,
             case hasSubevent: return special.of(hasFirstSubevent,
                                                 hasLastSubevent);
             case wordForm: return special.of(verbForm,
+                                             nounForm,
                                              adjectiveForm);
             default: return special == general;
         }
@@ -1493,6 +1503,7 @@ bool generalizes(T)(T general,
 
                           wordForm,
                           verbForm,
+                          nounForm,
                           adjectiveForm);
     }
 
