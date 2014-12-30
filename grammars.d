@@ -585,6 +585,9 @@ enum Sense:ubyte
     ordinalNumber, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
 
     noun,
+    nounSingular,
+    nounPlural,
+
     nounNumeric,
 
     nounInteger,                /// 11
@@ -806,6 +809,8 @@ unittest
         with (Sense)
             return (kind.isNounNumeric ||
                     kind.of(noun,
+                            nounSingular,
+                            nounPlural,
                             nounTimeWeekday,
                             nounTimeMonth,
                             nounTimeDayOfMonth,

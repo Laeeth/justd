@@ -1486,6 +1486,12 @@ class Net(bool useArray = true,
 
         learnChemicalElements();
 
+        learnPairs("../knowledge/en/irregular_noun.txt",
+                   Sense.nounSingular, Lang.en,
+                   Rel.verbForm,
+                   Sense.nounPlural, Lang.en,
+                   Origin.manual, 1.0);
+
         learnPairs("../knowledge/sv/name_day.txt",
                    Sense.nounName, Lang.sv,
                    Rel.hasNameDay,
@@ -4103,6 +4109,7 @@ class Net(bool useArray = true,
                 case "ab": senses ~= Sense.adverb; break;
                 case "pp": senses ~= Sense.preposition; break;
                 case "pn": senses ~= Sense.pronoun; break;
+                case "ps": senses ~= Sense.pronounPossessive; break;
                 case "kn": senses ~= Sense.conjunction; break;
                 case "in": senses ~= Sense.interjection; break;
                 case "abbrev": senses ~= Sense.nounAbbrevation; break;
@@ -4110,11 +4117,14 @@ class Net(bool useArray = true,
                 case "abbrev, nn":
                     senses ~= Sense.nounAbbrevation; break;
                 case "article": senses ~= Sense.article; break;
-                case "rg": senses ~= Sense.nounInteger; break;
-                case "ro": senses ~= Sense.ordinalNumber; break;
+                case "rg":
+                case "rg, nn": senses ~= Sense.nounInteger; break;
+                case "ro":
+                case "ro, nn": senses ~= Sense.ordinalNumber; break;
                 case "in, nn": senses ~= [Sense.interjection, Sense.noun]; break;
                 case "jj, nn": senses ~= [Sense.adjective, Sense.noun]; break;
                 case "jj, pp": senses ~= [Sense.adjective, Sense.preposition]; break;
+                case "jj, pc": senses ~= [Sense.adjective]; break; // TODO can be either adjective or verb
                 case "nn, jj": senses ~= [Sense.noun, Sense.adjective]; break;
                 case "jj, nn, ab": senses ~= [Sense.adjective, Sense.noun, Sense.adverb]; break;
                 case "ab, jj": senses ~= [Sense.adverb, Sense.adjective]; break;
