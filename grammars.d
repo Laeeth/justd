@@ -611,6 +611,7 @@ enum Sense:ubyte
     nounTimeMonth,
     nounTimeDayOfMonth,
     nounTimeYear,
+    nounTimeDayOfYear, nounDate = nounTimeDayOfYear,
 
     nounSeason,
 

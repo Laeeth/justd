@@ -267,6 +267,8 @@ enum Rel:ubyte
     generalizes, // TODO Merge with other enumerator?
     specializes, // TODO reversionOf generalizes
 
+    hasNameDay,
+
     hasRelative,
     hasFamilyMember, // can be a dog
 

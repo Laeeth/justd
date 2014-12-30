@@ -1486,6 +1486,12 @@ class Net(bool useArray = true,
 
         learnChemicalElements();
 
+        learnPairs("../knowledge/sv/name_day.txt",
+                   Sense.nounName, Lang.sv,
+                   Rel.hasNameDay,
+                   Sense.nounDate, Lang.en,
+                   Origin.manual, 1.0);
+
         // English
         learnPairs("../knowledge/en/shorthand.txt",
                    Sense.unknown, Lang.en,
@@ -1729,12 +1735,12 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
 
-            auto firstRef = store(first.idup, firstLang, firstSense, origin);
+            auto firstRefs = store(first.splitter(',').map!idup, firstLang, firstSense, origin);
 
             if (!second.empty)
             {
-                auto secondRef = store(second.idup, secondLang, secondSense, origin);
-                connect(firstRef, rel, secondRef, secondLang, origin, weight, false, false, true);
+                auto secondRefs = store(second.splitter(',').map!idup, firstLang, secondSense, origin);
+                connectMtoN(firstRefs, rel, secondRefs, secondLang, origin, weight, false, false, true);
             }
         }
     }
@@ -3377,15 +3383,19 @@ class Net(bool useArray = true,
                                 D dsts,
                                 Lang lang,
                                 Origin origin,
-                                NWeight weight = 1.0) if (isIterableOf!(S, NodeRef) &&
-                                                          isIterableOf!(D, NodeRef))
+                                NWeight weight = 1.0,
+                                bool negation = false,
+                                bool reversion = false,
+                                bool checkExisting = false) if (isIterableOf!(S, NodeRef) &&
+                                                                isIterableOf!(D, NodeRef))
     {
         typeof(return) linkIxes;
         foreach (src; srcs)
         {
             foreach (dst; dsts)
             {
-                linkIxes ~= connect(src, rel, dst, lang, origin, weight);
+                linkIxes ~= connect(src, rel, dst, lang, origin, weight,
+                                    negation, reversion, checkExisting);
             }
         }
         return linkIxes;
