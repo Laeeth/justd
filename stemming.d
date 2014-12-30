@@ -524,6 +524,8 @@ unittest
 
 import dbg;
 
+/** Stem Swedish Word $(D s).
+ */
 auto ref stemSwedish(S)(S s) if (isSomeString!S)
 {
     enum ar = `ar`;
@@ -556,11 +558,17 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         {
             const t = s[0 .. $ - en.length];
             if (s.of(`även`))
+            {
                 return s;
+            }
             else if (t.of(`sann`))
+            {
                 return t;
+            }
             else if (t.endsWith(`mm`, `nn`))
+            {
                 return t[0 .. $ - 1];
+            }
             return t;
         }
         if (s.endsWith(ern))
@@ -570,10 +578,20 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         if (s.endsWith(an))
         {
             const t = s[0 .. $ - an.length];
-            if (t.endsWith(`ck`, `n`))
+            if (t.length >= 3 &&
+                t.endsWith(`tt`, `mp`, `ck`, `st`))
+            {
                 return s[0 ..$ - 1];
+            }
+            else if (t.length >= 2 &&
+                     t.endsWith(`n`, `p`))
+            {
+                return s[0 ..$ - 1];
+            }
             else if (t.length < 3)
+            {
                 return s;
+            }
             return t;
         }
     }
@@ -596,7 +614,9 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
             {
                 const u = t[0 .. $ - ar.length];
                 if (u.canFind!(a => a.isSwedishVowel))
+                {
                     return u;
+                }
                 else
                 {
                     return t[0 .. $ - 1];
@@ -629,9 +649,13 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         if (t.canFind!(a => a.isSwedishVowel))
         {
             if (t.endsWith(`mm`, `nn`))
+            {
                 return t[0 .. $ - 1];
+            }
             else
+            {
                 return t;
+            }
         }
         else
         {
@@ -643,29 +667,43 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     {
         const t = s[0 .. $ - aste.length];
         if (t.of(`sann`))
+        {
             return t;
+        }
         if (t.endsWith(`mm`, `nn`))
+        {
             return t[0 .. $ - 1];
+        }
         if (t.canFind!(a => a.isSwedishVowel))
+        {
             return t;
+        }
     }
 
     if (s.endsWith(are, ast))
     {
         const t = s[0 .. $ - are.length];
         if (t.of(`sann`))
+        {
             return t;
+        }
         if (t.endsWith(`mm`, `nn`))
+        {
             return t[0 .. $ - 1];
+        }
         if (t.canFind!(a => a.isSwedishVowel))
+        {
             return t;
+        }
     }
 
     if (s.endsWith(iserad))
     {
         const t = s[0 .. $ - iserad.length];
         if (!t.endsWith(`n`))
+        {
             return t;
+        }
     }
 
     if (s.endsWith(de))
@@ -675,13 +713,19 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         {
             const t = s[0 .. $ - ande.length];
             if (t.empty)
+            {
                 return s;
+            }
             else if (t[$ - 1].isSwedishConsonant)
+            {
                 return s[0 .. $ - 3];
+            }
             return t;
         }
         if (s.of(`hade`))
+        {
             return s;
+        }
         const t = s[0 .. $ - de.length];
         return t;
     }
@@ -694,7 +738,9 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
             const t = s[0 .. $ - ning.length];
             if (!t.endsWith(`n`) &&
                 t != `tid`)
+            {
                 return t;
+            }
         }
         return s[0 .. $ - ing.length];
     }
@@ -707,10 +753,14 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     return s;
 }
 
-import assert_ex;
-
 unittest
 {
+    // import assert_ex;
+
+    assert("rumpan".stemSwedish == "rumpa");
+    assert("sopan".stemSwedish == "sopa");
+    assert("kistan".stemSwedish == "kista");
+
     assert("karl".stemSwedish == "karl");
 
     assert("grenen".stemSwedish == "gren");
@@ -861,8 +911,7 @@ auto ref stemNorvegian(S)(S s) if (isSomeString!S)
 /** Stem $(D s) in Language $(D lang).
     If lang is unknown try each known language until failure.
  */
-Tuple!(S, Lang) stemIn(S)(S s,
-                        Lang lang = Lang.unknown) if (isSomeString!S)
+Tuple!(S, Lang) stemIn(S)(S s, Lang lang = Lang.unknown) if (isSomeString!S)
 {
     typeof(return) t;
     with (Lang)
@@ -886,8 +935,7 @@ Tuple!(S, Lang) stemIn(S)(S s,
 }
 
 /** Destructively Stem $(D s) in Language $(D lang). */
-Tuple!(bool, Lang) stemize(S)(ref S s,
-                              Lang lang = Lang.unknown) if (isSomeString!S)
+Tuple!(bool, Lang) stemize(S)(ref S s, Lang lang = Lang.unknown) if (isSomeString!S)
 {
     const n = s.length;
     auto t = s.stemIn(lang);
