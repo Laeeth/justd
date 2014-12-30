@@ -1618,9 +1618,9 @@ ref T[] append(T, Args...)(ref T[] data,
     else static if (allSatisfy!(isElementType, Args))
     {
         data.length += args.length;
-        foreach (i, ref e; args)
+        foreach (i, arg; args)
         {
-            data[$ - args.length + i] = e;
+            data[$ - args.length + i] = arg;
         }
     }
     else
@@ -1628,17 +1628,23 @@ ref T[] append(T, Args...)(ref T[] data,
         static size_t estimateLength(Args args)
         {
             size_t result;
-            foreach (ref e; args)
+            import std.traits: isArray;
+            foreach (arg; args)
             {
-                static if (hasLength!(typeof(e)))
+                alias A = typeof(arg);
+                static if (isArray!A &&
+                           is(T == ElementType!(A)) &&
+                           hasLength!A)
                 {
-                    result += e.length;
+                    result += arg.length;
                 }
                 else
                 {
                     result += 1;
                 }
             }
+            // import std.stdio;
+            // writeln(args, " : ", result);
             return result;
         }
 
@@ -1647,9 +1653,9 @@ ref T[] append(T, Args...)(ref T[] data,
 
         app.reserve(data.length + estimateLength(args));
 
-        foreach (ref e; args)
+        foreach (arg; args)
         {
-            app.put(e);
+            app.put(arg);
         }
         data = app.data;
     }
@@ -1659,14 +1665,20 @@ ref T[] append(T, Args...)(ref T[] data,
 
 unittest
 {
-    import std.stdio;
     int[] data;
     import std.range: only, iota;
+
     data.append(-1, 0, only(1, 2, 3), iota(4, 9));
     assert(data == [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]);
+
     data.append(9, 10);
     assert(data == [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    data.append(11);
-    assert(data == [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+
+    data.append([11, 12], [13, 14]);
+    assert(data == [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+
+    // int[3] d;
+    // data.append(d, d);
+
     static assert(!__traits(compiles, { data.append(); }));
 }
