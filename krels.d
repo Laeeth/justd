@@ -1134,6 +1134,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case decreasesRiskOf:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["minskar", not, "risken av"]; break;
+                            case en:
+                            default: words = ["does ", not, "decrease risk of"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["blir", not, "mindre sannolik av"]; break;
+                            case en:
+                            default: words = ["does", not, "become less likely by"]; break;
+                        }
+                    }
+                    break;
                 case desires:
                     if (dir == RelDir.forward)
                     {
