@@ -830,6 +830,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case specializes:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["specialiserar", not]; break;
+                            case en:
+                            default: words = ["does", not, "specialize"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "specialiseras av"]; break;
+                            case en:
+                            default: words = ["can", not, "be specialized by"]; break;
+                        }
+                    }
+                    break;
                 case eats:
                     if (dir == RelDir.forward)
                     {
@@ -1356,6 +1376,22 @@ auto toHuman(const Rel rel,
                         default: words = ["has", not, "adjective form"]; break;
                     }
                     break;
+                case cookedWith:
+                    switch (lang)
+                    {
+                        case sv: words = ["kan", not, "lagas med"]; break;
+                        case en:
+                        default: words = ["can be", not, "cooked with"]; break;
+                    }
+                    break;
+                case servedWith:
+                    switch (lang)
+                    {
+                        case sv: words = ["kan", not, "serveras med"]; break;
+                        case en:
+                        default: words = ["can be", not, "served with"]; break;
+                    }
+                    break;
                 default:
                     import std.conv: to;
                     const ordered = !rel.isSymmetric;
@@ -1512,8 +1548,6 @@ bool generalizes(T)(T general,
                           hasFamilyMember,
                           hasSpouse,
                           hasSibling,
-                          hasBrother,
-                          hasSister,
 
                           competesWith,
                           cookedWith,
