@@ -26,9 +26,16 @@
     Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
     Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
     Data: http://www.words-to-use.com/
-    Data: http://www.ethnologue.com/browse/names
+
+    English Phrases: http://www.talkenglish.com
+    Names: http://www.nordicnames.de/
+    Names: http://www.behindthename.com/
+    Names: http://www.ethnologue.com/browse/names
+    Names: http://www.20000-names.com/
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
+
+    TODO Learn Sense.uncountablesNouns first and then reuse and specializes "love" in Sense.noun
 
     TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
 
@@ -1374,6 +1381,9 @@ class Net(bool useArray = true,
      */
     void learnPreciseThings()
     {
+        learnAttributes(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.nounUncountable, Sense.noun);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.nounUncountable, Sense.noun);
+
         learnEnglishComputerKnowledge();
 
         learnEnglishIrregularVerbs();
@@ -1381,22 +1391,6 @@ class Net(bool useArray = true,
         learnMath();
 
         learnEnglishOther();
-
-        learnUncountableNouns(Lang.en,
-                              ["music", "art", "love", "happiness",
-                               "math", "physics",
-                               "advice", "information", "news",
-                               "furniture", "luggage",
-                               "rice", "sugar", "butter", // generalize to seed (grödor) or substance
-                               "water", "rain", // generalize to fluids
-                               "coffee", "wine", "beer", "whiskey", "milk", // generalize to beverage
-                               "electricity", "gas", "power"
-                               "money", "currency",
-                               "crockery", "cutlery",
-                               "luggage", "baggage", "glass", "sand"]);
-        learnUncountableNouns(Lang.sv,
-                              ["apotek", "hypotek", "bibliotek", "fonotek", "filmotek",
-                               "pinaotek", "videotek", "diskotek", "mediatek", "datortek", "glyptotek"]);
 
         learnReversions();
         learnEtymologicallyDerivedFroms();
@@ -1544,6 +1538,13 @@ class Net(bool useArray = true,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
 
+        // French-English
+        learnPairs("../knowledge/fr-en/phrase_translation.txt",
+                   Sense.unknown, Lang.fr,
+                   Rel.translationOf,
+                   Sense.unknown, Lang.en,
+                   Origin.manual, 1.0);
+
         learnOpposites();
     }
 
@@ -1620,6 +1621,11 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, false, `say`, Sense.verb, Sense.verb);
         learnAttributes(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, true, `book`, Sense.adjective, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/informal.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, false, `informal`, Sense.adjective, Sense.noun);
+
+        // Red Wine
+        learnAttributes(Lang.en, rdT("../knowledge/en/red_wine_color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `red wine color`, Sense.noun, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/red_wine_flavor.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `red wine flavor`, Sense.noun, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/red_wine_food.txt").splitter('\n').filter!(w => !w.empty), Rel.servedWith, false, `red wine`, Sense.noun, Sense.noun);
 
         learnAttributes(Lang.en, rdT("../knowledge/en/literary_genre.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `literary genre`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/major_literary_form.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `major literary form`, Sense.noun, Sense.noun);
