@@ -20,6 +20,7 @@ enum Rel:ubyte
           * make that distinction.) This is the hyponym relation in
           * WordNet. /r/IsA /c/en/car /c/en/vehicle ; /r/IsA /c/en/chicago
           * /c/en/city */
+    mayBeA,
 
     partOf, /* A is a part of B. This is the part meronym relation in
                WordNet. /r/PartOf /c/en/gearshift /c/en/car */
@@ -436,6 +437,26 @@ auto toHuman(const Rel rel,
                             case de: words = ["can", not, "sein ein"]; break;
                             case en:
                             default: words = ["can", not, "be a"]; break;
+                        }
+                    }
+                    break;
+                case mayBeA:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "vara en"]; break;
+                            case en:
+                            default: words = ["may", not, "be a"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "vara en"]; break;
+                            case en:
+                            default: words = ["may", not, "be a"]; break;
                         }
                     }
                     break;
