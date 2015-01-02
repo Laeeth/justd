@@ -1567,6 +1567,10 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/winter.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `winter`, Sense.unknown, Sense.nounSeason);
         learnAttributes(Lang.en, rdT("../knowledge/en/spring.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `spring`, Sense.unknown, Sense.nounSeason);
 
+        learnAttributes(Lang.en, rdT("../knowledge/en/summer_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.noun, Sense.nounSeason);
+        learnAttributes(Lang.en, rdT("../knowledge/en/summer_adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.adjective, Sense.nounSeason);
+        learnAttributes(Lang.en, rdT("../knowledge/en/summer_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.verb, Sense.nounSeason);
+
         learnAttributes(Lang.en, rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, false, `house`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `device`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/farm.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, false, `farm`, Sense.noun, Sense.noun);
