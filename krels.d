@@ -1337,6 +1337,26 @@ auto toHuman(const Rel rel,
                         }
                     }
                     break;
+                case hasMeaning:
+                    if (dir == RelDir.forward)
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["har", not, "betydelsen"]; break;
+                            case en:
+                            default: words = ["does", not, "have meaning"]; break;
+                        }
+                    }
+                    else
+                    {
+                        switch (lang)
+                        {
+                            case sv: words = ["kan", not, "beskrivas av"]; break;
+                            case en:
+                            default: words = ["can", not, "be described by"]; break;
+                        }
+                    }
+                    break;
                 case mutualProxyFor:
                     switch (lang)
                     {
