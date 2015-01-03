@@ -93,6 +93,7 @@ enum Rel:ubyte
     headquarteredIn,
 
     hasContext,
+    hasMeaning,
 
     locatedNear,                // TODO or AtLocation?
     borderedBy,

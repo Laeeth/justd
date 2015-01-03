@@ -12,3 +12,4 @@ mediatek
 pinaotek
 scenery
 videotek
+bestyr

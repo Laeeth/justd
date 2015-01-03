@@ -1,416 +1,416 @@
-absentpresent
-abundantscarce
-acceptdecline
-acceptrefuse
-accurateinaccurate
-admitdeny
-advantagedisadvantage
-againstfor
-agreedisagree
-alivedead
-allnone
-allnothing
-allyenemy
-alwaysnever
-ancientmodern
-answerquestion
-antonymsynonym
-aparttogether
-appeardisappear
-appearvanish
-approvedisapprove
-arrivedepart
-artificialnatural
-ascenddescend
-atticcellar
-attractiverepulsive
-awakeasleep
-backwardforward
-badgood
-beautifulugly
-beforeafter
-beginend
-belowabove
-bentstraight
-bestworst
-betterworse
-betterworst
-biglittle
-bigsmall
-bittersweet
-blackwhite
-blamepraise
-blesscurse
-boldmeek
-boldtimid
-borrowlend
-bottomtop
-boundfree
-boundunbound
-boundlesslimited
-boygirl
-bravecowardly
-brightdim
-brightdull
-brightenfade
-broadnarrow
-builddestroy
-calmtroubled
-calmwindy
-cancan't
-cancannot
-capableincapable
-captivefree
-carefulcareless
-cheapexpensive
-cheerfuldiscouraged
-cheerfuldreary
-cheerfulsad
-clearcloudy
-clearopaque
-cleverstupid
-clockwisecounterclockwise
-closedistant
-closefar
-closedajar
-closedopen
-clumsygraceful
-coldhot
-combineseparate
-comego
-comfortdiscomfort
-commonrare
-compulsoryvoluntary
-concealreveal
-contractexpand
-coolwarm
-correctincorrect
-correctwrong
-couragecowardice
-courteousdiscourteous
-courteousrude
-createdestroy
-crookedstraight
-cruelkind
-dangeroussafe
-darklight
-daynight
-daytimenighttime
-deadalive
-declineaccept
-declineincrease
-decreaseincrease
-deepshallow
-definiteindefinite
-demandsupply
-despairhope
-dimbright
-disappearappear
-discourageencourage
-diseasedhealthy
-downup
-downwardsupwards
-drearycheerful
-drymoist
-drywet
-dullbright
-dullshiny
-duskdawn
-earlylate
-eastwest
-easydifficult
-easyhard
-emptyfull
-encouragediscourage
-endbegin
-endstart
-enterexit
-evenodd
-expandcontract
-exportimport
-exteriorinterior
-externalinternal
-fadebrighten
-failsucceed
-famousunknown
-farnear
-fastslow
-fatthin
-feeblepowerful
-feeblestrong
-fewmany
-findlose
-firstlast
-floatsink
-foldunfold
-foolishwise
-foragainst
-foreaft
-forgetremember
-fortunateunfortunate
-foundlost
-freebound
-freecaptive
-frequentseldom
-freshstale
-friendenemy
-fullempty
-generousstingy
-gentlerough
-getgive
-giantdwarf
-giantsmall
-gianttiny
-girlboy
-givereceive
-givetake
-gladsad
-gladsorry
-gloomycheerful
-gostop
-goodbad
-goodevil
-grantrefuse
-greatsmall
-greattiny
-greatunimportant
-growshrink
-guesthost
-guiltyinnocent
-happysad
-hardeasy
-hardsoft
-harmfulharmless
-harshmild
-hatelove
-haveshavenots
-healthydiseased
-healthyill
-healthysick
-heavenhell
-heavylight
-helphinder
-herethere
-herocoward
-highlow
-hillvalley
-hinderhelp
-honestdishonest
-horizontalvertical
-hotcold
-humbleproud
-illhealthy
-illwell
-immensesmall
-immensetiny
-importanttrivial
-inout
-includeexclude
-increasedecrease
-inferiorsuperior
-inhaleexhale
-innerouter
-insideoutside
-intelligentstupid
-intelligentunintelligent
-intentionalaccidental
-interestingboring
-interestingdull
-interestinguninteresting
-interiorexterior
-internalexternal
-joinseparate
-juniorsenior
-justunjust
-justiceinjustice
-knowledgeignorance
-knownunknown
-landlordtenant
-largesmall
-lastfirst
-laughcry
-lawfulillegal
-lawfulunlawful
-lazyindustrious
-leaderfollower
-leftright
-lend borrow
-lengthenshorten
-lenientstrict
-lessmore
-lightdark
-lightheavy
-likedislike
-likehate
-likelyunlikely
-limitedboundless
-longshort
-loosetight
-losefind
-losswin
-loudquiet
-lovehate
-lowhigh
-loyaldisloyal
-madhappy
-madsane
-majorminor
-manyfew
-matureimmature
-maximumminimum
-meltfreeze
-merrysad
-messyneat
-minormajor
-minoritymajority
-miserspendthrift
-misunderstandunderstand
-moreless
-nadirzenith
-narrowwide
-neardistant
-nearfar
-neatmessy
-neatuntidy
-neveralways
-newold
-nightday
-nighttimedaytime
-noyes
-noisyquiet
-nonesome
-northsouth
-obedientdisobedient
-oddeven
-offerrefuse
-oldnew
-oldyoung
-onoff
-openclosed
-openshut
-opposite same
-oppositesimilar
-optimistpessimist
-outin
-outerinner
-overunder
-pastpresent
-patientimpatient
-peacewar
-permanenttemporary
-plentifulscarce
-pluralsingular
-poetryprose
-politeimpolite
-politerude
-possibleimpossible
-povertyriches
-povertywealth
-powerfulweak
-prettyugly
-privatepublic
-prudentimprudent
-purecontaminated
-pureimpure
-pushpull
-qualifiedunqualified
-questionanswer
-quietloud
-quietnoisy
-raiselower
-rapidslow
-rarecommon
-realfake
-regularirregular
-richpoor
-rightleft
-rightsideupupsidedown
-rightwrong
-roughsmooth
-rudecourteous
-safeunsafe
-sameopposite
-satisfactoryunsatisfactory
-scattercollect
-secondhandnew
-secureinsecure
-separatejoin
-separatetogether
-serioustrivial
-shallowdeep
-shrinkgrow
-sickhealthy
-sickill
-simplecomplex
-simplehard
-singularplural
-sinkfloat
-slimfat,thick
-slowfast
-soberdrunk
-softhard
-somenone
-sorrowjoy
-soursweet
-sow reap
-startfinish
-stopgo
-straightcrooked
-strictlenient
-strongweak
-successfailure
-sunnycloudy
-sweetsour
-synonymantonym
-takegive
-tallshort
-tamewild
-themus
-therehere
-thickthin
-tightloose
-tightslack
-tinybig
-tinyhuge
-togetherapart
-topbottom
-tougheasy
-toughtender
-transparentopaque
-truefalse
-truthfalsehood
-truthlie
-truthuntruth
-underover
-unfoldfold
-unknownknown
-unqualifiedqualified
-unsafesafe
-updown
-upside-downright-side-up
-upstairdownstair
-usthem
-usefuluseless
-vacantoccupied
-vanishappear
-vasttiny
-victorydefeat
-virtuevice
-visibleinvisible
-voluntarycompulsory
-warpeace
-waxwane
-weakstrong
-wetdry
-whiteblack
-widenarrow
-winlose
-wisdomfolly
-wisdomstupidity
-withinoutside
-wrongright
-yesno
-yinyang
-youngold
-zenithnadir
-zipunzip
+absentpresent
+abundantscarce
+acceptdecline
+acceptrefuse
+accurateinaccurate
+admitdeny
+advantagedisadvantage
+againstfor
+agreedisagree
+alivedead
+allnone
+allnothing
+allyenemy
+alwaysnever
+ancientmodern
+answerquestion
+antonymsynonym
+aparttogether
+appeardisappear
+appearvanish
+approvedisapprove
+arrivedepart
+artificialnatural
+ascenddescend
+atticcellar
+attractiverepulsive
+awakeasleep
+backwardforward
+badgood
+beautifulugly
+beforeafter
+beginend
+belowabove
+bentstraight
+bestworst
+betterworse
+betterworst
+biglittle
+bigsmall
+bittersweet
+blackwhite
+blamepraise
+blesscurse
+boldmeek
+boldtimid
+borrowlend
+bottomtop
+boundfree
+boundunbound
+boundlesslimited
+boygirl
+bravecowardly
+brightdim
+brightdull
+brightenfade
+broadnarrow
+builddestroy
+calmtroubled
+calmwindy
+cancan't
+cancannot
+capableincapable
+captivefree
+carefulcareless
+cheapexpensive
+cheerfuldiscouraged
+cheerfuldreary
+cheerfulsad
+clearcloudy
+clearopaque
+cleverstupid
+clockwisecounterclockwise
+closedistant
+closefar
+closedajar
+closedopen
+clumsygraceful
+coldhot
+combineseparate
+comego
+comfortdiscomfort
+commonrare
+compulsoryvoluntary
+concealreveal
+contractexpand
+coolwarm
+correctincorrect
+correctwrong
+couragecowardice
+courteousdiscourteous
+courteousrude
+createdestroy
+crookedstraight
+cruelkind
+dangeroussafe
+darklight
+daynight
+daytimenighttime
+deadalive
+declineaccept
+declineincrease
+decreaseincrease
+deepshallow
+definiteindefinite
+demandsupply
+despairhope
+dimbright
+disappearappear
+discourageencourage
+diseasedhealthy
+downup
+downwardsupwards
+drearycheerful
+drymoist
+drywet
+dullbright
+dullshiny
+duskdawn
+earlylate
+eastwest
+easydifficult
+easyhard
+emptyfull
+encouragediscourage
+endbegin
+endstart
+enterexit
+evenodd
+expandcontract
+exportimport
+exteriorinterior
+externalinternal
+fadebrighten
+failsucceed
+famousunknown
+farnear
+fastslow
+fatthin
+feeblepowerful
+feeblestrong
+fewmany
+findlose
+firstlast
+floatsink
+foldunfold
+foolishwise
+foragainst
+foreaft
+forgetremember
+fortunateunfortunate
+foundlost
+freebound
+freecaptive
+frequentseldom
+freshstale
+friendenemy
+fullempty
+generousstingy
+gentlerough
+getgive
+giantdwarf
+giantsmall
+gianttiny
+girlboy
+givereceive
+givetake
+gladsad
+gladsorry
+gloomycheerful
+gostop
+goodbad
+goodevil
+grantrefuse
+greatsmall
+greattiny
+greatunimportant
+growshrink
+guesthost
+guiltyinnocent
+happysad
+hardeasy
+hardsoft
+harmfulharmless
+harshmild
+hatelove
+haveshavenots
+healthydiseased
+healthyill
+healthysick
+heavenhell
+heavylight
+helphinder
+herethere
+herocoward
+highlow
+hillvalley
+hinderhelp
+honestdishonest
+horizontalvertical
+hotcold
+humbleproud
+illhealthy
+illwell
+immensesmall
+immensetiny
+importanttrivial
+inout
+includeexclude
+increasedecrease
+inferiorsuperior
+inhaleexhale
+innerouter
+insideoutside
+intelligentstupid
+intelligentunintelligent
+intentionalaccidental
+interestingboring
+interestingdull
+interestinguninteresting
+interiorexterior
+internalexternal
+joinseparate
+juniorsenior
+justunjust
+justiceinjustice
+knowledgeignorance
+knownunknown
+landlordtenant
+largesmall
+lastfirst
+laughcry
+lawfulillegal
+lawfulunlawful
+lazyindustrious
+leaderfollower
+leftright
+lend borrow
+lengthenshorten
+lenientstrict
+lessmore
+lightdark
+lightheavy
+likedislike
+likehate
+likelyunlikely
+limitedboundless
+longshort
+loosetight
+losefind
+losswin
+loudquiet
+lovehate
+lowhigh
+loyaldisloyal
+madhappy
+madsane
+majorminor
+manyfew
+matureimmature
+maximumminimum
+meltfreeze
+merrysad
+messyneat
+minormajor
+minoritymajority
+miserspendthrift
+misunderstandunderstand
+moreless
+nadirzenith
+narrowwide
+neardistant
+nearfar
+neatmessy
+neatuntidy
+neveralways
+newold
+nightday
+nighttimedaytime
+noyes
+noisyquiet
+nonesome
+northsouth
+obedientdisobedient
+oddeven
+offerrefuse
+oldnew
+oldyoung
+onoff
+openclosed
+openshut
+opposite same
+oppositesimilar
+optimistpessimist
+outin
+outerinner
+overunder
+pastpresent
+patientimpatient
+peacewar
+permanenttemporary
+plentifulscarce
+pluralsingular
+poetryprose
+politeimpolite
+politerude
+possibleimpossible
+povertyriches
+povertywealth
+powerfulweak
+prettyugly
+privatepublic
+prudentimprudent
+purecontaminated
+pureimpure
+pushpull
+qualifiedunqualified
+questionanswer
+quietloud
+quietnoisy
+raiselower
+rapidslow
+rarecommon
+realfake
+regularirregular
+richpoor
+rightleft
+rightsideupupsidedown
+rightwrong
+roughsmooth
+rudecourteous
+safeunsafe
+sameopposite
+satisfactoryunsatisfactory
+scattercollect
+secondhandnew
+secureinsecure
+separatejoin
+separatetogether
+serioustrivial
+shallowdeep
+shrinkgrow
+sickhealthy
+sickill
+simplecomplex
+simplehard
+singularplural
+sinkfloat
+slimfat,thick
+slowfast
+soberdrunk
+softhard
+somenone
+sorrowjoy
+soursweet
+sow reap
+startfinish
+stopgo
+straightcrooked
+strictlenient
+strongweak
+successfailure
+sunnycloudy
+sweetsour
+synonymantonym
+takegive
+tallshort
+tamewild
+themus
+therehere
+thickthin
+tightloose
+tightslack
+tinybig
+tinyhuge
+togetherapart
+topbottom
+tougheasy
+toughtender
+transparentopaque
+truefalse
+truthfalsehood
+truthlie
+truthuntruth
+underover
+unfoldfold
+unknownknown
+unqualifiedqualified
+unsafesafe
+updown
+upside-downright-side-up
+upstairdownstair
+usthem
+usefuluseless
+vacantoccupied
+vanishappear
+vasttiny
+victorydefeat
+virtuevice
+visibleinvisible
+voluntarycompulsory
+warpeace
+waxwane
+weakstrong
+wetdry
+whiteblack
+widenarrow
+winlose
+wisdomfolly
+wisdomstupidity
+withinoutside
+wrongright
+yesno
+yinyang
+youngold
+zenithnadir
+zipunzip

@@ -35,6 +35,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Replace comma in .txt files with some other ASCII separator
+
     TODO Learn Sense.uncountablesNouns first and then reuse and specializes "love" in Sense.noun
 
     TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
@@ -43,8 +45,6 @@
 
     TODO At end of store() use convert Sense to string Rel.noun => "noun" and store it
          connect(secondRef, Rel.isA, store(groupName, firstLang, Sense.noun, origin), firstLang, origin, weight, false, false, true);
-
-    TODO Replace comma in .txt files with some other ASCII separator
 
     TODO Learn: https://sv.wikipedia.org/wiki/Modalt_hj%C3%A4lpverb
 
@@ -197,13 +197,15 @@ enum char asciiRS = '';       // ASCII Record Separator
 enum char asciiGS = '';       // ASCII Group Separator
 enum char asciiFS = '';       // ASCII File Separator
 
-enum separator = asciiUS;
-enum weightSeparator = '#';
+enum syllableSeparator = asciiUS; // separates syllables
+enum alternativesSeparator = asciiRS; // separates alternatives
+enum roleSeparator = asciiFS; // separates subject from object, translations, etc.
+enum qualifierSeparator = ':'; // noun:eka
+enum countSeparator = '#'; // gives occurrence count
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
 /* import containers: HashMap; */
-
 
 static if (__VERSION__ < 2067)
 {
@@ -1386,7 +1388,7 @@ class Net(bool useArray = true,
 
         learnEnglishComputerKnowledge();
 
-        learnEnglishIrregularVerbs();
+        learnEnglishVerbs();
 
         learnMath();
 
@@ -1402,6 +1404,14 @@ class Net(bool useArray = true,
         learnEnglishFeelings();
         learnSwedishFeelings();
 
+        // Male Names
+        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
+
+        // Surnames
+        learnAttributes(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun);
+
         // TODO functionize to learnGroup
         learnAttributes(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `compound word`, Sense.unknown, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.noun, Sense.noun);
@@ -1415,14 +1425,11 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `determiner`, Sense.determiner, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `predeterminer`, Sense.predeterminer, Sense.noun);
-
         learnAttributes(Lang.en, rdT("../knowledge/en/dolch_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch word`, Sense.unknown, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `personal quality`, Sense.adjective, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/prepositions.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `preposition`, Sense.preposition, Sense.noun);
-
         learnAttributes(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `color`, Sense.unknown, Sense.noun);
-
         learnAttributes(Lang.en, rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `shape`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `fruit`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/plants.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `plant`, Sense.noun, Sense.noun);
@@ -1452,7 +1459,6 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/pair.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pair`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/season.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `season`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/holiday.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `holiday`, Sense.noun, Sense.noun);
-
         learnAttributes(Lang.en, rdT("../knowledge/en/birthday.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `birthday`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/biomes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `biome`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/dogs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dog`, Sense.noun, Sense.noun);
@@ -1478,31 +1484,46 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `mineral group`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `major mineral group`, Sense.noun, Sense.noun);
 
+        // Swedish
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/house.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `hus`, Sense.noun, Sense.noun);
+
         learnChemicalElements();
 
+        // Irregular Noun
         learnPairs("../knowledge/en/irregular_noun.txt",
                    Sense.nounSingular, Lang.en,
                    Rel.nounForm,
                    Sense.nounPlural, Lang.en,
                    Origin.manual, 1.0);
-
-        learnPairs("../knowledge/sv/name_day.txt",
-                   Sense.nounName, Lang.sv,
-                   Rel.hasNameDay,
-                   Sense.nounDate, Lang.en,
+        learnPairs("../knowledge/sv/irregular_noun.txt",
+                   Sense.nounSingular, Lang.sv,
+                   Rel.nounForm,
+                   Sense.nounPlural, Lang.sv,
                    Origin.manual, 1.0);
 
-        // English
+        // Shorthand
         learnPairs("../knowledge/en/shorthand.txt",
                    Sense.unknown, Lang.en,
                    Rel.shorthandFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
+        learnPairs("../knowledge/sv/shorthand.txt",
+                   Sense.unknown, Lang.sv,
+                   Rel.shorthandFor,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, 1.0);
+
+        // Synonym
         learnPairs("../knowledge/en/synonym.txt",
                    Sense.unknown, Lang.en,
                    Rel.synonymFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
+        learnPairs("../knowledge/sv/synonym.txt",
+                   Sense.unknown, Lang.sv,
+                   Rel.synonymFor,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, 0.5);
         learnPairs("../knowledge/en/noun_synonym.txt",
                    Sense.noun, Lang.en,
                    Rel.synonymFor,
@@ -1513,20 +1534,21 @@ class Net(bool useArray = true,
                    Rel.synonymFor,
                    Sense.adjective, Lang.en,
                    Origin.manual, 1.0);
+
+        // Acronym
         learnPairs("../knowledge/en/acronym.txt",
                    Sense.nounAcronym, Lang.en,
                    Rel.acronymFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
 
-        // Swedish
-        learnPairs("../knowledge/sv/synonym.txt",
-                   Sense.unknown, Lang.sv,
-                   Rel.synonymFor,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 0.5);
+        learnPairs("../knowledge/sv/name_day.txt",
+                   Sense.nounName, Lang.sv,
+                   Rel.hasNameDay,
+                   Sense.nounDate, Lang.en,
+                   Origin.manual, 1.0);
 
-        // English-Swedish
+        // Translation
         learnPairs("../knowledge/en-sv/noun_translation.txt",
                    Sense.noun, Lang.en,
                    Rel.translationOf,
@@ -1538,7 +1560,6 @@ class Net(bool useArray = true,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
 
-        // French-English
         learnPairs("../knowledge/fr-en/phrase_translation.txt",
                    Sense.unknown, Lang.fr,
                    Rel.translationOf,
@@ -1635,21 +1656,22 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/major_literary_form.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `major literary form`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/classic_major_literary_genre.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `classic major literary genre`, Sense.noun, Sense.noun);
 
-        // English Names
-        learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun);
-        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun);
+        // Female Names
+        learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun, 1.0);
 
-        // Swedish Names
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun);
+        learnPairs("../knowledge/sv/male_name_meaning.txt",
+                   Sense.nounNameMale, Lang.sv,
+                   Rel.hasMeaning,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, 0.7);
 
-        learnPairs("../knowledge/en/color_adjective.txt",
-                   Sense.adjective, Lang.en,
-                   Rel.similarTo,
-                   Sense.unknown, Lang.en,
-                   Origin.manual, 0.5);
-   }
+        learnPairs("../knowledge/sv/female_name_meaning.txt",
+                   Sense.nounNameFemale, Lang.sv,
+                   Rel.hasMeaning,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, 0.7);
+    }
 
     /// Learn Emotions.
     void learnEmotions()
@@ -1700,14 +1722,14 @@ class Net(bool useArray = true,
         {
             if (expr.empty) { continue; }
 
-            auto split = expr.findSplit([weightSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
-            const name = split[0], weight = split[2];
+            auto split = expr.findSplit([countSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            const name = split[0], count = split[2];
 
             NWeight nweight = 1.0;
-            if (!weight.empty)
+            if (!count.empty)
             {
-                const w = weight.to!NWeight;
-                nweight = w/(1 + w); // normalized weight
+                const w = count.to!NWeight;
+                nweight = w/(1 + w); // count to normalized weight
             }
 
             connect(store(name.idup, lang, wordSense, origin),
@@ -1723,7 +1745,7 @@ class Net(bool useArray = true,
         foreach (expr; File("../knowledge/en/chemical_elements.txt").byLine)
         {
             if (expr.empty) { continue; }
-            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const name = split[0], abbr = split[2];
             NWeight weight = 1.0;
             connect(store(name.idup, lang, Sense.noun, origin),
@@ -1748,14 +1770,14 @@ class Net(bool useArray = true,
         foreach (expr; File(path).byLine)
         {
             if (expr.empty) { continue; }
-            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
 
-            auto firstRefs = store(first.splitter(',').map!idup, firstLang, firstSense, origin);
+            auto firstRefs = store(first.splitter(alternativesSeparator).map!idup, firstLang, firstSense, origin);
 
             if (!second.empty)
             {
-                auto secondRefs = store(second.splitter(',').map!idup, firstLang, secondSense, origin);
+                auto secondRefs = store(second.splitter(alternativesSeparator).map!idup, firstLang, secondSense, origin);
                 connectMtoN(firstRefs, rel, secondRefs, secondLang, origin, weight, false, false, true);
             }
         }
@@ -1782,7 +1804,7 @@ class Net(bool useArray = true,
         foreach (expr; File("../knowledge/en/opposites.txt").byLine)
         {
             if (expr.empty) { continue; }
-            auto split = expr.findSplit([separator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;
             const sense = commonSense(first, second);
@@ -1817,17 +1839,21 @@ class Net(bool useArray = true,
     /// Learn Etymologically Derived Froms.
     void learnEtymologicallyDerivedFroms()
     {
-        learnEtymologicallyDerivedFrom("holiday", Lang.en, "holy day", Lang.en, Sense.noun);
-        learnEtymologicallyDerivedFrom("juletide", Lang.en, "juletid", Lang.sv, Sense.noun);
-        learnEtymologicallyDerivedFrom("smorgosbord", Lang.en, "smörgåsbord", Lang.sv, Sense.noun);
+        learnEtymologicallyDerivedFrom("holiday", Lang.en, Sense.noun,
+                                       "holy day", Lang.en, Sense.noun);
+        learnEtymologicallyDerivedFrom("juletide", Lang.en, Sense.noun,
+                                       "juletid", Lang.sv, Sense.noun);
+        learnEtymologicallyDerivedFrom("smorgosbord", Lang.en, Sense.noun,
+                                       "smörgåsbord", Lang.sv, Sense.noun);
+        learnEtymologicallyDerivedFrom("förgätmigej", Lang.sv, Sense.noun,
+                                       "förgät mig ej", Lang.sv, Sense.unknown); // TODO uppmaning
     }
 
     /** Learn that $(D first) in language $(D firstLang) is etymologically
         derived from $(D second) in language $(D secondLang) both in sense $(D sense).
      */
-    LinkRef learnEtymologicallyDerivedFrom(S)(S first, Lang firstLang,
-                                              S second, Lang secondLang,
-                                              Sense sense) if (isSomeString!S)
+    LinkRef learnEtymologicallyDerivedFrom(S1, S2)(S1 first, Lang firstLang, Sense firstSense,
+                                                   S2 second, Lang secondLang, Sense secondSense)
     {
         return connect(store(first, firstLang, Sense.noun, Origin.manual),
                        Rel.etymologicallyDerivedFrom,
@@ -1837,10 +1863,10 @@ class Net(bool useArray = true,
 
     /** Learn English Irregular Verb.
      */
-    LinkRef[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive,
-                                                    S2 past,
-                                                    S3 pastParticiple,
-                                                    Origin origin = Origin.manual)
+    LinkRef[] learnEnglishVerb(S1, S2, S3)(S1 infinitive,
+                                           S2 past,
+                                           S3 pastParticiple,
+                                           Origin origin = Origin.manual)
     {
         enum lang = Lang.en;
         NodeRef[] all;
@@ -2980,164 +3006,164 @@ class Net(bool useArray = true,
         TODO Move to irregular_verb.txt in format: bewas,werebeen
         TODO Merge with http://www.enchantedlearning.com/wordlist/irregularverbs.shtml
      */
-    void learnEnglishIrregularVerbs()
+    void learnEnglishVerbs()
     {
-        learnEnglishIrregularVerb("arise", "arose", "arisen");
-        learnEnglishIrregularVerb("rise", "rose", "risen");
-        learnEnglishIrregularVerb("wake", ["woke", "awaked"], "woken");
-        learnEnglishIrregularVerb("be", ["was", "were"], "been");
-        learnEnglishIrregularVerb("bear", ["bore", "born"], "borne");
-        learnEnglishIrregularVerb("beat", "beat", "beaten");
-        learnEnglishIrregularVerb("become", "became", "become");
-        learnEnglishIrregularVerb("begin", "began", "begun");
-        learnEnglishIrregularVerb("bend", "bent", "bent");
-        learnEnglishIrregularVerb("bet", "bet", "bet");
-        learnEnglishIrregularVerb("bid", ["bid", "bade"], ["bid", "bidden"]);
-        learnEnglishIrregularVerb("bind", "bound", "bound");
-        learnEnglishIrregularVerb("bite", "bit", "bitten");
-        learnEnglishIrregularVerb("bleed", "bled", "bled");
-        learnEnglishIrregularVerb("blow", "blew", "blown");
-        learnEnglishIrregularVerb("break", "broke", "broken");
-        learnEnglishIrregularVerb("breed", "bred", "bred");
-        learnEnglishIrregularVerb("bring", "brought", "brought");
-        learnEnglishIrregularVerb("build", "built", "built");
-        learnEnglishIrregularVerb("burn", ["burnt", "burned"], ["burnt", "burned"]);
-        learnEnglishIrregularVerb("burst", "burst", "burst");
-        learnEnglishIrregularVerb("buy", "bought", "bought");
-        learnEnglishIrregularVerb("cast", "cast", "cast");
-        learnEnglishIrregularVerb("catch", "caught", "caught");
-        learnEnglishIrregularVerb("choose", "chose", "chosen");
-        learnEnglishIrregularVerb("come", "came", "come");
-        learnEnglishIrregularVerb("cost", "cost", "cost");
-        learnEnglishIrregularVerb("creep", "crept", "crept");
-        learnEnglishIrregularVerb("cut", "cut", "cut");
-        learnEnglishIrregularVerb("deal", "dealt", "dealt");
-        learnEnglishIrregularVerb("dig", "dug", "dug");
-        learnEnglishIrregularVerb("dive", ["dived", "dove"], "dived");
-        learnEnglishIrregularVerb("do", "did", "done");
-        learnEnglishIrregularVerb("draw", "drew", "drawn");
-        learnEnglishIrregularVerb("dream", ["dreamt", "dreamed"], ["dreamt", "dreamed"]);
-        learnEnglishIrregularVerb("drink", "drank", "drunk");
-        learnEnglishIrregularVerb("drive", "drove", "driven");
-        learnEnglishIrregularVerb("dwell", "dwelt", "dwelt");
-        learnEnglishIrregularVerb("eat", "ate", "eaten");
-        learnEnglishIrregularVerb("fall", "fell", "fallen");
-        learnEnglishIrregularVerb("feed", "fed", "fed");
-        learnEnglishIrregularVerb("fight", "fought", "fought");
-        learnEnglishIrregularVerb("find", "found", "found");
-        learnEnglishIrregularVerb("flee", "fled", "fled");
-        learnEnglishIrregularVerb("fly", "flew", "flown");
-        learnEnglishIrregularVerb("forbid", ["forbade", "forbad"], "forbidden");
-        learnEnglishIrregularVerb("forget", "forgot", "forgotten");
-        learnEnglishIrregularVerb("forgive", "forgave", "forgiven");
-        learnEnglishIrregularVerb("forsake", "forsook", "forsaken");
-        learnEnglishIrregularVerb("freeze", "froze", "frozen");
+        learnEnglishVerb("arise", "arose", "arisen");
+        learnEnglishVerb("rise", "rose", "risen");
+        learnEnglishVerb("wake", ["woke", "awaked"], "woken");
+        learnEnglishVerb("be", ["was", "were"], "been");
+        learnEnglishVerb("bear", ["bore", "born"], "borne");
+        learnEnglishVerb("beat", "beat", "beaten");
+        learnEnglishVerb("become", "became", "become");
+        learnEnglishVerb("begin", "began", "begun");
+        learnEnglishVerb("bend", "bent", "bent");
+        learnEnglishVerb("bet", "bet", "bet");
+        learnEnglishVerb("bid", ["bid", "bade"], ["bid", "bidden"]);
+        learnEnglishVerb("bind", "bound", "bound");
+        learnEnglishVerb("bite", "bit", "bitten");
+        learnEnglishVerb("bleed", "bled", "bled");
+        learnEnglishVerb("blow", "blew", "blown");
+        learnEnglishVerb("break", "broke", "broken");
+        learnEnglishVerb("breed", "bred", "bred");
+        learnEnglishVerb("bring", "brought", "brought");
+        learnEnglishVerb("build", "built", "built");
+        learnEnglishVerb("burn", ["burnt", "burned"], ["burnt", "burned"]);
+        learnEnglishVerb("burst", "burst", "burst");
+        learnEnglishVerb("buy", "bought", "bought");
+        learnEnglishVerb("cast", "cast", "cast");
+        learnEnglishVerb("catch", "caught", "caught");
+        learnEnglishVerb("choose", "chose", "chosen");
+        learnEnglishVerb("come", "came", "come");
+        learnEnglishVerb("cost", "cost", "cost");
+        learnEnglishVerb("creep", "crept", "crept");
+        learnEnglishVerb("cut", "cut", "cut");
+        learnEnglishVerb("deal", "dealt", "dealt");
+        learnEnglishVerb("dig", "dug", "dug");
+        learnEnglishVerb("dive", ["dived", "dove"], "dived");
+        learnEnglishVerb("do", "did", "done");
+        learnEnglishVerb("draw", "drew", "drawn");
+        learnEnglishVerb("dream", ["dreamt", "dreamed"], ["dreamt", "dreamed"]);
+        learnEnglishVerb("drink", "drank", "drunk");
+        learnEnglishVerb("drive", "drove", "driven");
+        learnEnglishVerb("dwell", "dwelt", "dwelt");
+        learnEnglishVerb("eat", "ate", "eaten");
+        learnEnglishVerb("fall", "fell", "fallen");
+        learnEnglishVerb("feed", "fed", "fed");
+        learnEnglishVerb("fight", "fought", "fought");
+        learnEnglishVerb("find", "found", "found");
+        learnEnglishVerb("flee", "fled", "fled");
+        learnEnglishVerb("fly", "flew", "flown");
+        learnEnglishVerb("forbid", ["forbade", "forbad"], "forbidden");
+        learnEnglishVerb("forget", "forgot", "forgotten");
+        learnEnglishVerb("forgive", "forgave", "forgiven");
+        learnEnglishVerb("forsake", "forsook", "forsaken");
+        learnEnglishVerb("freeze", "froze", "frozen");
 
-        learnEnglishIrregularVerb("get", "got", ["gotten", "got"]);
-        learnEnglishIrregularVerb("give", "gave", "given");
-        learnEnglishIrregularVerb("go", "went", "gone");
-        learnEnglishIrregularVerb("grind", "ground", "ground");
-        learnEnglishIrregularVerb("grow", "grew", "grown");
+        learnEnglishVerb("get", "got", ["gotten", "got"]);
+        learnEnglishVerb("give", "gave", "given");
+        learnEnglishVerb("go", "went", "gone");
+        learnEnglishVerb("grind", "ground", "ground");
+        learnEnglishVerb("grow", "grew", "grown");
 
-        learnEnglishIrregularVerb("hang", ["hanged", "hung"], ["hanged", "hung"]);
-        learnEnglishIrregularVerb("have", "had", "had");
-        learnEnglishIrregularVerb("hear", "heard", "heard");
-        learnEnglishIrregularVerb("hide", "hid", "hidden");
-        learnEnglishIrregularVerb("hit", "hit", "hit");
-        learnEnglishIrregularVerb("hold", "held", "held");
-        learnEnglishIrregularVerb("hurt", "hurt", "hurt");
+        learnEnglishVerb("hang", ["hanged", "hung"], ["hanged", "hung"]);
+        learnEnglishVerb("have", "had", "had");
+        learnEnglishVerb("hear", "heard", "heard");
+        learnEnglishVerb("hide", "hid", "hidden");
+        learnEnglishVerb("hit", "hit", "hit");
+        learnEnglishVerb("hold", "held", "held");
+        learnEnglishVerb("hurt", "hurt", "hurt");
 
-        learnEnglishIrregularVerb("keep", "kept", "kept");
-        learnEnglishIrregularVerb("kneel", "knelt", "knelt");
-        learnEnglishIrregularVerb("knit", ["knit", "knitted"], ["knit", "knitted"]);
-        learnEnglishIrregularVerb("know", "knew", "known");
+        learnEnglishVerb("keep", "kept", "kept");
+        learnEnglishVerb("kneel", "knelt", "knelt");
+        learnEnglishVerb("knit", ["knit", "knitted"], ["knit", "knitted"]);
+        learnEnglishVerb("know", "knew", "known");
 
-        learnEnglishIrregularVerb("lay", "laid", "laid");
-        learnEnglishIrregularVerb("lead", "led", "led");
+        learnEnglishVerb("lay", "laid", "laid");
+        learnEnglishVerb("lead", "led", "led");
 
-        learnEnglishIrregularVerb("lean", ["leaned", "leant"], ["leaned", "leant"]);
-        learnEnglishIrregularVerb("leap", ["leaped", "leapt"], ["leaped", "leapt"]);
+        learnEnglishVerb("lean", ["leaned", "leant"], ["leaned", "leant"]);
+        learnEnglishVerb("leap", ["leaped", "leapt"], ["leaped", "leapt"]);
 
-        learnEnglishIrregularVerb("learn", ["learned", "learnt"], ["learned", "learnt"]);
-        learnEnglishIrregularVerb("leave", "left", "left");
-        learnEnglishIrregularVerb("lend", "lent", "lent");
-        learnEnglishIrregularVerb("let", "let", "let");
-        learnEnglishIrregularVerb("lie", "lay", "lain");
-        learnEnglishIrregularVerb("light", ["lighted", "lit"], ["lighted", "lit"]);
-        learnEnglishIrregularVerb("lose", "lost", "lost");
+        learnEnglishVerb("learn", ["learned", "learnt"], ["learned", "learnt"]);
+        learnEnglishVerb("leave", "left", "left");
+        learnEnglishVerb("lend", "lent", "lent");
+        learnEnglishVerb("let", "let", "let");
+        learnEnglishVerb("lie", "lay", "lain");
+        learnEnglishVerb("light", ["lighted", "lit"], ["lighted", "lit"]);
+        learnEnglishVerb("lose", "lost", "lost");
 
-        learnEnglishIrregularVerb("make", "made", "made");
-        learnEnglishIrregularVerb("mean", "meant", "meant");
-        learnEnglishIrregularVerb("meet", "met", "met");
-        learnEnglishIrregularVerb("mistake", "mistook", "mistaken");
+        learnEnglishVerb("make", "made", "made");
+        learnEnglishVerb("mean", "meant", "meant");
+        learnEnglishVerb("meet", "met", "met");
+        learnEnglishVerb("mistake", "mistook", "mistaken");
 
-        learnEnglishIrregularVerb("partake", "partook", "partaken");
-        learnEnglishIrregularVerb("pay", "paid", "paid");
-        learnEnglishIrregularVerb("put", "put", "put");
+        learnEnglishVerb("partake", "partook", "partaken");
+        learnEnglishVerb("pay", "paid", "paid");
+        learnEnglishVerb("put", "put", "put");
 
-        learnEnglishIrregularVerb("read", "read", "read");
-        learnEnglishIrregularVerb("rend", "rent", "rent");
-        learnEnglishIrregularVerb("rid", "rid", "rid");
-        learnEnglishIrregularVerb("ride", "rode", "ridden");
-        learnEnglishIrregularVerb("run", "ran", "run");
+        learnEnglishVerb("read", "read", "read");
+        learnEnglishVerb("rend", "rent", "rent");
+        learnEnglishVerb("rid", "rid", "rid");
+        learnEnglishVerb("ride", "rode", "ridden");
+        learnEnglishVerb("run", "ran", "run");
 
-        learnEnglishIrregularVerb("say", "said", "said");
-        learnEnglishIrregularVerb("see", "saw", "seen");
-        learnEnglishIrregularVerb("seek", "sought", "sought");
-        learnEnglishIrregularVerb("sell", "sold", "sold");
-        learnEnglishIrregularVerb("send", "sent", "sent");
-        learnEnglishIrregularVerb("set", "set", "set");
-        learnEnglishIrregularVerb("shake", "shook", "shaken");
-        learnEnglishIrregularVerb("shed", "shed", "shed");
-        learnEnglishIrregularVerb("shine", "shone", "shone");
-        learnEnglishIrregularVerb("shoot", "shot", "shot");
-        learnEnglishIrregularVerb("shrink", "shrank", "shrunk");
-        learnEnglishIrregularVerb("shut", "shut", "shut");
-        learnEnglishIrregularVerb("sing", "sang", "sung");
-        learnEnglishIrregularVerb("sink", "sank", "sank");
-        learnEnglishIrregularVerb("sit", "sat", "sat");
-        learnEnglishIrregularVerb("slay", "slew", "slain");
-        learnEnglishIrregularVerb("sleep", "slept", "slept");
-        learnEnglishIrregularVerb("sling", "slung", "slung");
-        learnEnglishIrregularVerb("slit", "slit", "slit");
-        learnEnglishIrregularVerb("speak", "spoke", "spoken");
-        learnEnglishIrregularVerb("spin", "spun", "spun");
-        learnEnglishIrregularVerb("spit", "spat", "spat");
-        learnEnglishIrregularVerb("split", "split", "split");
-        learnEnglishIrregularVerb("spring", "sprang", "sprung");
-        learnEnglishIrregularVerb("stand", "stood", "stood");
-        learnEnglishIrregularVerb("steal", "stole", "stolen");
-        learnEnglishIrregularVerb("stick", "stuck", "stuck");
-        learnEnglishIrregularVerb("sting", "stung", "stung");
-        learnEnglishIrregularVerb("stink", "stank", "stunk");
-        learnEnglishIrregularVerb("stride", "strode", "stridden");
-        learnEnglishIrregularVerb("strive", "strove", "striven");
-        learnEnglishIrregularVerb("swear", "swore", "sworn");
-        learnEnglishIrregularVerb("sweep", "swept", "swept");
-        learnEnglishIrregularVerb("swim", "swam", "swum");
-        learnEnglishIrregularVerb("swing", "swung", "swung");
+        learnEnglishVerb("say", "said", "said");
+        learnEnglishVerb("see", "saw", "seen");
+        learnEnglishVerb("seek", "sought", "sought");
+        learnEnglishVerb("sell", "sold", "sold");
+        learnEnglishVerb("send", "sent", "sent");
+        learnEnglishVerb("set", "set", "set");
+        learnEnglishVerb("shake", "shook", "shaken");
+        learnEnglishVerb("shed", "shed", "shed");
+        learnEnglishVerb("shine", "shone", "shone");
+        learnEnglishVerb("shoot", "shot", "shot");
+        learnEnglishVerb("shrink", "shrank", "shrunk");
+        learnEnglishVerb("shut", "shut", "shut");
+        learnEnglishVerb("sing", "sang", "sung");
+        learnEnglishVerb("sink", "sank", "sank");
+        learnEnglishVerb("sit", "sat", "sat");
+        learnEnglishVerb("slay", "slew", "slain");
+        learnEnglishVerb("sleep", "slept", "slept");
+        learnEnglishVerb("sling", "slung", "slung");
+        learnEnglishVerb("slit", "slit", "slit");
+        learnEnglishVerb("speak", "spoke", "spoken");
+        learnEnglishVerb("spin", "spun", "spun");
+        learnEnglishVerb("spit", "spat", "spat");
+        learnEnglishVerb("split", "split", "split");
+        learnEnglishVerb("spring", "sprang", "sprung");
+        learnEnglishVerb("stand", "stood", "stood");
+        learnEnglishVerb("steal", "stole", "stolen");
+        learnEnglishVerb("stick", "stuck", "stuck");
+        learnEnglishVerb("sting", "stung", "stung");
+        learnEnglishVerb("stink", "stank", "stunk");
+        learnEnglishVerb("stride", "strode", "stridden");
+        learnEnglishVerb("strive", "strove", "striven");
+        learnEnglishVerb("swear", "swore", "sworn");
+        learnEnglishVerb("sweep", "swept", "swept");
+        learnEnglishVerb("swim", "swam", "swum");
+        learnEnglishVerb("swing", "swung", "swung");
 
-        learnEnglishIrregularVerb("slide", "slid", ["slid", "slidden"]);
-        learnEnglishIrregularVerb("speed", ["sped", "speeded"], ["sped", "speeded"]);
-        learnEnglishIrregularVerb("tread", "trod", ["trodden", "trod"]);
+        learnEnglishVerb("slide", "slid", ["slid", "slidden"]);
+        learnEnglishVerb("speed", ["sped", "speeded"], ["sped", "speeded"]);
+        learnEnglishVerb("tread", "trod", ["trodden", "trod"]);
 
-        learnEnglishIrregularVerb("take", "took", "taken");
-        learnEnglishIrregularVerb("teach", "taught", "taught");
-        learnEnglishIrregularVerb("tear", "tore", "torn");
-        learnEnglishIrregularVerb("tell", "told", "told");
-        learnEnglishIrregularVerb("think", "thought", "thought");
-        learnEnglishIrregularVerb("throw", "threw", "thrown");
+        learnEnglishVerb("take", "took", "taken");
+        learnEnglishVerb("teach", "taught", "taught");
+        learnEnglishVerb("tear", "tore", "torn");
+        learnEnglishVerb("tell", "told", "told");
+        learnEnglishVerb("think", "thought", "thought");
+        learnEnglishVerb("throw", "threw", "thrown");
 
-        learnEnglishIrregularVerb("understand", "understood", "understood");
-        learnEnglishIrregularVerb("upset", "upset", "upset");
+        learnEnglishVerb("understand", "understood", "understood");
+        learnEnglishVerb("upset", "upset", "upset");
 
-        learnEnglishIrregularVerb("wear", "wore", "worn");
-        learnEnglishIrregularVerb("weave", "wove", "woven");
-        learnEnglishIrregularVerb("weep", "wept", "wept");
-        learnEnglishIrregularVerb("win", "won", "won");
-        learnEnglishIrregularVerb("wind", "wound", "wound");
-        learnEnglishIrregularVerb("wring", "wrung", "wrung");
-        learnEnglishIrregularVerb("write", "wrote", "written");
+        learnEnglishVerb("wear", "wore", "worn");
+        learnEnglishVerb("weave", "wove", "woven");
+        learnEnglishVerb("weep", "wept", "wept");
+        learnEnglishVerb("win", "won", "won");
+        learnEnglishVerb("wind", "wound", "wound");
+        learnEnglishVerb("wring", "wrung", "wrung");
+        learnEnglishVerb("write", "wrote", "written");
     }
 
     /** Learn Math.
@@ -3219,10 +3245,11 @@ class Net(bool useArray = true,
         connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
-    /** Learn Swedish Irregular Verbs.
+    /** Learn Swedish (Irregular) Verbs.
     */
     void learnSwedishVerbs()
     {
+        learnSwedishVerb("eka", "eka", "ekar", "ekade", "ekat"); // English:echo
         learnSwedishVerb("ge", "ge", "ger", "gav", "gett/givit");
         learnSwedishVerb("ange", "ange", "anger", "angav", "angett/angivit");
         learnSwedishVerb("anse", "anse", "anser", "ansåg", "ansett");
@@ -3285,6 +3312,8 @@ class Net(bool useArray = true,
         learnSwedishVerb("återge", "återge", "återger", "återgav", "återgivit");
         learnSwedishVerb("översätt", "översätta", "översätter", "översatte", "översatt");
         learnSwedishVerb("tyng", "tynga", "tynger", "tyngde", "tyngt");
+        learnSwedishVerb("glöm", "glömma", "glömmer", "glömde", "glömt");
+        learnSwedishVerb("förgät", "förgäta", "förgäter", "förgat", "förgätit");
     }
 
     /** Learn Adjective in language $(D lang).
