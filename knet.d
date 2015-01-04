@@ -35,6 +35,11 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO functionize uses of splitter-map-filter to convert CSV-strings to string[]
+
+    TODO CN5: Infer Sense from specific Rels such as instanceOf Ra
+    TODO CN5: Parse parens after "Ra (board game)" and put in category
+
     TODO Replace comma in .txt files with some other ASCII separator
 
     TODO Learn Sense.uncountablesNouns first and then reuse and specializes "love" in Sense.noun
@@ -47,9 +52,6 @@
          connect(secondRef, Rel.isA, store(groupName, firstLang, Sense.noun, origin), firstLang, origin, weight, false, false, true);
 
     TODO Learn: https://sv.wikipedia.org/wiki/Modalt_hj%C3%A4lpverb
-
-    TODO If "X Y" gives no hits try "X-Y" then "XY"
-    TODO If "X-Y" gives no hits try "X Y" then "XY"
 
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
@@ -4190,7 +4192,6 @@ class Net(bool useArray = true,
                         continue;
                     }
 
-                    // TODO functionize or fix source so we don't have to do strip and filter on emptyness
                     auto src_ = src.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
                     auto dst_ = dst.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
 
@@ -4540,7 +4541,7 @@ class Net(bool useArray = true,
         // try joined
         if (recurse && lineNodeRefs.empty)
         {
-            auto spaceParts = normLine.splitter(" ");
+            auto spaceParts = normLine.splitter(' ').filter!(a => !a.empty);
             if (spaceParts.count >= 2)
             {
                 {
@@ -4554,7 +4555,7 @@ class Net(bool useArray = true,
                     showNodes(joinedLine, lang, sense, lineSeparator, false);
                 }
             }
-            auto minusParts = normLine.splitter("-");
+            auto minusParts = normLine.splitter('-').filter!(a => !a.empty);
             if (minusParts.count >= 2)
             {
                 {
