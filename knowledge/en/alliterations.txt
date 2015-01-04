@@ -186,7 +186,7 @@ shape up or ship out
 shell-shocked
 ship shape
 silver screen
-simon says...
+simon says _
 sing for your supper
 sing-song
 sink or swim

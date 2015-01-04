@@ -149,7 +149,8 @@ it's about timedet var på tiden
 it's up to {1}det är upp till {1}
 it's {1}hon är {1}
 it's {1}klockan är {1}
-it´s off the chain!det är jättehäftigt!, det är helt sanslöst!
+it´s off the chaindet är jättehäftigt
+it´s off the chaindet är helt sanslöst
 jump to conclusionsdra förhastade slutsatser
 just a littlebara lite
 just my lucktypiskt
@@ -184,7 +185,9 @@ payorbetalningsskyldig
 piece of cakelätt som en plätt
 please speak more slowlyvar snäll och tala långsammare
 please write it downskulle du kunna skriva ned det åt mig?
-pleased to meet youtrevligt att träffas, trevligt att råkas, angenämt [formal]
+pleased to meet youtrevligt att träffas
+pleased to meet you
+pleased to meet youangenämt
 practice my {1}öva på min {1}
 raised in a barnhelt ouppfostrad
 reallyverkligen
@@ -267,3 +270,8 @@ just in caseutifall att
 just in casebara utifall att
 it's not that importantdet är inte så viktigt
 welcome backvälkommen åter
+never in lifealdrig i livet
+bushwhackarmbåga sig fram
+birds of one featherav samma skrot och korn
+farewell on gray paperavsked på grått papper
+armed to the teethbeväpnad till tänderna
