@@ -9,7 +9,7 @@ module grammars;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
-import std.algorithm: uniq, map, find, canFind, startsWith, endsWith;
+import std.algorithm: uniq, map, find, canFind, startsWith, endsWith, among;
 import std.array: array;
 import std.conv;
 import predicates: of;

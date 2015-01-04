@@ -35,6 +35,9 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    BUG Don't stem words containing non-English letters. Reuse variadic version
+    of x.canFind(englishLetters...)
+
     TODO functionize uses of splitter-map-filter to convert CSV-strings to string[]
 
     TODO CN5: Infer Sense from specific Rels such as instanceOf Ra

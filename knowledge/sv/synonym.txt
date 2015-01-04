@@ -134,9 +134,10 @@ blekelugnt vattenstilla
 blessyrsår (särskilt kroppsligt)
 bligastirra
 blotaoffra
-blott1: endast (blott en dag, ett ögonblick i sänder) 2: såframt (ex allt detta är ditt, blott du säger ett)
+blottendast (blott en dag, ett ögonblick i sänder)
+blottsåframt (ex allt detta är ditt, blott du säger ett)
 blåkopierakopiering av dokument på en trumma som vevas för hand
-boksyntförtrogen med böcker (ej: som ser böcker överallt)
+boksyntförtrogen med böcker
 boktryckerikonstatt trycka böcker
 bolabedriva otukt
 borderlineemotionellt instabil personlighetsstörning (ips)
@@ -146,9 +147,10 @@ bortklemadbortskämd
 bra slagbra sort
 bragts'bragts med livet
 brandgulorange
-brisslorställnig att torka fisknät på . gammalskånska?
+brisslorställning att torka fisknät på (gammalskånska?)
 brysktvärhäftig
-bröstgängesgå bröstgänges tillväga = handla bryskt
+bröstgängesbryskt
+gå bröstgänges tillvägahandla bryskt
 burgenvälbärgadförmögen
 burlesktöverdrivet roligt
 burskapgehöracceptans (för idéer, tankar etc)
@@ -1024,7 +1026,9 @@ sliksådan
 slogliten äng
 smoffsblött skägg (norrländska)
 smädaskymf
-smörgåsiannedsättande benämning på svensk: smörgås(bords)ätare l. invånare i smörgåslandet /saob
+smörgåsiannedsättande benämning på svensk
+smörgåsiansmörgås(bords)ätare
+smörgåsianinvånare i smörgåslandet
 snabbkvick
 snarskankkrokben
 snarstuckenlättirriterad

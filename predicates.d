@@ -9,9 +9,11 @@ module predicates;
 
 import std.traits: CommonType;
 import std.range: isIterable, ElementType;
+import std.algorithm: among;
 
 /** Return true if $(D x) is a equal to any of $(D y).
     TODO Make ys lazy if any of ys is a delegate.
+    TODO Reuse among instead
  */
 bool of(S, T...)(in S x, in T ys) pure if (ys.length >= 1 &&
                                            is(typeof({ return S.init ==
