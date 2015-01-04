@@ -35,6 +35,11 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Move specific knowledge from wordnet.d to beginning of learnPreciseThings()
+
+    TODO Show warning and then exceptions when adding a word as a language that
+    doesn't support include its characters
+
     BUG Don't stem words containing non-English letters. Reuse variadic version
     of x.canFind(englishLetters...)
 
