@@ -4189,10 +4189,15 @@ class Net(bool useArray = true,
                         dln(`warning: empty dst for "`, src, `"`);
                         continue;
                     }
-                    connect(store(src, srcLang, sense, origin),
-                            Rel.translationOf,
-                            store(dst, dstLang, sense, origin),
-                            Lang.unknown, origin, 1.0, false, false, true);
+
+                    // TODO functionize or fix source so we don't have to do strip and filter on emptyness
+                    auto src_ = src.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
+                    auto dst_ = dst.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
+
+                    connectMtoN(store(src_, srcLang, sense, origin),
+                                Rel.translationOf,
+                                store(dst_, dstLang, sense, origin),
+                                Lang.unknown, origin, 1.0, false, false, true);
                 }
             }
         };
@@ -4440,7 +4445,8 @@ class Net(bool useArray = true,
     void showNodes(S)(S line,
                       Lang lang = Lang.unknown,
                       Sense sense = Sense.unknown,
-                      S lineSeparator = `_`) if (isSomeString!S)
+                      S lineSeparator = `_`,
+                      bool recurse = true) if (isSomeString!S)
     {
         import std.ascii: whitespace;
         import std.algorithm: splitter;
@@ -4531,19 +4537,41 @@ class Net(bool useArray = true,
         // as is
         showNodeRefs(lineNodeRefs);
 
-        if (lineNodeRefs.empty)
+        // try joined
+        if (recurse && lineNodeRefs.empty)
         {
-            auto parts = normLine.splitter(" ");
-            if (parts.count >= 2)
+            auto spaceParts = normLine.splitter(" ");
+            if (spaceParts.count >= 2)
             {
-                const joinedLine = parts.joiner.to!string;
-                writeln(`> Joined to `, joinedLine);
-                showNodes(joinedLine, lang, sense, lineSeparator);
+                {
+                    const joinedLine = spaceParts.joiner.to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
+                {
+                    const joinedLine = spaceParts.joiner("-").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
+            }
+            auto minusParts = normLine.splitter("-");
+            if (minusParts.count >= 2)
+            {
+                {
+                    const joinedLine = minusParts.joiner("").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
+                {
+                    const joinedLine = minusParts.joiner(" ").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
             }
         }
 
         // stemmed
-        if (lineNodeRefs.empty)
+        if (recurse && lineNodeRefs.empty)
         {
             while (true)
             {
