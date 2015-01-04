@@ -502,6 +502,22 @@ unittest
     assert(!'å'.isEnglishConsonant);
 }
 
+/** English Letters. */
+enum englishLetters = englishVowels ~ englishConsonants;
+
+/** Check if $(D c) is a Letter. */
+bool isEnglishLetter(C)(C c) if (isSomeChar!C)
+{
+    return c.of(englishLetters);
+}
+alias isEnglish = isEnglishLetter;
+
+unittest
+{
+    assert('k'.isEnglishLetter);
+    assert(!'å'.isEnglishLetter);
+}
+
 enum EnglishDoubleConsonants = ["bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt"];
 
 /** Check if $(D c) is a Consonant. */
