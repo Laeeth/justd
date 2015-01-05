@@ -4,3 +4,4 @@ FAQfrequently asked questions
 CPUcentral processing unit
 DNSdomain name system
 DVDdigital versatile disc
+YMMVyour mileage may vary
