@@ -43,6 +43,7 @@
     TODO Show warning and then exceptions when adding a word as a language that
     doesn't support include its characters
 
+    BUG Skriv in smärta i propmpt: gives wrong relations: "[give" and "cause] pain; grieve"
     BUG reversion no effect for book_property.txt
 
     BUG Don't stem words containing non-English letters. Reuse variadic version
