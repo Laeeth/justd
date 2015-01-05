@@ -1657,7 +1657,7 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `New Year's Eve`, Sense.unknown, Sense.noun);
 
         learnAttributes(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, false, `say`, Sense.verb, Sense.verb);
-        learnAttributes(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, true, `book`, Sense.adjective, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, false, `book`, Sense.adjective, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/informal.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, false, `informal`, Sense.adjective, Sense.noun);
 
         // Red Wine
