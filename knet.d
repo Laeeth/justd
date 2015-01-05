@@ -54,8 +54,6 @@
 
     TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
 
-    BUG book gets incorrect printing "is property of" instead of "has property"
-
     TODO At end of store() use convert Sense to string Rel.noun => "noun" and store it
          connect(secondRef, Rel.isA, store(groupName, firstLang, Sense.noun, origin), firstLang, origin, weight, false, false, true);
 
