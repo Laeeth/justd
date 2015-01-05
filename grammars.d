@@ -598,6 +598,8 @@ enum Sense:ubyte
     prefix,
     suffix,
 
+    idiom,                      /// Idiomatic Expression.
+
     ordinalNumber, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
 
     noun,
