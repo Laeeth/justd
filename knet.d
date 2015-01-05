@@ -38,6 +38,10 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Add endsWith hasEnd
+
+    TODO Guess verb if endsWith: "vowel"+ "konsonant"+ and "ize"
+
     TODO Move specific knowledge from wordnet.d to beginning of learnPreciseThings()
 
     TODO Show warning and then exceptions when adding a word as a language that
