@@ -26,6 +26,9 @@
     Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
     Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
     Data: http://www.words-to-use.com/
+    Data: http://www.slangopedia.se/
+    Data: http://www.learn-english-today.com/idioms/
+    Data: http://www.smart-words.org/list-of-synonyms/
 
     English Phrases: http://www.talkenglish.com
     Names: http://www.nordicnames.de/
