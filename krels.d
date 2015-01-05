@@ -1532,6 +1532,7 @@ bool specializes(Rel special,
             case wordForm: return special.of(verbForm,
                                              nounForm,
                                              adjectiveForm);
+            case synonymFor: return special.of(shorthandFor);
             default: return special == general;
         }
     }
@@ -1594,6 +1595,7 @@ bool generalizes(T)(T general,
         with (Rel)
             return (rel.isSymmetric ||
                     rel.of(generalizes,
+                           shorthandFor,
                            partOf,
                            isA,
                            memberOf,

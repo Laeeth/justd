@@ -48,9 +48,6 @@
 
     TODO functionize uses of splitter-map-filter to convert CSV-strings to string[]
 
-    TODO CN5: Infer Sense from specific Rels such as instanceOf Ra
-    TODO CN5: Parse parens after "Ra (board game)" and put in category
-
     TODO Replace comma in .txt files with some other ASCII separator
 
     TODO Learn Sense.uncountablesNouns first and then reuse and specializes "love" in Sense.noun
@@ -66,7 +63,10 @@
 
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
+    TODO CN5: Infer Sense from specific Rels such as instanceOf Ra
+    TODO CN5: Parse parens after "Ra (board game)" and put in category
     TODO Infer:
+         - X isA Y and Y hasProperty Z => X hasProperty Z
          - if X rel Y and assert(R.isSymmetric): Sense can be inferred in both directions if some Sense is unknown
          - shampoo atLocation bathroom, shampoo stored in bottles => bottles atLocation bathroom
          - sulfur synonymWith sulphur => sulfuric synonymWith sulphuric
