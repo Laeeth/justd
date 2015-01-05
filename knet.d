@@ -43,6 +43,8 @@
     TODO Show warning and then exceptions when adding a word as a language that
     doesn't support include its characters
 
+    BUG reversion no effect for book_property.txt
+
     BUG Don't stem words containing non-English letters. Reuse variadic version
     of x.canFind(englishLetters...)
 
@@ -1655,7 +1657,7 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `New Year's Eve`, Sense.unknown, Sense.noun);
 
         learnAttributes(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, false, `say`, Sense.verb, Sense.verb);
-        learnAttributes(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, false, `book`, Sense.adjective, Sense.noun);
+        learnAttributes(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, true, `book`, Sense.adjective, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/informal.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, false, `informal`, Sense.adjective, Sense.noun);
 
         // Red Wine
@@ -3234,12 +3236,12 @@ class Net(bool useArray = true,
                     Lang.en, Origin.manual, 1.0);
 
         connect1toM(store("herb", Lang.en, Sense.noun, Origin.manual),
-                    Rel.madeOf,
+                    Rel.madeOf, false,
                     store(["leaf", "plant"], Lang.en, Sense.noun, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
 
         connect1toM(store("spice", Lang.en, Sense.noun, Origin.manual),
-                    Rel.madeOf,
+                    Rel.madeOf, false,
                     store(["root", "plant"], Lang.en, Sense.noun, Origin.manual),
                     Lang.en, Origin.manual, 1.0);
     }
@@ -3500,7 +3502,7 @@ class Net(bool useArray = true,
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
     LinkRef[] connect1toM(R)(NodeRef first,
-                             Rel rel,
+                             Rel rel, bool reversion,
                              R rest,
                              Lang lang,
                              Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
@@ -3510,7 +3512,7 @@ class Net(bool useArray = true,
         {
             if (first != you)
             {
-                linkIxes ~= connect(first, rel, you, lang, origin, weight);
+                linkIxes ~= connect(first, rel, you, lang, origin, weight, false, reversion);
             }
         }
         return linkIxes;
