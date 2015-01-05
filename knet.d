@@ -49,6 +49,7 @@
     TODO Show warning and then exceptions when adding a word as a language that
     doesn't support include its characters
 
+    BUG Skrivn in "att fela är mänskligt" ger språk "English" när det borde ge språk Swedish
     BUG Skriv in smärta i propmpt: gives wrong relations: "[give" and "cause] pain; grieve"
     BUG reversion no effect for book_property.txt
 
@@ -1581,7 +1582,11 @@ class Net(bool useArray = true,
                    Rel.translationOf,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
-
+        learnPairs("../knowledge/en-sv/idiom_translation.txt",
+                   Sense.idiom, Lang.en,
+                   Rel.translationOf,
+                   Sense.idiom, Lang.sv,
+                   Origin.manual, 1.0);
         learnPairs("../knowledge/fr-en/phrase_translation.txt",
                    Sense.unknown, Lang.fr,
                    Rel.translationOf,
