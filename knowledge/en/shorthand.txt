@@ -9,3 +9,24 @@ it'sit is
 subsubmarinesubwaysubwoofer
 idiomidiomatic expression
 personpersonus
+
+HzHertz
+VVolt
+AAmpere
+KKelvin
+CdCandela
+
+mmeter
+mmetre
+ssecond
+sseconds
+
+kkilo
+MMega
+GGiga
+
+kgkilogram
+
+degreedegree Celsius
+degreedegree Fahrenheit
+degreedegree Kelvin

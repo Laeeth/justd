@@ -641,6 +641,9 @@ enum Sense:ubyte
     nounAbbrevation,
     nounAcronym,
 
+    nounSIBaseUnitName,
+    nounSIDerivedUnitName,
+
     /* Verb */
 
     verb,

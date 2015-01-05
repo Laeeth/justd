@@ -92,7 +92,7 @@
 
     TODO Make use of stealFront and stealBack
 
-    TODO ansiktstvätt => facial_wash
+    TODO ansiktstvätt => "facial wash"
     TODO biltvätt => findSplit [bil tvätt] => search("car wash") or search("car_wash") or search("carwash")
     TODO promote equal splits through weigthing sum_over_i(x[i].length^)2
 
@@ -1401,6 +1401,7 @@ class Net(bool useArray = true,
      */
     void learnPreciseThings()
     {
+        // TODO replace with automatics
         learnAttributes(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.nounUncountable, Sense.noun, 1.0);
         learnAttributes(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.nounUncountable, Sense.noun, 1.0);
 
@@ -1409,6 +1410,7 @@ class Net(bool useArray = true,
         learnEnglishVerbs();
 
         learnMath();
+        learnPhysics();
 
         learnEnglishOther();
 
@@ -3218,6 +3220,15 @@ class Net(bool useArray = true,
                 store("2.71828182845904523536028747135266249775724709369995",
                       Lang.math, Sense.nounDecimal, origin),
                 Lang.en, origin, 1.0);
+    }
+    /** Learn Math.
+     */
+
+    void learnPhysics()
+    {
+        learnAttributes(Lang.en, rdT("../knowledge/en/si_base_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI base unit name noun`, Sense.nounSIBaseUnitName, Sense.noun, 1.0);
+        // TODO Name Symbol, Quantity, In SI units, In Si base units
+        learnAttributes(Lang.en, rdT("../knowledge/en/si_derived_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI derived unit name noun`, Sense.nounSIDerivedUnitName, Sense.noun, 1.0);
     }
 
     /** Learn English Irregular Verbs.
