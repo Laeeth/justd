@@ -30,6 +30,7 @@
     Data: http://www.learn-english-today.com/idioms/
     Data: http://www.smart-words.org/list-of-synonyms/
     Data: http://www.thefreedictionary.com/
+    Data: http://www.paengelska.com/engelska_uttryck_a.htm
 
     English Phrases: http://www.talkenglish.com
     Names: http://www.nordicnames.de/
