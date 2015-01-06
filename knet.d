@@ -1705,6 +1705,11 @@ class Net(bool useArray = true,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.en,
                    Origin.manual, 0.7);
+        learnPairs("../knowledge/sv/idiom_meaning.txt",
+                   Sense.idiom, Lang.sv,
+                   Rel.hasMeaning,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, 0.7);
     }
 
     /// Learn Emotions.
