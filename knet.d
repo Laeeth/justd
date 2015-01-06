@@ -4613,7 +4613,7 @@ class Net(bool useArray = true,
                 }
             }
         }
-        else if (normLine.skipOver(`canFind(`) ||
+        else if (normLine.skipOver(`canfind(`) ||
                  normLine.skipOver(`contain(`) ||
                  normLine.skipOver(`contains(`))
         {
