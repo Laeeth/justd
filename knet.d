@@ -4613,6 +4613,23 @@ class Net(bool useArray = true,
                 }
             }
         }
+        else if (normLine.skipOver(`canFind(`) ||
+                 normLine.skipOver(`contain(`) ||
+                 normLine.skipOver(`contains(`))
+        {
+            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            auto split = normLine.findSplitBefore(`)`);
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                auto hits = canFind(arg);
+                foreach (node; hits.map!(a => nodeAt(a)))
+                {
+                    showNode(node, 1.0);
+                    writeln;
+                }
+            }
+        }
 
         if (normLine.empty)
             return;
@@ -4746,11 +4763,19 @@ class Net(bool useArray = true,
     }
 
     /** Get NodeRefs whose Lemma Expr starts with $(D prefix). */
-    auto startsWith(S)(S suffix,
+    auto canFind(S)(S part,
+                    Lang lang = Lang.unknown,
+                    Sense sense = Sense.unknown) if (isSomeString!S)
+    {
+        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.canFind(part));
+    }
+
+    /** Get NodeRefs whose Lemma Expr starts with $(D prefix). */
+    auto startsWith(S)(S prefix,
                        Lang lang = Lang.unknown,
                        Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.startsWith(suffix));
+        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.startsWith(prefix));
     }
 
     /** Get NodeRefs whose Lemma Expr starts with $(D suffix). */
