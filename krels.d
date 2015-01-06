@@ -1535,7 +1535,8 @@ bool specializes(Rel special,
             case wordForm: return special.of(verbForm,
                                              nounForm,
                                              adjectiveForm);
-            case synonymFor: return special.of(shorthandFor);
+            case synonymFor: return special.of(abbreviationFor,
+                                               shorthandFor);
             default: return special == general;
         }
     }

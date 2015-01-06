@@ -4554,7 +4554,8 @@ class Net(bool useArray = true,
                 }
             }
         }
-        else if (normLine.skipOver(`translationsof(`))
+        else if (normLine.skipOver(`translationsof(`) ||
+                 normLine.skipOver(`translate(`))
         {
             auto split = normLine.findSplitBefore(`)`);
             const arg = split[0];

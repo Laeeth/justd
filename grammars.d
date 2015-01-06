@@ -19,7 +19,7 @@ import predicates: of;
     See also: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
     See also: http://msdn.microsoft.com/en-us/library/ms533052(v=vs.85).aspx
  */
-enum Lang:ubyte
+enum Lang:ushort
 {
     unknown,                    /// Unknown
     any = unknown,
@@ -35,7 +35,7 @@ enum Lang:ubyte
     ar,                       /// Arabic
     // ary,                       /// TODO?
     // arc,                       /// TODO?
-    ae,                       /// Avestan
+    ae,                       /// Avestan Iran (extinct)
     ak,                       /// Akan
     // akk,                      /// TODO?
     an,                       /// Aragonese
@@ -44,121 +44,285 @@ enum Lang:ubyte
     // ase,                       /// TODO?
     // ast,                       /// TODO?
     // ax,                       /// TODO?
-    az,                       /// Azerbaijani
-    hy,                       /// Armenian
-    eu,                       /// Basque
-    ba,                       /// Baskhir
+    az,                       /// Azerbaijani (Azeri)
+    hy,                       /// Armenian: Armenia
+    eu,                       /// Basque: Spain, France
+    ba,                       /// Baskhir: Volga, Urals, Central Asia
     // ban,                      /// TODO?
     be,                       /// Belarusian
     // bj,                       /// TODO?
-    bn,                       /// Bengali
-    br,                       /// Breton
+    bn,                       /// Bengali (Bangla): Bangladesh, India
+    br,                       /// Breton: France
     bs,                       /// Bosnian
     bg,                       /// Bulgarian
-    bo,                       /// ibetan
+    bo,                       /// Tibetan
     // bp,                       /// TODO?
     // bt,                       /// TODO?
-    my,                       /// Burmese
-    zh,                       /// Chinese Mandarin
+    my,                       /// Burmese: Myanmar
+    zh,                       /// Chinese (Mandarin, Putonghua): China, Singapore
     crh,                      /// Crimean Tatar
-    hr,                       /// Croatian
+    hr,                       /// Croatian: Croatia
     // cr,                       /// TODO?
-    ca,                       /// Catalan
-    cy,                       /// Welch
-    cs,                       /// Czech
+    ca,                       /// Catalan/Valencian (Spain)
+    cy,                       /// Welch: Wales, Heddwch, Tangnefedd
+    cs,                       /// Czech: Czech Republic
     // csb,                      /// TODO?
-    da,                       /// Danish
+    da,                       /// Danish: Denmark, Greenland
     // ds,                       /// TODO?
     // dsb,                      /// TODO?
-    nl,                       /// Dutch
+    nl,                       /// Dutch (Flemish): Netherlands, Belgium
     eo,                       /// Esperanto
     et,                       /// Estonian
-    fi,                       /// Finnish
-    fj,                       /// Fiji
-    fo,                       /// Faeroese
+    fi,                       /// Finnish: Finland, Sweden, Russia
+    fj,                       /// Fijian: Fiji
+    fo,                       /// Faroese (Faeroese): Faroe Islands
     // fu,                       /// TODO?
     // fur,                      /// TODO?
-    fr,                       /// French
+    fr,                       /// French: France, Belgium, Canada, Caribbean, West Africa, Polynesia
     fr_ch,                    /// French (Switzerland)
-    gl,                       /// Galician
-    gv,                       /// Manx
-    de,                       /// German
-    el,                       /// Greek
-    ha,                       /// Hausa
-    // haw,                      /// TODO?
-    he,                       /// Hebrew
+    gl,                       /// Galician (Gallegan): Spain, Portugal
+    gv,                       /// Manx: Isle of Man
+    de,                       /// German: Germany, Austria, Switzerland, Liechtenstein, Italy, Belgium
+    el,                       /// Greek: Greece, Cyprus
+    ha,                       /// Hausa: Nigeria
+    haw,                      /// Hawaiian: Hawaii
+    he,                       /// Hebrew: Israel
     // hs,                       /// TODO?
     // hsb,                      /// TODO?
-    hi,                       /// Hindi
-    hu,                       /// Hungarian
+    hi,                       /// Hindi: India, Nepal, Uganda, Suriname
+    hu,                       /// Hungarian: Hungary, Romania, Slovakia
     is_,                      /// Icelandic
-    io,                       /// Ido
-    id,                       /// Indonesian
-    ga,                       /// Irish
-    it,                       /// Italian
-    ja,                       /// Japanese, 日本語
-    ka,                       /// Georgian
-    ku,                       /// Kurdish
-    kn,                       /// Kannada
-    kk,                       /// Kazakh
-    km,                       /// Khmer
-    ko,                       /// Korean
-    ky,                       /// Kyrgyz
-    lo,                       /// Lao
-    la,                       /// Latin
-    lt,                       /// Lithuanian
-    lv,                       /// Latvian
+    io,                       /// Ido: Nigeria
+    id,                       /// Indonesian (Bahasa): Indonesia
+    ga,                       /// Irish: Ireland
+    it,                       /// Italian: Italy, Switzerland
+    ja,                       /// Japanese, 日本語: Japan
+    ka,                       /// Georgian: Georgia
+    ku,                       /// Kurdish: Kurdistan (Turkey, Syria, Iran, Iraq)
+    kn,                       /// Kannada: India
+    kk,                       /// Kazakh: Kazakhstan
+    km,                       /// Khmer: Cambodia
+    ko,                       /// Korean: Korea
+    ky,                       /// Kirghiz (Kyrgyz): Kirghizstan, China
+    lo,                       /// Lao: Laos
+    la,                       /// Latin: Rome (extinct)
+    lt,                       /// Lithuanian: Lithuania
+    lv,                       /// Latvian: Latvia
     jbo,                      /// Lojban
-    mk,                       /// Macedonian
+    mk,                       /// Macedonian: Macedonia
     nan,                      /// Min Nan
-    mg,                       /// Malagasy
-    mn,                       /// Mongolian
-    ms,                       /// Malay
-    mt,                       /// Maltese
-    ne,                       /// Nepali
-    no,                       /// Norwegian
-    ps,                       /// Pashto
-    fa,                       /// Persian
-    oc,                       /// Occitan
+    mg,                       /// Malagasy (Malgache): Madagascar
+    mn,                       /// Mongolian: Mongolia
+    ms,                       /// Malay: Malaysia
+    mt,                       /// Maltese: Malta
+    ne,                       /// Nepali: Nepal
+    no,                       /// Norwegian: Norway
+    ps,                       /// Pashto: Afghanistan, Iran, Pakistan
+    fa,                       /// Persian (Farsi): Iran, Iraq, Afghanistan, Pakistan, Azerbaijan
+    oc,                       /// Occitan (Provençal, Languedocian): France
     pl,                       /// Polish
-    pt,                       /// Portuguese
+    pt,                       /// Portuguese: Portugal, Brazil, Angola, Mozambique, Cape Verde, Guinea-Bissau
     pt_BR,                    /// Brazilian Portuguese
-    ro,                       /// omanian
-    ru,                       /// ussian
-    sa,                       /// Sanskrit
+    ro,                       /// Romanian: Romania, Hungary
+    ru,                       /// Russian
+    sa,                       /// Sanskrit: India (extinct, liturgical)
     // sc,                    /// TODO?
     // scn,                   /// TODO?
-    si,                       /// Sinhalese
-    sm,                       /// Samoan
-    sco,                      /// Scots
-    sq,                       /// Albanian
+    si,                       /// Sinhalese: Sri Lanka
+    sm,                       /// Samoan: Samoa
+    sco,                      /// Scots: Scotland
+    sq,                       /// Albanian: Albania, Kosovo
     // se,                       /// TODO?
     // sy,                       /// TODO?
     // syc,                       /// TODO?
-    te,                       /// egulu
-    tl,                       /// agalog
+    te,                       /// Telugu: India
+    tl,                       /// Tagalog (Pilipino): Philippines
     // tp,                       /// TODO?
     // tpi,                       /// TODO?
-    gd,                       /// Scottish Gaelic
-    sr,                       /// Serbian
-    sk,                       /// Slovak
-    sl,                       /// Slovene, Slovenian
+    gd,                       /// Scottish Gaelic: Scotland
+    sr,                       /// Serbian: Serbia, Montenegro, Bosnia
+    sk,                       /// Slovak: Slovak Republic
+    sl,                       /// Slovene, Slovenian: Slovenia, Austria, Italy
     es,                       /// Spanish
-    sw,                       /// Swahili
+    sw,                       /// Swahili: East Africa
     sv,                       /// Swedish
-    tg,                       /// Tajik
-    ta,                       /// Tamil
-    th,                       /// Thai
-    tr,                       /// Turkish
-    tk,                       /// Turkmen
+    tg,                       /// Tajik: Tajikistan, Afghanistan
+    ta,                       /// Tamil: India
+    th,                       /// Thai: Thailand
+    tr,                       /// Turkish: Turkey, Cyprus
+    tk,                       /// Turkmen: Turkmenistan, Afghanistan
     uk,                       /// Ukrainian
-    ur,                       /// Urdu
-    uz,                       /// Uzbek
-    vi,                       /// Vietnamese
+    ur,                       /// Urdu: Pakistan, India, Central Asia
+    uz,                       /// Uzbek: Uzbekistan, Central Asia, China
+    vi,                       /// Vietnamese: Viet Nam
     vo,                       /// Volapük
-    wa,                       /// Waloon
-    yi,                       /// Yiddish
+    wa,                       /// Waloon: Belgium
+    yi,                       /// Yiddish: Israel, USA, Russia
     faroese,                  /// Faroese
+
+    aa, // Afar	Ethiopia, Eritrea, Djibouti	Salaamata
+    ab, // Abkhaz	Caucasus	needed!
+    afa, // Luganda	Uganda	Emirembe
+    akk, // Akkadian	Mesopotamia (extinct)	(Salmu)
+    alg, // Abenaki	North America	Okikiamgenoka, Kamignokawôgan
+    am, // Amharic	Ethopia, Egypt	ሰላም (salām)
+    ang, // Anglo Saxon (Old English)	England (extinct)	ᚠᚱᛁᚦ (friþ), Frið
+    arw, // Arawak	Suriname, Guyana, Venezuela	needed!
+    arc, // Aramaic (Syriac, Assyrian)	Iraq, Iran, Syria, and liturgical	ܫܠܡܐ (shlamaa)
+    arn, // Mapundungun	Chile	Uvchin, Tügkülen
+    art, // Lojban	 	panpi
+    ast, // Asturian	Spain	Paz
+    at, // Haiti / Guiana Creole (Kreyol)	Caribbean	Lapè
+    aus, // Olkola	Australia	Erray
+    // aus, // Pintupi-Luritja	Australia	Yatanpa
+    // aus, // Wagiman	Australia	Nyimbur-ma
+    // aus, // Warlpiri	Australia	Iawa-nyinami
+    av, // Avar	Caucasus	Рекъел (reqel)
+    ay, // Aymara	Bolivia	Hacaña
+    bai, // Dschang (Yemba)	Cameroon	Mbwɛ´né
+    bas, // Basaa	Cameroon	SàN
+    bat, // Old Prussian, Sudovian (Jatvingian)	Baltic (extinct)	Pakajan
+    btk, // Batak	Indonesia	Pardamean
+    bem, // Bemba	Zambia	Mutenden, Ukwikala mu
+    bh, // Bihari	India	needed!
+    bi, // Bislama	Vanuatu	Pís
+    bla, // Blackfoot	North America	Innaihtsi'iyi
+    bm, // Bambara	Mali	Here, Errébé
+    cai, // Ch'ol (Tumbalá)	Chiapas (Mexico)	Ñʌch'chocoya
+    car, // Caribe	Venezuala, Suriname	needed!
+    ce, // Chechen	Chechnya (Caucasus)	Машар (mashar)
+    ceb, // Cebuano	Philippines	Kalinaw, Kahusayan
+    ch, // Chamorro	Guam	Minaggen
+    cho, // Choctaw	North America	Achukma
+    chk, // Chuuk	Truk	Kunammwey
+    chr, // Cherokee (Tsalagi)	North America	ᏙᎯᏱ (dohiyi)
+    chy, // Cheyenne	North America	Nanomonsetôtse
+    co, // Corsican	Corsica (France)	Pace
+    cop, // Coptic	Egypt (extinct) and liturgical	Ϩιρηνη (hirīnī)
+    cpe, // Afro-Seminole	North America	needed!
+    cpf, // Cajun French (Acadian, Kreyol Lwiziyen)	Louisiana (USA)	needed!
+    cr, // Cree	North America	Wetaskiwin, Papayatik
+    crp, // Fanagolo	South Africa	Kutula
+    cu, // Old Church Slavonic	Eastern Europe (liturgical)	Ми́ръ (mírə)
+    cv, // Chuvash	Russia	needed!
+    del, // Lenape (Delaware)	North America	Achwangundowagan
+    dua, // Duala	Cameroon	Musango
+    dra, // Brahui	Pakistan, Afghanistan, Iran	(âsûdaî)
+    dv, // Divehi (Maldivian)	Maldives	ސުޅަ (sulha)
+    dz, // Dzongkha	Bhutan	གཞི་བདེ (gzhi-bde)
+    ee, // Ewe (Évé)	West Africa	Ŋutifafa
+    efi, // Efik	Nigeria	Emem
+    enm, // Middle English	England (extinct)	Pes, Pise, Pees, ...
+    ff, // Fula (Falani)	West Africa	Jam
+    fiu, // Karelian	Russia, Finland	Rauhu, Vienosti
+    fon, // Fon	Benin	Fifâ
+    fro, // Old French	France	Pais
+    fur, // Friulian (Frulan)	Friuli (Italy)	Pâs
+    fy, // Frisian	Germany, Netherlands	Frede
+    gez, // Ge'ez	Ethiopia, Eritrea (liturgical)	ሰላም (salām)
+    gmh, // Middle High German	Central Europe (extinct)	Vride
+    gn, // Guarani	Bolivia, Paraguay, Brazil	Apĭrĭvé, Ñerane'i, Py'aguapy
+    goh, // Old High German	Central Europe (extinct)	Fridu
+    got, // Gothic	Central Europe (extinct)
+    grc, // Ancient Greek	Miditerranean (extinct) and liturgical	Εἰρήνη (eirḗnē)
+    gu, // Gujarati	India, Pakistan	શાંતિ (śānti)
+    hil, // Hiligaynon (Ilongo)	Philippines	Paghidait
+    hmn, // Hmong	China, Viet Nam, Laos, Thailand	Kev tiaj tus
+    ho, // Hiri Motu	Papua New Guinea	Taim billong sikan
+    hz, // Herero	Southern Africa	needed!
+    ia, // Interlingua	 	Pace
+    ie, // Interlingue	 	Pace
+    ig, // Igbo (Ibo)	Nigeria	Udo
+    ii, // Sichuan Yi	China	ꄮꐽ (te-njo)
+    ik, // Iñupiaq	Alaska	Kiñuiñak, Tutqiun
+    ilo, // Ilocano	Philippines	Kappia
+    inh, // Ingush	Ingutia (Caucasus)	Машар (mashar)
+    iu, // Inuktitut	Canada	ᓴᐃᒻᒪᓯᒪᓂᖅ (saimmasimaniq)
+    jpr, // Judeo-Persian (Bukharic)	Mideast, Central Asia	needed!
+    jrb, // Judeo-Arabic	Mideast, North Africa	needed!
+    jv, // Javanese	Indonesia	Rukun
+    kab, // Kabyle	Algeria	Lahna
+    kg, // Kongo	Congo	Kikœndi
+    ki, // Kikuyu (Gikuyu)	Kenya	Thayu
+    kj, // Kwanyama (Kuanyama)	Angola, Namibia	needed!
+    kl, // Greenlandic (Kalaallisut)	Greenland	Irqigsiniq, Erĸigsineĸ
+    kos, // Kosraean	Micronesia	Mihs
+    kr, // Kanuri	Niger, Nigeria	needed!
+    ks, // Kashmiri	Kashmir (India, Pakistan)	امن (amn)
+    kv, // Komi	Russian Arctic	needed!
+    kw, // Cornish	Cornwall (extinct)	Cres
+    lad, // Ladino (Judeo-Spanish)	Turkey, Israel, North Africa	Pas, פאש
+    lb, // Luxemburgish (Lëtzebuergesch)	Luxembourg	Fridd, Fridden
+    lg, // Ganda	Niger, Congo	needed!
+    li, // Limburgan (Limburgish)	Belgium	Vreij
+    ln, // Lingala	Congo	Kímía
+    lol, // Mongo-Nkundu	Congo	Bóoto
+    loz, // Lozi	Zambia	Nala
+    lu, // Luba-Katanga	Niger, Congo	needed!
+    man, // Mandinka	Senegal, Gambia, Guinea-Bissau	Kayiroo
+    map, // Bisaya	Brunei	Kalinaw
+    mh, // Marshallese	Marshall Islands	Ainemon
+    mi, // Maori	New Zealand	Rangima'arie, Nohopuku, Rongo
+    mic, // Micmac	North America	Wôntôkóde
+    mis, // Ainu	Japan	アプンノ, あぷんの (apunno)
+    ml, // Malayalam	India	സമാധാനം (samaadhaanam)
+    mno, // Manobo	Philippines	Linew
+    mo, // Moldavian (Moldavan)	Moldava	Pace, Паче (pace)
+    mos, // Mossi (Moré)	Burkina Faso	Lâfí
+    mr, // Marathi	India	शांतता (śāntātā), शांती (śāntī)
+    mus, // Muskogee (Creek)	North America	Ittimokla
+    myn, // Kekchi	Guatemala, Belize	Tuktuquil usilal
+    na, // Nauruan	Nauru	Iow
+    nah, // Náhuatl (Aztec)	Mexico, Guatemala	Tlamatcanemiliztli, Mocehuia
+    nd, // North Ndebele	Zimbabwe	needed!
+    nds, // Old Saxon	Saxony (extinct)	Friðu
+    ng, // Ndonga	Angola, Namibia	needed!
+    non, // Old Norse	Scandinavia (extinct)	ᚠᚱᛁᚦᚱ, Friðr
+    nr, // South Ndebele	Zimbabwe, Botswana	needed!
+    nv, // Navajo (Navaho)	North America	K'é, Hozo
+    ny, // Chichewa (Chewa, Nyanja)	Malawi	M'tendere
+    om, // Oromo	Ethiopia, Kenya	Nagaya, ነገየ (nagaya)
+    or, // Oriya	India	needed!
+    os, // Ossetic (Ossetian)	Georgia, Russia	needed!
+    oto, // Otomi	Mexico	Hmetho
+    pa, // Panjabi (Punjab)	Pakistan, India	ਸ਼ਾਂਤੀ (śānti)
+    paa, // Ekari	Indonesia	Muka-Muka
+    pag, // Pangasinan	Philippines	Kareenan
+    pam, // Pampangan (Kapampangan)	Philippines	Kapayapan
+    pap, // Papiamentu	Netherlands Antilles	Pas
+    pau, // Palauan	Palau	Búdech
+    pi, // Pali	India	Sāma, Santi
+    qu, // Quechua	Peru	Anka Kay, Qasikay, Aligu, Sonqo Tiaykuy
+    rap, // Rapanui	Chile	Kiba-kiba, Pava
+    rm, // Raeto-Romance (Romansch)	Switzerland	Pasch
+    rn, // Rundi (Kirundi, Urundi)	Burundi	Amahoro
+    rom, // Romany (Gypsy, Tsigane)	Europe, South America, etc	Smirom
+    rw, // Kinyarwanda (Rwanda, Ruanda)	Rwanda	Nimuhóre, Amahoro
+    sd, // Sindhi	Pakistan, India	शांति, شانت (śanti)
+    sg, // Sango	Central African Republic	needed!
+    sn, // Shona	Zimbabwe	Runyaro, Dendemaro
+    so, // Somali	Somalia, Djibouti, Ethiopia	Nabáda
+    ss, // Swati (Siswati)	Swaziland	Kuthála
+    st, // Southern Sotho (Sesotho, Sesuthu)	South Africa	Kgotso, Khotso
+    su, // Sundanese	Indonesia	needed!
+    ti, // Tigrinya (Tigrigna)	Eritrea	ሰላም (salām)
+    tli, // Tlingit	North America	Li-k'ei
+    tn, // Tswana (Setswana)	Botswana	Khotso, Kagiso
+    to, // Tonga	Zambia	Malino, Melino
+    ts, // Tsonga	South Africa	needed!
+    tt, // Tatar	Russia	Тынычлык (tınıçlık)
+    tw, // Twi	West Africa	Asomdwee
+    ty, // Tahitian	Tahiti	Hau
+    ug, // Uighur (Uygur)	China, Central Asia	تىنچلىق (tinçlik)
+    ve, // Venda	South Africa	needed!
+    wen, // Upper Sorbian (Wendish)	Germany	Pokoj
+    wo, // Wolof	West Africa	Jàmm
+    xh, // Xhosa	South Africa, Botswana	Uxolo
+    yo, // Yoruba	Nigeria, Benin, Togo	Alaáfía
+    ypk, // Yu'pik	Alaska, Canada	Kiñuiñak
+    za, // Chuang (Zhuang)	China	needed!
+    zap, // Zapotec	Mexico	Layeni, Binlo
+    zu, // Zulu	Southern Africa	Isithangami, Ukuthula
 
     c,
     firstFormal = c,
@@ -175,6 +339,7 @@ enum Lang:ubyte
     modelica,
 
     math,                ///< "Mathematics is the only truly universal language"
+    physics,
 }
 
 /** Return true if $(D lang) is case-sensitive. */
@@ -197,7 +362,7 @@ string toHuman(Lang lang) @safe pure @nogc nothrow
 {
     with (Lang)
     {
-        final switch (lang)
+        switch (lang)
         {
             case unknown: return `??`;
             case en: return `English`; // 英語
@@ -318,6 +483,8 @@ string toHuman(Lang lang) @safe pure @nogc nothrow
             case fortran: return `Fortran`;
             case modelica: return `Modelica`;
             case math: return `Mathematics`;
+            case physics: return `Physics`;
+            default: return "??";
         }
     }
 
@@ -1436,6 +1603,9 @@ unittest
     }
 }
 
+/**
+   Reuse knet translation query instead.
+ */
 string negationIn(Lang lang = Lang.en)
     @safe pure nothrow
 {
