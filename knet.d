@@ -4580,6 +4580,23 @@ class Net(bool useArray = true,
                 showTopLanguages(hist);
             }
         }
+        else if (normLine.skipOver(`beginswith(`) ||
+                 normLine.skipOver(`hasbegin(`) ||
+                 normLine.skipOver(`hasstart(`))
+        {
+            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            auto split = normLine.findSplitBefore(`)`);
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                auto hits = startsWith(arg);
+                foreach (node; hits.map!(a => nodeAt(a)))
+                {
+                    showNode(node, 1.0);
+                    writeln;
+                }
+            }
+        }
         else if (normLine.skipOver(`endswith(`) ||
                  normLine.skipOver(`hasend(`))
         {
@@ -4728,7 +4745,15 @@ class Net(bool useArray = true,
         return nodes;
     }
 
-    /** Get NodeRefs whose Lemma Expr ends with suffix. */
+    /** Get NodeRefs whose Lemma Expr starts with $(D prefix). */
+    auto startsWith(S)(S suffix,
+                       Lang lang = Lang.unknown,
+                       Sense sense = Sense.unknown) if (isSomeString!S)
+    {
+        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.startsWith(suffix));
+    }
+
+    /** Get NodeRefs whose Lemma Expr starts with $(D suffix). */
     auto endsWith(S)(S suffix,
                      Lang lang = Lang.unknown,
                      Sense sense = Sense.unknown) if (isSomeString!S)
