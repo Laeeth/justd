@@ -35,27 +35,27 @@ class WordNet(bool useArray = true,
     /** WordNet Semantic Relation Type Code.
         See also: conceptnet5.Relation
     */
-    enum Relation:ubyte
-    {
-        unknown,
-        attribute,
-        causes,
-        classifiedByRegion,
-        classifiedByUsage,
-        classifiedByTopic,
-        entails,
-        hyponymOf, // also called hyperonymy, hyponymy,
-        instanceOf,
-        memberMeronymOf,
-        partMeronymOf,
-        sameVerbGroupAs,
-        similarTo,
-        substanceMeronymOf,
-        antonymOf,
-        derivationallyRelated,
-        pertainsTo,
-        seeAlso,
-    }
+    // enum Relation:ubyte
+    // {
+    //     unknown,
+    //     attribute,
+    //     causes,
+    //     classifiedByRegion,
+    //     classifiedByUsage,
+    //     classifiedByTopic,
+    //     entails,
+    //     hyponymOf, // also called hyperonymy, hyponymy,
+    //     instanceOf,
+    //     memberMeronymOf,
+    //     partMeronymOf,
+    //     sameVerbGroupAs,
+    //     similarTo,
+    //     substanceMeronymOf,
+    //     antonymOf,
+    //     derivationallyRelated,
+    //     pertainsTo,
+    //     seeAlso,
+    // }
 
     alias LinkIx = uint; // link index (precision)
 
