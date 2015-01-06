@@ -20,6 +20,8 @@ enum Rel:ubyte
           * make that distinction.) This is the hyponym relation in
           * WordNet. /r/IsA /c/en/car /c/en/vehicle ; /r/IsA /c/en/chicago
           * /c/en/city */
+    hyponymOf = isA, /// WordNet. Use isA instead.
+
     mayBeA,
 
     partOf, /* A is a part of B. This is the part meronym relation in
@@ -27,6 +29,7 @@ enum Rel:ubyte
 
     memberOf, /* A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
+
     memberOfEconomicSector,
     participatesIn,
     growsIn,
