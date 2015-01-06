@@ -599,6 +599,7 @@ enum Sense:ubyte
     suffix,
 
     idiom,                      /// Idiomatic Expression.
+    slang,                      /// Slang
 
     ordinalNumber, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
 

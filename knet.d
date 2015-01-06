@@ -1710,6 +1710,13 @@ class Net(bool useArray = true,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.7);
+
+        // Slang
+        learnPairs("../knowledge/sv/slang_meaning.txt",
+                   Sense.slang, Lang.sv,
+                   Rel.hasMeaning,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, 0.7);
     }
 
     /// Learn Emotions.
