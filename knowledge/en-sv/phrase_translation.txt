@@ -1,15 +1,21 @@
 account cardkundkort
+after tomorrowi övermorgon
+the day after tomorrowi övermorgon
 and you?och du?
+armed to the teethbeväpnad till tänderna
 at night [single future event]i natt
 back to the grindtillbaka till grottekvarnen
+before sunsetföre solnedgången
 behave yourselfuppför dig
 bigstor
-no big dealingen stor sak
+birds of one featherav samma skrot och korn
 bless you (when sneezing)prosit
 bon appetitsmaklig måltid
 bon voyagelycklig resa
 bon voyagetrevlig resa
+bushwhackarmbåga sig fram
 business parkföretagspark
+I'm busyjag är upptagen
 by heartutantill
 call an ambulans!ring ambulansen!
 call an ambulans!ring på ambulansen!
@@ -41,6 +47,8 @@ every now and thendå och då
 excuse meursäkta
 excuse meursäkta mig
 excuse me!ursäkta!
+fall behindhamna efter
+farewell on gray paperavsked på grått papper
 fire!det brinner!
 får jag lov?may i?
 gesundheit!skål!
@@ -92,6 +100,8 @@ hop inhoppa in
 horses for coursesdon efter person
 how are you?hur mår du?
 how are you?hur är det med dig?
+how come {1}?hur kommer det sig att {1}?
+how come?hur kommer det sig?
 how do you say {1} in {2}?hur säger man {1} på {2}?
 how much is it?hur mycket kostar det?
 how much is that?hur mycket blir det?
@@ -101,6 +111,7 @@ how much is this?hur mycket kostar detta?
 how old are you?hur gammal är du?
 how's it goinghur går det?
 hurry upskynda på
+i blew itjag gjorde bort mig
 i don't knowjag vet inte
 i don't understandjag förstår inte
 i feel sickjag mår dåligt
@@ -134,6 +145,7 @@ i'm injag är på
 i'm in the blackjag är på grön kvist
 i'm looking for johnjag letar efter john
 i'm lostjag har tappat bort mig
+i'm on my wayjag är på väg
 i'm sick of itjag är trött på det
 i'm sorry? [if you don't hear something]förlåt?
 i'm {1}jag är {1}
@@ -142,17 +154,22 @@ if {1} insistom {1} insisterar
 in the evening [single future event]i kväll
 in the morning [repeated]på morgonen
 in the morning [single future event]imorgon bitti
+inside the houseinne i huset
+inside the houseinuti i huset
 island-hoppingfrån ö till ö
 it can't hurtdet kan inte skada
 it's a long storydet är en lång historia
 it's about timedet var på tiden
+it's not that importantdet är inte så viktigt
 it's up to {1}det är upp till {1}
 it's {1}hon är {1}
 it's {1}klockan är {1}
-it´s off the chaindet är jättehäftigt
 it´s off the chaindet är helt sanslöst
+it´s off the chaindet är jättehäftigt
 jump to conclusionsdra förhastade slutsatser
 just a littlebara lite
+just in casebara utifall att
+just in caseutifall att
 just my lucktypiskt
 keep an eye onhålla ett öga på
 keep {1} fingers crossedhålla tummarna
@@ -168,26 +185,33 @@ mrherr
 mrsfru
 my name is {1}jag heter {1}
 my {1} is badmin {1} är dålig
+nature callsnaturen kallar
+never in lifealdrig i livet
 never mindglöm det
 nice to meet youtrevligt att träffas
+no big dealingen stor sak
 no probleminga problem
+no strings attachedkravlöst
 not so goodinte så bra
 nothing muchinte mycket
 now you're cookingnu har du fattat galoppen
 now you're talkingnu snackar vi
+oh dearåh kära
 oh that is goodoj det var bra
 one language is never enoughett språk är aldrig nog
 one moment pleaseett ögonblick
 out of the bluefrån ingenstans
 out of this worldinte av denna världen
+outside vehicleutanför fordon
+inside vehicleinuti fordon
 over {1} dead bodyöver {1} döda kropp
 payorbetalningsskyldig
 piece of cakelätt som en plätt
 please speak more slowlyvar snäll och tala långsammare
 please write it downskulle du kunna skriva ned det åt mig?
-pleased to meet youtrevligt att träffas
 pleased to meet you
 pleased to meet youangenämt
+pleased to meet youtrevligt att träffas
 practice my {1}öva på min {1}
 raised in a barnhelt ouppfostrad
 reallyverkligen
@@ -228,10 +252,12 @@ twenty-four sevendygnet runt
 we are {1} years oldvi är {1} gamla
 welcomevälkommen [singular]
 welcomevälkomna [plural]
+welcome backvälkommen åter
 what a small worldvärlden är liten
 what do you do for a living?vad jobbar du med?
 what does "gato" mean in english?vad betyder ¡°saktare¡± på engelska?
 what time is it?vad är klockan?
+what's eating you?vad är det som är fel?
 what's new?något nytt på gång?
 what's that called in {1}?vad heter det på {1}?
 what's that in {1}?vad heter det på {1}?
@@ -249,6 +275,8 @@ where's {1}?var är {1}?
 where's {1}?vart ligger {1}?
 where's {1}?vart är {1}?
 who caresvem bry sig
+with memed mig
+without himutan honom
 work awaylägga jobbet bakom sig
 would {1} like to dance?vill {1} dansa?
 write it down, pleaseskriv ner det, är ni snäll
@@ -260,22 +288,10 @@ you've got to be kiddingdu måste skämta
 {1} don't buy it{1} tror inte på det
 {1} know better than that{1} vet bättre än så
 {1} made it{1} klarade det
-i'm on my wayjag är på väg
 {1} told you sodet var ju det {1} sa
-no strings attachedkravlöst
-i blew itjag gjorde bort mig
-what's eating you?vad är det som är fel?
-nature callsnaturen kallar
-just in caseutifall att
-just in casebara utifall att
-it's not that importantdet är inte så viktigt
-welcome backvälkommen åter
-never in lifealdrig i livet
-bushwhackarmbåga sig fram
-birds of one featherav samma skrot och korn
-farewell on gray paperavsked på grått papper
-armed to the teethbeväpnad till tänderna
-how come?hur kommer det sig?
-how come {1}?hur kommer det sig att {1}?
-fall behindhamna efter
-oh dearåh kära
+dear sirbäste herrn
+dear madambästa fru
+dear missbästa fröken
+dear sir / madambästa herr eller fru
+dear sirsbästa herrar
+dear madamsbästa fruar
