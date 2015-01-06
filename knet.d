@@ -32,6 +32,7 @@
     Data: http://www.smart-words.org/list-of-synonyms/
     Data: http://www.thefreedictionary.com/
     Data: http://www.paengelska.com/engelska_uttryck_a.htm
+    Data: http://www.ego4u.com/en/cram-up/grammar/prepositions
 
     English Phrases: http://www.talkenglish.com
     Names: http://www.nordicnames.de/
@@ -1434,23 +1435,90 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
         learnAttributes(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
 
+        learnAttributes(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `people`, Sense.noun, Sense.noun, 1.0);
+
         // TODO functionize to learnGroup
         learnAttributes(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `compound word`, Sense.unknown, Sense.noun, 1.0);
+
+        // Part of Speech (PoS)
         learnAttributes(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.noun, Sense.noun, 1.0);
-        learnAttributes(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `people`, Sense.noun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pronoun`, Sense.pronoun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `verb`, Sense.verb, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `interjection`, Sense.interjection, Sense.noun, 1.0);
+
+        // Undefinite Articles
+        learnAttributes(Lang.en, [`a`, `an`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.de, [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.fr, [`un`, `une`, `des`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`en`, `ena`, `ett`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+
+        // Definite Articles
+        learnAttributes(Lang.en, [`the`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.de, [`der`, `die`, `das`, `des`, `dem`, `den`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.fr, [`le`, `la`, `l'`, `les`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`den`, `det`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+
+        // Partitive Articles
+        learnAttributes(Lang.en, [`some`],
+                        Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
+        learnAttributes(Lang.fr, [`du`, `de`, `la`, `de`, `l'`, `des`],
+                        Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
+
+        // TODO merge with conjunctions?
+        // TODO categorize like http://www.grammarbank.com/connectives-list.html
+        enum connectives = [`the`, `of`, `and`, `to`, `a`, `in`, `that`, `is`,
+                            `was`, `he`, `for`, `it`, `with`, `as`, `his`,
+                            `on`, `be`, `at`, `by`, `i`, `this`, `had`, `not`,
+                            `are`, `but`, `from`, `or`, `have`, `an`, `they`,
+                            `which`, `one`, `you`, `were`, `her`, `all`, `she`,
+                            `there`, `would`, `their`, `we him`, `been`, `has`,
+                            `when`, `who`, `will`, `more`, `no`, `if`, `out`,
+                            `so`, `said`, `what`, `up`, `its`, `about`, `into`,
+                            `than them`, `can`, `only`, `other`, `new`, `some`,
+                            `could`, `time`, `these`, `two`, `may`, `then`,
+                            `do`, `first`, `any`, `my`, `now`, `such`, `like`,
+                            `our`, `over`, `man`, `me`, `even`, `most`, `made`,
+                            `after`, `also`, `did`, `many`, `before`, `must`,
+                            `through back`, `years`, `where`, `much`, `your`,
+                            `way`, `well`, `down`, `should`, `because`, `each`,
+                            `just`, `those`, `people mr`, `how`, `too`,
+                            `little`, `state`, `good`, `very`, `make`, `world`,
+                            `still`, `own`, `see`, `men`, `work`, `long`, `get`,
+                            `here`, `between`, `both`, `life`, `being`, `under`,
+                            `never`, `day`, `same`, `another`, `know`, `while`,
+                            `last`, `might us`, `great`, `old`, `year`, `off`,
+                            `come`, `since`, `against`, `go`, `came`, `right`,
+                            `used`, `take`, `three`];
+
+        // Conjunction
+        learnAttributes(Lang.en, [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`],
+                        Rel.isA, false, `coordinating conjunction`, Sense.coordinatingConjunction, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
+                        Rel.isA, false, `coordinating conjunction`, Sense.coordinatingConjunction, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
+
         learnAttributes(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verb, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `determiner`, Sense.determiner, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
+
+        learnAttributes(Lang.en, rdT("../knowledge/en/preposition.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `preposition`, Sense.preposition, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`since`, `ago`, `before`, `past`], Rel.isA, false, `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
+
+        // Other
+
         learnAttributes(Lang.en, rdT("../knowledge/en/dolch_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch word`, Sense.unknown, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `personal quality`, Sense.adjective, Sense.noun, 1.0);
-        learnAttributes(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
-        learnAttributes(Lang.en, rdT("../knowledge/en/prepositions.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `preposition`, Sense.preposition, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `color`, Sense.unknown, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `shape`, Sense.noun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `fruit`, Sense.noun, Sense.noun, 1.0);

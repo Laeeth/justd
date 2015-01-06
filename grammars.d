@@ -852,11 +852,10 @@ enum Sense:ubyte
 
     adverb, /// changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
     normalAdverb,
-    conjunctiveAdverb, /// joins together sentences
+    conjunctiveAdverb, adverbialConjunction = conjunctiveAdverb, /// joins together sentences
     negatingAdverb,
     affirmingAdverb,
 
-    adverbialConjunction = conjunctiveAdverb,
 
     preposition, /// often ambiguous
     prepositionTime, /// only related to time
