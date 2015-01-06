@@ -1309,11 +1309,18 @@ class Net(bool useArray = true,
 
     /** Learn $(D Lemma) of $(D expr).
      */
-    void learnLemma(S)(S expr, Lemma lemma) if (isSomeString!S)
+    void learnLemmaMaybeSpecialized(ref Lemma lemma)
     {
+        const expr = lemma.expr;
+        if (expr == "stödja")
+        {
+            dln("stödja: ", lemma);
+        }
         if (expr in lemmasByExpr)
         {
-            if (!lemmasByExpr[expr][].canFind(lemma)) // TODO Make use of binary search
+            // TODO Reuse senses that specialize lemma.sense and modify lemma.sense to it
+            const existingLemmas = lemmasByExpr[expr][];
+            if (!existingLemmas.canFind(lemma)) // TODO Make use of binary search
             {
                 lemmasByExpr[expr] ~= lemma;
             }
@@ -1367,14 +1374,14 @@ class Net(bool useArray = true,
         const quick = true;
         const maxCount = quick ? 10000 : size_t.max;
 
+        // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
+        learnPreciseThings();
+
         // Supervised Knowledge
         wordnet = new WordNet!(true, true)([Lang.en]);
         readSynlexFile("~/Knowledge/swesaurus/synpairs.xml".expandTilde.buildNormalizedPath);
         readFolketsFile("~/Knowledge/swesaurus/folkets_en_sv_public.xdxf".expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
         readFolketsFile("~/Knowledge/swesaurus/folkets_sv_en_public.xdxf".expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
-
-        // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
-        learnPreciseThings();
 
         // Learn Less Absolute Things
         learnAssociativeThings();
@@ -3468,13 +3475,13 @@ class Net(bool useArray = true,
         const origin = Origin.manual;
         connectMto1(nouns.map!(word => store(word, lang, sense, origin)),
                     Rel.isA, false,
-                    store("uncountable_noun", lang, sense, origin),
+                    store("uncountable noun", lang, sense, origin),
                     lang, origin);
     }
 
     /** Lookup-or-Store $(D Node) at $(D lemma) index.
      */
-    NodeRef store(in Lemma lemma,
+    NodeRef store(Lemma lemma,
                   Node node) in { assert(!lemma.expr.empty); }
     body
     {
@@ -3495,10 +3502,11 @@ class Net(bool useArray = true,
             assert(allNodes.length <= nullIx);
             const cix = NodeRef(cast(Ix)allNodes.length);
             allNodes ~= node; // .. new node that is stored
+
+            learnLemmaMaybeSpecialized(lemma);
+
             nodeRefByLemma[lemma] = cix; // store index to ..
             nodeStringLengthSum += lemma.expr.length;
-
-            learnLemma(lemma.expr, lemma);
 
             return cix;
         }
@@ -4649,7 +4657,8 @@ class Net(bool useArray = true,
                 showTopLanguages(hist);
             }
         }
-        else if (normLine.skipOver(`beginswith(`) ||
+        else if (normLine.skipOver(`startswith(`) ||
+                 normLine.skipOver(`beginswith(`) ||
                  normLine.skipOver(`hasbegin(`) ||
                  normLine.skipOver(`hasstart(`))
         {
@@ -4667,7 +4676,8 @@ class Net(bool useArray = true,
             }
         }
         else if (normLine.skipOver(`endswith(`) ||
-                 normLine.skipOver(`hasend(`))
+                 normLine.skipOver(`hasend(`) ||
+                 normLine.skipOver(`hassuffix(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
             auto split = normLine.findSplitBefore(`)`);

@@ -77,7 +77,6 @@ enum Lang:ushort
     fj,                       /// Fijian: Fiji
     fo,                       /// Faroese (Faeroese): Faroe Islands
     // fu,                       /// TODO?
-    // fur,                      /// TODO?
     fr,                       /// French: France, Belgium, Canada, Caribbean, West Africa, Polynesia
     fr_ch,                    /// French (Switzerland)
     gl,                       /// Galician (Gallegan): Spain, Portugal
@@ -398,7 +397,8 @@ string toHuman(Lang lang) @safe pure @nogc nothrow
             case et: return `Estonian`;
             case fi: return `Finnish`;
             case fj: return `Fiji`;
-            case fo: return `Faeroese`;
+            case fo:
+            case faroese: return `Faroese`;
             case fr: return `French`;
             case fr_ch: return `French (Switzerland)`;
             case gl: return `Galician`;
@@ -469,7 +469,14 @@ string toHuman(Lang lang) @safe pure @nogc nothrow
             case vo: return `Volapük`;
             case wa: return `Waloon`;
             case yi: return `Yiddish`;
-            case faroese: return `Faroese`;
+            case akk: return `Akkadian`;
+            case ce: return `Chechen`;
+            case co: return `Corsican`;
+            case fur: return `Friulian`;
+            case gu: return `Gujarati`;
+            case hil: return `Hiligaynon`;
+            case haw: return `Hawaiian`;
+
             case c: return `C`;
             case cxx: return `C++`;
             case cSharp: return `C#`;
