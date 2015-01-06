@@ -2,7 +2,7 @@
 
 /** Knowledge Graph Database.
 
-    Reads data from DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
+    Reads data from SUMO, DBpedia, Freebase, Yago, BabelNet, ConceptNet, Nell,
     Wikidata, WikiTaxonomy into a Knowledge Graph.
 
     Applications:
@@ -18,6 +18,7 @@
     See also: http://www.eturner.net/omcsnetcpp/
     See also: http://wwww.abbreviations.com
 
+    Data: http://www.adampease.org/OP/
     Data: http://www.wordfrequency.info/
     Data: http://conceptnet5.media.mit.edu/downloads/current/
     Data: http://wiki.dbpedia.org/DBpediaAsTables
@@ -39,8 +40,6 @@
     Names: http://www.20000-names.com/
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
-
-    TODO Add endsWith hasEnd
 
     TODO Guess verb if endsWith: "vowel"+ "konsonant"+ and "ize"
 
@@ -4581,6 +4580,22 @@ class Net(bool useArray = true,
                 showTopLanguages(hist);
             }
         }
+        else if (normLine.skipOver(`endswith(`) ||
+                 normLine.skipOver(`hasend(`))
+        {
+            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            auto split = normLine.findSplitBefore(`)`);
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                auto hits = endsWith(arg);
+                foreach (node; hits.map!(a => nodeAt(a)))
+                {
+                    showNode(node, 1.0);
+                    writeln;
+                }
+            }
+        }
 
         if (normLine.empty)
             return;
@@ -4707,11 +4722,18 @@ class Net(bool useArray = true,
                                 lang,
                                 sense);
         showNodeRefs(nodes, Rel.translationOf); // TODO traverse synonyms and translations
-
         // en => sv:
         // en-en => sv-sv
         /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         return nodes;
+    }
+
+    /** Get NodeRefs whose Lemma Expr ends with suffix. */
+    auto endsWith(S)(S suffix,
+                     Lang lang = Lang.unknown,
+                     Sense sense = Sense.unknown) if (isSomeString!S)
+    {
+        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.endsWith(suffix));
     }
 
     /** Relatedness.
