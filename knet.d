@@ -1318,9 +1318,26 @@ class Net(bool useArray = true,
         }
         if (expr in lemmasByExpr)
         {
-            // TODO Reuse senses that specialize lemma.sense and modify lemma.sense to it
             const existingLemmas = lemmasByExpr[expr][];
-            if (!existingLemmas.canFind(lemma)) // TODO Make use of binary search
+
+            // reuse senses that specialize lemma.sense and modify lemma.sense to it
+            auto hit = false;
+            foreach (existingLemma; existingLemmas)
+            {
+                if (existingLemma.lang == lemma.lang &&
+                    existingLemma.categoryIx == lemma.categoryIx &&
+                    lemma.sense != Sense.unknown && // must be here!
+                    existingLemma.sense.specializes(lemma.sense))
+                {
+                    dln("Specializing Lemma ", expr, " sense from ", lemma.sense, " to ", existingLemma.sense);
+                    // lemma.sense = existingLemma.sense;
+                    hit = true;
+                    break;
+                }
+            }
+
+            const hitAlt = existingLemmas.canFind(lemma);
+            if (!hitAlt) // TODO Make use of binary search
             {
                 lemmasByExpr[expr] ~= lemma;
             }
