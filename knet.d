@@ -4823,6 +4823,17 @@ class Net(bool useArray = true,
                 showTopLanguages(hist);
             }
         }
+        else if (normLine.skipOver(`languageof(`))
+        {
+            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            const split = normLine.findSplitBefore(`)`);
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                auto hist = languagesOf(arg.splitter(" "));
+                showTopLanguages(hist, 1);
+            }
+        }
         else if (normLine.skipOver(`startswith(`) ||
                  normLine.skipOver(`beginswith(`) ||
                  normLine.skipOver(`hasbegin(`) ||
@@ -5008,11 +5019,14 @@ class Net(bool useArray = true,
     }
 
     /** Show Languages Sorted By Falling Weight. */
-    void showTopLanguages(NWeight[Lang] hist)
+    void showTopLanguages(NWeight[Lang] hist, size_t maxCount = size_t.max)
     {
+        size_t i = 0;
         foreach (e; hist.pairs.sort!((a, b) => (a[1] > b[1])))
         {
+            if (i == maxCount) { break; }
             writeln("  - ", e[0].toHuman, ": ", e[1], " #hits");
+            ++i;
         }
     }
 
