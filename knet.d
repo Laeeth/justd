@@ -148,7 +148,7 @@
     < Concept(s) or ? for help: love
     > Line love
     - in English of sense uncountable
-    - is a:  uncountable noun(en-uncountable:1.00@Manual),
+    - is a:  uncountable(en-uncountable:1.00@Manual),
     - in English
     - is the opposite of:  hate(en:1.00@CN5),
     - is the opposite of:  hate(en-verb:1.00@CN5),
@@ -1452,8 +1452,8 @@ class Net(bool useArray = true,
     void learnPreciseThings()
     {
         // TODO replace with automatics
-        learnAttributes(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.uncountable, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.uncountable, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.uncountable, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.uncountable, Sense.noun, 1.0);
 
         learnEnglishComputerKnowledge();
 
@@ -3845,13 +3845,13 @@ class Net(bool useArray = true,
 
     /* TODO Add logic describing which Sense.nounX and CategoryIx that fulfills
      * isUncountable() and use it here. */
-    void learnUncountableNouns(R)(Lang lang, R nouns) if (isSourceOf!(R, string))
+    void learnUncountables(R)(Lang lang, R nouns) if (isSourceOf!(R, string))
     {
         const sense = Sense.uncountable;
         const origin = Origin.manual;
         connectMto1(nouns.map!(word => store(word, lang, sense, origin)),
                     Rel.isA, false,
-                    store("uncountable noun", lang, sense, origin),
+                    store("uncountable", lang, sense, origin),
                     lang, origin);
     }
 
