@@ -42,7 +42,17 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Use pattern matching
+    TODO {A} means one word referred to with {A}
+    TODO {A B} means one word referred to with {A B}
+    TODO {1} means one word
+    TODO {2} means one word
+    TODO {1,2} means one or two words
+    TODO {*} means zero or more words
+    TODO {+} means one or more words
+
     BUG learnPairs has no effect. Test name_day.txt by searching for Sylvester.
+    BUG Swedish is not shown in "Node Count by Language:"
 
     TODO Cleanup Pass: All other relations specialize Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo scottish" needless
 
@@ -1746,6 +1756,21 @@ class Net(bool useArray = true,
                         Rel.isA, false, `coordinating manner conjunction`, Sense.conjunctionSubordinatingManner, Sense.noun, 1.0);
         learnAttributes(Lang.en, [`where`, `wherever`],
                         Rel.isA, false, `coordinating place conjunction`, Sense.conjunctionSubordinatingPlace, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`as {*} as`,
+                                  `just as {*} so`,
+                                  `both {*} and`,
+                                  `hardly {*} when`,
+                                  `scarcely {*} when`,
+                                  `either {*} or`,
+                                  `neither {*} nor`,
+                                  `if {*} then`,
+                                  `not {*} but`,
+                                  `what with {*} and`,
+                                  `whether {*} or`,
+                                  `not only {*} but also`,
+                                  `no sooner {*} than`,
+                                  `rather {*} than`],
+                        Rel.isA, false, `correlative conjunction`, Sense.conjunctionCorrelative, Sense.noun, 1.0);
 
         // Subordinating Conjunction
         connect(store("subordinating conjunction", Lang.en, Sense.noun, Origin.manual),
@@ -4452,7 +4477,7 @@ class Net(bool useArray = true,
         import std.range: cycle;
         auto indent = `- `; // TODO use clever range plus indent_depth
 
-        foreach (rel; Rel.min .. Rel.max)
+        foreach (rel; EnumMembers!Rel)
         {
             const count = linkCountsByRel[rel];
             if (count)
@@ -4464,7 +4489,7 @@ class Net(bool useArray = true,
         writeln(`Node Count: `, allNodes.length);
 
         writeln(`Node Count by Origin:`);
-        foreach (source; Origin.min .. Origin.max)
+        foreach (source; EnumMembers!Origin)
         {
             const count = linkSourceCounts[source];
             if (count)
@@ -4473,8 +4498,12 @@ class Net(bool useArray = true,
             }
         }
 
+        pragma(msg, EnumMembers!Origin);
+        pragma(msg, __traits(allMembers, Rel));
+        pragma(msg, EnumMembers!Lang);
+
         writeln(`Node Count by Language:`);
-        foreach (lang; Lang.min..Lang.max)
+        foreach (lang; EnumMembers!Lang)
         {
             const count = hlangCounts[lang];
             if (count)
@@ -4484,7 +4513,7 @@ class Net(bool useArray = true,
         }
 
         writeln(`Node Count by Word Kind:`);
-        foreach (sense; Sense.min..Sense.max)
+        foreach (sense; EnumMembers!Sense)
         {
             const count = senseCounts[sense];
             if (count)
