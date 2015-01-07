@@ -57,7 +57,6 @@
     TODO Support asNoun(deed)
 
     BUG learnTuple has no effect. Test name_day.txt by searching for Sylvester.
-    BUG Swedish is not shown in "Node Count by Language:"
 
     TODO Cleanup Pass: All other relations specialize Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo scottish" needless
 
@@ -1242,12 +1241,13 @@ class Net(bool useArray = true,
 
         WordNet!(true, true) wordnet;
 
-        size_t[Rel.max + 1] linkCountsByRel; /// Link Counts by Relation Type.
         size_t symmetricRelCount = 0; /// Symmetric Relation Count.
         size_t transitiveRelCount = 0; /// Transitive Relation Count.
+
+        size_t[Rel.max + 1] relCounts; /// Link Counts by Relation Type.
         size_t[Origin.max + 1] linkSourceCounts;
-        size_t[Lang.max + 1] hlangCounts;
-        size_t[Sense.max + 1] senseCounts;
+        size_t[Lang.max + 1] nodeCountByLang;
+        size_t[Sense.max + 1] nodeCountBySense; /// Node Counts by Sense Type.
         size_t nodeStringLengthSum = 0;
         size_t connectednessSum = 0;
 
@@ -3673,6 +3673,9 @@ class Net(bool useArray = true,
             nodeRefByLemma[lemma] = cix; // store index to ..
             nodeStringLengthSum += lemma.expr.length;
 
+            ++nodeCountByLang[lemma.lang];
+            ++nodeCountBySense[lemma.sense];
+
             return cix;
         }
     }
@@ -3874,7 +3877,7 @@ class Net(bool useArray = true,
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
-        ++linkCountsByRel[rel];
+        ++relCounts[rel];
         ++linkSourceCounts[origin];
 
         if (origin == Origin.cn5)
@@ -3924,7 +3927,6 @@ class Net(bool useArray = true,
         auto items = part.splitter('/');
 
         const lang = items.front.decodeLang; items.popFront;
-        ++hlangCounts[lang];
 
         static if (useRCString) { immutable expr = items.front.tr("_", " "); }
         else                    { immutable expr = items.front.tr("_", " ").idup; }
@@ -3940,7 +3942,6 @@ class Net(bool useArray = true,
                 dln(`Unknown Sense code `, items.front);
             }
         }
-        ++senseCounts[sense];
 
         return store(expr.correctLemmaExpr, lang, sense, Origin.cn5, anyCategory);
     }
@@ -4522,7 +4523,7 @@ class Net(bool useArray = true,
 
         foreach (rel; enumMembers!Rel)
         {
-            const count = linkCountsByRel[rel];
+            const count = relCounts[rel];
             if (count)
             {
                 writeln(indent, rel.to!string, `: `, count);
@@ -4544,17 +4545,17 @@ class Net(bool useArray = true,
         writeln(`Node Count by Language:`);
         foreach (lang; enumMembers!Lang)
         {
-            const count = hlangCounts[lang];
+            const count = nodeCountByLang[lang];
             if (count)
             {
                 writeln(indent, lang.toHuman, ` (`, lang.to!string, `) : `, count);
             }
         }
 
-        writeln(`Node Count by Word Kind:`);
+        writeln(`Node Count by Sense:`);
         foreach (sense; enumMembers!Sense)
         {
-            const count = senseCounts[sense];
+            const count = nodeCountBySense[sense];
             if (count)
             {
                 writeln(indent, sense, ` (`, sense.to!string, `) : `, count);

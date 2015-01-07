@@ -801,14 +801,14 @@ enum Sense:ubyte
 
     nameLocation,           /// Stockholm
     namePerson,             /// John
-    nounOrganisationName,   /// CIA
+    nameOrganisation,   /// CIA
     country,            /// Sweden
 
     weekday,
     month,
-    nounTimeDayOfMonth,
-    nounTimeYear,
-    nounTimeDayOfYear, nounDate = nounTimeDayOfYear,
+    dayOfMonth,
+    year,
+    dayOfYear, nounDate = dayOfYear,
 
     season,
 
@@ -863,7 +863,6 @@ enum Sense:ubyte
     conjunctiveAdverb, adverbialConjunction = conjunctiveAdverb, /// joins together sentences
     negatingAdverb,
     affirmingAdverb,
-
 
     preposition, /// often ambiguous
     prepositionTime, /// only related to time
@@ -1020,8 +1019,8 @@ unittest
                             nounPlural,
                             weekday,
                             month,
-                            nounTimeDayOfMonth,
-                            nounTimeYear,
+                            dayOfMonth,
+                            year,
                             season,
                             uncountable,
                             nounAbbrevation,
@@ -1054,7 +1053,7 @@ unittest
                            surname,
                            nameLocation,
                            namePerson,
-                           nounOrganisationName,
+                           nameOrganisation,
                            country);
     }
     bool isVerb(Sense kind)
