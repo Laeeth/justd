@@ -42,6 +42,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    BUG learnPairs has no effect. Test name_day.txt by searching for Sylvester.
+
     TODO Guess verb if endsWith: "vowel"+ "konsonant"+ and "ize"
 
     TODO Move specific knowledge from wordnet.d to beginning of learnPreciseThings()
@@ -1312,27 +1314,26 @@ class Net(bool useArray = true,
     void learnLemmaMaybeSpecialized(ref Lemma lemma)
     {
         const expr = lemma.expr;
-        if (expr == "stödja")
-        {
-            dln("stödja: ", lemma);
-        }
         if (expr in lemmasByExpr)
         {
             const existingLemmas = lemmasByExpr[expr][];
 
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
-            auto hit = false;
-            foreach (existingLemma; existingLemmas)
+            if (false)
             {
-                if (existingLemma.lang == lemma.lang &&
-                    existingLemma.categoryIx == lemma.categoryIx &&
-                    lemma.sense != Sense.unknown && // must be here!
-                    existingLemma.sense.specializes(lemma.sense))
+                auto hit = false;
+                foreach (existingLemma; existingLemmas)
                 {
-                    dln("Specializing Lemma ", expr, " sense from ", lemma.sense, " to ", existingLemma.sense);
-                    // lemma.sense = existingLemma.sense;
-                    hit = true;
-                    break;
+                    if (existingLemma.lang == lemma.lang &&
+                        existingLemma.categoryIx == lemma.categoryIx &&
+                        lemma.sense != Sense.unknown && // must be here!
+                        existingLemma.sense.specializes(lemma.sense))
+                    {
+                        dln("Specializing Lemma ", expr, " sense from ", lemma.sense, " to ", existingLemma.sense);
+                        // lemma.sense = existingLemma.sense;
+                        hit = true;
+                        break;
+                    }
                 }
             }
 
@@ -1656,10 +1657,16 @@ class Net(bool useArray = true,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
 
+        // Name
         learnPairs("../knowledge/sv/name_day.txt",
                    Sense.nounName, Lang.sv,
                    Rel.hasNameDay,
                    Sense.nounDate, Lang.en,
+                   Origin.manual, 1.0);
+        learnPairs("../knowledge/en/surname_country.txt",
+                   Sense.nounNameSur, Lang.unknown,
+                   Rel.hasOrigin,
+                   Sense.nounCountry, Lang.en,
                    Origin.manual, 1.0);
 
         // Translation
