@@ -51,12 +51,10 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
-    TODO Group Rel bool negation and bool reversion into a bitfield of size 16 and simplify interfaces.
+    TODO Group Rel bool negation and bool reversion into a bitfield of size 16
+    and simplify interfaces. Use CTFE to add instantiator rel!"memberOf"
 
     TODO Support N-way in learnTuple en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
-
-    TODO Support inEnglish(be)
-    TODO Support asNoun(deed)
 
     BUG learnTuple has no effect. Test name_day.txt by searching for Sylvester.
 
