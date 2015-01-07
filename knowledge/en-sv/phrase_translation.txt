@@ -266,13 +266,14 @@ what's this?vad är det där?
 what's up?nå't nytt?
 what's your name?vad heter du?
 what?vad?
-where are you from?
 where are you from?var kommer du ifrån?
 where are you from?varifrån kommer du?
 where do you live?var bor du någonstans?
 where do you live?var bor du?
 where's {1}?var är {1}?
 where's {1}?vart ligger {1}?
+where's {1} situated?vart ligger {1}?
+where's {1} situated?var är {1} belagd?
 where's {1}?vart är {1}?
 who caresvem bry sig
 with memed mig
@@ -297,4 +298,3 @@ dear sirsbästa herrar
 dear madamsbästa fruar
 once upon a timedet var en gång
 the wild westvilda västern
-how the west was wonvilda västern
