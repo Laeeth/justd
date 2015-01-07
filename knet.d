@@ -51,10 +51,12 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO Support N-way in learnTuple en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
+
     TODO Support inEnglish(be)
     TODO Support asNoun(deed)
 
-    BUG learnPairs has no effect. Test name_day.txt by searching for Sylvester.
+    BUG learnTuple has no effect. Test name_day.txt by searching for Sylvester.
     BUG Swedish is not shown in "Node Count by Language:"
 
     TODO Cleanup Pass: All other relations specialize Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo scottish" needless
@@ -1562,87 +1564,87 @@ class Net(bool useArray = true,
         learnChemicalElements();
 
         // Irregular Noun
-        learnPairs("../knowledge/en/irregular_noun.txt",
+        learnTuple("../knowledge/en/irregular_noun.txt",
                    Sense.nounSingular, Lang.en,
                    Rel.nounForm,
                    Sense.nounPlural, Lang.en,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/sv/irregular_noun.txt",
+        learnTuple("../knowledge/sv/irregular_noun.txt",
                    Sense.nounSingular, Lang.sv,
                    Rel.nounForm,
                    Sense.nounPlural, Lang.sv,
                    Origin.manual, 1.0);
 
         // Shorthand
-        learnPairs("../knowledge/en/shorthand.txt",
+        learnTuple("../knowledge/en/shorthand.txt",
                    Sense.unknown, Lang.en,
                    Rel.shorthandFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/sv/shorthand.txt",
+        learnTuple("../knowledge/sv/shorthand.txt",
                    Sense.unknown, Lang.sv,
                    Rel.shorthandFor,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
 
         // Synonym
-        learnPairs("../knowledge/en/synonym.txt",
+        learnTuple("../knowledge/en/synonym.txt",
                    Sense.unknown, Lang.en,
                    Rel.synonymFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/sv/synonym.txt",
+        learnTuple("../knowledge/sv/synonym.txt",
                    Sense.unknown, Lang.sv,
                    Rel.synonymFor,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.5);
-        learnPairs("../knowledge/en/noun_synonym.txt",
+        learnTuple("../knowledge/en/noun_synonym.txt",
                    Sense.noun, Lang.en,
                    Rel.synonymFor,
                    Sense.noun, Lang.en,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/en/adjective_synonym.txt",
+        learnTuple("../knowledge/en/adjective_synonym.txt",
                    Sense.adjective, Lang.en,
                    Rel.synonymFor,
                    Sense.adjective, Lang.en,
                    Origin.manual, 1.0);
 
         // Acronym
-        learnPairs("../knowledge/en/acronym.txt",
+        learnTuple("../knowledge/en/acronym.txt",
                    Sense.nounAcronym, Lang.en,
                    Rel.acronymFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
 
         // Name
-        learnPairs("../knowledge/sv/name_day.txt",
+        learnTuple("../knowledge/sv/name_day.txt",
                    Sense.nounName, Lang.sv,
                    Rel.hasNameDay,
                    Sense.nounDate, Lang.en,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/en/surname_country.txt",
+        learnTuple("../knowledge/en/surname_country.txt",
                    Sense.nounNameSur, Lang.unknown,
                    Rel.hasOrigin,
                    Sense.nounCountry, Lang.en,
                    Origin.manual, 1.0);
 
         // Translation
-        learnPairs("../knowledge/en-sv/noun_translation.txt",
+        learnTuple("../knowledge/en-sv/noun_translation.txt",
                    Sense.noun, Lang.en,
                    Rel.translationOf,
                    Sense.noun, Lang.sv,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/en-sv/phrase_translation.txt",
+        learnTuple("../knowledge/en-sv/phrase_translation.txt",
                    Sense.unknown, Lang.en,
                    Rel.translationOf,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/en-sv/idiom_translation.txt",
+        learnTuple("../knowledge/en-sv/idiom_translation.txt",
                    Sense.idiom, Lang.en,
                    Rel.translationOf,
                    Sense.idiom, Lang.sv,
                    Origin.manual, 1.0);
-        learnPairs("../knowledge/fr-en/phrase_translation.txt",
+        learnTuple("../knowledge/fr-en/phrase_translation.txt",
                    Sense.unknown, Lang.fr,
                    Rel.translationOf,
                    Sense.unknown, Lang.en,
@@ -1887,32 +1889,32 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun, 1.0);
         learnAttributes(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun, 1.0);
 
-        learnPairs("../knowledge/sv/male_name_meaning.txt",
+        learnTuple("../knowledge/sv/male_name_meaning.txt",
                    Sense.nounNameMale, Lang.sv,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.7);
 
-        learnPairs("../knowledge/sv/female_name_meaning.txt",
+        learnTuple("../knowledge/sv/female_name_meaning.txt",
                    Sense.nounNameFemale, Lang.sv,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.7);
 
         // Idioms
-        learnPairs("../knowledge/en/idiom_meaning.txt",
+        learnTuple("../knowledge/en/idiom_meaning.txt",
                    Sense.idiom, Lang.en,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.en,
                    Origin.manual, 0.7);
-        learnPairs("../knowledge/sv/idiom_meaning.txt",
+        learnTuple("../knowledge/sv/idiom_meaning.txt",
                    Sense.idiom, Lang.sv,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.7);
 
         // Slang
-        learnPairs("../knowledge/sv/slang_meaning.txt",
+        learnTuple("../knowledge/sv/slang_meaning.txt",
                    Sense.slang, Lang.sv,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.sv,
@@ -2007,8 +2009,8 @@ class Net(bool useArray = true,
         }
     }
 
-    /// Learn Pairs of Words.
-    void learnPairs(string path,
+    /// Learn Tuple of Words all related by $(D rel).
+    void learnTuple(string path,
                     Sense firstSense, Lang firstLang,
                     Rel rel,
                     Sense secondSense, Lang secondLang,
@@ -3438,7 +3440,44 @@ class Net(bool useArray = true,
                 Rel.definedAs,
                 store("2.71828182845904523536028747135266249775724709369995",
                       Lang.math, Sense.nounDecimal, origin),
-                Lang.en, origin, 1.0);
+                Lang.unknown, origin, 1.0);
+
+        // Groupings
+
+        connect(store("dozen", Lang.en, Sense.noun, origin),
+                Rel.definedAs,
+                store("12", Lang.math, Sense.nounInteger, origin),
+                Lang.unknown, origin, 1.0);
+
+        connect(store("baker's dozen", Lang.en, Sense.noun, origin),
+                Rel.definedAs,
+                store("13", Lang.math, Sense.nounInteger, origin),
+                Lang.unknown, origin, 1.0);
+
+        connect(store("tjog", Lang.sv, Sense.noun, origin),
+                Rel.definedAs,
+                store("20", Lang.math, Sense.nounInteger, origin),
+                Lang.unknown, origin, 1.0);
+
+        connect(store("gross", Lang.en, Sense.noun, origin),
+                Rel.definedAs,
+                store("144", Lang.math, Sense.nounInteger, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("gross", Lang.sv, Sense.noun, origin), // TODO Support [Lang.en, Lang.sv]
+                Rel.definedAs,
+                store("144", Lang.math, Sense.nounInteger, origin),
+                Lang.unknown, origin, 1.0);
+
+        connect(store("small gross", Lang.en, Sense.noun, origin),
+                Rel.definedAs,
+                store("120", Lang.math, Sense.nounInteger, origin),
+                Lang.unknown, origin, 1.0);
+
+        connect(store("great gross", Lang.en, Sense.noun, origin),
+                Rel.definedAs,
+                store("1728", Lang.math, Sense.nounInteger, origin),
+                Lang.unknown, origin, 1.0);
+
     }
     /** Learn Math.
      */

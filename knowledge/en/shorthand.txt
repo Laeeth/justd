@@ -37,8 +37,12 @@ degreedegree Celsius
 degreedegree Fahrenheit
 degreedegree Kelvin
 
-∞infinity
-πpi
 infinfinity
 minminimum
 maxmaximum
+
+dozdozen
+dzdozen
+
+∞infinity
+πpi
