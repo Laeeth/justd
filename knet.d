@@ -1454,13 +1454,7 @@ class Net(bool useArray = true,
         learnEnglishFeelings();
         learnSwedishFeelings();
 
-        // Male Names
-        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
-
-        // Surnames
-        learnAttributes(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
+        learnNames();
 
         learnAttributes(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `people`, Sense.noun, Sense.noun, 1.0);
 
@@ -1468,9 +1462,9 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `compound word`, Sense.unknown, Sense.noun, 1.0);
 
         // Part of Speech (PoS)
-        learnAttributes(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.noun, Sense.noun, 1.0);
-        learnAttributes(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pronoun`, Sense.pronoun, Sense.noun, 1.0);
-        learnAttributes(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `verb`, Sense.verb, Sense.noun, 1.0);
+        learnNouns();
+        learnPronouns();
+        learnVerbs();
         learnUndefiniteArticles();
         learnDefiniteArticles();
         learnPartitiveArticles();
@@ -1643,6 +1637,21 @@ class Net(bool useArray = true,
         learnOpposites();
     }
 
+    void learnNouns()
+    {
+        learnAttributes(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.noun, Sense.noun, 1.0);
+    }
+
+    void learnPronouns()
+    {
+        learnAttributes(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pronoun`, Sense.pronoun, Sense.noun, 1.0);
+    }
+
+    void learnVerbs()
+    {
+        learnAttributes(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `verb`, Sense.verb, Sense.noun, 1.0);
+    }
+
     void learnDefiniteArticles()
     {
         learnAttributes(Lang.en, [`the`],
@@ -1673,6 +1682,17 @@ class Net(bool useArray = true,
                         Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
         learnAttributes(Lang.fr, [`du`, `de`, `la`, `de`, `l'`, `des`],
                         Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
+    }
+
+    void learnNames()
+    {
+        // Male Names
+        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
+
+        // Surnames
+        learnAttributes(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
     }
 
     void learnConjunctions()
