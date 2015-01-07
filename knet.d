@@ -4543,7 +4543,7 @@ class Net(bool useArray = true,
             const count = linkSourceCounts[source];
             if (count)
             {
-                writeln(indent, source.to!string, `: `, count);
+                writeln(indent, source.toNice, `: `, count);
             }
         }
 
