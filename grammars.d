@@ -784,6 +784,8 @@ enum Sense:ubyte
 
     nounNumeric,
 
+    numeral,
+
     integer,                /// 11
     integerPositive,        /// 0,1, ...
     integerNegative,        /// ..., -1, 0
@@ -1041,6 +1043,7 @@ unittest
     {
         with (Sense)
             return (kind.of(integer,
+                            numeral,
                             integerPositive,
                             integerNegative));
     }

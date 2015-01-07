@@ -3416,8 +3416,6 @@ class Net(bool useArray = true,
         learnEnglishVerb("write", "wrote", "written");
     }
 
-    /** Learn Math.
-     */
     void learnMath()
     {
         const origin = Origin.manual;
@@ -3444,48 +3442,122 @@ class Net(bool useArray = true,
                       Lang.math, Sense.decimal, origin),
                 Lang.unknown, origin, 1.0);
 
-        // Groupings/Aggregates (MÄngdmått)
+        learnNumerals();
+    }
 
-        connect(store("dozen", Lang.en, Sense.noun, origin),
+    // Learn Numerals (Groupings/Aggregates) (MÄngdmått)
+    void learnNumerals()
+    {
+        const origin = Origin.manual;
+
+        connect(store("single", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("1", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("pair", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("2", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("duo", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("2", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("triple", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("3", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("quadruple", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("4", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("quintuple", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("5", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("sextuple", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("6", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("septuple", Lang.en, Sense.numeral, origin),
+                Rel.definedAs,
+                store("7", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+
+        // Greek Numbering
+        // TODO Also Latin?
+        connect(store("tetra", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("4", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("penta", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("5", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("hexa", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("6", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("hepta", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("7", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("octa", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("8", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("nona", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("9", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("deca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("10", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("hendeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("11", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("dodeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("12", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("trideca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("13", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("tetradeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("14", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("pentadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("15", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("hexadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("16", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("heptadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("17", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("octadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("18", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("enneadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("19", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+        connect(store("icosa", Lang.el, Sense.numeral, origin), Rel.definedAs,
+                store("20", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+
+        // Aggregate
+        connect(store("dozen", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("12", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
-
-        connect(store("baker's dozen", Lang.en, Sense.noun, origin),
+        connect(store("baker's dozen", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("13", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
-
-        connect(store("tjog", Lang.sv, Sense.noun, origin),
+        connect(store("tjog", Lang.sv, Sense.numeral, origin),
                 Rel.definedAs,
                 store("20", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
-
-        connect(store("skock", Lang.sv, Sense.noun, origin),
+        connect(store("skock", Lang.sv, Sense.numeral, origin),
                 Rel.definedAs,
                 store("60", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
-        connectMto1(store(["dussin", "tolft"], Lang.sv, Sense.noun, origin),
+        connectMto1(store(["dussin", "tolft"], Lang.sv, Sense.numeral, origin),
                     Rel.definedAs, false,
                     store("12", Lang.math, Sense.integer, origin),
                     Lang.unknown, origin, 1.0);
 
-        connect(store("gross", Lang.en, Sense.noun, origin),
+        connect(store("gross", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("144", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
-        connect(store("gross", Lang.sv, Sense.noun, origin), // TODO Support [Lang.en, Lang.sv]
+        connect(store("gross", Lang.sv, Sense.numeral, origin), // TODO Support [Lang.en, Lang.sv]
                 Rel.definedAs,
                 store("144", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
-        connect(store("small gross", Lang.en, Sense.noun, origin),
+        connect(store("small gross", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("120", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
-        connect(store("great gross", Lang.en, Sense.noun, origin),
+        connect(store("great gross", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("1728", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);

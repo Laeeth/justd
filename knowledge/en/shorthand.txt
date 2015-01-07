@@ -44,5 +44,7 @@ maxmaximum
 dozdozen
 dzdozen
 
+quadquadruple
+
 ∞infinity
 πpi
