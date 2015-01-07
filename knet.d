@@ -4538,7 +4538,7 @@ class Net(bool useArray = true,
         writeln(`Node Count: `, allNodes.length);
 
         writeln(`Node Count by Origin:`);
-        foreach (source; EnumMembers!Origin)
+        foreach (source; enumMembers!Origin)
         {
             const count = linkSourceCounts[source];
             if (count)
