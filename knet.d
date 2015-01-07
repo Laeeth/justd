@@ -51,6 +51,7 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO
     BUG learnPairs has no effect. Test name_day.txt by searching for Sylvester.
     BUG Swedish is not shown in "Node Count by Language:"
 
@@ -1064,6 +1065,7 @@ class Net(bool useArray = true,
         Lang lang;
         Sense sense;
         CategoryIx categoryIx;
+        bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression
         /* auto opCast(T : bool)() { return expr !is null; } */
     }
 
