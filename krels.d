@@ -152,6 +152,7 @@ enum Rel:ubyte
     hasCapital,
     hasExpert,
     hasLanguage,
+    hasOrigin,
     hasCurrency,
 
     hasEmotion, // TODO remove this and use "love" isA "emotion"?
@@ -1500,6 +1501,7 @@ bool specializes(Rel special,
                                                 hasOfficialWebsite,
                                                 hasScore, hasLoserScore, hasWinnerScore,
                                                 hasLanguage,
+                                                hasOrigin,
                                                 hasCurrency,
                                                 hasEmotion);
             case derivedFrom: return special.of(acronymFor,
