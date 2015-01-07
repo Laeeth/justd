@@ -3523,6 +3523,7 @@ class Net(bool useArray = true,
                 store("20", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
 
         learnEnglishOrdinalShorthands();
+        learnSwedisOrdinalShorthands();
 
         // Aggregate
         connect(store("dozen", Lang.en, Sense.numeral, origin),
@@ -3576,75 +3577,84 @@ class Net(bool useArray = true,
      */
     void learnEnglishOrdinalShorthands()
     {
-        const lang = Lang.en;
-        const sense = Sense.numeralOrdinal;
-        const origin = Origin.manual;
-        const rel = Rel.shorthandFor;
-        connect(store("1st", lang, sense, origin), rel,
-                store("first", lang, sense, origin), lang, origin, 1.0);
-        connect(store("2nd", lang, sense, origin), rel,
-                store("second", lang, sense, origin), lang, origin, 1.0);
-        connect(store("3rd", lang, sense, origin), rel,
-                store("third", lang, sense, origin), lang, origin, 1.0);
-        connect(store("4th", lang, sense, origin), rel,
-                store("fourth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("5th", lang, sense, origin), rel,
-                store("fifth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("6th", lang, sense, origin), rel,
-                store("sixth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("7th", lang, sense, origin), rel,
-                store("seventh", lang, sense, origin), lang, origin, 1.0);
-        connect(store("8th", lang, sense, origin), rel,
-                store("eighth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("9th", lang, sense, origin), rel,
-                store("ninth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("10th", lang, sense, origin), rel,
-                store("tenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("11th", lang, sense, origin), rel,
-                store("eleventh", lang, sense, origin), lang, origin, 1.0);
-        connect(store("12th", lang, sense, origin), rel,
-                store("twelfth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("13th", lang, sense, origin), rel,
-                store("thirteenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("14th", lang, sense, origin), rel,
-                store("fourteenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("15th", lang, sense, origin), rel,
-                store("fifteenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("16th", lang, sense, origin), rel,
-                store("sixteenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("17th", lang, sense, origin), rel,
-                store("seventeenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("18th", lang, sense, origin), rel,
-                store("eighteenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("19th", lang, sense, origin), rel,
-                store("nineteenth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("20th", lang, sense, origin), rel,
-                store("twentieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("21th", lang, sense, origin), rel,
-                store("twenty-first", lang, sense, origin), lang, origin, 1.0);
+        const pairs = [tuple("1st", "first"),
+                       tuple("2nd", "second"),
+                       tuple("3rd", "third"),
+                       tuple("4th", "fourth"),
+                       tuple("5th", "fifth"),
+                       tuple("6th", "sixth"),
+                       tuple("7th", "seventh"),
+                       tuple("8th", "eighth"),
+                       tuple("9th", "ninth"),
+                       tuple("10th", "tenth"),
+                       tuple("11th", "eleventh"),
+                       tuple("12th", "twelfth"),
+                       tuple("13th", "thirteenth"),
+                       tuple("14th", "fourteenth"),
+                       tuple("15th", "fifteenth"),
+                       tuple("16th", "sixteenth"),
+                       tuple("17th", "seventeenth"),
+                       tuple("18th", "eighteenth"),
+                       tuple("19th", "nineteenth"),
+                       tuple("20th", "twentieth"),
+                       tuple("21th", "twenty-first"),
+                       tuple("30th", "thirtieth"),
+                       tuple("40th", "fourtieth"),
+                       tuple("50th", "fiftieth"),
+                       tuple("60th", "sixtieth"),
+                       tuple("70th", "seventieth"),
+                       tuple("80th", "eightieth"),
+                       tuple("90th", "ninetieth"),
+                       tuple("100th", "one hundredth"),
+                       tuple("1000th", "one thousandth"),
+                       tuple("1000000th", "one millionth"),
+                       tuple("1000000000th", "one billionth")];
+        foreach (pair; pairs)
+        {
+            connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.shorthandFor,
+                    store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Lang.sv, Origin.manual, 1.0);
+        }
+    }
 
-        connect(store("30th", lang, sense, origin), rel,
-                store("thirtieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("40th", lang, sense, origin), rel,
-                store("fourtieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("50th", lang, sense, origin), rel,
-                store("fiftieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("60th", lang, sense, origin), rel,
-                store("sixtieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("70th", lang, sense, origin), rel,
-                store("seventieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("80th", lang, sense, origin), rel,
-                store("eightieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("90th", lang, sense, origin), rel,
-                store("ninetieth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("100th", lang, sense, origin), rel,
-                store("one hundredth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("1000th", lang, sense, origin), rel,
-                store("one thousandth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("1000000th", lang, sense, origin), rel,
-                store("one millionth", lang, sense, origin), lang, origin, 1.0);
-        connect(store("1000000000th", lang, sense, origin), rel,
-                store("one billionth", lang, sense, origin), lang, origin, 1.0);
+    /** Learn Swedish Ordinal Shorthands.
+     */
+    void learnSwedishOrdinalShorthands()
+    {
+        const pairs = [tuple("1st", "första"),
+                       tuple("2nd", "andra"),
+                       tuple("3rd", "tredje"),
+                       tuple("4th", "fjärde"),
+                       tuple("5th", "femte"),
+                       tuple("6th", "sjätte"),
+                       tuple("7th", "sjunde"),
+                       tuple("8th", "åttonde"),
+                       tuple("9th", "nionde"),
+                       tuple("10th", "tionde"),
+                       tuple("11th", "elfte"),
+                       tuple("12th", "tolfte"),
+                       tuple("13th", "trettonde"),
+                       tuple("14th", "fjortonde"),
+                       tuple("15th", "femtonde"),
+                       tuple("16th", "sextonde"),
+                       tuple("17th", "sjuttonde"),
+                       tuple("18th", "artonde"),
+                       tuple("19th", "nittonde"),
+                       tuple("20th", "tjugonde"),
+                       tuple("30th", "trettionde"),
+                       tuple("40th", "fyrtionde"),
+                       tuple("50th", "femtionde"),
+                       tuple("60th", "sextionde"),
+                       tuple("70th", "sjuttionde"),
+                       tuple("80th", "åttionde"),
+                       tuple("90th", "nittionde"),
+                       tuple("100th", "hundrade"),
+                       tuple("1000th", "tusende"),
+                       tuple("1000000th", "miljonte")]
+        foreach (pair; pairs)
+        {
+            connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.shorthandFor,
+                    store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Lang.sv, Origin.manual, 1.0);
+        }
     }
 
     /** Learn Math.
