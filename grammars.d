@@ -772,8 +772,9 @@ enum Sense:ubyte
     prefix,
     suffix,
 
+    phrase,                     /// Phrase.
     idiom,                      /// Idiomatic Expression.
-    slang,                      /// Slang
+    slang,                      /// Slang.
 
     ordinalNumber, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
 

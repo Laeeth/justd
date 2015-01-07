@@ -44,7 +44,7 @@
 
     BUG learnPairs has no effect. Test name_day.txt by searching for Sylvester.
 
-    TODO Guess verb if endsWith: "vowel"+ "konsonant"+ and "ize"
+    TODO Cleanup Pass: All other relations specialize Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo scottish" needless
 
     TODO Should we index all word forms for nouns, verbs and adjectives? Not if we can avoid it.
 
@@ -1471,81 +1471,11 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.noun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pronoun`, Sense.pronoun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `verb`, Sense.verb, Sense.noun, 1.0);
-        learnAttributes(Lang.en, rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `interjection`, Sense.interjection, Sense.noun, 1.0);
-
-        // Undefinite Articles
-        learnAttributes(Lang.en, [`a`, `an`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
-        learnAttributes(Lang.de, [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
-        learnAttributes(Lang.fr, [`un`, `une`, `des`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, [`en`, `ena`, `ett`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
-
-        // Definite Articles
-        learnAttributes(Lang.en, [`the`],
-                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
-        learnAttributes(Lang.de, [`der`, `die`, `das`, `des`, `dem`, `den`],
-                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
-        learnAttributes(Lang.fr, [`le`, `la`, `l'`, `les`],
-                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, [`den`, `det`],
-                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
-
-        // Partitive Articles
-        learnAttributes(Lang.en, [`some`],
-                        Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
-        learnAttributes(Lang.fr, [`du`, `de`, `la`, `de`, `l'`, `des`],
-                        Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
-
-        // TODO merge with conjunctions?
-        // TODO categorize like http://www.grammarbank.com/connectives-list.html
-        enum connectives = [`the`, `of`, `and`, `to`, `a`, `in`, `that`, `is`,
-                            `was`, `he`, `for`, `it`, `with`, `as`, `his`,
-                            `on`, `be`, `at`, `by`, `i`, `this`, `had`, `not`,
-                            `are`, `but`, `from`, `or`, `have`, `an`, `they`,
-                            `which`, `one`, `you`, `were`, `her`, `all`, `she`,
-                            `there`, `would`, `their`, `we him`, `been`, `has`,
-                            `when`, `who`, `will`, `more`, `no`, `if`, `out`,
-                            `so`, `said`, `what`, `up`, `its`, `about`, `into`,
-                            `than them`, `can`, `only`, `other`, `new`, `some`,
-                            `could`, `time`, `these`, `two`, `may`, `then`,
-                            `do`, `first`, `any`, `my`, `now`, `such`, `like`,
-                            `our`, `over`, `man`, `me`, `even`, `most`, `made`,
-                            `after`, `also`, `did`, `many`, `before`, `must`,
-                            `through back`, `years`, `where`, `much`, `your`,
-                            `way`, `well`, `down`, `should`, `because`, `each`,
-                            `just`, `those`, `people mr`, `how`, `too`,
-                            `little`, `state`, `good`, `very`, `make`, `world`,
-                            `still`, `own`, `see`, `men`, `work`, `long`, `get`,
-                            `here`, `between`, `both`, `life`, `being`, `under`,
-                            `never`, `day`, `same`, `another`, `know`, `while`,
-                            `last`, `might us`, `great`, `old`, `year`, `off`,
-                            `come`, `since`, `against`, `go`, `came`, `right`,
-                            `used`, `take`, `three`];
-
-        // Coordinating Conjunction
-        connect(store("coordinating conjunction", Lang.en, Sense.noun, Origin.manual),
-                Rel.uses,
-                store("connect independent sentence parts", Lang.en, Sense.unknown, Origin.manual),
-                Lang.en, Origin.manual, 1.0, false, true);
-        learnAttributes(Lang.en, [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`],
-                        Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
-                        Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
-
-        // Subordinating Conjunction
-        connect(store("subordinating conjunction", Lang.en, Sense.noun, Origin.manual),
-                Rel.uses,
-                store("establish the relationship between the dependent clause and the rest of the sentence", Lang.en, Sense.unknown, Origin.manual),
-                Lang.en, Origin.manual, 1.0, false, true);
-
-        // Conjunction
-        learnAttributes(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
-
-        enum swedishConjunctions = [`alldenstund`, `allenast`, `ante`, `antingen`, `att`, `bara`, `blott`, `bå`, `båd'`, `både`, `dock`, `att`, `där`, `därest`, `därför`, `att`, `då`, `eftersom`, `ehur`, `ehuru`, `eller`, `emedan`, `enär`, `ety`, `evad`, `fast`, `fastän`, `för`, `förrän`, `försåvida`, `försåvitt`, `fȧst`, `huruvida`, `hvarför`, `hvarken`, `hvarpå`, `ifall`, `innan`, `ity`, `ity`, `att`, `liksom`, `medan`, `medans`, `men`, `mens`, `när`, `närhelst`, `oaktat`, `och`, `om`, `om`, `och`, `endast`, `om`, `plus`, `att`, `samt`, `sedan`, `som`, `sä`, `så`, `såframt`, `såsom`, `såvida`, `såvitt`, `såväl`, `sö`, `tast`, `tills`, `ty`, `utan`, `varför`, `varken`, `än`, `ändock`, `änskönt`, `ävensom`, `å`];
-        learnAttributes(Lang.sv, swedishConjunctions, Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
+        learnUndefiniteArticles();
+        learnDefiniteArticles();
+        learnPartitiveArticles();
+        learnConjunctions();
+        learnInterjections();
 
         // Verb
         learnAttributes(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verb, Sense.noun, 1.0);
@@ -1711,6 +1641,96 @@ class Net(bool useArray = true,
                    Origin.manual, 1.0);
 
         learnOpposites();
+    }
+
+    void learnDefiniteArticles()
+    {
+        learnAttributes(Lang.en, [`the`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.de, [`der`, `die`, `das`, `des`, `dem`, `den`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.fr, [`le`, `la`, `l'`, `les`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`den`, `det`],
+                        Rel.isA, false, `definite article`, Sense.articleDefinite, Sense.noun, 1.0);
+    }
+
+    void learnUndefiniteArticles()
+    {
+        learnAttributes(Lang.en, [`a`, `an`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.de, [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.fr, [`un`, `une`, `des`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`en`, `ena`, `ett`],
+                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+    }
+
+    void learnPartitiveArticles()
+    {
+        learnAttributes(Lang.en, [`some`],
+                        Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
+        learnAttributes(Lang.fr, [`du`, `de`, `la`, `de`, `l'`, `des`],
+                        Rel.isA, false, `partitive article`, Sense.articlePartitive, Sense.noun, 1.0);
+    }
+
+    void learnConjunctions()
+    {
+        // TODO merge with conjunctions?
+        // TODO categorize like http://www.grammarbank.com/connectives-list.html
+        enum connectives = [`the`, `of`, `and`, `to`, `a`, `in`, `that`, `is`,
+                            `was`, `he`, `for`, `it`, `with`, `as`, `his`,
+                            `on`, `be`, `at`, `by`, `i`, `this`, `had`, `not`,
+                            `are`, `but`, `from`, `or`, `have`, `an`, `they`,
+                            `which`, `one`, `you`, `were`, `her`, `all`, `she`,
+                            `there`, `would`, `their`, `we him`, `been`, `has`,
+                            `when`, `who`, `will`, `more`, `no`, `if`, `out`,
+                            `so`, `said`, `what`, `up`, `its`, `about`, `into`,
+                            `than them`, `can`, `only`, `other`, `new`, `some`,
+                            `could`, `time`, `these`, `two`, `may`, `then`,
+                            `do`, `first`, `any`, `my`, `now`, `such`, `like`,
+                            `our`, `over`, `man`, `me`, `even`, `most`, `made`,
+                            `after`, `also`, `did`, `many`, `before`, `must`,
+                            `through back`, `years`, `where`, `much`, `your`,
+                            `way`, `well`, `down`, `should`, `because`, `each`,
+                            `just`, `those`, `people mr`, `how`, `too`,
+                            `little`, `state`, `good`, `very`, `make`, `world`,
+                            `still`, `own`, `see`, `men`, `work`, `long`, `get`,
+                            `here`, `between`, `both`, `life`, `being`, `under`,
+                            `never`, `day`, `same`, `another`, `know`, `while`,
+                            `last`, `might us`, `great`, `old`, `year`, `off`,
+                            `come`, `since`, `against`, `go`, `came`, `right`,
+                            `used`, `take`, `three`];
+
+        // Coordinating Conjunction
+        connect(store("coordinating conjunction", Lang.en, Sense.noun, Origin.manual),
+                Rel.uses,
+                store("connect independent sentence parts", Lang.en, Sense.unknown, Origin.manual),
+                Lang.en, Origin.manual, 1.0, false, true);
+        learnAttributes(Lang.en, [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`],
+                        Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
+                        Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
+
+        // Subordinating Conjunction
+        connect(store("subordinating conjunction", Lang.en, Sense.noun, Origin.manual),
+                Rel.uses,
+                store("establish the relationship between the dependent clause and the rest of the sentence", Lang.en, Sense.unknown, Origin.manual),
+                Lang.en, Origin.manual, 1.0, false, true);
+
+        // Conjunction
+        learnAttributes(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
+
+        enum swedishConjunctions = [`alldenstund`, `allenast`, `ante`, `antingen`, `att`, `bara`, `blott`, `bå`, `båd'`, `både`, `dock`, `att`, `där`, `därest`, `därför`, `att`, `då`, `eftersom`, `ehur`, `ehuru`, `eller`, `emedan`, `enär`, `ety`, `evad`, `fast`, `fastän`, `för`, `förrän`, `försåvida`, `försåvitt`, `fȧst`, `huruvida`, `hvarför`, `hvarken`, `hvarpå`, `ifall`, `innan`, `ity`, `ity`, `att`, `liksom`, `medan`, `medans`, `men`, `mens`, `när`, `närhelst`, `oaktat`, `och`, `om`, `om`, `och`, `endast`, `om`, `plus`, `att`, `samt`, `sedan`, `som`, `sä`, `så`, `såframt`, `såsom`, `såvida`, `såvitt`, `såväl`, `sö`, `tast`, `tills`, `ty`, `utan`, `varför`, `varken`, `än`, `ändock`, `änskönt`, `ävensom`, `å`];
+        learnAttributes(Lang.sv, swedishConjunctions, Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
+    }
+
+    void learnInterjections()
+    {
+        learnAttributes(Lang.en,
+                        rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(word => !word.empty),
+                        Rel.isA, false, `interjection`, Sense.interjection, Sense.noun, 1.0);
     }
 
     /// Learn Assocative Things.
@@ -1881,12 +1901,15 @@ class Net(bool useArray = true,
                               Lang lang = Lang.en,
                               Origin origin = Origin.manual) if (isSomeString!S)
     {
-        foreach (expr; File(path).byLine)
+        foreach (expr; File(path).byLine.filter!(a => !a.empty))
         {
-            if (expr.empty) { continue; }
-
             auto split = expr.findSplit([countSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const name = split[0], count = split[2];
+
+            if (expr == "ack#2")
+            {
+                dln(name, ", ", count);
+            }
 
             NWeight nweight = 1.0;
             if (!count.empty)
@@ -1905,9 +1928,8 @@ class Net(bool useArray = true,
     /// Learn Chemical Elements.
     void learnChemicalElements(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
-        foreach (expr; File("../knowledge/en/chemical_elements.txt").byLine)
+        foreach (expr; File("../knowledge/en/chemical_elements.txt").byLine.filter!(a => !a.empty))
         {
-            if (expr.empty) { continue; }
             auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const name = split[0], abbr = split[2];
             NWeight weight = 1.0;
@@ -1930,9 +1952,8 @@ class Net(bool useArray = true,
                     Origin origin = Origin.manual,
                     NWeight weight = 0.5)
     {
-        foreach (expr; File(path).byLine)
+        foreach (expr; File(path).byLine.filter!(a => !a.empty))
         {
-            if (expr.empty) { continue; }
             auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
 
@@ -1964,9 +1985,8 @@ class Net(bool useArray = true,
     /// Learn Opposites.
     void learnOpposites(Lang lang = Lang.en, Origin origin = Origin.manual)
     {
-        foreach (expr; File("../knowledge/en/opposites.txt").byLine)
+        foreach (expr; File("../knowledge/en/opposites.txt").byLine.filter!(a => !a.empty))
         {
-            if (expr.empty) { continue; }
             auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const first = split[0], second = split[2];
             NWeight weight = 1.0;

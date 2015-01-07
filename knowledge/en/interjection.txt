@@ -1,39 +1,67 @@
-I say
 aah
-ack
-agreed
+absolutely
+achoo
+ack#2
+agreed#2
 ah
-aha
-ahem
-alas
+aha#2
+ahem#2
+ahh
+ahoy
+alack
+alas#2
 all right
-amen
-argh
-as if
+alright
+alrighty
+alrighty-roo
+amen#2
+anyhoo
+anyhow
+anytime
+argh#2
+as if#2
+attaboy
+attagirl
 aw
+awful
+awww
 ay
 aye
 bah
+bah humbug
+bam
+behold
+bingo
+blah
 blast
+bless you
+boo
 boo hoo
 bother
 boy
+bravo
 brr
 by golly
 bye
 cheerio
-cheers
+cheers#2
 chin up
 come on
 crikey
+crud
 curses
+dang
+darn
 dear me
 doggone
+doh
 drat
-duh
+drat
+duh#2
 easy does it
-eek
+eek#2
 egads
+eh
 er
 exactly
 fair enough
@@ -46,45 +74,53 @@ g'day
 gadzooks
 gah
 gangway
-gee
-gee whiz
+gee whiz#2
+gee#2
+geepers
 geez
 gesundheit
 get lost
 get outta here
 go on
+golly
 good
 good golly
 good job
-gosh
+goodnes
+goodness gracious
+gosh#2
 gracious
 great
 grr
 gulp
-ha
+ha#2
 ha-ha
 hah
-hallelujah
+hallelujah#2
 harrumph
 haw
 hee
 here
-hey
-hmm
+hey#2
+hi
+hmm#2
 ho hum
 hoo
 hooray
 hot dog
 how
 huh
+huh#2
 hum
 humbug
 hurray
 huzza
+i say
 ick
+indeed
 is it
 ixnay
-jeez
+jeez#2
 just a sec
 just kidding
 just wondering
@@ -101,41 +137,46 @@ meh
 mmm
 most certainly
 my
+my gosh
 my my
 my word
-nah
+nah#2
 naw
 never
-no
 no can do
 no thanks
 no way
+no#2
 nooo
 not
+now
 nuts
 oh
 oh no
 oh-oh
 oho
-okay
-okey-dokey
+okay#2
+okey-dokey#2
 om
 oof
 ooh
+oops
 oopsey
+ouch
 over
 oy
 oyez
 peace
 pew
 pff
-phew
+phew#2
 pish posh
+please
 psst
 ptui
 quite
 rah
-rats
+rats#2
 ready
 right
 right on
@@ -147,7 +188,8 @@ see ya
 shame
 shh
 shoo
-shucks
+shoot
+shucks#2
 sigh
 sleep tight
 snap
@@ -161,15 +203,16 @@ take that
 tally ho
 tch
 thanks
-there
 there there
+there#2
 time out
 toodles
 touche
 tsk
 tsk-tsk
-tut
+tut#2
 tut-tut
+uggh
 ugh
 uh
 uh-oh
@@ -180,11 +223,12 @@ very nice
 very well
 voila
 vroom
+waa
 wah
 well
 well done
 well well
-what
+what#2
 whatever
 whee
 when
@@ -195,14 +239,18 @@ whoopee
 whoops
 whoopsey
 why
+woah
+woops
 word
-wow
+wow#2
 wuzzup
 ya
+yay
 yea
 yeah
 yech
-yikes
+yes
+yikes#2
 yippee
 yo
 yoo-hoo
