@@ -1664,7 +1664,37 @@ class Net(bool useArray = true,
 
     void learnPronouns()
     {
+        learnEnglishPronouns();
+        learnSwedishPronouns();
+    }
+
+    void learnEnglishPronouns()
+    {
         learnAttributes(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pronoun`, Sense.pronoun, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`I`, `me`,  `you`, `it`], Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.noun, 1.0);
+
+        learnAttributes(Lang.en, [`he`, `him`], Rel.isA, false, `male singular personal pronoun`, Sense.pronounPersonalSingularMale, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`she`, `her`], Rel.isA, false, `female singular personal pronoun`, Sense.pronounPersonalSingularFemale, Sense.noun, 1.0);
+
+        learnAttributes(Lang.en, [`we`, `us`, // 1st person
+                                  `you`, // 2nd person
+                                  `they`, `them`], // 3rd person
+                        Rel.isA, false, `personal pronoun plural`, Sense.pronounPersonalPlural, Sense.noun, 1.0);
+    }
+
+    void learnSwedishPronouns()
+    {
+        learnAttributes(Lang.sv, [`jag`, `mig`, // TODO 1st person
+                                  `du`, `dig`, // TODO 2nd person
+                                  `den`, `det`], // TODO 3rd person
+                        Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`han`, `honom`], Rel.isA, false, `male singular personal pronoun`, Sense.pronounPersonalSingularMale, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`hon`, `henne`], Rel.isA, false, `female singular personal pronoun`, Sense.pronounPersonalSingularFemale, Sense.noun, 1.0);
+
+        learnAttributes(Lang.sv, [`vi`, `oss`, // 1st person
+                                  `ni`, // 2nd person
+                                  `de`, `dem`], // 3rd person
+                        Rel.isA, false, `personal pronoun plural`, Sense.pronounPersonalPlural, Sense.noun, 1.0);
     }
 
     void learnVerbs()
@@ -3523,7 +3553,7 @@ class Net(bool useArray = true,
                 store("20", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
 
         learnEnglishOrdinalShorthands();
-        learnSwedisOrdinalShorthands();
+        learnSwedishOrdinalShorthands();
 
         // Aggregate
         connect(store("dozen", Lang.en, Sense.numeral, origin),
@@ -3640,6 +3670,10 @@ class Net(bool useArray = true,
                        tuple("18:e", "artonde"),
                        tuple("19:e", "nittonde"),
                        tuple("20:e", "tjugonde"),
+                       tuple("21:a", "tjugoförsta"),
+                       tuple("22:a", "tjugoandra"),
+                       tuple("23:e", "tjugotredje"),
+                       // ..
                        tuple("30:e", "trettionde"),
                        tuple("40:e", "fyrtionde"),
                        tuple("50:e", "femtionde"),
@@ -3649,7 +3683,7 @@ class Net(bool useArray = true,
                        tuple("90:e", "nittionde"),
                        tuple("100:e", "hundrade"),
                        tuple("1000:e", "tusende"),
-                       tuple("1000000:e", "miljonte")]
+                       tuple("1000000:e", "miljonte")];
         foreach (pair; pairs)
         {
             connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.shorthandFor,

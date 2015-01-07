@@ -159,42 +159,6 @@ class WordNet(bool useArray = true,
 
     void readExplicits()
     {
-        /* personal pronoun */
-        foreach (e; [`I`, `me`,  `you`, `it`]) {
-            addWord(e, Sense.pronounPersonalSingular, 0, Lang.en);
-        }
-        foreach (e; [`he`, `him`]) {
-            addWord(e, Sense.pronounPersonalSingularMale, 0, Lang.en);
-        }
-        foreach (e; [`she`, `her`]) {
-            addWord(e, Sense.pronounPersonalSingularFemale, 0, Lang.en);
-        }
-
-        foreach (e; [`jag`, `mig`, // 1st person
-                     `du`, `dig`, // 2nd person
-                     `den`, `det`]) { // 3rd person
-            addWord(e, Sense.pronounPersonalSingular, 0, Lang.sv);
-        }
-        foreach (e; [`han`, `honom`]) {
-            addWord(e, Sense.pronounPersonalSingularMale, 0, Lang.sv);
-        }
-        foreach (e; [`hon`, `henne`]) {
-            addWord(e, Sense.pronounPersonalSingularFemale, 0, Lang.sv);
-        }
-
-        foreach (e; [`we`, `us`, // 1st person
-                     `you`, // 2nd person
-                     `they`, `them`]) // 3rd person
-        {
-            addWord(e, Sense.pronounPersonalPlural, 0, Lang.en);
-        }
-        foreach (e; [`vi`, `oss`, // 1st person
-                     `ni`, // 2nd person
-                     `de`, `dem`]) // 3rd person
-        {
-            addWord(e, Sense.pronounPersonalPlural, 0, Lang.sv);
-        }
-
         /* TODO near/far in distance/time , singular, plural */
         foreach (e; [`this`, `that`,
                      `these`, `those`]) {
