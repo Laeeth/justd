@@ -51,6 +51,8 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO Remove Lang argument to connect()
+
     TODO Group Rel bool negation and bool reversion into a bitfield of size 16
     and simplify interfaces. Use CTFE to add instantiator rel!"memberOf"
 
@@ -58,7 +60,9 @@
 
     BUG learnTuple has no effect. Test name_day.txt by searching for Sylvester.
 
-    TODO Cleanup Pass: All other relations specialize Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo scottish" needless
+    TODO Add Sense Specialization Pass: All other relations specialize
+    Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo
+    scottish" needless
 
     TODO Should we index all word forms for nouns, verbs and adjectives? Not if we can avoid it.
 
@@ -3518,6 +3522,8 @@ class Net(bool useArray = true,
         connect(store("icosa", Lang.el, Sense.numeral, origin), Rel.definedAs,
                 store("20", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
 
+        learnEnglishOrdinalShorthands();
+
         // Aggregate
         connect(store("dozen", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
@@ -3530,6 +3536,10 @@ class Net(bool useArray = true,
         connect(store("tjog", Lang.sv, Sense.numeral, origin),
                 Rel.definedAs,
                 store("20", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+        connect(store("flak", Lang.sv, Sense.numeral, origin),
+                Rel.definedAs,
+                store("24", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
         connect(store("skock", Lang.sv, Sense.numeral, origin),
                 Rel.definedAs,
@@ -3561,9 +3571,84 @@ class Net(bool useArray = true,
                 Lang.unknown, origin, 1.0);
 
     }
+
+    /** Learn English Ordinal Shorthands.
+     */
+    void learnEnglishOrdinalShorthands()
+    {
+        const lang = Lang.en;
+        const sense = Sense.numeralOrdinal;
+        const origin = Origin.manual;
+        const rel = Rel.shorthandFor;
+        connect(store("1st", lang, sense, origin), rel,
+                store("first", lang, sense, origin), lang, origin, 1.0);
+        connect(store("2nd", lang, sense, origin), rel,
+                store("second", lang, sense, origin), lang, origin, 1.0);
+        connect(store("3rd", lang, sense, origin), rel,
+                store("third", lang, sense, origin), lang, origin, 1.0);
+        connect(store("4th", lang, sense, origin), rel,
+                store("fourth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("5th", lang, sense, origin), rel,
+                store("fifth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("6th", lang, sense, origin), rel,
+                store("sixth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("7th", lang, sense, origin), rel,
+                store("seventh", lang, sense, origin), lang, origin, 1.0);
+        connect(store("8th", lang, sense, origin), rel,
+                store("eighth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("9th", lang, sense, origin), rel,
+                store("ninth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("10th", lang, sense, origin), rel,
+                store("tenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("11th", lang, sense, origin), rel,
+                store("eleventh", lang, sense, origin), lang, origin, 1.0);
+        connect(store("12th", lang, sense, origin), rel,
+                store("twelfth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("13th", lang, sense, origin), rel,
+                store("thirteenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("14th", lang, sense, origin), rel,
+                store("fourteenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("15th", lang, sense, origin), rel,
+                store("fifteenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("16th", lang, sense, origin), rel,
+                store("sixteenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("17th", lang, sense, origin), rel,
+                store("seventeenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("18th", lang, sense, origin), rel,
+                store("eighteenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("19th", lang, sense, origin), rel,
+                store("nineteenth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("20th", lang, sense, origin), rel,
+                store("twentieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("21th", lang, sense, origin), rel,
+                store("twenty-first", lang, sense, origin), lang, origin, 1.0);
+
+        connect(store("30th", lang, sense, origin), rel,
+                store("thirtieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("40th", lang, sense, origin), rel,
+                store("fourtieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("50th", lang, sense, origin), rel,
+                store("fiftieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("60th", lang, sense, origin), rel,
+                store("sixtieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("70th", lang, sense, origin), rel,
+                store("seventieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("80th", lang, sense, origin), rel,
+                store("eightieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("90th", lang, sense, origin), rel,
+                store("ninetieth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("100th", lang, sense, origin), rel,
+                store("one hundredth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("1000th", lang, sense, origin), rel,
+                store("one thousandth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("1000000th", lang, sense, origin), rel,
+                store("one millionth", lang, sense, origin), lang, origin, 1.0);
+        connect(store("1000000000th", lang, sense, origin), rel,
+                store("one billionth", lang, sense, origin), lang, origin, 1.0);
+    }
+
     /** Learn Math.
      */
-
     void learnPhysics()
     {
         learnAttributes(Lang.en, rdT("../knowledge/en/si_base_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI base unit name noun`, Sense.baseSIUnit, Sense.noun, 1.0);
