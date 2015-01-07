@@ -817,8 +817,8 @@ enum Sense:ubyte
     nounAbbrevation,
     nounAcronym,
 
-    nounSIBaseUnitName,
-    nounSIDerivedUnitName,
+    baseSIUnit,
+    derivedSIUnit,
 
     /* Verb */
 

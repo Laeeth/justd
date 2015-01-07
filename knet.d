@@ -3484,9 +3484,9 @@ class Net(bool useArray = true,
 
     void learnPhysics()
     {
-        learnAttributes(Lang.en, rdT("../knowledge/en/si_base_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI base unit name noun`, Sense.nounSIBaseUnitName, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/si_base_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI base unit name noun`, Sense.baseSIUnit, Sense.noun, 1.0);
         // TODO Name Symbol, Quantity, In SI units, In Si base units
-        learnAttributes(Lang.en, rdT("../knowledge/en/si_derived_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI derived unit name noun`, Sense.nounSIDerivedUnitName, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/si_derived_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI derived unit name noun`, Sense.derivedSIUnit, Sense.noun, 1.0);
     }
 
     /** Learn English Irregular Verbs.
@@ -4763,7 +4763,7 @@ class Net(bool useArray = true,
         }
         else if (normLine.skipOver(`anagramsof(`))
         {
-            auto split = normLine.findSplitBefore(`)`);
+            const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -4778,7 +4778,7 @@ class Net(bool useArray = true,
         }
         else if (normLine.skipOver(`synonymsof(`))
         {
-            auto split = normLine.findSplitBefore(`)`);
+            const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -4794,7 +4794,7 @@ class Net(bool useArray = true,
         else if (normLine.skipOver(`translationsof(`) ||
                  normLine.skipOver(`translate(`))
         {
-            auto split = normLine.findSplitBefore(`)`);
+            const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -4810,7 +4810,7 @@ class Net(bool useArray = true,
         else if (normLine.skipOver(`languagesof(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
-            auto split = normLine.findSplitBefore(`)`);
+            const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -4824,7 +4824,7 @@ class Net(bool useArray = true,
                  normLine.skipOver(`hasstart(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
-            auto split = normLine.findSplitBefore(`)`);
+            const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -4841,7 +4841,7 @@ class Net(bool useArray = true,
                  normLine.skipOver(`hassuffix(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
-            auto split = normLine.findSplitBefore(`)`);
+            const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -4858,7 +4858,7 @@ class Net(bool useArray = true,
                  normLine.skipOver(`contains(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
-            auto split = normLine.findSplitBefore(`)`);
+            const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
@@ -4868,6 +4868,34 @@ class Net(bool useArray = true,
                     showNode(node, 1.0);
                     writeln;
                 }
+            }
+        }
+        else if (normLine.skipOver(`as`)) // asSense
+        {
+            const split = normLine.findSplit("(");
+            const senseString = split[0].strip;
+            const arg = split[2].until(')').array.strip;
+            try
+            {
+                const qSense = senseString.toLower.to!Sense;
+                dln(senseString, ", ", arg, " ", qSense);
+            }
+            catch (std.conv.ConvException e)
+            {
+            }
+        }
+        else if (normLine.skipOver(`in`)) // inLanguage
+        {
+            const split = normLine.findSplit("(");
+            const langString = split[0].strip;
+            const arg = split[2].until(')').array.strip;
+            try
+            {
+                const qLang = langString.toLower.to!Lang;
+                dln(langString, ", ", arg, " ", qLang);
+            }
+            catch (std.conv.ConvException e)
+            {
             }
         }
 
