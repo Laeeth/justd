@@ -389,3 +389,13 @@ bool isNewline(S)(S s) if (isSomeString!S)
         static assert(false, "Support windows?");
     }
 }
+
+/** Dynamic Variant of $(D EnumMembers).
+    See also: http://forum.dlang.org/thread/bspwlfypfishykezzocx@forum.dlang.org#post-dguqnroxbfewerepomwq:40forum.dlang.org
+*/
+auto enumMembers(T)()
+{
+    import std.traits: EnumMembers;
+    import std.algorithm: sort, uniq;
+    return [EnumMembers!T].sort().uniq;
+}

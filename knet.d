@@ -51,7 +51,9 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
-    TODO
+    TODO Support inEnglish(be)
+    TODO Support asNoun(deed)
+
     BUG learnPairs has no effect. Test name_day.txt by searching for Sylvester.
     BUG Swedish is not shown in "Node Count by Language:"
 
@@ -217,7 +219,7 @@ alias rdT = readText;
 
 import algorithm_ex: isPalindrome, either, append;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
-import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf;
+import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
 import stemming;
@@ -4479,7 +4481,7 @@ class Net(bool useArray = true,
         import std.range: cycle;
         auto indent = `- `; // TODO use clever range plus indent_depth
 
-        foreach (rel; EnumMembers!Rel)
+        foreach (rel; enumMembers!Rel)
         {
             const count = linkCountsByRel[rel];
             if (count)
@@ -4500,12 +4502,8 @@ class Net(bool useArray = true,
             }
         }
 
-        pragma(msg, EnumMembers!Origin);
-        pragma(msg, __traits(allMembers, Rel));
-        pragma(msg, EnumMembers!Lang);
-
         writeln(`Node Count by Language:`);
-        foreach (lang; EnumMembers!Lang)
+        foreach (lang; enumMembers!Lang)
         {
             const count = hlangCounts[lang];
             if (count)
@@ -4515,7 +4513,7 @@ class Net(bool useArray = true,
         }
 
         writeln(`Node Count by Word Kind:`);
-        foreach (sense; EnumMembers!Sense)
+        foreach (sense; enumMembers!Sense)
         {
             const count = senseCounts[sense];
             if (count)
