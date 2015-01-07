@@ -784,35 +784,35 @@ enum Sense:ubyte
 
     nounNumeric,
 
-    nounInteger,                /// 11
-    nounIntegerPositive,        /// 0,1, ...
-    nounIntegerNegative,        /// ..., -1, 0
+    integer,                /// 11
+    integerPositive,        /// 0,1, ...
+    integerNegative,        /// ..., -1, 0
 
-    nounDecimal,                /// 3.14
+    decimal,                /// 3.14
 
-    nounRationalNumber,         /// 1/3
-    nounIrrationalNumber,       /// pi, e
-    nounComplexNumber,          /// 1+2i
+    numberRational,         /// 1/3
+    numberIrrational,       /// pi, e
+    numberComplex,          /// 1+2i
 
-    nounName,                   /// proper name
-    nounNameMale,               /// proper name
-    nounNameFemale,             /// proper name
-    nounNameSur,                /// proper surname
+    name,                   /// proper name
+    nameMale,               /// proper name
+    nameFemale,             /// proper name
+    surname,                /// proper surname
 
-    nounLocationName,           /// Stockholm
-    nounPersonName,             /// John
-    nounOrganisationName,       /// CIA
-    nounCountry,                /// Sweden
+    nameLocation,           /// Stockholm
+    namePerson,             /// John
+    nounOrganisationName,   /// CIA
+    country,            /// Sweden
 
-    nounTimeWeekday,
-    nounTimeMonth,
+    weekday,
+    month,
     nounTimeDayOfMonth,
     nounTimeYear,
     nounTimeDayOfYear, nounDate = nounTimeDayOfYear,
 
-    nounSeason,
+    season,
 
-    nounUncountable,
+    uncountable,
 
     nounAbbrevation,
     nounAcronym,
@@ -1014,48 +1014,48 @@ unittest
     bool isNoun(Sense kind)
     {
         with (Sense)
-            return (kind.isNounNumeric ||
+            return (kind.isNumeric ||
                     kind.of(noun,
                             nounSingular,
                             nounPlural,
-                            nounTimeWeekday,
-                            nounTimeMonth,
+                            weekday,
+                            month,
                             nounTimeDayOfMonth,
                             nounTimeYear,
-                            nounSeason,
-                            nounUncountable,
+                            season,
+                            uncountable,
                             nounAbbrevation,
                             nounAcronym) ||
-                    kind.isNounName);
+                    kind.isName);
     }
-    bool isNounNumeric(Sense kind)
+    bool isNumeric(Sense kind)
     {
         with (Sense)
-            return (kind.isNounInteger ||
+            return (kind.isInteger ||
                     kind.of(nounNumeric,
-                            nounDecimal,
-                            nounRationalNumber,
-                            nounIrrationalNumber,
-                            nounComplexNumber));
+                            decimal,
+                            numberRational,
+                            numberIrrational,
+                            numberComplex));
     }
-    bool isNounInteger(Sense kind)
+    bool isInteger(Sense kind)
     {
         with (Sense)
-            return (kind.of(nounInteger,
-                            nounIntegerPositive,
-                            nounIntegerNegative));
+            return (kind.of(integer,
+                            integerPositive,
+                            integerNegative));
     }
-    bool isNounName(Sense kind)
+    bool isName(Sense kind)
     {
         with (Sense)
-            return kind.of(nounName,
-                           nounNameMale,
-                           nounNameFemale,
-                           nounNameSur,
-                           nounLocationName,
-                           nounPersonName,
+            return kind.of(name,
+                           nameMale,
+                           nameFemale,
+                           surname,
+                           nameLocation,
+                           namePerson,
                            nounOrganisationName,
-                           nounCountry);
+                           country);
     }
     bool isVerb(Sense kind)
     {
@@ -1211,8 +1211,8 @@ bool specializes(Sense special,
              * relevant cases: */
             case unknown: return true;
             case noun: return special.isNoun || special.isPronoun;
-            case nounNumeric: return special.isNounNumeric;
-            case nounName: return special.isNounName;
+            case nounNumeric: return special.isNumeric;
+            case name: return special.isName;
             case nounAbbrevation: return special == nounAcronym;
             case verb: return special.isVerb;
             case adverb: return special.isAdverb;

@@ -144,8 +144,8 @@
     BUG hate is learned twice. Add duplicate detection.
     < Concept(s) or ? for help: love
     > Line love
-    - in English of sense nounUncountable
-    - is a:  uncountable noun(en-nounUncountable:1.00@Manual),
+    - in English of sense uncountable
+    - is a:  uncountable noun(en-uncountable:1.00@Manual),
     - in English
     - is the opposite of:  hate(en:1.00@CN5),
     - is the opposite of:  hate(en-verb:1.00@CN5),
@@ -1448,8 +1448,8 @@ class Net(bool useArray = true,
     void learnPreciseThings()
     {
         // TODO replace with automatics
-        learnAttributes(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.nounUncountable, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.nounUncountable, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.uncountable, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable noun`, Sense.uncountable, Sense.noun, 1.0);
 
         learnEnglishComputerKnowledge();
 
@@ -1618,14 +1618,14 @@ class Net(bool useArray = true,
 
         // Name
         learnTuple("../knowledge/sv/name_day.txt",
-                   Sense.nounName, Lang.sv,
+                   Sense.name, Lang.sv,
                    Rel.hasNameDay,
                    Sense.nounDate, Lang.en,
                    Origin.manual, 1.0);
         learnTuple("../knowledge/en/surname_country.txt",
-                   Sense.nounNameSur, Lang.unknown,
+                   Sense.surname, Lang.unknown,
                    Rel.hasOrigin,
-                   Sense.nounCountry, Lang.en,
+                   Sense.country, Lang.en,
                    Origin.manual, 1.0);
 
         // Translation
@@ -1703,12 +1703,12 @@ class Net(bool useArray = true,
     void learnNames()
     {
         // Male Names
-        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nounNameMale, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nameMale, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nameMale, Sense.noun, 1.0);
 
         // Surnames
-        learnAttributes(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.nounNameSur, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.surname, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.surname, Sense.noun, 1.0);
     }
 
     void learnConjunctions()
@@ -1813,13 +1813,13 @@ class Net(bool useArray = true,
 
         learnAttributes(Lang.en, rdT("../knowledge/en/vacation.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `vacation`, Sense.unknown, Sense.noun);
 
-        learnAttributes(Lang.en, rdT("../knowledge/en/autumn.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `autumn`, Sense.unknown, Sense.nounSeason);
-        learnAttributes(Lang.en, rdT("../knowledge/en/winter.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `winter`, Sense.unknown, Sense.nounSeason);
-        learnAttributes(Lang.en, rdT("../knowledge/en/spring.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `spring`, Sense.unknown, Sense.nounSeason);
+        learnAttributes(Lang.en, rdT("../knowledge/en/autumn.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `autumn`, Sense.unknown, Sense.season);
+        learnAttributes(Lang.en, rdT("../knowledge/en/winter.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `winter`, Sense.unknown, Sense.season);
+        learnAttributes(Lang.en, rdT("../knowledge/en/spring.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `spring`, Sense.unknown, Sense.season);
 
-        learnAttributes(Lang.en, rdT("../knowledge/en/summer_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.noun, Sense.nounSeason);
-        learnAttributes(Lang.en, rdT("../knowledge/en/summer_adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.adjective, Sense.nounSeason);
-        learnAttributes(Lang.en, rdT("../knowledge/en/summer_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.verb, Sense.nounSeason);
+        learnAttributes(Lang.en, rdT("../knowledge/en/summer_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.noun, Sense.season);
+        learnAttributes(Lang.en, rdT("../knowledge/en/summer_adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.adjective, Sense.season);
+        learnAttributes(Lang.en, rdT("../knowledge/en/summer_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.atTime, false, `summer`, Sense.verb, Sense.season);
 
         learnAttributes(Lang.en, rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.atLocation, false, `house`, Sense.noun, Sense.noun);
         learnAttributes(Lang.en, rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `device`, Sense.noun, Sense.noun);
@@ -1886,17 +1886,17 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/classic_major_literary_genre.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `classic major literary genre`, Sense.noun, Sense.noun);
 
         // Female Names
-        learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nounNameFemale, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nameFemale, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nameFemale, Sense.noun, 1.0);
 
         learnTuple("../knowledge/sv/male_name_meaning.txt",
-                   Sense.nounNameMale, Lang.sv,
+                   Sense.nameMale, Lang.sv,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.7);
 
         learnTuple("../knowledge/sv/female_name_meaning.txt",
-                   Sense.nounNameFemale, Lang.sv,
+                   Sense.nameFemale, Lang.sv,
                    Rel.hasMeaning,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.7);
@@ -3420,62 +3420,62 @@ class Net(bool useArray = true,
     {
         const origin = Origin.manual;
 
-        connect(store("π", Lang.math, Sense.nounIrrationalNumber, origin),
+        connect(store("π", Lang.math, Sense.numberIrrational, origin),
                 Rel.translationOf,
-                store("pi", Lang.en, Sense.nounIrrationalNumber, origin), // TODO other Langs?
+                store("pi", Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
                 Lang.en, origin, 1.0);
-        connect(store("e", Lang.math, Sense.nounIrrationalNumber, origin),
+        connect(store("e", Lang.math, Sense.numberIrrational, origin),
                 Rel.translationOf,
-                store("e", Lang.en, Sense.nounIrrationalNumber, origin), // TODO other Langs?
+                store("e", Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
                 Lang.en, origin, 1.0);
 
         /// http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
-        connect(store("π", Lang.math, Sense.nounIrrationalNumber, origin),
+        connect(store("π", Lang.math, Sense.numberIrrational, origin),
                 Rel.definedAs,
                 store("3.14159265358979323846264338327950288419716939937510",
-                      Lang.math, Sense.nounDecimal, origin),
+                      Lang.math, Sense.decimal, origin),
                 Lang.en, origin, 1.0);
 
-        connect(store("e", Lang.math, Sense.nounIrrationalNumber, origin),
+        connect(store("e", Lang.math, Sense.numberIrrational, origin),
                 Rel.definedAs,
                 store("2.71828182845904523536028747135266249775724709369995",
-                      Lang.math, Sense.nounDecimal, origin),
+                      Lang.math, Sense.decimal, origin),
                 Lang.unknown, origin, 1.0);
 
-        // Groupings
+        // Groupings/Aggregates (MÄngdmått)
 
         connect(store("dozen", Lang.en, Sense.noun, origin),
                 Rel.definedAs,
-                store("12", Lang.math, Sense.nounInteger, origin),
+                store("12", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
         connect(store("baker's dozen", Lang.en, Sense.noun, origin),
                 Rel.definedAs,
-                store("13", Lang.math, Sense.nounInteger, origin),
+                store("13", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
         connect(store("tjog", Lang.sv, Sense.noun, origin),
                 Rel.definedAs,
-                store("20", Lang.math, Sense.nounInteger, origin),
+                store("20", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
         connect(store("gross", Lang.en, Sense.noun, origin),
                 Rel.definedAs,
-                store("144", Lang.math, Sense.nounInteger, origin),
+                store("144", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
         connect(store("gross", Lang.sv, Sense.noun, origin), // TODO Support [Lang.en, Lang.sv]
                 Rel.definedAs,
-                store("144", Lang.math, Sense.nounInteger, origin),
+                store("144", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
         connect(store("small gross", Lang.en, Sense.noun, origin),
                 Rel.definedAs,
-                store("120", Lang.math, Sense.nounInteger, origin),
+                store("120", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
         connect(store("great gross", Lang.en, Sense.noun, origin),
                 Rel.definedAs,
-                store("1728", Lang.math, Sense.nounInteger, origin),
+                store("1728", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
     }
@@ -3636,7 +3636,7 @@ class Net(bool useArray = true,
      * isUncountable() and use it here. */
     void learnUncountableNouns(R)(Lang lang, R nouns) if (isSourceOf!(R, string))
     {
-        const sense = Sense.nounUncountable;
+        const sense = Sense.uncountable;
         const origin = Origin.manual;
         connectMto1(nouns.map!(word => store(word, lang, sense, origin)),
                     Rel.isA, false,
@@ -4434,7 +4434,7 @@ class Net(bool useArray = true,
                 break;
                 case "prefix": senses ~= Sense.prefix; break;
                 case "suffix": senses ~= Sense.suffix; break;
-                case "pm": senses ~= Sense.nounName; break;
+                case "pm": senses ~= Sense.name; break;
                 case "nn": senses ~= Sense.noun; break;
                 case "vb": senses ~= Sense.verb; break;
                 case "hjälpverb": senses ~= Sense.auxiliaryVerb; break;
@@ -4452,7 +4452,7 @@ class Net(bool useArray = true,
                     senses ~= Sense.nounAbbrevation; break;
                 case "article": senses ~= Sense.article; break;
                 case "rg":
-                case "rg, nn": senses ~= Sense.nounInteger; break;
+                case "rg, nn": senses ~= Sense.integer; break;
                 case "ro":
                 case "ro, nn": senses ~= Sense.ordinalNumber; break;
                 case "in, nn": senses ~= [Sense.interjection, Sense.noun]; break;
