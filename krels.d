@@ -479,10 +479,9 @@ auto toHuman(const Rel rel,
                     {
                         switch (lang)
                         {
-                            case sv: words = ["innehåller", not]; break;
-                            case de: words = ["enthält", not]; break;
+                            case sv: words = ["har", not, "del"]; break;
                             case en:
-                            default: words = [not, "contains"]; break;
+                            default: words = ["does", not, "have art"]; break;
                         }
                     }
                     break;
