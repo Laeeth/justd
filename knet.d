@@ -3459,6 +3459,11 @@ class Net(bool useArray = true,
                 store("20", Lang.math, Sense.integer, origin),
                 Lang.unknown, origin, 1.0);
 
+        connect(store(["dussin", "tolft"], Lang.sv, Sense.noun, origin),
+                Rel.definedAs,
+                store("12", Lang.math, Sense.integer, origin),
+                Lang.unknown, origin, 1.0);
+
         connect(store("gross", Lang.en, Sense.noun, origin),
                 Rel.definedAs,
                 store("144", Lang.math, Sense.integer, origin),
