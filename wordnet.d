@@ -311,7 +311,7 @@ class WordNet(bool useArray = true,
                      `though`, `till`, `unless`, `until`, `what`,
                      `when`, `whenever`, `wherever`, `whether`, `while`])
         {
-            addWord(e, Sense.subordinatingConjunction, 0, Lang.en);
+            addWord(e, Sense.conjunctionSubordinating, 0, Lang.en);
         }
 
         foreach (e; [`accordingly`, `additionally`, `again`, `almost`,

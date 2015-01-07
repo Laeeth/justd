@@ -832,17 +832,17 @@ enum Sense:ubyte
     verbPresent,
 
     verbPast,
-    verbImperfect = verbPast, /// https://en.wikipedia.org/wiki/Imperfect
+    verbImperfect = verbPast, /// See also: https://en.wikipedia.org/wiki/Imperfect
 
     verbPastParticiple,
     verbSupinum = verbPastParticiple,
 
-    verbFuture, /// https://en.wikipedia.org/wiki/Future_tense
+    verbFuture, /// See also: https://en.wikipedia.org/wiki/Future_tense
     verbFuturum = verbFuture,
     verbFuturumI,
     verbFuturumII,
 
-    auxiliaryVerb, /// https://en.wikipedia.org/wiki/Auxiliary_verb. "Hjälpverb" in Swedish
+    auxiliaryVerb, /// See also: https://en.wikipedia.org/wiki/Auxiliary_verb. "Hjälpverb" in Swedish
     auxiliaryVerbModal, /// Modalt Hjälpverb
 
     /* Adjective */
@@ -870,25 +870,25 @@ enum Sense:ubyte
     prepositionPlace = prepositionPosition,
     prepositionDirection, /// only related to space change (velocity)
 
-    pronoun, /// https://www.englishclub.com/grammar/pronouns.htm
+    pronoun, /// See also: https://www.englishclub.com/grammar/pronouns.htm
 
-    pronounPersonal, /// https://www.englishclub.com/grammar/pronouns-personal.htm
-    pronounPersonalSingular, /// https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonal, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonalSingular, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingularMale,
     pronounPersonalSingularFemale,
     pronounPersonalSingularNeutral,
-    pronounPersonalPlural, /// https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonalPlural, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
 
-    pronounDemonstrative, /// https://www.englishclub.com/grammar/pronouns-demonstrative.htm
+    pronounDemonstrative, /// See also: https://www.englishclub.com/grammar/pronouns-demonstrative.htm
 
-    pronounPossessive, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
-    pronounPossessiveSingular, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessive, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessiveSingular, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
     pronounPossessiveSingularMale,
     pronounPossessiveSingularFemale,
     pronounPossessiveSingularNeutral,
-    pronounPossessivePlural, /// https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessivePlural, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
 
-    pronounInterrogative, /// https://www.englishclub.com/grammar/pronouns-reciprocal.htm
+    pronounInterrogative, /// See also: https://www.englishclub.com/grammar/pronouns-reciprocal.htm
 
     pronounReflexive,
     pronounReflexiveSingular,
@@ -900,7 +900,7 @@ enum Sense:ubyte
     pronounIndefiniteSingular,
     pronounIndefinitePlural,
 
-    pronounRelative, /// https://www.englishclub.com/grammar/pronouns-relative.htm
+    pronounRelative, /// See also: https://www.englishclub.com/grammar/pronouns-relative.htm
 
     determiner,
     predeterminer,
@@ -910,9 +910,10 @@ enum Sense:ubyte
     articleDefinite,
     articlePartitive,
 
-    conjunction,
-    coordinatingConjunction,
-    subordinatingConjunction,
+    conjunction, /// See also: http://www.smart-words.org/linking-words/conjunctions.html
+    conjunctionCoordinating,
+    conjunctionSubordinating, subordinator = conjunctionSubordinating,
+    conjunctionCorrelative,
 
     interjection, exclamation = interjection,
 }
@@ -1174,8 +1175,9 @@ unittest
     {
         with (Sense)
             return kind.of(conjunction,
-                           coordinatingConjunction,
-                           subordinatingConjunction);
+                           conjunctionCoordinating,
+                           conjunctionSubordinating,
+                           conjunctionCorrelative);
     }
 }
 

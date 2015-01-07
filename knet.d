@@ -46,6 +46,8 @@
 
     TODO Guess verb if endsWith: "vowel"+ "konsonant"+ and "ize"
 
+    TODO Should we index all word forms for nouns, verbs and adjectives? Not if we can avoid it.
+
     TODO Move specific knowledge from wordnet.d to beginning of learnPreciseThings()
 
     TODO Show warning and then exceptions when adding a word as a language that
@@ -76,7 +78,7 @@
     TODO CN5: Infer Sense from specific Rels such as instanceOf Ra
     TODO CN5: Parse parens after "Ra (board game)" and put in category
     TODO Infer:
-         - X isA Y and Y hasProperty Z => X hasProperty Z
+         - X isA Y and Y hasProperty Z => X hasProperty Z: expressed as X.getPropertyMaybe(Z)
          - if X rel Y and assert(R.isSymmetric): Sense can be inferred in both directions if some Sense is unknown
          - shampoo atLocation bathroom, shampoo stored in bottles => bottles atLocation bathroom
          - sulfur synonymWith sulphur => sulfuric synonymWith sulphuric
@@ -1523,14 +1525,31 @@ class Net(bool useArray = true,
                             `come`, `since`, `against`, `go`, `came`, `right`,
                             `used`, `take`, `three`];
 
-        // Conjunction
+        // Coordinating Conjunction
+        connect(store("coordinating conjunction", Lang.en, Sense.noun, Origin.manual),
+                Rel.uses,
+                store("connect independent sentence parts", Lang.en, Sense.unknown, Origin.manual),
+                Lang.en, Origin.manual, 1.0, false, true);
         learnAttributes(Lang.en, [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`],
-                        Rel.isA, false, `coordinating conjunction`, Sense.coordinatingConjunction, Sense.noun, 1.0);
+                        Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
         learnAttributes(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
-                        Rel.isA, false, `coordinating conjunction`, Sense.coordinatingConjunction, Sense.noun, 1.0);
+                        Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
+
+        // Subordinating Conjunction
+        connect(store("subordinating conjunction", Lang.en, Sense.noun, Origin.manual),
+                Rel.uses,
+                store("establish the relationship between the dependent clause and the rest of the sentence", Lang.en, Sense.unknown, Origin.manual),
+                Lang.en, Origin.manual, 1.0, false, true);
+
+        // Conjunction
         learnAttributes(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
 
+        enum swedishConjunctions = [`alldenstund`, `allenast`, `ante`, `antingen`, `att`, `bara`, `blott`, `bå`, `båd'`, `både`, `dock`, `att`, `där`, `därest`, `därför`, `att`, `då`, `eftersom`, `ehur`, `ehuru`, `eller`, `emedan`, `enär`, `ety`, `evad`, `fast`, `fastän`, `för`, `förrän`, `försåvida`, `försåvitt`, `fȧst`, `huruvida`, `hvarför`, `hvarken`, `hvarpå`, `ifall`, `innan`, `ity`, `ity`, `att`, `liksom`, `medan`, `medans`, `men`, `mens`, `när`, `närhelst`, `oaktat`, `och`, `om`, `om`, `och`, `endast`, `om`, `plus`, `att`, `samt`, `sedan`, `som`, `sä`, `så`, `såframt`, `såsom`, `såvida`, `såvitt`, `såväl`, `sö`, `tast`, `tills`, `ty`, `utan`, `varför`, `varken`, `än`, `ändock`, `änskönt`, `ävensom`, `å`];
+        learnAttributes(Lang.sv, swedishConjunctions, Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
+
+        // Verb
         learnAttributes(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verb, Sense.noun, 1.0);
+
         learnAttributes(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `determiner`, Sense.determiner, Sense.noun, 1.0);
@@ -4331,19 +4350,14 @@ class Net(bool useArray = true,
                 case "nn, vb": senses ~= [Sense.noun, Sense.verb]; break;
                 case "vb, abbrev": senses ~= [Sense.verbAbbrevation]; break;
                 case "jj, abbrev": senses ~= [Sense.adjectiveAbbrevation]; break;
+                case "ie": senses ~= Sense.conjunction; break; // TODO "ie" is a strange abbrevation for "conjunction"
                 default: dln(`warning: TODO "`, src, `" have sense "`, gr, `"`); break;
             }
 
             foreach (sense; senses)
             {
-                foreach (dst; dsts)
+                foreach (dst; dsts.filter!(a => !a.empty))
                 {
-                    if (dst.empty)
-                    {
-                        dln(`warning: empty dst for "`, src, `"`);
-                        continue;
-                    }
-
                     auto src_ = src.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
                     auto dst_ = dst.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
 
