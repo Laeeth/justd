@@ -776,8 +776,6 @@ enum Sense:ubyte
     idiom,                      /// Idiomatic Expression.
     slang,                      /// Slang.
 
-    ordinalNumber, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
-
     noun,
     nounSingular,
     nounPlural,
@@ -785,6 +783,8 @@ enum Sense:ubyte
     nounNumeric,
 
     numeral,
+    numeralOrdinal,
+    ordinalNumber = numeralOrdinal, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
 
     integer,                /// 11
     integerPositive,        /// 0,1, ...
@@ -1039,11 +1039,17 @@ unittest
                             numberIrrational,
                             numberComplex));
     }
+    bool isNumeral(Sense kind)
+    {
+        with (Sense)
+            return (kind.of(numeral,
+                            ordinalNumber));
+    }
     bool isInteger(Sense kind)
     {
         with (Sense)
-            return (kind.of(integer,
-                            numeral,
+            return (kind.isNumeral ||
+                    kind.of(integer,
                             integerPositive,
                             integerNegative));
     }
@@ -1213,6 +1219,8 @@ bool specializes(Sense special,
              * relevant cases: */
             case unknown: return true;
             case noun: return special.isNoun || special.isPronoun;
+            case numeral: return special.isNumeral;
+            case integer: return special.isInteger;
             case nounNumeric: return special.isNumeric;
             case name: return special.isName;
             case nounAbbrevation: return special == nounAcronym;
