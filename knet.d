@@ -1732,6 +1732,20 @@ class Net(bool useArray = true,
                         Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
         learnAttributes(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
                         Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`though`, `although`, `even though`, `while`],
+                        Rel.isA, false, `coordinating concession conjunction`, Sense.conjunctionSubordinatingConcession, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`if`, `only if`, `unless`, `until`, `provided that`, `assuming that`, `even if`, `in case`, `in case that`, `lest`],
+                        Rel.isA, false, `coordinating condition conjunction`, Sense.conjunctionSubordinatingCondition, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`than`, `rather than`, `whether`, `as much as`, `whereas`],
+                        Rel.isA, false, `coordinating comparison conjunction`, Sense.conjunctionSubordinatingComparison, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`after`, `as long as`, `as soon as`, `before`, `by the time`, `now that`, `once`, `since`, `till`, `until`, `when`, `whenever`, `while`],
+                        Rel.isA, false, `coordinating time conjunction`, Sense.conjunctionSubordinatingTime, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`because`, `since`, `so that`, `in order`, `in order that`, `why`],
+                        Rel.isA, false, `coordinating reason conjunction`, Sense.conjunctionSubordinatingReason, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`how`, `as though`, `as if`],
+                        Rel.isA, false, `coordinating manner conjunction`, Sense.conjunctionSubordinatingManner, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`where`, `wherever`],
+                        Rel.isA, false, `coordinating place conjunction`, Sense.conjunctionSubordinatingPlace, Sense.noun, 1.0);
 
         // Subordinating Conjunction
         connect(store("subordinating conjunction", Lang.en, Sense.noun, Origin.manual),

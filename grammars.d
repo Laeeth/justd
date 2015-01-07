@@ -914,6 +914,15 @@ enum Sense:ubyte
     conjunction, /// See also: http://www.smart-words.org/linking-words/conjunctions.html
     conjunctionCoordinating,
     conjunctionSubordinating, subordinator = conjunctionSubordinating,
+    conjunctionSubordinatingConcession,
+    conjunctionSubordinatingCondition,
+    conjunctionSubordinatingComparison,
+    conjunctionSubordinatingTime,
+    conjunctionSubordinatingReason,
+    conjunctionSubordinatingAdjective,
+    conjunctionSubordinatingPronoun,
+    conjunctionSubordinatingManner,
+    conjunctionSubordinatingPlace,
     conjunctionCorrelative,
 
     interjection, exclamation = interjection,
@@ -1178,6 +1187,15 @@ unittest
             return kind.of(conjunction,
                            conjunctionCoordinating,
                            conjunctionSubordinating,
+                           conjunctionSubordinatingConcession,
+                           conjunctionSubordinatingCondition,
+                           conjunctionSubordinatingComparison,
+                           conjunctionSubordinatingTime,
+                           conjunctionSubordinatingReason,
+                           conjunctionSubordinatingAdjective,
+                           conjunctionSubordinatingPronoun,
+                           conjunctionSubordinatingManner,
+                           conjunctionSubordinatingPlace,
                            conjunctionCorrelative);
     }
 }
