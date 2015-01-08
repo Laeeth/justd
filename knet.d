@@ -51,6 +51,8 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO Replace context with NodeRef
+
     TODO Infer senses of consecutive word when reading sorted word
     list. Requires knowledge of Language specfic ending grammar for verbs,
     nouns, adjectives, adverbs. Use (verb|noun|adjective)(Ir)Regular to indicate regularity
@@ -99,7 +101,7 @@
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
     TODO CN5: Infer Sense from specific Rels such as instanceOf Ra
-    TODO CN5: Parse parens after "Ra (board game)" and put in category
+    TODO CN5: Parse parens after "Ra (board game)" and put in context
     TODO Infer:
          - X isA Y and Y hasProperty Z => X hasProperty Z: expressed as X.getPropertyMaybe(Z)
          - if X rel Y and assert(R.isSymmetric): Sense can be inferred in both directions if some Sense is unknown
@@ -138,7 +140,7 @@
 
     TODO Extend Link with an array of relation types (Rel) for all its
          actors and context. We can then describe contextual knowledge.
-         Perhaps Merge with NELL's CategoryIx.
+         Perhaps Merge with NELL's ContextIx.
 
     BUG Searching for good gives incorrect oppositeOf relations
 
@@ -1056,12 +1058,12 @@ class Net(bool useArray = true,
     static if (useArray) { alias LinkRefs = Array!LinkRef; }
     else                 { alias LinkRefs = LinkRef[]; }
 
-    /** Ontology Category Index (currently from NELL). */
-    struct CategoryIx
+    /** Context or Ontology Category Index (currently from NELL). */
+    struct ContextIx
     {
         @safe @nogc pure nothrow:
-        static CategoryIx asUndefined() { return CategoryIx(0); }
-        bool defined() const { return this != CategoryIx.asUndefined; }
+        static ContextIx asUndefined() { return ContextIx(0); }
+        bool defined() const { return this != ContextIx.asUndefined; }
         /* auto opCast(T : bool)() { return defined; } */
     private:
         ushort _ix = 0;
@@ -1076,7 +1078,7 @@ class Net(bool useArray = true,
          * meanings of the same word in different languages. */
         Lang lang;
         Sense sense;
-        CategoryIx categoryIx;
+        ContextIx context; /// Context.
         bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression
         /* auto opCast(T : bool)() { return expr !is null; } */
     }
@@ -1240,11 +1242,11 @@ class Net(bool useArray = true,
 
         Lemmas[string] lemmasByExpr;
 
-        string[CategoryIx] categoryNameByIx; /** Ontology Category Names by Index. */
-        CategoryIx[string] categoryIxByName; /** Ontology Category Indexes by Name. */
+        string[ContextIx] contextNameByIx; /** Ontology Context Names by Index. */
+        ContextIx[string] contextIxByName; /** Ontology Context Indexes by Name. */
 
-        enum anyCategory = CategoryIx.asUndefined; // reserve 0 for anyCategory (unknown)
-        ushort categoryIxCounter = CategoryIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyCategory (unknown)
+        enum anyContext = ContextIx.asUndefined; // reserve 0 for anyContext (unknown)
+        ushort contextIxCounter = ContextIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyContext (unknown)
 
         size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
 
@@ -1296,10 +1298,10 @@ class Net(bool useArray = true,
     NodeRefs nodeRefsByLemmaDirect(S)(S expr,
                                       Lang lang,
                                       Sense sense,
-                                      CategoryIx category) if (isSomeString!S)
+                                      ContextIx context) if (isSomeString!S)
     {
         typeof(return) nodes;
-        auto lemma = Lemma(expr, lang, sense, category);
+        auto lemma = Lemma(expr, lang, sense, context);
         if (lemma in nodeRefByLemma) // if hashed lookup possible
         {
             nodes ~= nodeRefByLemma[lemma]; // use it
@@ -1313,7 +1315,7 @@ class Net(bool useArray = true,
                 const wordsFixed = wordsSplit.joiner("_").to!S;
                 /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
                 // TODO: Functionize
-                auto lemmaFixed = Lemma(wordsFixed, lang, sense, category);
+                auto lemmaFixed = Lemma(wordsFixed, lang, sense, context);
                 if (lemmaFixed in nodeRefByLemma)
                 {
                     nodes ~= nodeRefByLemma[lemmaFixed];
@@ -1352,7 +1354,7 @@ class Net(bool useArray = true,
                 foreach (existingLemma; existingLemmas)
                 {
                     if (existingLemma.lang == lemma.lang &&
-                        existingLemma.categoryIx == lemma.categoryIx &&
+                        existingLemma.context == lemma.context &&
                         lemma.sense != Sense.unknown && // must be here!
                         existingLemma.sense.specializes(lemma.sense))
                     {
@@ -1387,15 +1389,15 @@ class Net(bool useArray = true,
     NodeRefs nodeRefsOf(S)(S expr,
                            Lang lang,
                            Sense sense,
-                           CategoryIx category = anyCategory) if (isSomeString!S)
+                           ContextIx context = anyContext) if (isSomeString!S)
     {
         typeof(return) nodes;
 
         if (lang != Lang.unknown &&
             sense != Sense.unknown &&
-            category != anyCategory) // if exact Lemma key can be used
+            context != anyContext) // if exact Lemma key can be used
         {
-            return nodeRefsByLemmaDirect(expr, lang, sense, category); // fast hash lookup
+            return nodeRefsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
         }
         else
         {
@@ -1685,6 +1687,12 @@ class Net(bool useArray = true,
                                   `you`, // 2nd person
                                   `they`, `them`], // 3rd person
                         Rel.isA, false, `personal pronoun plural`, Sense.pronounPersonalPlural, Sense.noun, 1.0);
+
+        /* TODO near/far in distance/time , singular, plural */
+        learnAttributes(Lang.en, [`this`, `that`], Rel.isA, false,
+                        `demonstrative pronoun singular`, Sense.pronounDemonstrativeSingular, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`these`, `those`], Rel.isA, false,
+                        `demonstrative pronoun plural`, Sense.pronounDemonstrativePlural, Sense.noun, 1.0);
     }
 
     void learnSwedishPronouns()
@@ -1700,6 +1708,11 @@ class Net(bool useArray = true,
                                   `ni`, // 2nd person
                                   `de`, `dem`], // 3rd person
                         Rel.isA, false, `personal pronoun plural`, Sense.pronounPersonalPlural, Sense.noun, 1.0);
+
+        learnAttributes(Lang.sv, [`den här`, `den där`], Rel.isA, false,
+                        `demonstrative pronoun singular`, Sense.pronounDemonstrativeSingular, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`de här`, `de där`], Rel.isA, false,
+                        `demonstrative pronoun plural`, Sense.pronounDemonstrativePlural, Sense.noun, 1.0);
     }
 
     void learnVerbs()
@@ -3848,7 +3861,7 @@ class Net(bool useArray = true,
         learnAdjective(lang, "tung", "tyngre", "tyngst");
     }
 
-    /* TODO Add logic describing which Sense.nounX and CategoryIx that fulfills
+    /* TODO Add logic describing which Sense.nounX and ContextIx that fulfills
      * isUncountable() and use it here. */
     void learnUncountables(R)(Lang lang, R nouns) if (isSourceOf!(R, string))
     {
@@ -3901,10 +3914,10 @@ class Net(bool useArray = true,
                   Lang lang,
                   Sense sense,
                   Origin origin,
-                  CategoryIx categoryIx = CategoryIx.asUndefined) in { assert(!expr.empty); }
+                  ContextIx context = ContextIx.asUndefined) in { assert(!expr.empty); }
     body
     {
-        const lemma = Lemma(expr, lang, sense, categoryIx);
+        const lemma = Lemma(expr, lang, sense, context);
         return store(lemma, Node(lemma, origin));
     }
 
@@ -3914,23 +3927,23 @@ class Net(bool useArray = true,
                      Lang lang,
                      Sense sense,
                      Origin origin,
-                     CategoryIx categoryIx = CategoryIx.asUndefined)
+                     ContextIx context = ContextIx.asUndefined)
     {
         if (expr.empty)
             return NodeRef.asUndefined;
-        return store(expr, lang, sense, origin, categoryIx);
+        return store(expr, lang, sense, origin, context);
     }
 
     NodeRef[] store(Exprs)(Exprs exprs,
                            Lang lang,
                            Sense sense,
                            Origin origin,
-                           CategoryIx categoryIx = CategoryIx.asUndefined) if (isIterable!(Exprs))
+                           ContextIx context = ContextIx.asUndefined) if (isIterable!(Exprs))
     {
         typeof(return) nodeRefs;
         foreach (expr; exprs)
         {
-            nodeRefs ~= store(expr, lang, sense, origin, categoryIx);
+            nodeRefs ~= store(expr, lang, sense, origin, context);
         }
         return nodeRefs;
     }
@@ -4159,27 +4172,27 @@ class Net(bool useArray = true,
             }
         }
 
-        return store(expr.correctLemmaExpr, lang, sense, Origin.cn5, anyCategory);
+        return store(expr.correctLemmaExpr, lang, sense, Origin.cn5, anyContext);
     }
 
     import std.algorithm: splitter;
 
-    /** Lookup Category by $(D name). */
-    CategoryIx categoryByName(S)(S name) if (isSomeString!S)
+    /** Lookup Context by $(D name). */
+    ContextIx contextByName(S)(S name) if (isSomeString!S)
     {
-        auto categoryIx = anyCategory;
-        if (name in categoryIxByName)
+        auto context = anyContext;
+        if (name in contextIxByName)
         {
-            categoryIx = categoryIxByName[name];
+            context = contextIxByName[name];
         }
         else
         {
-            assert(categoryIxCounter != categoryIxCounter.max);
-            categoryIx._ix = categoryIxCounter++;
-            categoryNameByIx[categoryIx] = name;
-            categoryIxByName[name] = categoryIx;
+            assert(contextIxCounter != contextIxCounter.max);
+            context._ix = contextIxCounter++;
+            contextNameByIx[context] = name;
+            contextIxByName[name] = context;
         }
-        return categoryIx;
+        return context;
     }
 
     /** Read NELL Entity from $(D part). */
@@ -4196,20 +4209,20 @@ class Net(bool useArray = true,
 
         if (show) dln("ENTITY:", entity);
 
-        auto personCategorySplit = entity.front.findSplitAfter("person");
-        if (!personCategorySplit[0].empty)
+        auto personContextSplit = entity.front.findSplitAfter("person");
+        if (!personContextSplit[0].empty)
         {
-            /* dln(personCategorySplit, " livesIn ", personCategorySplit[1]); */
-            /* lookupOrStoreCategory(personCategorySplit[0]); */
+            /* dln(personContextSplit, " livesIn ", personContextSplit[1]); */
+            /* lookupOrStoreContext(personContextSplit[0]); */
         }
         else
         {
-            /* lookupOrStoreCategory(entity.front); */
+            /* lookupOrStoreContext(entity.front); */
         }
 
-        /* category */
-        immutable categoryName = entity.front.idup; entity.popFront;
-        const categoryIx = categoryByName(categoryName);
+        /* context */
+        immutable contextName = entity.front.idup; entity.popFront;
+        const context = contextByName(contextName);
 
         if (entity.empty)
         {
@@ -4221,18 +4234,18 @@ class Net(bool useArray = true,
 
         /* name */
         // clean cases such as concept:language:english_language
-        immutable entityName = (entity.front.endsWith("_" ~ categoryName) ?
-                                entity.front[0 .. $ - (categoryName.length + 1)] :
+        immutable entityName = (entity.front.endsWith("_" ~ contextName) ?
+                                entity.front[0 .. $ - (contextName.length + 1)] :
                                 entity.front).idup;
         entity.popFront;
 
-        auto entityIx = store(entityName.tr(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, categoryIx);
+        auto entityIx = store(entityName.tr(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context);
 
         return tuple(entityIx,
-                     categoryName,
+                     contextName,
                      connect(entityIx,
                              Rel.isA,
-                             store(categoryName.tr(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, categoryIx),
+                             store(contextName.tr(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
                              lang,
                              Origin.nell, 1.0, false, false,
                              true)); // need to check duplicates here
@@ -4249,9 +4262,9 @@ class Net(bool useArray = true,
         NodeRef entityIx;
         NodeRef valueIx;
 
-        string entityCategoryName;
+        string entityContextName;
         char[] relationName;
-        string valueCategoryName;
+        string valueContextName;
 
         auto ignored = false;
         NWeight mainWeight;
@@ -4266,7 +4279,7 @@ class Net(bool useArray = true,
                 case 0:
                     auto entity = readNELLEntity(part);
                     entityIx = entity[0];
-                    entityCategoryName = entity[1];
+                    entityContextName = entity[1];
                     if (!entityIx.defined) { return; }
 
                     break;
@@ -4305,13 +4318,13 @@ class Net(bool useArray = true,
                             auto value = readNELLEntity(part);
                             valueIx = value[0];
                             if (!valueIx.defined) { return; }
-                            valueCategoryName = value[1];
+                            valueContextName = value[1];
 
-                            relationName.skipOver(entityCategoryName); // strip dumb prefix
-                            relationName.skipOverBack(valueCategoryName); // strip dumb suffix
+                            relationName.skipOver(entityContextName); // strip dumb prefix
+                            relationName.skipOverBack(valueContextName); // strip dumb suffix
 
-                            rel = relationName.decodeRelationPredicate(entityCategoryName,
-                                                              valueCategoryName,
+                            rel = relationName.decodeRelationPredicate(entityContextName,
+                                                              valueContextName,
                                                               Origin.nell,
                                                               negation, reversion, tense);
                         }
@@ -4893,9 +4906,9 @@ class Net(bool useArray = true,
         {
             write(`:`, node.lemma.sense);
         }
-        if (node.lemma.categoryIx != CategoryIx.asUndefined)
+        if (node.lemma.context != ContextIx.asUndefined)
         {
-            write(`:`, categoryNameByIx[node.lemma.categoryIx]);
+            write(`:`, contextNameByIx[node.lemma.context]);
         }
 
         writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close

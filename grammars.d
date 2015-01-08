@@ -890,6 +890,8 @@ enum Sense:ubyte
     pronounPersonalPlural, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
 
     pronounDemonstrative, /// See also: https://www.englishclub.com/grammar/pronouns-demonstrative.htm
+    pronounDemonstrativeSingular,
+    pronounDemonstrativePlural,
 
     pronounPossessive, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
     pronounPossessiveSingular, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
@@ -1164,7 +1166,9 @@ unittest
     bool isPronounDemonstrative(Sense kind)
     {
         with (Sense)
-            return kind.of(pronounDemonstrative);
+            return kind.of(pronounDemonstrative,
+                           pronounDemonstrativeSingular,
+                           pronounDemonstrativePlural);
     }
     bool isPronounPlural(Sense kind)
     {
