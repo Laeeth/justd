@@ -7,7 +7,6 @@ at night [single future event]i natt
 back to the grindtillbaka till grottekvarnen
 before sunsetföre solnedgången
 behave yourselfuppför dig
-bigstor
 birds of one featherav samma skrot och korn
 bless you (when sneezing)prosit
 bon appetitsmaklig måltid
@@ -16,8 +15,9 @@ bon voyagetrevlig resa
 bushwhackarmbåga sig fram
 business parkföretagspark
 by heartutantill
-call an ambulans!ring ambulansen!
-call an ambulans!ring på ambulansen!
+call an ambulans!ring ambulans!
+call an ambulans!ring på ambulans!
+call an ambulans!ring efter ambulans!
 call the police!ring polisen!
 can i help you?kan jag hjälpa dig?
 can you help me?kan du hjälpa mig?
@@ -260,8 +260,8 @@ turn rightsväng höger
 tusen tack (a thousand thanks)
 twenty-four sevendygnet runt
 we are {1} years oldvi är {1} gamla
-welcomevälkommen [singular]
-welcomevälkomna [plural]
+welcomevälkommen
+welcomevälkomna
 welcome backvälkommen åter
 what a small worldvärlden är liten
 what do you do for a living?vad jobbar du med?
@@ -293,10 +293,14 @@ would {1} like to dance?vill {1} dansa?
 write it down, pleaseskriv ner det, är ni snäll
 yes, a littleja, lite grann
 you're very kinddu är väldigt vänlig
-you're welcomeingen orsak
-you're welcomevar så god
+you're welcomeingen orsakvar så god
 you've got to be kiddingdu måste skämta
 {1} don't buy it{1} tror inte på det
 {1} know better than that{1} vet bättre än så
 {1} made it{1} klarade det
 {1} told you sodet var ju det {1} sa
+what the hell?vad i helvete?
+multiplied bymultiplicerat medmultiplicerad med
+for instancetill exempel
+for exampletill exempel
+et ceteraoch så vidare
