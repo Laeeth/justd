@@ -88,3 +88,6 @@ PoSPart of Speech
 etcet cetera
 
 aealmost everywhere
+
+dim.diminutive
+dim.diminuendo
