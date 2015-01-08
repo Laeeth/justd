@@ -50,3 +50,4 @@ quadquadruple
 πpi
 
 uncountableuncountable noun
+periodtime period

@@ -51,6 +51,8 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO Add isExactIn(Sense sense, Lang lang). Use to specialize in learnLemmaMaybeSpecialized().
+
     TODO Make context a NodeRef such NodeRef("mammal") =>isA=> NodeRef("animal")
 
     TODO Infer senses of consecutive word when reading sorted word
@@ -1952,6 +1954,9 @@ class Net(bool useArray = true,
 
         learnAttributes(Lang.en, [`january`, `february`, `mars`, `april`, `may`, `june`, `july`, `august`, `september`, `oktober`, `november`, `december`], Rel.isA, false, `month`, Sense.month, Sense.noun, 1.0);
         learnAttributes(Lang.sv, [`januari`, `februari`, `mars`, `april`, `maj`, `juni`, `juli`, `augusti`, `september`, `oktober`, `november`, `december`],    Rel.isA, false, `month`, Sense.month, Sense.noun, 1.0);
+
+        learnAttributes(Lang.en, [`time period`], Rel.isA, false, `noun`, Sense.noun, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`month`], Rel.isA, false, `time period`, Sense.noun, Sense.noun, 1.0);
     }
 
     /// Learn Assocative Things.
@@ -4269,7 +4274,7 @@ class Net(bool useArray = true,
         if (!items.empty)
         {
             const item = items.front;
-            sense = item.decodeWordKind;
+            sense = item.decodeWordSense;
             if (sense == Sense.unknown && item != `_`)
             {
                 dln(`Unknown Sense code `, items.front);

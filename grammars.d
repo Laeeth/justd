@@ -757,7 +757,7 @@ enum Tense:ubyte
     futureDuration,
 }
 
-/** Human Word Sense Kind (Category). */
+/** Human Word Sense (Category). */
 enum Sense:ubyte
 {
     unknown,
@@ -802,6 +802,7 @@ enum Sense:ubyte
     nameOrganisation,   /// CIA
     country,            /// Sweden
 
+    timePeriod,
     weekday,
     month,
     dayOfMonth,
@@ -953,6 +954,16 @@ enum Sense:ubyte
     conjunctionCorrelative,
 
     interjection, exclamation = interjection,
+
+    /// Programming Language
+    code,
+    codeOperator,
+    codeOperatorAssignment,
+    codeFunction,
+    codeFunctionReference,
+    codeVariable,
+    codeVariableReference,
+    codeType,
 }
 
 /** Part of a Sentence. */
@@ -980,32 +991,32 @@ class Subject : Part
     Article article;
 }
 
-/** Decode character $(D kindCode) into a $(D Sense). */
-Sense decodeWordKind(C)(C kindCode) if (isSomeChar!C)
+/** Decode character $(D senseCode) into a $(D Sense). */
+Sense decodeWordSense(C)(C senseCode) if (isSomeChar!C)
 {
-    typeof(return) kind;
-    switch (kindCode) with (Sense)
+    typeof(return) sense;
+    switch (senseCode) with (Sense)
     {
-        case 'n': kind = noun; break;
-        case 'v': kind = verb; break;
-        case 'a': kind = adjective; break;
-        case 'r': kind = adverb; break;
-        default: kind = unknown; break;
+        case 'n': sense = noun; break;
+        case 'v': sense = verb; break;
+        case 'a': sense = adjective; break;
+        case 'r': sense = adverb; break;
+        default: sense = unknown; break;
     }
-    return kind;
+    return sense;
 }
 
 unittest
 {
-    assert('n'.decodeWordKind == Sense.noun);
+    assert('n'.decodeWordSense == Sense.noun);
 }
 
-/** Decode string $(D kindCode) into a $(D Sense). */
-Sense decodeWordKind(S)(S kindCode) if (isSomeString!S)
+/** Decode string $(D senseCode) into a $(D Sense). */
+Sense decodeWordSense(S)(S senseCode) if (isSomeString!S)
 {
-    if (kindCode.length == 1)
+    if (senseCode.length == 1)
     {
-        return kindCode[0].decodeWordKind;
+        return senseCode[0].decodeWordSense;
     }
     else
     {
@@ -1015,13 +1026,13 @@ Sense decodeWordKind(S)(S kindCode) if (isSomeString!S)
 
 unittest
 {
-    assert(`n`.decodeWordKind == Sense.noun);
+    assert(`n`.decodeWordSense == Sense.noun);
 }
 
-/** Convert $(D word) to $(D kind). */
-auto toWordOfKind(S)(S word,
-                     Sense toKind,
-                     Sense fromKind = Sense.unknown) if (isSomeString!S)
+/** Convert $(D word) to $(D sense). */
+auto toWordOfSense(S)(S word,
+                      Sense toSense,
+                      Sense fromSense = Sense.unknown) if (isSomeString!S)
 {
     return word;
 }
@@ -1035,48 +1046,64 @@ unittest
 
 @safe pure @nogc nothrow
 {
-    bool isNoun(Sense kind)
+    bool isCode(Sense sense)
     {
-        with (Sense) return (kind.isNumeric ||
-                             kind.of(noun,
+        with (Sense) return (sense.of(code,
+                                     codeOperator,
+                                     codeOperatorAssignment,
+                                     codeFunction,
+                                     codeFunctionReference,
+                                     codeVariable,
+                                     codeVariableReference,
+                                     codeType));
+    }
+    bool isNoun(Sense sense)
+    {
+        with (Sense) return (sense.isNumeric ||
+                             sense.isTimePeriod ||
+                             sense.of(noun,
                                      nounRegular,
                                      nounIrregular,
                                      nounSingular,
                                      nounPlural,
-                                     weekday,
-                                     month,
-                                     dayOfMonth,
-                                     year,
-                                     season,
                                      uncountable,
                                      nounAbbrevation,
                                      nounAcronym) ||
-                             kind.isName);
+                             sense.isName);
     }
-    bool isNumeric(Sense kind)
+    bool isTimePeriod(Sense sense)
     {
-        with (Sense) return (kind.isInteger ||
-                             kind.of(nounNumeric,
+        with (Sense) return sense.of(timePeriod,
+                                    weekday,
+                                    month,
+                                    dayOfMonth,
+                                    year,
+                                    season);
+    }
+    bool isNumeric(Sense sense)
+    {
+        with (Sense) return (sense.isInteger ||
+                             sense.of(nounNumeric,
                                      decimal,
                                      numberRational,
                                      numberIrrational,
                                      numberComplex));
     }
-    bool isNumeral(Sense kind)
+    bool isNumeral(Sense sense)
     {
-        with (Sense) return (kind.of(numeral,
+        with (Sense) return (sense.of(numeral,
                                      ordinalNumber));
     }
-    bool isInteger(Sense kind)
+    bool isInteger(Sense sense)
     {
-        with (Sense) return (kind.isNumeral ||
-                             kind.of(integer,
+        with (Sense) return (sense.isNumeral ||
+                             sense.of(integer,
                                      integerPositive,
                                      integerNegative));
     }
-    bool isName(Sense kind)
+    bool isName(Sense sense)
     {
-        with (Sense) return kind.of(name,
+        with (Sense) return sense.of(name,
                                     nameMale,
                                     nameFemale,
                                     surname,
@@ -1085,9 +1112,9 @@ unittest
                                     nameOrganisation,
                                     country);
     }
-    bool isVerb(Sense kind)
+    bool isVerb(Sense sense)
     {
-        with (Sense) return kind.of(verb,
+        with (Sense) return sense.of(verb,
                                     verbRegular,
                                     verbIrregular,
                                     verbAbbrevation,
@@ -1098,9 +1125,9 @@ unittest
                                     verbFuture,
                                     verbPastParticiple);
     }
-    bool isAdjective(Sense kind)
+    bool isAdjective(Sense sense)
     {
-        with (Sense) return kind.of(adjective,
+        with (Sense) return sense.of(adjective,
                                     adjectiveRegular,
                                     adjectiveIrregular,
                                     adjectiveAbbrevation,
@@ -1110,33 +1137,33 @@ unittest
                                     adjectivePossessiveSingular,
                                     adjectivePossessivePlural);
     }
-    bool isAdverb(Sense kind)
+    bool isAdverb(Sense sense)
     {
-        with (Sense) return kind.of(adverb,
+        with (Sense) return sense.of(adverb,
                                     normalAdverb,
                                     negatingAdverb,
                                     affirmingAdverb,
                                     conjunctiveAdverb);
     }
-    bool isPronoun(Sense kind)
+    bool isPronoun(Sense sense)
     {
-        with (Sense) return (kind == pronoun ||
-                             kind.isPronounPersonal ||
-                             kind.isPronounPossessive ||
-                             kind.isPronounDemonstrative ||
-                             kind == pronounInterrogative ||
-                             kind.isPronounReflexive ||
-                             kind.isPronounIndefinite ||
-                             kind == pronounRelative);
+        with (Sense) return (sense == pronoun ||
+                             sense.isPronounPersonal ||
+                             sense.isPronounPossessive ||
+                             sense.isPronounDemonstrative ||
+                             sense == pronounInterrogative ||
+                             sense.isPronounReflexive ||
+                             sense.isPronounIndefinite ||
+                             sense == pronounRelative);
     }
-    bool isPronounPersonal(Sense kind)
+    bool isPronounPersonal(Sense sense)
     {
-        return (kind.isPronounPersonalSingular ||
-                kind.isPronounPersonalPlural);
+        return (sense.isPronounPersonalSingular ||
+                sense.isPronounPersonalPlural);
     }
-    bool isPronounPersonalSingular(Sense kind)
+    bool isPronounPersonalSingular(Sense sense)
     {
-        with (Sense) return kind.of(pronounPersonalSingular,
+        with (Sense) return sense.of(pronounPersonalSingular,
 
                                     pronounPersonalSingular1st,
                                     pronounPersonalSingular2nd,
@@ -1152,76 +1179,76 @@ unittest
 
                                     pronounPersonalSingularNeutral);
     }
-    bool isPronounPersonalPlural(Sense kind)
+    bool isPronounPersonalPlural(Sense sense)
     {
-        with (Sense) return kind.of(pronounPersonalPlural,
+        with (Sense) return sense.of(pronounPersonalPlural,
                                     pronounPersonalPlural1st,
                                     pronounPersonalPlural2nd,
                                     pronounPersonalPlural3rd);
     }
-    bool isPronounPossessive(Sense kind)
+    bool isPronounPossessive(Sense sense)
     {
-        with (Sense) return (kind == pronounPossessive ||
-                             kind.isPronounPossessiveSingular ||
-                             kind.isPronounPossessivePlural);
+        with (Sense) return (sense == pronounPossessive ||
+                             sense.isPronounPossessiveSingular ||
+                             sense.isPronounPossessivePlural);
     }
-    bool isPronounPossessiveSingular(Sense kind)
+    bool isPronounPossessiveSingular(Sense sense)
     {
-        with (Sense) return kind.of(pronounPossessiveSingular,
+        with (Sense) return sense.of(pronounPossessiveSingular,
                                     pronounPossessiveSingular1st,
                                     pronounPossessiveSingular2nd,
                                     pronounPossessiveSingularMale,
                                     pronounPossessiveSingularFemale,
                                     pronounPossessiveSingularNeutral);
     }
-    bool isPronounPossessivePlural(Sense kind)
+    bool isPronounPossessivePlural(Sense sense)
     {
-        with (Sense) return kind.of(pronounPossessivePlural,
+        with (Sense) return sense.of(pronounPossessivePlural,
                                     pronounPossessivePlural1st,
                                     pronounPossessivePlural2nd,
                                     pronounPossessivePlural3rd);
     }
-    bool isPronounDemonstrative(Sense kind)
+    bool isPronounDemonstrative(Sense sense)
     {
-        with (Sense) return kind.of(pronounDemonstrative,
+        with (Sense) return sense.of(pronounDemonstrative,
                                     pronounDemonstrativeSingular,
                                     pronounDemonstrativePlural);
     }
-    bool isPronounPlural(Sense kind)
+    bool isPronounPlural(Sense sense)
     {
-        with (Sense) return (kind.isPronounPersonalPlural ||
-                             kind == pronounPossessivePlural);
+        with (Sense) return (sense.isPronounPersonalPlural ||
+                             sense == pronounPossessivePlural);
     }
-    bool isPronounReflexive(Sense kind)
+    bool isPronounReflexive(Sense sense)
     {
-        with (Sense) return kind.of(pronounReflexive,
+        with (Sense) return sense.of(pronounReflexive,
                                     pronounReflexiveSingular,
                                     pronounReflexivePlural);
     }
-    bool isPronounIndefinite(Sense kind)
+    bool isPronounIndefinite(Sense sense)
     {
-        with (Sense) return kind.of(pronounIndefinite,
+        with (Sense) return sense.of(pronounIndefinite,
                                     pronounIndefiniteSingular,
                                     pronounIndefinitePlural);
     }
-    bool isPreposition(Sense kind)
+    bool isPreposition(Sense sense)
     {
-        with (Sense) return kind.of(preposition,
+        with (Sense) return sense.of(preposition,
                                     prepositionTime,
                                     prepositionPosition,
                                     prepositionPlace,
                                     prepositionDirection);
     }
-    bool isArticle(Sense kind)
+    bool isArticle(Sense sense)
     {
-        with (Sense) return kind.of(article,
+        with (Sense) return sense.of(article,
                                     articleUndefinite,
                                     articleDefinite,
                                     articlePartitive);
     }
-    bool isConjunction(Sense kind)
+    bool isConjunction(Sense sense)
     {
-        with (Sense) return kind.of(conjunction,
+        with (Sense) return sense.of(conjunction,
                                     conjunctionCoordinating,
                                     conjunctionSubordinating,
                                     conjunctionSubordinatingConcession,
@@ -1341,21 +1368,21 @@ static immutable jobTitleSuffixes = [ `or`, // traitor
 /** English Word Suffixes. */
 static immutable wordSuffixes = [ allNounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;
 
-Gender getGender(S)(S lemma, Sense kind) if (isSomeString!S)
+Gender getGender(S)(S lemma, Sense sense) if (isSomeString!S)
 {
-    if (kind.isPronounSingularMale)
+    if (sense.isPronounSingularMale)
     {
         return Gender.male;
     }
-    else if (kind.isPronounPersonalSingularFemale)
+    else if (sense.isPronounPersonalSingularFemale)
     {
         return Gender.female;
     }
-    else if (kind.isPronounPersonalSingularNeutral)
+    else if (sense.isPronounPersonalSingularNeutral)
     {
         return Gender.neutral;
     }
-    else if (kind.isNoun)
+    else if (sense.isNoun)
     {
         return Gender.unknown;
     }
