@@ -51,6 +51,8 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO Infer English-Swedish Translations: "[are|is] requirED = krävs" because of "require = kräva"
+
     TODO Add isExactIn(Sense sense, Lang lang). Use to specialize in learnLemmaMaybeSpecialized().
 
     TODO Make context a NodeRef such NodeRef("mammal") =>isA=> NodeRef("animal")
