@@ -777,6 +777,9 @@ enum Sense:ubyte
     slang,                      /// Slang.
 
     noun,
+    nounRegular,
+    nounIrregular,
+
     nounSingular,
     nounPlural,
 
@@ -825,6 +828,9 @@ enum Sense:ubyte
     /* Verb */
 
     verb,
+    verbRegular,
+    verbIrregular,
+
     verbAbbrevation,
 
     verbImperative,
@@ -851,6 +857,8 @@ enum Sense:ubyte
     /* Adjective */
 
     adjective,
+    adjectiveRegular,
+    adjectiveIrregular,
     adjectiveAbbrevation,
 
     adjectiveNominative,
@@ -1017,6 +1025,8 @@ unittest
         with (Sense)
             return (kind.isNumeric ||
                     kind.of(noun,
+                            nounRegular,
+                            nounIrregular,
                             nounSingular,
                             nounPlural,
                             weekday,
@@ -1069,6 +1079,8 @@ unittest
     {
         with (Sense)
             return kind.of(verb,
+                           verbRegular,
+                           verbIrregular,
                            verbAbbrevation,
                            verbImperative,
                            verbInfinitive,
@@ -1081,6 +1093,8 @@ unittest
     {
         with (Sense)
             return kind.of(adjective,
+                           adjectiveRegular,
+                           adjectiveIrregular,
                            adjectiveAbbrevation,
                            adjectiveNominative,
                            adjectiveComparative,
