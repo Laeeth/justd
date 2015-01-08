@@ -1457,8 +1457,7 @@ class Net(bool useArray = true,
             const sense_cnt    = words[4+p_cnt].to!uint;
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
-            auto ids = words[6+p_cnt..$].map!(a => a.to!uint);
-            dln(ids);
+            auto ids = words[6+p_cnt..$].map!(a => a.to!uint); // relating ids
             static if (useArray)
             {
                 // auto links = Links(ids);
