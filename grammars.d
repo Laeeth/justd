@@ -884,21 +884,44 @@ enum Sense:ubyte
 
     pronounPersonal, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
     pronounPersonalSingular, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
+
+    pronounPersonalSingular1st,
+    pronounPersonalSingular2nd,
+    pronounPersonalSingular3rd,
+
     pronounPersonalSingularMale,
+    pronounPersonalSingularMale1st,
+    pronounPersonalSingularMale2nd,
+
     pronounPersonalSingularFemale,
+    pronounPersonalSingularFemale1st,
+    pronounPersonalSingularFemale2nd,
+
     pronounPersonalSingularNeutral,
+
     pronounPersonalPlural, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonalPlural1st,
+    pronounPersonalPlural2nd,
+    pronounPersonalPlural3rd,
 
     pronounDemonstrative, /// See also: https://www.englishclub.com/grammar/pronouns-demonstrative.htm
     pronounDemonstrativeSingular,
     pronounDemonstrativePlural,
 
     pronounPossessive, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
+
     pronounPossessiveSingular, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessiveSingular1st,
+    pronounPossessiveSingular2nd,
     pronounPossessiveSingularMale,
+
     pronounPossessiveSingularFemale,
     pronounPossessiveSingularNeutral,
+
     pronounPossessivePlural, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
+    pronounPossessivePlural1st,
+    pronounPossessivePlural2nd,
+    pronounPossessivePlural3rd,
 
     pronounInterrogative, /// See also: https://www.englishclub.com/grammar/pronouns-reciprocal.htm
 
@@ -1134,14 +1157,28 @@ unittest
     {
         with (Sense)
             return kind.of(pronounPersonalSingular,
+
+                           pronounPersonalSingular1st,
+                           pronounPersonalSingular2nd,
+                           pronounPersonalSingular3rd,
+
                            pronounPersonalSingularMale,
+                           pronounPersonalSingularMale1st,
+                           pronounPersonalSingularMale2nd,
+
                            pronounPersonalSingularFemale,
+                           pronounPersonalSingularFemale1st,
+                           pronounPersonalSingularFemale2nd,
+
                            pronounPersonalSingularNeutral);
     }
     bool isPronounPersonalPlural(Sense kind)
     {
         with (Sense)
-            return kind.of(pronounPersonalPlural);
+            return kind.of(pronounPersonalPlural,
+                           pronounPersonalPlural1st,
+                           pronounPersonalPlural2nd,
+                           pronounPersonalPlural3rd);
     }
     bool isPronounPossessive(Sense kind)
     {
@@ -1154,6 +1191,8 @@ unittest
     {
         with (Sense)
             return kind.of(pronounPossessiveSingular,
+                           pronounPossessiveSingular1st,
+                           pronounPossessiveSingular2nd,
                            pronounPossessiveSingularMale,
                            pronounPossessiveSingularFemale,
                            pronounPossessiveSingularNeutral);
@@ -1161,7 +1200,10 @@ unittest
     bool isPronounPossessivePlural(Sense kind)
     {
         with (Sense)
-            return kind.of(pronounPossessivePlural);
+            return kind.of(pronounPossessivePlural,
+                           pronounPossessivePlural1st,
+                           pronounPossessivePlural2nd,
+                           pronounPossessivePlural3rd);
     }
     bool isPronounDemonstrative(Sense kind)
     {

@@ -1687,11 +1687,11 @@ class Net(bool useArray = true,
         learnAttributes(lang, [`you`], Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular2nd, Sense.noun, 1.0);
         learnAttributes(lang, [`it`], Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.noun, 1.0);
 
-        learnAttributes(lang, [`he`], Rel.isA, false, `1st-person male singular personal pronoun`, Sense.pronounPersonalSingular1stMale, Sense.noun, 1.0);
-        learnAttributes(lang, [`him`], Rel.isA, false, `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingular2ndMale, Sense.noun, 1.0);
+        learnAttributes(lang, [`he`], Rel.isA, false, `1st-person male singular personal pronoun`, Sense.pronounPersonalSingularMale1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`him`], Rel.isA, false, `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingularMale2nd, Sense.noun, 1.0);
 
-        learnAttributes(lang, [`she`], Rel.isA, false, `1st-person female singular personal pronoun`, Sense.pronounPersonalSingular1stFemale, Sense.noun, 1.0);
-        learnAttributes(lang, [`her`], Rel.isA, false, `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingular2ndFemale, Sense.noun, 1.0);
+        learnAttributes(lang, [`she`], Rel.isA, false, `1st-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`her`], Rel.isA, false, `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale2nd, Sense.noun, 1.0);
 
         learnAttributes(lang, [`we`, `us`], Rel.isA, false, `1st-person personal pronoun plural`, Sense.pronounPersonalPlural1st, Sense.noun, 1.0);
         learnAttributes(lang, [`you`], Rel.isA, false, `2nd-person personal pronoun plural`, Sense.pronounPersonalPlural2nd, Sense.noun, 1.0);
@@ -1722,7 +1722,7 @@ class Net(bool useArray = true,
                                `that` // things and people
                             ], Rel.isA, false, `relative pronoun`, Sense.pronounRelative, Sense.noun, 1.0);
 
-        learnAttributes(lang, [`all`, `any`, `more`, `most`, `none`, `some`, `such`], Rel.isA, false, `indefinite pronoun`, Sense.pronounIndefinitePlural.noun, 1.0);
+        learnAttributes(lang, [`all`, `any`, `more`, `most`, `none`, `some`, `such`], Rel.isA, false, `indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.noun, 1.0);
         learnAttributes(lang, [`another`, `anybody`, `anyone`, `anything`, `each`, `either`, `enough`,
                                `everybody`, `everyone`, `everything`, `less`, `little`, `much`, `neither`,
                                `nobody`, `noone`, `one`, `other`,
