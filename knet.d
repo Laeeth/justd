@@ -106,6 +106,7 @@
     TODO Use http://www.wordfrequency.info/files/entriesWithoutCollocates.txt etc
 
     TODO CN5: Infer Sense from specific Rels such as instanceOf Ra
+    TODO Infer Senses in both directions over synonymWith typically: plåga (unknown) synonymWith tortera (noun) => plåga must have sense here
     TODO CN5: Parse parens after "Ra (board game)" and put in context
     TODO Infer:
          - X isA Y and Y hasProperty Z => X hasProperty Z: expressed as X.getPropertyMaybe(Z)
