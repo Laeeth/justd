@@ -1416,6 +1416,22 @@ auto toHuman(const Rel rel,
                         default: words = ["can be", not, "served with"]; break;
                     }
                     break;
+                case competesWith:
+                    switch (lang)
+                    {
+                        case sv: words = ["tävlar", not, "med"]; break;
+                        case en:
+                        default: words = ["does", not, "compete with"]; break;
+                    }
+                    break;
+                case collaboratesWith:
+                    switch (lang)
+                    {
+                        case sv: words = ["samarbetar", not, "med"]; break;
+                        case en:
+                        default: words = ["does", not, "collaborate with"]; break;
+                    }
+                    break;
                 default:
                     import std.conv: to;
                     const ordered = !rel.isSymmetric;
@@ -1577,6 +1593,7 @@ bool generalizes(T)(T general,
                           hasSibling,
 
                           competesWith,
+                          collaboratesWith,
                           cookedWith,
                           servedWith,
                           physicallyConnectedWith,
