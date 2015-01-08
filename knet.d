@@ -51,6 +51,11 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO Infer senses of consecutive word when reading sorted word
+    list. Requires knowledge of Language specfic ending grammar for verbs,
+    nouns, adjectives, adverbs.
+    - Swedish: "ersätt", "ersätta", "ersätter", "ersatte", "ersatt"
+
     TODO Remove Lang argument to connect()
 
     TODO Group Rel bool negation and bool reversion into a bitfield of size 16
