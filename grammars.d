@@ -762,6 +762,8 @@ enum Sense:ubyte
 {
     unknown,
 
+    language,
+
     prefix,
     suffix,
 

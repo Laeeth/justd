@@ -1744,10 +1744,10 @@ class Net(bool useArray = true,
                    Rel.hasNameDay,
                    Sense.nounDate, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/en/surname_origin_meaning.txt",
+        learnTuple("../knowledge/en/surname_languages.txt",
                    Sense.surname, Lang.unknown,
                    Rel.hasOrigin,
-                   Sense.country, Lang.en,
+                   Sense.language, Lang.en,
                    Origin.manual, 1.0);
 
         // Translation
@@ -2401,7 +2401,7 @@ class Net(bool useArray = true,
                                    Origin origin = Origin.manual) if (isSomeString!S)
     {
         enum lang = Lang.en;
-        return connect(store(acronym.toLower, lang, Sense.nounAcronym, origin),
+        return connect(store(acronym, lang, Sense.nounAcronym, origin),
                        Rel.acronymFor,
                        store(expr.toLower, lang, sense, origin),
                        lang, origin, weight);
@@ -2420,9 +2420,9 @@ class Net(bool useArray = true,
                                                                        (isSomeString!(ElementType!R)) &&
                                                                        isSomeString!S)
     {
-        return connectMto1(store(words.map!toLower, lang, wordSense, origin),
+        return connectMto1(store(words, lang, wordSense, origin),
                            rel, reversion,
-                           store(attribute.toLower, lang, attributeSense, origin),
+                           store(attribute, lang, attributeSense, origin),
                            Lang.en, origin, weight);
     }
 
@@ -2434,9 +2434,9 @@ class Net(bool useArray = true,
                                       Sense sense = Sense.unknown,
                                       Origin origin = Origin.manual) if (isSomeString!S)
     {
-        return connectMtoN(store(emoticons.map!toLower, Lang.any, Sense.unknown, origin),
+        return connectMtoN(store(emoticons, Lang.any, Sense.unknown, origin),
                            Rel.emoticonFor,
-                           store(exprs.map!toLower, Lang.en, sense, origin),
+                           store(exprs, Lang.en, sense, origin),
                            Lang.en, origin, weight);
     }
 
@@ -5283,7 +5283,7 @@ class Net(bool useArray = true,
 
         // auto normLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
-        auto normLine = line.strip.tr(std.ascii.whitespace, ` `, `s`).toLower;
+        auto normLine = line.strip.tr(std.ascii.whitespace, ` `, `s`);
         if (normLine.empty)
             return;
 

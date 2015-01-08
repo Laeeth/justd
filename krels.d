@@ -1336,6 +1336,46 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case hasNameDay:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["har", not, "namnsdag"]; break;
+                    case en:
+                    default: words = ["does", not, "have name day"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "namnsdag för"]; break;
+                    case en:
+                    default: words = ["is", not, "name day for"]; break;
+                }
+            }
+            break;
+        case hasOrigin:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["har", not, "ursprung"]; break;
+                    case en:
+                    default: words = ["does", not, "have origin"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "ursprung för"]; break;
+                    case en:
+                    default: words = ["is", not, "origin for"]; break;
+                }
+            }
+            break;
         case hasMeaning:
             if (dir == RelDir.forward)
             {
