@@ -26,10 +26,32 @@ adv.adverb
 ack.ackusativ
 dat.dativ
 
+belg.belgiska
+
 adm.administration
+avledn.avledning
+besl.besläktat
+abstr.abstrakt
+
+civ.ing.civilingenjör
+civ.ek.civilekonom
 
 aeareaenhet
 AEastronomisk enhet
+ADBautomatisk databehandling
+ADarbetsdomstolen
+BFBondeförbundet
 
 t.ext extextill exempel
 bl.abl abland annatbland andra
+
+a.a.anfört arbete
+befälh.befälhavare
+
+V.S.B.vilket skulle bevisas
+V.S.V.vilket skulle visas
+V.S.U.vilket skulle utföras
+
+D.S.densamme
+
+b.v.s.a.b v s aBVSAbvsabilligare vid snabb affär

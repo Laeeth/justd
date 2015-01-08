@@ -1709,6 +1709,11 @@ class Net(bool useArray = true,
                    Rel.shorthandFor,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
+        learnTuple("../knowledge/la/shorthand.txt",
+                   Sense.unknown, Lang.la,
+                   Rel.shorthandFor,
+                   Sense.unknown, Lang.la,
+                   Origin.manual, 1.0);
 
         // Synonym
         learnTuple("../knowledge/en/synonym.txt",
@@ -1761,6 +1766,16 @@ class Net(bool useArray = true,
                    Sense.unknown, Lang.en,
                    Rel.translationOf,
                    Sense.unknown, Lang.sv,
+                   Origin.manual, 1.0);
+        learnTuple("../knowledge/la-sv/phrase_translation.txt",
+                   Sense.unknown, Lang.la,
+                   Rel.translationOf,
+                   Sense.unknown, Lang.sv,
+                   Origin.manual, 1.0);
+        learnTuple("../knowledge/la-en/phrase_translation.txt",
+                   Sense.unknown, Lang.la,
+                   Rel.translationOf,
+                   Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
         learnTuple("../knowledge/en-sv/idiom_translation.txt",
                    Sense.idiom, Lang.en,
