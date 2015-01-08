@@ -77,7 +77,7 @@
     doesn't support include its characters
 
     BUG Skrivn in "att fela är mänskligt" ger språk "English" när det borde ge språk Swedish
-    BUG Skriv in smärta i propmpt: gives wrong relations: "[give" and "cause] pain; grieve"
+    BUG Skriv in smärta i prompt: gives wrong relations: "[give" and "cause] pain; grieve"
     BUG reversion no effect for book_property.txt
 
     BUG Don't stem words containing non-English letters. Reuse variadic version
