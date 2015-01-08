@@ -1,6 +1,6 @@
+I'm busyjag är upptagen
 account cardkundkort
 after tomorrowi övermorgon
-the day after tomorrowi övermorgon
 and you?och du?
 armed to the teethbeväpnad till tänderna
 at night [single future event]i natt
@@ -15,7 +15,6 @@ bon voyagelycklig resa
 bon voyagetrevlig resa
 bushwhackarmbåga sig fram
 business parkföretagspark
-I'm busyjag är upptagen
 by heartutantill
 call an ambulans!ring ambulansen!
 call an ambulans!ring på ambulansen!
@@ -33,6 +32,12 @@ congratsgrattis
 congratulationsgrattis
 core messageskärnargument
 core visual aidcentrala visuella hjälpmedlet
+dear madambästa fru
+dear madamsbästa fruar
+dear missbästa fröken
+dear sirbäste herrn
+dear sir / madambästa herr eller fru
+dear sirsbästa herrar
 do you like it?gillar du den?
 do you speak {1}?pratar du {1}?
 don't mention itingen orsak
@@ -47,6 +52,8 @@ every now and thendå och då
 excuse meursäkta
 excuse meursäkta mig
 excuse me!ursäkta!
+expert onexpert på
+experts inproffs på
 fall behindhamna efter
 farewell on gray paperavsked på grått papper
 fire!det brinner!
@@ -156,6 +163,7 @@ in the morning [repeated]på morgonen
 in the morning [single future event]imorgon bitti
 inside the houseinne i huset
 inside the houseinuti i huset
+inside vehicleinuti fordon
 island-hoppingfrån ö till ö
 it can't hurtdet kan inte skada
 it's a long storydet är en lång historia
@@ -198,12 +206,12 @@ now you're cookingnu har du fattat galoppen
 now you're talkingnu snackar vi
 oh dearåh kära
 oh that is goodoj det var bra
+once upon a timedet var en gång
 one language is never enoughett språk är aldrig nog
 one moment pleaseett ögonblick
 out of the bluefrån ingenstans
 out of this worldinte av denna världen
 outside vehicleutanför fordon
-inside vehicleinuti fordon
 over {1} dead bodyöver {1} döda kropp
 payorbetalningsskyldig
 piece of cakelätt som en plätt
@@ -241,6 +249,8 @@ take it easyta det lugnt
 thank goodnesstack och lov
 thank youtack
 thank you very muchtack så mycket
+the day after tomorrowi övermorgon
+the wild westvilda västern
 time hung heavy on his handstiden släpade sig fram [för honom]
 tomorrow morningimorgon bitti
 tomorrow/ yesterdayimorgon/ igår
@@ -270,10 +280,10 @@ where are you from?var kommer du ifrån?
 where are you from?varifrån kommer du?
 where do you live?var bor du någonstans?
 where do you live?var bor du?
+where's {1} situated?var är {1} belagd?
+where's {1} situated?vart ligger {1}?
 where's {1}?var är {1}?
 where's {1}?vart ligger {1}?
-where's {1} situated?vart ligger {1}?
-where's {1} situated?var är {1} belagd?
 where's {1}?vart är {1}?
 who caresvem bry sig
 with memed mig
@@ -290,13 +300,3 @@ you've got to be kiddingdu måste skämta
 {1} know better than that{1} vet bättre än så
 {1} made it{1} klarade det
 {1} told you sodet var ju det {1} sa
-dear sirbäste herrn
-dear madambästa fru
-dear missbästa fröken
-dear sir / madambästa herr eller fru
-dear sirsbästa herrar
-dear madamsbästa fruar
-once upon a timedet var en gång
-the wild westvilda västern
-experts inproffs på
-expert onexpert på
