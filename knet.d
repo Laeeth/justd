@@ -227,7 +227,7 @@ import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind, count, setUnion, setIntersection;
 import std.container: Array;
-import std.string: tr, toLower, toUpper;
+import std.string: tr, toLower, toUpper, capitalize;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
@@ -5535,13 +5535,33 @@ class Net(bool useArray = true,
             }
         }
 
-        if (recurse &&
-            lineNodeRefs.empty &&
+        if (recurse && lineNodeRefs.empty &&
             !normLine.endsWith('?'))
         {
-            writeln(`> Turned `, normLine, " into a question");
-            showNodes(normLine ~ '?', lang, sense, lineSeparator);
+            writeln(`> Trying `, normLine, " as a question");
+            showNodes(normLine ~ '?', lang, sense, lineSeparator, false);
         }
+
+        if (recurse && lineNodeRefs.empty)
+        {
+            const loweredLine = normLine.toLower;
+            if (loweredLine != normLine)
+            {
+                writeln(`> Trying `, normLine, " in lowercase");
+                showNodes(loweredLine, lang, sense, lineSeparator, false);
+            }
+        }
+
+        if (recurse && lineNodeRefs.empty)
+        {
+            const capitalizedLine = normLine.capitalize;
+            if (capitalizedLine != normLine)
+            {
+                writeln(`> Trying `, normLine, " as a capitalized (name)");
+                showNodes(capitalizedLine, lang, sense, lineSeparator, false);
+            }
+        }
+
     }
 
     auto anagramsOf(S)(S expr) if (isSomeString!S)
