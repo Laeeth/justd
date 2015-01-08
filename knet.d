@@ -5547,6 +5547,13 @@ class Net(bool useArray = true,
                 showNodes(loweredLine, lang, sense, lineSeparator, false);
             }
 
+            const upperedLine = normLine.toUpper;
+            if (upperedLine != normLine)
+            {
+                writeln(`> Trying `, normLine, " in uppercase");
+                showNodes(upperedLine, lang, sense, lineSeparator, false);
+            }
+
             const capitalizedLine = normLine.capitalize;
             if (capitalizedLine != normLine)
             {
