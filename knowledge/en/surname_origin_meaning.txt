@@ -1,44 +1,44 @@
 AbbeyEnglishhasMeaning:dweller by the abbey or worker at the abbey from the Middle English abbeye, abbaye
 AbbottEnglishcognate of Abate
-AbelEnglish,French,Danish,Norwegian,Dutch,Spanish,GermanderivedFrom:Abel
+AbelEnglishFrenchDanishNorwegianDutchSpanishGermanderivedFrom:Abel
 AbernathyScottish
 AbneyEnglishOriginally the name was D'Aubigne and is found as the name of towns in four locations in France
-AbrahamJewish,English,Dutch,FrenchderivedFrom:Abraham
-AbrahamsJewish,English,DutchderivedFrom:Abraham
-AbrahamsonEnglish,JewishhasMeaning:son of Abraham
-AbramEnglish,DutchderivedFrom:Abraham
-AbramsJewish,English,DutchhasMeaning:son of Abraham
+AbrahamJewishEnglishDutchFrenchderivedFrom:Abraham
+AbrahamsJewishEnglishDutchderivedFrom:Abraham
+AbrahamsonEnglishJewishhasMeaning:son of Abraham
+AbramEnglishDutchderivedFrom:Abraham
+AbramsJewishEnglishDutchhasMeaning:son of Abraham
 AbramsonEnglishhasMeaning:son of Abraham
-AchillesEnglish,GermanderivedFrom:Achilles
-AckerEnglish,GermanDenoted a person who lived near a field, derivedFrom:Middle English acker or Old High German ackar hasMeaning:field (related to the word acre)
+AchillesEnglishGermanderivedFrom:Achilles
+AckerEnglishGermanDenoted a person who lived near a field, derivedFrom:Middle English acker or Old High German ackar hasMeaning:field (related to the word acre)
 AckermanEnglishhasMeaning:ploughman from the Middle English word acker field
 AckermanEnglishvariantOf:Acker
 AdairEnglishderivedFrom:Edgar
 AdairScottish
-AdamEnglish,French,German,JewishderivedFrom:Adam
-AdamsEnglish,JewishderivedFrom:Adam
-AdamsonEnglish,ScottishhasMeaning:son of Adam
+AdamEnglishFrenchGermanJewishderivedFrom:Adam
+AdamsEnglishJewishderivedFrom:Adam
+AdamsonEnglishScottishhasMeaning:son of Adam
 AdcockEnglishderivedFrom:diminutive of the given name Adam
 AddisonEnglishhasMeaning:son of Addy
 AdkinsEnglishvariantOf:he Atkins
 AguirreSpanish
-AikenEnglish,ScottishderivedFrom:medieval given name Atkin, a diminutive of Adam
+AikenEnglishScottishderivedFrom:medieval given name Atkin, a diminutive of Adam
 AinsworthEnglishHabitational name for someone who lived in a place named Ainsworth near Manchester, from the Old English given name Ægen and worþ hasMeaning:enclosure
-AitkenScottish,EnglishderivedFrom:medieval given name Atkin, a diminutive of Adam
+AitkenScottishEnglishderivedFrom:medieval given name Atkin, a diminutive of Adam
 AkermanEnglishvariantOf:Ackerman,Acker
 AkersEnglishvariantOf:Acker
-AlbertEnglish,French,Catalan,Hungarian,GermanderivedFrom:Albert
-AlbertsEnglish,DutchhasMeaning:son of Albert
+AlbertEnglishFrenchCatalanHungarianGermanderivedFrom:Albert
+AlbertsEnglishDutchhasMeaning:son of Albert
 AlbertsonEnglishhasMeaning:son of Albert
-AlbinsonEnglish,SwedishhasMeaning:son of Albin
+AlbinsonEnglishSwedishhasMeaning:son of Albin
 AldenEnglishderivedFrom:Old English given name Ealdwine
 AlexanderEnglishderivedFrom:Alexander
 AlexanderScottish
 AlfredsonEnglishhasMeaning:son of Alfred
 AlfsonEnglishhasMeaning:son of Alf
 AlgerEnglishderivedFrom:Algar
-AllardEnglish,FrenchderivedFrom:ÆÐELRÆD
-AllenEnglish,ScottishderivedFrom:Alan
+AllardEnglishFrenchderivedFrom:ÆÐELRÆD
+AllenEnglishScottishderivedFrom:Alan
 AllenIrish
 AllisonScottish
 AllsoppEnglishderivedFrom:village of Alsop en la Dale in Derbyshire, English
@@ -48,8 +48,8 @@ AlvarezSpanish
 AlveyEnglishderivedFrom:Anglo-Saxon given name Ælfwig hasMeaning:elf battle
 AlvinEnglishvariantOf:Elwyn
 AndersenDanish
-AndersonEnglish,Scottish,SwedishhasMeaning:son of Andrew
-AndrewsEnglish,ScottishhasMeaning:son of Andrew
+AndersonEnglishScottishSwedishhasMeaning:son of Andrew
+AndrewsEnglishScottishhasMeaning:son of Andrew
 AndrewsonEnglishvariantOf:Anderson
 AnselEnglishderivedFrom:Anselm
 AnsonEnglishhasMeaning:son of Agnes
@@ -58,14 +58,14 @@ ApplebyEnglishReferred to someone who lived by or tended an apple orchard
 AppletonEnglishhasMeaning:apple town
 ArcherEnglishOccupational name for one who practiced archery
 ArkwrightEnglishOccupational name for a chest maker, from Middle English arc meaning chest, bin and wright meaning maker, craftsman
-ArmisteadEnglish,FrenchhasMeaning:dweller by or at the hermitage from the Old French ermite and the Old English stede
+ArmisteadEnglishFrenchhasMeaning:dweller by or at the hermitage from the Old French ermite and the Old English stede
 ArmstrongScottish
 ArnoldEnglishderivedFrom:Arnold
 ArringtonEnglishderivedFrom:town originally called Earningaton, hasMeaning:Earna's settlement
 ArsenaultFrench
 ArterberryEnglishAnglicized form of Auttenberg
 ArterburyEnglishAnglicized form of Auttenberg
-ArthurEnglish,FrenchderivedFrom:Arthur
+ArthurEnglishFrenchderivedFrom:Arthur
 ArthursonEnglishhasMeaning:son of Arthur
 AshEnglishhasMeaning:dweller by the ash trees from the Old English æsc
 AshbyEnglish
@@ -82,10 +82,10 @@ AugustineEnglishderivedFrom:Augustine
 AustinEnglishderivedFrom:Austin
 AuteberryEnglishAnglicized form of Auttenberg
 AutenberryEnglishAnglicized form of Auttenberg
-AuttenbergEnglish,German,PolishPossibly means dweller at Ealdwine's hill from the Germanic name Ealdwine hasMeaning:old friend and berg hasMeaning:hill, mountain
+AuttenbergEnglishGermanPolishPossibly means dweller at Ealdwine's hill from the Germanic name Ealdwine hasMeaning:old friend and berg hasMeaning:hill, mountain
 AverillEnglishderivedFrom:feminine given name Eoforhild
 AveryEnglishderivedFrom:Norman French form of the given names Alberich or Alfred
-AyersEnglish,ScottishIndicated a person from Ayr, Scottish
+AyersEnglishScottishIndicated a person from Ayr, Scottish
 AyersEnglishderivedFrom:Ealhhere which means temple army in Old English
 AyersEnglishhasMeaning:heir from the Middle English eir
 AylmerEnglishderivedFrom:Old English name ÆÐELMÆR
@@ -98,7 +98,7 @@ BadcockEnglishvariantOf:Babcock
 BadcockeEnglishvariantOf:Babcock
 BadcokeEnglishvariantOf:Babcock
 BagleyEnglishName for someone who lived in a field populated by badgers, from Old English bagga bag-shaped animal, badger combined with leah woodland, clearing
-BaileyEnglish,IrishFrom Middle English baili hasMeaning:bailiff, which comes via Old French from Latin baiulus porter
+BaileyEnglishIrishFrom Middle English baili hasMeaning:bailiff, which comes via Old French from Latin baiulus porter
 BainScottish
 BainesEnglishderivedFrom:nickname for a thin person, hasMeaning:bones
 BairdScottish
@@ -111,7 +111,7 @@ BanisterEnglishMeant basket maker in Norman French
 BanksEnglishhasMeaning:by the bank
 BannerEnglishOccupational name for a flag carrier, derivedFrom:Old French baniere meaning banner, ultimately of Germanic origin
 BannermanEnglishvariantOf:Banner
-BarberEnglish,ScottishIndicated one who cut hair for a living
+BarberEnglishScottishIndicated one who cut hair for a living
 BardsleyEnglishFrom the name a village lying between Ashton-under-Lyne and Oldham, in the County of Lancashire, English
 BarkerEnglishFrom Middle English bark(en) to tan, an occupational name for a leather tanner
 BarlowEnglishderivedFrom:umber of English place names which variously mean barley hill, barn hill, boar clearing or barley clearing
@@ -120,7 +120,7 @@ BarnetEnglishvariantOf:Barnett
 BarnettEnglishderivedFrom:place originating from Old English bœrnet cleared by burning
 BarrScottish
 BarretEnglishvariantOf:Barrett
-BarrettEnglish,IrishderivedFrom:Middle English meaning dispute, originally given to a quarrelsome person
+BarrettEnglishIrishderivedFrom:Middle English meaning dispute, originally given to a quarrelsome person
 BarryIrish
 BartlettEnglish
 BartonEnglishderivedFrom:place name hasMeaning:barley town
@@ -129,7 +129,7 @@ BassEnglishEnglish cognate of Basso
 BatchelorEnglish
 BatemanEnglish
 BatesEnglishhasMeaning:son of Batte
-BatesonEnglish,ScottishhasMeaning:son of Batte
+BatesonEnglishScottishhasMeaning:son of Batte
 BattleEnglishderivedFrom:English places called Battle, so named because they were sites of battles
 BattsEnglishFrom the medieval name Batte, a diminutive of Bartholomew
 BauerGerman
@@ -138,26 +138,26 @@ BeachEnglish
 BeakeEnglishderivedFrom:nickname for a person with a big nose, from Middle English beke hasMeaning:beak
 BeasleyEnglish
 BeasleyEnglishderivedFrom:a place in Lancashire, from Old English beos bent grass and leah woodland, clearing
-BeattieEnglish,ScottishFrom the medieval name Battie, a diminutive of Bartholomew
+BeattieEnglishScottishFrom the medieval name Battie, a diminutive of Bartholomew
 BeckEnglishFrom Middle English bekke meaning stream, brook
 BeckEnglishFrom Old English becca pick-axe, an occupational surname
-BeckEnglish,GermanvariantOf:Beake
+BeckEnglishGermanvariantOf:Beake
 BecketEnglishvariantOf:Beckett
 BeckettEnglishOriginally a diminutive of Beck or Beck
 BeckhamEnglishderivedFrom:place name meaning Becca's homestead
 BeebeEnglish
 BelcherEnglishderivedFrom:Middle English version of Old French bel chiere
 BellEnglishderivedFrom:Bel, a medieval short form of Isabel,hasMeaning:bell from Middle English belle
-BellamyFrench,EnglishProbably from the Norman French bel ami meaning beautiful friend
+BellamyFrenchEnglishProbably from the Norman French bel ami meaning beautiful friend
 BenbowEnglishderivedFrom:nickname given to an archer meaning bend the bow, later shortened to Benbow
 BenderGerman
 BenjaminsonEnglishhasMeaning:son of Benjamin
 BennetEnglishderivedFrom:medieval English given name Bennett
-BennettEnglish,ScottishvariantOf:Bennet
+BennettEnglishScottishvariantOf:Bennet
 BensonEnglishhasMeaning:son of Benedict
 BentleyEnglishderivedFrom:place name meaning clearing covered with bent grass in Old English
 BentonEnglishDenoted someone who came from Benton, English
-BernardFrench,English,Polish,CzechderivedFrom:Bernard
+BernardFrenchEnglishPolishCzechderivedFrom:Bernard
 BerryEnglishderivedFrom:place name which was derivedFrom:Old English burh fortification
 BeverleyEnglishvariantOf:Beverly
 BeverlyEnglishderivedFrom:place name meaning beaver stream in Old English
@@ -168,14 +168,14 @@ BlackbourneEnglishvariantOf:Blackburn
 BlackburnEnglishhasMeaning:black stream in Old English
 BlackmanEnglishderivedFrom:nickname (see Black)
 BlackwellEnglish
-BlackwoodScottish,EnglishFrom an English place name meaning black wood
+BlackwoodScottishEnglishFrom an English place name meaning black wood
 BlairScottish
-BlakeEnglish,IrishderivedFrom:Old English blæc black or blāc pale
+BlakeEnglishIrishderivedFrom:Old English blæc black or blāc pale
 BlakesleeEnglishFrom Blakesley, a town in Northamptonshire
 BlevinsWelsh
 BloodworthEnglishHabitational name from Blidworth in Nottinghamshire, which was named with the Old English given name Blīþa and the Old English worð, which means enclosure
 BloxamEnglishvariantOf:Bloxham
-BloxhamEnglishAfter the Saxon conquest of English, two brothers by the name of Blocc established a town, named Blocc's Hamlet
+BloxhamEnglishAfter the Saxon conquest of English two brothers by the name of Blocc established a town, named Blocc's Hamlet
 BlueEnglishderivedFrom:nickname for a person with blue eyes or blue clothing
 BlytheEnglishFrom Old English meaning happy or joyous
 BoivinEnglishNickname for a wine drinker, from Old French boi, a form of the verb boivre to drink, and vin wine
@@ -185,7 +185,7 @@ BoneEnglishhasMeaning:good from the Old French bon
 BoneEnglishhasMeaning:thin, bony from the Old English ban
 BonhamEnglishderivedFrom:Old French bon homme good man
 BonherEnglishvariantOf:Bonheur
-BonnerEnglish,FrenchOf Norman French origin with the original Bonners arriving in Britain during the Norman Conquest in the 11th century
+BonnerEnglishFrenchOf Norman French origin with the original Bonners arriving in Britain during the Norman Conquest in the 11th century
 BonneyEnglishvariantOf:Bonner
 BoonEnglishOriginally indicated a person from Bohon, La Manche
 BoonEnglishvariantOf:Bone
@@ -198,7 +198,7 @@ BowenWelsh
 BowersScottish
 BowmanEnglishOccupational name for an archer, derivedFrom:Middle English bow, Old English boga meaning bow
 BoyceEnglishFrom Old French bois meaning wood, originally given to someone who lived by or in a wood
-BoydEnglish,Scottish
+BoydEnglishScottish
 BoyleIrish
 BraddockEnglishOld English meaning broad oak
 BradfordEnglishderivedFrom:place name which meant broad ford in Old English
@@ -206,17 +206,17 @@ BradleyEnglishderivedFrom:common English place name meaning broad clearing
 BradshawEnglish
 BradyIrish
 BraggEnglish
-BramsDutch,EnglishderivedFrom:Bram
+BramsDutchEnglishderivedFrom:Bram
 BramsonEnglishhasMeaning:son of Bram
-BrandGerman,EnglishderivedFrom:Germanic given name Brando or its Old Norse cognate Brandr
+BrandGermanEnglishderivedFrom:Germanic given name Brando or its Old Norse cognate Brandr
 BrandonEnglishderivedFrom:place name meaning hill covered with broom in Old English
 BransonEnglishhasMeaning:son of Brandr
-BrantGerman,EnglishvariantOf:Brand
+BrantGermanEnglishvariantOf:Brand
 BrasherEnglishhasMeaning:brass worker, derivedFrom:Old English brœs brass
 BrassingtonEnglishderivedFrom:place name, meaning enclosure by a steep path
 BrayEnglishderivedFrom:place name derivedFrom:Cornish bre hill
-BreckenridgeScottish,Irish,EnglishHabitational name for someone from Brackenrig in Lanarkshire, named with the northern Middle English braken, meaning bracken (from the Old Norse brækni), and rigg, meaning ridge (from the Old Norse hryggr), or from a similarly named place located in northern English
-BreckinridgeScottish,EnglishvariantOf:Breckenridge
+BreckenridgeScottishIrishEnglishHabitational name for someone from Brackenrig in Lanarkshire, named with the northern Middle English braken, meaning bracken (from the Old Norse brækni), and rigg, meaning ridge (from the Old Norse hryggr), or from a similarly named place located in northern English
+BreckinridgeScottishEnglishvariantOf:Breckenridge
 BreenIrish
 BrennanIrish
 BrentEnglishOriginally derivedFrom:an English place name derivedFrom:a Celtic word meaning hill
@@ -244,19 +244,19 @@ BrysonEnglishhasMeaning:son of Brice
 BuchananScottish
 BuckleyEnglishFrom an English place name derivedFrom:bucca goat and leah woodland, clearing
 BullardEnglishOccupational name for a scribe, derivedFrom:Middle English bulle letter
-BulleDutch,EnglishvariantOf:Bul
+BulleDutchEnglishvariantOf:Bul
 BullockEnglishderivedFrom:nickname meaning young bull
 BunkerEnglishderivedFrom:orman French de Bon Coer meaning of a good heart
 BurgessEnglish
-BurkeEnglish,IrishderivedFrom:Middle English burk, meaning fort or fortified town
+BurkeEnglishIrishderivedFrom:Middle English burk, meaning fort or fortified town
 BurkeIrish
 BurnhamEnglishderivedFrom:Burnham, a town in Norfolk and Essex, English
-BurnsEnglish,ScottishderivedFrom:Old English burne stream
+BurnsEnglishScottishderivedFrom:Old English burne stream
 BurrellEnglishThis was the name of a type of cloth
 BurtonEnglishEnglish place name derivedFrom:Old English meaning fortified town
 BushEnglishGiven to a person who lived in or near bushes
 ButcherEnglishOccupational name for a butcher, derivedFrom:Old French bouchier
-ButlerEnglish,IrishFrom the Middle English word botte, which means a vat or large trough used to contain wine
+ButlerEnglishIrishFrom the Middle English word botte, which means a vat or large trough used to contain wine
 ButtsEnglishderivedFrom:nickname meaning short, stumpy
 ByrdEnglishvariantOf:Bird
 ByrneIrish
@@ -266,17 +266,17 @@ CalhounScottish
 CallahanIrish
 CameronScottish
 CampbellScottish
-CannonEnglish,IrishFrom the ecclesiastical usage of canon, referring to a church official
+CannonEnglishIrishFrom the ecclesiastical usage of canon, referring to a church official
 CantrellEnglishHabitational name for someone from Cantrell in Devon, from an unknown first element and the Old English hyll, meaning hill
 CantuItalian
 CardenasSpanish
 CareyIrish
-CarlEnglish,DutchderivedFrom:Charles
+CarlEnglishDutchderivedFrom:Charles
 CarlisleEnglishderivedFrom:a city in northern English
 CarlsonSwedish
 CarlyleEnglishvariantOf:Carlisle
 CarmanEnglishFrom the Old Norse given name Karlmann
-CarmanEnglish,DutchOccupational name for a carter, from Middle English car cart and man man
+CarmanEnglishDutchOccupational name for a carter, from Middle English car cart and man man
 CarneyIrish
 CarpenterEnglishFrom the occupation, derivedFrom:Middle English carpentier (ultimately from Latin carpentarius meaning carriage maker)
 CarrScottish
@@ -297,8 +297,8 @@ ChadwickEnglishderivedFrom:place name meaning dairy farm belonging to Chad in 
 ChamberlainEnglishOccupational name for one who looked after the master bedroom, from Norman French cambrelain
 ChambersEnglishOccupational name for one who looked after the master bedroom, from Norman French cambre chamber, room
 ChanceEnglishderivedFrom:nickname for a lucky person or a gambler
-ChancellorEnglish,ScottishOccupational name for an administrator, a chancellor, from Norman French chancelier
-ChandlerEnglishOccupational surname meaning candle seller or candle maker in Middle English,ultimately derivedFrom:Old French
+ChancellorEnglishScottishOccupational name for an administrator, a chancellor, from Norman French chancelier
+ChandlerEnglishOccupational surname meaning candle seller or candle maker in Middle Englishultimately derivedFrom:Old French
 ChaneyScottish
 ChapmanEnglishOccupational name for a merchant, from Old English ceapmann
 ChaseEnglishOccupational name for a hunter, from Middle English chase hunt
@@ -331,23 +331,23 @@ CliftonEnglishderivedFrom:place name meaning settlement by a cliff in Old Engl
 ClintonEnglishderivedFrom:place name meaning settlement on the River Glyme in Old English
 CloseEnglishTopographic name for someone who lived by an enclosure of some sort, such as (in towns), a courtyard set back from the main street or (in county districts) a farmyard
 CobbEnglishderivedFrom:medieval English byname meaning lump
-CoburnScottish,EnglishvariantOf:Cockburn
+CoburnScottishEnglishvariantOf:Cockburn
 CochranScottish
 CochraneScottish
 CockEnglishvariantOf:Cox
-CockburnScottish,EnglishName for someone who came from Cockburn, a place in Berwickshire
+CockburnScottishEnglishName for someone who came from Cockburn, a place in Berwickshire
 CocksEnglishvariantOf:Cox
 CoelEnglishvariantOf:Cole
 CoffeyIrish
 CokeEnglishvariantOf:Cook
 CokesEnglishderivedFrom:Flemish word cok which denoted a cook
 CokesEnglishderivedFrom:Middle English hypocoristic suffix -coke(s) which meant cockerel possibly denoting someone who strutted around like a cockerel
-ColbertEnglish,FrenchderivedFrom:Colobert
+ColbertEnglishFrenchderivedFrom:Colobert
 ColeEnglishFrom the Old English byname Cola
-ColemanIrish,EnglishderivedFrom:COLMÁN
+ColemanIrishEnglishderivedFrom:COLMÁN
 CollierEnglish
 CollingwoodEnglishhasMeaning:coal forest from the Old English words col and wudu
-CollinsEnglish,IrishhasMeaning:son of Colin
+CollinsEnglishIrishhasMeaning:son of Colin
 ColtonEnglishderivedFrom:place name meaning COLA's town
 CombsEnglishOld English from a Celtic root meaning valley
 ComptonEnglish
@@ -381,37 +381,37 @@ CourtenayEnglishderivedFrom:nickname for a person with a short nose, from Old 
 CourtenayEnglishderivedFrom:towns in France which were originally derivatives of the Gallo-Roman personal name Curtenus, itself derivedFrom:Latin curtus short
 CourtneyEnglishvariantOf:Courtenay or Courtenay
 CowanScottish
-CowdenEnglish,ScottishFrom various place names meaning either coal valley, coal hill, or cow pasture in Old English
-CoxEnglish,IrishderivedFrom:medieval nickname cok which meant rooster
+CowdenEnglishScottishFrom various place names meaning either coal valley, coal hill, or cow pasture in Old English
+CoxEnglishIrishderivedFrom:medieval nickname cok which meant rooster
 CoyleIrish
 CoyneIrish
 CrabtreeEnglish
 CraigScottish
-CrawfordEnglish,ScottishderivedFrom:place name derivedFrom:Old English crawa crow and ford river crossing
-CreweEnglish,WelshName for someone from Crewe in Cheshire, which comes from Welsh criu weir
+CrawfordEnglishScottishderivedFrom:place name derivedFrom:Old English crawa crow and ford river crossing
+CreweEnglishWelshName for someone from Crewe in Cheshire, which comes from Welsh criu weir
 CrockettScottish
-CroftEnglish,ScottishFrom an Old English term that referred to a small pasture near a house
+CroftEnglishScottishFrom an Old English term that referred to a small pasture near a house
 CropperEnglishOccupational name referring to a fruit picker or a crop reaper
 CrossEnglishLocative surname meaning cross
 CrouchEnglishvariantOf:Cross
 CrowleyIrish
 CruzSpanish
-CullenEnglish,IrishFrom an Old French form of Cologne, a city in Germany
-CumminsEnglish,Scottish,IrishderivedFrom:Cuimin, a Breton name meaning little bent one
+CullenEnglishIrishFrom an Old French form of Cologne, a city in Germany
+CumminsEnglishScottishIrishderivedFrom:Cuimin, a Breton name meaning little bent one
 CunninghamScottish
 CurranIrish
 CurtisEnglishNickname for a courteous person from Old French curteis meaning refined
 DabneyEnglishvariantOf:Abney
 DaleyIrish
 DalrympleScottish
-DaltonEnglish,IrishderivedFrom:place name which meant valley town in Old English
+DaltonEnglishIrishderivedFrom:place name which meant valley town in Old English
 DalyIrish
 DaneEnglishOriginally denoted a Dane, that is a person from Danish
 DaneEnglishvariantOf:Dean or Dean
 DanellEnglishvariantOf:Daniel
-DanielEnglish,ScottishderivedFrom:Daniel
+DanielEnglishScottishderivedFrom:Daniel
 DaniellEnglishvariantOf:Daniel
-DanielsEnglish,ScottishvariantOf:Daniel
+DanielsEnglishScottishvariantOf:Daniel
 DanielsonEnglishhasMeaning:son of Daniel
 DannelEnglishvariantOf:Daniel
 DannielEnglishvariantOf:Daniel
@@ -420,28 +420,28 @@ DarbyEnglishderivedFrom:town Derby, meaning deer farm in Old Norse
 DarrellEnglishderivedFrom:orman French d'Airelle, originally denoting one who came from Airelle in France
 DarwinEnglishderivedFrom:Deorwine
 DaubneyEnglishvariantOf:Abney
-DaughertyEnglish,IrishOf Norman origin meaning from Hauterive, a place name derivedFrom:Old French haute rive high bank
+DaughertyEnglishIrishOf Norman origin meaning from Hauterive, a place name derivedFrom:Old French haute rive high bank
 DavenportEnglish
-DavidEnglish,French,Scottish,Jewish,CzechderivedFrom:David
-DavidsonEnglish,ScottishhasMeaning:son of David
-DaviesEnglish,WelshvariantOf:Davis
-DavisEnglish,Scottish,Irish,WelshhasMeaning:son of David
+DavidEnglishFrenchScottishJewishCzechderivedFrom:David
+DavidsonEnglishScottishhasMeaning:son of David
+DaviesEnglishWelshvariantOf:Davis
+DavisEnglishScottishIrishWelshhasMeaning:son of David
 DavisonEnglishhasMeaning:son of David
 DawsonEnglishhasMeaning:son of Daw
-DayEnglish,IrishderivedFrom:diminutive name derivedFrom:David
+DayEnglishIrishderivedFrom:diminutive name derivedFrom:David
 DeadmanEnglishTrade name for a grave digger
 DeanEnglishderivedFrom:Middle English dene meaning valley
 DeanEnglishOccupational surname meaning dean, referring to a person who either was a dean or worked for one
 DedrickEnglishderivedFrom:Dederick, an older form of Derek
 DeeringEnglishFrom the Old English given name Deora meaning dear, beloved
-DelaneyEnglish,IrishderivedFrom:orman French de l'aunaie meaning from the alder grove
+DelaneyEnglishIrishderivedFrom:orman French de l'aunaie meaning from the alder grove
 DempseyIrish
 DenmanEnglishvariantOf:Deadman
 DennelEnglishvariantOf:Daniel
 DennellEnglishvariantOf:Daniel
 DenzilEnglishFrom the place name Denzell, a manor in Cornwall, which is of unknown meaning
 DerbyEnglishvariantOf:Darby
-DerrickEnglish,GermanderivedFrom:Derrick, which is a form of Derek
+DerrickEnglishGermanderivedFrom:Derrick, which is a form of Derek
 DerricksEnglishderivedFrom:Derrick
 DerricksonEnglishhasMeaning:son of Derrick
 DevereuxEnglishIndicated a person originally from Evreux in France
@@ -460,7 +460,7 @@ DicksonEnglishhasMeaning:son of Dick
 DicksonScottish
 DillonIrish
 DisneyEnglishAnglicized form of D'Isigny meaning one who is from the canton of Isigny located in France
-DixonEnglish,ScottishhasMeaning:Dick's son
+DixonEnglishScottishhasMeaning:Dick's son
 DobsonEnglish
 DoddWelsh
 DohertyIrish
@@ -468,7 +468,7 @@ DolanIrish
 DominguezSpanish
 DonahueIrish
 DonaldsEnglishderivedFrom:Donald
-DonaldsonEnglish,ScottishhasMeaning:son of Donald
+DonaldsonEnglishScottishhasMeaning:son of Donald
 DonnellyIrish
 DonovanIrish
 DorseyEnglishhasMeaning:Orsay in Norman French
@@ -492,9 +492,9 @@ DukeEnglishFrom the noble title, which was originally from Latin dux leader
 DukesEnglishPatronymic form of Duke
 DuncanScottish
 DunlapScottish
-DunnEnglish,Scottish,IrishderivedFrom:Old English dunn dark or Gaelic donn brown, referring to hair colour or complexion
-DurandEnglish,FrenchVariation of Durant
-DurantFrench,EnglishFrom the nickname Durandus, meaning enduring
+DunnEnglishScottishIrishderivedFrom:Old English dunn dark or Gaelic donn brown, referring to hair colour or complexion
+DurandEnglishFrenchVariation of Durant
+DurantFrenchEnglishFrom the nickname Durandus, meaning enduring
 DustinEnglishFrom the Old Norse given name ÞÓRsteinn
 DwerryhouseEnglishhasMeaning:dweller at the dwarf-house from Middle English dwerugh or Old English dweorh, a dwarf, and Middle English hous or Old English hus
 DwightEnglishFrom the medieval feminine name Diot, a diminutive of Dionysia, the feminine form of Dionysius
@@ -513,7 +513,7 @@ EcclestoneEnglishvariantOf:Eccleston
 EdgarEnglishderivedFrom:Edgar
 EdisonEnglishhasMeaning:son of Eda or son of Adam
 EdmondsonScottish
-EdwardsEnglish,WelshhasMeaning:son of Edward
+EdwardsEnglishWelshhasMeaning:son of Edward
 EdwardsonEnglishhasMeaning:son of Edward
 EganIrish
 ElderEnglishderivedFrom:Old English ealdra meaning older, used to distinguish two people who had the same name
@@ -523,9 +523,9 @@ EliotEnglishvariantOf:Elliott
 EliottEnglishvariantOf:Elliott
 ElleryEnglishFrom the medieval masculine name Hilary
 ElliotEnglishvariantOf:Elliott
-ElliottEnglish,ScottishderivedFrom:diminutive of the given name Elias
+ElliottEnglishScottishderivedFrom:diminutive of the given name Elias
 EllisEnglish
-EllisEnglish,WelshderivedFrom:Elijah, or sometimes Elisedd
+EllisEnglishWelshderivedFrom:Elijah, or sometimes Elisedd
 EllisonEnglishPatronymic form of the English name Ellis, from the medieval given name Elis, a vernacular form of Elijah
 EllissonEnglishvariantOf:Ellison
 EllistonEnglishvariantOf:Ellison
@@ -543,32 +543,32 @@ EmmettEnglishderivedFrom:diminutive of the feminine given name Emma
 EndicottEnglishhasMeaning:end cottage
 EnglishEnglishDenoted a person who was of English heritage
 EricksonNorwegian
-EricsonEnglish,SwedishhasMeaning:son of Eric
+EricsonEnglishSwedishhasMeaning:son of Eric
 EspensonEnglishhasMeaning:son of Espen
 EthansEnglishderivedFrom:Ethan
-EustisEnglish,FrenchderivedFrom:Eustace
+EustisEnglishFrenchderivedFrom:Eustace
 EvansWelsh
 EvansonEnglishhasMeaning:son of Evan
 EvelynEnglishderivedFrom:Aveline
 EveredEnglishderivedFrom:Everard
 EverettEnglishderivedFrom:Everard
 EverillEnglishderivedFrom:feminine given name Eoforhild
-EwartEnglish,ScottishderivedFrom:Norman form of Edward
-EwartEnglish,ScottishderivedFrom:place name meaning river enclosure in Old English
+EwartEnglishScottishderivedFrom:Norman form of Edward
+EwartEnglishScottishderivedFrom:place name meaning river enclosure in Old English
 EwingScottish
-FabianEnglish,French,PolishderivedFrom:Fabian
+FabianEnglishFrenchPolishderivedFrom:Fabian
 FaganIrish
-FairbairnScottish,EnglishhasMeaning:beautiful child in Middle English
+FairbairnScottishEnglishhasMeaning:beautiful child in Middle English
 FairburnEnglishderivedFrom:place name which meant fern stream, from Old English fearn fern and burna stream
 FairchildEnglishhasMeaning:beautiful child in Middle English
-FaircloughEnglishFrom Old English,meaning fair cliff
+FaircloughEnglishFrom Old Englishmeaning fair cliff
 FallonIrish
 FanningIrish
 FarleyEnglish
 FarnhamEnglishhasMeaning:Farnham, English
 FarrellIrish
-FaulknerEnglish,ScottishOld English for falconer
-FayFrench,EnglishRefers to one who came from Fay or Faye (meaning beech tree) in France
+FaulknerEnglishScottishOld English for falconer
+FayFrenchEnglishRefers to one who came from Fay or Faye (meaning beech tree) in France
 FearEnglishFrom an Old English nickname feare meaning friend
 FennEnglishderivedFrom:name for someone who dwelt near a marsh, from the Middle English fenn, meaning marsh or bog
 FergusonScottish
@@ -578,14 +578,14 @@ FigueroaSpanish
 FinchEnglish
 FinnIrish
 FinneganIrish
-FirminEnglish,FrenchderivedFrom:Firmin
+FirminEnglishFrenchderivedFrom:Firmin
 FischerGerman
-FisherEnglish,JewishCognate of Fischer
+FisherEnglishJewishCognate of Fischer
 FishmanEnglishOccupational name for a fisherman
 FitchEnglish
 FitzgeraldIrish
 FitzpatrickIrish
-FitzroyEnglishhasMeaning:son of the king in Anglo-Norman French,from the French roi meaning king
+FitzroyEnglishhasMeaning:son of the king in Anglo-Norman Frenchfrom the French roi meaning king
 FitzsimmonsIrish
 FlanaganIrish
 FlemingEnglishGiven to a person who was a Fleming, that is a person who was from Flanders in the Netherlands
@@ -598,12 +598,12 @@ FlynnIrish
 FoleyIrish
 ForbesScottish
 FordEnglishName given to someone who lived by a ford, possibly the official who maintained it
-ForestEnglish,FrenchOriginally belonged to a person who lived near or in a forest
+ForestEnglishFrenchOriginally belonged to a person who lived near or in a forest
 ForesterEnglishDenoted a keeper or one in charge of a forest, or one who has charge of growing timber in a forest (see Forest)
-ForneyEnglish,ScottishName for someone who lived around ferns, from Middle English fern fern and heye enclosure
+ForneyEnglishScottishName for someone who lived around ferns, from Middle English fern fern and heye enclosure
 ForrestEnglishvariantOf:Forest
 ForsythScottish
-FossEnglish,FrenchderivedFrom:Old French fosse ditch
+FossEnglishFrenchderivedFrom:Old French fosse ditch
 FosterEnglishNickname given to a person who was a foster-child or foster-parent
 FosterEnglishOccupational name for a scissor maker, derivedFrom:Old French forcetier
 FosterEnglishOccupational name for a woodworker, derivedFrom:Old French fustrier
@@ -620,15 +620,15 @@ FranklinEnglishderivedFrom:Middle English frankelin meaning freeman
 FranklynEnglishvariantOf:Franklin
 FraserScottish
 FrazierScottish
-FreemanEnglish,IrishReferred to a person who was born free, or in other words was not a serf
-FrostEnglish,GermanFrom Old English and Old High German,a nickname for a person who had a cold personality or a white beard
+FreemanEnglishIrishReferred to a person who was born free, or in other words was not a serf
+FrostEnglishGermanFrom Old English and Old High Germana nickname for a person who had a cold personality or a white beard
 FryEnglishRoot is from the Old English word frig meaning free
 FryeEnglishvariantOf:Fry
 FullerEnglish
 FullerEnglishOccupational name for a fuller
 GabrielsEnglishderivedFrom:Gabriel
 GabrielsonEnglishhasMeaning:son of Gabriel
-GageFrench,EnglishOccupational surname deriving either from Old French gauge measure (a name for an assayer) or gage pledge (a name for a moneylender)
+GageFrenchEnglishOccupational surname deriving either from Old French gauge measure (a name for an assayer) or gage pledge (a name for a moneylender)
 GalbraithScottish
 GallagherIrish
 GallegosSpanish
@@ -650,7 +650,7 @@ GarnettEnglishOccupational surname which referred to a person who made hinges 
 GarnettEnglishOccupational surname which referred to a person who sold pomegranates (Old French pome grenate)
 GarrardEnglishderivedFrom:Gerard
 GarretEnglishvariantOf:Garrett
-GarrettEnglish,IrishderivedFrom:Gerald or Gerard
+GarrettEnglishIrishderivedFrom:Gerald or Gerard
 GarrisonEnglish
 GarrodEnglishderivedFrom:Gerald
 GarryEnglishvariantOf:Geary
@@ -661,21 +661,21 @@ GearyEnglishderivedFrom:Norman given name which was a short form of Germanic n
 GentryEnglish
 GeorgeEnglishderivedFrom:George
 GeorgesonEnglishhasMeaning:son of George
-GibbScottish,EnglishderivedFrom:Gib
+GibbScottishEnglishderivedFrom:Gib
 GibbonsIrish
-GibbsScottish,EnglishhasMeaning:Gib's son, where Gib is a diminutive of Gilbert
-GibsonScottish,EnglishhasMeaning:son of Gib
+GibbsScottishEnglishhasMeaning:Gib's son, where Gib is a diminutive of Gilbert
+GibsonScottishEnglishhasMeaning:son of Gib
 GiffardEnglishderivedFrom:Germanic given name Gebhard
 GilbertEnglishderivedFrom:given name Gilbert
-GilesEnglish,FrenchderivedFrom:Giles
+GilesEnglishFrenchderivedFrom:Giles
 GillScottish
-GillespieIrish,Scottish
+GillespieIrishScottish
 GilliamEnglishvariantOf:William
 GladwinEnglishderivedFrom:Old English given name GLÆDwine
 GladwynEnglishvariantOf:Gladwin
 GlassScottish
 GleasonIrish
-GloverEnglish,ScottishhasMeaning:a person who made or sold gloves from Middle English glovere
+GloverEnglishScottishhasMeaning:a person who made or sold gloves from Middle English glovere
 GoddardEnglishderivedFrom:Germanic given name Godehard
 GodfreyEnglishFrom the Norman given name Godefrei, Godefroi(s) (see Godfrey)
 GoffeEnglishderivedFrom:Breton goff smith and referred to a worker in metals
@@ -688,16 +688,16 @@ GorboldEnglishhasMeaning:son of Gerbold, a given name of Saxon origin
 GordonScottish
 GoreEnglishFrom the Old English word gara meaning a triangular plot of land
 GormanIrish
-GosseFrench,EnglishderivedFrom:Norman given name Gosse
+GosseFrenchEnglishderivedFrom:Norman given name Gosse
 GraceIrish
 GradyIrish
 GrahamScottish
-GrangerEnglish,FrenchhasMeaning:farm bailiff from Old French grangier, ultimately from Latin granum meaning grain
-GrantEnglish,ScottishderivedFrom:orman French meaning grand, tall, large, great
+GrangerEnglishFrenchhasMeaning:farm bailiff from Old French grangier, ultimately from Latin granum meaning grain
+GrantEnglishScottishderivedFrom:orman French meaning grand, tall, large, great
 GranthamEnglish
 GranvilleEnglishderivedFrom:Norman place name Grainville
 GravesEnglishOccupational name for a steward, derivedFrom:Middle English greyve
-GrayEnglish,ScottishderivedFrom:nickname for a person who had grey hair or grey clothes
+GrayEnglishScottishderivedFrom:nickname for a person who had grey hair or grey clothes
 GreenEnglishDescriptive name for someone who often wore the colour green or someone who lived near the village green
 GreeneEnglishvariantOf:Green
 GreenwoodEnglish
@@ -706,7 +706,7 @@ GregoryEnglishderivedFrom:Gregory that was popular in the Christian world duri
 GrenvilleEnglishvariantOf:Granville
 GreyEnglishvariantOf:Gray
 GriffinEnglishFrom the mythological beast with body of a lion with head and wings of an eagle
-GriffinEnglish,IrishderivedFrom:Griffith
+GriffinEnglishIrishderivedFrom:Griffith
 GriffithWelsh
 GrovesEnglishFrom Old English graf grove
 GullyEnglishNickname for a big person, from Middle English golias meaning giant (ultimately from Goliath, the Philistine warrior who was slain by David in the Old Testament)
@@ -715,46 +715,46 @@ GustafsonSwedish
 GuthrieScottish
 GutierrezSpanish
 GuzmanSpanish
-HackettEnglish,IrishderivedFrom:diminutive of the medieval given name Hake, which was of Old Norse origin and meant hook
+HackettEnglishIrishderivedFrom:diminutive of the medieval given name Hake, which was of Old Norse origin and meant hook
 HadawayEnglishvariantOf:Hathaway
-HadenEnglish,IrishvariantOf:Hayden
+HadenEnglishIrishvariantOf:Hayden
 HaganIrish
 HaggardEnglishderivedFrom:descriptive nickname meaning wild, untamed, worn
 HahnGerman
 HaightEnglishName given to someone who lived at the top of a hill
 HaileyEnglishvariantOf:Hayley
 HaleEnglishderivedFrom:Old English healh meaning nook, hollow
-HaleyEnglish,IrishvariantOf:Hayley
-HallEnglish,German,Danish,Norwegian,Swedish,ScottishhasMeaning:simply hall, given to one who either lived in or worked in a hall (the house of a medieval noble)
-HallmanEnglish,SwedishOccupational variant of Hall
+HaleyEnglishIrishvariantOf:Hayley
+HallEnglishGermanDanishNorwegianSwedishScottishhasMeaning:simply hall, given to one who either lived in or worked in a hall (the house of a medieval noble)
+HallmanEnglishSwedishOccupational variant of Hall
 HalseyEnglish
-HambledonEnglish,ScottishvariantOf:Hamilton
-HambletonEnglish,ScottishvariantOf:Hamilton
-HameldonEnglish,ScottishvariantOf:Hamilton
-HamiltonEnglish,ScottishFrom an English place name, derivedFrom:elements hamel crooked, mutilated and dun hill
+HambledonEnglishScottishvariantOf:Hamilton
+HambletonEnglishScottishvariantOf:Hamilton
+HameldonEnglishScottishvariantOf:Hamilton
+HamiltonEnglishScottishFrom an English place name, derivedFrom:elements hamel crooked, mutilated and dun hill
 HammEnglishhasMeaning:river meadow in Old English
 HammondEnglish
 HampsonEnglishhasMeaning:son of Hamo
-HamptonEnglishderivedFrom:a town in English, meaning homestead farm
+HamptonEnglishderivedFrom:a town in English meaning homestead farm
 HancockEnglishderivedFrom:diminutive of the medieval name Hann
-HanleyEnglish,IrishhasMeaning:high meadow in Old English
+HanleyEnglishIrishhasMeaning:high meadow in Old English
 HannaScottish
 HansenDanish
 HansonEnglishhasMeaning:son of Hann
 HardenEnglishderivedFrom:place name meaning hare valley in Old English
-HardingEnglish,ScottishderivedFrom:Heard
+HardingEnglishScottishderivedFrom:Heard
 HardwickEnglishFrom Old English heorde herd and wic farm
-HardyEnglish,French,ScottishFrom Old French hardi meaning bold, daring
+HardyEnglishFrenchScottishFrom Old French hardi meaning bold, daring
 HarfordEnglishHabitational name from places called Harford, in Gloucestershire and Devon, meaning hart ford
 HargraveEnglishderivedFrom:Old English elements har meaning grey and graefe thicket
 HarlanEnglishvariantOf:Harland
 HarlandEnglishderivedFrom:place name meaning hare land in Old English
 HarleyEnglishderivedFrom:place name meaning hare clearing from Old English hara hare and leah woodland, clearing
 HarlowEnglishHabitational name derivedFrom:a number of locations named Harlow, from Old English hær rock or here army, combined with hlaw hill
-HarmanEnglish,French,GermanvariantOf:Hermann
+HarmanEnglishFrenchGermanvariantOf:Hermann
 HarmonEnglishderivedFrom:Herman
 HaroldsonEnglishhasMeaning:son of Harold
-HarperEnglish,ScottishOriginally belonged to a person who played the harp or who made harps
+HarperEnglishScottishOriginally belonged to a person who played the harp or who made harps
 HarrellEnglishderivedFrom:Harold
 HarrelsonEnglishvariantOf:Haroldson
 HarringtonScottish
@@ -790,17 +790,17 @@ HealyIrish
 HeathEnglish
 HeathEnglishOriginally belonged to a person who was a dweller on the heath or open land
 HedleyEnglishvariantOf:Headley
-HendersonScottish,EnglishhasMeaning:son of Hendry
-HendryScottish,EnglishderivedFrom:Henry
-HenryEnglish,IrishderivedFrom:Henry
+HendersonScottishEnglishhasMeaning:son of Hendry
+HendryScottishEnglishderivedFrom:Henry
+HenryEnglishIrishderivedFrom:Henry
 HenrysonEnglishhasMeaning:son of Henry
 HensleyEnglish
 HensonEnglishhasMeaning:son of Henne, Henne being a diminutive of Henry
-HepburnScottish,EnglishderivedFrom:place name meaning high burial mound in Old English
-HerbertDutch,English,French,GermanderivedFrom:male given name Herbert
-HerbertsDutch,EnglishvariantOf:Herbert
+HepburnScottishEnglishderivedFrom:place name meaning high burial mound in Old English
+HerbertDutchEnglishFrenchGermanderivedFrom:male given name Herbert
+HerbertsDutchEnglishvariantOf:Herbert
 HerbertsonEnglishhasMeaning:son of Herbert
-HermanEnglish,DutchderivedFrom:Herman
+HermanEnglishDutchderivedFrom:Herman
 HermansonEnglishhasMeaning:son of Herman
 HernandezSpanish
 HerndonEnglish
@@ -832,10 +832,10 @@ HollinsEnglishRefers to someone living by a holly tree
 HollisEnglish
 HollowayEnglish
 HolmanEnglish
-HolmeEnglish,ScottishRefers either to someone living by an island in a fen (from northern Middle English holm) or near a holly tree (Middle English holm)
-HolmesEnglish,ScottishvariantOf:Holme
+HolmeEnglishScottishRefers either to someone living by an island in a fen (from northern Middle English holm) or near a holly tree (Middle English holm)
+HolmesEnglishScottishvariantOf:Holme
 HolmwoodEnglishOld English meaning holly wood or from a place name in Derby or Surrey
-HoltDutch,Danish,English,NorwegianhasMeaning:a wood or grove in Old English or German
+HoltDutchDanishEnglishNorwegianhasMeaning:a wood or grove in Old English or German
 HoneycuttEnglishderivedFrom:name of the English town Hunnacott
 HoneysettEnglishEnglish surname of Walloon origin, derivedFrom:a diminutive of the name Johannes (Hanosse)
 HoodEnglish
@@ -846,8 +846,8 @@ HopeEnglishderivedFrom:Middle English hop small valley
 HopkinsEnglishPatronymic formed from a diminutive of Hob
 HopperEnglishReferred to a person who hopped
 HopsonEnglishvariantOf:Hobson
-HornEnglish,German,Norwegian,DanishOccupational name for one who carved objects out of horn or who played a horn
-HornEnglish,German,Norwegian,DanishOriginally given to a person who lived near a horned-shaped geographical feature, such as a mountain or a bend in a river
+HornEnglishGermanNorwegianDanishOccupational name for one who carved objects out of horn or who played a horn
+HornEnglishGermanNorwegianDanishOriginally given to a person who lived near a horned-shaped geographical feature, such as a mountain or a bend in a river
 HorneEnglishvariantOf:Horn
 HorsfallEnglishderivedFrom:place in Yorkshire meaning horse clearing
 HortonEnglishderivedFrom:a town in Yorkshire meaning mud town
@@ -866,16 +866,16 @@ HuddlesonEnglishhasMeaning:son of Huddle (see Hudson)
 HuddlestonEnglishderivedFrom:a town Huddleston in the Yorkshire region of English
 HudnallEnglishFrom the Old English place name Hudanheale meaning Huda's heath or nook of land belonging to a man called Huda
 HudsonEnglishhasMeaning:son of Hudde
-HuffEnglish,GermanhasMeaning:spur of a hill in Old English
+HuffEnglishGermanhasMeaning:spur of a hill in Old English
 HuffmanGerman
-HughesEnglish,WelshPatronymic of the given name Hugh
+HughesEnglishWelshPatronymic of the given name Hugh
 HullEnglishvariantOf:Hill
-HumeScottish,EnglishvariantOf:Holme
+HumeScottishEnglishvariantOf:Holme
 HumphreyWelsh
 HumphriesWelsh
 HunnisettEnglishVariant spelling of Honeysett
 HuntEnglishvariantOf:Hunter
-HunterEnglish,ScottishOccupational name which referred to someone who hunted for a living, from Old English hunta
+HunterEnglishScottishOccupational name which referred to someone who hunted for a living, from Old English hunta
 HurleyIrish
 HurstEnglishderivedFrom:Middle English place name meaning thicket of trees
 HutchinsonScottish
@@ -892,23 +892,23 @@ IlbertEnglishderivedFrom:Norman French form of the Germanic given name Hildibe
 InghamEnglishFrom an English place name meaning INGA's homestead
 IngramEnglishderivedFrom:Norman French given name Enguerrand
 IrvinEnglishvariantOf:Irving or Irwin
-IrvineScottish,EnglishvariantOf:Irving
-IrvingScottish,EnglishOriginally derivedFrom:a Scottish place name (in North Ayrshire) meaning green water
+IrvineScottishEnglishvariantOf:Irving
+IrvingScottishEnglishOriginally derivedFrom:a Scottish place name (in North Ayrshire) meaning green water
 IrwinEnglishderivedFrom:Old English given name Eoforwine
 IsaacsonEnglishhasMeaning:son of Isaac
-IversEnglish,IrishPatronymic derivedFrom:given name Ivor
-JackEnglish,ScottishderivedFrom:Jack
+IversEnglishIrishPatronymic derivedFrom:given name Ivor
+JackEnglishScottishderivedFrom:Jack
 JacksonEnglishhasMeaning:son of Jack
-JacobsDutch,EnglishderivedFrom:Jacob
-JacobsonDutch,English,NorwegianhasMeaning:son of Jacob
+JacobsDutchEnglishderivedFrom:Jacob
+JacobsonDutchEnglishNorwegianhasMeaning:son of Jacob
 JakemanEnglishEnglish form of the French name Jacquème (see James)
 JakemanEnglishhasMeaning:servant of Jack
 JamesEnglishderivedFrom:James
 JamesonEnglishhasMeaning:son of James
-JamisonEnglish,ScottishhasMeaning:son of James
-JansDutch,German,EnglishhasMeaning:son of Jan
-JansonEnglish,GermanhasMeaning:son of Jan
-JardineScottish,EnglishhasMeaning:garden, denoting someone who worked as a gardener
+JamisonEnglishScottishhasMeaning:son of James
+JansDutchGermanEnglishhasMeaning:son of Jan
+JansonEnglishGermanhasMeaning:son of Jan
+JardineScottishEnglishhasMeaning:garden, denoting someone who worked as a gardener
 JarrettEnglishvariantOf:Garrett
 JarvisEnglishderivedFrom:Gervais
 JeanesEnglishThe first record of this name comes from records of William the Conqueror's land grants to his supporters during the Conquest of English
@@ -918,12 +918,12 @@ JeffersonEnglishhasMeaning:son of Jeffrey
 JefferyEnglishderivedFrom:Jeffrey
 JeffriesEnglishderivedFrom:Jeffrey
 JekyllEnglishderivedFrom:Breton given name JUDICAËL
-JenkinsEnglish,WelshderivedFrom:Jenkin, a medieval diminutive of Jen, itself a Middle English form of John
+JenkinsEnglishWelshderivedFrom:Jenkin, a medieval diminutive of Jen, itself a Middle English form of John
 JenningsEnglishderivedFrom:Jenyn, a medieval diminutive of Jen, itself a Middle English form of John
 JensenDanish
 JephsonEnglishvariantOf:Jepson
 JepsonEnglishhasMeaning:son of Jep
-JerniganWelsh,EnglishderivedFrom:Old Breton name Iarnuuocon meaning iron famous
+JerniganWelshEnglishderivedFrom:Old Breton name Iarnuuocon meaning iron famous
 JeromeEnglishderivedFrom:Jerome
 JervisEnglishvariantOf:Jarvis
 JewelEnglishvariantOf:Jewell
@@ -933,10 +933,10 @@ JinksEnglishhasMeaning:son of Jenk, Jenk meaning little John
 JohnsEnglishderivedFrom:John
 JohnsonEnglishhasMeaning:son of John
 JohnsonSwedish
-JohnstonEnglish,Scottish
+JohnstonEnglishScottish
 JoinerEnglishOccupational surname for a carpenter (that is, a person who joined wood together to make furniture)
-JonesEnglish,WelshderivedFrom:Jon, a medieval variant of John
-JordanEnglish,French,German,Polish
+JonesEnglishWelshderivedFrom:Jon, a medieval variant of John
+JordanEnglishFrenchGermanPolish
 JordanIrish
 JorgensenDanish
 JosephsEnglishderivedFrom:Joseph
@@ -964,10 +964,10 @@ KelseyEnglishFrom an English place name meaning Cenel's island, from the Old E
 KempEnglish
 KempEnglishderivedFrom:Middle English kempe meaning champion, warrior
 KendalEnglishvariantOf:Kendall
-KendallEnglish,ScottishderivedFrom:town of Kendale in English, and was so called from the river Kent, on which it is situated, and dael valley, dale
+KendallEnglishScottishderivedFrom:town of Kendale in English and was so called from the river Kent, on which it is situated, and dael valley, dale
 KendrickEnglishFrom the Old English given names Cyneric or Cenric
 KennardEnglishderivedFrom:given names Cyneweard or Cyneheard
-KennedyIrish,Scottish
+KennedyIrishScottish
 KenneyIrish
 KennyIrish
 KentEnglish
@@ -978,7 +978,7 @@ KevinsEnglishhasMeaning:son of Kevin
 KevinsonEnglishhasMeaning:son of Kevin
 KeyEnglishvariantOf:Kay or Kay
 KeysEnglishvariantOf:Kay
-KiddEnglish,ScottishderivedFrom:nickname meaning young goat, kid in Middle English
+KiddEnglishScottishderivedFrom:nickname meaning young goat, kid in Middle English
 KilgoreScottish
 KillamEnglishDenoted one who hailed from the English town of Kilham, meaning kiln hamlet
 KimballEnglishderivedFrom:Welsh given name Cynbel or the Old English given name Cynebald
@@ -998,7 +998,7 @@ KirkpatrickBorderlands
 KitchenEnglishOccupational name for a person who worked in a kitchen (of a monastery for example)
 KitchensEnglishvariantOf:Kitchen
 KleinGerman
-KnaggsEnglishFound most commonly in the north of English, in particular Yorkshire
+KnaggsEnglishFound most commonly in the north of English in particular Yorkshire
 KnightEnglishFrom the Old English cniht, meaning knight or tenant serving as a mounted soldier
 KochGerman
 KoenigGerman
@@ -1008,7 +1008,7 @@ LaceyEnglishvariantOf:Lacy
 LacroixFrench
 LacyEnglishderivedFrom:Lassy, the name of a town in Normandy
 LakeEnglish
-LamarFrench,EnglishOriginally from a place name in Normandy, which was derivedFrom:Old French la mare meaning the pool
+LamarFrenchEnglishOriginally from a place name in Normandy, which was derivedFrom:Old French la mare meaning the pool
 LambEnglish
 LamontScottish
 LancasterEnglish
@@ -1018,8 +1018,8 @@ LangdonEnglishderivedFrom:Old English place name meaning long hill (effectivel
 LangleyEnglishHabitational surname derivedFrom:old English lang long and leah woodland, clearing
 LarkinIrish
 LarsenDanish
-LarsonEnglish,SwedishhasMeaning:son of Lar, where Lar is a medieval diminutive of Laurence
-LawEnglish,ScottishderivedFrom:old English hlaw hill
+LarsonEnglishSwedishhasMeaning:son of Lar, where Lar is a medieval diminutive of Laurence
+LawEnglishScottishderivedFrom:old English hlaw hill
 LawrenceEnglishderivedFrom:Laurence
 LawsonEnglishhasMeaning:son of Laurence
 LaytonEnglishderivedFrom:place name meaning settlement with a leek garden in Old English
@@ -1030,19 +1030,19 @@ LedfordEnglishhasMeaning:path leading across a ford from the Old English læda
 LeeEnglishOriginally given to a person who lived on or near a leah, Old English meaning woodland, clearing
 LeighEnglishvariantOf:Lee
 LeightonEnglishvariantOf:Layton
-LeonFrench,EnglishvariantOf:Lyon
+LeonFrenchEnglishvariantOf:Lyon
 LeonardIrish
 LeonardsonEnglishhasMeaning:son of Leonard
 LeslieScottish
 LevesqueFrench
 LevittEnglishvariantOf:Leavitt
 LewinEnglishderivedFrom:Leofwine
-LewisEnglish,Welsh,Welsh-AltderivedFrom:Lewis
+LewisEnglishWelshWelsh-AltderivedFrom:Lewis
 LeytonEnglishvariantOf:Layton
 LincolnEnglishOriginally indicated that the bearer was from the English city of Lincoln, derivedFrom:Brythonic lindo lake, pool and Latin colonia colony
 LindonEnglishvariantOf:Lyndon
-LindsayEnglish,ScottishFrom the region of Lindsey in Lincolnshire, which means Lincoln island in Old English
-LindseyEnglish,ScottishvariantOf:Lindsay
+LindsayEnglishScottishFrom the region of Lindsey in Lincolnshire, which means Lincoln island in Old English
+LindseyEnglishScottishvariantOf:Lindsay
 LintonEnglishOriginally from place names meaning either flax town or lime tree town in Old English
 LinwoodEnglishOriginally derivedFrom:a place name meaning stream forest in Old English
 LittleEnglishderivedFrom:ickname given to a short person
@@ -1059,20 +1059,20 @@ LopezSpanish
 LoveEnglish
 LovelEnglishvariantOf:Lowell
 LovellEnglishvariantOf:Lowell
-LowEnglish,ScottishvariantOf:Law
-LoweEnglish,ScottishvariantOf:Low
+LowEnglishScottishvariantOf:Law
+LoweEnglishScottishvariantOf:Low
 LowellEnglishderivedFrom:Norman French nickname, from lou wolf and a diminutive suffix
-LowryScottish,EnglishderivedFrom:diminutive of Laurence
-LucasDutch,EnglishderivedFrom:Lucas
+LowryScottishEnglishderivedFrom:diminutive of Laurence
+LucasDutchEnglishderivedFrom:Lucas
 LukesonEnglishhasMeaning:son of Luke
 LumEnglishFrom places in Lancashire and West Yorkshire called Lumb, both apparently originally named for Old English lum(m) pool
-LundDanish,Swedish,Norwegian,EnglishhasMeaning:grove of trees, from Old Norse lundr
+LundDanishSwedishNorwegianEnglishhasMeaning:grove of trees, from Old Norse lundr
 LynchIrish
 LyndonEnglishOriginally from a place name meaning lime tree hill in Old English
 LynnEnglishFrom the Welsh word llyn meaning lake
 LyntonEnglishvariantOf:Linton
 LynwoodEnglishvariantOf:Linwood
-LyonScottish,English,French,DutchHabitational name from either the Lyon in southern central France, or Lyons-la-Forêt in Eure, Normandy
+LyonScottishEnglishFrenchDutchHabitational name from either the Lyon in southern central France, or Lyons-la-Forêt in Eure, Normandy
 LyonsScottish
 MacDonaldScottish
 MacGregorScottish
@@ -1095,9 +1095,9 @@ MalloryEnglishFrom Old French maloret meaning unfortunate, unlucky, a term int
 MalloyIrish
 MaloneIrish
 MaloneyIrish
-MannGerman,EnglishderivedFrom:nickname meaning man
+MannGermanEnglishderivedFrom:nickname meaning man
 ManningEnglish
-MarchandEnglish,FrenchOccupational surname meaning merchant, ultimately from Latin mercari to trade
+MarchandEnglishFrenchOccupational surname meaning merchant, ultimately from Latin mercari to trade
 MarkEnglishderivedFrom:Mark
 MarleyEnglishOriginally denoted a person who hailed from one of the various places in Britain called Marley, ultimately meaning either pleasant wood, boundary wood or marten wood in Old English
 MarlowEnglishOriginally a name for a person from Marlow (Buckinghamshire), English
@@ -1106,22 +1106,22 @@ MarsdenEnglishderivedFrom:place name derivedFrom:Old English mearc boundary an
 MarshEnglish
 MarshallEnglishderivedFrom:Middle English mareschal a marshal, ultimately derivedFrom:Germanic marah horse and scalc servant
 MarstonEnglishderivedFrom:place name derivedFrom:Old English mersc marsh and tun enclosure
-MartelEnglish,FrenchderivedFrom:Martel, a medieval diminutive of Martin
-MartelFrench,EnglishNickname for a smith, derivedFrom:old French martel hammer, ultimately from Latin martellus
-MartellEnglish,German,CatalanvariantOf:Martel or Martel
-MartinEnglish,French,German,CzechderivedFrom:Martin
+MartelEnglishFrenchderivedFrom:Martel, a medieval diminutive of Martin
+MartelFrenchEnglishNickname for a smith, derivedFrom:old French martel hammer, ultimately from Latin martellus
+MartellEnglishGermanCatalanvariantOf:Martel or Martel
+MartinEnglishFrenchGermanCzechderivedFrom:Martin
 MartinIrish
 MartinezSpanish
 MartinsEnglishderivedFrom:Martin
 MartinsonEnglishhasMeaning:son of Martin
 MasonEnglishOccupational name for a stoneworker or layer of bricks, from Old French masson, ultimately of Germanic origin (akin to Old English macian to make)
 MasseyEnglishderivedFrom:Massy, the name of several towns in France
-MastersEnglish,ScottishhasMeaning:son of the master from Middle English maister
+MastersEnglishScottishhasMeaning:son of the master from Middle English maister
 MastersonEnglishhasMeaning:son of the master from Middle English maister
 MathersEnglishOccupational surname meaning mower in Old English
 MathewsEnglishderivedFrom:Matthew
 MathewsonEnglishhasMeaning:son of Matthew
-MatthewsEnglish,WelshderivedFrom:Matthew
+MatthewsEnglishWelshderivedFrom:Matthew
 MatthewsonEnglishhasMeaning:son of Matthew
 MattinglyEnglish
 MaurerGerman
@@ -1220,7 +1220,7 @@ MilburnEnglishderivedFrom:place name meaning mill stream in Old English
 MilesEnglishderivedFrom:Miles
 MilfordEnglishOriginally derivedFrom:various place names all meaning ford by a mill in Old English
 MillardEnglishvariantOf:Millward
-MillerEnglish,German,ScottishOccupational surname referring to a person who owned or worked in a grain mill, from Middle English mille mill
+MillerEnglishGermanScottishOccupational surname referring to a person who owned or worked in a grain mill, from Middle English mille mill
 MillhouseEnglishName for someone whose house was in a mill or who worked in a mill
 MillsEnglishOriginally given to one who lived near a mill or who worked in a mill
 MillwardEnglishhasMeaning:guardian of the mill in Old English
@@ -1228,7 +1228,7 @@ MilneEnglish
 MiltonEnglishderivedFrom:English place name meaning mill town in Old English
 MinettEnglishFrom the medieval given name Minne, derivedFrom:Germanic element minna love
 MirandaSpanish
-MitchellEnglish,Irish,ScottishderivedFrom:Michael
+MitchellEnglishIrishScottishderivedFrom:Michael
 MolloyIrish
 MonaghanIrish
 MonahanIrish
@@ -1236,12 +1236,12 @@ MondayEnglishDenoted a person for whom this was a significant day, often the d
 MondayEnglishderivedFrom:Old Norse given name Mundi which was a diminutive of names beginning with the element mundr meaning protection
 MondyEnglishvariantOf:Monday or Monday
 MonroeScottish
-MontgomeryEnglish,ScottishderivedFrom:place name in Calvados, France meaning GUMARICH's mountain
+MontgomeryEnglishScottishderivedFrom:place name in Calvados, France meaning GUMARICH's mountain
 MoodyEnglish
 MooneyIrish
 MooreEnglishFrom Middle English mor meaning open land or bog
 MooreEnglishNickname for a person of dark complexion, from Old French more meaning Moor
-MooreEnglish,IrishderivedFrom:Maurus
+MooreEnglishIrishderivedFrom:Maurus
 MooresEnglishvariantOf:Moore
 MoorsEnglishvariantOf:Moore
 MoralesSpanish
@@ -1251,14 +1251,14 @@ MorenoSpanish
 MorganWelsh
 MorinEnglishvariantOf:Moore and Moore
 MorisonEnglishvariantOf:Morrison
-MorrisEnglish,Irish,Scottish,WelshderivedFrom:Maurice
+MorrisEnglishIrishScottishWelshderivedFrom:Maurice
 MorrishEnglishvariantOf:Morriss
-MorrisonEnglish,ScottishhasMeaning:son of Morris
+MorrisonEnglishScottishhasMeaning:son of Morris
 MorrissEnglishderivedFrom:Morris
 MorrowIrish
 MorseEnglishvariantOf:Morriss
 MoserGerman
-MosesJewish,EnglishderivedFrom:Moses
+MosesJewishEnglishderivedFrom:Moses
 MossEnglish
 MottersheadEnglishderivedFrom:name of a lost place in Cheshire, from the Old English byname Motere which meant speaker and Middle English heved meaning headland
 MouldEnglishderivedFrom:Mauld, a medieval form of Matilda
@@ -1283,30 +1283,30 @@ NapierScottish
 NashEnglishderivedFrom:Middle English phrase atten ash at the ash tree
 NathansEnglishderivedFrom:Nathan
 NathansonEnglishhasMeaning:son of Nathan
-NealEnglish,IrishderivedFrom:Neil
-NeilIrish,Scottish,EnglishderivedFrom:Neil
+NealEnglishIrishderivedFrom:Neil
+NeilIrishScottishEnglishderivedFrom:Neil
 NelsonEnglishhasMeaning:son of Neil
-NessScottish,English,NorwegianhasMeaning:headland in Middle English,originally referring to a person who lived there
-NevilleEnglish,IrishderivedFrom:Norman French place name meaning new town
-NewellEnglish,IrishvariantOf:Neville
+NessScottishEnglishNorwegianhasMeaning:headland in Middle Englishoriginally referring to a person who lived there
+NevilleEnglishIrishderivedFrom:Norman French place name meaning new town
+NewellEnglishIrishvariantOf:Neville
 NewmanEnglishhasMeaning:new man, newcomer from the Old English neowe, niwe, nige and mann
 NewportEnglishGiven to one who came from the town of Newport (which means simply new port), which was the name of several English towns
 NewtonEnglishderivedFrom:one of many English towns meaning new town
 NicholsEnglishderivedFrom:Nicholas
-NicholsonEnglish,ScottishhasMeaning:son of Nicholas
+NicholsonEnglishScottishhasMeaning:son of Nicholas
 NicolsonEnglishvariantOf:Nicholson
-NielsonEnglish,DanishvariantOf:Nelson
+NielsonEnglishDanishvariantOf:Nelson
 NigelEnglishderivedFrom:Nigel
 NilesEnglishhasMeaning:son of Neil
 NixonEnglishhasMeaning:son of Nicholas
 NobleScottish
-NoelFrench,EnglishEither from the given name NOËL, or else derived directly from Old French noel Christmas and given to a person who had a particular connection with the holiday
+NoelFrenchEnglishEither from the given name NOËL, or else derived directly from Old French noel Christmas and given to a person who had a particular connection with the holiday
 NolanIrish
 NoonanIrish
 NormanEnglishReferred to a person who was originally from Scandinavia or Normandy
 NormansonEnglishhasMeaning:son of Norman
-NorrisEnglish,ScottishhasMeaning:north from Old French norreis
-NorrisEnglish,ScottishhasMeaning:wet nurse, foster mother from Old French nurise, norrice
+NorrisEnglishScottishhasMeaning:north from Old French norreis
+NorrisEnglishScottishhasMeaning:wet nurse, foster mother from Old French nurise, norrice
 NorthEnglishName for a person who lived to the north
 NorthropEnglishNorthrop is a name of a town in English. means north farm
 NortonEnglishOriginally taken from a place name meaning north town in Old English
@@ -1332,17 +1332,17 @@ OakleyEnglishderivedFrom:place name that had many oak trees
 OdellEnglishOriginally denoted a person who was from Odell (Bedfordshire), English
 OgdenEnglishhasMeaning:(dweller in the) oak valley from Old English âc oak and denu valley
 OgleEnglish
-OlhouserNorwegian,EnglishhasMeaning:(dweller by or near the) old house
-OliverCatalan,English,French,German,ScottishderivedFrom:Oliver
+OlhouserNorwegianEnglishhasMeaning:(dweller by or near the) old house
+OliverCatalanEnglishFrenchGermanScottishderivedFrom:Oliver
 OliversonEnglishhasMeaning:son of Oliver
-OlsonNorwegian,Swedish
+OlsonNorwegianSwedish
 OrrScottish
 OrtegaSpanish
 OrtizSpanish
 OsborneEnglishderivedFrom:Osborn
 OsbourneEnglishderivedFrom:Osborn
 OtisEnglishhasMeaning:son of Ode
-OttEnglish,GermanderivedFrom:Otto
+OttEnglishGermanderivedFrom:Otto
 OutlawEnglishhasMeaning:simply outlaw from the Middle English outlawe
 OutterridgeEnglishderivedFrom:Old English given name Uhtric which was composed of the elements uht dawn and ric power
 OvertonEnglishDenotes a person who hailed from one of the various places in English called Overton or Orton
@@ -1352,28 +1352,28 @@ OwstonEnglishDenotes a person who came from any one of the places in Britain c
 PaddonEnglishvariantOf:Patton
 PadillaSpanish
 PadmoreEnglishOriginally indicated a person from Padmore, English
-PageEnglish,FrenchOccupational name meaning servant, page
-PagetEnglish,FrenchDiminutive of Page
+PageEnglishFrenchOccupational name meaning servant, page
+PagetEnglishFrenchDiminutive of Page
 PaigeEnglishvariantOf:Page
 PalmerEnglishhasMeaning:pilgrim
-ParentEnglish,FrenchderivedFrom:old French parent notable
-ParisEnglish,FrenchvariantOf:Parish
+ParentEnglishFrenchderivedFrom:old French parent notable
+ParisEnglishFrenchvariantOf:Parish
 ParishEnglishderivedFrom:rare medieval given name Paris which was an Old French form of Patrick
 ParishEnglishOriginally denoted a person who came from the French city of Paris, which got its name from the ancient Celtic tribe known as the Parisii
 ParkerEnglishhasMeaning:keeper of the park in Middle English
 ParksScottish
-ParrisEnglish,FrenchvariantOf:Parish
+ParrisEnglishFrenchvariantOf:Parish
 ParrishEnglish
 ParsonsEnglishOriginally denoted a person who served as a parson
-PaternosterEnglish,French,German,ItalianOccupational name for a maker of rosaries, also called paternosters
-PatersonEnglish,ScottishhasMeaning:son of Patrick
+PaternosterEnglishFrenchGermanItalianOccupational name for a maker of rosaries, also called paternosters
+PatersonEnglishScottishhasMeaning:son of Patrick
 PatrickEnglishderivedFrom:Patrick
 PatricksonEnglishhasMeaning:son of Patrick
-PattersonEnglish,Scottish,IrishhasMeaning:son of Patrick
-PattonEnglish,ScottishDiminutive of the medieval name Pate, a short form of Patrick
-PaulEnglish,French,German,DutchderivedFrom:Paul
+PattersonEnglishScottishIrishhasMeaning:son of Patrick
+PattonEnglishScottishDiminutive of the medieval name Pate, a short form of Patrick
+PaulEnglishFrenchGermanDutchderivedFrom:Paul
 PaulsonEnglishhasMeaning:son of Paul
-PayneIrish,Scottish,EnglishhasMeaning:villager, rustic and later heathen from the Middle English Payn, Old French Paien which was often given to children whose baptism had been postponed or adults whose religious zeal was lacking
+PayneIrishScottishEnglishhasMeaning:villager, rustic and later heathen from the Middle English Payn, Old French Paien which was often given to children whose baptism had been postponed or adults whose religious zeal was lacking
 PaytonEnglishderivedFrom:town of Peyton in Sussex
 PeacockEnglishFrom the Middle English words pecok and pocok which mean peacock
 PeakEnglishhasMeaning:dweller by the pointed hill from the Old English peac or from the Peak District (Derbyshire), English
@@ -1388,26 +1388,26 @@ PenningtonEnglish
 PennyEnglishhasMeaning:penny (the coin) from the Old English pening, penig
 PereiraPortuguese
 PerezSpanish
-PerkinsEnglish,WelshhasMeaning:son of little Peter
+PerkinsEnglishWelshhasMeaning:son of little Peter
 PerryEnglishderivedFrom:Middle English perrie, Old English pyrige meaning pear tree
-PeterEnglish,German,DutchderivedFrom:Peter
-PetersEnglish,GermanderivedFrom:Peter
-PetersonEnglish,Scottish,SwedishhasMeaning:son of Peter
-PetitCatalan,English,FrenchhasMeaning:small, little derivedFrom:Old French petit
-PettigrewEnglish,FrenchderivedFrom:French petit small and cru growth
+PeterEnglishGermanDutchderivedFrom:Peter
+PetersEnglishGermanderivedFrom:Peter
+PetersonEnglishScottishSwedishhasMeaning:son of Peter
+PetitCatalanEnglishFrenchhasMeaning:small, little derivedFrom:Old French petit
+PettigrewEnglishFrenchderivedFrom:French petit small and cru growth
 PeytonEnglishvariantOf:Payton
 PhelpsEnglishhasMeaning:son of Philip
-PhilipsEnglish,DutchhasMeaning:son of Philip
-PhillipsEnglish,Irish,WelshhasMeaning:son of Philip
+PhilipsEnglishDutchhasMeaning:son of Philip
+PhillipsEnglishIrishWelshhasMeaning:son of Philip
 PickeringEnglishderivedFrom:a town in Yorkshire, derivedFrom:Old English Piceringas, the name of a tribe
 PickleEnglishderivedFrom:Middle English pighel field
 PierceEnglishderivedFrom:Piers
 PiersonEnglishhasMeaning:son of Piers
 PikeEnglish
-PiperEnglish,ScottishOriginally given to a person who played on a pipe (a flute)
+PiperEnglishScottishOriginally given to a person who played on a pipe (a flute)
 PittmanEnglish
 PittsEnglishhasMeaning:dweller by the pit, hollow from the Old English pytt or from Pitt (Hants) or Pett (East Sussex), English
-PlankGerman,EnglishhasMeaning:plank from the Latin plancus
+PlankGermanEnglishhasMeaning:plank from the Latin plancus
 PlaskettEnglishhasMeaning:dweller by the swampy meadow from the Old French plasquet
 PlattEnglishHabitational name from Platt or Platt Bridge in Lancashire, named in Middle English with Old French plat flat, thin, in the dialect sense plank bridge
 PocockEnglishOrthographic variant of the more familiar Peacock
@@ -1419,15 +1419,15 @@ PondEnglishReferred to one who dwelt near a pond
 PooleEnglishFrom Old English pol meaning pool
 PopeEnglishderivedFrom:nickname which originally designated a person who played the part of the pope in a play or pageant
 PopeScottish
-PorcherEnglish,FrenchhasMeaning:swineherd from the Old French and Middle English word porchier
-PorterEnglish,ScottishOccupational surname meaning doorkeeper, ultimately from Old French porte door, from Latin porta
+PorcherEnglishFrenchhasMeaning:swineherd from the Old French and Middle English word porchier
+PorterEnglishScottishOccupational surname meaning doorkeeper, ultimately from Old French porte door, from Latin porta
 PorterfieldScottish
 PotterEnglishFrom the occupation: one who makes earthen vessels
 PoundEnglishOccupational name for a person who kept animals, from Old English pund animal enclosure (as in dog pound)
 PowellWelsh
 PowerEnglishhasMeaning:poor from the Middle English and Old French word povre, poure
-PowerEnglish,IrishIndicated a person who came from Pois (Picardy), France
-PowersEnglish,IrishvariantOf:Power
+PowerEnglishIrishIndicated a person who came from Pois (Picardy), France
+PowersEnglishIrishvariantOf:Power
 PraterEnglish
 PrattEnglish
 PrescottEnglishFrom an English place name meaning priest's cottage
@@ -1442,14 +1442,14 @@ PruittWelsh
 PryorEnglishBelonged to one who was a prior (a religious official), or one who worked fro a prior
 PuckettEnglish
 PughWelsh
-PurcellEnglish,IrishhasMeaning:swineherd or perhaps just piglet from the Old French pourcel
+PurcellEnglishIrishhasMeaning:swineherd or perhaps just piglet from the Old French pourcel
 PutnamEnglishhasMeaning:Putnam (Herts, Surrey), English
-QueenEnglish,IrishhasMeaning:woman from the Old English cwen which was sometimes used as a given name
+QueenEnglishIrishhasMeaning:woman from the Old English cwen which was sometimes used as a given name
 QueshireEnglishProbably an unusual variant of Cheshire
-QuickEnglish,Irish,ScottishvariantOf:Quigley
-QuickleyEnglish,Irish,ScottishvariantOf:Quigley
-QuiggEnglish,Irish,ScottishvariantOf:Quigley
-QuigleyEnglish,Irish,ScottishderivedFrom:Middle English quik or Old English cwic, which both mean lively
+QuickEnglishIrishScottishvariantOf:Quigley
+QuickleyEnglishIrishScottishvariantOf:Quigley
+QuiggEnglishIrishScottishvariantOf:Quigley
+QuigleyEnglishIrishScottishderivedFrom:Middle English quik or Old English cwic, which both mean lively
 QuinceyEnglishvariantOf:Quincy
 QuincyEnglishOriginally from various place names in Normandy which were derivedFrom:given name Quintus
 QuinlanIrish
@@ -1464,12 +1464,12 @@ RakesEnglishvariantOf:Rake
 RalstonScottish
 RamirezSpanish
 RamosSpanish
-RamseyScottish,EnglishhasMeaning:garlic island, derivedFrom:Old English hramsa garlic and eg island
+RamseyScottishEnglishhasMeaning:garlic island, derivedFrom:Old English hramsa garlic and eg island
 RandalEnglishvariantOf:Randall
 RandallEnglishderivedFrom:Randel,variantOf:Randall
 RankinScottish
 RasmussenDanish
-RayEnglish,ScottishhasMeaning:either kingly from the Old French rey, roy, or female roe deer from the Middle English ray which would have denoted a timid person variantOf:Rye, Rye or Wray
+RayEnglishScottishhasMeaning:either kingly from the Old French rey, roy, or female roe deer from the Middle English ray which would have denoted a timid person variantOf:Rye, Rye or Wray
 RayneEnglishderivedFrom:Germanic name which was short for longer names beginning with the element ragin meaning advice, counsel
 RaynersonEnglishhasMeaning:son of Rayner
 ReadEnglishhasMeaning:dweller in a clearing in woodland from Old English ried
@@ -1483,29 +1483,29 @@ ReeseWelsh
 ReeveEnglishOccupational name for a sheriff, from Middle English reeve
 ReevesEnglish
 ReganIrish
-ReidEnglish,Scottish
-ReierEnglish,GermanvariantOf:Royer
+ReidEnglishScottish
+ReierEnglishGermanvariantOf:Royer
 ReillyIrish
 RennellEnglishvariantOf:Reynolds
 RennoldEnglishvariantOf:Reynolds
 RennollEnglishvariantOf:Reynolds
 RevieEnglishvariantOf:Reeve
 ReyEnglishhasMeaning:female roe deer from the Old English rœge and probably denoted someone of a nervous temperament
-ReyEnglish,Spanish,French,CatalanhasMeaning:king from the Latin rex, regis
+ReyEnglishSpanishFrenchCatalanhasMeaning:king from the Latin rex, regis
 ReyesSpanish
 ReynellEnglishvariantOf:Reynolds
-ReynoldsEnglish,IrishderivedFrom:Reynold
+ReynoldsEnglishIrishderivedFrom:Reynold
 RhodesEnglishEither a topographical name derivedFrom:Old English rod meaning a clearing in woodland, or a locational name from any of the locations named with this word
-RiceEnglish,Welsh,IrishAnglicized version of the given name Rhys
-RichardEnglish,French,German,DutchderivedFrom:Richard
+RiceEnglishWelshIrishAnglicized version of the given name Rhys
+RichardEnglishFrenchGermanDutchderivedFrom:Richard
 RichardsEnglishderivedFrom:Richard
 RichardsonEnglishhasMeaning:son of Richard
 RickardEnglishvariantOf:Richard
 RiderEnglishvariantOf:Ryder
 RidleyEnglishDenotes a person who hailed from one of the various places in English with that name
-RierEnglish,GermanvariantOf:Royer
+RierEnglishGermanvariantOf:Royer
 RigbyEnglishOriginally derivedFrom:a place name meaning ridge farm in Old Norse
-RileyEnglish,IrishOriginally derivedFrom:a place name meaning rye clearing in Old English
+RileyEnglishIrishOriginally derivedFrom:a place name meaning rye clearing in Old English
 RimmerEnglishhasMeaning:poet from the Middle English rime(n)
 RitchieScottish
 RiveraSpanish
@@ -1513,9 +1513,9 @@ RoachEnglishhasMeaning:dweller by the rocks from the Middle English and Old Fr
 RoachIrish
 RobbScottish
 RobbinsEnglishderivedFrom:Robin
-RobertEnglish,French,DutchderivedFrom:Robert
-RobertsEnglish,WelshhasMeaning:son of Robert
-RobertsonEnglish,ScottishhasMeaning:son of Robert
+RobertEnglishFrenchDutchderivedFrom:Robert
+RobertsEnglishWelshhasMeaning:son of Robert
+RobertsonEnglishScottishhasMeaning:son of Robert
 RobinsonEnglishhasMeaning:son of Robin
 RoblesSpanish
 RocheIrish
@@ -1525,22 +1525,22 @@ RodriguezSpanish
 RogersEnglishderivedFrom:Roger
 RogersonEnglishhasMeaning:son of Roger
 RollinsEnglishhasMeaning:son of little Roland
-RomeFrench,EnglishEnglish and French form of Roma
+RomeFrenchEnglishEnglish and French form of Roma
 RomeroSpanish
-RomillyEnglish,FrenchOriginally denoted a person who came from any of the various places in northern France called Romilly or Remilly, or from Romiley in English
+RomillyEnglishFrenchOriginally denoted a person who came from any of the various places in northern France called Romilly or Remilly, or from Romiley in English
 RooneyIrish
 RoscoeEnglishderivedFrom:place name meaning doe wood in Old Norse
 RoseEnglishderivedFrom:Rose
-RoseEnglish,French,German,Scottish,JewishhasMeaning:rose from the Middle English,Old French and Middle High German rose
-RossEnglish,ScottishFrom various place names (such as the region of Ross in northern Scottish) which are derivedFrom:Scottish Gaelic ros meaning promontory, headland
+RoseEnglishFrenchGermanScottishJewishhasMeaning:rose from the Middle EnglishOld French and Middle High German rose
+RossEnglishScottishFrom various place names (such as the region of Ross in northern Scottish) which are derivedFrom:Scottish Gaelic ros meaning promontory, headland
 RossiItalian
 RothGerman
 RoundsEnglishhasMeaning:son of the fat person from the Middle English and Old French rond, rund
 RowbottomEnglishhasMeaning:dweller in the overgrown valley from the Old English ruh rough, overgrown and boðm valley
-RoweEnglish,Scottish,IrishhasMeaning:dweller by a row of hedges or houses from the Middle English row
+RoweEnglishScottishIrishhasMeaning:dweller by a row of hedges or houses from the Middle English row
 RowlandEnglishderivedFrom:Roland
 RowntreeEnglishGiven to a person who lived near a rowan tree or mountain ash
-RoyFrench,EnglishvariantOf:Ray
+RoyFrenchEnglishvariantOf:Ray
 RoyceEnglishOriginally derivedFrom:medieval given name Royse, a variant of Rose
 RoycestonEnglishvariantOf:Royston
 RoydonEnglishOriginally derivedFrom:a place name meaning rye hill from Old English ryge rye and dun hill
@@ -1566,27 +1566,27 @@ SackvilleEnglishFrom the latin de sicca villa meaning from the dry town
 SadlerEnglishhasMeaning:saddle-maker from the Old English sadol
 SalazarSpanish
 SalisburyEnglish
-SalomonEnglish,French,Italian,German,Danish,Norwegian,Polish, Jewish,HungarianderivedFrom:Salomon
-SalvageEnglish,FrenchvariantOf:Savage
+SalomonEnglishFrenchItalianGermanDanishNorwegianPolish JewishHungarianderivedFrom:Salomon
+SalvageEnglishFrenchvariantOf:Savage
 SampsonEnglishderivedFrom:medieval form of the given name Samson
 SamsEnglishderivedFrom:Samuel
-SamsonEnglish,French,German,Jewish,DutchderivedFrom:name Samson
-SamuelEnglish,French,German,JewishderivedFrom:Samuel
+SamsonEnglishFrenchGermanJewishDutchderivedFrom:name Samson
+SamuelEnglishFrenchGermanJewishderivedFrom:Samuel
 SamuelsEnglishderivedFrom:Samuel
 SamuelsonEnglishhasMeaning:son of Samuel
 SanchezSpanish
-SandersEnglish,IrishPatronymic of the given name Sander, a medieval form of Alexander
+SandersEnglishIrishPatronymic of the given name Sander, a medieval form of Alexander
 SandersonEnglishhasMeaning:son of Alexander
-SandfordEnglishIndicated a person from Sandford, English, which means simply sand ford
+SandfordEnglishIndicated a person from Sandford, English which means simply sand ford
 SandovalSpanish
 SandsEnglishFrom the English word, meaning the person lived near or on a beach
 SanfordEnglishvariantOf:Sandford
-SangsterEnglish,ScottishOccupational surname meaning song-maker or singer from Old English
+SangsterEnglishScottishOccupational surname meaning song-maker or singer from Old English
 SantiagoSpanish
-SappingtonEnglishFrom the city of Sapperton, English, from Old English sapere meaning soap maker and ton meaning town, farm, or settlement
-SargentEnglish,FrenchvariantOf:Sergeant
-SaundersEnglish,Scottish,IrishvariantOf:Sanders
-SauvageEnglish,FrenchvariantOf:Savage
+SappingtonEnglishFrom the city of Sapperton, English from Old English sapere meaning soap maker and ton meaning town, farm, or settlement
+SargentEnglishFrenchvariantOf:Sergeant
+SaundersEnglishScottishIrishvariantOf:Sanders
+SauvageEnglishFrenchvariantOf:Savage
 SavageEnglishEnglish nickname for a wild or uncouth person, derivedFrom:a Middle English version of Old French salvage or sauvage, which means untamed
 SavegeEnglishvariantOf:Savage
 SavidgeEnglishvariantOf:Savage
@@ -1598,11 +1598,11 @@ SchmidtGerman
 SchmittGerman
 SchneiderGerman
 SchofieldEnglish
-SchoolScottish,EnglishderivedFrom:either the Old Norse given name Skúli, the Old Danish Skuli or the Old Swedish Skule which probably all mean to protect
+SchoolScottishEnglishderivedFrom:either the Old Norse given name Skúli, the Old Danish Skuli or the Old Swedish Skule which probably all mean to protect
 SchroederGerman
 SchultzGerman
 SchwartzGerman
-ScottEnglish,ScottishOriginally given to a person from Scottish or a person who spoke Scottish Gaelic
+ScottEnglishScottishOriginally given to a person from Scottish or a person who spoke Scottish Gaelic
 ScrivenEnglishhasMeaning:writer, clerk in Old French
 ScrivenerEnglishvariantOf:Scriven
 ScrivenorEnglishvariantOf:Scriven
@@ -1614,7 +1614,7 @@ SelbyEnglishderivedFrom:a village which meant willow farm in Old English
 SelfEnglish
 SempersEnglishderivedFrom:city of Saint Pierre in France
 SeniorEnglishOriginally a name for the elder of two brothers
-SergeantEnglish,FrenchOccupational name derivedFrom:Middle English sergent servant
+SergeantEnglishFrenchOccupational name derivedFrom:Middle English sergent servant
 SerranoSpanish
 SessionsEnglishAnglicized form of Soissons (a city outside of Paris)
 SewardEnglishderivedFrom:Sigeweard
@@ -1628,7 +1628,7 @@ SharmanEnglishvariantOf:Sherman
 SharpScottish
 SharpeScottish
 SharrowEnglishOriginally a name for someone from Sharrow, English
-ShawEnglish,ScottishOriginally given to a person who lived near a sceaga, Old English meaning thicket
+ShawEnglishScottishOriginally given to a person who lived near a sceaga, Old English meaning thicket
 SheaIrish
 SheehanIrish
 ShelbyEnglishvariantOf:Selby
@@ -1639,21 +1639,21 @@ SherburneEnglishDenotes a person hailing from any of the various places called
 SheridanIrish
 ShermanEnglishLiterally shear man, referring to someone who used shears in his line of work, such as a sheep-shearer
 SherwoodEnglish
-ShieldsEnglish,Irish
+ShieldsEnglishIrish
 ShineEnglishhasMeaning:beautiful, attractive from the Old English sciene
 ShoemakerGerman
 ShortEnglishderivedFrom:nickname for a short person, from Middle English schort
 SidneyEnglishOriginally derivedFrom:various place names in English meaning wide island, from Old English sid wide and eg island
-SilvaPortuguese,Spanish
+SilvaPortugueseSpanish
 SimmonsEnglishderivedFrom:Simon
 SimmsEnglishderivedFrom:medieval given name Sim, a short form of Simon
-SimonCzech,Dutch,English,French,German,Hungarian,JewishderivedFrom:Hebrew given name Simon
-SimonsEnglish,GermanderivedFrom:Simon
+SimonCzechDutchEnglishFrenchGermanHungarianJewishderivedFrom:Hebrew given name Simon
+SimonsEnglishGermanderivedFrom:Simon
 SimonsonEnglishhasMeaning:son of Simon
 SimpkinEnglishderivedFrom:diminutive of the given name Simon
 SimpsonEnglishhasMeaning:son of Sim, Sim being a medieval short form of Simon
-SimsEnglish,ScottishvariantOf:Simms
-SinclairEnglish,ScottishderivedFrom:Norman French town called Saint Clair
+SimsEnglishScottishvariantOf:Simms
+SinclairEnglishScottishderivedFrom:Norman French town called Saint Clair
 SkinnerEnglishhasMeaning:skinner from the Old Norse skinn
 SlaterEnglishOccupational surname indicating that an early member worked as a person who covered roofs with slate
 SlatteryIrish
@@ -1663,24 +1663,24 @@ SmallEnglishderivedFrom:nickname for a small person, from Middle English smal
 SmallsEnglishFrom Old English smael, small or thin
 SmartEnglish
 SmedleyEnglishFrom an unidentified place name probably meaning smooth clearing in Old English
-SmithEnglish,German,Irish,ScottishhasMeaning:metal worker, blacksmith from Old English smið, derivedFrom:smitan to smite, to hit
+SmithEnglishGermanIrishScottishhasMeaning:metal worker, blacksmith from Old English smið, derivedFrom:smitan to smite, to hit
 SmytheEnglishvariantOf:Smith
 SnellingEnglishvariantOf:Snell
-SniderDutch,EnglishvariantOf:Snyder
-SnidersDutch,EnglishvariantOf:Snyder
+SniderDutchEnglishvariantOf:Snyder
+SnidersDutchEnglishvariantOf:Snyder
 SnowEnglish
-SnyderDutch,English,GermanhasMeaning:tailor in Dutch,an occupational name for a person who stitched coats and clothing
-SnydersDutch,EnglishvariantOf:Snyder
+SnyderDutchEnglishGermanhasMeaning:tailor in Dutchan occupational name for a person who stitched coats and clothing
+SnydersDutchEnglishvariantOf:Snyder
 SomervilleScottish
 SotoSpanish
 SouthersEnglishhasMeaning:south
 SouthgateEnglishhasMeaning:dweller by the south gate
 SowardsEnglishvariantOf:Seward
-SpaldingEnglish,ScottishFrom the place name Spalding in Lincolnshire
+SpaldingEnglishScottishFrom the place name Spalding in Lincolnshire
 SparksEnglishderivedFrom:Old Norse nickname sparkr meaning vivacious
 SpearEnglishFrom the Middle English spere spear, possibly an occupational name for a hunter or a maker of spears
 SpearingEnglishPatronymic of Spear
-SpearsEnglish,ScottishPatronymic of Spear
+SpearsEnglishScottishPatronymic of Spear
 SpeightEnglishEnglish form of Specht
 SpenceEnglishvariantOf:Spencer
 SpencerEnglishOccupational surname for the person at the manor who dispensed the Lord's provisions to those who lived on his land and worked at his estate
@@ -1688,21 +1688,21 @@ SpoonerEnglishhasMeaning:maker of spoons from the Middle English spoon or make
 SpurlingEnglishhasMeaning:little sparrow from the Middle English sparewe plus the diminutive suffix -(l)ing
 StJohnEnglishFrom the place name St John
 StaceyEnglishvariantOf:Stacy
-StackEnglish,IrishhasMeaning:big from Middle English stack meaning haystack
+StackEnglishIrishhasMeaning:big from Middle English stack meaning haystack
 StacksEnglishvariantOf:Stack
 StacyEnglishderivedFrom:Stace, a medieval form of Eustace
 StaffordEnglishFrom the English place name Staffordshire, which was adopted by the man who lived near a river or creek at a crossing point, which was called a ford
-StainthorpeEnglishOriginally indicated a person from Staindrop (Durham), English, which means valley with stony ground from the Old English stæner meaning stony ground and hop meaning valley
+StainthorpeEnglishOriginally indicated a person from Staindrop (Durham), English which means valley with stony ground from the Old English stæner meaning stony ground and hop meaning valley
 StampEnglishOriginally denoted a person from Etampes (Seine-et-Oise), France
 StanfordEnglishderivedFrom:place name meaning stone ford in Old English
 StanleyEnglishderivedFrom:place name meaning stone clearing in Old English
 StantonEnglishhasMeaning:one of the many places named Stanton, Staunton in Britain
-StarkEnglish,GermanderivedFrom:nickname meaning strong, brave in Old German and Old English
+StarkEnglishGermanderivedFrom:nickname meaning strong, brave in Old German and Old English
 StarrEnglishFrom Middle English sterre star
 StathamEnglishderivedFrom:a village in the English county of Lancashire, near Manchester, Liverpool, and Warrington
 SteedEnglishderivedFrom:Middle English steed, which in turn derives from Old English steda, meaning stallion
 SteeleEnglishOccupational name for a steelworker
-SteffenLow German,EnglishderivedFrom:Stephen
+SteffenLow GermanEnglishderivedFrom:Stephen
 StenetEnglishderivedFrom:diminutive of Stephen, Sten, plus the diminutive suffix -et
 StephensEnglishderivedFrom:Stephen
 StephensonEnglishhasMeaning:son of Stephen
@@ -1721,10 +1721,10 @@ StreetEnglishHabitational name for anyone who lived in a place called Street, 
 StricklandEnglishderivedFrom:place called Strickland in Westmoreland, English
 StringerEnglishOccupational name for a maker of string or bow strings, from Middle English streng string
 StrongEnglish
-StroudEnglish,ScottishLocational name meaning thicket, marsh, or marshy ground overgrown with brushwood
-StrudwickScottish,EnglishOriginally a name for a person from Strudwick, English
+StroudEnglishScottishLocational name meaning thicket, marsh, or marshy ground overgrown with brushwood
+StrudwickScottishEnglishOriginally a name for a person from Strudwick, English
 StuartScottish
-StudwickScottish,EnglishvariantOf:Strudwick
+StudwickScottishEnglishvariantOf:Strudwick
 StylesEnglishLocational name for one who lived near a steep hill, from Old English stigol climb
 SuarezSpanish
 SudworthEnglishFrom an English place name composed of sud south and worth farm
@@ -1747,7 +1747,7 @@ TashEnglishFrom Middle English at asche at the ash tree
 TaskerEnglishMiddle English taske meaning task or assignment
 TateEnglishderivedFrom:Old English given name Tata, of unknown meaning
 TathamEnglishFrom the locational name Tatham which come from the 7th-century given name Tata and ham meaning homestead
-TaylorEnglish,English-Alt,ScottishderivedFrom:Old French tailleur, meaning tailor, ultimately from Latin taliare to cut
+TaylorEnglishEnglish-AltScottishderivedFrom:Old French tailleur, meaning tailor, ultimately from Latin taliare to cut
 TeelEnglishhasMeaning:teal, duck from the Middle English tele
 TempleEnglish
 TempletonScottish
@@ -1757,15 +1757,15 @@ TennysonEnglishhasMeaning:son of Denis
 TerrellEnglishProbably derivedFrom:Norman French nickname tirel to pull, referring to a stubborn person
 TerryEnglish
 TerryEnglishderivedFrom:medieval name Thierry, a Norman French form of Theodoric
-ThackerEnglishhasMeaning:roofer, thatcher in northern Middle English,a variant of Thatcher
+ThackerEnglishhasMeaning:roofer, thatcher in northern Middle Englisha variant of Thatcher
 ThatcherEnglishRefers to a person who thatches roofs by attaching straw to them
-ThomasEnglish,French,WelshderivedFrom:Thomas
+ThomasEnglishFrenchWelshderivedFrom:Thomas
 ThompsettEnglishDiminutive form of Thomas
-ThompsonEnglish,ScottishhasMeaning:son of Thomas
-ThomsonEnglish,ScottishvariantOf:Thompson
-ThorburnEnglish,ScottishderivedFrom:Old Norse given name ÞÓRBJÖRn
+ThompsonEnglishScottishhasMeaning:son of Thomas
+ThomsonEnglishScottishvariantOf:Thompson
+ThorburnEnglishScottishderivedFrom:Old Norse given name ÞÓRBJÖRn
 ThorleyEnglishderivedFrom:place name meaning thorn clearing in Old English
-ThornEnglish,DanishOriginally applied to a person who lived in or near a thorn bush
+ThornEnglishDanishOriginally applied to a person who lived in or near a thorn bush
 ThorneEnglishvariantOf:Thorn
 ThorntonEnglishderivedFrom:place name meaning thorn town in Old English
 ThorpeEnglishFrom old Norse þorp village
@@ -1774,7 +1774,7 @@ ThurstanEnglishderivedFrom:Old Norse name ÞÓRsteinn
 ThurstonEnglish
 ThwaiteEnglishhasMeaning:dweller in a forest clearing, fenced off enclosure or low meadows from the Old Norse Þveit
 TierneyIrish
-TifftEnglish,GermanvariantOf:Toft
+TifftEnglishGermanvariantOf:Toft
 TilleyEnglish
 TimberlakeEnglishFrom an English place name meaning (obviously) timber lake
 TimmonsIrish
@@ -1782,23 +1782,23 @@ TimothysonEnglishhasMeaning:son of Timothy
 TinkerEnglishOccupational name for a mender of kettles, pots, pans
 TiptonEnglishGiven to one who came from town of Tipton (which means town of Tibba)
 TirrellEnglishvariantOf:Terrell
-TittensorEnglish,WelshIndicated a person from Tittensor, English
-TobiasEnglish,French,German,JewishderivedFrom:Tobias
-TobinEnglish,IrishderivedFrom:diminutive of the given name Tobias
+TittensorEnglishWelshIndicated a person from Tittensor, English
+TobiasEnglishFrenchGermanJewishderivedFrom:Tobias
+TobinEnglishIrishderivedFrom:diminutive of the given name Tobias
 TodEnglishvariantOf:Todd
 ToddEnglishhasMeaning:fox, derivedFrom:Middle English todde
 ToftEnglishDenotes a person hailing from one of the many places in Britain of that name
-TolbertEnglish,FrenchderivedFrom:continental Germanic given name of unknown meaning, the second element of the name is derivedFrom:berht meaning bright, famous
+TolbertEnglishFrenchderivedFrom:continental Germanic given name of unknown meaning, the second element of the name is derivedFrom:berht meaning bright, famous
 TollemacheEnglishhasMeaning:knapsack in Old French
 TollerEnglishOccupational name meaning tax gatherer from the Middle English toll
 TorresSpanish
 TownerEnglishvariantOf:Toller
 TownsendEnglishhasMeaning:dweller at the town's end
 TraceyEnglishFrom the village of Tracy-sur-mer on the Normandy coast in France
-TracyEnglish,IrishvariantOf:Tracey or Tracey
+TracyEnglishIrishvariantOf:Tracey or Tracey
 TraiylorEnglishvariantOf:Taylor
-TraskEnglish,ScottishOriginally indicated a person from Thirsk, English
-TraversEnglish,FrenchFrom an English and French place name that described a person who lived near a bridge or ford, or occasionally as an occupational name for the collector of tolls at such a location
+TraskEnglishScottishOriginally indicated a person from Thirsk, English
+TraversEnglishFrenchFrom an English and French place name that described a person who lived near a bridge or ford, or occasionally as an occupational name for the collector of tolls at such a location
 TravesEnglishEnglish variant of Travers
 TravisEnglishEnglish variant of Travers
 TravissEnglishEnglish variant of Travers
@@ -1812,11 +1812,11 @@ TriggsEnglishderivedFrom:nickname meaning loyal (Old Norse triggr)
 TruemanEnglishvariantOf:Truman
 TrujilloSpanish
 TrumanEnglishhasMeaning:trusty man in Middle English
-TuckerEnglish,IrishderivedFrom:Old English tucian meaning one who fulls cloth
+TuckerEnglishIrishderivedFrom:Old English tucian meaning one who fulls cloth
 TuffEnglishvariantOf:Tuft
 TuftEnglishhasMeaning:(dweller by) a clump of trees or bushes from the Middle English tufte, tuffe
 TupperEnglishderivedFrom:Middle English toupe ram
-TurnbullEnglish,ScottishNickname for someone thought to be strong enough to turn around a bull
+TurnbullEnglishScottishNickname for someone thought to be strong enough to turn around a bull
 TurnerEnglishOccupational name meaning one who works with a lathe
 TylerEnglishOccupational name meaning tiler of roofs, from Old English tigele tile
 TyrellEnglishvariantOf:Terrell
@@ -1824,11 +1824,11 @@ TyrrellEnglishvariantOf:Terrell
 TysonEnglishderivedFrom:ickname for a quarrelsome person, from Old French tison meaning firebrand
 TysonEnglishvariantOf:Dyson
 UnderhillEnglishhasMeaning:dweller at the foot of a hill or from a locational name from Underhill in Devon, which was named after the Old English under under and hyll hill, or from Underhill in Kent, named after the Old English under and helde slope
-UnderwoodEnglish,ScottishderivedFrom:Scottish and English place name for a man who lived at the edge of the woods
+UnderwoodEnglishScottishderivedFrom:Scottish and English place name for a man who lived at the edge of the woods
 UptonEnglishderivedFrom:place name meaning upper town in Old English
 UrquhartScottish
-VanMiddlesworthEnglish,DutchAmericanized form of Dutch Van Middelburg
-VanceEnglish,ScottishhasMeaning:dweller by a fen, marsh from the Old English fenn
+VanMiddlesworthEnglishDutchAmericanized form of Dutch Van Middelburg
+VanceEnglishScottishhasMeaning:dweller by a fen, marsh from the Old English fenn
 VannEnglishhasMeaning:dweller by a fen, marsh from the Old English fenn
 VargasSpanish
 VarleyEnglishhasMeaning:Verly, France
@@ -1839,11 +1839,11 @@ VegaSpanish
 VelezSpanish
 VerityEnglishderivedFrom:nickname meaning truth, perhaps given originally to a truthful person
 VernonEnglishLocational name in the Eure region of Normandy, from the Gaulish element vern alder (tree) with the genitive case maker -onis making it place of the alders
-VictorDutch,English,French,German,Italian,Portuguese,SpanishderivedFrom:male given name Victor
-VictorsDutch,English,FrenchderivedFrom:male given name Victor
+VictorDutchEnglishFrenchGermanItalianPortugueseSpanishderivedFrom:male given name Victor
+VictorsDutchEnglishFrenchderivedFrom:male given name Victor
 VictorsonEnglishhasMeaning:son of Victor
-VincentEnglish,FrenchderivedFrom:Vincent
-VipondFrench,EnglishAnglicized form of the French Vieuxpont old bridge
+VincentEnglishFrenchderivedFrom:Vincent
+VipondFrenchEnglishAnglicized form of the French Vieuxpont old bridge
 VirgoEnglishPossibly from Latin virgo virgin, maiden
 VogelGerman
 WaddellScottish
@@ -1852,21 +1852,21 @@ WadeEnglishFrom the Old English given name Wada, a derivative of the word wada
 WagnerGerman
 WakefieldEnglishOriginally indicated a person who came from the town of Wakefield, which means literally field for the yearly wake or festival
 WalkerEnglishOccupational surname for a person who walked on damp raw cloth in order to thicken it
-WallaceScottish,English,IrishhasMeaning:foreigner, stranger from the Norman French waleis
+WallaceScottishEnglishIrishhasMeaning:foreigner, stranger from the Norman French waleis
 WallerEnglishderivedFrom:Middle English walle denoting a builder of walls
 WallerEnglishderivedFrom:Old French gallier meaning man with a pleasant temper
-WallisScottish,EnglishvariantOf:Wallace
+WallisScottishEnglishvariantOf:Wallace
 WalmsleyEnglishFrom an English place name meaning a clearing in a wood, near a lake
-WalshEnglish,IrishhasMeaning:Celtic, from Middle English walsche foreigner (related to Welsh)
-WalterEnglish,GermanderivedFrom:Walter
+WalshEnglishIrishhasMeaning:Celtic, from Middle English walsche foreigner (related to Welsh)
+WalterEnglishGermanderivedFrom:Walter
 WaltersEnglishderivedFrom:Walter
-WaltersonEnglish,SwedishhasMeaning:son of Walter
-WaltonEnglishFrom any of several villages in English, from Old English wald wood, wall wall, or wælla stream, spring and ton town
+WaltersonEnglishSwedishhasMeaning:son of Walter
+WaltonEnglishFrom any of several villages in English from Old English wald wood, wall wall, or wælla stream, spring and ton town
 WardEnglishAmericanized form of French GUÉRin
-WardEnglish,IrishderivedFrom:Old English occupation weard meaning guard, watchman
+WardEnglishIrishderivedFrom:Old English occupation weard meaning guard, watchman
 WardrobeEnglishhasMeaning:warder of the robes, from the Old French warder, garder to watch and robe
 WareEnglishMost examples of this surname are probably derivedFrom:Old English wær meaning (dweller by the) dam, weir
-WarnerGerman,EnglishvariantOf:Werner
+WarnerGermanEnglishvariantOf:Werner
 WarrenEnglishName for a person who lived near a warrene, Norman French meaning animal enclosure (of Germanic origin)
 WarrenEnglishOriginally denoted a person from the town of La Varenne in Normandy
 WarrickEnglishvariantOf:Warwick
@@ -1874,10 +1874,10 @@ WarwickEnglishderivedFrom:a town, itself derivedFrom:Old English wer weir, dam
 WashEnglishderivedFrom:Old French name Gace, Old German Wazzo and Frisian Watso which all are diminutives of Old German names beginning with Wad- or Warin-
 WashingtonEnglishderivedFrom:place name meaning town of Wassa, from Old English tun, meaning town, and Wassa, a given name derivedFrom:Wāðsige, composed of the elements wāð hunt and sige victory
 WatermanEnglishhasMeaning:servant of Walter
-WatermanEnglish,DutchOccupational surname for a boatman or a water carrier
+WatermanEnglishDutchOccupational surname for a boatman or a water carrier
 WatersEnglishOriginally given to a person who lived near the water
 WatkinsEnglishderivedFrom:Middle English given name Wat or Watt, which was a diminutive of the name Walter
-WatsonEnglish,ScottishPatronymic form of the English and Scottish name Watt, which came from the extremely popular Middle English given name Wat or Watt, which was a diminutive of the name Walter
+WatsonEnglishScottishPatronymic form of the English and Scottish name Watt, which came from the extremely popular Middle English given name Wat or Watt, which was a diminutive of the name Walter
 WaughScottish
 WayEnglishOriginally given to a person who lived near a road (a way)
 WayneEnglishOccupational surname meaning wagon maker, derivedFrom:Old English wægn wagon
@@ -1887,14 +1887,14 @@ WeberGerman
 WebsterEnglishOccupational name meaning weaver, from Old English webba
 WeekesEnglishhasMeaning:dweller in an outlying settlement (dependent on a larger village) from the Old English wic
 WeeksEnglish
-WelchEnglish,IrishvariantOf:Walsh
+WelchEnglishIrishvariantOf:Walsh
 WellsEnglishderivedFrom:Middle English welle meaning well
 WelshIrish
 WembleyEnglishHabitational name perhaps derivedFrom:Wembley in Greater London, named from the Old English given name Wemba and leah meaning woodland, clearing
 WentworthEnglish
 WescottEnglishderivedFrom:place name which meant west cottages in Old English
 WesleyEnglishvariantOf:Westley
-WestEnglish,GermanName for a person who lived to the west of something, or who came from the west
+WestEnglishGermanName for a person who lived to the west of something, or who came from the west
 WestbrookEnglishderivedFrom:place in southern English (Hampshire, Devon) meaning from west of the brook
 WestleyEnglishderivedFrom:place name meaning west meadow in Old English
 WhalenIrish
@@ -1902,7 +1902,7 @@ WheelerEnglishOccupational name for a maker of wagon wheels
 WheelockEnglishhasMeaning:Wheelock (Cheshire), English
 WhineryEnglishOriginally indicated a person from Whinneray (Cumbria), English
 WhitakerEnglishFrom an Old English place name composed of hwit white and aecer acre
-WhiteEnglish,Irish,ScottishThis originated as a nickname for a person who had white hair or a pale complexion
+WhiteEnglishIrishScottishThis originated as a nickname for a person who had white hair or a pale complexion
 WhiteheadEnglish
 WhitneyEnglishOriginally from a place name meaning white island in Old English
 WhittakerEnglish
@@ -1918,33 +1918,33 @@ WilkinsEnglishhasMeaning:son of Wilkin
 WilkinsonEnglishhasMeaning:son of Wilkin
 WillardEnglishderivedFrom:Wilheard or Willihard
 WilliamEnglishderivedFrom:William
-WilliamsEnglish,Welsh,GermanhasMeaning:son of William
-WilliamsonEnglish,ScottishhasMeaning:son of William
+WilliamsEnglishWelshGermanhasMeaning:son of William
+WilliamsonEnglishScottishhasMeaning:son of William
 WillisEnglishderivedFrom:William
 WilloughbyEnglishFrom Old English wilig meaning willow plus Old Norse byr meaning farm or village
 WilmerEnglishderivedFrom:WILMǢR
-WilsonEnglish,ScottishhasMeaning:son of Will, Will being a short form of William
+WilsonEnglishScottishhasMeaning:son of Will, Will being a short form of William
 WinchesterEnglishFrom an English place name, derivedFrom:given name Venta, of unknown meaning, combined with Latin castra encampment
 WinfieldEnglishderivedFrom:place name derivedFrom:Old English wynn meadow and feld field
 WinshipEnglishhasMeaning:Wincheap Street (Canterbury), English
 WinslowEnglishderivedFrom:Old English place name meaning hill belonging to Wine
 WinstonEnglishderivedFrom:Old English name Wynstan meaning joy stone
-WinterEnglish,German,SwedishFrom the Old English winter or the Old High German wintar (Middle High German winter) meaning winter
+WinterEnglishGermanSwedishFrom the Old English winter or the Old High German wintar (Middle High German winter) meaning winter
 WinterbottomEnglishBottom means vale or lowland, so Winterbottom probably refers to a winter pasture in a lowland valley
 WinthropEnglishHabitational name from the place names Winthrope or Winthrope
 WintonEnglishderivedFrom:name of villages meaning enclosure belonging to Wine in Old English
 WiseEnglish
 WitherspoonEnglishOriginally given to a person who dwelt at or near a sheep enclosure, Middle English wether sheep and spong strip of land
-WolfGerman,EnglishFrom Middle High German wolf meaning wolf
+WolfGermanEnglishFrom Middle High German wolf meaning wolf
 WolfeEnglishhasMeaning:wolf either from the many Germanic names beginning with the element wolf or as a nickname
 WomackEnglishOf uncertain origin
-WoodEnglish,ScottishOriginally denoted one who lived in or worked in a wood or forest, derivedFrom:Middle English wode
+WoodEnglishScottishOriginally denoted one who lived in or worked in a wood or forest, derivedFrom:Middle English wode
 WoodardEnglish
 WoodcockEnglishNickname referring to the woodcock bird
 WoodhamEnglishhasMeaning:home near the wood, derivedFrom:Old English wudu wood and ham home
 WoodhamsEnglishvariantOf:Woodham
 WoodruffEnglish
-WoodsEnglish,ScottishvariantOf:Wood
+WoodsEnglishScottishvariantOf:Wood
 WoodwardEnglishOccupational surname meaning ward of the wood or guardian of the wood
 WootenEnglish
 WoottonEnglishderivedFrom:Old English wadu-tun meaning farm in or near a wood
@@ -1953,18 +1953,18 @@ WraggeEnglishderivedFrom:Old Danish given name Wraghi
 WrayEnglishDenoted someone who hailed from any of the various places of that name in Northern English from the Old Norse vrá meaning corner, recess
 WrenEnglish
 WrightEnglishAmericanized form of French Le Droit, a nickname for an upright person, from Old French droit right
-WrightEnglish,ScottishFrom Old English wryhta meaning worker, an occupational name for someone who was a craftsman
+WrightEnglishScottishFrom Old English wryhta meaning worker, an occupational name for someone who was a craftsman
 WyattEnglishFrom the medieval given name Wyot
 WyghtEnglishhasMeaning:agile, strong from the Middle English wiht, wight
 WymanEnglishFrom the Old English given name Wigmund
 WyndhamEnglishhasMeaning:house on the lane, based on the Scottish word wynd, a lane, and the Anglo-Saxon ham, a home
 WynneEnglishderivedFrom:Wine
-YATEsEnglish,WelshhasMeaning:dweller by the gate, gate keeper from the Old English word geat meaning gate
+YATEsEnglishWelshhasMeaning:dweller by the gate, gate keeper from the Old English word geat meaning gate
 YapEnglishderivedFrom:nickname for a clever or cunning person, from Middle English yap, meaning devious, deceitful, bent, shrewd
 YatesEnglish
 YongEnglishvariantOf:Young
 YorkEnglishderivedFrom:English city, which probably was derivedFrom:a Brythonic word meaning yew tree
-YoungGerman,Scottish,EnglishderivedFrom:Old English word geong, which means young
+YoungGermanScottishEnglishderivedFrom:Old English word geong, which means young
 YoungeEnglishvariantOf:Young
 YoxallEnglishOriginally indicated a person from Yoxhall (Staffordshire), English
 ZieglerGerman
