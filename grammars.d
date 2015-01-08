@@ -359,142 +359,138 @@ alias isProgrammingLanguage = isFormal;
 /** TODO Remove when __traits(documentation is merged */
 string toHuman(Lang lang) @safe pure @nogc nothrow
 {
-    with (Lang)
+    switch (lang) with (Lang)
     {
-        switch (lang)
-        {
-            case unknown: return `??`;
-            case en: return `English`; // 英語
-            case en_US: return `American English`;
-            case en_GB: return `British English`;
-            case en_CA: return `Canadian English`;
-            case af: return `Afrikaans`;
-            case ar: return `Arabic`;
-            case ae: return `Avestan`;
-            case ak: return `Akan`;
-            case an: return `Aragonese`;
-            case as: return `Assamese`;
-            case az: return `Azerbaijani`;
-            case hy: return `Armenian`;
-            case eu: return `Basque`;
-            case ba: return `Baskhir`;
-            case be: return `Belarusian`;
-            case bn: return `Bengali`;
-            case br: return `Breton`;
-            case bs: return `Bosnian`;
-            case bg: return `Bulgarian`;
-            case bo: return `Tibetan`;
-            case my: return `Burmese`;
-            case zh: return `Chinese Mandarin`;
-            case crh: return `Crimean Tatar`;
-            case hr: return `Croatian`;
-            case ca: return `Catalan`;
-            case cy: return `Welch`;
-            case cs: return `Czech`;
-            case da: return `Danish`;
-            case nl: return `Dutch`;
-            case eo: return `Esperanto`;
-            case et: return `Estonian`;
-            case fi: return `Finnish`;
-            case fj: return `Fiji`;
-            case fo:
-            case faroese: return `Faroese`;
-            case fr: return `French`;
-            case fr_ch: return `French (Switzerland)`;
-            case gl: return `Galician`;
-            case gv: return `Manx`;
-            case de: return `German`;
-            case el: return `Greek`;
-            case ha: return `Hausa`;
-            case he: return `Hebrew`;
-            case hi: return `Hindi`;
-            case hu: return `Hungarian`;
-            case is_: return `Icelandic`;
-            case io: return `Ido`;
-            case id: return `Indonesian`;
-            case ga: return `Irish`;
-            case it: return `Italian`;
-            case ja: return `Japanese`; // 日本語
-            case ka: return `Georgian`;
-            case ku: return `Kurdish`;
-            case kn: return `Kannada`;
-            case kk: return `Kazakh`;
-            case km: return `Khmer`;
-            case ko: return `Korean`;
-            case ky: return `Kyrgyz`;
-            case lo: return `Lao`;
-            case la: return `Latin`;
-            case lt: return `Lithuanian`;
-            case lv: return `Latvian`;
-            case jbo: return `Lojban`;
-            case mk: return `Macedonian`;
-            case nan: return `Min Nan`;
-            case mg: return `Malagasy`;
-            case mn: return `Mongolian`;
-            case ms: return `Malay`;
-            case mt: return `Maltese`;
-            case ne: return `Nepali`;
-            case no: return `Norwegian`;
-            case ps: return `Pashto`;
-            case fa: return `Persian`;
-            case oc: return `Occitan`;
-            case pl: return `Polish`;
-            case pt: return `Portuguese`;
-            case pt_BR: return `Brazilian Portuguese`;
-            case ro: return `Romanian`;
-            case ru: return `Russian`;
-            case sa: return `Sanskrit`;
-            case si: return `Sinhalese`;
-            case sm: return `Samoan`;
-            case sco: return `Scots`;
-            case sq: return `Albanian`;
-            case te: return `Tegulu`;
-            case tl: return `Tagalog`;
-            case gd: return `Scottish Gaelic`;
-            case sr: return `Serbian`;
-            case sk: return `Slovak`;
-            case sl: return `Slovene`;
-            case es: return `Spanish`;
-            case sw: return `Swahili`;
-            case sv: return `Swedish`;
-            case tg: return `Tajik`;
-            case ta: return `Tamil`;
-            case th: return `Thai`;
-            case tr: return `Turkish`;
-            case tk: return `Turkmen`;
-            case uk: return `Ukrainian`;
-            case ur: return `Urdu`;
-            case uz: return `Uzbek`;
-            case vi: return `Vietnamese`;
-            case vo: return `Volapük`;
-            case wa: return `Waloon`;
-            case yi: return `Yiddish`;
-            case akk: return `Akkadian`;
-            case ce: return `Chechen`;
-            case co: return `Corsican`;
-            case fur: return `Friulian`;
-            case gu: return `Gujarati`;
-            case hil: return `Hiligaynon`;
-            case haw: return `Hawaiian`;
+        case unknown: return `??`;
+        case en: return `English`; // 英語
+        case en_US: return `American English`;
+        case en_GB: return `British English`;
+        case en_CA: return `Canadian English`;
+        case af: return `Afrikaans`;
+        case ar: return `Arabic`;
+        case ae: return `Avestan`;
+        case ak: return `Akan`;
+        case an: return `Aragonese`;
+        case as: return `Assamese`;
+        case az: return `Azerbaijani`;
+        case hy: return `Armenian`;
+        case eu: return `Basque`;
+        case ba: return `Baskhir`;
+        case be: return `Belarusian`;
+        case bn: return `Bengali`;
+        case br: return `Breton`;
+        case bs: return `Bosnian`;
+        case bg: return `Bulgarian`;
+        case bo: return `Tibetan`;
+        case my: return `Burmese`;
+        case zh: return `Chinese Mandarin`;
+        case crh: return `Crimean Tatar`;
+        case hr: return `Croatian`;
+        case ca: return `Catalan`;
+        case cy: return `Welch`;
+        case cs: return `Czech`;
+        case da: return `Danish`;
+        case nl: return `Dutch`;
+        case eo: return `Esperanto`;
+        case et: return `Estonian`;
+        case fi: return `Finnish`;
+        case fj: return `Fiji`;
+        case fo:
+        case faroese: return `Faroese`;
+        case fr: return `French`;
+        case fr_ch: return `French (Switzerland)`;
+        case gl: return `Galician`;
+        case gv: return `Manx`;
+        case de: return `German`;
+        case el: return `Greek`;
+        case ha: return `Hausa`;
+        case he: return `Hebrew`;
+        case hi: return `Hindi`;
+        case hu: return `Hungarian`;
+        case is_: return `Icelandic`;
+        case io: return `Ido`;
+        case id: return `Indonesian`;
+        case ga: return `Irish`;
+        case it: return `Italian`;
+        case ja: return `Japanese`; // 日本語
+        case ka: return `Georgian`;
+        case ku: return `Kurdish`;
+        case kn: return `Kannada`;
+        case kk: return `Kazakh`;
+        case km: return `Khmer`;
+        case ko: return `Korean`;
+        case ky: return `Kyrgyz`;
+        case lo: return `Lao`;
+        case la: return `Latin`;
+        case lt: return `Lithuanian`;
+        case lv: return `Latvian`;
+        case jbo: return `Lojban`;
+        case mk: return `Macedonian`;
+        case nan: return `Min Nan`;
+        case mg: return `Malagasy`;
+        case mn: return `Mongolian`;
+        case ms: return `Malay`;
+        case mt: return `Maltese`;
+        case ne: return `Nepali`;
+        case no: return `Norwegian`;
+        case ps: return `Pashto`;
+        case fa: return `Persian`;
+        case oc: return `Occitan`;
+        case pl: return `Polish`;
+        case pt: return `Portuguese`;
+        case pt_BR: return `Brazilian Portuguese`;
+        case ro: return `Romanian`;
+        case ru: return `Russian`;
+        case sa: return `Sanskrit`;
+        case si: return `Sinhalese`;
+        case sm: return `Samoan`;
+        case sco: return `Scots`;
+        case sq: return `Albanian`;
+        case te: return `Tegulu`;
+        case tl: return `Tagalog`;
+        case gd: return `Scottish Gaelic`;
+        case sr: return `Serbian`;
+        case sk: return `Slovak`;
+        case sl: return `Slovene`;
+        case es: return `Spanish`;
+        case sw: return `Swahili`;
+        case sv: return `Swedish`;
+        case tg: return `Tajik`;
+        case ta: return `Tamil`;
+        case th: return `Thai`;
+        case tr: return `Turkish`;
+        case tk: return `Turkmen`;
+        case uk: return `Ukrainian`;
+        case ur: return `Urdu`;
+        case uz: return `Uzbek`;
+        case vi: return `Vietnamese`;
+        case vo: return `Volapük`;
+        case wa: return `Waloon`;
+        case yi: return `Yiddish`;
+        case akk: return `Akkadian`;
+        case ce: return `Chechen`;
+        case co: return `Corsican`;
+        case fur: return `Friulian`;
+        case gu: return `Gujarati`;
+        case hil: return `Hiligaynon`;
+        case haw: return `Hawaiian`;
 
-            case c: return `C`;
-            case cxx: return `C++`;
-            case cSharp: return `C#`;
-            case objectiveC: return `Objective-C`;
-            case objectiveCxx: return `Objective-C++`;
-            case d: return `D`;
-            case java: return `Java`;
-            case ada: return `Ada`;
-            case rust: return `Rust`;
-            case swift: return `Swift`;
-            case fortran: return `Fortran`;
-            case modelica: return `Modelica`;
-            case math: return `Mathematics`;
-            case physics: return `Physics`;
-            default: return "??";
-        }
+        case c: return `C`;
+        case cxx: return `C++`;
+        case cSharp: return `C#`;
+        case objectiveC: return `Objective-C`;
+        case objectiveCxx: return `Objective-C++`;
+        case d: return `D`;
+        case java: return `Java`;
+        case ada: return `Ada`;
+        case rust: return `Rust`;
+        case swift: return `Swift`;
+        case fortran: return `Fortran`;
+        case modelica: return `Modelica`;
+        case math: return `Mathematics`;
+        case physics: return `Physics`;
+        default: return "??";
     }
-
 }
 
 Lang decodeLang(S)(S lang) @safe pure nothrow if (isSomeString!S)
@@ -637,14 +633,11 @@ unittest
 /** Check if $(D c) is a Vowel in language $(D lang). */
 bool isVowel(C)(C c, Lang lang) if (isSomeChar!C)
 {
-    with (Lang)
+    switch (lang) with (Lang)
     {
-        switch (lang)
-        {
-            case en: return c.isEnglishVowel;
-            case sv: return c.isSwedishVowel;
-            default: return c.isEnglishVowel;
-        }
+        case en: return c.isEnglishVowel;
+        case sv: return c.isSwedishVowel;
+        default: return c.isEnglishVowel;
     }
 }
 
@@ -991,16 +984,13 @@ class Subject : Part
 Sense decodeWordKind(C)(C kindCode) if (isSomeChar!C)
 {
     typeof(return) kind;
-    with (Sense)
+    switch (kindCode) with (Sense)
     {
-        switch (kindCode)
-        {
-            case 'n': kind = noun; break;
-            case 'v': kind = verb; break;
-            case 'a': kind = adjective; break;
-            case 'r': kind = adverb; break;
-            default: kind = unknown; break;
-        }
+        case 'n': kind = noun; break;
+        case 'v': kind = verb; break;
+        case 'a': kind = adjective; break;
+        case 'r': kind = adverb; break;
+        default: kind = unknown; break;
     }
     return kind;
 }
@@ -1047,106 +1037,97 @@ unittest
 {
     bool isNoun(Sense kind)
     {
-        with (Sense)
-            return (kind.isNumeric ||
-                    kind.of(noun,
-                            nounRegular,
-                            nounIrregular,
-                            nounSingular,
-                            nounPlural,
-                            weekday,
-                            month,
-                            dayOfMonth,
-                            year,
-                            season,
-                            uncountable,
-                            nounAbbrevation,
-                            nounAcronym) ||
-                    kind.isName);
+        with (Sense) return (kind.isNumeric ||
+                             kind.of(noun,
+                                     nounRegular,
+                                     nounIrregular,
+                                     nounSingular,
+                                     nounPlural,
+                                     weekday,
+                                     month,
+                                     dayOfMonth,
+                                     year,
+                                     season,
+                                     uncountable,
+                                     nounAbbrevation,
+                                     nounAcronym) ||
+                             kind.isName);
     }
     bool isNumeric(Sense kind)
     {
-        with (Sense)
-            return (kind.isInteger ||
-                    kind.of(nounNumeric,
-                            decimal,
-                            numberRational,
-                            numberIrrational,
-                            numberComplex));
+        with (Sense) return (kind.isInteger ||
+                             kind.of(nounNumeric,
+                                     decimal,
+                                     numberRational,
+                                     numberIrrational,
+                                     numberComplex));
     }
     bool isNumeral(Sense kind)
     {
-        with (Sense)
-            return (kind.of(numeral,
-                            ordinalNumber));
+        with (Sense) return (kind.of(numeral,
+                                     ordinalNumber));
     }
     bool isInteger(Sense kind)
     {
-        with (Sense)
-            return (kind.isNumeral ||
-                    kind.of(integer,
-                            integerPositive,
-                            integerNegative));
+        with (Sense) return (kind.isNumeral ||
+                             kind.of(integer,
+                                     integerPositive,
+                                     integerNegative));
     }
     bool isName(Sense kind)
     {
-        with (Sense)
-            return kind.of(name,
-                           nameMale,
-                           nameFemale,
-                           surname,
-                           nameLocation,
-                           namePerson,
-                           nameOrganisation,
-                           country);
+        with (Sense) return kind.of(name,
+                                    nameMale,
+                                    nameFemale,
+                                    surname,
+                                    nameLocation,
+                                    namePerson,
+                                    nameOrganisation,
+                                    country);
     }
     bool isVerb(Sense kind)
     {
-        with (Sense)
-            return kind.of(verb,
-                           verbRegular,
-                           verbIrregular,
-                           verbAbbrevation,
-                           verbImperative,
-                           verbInfinitive,
-                           verbPresent,
-                           verbPast,
-                           verbFuture,
-                           verbPastParticiple);
+        with (Sense) return kind.of(verb,
+                                    verbRegular,
+                                    verbIrregular,
+                                    verbAbbrevation,
+                                    verbImperative,
+                                    verbInfinitive,
+                                    verbPresent,
+                                    verbPast,
+                                    verbFuture,
+                                    verbPastParticiple);
     }
     bool isAdjective(Sense kind)
     {
-        with (Sense)
-            return kind.of(adjective,
-                           adjectiveRegular,
-                           adjectiveIrregular,
-                           adjectiveAbbrevation,
-                           adjectiveNominative,
-                           adjectiveComparative,
-                           adjectiveSuperlative,
-                           adjectivePossessiveSingular,
-                           adjectivePossessivePlural);
+        with (Sense) return kind.of(adjective,
+                                    adjectiveRegular,
+                                    adjectiveIrregular,
+                                    adjectiveAbbrevation,
+                                    adjectiveNominative,
+                                    adjectiveComparative,
+                                    adjectiveSuperlative,
+                                    adjectivePossessiveSingular,
+                                    adjectivePossessivePlural);
     }
     bool isAdverb(Sense kind)
     {
-        with (Sense)
-            return kind.of(adverb,
-                           normalAdverb,
-                           negatingAdverb,
-                           affirmingAdverb,
-                           conjunctiveAdverb);
+        with (Sense) return kind.of(adverb,
+                                    normalAdverb,
+                                    negatingAdverb,
+                                    affirmingAdverb,
+                                    conjunctiveAdverb);
     }
     bool isPronoun(Sense kind)
     {
-        with (Sense)
-            return (kind == pronoun ||
-                    kind.isPronounPersonal ||
-                    kind.isPronounPossessive ||
-                    kind.isPronounDemonstrative ||
-                    kind == pronounInterrogative ||
-                    kind.isPronounReflexive ||
-                    kind.isPronounIndefinite ||
-                    kind == pronounRelative);
+        with (Sense) return (kind == pronoun ||
+                             kind.isPronounPersonal ||
+                             kind.isPronounPossessive ||
+                             kind.isPronounDemonstrative ||
+                             kind == pronounInterrogative ||
+                             kind.isPronounReflexive ||
+                             kind.isPronounIndefinite ||
+                             kind == pronounRelative);
     }
     bool isPronounPersonal(Sense kind)
     {
@@ -1155,116 +1136,104 @@ unittest
     }
     bool isPronounPersonalSingular(Sense kind)
     {
-        with (Sense)
-            return kind.of(pronounPersonalSingular,
+        with (Sense) return kind.of(pronounPersonalSingular,
 
-                           pronounPersonalSingular1st,
-                           pronounPersonalSingular2nd,
-                           pronounPersonalSingular3rd,
+                                    pronounPersonalSingular1st,
+                                    pronounPersonalSingular2nd,
+                                    pronounPersonalSingular3rd,
 
-                           pronounPersonalSingularMale,
-                           pronounPersonalSingularMale1st,
-                           pronounPersonalSingularMale2nd,
+                                    pronounPersonalSingularMale,
+                                    pronounPersonalSingularMale1st,
+                                    pronounPersonalSingularMale2nd,
 
-                           pronounPersonalSingularFemale,
-                           pronounPersonalSingularFemale1st,
-                           pronounPersonalSingularFemale2nd,
+                                    pronounPersonalSingularFemale,
+                                    pronounPersonalSingularFemale1st,
+                                    pronounPersonalSingularFemale2nd,
 
-                           pronounPersonalSingularNeutral);
+                                    pronounPersonalSingularNeutral);
     }
     bool isPronounPersonalPlural(Sense kind)
     {
-        with (Sense)
-            return kind.of(pronounPersonalPlural,
-                           pronounPersonalPlural1st,
-                           pronounPersonalPlural2nd,
-                           pronounPersonalPlural3rd);
+        with (Sense) return kind.of(pronounPersonalPlural,
+                                    pronounPersonalPlural1st,
+                                    pronounPersonalPlural2nd,
+                                    pronounPersonalPlural3rd);
     }
     bool isPronounPossessive(Sense kind)
     {
-        with (Sense)
-            return (kind == pronounPossessive ||
-                    kind.isPronounPossessiveSingular ||
-                    kind.isPronounPossessivePlural);
+        with (Sense) return (kind == pronounPossessive ||
+                             kind.isPronounPossessiveSingular ||
+                             kind.isPronounPossessivePlural);
     }
     bool isPronounPossessiveSingular(Sense kind)
     {
-        with (Sense)
-            return kind.of(pronounPossessiveSingular,
-                           pronounPossessiveSingular1st,
-                           pronounPossessiveSingular2nd,
-                           pronounPossessiveSingularMale,
-                           pronounPossessiveSingularFemale,
-                           pronounPossessiveSingularNeutral);
+        with (Sense) return kind.of(pronounPossessiveSingular,
+                                    pronounPossessiveSingular1st,
+                                    pronounPossessiveSingular2nd,
+                                    pronounPossessiveSingularMale,
+                                    pronounPossessiveSingularFemale,
+                                    pronounPossessiveSingularNeutral);
     }
     bool isPronounPossessivePlural(Sense kind)
     {
-        with (Sense)
-            return kind.of(pronounPossessivePlural,
-                           pronounPossessivePlural1st,
-                           pronounPossessivePlural2nd,
-                           pronounPossessivePlural3rd);
+        with (Sense) return kind.of(pronounPossessivePlural,
+                                    pronounPossessivePlural1st,
+                                    pronounPossessivePlural2nd,
+                                    pronounPossessivePlural3rd);
     }
     bool isPronounDemonstrative(Sense kind)
     {
-        with (Sense)
-            return kind.of(pronounDemonstrative,
-                           pronounDemonstrativeSingular,
-                           pronounDemonstrativePlural);
+        with (Sense) return kind.of(pronounDemonstrative,
+                                    pronounDemonstrativeSingular,
+                                    pronounDemonstrativePlural);
     }
     bool isPronounPlural(Sense kind)
     {
-        with (Sense)
-            return (kind.isPronounPersonalPlural ||
-                    kind == pronounPossessivePlural);
+        with (Sense) return (kind.isPronounPersonalPlural ||
+                             kind == pronounPossessivePlural);
     }
     bool isPronounReflexive(Sense kind)
     {
-        with (Sense)
-            return kind.of(pronounReflexive,
-                           pronounReflexiveSingular,
-                           pronounReflexivePlural);
+        with (Sense) return kind.of(pronounReflexive,
+                                    pronounReflexiveSingular,
+                                    pronounReflexivePlural);
     }
     bool isPronounIndefinite(Sense kind)
     {
-        with (Sense)
-            return kind.of(pronounIndefinite,
-                           pronounIndefiniteSingular,
-                           pronounIndefinitePlural);
+        with (Sense) return kind.of(pronounIndefinite,
+                                    pronounIndefiniteSingular,
+                                    pronounIndefinitePlural);
     }
     bool isPreposition(Sense kind)
     {
-        with (Sense)
-            return kind.of(preposition,
-                           prepositionTime,
-                           prepositionPosition,
-                           prepositionPlace,
-                           prepositionDirection);
+        with (Sense) return kind.of(preposition,
+                                    prepositionTime,
+                                    prepositionPosition,
+                                    prepositionPlace,
+                                    prepositionDirection);
     }
     bool isArticle(Sense kind)
     {
-        with (Sense)
-            return kind.of(article,
-                           articleUndefinite,
-                           articleDefinite,
-                           articlePartitive);
+        with (Sense) return kind.of(article,
+                                    articleUndefinite,
+                                    articleDefinite,
+                                    articlePartitive);
     }
     bool isConjunction(Sense kind)
     {
-        with (Sense)
-            return kind.of(conjunction,
-                           conjunctionCoordinating,
-                           conjunctionSubordinating,
-                           conjunctionSubordinatingConcession,
-                           conjunctionSubordinatingCondition,
-                           conjunctionSubordinatingComparison,
-                           conjunctionSubordinatingTime,
-                           conjunctionSubordinatingReason,
-                           conjunctionSubordinatingAdjective,
-                           conjunctionSubordinatingPronoun,
-                           conjunctionSubordinatingManner,
-                           conjunctionSubordinatingPlace,
-                           conjunctionCorrelative);
+        with (Sense) return kind.of(conjunction,
+                                    conjunctionCoordinating,
+                                    conjunctionSubordinating,
+                                    conjunctionSubordinatingConcession,
+                                    conjunctionSubordinatingCondition,
+                                    conjunctionSubordinatingComparison,
+                                    conjunctionSubordinatingTime,
+                                    conjunctionSubordinatingReason,
+                                    conjunctionSubordinatingAdjective,
+                                    conjunctionSubordinatingPronoun,
+                                    conjunctionSubordinatingManner,
+                                    conjunctionSubordinatingPlace,
+                                    conjunctionCorrelative);
     }
 }
 
@@ -1272,33 +1241,31 @@ bool specializes(Sense special,
                  Sense general)
     @safe @nogc pure nothrow
 {
-    with (Sense) {
-        switch (general)
-        {
-            /* TODO Use static foreach over all enum members to generate all
-             * relevant cases: */
-            case unknown: return true;
-            case noun: return special.isNoun || special.isPronoun;
-            case numeral: return special.isNumeral;
-            case integer: return special.isInteger;
-            case nounNumeric: return special.isNumeric;
-            case name: return special.isName;
-            case nounAbbrevation: return special == nounAcronym;
-            case verb: return special.isVerb;
-            case adverb: return special.isAdverb;
-            case adjective: return special.isAdjective;
-            case adjectiveNominative:
-            case adjectiveComparative:
-            case adjectiveSuperlative:
-                return special == general;
-            case pronoun: return special.isPronoun;
-            case pronounPersonal: return special.isPronounPersonal;
-            case pronounPossessive: return special.isPronounPossessive;
-            case preposition: return special.isPreposition;
-            case article: return special.isArticle;
-            case conjunction: return special.isConjunction;
-            default: return special == general;
-        }
+    switch (general) with (Sense)
+    {
+        /* TODO Use static foreach over all enum members to generate all
+         * relevant cases: */
+        case unknown: return true;
+        case noun: return special.isNoun || special.isPronoun;
+        case numeral: return special.isNumeral;
+        case integer: return special.isInteger;
+        case nounNumeric: return special.isNumeric;
+        case name: return special.isName;
+        case nounAbbrevation: return special == nounAcronym;
+        case verb: return special.isVerb;
+        case adverb: return special.isAdverb;
+        case adjective: return special.isAdjective;
+        case adjectiveNominative:
+        case adjectiveComparative:
+        case adjectiveSuperlative:
+            return special == general;
+        case pronoun: return special.isPronoun;
+        case pronounPersonal: return special.isPronounPersonal;
+        case pronounPossessive: return special.isPronounPossessive;
+        case preposition: return special.isPreposition;
+        case article: return special.isArticle;
+        case conjunction: return special.isConjunction;
+        default: return special == general;
     }
 }
 
@@ -1706,12 +1673,11 @@ unittest
 string negationIn(Lang lang = Lang.en)
     @safe pure nothrow
 {
-    with (Lang)
-        switch (lang)
-        {
-            case en: return "not";
-            case sv: return "inte";
-            case de: return "nicht";
-            default: return "not";
-        }
+    switch (lang) with (Lang)
+    {
+        case en: return "not";
+        case sv: return "inte";
+        case de: return "nicht";
+        default: return "not";
+    }
 }

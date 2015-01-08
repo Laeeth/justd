@@ -913,31 +913,30 @@ bool defined(Origin origin) @safe @nogc pure nothrow { return origin != Origin.u
 
 string toNice(Origin origin) @safe pure
 {
-    with (Origin)
-        final switch (origin)
-        {
-            case unknown: return "Unknown";
-            case cn5: return "CN5";
-            case dbpedia: return "DBpedia";
+    final switch (origin) with (Origin)
+    {
+        case unknown: return "Unknown";
+        case cn5: return "CN5";
+        case dbpedia: return "DBpedia";
             // case dbpedia37: return "DBpedia37";
             // case dbpedia39Umbel: return "DBpedia39Umbel";
             // case dbpediaEn: return "DBpediaEnglish";
 
-            case wordnet: return "WordNet";
+        case wordnet: return "WordNet";
 
-            case umbel: return "umbel";
-            case jmdict: return "JMDict";
+        case umbel: return "umbel";
+        case jmdict: return "JMDict";
 
-            case verbosity: return "Verbosity";
-            case wiktionary: return "Wiktionary";
-            case nell: return "NELL";
-            case yago: return "Yago";
-            case globalmind: return "GlobalMind";
-            case synlex: return "Synlex";
-            case folketsLexikon: return "FolketsLexikon";
-            case swesaurus: return "Swesaurus";
-            case manual: return "Manual";
-        }
+        case verbosity: return "Verbosity";
+        case wiktionary: return "Wiktionary";
+        case nell: return "NELL";
+        case yago: return "Yago";
+        case globalmind: return "GlobalMind";
+        case synlex: return "Synlex";
+        case folketsLexikon: return "FolketsLexikon";
+        case swesaurus: return "Swesaurus";
+        case manual: return "Manual";
+    }
 }
 
 auto pageSize() @trusted
@@ -1240,7 +1239,7 @@ class Net(bool useArray = true,
         Nodes allNodes;
         Links allLinks;
 
-        Lemmas[string] lemmasByExpr;
+        Lemmas[Expr] lemmasByExpr;
 
         string[ContextIx] contextNameByIx; /** Ontology Context Names by Index. */
         ContextIx[string] contextIxByName; /** Ontology Context Indexes by Name. */
@@ -1335,7 +1334,7 @@ class Net(bool useArray = true,
      */
     Lemmas lemmasOf(S)(S expr) if (isSomeString!S)
     {
-        return expr in lemmasByExpr ? lemmasByExpr[expr] : typeof(return).init;
+        return lemmasByExpr.get(expr.idup, typeof(return).init);
     }
 
     /** Learn $(D Lemma) of $(D expr).
@@ -4497,23 +4496,22 @@ class Net(bool useArray = true,
     Origin decodeCN5OriginDirect(char[] path, out Lang lang,
                                  Origin currentOrigin)
     {
-        with (Origin)
-            switch (path)
-            {
-                case `/s/dbpedia/3.7`:
-                case `/s/dbpedia/3.9/umbel`:
-                case `/d/dbpedia/en`:
-                    lang = Lang.en;
-                    return dbpedia;
+        switch (path) with (Origin)
+        {
+            case `/s/dbpedia/3.7`:
+            case `/s/dbpedia/3.9/umbel`:
+            case `/d/dbpedia/en`:
+                lang = Lang.en;
+                return dbpedia;
 
-                case `/d/wordnet/3.0`: return wordnet;
-                case `/s/wordnet/3.0`: return wordnet;
-                case `/d/umbel`: return umbel;
-                case `/d/jmdict`: return jmdict;
+            case `/d/wordnet/3.0`: return wordnet;
+            case `/s/wordnet/3.0`: return wordnet;
+            case `/d/umbel`: return umbel;
+            case `/d/jmdict`: return jmdict;
 
-                case `/s/site/verbosity`: return verbosity;
-                default: /* dln("Handle ", path); */ return unknown;
-            }
+            case `/s/site/verbosity`: return verbosity;
+            default: /* dln("Handle ", path); */ return unknown;
+        }
     }
 
     /** Decode ConceptNet5 Origin $(D path). */
@@ -4547,18 +4545,17 @@ class Net(bool useArray = true,
                     }
                     break;
                 case 2:
-                    with (Origin)
-                        switch (part)
-                        {
-                            case "dbpedia": origin = dbpedia; break;
-                            case "wordnet": origin = wordnet; break;
-                            case "wiktionary": origin = wiktionary; break;
-                            case "globalmind": origin = globalmind; break;
-                            case "conceptnet": origin = cn5; break;
-                            case "verbosity": origin = verbosity; break;
-                            case "site": fromSite = true; break;
-                            default: break;
-                        }
+                    switch (part) with (Origin)
+                    {
+                        case "dbpedia": origin = dbpedia; break;
+                        case "wordnet": origin = wordnet; break;
+                        case "wiktionary": origin = wiktionary; break;
+                        case "globalmind": origin = globalmind; break;
+                        case "conceptnet": origin = cn5; break;
+                        case "verbosity": origin = verbosity; break;
+                        case "site": fromSite = true; break;
+                        default: break;
+                    }
                     break;
                 default:
                     break;
@@ -5269,7 +5266,13 @@ class Net(bool useArray = true,
                     writeln(`> Joined to `, joinedLine);
                     showNodes(joinedLine, lang, sense, lineSeparator, false);
                 }
+                {
+                    const joinedLine = spaceParts.joiner("'").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
             }
+
             auto minusParts = normLine.splitter('-').filter!(a => !a.empty);
             if (minusParts.count >= 2)
             {
@@ -5280,6 +5283,31 @@ class Net(bool useArray = true,
                 }
                 {
                     const joinedLine = minusParts.joiner(" ").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
+                {
+                    const joinedLine = minusParts.joiner("'").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
+            }
+
+            auto quoteParts = normLine.splitter(`'`).filter!(a => !a.empty);
+            if (quoteParts.count >= 2)
+            {
+                {
+                    const joinedLine = quoteParts.joiner("").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
+                {
+                    const joinedLine = quoteParts.joiner(" ").to!string;
+                    writeln(`> Joined to `, joinedLine);
+                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                }
+                {
+                    const joinedLine = quoteParts.joiner("-").to!string;
                     writeln(`> Joined to `, joinedLine);
                     showNodes(joinedLine, lang, sense, lineSeparator, false);
                 }
@@ -5297,6 +5325,14 @@ class Net(bool useArray = true,
                 writeln(`> Stemmed to `, normLine, " in language ", stemStatus[1]);
                 showNodes(normLine, lang, sense, lineSeparator);
             }
+        }
+
+        if (recurse &&
+            lineNodeRefs.empty &&
+            !normLine.endsWith('?'))
+        {
+            writeln(`> Turned `, normLine, " into a question");
+            showNodes(normLine ~ '?', lang, sense, lineSeparator);
         }
     }
 
