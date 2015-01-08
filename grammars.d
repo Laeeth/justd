@@ -769,6 +769,8 @@ enum Sense:ubyte
     idiom,                      /// Idiomatic Expression.
     slang,                      /// Slang.
 
+    punctuation,
+
     noun,
     nounRegular,
     nounIrregular,

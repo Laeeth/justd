@@ -49,5 +49,38 @@ quadquadruple
 ∞infinity
 πpi
 
+++increment
+--decrement
+
+en:code:incincrement
+en:code:decdecrement
+
+addaddition
+subsubtraction
+mulmultiply
+divdivide
+
++plus
+-minus
+*times
+*star
+
+math:+add
+math:-subtract
+math:*multiply
+math:/divide
+math:/over
+code:^power
+code:^xor
+
+xorexclusive or
+
+expexponent
+
+supsuper
+subsubset
+
 uncountableuncountable noun
 periodtime period
+
+PoSPart of Speech
