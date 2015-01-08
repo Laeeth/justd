@@ -453,7 +453,7 @@ class WordNet(bool useArray = true,
             const synset_off   = words[6+p_cnt].to!uint;
             static if (useArray) { auto links = Links(words[6+p_cnt..$].map!(a => a.to!uint)); }
             else                 { auto links = words[6+p_cnt..$].map!(a => a.to!uint).array; }
-            auto meaning = Entry!Links(words[1].front.decodeWordKind,
+            auto meaning = Entry!Links(words[1].front.decodeWordSense,
                                            words[2].to!ubyte, links, lang);
             debug assert(synset_cnt == sense_cnt);
             _words[lemma] ~= meaning;
