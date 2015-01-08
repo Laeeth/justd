@@ -157,18 +157,6 @@ class WordNet(bool useArray = true,
         readIndex(dictDir.nPath(`index.verb`), false, lang);
     }
 
-    void readExplicits()
-    {
-        /* weekdays */
-        foreach (e; [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`]) { addWord(e, Sense.weekday, 0, Lang.en); }
-        foreach (e; [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`]) { addWord(e, Sense.weekday, 0, Lang.de); }
-        foreach (e; [`måndag`, `tisdag`, `onsdag`, `torsdag`, `fredag`, `lördag`, `söndag`]) { addWord(e, Sense.weekday, 0, Lang.sv); }
-
-        /* months */
-        foreach (e; [`januari`, `februari`, `mars`, `april`, `maj`, `juni`, `juli`, `augusti`, `september`, `oktober`, `november`, `december`]) { addWord(e, Sense.month, 0, Lang.sv); }
-        foreach (e; [`january`, `february`, `mars`, `april`, `may`, `june`, `july`, `august`, `september`, `oktober`, `november`, `december`]) { addWord(e, Sense.month, 0, Lang.en); }
-    }
-
     void readDicts(const Lang[] langs = [Lang.en, Lang.sv],
                    bool allLangs = false)
     {
@@ -252,7 +240,6 @@ class WordNet(bool useArray = true,
          bool allLangs = false)
     {
         readDicts(langs, allLangs);
-        readExplicits();
 
         // TODO Learn: adjective strong <=> noun strength
 
