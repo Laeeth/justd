@@ -51,7 +51,7 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
-    TODO Replace context with NodeRef
+    TODO Make context a NodeRef such NodeRef("mammal") =>isA=> NodeRef("animal")
 
     TODO Infer senses of consecutive word when reading sorted word
     list. Requires knowledge of Language specfic ending grammar for verbs,
@@ -60,7 +60,7 @@
 
     TODO Remove Lang argument to connect()
 
-    TODO Group Rel bool negation and bool reversion into a bitfield of size 16
+    TODO Group Rel bool negation and bool reversion into a bitfield struct of size 16
     and simplify interfaces. Use CTFE to add instantiator rel!"memberOf"
 
     TODO Support N-way in learnTuple en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
@@ -1492,6 +1492,8 @@ class Net(bool useArray = true,
         learnNouns();
         learnPronouns();
         learnVerbs();
+        learnEnglishAdverbs();
+        learnSwedishAdverbs();
         learnUndefiniteArticles();
         learnDefiniteArticles();
         learnPartitiveArticles();
@@ -1677,47 +1679,137 @@ class Net(bool useArray = true,
 
     void learnEnglishPronouns()
     {
-        learnAttributes(Lang.en, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pronoun`, Sense.pronoun, Sense.noun, 1.0);
-        learnAttributes(Lang.en, [`I`, `me`,  `you`, `it`], Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.noun, 1.0);
+        enum lang = Lang.en;
 
-        learnAttributes(Lang.en, [`he`, `him`], Rel.isA, false, `male singular personal pronoun`, Sense.pronounPersonalSingularMale, Sense.noun, 1.0);
-        learnAttributes(Lang.en, [`she`, `her`], Rel.isA, false, `female singular personal pronoun`, Sense.pronounPersonalSingularFemale, Sense.noun, 1.0);
+        // Singular
+        learnAttributes(lang, [`I`, `me`], Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`you`], Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular2nd, Sense.noun, 1.0);
+        learnAttributes(lang, [`it`], Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.noun, 1.0);
 
-        learnAttributes(Lang.en, [`we`, `us`, // 1st person
-                                  `you`, // 2nd person
-                                  `they`, `them`], // 3rd person
-                        Rel.isA, false, `personal pronoun plural`, Sense.pronounPersonalPlural, Sense.noun, 1.0);
+        learnAttributes(lang, [`he`], Rel.isA, false, `1st-person male singular personal pronoun`, Sense.pronounPersonalSingular1stMale, Sense.noun, 1.0);
+        learnAttributes(lang, [`him`], Rel.isA, false, `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingular2ndMale, Sense.noun, 1.0);
 
-        /* TODO near/far in distance/time , singular, plural */
-        learnAttributes(Lang.en, [`this`, `that`], Rel.isA, false,
-                        `demonstrative pronoun singular`, Sense.pronounDemonstrativeSingular, Sense.noun, 1.0);
-        learnAttributes(Lang.en, [`these`, `those`], Rel.isA, false,
-                        `demonstrative pronoun plural`, Sense.pronounDemonstrativePlural, Sense.noun, 1.0);
+        learnAttributes(lang, [`she`], Rel.isA, false, `1st-person female singular personal pronoun`, Sense.pronounPersonalSingular1stFemale, Sense.noun, 1.0);
+        learnAttributes(lang, [`her`], Rel.isA, false, `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingular2ndFemale, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`we`, `us`], Rel.isA, false, `1st-person personal pronoun plural`, Sense.pronounPersonalPlural1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`you`], Rel.isA, false, `2nd-person personal pronoun plural`, Sense.pronounPersonalPlural2nd, Sense.noun, 1.0);
+        learnAttributes(lang, [`they`, `they`], Rel.isA, false, `3rd-person personal pronoun plural`, Sense.pronounPersonalPlural3rd, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`this`, `that`], Rel.isA, false, `singular demonstrative pronoun`, Sense.pronounDemonstrativeSingular, Sense.noun, 1.0);
+        learnAttributes(lang, [`these`, `those`], Rel.isA, false, `plural demonstrative pronoun`, Sense.pronounDemonstrativePlural, Sense.noun, 1.0);
+
+        // Possessive
+        learnAttributes(lang, [`my`, `your`], Rel.isA, false, `singular possessive adjective`, Sense.adjectivePossessiveSingular, Sense.noun, 1.0);
+        learnAttributes(lang, [`our`, `their`], Rel.isA, false, `plural possessive adjective`, Sense.adjectivePossessivePlural, Sense.noun, 1.0);
+        learnAttributes(lang, [`mine`, `yours`], Rel.isA, false, `singular possessive pronoun`, Sense.pronounPossessiveSingular, Sense.noun, 1.0);
+        learnAttributes(lang, [`his`], Rel.isA, false, `male singular possessive pronoun`, Sense.pronounPossessiveSingularMale, Sense.noun, 1.0);
+        learnAttributes(lang, [`hers`], Rel.isA, false, `female singular possessive pronoun`, Sense.pronounPossessiveSingularFemale, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`ours`], Rel.isA, false, `1st-person plural possessive pronoun`, Sense.pronounPossessivePlural1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`yours`], Rel.isA, false, `2nd-person plural possessive pronoun`, Sense.pronounPossessivePlural2nd, Sense.noun, 1.0);
+        learnAttributes(lang, [`theirs`], Rel.isA, false, `3rd-person plural possessive pronoun`, Sense.pronounPossessivePlural3rd, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`who`, `whom`, `what`, `which`, `whose`, `whoever`, `whatever`, `whichever`], Rel.isA, false, `interrogative pronoun`, Sense.pronounInterrogative, Sense.noun, 1.0);
+        learnAttributes(lang, [`myself`, `yourself`, `himself`, `herself`, `itself`], Rel.isA, false, `singular reflexive pronoun`, Sense.pronounReflexiveSingular, Sense.noun, 1.0);
+        learnAttributes(lang, [`ourselves`, `yourselves`, `themselves`], Rel.isA, false, `plural reflexive pronoun`, Sense.pronounReflexivePlural, Sense.noun, 1.0);
+        learnAttributes(lang, [`each other`, `one another`], Rel.isA, false, `reciprocal pronoun`, Sense.pronounReciprocal, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`who`, `whom`, // generally only for people
+                               `whose`, // possession
+                               `which`, // things
+                               `that` // things and people
+                            ], Rel.isA, false, `relative pronoun`, Sense.pronounRelative, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`all`, `any`, `more`, `most`, `none`, `some`, `such`], Rel.isA, false, `indefinite pronoun`, Sense.pronounIndefinitePlural.noun, 1.0);
+        learnAttributes(lang, [`another`, `anybody`, `anyone`, `anything`, `each`, `either`, `enough`,
+                               `everybody`, `everyone`, `everything`, `less`, `little`, `much`, `neither`,
+                               `nobody`, `noone`, `one`, `other`,
+                               `somebody`, `someone`,
+                               `something`, `you`], Rel.isA, false, `singular indefinite pronoun`, Sense.pronounIndefiniteSingular, Sense.noun, 1.0);
+        learnAttributes(lang, [`both`, `few`, `fewer`, `many`, `others`, `several`, `they`], Rel.isA, false, `plural indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.noun, 1.0);
+
+        // Rest
+        learnAttributes(lang, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `pronoun`, Sense.pronoun, Sense.noun, 1.0); // TODO Remove?
     }
 
     void learnSwedishPronouns()
     {
-        learnAttributes(Lang.sv, [`jag`, `mig`, // TODO 1st person
-                                  `du`, `dig`, // TODO 2nd person
-                                  `den`, `det`], // TODO 3rd person
-                        Rel.isA, false, `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, [`han`, `honom`], Rel.isA, false, `male singular personal pronoun`, Sense.pronounPersonalSingularMale, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, [`hon`, `henne`], Rel.isA, false, `female singular personal pronoun`, Sense.pronounPersonalSingularFemale, Sense.noun, 1.0);
+        enum lang = Lang.sv;
 
-        learnAttributes(Lang.sv, [`vi`, `oss`, // 1st person
-                                  `ni`, // 2nd person
-                                  `de`, `dem`], // 3rd person
-                        Rel.isA, false, `personal pronoun plural`, Sense.pronounPersonalPlural, Sense.noun, 1.0);
+        // Personal
+        learnAttributes(lang, [`jag`, `mig`], Rel.isA, false, `1st-person singular personal pronoun`, Sense.pronounPersonalSingular1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`du`, `dig`], Rel.isA, false, `2nd-person singular personal pronoun`, Sense.pronounPersonalSingular2nd, Sense.noun, 1.0);
+        learnAttributes(lang, [`den`, `det`], Rel.isA, false, `3rd-person singular personal pronoun`, Sense.pronounPersonalSingular3rd, Sense.noun, 1.0);
 
-        learnAttributes(Lang.sv, [`den här`, `den där`], Rel.isA, false,
-                        `demonstrative pronoun singular`, Sense.pronounDemonstrativeSingular, Sense.noun, 1.0);
-        learnAttributes(Lang.sv, [`de här`, `de där`], Rel.isA, false,
-                        `demonstrative pronoun plural`, Sense.pronounDemonstrativePlural, Sense.noun, 1.0);
+        learnAttributes(lang, [`han`], Rel.isA, false, `1st-person male singular personal pronoun`, Sense.pronounPersonalSingularMale1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`honom`], Rel.isA, false, `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingularMale2nd, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`hon`], Rel.isA, false, `1st-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`henne`], Rel.isA, false, `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale2nd, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`hen`], Rel.isA, false, `androgyn singular personal pronoun`, Sense.pronounPersonalSingular, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`vi`, `oss`], Rel.isA, false, `1st-person personal pronoun plural`, Sense.pronounPersonalPlural1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`ni`], Rel.isA, false, `2nd-person personal pronoun plural`, Sense.pronounPersonalPlural2nd, Sense.noun, 1.0);
+        learnAttributes(lang, [`de`, `dem`], Rel.isA, false, `3rd-person personal pronoun plural`, Sense.pronounPersonalPlural3rd, Sense.noun, 1.0);
+
+        // Possessive
+        learnAttributes(lang, [`min`], Rel.isA, false, `1st-person singular possessive adjective`, Sense.pronounPossessiveSingular1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`din`], Rel.isA, false, `2nd-person possessive adjective`, Sense.pronounPossessiveSingular2nd, Sense.noun, 1.0);
+        learnAttributes(lang, [`hans`], Rel.isA, false, `male singular possessive pronoun`, Sense.pronounPossessiveSingularMale, Sense.noun, 1.0);
+        learnAttributes(lang, [`hennes`], Rel.isA, false, `female singular possessive pronoun`, Sense.pronounPossessiveSingularFemale, Sense.noun, 1.0);
+        learnAttributes(lang, [`hens`], Rel.isA, false, `singular possessive pronoun`, Sense.pronounPossessiveSingular, Sense.noun, 1.0);
+        learnAttributes(lang, [`dens`, `dets`], Rel.isA, false, `singular possessive pronoun`, Sense.pronounPossessiveSingularNeutral, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`vår`], Rel.isA, false, `1st-person plural possessive pronoun`, Sense.pronounPossessivePlural1st, Sense.noun, 1.0);
+        learnAttributes(lang, [`er`], Rel.isA, false, `2nd-person plural possessive pronoun`, Sense.pronounPossessivePlural2nd, Sense.noun, 1.0);
+        learnAttributes(lang, [`deras`], Rel.isA, false, `3rd-person plural possessive pronoun`, Sense.pronounPossessivePlural3rd, Sense.noun, 1.0);
+
+        // Demonstrative
+        learnAttributes(lang, [`den här`, `den där`], Rel.isA, false, `demonstrative pronoun singular`, Sense.pronounDemonstrativeSingular, Sense.noun, 1.0);
+        learnAttributes(lang, [`de här`, `de där`], Rel.isA, false, `demonstrative pronoun plural`, Sense.pronounDemonstrativePlural, Sense.noun, 1.0);
+
+        // Other
+        learnAttributes(lang, [`vem`, `som`, `vad`, `vilken`, `vems`], Rel.isA, false, `interrogative pronoun`, Sense.pronounInterrogative, Sense.noun, 1.0);
+        learnAttributes(lang, [`mig själv`, `dig själv`, `han själv`, `henne själv`, `hen själv`, `den själv`, `det själv`], Rel.isA, false, `singular reflexive pronoun`, Sense.pronounReflexiveSingular, Sense.noun, 1.0); // TODO person
+        learnAttributes(lang, [`oss själva`, `er själva`, `dem själva`], Rel.isA, false, `plural reflexive pronoun`, Sense.pronounReflexivePlural, Sense.noun, 1.0); // TODO person
+        learnAttributes(lang, [`varandra`], Rel.isA, false, `reciprocal pronoun`, Sense.pronounReciprocal, Sense.noun, 1.0);
     }
 
     void learnVerbs()
     {
         learnAttributes(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `verb`, Sense.verb, Sense.noun, 1.0);
+    }
+
+    void learnEnglishAdverbs()
+    {
+        enum lang = Lang.en;
+        learnAttributes(lang,
+                        [`accordingly`, `additionally`, `again`, `almost`,
+                         `although`, `anyway`, `as a result`, `besides`,
+                         `certainly`, `comparatively`, `consequently`,
+                         `contrarily`, `conversely`, `elsewhere`, `equally`,
+                         `eventually`, `finally`, `further`, `furthermore`,
+                         `hence`, `henceforth`, `however`, `in addition`,
+                         `in comparison`, `in contrast`, `in fact`, `incidentally`,
+                         `indeed`, `instead`, `just as`, `likewise`,
+                         `meanwhile`, `moreover`, `namely`, `nevertheless`,
+                         `next`, `nonetheless`, `notably`, `now`, `otherwise`,
+                         `rather`, `similarly`, `still`, `subsequently`, `that is`,
+                         `then`, `thereafter`, `therefore`, `thus`,
+                         `undoubtedly`, `uniquely`, `on the other hand`, `also`,
+                         `for example`, `for instance`, `of course`, `on the contrary`,
+                         `so far`, `until now`, `thus` ],
+                        Rel.isA, false, `conjunctive adverb`, Sense.conjunctiveAdverb, Sense.noun, 1.0);
+        learnAttributes(lang, [`no`, `not`, `never`, `nowhere`, `none`, `nothing`], Rel.isA, false, `negating adverb`, Sense.negatingAdverb, Sense.noun, 1.0);
+        learnAttributes(lang, [`yes`, `yeah`], Rel.isA, false, `affirming adverb`, Sense.affirmingAdverb, Sense.noun, 1.0);
+    }
+
+    void learnSwedishAdverbs()
+    {
+        enum lang = Lang.sv;
+        learnAttributes(lang, [`ej`, `inte`, `icke`], Rel.isA, false, `negating adverb`, Sense.negatingAdverb, Sense.noun, 1.0);
     }
 
     void learnDefiniteArticles()
@@ -1800,7 +1892,9 @@ class Net(bool useArray = true,
                         Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
         learnAttributes(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
                         Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
-        learnAttributes(Lang.en, [`though`, `although`, `even though`, `while`],
+        learnAttributes(Lang.en, [`that`],
+                        Rel.isA, false, `coordinating conjunction`, Sense.conjunctionSubordinating, Sense.noun, 1.0);
+        learnAttributes(Lang.en, [`though`, `although`, `eventhough`, `even though`, `while`],
                         Rel.isA, false, `coordinating concession conjunction`, Sense.conjunctionSubordinatingConcession, Sense.noun, 1.0);
         learnAttributes(Lang.en, [`if`, `only if`, `unless`, `until`, `provided that`, `assuming that`, `even if`, `in case`, `in case that`, `lest`],
                         Rel.isA, false, `coordinating condition conjunction`, Sense.conjunctionSubordinatingCondition, Sense.noun, 1.0);
@@ -2201,8 +2295,8 @@ class Net(bool useArray = true,
                                     Sense attributeSense = Sense.noun,
                                     NWeight weight = 0.5,
                                     Origin origin = Origin.manual) if (isInputRange!R &&
-                                                                  (isSomeString!(ElementType!R)) &&
-                                                                  isSomeString!S)
+                                                                       (isSomeString!(ElementType!R)) &&
+                                                                       isSomeString!S)
     {
         return connectMto1(store(words.map!toLower, lang, wordSense, origin),
                            rel, reversion,

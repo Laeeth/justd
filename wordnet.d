@@ -159,98 +159,6 @@ class WordNet(bool useArray = true,
 
     void readExplicits()
     {
-        foreach (e; [`my`, `your`]) { addWord(e, Sense.adjectivePossessiveSingular, 0, Lang.en); }
-        foreach (e; [`our`, `their`]) { addWord(e, Sense.adjectivePossessivePlural, 0, Lang.en); }
-        foreach (e; [`mine`, `yours`]) /* 1st person */ { addWord(e, Sense.pronounPossessiveSingular, 0, Lang.en); }
-        foreach (e; [`his`]) { addWord(e, Sense.pronounPossessiveSingularMale, 0, Lang.en); }
-        foreach (e; [`hers`]) { addWord(e, Sense.pronounPossessiveSingularFemale, 0, Lang.en); }
-
-        foreach (e; [`min`, /* 1st person */ `din`, /* 2nd person */ ]) { addWord(e, Sense.pronounPossessiveSingular, 0, Lang.sv); }
-        foreach (e; [`hans`]) { addWord(e, Sense.pronounPossessiveSingularMale, 0, Lang.sv); }
-        foreach (e; [`hennes`]) { addWord(e, Sense.pronounPossessiveSingularFemale, 0, Lang.sv); }
-        foreach (e; [`dens`, `dets`, /* 3rd person */ ]) { addWord(e, Sense.pronounPossessiveSingularNeutral, 0, Lang.sv); }
-
-        foreach (e; [`ours`, // 1st person
-                     `yours`, // 2nd person
-                     `theirs` // 3rd person
-                     ])
-        {
-            addWord(e, Sense.pronounPossessivePlural, 0, Lang.en);
-        }
-
-        foreach (e; [`vår`, // 1st person
-                     `er`, // 2nd person
-                     `deras` // 3rd person
-                     ])
-        {
-            addWord(e, Sense.pronounPossessivePlural, 0, Lang.sv);
-        }
-        foreach (e; [`who`, `whom`, `what`, `which`, `whose`, `whoever`, `whatever`, `whichever`]) { addWord(e, Sense.pronounInterrogative, 0, Lang.sv); }
-        foreach (e; [`vem`, `som`, `vad`, `vilken`, `vems`]) { addWord(e, Sense.pronounInterrogative, 0, Lang.sv); }
-
-        foreach (e; [`myself`, `yourself`, `himself`, `herself`, `itself`]) { addWord(e, Sense.pronounReflexiveSingular, 0, Lang.en); }
-        foreach (e; [`mig själv`, `dig själv`, `han själv`, `henne själv`, `den själv`]) { addWord(e, Sense.pronounReflexiveSingular, 0, Lang.sv); }
-
-        foreach (e; [`ourselves`, `yourselves`, `themselves`]) { addWord(e, Sense.pronounReflexivePlural, 0, Lang.en); }
-        foreach (e; [`oss själva`, `er själva`, `dem själva`]) { addWord(e, Sense.pronounReflexivePlural, 0, Lang.sv); }
-
-        foreach (e; [`each other`, `one another`]) { addWord(e, Sense.pronounReciprocal, 0, Lang.en); }
-        foreach (e; [`varandra`]) { addWord(e, Sense.pronounReciprocal, 0, Lang.sv); }
-
-        foreach (e; [`another`, `anybody`, `anyone`, `anything`, `each`, `either`, `enough`,
-                     `everybody`, `everyone`, `everything`, `less`, `little`, `much`, `neither`,
-                     `nobody`, `noone`, `one`, `other`,
-                     `somebody`, `someone`,
-                     `something`, `you`]) {
-            addWord(e, Sense.pronounIndefiniteSingular, 0, Lang.en);
-        }
-
-        foreach (e; [`both`, `few`, `fewer`, `many`, `others`, `several`, `they`]) { addWord(e, Sense.pronounIndefinitePlural, 0, Lang.en); }
-
-        foreach (e; [`all`, `any`, `more`, `most`, `none`, `some`, `such`]) { addWord(e, Sense.pronounIndefinite, 0, Lang.en); }
-
-        foreach (e; [`who`, `whom`, // generally only for people
-                     `whose`, // possession
-                     `which`, // things
-                     `that` // things and people
-                     ]) {
-            addWord(e, Sense.pronounRelative, 0, Lang.en);
-        }
-
-        foreach (e; [`after`, `although`, `as`, `as if`, `as long as`,
-                     `because`, `before`, `even if`, `even though`, `if`,
-                     `once`, `provided`, `since`, `so that`, `that`,
-                     `though`, `till`, `unless`, `until`, `what`,
-                     `when`, `whenever`, `wherever`, `whether`, `while`])
-        {
-            addWord(e, Sense.conjunctionSubordinating, 0, Lang.en);
-        }
-
-        foreach (e; [`accordingly`, `additionally`, `again`, `almost`,
-                     `although`, `anyway`, `as a result`, `besides`,
-                     `certainly`, `comparatively`, `consequently`,
-                     `contrarily`, `conversely`, `elsewhere`, `equally`,
-                     `eventually`, `finally`, `further`, `furthermore`,
-                     `hence`, `henceforth`, `however`, `in addition`,
-                     `in comparison`, `in contrast`, `in fact`, `incidentally`,
-                     `indeed`, `instead`, `just as`, `likewise`,
-                     `meanwhile`, `moreover`, `namely`, `nevertheless`,
-                     `next`, `nonetheless`, `notably`, `now`, `otherwise`,
-                     `rather`, `similarly`, `still`, `subsequently`, `that is`,
-                     `then`, `thereafter`, `therefore`, `thus`,
-                     `undoubtedly`, `uniquely`, `on the other hand`, `also`,
-                     `for example`, `for instance`, `of course`, `on the contrary`,
-                     `so far`, `until now`, `thus` ])
-        {
-            addWord(e, Sense.conjunctiveAdverb, 0, Lang.en);
-        }
-
-        foreach (e; [`no`, `not`, `never`, `nowhere`, `none`, `nothing`]) { addWord(e, Sense.negatingAdverb, 0, Lang.en); }
-
-        foreach (e; [`yes`, `yeah`]) { addWord(e, Sense.affirmingAdverb, 0, Lang.en); }
-
-        foreach (e; [`ej`, `inte`, `icke`]) { addWord(e, Sense.negatingAdverb, 0, Lang.sv); }
-
         /* weekdays */
         foreach (e; [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`]) { addWord(e, Sense.weekday, 0, Lang.en); }
         foreach (e; [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`]) { addWord(e, Sense.weekday, 0, Lang.de); }
@@ -639,7 +547,8 @@ unittest
 
     const netLangs = [Lang.en,
                       Lang.de,
-                      Lang.sv];
+                      Lang.sv,
+                      Lang.br];
 
     auto wn = new WordNet!(useArray, useRCString)(netLangs);
 
