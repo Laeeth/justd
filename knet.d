@@ -53,7 +53,7 @@
 
     TODO Infer senses of consecutive word when reading sorted word
     list. Requires knowledge of Language specfic ending grammar for verbs,
-    nouns, adjectives, adverbs.
+    nouns, adjectives, adverbs. Use (verb|noun|adjective)(Ir)Regular to indicate regularity
     - Swedish: "ersätt", "ersätta", "ersätter", "ersatte", "ersatt"
 
     TODO Remove Lang argument to connect()
