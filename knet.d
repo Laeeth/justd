@@ -5270,8 +5270,10 @@ class Net(bool useArray = true,
         }
     }
 
-    /** Show nodes and their relations matching content in $(D line). */
-    void showNodes(S)(S line,
+    /** Try Showing nodes and their relations matching content in $(D line).
+        Returns: true if any nodes where shown, false otherwise.
+     */
+    bool showNodes(S)(S line,
                       Lang lang = Lang.unknown,
                       Sense sense = Sense.unknown,
                       S lineSeparator = `_`,
@@ -5285,7 +5287,7 @@ class Net(bool useArray = true,
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
         auto normLine = line.strip.tr(std.ascii.whitespace, ` `, `s`);
         if (normLine.empty)
-            return;
+            return false;
 
         writeln(`> Line "`, normLine, `"`);
 
@@ -5450,7 +5452,7 @@ class Net(bool useArray = true,
         }
 
         if (normLine.empty)
-            return;
+            return false;
 
         // queried line nodes
         auto lineNodeRefs = nodeRefsOf(normLine, lang, sense);
@@ -5520,11 +5522,8 @@ class Net(bool useArray = true,
                     showNodes(joinedLine, lang, sense, lineSeparator, false);
                 }
             }
-        }
 
-        // stemmed
-        if (recurse && lineNodeRefs.empty)
-        {
+            // stemmed
             while (true)
             {
                 const stemStatus = normLine.stemize(lang);
@@ -5533,27 +5532,20 @@ class Net(bool useArray = true,
                 writeln(`> Stemmed to `, normLine, " in language ", stemStatus[1]);
                 showNodes(normLine, lang, sense, lineSeparator);
             }
-        }
 
-        if (recurse && lineNodeRefs.empty &&
-            !normLine.endsWith('?'))
-        {
-            writeln(`> Trying `, normLine, " as a question");
-            showNodes(normLine ~ '?', lang, sense, lineSeparator, false);
-        }
+            if (!normLine.endsWith('?'))
+            {
+                writeln(`> Trying `, normLine, " as a question");
+                showNodes(normLine ~ '?', lang, sense, lineSeparator, false);
+            }
 
-        if (recurse && lineNodeRefs.empty)
-        {
             const loweredLine = normLine.toLower;
             if (loweredLine != normLine)
             {
                 writeln(`> Trying `, normLine, " in lowercase");
                 showNodes(loweredLine, lang, sense, lineSeparator, false);
             }
-        }
 
-        if (recurse && lineNodeRefs.empty)
-        {
             const capitalizedLine = normLine.capitalize;
             if (capitalizedLine != normLine)
             {
@@ -5562,6 +5554,7 @@ class Net(bool useArray = true,
             }
         }
 
+        return false;
     }
 
     auto anagramsOf(S)(S expr) if (isSomeString!S)
