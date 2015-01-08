@@ -287,7 +287,7 @@ class WordNet(bool useArray = true,
         TODO filter on langs if langs is non-empty.
      */
     Entry!Links[] meaningsOf(S)(const S lemma,
-                                    const Lang[] langs = [])
+                                const Lang[] langs = [])
     {
         typeof(return) senses;
 

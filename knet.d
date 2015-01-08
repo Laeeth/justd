@@ -1639,7 +1639,7 @@ class Net(bool useArray = true,
                    Rel.hasNameDay,
                    Sense.nounDate, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/en/surname_country.txt",
+        learnTuple("../knowledge/en/surname_origin_meaning.txt",
                    Sense.surname, Lang.unknown,
                    Rel.hasOrigin,
                    Sense.country, Lang.en,
