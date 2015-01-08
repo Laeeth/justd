@@ -1418,6 +1418,103 @@ class Net(bool useArray = true,
         return nodes;
     }
 
+    auto pageSize() @trusted
+    {
+        version(linux)
+        {
+            import core.sys.posix.sys.shm: __getpagesize;
+            return __getpagesize();
+        }
+        else
+        {
+            return 4096;
+        }
+    }
+
+    void readIndexLine(R, N)(const R line,
+                             const N lnr,
+                             const Lang lang = Lang.unknown,
+                             const bool useMmFile = false)
+    {
+        if (!line.empty &&
+            !line.front.isWhite) // if first is not space. TODO move this check
+        {
+            static if (isSomeString!R) { const linestr = line; }
+            else                       { const linestr = cast(string)line.idup; } // TODO Why is this needed? And why does this fail?
+            /* pragma(msg, typeof(line).stringof); */
+            /* pragma(msg, typeof(line.idup).stringof); */
+            const words        = linestr.split; // TODO Non-eager split?
+
+            // const lemma        = words[0].idup; // NOTE: Stuff fails if this is set
+            static if (useRCString) { immutable Lemma lemma = words[0]; }
+            else                    { immutable lemma = words[0].idup; }
+
+            const pos          = words[1];
+            const synset_cnt   = words[2].to!uint;
+            const p_cnt        = words[3].to!uint;
+            const ptr_symbol   = words[4..4+p_cnt];
+            const sense_cnt    = words[4+p_cnt].to!uint;
+            const tagsense_cnt = words[5+p_cnt].to!uint;
+            const synset_off   = words[6+p_cnt].to!uint;
+            static if (useArray)
+            {
+                // auto links = Links(words[6+p_cnt..$].map!(a => a.to!uint));
+            }
+            else
+            {
+                // auto links = words[6+p_cnt..$].map!(a => a.to!uint).array;
+            }
+            // auto meaning = Entry!Links(words[1].front.decodeWordSense,
+            //                            words[2].to!ubyte, links, lang);
+            debug assert(synset_cnt == sense_cnt);
+            // _words[lemma] ~= meaning;
+        }
+    }
+
+    /** Read WordNet Index File $(D fileName).
+        Manual page: wndb
+    */
+    void readIndex(string fileName, bool useMmFile = false,
+                   Lang lang = Lang.unknown)
+    {
+        size_t lnr;
+        /* TODO Functionize and merge with conceptnet5.readCSV */
+        if (useMmFile)
+        {
+            version (none)
+            {
+                import std.mmfile: MmFile;
+                auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
+                const data = cast(ubyte[])mmf[];
+                // import algorithm_ex: byLine;
+                foreach (line; data.byLine)
+                {
+                    readIndexLine(line, lnr, lang, useMmFile);
+                    lnr++;
+                }
+            }
+        }
+        else
+        {
+            foreach (line; File(fileName).byLine)
+            {
+                readIndexLine(line, lnr, lang);
+                lnr++;
+            }
+        }
+        writeln(`Read `, lnr, ` words from `, fileName);
+    }
+
+    void readWordNet(const string dirPath)
+    {
+        // NOTE: Test both read variants through alternating uses of Mmfile or not
+        const lang = Lang.en;
+        readIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang);
+        readIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang);
+        readIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang);
+        readIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang);
+    }
+
     /** Construct Network */
     this(string dirPath)
     {
@@ -1428,7 +1525,9 @@ class Net(bool useArray = true,
         learnPreciseThings();
 
         // Supervised Knowledge
-        wordnet = new WordNet!(true, true)([Lang.en]);
+        wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
+        readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
+
         readSynlexFile("~/Knowledge/swesaurus/synpairs.xml".expandTilde.buildNormalizedPath);
         readFolketsFile("~/Knowledge/swesaurus/folkets_en_sv_public.xdxf".expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
         readFolketsFile("~/Knowledge/swesaurus/folkets_sv_en_public.xdxf".expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
