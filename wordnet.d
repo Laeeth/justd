@@ -146,7 +146,7 @@ class WordNet(bool useArray = true,
         writeln(`Added `, lnr, ` new `, lang.toHuman, ` (`, exceptionCount, ` uncaseable) words from `, fileName);
     }
 
-    void readWordNet(const string dirName = `~/Knowledge/wordnet/WordNet-3.0/dict`)
+    void readWordNet(const string dirName = `~/Knowledge/wordnet/dict-3.1`)
     {
         const dictDir = dirName.expandTilde;
         // NOTE: Test both read variants through alternating uses of Mmfile or not
