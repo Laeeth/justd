@@ -1515,7 +1515,9 @@ class Net(bool useArray = true,
         readIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang);
     }
 
-    /** Construct Network */
+    /** Construct Network
+        Read sources in order of decreasing reliability.
+     */
     this(string dirPath)
     {
         const quick = true;
@@ -1524,21 +1526,13 @@ class Net(bool useArray = true,
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnPreciseThings();
 
-        // Supervised Knowledge
+        // Externally Supervised Knowledge
         wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
         readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
-
-        readSynlexFile("~/Knowledge/swesaurus/synpairs.xml".expandTilde.buildNormalizedPath);
-        readFolketsFile("~/Knowledge/swesaurus/folkets_en_sv_public.xdxf".expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
-        readFolketsFile("~/Knowledge/swesaurus/folkets_sv_en_public.xdxf".expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
+        readSwesaurus();
 
         // Learn Less Absolute Things
         learnAssociativeThings();
-
-        // NELL
-        readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
-                                                            .buildNormalizedPath,
-                     10000);
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
@@ -1550,6 +1544,11 @@ class Net(bool useArray = true,
         {
             readCN5File(file, false, maxCount);
         }
+
+        // NELL
+        readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
+                                                            .buildNormalizedPath,
+                     10000);
 
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
@@ -4800,6 +4799,13 @@ class Net(bool useArray = true,
         }
         writeln("Reading ConceptNet from ", path, ` having `, lnr, ` lines`);
         showRelations;
+    }
+
+    void readSwesaurus()
+    {
+        readSynlexFile("~/Knowledge/swesaurus/synpairs.xml".expandTilde.buildNormalizedPath);
+        readFolketsFile("~/Knowledge/swesaurus/folkets_en_sv_public.xdxf".expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
+        readFolketsFile("~/Knowledge/swesaurus/folkets_sv_en_public.xdxf".expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
     }
 
     /** Read SynLex Synonyms File $(D path) in XML format.
