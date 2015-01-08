@@ -1499,6 +1499,7 @@ class Net(bool useArray = true,
         learnPartitiveArticles();
         learnConjunctions();
         learnInterjections();
+        learnTime();
 
         // Verb
         learnAttributes(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verb, Sense.noun, 1.0);
@@ -1942,6 +1943,16 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en,
                         rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(word => !word.empty),
                         Rel.isA, false, `interjection`, Sense.interjection, Sense.noun, 1.0);
+    }
+
+    void learnTime()
+    {
+        learnAttributes(Lang.en, [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`],    Rel.isA, false, `weekday`, Sense.weekday, Sense.noun, 1.0);
+        learnAttributes(Lang.de, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Rel.isA, false, `weekday`, Sense.weekday, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Rel.isA, false, `weekday`, Sense.weekday, Sense.noun, 1.0);
+
+        learnAttributes(Lang.en, [`january`, `february`, `mars`, `april`, `may`, `june`, `july`, `august`, `september`, `oktober`, `november`, `december`], Rel.isA, false, `month`, Sense.month, Sense.noun, 1.0);
+        learnAttributes(Lang.sv, [`januari`, `februari`, `mars`, `april`, `maj`, `juni`, `juli`, `augusti`, `september`, `oktober`, `november`, `december`],    Rel.isA, false, `month`, Sense.month, Sense.noun, 1.0);
     }
 
     /// Learn Assocative Things.
