@@ -544,6 +544,7 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     enum iserad = `iserad`;
     enum de = `de`;
     enum ing = `ing`;
+    enum igt = `igt`;
     enum llt = `llt`;
 
     switch (s)
@@ -594,6 +595,11 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
             }
             return t;
         }
+    }
+
+    if (s.endsWith(igt))
+    {
+        return s[0 .. $ - 1];
     }
 
     if (s.endsWith(ya))
