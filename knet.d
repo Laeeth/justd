@@ -1156,7 +1156,6 @@ class Net(bool useArray = true,
              Rel rel,
              NodeRef dstRef,
              bool negation,
-             Lang lang = Lang.unknown,
              Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
         {
@@ -1211,8 +1210,6 @@ class Net(bool useArray = true,
 
         Rel rel;
         bool negation; /// relation negation
-
-        Lang lang;
 
         Origin origin;
     }
@@ -2012,7 +2009,7 @@ class Net(bool useArray = true,
         connect(store("coordinating conjunction", Lang.en, Sense.noun, Origin.manual),
                 Rel.uses,
                 store("connect independent sentence parts", Lang.en, Sense.unknown, Origin.manual),
-                Lang.en, Origin.manual, 1.0, false, true);
+                Origin.manual, 1.0, false, true);
         learnAttributes(Lang.en, [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`],
                         Rel.isA, false, `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.noun, 1.0);
         learnAttributes(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
@@ -2053,7 +2050,7 @@ class Net(bool useArray = true,
         connect(store("subordinating conjunction", Lang.en, Sense.noun, Origin.manual),
                 Rel.uses,
                 store("establish the relationship between the dependent clause and the rest of the sentence", Lang.en, Sense.unknown, Origin.manual),
-                Lang.en, Origin.manual, 1.0, false, true);
+                Origin.manual, 1.0, false, true);
 
         // Conjunction
         learnAttributes(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `conjunction`, Sense.conjunction, Sense.noun, 1.0);
@@ -2270,7 +2267,7 @@ class Net(bool useArray = true,
             connect(store(name.idup, lang, wordSense, origin),
                     rel,
                     store(attribute, lang, attributeSense, origin),
-                    lang, origin, nweight);
+                    origin, nweight);
         }
     }
 
@@ -2285,11 +2282,11 @@ class Net(bool useArray = true,
             connect(store(name.idup, lang, Sense.noun, origin),
                     Rel.isA,
                     store("chemical element", lang, Sense.noun, origin),
-                    lang, origin, weight);
+                    origin, weight);
             connect(store(abbr.idup, lang, Sense.noun, origin), // TODO store capitalized?
                     Rel.abbreviationFor,
                     store(name.idup, lang, Sense.noun, origin),
-                    lang, origin, weight);
+                    origin, weight);
         }
     }
 
@@ -2310,8 +2307,9 @@ class Net(bool useArray = true,
 
             if (!second.empty)
             {
-                auto secondRefs = store(second.splitter(alternativesSeparator).map!idup, firstLang, secondSense, origin);
-                connectMtoN(firstRefs, rel, secondRefs, secondLang, origin, weight, false, false, true);
+                auto secondRefs = store(second.splitter(alternativesSeparator).map!idup, secondLang, secondSense, origin);
+                connectMtoN(firstRefs, rel, secondRefs,
+                            origin, weight, false, false, true);
             }
         }
     }
@@ -2343,7 +2341,7 @@ class Net(bool useArray = true,
             connect(store(first.idup, lang, sense, origin),
                     Rel.oppositeOf,
                     store(second.idup, lang, sense, origin),
-                    lang, origin, weight);
+                    origin, weight);
         }
     }
 
@@ -2390,7 +2388,7 @@ class Net(bool useArray = true,
         return connect(store(first, firstLang, Sense.noun, Origin.manual),
                        Rel.etymologicallyDerivedFrom,
                        store(second, secondLang, Sense.noun, Origin.manual),
-                       Lang.unknown, Origin.manual, 1.0);
+                       Origin.manual, 1.0);
     }
 
     /** Learn English Irregular Verb.
@@ -2420,7 +2418,7 @@ class Net(bool useArray = true,
         return connect(store(acronym, lang, Sense.nounAcronym, origin),
                        Rel.acronymFor,
                        store(expr.toLower, lang, sense, origin),
-                       lang, origin, weight);
+                       origin, weight);
     }
 
     /** Learn English $(D words) related to attribute.
@@ -2439,7 +2437,7 @@ class Net(bool useArray = true,
         return connectMto1(store(words, lang, wordSense, origin),
                            rel, reversion,
                            store(attribute, lang, attributeSense, origin),
-                           Lang.en, origin, weight);
+                           origin, weight);
     }
 
     /** Learn English Emoticon.
@@ -2453,7 +2451,7 @@ class Net(bool useArray = true,
         return connectMtoN(store(emoticons, Lang.any, Sense.unknown, origin),
                            Rel.emoticonFor,
                            store(exprs, Lang.en, sense, origin),
-                           Lang.en, origin, weight);
+                           origin, weight);
     }
 
     /** Learn English Computer Acronyms.
@@ -3705,24 +3703,24 @@ class Net(bool useArray = true,
         connect(store(`π`, Lang.math, Sense.numberIrrational, origin),
                 Rel.translationOf,
                 store(`pi`, Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
-                Lang.en, origin, 1.0);
+                origin, 1.0);
         connect(store(`e`, Lang.math, Sense.numberIrrational, origin),
                 Rel.translationOf,
                 store(`e`, Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
-                Lang.en, origin, 1.0);
+                origin, 1.0);
 
         /// http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
         connect(store(`π`, Lang.math, Sense.numberIrrational, origin),
                 Rel.definedAs,
                 store(`3.14159265358979323846264338327950288419716939937510`,
                       Lang.math, Sense.decimal, origin),
-                Lang.en, origin, 1.0);
+                origin, 1.0);
 
         connect(store(`e`, Lang.math, Sense.numberIrrational, origin),
                 Rel.definedAs,
                 store(`2.71828182845904523536028747135266249775724709369995`,
                       Lang.math, Sense.decimal, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
     }
 
     void learnPunctuation()
@@ -3733,85 +3731,85 @@ class Net(bool useArray = true,
                 Rel.definedAs,
                 store(`colon`,
                       Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect(store(`;`, Lang.unknown, Sense.punctuation, origin),
                 Rel.definedAs,
                 store(`semicolon`,
                       Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connectMto1(store([`,`, `،`, `、`], Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs, false,
                     store(`comma`,
                           Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connectMtoN(store([`/`, `⁄`], Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs,
                     store([`slash`, `stroke`, `solidus`],
                           Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connect(store(`-`, Lang.unknown, Sense.punctuation, origin),
                 Rel.definedAs,
                 store(`hyphen`, Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect(store(`-`, Lang.unknown, Sense.punctuation, origin),
                 Rel.definedAs,
                 store(`hyphen-minus`, Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect(store(`?`, Lang.unknown, Sense.punctuation, origin),
                 Rel.definedAs,
                 store(`question mark`, Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect(store(`!`, Lang.unknown, Sense.punctuation, origin),
                 Rel.definedAs,
                 store(`exclamation mark`, Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect1toM(store(`.`, Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs, false,
                     store([`full stop`, `period`], Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connectMto1(store([`’`, `'`], Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs, false,
                     store(`apostrophe`, Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connectMto1(store([`‒`, `–`, `—`, `―`], Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs, false,
                     store(`dash`, Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connectMto1(store([`‘’`, `“”`, `''`, `""`], Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs, false,
                     store(`quotation marks`, Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connectMto1(store([`…`, `...`], Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs, false,
                     store(`ellipsis`, Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connect(store(`()`, Lang.unknown, Sense.punctuation, origin),
                 Rel.definedAs,
                 store(`parenthesis`, Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect(store(`{}`, Lang.unknown, Sense.punctuation, origin),
                 Rel.definedAs,
                 store(`curly braces`, Lang.en, Sense.noun, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connectMto1(store([`[]`, `()`, `{}`, `⟨⟩`], Lang.unknown, Sense.punctuation, origin),
                     Rel.definedAs, false,
                     store(`brackets`, Lang.en, Sense.noun, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         learnNumerals();
     }
@@ -3824,72 +3822,72 @@ class Net(bool useArray = true,
         connect(store("single", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("1", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("pair", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("2", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("duo", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("2", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("triple", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("3", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("quadruple", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("4", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("quintuple", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("5", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("sextuple", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("6", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("septuple", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("7", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         // Greek Numbering
         // TODO Also Latin?
         connect(store("tetra", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("4", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("4", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("penta", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("5", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("5", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("hexa", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("6", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("6", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("hepta", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("7", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("7", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("octa", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("8", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("8", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("nona", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("9", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("9", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("deca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("10", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("10", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("hendeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("11", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("11", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("dodeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("12", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("12", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("trideca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("13", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("13", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("tetradeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("14", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("14", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("pentadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("15", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("15", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("hexadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("16", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("16", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("heptadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("17", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("17", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("octadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("18", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("18", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("enneadeca", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("19", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("19", Lang.math, Sense.integer, origin), origin, 1.0);
         connect(store("icosa", Lang.el, Sense.numeral, origin), Rel.definedAs,
-                store("20", Lang.math, Sense.integer, origin), Lang.unknown, origin, 1.0);
+                store("20", Lang.math, Sense.integer, origin), origin, 1.0);
 
         learnEnglishOrdinalShorthands();
         learnSwedishOrdinalShorthands();
@@ -3898,47 +3896,47 @@ class Net(bool useArray = true,
         connect(store("dozen", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("12", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("baker's dozen", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("13", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("tjog", Lang.sv, Sense.numeral, origin),
                 Rel.definedAs,
                 store("20", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("flak", Lang.sv, Sense.numeral, origin),
                 Rel.definedAs,
                 store("24", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("skock", Lang.sv, Sense.numeral, origin),
                 Rel.definedAs,
                 store("60", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connectMto1(store(["dussin", "tolft"], Lang.sv, Sense.numeral, origin),
                     Rel.definedAs, false,
                     store("12", Lang.math, Sense.integer, origin),
-                    Lang.unknown, origin, 1.0);
+                    origin, 1.0);
 
         connect(store("gross", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("144", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
         connect(store("gross", Lang.sv, Sense.numeral, origin), // TODO Support [Lang.en, Lang.sv]
                 Rel.definedAs,
                 store("144", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect(store("small gross", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("120", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
         connect(store("great gross", Lang.en, Sense.numeral, origin),
                 Rel.definedAs,
                 store("1728", Lang.math, Sense.integer, origin),
-                Lang.unknown, origin, 1.0);
+                origin, 1.0);
 
     }
 
@@ -3981,7 +3979,7 @@ class Net(bool useArray = true,
         foreach (pair; pairs)
         {
             connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.shorthandFor,
-                    store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Lang.sv, Origin.manual, 1.0);
+                    store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
         }
     }
 
@@ -4026,7 +4024,7 @@ class Net(bool useArray = true,
         foreach (pair; pairs)
         {
             connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.shorthandFor,
-                    store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Lang.sv, Origin.manual, 1.0);
+                    store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
         }
     }
 
@@ -4049,7 +4047,7 @@ class Net(bool useArray = true,
                           Lang.en, Sense.noun, Origin.manual),
                     Rel.uses, false,
                     store("herb", Lang.en, Sense.noun, Origin.manual),
-                    Lang.en, Origin.manual, 1.0);
+                    Origin.manual, 1.0);
 
         connectMto1(store(["enrich taste of food",
                            "improve taste of food",
@@ -4057,17 +4055,17 @@ class Net(bool useArray = true,
                           Lang.en, Sense.noun, Origin.manual),
                     Rel.uses, false,
                     store("spice", Lang.en, Sense.noun, Origin.manual),
-                    Lang.en, Origin.manual, 1.0);
+                    Origin.manual, 1.0);
 
         connect1toM(store("herb", Lang.en, Sense.noun, Origin.manual),
                     Rel.madeOf, false,
                     store(["leaf", "plant"], Lang.en, Sense.noun, Origin.manual),
-                    Lang.en, Origin.manual, 1.0);
+                    Origin.manual, 1.0);
 
         connect1toM(store("spice", Lang.en, Sense.noun, Origin.manual),
                     Rel.madeOf, false,
                     store(["root", "plant"], Lang.en, Sense.noun, Origin.manual),
-                    Lang.en, Origin.manual, 1.0);
+                    Origin.manual, 1.0);
     }
 
     /** Learn Swedish Irregular Verb.
@@ -4274,7 +4272,6 @@ class Net(bool useArray = true,
     LinkRef[] connectMtoN(S, D)(S srcs,
                                 Rel rel,
                                 D dsts,
-                                Lang lang,
                                 Origin origin,
                                 NWeight weight = 1.0,
                                 bool negation = false,
@@ -4287,7 +4284,7 @@ class Net(bool useArray = true,
         {
             foreach (dst; dsts)
             {
-                linkIxes ~= connect(src, rel, dst, lang, origin, weight,
+                linkIxes ~= connect(src, rel, dst, origin, weight,
                                     negation, reversion, checkExisting);
             }
         }
@@ -4318,7 +4315,7 @@ class Net(bool useArray = true,
                 {
                     break;
                 }
-                linkIxes ~= connect(me, rel, you, lang, origin, weight);
+                linkIxes ~= connect(me, rel, you, origin, weight);
                 ++j;
             }
             ++i;
@@ -4332,7 +4329,6 @@ class Net(bool useArray = true,
     LinkRef[] connect1toM(R)(NodeRef first,
                              Rel rel, bool reversion,
                              R rest,
-                             Lang lang,
                              Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
@@ -4340,7 +4336,7 @@ class Net(bool useArray = true,
         {
             if (first != you)
             {
-                linkIxes ~= connect(first, rel, you, lang, origin, weight, false, reversion);
+                linkIxes ~= connect(first, rel, you, origin, weight, false, reversion);
             }
         }
         return linkIxes;
@@ -4351,7 +4347,6 @@ class Net(bool useArray = true,
     LinkRef[] connectMto1(R)(R rest,
                              Rel rel, bool reversion,
                              NodeRef first,
-                             Lang lang,
                              Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
     {
         typeof(return) linkIxes;
@@ -4359,7 +4354,7 @@ class Net(bool useArray = true,
         {
             if (first != you)
             {
-                linkIxes ~= connect(you, rel, first, lang, origin, weight, false, reversion);
+                linkIxes ~= connect(you, rel, first, origin, weight, false, reversion);
             }
         }
         return linkIxes;
@@ -4379,7 +4374,6 @@ class Net(bool useArray = true,
     LinkRef connect(NodeRef src,
                     Rel rel,
                     NodeRef dst,
-                    Lang lang = Lang.unknown,
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
                     bool negation = false,
@@ -4418,7 +4412,6 @@ class Net(bool useArray = true,
                          rel,
                          reversion ? src : dst,
                          negation,
-                         lang,
                          origin);
 
         nodeAt(src).links ~= linkRef.forward;
@@ -4567,7 +4560,6 @@ class Net(bool useArray = true,
                      connect(entityIx,
                              Rel.isA,
                              store(contextName.tr(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
-                             lang,
                              Origin.nell, 1.0, false, false,
                              true)); // need to check duplicates here
     }
@@ -4668,7 +4660,6 @@ class Net(bool useArray = true,
             valueIx.defined)
         {
             auto mainLinkRef = connect(entityIx, rel, valueIx,
-                                       Lang.en,
                                        Origin.nell, mainWeight, negation, reversion);
         }
 
@@ -4870,7 +4861,7 @@ class Net(bool useArray = true,
             dst.defined &&
             src != dst)
         {
-            return connect(src, rel, dst, lang, origin, weight, negation, reversion);
+            return connect(src, rel, dst, origin, weight, negation, reversion);
         }
         else
         {
@@ -4947,7 +4938,7 @@ class Net(bool useArray = true,
                 connect(store(w1, lang, Sense.unknown, origin),
                         Rel.synonymFor,
                         store(w2, lang, Sense.unknown, origin),
-                        lang, origin, weight, false, false, true);
+                        origin, weight, false, false, true);
                 ++lnr;
             }
         };
@@ -5042,7 +5033,7 @@ class Net(bool useArray = true,
                     connectMtoN(store(src_, srcLang, sense, origin),
                                 Rel.translationOf,
                                 store(dst_, dstLang, sense, origin),
-                                Lang.unknown, origin, 1.0, false, false, true);
+                                origin, 1.0, false, false, true);
                 }
             }
         };
@@ -5213,7 +5204,7 @@ class Net(bool useArray = true,
     void showLinkRef(LinkRef linkRef)
     {
         auto link = linkAt(linkRef);
-        showLink(link.rel, linkRef.dir, link.negation, link.lang);
+        showLink(link.rel, linkRef.dir, link.negation);
     }
 
     void showNode(in Node node, NWeight weight)
