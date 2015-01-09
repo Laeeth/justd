@@ -4,25 +4,19 @@ hänhädan
 vavara
 babara
 memed
-
 på Gpå gång
-
 öböverbefälhavareöverskottsbolaget
-
 ÖoBöverskottsbolaget
-
 t.o.m.till och med
 s.a.s.så att säga
 iafiaf.i.a.f.i alla fall
 osvosv.o.s.v.och så vidare
 dvsd.v.s.d. v. s.dvs.det vill säga
-
 e.d.e.dyl.eller dylikt
 o.d.o.dyl.och dylikt
 o.likn.och liknande
 dyl.dylikt
 el.eller
-
 anm.anmanmärkninganmärkningar
 ben.benämnd
 ang.angangående
@@ -34,7 +28,6 @@ bokf.bokföring
 inst.institution
 bifl.biflod
 akad.akademi
-
 med.medicin
 fil.filosofiefilosofisk
 jur.jurisjuridikjuridisk
@@ -56,73 +49,50 @@ br.bruklbrukligt
 bokb.bokbindarterm
 boktr.boktryckarterm
 blomstersk.blomsterskötsel
-
 bisk.biskop
-
 blbl.blott
-
 bilj.biljon
 bilj.biljardterm
-
 Dr.dr.doktor
 Fil. Drfil. drfil.drfilosofie doktor
 Teol. Drteol. drteol.drteologie doktor
-
 adr.adradressadressat
 adj.adjektiv
 adv.adverb
 interj.interjektion
-
 inf.infinitiv
 imperf.imperfekt
 perf.part.perfekt particip
-
 ack.ackusativ
 dat.dativ
-
 belg.belgiska
-
 adm.administration
 avledn.avledning
 besl.besläktat
 abstr.abstrakt
-
 civ.ing.civilingenjör
 civ.ek.civilekonom
-
 aeareaenhet
 AEastronomisk enhet
-ABaktiebolag
 ADBautomatisk databehandling
 ADarbetsdomstolen
 BFBondeförbundet
-
 t.ext extextill exempel
 bl.abl abland annatbland andra
-
 a.a.anfört arbete
 befälh.befälhavare
-
 V.S.B.vilket skulle bevisas
 V.S.V.vilket skulle visas
 V.S.U.vilket skulle utföras
-
 D.S.densamme
-
 b.v.s.a.b v s aBVSAbvsabilligare vid snabb affär
-
 momsmervärdesomsättningsskatt
-
 ink.inkl.inklusive
 exkl.exklusive
-
 forts.fortsfortsättning
-
 e.Kr.e Kre. Kr.efter Kristus
 f.Kr.f Krf. Kr.före Kristus
-
 v.t.vår tideräkning
-
 cac:acirka
 eme.m.eftermiddagen
 etcet cetera
@@ -147,11 +117,12 @@ p.g.a.på grund av
 pl.planschpluralpostlåda
 PMpromemoria
 resp.respektive
+s.sida
 s.sidan
+sidd.sidor
 s.k.så kalladså kalladeså kallat
 st.styckstycke
 St.Stora
-
 drdoktor
 enl.enligt
 f.d.före detta
@@ -167,3 +138,224 @@ tfntelefon
 u.a.utan anmärkning
 vard.vardag
 v.g.v.var god vänd
+ab.aktbilaga
+ang.angående
+anm.anmärkning
+art.artikeln
+att.attestera
+att.attention
+avd.avdelning
+afd.avdelning
+avl.avlidne
+afl.avlidne
+BBbarnbördshus; barnbördsklinik, se kvinnoklinik
+B.B.bäste bror
+B:coB:koBanko, se riksdaler
+betr.beträffande
+bgbankgiro
+bhbysthållare
+bif.bifogas
+bilautomobil
+bl.a.bland annat eller bland andra
+BrfBostadsrättsförening
+b.v.s.a.BVSAbilligare vid snabb affär
+båb.å.byggnadsår
+cdcompact disc
+co.kompani
+d.den (före datum)
+d.död
+dir.direktör
+div.diverse
+d.m.denna månad
+dnrdiarienummer
+dod:odito
+doc.docent
+d:rdrdoktor
+d:sdsdennes = denna månad
+d.s.o.datum som ovan
+d.v.då varande
+d.y.den yngre
+dåv.dåvarande
+d.ä.den äldre
+e.a.g.en annan gång
+eftr.efterträdare
+eg.egentligen
+ekon.ekonomi
+e.Kr.efter Kristus
+e.o.extra ordinarie
+ESOenligt senare (särskild) order
+etc.etcetera
+e.u.enligt uppdrag
+ev.eventuell(t)
+ex.exempel; exemplar
+f.förre; och följande (sida); född
+farm.farmaci
+ff.och följande (sidor)
+ffgför första gången
+fig.figur
+fil.filosofie
+f.Kr.före Kristus
+fm.f.m.förmiddag
+forts.fortsättning
+forts.fortsättning följer
+fr.a.framför allt
+f.v.b.för vidare befordran
+f.v.t.före vår tideräkning
+f.ö.för övrigt
+följ.följande
+föreg.föregående
+förf.författare
+ggrgånger
+gmgenom
+gr.grader
+g.s.gamla stilen, datum enligt julianska kalendern
+H.K.H.Hans Kungliga Höghet
+H.K.H.Hennes Kungliga Höghet
+H.M.Hans Majestät
+H.M.Hennes Majestät
+hrherr; hrr = herrar
+i.a.f.i alla fall
+IKTinformations- och kommunikationsteknik
+ITKinformationsteknik och kommunikation
+ill.illustrationillustrerad
+inkl.inklusive
+iofsi och för sig
+i.o.m.iomi och med
+IRinfraröd
+ISBNinternationellt standardboknummer
+isfi så fall
+i shti synnerhet
+i st.f.istfi stället för
+IVAintensivvårdsavdelningKungliga Ingenjörsvetenskapsakademien
+jfrjämför
+jrjunior
+jur.juris
+K.Kunglig
+k:akyrka
+kand.kandidat
+kap.kapitel
+kbfdkyrkobokföringsdistrikt
+KBMKrisberedskapsmyndigheten
+KFMKronofogdemyndigheten
+kl.klockan; klass
+krkronor
+krmkryddmått
+lliter
+lb.libra, viktenheten pund (lispund, skålpund), även tecknet ℔
+leg.legitimerad
+lic.licentiat
+lisp.lispund, äldre svensk viktenhet
+m.a.a.med anledning av
+mag.magisterexamen
+Maj:tMajestät
+m.a.omed andra ord
+m.a.omed akademiska ordnar
+m.a.p.med avseende på
+max.maximum
+mcmotorcykel
+med.medicine
+m.h.a.med hjälp av
+m.h.t.med hänsyn till
+minminut
+mdmiljarder
+mdkrmiljarder kronor
+mmmillimeter
+m.m.d.med mera dylikt
+mnmiljoner
+mnkrmiljoner kronor
+mom.moment
+mskmatsked
+mtpmed tanke på
+m.v.h.med vänlig hälsning
+möjl.möjligen
+m ö.h.meter över havet
+n.b.nedre botten; nota bene (latin: notera)
+N:oNumero = nr
+nrnummer
+N:sNumeris, plural av Numero = nr
+näml.nämligen
+nästk.nästkommande
+o.och
+o.d.och dylikt
+odont.odontologie
+o.dyl.och dylikt
+o.k.s.också känd som
+omkr.omkring
+omminom matematik, filosofi och logik: om och endast om; ekvivalent
+omsomsättningsskatt, en föregångare till moms
+o.m.s.och mera sådant
+op.opus
+ordf.ordförande
+o.s.a.OSAOm svar anhålles
+o.s.v.och så vidare
+pers.person
+pgpostgiro eller nyare plusgiro
+p.gr.på grund (av)
+pol.politices
+prel.preliminär
+prof.professor
+prov.provisorisk
+puapå uppdrag av
+RCradiostyrd
+rc.I frakturstil användes rc. för &c. = etc. = et cetera
+R:drRdrRiksdaler
+ref.referens
+R:gsRiksgälds
+RIP R.I.P.Vila I Frid , lat. Requiescat in pace
+rst.runstycke, äldre svensk myntenhet
+s:asasumma
+sek.sekund
+SEKvalutakoden som betecknar Svenska kronor
+sekr.sekreterare
+sign.signatur; signum
+sistl.sistlidne = förra (månaden, året)
+s.k.så kallad
+sk.skilling, äldre svensk myntenhet, även förkortat med ß
+skepp.Sk:pund, Sk#skeppund
+skålp.skålpund
+s.m.silvermynt
+smssammansättning
+s.m.s.som man säger
+sp.spalt
+spec.speciell
+srsenior
+sssåsom
+ssksjuksköterska
+s.st.samma ställe (i fotnoter; jämför: ibid., a.a.)
+st.styck
+StStora (ortnamn)
+S:tSankt
+S:taSankta
+stud.studerande
+särsk.särskilt
+t.till
+tab.tabell
+tekn.teknologie
+tfn.telefon
+temp.temperatur
+teol.teologie
+t.ex.till exempel
+tf.tillförordnad
+tgmtelegram
+t.h.till höger
+tim.timme, timmar
+tjftjänsteförrättare
+tjltjänstledig
+tjmtjänsteman
+tkrtusen(tal) kronor
+kkrkilokronor
+tr.trappa
+t:rtunnor
+trol.troligen; trolovad
+trpttrsptransport
+TVtvtevetelevision
+t.v.tills vidare; till vänster
+ung.ungefär
+u.p.a.utan personligt ansvar
+urspr.ursprungligen
+utg.utgivenutgivareutgåva
+v.vice; vecka; von
+VABvård av sjukt barn
+w.vecka (week)
+vdverkställande direktör
+vplvärnpliktig
