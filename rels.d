@@ -238,6 +238,7 @@ enum Rel:ubyte
     instanceOf,
 
     madeOf, // TODO Unite with instanceOf
+    madeBy,
     madeAt,
 
     inheritsFrom,

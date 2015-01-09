@@ -1720,6 +1720,11 @@ class Net(bool useArray = true,
                   Rel.abbreviationFor,
                   Sense.unknown, Lang.sv,
                   Origin.manual, 1.0);
+        learnMtoN("../knowledge/sv/language_abbrevation.txt",
+                  Sense.language, Lang.sv,
+                  Rel.abbreviationFor,
+                  Sense.language, Lang.sv,
+                  Origin.manual, 1.0);
 
         // Synonym
         learnMtoN("../knowledge/en/synonym.txt",
@@ -1758,6 +1763,11 @@ class Net(bool useArray = true,
                   Sense.nounAcronym, Lang.fr,
                   Rel.acronymFor,
                   Sense.unknown, Lang.fr,
+                  Origin.manual, 1.0);
+        learnMtoN("../knowledge/sv/newspaper_acronym.txt",
+                  Sense.newspaper, Lang.sv,
+                  Rel.acronymFor,
+                  Sense.newspaper, Lang.sv,
                   Origin.manual, 1.0);
 
         // Name

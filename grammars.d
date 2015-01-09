@@ -805,6 +805,7 @@ enum Sense:ubyte
     namePerson,             /// John
     nameOrganisation,   /// CIA
     country,            /// Sweden
+    newspaper,            /// Tidning
 
     timePeriod,
     weekday,
@@ -1108,13 +1109,14 @@ unittest
     bool isName(Sense sense)
     {
         with (Sense) return sense.of(name,
-                                    nameMale,
-                                    nameFemale,
-                                    surname,
-                                    nameLocation,
-                                    namePerson,
-                                    nameOrganisation,
-                                    country);
+                                     nameMale,
+                                     nameFemale,
+                                     surname,
+                                     nameLocation,
+                                     namePerson,
+                                     nameOrganisation,
+                                     country,
+                                     newspaper);
     }
     bool isVerb(Sense sense)
     {
