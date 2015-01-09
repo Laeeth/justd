@@ -3,7 +3,6 @@ hänhädan
 
 vavara
 babara
-
 memed
 
 på Gpå gång
@@ -12,10 +11,17 @@ på Gpå gång
 
 ÖoBöverskottsbolaget
 
-osvoch så vidare
+t.o.m.till och med
+s.a.s.så att säga
+iafiaf.i.a.f.i alla fall
+osvosv.o.s.v.och så vidare
 dvsd.v.s.d. v. s.dvs.det vill säga
+
 e.d.e.dyl.eller dylikt
 o.d.o.dyl.och dylikt
+o.likn.och liknande
+dyl.dylikt
+el.eller
 
 anm.anmanmärkninganmärkningar
 ben.benämnd
@@ -26,15 +32,37 @@ dial.dialekt
 betyd.betydningbetydningen
 bokf.bokföring
 inst.institution
+bifl.biflod
+akad.akademi
 
 med.medicin
 fil.filosofiefilosofisk
 jur.jurisjuridikjuridisk
 tek.tekniskteknikteknologie
 teol.teologiteologie
+akust.akustik
 log.logik
 fonet.fonetik
 hand.handelsterm
+alt.alternativt
+bil.bilaga
+bildh.bildhuggare
+bildl.bildligt
+biokem.biokemi
+biol.biologi
+bot.botanik
+boxn.boxning
+br.bruklbrukligt
+bokb.bokbindarterm
+boktr.boktryckarterm
+blomstersk.blomsterskötsel
+
+bisk.biskop
+
+blbl.blott
+
+bilj.biljon
+bilj.biljardterm
 
 Dr.dr.doktor
 Fil. Drfil. drfil.drfilosofie doktor
@@ -93,4 +121,52 @@ forts.fortsfortsättning
 e.Kr.e Kre. Kr.efter Kristus
 f.Kr.f Krf. Kr.före Kristus
 
-v.t.vår tideräkning
+v.t.vår tideräkning
+
+cac:acirka
+eme.m.eftermiddagen
+etcet cetera
+exex.exempelexemplar
+f.nför närvarande
+f.n.för närvarande
+fr.från
+fr.fru.fröken
+fr.o.m.från och med
+fr.o.mfrån och med
+jfrjfr.jämför
+klklockanklass
+m.fl.med flera
+m.m.med mera
+n.b.nedre botten
+ngnnågon
+ngtnågot
+nr.nrnummer
+obsobservera
+PGpostgiro
+p.g.a.på grund av
+pl.planschpluralpostlåda
+PMpromemoria
+resp.respektive
+s.sidan
+s.k.så kalladså kalladeså kallat
+st.styckstycke
+St.Stora
+
+aug.augusti
+dec.december
+drdoktor
+enl.enligt
+febr.februari
+f.d.före detta
+fg.å.föregående år
+f.k.för kännedom
+f.v.förutvarande
+hrherr
+i st.f.i stället för
+min.minst
+mån.månad
+skn.Skandinavien
+tfntelefon
+u.a.utan anmärkning
+vard.vardag
+v.g.v.var god vänd

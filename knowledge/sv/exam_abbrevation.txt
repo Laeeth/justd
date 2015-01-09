@@ -1,0 +1,27 @@
+civ.ek.
+civ.ing.
+teol.kand.
+teol.lic.
+teol.dr.
+jur. kand.
+jur.utr.kand.
+jur.lic.
+jur.dr.
+med.dr
+med.lic.
+med.kand.
+odont.kand.
+odont.lic.
+odont.dr.
+fil.dr.
+fil.lic.
+fil.kand.
+fil.mag.
+pol.kand.
+pol.mag.
+pol.dr
+tekn.dr
+tekn.lic.
+ekon.dr.
+ekon. mag.
+ekon. kand.

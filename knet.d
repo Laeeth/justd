@@ -72,9 +72,9 @@
     TODO Group Rel bool negation and bool reversion into a bitfield struct of size 16
     and simplify interfaces. Use CTFE to add instantiator rel!"memberOf"
 
-    TODO Support N-way in learnTuple en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
+    TODO Support N-way in learnMtoN en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
 
-    BUG learnTuple has no effect. Test name_day.txt by searching for Sylvester.
+    BUG learnMtoN has no effect. Test name_day.txt by searching for Sylvester.
 
     TODO Add Sense Specialization Pass: All other relations specialize
     Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo
@@ -1688,102 +1688,117 @@ class Net(bool useArray = true,
         learnChemicalElements();
 
         // Irregular Noun
-        learnTuple("../knowledge/en/irregular_noun.txt",
+        learnMtoN("../knowledge/en/irregular_noun.txt",
                    Sense.nounSingular, Lang.en,
                    Rel.nounForm,
                    Sense.nounPlural, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/sv/irregular_noun.txt",
+        learnMtoN("../knowledge/sv/irregular_noun.txt",
                    Sense.nounSingular, Lang.sv,
                    Rel.nounForm,
                    Sense.nounPlural, Lang.sv,
                    Origin.manual, 1.0);
 
         // Abbrevation
-        learnTuple("../knowledge/en/abbrevation.txt",
+        learnMtoN("../knowledge/en/abbrevation.txt",
                    Sense.unknown, Lang.en,
                    Rel.abbreviationFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/sv/abbrevation.txt",
+        learnMtoN("../knowledge/sv/abbrevation.txt",
                    Sense.unknown, Lang.sv,
                    Rel.abbreviationFor,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/la/abbrevation.txt",
+        learnMtoN("../knowledge/la/abbrevation.txt",
                    Sense.unknown, Lang.la,
                    Rel.abbreviationFor,
                    Sense.unknown, Lang.la,
                    Origin.manual, 1.0);
+        learnMtoN("../knowledge/sv/cardinal_direction_abbrevation.txt",
+                  Sense.unknown, Lang.sv,
+                  Rel.abbreviationFor,
+                  Sense.unknown, Lang.sv,
+                  Origin.manual, 1.0);
 
         // Synonym
-        learnTuple("../knowledge/en/synonym.txt",
+        learnMtoN("../knowledge/en/synonym.txt",
                    Sense.unknown, Lang.en,
                    Rel.synonymFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/sv/synonym.txt",
+        learnMtoN("../knowledge/sv/synonym.txt",
                    Sense.unknown, Lang.sv,
                    Rel.synonymFor,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 0.5);
-        learnTuple("../knowledge/en/noun_synonym.txt",
+        learnMtoN("../knowledge/en/noun_synonym.txt",
                    Sense.noun, Lang.en,
                    Rel.synonymFor,
                    Sense.noun, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/en/adjective_synonym.txt",
+        learnMtoN("../knowledge/en/adjective_synonym.txt",
                    Sense.adjective, Lang.en,
                    Rel.synonymFor,
                    Sense.adjective, Lang.en,
                    Origin.manual, 1.0);
 
         // Acronym
-        learnTuple("../knowledge/en/acronym.txt",
+        learnMtoN("../knowledge/en/acronym.txt",
                    Sense.nounAcronym, Lang.en,
                    Rel.acronymFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
+        learnMtoN("../knowledge/sv/acronym.txt",
+                  Sense.nounAcronym, Lang.sv,
+                  Rel.acronymFor,
+                  Sense.unknown, Lang.sv,
+                  Origin.manual, 1.0);
+        learnMtoN("../knowledge/fr/acronym.txt",
+                  Sense.nounAcronym, Lang.fr,
+                  Rel.acronymFor,
+                  Sense.unknown, Lang.fr,
+                  Origin.manual, 1.0);
 
         // Name
-        learnTuple("../knowledge/sv/name_day.txt",
+        learnMtoN("../knowledge/sv/name_day.txt",
                    Sense.name, Lang.sv,
                    Rel.hasNameDay,
                    Sense.nounDate, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/en/surname_languages.txt",
+        learnMtoN("../knowledge/en/surname_languages.txt",
                    Sense.surname, Lang.unknown,
                    Rel.hasOrigin,
                    Sense.language, Lang.en,
                    Origin.manual, 1.0);
 
         // Translation
-        learnTuple("../knowledge/en-sv/noun_translation.txt",
+        learnMtoN("../knowledge/en-sv/noun_translation.txt",
                    Sense.noun, Lang.en,
                    Rel.translationOf,
                    Sense.noun, Lang.sv,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/en-sv/phrase_translation.txt",
+        learnMtoN("../knowledge/en-sv/phrase_translation.txt",
                    Sense.unknown, Lang.en,
                    Rel.translationOf,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/la-sv/phrase_translation.txt",
+        learnMtoN("../knowledge/la-sv/phrase_translation.txt",
                    Sense.unknown, Lang.la,
                    Rel.translationOf,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/la-en/phrase_translation.txt",
+        learnMtoN("../knowledge/la-en/phrase_translation.txt",
                    Sense.unknown, Lang.la,
                    Rel.translationOf,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/en-sv/idiom_translation.txt",
+        learnMtoN("../knowledge/en-sv/idiom_translation.txt",
                    Sense.idiom, Lang.en,
                    Rel.translationOf,
                    Sense.idiom, Lang.sv,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/fr-en/phrase_translation.txt",
+        learnMtoN("../knowledge/fr-en/phrase_translation.txt",
                    Sense.unknown, Lang.fr,
                    Rel.translationOf,
                    Sense.unknown, Lang.en,
@@ -2174,36 +2189,36 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nameFemale, Sense.noun, 1.0);
         learnAttributes(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nameFemale, Sense.noun, 1.0);
 
-        learnTuple("../knowledge/sv/male_name_meaning.txt",
-                   Sense.nameMale, Lang.sv,
-                   Rel.hasMeaning,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 0.7);
+        learnMtoN("../knowledge/sv/male_name_meaning.txt",
+                  Sense.nameMale, Lang.sv,
+                  Rel.hasMeaning,
+                  Sense.unknown, Lang.sv,
+                  Origin.manual, 0.7);
 
-        learnTuple("../knowledge/sv/female_name_meaning.txt",
-                   Sense.nameFemale, Lang.sv,
-                   Rel.hasMeaning,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 0.7);
+        learnMtoN("../knowledge/sv/female_name_meaning.txt",
+                  Sense.nameFemale, Lang.sv,
+                  Rel.hasMeaning,
+                  Sense.unknown, Lang.sv,
+                  Origin.manual, 0.7);
 
         // Idioms
-        learnTuple("../knowledge/en/idiom_meaning.txt",
-                   Sense.idiom, Lang.en,
-                   Rel.hasMeaning,
-                   Sense.unknown, Lang.en,
-                   Origin.manual, 0.7);
-        learnTuple("../knowledge/sv/idiom_meaning.txt",
-                   Sense.idiom, Lang.sv,
-                   Rel.hasMeaning,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 0.7);
+        learnMtoN("../knowledge/en/idiom_meaning.txt",
+                  Sense.idiom, Lang.en,
+                  Rel.hasMeaning,
+                  Sense.unknown, Lang.en,
+                  Origin.manual, 0.7);
+        learnMtoN("../knowledge/sv/idiom_meaning.txt",
+                  Sense.idiom, Lang.sv,
+                  Rel.hasMeaning,
+                  Sense.unknown, Lang.sv,
+                  Origin.manual, 0.7);
 
         // Slang
-        learnTuple("../knowledge/sv/slang_meaning.txt",
-                   Sense.slang, Lang.sv,
-                   Rel.hasMeaning,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 0.7);
+        learnMtoN("../knowledge/sv/slang_meaning.txt",
+                  Sense.slang, Lang.sv,
+                  Rel.hasMeaning,
+                  Sense.unknown, Lang.sv,
+                  Origin.manual, 0.7);
     }
 
     /// Learn Emotions.
@@ -2294,13 +2309,12 @@ class Net(bool useArray = true,
         }
     }
 
-    /// Learn Tuple of Words all related by $(D rel).
-    void learnTuple(string path,
-                    Sense firstSense, Lang firstLang,
-                    Rel rel,
-                    Sense secondSense, Lang secondLang,
-                    Origin origin = Origin.manual,
-                    NWeight weight = 0.5)
+    void learnMtoN(string path,
+                   Sense firstSense, Lang firstLang,
+                   Rel rel,
+                   Sense secondSense, Lang secondLang,
+                   Origin origin = Origin.manual,
+                   NWeight weight = 0.5)
     {
         foreach (expr; File(path).byLine.filter!(a => !a.empty))
         {

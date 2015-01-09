@@ -117,3 +117,5 @@ limolimousine
 cabtaxi cab
 taxitaxi cab
 taxi cabtaxicab
+
+a.k.a.also known as

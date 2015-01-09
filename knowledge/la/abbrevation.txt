@@ -1,3 +1,10 @@
-a.a.ad acta
 Q.E.D.quod erat demonstrandum
 Q.E.F.quod erat faciendum
+a.a.ad acta
+e.g.exempli gratia
+e.o.ex officio
+ibid.idibidem
+i.e.id
+m.p.manu propria
+op.cit.opus citatum
+sicsic erat scriptum

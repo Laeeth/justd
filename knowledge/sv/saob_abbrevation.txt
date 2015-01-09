@@ -1,0 +1,664 @@
+A.	Adolf (i regentbeteckning)
+abl.	ablativ
+abs.	absolut användning
+abstr.	abstrakt(-a), i abstrakt betydelse
+ack.	ackusativ
+adj.	adjektiv(-et, -en)
+adm.	administrativ term
+*admin.	se adm.
+adv.	adverb(-et, -en)
+*afl.	se avledn.
+*ags.	anglosaxisk(-t, -a), anglosaxiska; utbytt mot: feng.
+akt.	aktiv(-t, -a), (i) aktiv form, aktivum;
+alban.	albansk(-t, -a), albanska.
+allm. (i förb.: i allm.)	allmänhet
+*allm	allmän(-t, -a)
+amerik. eng.	amerikanskengelsk(-t, -a), amerikansk engelska
+anat.	anatomisk term
+*andl.	i andlig betydelse
+*anf	anförd (anfört, anförda)
+anglofr.	anglofransk(-t, -a>, anglofranska
+anm.	anmärkning
+antropol.	antropologisk term
+anv.	användning(-en, -ar)
+*apot.	apotekarterm
+arab.	arabisk(-t, -a), arabiska
+aram.	arameisk(-t, -a), arameiska
+*ark.	se arkeol.
+arkeol.	arkeologisk term
+armen.	armenisk(-t, -a), armeniska
+art.	artikel(-keln, -klar)
+artill.	artilleriterm
+assyr.	assyrisk(-t, -a), assyriska
+*astr.	se astron.
+astrol.	astrologisk term
+astron.	astronomisk term
+avest.	avestisk(-t, -a), avestiska
+avledn.	avledning(-en, -ar, -arna)
+avljudsförh.	avljudsförhållande
+avs. (i förb.: med avs. på)	avseende
+
+babyl.	babylonisk(-t, -a), babyloniska
+bag.	bageriterm
+*bakter.	se bakteriol.
+bakteriol.	bakteriologisk term
+*balneol.	balneologisk term
+baltoslav.	baltoslavisk(-t, -a), baltoslaviska
+bankv.	term inom bankväsendet
+*bef.	term inom befästningskonsten, fortifikationsterm
+*bem.	bemärkelse(-n, -r, -rna)
+bergv.	term inom bergväsendet
+best.	bestämd (bestämt, bestämda), (i) bestämd form
+bet.	betydelse(-n, -r, -rna)
+*bibelövers.	bibelöversättning(-en, -ar, -arna)
+bibet.	bibetydelse(-n, -r, -rna)
+bibliogr.	bibliografisk term
+bibliot.	term inom biblioteksväsendet
+bildh.	term inom bildhuggarkonsten
+bildl.	bildlig(-t, -a), i bildlig användning
+biodl.	biodlarterm
+biol.	biologisk term
+bl.	blott
+bl. a.	bland annat
+blecksl.	bleckslagarterm
+*bleckslag	se blecksl.
+Blek.	Blekinge
+Bohusl.	Bohuslän
+bokb.	bokbindarterm
+bokför.	bokföringsterm
+*bokh.	bokhandelsterm
+boktr.	boktryckarterm
+Bornh.	Bornholm
+bot.	botanisk term
+br.	brukligt
+brandv.	term inom brandväsendet
+bret.	bretonsk(-t, -a), bretonska
+brygg.	bryggeriterm
+brännvinsbr.	term inom brännvinsbränningen
+bulg.	bulgarisk(-t, -a), bulgariska
+byggn.	byggnadsteknisk term
+
+c.	cirka
+cg	centigram
+cit.	citat
+cl	centiliter
+cm	centimeter
+cm2	kvadratcentimeter
+cm3	kubikcentimeter
+
+d.	(ny)dansk(-t, -a), (ny)danska
+Dalsl.	Dalsland
+dan.	(ny)dansk(-t, -a), (ny)danska
+dans.	term inom danskonsten
+dat.	dativ
+datal.	datalogisk term
+dekl.	deklination(-en, -er, -erna)
+demonstr.	demonstrativ(-t, -a)
+DENS. (om författare)	densamme(-a)
+dep.	deponens
+DES. (om författare)	desamma
+determ.	determinativ(-t, -a)
+dets.	detsamma
+dg	decigram
+dial.	dialekt(-en, -er, -erna)
+dimin.	diminutiv(-t, -a)
+dipl.	diplomatisk term
+dl	deciliter
+dm	decimeter
+dm2	kvadratdecimeter
+dm3	kubikdecimeter
+d. o.	detta ord, dessa ord
+dt	deciton
+dual.	dualis
+duv.	term rörande brevduvor och duvavel
+dvs.	det vill säga
+därigm	därigenom
+Därs.	därsammastädes, på samma ställe, i samma källa
+
+E.	Erik (i regentbeteckning)
+eg.	egentlig(-t, -a), egentligen
+Eg. Finl.	Egentliga Finland
+egypt.	egyptisk(-t, -a), egyptiska
+egyptol.	egyptologisk term
+ekon.	ekonomisk term
+*elektrotekn.	se el.-tekn.
+el.-tekn.	elektroteknisk term
+embryol.	embryologisk term
+eng.	(ny)engelsk(-t, -a), (ny)engelska
+enl.	enligt
+*enst.	enstaka förekommande
+entomol.	entomologisk term
+eskimåspr.	eskimåspråk
+estet.	term inom estetiken
+Estl.	Estland
+estn.	estnisk(-t, -a), estniska
+etnogr.	etnografisk term
+
+f.	femininum
+f.	forma (form)
+f.	och följande sida (l. spalt)
+fackspr.	fackspråk
+fam.	familjärt
+farm.	farmakologisk term, farmaceutisk term
+fd.	forndansk(-t, -a), forndanska
+f. d.	före detta
+fdan.	forndansk(-t, -a), forndanska
+fem.	feminin(-t, -a)
+feng.	fornengelsk(-t, -a), fornengelska
+fenic.	fenicisk(-t, -a), feniciska
+ff.	och följande sidor (l. spalter)
+ffr.	fornfransk(-t, -a), fornfranska
+ffris.	fornfrisisk(-t, -a), fornfrisiska
+fgutn.	forngutnisk(-t, -a), forngutniska
+fht.	fornhögtysk(-t, -a), fornhögtyska
+fil.	filius (son)
+filat.	term inom filatelin
+filos.	filosofisk term
+fin.	finsk(-t, -a), finska
+find.	fornindisk(-t, -a), fornindiska;
+Finl.	Finland
+fisk.	fiskeriterm
+flfrank.	fornlågfrankisk(-t, -a), fornlågfrankiska
+flygv.	term inom flygväsendet
+fnor.	fornnorsk(-t, -a), fornnorska
+folklor.	folkloristisk term
+folkrätt.	folkrättslig term
+formavd.	formavdelning(-en, -ar, -arna)
+fotogr.	fotografisk term
+fpers.	fornpersisk(-t, -a), fornpersiska
+fpreuss.	fornpreussisk(-t, -a), fornpreussiska
+fr.	(ny)fransk(-t, -a), (ny)franska
+fr.	från
+frank.	frankisk(-t, -a), frankiska
+frenol.	frenologisk term
+frimur.	term inom frimurarväsendet
+fris.	frisisk(-t, -a), frisiska
+fr. o. m.	från och med
+*fsachs.	se fsax.
+fsax.	fornsaxisk(-t, -a), fornsaxiska
+fslav.	fornslavisk(-t, -a), fornslaviska
+fsv.	fornsvensk(-t, -a), fornsvenska
+fut.	futurum
+fvn.	fornvästnordisk(-t, -a), fornvästnordiska
+*fyrverk.	fyrverkeriterm
+fyrväs.	term inom fyrväsendet
+fys	term inom fysiken
+fysiol.	fysiologisk term
+fångv.	fångvårdsterm
+fäkt.	fäktningsterm
+fär.	färöisk(-t, -a), färöiska
+färg.	färgarterm
+f. ö.	för övrigt
+*följ.	följande (ord)
+förb.	förbindelse(-n, -r, -rna)
+*föreg.	föregående (ord)
+*förek.	förekommande
+förf.	författare
+*förf.	författad(-at, -ade)
+förh.	förhållanden
+försäkr.	term inom försäkringsväsendet
+förvaltn.	förvaltningsterm
+
+g	gram
+G.	Gustav (i regentbeteckning)
+gael.	gaelisk(-t, -a), gaeliska
+gall.	gallisk(-t, -a), galliska
+*garf.	se garv.
+garv.	garveriterm
+Gbg	Göteborg
+gen.	genitiv
+geneal.	genealogisk term
+genet.	genetisk term
+geod.	geodetisk term
+geogr.	geografisk term
+geol.	geologisk term
+geom.	geometrisk term
+germ.	germansk(-t, -a)
+gg, ggr	gång, gånger
+glasfabr.	term inom glasfabrikationen
+glasm.	glamästarterm
+*Gld	se Götal.
+gm	genom
+got.	gotisk(-t, -a), gotiska
+Gotl.	Gotland
+gr.	grekisk(-t, -a), grekiska
+*gradf.	gradförhöjning, komparation
+gram.	grammatisk(-t, -a)
+grundbet.	grundbetydelse(-n, -r, -rna)
+guldsm.	guldsmedsterm
+gymn.	term inom gymnastiken
+Gästrikl.	Gästrikland
+Götal.	Götaland
+
+*h.	häfte
+Hall.	Halland
+handarb.	handarbetsterm
+handel.	handelsterm
+handl.	handling
+handskm.	handskmakarterm
+*handtv.	se hantv.
+hantv.	hantverksterm
+hattm.	hattmakarterm
+hebr.	hebreisk(-t, -a), hebreiska
+herald	heraldisk term
+hett.	hettitisk(-t, -a), hettitiska
+hg	hektogram, hekto
+hippol.	hippologisk term
+hist.	historisk term
+histol.	histologisk term
+hl	hektoliter
+*hofsl.	se hovsl.
+*holl.	holländsk(-t, -a), holländska; utbytt mot: nl.
+hovsl.	hovslagarterm
+hskr.	handskrift(-er)
+hund.	term rörande hundar eller hundavel
+*husdj.	term inom husdjursskötseln
+*hvard.	se vard.
+*hygien.	term inom hälso(vårds)läran
+Hälsingl.	Hälsingland
+hänv.	hänvisning(-en, -ar, -arna)
+Härjed.	Härjedalen
+
+*idrott.	idrottsterm
+ieur.	indoeuropeisk(-t, -a), indoeuropeiska
+ig.	individens genus
+imper.	imperativ
+ind.	indikativ
+indianspr.	indianspråk
+indir. (i förb.: indir. obj.)	indirekt
+*indoeur.	se ieur.
+inf.	infinitiv
+innehållsobj.	innehållsobjekt(-et, -en)
+intensivbildn	intensivbildning(-en, -ar, -arna)
+interj.	interjektion
+interr.	interrogativ(-t, -a)
+intr.	intransitiv(-t, -a) i intransitiv användning
+ipf.	imperfektum
+ir.	irisk(-t, -a), iriska
+i sht	i synnerhet
+isl.	fornisländsk(-t, -a), fornisländska
+i st. f.	i stället för
+it.	italiensk(-t, -a), italienska
+
+J.	Johan (i regentbeteckning)
+jap.	japansk(-t, -a), japanska
+jfr	jämför
+jur.	juridisk term
+Jyll.	Jylland
+jäg.	jägarterm
+Jämtl.	Jämtland
+järnv.	järnvägsterm
+
+kam.	kameral term
+*kansl.	i kanslistil
+kartogr.	kartografisk term
+*kav.	kavalleriterm
+kelt.	keltisk(-t, -a), keltiska
+kem.	kemisk term
+keram.	keramisk term
+kg	kilogram, kilo
+kines.	kinesisk(-t, -a), kinesiska
+kir.	kirurgisk term
+km	kilometer
+km2	kvadratkilometer
+K. Maj:t	Kunglig Majestät
+kok.	term inom kokkonsten
+koll.	med kollektiv betydelse, kollektiv(-t, -a)
+komp.	komparativ
+kondit.	konditoriterm
+konj.	konjunktion
+konj.	konjunktiv
+kons.	konsonant(-en, -er, -erna)
+konst.	konstterm
+konsthantv.	konsthantverksterm
+*konsthist.	se konstvet.
+*konstr.	konstruktion(-en, -er, -erna)
+konstvet.	term inom konstvetenskapen
+kopparsl.	kopparslagarterm
+korgm.	korgmakarterm
+korn.	kornisk(-t, -a), korniska
+kortsp.	kortspelsterm
+kronol.	kronologisk term
+kulturhist.	kulturhistorisk term
+*Kungl. Maj:t	Kunglig Majestät
+kymr.	kymrisk(-t, -a), kymriska
+kyrklat.	kyrkolatin
+kyrkohist.	kyrkohistorisk term
+kyrkslav.	kyrkslavisk(-t, -a), kyrkslaviska
+körsn.	körsnärsterm
+
+l	liter
+l.	eller
+*landt.	se lant.
+lant.	lantbruksterm
+lantmät.	lantmäteriterm
+*lap.	lapsk(-t, -a), lapska; utbytt mot: sam.
+Lappl.	Lappland
+lat.	latinsk(-t, -a), latin
+l. dyl.	eller dylikt
+lett.	lettisk(-t, -a), lettiska
+*lillry.	lillrysk(-t, -a), lillryskai, se ukr.
+Lin.	Linné
+lit.	litauisk(-t, -a), litauiska
+*litt.-hist.	litteraturhistorisk term
+litt.-vet.	litteraturvetenskaplig term
+*liturg.	term inom liturgin, liturgisk term
+log.	term inom logiken
+lt.	lågtysk(-t, -a), lågtyska
+
+m	meter
+m.	maskulinum
+m2	kvadratmeter
+m3	kubikmeter
+mask.	maskulin(-t, -a)
+mat.	matematisk term
+med.	medicinsk term
+Medelp.	Medelpad
+*med.-hist.	medicinskhistorisk term
+*med.-kem.	medicinskkemisk term
+mejeri.	term inom mejeriväsendet
+*mek.	term inom mekaniken
+meng.	medelengelsk(-t, -a), medelengelska
+metafys.	metafysisk term
+metall.	metallurgisk term
+*meteor.	se meteorol.
+meteorol.	meteorologisk term
+metr.	term inom metriken
+m. fl.	med flera
+mfr.	medelfransk(-t, -a), medelfranska
+mg	milligram
+mht.	medelhögtysk(-t, -a), medelhögtyska
+mil.	term inom militärväsendet
+*mil.-med.	militärmedicinsk term
+*miner.	se mineral.
+mineral.	mineralogisk term
+*miss.-hist.	missionshistorisk term
+ml	milliliter
+mlat.	medeltidslatinsk(-t, -a), medeltidslatin
+mlt.	medellågtysk(-t, -a), medellågtyska
+mm	millimeter
+mm2	kvadratmillimeter
+mm3	kubikmillimeter
+m. m.	med mera
+mnl.	medelnederländsk(-t, -a), medelnederländska
+*mnt.	medelnedertysk(-t, -a), medelnedertyska; utbytt mot: mlt.
+mom.	moment(-et, -en)
+motsv.	motsvarande
+mus.	musikterm, musikhistorisk term
+*mus.-hist.	musikhistorisk term
+mytol.	mytologisk term
+mål.	målarterm
+möjl.	möjligen
+
+n.	neutrum
+nat.-ekon.	nationalekonomisk term
+naturv.	naturvetenskaplig term
+*navig.	navigationsterm
+neutr.	neutral(-t, -a)
+ngn, ngt, ngra	någon, något, några
+ngnstädes	någonstädes
+nl.	nederländsk(-t, -a), nederländska
+*Nld	se Norrl.
+*nnt.	nynedertysk(-t, -a), nynedertyska; utbytt mot: lt.
+nom.	nominativ
+nor.	norsk(-t, -a), norska
+Norrb.	Norrbotten
+Norrl.	Norrland
+nr	nummer
+*nt.	nedertysk(-t, -a), nedertyska; utbytt mot: lt.
+*num.	se numism
+numism.	numismatisk term
+*nuv.	nuvarande
+nygr.	nygrekisk(-t, -a), nygrekiska
+nyhebr.	nyhebreisk(-t, -a), nyhebreiska
+nyisl.	nyisländsk(-t, -a), nyisländska
+Nyl.	Nyland
+nylat.	nylatinsk(-t, -a), nylatin
+nysv.	nysvensk(-t, -a), nysvenska
+näml.	nämligen
+
+O.	Oskar (i regentbeteckning)
+o.	och
+obest.	obestämd (obestämt, obestämda), (i) obestämd form
+obj.	objekt(-et, -en);
+obl.	oblik(-t, a)
+obr.	obruklig(-t, -a)
+*obst.	se obstetr.
+obstetr.	term inom obstetriken
+oböjl.	oböjlig(-t, -a)
+o. d.	och dylikt
+*odont.	se odontol.
+odontol.	odontologisk term
+o. dyl.	och dylikt
+oeg.	oegentlig(-t, -a), i oegentlig användning
+oftalm.	oftalmiatrisk term
+opers.	opersonligt
+opt.	term inom optiken
+ordspr.	ordspråk
+orgelb.	orgelbyggarterm
+orig.	original(-et, -en)
+osk.	oskisk(-t, -a), oskiska
+osv.	och så vidare
+
+p.	particip
+p. adj.	participiellt adjektiv
+*paleont.	se paleontol.
+paleontol.	paleontologisk term
+paleozool.	paleozoologisk term
+participbildn.	participbildning(-en, -ar, -arna)
+pass.	passiv(-t, -a), (i) passiv form, passivum;
+patol.	patologisk term
+*ped.	se pedag.
+pedag.	pedagogisk term
+pers.	personlig(-t, -a), person
+personobj.	personobjekt(-et, -en)
+personsubj.	personsubjekt(-et, -en)
+*petrogr.	petrografisk term
+pf.	perfektum
+pl.	pluralis
+plåtsl.	plåtslagarterm
+pol.	polsk(-t, -a), polska
+polit.	term inom politiken, politisk term
+port.	portugisisk(-t, -a), portugisiska
+poss.	possessiv(-t, -a);
+post.	term inom postväsendet
+p. pf.	perfektparticip
+p. pr.	presensparticip
+pr.	presens
+prep.	preposition
+prep.-uttr.	prepositionsuttryc
+pret.	preteritum
+pron.	pronomen
+prov.	provensalsk(-t, -a), provensalska
+psykiatr.	psykiatrisk term
+psykol.	psykologisk term
+
+r.	realgenus, reale
+*radio.	radioteknisk term
+*radiot.	radioteknisk term
+recipr.	reciprok(-t, -a)
+refl.	reflexiv verbform, reflexiv(-t, -a)
+rel.	relativ(-t, -a)
+*rel.-hist.	religionshistorisk term
+relig.	religionshistorisk term, religionsvetenskaplig term
+*rel.-vet.	religionsvetenskaplig term
+repslag.	repslagarterm
+resp.	respektive
+retor.	term inom retoriken
+*ridk.	term inom ridkonsten
+riksspr.	riksspråk(-et)
+rundan.	rundanska
+runsv.	runsvenska
+ry.	rysk(-t, -a), ryska
+Ryssl.	Ryssland
+räkn.	räkneord
+*rättsfil.	se rättsfilos.
+rättsfilos.	rättsfilosofisk term
+rättshist.	rättshistorisk term
+
+s.	sida
+*s. a.	sine anno (utan uppgift om tryckår)
+sadelm.	sadelmakarterm
+sakobj.	sakobjekt(-et, -en)
+saksubj.	saksubjekt(-et, -en)
+sam.	samisk(-t, -a), samiska
+samhällsv.	samhällsvetenskaplig term
+sannol.	sannolikt
+sanskr.	sanskrit
+sbst.	substantiv
+semit.	semitisk(-t, -a)
+sengr.	sengrekisk(-t, -a), sengrekiska
+senlat.	senlatinsk(-t, -a), senlatin
+serb.	serbisk(-t, -a), serbiska
+sg.	singularis
+shetl.	shetländsk(-t, -a), shetländska
+sht.	synnerhet
+*simn.	term inom simningen, term inom simsporten
+*sistn.	sistnämnda
+sjukgymn.	term inom sjukgymnastiken
+Själl.	Själland
+sjömil.	sjömilitär term
+sjöt.	sjöterm
+s. k.	så kallad (så kallat, så kallade)
+skeppsb.	skeppsbyggeriterm
+*skjutk.	term inom "skjutkonsten", skytteterm
+*skjutv.	skjutvapenterm
+skogsv.	term inom skogsväsendet
+skom.	skomakarterm
+Skottl.	Skottland
+*skr.	skrift(-er)
+skrädd.	skräddarterm
+skämts.	skämtsamt
+*s. l.	sine loco (utan uppgift om tryckort)
+slakt.	slaktterm
+slav.	slavisk(-t, -a)
+slovak.	slovakisk(-t, -a), slovakiska
+sloven.	slovensk(-t, -a), slovenska
+slutart.	slutartikel(-keln, -klar, -klarna)
+slöjd.	slöjdterm
+Smål.	Småland
+snick.	snickarterm
+snörm.	snörmakarterm
+*socialpolit.	socialpolitisk term
+sociol.	sociologisk term
+*sockerbag.	"sockerbageriterm", konditoriterm
+sorb.	sorbisk(-t, -a), sorbiska
+sot.	sotarterm
+sp.	spalt(-en, -er)
+span.	spansk(-t, -a), spanska
+specialanv.	specialanvändning (-en, -ar, -arna)
+spelt.	spelterm
+sport	sportterm
+spr.	språk
+språkv.	språkvetenskaplig term
+spårv.	spårvägsterm
+ss.	såsom
+ssg(n)	sammansättning(en)
+ssgr(na)	sammansättningar(na)
+ssgsform	sammansättningsform
+ssgsled	sammansättningsled
+ssgstyp	sammansättningstyp
+*sskr.	sammanskriven (-et, -na)
+*sskr.	sammanskrivning
+ssp.	subspecies (underart)
+s:t	sankt
+statist.	statistisk term
+statsv.	statsvetenskaplig term
+stenhugg.	stenhuggarterm
+Sthm	Stockholm
+stilist.	term inom stilistiken
+st. v.	starkt verb
+subj.	subjekt(-et, -en)
+sup.	supinum
+superl.	superlativ
+Sv.	Sverige
+sv.	(nysvensk(-t, -a), (ny)svenska
+Sveal.	Svealand
+*Svld	se Sveal.
+sv. v.	svagt verb
+syr.	syrisk(-t, -a), syriska
+sälls.	sällsynt(-a)
+särsk.	särskilt
+särsk. förb.	särskild förbindelse, (särskilda förbindelsen, särskilda förbindelser, särskilda förbindelserna)
+Södermanl.	Södermanland
+sömn.	sömnadsterm
+
+t	ton
+t.	(ny)högtysk(-t, -a), (ny)högtyska
+*tandtekn.	se odontol.
+teat.	teaterterm
+tekn.	teknisk term, teknologisk term
+tele.	term inom telefoni l. telegrafi l. teleteknik
+*telef.	term inom telefoni
+*telegr.	term inom telegrafi
+teol.	teologisk term
+t. ex.	till exempel
+textil.	textilterm
+textiltekn.	textilteknisk term
+*tidräkn.	term inom tidräkningskonsten, kronologisk term
+tillf.	tillfälligt
+*timmerm.	timmermansterm
+tjeck.	tjeckisk(-t, -a), tjeckiska
+tochar.	tocharisk(-t, -a), tochariska
+*tonk.	term inom tonkonsten
+topogr.	topografisk term
+tr.	transitiv(-t, -a), (i) transitiv anv.
+trol.	troligen
+trädg.	trädgårdsterm
+tullv.	term inom tullväsendet
+tunnbind.	tunnbindarterm
+turk.	turkisk(-t, -a), turkiska
+Tyskl.	Tyskland
+
+ukr.	ukrainsk(-t, -a)
+ung.	ungersk(-t, -a), ungerska
+Uppl.	Uppland
+uppl.	upplaga(-an, -or, -orna)
+urgerm.	urgermansk(-t, -a), urgermanska
+urmak.	urmakarterm
+urn.	urnordiska
+urspr.	ursprungligen
+USA	Förenta staterna
+uttr.	uttryck(-et, -en)
+
+*v.	se var.
+v.	verb
+*vagnmak.	vagnmakarterm
+vanl.	vanligen
+vap.	vapenterm, vapenhistorisk term
+*vapenhist.	vapenhistorisk term
+*vapenl.	term inom "vapenläran"
+var.	varietas (varietet)
+vard.	vardagligt
+varigm	varigenom
+vbaladj.	verbaladjektiv(-et, -en)
+vbalform	verbalform
+vbalsbst.	verbalsubstantiv(-et, -en)
+v. dep.	deponentiellt verb, deponens
+veter.	term inom veterinärväsendet
+vulg.	vulgärt
+vulgärlat.	vulgärlatinsk(-t, -a), vulgärlatin
+*väfn.	se vävn.
+Värml.	Värmland
+Västerb.	Västerbotten
+Västergötl.	Västergötland
+Västmanl.	Västmanland
+vävn.	vävnadsterm
+*växtbiol.	växtbiologisk term
+
+y.	yngre
+
+zool.	zoologisk term
+
+Ångermanl.	Ångermanland
+årh.	århundrade(-t, -n)
+åtm.	åtminstone
+*åtsk.	åtskilliga
+
+ä.	äldre
+*äfv.	se äv.
+ärftl.	term inom ärftlighetsläran
+äv.	även
+*öfv.	se öv.
+
+öv.	översättning(-en, -ar, -arna)
