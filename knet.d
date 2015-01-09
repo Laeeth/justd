@@ -5541,17 +5541,17 @@ class Net(bool useArray = true,
             {
                 {
                     const joinedLine = spaceParts.joiner.to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = spaceParts.joiner("-").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = spaceParts.joiner("'").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
@@ -5561,17 +5561,17 @@ class Net(bool useArray = true,
             {
                 {
                     const joinedLine = minusParts.joiner("").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = minusParts.joiner(" ").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = minusParts.joiner("'").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
@@ -5581,17 +5581,17 @@ class Net(bool useArray = true,
             {
                 {
                     const joinedLine = quoteParts.joiner("").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = quoteParts.joiner(" ").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = quoteParts.joiner("-").to!string;
-                    writeln(`> Joined to `, joinedLine);
+                    writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
@@ -5602,35 +5602,36 @@ class Net(bool useArray = true,
                 const stemStatus = normLine.stemize(lang);
                 if (!stemStatus[0])
                     break;
-                writeln(`> Stemmed to `, normLine, " in language ", stemStatus[1]);
+                writeln(`> Stemmed to "`, normLine, `" in language `, stemStatus[1]);
                 const Lang stemmedLang = stemStatus[1];
                 showNodes(normLine, stemmedLang, sense, lineSeparator);
             }
 
             if (!normLine.endsWith('?'))
             {
-                writeln(`> Trying `, normLine, " as a question");
-                showNodes(normLine ~ '?', lang, sense, lineSeparator, triedLines);
+                const questionLine = normLine ~ '?';
+                writeln(`> As a question "`, questionLine, `"`);
+                showNodes(questionLine, lang, sense, lineSeparator, triedLines);
             }
 
             const loweredLine = normLine.toLower;
             if (loweredLine != normLine)
             {
-                writeln(`> Trying `, normLine, " in lowercase");
+                writeln(`> Lowercased to "`, loweredLine, `"`);
                 showNodes(loweredLine, lang, sense, lineSeparator, triedLines);
             }
 
             const upperedLine = normLine.toUpper;
             if (upperedLine != normLine)
             {
-                writeln(`> Trying `, normLine, " in uppercase");
+                writeln(`> Uppercased to "`, upperedLine, `"`);
                 showNodes(upperedLine, lang, sense, lineSeparator, triedLines);
             }
 
             const capitalizedLine = normLine.capitalize;
             if (capitalizedLine != normLine)
             {
-                writeln(`> Trying `, normLine, " as a capitalized (name)");
+                writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
                 showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines);
             }
         }
