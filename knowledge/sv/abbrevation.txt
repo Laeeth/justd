@@ -91,5 +91,6 @@ exkl.exklusive
 forts.fortsfortsättning
 
 e.Kr.e Kre. Kr.efter Kristus
+f.Kr.f Krf. Kr.före Kristus
 
 v.t.vår tideräkning

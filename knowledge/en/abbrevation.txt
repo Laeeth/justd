@@ -110,3 +110,10 @@ AcAir-conditioningAcetateAcetyl
 inf.infinitiveinformal
 
 ADA.D.A. D.anno Domini
+BCB.C.B. C.before Christ
+
+limolimousine
+
+cabtaxi cab
+taxitaxi cab
+taxi cabtaxicab

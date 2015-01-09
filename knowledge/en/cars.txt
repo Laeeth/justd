@@ -20,7 +20,6 @@ hot rod
 hum-vee
 hybrid
 jeep
-limo
 limousine
 low-rider
 luxury car
