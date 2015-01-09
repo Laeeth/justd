@@ -244,6 +244,7 @@ import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
 import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
+import predicates: allEqual;
 import stemming;
 import dbg;
 import grammars;
@@ -5751,25 +5752,30 @@ class Net(bool useArray = true,
         {
             const expr = pair[0];
             auto lemmas = pair[1];
-            const count = lemmas.length;
-            switch (count)
+            if (lemmas.map!(lemma => lemma.lang).allEqual)
             {
-                case 2:
-                    if (lemmas[0].sense.specializes(lemmas[1].sense))
-                    {
-                        dln(`Specializing Lemma expr "`, expr, `" sense from "`,
-                            lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
-                        lemmas[1].sense = lemmas[0].sense;
-                    }
-                    else if (lemmas[1].sense.specializes(lemmas[0].sense))
-                    {
-                        dln(`Specializing Lemma expr "`, expr, `" sense from "`,
-                            lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
-                        lemmas[0].sense = lemmas[1].sense;
-                    }
-                    break;
-                default:
-                    break;
+                switch (lemmas.length)
+                {
+                    case 2:
+                        if (lemmas[0].sense.specializes(lemmas[1].sense))
+                        {
+                            if (lemmas[0].lang.of(Lang.en, Lang.sv))
+                            {
+                                dln(`Specializing Lemma expr "`, expr, `" in `, lemmas[0].lang, ` of sense from "`,
+                                    lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
+                            }
+                            lemmas[1].sense = lemmas[0].sense;
+                        }
+                        else if (lemmas[1].sense.specializes(lemmas[0].sense))
+                        {
+                            dln(`Specializing Lemma expr "`, expr, `" in `, lemmas[0].lang, ` of sense from "`,
+                                lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
+                            lemmas[0].sense = lemmas[1].sense;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
