@@ -131,10 +131,11 @@ enum Rel:ubyte
                     See also: https://english.stackexchange.com/questions/150529/what-is-the-difference-between-property-and-attribute
                     */
     hasAttribute = hasProperty,
+
+    // TODO replace with hasProperty and hasAttribute
     hasShape,
     hasColor,
     hasSize,
-
     hasDiameter,
     hasArea,
     hasLength,
@@ -142,7 +143,6 @@ enum Rel:ubyte
     hasWidth,
     hasThickness,
     hasWeight,
-
     hasAge,
     hasWebsite,
     hasOfficialWebsite,
@@ -1233,6 +1233,46 @@ auto toHuman(const Rel rel,
                     case sv: words = ["används", not, "av"]; break;
                     case en:
                     default: words = ["is", not, "used by"]; break;
+                }
+            }
+            break;
+        case controls:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["kontrollerar", not]; break;
+                    case en:
+                    default: words = ["does", not, "control"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["kontrolleras", not, "av"]; break;
+                    case en:
+                    default: words = ["is", not, "controlled by"]; break;
+                }
+            }
+            break;
+        case treats:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["hanteras", not]; break;
+                    case en:
+                    default: words = ["does", not, "treat"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["hanteras", not, "av"]; break;
+                    case en:
+                    default: words = ["is", not, "treated by"]; break;
                 }
             }
             break;

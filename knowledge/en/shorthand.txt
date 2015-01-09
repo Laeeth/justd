@@ -91,3 +91,15 @@ aealmost everywhere
 
 dim.diminutive
 dim.diminuendo
+
+VATvalue added tax
+GSTgoods and services tax
+
+dial.dialect
+
+Dr.doctor
+Drs.doctors
+
+PhDPh.D.D.Phil.DPhildoctor of Philosophy
+
+inc.incorporated

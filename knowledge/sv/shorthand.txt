@@ -13,16 +13,37 @@ på Gpå gång
 ÖoBöverskottsbolaget
 
 osvoch så vidare
+dvsd.v.s.d. v. s.dvs.det vill säga
+e.d.e.dyl.eller dylikt
+o.d.o.dyl.och dylikt
+
 anm.anmanmärkninganmärkningar
 ben.benämnd
 ang.angangående
 anspr.anspråk
+dets.detsamma
+dial.dialekt
 betyd.betydningbetydningen
+bokf.bokföring
+
+med.medicin
+fil.filosofiefilosofisk
+jur.jurisjuridikjuridisk
+tek.tekniskteknikteknologie
+teol.teologiteologie
+hand.handelsterm
+
+Dr.dr.doktor
+Fil. Drfil. drfil.drfilosofie doktor
+Teol. Drteol. drteol.drteologie doktor
 
 adr.adradressadressat
 adj.adjektiv
 adv.adverb
 interj.interjektion
+
+imperf.imperfekt
+perf.part.perfekt particip
 
 ack.ackusativ
 dat.dativ
@@ -39,6 +60,7 @@ civ.ek.civilekonom
 
 aeareaenhet
 AEastronomisk enhet
+ABaktiebolag
 ADBautomatisk databehandling
 ADarbetsdomstolen
 BFBondeförbundet
@@ -56,3 +78,8 @@ V.S.U.vilket skulle utföras
 D.S.densamme
 
 b.v.s.a.b v s aBVSAbvsabilligare vid snabb affär
+
+momsmervärdesomsättningsskatt
+
+inkl.inklusive
+exkl.exklusive
