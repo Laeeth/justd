@@ -17,7 +17,7 @@ JOJustitieombudsman
 JämOJämställdhetsombudsmannen
 KDUKristdemokratiska Ungdomsförbundet
 KFKooperativa Förbundet
-KOKonsumentombudsmannen
+KOkonsumentombudsmannen
 KominternKommunistiska internationalen
 LOLandsorganisationen
 MUFModerata ungdomsförbundet
@@ -50,6 +50,6 @@ SSUSocialdemokratiska Ungdomsförbundet
 SVTSveriges Television
 TCOTjänstemännens centralorganisation
 TRVTrafikverket
-USAAmerikas Förenta Stater
 WHOVärldshälsoorganisationen
 WWFVärldsnaturfonden
+RFSLRiksförbundet för Sexuellt Likaberättigande

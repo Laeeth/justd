@@ -20,3 +20,6 @@ NATONorth Atlantic Treaty Organization
 UNICEFUnited Nations Children's Fund
 UnescoUnited Nations Educational, Scientific and Cultural Organization
 SSGSSG Standard Solutions Group
+ASEANAssociation of Southeast Asian Nations
+CSAConfederate States of America
+ETCElectronic Telecommunications Committee
