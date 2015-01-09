@@ -1699,20 +1699,20 @@ class Net(bool useArray = true,
                    Sense.nounPlural, Lang.sv,
                    Origin.manual, 1.0);
 
-        // Shorthand
-        learnTuple("../knowledge/en/shorthand.txt",
+        // Abbrevation
+        learnTuple("../knowledge/en/abbrevation.txt",
                    Sense.unknown, Lang.en,
-                   Rel.shorthandFor,
+                   Rel.abbreviationFor,
                    Sense.unknown, Lang.en,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/sv/shorthand.txt",
+        learnTuple("../knowledge/sv/abbrevation.txt",
                    Sense.unknown, Lang.sv,
-                   Rel.shorthandFor,
+                   Rel.abbreviationFor,
                    Sense.unknown, Lang.sv,
                    Origin.manual, 1.0);
-        learnTuple("../knowledge/la/shorthand.txt",
+        learnTuple("../knowledge/la/abbrevation.txt",
                    Sense.unknown, Lang.la,
-                   Rel.shorthandFor,
+                   Rel.abbreviationFor,
                    Sense.unknown, Lang.la,
                    Origin.manual, 1.0);
 
@@ -3982,7 +3982,7 @@ class Net(bool useArray = true,
                        tuple("1000000000th", "one billionth")];
         foreach (pair; pairs)
         {
-            connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.shorthandFor,
+            connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.abbreviationFor,
                     store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
         }
     }
@@ -4027,7 +4027,7 @@ class Net(bool useArray = true,
                        tuple("1000000:e", "miljonte")];
         foreach (pair; pairs)
         {
-            connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.shorthandFor,
+            connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Rel.abbreviationFor,
                     store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
         }
     }
