@@ -1340,6 +1340,41 @@ class Net(bool useArray = true,
         return lemmasOf(expr).map!(lemma => nodeRefByLemma[lemma]);
     }
 
+    /** Get All Possible Nodes related to $(D word) in the interpretation
+        (semantic context) $(D sense).
+        If no sense given return all possible.
+    */
+    NodeRefs nodeRefsOf(S)(S expr,
+                           Lang lang,
+                           Sense sense,
+                           ContextIx context = anyContext) if (isSomeString!S)
+    {
+        typeof(return) nodes;
+
+        if (lang != Lang.unknown &&
+            sense != Sense.unknown &&
+            context != anyContext) // if exact Lemma key can be used
+        {
+            return nodeRefsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
+        }
+        else
+        {
+            nodes = NodeRefs(nodeRefsOf(expr).filter!(a => (lang == Lang.unknown ||
+                                                            nodeAt(a).lemma.lang == lang))
+                                             .array); // TODO avoid allocations
+        }
+
+        if (nodes.empty)
+        {
+            /* writeln(`Lookup translation of individual expr; bil_tvätt => car-wash`); */
+            /* foreach (word; expr.splitter(`_`)) */
+            /* { */
+            /*     writeln(`Translate word "`, word, `" from `, lang, ` to English`); */
+            /* } */
+        }
+        return nodes;
+    }
+
     /** Get All Possible Lemmas related to $(D word).
      */
     Lemmas lemmasOf(S)(S expr) if (isSomeString!S)
@@ -1389,39 +1424,6 @@ class Net(bool useArray = true,
             }
             lemmasByExpr[expr] ~= lemma;
         }
-    }
-
-    /** Get All Possible Nodes related to $(D word) in the interpretation
-        (semantic context) $(D sense).
-        If no sense given return all possible.
-    */
-    NodeRefs nodeRefsOf(S)(S expr,
-                           Lang lang,
-                           Sense sense,
-                           ContextIx context = anyContext) if (isSomeString!S)
-    {
-        typeof(return) nodes;
-
-        if (lang != Lang.unknown &&
-            sense != Sense.unknown &&
-            context != anyContext) // if exact Lemma key can be used
-        {
-            return nodeRefsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
-        }
-        else
-        {
-            nodes = NodeRefs(nodeRefsOf(expr).array); // TODO avoid allocations
-        }
-
-        if (nodes.empty)
-        {
-            /* writeln(`Lookup translation of individual expr; bil_tvätt => car-wash`); */
-            /* foreach (word; expr.splitter(`_`)) */
-            /* { */
-            /*     writeln(`Translate word "`, word, `" from `, lang, ` to English`); */
-            /* } */
-        }
-        return nodes;
     }
 
     auto pageSize() @trusted
@@ -5602,9 +5604,9 @@ class Net(bool useArray = true,
                 const stemStatus = normLine.stemize(lang);
                 if (!stemStatus[0])
                     break;
-                writeln(`> Stemmed to "`, normLine, `" in language `, stemStatus[1]);
                 const Lang stemmedLang = stemStatus[1];
-                showNodes(normLine, stemmedLang, sense, lineSeparator);
+                writeln(`> Stemmed to "`, normLine, `" in language `, stemmedLang);
+                showNodes(normLine, stemmedLang, sense, lineSeparator, triedLines);
             }
 
             if (!normLine.endsWith('?'))
