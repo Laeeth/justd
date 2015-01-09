@@ -1058,13 +1058,13 @@ unittest
     bool isCode(Sense sense)
     {
         with (Sense) return (sense.of(code,
-                                     codeOperator,
-                                     codeOperatorAssignment,
-                                     codeFunction,
-                                     codeFunctionReference,
-                                     codeVariable,
-                                     codeVariableReference,
-                                     codeType));
+                                      codeOperator,
+                                      codeOperatorAssignment,
+                                      codeFunction,
+                                      codeFunctionReference,
+                                      codeVariable,
+                                      codeVariableReference,
+                                      codeType));
     }
     bool isFood(Sense sense)
     {
@@ -1090,32 +1090,32 @@ unittest
     bool isTimePeriod(Sense sense)
     {
         with (Sense) return sense.of(timePeriod,
-                                    weekday,
-                                    month,
-                                    dayOfMonth,
-                                    year,
-                                    season);
+                                     weekday,
+                                     month,
+                                     dayOfMonth,
+                                     year,
+                                     season);
     }
     bool isNumeric(Sense sense)
     {
         with (Sense) return (sense.isInteger ||
                              sense.of(nounNumeric,
-                                     decimal,
-                                     numberRational,
-                                     numberIrrational,
-                                     numberComplex));
+                                      decimal,
+                                      numberRational,
+                                      numberIrrational,
+                                      numberComplex));
     }
     bool isNumeral(Sense sense)
     {
         with (Sense) return (sense.of(numeral,
-                                     ordinalNumber));
+                                      ordinalNumber));
     }
     bool isInteger(Sense sense)
     {
         with (Sense) return (sense.isNumeral ||
                              sense.of(integer,
-                                     integerPositive,
-                                     integerNegative));
+                                      integerPositive,
+                                      integerNegative));
     }
     bool isName(Sense sense)
     {
@@ -1132,35 +1132,35 @@ unittest
     bool isVerb(Sense sense)
     {
         with (Sense) return sense.of(verb,
-                                    verbRegular,
-                                    verbIrregular,
-                                    verbAbbrevation,
-                                    verbImperative,
-                                    verbInfinitive,
-                                    verbPresent,
-                                    verbPast,
-                                    verbFuture,
-                                    verbPastParticiple);
+                                     verbRegular,
+                                     verbIrregular,
+                                     verbAbbrevation,
+                                     verbImperative,
+                                     verbInfinitive,
+                                     verbPresent,
+                                     verbPast,
+                                     verbFuture,
+                                     verbPastParticiple);
     }
     bool isAdjective(Sense sense)
     {
         with (Sense) return sense.of(adjective,
-                                    adjectiveRegular,
-                                    adjectiveIrregular,
-                                    adjectiveAbbrevation,
-                                    adjectiveNominative,
-                                    adjectiveComparative,
-                                    adjectiveSuperlative,
-                                    adjectivePossessiveSingular,
-                                    adjectivePossessivePlural);
+                                     adjectiveRegular,
+                                     adjectiveIrregular,
+                                     adjectiveAbbrevation,
+                                     adjectiveNominative,
+                                     adjectiveComparative,
+                                     adjectiveSuperlative,
+                                     adjectivePossessiveSingular,
+                                     adjectivePossessivePlural);
     }
     bool isAdverb(Sense sense)
     {
         with (Sense) return sense.of(adverb,
-                                    normalAdverb,
-                                    negatingAdverb,
-                                    affirmingAdverb,
-                                    conjunctiveAdverb);
+                                     normalAdverb,
+                                     negatingAdverb,
+                                     affirmingAdverb,
+                                     conjunctiveAdverb);
     }
     bool isPronoun(Sense sense)
     {
@@ -1182,26 +1182,26 @@ unittest
     {
         with (Sense) return sense.of(pronounPersonalSingular,
 
-                                    pronounPersonalSingular1st,
-                                    pronounPersonalSingular2nd,
-                                    pronounPersonalSingular3rd,
+                                     pronounPersonalSingular1st,
+                                     pronounPersonalSingular2nd,
+                                     pronounPersonalSingular3rd,
 
-                                    pronounPersonalSingularMale,
-                                    pronounPersonalSingularMale1st,
-                                    pronounPersonalSingularMale2nd,
+                                     pronounPersonalSingularMale,
+                                     pronounPersonalSingularMale1st,
+                                     pronounPersonalSingularMale2nd,
 
-                                    pronounPersonalSingularFemale,
-                                    pronounPersonalSingularFemale1st,
-                                    pronounPersonalSingularFemale2nd,
+                                     pronounPersonalSingularFemale,
+                                     pronounPersonalSingularFemale1st,
+                                     pronounPersonalSingularFemale2nd,
 
-                                    pronounPersonalSingularNeutral);
+                                     pronounPersonalSingularNeutral);
     }
     bool isPronounPersonalPlural(Sense sense)
     {
         with (Sense) return sense.of(pronounPersonalPlural,
-                                    pronounPersonalPlural1st,
-                                    pronounPersonalPlural2nd,
-                                    pronounPersonalPlural3rd);
+                                     pronounPersonalPlural1st,
+                                     pronounPersonalPlural2nd,
+                                     pronounPersonalPlural3rd);
     }
     bool isPronounPossessive(Sense sense)
     {
@@ -1212,24 +1212,24 @@ unittest
     bool isPronounPossessiveSingular(Sense sense)
     {
         with (Sense) return sense.of(pronounPossessiveSingular,
-                                    pronounPossessiveSingular1st,
-                                    pronounPossessiveSingular2nd,
-                                    pronounPossessiveSingularMale,
-                                    pronounPossessiveSingularFemale,
-                                    pronounPossessiveSingularNeutral);
+                                     pronounPossessiveSingular1st,
+                                     pronounPossessiveSingular2nd,
+                                     pronounPossessiveSingularMale,
+                                     pronounPossessiveSingularFemale,
+                                     pronounPossessiveSingularNeutral);
     }
     bool isPronounPossessivePlural(Sense sense)
     {
         with (Sense) return sense.of(pronounPossessivePlural,
-                                    pronounPossessivePlural1st,
-                                    pronounPossessivePlural2nd,
-                                    pronounPossessivePlural3rd);
+                                     pronounPossessivePlural1st,
+                                     pronounPossessivePlural2nd,
+                                     pronounPossessivePlural3rd);
     }
     bool isPronounDemonstrative(Sense sense)
     {
         with (Sense) return sense.of(pronounDemonstrative,
-                                    pronounDemonstrativeSingular,
-                                    pronounDemonstrativePlural);
+                                     pronounDemonstrativeSingular,
+                                     pronounDemonstrativePlural);
     }
     bool isPronounPlural(Sense sense)
     {
@@ -1239,45 +1239,45 @@ unittest
     bool isPronounReflexive(Sense sense)
     {
         with (Sense) return sense.of(pronounReflexive,
-                                    pronounReflexiveSingular,
-                                    pronounReflexivePlural);
+                                     pronounReflexiveSingular,
+                                     pronounReflexivePlural);
     }
     bool isPronounIndefinite(Sense sense)
     {
         with (Sense) return sense.of(pronounIndefinite,
-                                    pronounIndefiniteSingular,
-                                    pronounIndefinitePlural);
+                                     pronounIndefiniteSingular,
+                                     pronounIndefinitePlural);
     }
     bool isPreposition(Sense sense)
     {
         with (Sense) return sense.of(preposition,
-                                    prepositionTime,
-                                    prepositionPosition,
-                                    prepositionPlace,
-                                    prepositionDirection);
+                                     prepositionTime,
+                                     prepositionPosition,
+                                     prepositionPlace,
+                                     prepositionDirection);
     }
     bool isArticle(Sense sense)
     {
         with (Sense) return sense.of(article,
-                                    articleUndefinite,
-                                    articleDefinite,
-                                    articlePartitive);
+                                     articleUndefinite,
+                                     articleDefinite,
+                                     articlePartitive);
     }
     bool isConjunction(Sense sense)
     {
         with (Sense) return sense.of(conjunction,
-                                    conjunctionCoordinating,
-                                    conjunctionSubordinating,
-                                    conjunctionSubordinatingConcession,
-                                    conjunctionSubordinatingCondition,
-                                    conjunctionSubordinatingComparison,
-                                    conjunctionSubordinatingTime,
-                                    conjunctionSubordinatingReason,
-                                    conjunctionSubordinatingAdjective,
-                                    conjunctionSubordinatingPronoun,
-                                    conjunctionSubordinatingManner,
-                                    conjunctionSubordinatingPlace,
-                                    conjunctionCorrelative);
+                                     conjunctionCoordinating,
+                                     conjunctionSubordinating,
+                                     conjunctionSubordinatingConcession,
+                                     conjunctionSubordinatingCondition,
+                                     conjunctionSubordinatingComparison,
+                                     conjunctionSubordinatingTime,
+                                     conjunctionSubordinatingReason,
+                                     conjunctionSubordinatingAdjective,
+                                     conjunctionSubordinatingPronoun,
+                                     conjunctionSubordinatingManner,
+                                     conjunctionSubordinatingPlace,
+                                     conjunctionCorrelative);
     }
 }
 
