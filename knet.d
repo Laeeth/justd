@@ -52,6 +52,10 @@
     TODO {*} means zero or more words
     TODO {+} means one or more words
 
+    TODO In Swedish: *lig <=> *ligt can be inferred to adjective <=> adverb
+    TODO In English: X <=> Xely can be inferred to adjective <=> adverb
+    TODO In English: X <=> Xly can be inferred to adjective <=> adverb
+
     TODO Infer English-Swedish Translations: "[are|is] requirED = krävs" because of "require = kräva"
 
     TODO Add isExactIn(Sense sense, Lang lang). Use to specialize in learnLemmaMaybeSpecialized().
