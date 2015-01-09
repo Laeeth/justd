@@ -13,7 +13,7 @@ four-door
 four-wheel drive
 gas powered
 gas-electric
-hard top
+hardtop
 hatchback
 hearse
 hot rod
