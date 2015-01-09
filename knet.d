@@ -1596,7 +1596,7 @@ class Net(bool useArray = true,
 
         learnEnglishOther();
 
-        learnReversions();
+        learnVerbReversions();
         learnEtymologicallyDerivedFroms();
 
         learnSwedishVerbs();
@@ -2391,20 +2391,20 @@ class Net(bool useArray = true,
         }
     }
 
-    /// Learn Reversions.
-    void learnReversions()
+    /// Learn Verb Reversions.
+    void learnVerbReversions()
     {
         // TODO Copy all from krels.toHuman
-        learnReversion(`is a`, `can be`, Lang.en);
-        learnReversion(`leads to`, `can infer`, Lang.en);
-        learnReversion(`is part of`, `contains`, Lang.en);
-        learnReversion(`is member of`, `has member`, Lang.en);
+        learnVerbReversion(`is a`, `can be`, Lang.en);
+        learnVerbReversion(`leads to`, `can infer`, Lang.en);
+        learnVerbReversion(`is part of`, `contains`, Lang.en);
+        learnVerbReversion(`is member of`, `has member`, Lang.en);
     }
 
-    /// Learn Reversion.
-    LinkRef[] learnReversion(S)(S forward,
-                                S backward,
-                                Lang lang = Lang.unknown) if (isSomeString!S)
+    /// Learn Verb Reversion.
+    LinkRef[] learnVerbReversion(S)(S forward,
+                                    S backward,
+                                    Lang lang = Lang.unknown) if (isSomeString!S)
     {
         const origin = Origin.manual;
         auto all = [store(forward, lang, Sense.verbInfinitive, origin),
@@ -2439,16 +2439,16 @@ class Net(bool useArray = true,
 
     /** Learn English Irregular Verb.
      */
-    LinkRef[] learnEnglishVerb(S1, S2, S3)(S1 infinitive,
-                                           S2 past,
-                                           S3 pastParticiple,
-                                           Origin origin = Origin.manual)
+    LinkRef[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive,
+                                                    S2 past,
+                                                    S3 pastParticiple,
+                                                    Origin origin = Origin.manual)
     {
         enum lang = Lang.en;
         NodeRef[] all;
-        all ~= store(infinitive, lang, Sense.verbInfinitive, origin);
-        all ~= store(past, lang, Sense.verbPast, origin);
-        all ~= store(pastParticiple, lang, Sense.verbPastParticiple, origin);
+        all ~= store(infinitive, lang, Sense.verbIrregularInfinitive, origin);
+        all ~= store(past, lang, Sense.verbIrregularPast, origin);
+        all ~= store(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
         return connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
     }
 
@@ -3584,162 +3584,162 @@ class Net(bool useArray = true,
      */
     void learnEnglishIrregularVerbs()
     {
-        learnEnglishVerb(`arise`, `arose`, `arisen`);
-        learnEnglishVerb(`rise`, `rose`, `risen`);
-        learnEnglishVerb(`wake`, [`woke`, `awaked`], `woken`);
-        learnEnglishVerb(`be`, [`was`, `were`], `been`);
-        learnEnglishVerb(`bear`, [`bore`, `born`], `borne`);
-        learnEnglishVerb(`beat`, `beat`, `beaten`);
-        learnEnglishVerb(`become`, `became`, `become`);
-        learnEnglishVerb(`begin`, `began`, `begun`);
-        learnEnglishVerb(`bend`, `bent`, `bent`);
-        learnEnglishVerb(`bet`, `bet`, `bet`);
-        learnEnglishVerb(`bid`, [`bid`, `bade`], [`bid`, `bidden`]);
-        learnEnglishVerb(`bind`, `bound`, `bound`);
-        learnEnglishVerb(`bite`, `bit`, `bitten`);
-        learnEnglishVerb(`bleed`, `bled`, `bled`);
-        learnEnglishVerb(`blow`, `blew`, `blown`);
-        learnEnglishVerb(`break`, `broke`, `broken`);
-        learnEnglishVerb(`breed`, `bred`, `bred`);
-        learnEnglishVerb(`bring`, `brought`, `brought`);
-        learnEnglishVerb(`build`, `built`, `built`);
-        learnEnglishVerb(`burn`, [`burnt`, `burned`], [`burnt`, `burned`]);
-        learnEnglishVerb(`burst`, `burst`, `burst`);
-        learnEnglishVerb(`buy`, `bought`, `bought`);
-        learnEnglishVerb(`cast`, `cast`, `cast`);
-        learnEnglishVerb(`catch`, `caught`, `caught`);
-        learnEnglishVerb(`choose`, `chose`, `chosen`);
-        learnEnglishVerb(`come`, `came`, `come`);
-        learnEnglishVerb(`cost`, `cost`, `cost`);
-        learnEnglishVerb(`creep`, `crept`, `crept`);
-        learnEnglishVerb(`cut`, `cut`, `cut`);
-        learnEnglishVerb(`deal`, `dealt`, `dealt`);
-        learnEnglishVerb(`dig`, `dug`, `dug`);
-        learnEnglishVerb(`dive`, [`dived`, `dove`], `dived`);
-        learnEnglishVerb(`do`, `did`, `done`);
-        learnEnglishVerb(`draw`, `drew`, `drawn`);
-        learnEnglishVerb(`dream`, [`dreamt`, `dreamed`], [`dreamt`, `dreamed`]);
-        learnEnglishVerb(`drink`, `drank`, `drunk`);
-        learnEnglishVerb(`drive`, `drove`, `driven`);
-        learnEnglishVerb(`dwell`, `dwelt`, `dwelt`);
-        learnEnglishVerb(`eat`, `ate`, `eaten`);
-        learnEnglishVerb(`fall`, `fell`, `fallen`);
-        learnEnglishVerb(`feed`, `fed`, `fed`);
-        learnEnglishVerb(`fight`, `fought`, `fought`);
-        learnEnglishVerb(`find`, `found`, `found`);
-        learnEnglishVerb(`flee`, `fled`, `fled`);
-        learnEnglishVerb(`fly`, `flew`, `flown`);
-        learnEnglishVerb(`forbid`, [`forbade`, `forbad`], `forbidden`);
-        learnEnglishVerb(`forget`, `forgot`, `forgotten`);
-        learnEnglishVerb(`forgive`, `forgave`, `forgiven`);
-        learnEnglishVerb(`forsake`, `forsook`, `forsaken`);
-        learnEnglishVerb(`freeze`, `froze`, `frozen`);
+        learnEnglishIrregularVerb(`arise`, `arose`, `arisen`);
+        learnEnglishIrregularVerb(`rise`, `rose`, `risen`);
+        learnEnglishIrregularVerb(`wake`, [`woke`, `awaked`], `woken`);
+        learnEnglishIrregularVerb(`be`, [`was`, `were`], `been`);
+        learnEnglishIrregularVerb(`bear`, [`bore`, `born`], `borne`);
+        learnEnglishIrregularVerb(`beat`, `beat`, `beaten`);
+        learnEnglishIrregularVerb(`become`, `became`, `become`);
+        learnEnglishIrregularVerb(`begin`, `began`, `begun`);
+        learnEnglishIrregularVerb(`bend`, `bent`, `bent`);
+        learnEnglishIrregularVerb(`bet`, `bet`, `bet`);
+        learnEnglishIrregularVerb(`bid`, [`bid`, `bade`], [`bid`, `bidden`]);
+        learnEnglishIrregularVerb(`bind`, `bound`, `bound`);
+        learnEnglishIrregularVerb(`bite`, `bit`, `bitten`);
+        learnEnglishIrregularVerb(`bleed`, `bled`, `bled`);
+        learnEnglishIrregularVerb(`blow`, `blew`, `blown`);
+        learnEnglishIrregularVerb(`break`, `broke`, `broken`);
+        learnEnglishIrregularVerb(`breed`, `bred`, `bred`);
+        learnEnglishIrregularVerb(`bring`, `brought`, `brought`);
+        learnEnglishIrregularVerb(`build`, `built`, `built`);
+        learnEnglishIrregularVerb(`burn`, [`burnt`, `burned`], [`burnt`, `burned`]);
+        learnEnglishIrregularVerb(`burst`, `burst`, `burst`);
+        learnEnglishIrregularVerb(`buy`, `bought`, `bought`);
+        learnEnglishIrregularVerb(`cast`, `cast`, `cast`);
+        learnEnglishIrregularVerb(`catch`, `caught`, `caught`);
+        learnEnglishIrregularVerb(`choose`, `chose`, `chosen`);
+        learnEnglishIrregularVerb(`come`, `came`, `come`);
+        learnEnglishIrregularVerb(`cost`, `cost`, `cost`);
+        learnEnglishIrregularVerb(`creep`, `crept`, `crept`);
+        learnEnglishIrregularVerb(`cut`, `cut`, `cut`);
+        learnEnglishIrregularVerb(`deal`, `dealt`, `dealt`);
+        learnEnglishIrregularVerb(`dig`, `dug`, `dug`);
+        learnEnglishIrregularVerb(`dive`, [`dived`, `dove`], `dived`);
+        learnEnglishIrregularVerb(`do`, `did`, `done`);
+        learnEnglishIrregularVerb(`draw`, `drew`, `drawn`);
+        learnEnglishIrregularVerb(`dream`, [`dreamt`, `dreamed`], [`dreamt`, `dreamed`]);
+        learnEnglishIrregularVerb(`drink`, `drank`, `drunk`);
+        learnEnglishIrregularVerb(`drive`, `drove`, `driven`);
+        learnEnglishIrregularVerb(`dwell`, `dwelt`, `dwelt`);
+        learnEnglishIrregularVerb(`eat`, `ate`, `eaten`);
+        learnEnglishIrregularVerb(`fall`, `fell`, `fallen`);
+        learnEnglishIrregularVerb(`feed`, `fed`, `fed`);
+        learnEnglishIrregularVerb(`fight`, `fought`, `fought`);
+        learnEnglishIrregularVerb(`find`, `found`, `found`);
+        learnEnglishIrregularVerb(`flee`, `fled`, `fled`);
+        learnEnglishIrregularVerb(`fly`, `flew`, `flown`);
+        learnEnglishIrregularVerb(`forbid`, [`forbade`, `forbad`], `forbidden`);
+        learnEnglishIrregularVerb(`forget`, `forgot`, `forgotten`);
+        learnEnglishIrregularVerb(`forgive`, `forgave`, `forgiven`);
+        learnEnglishIrregularVerb(`forsake`, `forsook`, `forsaken`);
+        learnEnglishIrregularVerb(`freeze`, `froze`, `frozen`);
 
-        learnEnglishVerb(`get`, `got`, [`gotten`, `got`]);
-        learnEnglishVerb(`give`, `gave`, `given`);
-        learnEnglishVerb(`go`, `went`, `gone`);
-        learnEnglishVerb(`grind`, `ground`, `ground`);
-        learnEnglishVerb(`grow`, `grew`, `grown`);
+        learnEnglishIrregularVerb(`get`, `got`, [`gotten`, `got`]);
+        learnEnglishIrregularVerb(`give`, `gave`, `given`);
+        learnEnglishIrregularVerb(`go`, `went`, `gone`);
+        learnEnglishIrregularVerb(`grind`, `ground`, `ground`);
+        learnEnglishIrregularVerb(`grow`, `grew`, `grown`);
 
-        learnEnglishVerb(`hang`, [`hanged`, `hung`], [`hanged`, `hung`]);
-        learnEnglishVerb(`have`, `had`, `had`);
-        learnEnglishVerb(`hear`, `heard`, `heard`);
-        learnEnglishVerb(`hide`, `hid`, `hidden`);
-        learnEnglishVerb(`hit`, `hit`, `hit`);
-        learnEnglishVerb(`hold`, `held`, `held`);
-        learnEnglishVerb(`hurt`, `hurt`, `hurt`);
+        learnEnglishIrregularVerb(`hang`, [`hanged`, `hung`], [`hanged`, `hung`]);
+        learnEnglishIrregularVerb(`have`, `had`, `had`);
+        learnEnglishIrregularVerb(`hear`, `heard`, `heard`);
+        learnEnglishIrregularVerb(`hide`, `hid`, `hidden`);
+        learnEnglishIrregularVerb(`hit`, `hit`, `hit`);
+        learnEnglishIrregularVerb(`hold`, `held`, `held`);
+        learnEnglishIrregularVerb(`hurt`, `hurt`, `hurt`);
 
-        learnEnglishVerb(`keep`, `kept`, `kept`);
-        learnEnglishVerb(`kneel`, `knelt`, `knelt`);
-        learnEnglishVerb(`knit`, [`knit`, `knitted`], [`knit`, `knitted`]);
-        learnEnglishVerb(`know`, `knew`, `known`);
+        learnEnglishIrregularVerb(`keep`, `kept`, `kept`);
+        learnEnglishIrregularVerb(`kneel`, `knelt`, `knelt`);
+        learnEnglishIrregularVerb(`knit`, [`knit`, `knitted`], [`knit`, `knitted`]);
+        learnEnglishIrregularVerb(`know`, `knew`, `known`);
 
-        learnEnglishVerb(`lay`, `laid`, `laid`);
-        learnEnglishVerb(`lead`, `led`, `led`);
+        learnEnglishIrregularVerb(`lay`, `laid`, `laid`);
+        learnEnglishIrregularVerb(`lead`, `led`, `led`);
 
-        learnEnglishVerb(`lean`, [`leaned`, `leant`], [`leaned`, `leant`]);
-        learnEnglishVerb(`leap`, [`leaped`, `leapt`], [`leaped`, `leapt`]);
+        learnEnglishIrregularVerb(`lean`, [`leaned`, `leant`], [`leaned`, `leant`]);
+        learnEnglishIrregularVerb(`leap`, [`leaped`, `leapt`], [`leaped`, `leapt`]);
 
-        learnEnglishVerb(`learn`, [`learned`, `learnt`], [`learned`, `learnt`]);
-        learnEnglishVerb(`leave`, `left`, `left`);
-        learnEnglishVerb(`lend`, `lent`, `lent`);
-        learnEnglishVerb(`let`, `let`, `let`);
-        learnEnglishVerb(`lie`, `lay`, `lain`);
-        learnEnglishVerb(`light`, [`lighted`, `lit`], [`lighted`, `lit`]);
-        learnEnglishVerb(`lose`, `lost`, `lost`);
+        learnEnglishIrregularVerb(`learn`, [`learned`, `learnt`], [`learned`, `learnt`]);
+        learnEnglishIrregularVerb(`leave`, `left`, `left`);
+        learnEnglishIrregularVerb(`lend`, `lent`, `lent`);
+        learnEnglishIrregularVerb(`let`, `let`, `let`);
+        learnEnglishIrregularVerb(`lie`, `lay`, `lain`);
+        learnEnglishIrregularVerb(`light`, [`lighted`, `lit`], [`lighted`, `lit`]);
+        learnEnglishIrregularVerb(`lose`, `lost`, `lost`);
 
-        learnEnglishVerb(`make`, `made`, `made`);
-        learnEnglishVerb(`mean`, `meant`, `meant`);
-        learnEnglishVerb(`meet`, `met`, `met`);
-        learnEnglishVerb(`mistake`, `mistook`, `mistaken`);
+        learnEnglishIrregularVerb(`make`, `made`, `made`);
+        learnEnglishIrregularVerb(`mean`, `meant`, `meant`);
+        learnEnglishIrregularVerb(`meet`, `met`, `met`);
+        learnEnglishIrregularVerb(`mistake`, `mistook`, `mistaken`);
 
-        learnEnglishVerb(`partake`, `partook`, `partaken`);
-        learnEnglishVerb(`pay`, `paid`, `paid`);
-        learnEnglishVerb(`put`, `put`, `put`);
+        learnEnglishIrregularVerb(`partake`, `partook`, `partaken`);
+        learnEnglishIrregularVerb(`pay`, `paid`, `paid`);
+        learnEnglishIrregularVerb(`put`, `put`, `put`);
 
-        learnEnglishVerb(`read`, `read`, `read`);
-        learnEnglishVerb(`rend`, `rent`, `rent`);
-        learnEnglishVerb(`rid`, `rid`, `rid`);
-        learnEnglishVerb(`ride`, `rode`, `ridden`);
-        learnEnglishVerb(`run`, `ran`, `run`);
+        learnEnglishIrregularVerb(`read`, `read`, `read`);
+        learnEnglishIrregularVerb(`rend`, `rent`, `rent`);
+        learnEnglishIrregularVerb(`rid`, `rid`, `rid`);
+        learnEnglishIrregularVerb(`ride`, `rode`, `ridden`);
+        learnEnglishIrregularVerb(`run`, `ran`, `run`);
 
-        learnEnglishVerb(`say`, `said`, `said`);
-        learnEnglishVerb(`see`, `saw`, `seen`);
-        learnEnglishVerb(`seek`, `sought`, `sought`);
-        learnEnglishVerb(`sell`, `sold`, `sold`);
-        learnEnglishVerb(`send`, `sent`, `sent`);
-        learnEnglishVerb(`set`, `set`, `set`);
-        learnEnglishVerb(`shake`, `shook`, `shaken`);
-        learnEnglishVerb(`shed`, `shed`, `shed`);
-        learnEnglishVerb(`shine`, `shone`, `shone`);
-        learnEnglishVerb(`shoot`, `shot`, `shot`);
-        learnEnglishVerb(`shrink`, `shrank`, `shrunk`);
-        learnEnglishVerb(`shut`, `shut`, `shut`);
-        learnEnglishVerb(`sing`, `sang`, `sung`);
-        learnEnglishVerb(`sink`, `sank`, `sank`);
-        learnEnglishVerb(`sit`, `sat`, `sat`);
-        learnEnglishVerb(`slay`, `slew`, `slain`);
-        learnEnglishVerb(`sleep`, `slept`, `slept`);
-        learnEnglishVerb(`sling`, `slung`, `slung`);
-        learnEnglishVerb(`slit`, `slit`, `slit`);
-        learnEnglishVerb(`speak`, `spoke`, `spoken`);
-        learnEnglishVerb(`spin`, `spun`, `spun`);
-        learnEnglishVerb(`spit`, `spat`, `spat`);
-        learnEnglishVerb(`split`, `split`, `split`);
-        learnEnglishVerb(`spring`, `sprang`, `sprung`);
-        learnEnglishVerb(`stand`, `stood`, `stood`);
-        learnEnglishVerb(`steal`, `stole`, `stolen`);
-        learnEnglishVerb(`stick`, `stuck`, `stuck`);
-        learnEnglishVerb(`sting`, `stung`, `stung`);
-        learnEnglishVerb(`stink`, `stank`, `stunk`);
-        learnEnglishVerb(`stride`, `strode`, `stridden`);
-        learnEnglishVerb(`strive`, `strove`, `striven`);
-        learnEnglishVerb(`swear`, `swore`, `sworn`);
-        learnEnglishVerb(`sweep`, `swept`, `swept`);
-        learnEnglishVerb(`swim`, `swam`, `swum`);
-        learnEnglishVerb(`swing`, `swung`, `swung`);
+        learnEnglishIrregularVerb(`say`, `said`, `said`);
+        learnEnglishIrregularVerb(`see`, `saw`, `seen`);
+        learnEnglishIrregularVerb(`seek`, `sought`, `sought`);
+        learnEnglishIrregularVerb(`sell`, `sold`, `sold`);
+        learnEnglishIrregularVerb(`send`, `sent`, `sent`);
+        learnEnglishIrregularVerb(`set`, `set`, `set`);
+        learnEnglishIrregularVerb(`shake`, `shook`, `shaken`);
+        learnEnglishIrregularVerb(`shed`, `shed`, `shed`);
+        learnEnglishIrregularVerb(`shine`, `shone`, `shone`);
+        learnEnglishIrregularVerb(`shoot`, `shot`, `shot`);
+        learnEnglishIrregularVerb(`shrink`, `shrank`, `shrunk`);
+        learnEnglishIrregularVerb(`shut`, `shut`, `shut`);
+        learnEnglishIrregularVerb(`sing`, `sang`, `sung`);
+        learnEnglishIrregularVerb(`sink`, `sank`, `sank`);
+        learnEnglishIrregularVerb(`sit`, `sat`, `sat`);
+        learnEnglishIrregularVerb(`slay`, `slew`, `slain`);
+        learnEnglishIrregularVerb(`sleep`, `slept`, `slept`);
+        learnEnglishIrregularVerb(`sling`, `slung`, `slung`);
+        learnEnglishIrregularVerb(`slit`, `slit`, `slit`);
+        learnEnglishIrregularVerb(`speak`, `spoke`, `spoken`);
+        learnEnglishIrregularVerb(`spin`, `spun`, `spun`);
+        learnEnglishIrregularVerb(`spit`, `spat`, `spat`);
+        learnEnglishIrregularVerb(`split`, `split`, `split`);
+        learnEnglishIrregularVerb(`spring`, `sprang`, `sprung`);
+        learnEnglishIrregularVerb(`stand`, `stood`, `stood`);
+        learnEnglishIrregularVerb(`steal`, `stole`, `stolen`);
+        learnEnglishIrregularVerb(`stick`, `stuck`, `stuck`);
+        learnEnglishIrregularVerb(`sting`, `stung`, `stung`);
+        learnEnglishIrregularVerb(`stink`, `stank`, `stunk`);
+        learnEnglishIrregularVerb(`stride`, `strode`, `stridden`);
+        learnEnglishIrregularVerb(`strive`, `strove`, `striven`);
+        learnEnglishIrregularVerb(`swear`, `swore`, `sworn`);
+        learnEnglishIrregularVerb(`sweep`, `swept`, `swept`);
+        learnEnglishIrregularVerb(`swim`, `swam`, `swum`);
+        learnEnglishIrregularVerb(`swing`, `swung`, `swung`);
 
-        learnEnglishVerb(`slide`, `slid`, [`slid`, `slidden`]);
-        learnEnglishVerb(`speed`, [`sped`, `speeded`], [`sped`, `speeded`]);
-        learnEnglishVerb(`tread`, `trod`, [`trodden`, `trod`]);
+        learnEnglishIrregularVerb(`slide`, `slid`, [`slid`, `slidden`]);
+        learnEnglishIrregularVerb(`speed`, [`sped`, `speeded`], [`sped`, `speeded`]);
+        learnEnglishIrregularVerb(`tread`, `trod`, [`trodden`, `trod`]);
 
-        learnEnglishVerb(`take`, `took`, `taken`);
-        learnEnglishVerb(`teach`, `taught`, `taught`);
-        learnEnglishVerb(`tear`, `tore`, `torn`);
-        learnEnglishVerb(`tell`, `told`, `told`);
-        learnEnglishVerb(`think`, `thought`, `thought`);
-        learnEnglishVerb(`throw`, `threw`, `thrown`);
+        learnEnglishIrregularVerb(`take`, `took`, `taken`);
+        learnEnglishIrregularVerb(`teach`, `taught`, `taught`);
+        learnEnglishIrregularVerb(`tear`, `tore`, `torn`);
+        learnEnglishIrregularVerb(`tell`, `told`, `told`);
+        learnEnglishIrregularVerb(`think`, `thought`, `thought`);
+        learnEnglishIrregularVerb(`throw`, `threw`, `thrown`);
 
-        learnEnglishVerb(`understand`, `understood`, `understood`);
-        learnEnglishVerb(`upset`, `upset`, `upset`);
+        learnEnglishIrregularVerb(`understand`, `understood`, `understood`);
+        learnEnglishIrregularVerb(`upset`, `upset`, `upset`);
 
-        learnEnglishVerb(`wear`, `wore`, `worn`);
-        learnEnglishVerb(`weave`, `wove`, `woven`);
-        learnEnglishVerb(`weep`, `wept`, `wept`);
-        learnEnglishVerb(`win`, `won`, `won`);
-        learnEnglishVerb(`wind`, `wound`, `wound`);
-        learnEnglishVerb(`wring`, `wrung`, `wrung`);
-        learnEnglishVerb(`write`, `wrote`, `written`);
+        learnEnglishIrregularVerb(`wear`, `wore`, `worn`);
+        learnEnglishIrregularVerb(`weave`, `wove`, `woven`);
+        learnEnglishIrregularVerb(`weep`, `wept`, `wept`);
+        learnEnglishIrregularVerb(`win`, `won`, `won`);
+        learnEnglishIrregularVerb(`wind`, `wound`, `wound`);
+        learnEnglishIrregularVerb(`wring`, `wrung`, `wrung`);
+        learnEnglishIrregularVerb(`write`, `wrote`, `written`);
     }
 
     void learnMath()

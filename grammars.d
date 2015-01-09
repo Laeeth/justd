@@ -839,14 +839,20 @@ enum Sense:ubyte
     verbImperative,
 
     verbInfinitive,
+    verbRegularInfinitive,
+    verbIrregularInfinitive,
     verbBase = verbInfinitive,
 
     verbPresent,
 
     verbPast,
+    verbRegularPast,
+    verbIrregularPast,
     verbImperfect = verbPast, /// See also: https://en.wikipedia.org/wiki/Imperfect
 
     verbPastParticiple,
+    verbRegularPastParticiple,
+    verbIrregularPastParticiple,
     verbSupinum = verbPastParticiple,
 
     verbFuture, /// See also: https://en.wikipedia.org/wiki/Future_tense
@@ -1131,16 +1137,30 @@ unittest
     }
     bool isVerb(Sense sense)
     {
-        with (Sense) return sense.of(verb,
-                                     verbRegular,
-                                     verbIrregular,
-                                     verbAbbrevation,
-                                     verbImperative,
-                                     verbInfinitive,
-                                     verbPresent,
-                                     verbPast,
-                                     verbFuture,
-                                     verbPastParticiple);
+        with (Sense) return (sense.isVerbRegular ||
+                             sense.isVerbIrregular ||
+                             sense.of(verb,
+                                      verbInfinitive,
+                                      verbPast,
+                                      verbPastParticiple,
+                                      verbAbbrevation,
+                                      verbImperative,
+                                      verbPresent,
+                                      verbFuture));
+    }
+    bool isVerbRegular(Sense sense)
+    {
+        with (Sense) return sense.of(verbRegular,
+                                     verbRegularInfinitive,
+                                     verbRegularPast,
+                                     verbRegularPastParticiple);
+    }
+    bool isVerbIrregular(Sense sense)
+    {
+        with (Sense) return sense.of(verbIrregular,
+                                     verbIrregularInfinitive,
+                                     verbIrregularPast,
+                                     verbIrregularPastParticiple);
     }
     bool isAdjective(Sense sense)
     {
