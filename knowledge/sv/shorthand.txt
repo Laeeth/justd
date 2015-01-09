@@ -25,12 +25,15 @@ dets.detsamma
 dial.dialekt
 betyd.betydningbetydningen
 bokf.bokföring
+inst.institution
 
 med.medicin
 fil.filosofiefilosofisk
 jur.jurisjuridikjuridisk
 tek.tekniskteknikteknologie
 teol.teologiteologie
+log.logik
+fonet.fonetik
 hand.handelsterm
 
 Dr.dr.doktor
@@ -42,6 +45,7 @@ adj.adjektiv
 adv.adverb
 interj.interjektion
 
+inf.infinitiv
 imperf.imperfekt
 perf.part.perfekt particip
 
@@ -81,5 +85,11 @@ b.v.s.a.b v s aBVSAbvsabilligare vid snabb affär
 
 momsmervärdesomsättningsskatt
 
-inkl.inklusive
+ink.inkl.inklusive
 exkl.exklusive
+
+forts.fortsfortsättning
+
+e.Kr.e Kre. Kr.efter Kristus
+
+v.t.vår tideräkning

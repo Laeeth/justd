@@ -103,3 +103,10 @@ Drs.doctors
 PhDPh.D.D.Phil.DPhildoctor of Philosophy
 
 inc.incorporated
+inst.instituteinstant
+
+AcAir-conditioningAcetateAcetyl
+
+inf.infinitiveinformal
+
+ADA.D.A. D.anno Domini
