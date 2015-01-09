@@ -1527,16 +1527,19 @@ class Net(bool useArray = true,
      */
     this(string dirPath)
     {
+        learnDefault(dirPath);
+        inferSpecializedSenses();
+    }
+
+    void learnDefault(string dirPath)
+    {
         const quick = true;
         const maxCount = quick ? 10000 : size_t.max;
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnPreciseThings();
 
-        // Externally Supervised Knowledge
-        wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
-        readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
-        readSwesaurus();
+        if (false) learnTrainedThings();
 
         // Learn Less Absolute Things
         learnAssociativeThings();
@@ -1560,6 +1563,15 @@ class Net(bool useArray = true,
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
         /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
+    }
+
+    /// Learn Externally (Trained) Supervised Things.
+    void learnTrainedThings()
+    {
+        wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
+        readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
+
+        readSwesaurus();
     }
 
     /** Learn Precise (Absolute) Thing.
@@ -1629,9 +1641,12 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `personal quality`, Sense.adjective, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `color`, Sense.unknown, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `shape`, Sense.noun, Sense.noun, 1.0);
+
         learnAttributes(Lang.en, rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `fruit`, Sense.noun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/plants.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `plant`, Sense.noun, Sense.noun, 1.0);
-        learnAttributes(Lang.en, rdT("../knowledge/en/trees.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `tree`, Sense.noun, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/trees.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `tree`, Sense.noun, Sense.plant, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/spice.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `spice`, Sense.spice, Sense.food, 1.0);
+
         learnAttributes(Lang.en, rdT("../knowledge/en/shoes.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `shoe`, Sense.noun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/dances.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dance`, Sense.noun, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/landforms.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `landform`, Sense.noun, Sense.noun, 1.0);
@@ -5730,4 +5745,32 @@ class Net(bool useArray = true,
         return lang;
     }
 
+    void inferSpecializedSenses()
+    {
+        foreach (pair; lemmasByExpr.byPair)
+        {
+            const expr = pair[0];
+            auto lemmas = pair[1];
+            const count = lemmas.length;
+            switch (count)
+            {
+                case 2:
+                    if (lemmas[0].sense.specializes(lemmas[1].sense))
+                    {
+                        dln(`Specializing Lemma expr "`, expr, `" sense from "`,
+                            lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
+                        lemmas[1].sense = lemmas[0].sense;
+                    }
+                    else if (lemmas[1].sense.specializes(lemmas[0].sense))
+                    {
+                        dln(`Specializing Lemma expr "`, expr, `" sense from "`,
+                            lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
+                        lemmas[0].sense = lemmas[1].sense;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

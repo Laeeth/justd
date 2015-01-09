@@ -782,6 +782,10 @@ enum Sense:ubyte
 
     nounNumeric,
 
+    plant,
+    food,
+    spice,
+
     numeral,
     numeralOrdinal,
     ordinalNumber = numeralOrdinal, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
@@ -1062,18 +1066,25 @@ unittest
                                      codeVariableReference,
                                      codeType));
     }
+    bool isFood(Sense sense)
+    {
+        with (Sense) return (sense.of(food,
+                                      spice));
+    }
     bool isNoun(Sense sense)
     {
         with (Sense) return (sense.isNumeric ||
                              sense.isTimePeriod ||
+                             sense.isFood ||
                              sense.of(noun,
-                                     nounRegular,
-                                     nounIrregular,
-                                     nounSingular,
-                                     nounPlural,
-                                     uncountable,
-                                     nounAbbrevation,
-                                     nounAcronym) ||
+                                      nounRegular,
+                                      nounIrregular,
+                                      nounSingular,
+                                      nounPlural,
+                                      uncountable,
+                                      nounAbbrevation,
+                                      nounAcronym,
+                                      plant) ||
                              sense.isName);
     }
     bool isTimePeriod(Sense sense)
@@ -1274,12 +1285,14 @@ bool specializes(Sense special,
                  Sense general)
     @safe @nogc pure nothrow
 {
+    if (special == general) return false;
     switch (general) with (Sense)
     {
         /* TODO Use static foreach over all enum members to generate all
          * relevant cases: */
         case unknown: return true;
         case noun: return special.isNoun || special.isPronoun;
+        case food: return special.isFood;
         case numeral: return special.isNumeral;
         case integer: return special.isInteger;
         case nounNumeric: return special.isNumeric;
