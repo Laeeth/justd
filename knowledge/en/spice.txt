@@ -33,7 +33,6 @@ holy basil
 thai basil
 lemon basil
 sweet
-bay leaves
 bay leaf
 indian bayleaf
 tejpat
@@ -47,11 +46,6 @@ blue melilot
 boldo
 borage
 bouquet garni
-bouquet garni for chicken
-bouquet garni for fish
-bouquet garni for game
-bouquet garni for red meat
-bouquet garni for vegetables
 brazilian pepper or pink pepper
 brown mustard
 cajun
@@ -64,7 +58,6 @@ cayenne pepper
 celery
 chamomile
 chervil
-chicken
 chicory
 chili
 chili pepper
@@ -127,7 +120,6 @@ garlic granules
 garlic chives
 german chamomile
 ginger
-ginger ground
 ginger root
 torch
 bunga siantan
@@ -151,11 +143,12 @@ jerk
 jimbu
 juniper berries
 juniper berry
+kaffir
 kaffir leaves
 kaffir lime leaves
 makrud lime leaves
 kala zeera
-kawakawa
+kawakawa seeds
 keluak
 kluwak
 kepayang
@@ -192,7 +185,6 @@ st. lucie cherry
 marjoram
 mastic
 methi
-methi leaves
 mint
 mixed herbs
 mountain horopito
@@ -236,8 +228,8 @@ perilla
 shiso
 peruvian pepper
 pickling
+pimento
 pimento berries
-pimento ground
 piri piri
 poppy
 pot marjoram
@@ -270,7 +262,6 @@ spearmint
 spikenard
 star anise
 sumac
-sumac ground
 sweet basil
 sweet laurel
 sweet woodruff
