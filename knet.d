@@ -10,13 +10,15 @@
     - Translate text to use age-relevant words. Use pre-train child book word
       histogram for specific ages.
 
-    See also: www.oneacross.com/crosswords for inspiring applications
-    See also: http://programmers.stackexchange.com/q/261163/38719
-    See also: https://en.wikipedia.org/wiki/Hypergraph
+    See also: http://www.mindmachineproject.org/proj/omcs/
     See also: https://github.com/commonsense/conceptnet5/wiki
+    See also: https://en.wikipedia.org/wiki/Hypergraph
     See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
     See also: http://www.eturner.net/omcsnetcpp/
     See also: http://wwww.abbreviations.com
+    See also: www.oneacross.com/crosswords for inspiring applications
+    See also: http://programmers.stackexchange.com/q/261163/38719
+    See also: http://www.mindmachineproject.org/proj/prop/
 
     Data: http://www.adampease.org/OP/
     Data: http://www.wordfrequency.info/
@@ -1587,7 +1589,7 @@ class Net(bool useArray = true,
 
         learnEnglishComputerKnowledge();
 
-        learnEnglishVerbs();
+        learnEnglishIrregularVerbs();
 
         learnMath();
         learnPhysics();
@@ -1625,7 +1627,7 @@ class Net(bool useArray = true,
         learnTime();
 
         // Verb
-        learnAttributes(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verb, Sense.noun, 1.0);
+        learnAttributes(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
 
         learnAttributes(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
@@ -3580,7 +3582,7 @@ class Net(bool useArray = true,
         TODO Move to irregular_verb.txt in format: bewas,werebeen
         TODO Merge with http://www.enchantedlearning.com/wordlist/irregularverbs.shtml
      */
-    void learnEnglishVerbs()
+    void learnEnglishIrregularVerbs()
     {
         learnEnglishVerb(`arise`, `arose`, `arisen`);
         learnEnglishVerb(`rise`, `rose`, `risen`);
@@ -3765,6 +3767,20 @@ class Net(bool useArray = true,
                 store(`2.71828182845904523536028747135266249775724709369995`,
                       Lang.math, Sense.decimal, origin),
                 origin, 1.0);
+
+        learnAttributes(Lang.en,
+                        [`quaternary`,
+                         `quinary`,
+                         `senary`,
+                         `octal`,
+                         `decimal`,
+                         `duodecimal`,
+                         `vigesimal`,
+                         `quadrovigesimal`,
+                         `duotrigesimal`,
+                         `sexagesimal`,
+                         `octogesimal`],
+                        Rel.hasProperty, true, `counting system`, Sense.adjective, Sense.noun, 1.0);
     }
 
     void learnPunctuation()
@@ -5321,18 +5337,24 @@ class Net(bool useArray = true,
         }
     }
 
+    alias TriedLines = bool[string];
+
     /** Try Showing nodes and their relations matching content in $(D line).
         Returns: true if any nodes where shown, false otherwise.
      */
-    bool showNodes(S)(S line,
-                      Lang lang = Lang.unknown,
-                      Sense sense = Sense.unknown,
-                      S lineSeparator = `_`,
-                      bool recurse = true) if (isSomeString!S)
+    bool showNodes(string line,
+                   Lang lang = Lang.unknown,
+                   Sense sense = Sense.unknown,
+                   string lineSeparator = `_`,
+                   TriedLines triedLines = TriedLines.init)
     {
         import std.ascii: whitespace;
         import std.algorithm: splitter;
         import std.string: strip;
+
+        if (line in triedLines) // if already tested
+            return false;
+        triedLines[line] = true;
 
         // auto normLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
         // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
@@ -5512,7 +5534,7 @@ class Net(bool useArray = true,
         showNodeRefs(lineNodeRefs);
 
         // try joined
-        if (recurse && lineNodeRefs.empty)
+        if (lineNodeRefs.empty)
         {
             auto spaceParts = normLine.splitter(' ').filter!(a => !a.empty);
             if (spaceParts.count >= 2)
@@ -5520,17 +5542,17 @@ class Net(bool useArray = true,
                 {
                     const joinedLine = spaceParts.joiner.to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = spaceParts.joiner("-").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = spaceParts.joiner("'").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
 
@@ -5540,17 +5562,17 @@ class Net(bool useArray = true,
                 {
                     const joinedLine = minusParts.joiner("").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = minusParts.joiner(" ").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = minusParts.joiner("'").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
 
@@ -5560,17 +5582,17 @@ class Net(bool useArray = true,
                 {
                     const joinedLine = quoteParts.joiner("").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = quoteParts.joiner(" ").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = quoteParts.joiner("-").to!string;
                     writeln(`> Joined to `, joinedLine);
-                    showNodes(joinedLine, lang, sense, lineSeparator, false);
+                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
 
@@ -5581,34 +5603,35 @@ class Net(bool useArray = true,
                 if (!stemStatus[0])
                     break;
                 writeln(`> Stemmed to `, normLine, " in language ", stemStatus[1]);
-                showNodes(normLine, lang, sense, lineSeparator);
+                const Lang stemmedLang = stemStatus[1];
+                showNodes(normLine, stemmedLang, sense, lineSeparator);
             }
 
             if (!normLine.endsWith('?'))
             {
                 writeln(`> Trying `, normLine, " as a question");
-                showNodes(normLine ~ '?', lang, sense, lineSeparator, false);
+                showNodes(normLine ~ '?', lang, sense, lineSeparator, triedLines);
             }
 
             const loweredLine = normLine.toLower;
             if (loweredLine != normLine)
             {
                 writeln(`> Trying `, normLine, " in lowercase");
-                showNodes(loweredLine, lang, sense, lineSeparator, false);
+                showNodes(loweredLine, lang, sense, lineSeparator, triedLines);
             }
 
             const upperedLine = normLine.toUpper;
             if (upperedLine != normLine)
             {
                 writeln(`> Trying `, normLine, " in uppercase");
-                showNodes(upperedLine, lang, sense, lineSeparator, false);
+                showNodes(upperedLine, lang, sense, lineSeparator, triedLines);
             }
 
             const capitalizedLine = normLine.capitalize;
             if (capitalizedLine != normLine)
             {
                 writeln(`> Trying `, normLine, " as a capitalized (name)");
-                showNodes(capitalizedLine, lang, sense, lineSeparator, false);
+                showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines);
             }
         }
 
@@ -5748,6 +5771,7 @@ class Net(bool useArray = true,
 
     void inferSpecializedSenses()
     {
+        bool show = false;
         foreach (pair; lemmasByExpr.byPair)
         {
             const expr = pair[0];
@@ -5761,16 +5785,24 @@ class Net(bool useArray = true,
                         {
                             if (lemmas[0].lang.of(Lang.en, Lang.sv))
                             {
-                                dln(`Specializing Lemma expr "`, expr, `" in `, lemmas[0].lang, ` of sense from "`,
-                                    lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
+                                if (show)
+                                {
+                                    dln(`Specializing Lemma expr "`, expr,
+                                        `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
+                                        lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
+                                }
                             }
-                            lemmas[1].sense = lemmas[0].sense;
+                            // lemmas[1].sense = lemmas[0].sense;
                         }
                         else if (lemmas[1].sense.specializes(lemmas[0].sense))
                         {
-                            dln(`Specializing Lemma expr "`, expr, `" in `, lemmas[0].lang, ` of sense from "`,
-                                lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
-                            lemmas[0].sense = lemmas[1].sense;
+                            if (show)
+                            {
+                                dln(`Specializing Lemma expr "`, expr,
+                                    `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
+                                    lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
+                            }
+                            // lemmas[0].sense = lemmas[1].sense;
                         }
                         break;
                     default:
