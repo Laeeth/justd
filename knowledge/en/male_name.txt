@@ -1709,42 +1709,33 @@ Hamil
 Hamilton
 Hamish
 Hamlen
-Hamlin
-HamlinRuler of the Home
+Hamlinruler of the home
 Hammad
 Hamnet
 Hanan
 Hank
-HanleyFrom the High Meadow
+Hanleyfrom the high meadow
 Hans
 Hansiain
 Hanson
 Harald
 Harbert
 Harcourt
-Hardy
-HardyStrong
-Harlan
-HarlanHarlandMeadow of the Hares
+Hardystrong
+HarlanHarlandmeadow of the hares
 Harland
 Harlen
-Harley
-HarleyArmy Meadow
+Harleyarmy meadow
 Harlin
 Harman
 Harmon
-Harold
-HaroldHarryPower
+HaroldHarrypower
 Haroun
 Harp
 Harper
-Harris
-HarrisHarrisonSon of Harold
-Harrison
-Harry
+HarrisHarrisonson of Harold
 Hart
-Hartley
-HartleyResidence Name
+Hartleyresidence name
 Hartwell
 Harv
 Harvey
@@ -1769,11 +1760,9 @@ Haze
 Hazel
 Hazlett
 Heall
-Heath
-HeathHeathcliffFrom HeathMoorland
+HeathHeathclifffrom heathmoorland
 Hebert
-Hector
-HectorSteadfast
+Hectorsteadfast
 Heindrick
 Heinrick
 Heinrik
@@ -1782,11 +1771,9 @@ Hendrick
 Hendrik
 Henri
 Henrik
-Henry
-HenryRuler of the House
+Henryruler of the house
 Herb
-Herbert
-HerbertBright Warrior
+Herbertbright warrior
 Herbie
 Herby
 Herc
@@ -1794,8 +1781,7 @@ Hercule
 Hercules
 Herculie
 Heriberto
-Herman
-HermanWarrior
+Hermanwarrior
 Hermann
 Hermie
 Hermon
@@ -1847,33 +1833,27 @@ Hollis
 Holly
 Holmes
 Holt
-Homer
-HomerPledgeSecurity
+Homerpledgesecurity
 Homere
 Homerus
-Horace
-HoraceHoratioTimekeeper
+HoraceHoratiotimekeeper
 Horacio
-Horatio
 Horatius
 Horst
 Hort
 Horten
 Horton
-Howard
-HowardStrong Minded
+Howardstrong minded
 Howey
 Howie
 Hoyt
 Hube
-Hubert
-HubertBright Minded
+Hubertbright minded
 Huberto
 Hubey
 Hubie
 Huey
-Hugh
-HughHugoFire
+HughHugofire
 Hughie
 Hugibert
 Hugo
@@ -1883,12 +1863,10 @@ Humberto
 Humfrey
 Humfrid
 Humfried
-Humphrey
-HumphreySupporter of Peace
+Humphreysupporter of peace
 Hunfredo
 Hunt
-Hunter
-HunterHunter
+Hunterhunter
 Huntington
 Huntlee
 Huntley
@@ -1904,8 +1882,7 @@ Hyman
 Hymie
 Iago
 Iain
-Ian
-IanGod is Gracious
+IanGod is gracious
 Ibrahim
 Ichabod
 Iggie
@@ -1916,8 +1893,7 @@ Ignacius
 Ignatius
 Ignaz
 Ignazio
-Igor
-IgorHeroic Warrior
+Igorheroic warrior
 Ike
 Ikey
 Ilaire
@@ -1942,22 +1918,18 @@ Iorgos
 Iosep
 Ira
 Irv
-Irvin
-IrvinIrvingHandsome
+IrvinIrvinghandsome
 Irvine
-Irving
 Irwin
 Irwinn
 Isa
-Isaac
-IsaacLaughter
+Isaaclaughter
 Isaak
 Isac
 Isacco
 Isador
 Isadore
-Isaiah
-IsaiahGod's Salvation
+IsaiahGod's salvation
 Isak
 Isiahi
 Isidor
@@ -1967,26 +1939,21 @@ Isidro
 Israel
 Issiah
 Itch
-Ivan
-IvanForm of John
+Ivanform of John
 Ivar
 Ive
-Iver
-IverIvarArcher
-Ives
-IvesLittle Archer
+IverIvararcher
+Iveslittle archer
 Ivor
 Izaak
 Izak
 Izzy
 Jabez
-Jack
-JackGodly
+Jackgodly
 Jackie
 Jackson
 Jacky
-Jacob
-JacobConqueror
+Jacobconqueror
 Jacobo
 Jacques
 Jae
@@ -1997,8 +1964,7 @@ Jakie
 Jakob
 Jamaal
 Jamal
-James
-JamesJimmySupplanter
+JamesJimmysupplanter
 Jameson
 Jamesy
 Jamey
@@ -2022,14 +1988,11 @@ Jarret
 Jarrett
 Jarrid
 Jarrod
-Jarvis
-JarvisAccurate Arrow
+Jarvisaccurate arrow
 Jase
 Jasen
-Jason
-JasonGod is my Saviour
-Jasper
-JasperBearer of Treasure
+JasonGod is my saviour
+Jasperbearer of treasure
 Jasun
 Javier
 Jay
@@ -2040,8 +2003,7 @@ Jayson
 Jdavie
 Jean
 Jecho
-Jed
-JedBeloved of the Lord
+Jedbeloved of the lord
 Jedd
 Jeddy
 Jedediah
@@ -2050,8 +2012,7 @@ Jeff
 Jefferey
 Jefferson
 Jeffie
-Jeffrey
-JeffreyPeace Bringer
+Jeffreypeace bringer
 Jeffry
 Jeffy
 Jehu
@@ -2064,16 +2025,14 @@ Jeramey
 Jeramie
 Jere
 Jereme
-Jeremiah
-JeremiahJeremyExalted
+JeremiahJeremyexalted
 Jeremias
 Jeremie
 Jeremy
 Jermain
 Jermaine
 Jermayne
-Jerome
-JeromeOf Sacred Name
+Jeromeof sacred name
 Jeromy
 Jerri
 Jerrie
@@ -2082,8 +2041,7 @@ Jerrome
 Jerry
 Jervis
 Jess
-Jesse
-JesseGift Giver
+Jessegift giver
 Jessee
 Jessey
 Jessie
@@ -2092,7 +2050,6 @@ Jeth
 Jethro
 Jim
 Jimmie
-Jimmy
 Jo
 Joachim
 Joaquin
@@ -2108,8 +2065,7 @@ Joey
 Johan
 Johann
 Johannes
-John
-JohnGod is Gracious
+JohnGod is gracious
 Johnathan
 Johnathon
 Johnnie
@@ -2118,8 +2074,7 @@ Johny
 Jon
 Jonah
 Jonas
-Jonathan
-JonathanGift
+Jonathangift
 Jonathon
 Jone
 Jordan
@@ -2129,12 +2084,10 @@ Jorge
 Jory
 Jose
 Joseito
-Joseph
-JosephJoeyJoeGod Multiplies
+JosephJoeyJoeGod multiplies
 Josh
 Joshia
-Joshua
-JoshuaGod is my Salvation
+JoshuaGod is my salvation
 Joshuah
 Josiah
 Josias
@@ -2154,8 +2107,7 @@ Julie
 Julio
 Julius
 Justen
-Justin
-JustinJust
+Justinjust
 Justinian
 Justino
 Justis
@@ -2170,8 +2122,7 @@ Kaleb
 Kalil
 Kalle
 Kalvin
-Kane
-KaneHonor
+Kanehonor
 Kareem
 Karel
 Karim
@@ -2189,18 +2140,16 @@ Kean
 Keane
 Kearney
 Keary
-KeatonWhere Hawks Go
+Keatonwhere hawks go
 Keefe
 Keefer
-KeeganFiery
+Keeganfiery
 Keelby
 Keen
 Keenan
-Keene
-KeeneSharp
+Keenesharp
 Keir
-Keith
-KeithForest
+Keithforest
 Kelbee
 Kelby
 Kele
@@ -2208,35 +2157,28 @@ Kellby
 Kellen
 Kelley
 Kelly
-Kelsey
-KelseyIsland of Ships
-Kelvin
-KelvinFriend of the Sea
+Kelseyisland of ships
+Kelvinfriend of the sea
 Kelwin
 Ken
 Kendal
-Kendall
-KendallNarrow River
+Kendallnarrow river
 Kendell
-Kendrick
-KendrickRuler
+Kendrickruler
 Kendricks
 Kenn
 Kennan
 Kennedy
-Kenneth
-KennethKenHandsome
+KennethKenhandsome
 Kennett
 Kennie
 Kennith
 Kenny
 Kenon
-Kent
-KentBright White
+Kentbright white
 Kenton
-KenwayCourageous in Battle
-Kenyon
-KenyonBlonde Haired
+Kenwaycourageous in battle
+Kenyonblonde haired
 Ker
 Kerby
 Kerk
@@ -2244,40 +2186,33 @@ Kermie
 Kermit
 Kermy
 Kerr
-Kerry
-KerryDark
-Kerwin
-KerwinDark Skinned
+Kerrydark
+Kerwindark skinned
 Kerwinn
 Kev
 Kevan
 Keven
-Kevin
-KevinHandsome
+Kevinhandsome
 Kevon
 Khalil
-KieferBarrel Maker
+Kieferbarrel maker
 Kiel
 Kienan
-KilbyResidence Name
+Kilbyresidence name
 Kile
 Kiley
-Kilian
-KilianBlind
+Kilianblind
 Killian
 Killie
 Killy
-Kim
-KimChief
-Kimball
-KimballRoyally Brave
+Kimchief
+Kimballroyally brave
 Kimbell
 Kimble
 Kin
 Kincaid
 King
-Kingsley
-KingsleyResidence Name
+Kingsleyresidence name
 Kingsly
 Kingston
 Kinnie
@@ -2289,22 +2224,18 @@ Kippar
 Kipper
 Kippie
 Kippy
-Kirby
-KirbyResidence Name
-Kirk
-KirkChurch
-Kit
-KitChrist-Bearer
+Kirbyresidence name
+Kirkchurch
+KitChrist-bearer
 Klaus
 Klemens
 Klement
 Kleon
 Kliment
 Knox
-KodyHelpful
+Kodyhelpful
 Koenraad
-Konrad
-KonradBold Speaker
+Konradbold speaker
 Konstantin
 Konstantine
 Korey
@@ -2323,30 +2254,24 @@ Kristofor
 Kristoforo
 Kristopher
 Kristos
-Kurt
-KurtAble in Counsel
+Kurtable in counsel
 Kurtis
 Ky
-Kyle
-KyleHandsome
+Kylehandsome
 Kylie
 Laird
 Lalo
 Lamar
-Lambert
-LambertLand Bright
+Lambertland bright
 Lammond
 Lamond
-Lamont
-LamontLawyer
+Lamontlawyer
 Lance
-Lancelot
-LancelotLand
+Lancelotland
 Land
-LandonOwner
-LandryRuler of the Place
-Lane
-LaneNarrow Road
+Landonowner
+Landryruler of the place
+Lanenarrow road
 Laney
 Langsdon
 Langston
@@ -2354,13 +2279,11 @@ Lanie
 Lannie
 Lanny
 Larry
-Lars
-LarsVariant of Lawrence
+Larsvariant of Lawrence
 Laughton
 Launce
 Lauren
-Laurence
-LaurenceBayLaurel Tree
+Laurencebaylaurel tree
 Laurens
 Laurent
 Laurie
@@ -2375,15 +2298,14 @@ Lazar
 Lazare
 Lazaro
 Lazarus
-Lee
-LeeMeadow
+Leemeadow
 Leeland
 Lefty
 Leicester
 Leif
 Leigh
 Leighton
-LeithWide
+Leithwide
 Lek
 Leland
 Lem
@@ -2397,8 +2319,7 @@ Lennard
 Lennie
 Leo
 Leon
-Leonard
-LeonardLeoLeonBold Lion
+LeonardLeoLeonbold lion
 Leonardo
 Leonerd
 Leonhard
@@ -2406,14 +2327,11 @@ Leonid
 Leonidas
 Leopold
 Leroi
-Leroy
-LeroyPowerful King
+Leroypowerful king
 Les
 Lesley
-Leslie
-LeslieResidence Name
-Lester
-LesterCamp of the Legion
+Leslieresidence name
+Lestercamp of the legion
 Leupold
 Lev
 Levey
@@ -2430,8 +2348,7 @@ Liam
 Lief
 Lin
 Linc
-Lincoln
-LincolnResidence Name
+Lincolnresidence name
 Lind
 Lindon
 Lindsay
@@ -2442,22 +2359,18 @@ Linn
 Linoel
 Linus
 Lion
-Lionel
-LionelLion-like
+Lionellion-like
 Lionello
 Lisle
 Llewellyn
-Lloyd
-LloydGrey
+Lloydgrey
 Llywellyn
 Lock
 Locke
 Lockwood
 Lodovico
-Logan
-LoganTrenchForest
-Lombard
-LombardLong-Beard
+Logantrenchforest
+Lombardlong-beard
 Lon
 Lonnard
 Lonnie
@@ -2474,19 +2387,16 @@ Lothaire
 Lothario
 Lou
 Louie
-Louis
-LouisLewisWarrior
+LouisLewiswarrior
 Lovell
 Lowe
-Lowell
-LowellBeloved
+Lowellbeloved
 Lowrance
 Loy
 Loydie
 Luca
 Lucais
-Lucas
-LucasLukeLuminous
+LucasLukeluminous
 Luce
 Lucho
 Lucian
@@ -2503,15 +2413,14 @@ Luis
 Lukas
 Luke
 Lutero
-Luther
-LutherWarrior
+Lutherwarrior
 Ly
 Lydon
 Lyell
 Lyle
 Lyman
 Lyn
-LyndonLinden Tree
+Lyndonlinden tree
 Lynn
 Lyon
 Mac
@@ -2519,11 +2428,11 @@ Mace
 Mack
 Mackenzie
 Maddie
-MaddoxBeneficient
+Maddoxbeneficient
 Maddy
 Madison
 Magnum
-MagnusGreat
+Magnusgreat
 Mahmoud
 Mahmud
 Maison
@@ -2532,8 +2441,7 @@ Major
 Mal
 Malachi
 Malchy
-Malcolm
-MalcolmRoyal Blood
+Malcolmroyal blood
 Mallory
 Malvin
 Man
@@ -2553,20 +2461,17 @@ Marcelo
 Marchall
 Marco
 Marcos
-Marcus
-MarcusWarlike
+Marcuswarlike
 Marijn
 Mario
 Marion
 Marius
-Mark
-MarkMarcVariant of Marcus
+MarkMarcvariant of Marcus
 Markos
 Markus
 Marlin
 Marlo
-Marlon
-MarlonFalcon
+Marlonfalcon
 Marlow
 Marlowe
 Marmaduke
@@ -2577,16 +2482,14 @@ Mart
 Martainn
 Marten
 Martie
-Martin
-MartinWarlike
+Martinwarlike
 Martino
 Marty
 Martyn
 Marv
 Marve
 Marven
-Marvin
-MarvinSea
+Marvinsea
 Marwin
 Mason
 Massimiliano
@@ -2602,8 +2505,7 @@ Matt
 Matteo
 Matthaeus
 Mattheus
-Matthew
-MatthewGift of the Lord
+Matthewgift of the Lord
 Matthias
 Matthieu
 Matthiew
@@ -2611,16 +2513,14 @@ Matthus
 Mattias
 Mattie
 Matty
-Maurice
-MauriceDark Skin
+Mauricedark skin
 Mauricio
 Maurie
 Maurise
 Maurits
 Maurizio
 Maury
-Max
-MaxMaxwellGreat
+MaxMaxwellgreat
 Maxie
 Maxim
 Maximilian
@@ -2636,13 +2536,12 @@ Maynord
 Mayor
 Mead
 Meade
-MedwinPowerful Friend
+Medwinpowerful friend
 Meier
 Meir
 Mel
-MelvilleForm of Malvin
-Melvin
-MelvinServant
+Melvilleform of Malvin
+Melvinservant
 Melvyn
 Menard
 Mendel
@@ -2653,7 +2552,7 @@ Meredith
 Merell
 Merill
 Merle
-MerlinBird
+Merlinbird
 Merrel
 Merrick
 Merrill
@@ -2666,8 +2565,7 @@ Meryl
 Meyer
 Mic
 Micah
-Michael
-MichaelLike God
+Michaellike God
 Michail
 Michal
 Michale
@@ -2686,10 +2584,9 @@ Mikel
 Mikey
 Mikkel
 Mikol
-MilburnResidence Name
+Milburnresidence name
 Mile
-Miles
-MilesSoldier
+Milessoldier
 Mill
 Millard
 Miller
@@ -2713,13 +2610,10 @@ Moise
 Moises
 Moishe
 Monro
-Monroe
-MonroeWheeler
-Montague
-MontagueResidence Name
+Monroewheeler
+Montagueresidence name
 Monte
-Montgomery
-MontgomeryMountain
+Montgomerymountain
 Monti
 Monty
 Moore
@@ -2727,8 +2621,7 @@ Mord
 Mordecai
 Mordy
 Morey
-Morgan
-MorganFrom the Sea's Edge
+Morganfrom the sea's edge
 Morgen
 Morgun
 Morie
@@ -2737,16 +2630,14 @@ Morlee
 Morley
 Morly
 Morrie
-Morris
-MorrisMoorish
+Morrismoorish
 Morry
 Morse
 Mort
 Morten
 Mortie
 Mortimer
-Morton
-MortonFrom the FarmMoor
+Mortonfrom the farmmoor
 Morty
 Mose
 Moses
@@ -2759,8 +2650,7 @@ Munmro
 Munroe
 Murdoch
 Murdock
-Murray
-MurraySeaman
+Murrayseaman
 Murry
 Murvyn
 My
@@ -2783,15 +2673,12 @@ Natal
 Natale
 Nataniel
 Nate
-Nathan
 Nathanael
 Nathanial
-Nathaniel
-NathanielNathanGift of God
+NathanielNathangift of God
 Nathanil
 Natty
-Neal
-NealChampion
+Nealchampion
 Neale
 Neall
 Nealon
@@ -2815,16 +2702,14 @@ Nestor
 Nev
 Nevil
 Nevile
-Neville
-NevilleNew Town
+Nevillenew town
 Nevin
 Nevins
 Newton
 Nial
 Niall
 Niccolo
-Nicholas
-NicholasPeople Triumph
+Nicholaspeople triumph
 Nichole
 Nichols
 Nick
@@ -2845,8 +2730,7 @@ Nicolas
 Nicolis
 Niel
 Niels
-Nigel
-NigelBlack
+Nigelblack
 Niki
 Nikita
 Nikki
@@ -2872,8 +2756,7 @@ Nobie
 Noble
 Noby
 Noe
-Noel
-NoelTo be Born
+Noelto be born
 Nolan
 Noland
 Noll
@@ -2882,14 +2765,12 @@ Nolly
 Norbert
 Norbie
 Norby
-Norman
 NormanNorseman
 Normand
 Normie
 Normy
 Norrie
-Norris
-NorrisCaretaker
+Norriscaretaker
 Norry
 North
 Northrop
@@ -2916,15 +2797,14 @@ Ody
 Ogdan
 Ogden
 Ogdon
-OlafRelic
+Olafrelic
 Olag
 Olav
 Ole
 Olenolin
 Olin
-OlinHolly
-Oliver
-OliverOlive Tree
+Olinholly
+Oliverolive tree
 Olivero
 Olivier
 Oliviero
@@ -2948,8 +2828,7 @@ Orlando
 Orran
 Orren
 Orrin
-Orson
-OrsonLike the Bear
+Orsonlike the bear
 Orton
 Orv
 Orville
@@ -2958,22 +2837,19 @@ Osborn
 Osborne
 Osbourn
 Osbourne
-OscarSpear of God
+Oscarspear of God
 Osgood
 Osmond
 Osmund
 Ossie
-Oswald
-OswaldOf God-Like Power
+Oswaldof God-like power
 Oswell
 Otes
 Othello
 Otho
-Otis
-OtisHears Well
+Otishears well
 Otto
-Owen
-OwenWell-Born
+Owenwell-born
 Ozzie
 Ozzy
 Pablo
@@ -3026,16 +2902,14 @@ Pattie
 Pattin
 Patton
 Patty
-Paul
-PaulSmall
+Paulsmall
 Paulie
 Paulo
 Pauly
 Pavel
 Pavlov
 Paxon
-Paxton
-PaxtonTravelling Trader
+Paxtontravelling trader
 Payton
 Peadar
 Pearce
@@ -3053,36 +2927,29 @@ Pepe
 Pepillo
 Pepito
 Perceval
-Percival
-PercivalPercyGorge Piercer
+PercivalPercygorge piercer
 Percy
 Perice
 Perkin
 Pernell
 Perren
-Perry
-PerryPear Tree
+Perrypear tree
 Pete
-Peter
-PeterRockStone
+Peterrockstone
 Peterus
 Petey
 Petr
 Peyter
-Peyton
-PeytonForm of Patrick
+Peytonform of Patrick
 Phil
-Philbert
-PhilbertIllustriously Brilliant
-Philip
-PhilipHorse Lover
+Philbertillustriously brilliant
+Philiphorse lover
 Phillip
 Phillipe
 Phillipp
-Phineas
-PhineasBrazen Mouth
+Phineasbrazen mouth
 Phip
-PierceRockStone
+Piercerockstone
 Pierre
 Pierson
 Pieter
@@ -3117,23 +2984,18 @@ Purcell
 Putnam
 Putnem
 Pyotr
-QuadeFourth
-QuenbyForm of Quimby
+Quadefourth
+Quenbyform of Quimby
 Quent
-Quentin
-QuentinFifth Child
+Quentinfifth child
 Quill
-Quillan
-QuillanCub
-QuimbyWoman's Estate
-QuinbyResidence Name
+Quillancub
+Quimbywoman's estate
+Quinbyresidence name
 Quincey
-Quincy
-QuincyResidence Name
-Quinlan
-QuinlanStrong
-Quinn
-QuinnWise
+Quincyresidence name
+Quinlanstrong
+Quinnwise
 Quint
 Quintin
 Quinton
@@ -3161,13 +3023,11 @@ Raimundo
 Rainer
 Raleigh
 Ralf
-Ralph
-RalphVariant of Randolph
+Ralphvariant of Randolph
 Ram
 Ramon
 Ramsay
-Ramsey
-RamseyIsland of Ravens
+Ramseyisland of ravens
 Rance
 Rancell
 Rand
@@ -3177,8 +3037,7 @@ Randell
 Randi
 Randie
 Randolf
-Randolph
-RandolphStrong Shield
+Randolphstrong shield
 Randy
 Ransell
 Ransom
@@ -3190,8 +3049,7 @@ Ravid
 Raviv
 Rawley
 Ray
-Raymond
-RaymondWise Guardian
+Raymondwise guardian
 Raymund
 Raynard
 Rayner
@@ -3214,8 +3072,7 @@ Regen
 Reggie
 Reggis
 Reggy
-Reginald
-ReginaldPower
+Reginaldpower
 Reginauld
 Reid
 Reidar
@@ -3238,18 +3095,16 @@ Renato
 Renaud
 Renault
 Rene
-RenfredPeacemaker
+Renfredpeacemaker
 Reube
 Reuben
 Reuven
-Rex
-RexKing
+Rexking
 Rey
 Reynard
 Reynold
 Reynolds
-Rhett
-RhettStream
+Rhettstream
 Rhys
 Ric
 Ricard
@@ -3257,8 +3112,7 @@ Ricardo
 Riccardo
 Rice
 Rich
-Richard
-RichardPowerful Ruler
+Richardpowerful ruler
 Richardo
 Richart
 Richie
@@ -3273,11 +3127,10 @@ Ricki
 Rickie
 Ricky
 Ricoriki
-RidleyResidence Name
+Ridleyresidence name
 Rik
 Rikki
-Riley
-RileyValiant
+Rileyvaliant
 Rinaldo
 Ring
 Ringo
@@ -3293,8 +3146,7 @@ Robbert
 Robbie
 Robby
 Robers
-Robert
-RobertRobinBright Fame
+RobertRobinbright fame
 Roberto
 Robin
 Robinet
@@ -3311,13 +3163,11 @@ Roddie
 Roddy
 Roderic
 Roderich
-Roderick
-RoderickFamous Ruler
+Roderickfamous ruler
 Roderigo
 Rodge
 Rodger
-Rodney
-RodneyFamous
+Rodneyfamous
 Rodolfo
 Rodolph
 Rodolphe
@@ -3325,18 +3175,16 @@ Rodrick
 Rodrigo
 Rodrique
 Rog
-Roger
-RogerFamous Warrior
+Rogerfamous warrior
 Rogerio
 Rogers
 Roi
-Roland
-RolandFame of the Land
+Rolandfame of the land
 Rolando
 Roldan
 Roley
 Rolf
-RolfWolf
+Rolfwolf
 Rolfe
 Rolland
 Rollie
@@ -3349,22 +3197,19 @@ Romain
 Roman
 Romeo
 Ron
-Ronald
-RonaldOf Mighty Power
+Ronaldof mighty power
 Ronnie
 Ronny
 Rooney
 Roosevelt
 Rorke
-Rory
-RoryRed King
+Roryred king
 Rosco
 Roscoe
-Ross
-RossWood
+Rosswood
 Rossie
 Rossy
-RoswellMighty Steed
+Roswellmighty steed
 Roth
 Rourke
 Rouvin
@@ -3372,12 +3217,10 @@ Rowan
 Rowen
 Rowland
 Rowney
-Roy
-RoyKing
-Royal
+Royking
+royal
 Royall
-Royce
-RoyceSon of RoyKingly
+Royceson of Roykingly
 Rriocard
 Rube
 Ruben
@@ -3394,17 +3237,14 @@ Rudolph
 Rudy
 Rudyard
 Rufe
-Rufus
-RufusRed-Haired
+Rufusred-haired
 Ruggiero
-Rupert
-RupertOf Shining Fame
+Rupertof shining fame
 Ruperto
 Ruprecht
 Rurik
 Russ
-Russell
-RussellRed
+Russellred
 Rustie
 Rustin
 Rusty
@@ -3414,8 +3254,7 @@ Rutledge
 Rutter
 Ruttger
 Ruy
-Ryan
-RyanVariant of Bryan
+Ryanvariant of Bryan
 Ryley
 Ryon
 Ryun
