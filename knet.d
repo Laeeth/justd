@@ -5526,6 +5526,10 @@ class Net(bool useArray = true,
 
     alias TriedLines = bool[string];
 
+    void showFixedLine(string line)
+    {
+        writeln(`> Line "`, line, `"`);
+    }
     /** Try Showing nodes and their relations matching content in $(D line).
         Returns: true if any nodes where shown, false otherwise.
      */
@@ -5549,8 +5553,6 @@ class Net(bool useArray = true,
         auto normLine = line.strip.tr(std.ascii.whitespace, ` `, `s`);
         if (normLine.empty)
             return false;
-
-        writeln(`> Line "`, normLine, `"`);
 
         if (normLine == `palindrome`)
         {
@@ -5731,8 +5733,11 @@ class Net(bool useArray = true,
         // queried line nodes
         auto lineNodeRefs = nodeRefsOf(normLine, lang, sense);
 
-        // as is
-        showNodeRefs(lineNodeRefs);
+        if (!lineNodeRefs.empty)
+        {
+            showFixedLine(normLine);
+            showNodeRefs(lineNodeRefs);
+        }
 
         // try joined
         if (lineNodeRefs.empty)
