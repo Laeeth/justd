@@ -1231,49 +1231,38 @@ vidgåerkänna
 vidhållastå fast vid
 vidlyftigalltför stor
 vidlådavara behäftad med, sitta fast vid
-vigörhälsa (t ex vara vid god ~ = må bra)
 viktoriaseger, triumf
-viktualierlivsmedel (användes aktivt av min far, född -32)
-villfarelseillusion
-villrådighetobeslutsam, tvekande
-viltahandelaffär som säljer viltkött
+villrådigobeslutsam
+villrådigtvekande
 vindresurserresurser för vind
 vinnlägga"vinnlägga sig om" engagera sig, vara noga
 visavieg. mittemot men oftast använt som engelskans versus
-vischanlandet
-vitterhetskönlitteratur
-vivannat namn för gemål
 vorekonjunktiv (numera används oftast 'skulle vara' istället
 vurma förtycka om,vara svag för,gilla
-vyöversikt
 väl rustadebra förbreda
 vällustignjutningsfull, sinnlig
 vännedragnär kroken hakar fast i linan (fiske)
 värmevarmt
 vålvetata hand om
-våndaplåga, ångest
 vånnaönska
-vörrevardagsfisk
-xantippagrälsjuk kvinna
 ynkaömka
 ynkatycka synd om
 yoloyou only live once
 ypperligbra
-yppigfyllig, frodig (i positiv bemärkelse)
-ystermycket livlig, uppsluppen
+yppigfyllig
+yppigfrodig
+ystermycket livlig
+ysteruppsluppen
 ytenhetbeskriver mått
 yvasvara stolt
 yverborenöverdrivet nationalistisk
-zeugmatiskkonstruktion
 zlataneradominera
 àtotalt
 älskvärden person eventuellt föremål som är värt att älskas
 älskvärdvet inte kan ni
-ämbarhink , spann
 ämnaska
 änsköntäven om
 ärnaämna
-äskaett slags skrin
 äska 2begära (t ex anhålla om anslag)
 ättelägg. ätteläggar.1 barn. flera barn
 ävenledesdetsamma , likaså , även , också
@@ -1299,13 +1288,11 @@ zlataneradominera
 åtvarnat ex ~ ngn = varna, varsko ngn
 åvilabetalas ut
 åvägabringaåstadkomma
-ökdrag-/lastdjur
 ömsesidigttvå personer är ömsesidigt
 ömsomväxelvis. (t ex ömsom är det varmt och ömsom kallt)
 öpenöppen
 örgrovt grus; grusbank, revel, holme m.m
 örlavimla, ~ omkring = vimsa omkring
-örligkrig
 örlog[ö´rlåg] sjökrig
 öskamaffig
 össlaödsla, ölägga
@@ -1320,13 +1307,10 @@ zlataneradominera
 överordnatnormsystemet måste vara överordnat
 övligsedvanlig
 övligtsedvanligt, brukligt
-kung Borekung Vinter
-kung Borekung Frost
 serveralägga för, hälla upp, bära fram, duka fram, undfägna, bjuda, utspisa, bespisa
 serverapassa upp, uppassa, serva, betjäna
 serveratillhandahålla
 inget att tacka föringen orsak
-ståpälsgåshud
 
 i morsei idag på morgon
 i morsedenna dags morgon
@@ -1335,3 +1319,10 @@ i morsei dag morse
 imorrni morgon
 
 hur mycket är klockanvad är klockan
+
+numerusantal
+singularental
+pluralflertal
+
+vara vid god vigörmå bra
+efter Kristusanno Domini

@@ -306,4 +306,6 @@ for instancetill exempel
 for exampletill exempel
 et ceteraoch så vidare
 past participleperfekt particip
-efter Kristusanno Domini
+feel wellmå bra
+feel badmå dåligt
+feel sickmå illa

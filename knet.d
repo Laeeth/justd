@@ -1749,25 +1749,20 @@ class Net(bool useArray = true,
 
         // Synonym
         learnMtoN("../knowledge/en/synonym.txt",
-                   Sense.unknown, Lang.en,
-                   Rel.synonymFor,
-                   Sense.unknown, Lang.en,
-                   Origin.manual, 1.0);
+                   Sense.unknown, Lang.en, Rel.synonymFor,
+                   Sense.unknown, Lang.en, Origin.manual, 1.0);
         learnMtoN("../knowledge/sv/synonym.txt",
-                   Sense.unknown, Lang.sv,
-                   Rel.synonymFor,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 0.5);
+                   Sense.unknown, Lang.sv, Rel.synonymFor,
+                   Sense.unknown, Lang.sv, Origin.manual, 0.5);
+        learnMtoN("../knowledge/sv/noun_synonym.txt",
+                  Sense.noun, Lang.sv, Rel.synonymFor,
+                  Sense.noun, Lang.sv, Origin.manual, 0.5);
         learnMtoN("../knowledge/en/noun_synonym.txt",
-                   Sense.noun, Lang.en,
-                   Rel.synonymFor,
-                   Sense.noun, Lang.en,
-                   Origin.manual, 1.0);
+                   Sense.noun, Lang.en, Rel.synonymFor,
+                   Sense.noun, Lang.en, Origin.manual, 1.0);
         learnMtoN("../knowledge/en/adjective_synonym.txt",
-                   Sense.adjective, Lang.en,
-                   Rel.synonymFor,
-                   Sense.adjective, Lang.en,
-                   Origin.manual, 1.0);
+                   Sense.adjective, Lang.en, Rel.synonymFor,
+                   Sense.adjective, Lang.en, Origin.manual, 1.0);
 
         // Acronym
         learnMtoN("../knowledge/en/acronym.txt",
