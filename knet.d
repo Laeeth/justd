@@ -1595,6 +1595,7 @@ class Net(bool useArray = true,
 
         learnMath();
         learnPhysics();
+        learnComputers();
 
         learnEnglishOther();
 
@@ -4115,6 +4116,11 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/si_derived_unit_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `SI derived unit name noun`, Sense.derivedSIUnit, Sense.noun, 1.0);
     }
 
+    void learnComputers()
+    {
+        learnAttributes(Lang.en, rdT("../knowledge/en/programming_language.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `programming language`, Sense.languageProgramming, Sense.language, 1.0);
+    }
+
     /** Learn English Irregular Verbs.
      */
     void learnEnglishOther()
@@ -5174,7 +5180,7 @@ class Net(bool useArray = true,
             const count = nodeCountByLang[lang];
             if (count)
             {
-                writeln(indent, lang.toHuman, ` (`, lang.to!string, `) : `, count);
+                writeln(indent, lang.toHuman, ` : `, count);
             }
         }
 
@@ -5184,7 +5190,7 @@ class Net(bool useArray = true,
             const count = nodeCountBySense[sense];
             if (count)
             {
-                writeln(indent, sense, ` (`, sense.to!string, `) : `, count);
+                writeln(indent, sense.toHuman, ` : `, count);
             }
         }
 

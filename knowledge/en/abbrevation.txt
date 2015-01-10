@@ -122,3 +122,5 @@ a.k.a.also known as
 
 GingerGinger Root
 FennelFennel Seed
+
+cshC shell
