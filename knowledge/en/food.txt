@@ -494,7 +494,6 @@ stomach
 stove
 straw
 strawberry
-strawberry
 string bean
 stringy
 strudel
