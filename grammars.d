@@ -776,6 +776,7 @@ enum Sense:ubyte
     punctuation,
 
     noun,
+    nounCollective,
     nounRegular,
     nounIrregular,
 
@@ -1008,6 +1009,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case punctuation: return "punctuation";
 
         case noun: return "noun";
+        case nounCollective: return "collective noun";
         case nounRegular: return "regular noun";
         case nounIrregular: return "irregular noun";
 
@@ -1321,6 +1323,7 @@ unittest
                              sense.isFood ||
                              sense.isLanguage ||
                              sense.of(noun,
+                                      nounCollective,
                                       nounRegular,
                                       nounIrregular,
                                       nounSingular,

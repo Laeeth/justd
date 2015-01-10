@@ -45,7 +45,9 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
-    if lemma.expr.skipOver("regex:")
+    TODO if lemma.expr.skipOver("regex:")
+
+    TODO T-genus gives now hit
 
     TODO Prompt Queries:
     TODO canA(NOUN, VERB), canA(bird, fly), canA(man, walk), canA(dead man, walk)
@@ -1605,8 +1607,6 @@ class Net(bool useArray = true,
 
         learnEnglishComputerKnowledge();
 
-        learnEnglishIrregularVerbs();
-
         learnMath();
         learnPhysics();
         learnComputers();
@@ -1616,14 +1616,7 @@ class Net(bool useArray = true,
         learnVerbReversions();
         learnEtymologicallyDerivedFroms();
 
-        learnSwedishVerbs();
-        learnSwedishAdjectives();
-
         learnSwedishGrammar();
-
-        learnEmotions();
-        learnEnglishFeelings();
-        learnSwedishFeelings();
 
         learnNames();
 
@@ -1636,8 +1629,8 @@ class Net(bool useArray = true,
         learnNouns();
         learnPronouns();
         learnVerbs();
-        learnEnglishAdverbs();
-        learnSwedishAdverbs();
+        learnAdverbs();
+        learnSwedishAdjectives();
         learnUndefiniteArticles();
         learnDefiniteArticles();
         learnPartitiveArticles();
@@ -1847,11 +1840,27 @@ class Net(bool useArray = true,
                    Origin.manual, 1.0);
 
         learnOpposites();
+
+        learnEmotions();
+        learnEnglishFeelings();
+        learnSwedishFeelings();
     }
 
     void learnNouns()
     {
+        learnEnglishNouns();
+        learnSwedishNouns();
+    }
+
+    void learnEnglishNouns()
+    {
+        learnAttributes(Lang.en, rdT("../knowledge/en/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.nounCollective, Sense.noun, 1.0);
         learnAttributes(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.noun, Sense.noun, 1.0);
+    }
+
+    void learnSwedishNouns()
+    {
+        learnAttributes(Lang.sv, rdT("../knowledge/sv/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `noun`, Sense.nounCollective, Sense.noun, 1.0);
     }
 
     void learnPronouns()
@@ -1978,7 +1987,20 @@ class Net(bool useArray = true,
 
     void learnVerbs()
     {
+        learnSwedishVerbs();
+        learnEnglishVerbs();
+    }
+
+    void learnEnglishVerbs()
+    {
+        learnEnglishIrregularVerbs();
         learnAttributes(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `verb`, Sense.verb, Sense.noun, 1.0);
+    }
+
+    void learnAdverbs()
+    {
+        learnEnglishAdverbs();
+        learnSwedishAdverbs();
     }
 
     void learnSwedishAdverbs()
@@ -5486,7 +5508,8 @@ class Net(bool useArray = true,
                              RelDir.backward);
             }
         }
-        else if (normLine.skipOver(`anagramsof(`))
+        else if (normLine.skipOver(`anagramsof(`) ||
+                 normLine.skipOver(`anagrams_of(`))
         {
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
@@ -5501,7 +5524,8 @@ class Net(bool useArray = true,
                 }
             }
         }
-        else if (normLine.skipOver(`synonymsof(`))
+        else if (normLine.skipOver(`synonymsof(`) ||
+                 normLine.skipOver(`synonyms_of(`))
         {
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
@@ -5517,6 +5541,7 @@ class Net(bool useArray = true,
             }
         }
         else if (normLine.skipOver(`translationsof(`) ||
+                 normLine.skipOver(`translations_of(`) ||
                  normLine.skipOver(`translate(`))
         {
             const split = normLine.findSplitBefore(`)`);
@@ -5532,7 +5557,8 @@ class Net(bool useArray = true,
                 }
             }
         }
-        else if (normLine.skipOver(`languagesof(`))
+        else if (normLine.skipOver(`languagesof(`) ||
+                 normLine.skipOver(`languages_of(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -5543,7 +5569,8 @@ class Net(bool useArray = true,
                 showTopLanguages(hist);
             }
         }
-        else if (normLine.skipOver(`languageof(`))
+        else if (normLine.skipOver(`languageof(`) ||
+                 normLine.skipOver(`language_of(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -5555,9 +5582,13 @@ class Net(bool useArray = true,
             }
         }
         else if (normLine.skipOver(`startswith(`) ||
+                 normLine.skipOver(`starts_with(`) ||
                  normLine.skipOver(`beginswith(`) ||
+                 normLine.skipOver(`begins_with(`) ||
                  normLine.skipOver(`hasbegin(`) ||
-                 normLine.skipOver(`hasstart(`))
+                 normLine.skipOver(`has_begin(`) ||
+                 normLine.skipOver(`hasstart(`) ||
+                 normLine.skipOver(`has_start(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -5573,8 +5604,11 @@ class Net(bool useArray = true,
             }
         }
         else if (normLine.skipOver(`endswith(`) ||
+                 normLine.skipOver(`ends_with(`) ||
                  normLine.skipOver(`hasend(`) ||
-                 normLine.skipOver(`hassuffix(`))
+                 normLine.skipOver(`has_end(`) ||
+                 normLine.skipOver(`hassuffix(`) ||
+                 normLine.skipOver(`has_suffix(`))
         {
             normLine.skipOver(" "); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -5590,6 +5624,7 @@ class Net(bool useArray = true,
             }
         }
         else if (normLine.skipOver(`canfind(`) ||
+                 normLine.skipOver(`can_find(`) ||
                  normLine.skipOver(`contain(`) ||
                  normLine.skipOver(`contains(`))
         {
@@ -5608,7 +5643,7 @@ class Net(bool useArray = true,
         }
         else if (normLine.skipOver(`as`)) // asSense
         {
-            const split = normLine.findSplit("(");
+            const split = normLine.findSplit(`(`);
             const senseString = split[0].strip;
             const arg = split[2].until(')').array.strip;
             try
@@ -5622,7 +5657,7 @@ class Net(bool useArray = true,
         }
         else if (normLine.skipOver(`in`)) // inLanguage
         {
-            const split = normLine.findSplit("(");
+            const split = normLine.findSplit(`(`);
             const langString = split[0].strip;
             const arg = split[2].until(')').array.strip;
             try
