@@ -1,3 +1,6 @@
+Bratwurst
+French toast
+Jell-O
 acorn squash
 alfalfa sprout
 almond
@@ -14,6 +17,7 @@ avocado
 bacon
 bagel
 bake
+baked Alaska
 baked alaska
 bamboo shoot
 banana
@@ -21,8 +25,8 @@ barbecue
 barley
 basil
 batter
-beancurd
 bean
+beancurd
 beef
 beet
 bell pepper
@@ -55,12 +59,15 @@ bun
 burrito
 butter
 butter bean
+caf%uFFFD mocha latte
 cake
+cake batter
 calorie
 candy
 candy apple
 cantaloupe
 caper
+cappuccino
 caramel
 caramel apple
 carbohydrate
@@ -83,12 +90,15 @@ cherry
 chew
 chick pea
 chicken
+chicken and veal cutlets
 chili
 chip
 chives
 chocolate
+chocolate mousse
 chopstick
 chow
+chowder
 chutney
 cilantro
 cinnamon
@@ -106,11 +116,13 @@ comestible
 cook
 cookbook
 cookie
+cooking sherry
 corn
 cornflake
 cornmeal
 cottage cheese
 crab
+crabs leg
 cracker
 cranberry
 cream
@@ -134,6 +146,7 @@ dandelion green
 danish pastry
 date
 dessert
+dessert menu
 diet
 digest
 digestive system
@@ -149,6 +162,7 @@ dragonfruit
 dressing
 dried
 drink
+drink of water
 dry
 durian
 edam cheese
@@ -169,9 +183,11 @@ fig
 fillet
 fire
 fish
+fish soup
 flan
 flax
 flour
+fondue
 food
 food pyramid
 foodstuff
@@ -197,9 +213,9 @@ grape
 grapefruit
 grated
 gravy
+green
 green tea
 greenbean
-green
 grub
 guacamole
 guava
@@ -209,10 +225,13 @@ ham
 hamburger
 hash
 hazelnut
+head cheese
+heirloom tomato
 herb
 honey
 honeydew
 horseradish
+hot chocolate
 hot dog
 hot sauce
 hummus
@@ -241,6 +260,7 @@ ketchup
 kettle
 kettle corn
 kidney bean
+kielbasa
 kitchen
 kiwi
 knife
@@ -248,6 +268,7 @@ kohlrabi
 kumquat
 ladle
 lamb
+lamb chop
 lard
 lasagna
 legume
@@ -261,6 +282,7 @@ lime
 liver
 loaf
 lobster
+locally brewed beer
 lollipop
 loquat
 lox
@@ -302,7 +324,7 @@ muffin
 mug
 munch
 mushroom
-mussels
+mussel
 mustard
 mustard green
 mutton
@@ -312,15 +334,15 @@ nectarine
 nibble
 noodle
 nosh
+nougat
 nourish
 nourishment
 nut
 nutmeg
 nutrient
 nutrition
-nutritious
-oatmeal
 oat
+oatmeal
 oil
 okra
 oleo
@@ -341,6 +363,7 @@ parsnip
 pasta
 pastry
 pate
+pate de foie gras
 patty
 pattypan squash
 pea
@@ -365,6 +388,7 @@ plate
 platter
 plum
 poached
+polenta
 pomegranate
 pomelo
 pop
@@ -385,6 +409,7 @@ prune
 pudding
 pumpernickel
 pumpkin
+pumpkin seed
 punch
 quiche
 quinoa
@@ -402,6 +427,8 @@ rhubarb
 rib
 rice
 roast
+rock candy
+rocky road ice cream
 roll
 rolling pin
 romaine
@@ -459,11 +486,14 @@ spud
 squash
 squid
 steak
+steaks
 stew
+stick butter
 stir-fry
 stomach
 stove
 straw
+strawberry
 strawberry
 string bean
 stringy
@@ -527,8 +557,11 @@ watermelon
 wheat
 whey
 whipped cream
+wine
 wok
+wrap
 yam
 yeast
 yogurt
 yolk
+zampone

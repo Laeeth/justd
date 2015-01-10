@@ -1697,9 +1697,9 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/amphibians.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `amphibian`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/animals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `animal`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/mammals.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `mammal`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/foods.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `food`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/food.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `food`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/cars.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `car`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/buildings.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `building`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/building.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `building`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/housing.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `housing`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/occupation.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `occupation`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/cooking_tool.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `cooking tool`, Sense.noun, Sense.noun, 1.0);
@@ -1757,8 +1757,8 @@ class Net(bool useArray = true,
                            Sense.language, lang, Origin.manual, 1.0);
 
             // Noun
-            learnMto1Maybe(lang, dirPath ~ "/concrete_noun.txt", Rel.hasProperty, false, `concrete`, Sense.noun, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ "/abstract_noun.txt", Rel.hasProperty, false, `abstract`, Sense.noun, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/concrete_noun.txt", Rel.hasProperty, false, `concrete`, Sense.nounConcrete, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/abstract_noun.txt", Rel.hasProperty, false, `abstract`, Sense.nounAbstract, Sense.adjective, 1.0);
 
             // Acronym
             learnMtoNMaybe(dirPath ~ "/acronym.txt",
@@ -1781,6 +1781,8 @@ class Net(bool useArray = true,
                            Rel.hasOrigin,
                            Sense.language, Lang.en,
                            Origin.manual, 1.0);
+
+            learnMto1(lang, rdT("../knowledge/en/vehicle.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `vehicle`, Sense.noun, Sense.noun);
         }
 
         // Translation
@@ -2283,7 +2285,9 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/science.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `science`, Sense.unknown, Sense.noun);
         learnMto1(Lang.en, rdT("../knowledge/en/computer.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `computer`, Sense.unknown, Sense.noun);
         learnMto1(Lang.en, rdT("../knowledge/en/math.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `math`, Sense.unknown, Sense.noun);
+
         learnMto1(Lang.en, rdT("../knowledge/en/transport.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `transport`, Sense.unknown, Sense.noun);
+
         learnMto1(Lang.en, rdT("../knowledge/en/rock.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `rock`, Sense.unknown, Sense.noun);
         learnMto1(Lang.en, rdT("../knowledge/en/doctor.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `doctor`, Sense.unknown, Sense.noun);
         learnMto1(Lang.en, rdT("../knowledge/en/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `St. Patrick's Day`, Sense.unknown, Sense.noun);
@@ -2307,35 +2311,35 @@ class Net(bool useArray = true,
         learnMto1(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nameFemale, Sense.noun, 1.0);
 
         learnMtoNMaybe("../knowledge/sv/male_name_meaning.txt",
-                  Sense.nameMale, Lang.sv,
-                  Rel.hasMeaning,
-                  Sense.unknown, Lang.sv,
-                  Origin.manual, 0.7);
+                       Sense.nameMale, Lang.sv,
+                       Rel.hasMeaning,
+                       Sense.unknown, Lang.sv,
+                       Origin.manual, 0.7);
 
         learnMtoNMaybe("../knowledge/sv/female_name_meaning.txt",
-                  Sense.nameFemale, Lang.sv,
-                  Rel.hasMeaning,
-                  Sense.unknown, Lang.sv,
-                  Origin.manual, 0.7);
+                       Sense.nameFemale, Lang.sv,
+                       Rel.hasMeaning,
+                       Sense.unknown, Lang.sv,
+                       Origin.manual, 0.7);
 
         // Idioms
         learnMtoNMaybe("../knowledge/en/idiom_meaning.txt",
-                  Sense.idiom, Lang.en,
-                  Rel.hasMeaning,
-                  Sense.unknown, Lang.en,
-                  Origin.manual, 0.7);
+                       Sense.idiom, Lang.en,
+                       Rel.hasMeaning,
+                       Sense.unknown, Lang.en,
+                       Origin.manual, 0.7);
         learnMtoNMaybe("../knowledge/sv/idiom_meaning.txt",
-                  Sense.idiom, Lang.sv,
-                  Rel.hasMeaning,
-                  Sense.unknown, Lang.sv,
-                  Origin.manual, 0.7);
+                       Sense.idiom, Lang.sv,
+                       Rel.hasMeaning,
+                       Sense.unknown, Lang.sv,
+                       Origin.manual, 0.7);
 
         // Slang
         learnMtoNMaybe("../knowledge/sv/slang_meaning.txt",
-                  Sense.slang, Lang.sv,
-                  Rel.hasMeaning,
-                  Sense.unknown, Lang.sv,
-                  Origin.manual, 0.7);
+                       Sense.slang, Lang.sv,
+                       Rel.hasMeaning,
+                       Sense.unknown, Lang.sv,
+                       Origin.manual, 0.7);
     }
 
     /// Learn Emotions.

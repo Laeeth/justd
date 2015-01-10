@@ -1,11 +1,20 @@
+Adirondack chair
+Chesterfield
+Chinese lantern
+Chippendale chair
+Easy chair
+Tiffany lamp
+Venetian lamp
 armchair
 armoire
+banquette
 bar stool
 bassinet
 beach chair
 bean bag chair
 bed
 bed table
+bedside table
 bench
 bentwood rocker
 bergere
@@ -21,11 +30,13 @@ captain's chair
 card table
 carpet
 cart
+ceiling fan
 chair
 chaise lounge
 chandelier
 chest
 chest of drawer
+chiffonier
 china cabinet
 clothes valet
 club chair
@@ -37,10 +48,13 @@ cradle
 credenza
 crib
 cubbies
+cuckoo clock
 cupboard
 curio
 curtain
 cushion
+davenport
+daybed
 deck chair
 desk
 desk chair
@@ -48,18 +62,22 @@ dining room table
 director's chair
 display cabinet
 divan
-drapery
 drape
+drapery
 dresser
 easel
 easy chair
 end table
+fanback chair
 fateuil
 file cabinet
+filing cabinet
+foldaway bed
 folding chair
 folding screen
 footrest
 footstool
+four poster bed
 four-poster bed
 furnishing
 furniture
@@ -68,15 +86,19 @@ game table
 garden bench
 gateleg table
 glider rocker
+gooseneck lamp
 grandfather clock
 hall tree
 hammock
 hassock
+hat rack
 hat stand
 headboard
+high seat
 highchair
 hope chest
 hutch
+inglenook
 island
 kitchen island
 ladderback chair
@@ -85,16 +107,21 @@ lawn chair
 lift chair
 light
 lintel
+locker
 lounge chair
 lounger
 love seat
 mantle
 mattress
+boxspring
 mirror
 murphy bed
+night table
+nightlight
 nightstand
 office chair
 ottoman
+painting
 pantry
 park bench
 patio chair
@@ -104,15 +131,20 @@ piano bench
 picnic table
 pillow
 porch swing
+potty chair
 rack
+recessed lighting
 recliner
 rocking chair
+rollaway bed
 room divider
 rug
 sconce
 screen
+sculpture
 seat
 secretary
+sectional
 sectional sofa
 settee
 shelf
@@ -121,23 +153,34 @@ sideboard
 sleeper sofa
 sofa
 sofabed
+spotlight
+step stool
 stool
+sunlamp
+swivel chair
 table
 tansu
+tatami mat
 tea cart
 throne
 throw rug
+torchiere
+track lighting
+tripod
 trundle bed
 tuffet
 valet
 vanity
-venetian blinds
+venetian blind
 vitrine
+wall hanging
 wardrobe
 waste basket
 waterbed
-window shades
+wet bar
+window shade
 windsor chair
 wing chair
 work table
+workbench
 writing desk

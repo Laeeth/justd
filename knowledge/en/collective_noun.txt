@@ -2,3 +2,9 @@ family
 flock
 herd
 school class
+bunch
+audience
+team
+group
+bandvillage
+village
