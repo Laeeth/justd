@@ -701,6 +701,26 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case hasAttribute:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["har", not, "attribut"]; break;
+                    case en:
+                    default: words = ["has", not, "attribute"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "attribut av"]; break;
+                    case en:
+                    default: words = ["is", not, "attribute of"]; break;
+                }
+            }
+            break;
         case hasEmotion:
             if (dir == RelDir.forward)
             {

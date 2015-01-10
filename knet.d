@@ -1707,7 +1707,7 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/carparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, false, `car`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/bodyparts.txt").splitter('\n').filter!(w => !w.empty), Rel.partOf, false, `body`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/alliterations.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `alliteration`, Sense.unknown, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasProperty, false, `positive`, Sense.unknown, Sense.adjective, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/positives.txt").splitter('\n').filter!(word => !word.empty), Rel.hasAttribute, false, `positive`, Sense.unknown, Sense.adjective, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/mineral.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `mineral`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/metal.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `metal`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `mineral group`, Sense.noun, Sense.noun, 1.0);
@@ -1757,8 +1757,10 @@ class Net(bool useArray = true,
                            Sense.language, lang, Origin.manual, 1.0);
 
             // Noun
-            learnMto1Maybe(lang, dirPath ~ "/concrete_noun.txt", Rel.hasProperty, false, `concrete`, Sense.nounConcrete, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ "/abstract_noun.txt", Rel.hasProperty, false, `abstract`, Sense.nounAbstract, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/concrete_noun.txt", Rel.hasAttribute, false, `concrete`, Sense.nounConcrete, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/abstract_noun.txt", Rel.hasAttribute, false, `abstract`, Sense.nounAbstract, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/masculine_noun.txt", Rel.hasAttribute, false, `masculine`, Sense.noun, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/feminine_noun.txt", Rel.hasAttribute, false, `feminine`, Sense.noun, Sense.adjective, 1.0);
 
             // Acronym
             learnMtoNMaybe(dirPath ~ "/acronym.txt",
@@ -2295,7 +2297,7 @@ class Net(bool useArray = true,
 
         learnMto1(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, false, `say`, Sense.verb, Sense.verb);
         learnMto1(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, true, `book`, Sense.adjective, Sense.noun);
-        learnMto1(Lang.en, rdT("../knowledge/en/informal.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, false, `informal`, Sense.adjective, Sense.noun);
+        learnMto1(Lang.en, rdT("../knowledge/en/informal.txt").splitter('\n').filter!(w => !w.empty), Rel.hasAttribute, false, `informal`, Sense.adjective, Sense.noun);
 
         // Red Wine
         learnMto1(Lang.en, rdT("../knowledge/en/red_wine_color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `red wine color`, Sense.noun, Sense.noun);
