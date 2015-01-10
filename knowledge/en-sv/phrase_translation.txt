@@ -40,6 +40,7 @@ dear sir / madambästa herr eller fru
 dear sirsbästa herrar
 do you like it?gillar du den?
 do you speak {1}?pratar du {1}?
+do you speak {1}?talar du {1}?
 don't mention itingen orsak
 don't wait till the bubble's off the winesmid medan järnet är varmt
 don't worryoroa dig inte
@@ -267,11 +268,11 @@ what a small worldvärlden är liten
 what do you do for a living?vad jobbar du med?
 what does "gato" mean in english?vad betyder ¡°saktare¡± på engelska?
 what time is it?vad är klockan?
+what's the time?vad är klockan?
 what's eating you?vad är det som är fel?
 what's new?något nytt på gång?
 what's that called in {1}?vad heter det på {1}?
 what's that in {1}?vad heter det på {1}?
-what's the time?vad är klockan?
 what's this?vad är det där?
 what's up?nå't nytt?
 what's your name?vad heter du?
