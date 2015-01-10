@@ -4468,8 +4468,10 @@ class Net(bool useArray = true,
 
         if (checkExisting)
         {
-            if (auto existingIx = areConnected(src, rel, dst,
-                                               negation))
+            if (auto existingIx = areConnected(src,
+                                               rel, negation, reversion,
+                                               dst,
+                                               origin, weight))
             {
                 if (false)
                 {
@@ -5219,9 +5221,10 @@ class Net(bool useArray = true,
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkRef.max.
      */
     LinkRef areConnectedInOrder(NodeRef a,
-                                Rel rel,
+                                Rel rel, bool negation, bool reversion,
                                 NodeRef b,
-                                bool negation = false)
+                                Origin origin = Origin.unknown,
+                                NWeight weight = 1.0)
     {
         const bDir = (rel.isSymmetric ?
                       RelDir.any :
@@ -5245,27 +5248,35 @@ class Net(bool useArray = true,
         TODO warn about negation and reversion on existing rels
      */
     LinkRef areConnected(NodeRef a,
-                         Rel rel,
+                         Rel rel, bool negation, bool reversion,
                          NodeRef b,
-                         bool negation = false)
+                         Origin origin = Origin.unknown,
+                         NWeight weight = 1.0)
     {
-        return either(areConnectedInOrder(a, rel, b, negation),
-                      areConnectedInOrder(b, rel, a, negation));
+        return either(areConnectedInOrder(a,
+                                          rel, negation, reversion,
+                                          b,
+                                          origin, weight),
+                      areConnectedInOrder(b,
+                                          rel, negation, reversion,
+                                          a,
+                                          origin, weight));
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     LinkRef areConnected(in Lemma a,
-                         Rel rel,
+                         Rel rel, bool negation, bool reversion,
                          in Lemma b,
-                         bool negation = false)
+                         Origin origin = Origin.unknown,
+                         NWeight weight = 1.0)
     {
         if (a in nodeRefByLemma && // both lemmas exist
             b in nodeRefByLemma)
         {
             return areConnected(nodeRefByLemma[a],
-                                rel,
+                                rel, negation, reversion,
                                 nodeRefByLemma[b],
-                                negation);
+                                origin, weight);
         }
         return typeof(return).asUndefined;
     }
