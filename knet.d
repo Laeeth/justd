@@ -6,9 +6,13 @@
     Wikidata, WikiTaxonomy into a Knowledge Graph.
 
     Applications:
-    - Emotion Detection
+
+    - Baby Naming: Enter words you like the baby to represent and then search
+      over synonyms, translations, etc until you find the most releveant node of
+      type nameMale or nameFemale. Also show "how" they are related (show network walk).
     - Translate text to use age-relevant words. Use pre-train child book word
       histogram for specific ages.
+    - Emotion Detection
 
     See also: http://www.mindmachineproject.org/proj/omcs/
     See also: https://github.com/commonsense/conceptnet5/wiki
@@ -1723,6 +1727,20 @@ class Net(bool useArray = true,
             const langString = lang.to!string;
             const dirPath = "../knowledge/" ~ langString;
 
+            // Male Name
+            learnMtoNMaybe(dirPath ~ "/male_name.txt", // TODO isA male name
+                           Sense.nameMale, lang,
+                           Rel.hasMeaning,
+                           Sense.unknown, lang,
+                           Origin.manual, 1.0);
+
+            // Female Name
+            learnMtoNMaybe(dirPath ~ "/female_name.txt", // TODO isA female name
+                           Sense.nameFemale, lang,
+                           Rel.hasMeaning,
+                           Sense.unknown, lang,
+                           Origin.manual, 1.0);
+
             // Irregular Noun
             learnMtoNMaybe(dirPath ~ "/irregular_noun.txt",
                            Sense.nounSingular, lang,
@@ -1789,35 +1807,35 @@ class Net(bool useArray = true,
 
         // Translation
         learnMtoNMaybe("../knowledge/en-sv/noun_translation.txt",
-                   Sense.noun, Lang.en,
-                   Rel.translationOf,
-                   Sense.noun, Lang.sv,
-                   Origin.manual, 1.0);
+                       Sense.noun, Lang.en,
+                       Rel.translationOf,
+                       Sense.noun, Lang.sv,
+                       Origin.manual, 1.0);
         learnMtoNMaybe("../knowledge/en-sv/phrase_translation.txt",
-                   Sense.unknown, Lang.en,
-                   Rel.translationOf,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 1.0);
+                       Sense.unknown, Lang.en,
+                       Rel.translationOf,
+                       Sense.unknown, Lang.sv,
+                       Origin.manual, 1.0);
         learnMtoNMaybe("../knowledge/la-sv/phrase_translation.txt",
-                   Sense.unknown, Lang.la,
-                   Rel.translationOf,
-                   Sense.unknown, Lang.sv,
-                   Origin.manual, 1.0);
+                       Sense.unknown, Lang.la,
+                       Rel.translationOf,
+                       Sense.unknown, Lang.sv,
+                       Origin.manual, 1.0);
         learnMtoNMaybe("../knowledge/la-en/phrase_translation.txt",
-                   Sense.unknown, Lang.la,
-                   Rel.translationOf,
-                   Sense.unknown, Lang.en,
-                   Origin.manual, 1.0);
+                       Sense.unknown, Lang.la,
+                       Rel.translationOf,
+                       Sense.unknown, Lang.en,
+                       Origin.manual, 1.0);
         learnMtoNMaybe("../knowledge/en-sv/idiom_translation.txt",
-                   Sense.idiom, Lang.en,
-                   Rel.translationOf,
-                   Sense.idiom, Lang.sv,
-                   Origin.manual, 1.0);
+                       Sense.idiom, Lang.en,
+                       Rel.translationOf,
+                       Sense.idiom, Lang.sv,
+                       Origin.manual, 1.0);
         learnMtoNMaybe("../knowledge/fr-en/phrase_translation.txt",
-                   Sense.unknown, Lang.fr,
-                   Rel.translationOf,
-                   Sense.unknown, Lang.en,
-                   Origin.manual, 1.0);
+                       Sense.unknown, Lang.fr,
+                       Rel.translationOf,
+                       Sense.unknown, Lang.en,
+                       Origin.manual, 1.0);
 
         learnOpposites();
 
@@ -1828,6 +1846,13 @@ class Net(bool useArray = true,
 
     void learnNouns()
     {
+        const origin = Origin.manual;
+
+        connect(store(`male`, Lang.en, Sense.noun, origin), Rel.hasAttribute,
+                store(`masculine`, Lang.en, Sense.adjective, origin), origin, 1.0);
+        connect(store(`female`, Lang.en, Sense.noun, origin), Rel.hasAttribute,
+                store(`feminine`, Lang.en, Sense.adjective, origin), origin, 1.0);
+
         learnEnglishNouns();
         learnSwedishNouns();
     }
@@ -2108,10 +2133,6 @@ class Net(bool useArray = true,
 
     void learnNames()
     {
-        // Male Names
-        learnMto1(Lang.en, rdT("../knowledge/en/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nameMale, Sense.noun, 1.0);
-        learnMto1(Lang.sv, rdT("../knowledge/sv/male_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `male name`, Sense.nameMale, Sense.noun, 1.0);
-
         // Surnames
         learnMto1(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.surname, Sense.noun, 1.0);
         learnMto1(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `surname`, Sense.surname, Sense.noun, 1.0);
@@ -2325,6 +2346,11 @@ class Net(bool useArray = true,
                        Origin.manual, 0.7);
 
         // Idioms
+        learnMtoNMaybe("../knowledge/en/slang_meaning.txt",
+                       Sense.slang, Lang.en,
+                       Rel.hasMeaning,
+                       Sense.unknown, Lang.en,
+                       Origin.manual, 0.7);
         learnMtoNMaybe("../knowledge/en/idiom_meaning.txt",
                        Sense.idiom, Lang.en,
                        Rel.hasMeaning,
