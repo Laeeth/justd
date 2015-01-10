@@ -126,7 +126,7 @@ enum Rel:ubyte
                     B. /r/HasProperty /c/en/ice /c/en/solid
                     See also: https://english.stackexchange.com/questions/150529/what-is-the-difference-between-property-and-attribute
                  */
-    hasAttribute = hasProperty,
+    hasAttribute,
 
     // TODO replace with hasProperty and hasAttribute
     hasShape,
