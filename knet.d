@@ -5535,7 +5535,8 @@ class Net(bool useArray = true,
                    Lang lang = Lang.unknown,
                    Sense sense = Sense.unknown,
                    string lineSeparator = `_`,
-                   TriedLines triedLines = TriedLines.init)
+                   TriedLines triedLines = TriedLines.init,
+                   string modHint = ``)
     {
         import std.ascii: whitespace;
         import std.algorithm: splitter;
@@ -5743,17 +5744,17 @@ class Net(bool useArray = true,
             {
                 {
                     const joinedLine = spaceParts.joiner.to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = spaceParts.joiner("-").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = spaceParts.joiner("'").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
@@ -5763,17 +5764,17 @@ class Net(bool useArray = true,
             {
                 {
                     const joinedLine = minusParts.joiner("").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = minusParts.joiner(" ").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = minusParts.joiner("'").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
@@ -5783,57 +5784,64 @@ class Net(bool useArray = true,
             {
                 {
                     const joinedLine = quoteParts.joiner("").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = quoteParts.joiner(" ").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
                 {
                     const joinedLine = quoteParts.joiner("-").to!string;
-                    writeln(`> Joined to "`, joinedLine, `"`);
+                    // writeln(`> Joined to "`, joinedLine, `"`);
                     showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
                 }
             }
 
             // stemmed
+            auto stemLine = normLine;
             while (true)
             {
-                const stemStatus = normLine.stemize(lang);
-                if (!stemStatus[0])
+                const stemResult = stemLine.stemIn(lang);
+                auto stemMoreLine = stemResult[0];
+                const stemLang = stemResult[1];
+                if (stemMoreLine == stemLine)
                     break;
-                const Lang stemmedLang = stemStatus[1];
-                writeln(`> Stemmed to "`, normLine, `" in language `, stemmedLang);
-                showNodes(normLine, stemmedLang, sense, lineSeparator, triedLines);
+                // writeln(`> Stemmed to "`, stemMoreLine, `" in language `, stemLang);
+                showNodes(stemMoreLine, stemLang, sense, lineSeparator, triedLines);
+                stemLine = stemMoreLine;
             }
 
+            // questiond
             if (!normLine.endsWith('?'))
             {
                 const questionLine = normLine ~ '?';
-                writeln(`> As a question "`, questionLine, `"`);
+                // writeln(`> As a question "`, questionLine, `"`);
                 showNodes(questionLine, lang, sense, lineSeparator, triedLines);
             }
 
+            // lowered
             const loweredLine = normLine.toLower;
             if (loweredLine != normLine)
             {
-                writeln(`> Lowercased to "`, loweredLine, `"`);
+                // writeln(`> Lowercased to "`, loweredLine, `"`);
                 showNodes(loweredLine, lang, sense, lineSeparator, triedLines);
             }
 
+            // uppered
             const upperedLine = normLine.toUpper;
             if (upperedLine != normLine)
             {
-                writeln(`> Uppercased to "`, upperedLine, `"`);
+                // writeln(`> Uppercased to "`, upperedLine, `"`);
                 showNodes(upperedLine, lang, sense, lineSeparator, triedLines);
             }
 
+            // capitalized
             const capitalizedLine = normLine.capitalize;
             if (capitalizedLine != normLine)
             {
-                writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
+                // writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
                 showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines);
             }
         }
