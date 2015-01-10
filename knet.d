@@ -52,8 +52,6 @@
     TODO Infer: {1} isA NOUN => {1} isA NOUN
     TODO if lemma.expr.skipOver("regex:")
 
-    TODO T-genus gives now hit
-
     TODO Prompt Queries:
     TODO canA(NOUN, VERB), canA(bird, fly), canA(man, walk), canA(dead man, walk)
     TODO isA(NOUN, NOUN), canA(bird, animal)
