@@ -45,6 +45,20 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    if lemma.expr.skipOver("regex:")
+
+    TODO Prompt Queries:
+    TODO canA(NOUN, VERB), canA(bird, fly), canA(man, walk), canA(dead man, walk)
+    TODO isA(NOUN, NOUN), canA(bird, animal)
+    TODO is(NOUN, ADVERB), canA(bird, dead) infer from: {} hasProperty ADVERB
+    TODO all(birds)
+    TODO all(bird)
+    TODO instancesOf(bird)
+    TODO examplesOf(bird)
+    TODO translateTo(EXPR, LANGUAGE)
+
+    TODO Infer: x hasProperty dead => x is dead
+
     TODO Use pattern matching
     TODO {A} means one word referred to with {A}
     TODO {A B} means one word referred to with {A B}
@@ -1604,6 +1618,8 @@ class Net(bool useArray = true,
 
         learnSwedishVerbs();
         learnSwedishAdjectives();
+
+        learnSwedishGrammar();
 
         learnEmotions();
         learnEnglishFeelings();
@@ -4320,16 +4336,19 @@ class Net(bool useArray = true,
         learnAdjective(lang, "tung", "tyngre", "tyngst");
     }
 
-    /* TODO Add logic describing which Sense.nounX and ContextIx that fulfills
-     * isUncountable() and use it here. */
-    void learnUncountables(R)(Lang lang, R nouns) if (isSourceOf!(R, string))
+    /** Learn Swedish Grammar.
+     */
+    void learnSwedishGrammar()
     {
-        const sense = Sense.uncountable;
-        const origin = Origin.manual;
-        connectMto1(nouns.map!(word => store(word, lang, sense, origin)),
+        enum lang = Lang.sv;
+        connectMto1(store(["grundform", "genitiv"], lang, Sense.noun, Origin.manual),
                     Rel.isA, false,
-                    store("uncountable", lang, sense, origin),
-                    lang, origin);
+                    store("kasus", lang, Sense.noun, Origin.manual),
+                    Origin.manual);
+        connectMto1(store(["reale", "neutrum"], lang, Sense.noun, Origin.manual),
+                    Rel.isA, false,
+                    store("genus", lang, Sense.noun, Origin.manual),
+                    Origin.manual);
     }
 
     /** Lookup-or-Store $(D Node) at $(D lemma) index.

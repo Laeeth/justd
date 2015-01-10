@@ -97,7 +97,9 @@ därom tvista de lärdeuttryck för att en gammal tvistefråga ännu inte funni
 därtill är jag nödd och tvungenfrån hans brask, se brasklapp. försöka övertyga någon att man är tvingad att hålla med fast man egentligen inte vill
 elda för kråkornaslösa med något, framför allt om värme, ha dörren öppen medan man eldar
 elefant i en porslinsaffär/porslinsbutiknågon som verbalt eller fysiskt uppför sig mycket klumpigt, och ställer till stora problem genom att inte tänka sig för
-en annan femmaen helt annan sak, det förändrar saken. oftast uttryckt som; "det är/var en helt annan femma"
+annan femmahelt annan sak
+en annan femmadet förändrar saken
+regex:det [är|var] en helt annan femma"det förändrar saken
 en black om fotennågot som är en belastning. ursprungligt av boja, en black, om vristen som fångar försågs med
 en droppe i haveten så obetydlig del att det inte spelar någon roll i sammanhanget. ofta uttryckt som en liknelse; som en droppe i havet
 en fjäder i hattenha gjort något man kan vara stolt över, fått ett erkännande, "gav honom/henne en fjäder i hatten".)
@@ -117,8 +119,8 @@ ertappas med fingrarna i kakburken/syltburkenbli påkommen på bar gärning med
 ett hår av hinen mycket elak eller sarkastisk person. "hin" är en kortform av hin håle, ett noaord för satan
 ett litet korn av sanningen berättelse eller ett rykte kan innehålla delar som är sanna, men det mesta är lögn eller överdrifter
 ett rött skynke.något som väcker stark vrede. exempel "det är som ett rött skynke för honom/henne". från matadorens röda skynke som avser att reta upp tjuren i tjurfäktning
-ett slag i luftenett misslyckat försök
-ett streck i räkningenett oväntat hinder
+slag i luftenmisslyckat försök
+streck i räkningenoväntat hinder
 ett strå vassareen smula bättre eller förmer
 ett äpple om dagen håller doktorn bortaäven som "ett äpple om dagen är bra för magen" eller "ett äpple om dagen håller doktorn från staden". från det engelska talesättet one apple a day keeps the doctor away
 falla i god jordett förslag som mottas positivt. exempel: "förslaget föll i god jord." ursprungligen ur bibelns evangelier, exempelvis matteusevangeliet: "men somt föll i god jord, och gav frukt, dels hundrafalt, dels sextiofalt, dels trettiofalt";(matt. 13:8) om att människor tar emot förkunnelse och frälsning på olika vis, utifrån sina respektive förutsättningar
