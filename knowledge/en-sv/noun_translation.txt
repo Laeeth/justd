@@ -1,5 +1,18 @@
 Jack Frostkung Bore
+
 commander in chiefsupreme commanderöverbefälhavare
+
 aggregatesmängdmått
+
 United Nations Children's FundFN:s barnfond
 United States of AmericaAmerikas Förenta Stater
+
+part of speechordklass
+nounsubstantiv
+verbverb
+pronounpronomen
+conjunctionkonjunktion
+interjectioninterjektion
+adjectiveadjektiv
+determinerdeterminativt pronomen
+demonstrativedemonstrativt pronomen

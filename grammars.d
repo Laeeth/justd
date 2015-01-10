@@ -917,6 +917,10 @@ enum Sense:ubyte
     pronounDemonstrativeSingular,
     pronounDemonstrativePlural,
 
+    pronounDeterminative,
+    pronounDeterminativeSingular,
+    pronounDeterminativePlural,
+
     pronounPossessive, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
 
     pronounPossessiveSingular, /// See also: https://www.englishclub.com/grammar/pronouns-possessive.htm
@@ -1188,6 +1192,7 @@ unittest
                              sense.isPronounPersonal ||
                              sense.isPronounPossessive ||
                              sense.isPronounDemonstrative ||
+                             sense.isPronounDeterminative ||
                              sense == pronounInterrogative ||
                              sense.isPronounReflexive ||
                              sense.isPronounIndefinite ||
@@ -1250,6 +1255,12 @@ unittest
         with (Sense) return sense.of(pronounDemonstrative,
                                      pronounDemonstrativeSingular,
                                      pronounDemonstrativePlural);
+    }
+    bool isPronounDeterminative(Sense sense)
+    {
+        with (Sense) return sense.of(pronounDeterminative,
+                                     pronounDeterminativeSingular,
+                                     pronounDeterminativePlural);
     }
     bool isPronounPlural(Sense sense)
     {

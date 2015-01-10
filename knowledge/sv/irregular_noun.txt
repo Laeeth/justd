@@ -109,6 +109,8 @@ sjukdomsjukdomar
 nationnationer
 
 lärarelärare
+gycklaregycklare
+hycklarehycklare
 
 teknikertekniker
 
@@ -119,3 +121,6 @@ partipartier
 barnbarn
 
 hedhedar
+
+artistartister
+cyklistcyklister

@@ -1941,6 +1941,22 @@ class Net(bool useArray = true,
         learnAttributes(lang, [`den här`, `den där`], Rel.isA, false, `demonstrative pronoun singular`, Sense.pronounDemonstrativeSingular, Sense.noun, 1.0);
         learnAttributes(lang, [`de här`, `de där`], Rel.isA, false, `demonstrative pronoun plural`, Sense.pronounDemonstrativePlural, Sense.noun, 1.0);
 
+        learnAttributes(lang, [`den`, `det`], Rel.isA, false,
+                        `singular determinative pronoun`,
+                        Sense.pronounDeterminativeSingular, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`de`, `dem`], Rel.isA, false,
+                        `singular determinative pronoun`,
+                        Sense.pronounDeterminativePlural, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`en sådan`], Rel.isA, false,
+                        `singular determinative pronoun`,
+                        Sense.pronounDeterminativeSingular, Sense.noun, 1.0);
+
+        learnAttributes(lang, [`sådant`, `sådana`], Rel.isA, false,
+                        `singular determinative pronoun`,
+                        Sense.pronounDeterminativePlural, Sense.noun, 1.0);
+
         // Other
         learnAttributes(lang, [`vem`, `som`, `vad`, `vilken`, `vems`], Rel.isA, false, `interrogative pronoun`, Sense.pronounInterrogative, Sense.noun, 1.0);
         learnAttributes(lang, [`mig själv`, `dig själv`, `han själv`, `henne själv`, `hen själv`, `den själv`, `det själv`], Rel.isA, false, `singular reflexive pronoun`, Sense.pronounReflexiveSingular, Sense.noun, 1.0); // TODO person
