@@ -5235,7 +5235,8 @@ class Net(bool useArray = true,
             if ((aLink.actors[]
                       .canFind(NodeRef(b, bDir))) &&
                 aLink.rel == rel &&
-                aLink.negation == negation) // no need to check reversion here because all links are bidirectional
+                aLink.negation == negation && // no need to check reversion (all links are bidirectional)
+                aLink.origin == origin)
             {
                 return aLinkRef;
             }
