@@ -1802,7 +1802,11 @@ class Net(bool useArray = true,
                            Sense.language, Lang.en,
                            Origin.manual, 1.0);
 
-            learnMto1(lang, rdT("../knowledge/en/vehicle.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `vehicle`, Sense.noun, Sense.noun);
+            try
+            {
+                learnMto1(lang, rdT(dirPath ~ "/vehicle.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `vehicle`, Sense.noun, Sense.noun, 1.0);
+            }
+            catch (std.file.FileException e) {}
         }
 
         // Translation
