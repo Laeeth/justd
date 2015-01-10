@@ -93,6 +93,8 @@ enum Rel:ubyte
 
     hasContext,
     hasMeaning,
+    slangFor,
+    idiomFor,
 
     locatedNear,                // TODO or AtLocation?
     borderedBy,

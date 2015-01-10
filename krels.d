@@ -1147,6 +1147,46 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case slangFor:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "slang för"]; break;
+                    case en:
+                    default: words = ["is", not, "slang for"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "en beskrivning av slang"]; break;
+                    case en:
+                    default: words = ["is", not, "an explanation of the slang"]; break;
+                }
+            }
+            break;
+        case idiomFor:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "idiom för"]; break;
+                    case en:
+                    default: words = ["is", not, "an idiom for"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "en beskrivning av idiomet"]; break;
+                    case en:
+                    default: words = ["is", not, "an explanation of the idiom"]; break;
+                }
+            }
+            break;
         case mutualProxyFor:
             switch (lang)
             {

@@ -771,7 +771,6 @@ enum Sense:ubyte
 
     phrase,                     /// Phrase.
     idiom,                      /// Idiomatic Expression.
-    slang,                      /// Slang.
 
     punctuation,
 
@@ -1006,7 +1005,6 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case phrase: return "phrase";
         case idiom: return "idiom";
-        case slang: return "slang";
 
         case punctuation: return "punctuation";
 
@@ -2003,4 +2001,11 @@ string negationIn(Lang lang = Lang.en)
         case de: return "nicht";
         default: return "not";
     }
+}
+
+enum Manner:ubyte
+{
+    formal,
+    informal,
+    rude,
 }

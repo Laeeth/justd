@@ -82,6 +82,7 @@
     TODO Infer English-Swedish Translations: "[are|is] requirED = krävs" because of "require = kräva"
 
     TODO Add isExactIn(Sense sense, Lang lang). Use to specialize in learnLemmaMaybeSpecialized().
+    TODO Use lemma.sense = lemma.expr.until(':').to!Sense.specialize(lemma.sense) in Lemma()
 
     TODO Make context a NodeRef such NodeRef("mammal") =>isA=> NodeRef("animal")
 
@@ -1106,12 +1107,29 @@ class Net(bool useArray = true,
     struct Lemma
     {
         @safe @nogc pure nothrow:
+
+        this(Expr expr,
+             Lang lang,
+             Sense sense,
+             ContextIx context = ContextIx.asUndefined,
+             Manner manner = Manner.formal,
+             bool isRegexp = false)
+        {
+            this.expr = expr;
+            this.lang = lang;
+            this.sense = sense;
+            this.manner = manner;
+            this.context = context;
+            this.isRegexp = isRegexp;
+        }
+
         Expr expr;
         /* The following three are used to disambiguate different semantics
          * meanings of the same word in different languages. */
         Lang lang;
         Sense sense;
-        ContextIx context; /// Context.
+        ContextIx context;
+        Manner manner;
         bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression
         /* auto opCast(T : bool)() { return expr !is null; } */
     }
@@ -1775,10 +1793,18 @@ class Net(bool useArray = true,
                            Sense.language, lang, Origin.manual, 1.0);
 
             // Noun
-            learnMto1Maybe(lang, dirPath ~ "/concrete_noun.txt", Rel.hasAttribute, false, `concrete`, Sense.nounConcrete, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ "/abstract_noun.txt", Rel.hasAttribute, false, `abstract`, Sense.nounAbstract, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ "/masculine_noun.txt", Rel.hasAttribute, false, `masculine`, Sense.noun, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ "/feminine_noun.txt", Rel.hasAttribute, false, `feminine`, Sense.noun, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/concrete_noun.txt",
+                           Rel.hasAttribute, false, `concrete`,
+                           Sense.nounConcrete, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/abstract_noun.txt",
+                           Rel.hasAttribute, false, `abstract`,
+                           Sense.nounAbstract, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/masculine_noun.txt",
+                           Rel.hasAttribute, false, `masculine`,
+                           Sense.noun, Sense.adjective, 1.0);
+            learnMto1Maybe(lang, dirPath ~ "/feminine_noun.txt",
+                           Rel.hasAttribute, false, `feminine`,
+                           Sense.noun, Sense.adjective, 1.0);
 
             // Acronym
             learnMtoNMaybe(dirPath ~ "/acronym.txt",
@@ -1790,7 +1816,31 @@ class Net(bool useArray = true,
                            Sense.newspaper, lang,
                            Origin.manual, 1.0);
 
+            // Idioms
+            learnMtoNMaybe(dirPath ~ "/idiom_meaning.txt",
+                           Sense.idiom, lang,
+                           Rel.idiomFor,
+                           Sense.unknown, lang,
+                           Origin.manual, 0.7);
+
+            // Slang
+            learnMtoNMaybe(dirPath ~ "/slang_meaning.txt",
+                           Sense.unknown, lang,
+                           Rel.slangFor,
+                           Sense.unknown, lang,
+                           Origin.manual, 0.7);
+
             // Name
+            learnMtoNMaybe(dirPath ~ "/male_name_meaning.txt",
+                           Sense.nameMale, lang,
+                           Rel.hasMeaning,
+                           Sense.unknown, lang,
+                           Origin.manual, 0.7);
+            learnMtoNMaybe(dirPath ~ "/female_name_meaning.txt",
+                           Sense.nameFemale, lang,
+                           Rel.hasMeaning,
+                           Sense.unknown, lang,
+                           Origin.manual, 0.7);
             learnMtoNMaybe(dirPath ~ "/name_day.txt",
                            Sense.name, lang,
                            Rel.hasNameDay,
@@ -2336,42 +2386,6 @@ class Net(bool useArray = true,
         // Female Names
         learnMto1(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nameFemale, Sense.noun, 1.0);
         learnMto1(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `female name`, Sense.nameFemale, Sense.noun, 1.0);
-
-        learnMtoNMaybe("../knowledge/sv/male_name_meaning.txt",
-                       Sense.nameMale, Lang.sv,
-                       Rel.hasMeaning,
-                       Sense.unknown, Lang.sv,
-                       Origin.manual, 0.7);
-
-        learnMtoNMaybe("../knowledge/sv/female_name_meaning.txt",
-                       Sense.nameFemale, Lang.sv,
-                       Rel.hasMeaning,
-                       Sense.unknown, Lang.sv,
-                       Origin.manual, 0.7);
-
-        // Idioms
-        learnMtoNMaybe("../knowledge/en/slang_meaning.txt",
-                       Sense.slang, Lang.en,
-                       Rel.hasMeaning,
-                       Sense.unknown, Lang.en,
-                       Origin.manual, 0.7);
-        learnMtoNMaybe("../knowledge/en/idiom_meaning.txt",
-                       Sense.idiom, Lang.en,
-                       Rel.hasMeaning,
-                       Sense.unknown, Lang.en,
-                       Origin.manual, 0.7);
-        learnMtoNMaybe("../knowledge/sv/idiom_meaning.txt",
-                       Sense.idiom, Lang.sv,
-                       Rel.hasMeaning,
-                       Sense.unknown, Lang.sv,
-                       Origin.manual, 0.7);
-
-        // Slang
-        learnMtoNMaybe("../knowledge/sv/slang_meaning.txt",
-                       Sense.slang, Lang.sv,
-                       Rel.hasMeaning,
-                       Sense.unknown, Lang.sv,
-                       Origin.manual, 0.7);
     }
 
     /// Learn Emotions.
