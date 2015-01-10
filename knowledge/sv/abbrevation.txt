@@ -359,3 +359,11 @@ VABvård av sjukt barn
 w.vecka (week)
 vdverkställande direktör
 vplvärnpliktig
+
+igåri går
+idagi dag
+imorgoni morgon
+ikvälli kväll
+inatti natt
+
+imorsei morse

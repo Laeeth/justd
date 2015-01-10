@@ -1970,9 +1970,69 @@ class Net(bool useArray = true,
         learnAttributes(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `verb`, Sense.verb, Sense.noun, 1.0);
     }
 
+    void learnSwedishAdverbs()
+    {
+        enum lang = Lang.sv;
+
+        learnAttributes(lang,
+                        [`i går`, `i dag,`, `i morgon`,
+                         `i kväll`, `i natt`,
+                         `i går kväll`, `i går natt`, `i går morgon`
+                         `nästa dag`, `nästnästa dag`
+                         `nästa vecka`, `nästnästa vecka`
+                         `nästa månad`, `nästnästa månad`
+                         `nästa år`, `nästnästa år`
+                         `nu`, `omedelbart`
+                         `sedan`, `senare`, `nyligen`, `just nu`, `på sistone`, `snart`,
+                         `redan`, `fortfarande`, `ännu`, `förr`, `förut`],
+                        Rel.isA, false, `time adverb`, Sense.timeAdverb, Sense.noun, 1.0);
+
+        learnAttributes(lang,
+                        [`här`, `där`, `där borta`, `överallt`, `var som helst`,
+                         `ingenstans`, `hem`, `bort`, `ut`],
+                        Rel.isA, false, `place adverb`, Sense.placeAdverb, Sense.noun, 1.0);
+
+        learnAttributes(lang,
+                        [`alltid`, `ofta`, `vanligen`, `ibland`, `emellanåt`, `sällan`, `aldrig`],
+                        Rel.isA, false, `frequency adverb`, Sense.frequencyAdverb, Sense.noun, 1.0);
+
+        learnAttributes(lang,
+                        [`ja`, `japp`, `överallt`, `alltid`],
+                        Rel.isA, false, `affirming adverb`, Sense.affirmingAdverb, Sense.noun, 1.0);
+
+        learnAttributes(lang,
+                        [`ej`, `inte`, `icke`],
+                        Rel.isA, false, `negating adverb`, Sense.negatingAdverb, Sense.noun, 1.0);
+
+        learnAttributes(Lang.sv,
+                        [`emellertid`, `däremot`, `dock`, `likväl`, `ändå`,
+                         `trots det`, `trots detta`],
+                        Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
+    }
+
     void learnEnglishAdverbs()
     {
         enum lang = Lang.en;
+
+        learnAttributes(lang,
+                        [`yesterday`, `today`, `tomorrow`, `tonight`, `last night`, `this morning`,
+                         `previous week`, `next week`,
+                         `previous year`, `next year`,
+                         `now`, `then`, `later`, `right now`, `already`,
+                         `recently`, `lately`, `soon`, `immediately`,
+                         `still`, `yet`, `ago`],
+                        Rel.isA, false, `time adverb`, Sense.timeAdverb, Sense.noun, 1.0);
+
+        learnAttributes(lang,
+                        [`here`, `there`, `over there`, `out there`, `in there`,
+                         `everywhere`, `anywhere`, `nowhere`, `home`, `away`, `out`],
+                        Rel.isA, false, `place adverb`, Sense.placeAdverb, Sense.noun, 1.0);
+
+        learnAttributes(lang,
+                        [`always`, `frequently`, `usually`, `sometimes`, `occasionally`, `seldom`,
+                         `rarely`, `never`],
+                        Rel.isA, false, `frequency adverb`, Sense.frequencyAdverb, Sense.noun, 1.0);
+
         learnAttributes(lang,
                         [`accordingly`, `additionally`, `again`, `almost`,
                          `although`, `anyway`, `as a result`, `besides`,
@@ -1989,15 +2049,16 @@ class Net(bool useArray = true,
                          `undoubtedly`, `uniquely`, `on the other hand`, `also`,
                          `for example`, `for instance`, `of course`, `on the contrary`,
                          `so far`, `until now`, `thus` ],
-                        Rel.isA, false, `conjunctive adverb`, Sense.conjunctiveAdverb, Sense.noun, 1.0);
-        learnAttributes(lang, [`no`, `not`, `never`, `nowhere`, `none`, `nothing`], Rel.isA, false, `negating adverb`, Sense.negatingAdverb, Sense.noun, 1.0);
-        learnAttributes(lang, [`yes`, `yeah`], Rel.isA, false, `affirming adverb`, Sense.affirmingAdverb, Sense.noun, 1.0);
-    }
+                        Rel.isA, false, `conjunctive adverb`,
+                        Sense.conjunctiveAdverb, Sense.noun, 1.0);
 
-    void learnSwedishAdverbs()
-    {
-        enum lang = Lang.sv;
-        learnAttributes(lang, [`ej`, `inte`, `icke`], Rel.isA, false, `negating adverb`, Sense.negatingAdverb, Sense.noun, 1.0);
+        learnAttributes(lang,
+                        [`no`, `not`, `never`, `nowhere`, `none`, `nothing`],
+                        Rel.isA, false, `negating adverb`, Sense.negatingAdverb, Sense.noun, 1.0);
+
+        learnAttributes(lang,
+                        [`yes`, `yeah`],
+                        Rel.isA, false, `affirming adverb`, Sense.affirmingAdverb, Sense.noun, 1.0);
     }
 
     void learnDefiniteArticles()

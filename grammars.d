@@ -879,6 +879,9 @@ enum Sense:ubyte
 
     adverb, /// changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
     normalAdverb,
+    timeAdverb,
+    placeAdverb,
+    frequencyAdverb,
     conjunctiveAdverb, adverbialConjunction = conjunctiveAdverb, /// joins together sentences
     negatingAdverb,
     affirmingAdverb,
@@ -1101,6 +1104,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case adverb: return "adverb";
         case normalAdverb: return "normal adverb";
+        case timeAdverb: return "time adverb";
+        case placeAdverb: return "place adverb";
+        case frequencyAdverb: return "frequency adverb";
         case conjunctiveAdverb: return "conjunctive adverb";
         case negatingAdverb: return "negating adverb";
         case affirmingAdverb: return "affirming adverb";
@@ -1411,6 +1417,9 @@ unittest
     {
         with (Sense) return sense.of(adverb,
                                      normalAdverb,
+                                     timeAdverb,
+                                     placeAdverb,
+                                     frequencyAdverb,
                                      negatingAdverb,
                                      affirmingAdverb,
                                      conjunctiveAdverb);
