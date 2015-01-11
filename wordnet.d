@@ -18,7 +18,7 @@ alias nPath = buildNormalizedPath;
 /** Word Sense/Meaning/Interpretation. */
 struct Entry(Links = uint[])
 {
-    Sense kind;
+    Sense sense;
     ubyte synsetCount; // Number of senses (meanings).
     Links links;
     Lang lang;
@@ -125,12 +125,12 @@ class WordNet(bool useArray = true,
             }
             else
             {
-                Sense kind;
+                Sense sense;
                 auto split = lemma.findSplit(`'`);
                 if (!split[1].empty)
                 {
                     lemma = split[0]; // exclude genitive ending 's
-                    kind = Sense.noun;
+                    sense = Sense.noun;
                 }
                 const normalizedLemma = normalize(lemma, lang);
                 if (normalizedLemma[1])
@@ -139,7 +139,7 @@ class WordNet(bool useArray = true,
                 static if (useRCString) { immutable internedLemma = Lemma(normalizedLemma[0]); }
                 else                    { immutable internedLemma = normalizedLemma[0].idup; }
 
-                lnr += addWord(internedLemma, kind, 0, lang);
+                lnr += addWord(internedLemma, sense, 0, lang);
             }
             lemmaOld = lemma.idup;
         }
@@ -255,10 +255,10 @@ class WordNet(bool useArray = true,
         writeln(`Read `, lnr, ` words`);
     }
 
-    /** Store $(D lemma) as $(D kind) in language $(D lang).
+    /** Store $(D lemma) as $(D sense) in language $(D lang).
         Return true if a new word was added, false if word was specialized.
      */
-    bool addWord(S)(const S lemma, Sense kind, ubyte synsetCount,
+    bool addWord(S)(const S lemma, Sense sense, ubyte synsetCount,
                     Lang lang = Lang.unknown)
     {
         static if (useRCString) { const Lemma lemmaFixed = lemma; }
@@ -266,20 +266,20 @@ class WordNet(bool useArray = true,
         if (lemmaFixed in _words)
         {
             auto existing = _words[lemmaFixed];
-            foreach (ref e; existing) // for each possible more general kind
+            foreach (ref e; existing) // for each possible more general sense
             {
-                if (e.kind == Sense.init ||
-                    (kind != e.kind &&
-                     kind.memberOf(e.kind)))
+                if (e.sense == Sense.init ||
+                    (sense != e.sense &&
+                     sense.specializes(e.sense)))
                 {
-                    e.kind = kind; // specialize
+                    e.sense = sense; // specialize
                     return false;
                 }
             }
         }
 
         Links links;
-        _words[lemmaFixed] ~= Entry!Links(kind, synsetCount, links, lang);
+        _words[lemmaFixed] ~= Entry!Links(sense, synsetCount, links, lang);
         return true;
     }
 
@@ -305,15 +305,15 @@ class WordNet(bool useArray = true,
         return senses;
     }
 
-    /** Return true if $(D lemma) can mean a $(D kind) in any of $(D
+    /** Return true if $(D lemma) can mean a $(D sense) in any of $(D
         langs).
     */
     auto canMean(S)(const S lemma,
-                    const Sense kind,
+                    const Sense sense,
                     const Lang[] langs = []) if (isSomeString!S)
     {
         return meaningsOf(lemma, langs).canFind!(meaning =>
-                                                 meaning.kind.memberOf(kind));
+                                                 meaning.sense.memberOf(sense));
     }
 
     bool canMeanSomething(S)(const S lemma,
@@ -420,10 +420,10 @@ class WordNet(bool useArray = true,
     }
 
     auto canMean(S)(S lemma,
-                    Sense kind,
+                    Sense sense,
                     Lang lang = Lang.unknown) if (isSomeString!S)
     {
-        return canMean(lemma, kind, lang == Lang.unknown ? [] : [lang]);
+        return canMean(lemma, sense, lang == Lang.unknown ? [] : [lang]);
     }
 
     void readIndexLine(R, N)(const R line,
@@ -543,7 +543,7 @@ unittest
     /* foreach (word; words) */
     /* { */
     /*     writeln(word, ` has meanings `, */
-    /*             wn.meaningsOf(word).map!(wordSense => wordSense.kind.to!string).joiner(`, `)); */
+    /*             wn.meaningsOf(word).map!(wordSense => wordSense.sense.to!string).joiner(`, `)); */
     /* } */
 
     if (netLangs.canFind(Lang.en))

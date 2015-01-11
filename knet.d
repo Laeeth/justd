@@ -1005,6 +1005,7 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
     }
 }
 
+static if (false)
 Role decodeWordNetPointerSymbol(string sym, Sense sense)
 {
     typeof(return) role;
@@ -1015,11 +1016,11 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense)
             {
                 case `!`:  role = Role(antonymFor); break;
 
-                case `@`:  role = Role(`hypernym`); break;
-                case `@i`: role = Role(`instanceHypernym`); break; // TODO Print this!
+                case `@`:  role = Role(hyponymOf, true); break; // hypernym
+                case `@i`: role = Role(hyponymOf, true); break; // instanceHypernym. TODO print use
 
                 case `~`:  role = Role(hyponymOf); break; // isA
-                case `~i`: role = Role(instanceHyponym); break;
+                case `~i`: role = Role(hyponymOf); break; // instanceHyponym. TODO print use
 
                 case `#m`: role = Role(memberHolonym); break;
                 case `#s`: role = Role(substanceHolonym); break;
@@ -1046,12 +1047,12 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense)
             switch (sym)
             {
                 case `!`:  role = Role(antonymFor); break;
-                case `@`:  role = Role(hypernymOf); break; // reverse of isA
+                case `@`:  role = Role(hyponymOf, true); break; // hypernym
                 case `~`:  role = Role(hyponymOf); break; // isA
 
-                case `*`:  role = Role(entailment); break;
+                case `*`:  role = Role(entailment); break; // entailment. TODO print use
 
-                case `>`:  role = Role(cause); break;
+                case `>`:  role = Role(causes); break;
                 case `^`:  role = Role(alsoSee); break;
                 case `$`:  role = Role(verbGroup); break;
 
@@ -1622,7 +1623,7 @@ class Net(bool useArray = true,
             if (sense == Sense.unknown) { sense = posSense; }
             if (posSense != sense) { assert(posSense == sense); }
 
-            const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
+            // const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
 
             static if (useArray)
             {
@@ -1635,7 +1636,7 @@ class Net(bool useArray = true,
 
             auto node = store(lemma, Lang.en, sense, Origin.wordnet);
 
-            dln(nodeAt(node).lemma.expr, " has pointers ", ptr_symbol);
+            // dln(nodeAt(node).lemma.expr, " has pointers ", ptr_symbol);
             // auto meaning = Entry!Links(words[1].front.decodeWordSense,
             //                            words[2].to!ubyte, links, lang);
             // _words[lemma] ~= meaning;
@@ -1884,7 +1885,7 @@ class Net(bool useArray = true,
             // Irregular Noun
             learnMtoNMaybe(dirPath ~ "/irregular_noun.txt",
                            Sense.nounSingular, lang,
-                           Rel.nounForm,
+                           Rel.formOfNoun,
                            Sense.nounPlural, lang,
                            Origin.manual, 1.0);
 
@@ -2720,7 +2721,7 @@ class Net(bool useArray = true,
         all ~= store(infinitive, lang, Sense.verbIrregularInfinitive, origin);
         all ~= store(past, lang, Sense.verbIrregularPast, origin);
         all ~= store(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
-        return connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
+        return connectAll(Rel.formOfVerb, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn English Acronym.
@@ -4446,7 +4447,7 @@ class Net(bool useArray = true,
                     tryStore(present, lang, Sense.verbPresent, origin),
                     tryStore(past, lang, Sense.verbPast, origin),
                     tryStore(pastParticiple, lang, Sense.verbPastParticiple, origin)];
-        connectAll(Rel.verbForm, all.filter!(a => a.defined), lang, origin);
+        connectAll(Rel.formOfVerb, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn Swedish (Irregular) Verbs.
@@ -4531,7 +4532,7 @@ class Net(bool useArray = true,
         auto all = [tryStore(nominative, lang, Sense.adjectiveNominative, origin),
                     tryStore(comparative, lang, Sense.adjectiveComparative, origin),
                     tryStore(superlative, lang, Sense.adjectiveSuperlative, origin)];
-        connectAll(Rel.adjectiveForm, all.filter!(a => a.defined), lang, origin);
+        connectAll(Rel.formOfAdjective, all.filter!(a => a.defined), lang, origin);
     }
 
     /** Learn Swedish Adjectives.
@@ -4546,6 +4547,7 @@ class Net(bool useArray = true,
      */
     void learnEnglishAdjectives()
     {
+        const lang = Lang.en;
         connectMto1(store([`ablaze`, `abreast`, `afire`, `afloat`, `afraid`, `aghast`, `aglow`,
                            `alert`, `alike`, `alive`, `alone`, `aloof`, `ashamed`, `asleep`,
                            `awake`, `aware`, `fond`, `unaware`],

@@ -1196,7 +1196,7 @@ auto toHuman(const Rel rel,
                 default: words = ["is ", not, "a mutual proxy for"]; break;
             }
             break;
-        case wordForm:
+        case formOfWord:
             switch (lang)
             {
                 case sv: words = ["har", not, "ord form"]; break;
@@ -1204,7 +1204,7 @@ auto toHuman(const Rel rel,
                 default: words = ["has ", not, "word form"]; break;
             }
             break;
-        case verbForm:
+        case formOfVerb:
             switch (lang)
             {
                 case sv: words = ["har", not, "verb form"]; break;
@@ -1212,7 +1212,7 @@ auto toHuman(const Rel rel,
                 default: words = ["has", not, "verb form"]; break;
             }
             break;
-        case nounForm:
+        case formOfNoun:
             switch (lang)
             {
                 case sv: words = ["har", not, "substantiv form"]; break;
@@ -1220,7 +1220,7 @@ auto toHuman(const Rel rel,
                 default: words = ["has", not, "noun form"]; break;
             }
             break;
-        case adjectiveForm:
+        case formOfAdjective:
             switch (lang)
             {
                 case sv: words = ["har", not, "adjektiv form"]; break;
@@ -1374,9 +1374,10 @@ bool specializes(Rel special,
         case hasWebsite: return special.of(hasOfficialWebsite);
         case hasSubevent: return special.of(hasFirstSubevent,
                                             hasLastSubevent);
-        case wordForm: return special.of(verbForm,
-                                         nounForm,
-                                         adjectiveForm);
+        case formOfWord: return special.of(formOfVerb,
+                                         participleOfVerb,
+                                         formOfNoun,
+                                         formOfAdjective);
         case synonymFor: return special.of(abbreviationFor,
                                            togetherWritingFor,
                                            shorthandFor);
@@ -1424,10 +1425,10 @@ bool generalizes(T)(T general,
 
                                  mutualProxyFor,
 
-                                 wordForm,
-                                 verbForm,
-                                 nounForm,
-                                 adjectiveForm);
+                                 formOfWord,
+                                 formOfVerb,
+                                 formOfNoun,
+                                 formOfAdjective);
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to

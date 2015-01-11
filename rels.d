@@ -269,10 +269,11 @@ enum Rel:ubyte
     adverbPertainsTo,
     participleOf,
 
-    wordForm,
-    verbForm,
-    nounForm,
-    adjectiveForm,
+    formOfWord,
+    formOfVerb,
+    participleOfVerb,
+    formOfNoun,
+    formOfAdjective,
 
     generalizes, // TODO Merge with other enumerator?
     specializes, // TODO reversionOf generalizes
