@@ -5958,7 +5958,7 @@ class Net(bool useArray = true,
             // non-interpuncted
             if (normLine.startsWith('.', '?', '!'))
             {
-                const nonIPLine = normLine[1 .. $]; // TODO functionìze
+                const nonIPLine = normLine.dropOne;
                 // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
                 showNodes(nonIPLine, lang, sense, lineSeparator, triedLines);
             }
@@ -5966,7 +5966,7 @@ class Net(bool useArray = true,
             // non-interpuncted
             if (normLine.endsWith('.', '?', '!'))
             {
-                const nonIPLine = normLine[0 .. $ - 1]; // TODO functionìze
+                const nonIPLine = normLine.dropBackOne;
                 // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
                 showNodes(nonIPLine, lang, sense, lineSeparator, triedLines);
             }
