@@ -131,7 +131,7 @@ Permutations!(doCopy,T) permutations(bool doCopy = false, T)(T[] items) if (isMu
     return Permutations!(doCopy, T)(items.dup);
 }
 
-unittest
+@safe pure nothrow unittest
 {
     import std.algorithm: equal;
     auto x = [1, 2, 3];
@@ -146,7 +146,7 @@ unittest
     assert(x == y);
 }
 
-unittest
+@safe pure nothrow unittest
 {
     import std.algorithm: equal;
     auto x = [`1`, `2`, `3`];
@@ -161,7 +161,7 @@ unittest
     assert(x == y);
 }
 
-unittest
+@safe pure nothrow unittest
 {
     import std.algorithm: equal;
     auto x = ['1', '2', '3'];
@@ -174,4 +174,87 @@ unittest
                   ['3', '1', '2'],
                   ['3', '2', '1']]));
     assert(x == y);
+}
+
+struct CartesianPower(bool doCopy = true, T)
+{
+    T[] items;
+    ulong repeat;
+    T[] row;
+    ulong i, maxN;
+
+    this(T[] items_, in uint repeat_, T[] buffer) pure nothrow @safe @nogc
+    {
+        this.items = items_;
+        this.repeat = repeat_;
+        row = buffer[0 .. repeat];
+        row[] = items[0];
+        maxN = items.length ^^ repeat;
+    }
+
+    static if (doCopy)
+    {
+        @property T[] front() pure nothrow @safe @nogc
+        {
+            return row.dup;
+        }
+    }
+    else
+    {
+        @property T[] front() pure nothrow @safe @nogc
+        {
+            return row;
+        }
+    }
+
+    @property bool empty() pure nothrow @safe @nogc
+    {
+        return i >= maxN;
+    }
+
+    void popFront() pure nothrow @safe @nogc
+    {
+        i++;
+        if (empty)
+            return;
+        ulong n = i;
+        size_t count = repeat - 1;
+        while (n)
+        {
+            row[count] = items[n % items.length];
+            count--;
+            n /= items.length;
+        }
+    }
+}
+
+auto cartesianPower(bool doCopy = true, T)(T[] items, in uint
+                                                       repeat)
+    pure nothrow @safe {
+    return CartesianPower!(doCopy, T)(items, repeat, new
+                                      T[repeat]);
+}
+
+auto cartesianPower(bool doCopy = true, T)(T[] items, in uint
+                                                       repeat, T[] buffer)
+    pure nothrow @safe @nogc {
+    if (buffer.length >= repeat) {
+        return CartesianPower!(doCopy, T)(items, repeat, buffer);
+    } else {
+        // Is this correct in presence of chaining?
+        static immutable err = new Error("buffer.length <
+repeat");
+        throw err;
+    }
+}
+
+@nogc unittest
+{
+    import core.stdc.stdio;
+    int[3] items = [10, 20, 30];
+    int[4] buf;
+    foreach (p; cartesianPower!false(items, 4, buf))
+    {
+        printf("(%d, %d, %d, %d)\n", p[0], p[1], p[2], p[3]);
+    }
 }
