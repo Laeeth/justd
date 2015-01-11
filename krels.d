@@ -481,26 +481,6 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
-        case entails:
-            if (dir == RelDir.forward)
-            {
-                switch (lang)
-                {
-                    case sv: words = ["leder", not, "till"]; break;
-                    case en:
-                    default: words = ["does", not, "entail"]; break;
-                }
-            }
-            else
-            {
-                switch (lang)
-                {
-                    case sv: words = ["kan", not, "orsakas av"]; break;
-                    case en:
-                    default: words = ["can", not, "be entailed by"]; break;
-                }
-            }
-            break;
         case creates:
             if (dir == RelDir.forward)
             {

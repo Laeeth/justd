@@ -115,7 +115,7 @@ enum Rel:ubyte
     causes, /* A and B are events, and it is typical for A to cause B. */
     leadsTo = causes,
 
-    entails,                    /* TODO same as causes? */
+    // entails,                    /* opposite of causes */
     causesSideEffect,
 
     decreasesRiskOf,

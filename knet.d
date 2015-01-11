@@ -1017,7 +1017,7 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense)
             case `@i`: role = Role(instanceHypernymOf, true); break;
             case `~`:  role = Role(hyponymOf); break;
             case `~i`: role = Role(instanceHyponymOf); break;
-            case `*`:  role = Role(entails); break; // entailment. TODO difference to ">" cause
+            case `*`:  role = Role(causes, true); break; // entailment.
 
             case `#m`: role = Role(memberHolonym); break;
             case `#s`: role = Role(substanceHolonym); break;
