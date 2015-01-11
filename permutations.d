@@ -126,6 +126,19 @@ unittest
     assert(x != y);
 }
 
+unittest
+{
+    import std.algorithm: equal;
+    auto x = [1];
+    auto y = [1];
+    import assert_ex;
+    import std.stdio;
+    writeln();
+    assertEqual(permutationsInPlace(y),
+                [[1]]);
+    assert(x != y);
+}
+
 Permutations!(doCopy,T) permutations(bool doCopy = true, T)(T[] items) if (isMutable!T)
 {
     return Permutations!(doCopy, T)(items.dup);
@@ -176,6 +189,9 @@ Permutations!(doCopy,T) permutations(bool doCopy = true, T)(T[] items) if (isMut
     assert(x == y);
 }
 
+/**
+   See also: http://forum.dlang.org/thread/mailman.1434.1339436657.24740.digitalmars-d-learn@puremagic.com#post-uftixibnvfffugjwsdbl:40forum.dlang.org
+ */
 struct CartesianPower(bool doCopy = true, T)
 {
     T[] items;

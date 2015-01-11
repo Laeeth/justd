@@ -49,8 +49,12 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Learn Syllables:
+         - https://stackoverflow.com/questions/27889604/open-syllabification-database
+         - lemmasByExpr[`one-liner`] => Lemma(`one-liner`) =>
+         - May require bool checkSyllables = false;
+
     TODO Infer: {1} isA NOUN => {1} isA NOUN
-    TODO if lemma.expr.skipOver("regex:")
 
     TODO Prompt Queries:
     TODO canA(NOUN, VERB), canA(bird, fly), canA(man, walk), canA(dead man, walk)
@@ -273,6 +277,7 @@ import grammars;
 import rcstring;
 import krels;
 import combinations;
+import permutations;
 version(msgpack) import msgpack;
 
 enum char asciiUS = '';       // ASCII Unit Separator
@@ -5646,7 +5651,7 @@ class Net(bool useArray = true,
         }
     }
 
-    alias TriedLines = bool[string];
+    alias TriedLines = bool[string]; // TODO use std.container.set
 
     void showFixedLine(string line)
     {
@@ -5864,63 +5869,36 @@ class Net(bool useArray = true,
         // try joined
         if (lineNodeRefs.empty)
         {
-            auto spaceParts = normLine.splitter(' ').filter!(a => !a.empty);
-            if (spaceParts.count >= 2)
+            auto spaceWords = normLine.splitter(' ').filter!(a => !a.empty);
+            if (spaceWords.count >= 2)
             {
+                foreach (combWords; permutations.permutations(spaceWords.array)) // TODO remove .array
                 {
-                    const joinedLine = spaceParts.joiner.to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
-                }
-                {
-                    const joinedLine = spaceParts.joiner("-").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
-                }
-                {
-                    const joinedLine = spaceParts.joiner("'").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
+                    foreach (separator; [``, `-`, "'"])
+                    {
+                        showNodes(combWords.joiner(separator).to!string,
+                                  lang, sense, lineSeparator, triedLines);
+                    }
                 }
             }
 
-            auto minusParts = normLine.splitter('-').filter!(a => !a.empty);
-            if (minusParts.count >= 2)
+            auto minusWords = normLine.splitter('-').filter!(a => !a.empty);
+            if (minusWords.count >= 2)
             {
+                foreach (separator; [``, ` `, "'"])
                 {
-                    const joinedLine = minusParts.joiner("").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
-                }
-                {
-                    const joinedLine = minusParts.joiner(" ").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
-                }
-                {
-                    const joinedLine = minusParts.joiner("'").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
+                    showNodes(minusWords.joiner(separator).to!string,
+                              lang, sense, lineSeparator, triedLines);
                 }
             }
 
-            auto quoteParts = normLine.splitter(`'`).filter!(a => !a.empty);
-            if (quoteParts.count >= 2)
+            auto quoteWords = normLine.splitter(`'`).filter!(a => !a.empty);
+            if (quoteWords.count >= 2)
             {
+                foreach (separator; [``, ` `, "-"])
                 {
-                    const joinedLine = quoteParts.joiner("").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
-                }
-                {
-                    const joinedLine = quoteParts.joiner(" ").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
-                }
-                {
-                    const joinedLine = quoteParts.joiner("-").to!string;
-                    // writeln(`> Joined to "`, joinedLine, `"`);
-                    showNodes(joinedLine, lang, sense, lineSeparator, triedLines);
+                    showNodes(quoteWords.joiner(separator).to!string,
+                              lang, sense, lineSeparator, triedLines);
                 }
             }
 

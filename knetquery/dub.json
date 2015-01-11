@@ -8,6 +8,6 @@
     "sourceFiles": [ "../dbg.d", "../msgpack.d", "../krels.d", "../knet.d", "../rcstring.d", "../predicates.d",
                      "../wordnet.d", "../grammars.d", "../stemming.d",
                      "../assert_ex.d", "../range_ex.d", "../algorithm_ex.d", "../traits_ex.d", "../sort_ex.d",
-                     "../rational.d",
+                     "../rational.d", "../combinations.d", "../permutations.d",
                      "../backtrace/backtrace.d" ]
 }
