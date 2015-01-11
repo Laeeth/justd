@@ -879,6 +879,15 @@ enum Sense:ubyte
     adjectivePossessiveSingular,
     adjectivePossessivePlural,
 
+    adjectivePredicateOnly, /** Contextually dependent adjective relating to
+                            subject. Found after linking verbs (verbLinking).  An adjective
+                            that can be used only in predicate positions. If X
+                            is a predicate adjective, it can only be used in
+                            such phrases as "it is X " and never prenominally.
+                            Examples: - The shoes look expensive.  - The man is
+                            asleep.  - The animal is dead.
+                        */
+
     adverb, /// changes or simplifies the meaning of a verb, adjective, other adverb, clause, or sentence.
     normalAdverb,
     timeAdverb,
@@ -1095,6 +1104,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case auxiliaryVerbModal: return "modal auxiliary verb";
 
         case adjective: return "adjective";
+        case adjectivePredicateOnly: return "predicate only adjective";
         case adjectiveRegular: return "regular adjective";
         case adjectiveIrregular: return "irregular adjective";
         case adjectiveAbbrevation: return "adjective abbrevation";
@@ -1416,7 +1426,8 @@ unittest
                                      adjectiveComparative,
                                      adjectiveSuperlative,
                                      adjectivePossessiveSingular,
-                                     adjectivePossessivePlural);
+                                     adjectivePossessivePlural,
+                                     adjectivePredicateOnly);
     }
     bool isAdverb(Sense sense)
     {
@@ -1588,8 +1599,6 @@ bool specializes(Sense special,
     }
 }
 
-alias memberOf = specializes;
-
 static immutable implies = [ `in order to` ];
 
 unittest
@@ -1656,6 +1665,11 @@ static immutable jobTitleSuffixes = [ `or`, // traitor
                                       `ess`, // waitress
                                       `ive` // representative
     ];
+
+/** English Linking Verbs in Nominative Form.
+ */
+static immutable englishLinkingVerbs = [`is`, `seem`, `look`, `appear to be`, `could be`];
+static immutable swedishLinkingVerbs = [`är`, `verkar`, `ser`, `kan vara`];
 
 /** English Word Suffixes. */
 static immutable wordSuffixes = [ allNounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;

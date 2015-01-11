@@ -1005,6 +1005,109 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
     }
 }
 
+Tuple!(Rel, bool) decodeWordNetPointerSymbol(string sym, Sense sense)
+{
+    Rel rel;
+    switch (sense) with (Sense) with (Rel)
+    {
+        case noun:
+            switch (sym)
+            {
+                case `!`:  rel = antonymFor; break;
+
+                case `@`:  rel = hypernymOf; break; // reverse of isA
+                case `@i`: rel = instanceHypernym; break;
+
+                case `~`:  rel = hyponymOf; break; // isA
+                case `~i`: rel = instanceHyponym; break;
+
+                case `#m`: rel = memberHolonym; break;
+                case `#s`: rel = substanceHolonym; break;
+                case `#p`: rel = partHolonym; break;
+
+                case `%m`: rel = memberMeronym; break;
+                case `%s`: rel = substanceMeronym; break;
+                case `%p`: rel = partMeronym; break;
+
+                case `=`:  rel = attribute; break;
+                case `+`:  rel = derivationallyRelatedForm; break;
+                case `;c`: rel = domainOfSynset; break; // TOPIC
+                case `-c`: rel = memberOfThisDomain; break;  // TOPIC
+                case `;r`: rel = domainOfSynset; break; // REGION
+                case `-r`: rel = memberOfThisDomain; break; // REGION
+                case `;u`: rel = domainOfSynset; break; // USAGE
+                case `-u`: rel = memberOfThisDomain; break; // USAGE
+                default:
+                    assert(false, `Unexpected noun relation type ` ~ sym);
+                    break;
+            }
+            break;
+        case verb:
+            switch (sym)
+            {
+                case `!`:  rel = antonymFor; break;
+                case `@`:  rel = hypernymOf; break; // reverse of isA
+                case `~`:  rel = hyponymOf; break; // isA
+
+                case `*`:  rel = entailment; break;
+
+                case `>`:  rel = cause; break;
+                case `^`:  rel = alsoSee; break;
+                case `$`:  rel = verbGroup; break;
+
+                case `+`:  rel = derivationallyRelatedForm; break;
+                case `;c`: rel = domainOfSynset; break; // TOPIC
+                case `;r`: rel = domainOfSynset; break; // REGION
+                case `;u`: rel = domainOfSynset; break; // USAGE
+                default:
+                    assert(false, `Unexpected verb relation type ` ~ sym);
+                    break;
+            }
+            break;
+        case adjective:
+            switch (sym)
+            {
+                case `!`:  rel = antonymFor; break;
+                case `&`:  rel = similarTo; break;
+                case `<`:  rel = participleOfVerb; break;
+
+                case `\`:  rel = pertainym; break; // pertains to noun
+                case `=`:  rel = attribute; break;
+                case `^`:  rel = alsoSee; break;
+
+                case `;c`: rel = domainOfSynset; break; // TOPIC
+                case `;r`: rel = domainOfSynset; break; // REGION
+                case `;u`: rel = domainOfSynset; break; // USAGE
+                default:
+                    assert(false, `Unexpected adjective relation type ` ~ sym);
+                    break;
+            }
+            break;
+        case adverb:
+            switch (sym)
+            {
+                case `!`:  rel = antonymFor; break;
+                case `&`:  rel = similarTo; break;
+                case `<`:  rel = participleOfVerb; break;
+
+                case `\`:  rel = pertainym; break; // pertains to noun
+                case `=`:  rel = attribute; break;
+                case `^`:  rel = alsoSee; break;
+
+                case `;c`: rel = domainOfSynset; break; // TOPIC
+                case `;r`: rel = domainOfSynset; break; // REGION
+                case `;u`: rel = domainOfSynset; break; // USAGE
+                default:
+                    assert(false, `Unexpected adverb relation type ` ~ sym);
+                    break;
+            }
+            break;
+        default:
+            break;
+    }
+    return rel;
+}
+
 /** Main Knowledge Network.
 */
 class Net(bool useArray = true,
@@ -1494,27 +1597,32 @@ class Net(bool useArray = true,
             !line.front.isWhite) // if first is not space. TODO move this check
         {
             static if (isSomeString!R) { const linestr = line; }
-            else                       { const linestr = cast(string)line.idup; } // TODO Why is this needed? And why does this fail?
+            else                       { const linestr = cast(string)line.idup; }
             /* pragma(msg, typeof(line).stringof); */
             /* pragma(msg, typeof(line.idup).stringof); */
-            const words        = linestr.split; // TODO Non-eager split?
+            const words = linestr.split; // TODO Use splitter to optimize
 
-            // const lemma        = words[0].idup; // NOTE: Stuff fails if this is set
-            static if (useRCString) { immutable Lemma lemma = words[0]; }
-            else                    { immutable lemma = words[0].idup; }
+            // const lemma = words[0].idup; // NOTE: Stuff fails if this is set
+            static if (useRCString) { immutable Lemma lemma = words[0].tr("_", " "); }
+            else                    { immutable lemma = words[0].tr("_", " ").idup; }
 
             const pos          = words[1]; // Part of Speech (PoS)
             const synset_cnt   = words[2].to!uint; // Synonym Set Counter
             const p_cnt        = words[3].to!uint;
-            const ptr_symbol   = words[4..4+p_cnt];
-            const sense_cnt    = words[4+p_cnt].to!uint;
+            const ptr_symbol   = words[4 .. 4+p_cnt];
+
+            // const sense_cnt    = words[4+p_cnt].to!uint; // same as synset_cnt above (redundant)
+            // debug assert(synset_cnt == sense_cnt);
+
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
-            auto ids = words[6+p_cnt..$].map!(a => a.to!uint); // relating ids
+            auto ids = words[6+p_cnt .. $].map!(a => a.to!uint); // relating ids
 
             const posSense = pos.decodeWordSense;
             if (sense == Sense.unknown) { sense = posSense; }
             if (posSense != sense) { assert(posSense == sense); }
+
+            const rels = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
 
             static if (useArray)
             {
@@ -1524,9 +1632,12 @@ class Net(bool useArray = true,
             {
                 // auto links = ids.array;
             }
+
+            auto node = store(lemma, Lang.en, sense, Origin.wordnet);
+
+            dln(nodeAt(node).lemma.expr, " has pointers ", ptr_symbol);
             // auto meaning = Entry!Links(words[1].front.decodeWordSense,
             //                            words[2].to!ubyte, links, lang);
-            debug assert(synset_cnt == sense_cnt);
             // _words[lemma] ~= meaning;
         }
     }
@@ -1663,8 +1774,8 @@ class Net(bool useArray = true,
         learnNouns();
         learnPronouns();
         learnVerbs();
+        learnAdjectives();
         learnAdverbs();
-        learnSwedishAdjectives();
         learnUndefiniteArticles();
         learnDefiniteArticles();
         learnPartitiveArticles();
@@ -2059,6 +2170,12 @@ class Net(bool useArray = true,
     {
         learnSwedishVerbs();
         learnEnglishVerbs();
+    }
+
+    void learnAdjectives()
+    {
+        learnSwedishAdjectives();
+        learnEnglishAdjectives();
     }
 
     void learnEnglishVerbs()
@@ -4423,6 +4540,20 @@ class Net(bool useArray = true,
     {
         enum lang = Lang.sv;
         learnAdjective(lang, "tung", "tyngre", "tyngst");
+    }
+
+    /** Learn English Adjectives.
+     */
+    void learnEnglishAdjectives()
+    {
+        connectMto1(store([`ablaze`, `abreast`, `afire`, `afloat`, `afraid`, `aghast`, `aglow`,
+                           `alert`, `alike`, `alive`, `alone`, `aloof`, `ashamed`, `asleep`,
+                           `awake`, `aware`, `fond`, `unaware`],
+                          lang, Sense.adjectivePredicateOnly, Origin.manual),
+                    Rel.isA, false,
+                    store("predicate only adjective",
+                          lang, Sense.noun, Origin.manual),
+                    Origin.manual);
     }
 
     /** Learn Swedish Grammar.

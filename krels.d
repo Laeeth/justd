@@ -4,6 +4,7 @@ import grammars: Lang, negationIn;
 import std.conv: to;
 import predicates: of;
 public import rels: Rel;
+public import roles: Role;
 
 /** Relation Direction. */
 enum RelDir

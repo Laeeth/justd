@@ -18,10 +18,13 @@ enum Rel:ubyte
           * /c/en/city */
     hyponymOf = isA, /// WordNet. Use isA instead.
 
+    hypernymOf, /// WordNet. Reversion of isA
+
     mayBeA,
 
     partOf, /* A is a part of B. This is the part meronym relation in
                WordNet. /r/PartOf /c/en/gearshift /c/en/car */
+    meronym = partOf,
 
     memberOf, /* A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
@@ -239,7 +242,7 @@ enum Rel:ubyte
 
     instanceOf,
 
-    madeOf, // TODO Unite with instanceOf
+    madeOf, // TODO Unite with instanceOf?
     madeBy,
     madeAt,
 
