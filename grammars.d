@@ -785,7 +785,9 @@ enum Sense:ubyte
     nounSingular,
     nounPlural,
 
-    nounNumeric,
+    nounNominative,
+
+    numeric,
 
     plant,
     food,
@@ -837,6 +839,8 @@ enum Sense:ubyte
     /* Verb */
 
     verb,
+    verbTransitive,
+    verbIntransitive,
     verbRegular,
     verbIrregular,
 
@@ -969,7 +973,7 @@ enum Sense:ubyte
     predeterminer,
 
     article,
-    articleUndefinite,
+    articleIndefinite,
     articleDefinite,
     articlePartitive,
 
@@ -1028,8 +1032,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case nounSingular: return `singular noun`;
         case nounPlural: return `plural noun`;
+        case nounNominative: return `nominative noun`;
 
-        case nounNumeric: return `numeric`;
+        case numeric: return `numeric`;
 
         case plant: return `plant`;
         case food: return `food`;
@@ -1078,6 +1083,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case derivedSIUnit: return `derived SI unit`;
 
         case verb: return `verb`;
+        case verbTransitive: return `transitive verb`;
+        case verbIntransitive: return `intransitive verb`;
         case verbRegular: return `regular verb`;
         case verbIrregular: return `irregular verb`;
 
@@ -1197,7 +1204,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case predeterminer: return `predeterminer`;
 
         case article: return `article`;
-        case articleUndefinite: return `undefinite article`;
+        case articleIndefinite: return `undefinite article`;
         case articleDefinite: return `definite article`;
         case articlePartitive: return `partitive article`;
 
@@ -1347,6 +1354,7 @@ unittest
                                       nounIrregular,
                                       nounSingular,
                                       nounPlural,
+                                      nounNominative,
                                       uncountable,
                                       nounAbbrevation,
                                       nounAcronym,
@@ -1365,7 +1373,7 @@ unittest
     bool isNumeric(Sense sense)
     {
         with (Sense) return (sense.isInteger ||
-                             sense.of(nounNumeric,
+                             sense.of(numeric,
                                       decimal,
                                       numberRational,
                                       numberIrrational,
@@ -1401,6 +1409,8 @@ unittest
         with (Sense) return (sense.isVerbRegular ||
                              sense.isVerbIrregular ||
                              sense.of(verb,
+                                      verbTransitive,
+                                      verbIntransitive,
                                       verbInfinitive,
                                       verbPast,
                                       verbPastParticiple,
@@ -1550,7 +1560,7 @@ unittest
     bool isArticle(Sense sense)
     {
         with (Sense) return sense.of(article,
-                                     articleUndefinite,
+                                     articleIndefinite,
                                      articleDefinite,
                                      articlePartitive);
     }
@@ -1589,7 +1599,7 @@ bool specializes(Sense special,
         case food: return special.isFood;
         case numeral: return special.isNumeral;
         case integer: return special.isInteger;
-        case nounNumeric: return special.isNumeric;
+        case numeric: return special.isNumeric;
         case name: return special.isName;
         case nounAbbrevation: return special == nounAcronym;
         case verb: return special.isVerb;

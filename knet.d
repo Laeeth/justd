@@ -24,6 +24,7 @@
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: http://www.mindmachineproject.org/proj/prop/
 
+    Data: http://www.clres.com/dict.html
     Data: http://www.adampease.org/OP/
     Data: http://www.wordfrequency.info/
     Data: http://conceptnet5.media.mit.edu/downloads/current/
@@ -197,8 +198,6 @@
     - is the opposite of:  hate(en-verb:1.00@CN5),
     - is the opposite of:  hatred(en-noun:1.00@CN5),
     - is the opposite of:  hate(en:0.55@CN5),
-
-    TODO Why can't File.byLine be used instead of readText?
 */
 
 /* TODO
@@ -945,6 +944,7 @@ enum Origin:ubyte
     // dbpediaEn,
 
     wordnet,                    ///< WordNet
+    moby,                       ///< Moby.
 
     umbel,                      ///< http://www.umbel.org/
     jmdict,                     ///< http://www.edrdg.org/jmdict/j_jmdict.html
@@ -976,6 +976,7 @@ string toNice(Origin origin) @safe pure
             // case dbpediaEn: return "DBpediaEnglish";
 
         case wordnet: return "WordNet";
+        case moby: return "Moby";
 
         case umbel: return "umbel";
         case jmdict: return "JMDict";
@@ -1072,6 +1073,29 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense)
         }
     }
     return role;
+}
+
+Sense sensesOfMobyPoSCode(C)(C code) if (isSomeChar!C)
+{
+    switch (code) with (Sense)
+    {
+        case 'N': return noun;
+        case 'p': return nounPlural;
+        case 'h': return nounPhrase;
+        case 'V': return verb;
+        case 't': return verbTransitive;
+        case 'i': return verbIntransitive;
+        case 'A': return adjective;
+        case 'v': return adverb;
+        case 'C': return conjunction;
+        case 'P': return preposition;
+        case '!': return interjection;
+        case 'r': return pronoun;
+        case 'D': return articleDefinite;
+        case 'I': return articleIndefinite;
+        case 'o': return nounNominative;
+        default: dln("warning: Unknown code character " ~ code); return unknown;
+    }
 }
 
 /** Main Knowledge Network.
@@ -1739,29 +1763,7 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `compound word`, Sense.unknown, Sense.noun, 1.0);
 
         // Part of Speech (PoS)
-        learnNouns();
-        learnPronouns();
-        learnVerbs();
-        learnAdjectives();
-        learnAdverbs();
-        learnUndefiniteArticles();
-        learnDefiniteArticles();
-        learnPartitiveArticles();
-        learnConjunctions();
-        learnInterjections();
-        learnTime();
-
-        // Verb
-        learnMto1(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
-
-        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `determiner`, Sense.determiner, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
-
-        learnMto1(Lang.en, rdT("../knowledge/en/preposition.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `preposition`, Sense.preposition, Sense.noun, 1.0);
-        learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Rel.isA, false, `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
+        learnPartOfSpeech();
 
         // Other
 
@@ -1986,6 +1988,50 @@ class Net(bool useArray = true,
         learnEmotions();
         learnEnglishFeelings();
         learnSwedishFeelings();
+    }
+
+    void learnPartOfSpeech()
+    {
+        learnNouns();
+        learnPronouns();
+        learnVerbs();
+        learnAdjectives();
+        learnAdverbs();
+        learnUndefiniteArticles();
+        learnDefiniteArticles();
+        learnPartitiveArticles();
+        learnConjunctions();
+        learnInterjections();
+        learnTime();
+
+        // Verb
+        learnMto1(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
+
+        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `determiner`, Sense.determiner, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
+
+        learnMto1(Lang.en, rdT("../knowledge/en/preposition.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `preposition`, Sense.preposition, Sense.noun, 1.0);
+        learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Rel.isA, false, `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
+
+        learnMoby();
+    }
+
+    void learnMoby()
+    {
+        const path = "../knowledge/moby/part_of_speech.txt";
+        writeln("Reading Moby Part of Speech (PoS) list from ", path, " ...");
+        foreach (line; File(path).byLine)
+        {
+            auto split = line.splitter(roleSeparator);
+            const expr = split.front.idup; split.popFront;
+            foreach (sense; split.front.map!(a => a.sensesOfMobyPoSCode))
+            {
+                store(expr, Lang.en, sense, Origin.moby);
+            }
+        }
     }
 
     void learnEnumMemberNameHierarchy(T)() if (is(T == enum))
@@ -2285,13 +2331,13 @@ class Net(bool useArray = true,
     void learnUndefiniteArticles()
     {
         learnMto1(Lang.en, [`a`, `an`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+                        Rel.isA, false, `undefinite article`, Sense.articleIndefinite, Sense.noun, 1.0);
         learnMto1(Lang.de, [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+                        Rel.isA, false, `undefinite article`, Sense.articleIndefinite, Sense.noun, 1.0);
         learnMto1(Lang.fr, [`un`, `une`, `des`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+                        Rel.isA, false, `undefinite article`, Sense.articleIndefinite, Sense.noun, 1.0);
         learnMto1(Lang.sv, [`en`, `ena`, `ett`],
-                        Rel.isA, false, `undefinite article`, Sense.articleUndefinite, Sense.noun, 1.0);
+                        Rel.isA, false, `undefinite article`, Sense.articleIndefinite, Sense.noun, 1.0);
     }
 
     void learnPartitiveArticles()
