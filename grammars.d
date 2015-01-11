@@ -1241,19 +1241,17 @@ class Subject : Part
     Article article;
 }
 
-/** Decode character $(D senseCode) into a $(D Sense). */
-Sense decodeWordSense(C)(C senseCode) if (isSomeChar!C)
+/** Decode character $(D senseChar) into a $(D Sense). */
+Sense decodeWordSense(C)(C senseChar) if (isSomeChar!C)
 {
-    typeof(return) sense;
-    switch (senseCode) with (Sense)
+    switch (senseChar) with (Sense)
     {
-        case 'n': sense = noun; break;
-        case 'v': sense = verb; break;
-        case 'a': sense = adjective; break;
-        case 'r': sense = adverb; break;
-        default: sense = unknown; break;
+        case 'n': return noun;
+        case 'v': return verb;
+        case 'a': return adjective;
+        case 'r': return adverb;
+        default: return unknown;
     }
-    return sense;
 }
 
 unittest

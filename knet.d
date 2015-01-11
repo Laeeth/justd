@@ -1113,7 +1113,15 @@ class Net(bool useArray = true,
              Manner manner = Manner.formal,
              bool isRegexp = false)
         {
+            // this.isRegexp = expr.skipOver("regex:") ? true : isRegexp;
             this.expr = expr;
+            auto split = expr.findSplit(":");
+            const subSense = split[0];
+            const subExpr = split[2];
+            if (!split[1].empty)
+            {
+                // dln(subSense, " ", subExpr);
+            }
             this.lang = lang;
             this.sense = sense;
             this.manner = manner;
@@ -1479,6 +1487,7 @@ class Net(bool useArray = true,
     void readIndexLine(R, N)(const R line,
                              const N lnr,
                              const Lang lang = Lang.unknown,
+                             Sense sense = Sense.unknown,
                              const bool useMmFile = false)
     {
         if (!line.empty &&
@@ -1502,6 +1511,11 @@ class Net(bool useArray = true,
             const tagsense_cnt = words[5+p_cnt].to!uint;
             const synset_off   = words[6+p_cnt].to!uint;
             auto ids = words[6+p_cnt..$].map!(a => a.to!uint); // relating ids
+
+            const posSense = pos.decodeWordSense;
+            if (sense == Sense.unknown) { sense = posSense; }
+            if (posSense != sense) { assert(posSense == sense); }
+
             static if (useArray)
             {
                 // auto links = Links(ids);
@@ -1534,10 +1548,9 @@ class Net(bool useArray = true,
                 import std.mmfile: MmFile;
                 auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
                 const data = cast(ubyte[])mmf[];
-                // import algorithm_ex: byLine;
                 foreach (line; data.byLine)
                 {
-                    readIndexLine(line, lnr, lang, useMmFile);
+                    readIndexLine(line, lnr, lang, sense, useMmFile);
                     lnr++;
                 }
             }
@@ -1546,7 +1559,7 @@ class Net(bool useArray = true,
         {
             foreach (line; File(fileName).byLine)
             {
-                readIndexLine(line, lnr, lang);
+                readIndexLine(line, lnr, lang, sense);
                 lnr++;
             }
         }
@@ -1581,7 +1594,8 @@ class Net(bool useArray = true,
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnPreciseThings();
 
-        if (false) learnTrainedThings();
+        if (true)
+            learnTrainedThings();
 
         // Learn Less Absolute Things
         learnAssociativeThings();
@@ -1610,10 +1624,9 @@ class Net(bool useArray = true,
     /// Learn Externally (Trained) Supervised Things.
     void learnTrainedThings()
     {
-        wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
+        // wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
         readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
-
-        readSwesaurus();
+        // readSwesaurus();
     }
 
     /** Learn Precise (Absolute) Thing.
