@@ -1005,106 +1005,50 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
     }
 }
 
-static if (false)
 Role decodeWordNetPointerSymbol(string sym, Sense sense)
 {
     typeof(return) role;
-    switch (sense) with (Sense) with (Rel)
+    with (Rel)
     {
-        case noun:
-            switch (sym)
-            {
-                case `!`:  role = Role(antonymFor); break;
+        switch (sym)
+        {
+            case `!`:  role = Role(antonymFor); break;
+            case `@`:  role = Role(hypernymOf, true); break;
+            case `@i`: role = Role(instanceHypernymOf, true); break;
+            case `~`:  role = Role(hyponymOf); break;
+            case `~i`: role = Role(instanceHyponymOf); break;
+            case `*`:  role = Role(entails); break; // entailment. TODO difference to ">" cause
 
-                case `@`:  role = Role(hyponymOf, true); break; // hypernym
-                case `@i`: role = Role(hyponymOf, true); break; // instanceHypernym. TODO print use
+            case `#m`: role = Role(memberHolonym); break;
+            case `#s`: role = Role(substanceHolonym); break;
+            case `#p`: role = Role(partHolonym); break;
+            case `%m`: role = Role(memberOf); break;
+            case `%s`: role = Role(madeOf); break;
+            case `%p`: role = Role(partOf); break;
 
-                case `~`:  role = Role(hyponymOf); break; // isA
-                case `~i`: role = Role(hyponymOf); break; // instanceHyponym. TODO print use
+            case `=`:  role = Role(attribute); break;
+            case `+`:  role = Role(derivationallyRelatedForm); break;
+            case `;c`: role = Role(domainOfSynset); break; // TOPIC
+            case `-c`: role = Role(memberOfThisDomain); break;  // TOPIC
+            case `;r`: role = Role(domainOfSynset); break; // REGION
+            case `-r`: role = Role(memberOfThisDomain); break; // REGION
+            case `;u`: role = Role(domainOfSynset); break; // USAGE
+            case `-u`: role = Role(memberOfThisDomain); break; // USAGE
 
-                case `#m`: role = Role(memberHolonym); break;
-                case `#s`: role = Role(substanceHolonym); break;
-                case `#p`: role = Role(partHolonym); break;
+            case `>`:  role = Role(causes); break;
+            case `^`:  role = Role(alsoSee); break;
+            case `$`:  role = Role(formOfVerb); break;
 
-                case `%m`: role = Role(memberOf); break;
-                case `%s`: role = Role(madeOf); break;
-                case `%p`: role = Role(partOf); break;
+            case `&`:  role = Role(similarTo); break;
+            case `<`:  role = Role(participleOfVerb); break;
 
-                case `=`:  role = Role(attribute); break;
-                case `+`:  role = Role(derivationallyRelatedForm); break;
-                case `;c`: role = Role(domainOfSynset); break; // TOPIC
-                case `-c`: role = Role(memberOfThisDomain); break;  // TOPIC
-                case `;r`: role = Role(domainOfSynset); break; // REGION
-                case `-r`: role = Role(memberOfThisDomain); break; // REGION
-                case `;u`: role = Role(domainOfSynset); break; // USAGE
-                case `-u`: role = Role(memberOfThisDomain); break; // USAGE
-                default:
-                    assert(false, `Unexpected noun relation type ` ~ sym);
-                    break;
-            }
-            break;
-        case verb:
-            switch (sym)
-            {
-                case `!`:  role = Role(antonymFor); break;
-                case `@`:  role = Role(hyponymOf, true); break; // hypernym
-                case `~`:  role = Role(hyponymOf); break; // isA
+            case `\`:  role = Role(pertainym); break; // pertains to noun
+            case `=`:  role = Role(attribute); break;
 
-                case `*`:  role = Role(entailment); break; // entailment. TODO print use
-
-                case `>`:  role = Role(causes); break;
-                case `^`:  role = Role(alsoSee); break;
-                case `$`:  role = Role(verbGroup); break;
-
-                case `+`:  role = Role(derivationallyRelatedForm); break;
-                case `;c`: role = Role(domainOfSynset); break; // TOPIC
-                case `;r`: role = Role(domainOfSynset); break; // REGION
-                case `;u`: role = Role(domainOfSynset); break; // USAGE
-                default:
-                    assert(false, `Unexpected verb relation type ` ~ sym);
-                    break;
-            }
-            break;
-        case adjective:
-            switch (sym)
-            {
-                case `!`:  role = Role(antonymFor); break;
-                case `&`:  role = Role(similarTo); break;
-                case `<`:  role = Role(participleOfVerb); break;
-
-                case `\`:  role = Role(pertainym); break; // pertains to noun
-                case `=`:  role = Role(attribute); break;
-                case `^`:  role = Role(alsoSee); break;
-
-                case `;c`: role = Role(domainOfSynset); break; // TOPIC
-                case `;r`: role = Role(domainOfSynset); break; // REGION
-                case `;u`: role = Role(domainOfSynset); break; // USAGE
-                default:
-                    assert(false, `Unexpected adjective relation type ` ~ sym);
-                    break;
-            }
-            break;
-        case adverb:
-            switch (sym)
-            {
-                case `!`:  role = Role(antonymFor); break;
-                case `&`:  role = Role(similarTo); break;
-                case `<`:  role = Role(participleOfVerb); break;
-
-                case `\`:  role = Role(pertainym); break; // pertains to noun
-                case `=`:  role = Role(attribute); break;
-                case `^`:  role = Role(alsoSee); break;
-
-                case `;c`: role = Role(domainOfSynset); break; // TOPIC
-                case `;r`: role = Role(domainOfSynset); break; // REGION
-                case `;u`: role = Role(domainOfSynset); break; // USAGE
-                default:
-                    assert(false, `Unexpected adverb relation type ` ~ sym);
-                    break;
-            }
-            break;
-        default:
-            break;
+            default:
+                assert(false, `Unexpected relation type ` ~ sym);
+                break;
+        }
     }
     return role;
 }
@@ -1623,7 +1567,7 @@ class Net(bool useArray = true,
             if (sense == Sense.unknown) { sense = posSense; }
             if (posSense != sense) { assert(posSense == sense); }
 
-            // const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
+            const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
 
             static if (useArray)
             {
@@ -1745,6 +1689,8 @@ class Net(bool useArray = true,
      */
     void learnPreciseThings()
     {
+        learnTypeNameHierarchy!Sense;
+
         // TODO replace with automatics
         learnMto1(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.uncountable, Sense.noun, 1.0);
         learnMto1(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.uncountable, Sense.noun, 1.0);
@@ -2019,6 +1965,27 @@ class Net(bool useArray = true,
         learnEmotions();
         learnEnglishFeelings();
         learnSwedishFeelings();
+    }
+
+    void learnTypeNameHierarchy(T)()
+    {
+        const origin = Origin.manual;
+        foreach (i; enumMembers!T)
+        {
+            foreach (j; enumMembers!T)
+            {
+                if (i != T.unknown &&
+                    j != T.unknown &&
+                    i != j)
+                {
+                    if (i.specializes(j))
+                    {
+                        connect(store(i.toHuman, Lang.en, Sense.unknown, origin), Rel.specializes,
+                                store(j.toHuman, Lang.en, Sense.unknown, origin), origin, 1.0);
+                    }
+                }
+            }
+        }
     }
 
     void learnNouns()

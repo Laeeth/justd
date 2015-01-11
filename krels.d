@@ -481,6 +481,26 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case entails:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["leder", not, "till"]; break;
+                    case en:
+                    default: words = ["does", not, "entail"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["kan", not, "orsakas av"]; break;
+                    case en:
+                    default: words = ["can", not, "be entailed by"]; break;
+                }
+            }
+            break;
         case creates:
             if (dir == RelDir.forward)
             {
@@ -1367,6 +1387,7 @@ bool specializes(Rel special,
                                           similarAppearanceTo);
         case injures: return special.of(selfinjures);
         case causes: return special.of(causesSideEffect);
+        case entails: return special.of(causes);
         case uses: return special.of(usesLanguage,
                                      usesTool);
         case physicallyConnectedWith: return special.of(arisesFrom);
@@ -1381,6 +1402,8 @@ bool specializes(Rel special,
         case synonymFor: return special.of(abbreviationFor,
                                            togetherWritingFor,
                                            shorthandFor);
+        case instanceHypernymOf: return special.of(hypernymOf);
+        case instanceHyponymOf: return special.of(hyponymOf);
         default: return special == general;
     }
 }
@@ -1441,6 +1464,7 @@ bool generalizes(T)(T general,
     {
         with (Rel) return (rel.isSymmetric ||
                            rel.of(generalizes,
+                                  specializes,
                                   abbreviationFor,
                                   shorthandFor,
                                   partOf,
@@ -1463,7 +1487,8 @@ bool generalizes(T)(T general,
                     const Rel b)
     {
         with (Rel) return (a == hasEnemy  && b == hasFriend ||
-                           a == hasFriend && b == hasEnemy);
+                           a == hasFriend && b == hasEnemy ||
+                           a == specializes && b == generalizes);
     }
     alias areOpposites = oppositeOf;
 

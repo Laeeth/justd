@@ -489,7 +489,7 @@ string toHuman(Lang lang) @safe pure @nogc nothrow
         case modelica: return `Modelica`;
         case math: return `Mathematics`;
         case physics: return `Physics`;
-        default: return "??";
+        default: return `??`;
     }
 }
 
@@ -685,12 +685,12 @@ unittest
     assert(!'å'.isEnglishLetter);
 }
 
-enum EnglishDoubleConsonants = ["bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt"];
+enum EnglishDoubleConsonants = [`bb`, `dd`, `ff`, `gg`, `mm`, `nn`, `pp`, `rr`, `tt`];
 
 /** Check if $(D c) is a Consonant. */
 bool isEnglishDoubleConsonant(S)(S s) if (isSomeString!S)
 {
-    return c.of("bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt");
+    return c.of(`bb`, `dd`, `ff`, `gg`, `mm`, `nn`, `pp`, `rr`, `tt`);
 }
 
 /** computer Token. */
@@ -1003,226 +1003,226 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 {
     final switch (sense) with (Sense)
     {
-        case unknown: return "unknown";
+        case unknown: return `unknown`;
 
-        case language: return "language";
-        case languageNatural: return "natural language";
-        case languageProgramming: return "programming language";
+        case language: return `language`;
+        case languageNatural: return `natural language`;
+        case languageProgramming: return `programming language`;
 
-        case prefix: return "prefix";
-        case suffix: return "suffix";
+        case prefix: return `prefix`;
+        case suffix: return `suffix`;
 
-        case phrase: return "phrase";
-        case idiom: return "idiom";
+        case phrase: return `phrase`;
+        case idiom: return `idiom`;
 
-        case punctuation: return "punctuation";
+        case punctuation: return `punctuation`;
 
-        case noun: return "noun";
-        case nounAbstract: return "abstract noun";
-        case nounConcrete: return "concrete noun";
-        case nounCollective: return "collective noun";
-        case nounRegular: return "regular noun";
-        case nounIrregular: return "irregular noun";
+        case noun: return `noun`;
+        case nounAbstract: return `abstract noun`;
+        case nounConcrete: return `concrete noun`;
+        case nounCollective: return `collective noun`;
+        case nounRegular: return `regular noun`;
+        case nounIrregular: return `irregular noun`;
 
-        case nounSingular: return "singular noun";
-        case nounPlural: return "plural noun";
+        case nounSingular: return `singular noun`;
+        case nounPlural: return `plural noun`;
 
-        case nounNumeric: return "numeric";
+        case nounNumeric: return `numeric`;
 
-        case plant: return "plant";
-        case food: return "food";
-        case spice: return "spice";
+        case plant: return `plant`;
+        case food: return `food`;
+        case spice: return `spice`;
 
-        case numeral: return "numeral";
-        case numeralOrdinal: return "ordinal numeral";
+        case numeral: return `numeral`;
+        case numeralOrdinal: return `ordinal numeral`;
 
-        case integer: return "integer";
-        case integerPositive: return "positive integer";
-        case integerNegative: return "negative integer";
+        case integer: return `integer`;
+        case integerPositive: return `positive integer`;
+        case integerNegative: return `negative integer`;
 
-        case decimal: return "decimal";
+        case decimal: return `decimal`;
 
-        case numberRational: return "rational number";
-        case numberIrrational: return "irrational number";
-        case numberTranscendental: return "transcendental number";
-        case numberComplex: return "complex number";
+        case numberRational: return `rational number`;
+        case numberIrrational: return `irrational number`;
+        case numberTranscendental: return `transcendental number`;
+        case numberComplex: return `complex number`;
 
-        case name: return "name";
-        case nameMale: return "male name";
-        case nameFemale: return "female name";
-        case surname: return "surname";
+        case name: return `name`;
+        case nameMale: return `male name`;
+        case nameFemale: return `female name`;
+        case surname: return `surname`;
 
-        case nameLocation: return "location name";
-        case namePerson: return "person name";
-        case nameOrganisation: return "organisation name";
-        case country: return "country";
-        case newspaper: return "newspaper";
+        case nameLocation: return `location name`;
+        case namePerson: return `person name`;
+        case nameOrganisation: return `organisation name`;
+        case country: return `country`;
+        case newspaper: return `newspaper`;
 
-        case timePeriod: return "time period";
-        case weekday: return "weekday";
-        case month: return "month";
-        case dayOfMonth: return "day of month";
-        case year: return "year";
-        case dayOfYear: return "day of year";
+        case timePeriod: return `time period`;
+        case weekday: return `weekday`;
+        case month: return `month`;
+        case dayOfMonth: return `day of month`;
+        case year: return `year`;
+        case dayOfYear: return `day of year`;
 
-        case season: return "season";
+        case season: return `season`;
 
-        case uncountable: return "uncountable";
+        case uncountable: return `uncountable`;
 
-        case nounAbbrevation: return "noun abbrevation";
-        case nounAcronym: return "noun acronym";
+        case nounAbbrevation: return `noun abbrevation`;
+        case nounAcronym: return `noun acronym`;
 
-        case baseSIUnit: return "base SI unit";
-        case derivedSIUnit: return "derived SI unit";
+        case baseSIUnit: return `base SI unit`;
+        case derivedSIUnit: return `derived SI unit`;
 
-        case verb: return "verb";
-        case verbRegular: return "regular verb";
-        case verbIrregular: return "irregular verb";
+        case verb: return `verb`;
+        case verbRegular: return `regular verb`;
+        case verbIrregular: return `irregular verb`;
 
-        case verbAbbrevation: return "verb abbrevation";
+        case verbAbbrevation: return `verb abbrevation`;
 
-        case verbImperative: return "verb imperative";
+        case verbImperative: return `verb imperative`;
 
-        case verbInfinitive: return "verb infinitive";
-        case verbPresent: return "verb present";
-        case verbRegularInfinitive: return "verb regular infinitive";
-        case verbIrregularInfinitive: return "verb irregular infinitive";
+        case verbInfinitive: return `verb infinitive`;
+        case verbPresent: return `verb present`;
+        case verbRegularInfinitive: return `verb regular infinitive`;
+        case verbIrregularInfinitive: return `verb irregular infinitive`;
 
-        case verbPast: return "regular past";
-        case verbRegularPast: return "regular verb past";
-        case verbIrregularPast: return "irregular verb past";
+        case verbPast: return `regular past`;
+        case verbRegularPast: return `regular verb past`;
+        case verbIrregularPast: return `irregular verb past`;
 
-        case verbPastParticiple: return "verb past participle";
-        case verbRegularPastParticiple: return "verb regular past participle";
-        case verbIrregularPastParticiple: return "verb irregular past participle";
+        case verbPastParticiple: return `verb past participle`;
+        case verbRegularPastParticiple: return `verb regular past participle`;
+        case verbIrregularPastParticiple: return `verb irregular past participle`;
 
-        case verbFuture: return "verb future";
-        case verbFuturumI: return "verb futurum I";
-        case verbFuturumII: return "verb futurum II";
+        case verbFuture: return `verb future`;
+        case verbFuturumI: return `verb futurum I`;
+        case verbFuturumII: return `verb futurum II`;
 
-        case auxiliaryVerb: return "auxiliary verb";
-        case auxiliaryVerbModal: return "modal auxiliary verb";
+        case auxiliaryVerb: return `auxiliary verb`;
+        case auxiliaryVerbModal: return `modal auxiliary verb`;
 
-        case adjective: return "adjective";
-        case adjectivePredicateOnly: return "predicate only adjective";
-        case adjectiveRegular: return "regular adjective";
-        case adjectiveIrregular: return "irregular adjective";
-        case adjectiveAbbrevation: return "adjective abbrevation";
+        case adjective: return `adjective`;
+        case adjectivePredicateOnly: return `predicate only adjective`;
+        case adjectiveRegular: return `regular adjective`;
+        case adjectiveIrregular: return `irregular adjective`;
+        case adjectiveAbbrevation: return `adjective abbrevation`;
 
-        case adjectiveNominative: return "adjective nominative";
-        case adjectiveComparative: return "adjective comparative";
-        case adjectiveSuperlative: return "adjective superlative";
-        case adjectivePossessive: return "possessive adjective";
-        case adjectivePossessiveSingular: return "possessive adjective singular";
-        case adjectivePossessivePlural: return "possessive adjective plural";
+        case adjectiveNominative: return `adjective nominative`;
+        case adjectiveComparative: return `adjective comparative`;
+        case adjectiveSuperlative: return `adjective superlative`;
+        case adjectivePossessive: return `possessive adjective`;
+        case adjectivePossessiveSingular: return `possessive adjective singular`;
+        case adjectivePossessivePlural: return `possessive adjective plural`;
 
-        case adverb: return "adverb";
-        case normalAdverb: return "normal adverb";
-        case timeAdverb: return "time adverb";
-        case placeAdverb: return "place adverb";
-        case frequencyAdverb: return "frequency adverb";
-        case conjunctiveAdverb: return "conjunctive adverb";
-        case negatingAdverb: return "negating adverb";
-        case affirmingAdverb: return "affirming adverb";
+        case adverb: return `adverb`;
+        case normalAdverb: return `normal adverb`;
+        case timeAdverb: return `time adverb`;
+        case placeAdverb: return `place adverb`;
+        case frequencyAdverb: return `frequency adverb`;
+        case conjunctiveAdverb: return `conjunctive adverb`;
+        case negatingAdverb: return `negating adverb`;
+        case affirmingAdverb: return `affirming adverb`;
 
-        case preposition: return "preposition";
-        case prepositionTime: return "time preposition";
-        case prepositionPosition: return "position preposition";
-        case prepositionDirection: return "direction preposition";
+        case preposition: return `preposition`;
+        case prepositionTime: return `time preposition`;
+        case prepositionPosition: return `position preposition`;
+        case prepositionDirection: return `direction preposition`;
 
-        case pronoun: return "pronoun";
+        case pronoun: return `pronoun`;
 
-        case pronounPersonal: return "personal pronoun";
-        case pronounPersonalSingular: return "personal pronoun singular";
+        case pronounPersonal: return `personal pronoun`;
+        case pronounPersonalSingular: return `personal pronoun singular`;
 
-        case pronounPersonalSingular1st: return "personal pronoun singular 1st-person";
-        case pronounPersonalSingular2nd: return "personal pronoun singular 2nd-person";
-        case pronounPersonalSingular3rd: return "personal pronoun singular 3rd-person";
+        case pronounPersonalSingular1st: return `personal pronoun singular 1st-person`;
+        case pronounPersonalSingular2nd: return `personal pronoun singular 2nd-person`;
+        case pronounPersonalSingular3rd: return `personal pronoun singular 3rd-person`;
 
-        case pronounPersonalSingularMale: return "male personal pronoun singular";
-        case pronounPersonalSingularMale1st: return "male personal pronoun singular 1st person";
-        case pronounPersonalSingularMale2nd: return "male personal pronoun singular 2nd person";
+        case pronounPersonalSingularMale: return `male personal pronoun singular`;
+        case pronounPersonalSingularMale1st: return `male personal pronoun singular 1st person`;
+        case pronounPersonalSingularMale2nd: return `male personal pronoun singular 2nd person`;
 
-        case pronounPersonalSingularFemale: return "female personal pronoun singular";
-        case pronounPersonalSingularFemale1st: return "female personal pronoun singular 1st person";
-        case pronounPersonalSingularFemale2nd: return "female personal pronoun singular 2nd person";
+        case pronounPersonalSingularFemale: return `female personal pronoun singular`;
+        case pronounPersonalSingularFemale1st: return `female personal pronoun singular 1st person`;
+        case pronounPersonalSingularFemale2nd: return `female personal pronoun singular 2nd person`;
 
-        case pronounPersonalSingularNeutral: return "neutral personal pronoun singular";
+        case pronounPersonalSingularNeutral: return `neutral personal pronoun singular`;
 
-        case pronounPersonalPlural: return "personal pronoun plural";
-        case pronounPersonalPlural1st: return "personal pronoun plural 1st-person";
-        case pronounPersonalPlural2nd: return "personal pronoun plural 2nd-person";
-        case pronounPersonalPlural3rd: return "personal pronoun plural 3rd-person";
+        case pronounPersonalPlural: return `personal pronoun plural`;
+        case pronounPersonalPlural1st: return `personal pronoun plural 1st-person`;
+        case pronounPersonalPlural2nd: return `personal pronoun plural 2nd-person`;
+        case pronounPersonalPlural3rd: return `personal pronoun plural 3rd-person`;
 
-        case pronounDemonstrative: return "demonstrative pronoun";
-        case pronounDemonstrativeSingular: return "demonstrative pronoun singular";
-        case pronounDemonstrativePlural: return "demonstrative pronoun plural";
+        case pronounDemonstrative: return `demonstrative pronoun`;
+        case pronounDemonstrativeSingular: return `demonstrative pronoun singular`;
+        case pronounDemonstrativePlural: return `demonstrative pronoun plural`;
 
-        case pronounDeterminative: return "determinative pronoun";
-        case pronounDeterminativeSingular: return "determinative pronoun singular";
-        case pronounDeterminativePlural: return "determinative pronoun plural";
+        case pronounDeterminative: return `determinative pronoun`;
+        case pronounDeterminativeSingular: return `determinative pronoun singular`;
+        case pronounDeterminativePlural: return `determinative pronoun plural`;
 
-        case pronounPossessive: return "possessive pronoun";
+        case pronounPossessive: return `possessive pronoun`;
 
-        case pronounPossessiveSingular: return "possessive pronoun singular";
-        case pronounPossessiveSingular1st: return "possessive pronoun singular 1st-person";
-        case pronounPossessiveSingular2nd: return "possessive pronoun singular 2nd-person";
-        case pronounPossessiveSingularMale: return "possessive pronoun singular male-person";
+        case pronounPossessiveSingular: return `possessive pronoun singular`;
+        case pronounPossessiveSingular1st: return `possessive pronoun singular 1st-person`;
+        case pronounPossessiveSingular2nd: return `possessive pronoun singular 2nd-person`;
+        case pronounPossessiveSingularMale: return `possessive pronoun singular male-person`;
 
-        case pronounPossessiveSingularFemale: return "possessive pronoun singular female";
-        case pronounPossessiveSingularNeutral: return "possessive pronoun singular neutral";
+        case pronounPossessiveSingularFemale: return `possessive pronoun singular female`;
+        case pronounPossessiveSingularNeutral: return `possessive pronoun singular neutral`;
 
-        case pronounPossessivePlural: return "possessive pronoun plural";
-        case pronounPossessivePlural1st: return "possessive pronoun plural 1st-person";
-        case pronounPossessivePlural2nd: return "possessive pronoun plural 2nd-person";
-        case pronounPossessivePlural3rd: return "possessive pronoun plural 3rd-person";
+        case pronounPossessivePlural: return `possessive pronoun plural`;
+        case pronounPossessivePlural1st: return `possessive pronoun plural 1st-person`;
+        case pronounPossessivePlural2nd: return `possessive pronoun plural 2nd-person`;
+        case pronounPossessivePlural3rd: return `possessive pronoun plural 3rd-person`;
 
-        case pronounInterrogative: return "interrogative pronoun";
+        case pronounInterrogative: return `interrogative pronoun`;
 
-        case pronounReflexive: return "reflexive pronoun ";
-        case pronounReflexiveSingular: return "reflexive pronoun singular";
-        case pronounReflexivePlural: return "reflexive pronoun plural";
+        case pronounReflexive: return `reflexive pronoun `;
+        case pronounReflexiveSingular: return `reflexive pronoun singular`;
+        case pronounReflexivePlural: return `reflexive pronoun plural`;
 
-        case pronounReciprocal: return "reciprocal pronoun";
+        case pronounReciprocal: return `reciprocal pronoun`;
 
-        case pronounIndefinite: return "indefinite pronoun";
-        case pronounIndefiniteSingular: return "indefinite pronoun Singular";
-        case pronounIndefinitePlural: return "indefinite pronoun Plural";
+        case pronounIndefinite: return `indefinite pronoun`;
+        case pronounIndefiniteSingular: return `indefinite pronoun Singular`;
+        case pronounIndefinitePlural: return `indefinite pronoun Plural`;
 
-        case pronounRelative: return "relative pronoun";
+        case pronounRelative: return `relative pronoun`;
 
-        case determiner: return "determiner";
-        case predeterminer: return "predeterminer";
+        case determiner: return `determiner`;
+        case predeterminer: return `predeterminer`;
 
-        case article: return "article";
-        case articleUndefinite: return "undefinite article";
-        case articleDefinite: return "definite article";
-        case articlePartitive: return "partitive article";
+        case article: return `article`;
+        case articleUndefinite: return `undefinite article`;
+        case articleDefinite: return `definite article`;
+        case articlePartitive: return `partitive article`;
 
-        case conjunction: return "conjunction";
-        case conjunctionCoordinating: return "coordinating conjunction";
-        case conjunctionSubordinating: return "subordinating conjunction";
-        case conjunctionSubordinatingConcession: return "subordinating conjunction Concession";
-        case conjunctionSubordinatingCondition: return "subordinating conjunction Condition";
-        case conjunctionSubordinatingComparison: return "subordinating conjunction Comparison";
-        case conjunctionSubordinatingTime: return "subordinating conjunction time";
-        case conjunctionSubordinatingReason: return "subordinating conjunction reason";
-        case conjunctionSubordinatingAdjective: return "subordinating conjunction adjective";
-        case conjunctionSubordinatingPronoun: return "subordinating conjunction pronoun";
-        case conjunctionSubordinatingManner: return "subordinating conjunction manner";
-        case conjunctionSubordinatingPlace: return "subordinating conjunction place";
-        case conjunctionCorrelative: return "correlative conjunction";
+        case conjunction: return `conjunction`;
+        case conjunctionCoordinating: return `coordinating conjunction`;
+        case conjunctionSubordinating: return `subordinating conjunction`;
+        case conjunctionSubordinatingConcession: return `subordinating conjunction Concession`;
+        case conjunctionSubordinatingCondition: return `subordinating conjunction Condition`;
+        case conjunctionSubordinatingComparison: return `subordinating conjunction Comparison`;
+        case conjunctionSubordinatingTime: return `subordinating conjunction time`;
+        case conjunctionSubordinatingReason: return `subordinating conjunction reason`;
+        case conjunctionSubordinatingAdjective: return `subordinating conjunction adjective`;
+        case conjunctionSubordinatingPronoun: return `subordinating conjunction pronoun`;
+        case conjunctionSubordinatingManner: return `subordinating conjunction manner`;
+        case conjunctionSubordinatingPlace: return `subordinating conjunction place`;
+        case conjunctionCorrelative: return `correlative conjunction`;
 
-        case interjection: return "interjection";
+        case interjection: return `interjection`;
 
-        case code: return "code";
-        case codeOperator: return "code operator";
-        case codeOperatorAssignment: return "code assignment operator";
-        case codeFunction: return "code function";
-        case codeFunctionReference: return "code function reference";
-        case codeVariable: return "code variable";
-        case codeVariableReference: return "code variable reference";
-        case codeType: return "code type";
+        case code: return `code`;
+        case codeOperator: return `code operator`;
+        case codeOperatorAssignment: return `code assignment operator`;
+        case codeFunction: return `code function`;
+        case codeFunctionReference: return `code function reference`;
+        case codeVariable: return `code variable`;
+        case codeVariableReference: return `code variable reference`;
+        case codeType: return `code type`;
     }
 }
 
@@ -1757,21 +1757,21 @@ import std.typecons: tuple;
 /** Irregular Adjectives.
     See also: http://www.talkenglish.com/Grammar/comparative-superlative-adjectives.aspx
 */
-enum irregularAdjectivesEnglish = [tuple("good", "better", "best"),
-                                   tuple("well", "better", "best"),
+enum irregularAdjectivesEnglish = [tuple(`good`, `better`, `best`),
+                                   tuple(`well`, `better`, `best`),
 
-                                   tuple("bad", "worse", "worst"),
+                                   tuple(`bad`, `worse`, `worst`),
 
-                                   tuple("little", "less", "least"),
-                                   tuple("little", "smaller", "smallest"),
-                                   tuple("much", "more", "most"),
-                                   tuple("many", "more", "most"),
+                                   tuple(`little`, `less`, `least`),
+                                   tuple(`little`, `smaller`, `smallest`),
+                                   tuple(`much`, `more`, `most`),
+                                   tuple(`many`, `more`, `most`),
 
-                                   tuple("far", "further", "furthest"),
-                                   tuple("far", "farther", "farthest"),
+                                   tuple(`far`, `further`, `furthest`),
+                                   tuple(`far`, `farther`, `farthest`),
 
-                                   tuple("big", "larger", "largest"),
-                                   tuple("old", "elder", "eldest"),
+                                   tuple(`big`, `larger`, `largest`),
+                                   tuple(`old`, `elder`, `eldest`),
     ];
 
 /** Return true if $(D s) is an adjective in nominative form.
@@ -1820,7 +1820,7 @@ unittest
 }
 
 /** Irregular Adjectives. */
-enum irregularAdjectivesGerman = [tuple("gut", "besser", "besten")
+enum irregularAdjectivesGerman = [tuple(`gut`, `besser`, `besten`)
     ];
 
 /** Return $(D s) lemmatized (normalized).
@@ -2008,10 +2008,10 @@ string negationIn(Lang lang = Lang.en)
 {
     switch (lang) with (Lang)
     {
-        case en: return "not";
-        case sv: return "inte";
-        case de: return "nicht";
-        default: return "not";
+        case en: return `not`;
+        case sv: return `inte`;
+        case de: return `nicht`;
+        default: return `not`;
     }
 }
 

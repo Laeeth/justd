@@ -11,14 +11,20 @@ enum Rel:ubyte
                 ConceptNet 2 through 4.  */
     any = relatedTo,
 
+    hypernymOf, /// WordNet. Reversion of isA
+    superordinateOf = hypernymOf, /// WordNet.
+
+    instanceHypernymOf, /// WordNet.
+
     isA, /* A is a subtype or a specific instance of B; every A is a B. (We do
           * not make the type-token distinction, because people don't usually
           * make that distinction.) This is the hyponym relation in
           * WordNet. /r/IsA /c/en/car /c/en/vehicle ; /r/IsA /c/en/chicago
           * /c/en/city */
     hyponymOf = isA, /// WordNet. Use isA instead.
+    subordinateOf = hyponymOf, /// WordNet. Use isA instead.
 
-    hypernymOf, /// WordNet. Reversion of isA
+    instanceHyponymOf, /// WordNet.
 
     mayBeA,
 
@@ -79,7 +85,9 @@ enum Rel:ubyte
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
-    hasCitizenship, livesIn = hasCitizenship,
+    hasCitizenship,
+    livesIn = hasCitizenship,
+
     hasEthnicity,
     hasResidenceIn,
     hasHome,
@@ -105,8 +113,9 @@ enum Rel:ubyte
     controls,
 
     causes, /* A and B are events, and it is typical for A to cause B. */
-    entails = causes, /* TODO same as causes? */
     leadsTo = causes,
+
+    entails,                    /* TODO same as causes? */
     causesSideEffect,
 
     decreasesRiskOf,
