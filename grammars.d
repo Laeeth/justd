@@ -770,6 +770,7 @@ enum Sense:ubyte
     suffix,
 
     phrase,                     /// Phrase.
+    nounPhrase, /// Noun Phrase. See also: https://en.wikipedia.org/wiki/Moby_Project#Hyphenator
     idiom,                      /// Idiomatic Expression.
 
     punctuation,
@@ -1013,6 +1014,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case suffix: return `suffix`;
 
         case phrase: return `phrase`;
+        case nounPhrase: return `noun phrase`;
         case idiom: return `idiom`;
 
         case punctuation: return `punctuation`;
@@ -1326,6 +1328,11 @@ unittest
                                       languageNatural,
                                       languageProgramming));
     }
+    bool isPhrase(Sense sense)
+    {
+        with (Sense) return (sense.of(phrase,
+                                      nounPhrase));
+    }
     bool isNoun(Sense sense)
     {
         with (Sense) return (sense.isNumeric ||
@@ -1576,7 +1583,9 @@ bool specializes(Sense special,
          * relevant cases: */
         case unknown: return true;
         case language: return special.isLanguage;
-        case noun: return special.isNoun || special.isPronoun;
+        case phrase: return special.isPhrase;
+        case noun: return (special.isNoun ||
+                           special.isPronoun);
         case food: return special.isFood;
         case numeral: return special.isNumeral;
         case integer: return special.isInteger;
