@@ -1005,38 +1005,38 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
     }
 }
 
-Tuple!(Rel, bool) decodeWordNetPointerSymbol(string sym, Sense sense)
+Role decodeWordNetPointerSymbol(string sym, Sense sense)
 {
-    Rel rel;
+    typeof(return) role;
     switch (sense) with (Sense) with (Rel)
     {
         case noun:
             switch (sym)
             {
-                case `!`:  rel = antonymFor; break;
+                case `!`:  role = Role(antonymFor); break;
 
-                case `@`:  rel = hypernymOf; break; // reverse of isA
-                case `@i`: rel = instanceHypernym; break;
+                case `@`:  role = Role(`hypernym`); break;
+                case `@i`: role = Role(`instanceHypernym`); break; // TODO Print this!
 
-                case `~`:  rel = hyponymOf; break; // isA
-                case `~i`: rel = instanceHyponym; break;
+                case `~`:  role = Role(hyponymOf); break; // isA
+                case `~i`: role = Role(instanceHyponym); break;
 
-                case `#m`: rel = memberHolonym; break;
-                case `#s`: rel = substanceHolonym; break;
-                case `#p`: rel = partHolonym; break;
+                case `#m`: role = Role(memberHolonym); break;
+                case `#s`: role = Role(substanceHolonym); break;
+                case `#p`: role = Role(partHolonym); break;
 
-                case `%m`: rel = memberMeronym; break;
-                case `%s`: rel = substanceMeronym; break;
-                case `%p`: rel = partMeronym; break;
+                case `%m`: role = Role(memberOf); break;
+                case `%s`: role = Role(madeOf); break;
+                case `%p`: role = Role(partOf); break;
 
-                case `=`:  rel = attribute; break;
-                case `+`:  rel = derivationallyRelatedForm; break;
-                case `;c`: rel = domainOfSynset; break; // TOPIC
-                case `-c`: rel = memberOfThisDomain; break;  // TOPIC
-                case `;r`: rel = domainOfSynset; break; // REGION
-                case `-r`: rel = memberOfThisDomain; break; // REGION
-                case `;u`: rel = domainOfSynset; break; // USAGE
-                case `-u`: rel = memberOfThisDomain; break; // USAGE
+                case `=`:  role = Role(attribute); break;
+                case `+`:  role = Role(derivationallyRelatedForm); break;
+                case `;c`: role = Role(domainOfSynset); break; // TOPIC
+                case `-c`: role = Role(memberOfThisDomain); break;  // TOPIC
+                case `;r`: role = Role(domainOfSynset); break; // REGION
+                case `-r`: role = Role(memberOfThisDomain); break; // REGION
+                case `;u`: role = Role(domainOfSynset); break; // USAGE
+                case `-u`: role = Role(memberOfThisDomain); break; // USAGE
                 default:
                     assert(false, `Unexpected noun relation type ` ~ sym);
                     break;
@@ -1045,20 +1045,20 @@ Tuple!(Rel, bool) decodeWordNetPointerSymbol(string sym, Sense sense)
         case verb:
             switch (sym)
             {
-                case `!`:  rel = antonymFor; break;
-                case `@`:  rel = hypernymOf; break; // reverse of isA
-                case `~`:  rel = hyponymOf; break; // isA
+                case `!`:  role = Role(antonymFor); break;
+                case `@`:  role = Role(hypernymOf); break; // reverse of isA
+                case `~`:  role = Role(hyponymOf); break; // isA
 
-                case `*`:  rel = entailment; break;
+                case `*`:  role = Role(entailment); break;
 
-                case `>`:  rel = cause; break;
-                case `^`:  rel = alsoSee; break;
-                case `$`:  rel = verbGroup; break;
+                case `>`:  role = Role(cause); break;
+                case `^`:  role = Role(alsoSee); break;
+                case `$`:  role = Role(verbGroup); break;
 
-                case `+`:  rel = derivationallyRelatedForm; break;
-                case `;c`: rel = domainOfSynset; break; // TOPIC
-                case `;r`: rel = domainOfSynset; break; // REGION
-                case `;u`: rel = domainOfSynset; break; // USAGE
+                case `+`:  role = Role(derivationallyRelatedForm); break;
+                case `;c`: role = Role(domainOfSynset); break; // TOPIC
+                case `;r`: role = Role(domainOfSynset); break; // REGION
+                case `;u`: role = Role(domainOfSynset); break; // USAGE
                 default:
                     assert(false, `Unexpected verb relation type ` ~ sym);
                     break;
@@ -1067,17 +1067,17 @@ Tuple!(Rel, bool) decodeWordNetPointerSymbol(string sym, Sense sense)
         case adjective:
             switch (sym)
             {
-                case `!`:  rel = antonymFor; break;
-                case `&`:  rel = similarTo; break;
-                case `<`:  rel = participleOfVerb; break;
+                case `!`:  role = Role(antonymFor); break;
+                case `&`:  role = Role(similarTo); break;
+                case `<`:  role = Role(participleOfVerb); break;
 
-                case `\`:  rel = pertainym; break; // pertains to noun
-                case `=`:  rel = attribute; break;
-                case `^`:  rel = alsoSee; break;
+                case `\`:  role = Role(pertainym); break; // pertains to noun
+                case `=`:  role = Role(attribute); break;
+                case `^`:  role = Role(alsoSee); break;
 
-                case `;c`: rel = domainOfSynset; break; // TOPIC
-                case `;r`: rel = domainOfSynset; break; // REGION
-                case `;u`: rel = domainOfSynset; break; // USAGE
+                case `;c`: role = Role(domainOfSynset); break; // TOPIC
+                case `;r`: role = Role(domainOfSynset); break; // REGION
+                case `;u`: role = Role(domainOfSynset); break; // USAGE
                 default:
                     assert(false, `Unexpected adjective relation type ` ~ sym);
                     break;
@@ -1086,17 +1086,17 @@ Tuple!(Rel, bool) decodeWordNetPointerSymbol(string sym, Sense sense)
         case adverb:
             switch (sym)
             {
-                case `!`:  rel = antonymFor; break;
-                case `&`:  rel = similarTo; break;
-                case `<`:  rel = participleOfVerb; break;
+                case `!`:  role = Role(antonymFor); break;
+                case `&`:  role = Role(similarTo); break;
+                case `<`:  role = Role(participleOfVerb); break;
 
-                case `\`:  rel = pertainym; break; // pertains to noun
-                case `=`:  rel = attribute; break;
-                case `^`:  rel = alsoSee; break;
+                case `\`:  role = Role(pertainym); break; // pertains to noun
+                case `=`:  role = Role(attribute); break;
+                case `^`:  role = Role(alsoSee); break;
 
-                case `;c`: rel = domainOfSynset; break; // TOPIC
-                case `;r`: rel = domainOfSynset; break; // REGION
-                case `;u`: rel = domainOfSynset; break; // USAGE
+                case `;c`: role = Role(domainOfSynset); break; // TOPIC
+                case `;r`: role = Role(domainOfSynset); break; // REGION
+                case `;u`: role = Role(domainOfSynset); break; // USAGE
                 default:
                     assert(false, `Unexpected adverb relation type ` ~ sym);
                     break;
@@ -1105,7 +1105,7 @@ Tuple!(Rel, bool) decodeWordNetPointerSymbol(string sym, Sense sense)
         default:
             break;
     }
-    return rel;
+    return role;
 }
 
 /** Main Knowledge Network.
@@ -1622,7 +1622,7 @@ class Net(bool useArray = true,
             if (sense == Sense.unknown) { sense = posSense; }
             if (posSense != sense) { assert(posSense == sense); }
 
-            const rels = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
+            const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
 
             static if (useArray)
             {
