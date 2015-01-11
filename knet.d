@@ -6162,7 +6162,7 @@ class Net(bool useArray = true,
 
     void inferSpecializedSenses()
     {
-        bool show = false;
+        bool show = true;
         foreach (pair; lemmasByExpr.byPair)
         {
             const expr = pair[0];

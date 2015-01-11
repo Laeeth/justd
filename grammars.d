@@ -1589,9 +1589,7 @@ bool specializes(Sense special,
     if (special == general) return false;
     switch (general) with (Sense)
     {
-        /* TODO Use static foreach over all enum members to generate all
-         * relevant cases: */
-        case unknown: return true;
+        case unknown: return false;
         case language: return special.isLanguage;
         case phrase: return special.isPhrase;
         case noun: return (special.isNoun ||
@@ -1605,10 +1603,6 @@ bool specializes(Sense special,
         case verb: return special.isVerb;
         case adverb: return special.isAdverb;
         case adjective: return special.isAdjective;
-        case adjectiveNominative:
-        case adjectiveComparative:
-        case adjectiveSuperlative:
-            return special == general;
         case pronoun: return special.isPronoun;
         case pronounPersonal: return special.isPronounPersonal;
         case pronounPossessive: return special.isPronounPossessive;
