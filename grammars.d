@@ -1575,6 +1575,7 @@ bool specializes(Sense special,
         /* TODO Use static foreach over all enum members to generate all
          * relevant cases: */
         case unknown: return true;
+        case language: return special.isLanguage;
         case noun: return special.isNoun || special.isPronoun;
         case food: return special.isFood;
         case numeral: return special.isNumeral;

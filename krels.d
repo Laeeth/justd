@@ -1367,7 +1367,6 @@ bool specializes(Rel special,
                                           similarAppearanceTo);
         case injures: return special.of(selfinjures);
         case causes: return special.of(causesSideEffect);
-        case entails: return special.of(causes);
         case uses: return special.of(usesLanguage,
                                      usesTool);
         case physicallyConnectedWith: return special.of(arisesFrom);
@@ -1456,7 +1455,6 @@ bool generalizes(T)(T general,
                                   locatedNear,
                                   borderedBy,
                                   causes,
-                                  entails,
                                   hasSubevent,
                                   hasPrerequisite,
                                   hasShape,

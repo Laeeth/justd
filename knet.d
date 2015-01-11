@@ -1020,6 +1020,7 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
     }
 }
 
+static if (false)
 Role decodeWordNetPointerSymbol(string sym, Sense sense)
 {
     typeof(return) role;
@@ -1582,7 +1583,7 @@ class Net(bool useArray = true,
             if (sense == Sense.unknown) { sense = posSense; }
             if (posSense != sense) { assert(posSense == sense); }
 
-            const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
+            // const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
 
             static if (useArray)
             {
