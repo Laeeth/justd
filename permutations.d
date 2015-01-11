@@ -126,7 +126,7 @@ unittest
     assert(x != y);
 }
 
-Permutations!(doCopy,T) permutations(bool doCopy = false, T)(T[] items)
+Permutations!(doCopy,T) permutations(bool doCopy = false, T)(T[] items) if (isMutable!T)
 {
     return Permutations!(doCopy, T)(items.dup);
 }
