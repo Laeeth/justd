@@ -50,6 +50,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO "startsWith(larger than)" gives duplicate searches and takes long
+
     TODO Learn Syllables:
          - https://stackoverflow.com/questions/27889604/open-syllabification-database
          - lemmasByExpr[`one-liner`] => Lemma(`one-liner`) =>
