@@ -1,11 +1,14 @@
 module roles;
 
+import std.bitmanip: bitfields;
 public import rels;
 
 struct Role
 {
     @safe @nogc pure nothrow:
-    this(Rel rel, bool reversion = false, bool negation = false)
+    this(Rel rel,
+         bool reversion = false,
+         bool negation = false)
     {
         this.rel = rel;
         this.reversion = reversion;
@@ -41,6 +44,7 @@ struct Role
         }
     }
     Rel rel;
-    bool reversion;
-    bool negation;
+    mixin(bitfields!(bool, "reversion", 1,
+                     bool, "negation", 1,
+                     uint, "pad", 6));
 }
