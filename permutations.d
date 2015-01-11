@@ -126,7 +126,7 @@ unittest
     assert(x != y);
 }
 
-Permutations!(doCopy,T) permutations(bool doCopy = false, T)(T[] items) if (isMutable!T)
+Permutations!(doCopy,T) permutations(bool doCopy = false, T)(T[] items)
 {
     return Permutations!(doCopy, T)(items.dup);
 }
@@ -135,7 +135,7 @@ unittest
 {
     import std.algorithm: equal;
     auto x = [1, 2, 3];
-    auto y = [1, 2, 3];
+    auto y = x;
     assert(equal(permutations(y),
                  [[1, 2, 3],
                   [1, 3, 2],
@@ -143,5 +143,35 @@ unittest
                   [2, 3, 1],
                   [3, 1, 2],
                   [3, 2, 1]]));
+    assert(x == y);
+}
+
+unittest
+{
+    import std.algorithm: equal;
+    auto x = [`1`, `2`, `3`];
+    auto y = x;
+    assert(equal(permutations(y),
+                 [[`1`, `2`, `3`],
+                  [`1`, `3`, `2`],
+                  [`2`, `1`, `3`],
+                  [`2`, `3`, `1`],
+                  [`3`, `1`, `2`],
+                  [`3`, `2`, `1`]]));
+    assert(x == y);
+}
+
+unittest
+{
+    import std.algorithm: equal;
+    auto x = ['1', '2', '3'];
+    auto y = x;
+    assert(equal(permutations(y),
+                 [['1', '2', '3'],
+                  ['1', '3', '2'],
+                  ['2', '1', '3'],
+                  ['2', '3', '1'],
+                  ['3', '1', '2'],
+                  ['3', '2', '1']]));
     assert(x == y);
 }
