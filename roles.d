@@ -5,7 +5,7 @@ public import rels;
 struct Role
 {
     @safe @nogc pure nothrow:
-    this(Rel rel, bool reversion, bool negation)
+    this(Rel rel, bool reversion = false, bool negation = false)
     {
         this.rel = rel;
         this.reversion = reversion;
@@ -30,8 +30,9 @@ struct Role
 
             case `canBe`: this.rel = isA; break;
             default:
-                assert(false, `Unexpected role ` ~ role);
                 this.rel = relatedTo;
+                // assert(false, `Unexpected role `);
+                break;
         }
     }
     Rel rel;
