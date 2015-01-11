@@ -529,12 +529,14 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `participatein`:
             case `participatedin`: tense = Tense.pastMoment; return participatesIn;
 
+            case `attend`:
             case `attends`:
             case `worksfor`:                                       return worksFor;
             case `writesforpublication`:                           return writesForPublication;
             case `inacademicfield`:                                return worksInAcademicField;
 
             case `ceoof`:                                          return ceoOf;
+            case `play`:
             case `plays`:                                          return plays;
             case `playsinstrument`:                                return playsInstrument;
 
@@ -592,11 +594,15 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `hascitizenship`:                                 return hasCitizenship;
             case `hasresidencein`:                                 return hasResidenceIn;
 
-            case `causes`:                                         return causes;
+            case `cause`:
+            case `causes`:
             case `cancause`:                                       return causes;
+
+            case `leadto`:
             case `leadsto`:                                        return causes;
-            case `leadto`:                                         return causes;
-            case `entails`:                                        return entails;
+
+            case `entail`:
+            case `entails`:                      reversion = true; return causes;
 
             case `decreasestheriskof`:                             return decreasesRiskOf;
             case `treats`:                                         return treats;
@@ -620,6 +626,7 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `motivatedbygoal`:                                return motivatedByGoal;
             case `obstructedby`: tense = Tense.pastMoment; return obstructedBy;
 
+            case `desire`:
             case `desires`:                                        return desires;
             case `desireof`:                     reversion = true; return desires;
 
@@ -634,15 +641,23 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `buy`:
             case `buys`:
             case `buyed`: tense = Tense.pastMoment; return buys;
+
+            case `acquire`:
             case `acquires`:
             case `acquired`: tense = Tense.pastMoment; return acquires;
+
             case `affiliatedwith`: tense = Tense.pastMoment; return affiliatesWith;
 
+            case `own`:
             case `owns`:                                           return owns;
 
+            case `hire`:
+            case `hires`:
             case `hired`: tense = Tense.pastMoment; return hires;
             case `hiredBy`: reversion = true; tense = Tense.pastMoment; return hires;
 
+            case `create`:
+            case `creates`:
             case `created`: tense = Tense.pastMoment; return creates;
             case `createdby`:                    reversion = true; return creates;
             case `develop`:                                        return develops;
