@@ -2375,19 +2375,19 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, [`where`, `wherever`],
                         Rel.isA, false, `coordinating place conjunction`, Sense.conjunctionSubordinatingPlace, Sense.noun, 1.0);
         learnMto1(Lang.en, [`as {*} as`,
-                                  `just as {*} so`,
-                                  `both {*} and`,
-                                  `hardly {*} when`,
-                                  `scarcely {*} when`,
-                                  `either {*} or`,
-                                  `neither {*} nor`,
-                                  `if {*} then`,
-                                  `not {*} but`,
-                                  `what with {*} and`,
-                                  `whether {*} or`,
-                                  `not only {*} but also`,
-                                  `no sooner {*} than`,
-                                  `rather {*} than`],
+                            `just as {*} so`,
+                            `both {*} and`,
+                            `hardly {*} when`,
+                            `scarcely {*} when`,
+                            `either {*} or`,
+                            `neither {*} nor`,
+                            `if {*} then`,
+                            `not {*} but`,
+                            `what with {*} and`,
+                            `whether {*} or`,
+                            `not only {*} but also`,
+                            `no sooner {*} than`,
+                            `rather {*} than`],
                         Rel.isA, false, `correlative conjunction`, Sense.conjunctionCorrelative, Sense.noun, 1.0);
 
         // Subordinating Conjunction
@@ -2524,8 +2524,8 @@ class Net(bool useArray = true,
         foreach (group; groups)
         {
             learnMto1(Lang.en,
-                            rdT("../knowledge/en/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
-                            Rel.isA, false, group ~ ` emotion`, Sense.unknown, Sense.noun);
+                      rdT("../knowledge/en/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
+                      Rel.isA, false, group ~ ` emotion`, Sense.unknown, Sense.noun);
         }
     }
 
@@ -2549,8 +2549,8 @@ class Net(bool useArray = true,
     void learnSwedishFeelings()
     {
         learnMto1(Lang.sv,
-                        rdT("../knowledge/sv/känsla.txt").splitter('\n').filter!(word => !word.empty),
-                        Rel.isA, false, `känsla`, Sense.noun, Sense.noun);
+                  rdT("../knowledge/sv/känsla.txt").splitter('\n').filter!(word => !word.empty),
+                  Rel.isA, false, `känsla`, Sense.noun, Sense.noun);
     }
 
     /// Read and Learn Assocations.
@@ -4066,19 +4066,8 @@ class Net(bool useArray = true,
                       Lang.math, Sense.decimal, origin),
                 origin, 1.0);
 
-        learnMto1(Lang.en,
-                        [`quaternary`,
-                         `quinary`,
-                         `senary`,
-                         `octal`,
-                         `decimal`,
-                         `duodecimal`,
-                         `vigesimal`,
-                         `quadrovigesimal`,
-                         `duotrigesimal`,
-                         `sexagesimal`,
-                         `octogesimal`],
-                        Rel.hasProperty, true, `counting system`, Sense.adjective, Sense.noun, 1.0);
+        learnMto1(Lang.en, [`quaternary`, `quinary`, `senary`, `octal`, `decimal`, `duodecimal`, `vigesimal`, `quadrovigesimal`, `duotrigesimal`, `sexagesimal`, `octogesimal`],
+                  Rel.hasProperty, true, `counting system`, Sense.adjective, Sense.noun, 1.0);
     }
 
     void learnPunctuation()
@@ -5642,7 +5631,11 @@ class Net(bool useArray = true,
         {
             const lineNode = nodeAt(nodeRef);
 
-            write(`  - in `, lineNode.lemma.lang.toHuman);
+            write(`  -`);
+            if (lineNode.lemma.lang != Lang.unknown)
+            {
+                write(` in `, lineNode.lemma.lang.toHuman);
+            }
             if (lineNode.lemma.sense != Sense.unknown)
             {
                 write(` of sense `, lineNode.lemma.sense);
@@ -5962,12 +5955,41 @@ class Net(bool useArray = true,
                 stemLine = stemMoreLine;
             }
 
-            // questiond
-            if (!normLine.endsWith('?'))
+            // non-interpuncted
+            if (normLine.startsWith('.', '?', '!'))
             {
-                const questionLine = normLine ~ '?';
-                // writeln(`> As a question "`, questionLine, `"`);
-                showNodes(questionLine, lang, sense, lineSeparator, triedLines);
+                const nonIPLine = normLine[1 .. $]; // TODO functionìze
+                // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
+                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines);
+            }
+
+            // non-interpuncted
+            if (normLine.endsWith('.', '?', '!'))
+            {
+                const nonIPLine = normLine[0 .. $ - 1]; // TODO functionìze
+                // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
+                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines);
+            }
+
+            // interpuncted
+            if (!normLine.endsWith('.') &&
+                !normLine.endsWith('?') &&
+                !normLine.endsWith('!'))
+            {
+                // questioned
+                const questionedLine = normLine ~ '?';
+                // writeln(`> As a question "`, questionedLine, `"`);
+                showNodes(questionedLine, lang, sense, lineSeparator, triedLines);
+
+                // exclaimed
+                const exclaimedLine = normLine ~ '!';
+                // writeln(`> As an exclamation "`, exclaimedLine, `"`);
+                showNodes(exclaimedLine, lang, sense, lineSeparator, triedLines);
+
+                // dotted
+                const dottedLine = normLine ~ '.';
+                // writeln(`> As a dotted "`, dottedLine, `"`);
+                showNodes(dottedLine, lang, sense, lineSeparator, triedLines);
             }
 
             // lowered
