@@ -1689,7 +1689,7 @@ class Net(bool useArray = true,
      */
     void learnPreciseThings()
     {
-        learnTypeNameHierarchy!Sense;
+        learnEnumMemberNameHierarchy!Sense;
 
         // TODO replace with automatics
         learnMto1(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.uncountable, Sense.noun, 1.0);
@@ -1967,7 +1967,7 @@ class Net(bool useArray = true,
         learnSwedishFeelings();
     }
 
-    void learnTypeNameHierarchy(T)()
+    void learnEnumMemberNameHierarchy(T)() if (is(T == enum))
     {
         const origin = Origin.manual;
         foreach (i; enumMembers!T)
