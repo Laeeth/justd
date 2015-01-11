@@ -7,7 +7,7 @@ import std.traits: isMutable;
 /** Permutations of
     See also: http://rosettacode.org/wiki/Permutations#D
    */
-struct Permutations(bool doCopy = false, T) if (isMutable!T)
+struct Permutations(bool doCopy = true, T) if (isMutable!T)
 {
     private immutable size_t num;
     private T[] items;
@@ -106,7 +106,7 @@ struct Permutations(bool doCopy = false, T) if (isMutable!T)
     }
 }
 
-Permutations!(doCopy,T) permutationsInPlace(bool doCopy = false, T)(T[] items) if (isMutable!T)
+Permutations!(doCopy,T) permutationsInPlace(bool doCopy = true, T)(T[] items) if (isMutable!T)
 {
     return Permutations!(doCopy, T)(items);
 }
@@ -126,7 +126,7 @@ unittest
     assert(x != y);
 }
 
-Permutations!(doCopy,T) permutations(bool doCopy = false, T)(T[] items) if (isMutable!T)
+Permutations!(doCopy,T) permutations(bool doCopy = true, T)(T[] items) if (isMutable!T)
 {
     return Permutations!(doCopy, T)(items.dup);
 }
@@ -228,22 +228,25 @@ struct CartesianPower(bool doCopy = true, T)
     }
 }
 
-auto cartesianPower(bool doCopy = true, T)(T[] items, in uint
-                                                       repeat)
+auto cartesianPower(bool doCopy = true, T)(T[] items,
+                                           in uint repeat)
     pure nothrow @safe {
-    return CartesianPower!(doCopy, T)(items, repeat, new
-                                      T[repeat]);
+    return CartesianPower!(doCopy, T)(items, repeat, new T[repeat]);
 }
 
-auto cartesianPower(bool doCopy = true, T)(T[] items, in uint
-                                                       repeat, T[] buffer)
-    pure nothrow @safe @nogc {
-    if (buffer.length >= repeat) {
+auto cartesianPower(bool doCopy = true, T)(T[] items,
+                                           in uint repeat,
+                                           T[] buffer)
+    pure nothrow @safe @nogc
+{
+    if (buffer.length >= repeat)
+    {
         return CartesianPower!(doCopy, T)(items, repeat, buffer);
-    } else {
+    }
+    else
+    {
         // Is this correct in presence of chaining?
-        static immutable err = new Error("buffer.length <
-repeat");
+        static immutable err = new Error("buffer.length < repeat");
         throw err;
     }
 }
@@ -251,9 +254,10 @@ repeat");
 @nogc unittest
 {
     import core.stdc.stdio;
-    int[3] items = [10, 20, 30];
-    int[4] buf;
-    foreach (p; cartesianPower!false(items, 4, buf))
+    int[3] items = [1, 2, 3];
+    const n = 4;
+    int[n] buf;
+    foreach (p; cartesianPower!false(items, n, buf))
     {
         printf("(%d, %d, %d, %d)\n", p[0], p[1], p[2], p[3]);
     }
