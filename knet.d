@@ -2018,16 +2018,17 @@ class Net(bool useArray = true,
         // Verb
         learnMto1(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `determiner`, Sense.determiner, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
-
         learnMto1(Lang.en, rdT("../knowledge/en/preposition.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `preposition`, Sense.preposition, Sense.noun, 1.0);
+
         learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Rel.isA, false, `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
 
         learnMoby();
+
+        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
     }
 
     void learnMoby()
