@@ -57,6 +57,7 @@
          - https://stackoverflow.com/questions/27889604/open-syllabification-database
          - lemmasByExpr[`one-liner`] => Lemma(`one-liner`) =>
          - May require bool checkSyllables = false;
+         - if expr.canFind(syllableSeparator) use splitter(syllableSeparator) instead of findWordSplit()
 
     TODO Infer: {1} isA NOUN => {1} isA NOUN
 
@@ -2635,10 +2636,12 @@ class Net(bool useArray = true,
             auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const name = split[0], abbr = split[2];
             NWeight weight = 1.0;
+
             connect(store(name.idup, lang, Sense.noun, origin),
                     Rel.isA,
                     store("chemical element", lang, Sense.noun, origin),
                     origin, weight);
+
             connect(store(abbr.idup, lang, Sense.noun, origin), // TODO store capitalized?
                     Rel.abbreviationFor,
                     store(name.idup, lang, Sense.noun, origin),
