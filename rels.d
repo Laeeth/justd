@@ -221,6 +221,7 @@ enum Rel:ubyte
 
     togetherWritingFor,
 
+    symbolFor,
     abbreviationFor, shorthandFor = abbreviationFor,
 
     acronymFor,

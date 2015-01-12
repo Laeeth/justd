@@ -1008,6 +1008,26 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case symbolFor:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "en symbol för"]; break;
+                    case en:
+                    default: words = ["is", not, "a symbol for"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["har", not, "symbolen"]; break;
+                    case en:
+                    default: words = ["does", not, "have symbol"]; break;
+                }
+            }
+            break;
         case abbreviationFor:
             if (dir == RelDir.forward)
             {
@@ -1347,7 +1367,8 @@ bool specializes(Rel special,
         case derivedFrom: return special.of(acronymFor,
                                             abbreviationFor,
                                             emoticonFor);
-        case abbreviationFor: return special.of(acronymFor, emoticonFor);
+        case abbreviationFor: return special.of(acronymFor);
+        case symbolFor: return special.of(emoticonFor);
         case atLocation: return special.of(bornInLocation,
                                            hasCitizenship,
                                            hasResidenceIn,

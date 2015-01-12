@@ -75,6 +75,7 @@ enum Sense:ubyte
 
     uncountable,
 
+    abbrevation,
     nounAbbrevation,
     nounAcronym,
 
@@ -84,8 +85,10 @@ enum Sense:ubyte
     /* Verb */
 
     verb,
+
     verbTransitive,
     verbIntransitive,
+
     verbRegular,
     verbIrregular,
 
@@ -321,6 +324,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case uncountable: return `uncountable`;
 
+        case abbrevation: return `abbrevation`;
         case nounAbbrevation: return `noun abbrevation`;
         case nounAcronym: return `noun acronym`;
 
@@ -802,14 +806,25 @@ import predicates: of;
                                      conjunctionSubordinatingPlace,
                                      conjunctionCorrelative);
     }
+    bool isAbbrevation(Sense sense)
+    {
+        with (Sense) return (sense.of(abbrevation,
+                                      nounAbbrevation,
+                                      nounAcronym));
+    }
 }
+
+import grammars: Lang;
 
 /** Check if $(D special) uniquely specializes $(D general), that is if a word
     has been found to have sense $(D special) which is a more specialized sense
     than $(D general it must not have any other meaning less specialized thatn $(D special).
 */
 bool specializes(Sense special,
-                 Sense general)
+                 Sense general,
+                 bool uniquely = true,
+                 string expr = null,
+                 Lang lang = Lang.unknown)
     @safe @nogc pure nothrow
 {
     if (special == general) return false;
@@ -825,7 +840,7 @@ bool specializes(Sense special,
         case integer: return special.isInteger;
         case numeric: return special.isNumeric;
         case name: return special.isName;
-        case nounAbbrevation: return special == nounAcronym;
+        case abbrevation: return special.isAbbrevation;
         case verb: return special.isVerb;
         case adverb: return special.isAdverb;
         case adjective: return special.isAdjective;
@@ -839,7 +854,18 @@ bool specializes(Sense special,
     }
 }
 
-unittest
+@safe @nogc pure nothrow unittest
 {
+    with (Sense)
+    {
+        assert(languageProgramming.specializes(language));
+        assert(languageNatural.specializes(language));
+        assert(name.specializes(noun));
+        assert(verbTransitive.specializes(verb));
+        assert(nounSingular.specializes(noun));
+        assert(nounPlural.specializes(noun));
+        assert(integerPositive.specializes(integer));
+        assert(integerNegative.specializes(integer));
+    }
     assert(Sense.noun.isNoun);
 }
