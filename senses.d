@@ -42,6 +42,7 @@ enum Sense:ubyte
     numeral,
     numeralOrdinal,
     ordinalNumber = numeralOrdinal, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
+    rank = ordinalNumber,
 
     integer,                /// 11
     integerPositive,        /// 0,1, ...

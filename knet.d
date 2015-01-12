@@ -62,6 +62,7 @@
 
     TODO Learn Syllables:
          - Extend syllables.d and test it against moby/hyphentation.txt
+         - Use Java at: https://stackoverflow.com/questions/405161/detecting-syllables-in-a-word
          - https://stackoverflow.com/questions/27889604/open-syllabification-database
          - lemmasByExpr[`one-liner`] => Lemma(`one-liner`) =>
          - May require bool checkSyllables = false;
@@ -2006,6 +2007,21 @@ class Net(bool useArray = true,
         learnEmotions();
         learnEnglishFeelings();
         learnSwedishFeelings();
+
+        learnEnglishWordUsageRanks();
+    }
+
+    void learnEnglishWordUsageRanks()
+    {
+        const path = "../knowledge/en/word_usage_rank.txt";
+        foreach (line; File(path).byLine)
+        {
+            auto split = line.splitter(roleSeparator);
+            const rank = split.front.idup; split.popFront;
+            const word = split.front.idup; split.popFront;
+            connect(store(word, Lang.en, Sense.unknown, Origin.manual), Rel.hasAttribute,
+                    store(rank, Lang.en, Sense.rank, Origin.manual), Origin.manual, 1.0);
+        }
     }
 
     void learnPartOfSpeech()
