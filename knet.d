@@ -24,22 +24,24 @@
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: http://www.mindmachineproject.org/proj/prop/
 
-    Data: http://www.clres.com/dict.html
-    Data: http://www.adampease.org/OP/
-    Data: http://www.wordfrequency.info/
-    Data: http://conceptnet5.media.mit.edu/downloads/current/
-    Data: http://wiki.dbpedia.org/DBpediaAsTables
-    Data: http://icon.shef.ac.uk/Moby/
-    Data: http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
-    Data: http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
-    Data: http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
-    Data: http://www.words-to-use.com/
-    Data: http://www.slangopedia.se/
-    Data: http://www.learn-english-today.com/idioms/
-    Data: http://www.smart-words.org/list-of-synonyms/
-    Data: http://www.thefreedictionary.com/
-    Data: http://www.paengelska.com/engelska_uttryck_a.htm
-    Data: http://www.ego4u.com/en/cram-up/grammar/prepositions
+    Data:
+    - Svensk Etymologisk Ordbok: http://runeberg.org/svetym/
+    - http://www.clres.com/dict.html
+    - http://www.adampease.org/OP/
+    - http://www.wordfrequency.info/
+    - http://conceptnet5.media.mit.edu/downloads/current/
+    - http://wiki.dbpedia.org/DBpediaAsTables
+    - http://icon.shef.ac.uk/Moby/
+    - http://www.dcs.shef.ac.uk/research/ilash/Moby/moby.tar.Z
+    - http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157
+    - http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/
+    - http://www.words-to-use.com/
+    - http://www.slangopedia.se/
+    - http://www.learn-english-today.com/idioms/
+    - http://www.smart-words.org/list-of-synonyms/
+    - http://www.thefreedictionary.com/
+    - http://www.paengelska.com/engelska_uttryck_a.htm
+    - http://www.ego4u.com/en/cram-up/grammar/prepositions
 
     English Phrases: http://www.talkenglish.com
     Names: http://www.nordicnames.de/
@@ -1264,10 +1266,11 @@ class Net(bool useArray = true,
                     Rel rel = Rel.any,
                     bool negation = false)
     {
-        return node.links[].filter!(linkRef => (dir.of(RelDir.any, linkRef.dir) &&  // TODO functionize to match(RelDir, RelDir)
-                                                (linkAt(linkRef).rel == rel ||
-                                                 linkAt(linkRef).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
-                                                linkAt(linkRef).negation == negation));
+        return node.links[]
+                   .filter!(linkRef => (dir.of(RelDir.any, linkRef.dir) &&  // TODO functionize to match(RelDir, RelDir)
+                                        (linkAt(linkRef).rel == rel ||
+                                         linkAt(linkRef).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
+                                        linkAt(linkRef).negation == negation));
     }
 
     /** Network Traverser. */
@@ -1530,7 +1533,7 @@ class Net(bool useArray = true,
     /** Learn $(D Lemma) of $(D expr).
         Returns: either existing specialized lemma or a reference to the newly stored one.
      */
-    ref Lemma learnLemmaWithMaybeSpecializedSense(ref Lemma lemma)
+    ref Lemma learnLemma(ref Lemma lemma) @safe
     {
         const expr = lemma.expr;
         if (expr in lemmasByExpr)
@@ -4630,13 +4633,15 @@ class Net(bool useArray = true,
             const cix = NodeRef(cast(Ix)allNodes.length);
             allNodes ~= node; // .. new node that is stored
 
-            const newLemma = learnLemmaWithMaybeSpecializedSense(lemma);
+            const newLemma = learnLemma(lemma);
+            if (newLemma == lemma) // if lemma wasn't changed to an existing one
+            {
+                nodeRefByLemma[newLemma] = cix; // store index to ..
+                nodeStringLengthSum += newLemma.expr.length;
 
-            nodeRefByLemma[newLemma] = cix; // store index to ..
-            nodeStringLengthSum += newLemma.expr.length;
-
-            ++nodeCountByLang[newLemma.lang];
-            ++nodeCountBySense[newLemma.sense];
+                ++nodeCountByLang[newLemma.lang];
+                ++nodeCountBySense[newLemma.sense];
+            }
 
             return cix;
         }
