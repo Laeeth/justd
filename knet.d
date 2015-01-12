@@ -25,7 +25,9 @@
     See also: http://www.mindmachineproject.org/proj/prop/
 
     Data:
+    - Open Multilingual Wordnet: http://compling.hss.ntu.edu.sg/omw/
     - Svensk Etymologisk Ordbok: http://runeberg.org/svetym/
+    - WordNets: http://globalwordnet.org/wordnets-in-the-world/
     - http://www.clres.com/dict.html
     - http://www.adampease.org/OP/
     - http://www.wordfrequency.info/
