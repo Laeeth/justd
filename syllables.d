@@ -10,7 +10,7 @@ import std.uni: byGrapheme;
 
     The Algorithm:
 
-    - If number of letters <= 3 : return 1. Incorrect for Ira
+    - If number of letters <= 3 : return 1. Incorrect for Ira, weapon:usi.
 
     - If doesn’t end with “ted” or “tes” or “ses” or “ied” or “ies”, discard
       “es” and “ed” at the end. If it has only 1 vowel or 1 set of consecutive
