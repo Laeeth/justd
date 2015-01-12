@@ -88,7 +88,6 @@
 
     TODO Infer English-Swedish Translations: "[are|is] requirED = krävs" because of "require = kräva"
 
-    TODO Add isExactIn(Sense sense, Lang lang). Use to specialize in learnLemmaMaybeSpecialized().
     TODO Use lemma.sense = lemma.expr.until(':').to!Sense.specialize(lemma.sense) in Lemma()
 
     TODO Make context a NodeRef such NodeRef("mammal") =>isA=> NodeRef("animal")
@@ -1529,34 +1528,27 @@ class Net(bool useArray = true,
     }
 
     /** Learn $(D Lemma) of $(D expr).
+        Returns: either existing specialized lemma or a reference to the newly stored one.
      */
-    void learnLemmaMaybeSpecialized(ref Lemma lemma)
+    ref Lemma learnLemmaWithMaybeSpecializedSense(ref Lemma lemma)
     {
         const expr = lemma.expr;
         if (expr in lemmasByExpr)
         {
-            const existingLemmas = lemmasByExpr[expr][];
-
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
-            if (false)
+            foreach (ref existingLemma; lemmasByExpr[expr])
             {
-                auto hit = false;
-                foreach (existingLemma; existingLemmas)
+                if (existingLemma.lang == lemma.lang &&
+                    existingLemma.context == lemma.context &&
+                    existingLemma.sense.specializes(lemma.sense))
                 {
-                    if (existingLemma.lang == lemma.lang &&
-                        existingLemma.context == lemma.context &&
-                        lemma.sense != Sense.unknown && // must be here!
-                        existingLemma.sense.specializes(lemma.sense))
-                    {
-                        dln("Specializing Lemma ", expr, " sense from ", lemma.sense, " to ", existingLemma.sense);
-                        // lemma.sense = existingLemma.sense;
-                        hit = true;
-                        break;
-                    }
+                    // dln("Specializing Lemma ", expr, " sense from ", lemma.sense, " to ", existingLemma.sense);
+                    // lemma.sense = existingLemma.sense;
+                    return existingLemma;
                 }
             }
 
-            const hitAlt = existingLemmas.canFind(lemma);
+            const hitAlt = lemmasByExpr[expr].canFind(lemma);
             if (!hitAlt) // TODO Make use of binary search
             {
                 lemmasByExpr[expr] ~= lemma;
@@ -1570,6 +1562,7 @@ class Net(bool useArray = true,
             }
             lemmasByExpr[expr] ~= lemma;
         }
+        return lemma;
     }
 
     auto pageSize() @trusted
@@ -1692,7 +1685,7 @@ class Net(bool useArray = true,
     this(string dirPath)
     {
         learnDefault(dirPath);
-        inferSpecializedSenses();
+        // inferSpecializedSenses();
     }
 
     void learnDefault(string dirPath)
@@ -4630,13 +4623,13 @@ class Net(bool useArray = true,
             const cix = NodeRef(cast(Ix)allNodes.length);
             allNodes ~= node; // .. new node that is stored
 
-            learnLemmaMaybeSpecialized(lemma);
+            const newLemma = learnLemmaWithMaybeSpecializedSense(lemma);
 
-            nodeRefByLemma[lemma] = cix; // store index to ..
-            nodeStringLengthSum += lemma.expr.length;
+            nodeRefByLemma[newLemma] = cix; // store index to ..
+            nodeStringLengthSum += newLemma.expr.length;
 
-            ++nodeCountByLang[lemma.lang];
-            ++nodeCountBySense[lemma.sense];
+            ++nodeCountByLang[newLemma.lang];
+            ++nodeCountBySense[newLemma.sense];
 
             return cix;
         }
@@ -6182,14 +6175,11 @@ class Net(bool useArray = true,
                     case 2:
                         if (lemmas[0].sense.specializes(lemmas[1].sense))
                         {
-                            if (lemmas[0].lang.of(Lang.en, Lang.sv))
+                            if (show)
                             {
-                                if (show)
-                                {
-                                    dln(`Specializing Lemma expr "`, expr,
-                                        `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
-                                        lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
-                                }
+                                dln(`Specializing Lemma expr "`, expr,
+                                    `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
+                                    lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
                             }
                             // lemmas[1].sense = lemmas[0].sense;
                         }
