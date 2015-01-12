@@ -415,3 +415,4 @@ youngold
 zenithnadir
 zipunzip
 before Christanno Domini
+action verbstative verb
