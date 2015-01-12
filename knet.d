@@ -61,6 +61,7 @@
     TODO "startsWith(larger than)" gives duplicate searches and takes long
 
     TODO Learn Syllables:
+         - Extend syllables.d and test it against moby/hyphentation.txt
          - https://stackoverflow.com/questions/27889604/open-syllabification-database
          - lemmasByExpr[`one-liner`] => Lemma(`one-liner`) =>
          - May require bool checkSyllables = false;
