@@ -29,6 +29,7 @@ enum Sense:ubyte
 
     nounSingular,
     nounPlural,
+    nounUncountable,
 
     nounNominative,
 
@@ -72,8 +73,6 @@ enum Sense:ubyte
     dayOfYear, nounDate = dayOfYear,
 
     season,
-
-    uncountable,
 
     abbrevation,
     nounAbbrevation,
@@ -322,7 +321,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case season: return `season`;
 
-        case uncountable: return `uncountable`;
+        case nounUncountable: return `uncountable`;
 
         case abbrevation: return `abbrevation`;
         case nounAbbrevation: return `noun abbrevation`;
@@ -581,7 +580,7 @@ import predicates: of;
                                       nounSingular,
                                       nounPlural,
                                       nounNominative,
-                                      uncountable,
+                                      nounUncountable,
                                       nounAbbrevation,
                                       nounAcronym,
                                       plant) ||

@@ -135,7 +135,7 @@
 
     TODO Replace comma in .txt files with some other ASCII separator
 
-    TODO Learn Sense.uncountablesNouns first and then reuse and specializes "love" in Sense.noun
+    TODO Learn Sense.nounUncountablesNouns first and then reuse and specializes "love" in Sense.noun
 
     TODO Google for Henry Liebermann's Open CommonSense Knowledge Base
 
@@ -201,8 +201,8 @@
     BUG hate is learned twice. Add duplicate detection.
     < Concept(s) or ? for help: love
     > Line love
-    - in English of sense uncountable
-    - is a:  uncountable(en-uncountable:1.00@Manual),
+    - in English of sense nounUncountable
+    - is a:  nounUncountable(en-nounUncountable:1.00@Manual),
     - in English
     - is the opposite of:  hate(en:1.00@CN5),
     - is the opposite of:  hate(en-verb:1.00@CN5),
@@ -1746,8 +1746,8 @@ class Net(bool useArray = true,
         learnEnumMemberNameHierarchy!Sense(Sense.nounSingular);
 
         // TODO replace with automatics
-        learnMto1(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.uncountable, Sense.noun, 1.0);
-        learnMto1(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.uncountable, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
+        learnMto1(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
 
         // Part of Speech (PoS)
         learnPartOfSpeech();
@@ -1769,7 +1769,7 @@ class Net(bool useArray = true,
 
         learnNames();
 
-        learnMto1(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `people`, Sense.noun, Sense.uncountable, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `people`, Sense.noun, Sense.nounUncountable, 1.0);
 
         // TODO functionize to learnGroup
         learnMto1(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `compound word`, Sense.unknown, Sense.nounSingular, 1.0);
@@ -2523,35 +2523,35 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/roadway.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `roadway`, Sense.noun, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/baseball.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `baseball`, Sense.noun, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/boat.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `boat`, Sense.noun, Sense.nounSingular);
-        learnMto1(Lang.en, rdT("../knowledge/en/money.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `money`, Sense.noun, Sense.uncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/money.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `money`, Sense.noun, Sense.nounUncountable);
         learnMto1(Lang.en, rdT("../knowledge/en/family.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `family`, Sense.noun, Sense.nounCollective);
-        learnMto1(Lang.en, rdT("../knowledge/en/geography.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `geography`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/energy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `energy`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/time.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `time`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/water.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `water`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/clothing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `clothing`, Sense.unknown, Sense.uncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/geography.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `geography`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/energy.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `energy`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/time.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `time`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/water.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `water`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/clothing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `clothing`, Sense.unknown, Sense.nounUncountable);
         learnMto1(Lang.en, rdT("../knowledge/en/music_theory.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `music theory`, Sense.unknown, Sense.nounSingular);
-        learnMto1(Lang.en, rdT("../knowledge/en/happiness.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `happiness`, Sense.unknown, Sense.uncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/happiness.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `happiness`, Sense.unknown, Sense.nounUncountable);
         learnMto1(Lang.en, rdT("../knowledge/en/pirate.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `pirate`, Sense.unknown, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/monster.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `monster`, Sense.unknown, Sense.nounSingular);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/halloween.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `halloween`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/christmas.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `christmas`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/thanksgiving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `thanksgiving`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/camp.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `camping`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/cooking.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `cooking`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/sewing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `sewing`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/military.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `military`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/science.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `science`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/computer.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `computing`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/math.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `math`, Sense.unknown, Sense.uncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/halloween.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `halloween`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/christmas.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `christmas`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/thanksgiving.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `thanksgiving`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/camp.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `camping`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/cooking.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `cooking`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/sewing.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `sewing`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/military.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `military`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/science.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `science`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/computer.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `computing`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/math.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `math`, Sense.unknown, Sense.nounUncountable);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/transport.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `transportation`, Sense.unknown, Sense.uncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/transport.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `transportation`, Sense.unknown, Sense.nounUncountable);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/rock.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `rock`, Sense.unknown, Sense.uncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/rock.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `rock`, Sense.unknown, Sense.nounUncountable);
         learnMto1(Lang.en, rdT("../knowledge/en/doctor.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `doctor`, Sense.unknown, Sense.nounSingular);
-        learnMto1(Lang.en, rdT("../knowledge/en/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `St. Patrick's Day`, Sense.unknown, Sense.uncountable);
-        learnMto1(Lang.en, rdT("../knowledge/en/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `New Year's Eve`, Sense.unknown, Sense.uncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `St. Patrick's Day`, Sense.unknown, Sense.nounUncountable);
+        learnMto1(Lang.en, rdT("../knowledge/en/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `New Year's Eve`, Sense.unknown, Sense.nounUncountable);
 
         learnMto1(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, false, `say`, Sense.verb, Sense.verbIrregularInfinitive);
         learnMto1(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, true, `book`, Sense.adjective, Sense.nounSingular);
@@ -2649,7 +2649,7 @@ class Net(bool useArray = true,
             const name = split[0], sym = split[2];
             NWeight weight = 1.0;
 
-            connect(store(name.idup, lang, Sense.uncountable, origin),
+            connect(store(name.idup, lang, Sense.nounUncountable, origin),
                     Rel.isA,
                     store("chemical element", lang, Sense.nounSingular, origin),
                     origin, weight);
