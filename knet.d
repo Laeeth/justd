@@ -28,6 +28,7 @@
     - Open Multilingual Wordnet: http://compling.hss.ntu.edu.sg/omw/
     - Svensk Etymologisk Ordbok: http://runeberg.org/svetym/
     - WordNets: http://globalwordnet.org/wordnets-in-the-world/
+    - WordNet 3: http://eb.lv/dict/
     - http://www.clres.com/dict.html
     - http://www.adampease.org/OP/
     - http://www.wordfrequency.info/
