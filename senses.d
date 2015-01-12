@@ -157,7 +157,8 @@ enum Sense:ubyte
 
     pronoun, /// See also: https://www.englishclub.com/grammar/pronouns.htm
 
-    pronounPersonal, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
+    pronounPersonal,  /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
+
     pronounPersonalSingular, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
 
     pronounPersonalSingular1st,
@@ -249,6 +250,22 @@ enum Sense:ubyte
     codeVariable,
     codeVariableReference,
     codeType,
+}
+
+/// Check if $(D sense) is a noun acting as subject.
+bool isSubjectivePronoun(Sense sense)
+{
+    with (Sense) return sense.of(pronounPersonalSingular1st,
+                                 pronounPersonalSingular2nd,
+                                 pronounPersonalPlural1st,
+                                 pronounPersonalPlural2nd);
+}
+
+/// Check if $(D sense) is a noun acting as object.
+bool isObjectivePronoun(Sense sense)
+{
+    with (Sense) return sense.of(pronounPersonalSingular3rd,
+                                 pronounPersonalPlural3rd);
 }
 
 string toHuman(Sense sense) @safe pure @nogc nothrow
