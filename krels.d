@@ -760,6 +760,22 @@ auto toHuman(const Rel rel,
                 default: words = ["has", not, "sister"]; break;
             }
             break;
+        case hasFamilyMember:
+            switch (lang)
+            {
+                case sv: words = ["har", not, "familjemedlem"]; break;
+                case en:
+                default: words = ["does", not, "have family member"]; break;
+            }
+            break;
+        case hasSibling:
+            switch (lang)
+            {
+                case sv: words = ["har", not, "syskon"]; break;
+                case en:
+                default: words = ["does", not, "have sibling"]; break;
+            }
+            break;
         case hasSpouse:
             switch (lang)
             {

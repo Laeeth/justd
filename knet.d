@@ -2151,10 +2151,10 @@ class Net(bool useArray = true,
 
         learnMto1(lang, [`all`, `any`, `more`, `most`, `none`, `some`, `such`], Rel.isA, false, `indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.nounPhrase, 1.0);
         learnMto1(lang, [`another`, `anybody`, `anyone`, `anything`, `each`, `either`, `enough`,
-                               `everybody`, `everyone`, `everything`, `less`, `little`, `much`, `neither`,
-                               `nobody`, `noone`, `one`, `other`,
-                               `somebody`, `someone`,
-                               `something`, `you`], Rel.isA, false, `singular indefinite pronoun`, Sense.pronounIndefiniteSingular, Sense.nounPhrase, 1.0);
+                         `everybody`, `everyone`, `everything`, `less`, `little`, `much`, `neither`,
+                         `nobody`, `noone`, `one`, `other`,
+                         `somebody`, `someone`,
+                         `something`, `you`], Rel.isA, false, `singular indefinite pronoun`, Sense.pronounIndefiniteSingular, Sense.nounPhrase, 1.0);
         learnMto1(lang, [`both`, `few`, `fewer`, `many`, `others`, `several`, `they`], Rel.isA, false, `plural indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.nounPhrase, 1.0);
 
         // Rest
