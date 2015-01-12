@@ -273,11 +273,15 @@ import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
 import predicates: allEqual;
-import stemming;
 import dbg;
-import grammars;
+
 import rcstring;
+
+import stemming;
+import grammars;
+import senses;
 import krels;
+
 import combinations;
 import permutations;
 version(msgpack) import msgpack;

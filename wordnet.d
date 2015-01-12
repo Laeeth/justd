@@ -12,6 +12,7 @@ import rcstring;
 import dbg;
 import assert_ex;
 import krels;
+import senses;
 
 alias nPath = buildNormalizedPath;
 
