@@ -4621,6 +4621,12 @@ class Net(bool useArray = true,
         }
         else
         {
+            const specializedLemma = learnLemma(lemma);
+            if (specializedLemma != lemma) // if an existing more specialized lemma was found
+            {
+                return nodeRefByLemma[specializedLemma];
+            }
+
             auto wordsSplit = lemma.expr.findSplit(expressionWordSeparator);
             if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
             {
@@ -4633,15 +4639,11 @@ class Net(bool useArray = true,
             const cix = NodeRef(cast(Ix)allNodes.length);
             allNodes ~= node; // .. new node that is stored
 
-            const newLemma = learnLemma(lemma);
-            if (newLemma == lemma) // if lemma wasn't changed to an existing one
-            {
-                nodeRefByLemma[newLemma] = cix; // store index to ..
-                nodeStringLengthSum += newLemma.expr.length;
+            nodeRefByLemma[lemma] = cix; // store index to ..
+            nodeStringLengthSum += lemma.expr.length;
 
-                ++nodeCountByLang[newLemma.lang];
-                ++nodeCountBySense[newLemma.sense];
-            }
+            ++nodeCountByLang[lemma.lang];
+            ++nodeCountBySense[lemma.sense];
 
             return cix;
         }
