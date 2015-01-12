@@ -1,10 +1,16 @@
+audience
+band
+bandvillage
+bunch
+class
+club
+collection
+committee
+crowd
 family
 flock
+group
 herd
 school class
-bunch
-audience
 team
-group
-bandvillage
 village
