@@ -1381,8 +1381,10 @@ bool specializes(Rel special,
         case synonymFor: return special.of(abbreviationFor,
                                            togetherWritingFor,
                                            shorthandFor);
-        case instanceHypernymOf: return special.of(hypernymOf);
-        case instanceHyponymOf: return special.of(hyponymOf);
+        case instanceHypernymOf: return special.of(instanceOf,
+                                                   hypernymOf);
+        case instanceHyponymOf: return special.of(instanceOf,
+                                                  hyponymOf);
         default: return special == general;
     }
 }
