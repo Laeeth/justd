@@ -1923,6 +1923,13 @@ class Net(bool useArray = true,
                            Sense.unknown, lang,
                            Origin.manual, 0.7);
 
+            // Slang Adjectives
+            learnMtoNMaybe(dirPath ~ "/slang_adjective_meaning.txt",
+                           Sense.adjective, lang,
+                           Rel.slangFor,
+                           Sense.unknown, lang,
+                           Origin.manual, 0.7);
+
             // Name
             learnMtoNMaybe(dirPath ~ "/male_name_meaning.txt",
                            Sense.nameMale, lang,
