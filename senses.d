@@ -814,29 +814,29 @@ bool specializes(Sense special,
 {
     if (special == general) return false;
     switch (general) with (Sense)
-                     {
-                         case unknown: return false;
-                         case language: return special.isLanguage;
-                         case phrase: return special.isPhrase;
-                         case noun: return (special.isNoun ||
-                                            special.isPronoun);
-                         case food: return special.isFood;
-                         case numeral: return special.isNumeral;
-                         case integer: return special.isInteger;
-                         case numeric: return special.isNumeric;
-                         case name: return special.isName;
-                         case nounAbbrevation: return special == nounAcronym;
-                         case verb: return special.isVerb;
-                         case adverb: return special.isAdverb;
-                         case adjective: return special.isAdjective;
-                         case pronoun: return special.isPronoun;
-                         case pronounPersonal: return special.isPronounPersonal;
-                         case pronounPossessive: return special.isPronounPossessive;
-                         case preposition: return special.isPreposition;
-                         case article: return special.isArticle;
-                         case conjunction: return special.isConjunction;
-                         default: return special == general;
-                     }
+    {
+        case unknown: return false;
+        case language: return special.isLanguage;
+        case phrase: return special.isPhrase;
+        case noun: return (special.isNoun ||
+                           special.isPronoun);
+        case food: return special.isFood;
+        case numeral: return special.isNumeral;
+        case integer: return special.isInteger;
+        case numeric: return special.isNumeric;
+        case name: return special.isName;
+        case nounAbbrevation: return special == nounAcronym;
+        case verb: return special.isVerb;
+        case adverb: return special.isAdverb;
+        case adjective: return special.isAdjective;
+        case pronoun: return special.isPronoun;
+        case pronounPersonal: return special.isPronounPersonal;
+        case pronounPossessive: return special.isPronounPossessive;
+        case preposition: return special.isPreposition;
+        case article: return special.isArticle;
+        case conjunction: return special.isConjunction;
+        default: return special == general;
+    }
 }
 
 unittest
