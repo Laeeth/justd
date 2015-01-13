@@ -1844,7 +1844,13 @@ class Net(bool useArray = true,
 
         // Other
 
+        // See also: https://en.wikipedia.org/wiki/Dolch_word_list
         learnMto1(Lang.en, rdT("../knowledge/en/dolch_singular_noun.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch word`, Sense.nounSingular, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_preprimer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch pre-primer word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_primer.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch primer word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_1st_grade.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch 1-st grade word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_2nd_grade.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch 2-nd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_3rd_grade.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `dolch 3-rd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
 
         learnMto1(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `personal quality`, Sense.adjective, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `color`, Sense.unknown, Sense.noun, 1.0);
