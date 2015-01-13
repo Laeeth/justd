@@ -69,6 +69,19 @@ should be enhanced with
 , suffix with .idup if intentional
 \end{lstlisting}
 
+\item Add syntactic sugar
+
+\begin{lstlisting}[frame=single]
+void f() if (T is enum)
+\end{lstlisting}
+
+for
+
+\begin{lstlisting}[frame=single]
+void f() if (is(T == enum)
+\end{lstlisting}
+
+
 \item Add warning flag for casting between mutable, const and immutable.
 
 \item Add DMD flag to choose linker typically either ld.bfd or ld.gold.
@@ -94,6 +107,7 @@ template parameter D doesn’t fullfil predicate (D >= 1)
 \end{lstlisting}
 
 Further, forgetting to include std.functional: binaryFun before doing
+
 \begin{lstlisting}[frame=single]
 if (is(typeof(binaryFun!pred(r1.front, r2.front))))
 \end{lstlisting}
