@@ -1240,7 +1240,7 @@ auto toHuman(const Rel rel,
                 {
                     case sv: words = ["kan", not, "vara uttal av"]; break;
                     case en:
-                    default: words = ["can", not, "be pronouncation o"]; break;
+                    default: words = ["can", not, "be pronouncation of"]; break;
                 }
             }
             break;
