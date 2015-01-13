@@ -2029,12 +2029,13 @@ class Net(bool useArray = true,
                            Sense.language, Lang.en,
                            Origin.manual, 1.0);
 
-            try
-            {
-                learnMto1(lang, rdT(dirPath ~ "/vehicle.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `vehicle`, Sense.noun, Sense.noun, 1.0);
-                learnMto1(lang, rdT(dirPath ~ "/lowercase_letter.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0);
-                learnMto1(lang, rdT(dirPath ~ "/uppercase_letter.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0);
-            }
+            try { learnMto1(lang, rdT(dirPath ~ "/vehicle.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `vehicle`, Sense.noun, Sense.noun, 1.0); }
+            catch (std.file.FileException e) {}
+
+            try { learnMto1(lang, rdT(dirPath ~ "/lowercase_letter.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
+            catch (std.file.FileException e) {}
+
+            try { learnMto1(lang, rdT(dirPath ~ "/uppercase_letter.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
         }
 
