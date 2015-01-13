@@ -56,6 +56,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Use pronouncation to find rhymes in English
+
     TODO specializeUniquely John to name. In English where first letter isUpper.
 
     TODO "startsWith(larger than)" gives duplicate searches and takes long
@@ -272,7 +274,7 @@ import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort,
 import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize;
-import std.array: array;
+import std.array: array, replace;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
@@ -1668,8 +1670,8 @@ class Net(bool useArray = true,
             const words = linestr.split; // TODO Use splitter to optimize
 
             // const lemma = words[0].idup; // NOTE: Stuff fails if this is set
-            static if (useRCString) { immutable Lemma lemma = words[0].tr("_", " "); }
-            else                    { immutable lemma = words[0].tr("_", " ").idup; }
+            static if (useRCString) { immutable Lemma lemma = words[0].replace("_", " "); }
+            else                    { immutable lemma = words[0].replace("_", " ").idup; }
 
             const pos          = words[1]; // Part of Speech (PoS)
             const synset_cnt   = words[2].to!uint; // Synonym Set Counter
@@ -2135,7 +2137,7 @@ class Net(bool useArray = true,
             string expr;
             try
             {
-                expr = split.front.tr(`_`, ` `).idup;
+                expr = split.front.replace(`_`, ` `).idup;
             }
             catch (core.exception.UnicodeException e)
             {
@@ -2721,7 +2723,7 @@ class Net(bool useArray = true,
         foreach (feeling; feelings)
         {
             const path = "../knowledge/en/" ~ feeling ~ "_feeling.txt";
-            learnAssociations(path, Rel.similarTo, feeling.tr(`_`, ` `) ~ ` feeling`, Sense.adjective, Sense.adjective);
+            learnAssociations(path, Rel.similarTo, feeling.replace(`_`, ` `) ~ ` feeling`, Sense.adjective, Sense.adjective);
         }
     }
 
@@ -5030,8 +5032,8 @@ class Net(bool useArray = true,
 
         const lang = items.front.decodeLang; items.popFront;
 
-        static if (useRCString) { immutable expr = items.front.tr("_", " "); }
-        else                    { immutable expr = items.front.tr("_", " ").idup; }
+        static if (useRCString) { immutable expr = items.front.replace("_", " "); }
+        else                    { immutable expr = items.front.replace("_", " ").idup; }
 
         items.popFront;
         auto sense = Sense.unknown;
@@ -5112,13 +5114,13 @@ class Net(bool useArray = true,
                                 entity.front).idup;
         entity.popFront;
 
-        auto entityIx = store(entityName.tr(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context);
+        auto entityIx = store(entityName.replace(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context);
 
         return tuple(entityIx,
                      contextName,
                      connect(entityIx,
                              Rel.isA,
-                             store(contextName.tr(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
+                             store(contextName.replace(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
                              Origin.nell, 1.0, false, false,
                              true)); // need to check duplicates here
     }
@@ -5780,7 +5782,7 @@ class Net(bool useArray = true,
     void showNode(in Node node, NWeight weight)
     {
         if (node.lemma.expr)
-            write(` "`, node.lemma.expr, // .tr(`_`, ` `)
+            write(` "`, node.lemma.expr, // .replace(`_`, ` `)
                   `"`);
 
         write(` (`); // open
