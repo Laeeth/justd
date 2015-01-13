@@ -16,3 +16,5 @@ Christian EraCommon EraCurrent Era
 
 uppercase lettercapital letterlarge lettermajuscule
 lowercase lettersmall letterminuscule
+
+Dolch word listsight wordsthe Dolch 220
