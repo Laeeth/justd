@@ -2126,7 +2126,16 @@ class Net(bool useArray = true,
         foreach (line; File(path).byLine)
         {
             auto split = line.splitter(' ');
-            const expr = split.front.idup;
+            string expr;
+            try
+            {
+                expr = split.front.tr(`_`, ` `).idup;
+            }
+            catch (core.exception.UnicodeException e)
+            {
+                expr = split.front.idup;
+                dln("Could not decode expression ", expr);
+            }
             split.popFront;
             string ipas;
             try
@@ -2143,7 +2152,7 @@ class Net(bool useArray = true,
             catch (std.utf.UTFException e)
             {
                 ipas = split.front.idup;
-                dln("Could not decode ", ipas);
+                dln("Could not decode IPA code ", ipas);
             }
             connect(store(expr, Lang.en, Sense.unknown, Origin.manual), Rel.hasPronouncation,
                     store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
