@@ -28,7 +28,7 @@ divider
 dry-erase board
 easel
 encyclopedia
-english
+English
 eraser
 exam
 examination

@@ -286,7 +286,7 @@ gavial
 gazelle
 gecko
 gerbil
-german shepherd
+German shepherd
 giant squid
 gibbon
 gila monster
@@ -510,7 +510,7 @@ nymph
 ocelot
 octopus
 okapi
-old english sheepdog
+old English sheepdog
 onager
 opossum
 orangutan
@@ -630,7 +630,7 @@ sandpiper
 scallop
 scarlet macaw
 scorpion
-scottish terrier
+Scottish terrier
 sea anemone
 sea cow
 sea cucumber
