@@ -14,6 +14,10 @@ enum Sense:ubyte
     prefix,
     suffix,
 
+    letter,
+    letterLowercase,
+    letterUppercase,
+    word,
     phrase,                     /// Phrase.
     nounPhrase, /// Noun Phrase. See also: https://en.wikipedia.org/wiki/Moby_Project#Hyphenator
     idiom,                      /// Idiomatic Expression.
@@ -282,6 +286,10 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case prefix: return `prefix`;
         case suffix: return `suffix`;
 
+        case letter: return `letter`;
+        case letterLowercase: return `lowercase letter`;
+        case letterUppercase: return `uppercase letter`;
+        case word: return `word`;
         case phrase: return `phrase`;
         case nounPhrase: return `noun phrase`;
         case idiom: return `idiom`;
@@ -849,6 +857,8 @@ bool specializes(Sense special,
     {
         case unknown: return false;
         case language: return special.isLanguage;
+        case letter: return special.of(letterLowercase,
+                                       letterUppercase);
         case phrase: return special.isPhrase;
         case noun: return (special.isNoun ||
                            special.isPronoun);

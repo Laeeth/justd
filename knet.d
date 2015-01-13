@@ -2032,6 +2032,8 @@ class Net(bool useArray = true,
             try
             {
                 learnMto1(lang, rdT(dirPath ~ "/vehicle.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `vehicle`, Sense.noun, Sense.noun, 1.0);
+                learnMto1(lang, rdT(dirPath ~ "/lowercase_letter.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0);
+                learnMto1(lang, rdT(dirPath ~ "/uppercase_letter.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0);
             }
             catch (std.file.FileException e) {}
         }
@@ -5859,6 +5861,7 @@ class Net(bool useArray = true,
     {
         writeln(`> Line "`, line, `"`);
     }
+
     /** Try Showing nodes and their relations matching content in $(D line).
         Returns: true if any nodes where shown, false otherwise.
      */

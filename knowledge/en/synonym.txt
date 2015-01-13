@@ -13,3 +13,6 @@ imperfectpast tense
 anno DominiAnno Domini
 
 Christian EraCommon EraCurrent Era
+
+uppercase lettercapital letterlarge lettermajuscule
+lowercase lettersmall letterminuscule

@@ -126,3 +126,9 @@ FennelFennel Seed
 cshC shell
 
 elementchemical element
+
+uppercaseuppercase letter
+lowercaselowercase letter
+
+capitalcapital letter
+capcapital letter
