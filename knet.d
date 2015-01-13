@@ -267,7 +267,8 @@ import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind, count, setUnion, setIntersection;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
+import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize;
 import std.uni: isWhite, toLower;
@@ -5695,11 +5696,12 @@ class Net(bool useArray = true,
         foreach (aLinkRef; nodeAt(a).links)
         {
             const aLink = linkAt(aLinkRef);
-            if ((aLink.actors[]
-                      .canFind(NodeRef(b, bDir))) &&
-                aLink.rel == rel &&
+            if (aLink.rel == rel &&
                 aLink.negation == negation && // no need to check reversion (all links are bidirectional)
-                aLink.origin == origin)
+                aLink.origin == origin &&
+                (aLink.actors[]
+                      .canFind(NodeRef(b, bDir))) &&
+                abs(aLink.normalizedWeight - weight) < 1.0e-2) // TODO adjust
             {
                 return aLinkRef;
             }
