@@ -1103,6 +1103,7 @@ auto decodeMobyIPA(S)(S code) if (isSomeString!S)
         case `&`: return `æ`;
         case `-`: return `ə`;
         case `@`: return `ʌ`; // alt: ə
+        case `[@]`: return `ɜ`;
         case `@r`: return `ɜr`; // alt: ər
         case `A`: return `ɑː`;
         case `aI`: return `aɪ`;
