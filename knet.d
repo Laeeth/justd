@@ -60,6 +60,7 @@
 
     TODO "startsWith(larger than)" gives duplicate searches and takes long
 
+    TODO Add Syllable into Phonemes using some special UTF-8 character middle-dot character.
     TODO Learn Syllables:
          - Extend syllables.d and test it against knowledge/moby/hyphentation.txt
          - Use Java at: https://stackoverflow.com/questions/405161/detecting-syllables-in-a-word
