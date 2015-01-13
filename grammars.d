@@ -323,6 +323,11 @@ enum Lang:ushort
     zap, // Zapotec	Mexico	Layeni, Binlo
     zu, // Zulu	Southern Africa	Isithangami, Ukuthula
 
+    /** International Phonetic Alphabet (IPA)
+        https://en.wikipedia.org/wiki/International_Phonetic_Alphabet */
+    ipa,
+
+    // Programming Languages.
     c,
     firstFormal = c,
     cxx,
@@ -336,9 +341,13 @@ enum Lang:ushort
     swift,
     fortran,
     modelica,
+    lastFormal = modelica,
 
+    // Academic Languages
     math,                ///< "Mathematics is the only truly universal language"
+    firstAcademic = math,
     physics,
+    lastAcademic = physics,
 }
 
 /** Return true if $(D lang) is case-sensitive. */
@@ -351,10 +360,18 @@ alias isCaseSensitive = hasCase;
 /** Return true if $(D lang) is a formal (computer) language. */
 bool isFormal(Lang lang) @safe pure @nogc nothrow
 {
-    with (Lang) return (lang >= firstFormal);
+    with (Lang) return (lang >= firstFormal &&
+                        lang <= lastFormal);
 }
 alias forMachines = isFormal;
 alias isProgrammingLanguage = isFormal;
+
+/** Return true if $(D lang) is an academic language. */
+bool isAcademic(Lang lang) @safe pure @nogc nothrow
+{
+    with (Lang) return (lang >= firstAcademic &&
+                        lang <= lastAcademic);
+}
 
 /** TODO Remove when __traits(documentation is merged */
 string toHuman(Lang lang) @safe pure @nogc nothrow
@@ -474,6 +491,8 @@ string toHuman(Lang lang) @safe pure @nogc nothrow
         case gu: return `Gujarati`;
         case hil: return `Hiligaynon`;
         case haw: return `Hawaiian`;
+
+        case ipa: return `International Phonetic Alphabet`;
 
         case c: return `C`;
         case cxx: return `C++`;

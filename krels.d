@@ -1184,6 +1184,26 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case hasPronouncation:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["utalas", not]; break;
+                    case en:
+                    default: words = ["does", not, "have pronouncation"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["kan", not, "vara uttal av"]; break;
+                    case en:
+                    default: words = ["can", not, "be pronouncation o"]; break;
+                }
+            }
+            break;
         case slangFor:
             if (dir == RelDir.forward)
             {

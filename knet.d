@@ -61,7 +61,7 @@
     TODO "startsWith(larger than)" gives duplicate searches and takes long
 
     TODO Learn Syllables:
-         - Extend syllables.d and test it against moby/hyphentation.txt
+         - Extend syllables.d and test it against knowledge/moby/hyphentation.txt
          - Use Java at: https://stackoverflow.com/questions/405161/detecting-syllables-in-a-word
          - https://stackoverflow.com/questions/27889604/open-syllabification-database
          - lemmasByExpr[`one-liner`] => Lemma(`one-liner`) =>
@@ -117,7 +117,7 @@
 
     TODO Add Sense Specialization Pass: All other relations specialize
     Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo
-    scottish" needless
+    Scottish" needless
 
     TODO Should we index all word forms for nouns, verbs and adjectives? Not if we can avoid it.
 
@@ -1091,6 +1091,63 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense)
     return role;
 }
 
+/** Decode Moby Pronounciation Code to IPA Language.
+    See also: https://en.wikipedia.org/wiki/Moby_Project#Pronunciator
+*/
+auto decodeMobyIPA(S)(S code) if (isSomeString!S)
+{
+    switch (code)
+    {
+        case `&`: return `æ`;
+        case `-`: return `ə`;
+        case `@`: return `ʌ`; // alt: ə
+        case `@r`: return `ɜr`; // alt: ər
+        case `A`: return `ɑː`;
+        case `aI`: return `aɪ`;
+        case `Ar`: return `ɑr`;
+        case `AU`: return `aʊ`;
+        case `b`: return `b`;
+        case `d`: return `d`;
+        case `D`: return `ð`;
+        case `dZ`: return `dʒ`;
+        case `E`: return `ɛ`;
+        case `eI`: return `eɪ`;
+        case `f`: return `f`;
+        case `g`: return `ɡ`;
+        case `h`: return `h`;
+        case `hw`: return `hw`;
+        case `i`: return `iː`;
+        case `I`: return `ɪ`;
+        case `j`: return `j`;
+        case `k`: return `k`;
+        case `l`: return `l`;
+        case `m`: return `m`;
+        case `n`: return `n`;
+        case `N`: return `ŋ`;
+        case `O`: return `ɔː`;
+        case `Oi`: return `ɔɪ`;
+        case `oU`: return `oʊ`;
+        case `p`: return `p`;
+        case `r`: return `r`;
+        case `s`: return `s`;
+        case `S`: return `ʃ`;
+        case `t`: return `t`;
+        case `T`: return `θ`;
+        case `tS`: return `tʃ`;
+        case `u`: return `uː`;
+        case `U`: return `ʊ`;
+        case `v`: return `v`;
+        case `w`: return `w`;
+        case `z`: return `z`;
+        case `Z`: return `ʒ`;
+        case `'`: return `'`; // primary stress on the following syllable
+        case `,`: return `,`; // secondary stress on the following syllable
+        default:
+        // dln("warning: ", code);
+        return code.idup;
+    }
+}
+
 Sense sensesOfMobyPoSCode(C)(C code) if (isSomeChar!C)
 {
     switch (code) with (Sense)
@@ -2046,7 +2103,7 @@ class Net(bool useArray = true,
 
         learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Rel.isA, false, `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
 
-        learnMoby();
+        learnMobyPoS();
 
         // learn these after Moby as Moby is more specific
         learnNouns();
@@ -2054,12 +2111,48 @@ class Net(bool useArray = true,
 
         learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
+
+        learnMobyEnglishPronounciations();
     }
 
-    void learnMoby()
+    /** Learn English Pronouncation Patterns from Moby.
+        See also: https://en.wikipedia.org/wiki/Moby_Project#Hyphenator
+     */
+    void learnMobyEnglishPronounciations()
+    {
+        const path = "../knowledge/moby/pronounciation.txt";
+        writeln("Reading Moby pronounciations from ", path, " ...");
+        foreach (line; File(path).byLine)
+        {
+            auto split = line.splitter(' ');
+            const expr = split.front.idup;
+            split.popFront;
+            string ipas;
+            try
+            {
+                ipas = split.front
+                            .splitter('_') // word separator
+                            .map!(word =>
+                                  word.splitter('/') // phoneme separator
+                                      .map!(a => a.decodeMobyIPA)
+                                      .joiner)
+                            .joiner(` `)
+                            .to!string;
+            }
+            catch (std.utf.UTFException e)
+            {
+                ipas = split.front.idup;
+                dln("Could not decode ", ipas);
+            }
+            connect(store(expr, Lang.en, Sense.unknown, Origin.manual), Rel.hasPronouncation,
+                    store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
+        }
+    }
+
+    void learnMobyPoS()
     {
         const path = "../knowledge/moby/part_of_speech.txt";
-        writeln("Reading Moby Part of Speech (PoS) list from ", path, " ...");
+        writeln("Reading Moby Part of Speech (PoS) from ", path, " ...");
         foreach (line; File(path).byLine)
         {
             auto split = line.splitter(roleSeparator);
