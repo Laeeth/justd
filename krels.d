@@ -784,6 +784,46 @@ auto toHuman(const Rel rel,
                 default: words = ["has", not, "spouse"]; break;
             }
             break;
+        case hasParent:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["har", not, "förälder"]; break;
+                    case en:
+                    default: words = ["has", not, "parent"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "förälder till"]; break;
+                    case en:
+                    default: words = ["is", not, "parent of"]; break;
+                }
+            }
+            break;
+        case hasChild:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["har", not, "barn"]; break;
+                    case en:
+                    default: words = ["has", not, "child"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["är", not, "barn till"]; break;
+                    case en:
+                    default: words = ["is", not, "child of"]; break;
+                }
+            }
+            break;
         case hasHusband:
             if (dir == RelDir.forward)
             {
