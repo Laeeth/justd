@@ -272,6 +272,7 @@ import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort,
 import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize;
+import std.array: array;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
@@ -1179,7 +1180,10 @@ Sense sensesOfMobyPoSCode(C)(C code) if (isSomeChar!C)
 class Net(bool useArray = true,
           bool useRCString = true)
 {
-    import std.algorithm, std.range, std.path, std.array;
+    import std.range: front, split, isInputRange;
+    import std.algorithm: joiner, clamp;
+    import std.path: buildNormalizedPath, expandTilde, extension;
+    import std.algorithm: strip, array, until, dropOne, dropBackOne;
     import wordnet: WordNet;
 
     /// Normalized (Link) Weight.
