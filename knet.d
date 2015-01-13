@@ -1600,7 +1600,14 @@ class Net(bool useArray = true,
      */
     Lemmas lemmasOf(S)(S expr) if (isSomeString!S)
     {
-        return lemmasByExpr.get(expr.idup, typeof(return).init);
+        static if (is(S == string)) // TODO Is there a prettier way to do this?
+        {
+            return lemmasByExpr.get(expr, typeof(return).init);
+        }
+        else
+        {
+            return lemmasByExpr.get(expr.dup, typeof(return).init);
+        }
     }
 
     /** Learn $(D Lemma) of $(D expr).
@@ -2847,7 +2854,7 @@ class Net(bool useArray = true,
         foreach (expr; File("../knowledge/en/opposites.txt").byLine.filter!(a => !a.empty))
         {
             auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
-            const first = split[0], second = split[2];
+            const auto first = split[0], second = split[2];
             NWeight weight = 1.0;
             const sense = commonSense(first, second);
             connect(store(first.idup, lang, sense, origin),
@@ -5939,6 +5946,22 @@ class Net(bool useArray = true,
                 }
             }
         }
+        else if (normLine.skipOver(`rhymesof(`) ||
+                 normLine.skipOver(`rhymes_of(`))
+        {
+            const split = normLine.findSplitBefore(`)`);
+            const arg = split[0];
+            if (!arg.empty)
+            {
+                foreach (rhymeNode; rhymesOf(arg))
+                {
+                    showLinkNode(nodeAt(rhymeNode),
+                                 Rel.instanceOf,
+                                 NWeight.infinity,
+                                 RelDir.backward);
+                }
+            }
+        }
         else if (normLine.skipOver(`translationsof(`) ||
                  normLine.skipOver(`translations_of(`) ||
                  normLine.skipOver(`translate(`))
@@ -6223,6 +6246,21 @@ class Net(bool useArray = true,
                                 sense);
         showNodeRefs(nodes, Rel.synonymFor); // TODO traverse synonyms
         return nodes;
+    }
+
+    /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
+     */
+    NodeRefs rhymesOf(S)(S expr,
+                     Lang lang = Lang.unknown,
+                     Sense sense = Sense.unknown,
+                     bool withSameSyllableCount = false) if (isSomeString!S)
+    {
+        const lemma = lemmasOf(expr);
+        // return nodeRefByLemma.values
+        //                      .filter!(nodeRef => nodeAt(nodeRef).lemma
+        //                                                         .expr
+        //                                                         .startsWith(prefix));
+        return typeof(return).init;
     }
 
     /** Get Possible Languages of $(D text) sorted by falling strength.
