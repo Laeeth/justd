@@ -56,9 +56,11 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
-    TODO Use pronouncation to find rhymes in English
+    TODO rhymesOf() may reuse Walk.byNode walkOver(Rel.prounounciation)
 
-    TODO specializeUniquely John to name. In English where first letter isUpper.
+    TODO Support N-way in learnMtoNMaybe en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
+
+    TODO specializeUniquely John to name in English if first letter isUpper
 
     TODO "startsWith(larger than)" gives duplicate searches and takes long
 
@@ -113,8 +115,6 @@
 
     TODO Group Rel bool negation and bool reversion into a bitfield struct of size 16
     and simplify interfaces. Use CTFE to add instantiator rel!"memberOf"
-
-    TODO Support N-way in learnMtoNMaybe en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
 
     BUG learnMtoNMaybe has no effect. Test name_day.txt by searching for Sylvester.
 
@@ -270,7 +270,7 @@ import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, multiSort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
 import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize;
@@ -5845,8 +5845,10 @@ class Net(bool useArray = true,
             // TODO Why is cast needed here?
             auto linkRefs = cast(LinkRefs)linkRefsOf(lineNode, RelDir.any, rel, negation);
 
-            linkRefs[].sort!((a, b) => (linkAt(a).normalizedWeight >
-                                        linkAt(b).normalizedWeight));
+            linkRefs[].multiSort!((a, b) => (linkAt(a).normalizedWeight >
+                                             linkAt(b).normalizedWeight),
+                                  (a, b) => (linkAt(a).rel <
+                                             linkAt(b).rel));
             foreach (linkRef; linkRefs)
             {
                 auto link = linkAt(linkRef);
