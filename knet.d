@@ -278,7 +278,7 @@ import std.array: array, replace;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
-import std.file: readText;
+import std.file: readText, exists;
 alias rdT = readText;
 
 import algorithm_ex: isPalindrome, either, append;
@@ -1910,7 +1910,8 @@ class Net(bool useArray = true,
 
         learnChemicalElements();
 
-        foreach (lang; [Lang.en, Lang.sv, Lang.la, Lang.fr])
+        foreach (lang; enumMembers!Lang.filter!(lang =>
+                                                ("../knowledge/" ~ lang.to!string).exists))
         {
             const langString = lang.to!string;
             const dirPath = "../knowledge/" ~ langString;
