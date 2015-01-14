@@ -1391,8 +1391,6 @@ class Net(bool useArray = true,
             this.actors.reserve(this.actors.length + 2);
             this.actors ~= srcRef.backward;
             this.actors ~= dstRef.forward;
-            // this.actors.append(srcRef.backward,
-            //                    dstRef.backward);
             this.rel = rel;
             this.negation = negation;
             this.origin = origin;
@@ -2159,7 +2157,7 @@ class Net(bool useArray = true,
             catch (core.exception.UnicodeException e)
             {
                 expr = split.front.idup;
-                dln("Could not decode expression ", expr);
+                dln("Couldn't decode expression ", expr);
             }
             split.popFront;
             string ipas;
@@ -2177,7 +2175,7 @@ class Net(bool useArray = true,
             catch (std.utf.UTFException e)
             {
                 ipas = split.front.idup;
-                dln("Could not decode IPA code ", ipas);
+                dln("Couldn't decode IPA code ", ipas);
             }
             connect(store(expr, Lang.en, Sense.unknown, Origin.manual), Rel.hasPronouncation,
                     store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
@@ -5420,7 +5418,7 @@ class Net(bool useArray = true,
                     }
                     if (origin.of(Origin.any)) // if still nothing special
                     {
-                        dln("Could not decode origin ", part);
+                        dln("Couldn't decode origin ", part);
                     }
                     break;
                 default:
@@ -6294,16 +6292,19 @@ class Net(bool useArray = true,
                          Origin[] origins = [],
                          bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto srcs = nodeRefsOf(expr);
-        foreach (src; srcs)
+        auto srcRefs = nodeRefsOf(expr);
+        foreach (srcRef; srcRefs)
         {
-            auto dsts = nearsOf(src, Rel.hasPronouncation, origins);
-            foreach (dst; dsts)
+            const src = nodeAt(srcRef);
+            writeln("srcRef:", srcRef, ": ", src);
+            auto dstRefs = nearsOf(srcRef, Rel.hasPronouncation, origins);
+            foreach (dstRef; dstRefs)
             {
-                writeln(dst, ": ", nodeAt(dst));
+                const dst = nodeAt(dstRef);
+                writeln("dstRef:", dstRef, ": ", dst);
             }
         }
-        // auto dsts = nearsOf(srcs, Rel.hasPronouncation, origins);
+        // auto dstRefs = nearsOf(srcRefs, Rel.hasPronouncation, origins);
         // return nodeRefByLemma.values
         //                      .filter!(nodeRef => nodeAt(nodeRef).lemma
         //                                                         .expr
