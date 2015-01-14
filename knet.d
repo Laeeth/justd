@@ -104,7 +104,7 @@
 
     TODO Use lemma.sense = lemma.expr.until(':').to!Sense.specialize(lemma.sense) in Lemma()
 
-    TODO Make context a NodeRef such NodeRef("mammal") =>isA=> NodeRef("animal")
+    TODO Make context a Nd such Nd("mammal") =>isA=> Nd("animal")
 
     TODO Infer senses of consecutive word when reading sorted word
     list. Requires knowledge of Language specfic ending grammar for verbs,
@@ -165,7 +165,7 @@
     TODO For lemmas with Sense.unknown lookup its others lemmasOf. If only one
     other non-unknown Sense exists assume it to be its meaning.
 
-    TODO NodeRef getEmotion(nodeRef start, Rel[] overRels) { walkNodeRefs(); }
+    TODO Nd getEmotion(nodeRef start, Rel[] overRels) { walkNodeRefs(); }
 
     TODO Add randomness to traverser if normalized distance similarity between
     traversed nodes is smaller than a randomnessThreshold
@@ -1249,22 +1249,22 @@ class Net(bool useArray = true,
     }
 
     /// Reference to Node.
-    alias NodeRef = Ref!Node;
+    alias Nd = Ref!Node;
 
     /// Reference to Link.
-    alias LinkRef = Ref!Link;
+    alias Ln = Ref!Link;
 
     /** Expression (String). */
     static if (useRCString) { alias Expr = RCXString!(immutable char, 24-1); }
     else                    { alias Expr = immutable string; }
 
     /// References to Nodes.
-    static if (useArray) { alias NodeRefs = Array!NodeRef; }
-    else                 { alias NodeRefs = NodeRef[]; }
+    static if (useArray) { alias NodeRefs = Array!Nd; }
+    else                 { alias NodeRefs = Nd[]; }
 
     /// References to Links.
-    static if (useArray) { alias LinkRefs = Array!LinkRef; }
-    else                 { alias LinkRefs = LinkRef[]; }
+    static if (useArray) { alias LinkRefs = Array!Ln; }
+    else                 { alias LinkRefs = Ln[]; }
 
     /** Context or Ontology Category Index (currently from NELL). */
     struct ContextIx
@@ -1342,15 +1342,36 @@ class Net(bool useArray = true,
     {
         return node.links[]
                    .filter!(linkRef => (dir.of(RelDir.any, linkRef.dir) &&  // TODO functionize to match(RelDir, RelDir)
-                                        (linkAt(linkRef).rel == rel ||
-                                         linkAt(linkRef).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
-                                        linkAt(linkRef).negation == negation));
+                                        (at(linkRef).rel == rel ||
+                                         at(linkRef).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
+                                        at(linkRef).negation == negation));
     }
 
-    /** Network Traverser. */
+    auto linksOf(in Node node,
+                 RelDir dir = RelDir.any,
+                 Rel rel = Rel.any,
+                 bool negation = false)
+    {
+        return linkRefsOf(node, dir, rel, negation).map!(linkRef => at(linkRef));
+    }
+
+    auto linksOf(Nd nodeRef,
+                 RelDir dir = RelDir.any,
+                 Rel rel = Rel.any,
+                 bool negation = false)
+    {
+        return linksOf(at(nodeRef), dir, rel, negation);
+    }
+
+    alias Step = Tuple!(Ln, Nd); // steps from Node
+    alias Path = Step[]; // path of steps from Node
+
+    /** Network Traverser.
+        TODO: Returns Path
+     */
     class Traverser
     {
-        this(NodeRef first_)
+        this(Nd first_)
         {
             first = first_;
             current = first;
@@ -1358,12 +1379,12 @@ class Net(bool useArray = true,
 
         auto front()
         {
-            return linkRefsOf(nodeAt(current));
+            return linkRefsOf(at(current));
         }
 
-        NodeRef first;
-        NodeRef current;
-        NWeight[NodeRef] dists;
+        Nd first;
+        Nd current;
+        NWeight[Nd] dists;
     }
 
     Traverser traverse(in Node node)
@@ -1381,9 +1402,9 @@ class Net(bool useArray = true,
 
         /* @safe @nogc pure nothrow: */
 
-        this(NodeRef srcRef,
+        this(Nd srcRef,
              Rel rel,
-             NodeRef dstRef,
+             Nd dstRef,
              bool negation,
              Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
         body
@@ -1424,7 +1445,7 @@ class Net(bool useArray = true,
         }
 
         /** Get Normalized Link PWeight. */
-        @property NWeight normalizedWeight() const
+        @property NWeight nweight() const
         {
             return ((cast(typeof(return))packedWeight)/
                     (cast(typeof(return))PWeight.max));
@@ -1465,7 +1486,7 @@ class Net(bool useArray = true,
 
     private
     {
-        NodeRef[Lemma] nodeRefByLemma;
+        Nd[Lemma] nodeRefByLemma;
         Nodes allNodes;
         Links allLinks;
 
@@ -1508,13 +1529,13 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) linkAt(LinkRef linkRef) inout { return allLinks[linkRef.ix]; }
-        ref inout(Node) nodeAt(NodeRef cref) inout @nogc { return allNodes[cref.ix]; }
-        alias linkByRef = linkAt;
-        alias nodeByRef = nodeAt;
+        ref inout(Link) at(Ln linkRef) inout { return allLinks[linkRef.ix]; }
+        ref inout(Node) at(Nd cref) inout @nogc { return allNodes[cref.ix]; }
+        alias linkByRef = at;
+        alias nodeByRef = at;
     }
 
-    NodeRef nodeRefByLemmaMaybe(in Lemma lemma)
+    Nd nodeRefByLemmaMaybe(in Lemma lemma)
     {
         return (lemma in nodeRefByLemma ?
                          nodeRefByLemma[lemma] :
@@ -1580,7 +1601,7 @@ class Net(bool useArray = true,
         else
         {
             nodes = NodeRefs(nodeRefsOf(expr).filter!(a => (lang == Lang.unknown ||
-                                                            nodeAt(a).lemma.lang == lang))
+                                                            at(a).lemma.lang == lang))
                                              .array); // TODO avoid allocations
         }
 
@@ -1708,7 +1729,7 @@ class Net(bool useArray = true,
 
             auto node = store(lemma, Lang.en, sense, Origin.wordnet);
 
-            // dln(nodeAt(node).lemma.expr, " has pointers ", ptr_symbol);
+            // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);
             // auto meaning = Entry!Links(words[1].front.decodeWordSense,
             //                            words[2].to!ubyte, links, lang);
             // _words[lemma] ~= meaning;
@@ -2874,7 +2895,7 @@ class Net(bool useArray = true,
     }
 
     /// Learn Verb Reversion.
-    LinkRef[] learnVerbReversion(S)(S forward,
+    Ln[] learnVerbReversion(S)(S forward,
                                     S backward,
                                     Lang lang = Lang.unknown) if (isSomeString!S)
     {
@@ -2900,7 +2921,7 @@ class Net(bool useArray = true,
     /** Learn that $(D first) in language $(D firstLang) is etymologically
         derived from $(D second) in language $(D secondLang) both in sense $(D sense).
      */
-    LinkRef learnEtymologicallyDerivedFrom(S1, S2)(S1 first, Lang firstLang, Sense firstSense,
+    Ln learnEtymologicallyDerivedFrom(S1, S2)(S1 first, Lang firstLang, Sense firstSense,
                                                    S2 second, Lang secondLang, Sense secondSense)
     {
         return connect(store(first, firstLang, Sense.noun, Origin.manual),
@@ -2911,13 +2932,13 @@ class Net(bool useArray = true,
 
     /** Learn English Irregular Verb.
      */
-    LinkRef[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive,
+    Ln[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive,
                                                     S2 past,
                                                     S3 pastParticiple,
                                                     Origin origin = Origin.manual)
     {
         enum lang = Lang.en;
-        NodeRef[] all;
+        Nd[] all;
         all ~= store(infinitive, lang, Sense.verbIrregularInfinitive, origin);
         all ~= store(past, lang, Sense.verbIrregularPast, origin);
         all ~= store(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
@@ -2926,7 +2947,7 @@ class Net(bool useArray = true,
 
     /** Learn English Acronym.
      */
-    LinkRef learnEnglishAcronym(S)(S acronym,
+    Ln learnEnglishAcronym(S)(S acronym,
                                    S expr,
                                    NWeight weight = 1.0,
                                    Sense sense = Sense.unknown,
@@ -2941,7 +2962,7 @@ class Net(bool useArray = true,
 
     /** Learn English $(D words) related to attribute.
      */
-    LinkRef[] learnMto1(R, S)(Lang lang,
+    Ln[] learnMto1(R, S)(Lang lang,
                               R words,
                               Rel rel, bool reversion,
                               S attribute,
@@ -2958,7 +2979,7 @@ class Net(bool useArray = true,
                            origin, weight);
     }
 
-    LinkRef[] learnMto1Maybe(S)(Lang lang,
+    Ln[] learnMto1Maybe(S)(Lang lang,
                                 string wordsPath,
                                 Rel rel, bool reversion,
                                 S attribute,
@@ -2986,7 +3007,7 @@ class Net(bool useArray = true,
 
     /** Learn English Emoticon.
      */
-    LinkRef[] learnEnglishEmoticon(S)(S[] emoticons,
+    Ln[] learnEnglishEmoticon(S)(S[] emoticons,
                                       S[] exprs,
                                       NWeight weight = 1.0,
                                       Sense sense = Sense.unknown,
@@ -3371,8 +3392,8 @@ class Net(bool useArray = true,
         learnEnglishAcronym(`NIHS`,`National Institute of Health Sciences (Japan)`);
         learnEnglishAcronym(`NIOSH`,`National Institute for Occupational Safety and Health (US CDC)`);
         learnEnglishAcronym(`NITR`,`National Institute of Toxicological Research (Korea)`);
-        learnEnglishAcronym(`NOAEL`,`No-Observed Adverse Effect Level`);
-        learnEnglishAcronym(`NOEL`,`No-Observed Effect Level`);
+        learnEnglishAcronym(`NOAEL`,`Nd-Observed Adverse Effect Level`);
+        learnEnglishAcronym(`NOEL`,`Nd-Observed Effect Level`);
         learnEnglishAcronym(`NPPTAC`,`National Pollution Prevention and Toxics Advisory Committee (US EPA)`);
         learnEnglishAcronym(`NRC`,`National Research Council`);
         learnEnglishAcronym(`NTP`,`National Toxicology Program (US)`);
@@ -4764,7 +4785,7 @@ class Net(bool useArray = true,
 
     /** Lookup-or-Store $(D Node) at $(D lemma) index.
      */
-    NodeRef store(Lemma lemma,
+    Nd store(Lemma lemma,
                   Node node) in { assert(!lemma.expr.empty); }
     body
     {
@@ -4790,7 +4811,7 @@ class Net(bool useArray = true,
 
             // store
             assert(allNodes.length <= nullIx);
-            const cix = NodeRef(cast(Ix)allNodes.length);
+            const cix = Nd(cast(Ix)allNodes.length);
             allNodes ~= node; // .. new node that is stored
 
             nodeRefByLemma[lemma] = cix; // store index to ..
@@ -4804,7 +4825,7 @@ class Net(bool useArray = true,
     }
 
     /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
-    NodeRef store(Expr expr,
+    Nd store(Expr expr,
                   Lang lang,
                   Sense sense,
                   Origin origin,
@@ -4817,18 +4838,18 @@ class Net(bool useArray = true,
 
     /** Try to Lookup-or-Store $(D Node) named $(D expr) in language $(D lang).
      */
-    NodeRef tryStore(Expr expr,
+    Nd tryStore(Expr expr,
                      Lang lang,
                      Sense sense,
                      Origin origin,
                      ContextIx context = ContextIx.asUndefined)
     {
         if (expr.empty)
-            return NodeRef.asUndefined;
+            return Nd.asUndefined;
         return store(expr, lang, sense, origin, context);
     }
 
-    NodeRef[] store(Exprs)(Exprs exprs,
+    Nd[] store(Exprs)(Exprs exprs,
                            Lang lang,
                            Sense sense,
                            Origin origin,
@@ -4844,15 +4865,15 @@ class Net(bool useArray = true,
 
     /** Directed Connect Many Sources $(D srcs) to Many Destinations $(D dsts).
      */
-    LinkRef[] connectMtoN(S, D)(S srcs,
+    Ln[] connectMtoN(S, D)(S srcs,
                                 Rel rel,
                                 D dsts,
                                 Origin origin,
                                 NWeight weight = 1.0,
                                 bool negation = false,
                                 bool reversion = false,
-                                bool checkExisting = false) if (isIterableOf!(S, NodeRef) &&
-                                                                isIterableOf!(D, NodeRef))
+                                bool checkExisting = false) if (isIterableOf!(S, Nd) &&
+                                                                isIterableOf!(D, Nd))
     {
         typeof(return) linkIxes;
         foreach (src; srcs)
@@ -4870,11 +4891,11 @@ class Net(bool useArray = true,
         See also: http://forum.dlang.org/thread/iqkybajwdzcvdytakgvw@forum.dlang.org#post-iqkybajwdzcvdytakgvw:40forum.dlang.org
         See also: https://issues.dlang.org/show_bug.cgi?id=6788
     */
-    LinkRef[] connectAll(R)(Rel rel,
+    Ln[] connectAll(R)(Rel rel,
                             R all,
                             Lang lang,
                             Origin origin,
-                            NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
+                            NWeight weight = 1.0) if (isIterableOf!(R, Nd))
         in { assert(rel.isSymmetric); }
     body
     {
@@ -4901,10 +4922,10 @@ class Net(bool useArray = true,
     alias connectStar = connectAll;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
-    LinkRef[] connect1toM(R)(NodeRef first,
+    Ln[] connect1toM(R)(Nd first,
                              Rel rel, bool reversion,
                              R rest,
-                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
+                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -4919,10 +4940,10 @@ class Net(bool useArray = true,
     alias connectFanOut = connect1toM;
 
     /** Fan-In Connect $(D first) to Every in $(D rest). */
-    LinkRef[] connectMto1(R)(R rest,
+    Ln[] connectMto1(R)(R rest,
                              Rel rel, bool reversion,
-                             NodeRef first,
-                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, NodeRef))
+                             Nd first,
+                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
@@ -4937,7 +4958,7 @@ class Net(bool useArray = true,
     alias connectFanIn = connectMto1;
 
     /** Cyclic Connect Every in $(D all). */
-    void connectCycle(R)(Rel rel, R all) if (isIterableOf!(R, NodeRef))
+    void connectCycle(R)(Rel rel, R all) if (isIterableOf!(R, Nd))
     {
     }
     alias connectCircle = connectCycle;
@@ -4946,22 +4967,22 @@ class Net(bool useArray = true,
         TODO checkExisting is currently set to false because searching
         existing links is currently too slow
      */
-    LinkRef connect(NodeRef src,
+    Ln connect(Nd src,
                     Rel rel,
-                    NodeRef dst,
+                    Nd dst,
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
                     bool negation = false,
                     bool reversion = false,
                     bool checkExisting = false) in {
         assert(src != dst,
-               nodeAt(src).lemma.expr ~
+               at(src).lemma.expr ~
                " must not be equal to " ~
-               nodeAt(dst).lemma.expr);
+               at(dst).lemma.expr);
     }
     body
     {
-        if (src == dst) { return LinkRef.asUndefined; } // Don't allow self-reference for now
+        if (src == dst) { return Ln.asUndefined; } // Don't allow self-reference for now
 
         if (checkExisting)
         {
@@ -4973,8 +4994,8 @@ class Net(bool useArray = true,
                 if (false)
                 {
                     dln("warning: Nodes ",
-                        nodeAt(src).lemma.expr, " and ",
-                        nodeAt(dst).lemma.expr, " already related as ",
+                        at(src).lemma.expr, " and ",
+                        at(dst).lemma.expr, " already related as ",
                         rel);
                 }
                 return existingIx;
@@ -4983,7 +5004,7 @@ class Net(bool useArray = true,
 
         // TODO group these
         assert(allLinks.length <= nullIx);
-        auto linkRef = LinkRef(cast(Ix)allLinks.length);
+        auto linkRef = Ln(cast(Ix)allLinks.length);
 
         auto link = Link(reversion ? dst : src,
                          rel,
@@ -4991,8 +5012,8 @@ class Net(bool useArray = true,
                          negation,
                          origin);
 
-        nodeAt(src).links ~= linkRef.forward;
-        nodeAt(dst).links ~= linkRef.backward;
+        at(src).links ~= linkRef.forward;
+        at(dst).links ~= linkRef.backward;
         connectednessSum += 2;
 
         symmetricRelCount += rel.isSymmetric;
@@ -5025,8 +5046,8 @@ class Net(bool useArray = true,
 
         if (false)
         {
-            dln(" src:", nodeAt(src).lemma.expr,
-                " dst:", nodeAt(dst).lemma.expr,
+            dln(" src:", at(src).lemma.expr,
+                " dst:", at(dst).lemma.expr,
                 " rel:", rel,
                 " origin:", origin,
                 " negation:", negation,
@@ -5042,7 +5063,7 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 URI.
         See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
     */
-    NodeRef readCN5ConceptURI(T)(const T part)
+    Nd readCN5ConceptURI(T)(const T part)
     {
         auto items = part.splitter('/');
 
@@ -5087,7 +5108,7 @@ class Net(bool useArray = true,
     }
 
     /** Read NELL Entity from $(D part). */
-    Tuple!(NodeRef, string, LinkRef) readNELLEntity(S)(const S part)
+    Tuple!(Nd, string, Ln) readNELLEntity(S)(const S part)
     {
         const show = false;
 
@@ -5149,8 +5170,8 @@ class Net(bool useArray = true,
         auto reversion = false;
         auto tense = Tense.unknown;
 
-        NodeRef entityIx;
-        NodeRef valueIx;
+        Nd entityIx;
+        Nd valueIx;
 
         string entityContextName;
         char[] relationName;
@@ -5250,10 +5271,10 @@ class Net(bool useArray = true,
     }
 
     /** Node Locations. */
-    Location[NodeRef] locations;
+    Location[Nd] locations;
 
     /** Set Location of Node $(D cix) to $(D location) */
-    void setLocation(NodeRef cix, in Location location)
+    void setLocation(Nd cix, in Location location)
     {
         assert (cix !in locations);
         locations[cix] = location;
@@ -5262,17 +5283,17 @@ class Net(bool useArray = true,
     /** If $(D link) node origins unknown propagate them from $(D link)
         itself. */
     bool propagateLinkNodes(ref Link link,
-                               NodeRef srcRef,
-                               NodeRef dstRef)
+                               Nd srcRef,
+                               Nd dstRef)
     {
         bool done = false;
         if (!link.origin.defined)
         {
-            // TODO prevent duplicate lookups to nodeAt
-            if (!nodeAt(srcRef).origin.defined)
-                nodeAt(srcRef).origin = link.origin;
-            if (!nodeAt(dstRef).origin.defined)
-                nodeAt(dstRef).origin = link.origin;
+            // TODO prevent duplicate lookups to at
+            if (!at(srcRef).origin.defined)
+                at(srcRef).origin = link.origin;
+            if (!at(dstRef).origin.defined)
+                at(dstRef).origin = link.origin;
             done = true;
         }
         return done;
@@ -5362,14 +5383,14 @@ class Net(bool useArray = true,
     }
 
     /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
-    LinkRef readCN5Line(R, N)(R line, N lnr)
+    Ln readCN5Line(R, N)(R line, N lnr)
     {
         auto rel = Rel.any;
         auto negation = false;
         auto reversion = false;
         auto tense = Tense.unknown;
 
-        NodeRef src, dst;
+        Nd src, dst;
         NWeight weight;
         auto lang = Lang.unknown;
         auto origin = Origin.unknown;
@@ -5442,7 +5463,7 @@ class Net(bool useArray = true,
         }
         else
         {
-            return LinkRef.asUndefined;
+            return Ln.asUndefined;
         }
     }
 
@@ -5715,26 +5736,26 @@ class Net(bool useArray = true,
         writeln(indent, `Node Connectedness Average: `, cast(NWeight)connectednessSum/2/allNodes.length);
     }
 
-    /** Return Index to Link from $(D a) to $(D b) if present, otherwise LinkRef.max.
+    /** Return Index to Link from $(D a) to $(D b) if present, otherwise Ln.max.
      */
-    LinkRef areConnectedInOrder(NodeRef a,
-                                Rel rel, bool negation, bool reversion,
-                                NodeRef b,
-                                Origin origin = Origin.unknown,
-                                NWeight weight = 1.0)
+    Ln areConnectedInOrder(Nd a,
+                            Rel rel, bool negation, bool reversion,
+                            Nd b,
+                            Origin origin = Origin.unknown,
+                            NWeight nweight = 1.0)
     {
         const bDir = (rel.isSymmetric ?
                       RelDir.any :
                       RelDir.forward);
-        foreach (aLinkRef; nodeAt(a).links)
+        foreach (aLinkRef; at(a).links)
         {
-            const aLink = linkAt(aLinkRef);
+            const aLink = at(aLinkRef);
             if (aLink.rel == rel &&
                 aLink.negation == negation && // no need to check reversion (all links are bidirectional)
                 aLink.origin == origin &&
                 (aLink.actors[]
-                      .canFind(NodeRef(b, bDir))) &&
-                abs(aLink.normalizedWeight - weight) < 1.0e-2) // TODO adjust
+                      .canFind(Nd(b, bDir))) &&
+                abs(aLink.nweight - nweight) < 1.0e-2) // TODO adjust
             {
                 return aLinkRef;
             }
@@ -5743,12 +5764,12 @@ class Net(bool useArray = true,
         return typeof(return).asUndefined;
     }
 
-    /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise LinkRef.max.
+    /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise Ln.max.
         TODO warn about negation and reversion on existing rels
      */
-    LinkRef areConnected(NodeRef a,
+    Ln areConnected(Nd a,
                          Rel rel, bool negation, bool reversion,
-                         NodeRef b,
+                         Nd b,
                          Origin origin = Origin.unknown,
                          NWeight weight = 1.0)
     {
@@ -5763,7 +5784,7 @@ class Net(bool useArray = true,
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
-    LinkRef areConnected(in Lemma a,
+    Ln areConnected(in Lemma a,
                          Rel rel, bool negation, bool reversion,
                          in Lemma b,
                          Origin origin = Origin.unknown,
@@ -5789,9 +5810,9 @@ class Net(bool useArray = true,
         write(indent, rel.toHuman(dir, negation, lang), `: `);
     }
 
-    void showLinkRef(LinkRef linkRef)
+    void showLinkRef(Ln linkRef)
     {
-        auto link = linkAt(linkRef);
+        auto link = at(linkRef);
         showLink(link.rel, linkRef.dir, link.negation);
     }
 
@@ -5835,7 +5856,7 @@ class Net(bool useArray = true,
     {
         foreach (nodeRef; nodeRefs)
         {
-            const lineNode = nodeAt(nodeRef);
+            const lineNode = at(nodeRef);
 
             write(`  -`);
             if (lineNode.lemma.lang != Lang.unknown)
@@ -5851,22 +5872,22 @@ class Net(bool useArray = true,
             // TODO Why is cast needed here?
             auto linkRefs = cast(LinkRefs)linkRefsOf(lineNode, RelDir.any, rel, negation);
 
-            linkRefs[].multiSort!((a, b) => (linkAt(a).normalizedWeight >
-                                             linkAt(b).normalizedWeight),
-                                  (a, b) => (linkAt(a).rel.rank <
-                                             linkAt(b).rel.rank),
-                                  (a, b) => (linkAt(a).rel <
-                                             linkAt(b).rel));
+            linkRefs[].multiSort!((a, b) => (at(a).nweight >
+                                             at(b).nweight),
+                                  (a, b) => (at(a).rel.rank <
+                                             at(b).rel.rank),
+                                  (a, b) => (at(a).rel <
+                                             at(b).rel));
             foreach (linkRef; linkRefs)
             {
-                auto link = linkAt(linkRef);
+                auto link = at(linkRef);
                 showLinkRef(linkRef);
                 foreach (linkedNode; link.actors[]
                                          .filter!(actorNodeRef => (actorNodeRef.ix !=
                                                                    nodeRef.ix)) // don't self reference
-                                         .map!(nodeRef => nodeAt(nodeRef)))
+                                         .map!(nodeRef => at(nodeRef)))
                 {
-                    showNode(linkedNode, link.normalizedWeight);
+                    showNode(linkedNode, link.nweight);
                 }
                 writeln;
             }
@@ -5940,7 +5961,7 @@ class Net(bool useArray = true,
             {
                 foreach (synonymNode; synonymsOf(arg))
                 {
-                    showLinkNode(nodeAt(synonymNode),
+                    showLinkNode(at(synonymNode),
                                  Rel.instanceOf,
                                  NWeight.infinity,
                                  RelDir.backward);
@@ -5954,9 +5975,9 @@ class Net(bool useArray = true,
             const arg = split[0];
             if (!arg.empty)
             {
-                foreach (rhymeNode; rhymesOf(arg))
+                foreach (rhymingNode; rhymesOf(arg))
                 {
-                    showLinkNode(nodeAt(rhymeNode),
+                    showLinkNode(at(rhymingNode),
                                  Rel.instanceOf,
                                  NWeight.infinity,
                                  RelDir.backward);
@@ -5973,7 +5994,7 @@ class Net(bool useArray = true,
             {
                 foreach (translationNode; translationsOf(arg))
                 {
-                    showLinkNode(nodeAt(translationNode),
+                    showLinkNode(at(translationNode),
                                  Rel.instanceOf,
                                  NWeight.infinity,
                                  RelDir.backward);
@@ -6019,7 +6040,7 @@ class Net(bool useArray = true,
             if (!arg.empty)
             {
                 auto hits = startsWith(arg);
-                foreach (node; hits.map!(a => nodeAt(a)))
+                foreach (node; hits.map!(a => at(a)))
                 {
                     showNode(node, 1.0);
                     writeln;
@@ -6039,7 +6060,7 @@ class Net(bool useArray = true,
             if (!arg.empty)
             {
                 auto hits = endsWith(arg);
-                foreach (node; hits.map!(a => nodeAt(a)))
+                foreach (node; hits.map!(a => at(a)))
                 {
                     showNode(node, 1.0);
                     writeln;
@@ -6057,7 +6078,7 @@ class Net(bool useArray = true,
             if (!arg.empty)
             {
                 auto hits = canFind(arg);
-                foreach (node; hits.map!(a => nodeAt(a)))
+                foreach (node; hits.map!(a => at(a)))
                 {
                     showNode(node, 1.0);
                     writeln;
@@ -6251,25 +6272,25 @@ class Net(bool useArray = true,
 
     /** Get Links of $(D currents) type $(D rel) learned from $(D origins).
     */
-    auto linkRefsOf(NodeRef nodeRef,
+    auto linkRefsOf(Nd nodeRef,
                     Rel rel,
                     Origin[] origins = [])
     {
-        return nodeAt(nodeRef).links[]
-                              .filter!(linkRef => (linkAt(linkRef).rel == rel &&
+        return at(nodeRef).links[]
+                              .filter!(linkRef => (at(linkRef).rel == rel &&
                                                    (origins.empty ||
-                                                    origins.canFind(linkAt(linkRef).origin))));
+                                                    origins.canFind(at(linkRef).origin))));
     }
 
     /** Get Nearest Neighbours of $(D currents) over links of type $(D rel)
         learned from $(D origins).
     */
-    auto nearsOf(NodeRef nodeRef,
+    auto nearsOf(Nd nodeRef,
                  Rel rel,
                  Origin[] origins = [])
     {
         return linkRefsOf(nodeRef, rel, origins).map!(linkRef =>
-                                                      linkAt(linkRef).actors[]
+                                                      at(linkRef).actors[]
                                                                      .filter!(actor => actor != nodeRef))
                                                 .joiner(); // no self
     }
@@ -6279,7 +6300,7 @@ class Net(bool useArray = true,
     */
     // auto nearsOf(R)(R nodeRefs,
     //                 Rel rel,
-    //                 Origin[] origins = []) if (isSourceOf!(R, NodeRef))
+    //                 Origin[] origins = []) if (isSourceOf!(R, Nd))
     // {
     //     return nodeRefs[].map!(nodeRef => nearsOf(nodeRef, rel, origins));
     // }
@@ -6295,16 +6316,23 @@ class Net(bool useArray = true,
     {
         foreach (srcRef; nodeRefsOf(expr))
         {
-            const src = nodeAt(srcRef);
+            const src = at(srcRef);
+            foreach (link; linksOf(srcRef).filter!(link => link.rel == Rel.hasPronouncation))
+            {
+                writeln("srcRef: ", at(srcRef));
+                writeln("link.rel: ", link.rel);
+                writeln("link.actors: ", link.actors);
+            }
+
             foreach (dstRef; nearsOf(srcRef, Rel.hasPronouncation, origins))
             {
-                const dst = nodeAt(dstRef);
+                const dst = at(dstRef);
                 writeln("srcRef:", srcRef, " src:", src, " dstRef:", dstRef, " dst:", dst);
             }
         }
         // auto dstRefs = nearsOf(srcRefs, Rel.hasPronouncation, origins);
         // return nodeRefByLemma.values
-        //                      .filter!(nodeRef => nodeAt(nodeRef).lemma
+        //                      .filter!(nodeRef => at(nodeRef).lemma
         //                                                         .expr
         //                                                         .startsWith(prefix));
         return typeof(return).init;
@@ -6364,7 +6392,7 @@ class Net(bool useArray = true,
                     Lang lang = Lang.unknown,
                     Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.canFind(part));
+        return nodeRefByLemma.values.filter!(nodeRef => at(nodeRef).lemma.expr.canFind(part));
     }
 
     /** Get NodeRefs whose Lemma Expr starts with $(D prefix). */
@@ -6372,7 +6400,7 @@ class Net(bool useArray = true,
                        Lang lang = Lang.unknown,
                        Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.startsWith(prefix));
+        return nodeRefByLemma.values.filter!(nodeRef => at(nodeRef).lemma.expr.startsWith(prefix));
     }
 
     /** Get NodeRefs whose Lemma Expr starts with $(D suffix). */
@@ -6380,15 +6408,15 @@ class Net(bool useArray = true,
                      Lang lang = Lang.unknown,
                      Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nodeRef => nodeAt(nodeRef).lemma.expr.endsWith(suffix));
+        return nodeRefByLemma.values.filter!(nodeRef => at(nodeRef).lemma.expr.endsWith(suffix));
     }
 
     /** Relatedness.
         Sum of all paths relating a to b where each path is the path weight
         product.
     */
-    real relatedness(NodeRef a,
-                     NodeRef b) const @safe @nogc pure nothrow
+    real relatedness(Nd a,
+                     Nd b) const @safe @nogc pure nothrow
     {
         typeof(return) value;
         return value;
