@@ -6292,16 +6292,13 @@ class Net(bool useArray = true,
                          Origin[] origins = [],
                          bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto srcRefs = nodeRefsOf(expr);
-        foreach (srcRef; srcRefs)
+        foreach (srcRef; nodeRefsOf(expr))
         {
             const src = nodeAt(srcRef);
-            writeln("srcRef:", srcRef, ": ", src);
-            auto dstRefs = nearsOf(srcRef, Rel.hasPronouncation, origins);
-            foreach (dstRef; dstRefs)
+            foreach (dstRef; nearsOf(srcRef, Rel.hasPronouncation, origins))
             {
                 const dst = nodeAt(dstRef);
-                writeln("dstRef:", dstRef, ": ", dst);
+                writeln("srcRef:", srcRef, " src:", src, " dstRef:", dstRef, " dst:", dst);
             }
         }
         // auto dstRefs = nearsOf(srcRefs, Rel.hasPronouncation, origins);

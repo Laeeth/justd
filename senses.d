@@ -25,8 +25,10 @@ enum Sense:ubyte
     punctuation,
 
     noun,
+
     nounAbstract,
     nounConcrete,
+
     nounCollective,
     nounRegular,
     nounIrregular,
@@ -580,6 +582,12 @@ import predicates: of;
         with (Sense) return (sense.of(food,
                                       spice));
     }
+    bool isAbstract(Sense sense)
+    {
+        with (Sense) return (sense.isNumeric ||
+                             sense.isLanguage ||
+                             sense.isTimePeriod);
+    }
     bool isLanguage(Sense sense)
     {
         with (Sense) return (sense.of(language,
@@ -817,9 +825,14 @@ import predicates: of;
     }
     bool isConjunction(Sense sense)
     {
-        with (Sense) return sense.of(conjunction,
-                                     conjunctionCoordinating,
-                                     conjunctionSubordinating,
+        with (Sense) return (sense.of(conjunction,
+                                      conjunctionCoordinating,
+                                      conjunctionCorrelative) ||
+                             sense.isConjunctionSubordinating);
+    }
+    bool isConjunctionSubordinating(Sense sense)
+    {
+        with (Sense) return sense.of(conjunctionSubordinating,
                                      conjunctionSubordinatingConcession,
                                      conjunctionSubordinatingCondition,
                                      conjunctionSubordinatingComparison,
@@ -828,8 +841,7 @@ import predicates: of;
                                      conjunctionSubordinatingAdjective,
                                      conjunctionSubordinatingPronoun,
                                      conjunctionSubordinatingManner,
-                                     conjunctionSubordinatingPlace,
-                                     conjunctionCorrelative);
+                                     conjunctionSubordinatingPlace);
     }
     bool isAbbrevation(Sense sense)
     {
@@ -866,17 +878,37 @@ bool specializes(Sense special,
         case numeral: return special.isNumeral;
         case integer: return special.isInteger;
         case numeric: return special.isNumeric;
+
         case name: return special.isName;
         case abbrevation: return special.isAbbrevation;
+
         case verb: return special.isVerb;
+        case verbRegular: return special.isVerbRegular;
+        case verbIrregular: return special.isVerbIrregular;
+
         case adverb: return special.isAdverb;
         case adjective: return special.isAdjective;
+
         case pronoun: return special.isPronoun;
+        case pronounDemonstrative: return special.isPronounDemonstrative;
+        case pronounDeterminative: return special.isPronounDeterminative;
+        case pronounReflexive: return special.isPronounReflexive;
+        case pronounIndefinite: return special.isPronounIndefinite;
+
         case pronounPersonal: return special.isPronounPersonal;
+        case pronounPersonalSingular: return special.isPronounPersonalSingular;
+        case pronounPersonalPlural: return special.isPronounPersonalPlural;
+
         case pronounPossessive: return special.isPronounPossessive;
+        case pronounPossessiveSingular: return special.isPronounPossessiveSingular;
+        case pronounPossessivePlural: return special.isPronounPossessivePlural;
+
         case preposition: return special.isPreposition;
         case article: return special.isArticle;
+
         case conjunction: return special.isConjunction;
+        case conjunctionSubordinating: return special.isConjunctionSubordinating;
+
         default: return special == general;
     }
 }
