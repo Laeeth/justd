@@ -5854,6 +5854,8 @@ class Net(bool useArray = true,
 
             linkRefs[].multiSort!((a, b) => (linkAt(a).normalizedWeight >
                                              linkAt(b).normalizedWeight),
+                                  (a, b) => (linkAt(a).rel.rank <
+                                             linkAt(b).rel.rank),
                                   (a, b) => (linkAt(a).rel <
                                              linkAt(b).rel));
             foreach (linkRef; linkRefs)
@@ -6248,14 +6250,60 @@ class Net(bool useArray = true,
         return nodes;
     }
 
+    /** Get Links of $(D currents) type $(D rel) learned from $(D origins).
+    */
+    auto linkRefsOf(NodeRef nodeRef,
+                    Rel rel,
+                    Origin[] origins = [])
+    {
+        return nodeAt(nodeRef).links[]
+                              .filter!(linkRef => (linkAt(linkRef).rel == rel &&
+                                                   (origins.empty ||
+                                                    origins.canFind(linkAt(linkRef).origin))));
+    }
+
+    /** Get Nearest Neighbours of $(D currents) over links of type $(D rel)
+        learned from $(D origins).
+    */
+    auto nearsOf(NodeRef nodeRef,
+                 Rel rel,
+                 Origin[] origins = [])
+    {
+        return linkRefsOf(nodeRef, rel, origins).map!(linkRef =>
+                                                      linkAt(linkRef).actors[]
+                                                                     .filter!(actor => actor != nodeRef))
+                                                .joiner(); // no self
+    }
+
+    /** Get Nearest Neighbours of $(D srcs) over links of type $(D rel) learned
+        from $(D origins).
+    */
+    // auto nearsOf(R)(R nodeRefs,
+    //                 Rel rel,
+    //                 Origin[] origins = []) if (isSourceOf!(R, NodeRef))
+    // {
+    //     return nodeRefs[].map!(nodeRef => nearsOf(nodeRef, rel, origins));
+    // }
+
     /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
+        Set withSameSyllableCount to true to get synonyms which can be used to
+        help in translating songs with same rhythm.
      */
     NodeRefs rhymesOf(S)(S expr,
-                     Lang lang = Lang.unknown,
-                     Sense sense = Sense.unknown,
-                     bool withSameSyllableCount = false) if (isSomeString!S)
+                         Lang[] langs = [],
+                         Origin[] origins = [],
+                         bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        const lemma = lemmasOf(expr);
+        auto srcs = nodeRefsOf(expr);
+        foreach (src; srcs)
+        {
+            auto dsts = nearsOf(src, Rel.hasPronouncation, origins);
+            foreach (dst; dsts)
+            {
+                writeln(dst, ": ", nodeAt(dst));
+            }
+        }
+        // auto dsts = nearsOf(srcs, Rel.hasPronouncation, origins);
         // return nodeRefByLemma.values
         //                      .filter!(nodeRef => nodeAt(nodeRef).lemma
         //                                                         .expr

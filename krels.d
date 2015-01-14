@@ -14,6 +14,119 @@ enum RelDir
     forward                     /// Backward.
 }
 
+alias Rank = uint;
+
+@safe @nogc pure nothrow
+{
+    Rank rank(const Rel rel)
+    {
+        with (Rel)
+            switch (rel)
+            {
+                case synonymFor: return 0;
+                case isA: return 1;
+                case hypernymOf: return 2;
+                case meronym: return 3;
+                default: return Rank.max;
+            }
+    }
+    /* TODO Used to infer that
+       - X and Y are sisters => (hasSister(X,Y) && hasSister(Y,X))
+    */
+    bool isSymmetric(const Rel rel)
+    {
+        with (Rel) return rel.of(relatedTo,
+                                 translationOf,
+                                 synonymFor,
+                                 antonymFor,
+                                 reversionOf,
+                                 similarSizeTo,
+                                 similarTo,
+                                 similarAppearanceTo,
+
+                                 hasFriend,
+                                 hasTeamMate,
+                                 hasEnemy,
+
+                                 hasRelative,
+                                 hasFamilyMember,
+                                 hasSpouse,
+                                 hasSibling,
+
+                                 competesWith,
+                                 collaboratesWith,
+                                 cookedWith,
+                                 servedWith,
+                                 physicallyConnectedWith,
+
+                                 mutualProxyFor,
+
+                                 formOfWord,
+                                 formOfVerb,
+                                 formOfNoun,
+                                 formOfAdjective);
+    }
+
+    /** Return true if $(D relation) is a transitive relation that can used to
+        inference new relations (knowledge).
+
+        A relation R from A to B is transitive if A >=R=> B and B >=R=> C
+        infers A >=R=> C.
+    */
+    bool isTransitive(const Rel rel)
+    {
+        with (Rel) return (rel.isSymmetric ||
+                           rel.of(generalizes,
+                                  specializes,
+                                  abbreviationFor,
+                                  shorthandFor,
+                                  partOf,
+                                  isA,
+                                  memberOf,
+                                  hasA,
+                                  atLocation,
+                                  hasContext,
+                                  locatedNear,
+                                  borderedBy,
+                                  causes,
+                                  hasSubevent,
+                                  hasPrerequisite,
+                                  hasShape,
+                                  hasEmotion));
+    }
+
+    bool oppositeOf(const Rel a,
+                    const Rel b)
+    {
+        with (Rel) return (a == hasEnemy  && b == hasFriend ||
+                           a == hasFriend && b == hasEnemy ||
+                           a == specializes && b == generalizes);
+    }
+    alias areOpposites = oppositeOf;
+
+    /** Return true if $(D rel) is a strong.
+        TODO Where is strength decided and what purpose does it have?
+    */
+    bool isStrong(Rel rel)
+    {
+        with (Rel) return rel.of(hasProperty,
+                                 hasShape,
+                                 hasColor,
+                                 hasAge,
+                                 motivatedByGoal);
+    }
+
+    /** Return true if $(D rel) is a weak.
+        TODO Where is strongness decided and what purpose does it have?
+    */
+    bool isWeak(Rel rel)
+    {
+        with (Rel) return rel.of(isA,
+                                 locatedNear);
+    }
+
+}
+
 /** Convert $(D rel) to Human Language Representation. */
 auto toHuman(const Rel rel,
              const RelDir dir,
@@ -1491,103 +1604,4 @@ bool generalizes(T)(T general,
                     T special)
 {
     return specializes(special, general);
-}
-
-@safe @nogc pure nothrow
-{
-    /* TODO Used to infer that
-       - X and Y are sisters => (hasSister(X,Y) && hasSister(Y,X))
-    */
-    bool isSymmetric(const Rel rel)
-    {
-        with (Rel) return rel.of(relatedTo,
-                                 translationOf,
-                                 synonymFor,
-                                 antonymFor,
-                                 reversionOf,
-                                 similarSizeTo,
-                                 similarTo,
-                                 similarAppearanceTo,
-
-                                 hasFriend,
-                                 hasTeamMate,
-                                 hasEnemy,
-
-                                 hasRelative,
-                                 hasFamilyMember,
-                                 hasSpouse,
-                                 hasSibling,
-
-                                 competesWith,
-                                 collaboratesWith,
-                                 cookedWith,
-                                 servedWith,
-                                 physicallyConnectedWith,
-
-                                 mutualProxyFor,
-
-                                 formOfWord,
-                                 formOfVerb,
-                                 formOfNoun,
-                                 formOfAdjective);
-    }
-
-    /** Return true if $(D relation) is a transitive relation that can used to
-        inference new relations (knowledge).
-
-        A relation R from A to B is transitive if A >=R=> B and B >=R=> C
-        infers A >=R=> C.
-    */
-    bool isTransitive(const Rel rel)
-    {
-        with (Rel) return (rel.isSymmetric ||
-                           rel.of(generalizes,
-                                  specializes,
-                                  abbreviationFor,
-                                  shorthandFor,
-                                  partOf,
-                                  isA,
-                                  memberOf,
-                                  hasA,
-                                  atLocation,
-                                  hasContext,
-                                  locatedNear,
-                                  borderedBy,
-                                  causes,
-                                  hasSubevent,
-                                  hasPrerequisite,
-                                  hasShape,
-                                  hasEmotion));
-    }
-
-    bool oppositeOf(const Rel a,
-                    const Rel b)
-    {
-        with (Rel) return (a == hasEnemy  && b == hasFriend ||
-                           a == hasFriend && b == hasEnemy ||
-                           a == specializes && b == generalizes);
-    }
-    alias areOpposites = oppositeOf;
-
-    /** Return true if $(D rel) is a strong.
-        TODO Where is strength decided and what purpose does it have?
-    */
-    bool isStrong(Rel rel)
-    {
-        with (Rel) return rel.of(hasProperty,
-                                 hasShape,
-                                 hasColor,
-                                 hasAge,
-                                 motivatedByGoal);
-    }
-
-    /** Return true if $(D rel) is a weak.
-        TODO Where is strongness decided and what purpose does it have?
-    */
-    bool isWeak(Rel rel)
-    {
-        with (Rel) return rel.of(isA,
-                                 locatedNear);
-    }
-
 }
