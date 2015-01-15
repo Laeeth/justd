@@ -14,6 +14,7 @@
       histogram for specific ages.
     - Emotion Detection
 
+    See also: http://stevehanov.ca/blog/index.php?id=8
     See also: http://www.mindmachineproject.org/proj/omcs/
     See also: https://github.com/commonsense/conceptnet5/wiki
     See also: https://en.wikipedia.org/wiki/Hypergraph
@@ -6322,6 +6323,7 @@ class Net(bool useArray = true,
     /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
         Set withSameSyllableCount to true to get synonyms which can be used to
         help in translating songs with same rhythm.
+        See also: http://stevehanov.ca/blog/index.php?id=8
      */
     Nds rhymesOf(S)(S expr,
                     Lang[] langs = [],
