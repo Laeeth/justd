@@ -1604,8 +1604,8 @@ alias smul = mulu;
     See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
  */
 ref R append(R, Args...)(ref R data,
-                         auto ref Args args) if (args.length >= 1//  &&
-                                                 // isRandomAccessRange!R
+                         auto ref Args args) if (args.length >= 1
+                                                 //  && isRandomAccessRange!R
                              )
 {
     alias T = ElementType!R;
