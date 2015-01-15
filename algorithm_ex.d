@@ -1603,9 +1603,13 @@ alias smul = mulu;
     TODO Add support for other Random Access Ranges such as std.container.Array
     See also: http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org?page=1
  */
-ref T[] append(T, Args...)(ref T[] data,
-                           auto ref Args args) if (args.length >= 1)
+ref R append(R, Args...)(ref R data,
+                         auto ref Args args) if (args.length >= 1//  &&
+                                                 // isRandomAccessRange!R
+                             )
 {
+    alias T = ElementType!R;
+
     import std.traits: isAssignable;
     enum isElementType(E) = isAssignable!(T, E);
 
@@ -1649,7 +1653,7 @@ ref T[] append(T, Args...)(ref T[] data,
         }
 
         import std.range: appender;
-        auto app = appender!(T[])(data);
+        auto app = appender!(R)(data);
 
         app.reserve(data.length + estimateLength(args));
 
@@ -1679,6 +1683,19 @@ unittest
 
     // int[3] d;
     // data.append(d, d);
+
+    static assert(!__traits(compiles, { data.append(); }));
+}
+
+unittest
+{
+    import std.container: Array;
+    import std.algorithm: equal;
+
+    Array!int data;
+
+    data.append(-1);
+    assert(equal(data[], [-1]));
 
     static assert(!__traits(compiles, { data.append(); }));
 }
