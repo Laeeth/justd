@@ -10,7 +10,6 @@ abstrusdunkelsvårbegripligsvårförståelig
 ackack så sköna
 acklimatiseravänja vid klimatethärdaanpassa
 ackuratprecisjust
-acturatprecis
 adekvatriktig
 afavfrån (ett släkte)
 afbegeranlaga skifte
@@ -1307,22 +1306,37 @@ zlataneradominera
 överordnatnormsystemet måste vara överordnat
 övligsedvanlig
 övligtsedvanligt, brukligt
+
 serveralägga för, hälla upp, bära fram, duka fram, undfägna, bjuda, utspisa, bespisa
 serverapassa upp, uppassa, serva, betjäna
 serveratillhandahålla
 inget att tacka föringen orsak
-
 i morsei idag på morgon
 i morsedenna dags morgon
 i morsei dag morse
-
 imorrni morgon
-
 hur mycket är klockanvad är klockan
-
 numerusantal
 singularental
 pluralflertal
-
 vara vid god vigörmå bra
 efter Kristusanno Domini
+adertonarton
+allenastbara
+dväljasvistas
+enkannerligeni synnerhet
+envarvar och en
+fordomförr i tiden
+gunåstyvärr
+ickeinte
+medelsmed hjälp av
+medelstmed hjälp av
+måhändakanske
+skolaskall
+spörjafråga
+städsealltid
+tvennetvå
+trennetre
+vardabli
+vorovar
+åstadiväg
