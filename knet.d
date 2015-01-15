@@ -1402,17 +1402,19 @@ class Net(bool useArray = true,
 
         /* @safe @nogc pure nothrow: */
 
-        this(Nd srcRef,
+        this(Nd src,
              Rel rel,
-             Nd dstRef,
+             Nd dst,
              bool negation,
-             Origin origin = Origin.unknown) in { assert(srcRef.defined && dstRef.defined); }
+             Origin origin = Origin.unknown) in { assert(src.defined && dst.defined); }
         body
         {
             // http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org#post-zhndpadqtfareymbnfis:40forum.dlang.org
+            // this.actors.append(src.backward,
+            //                    dst.forward);
             this.actors.reserve(this.actors.length + 2);
-            this.actors ~= srcRef.backward;
-            this.actors ~= dstRef.forward;
+            this.actors ~= src.backward;
+            this.actors ~= dst.forward;
 
             this.rel = rel;
             this.negation = negation;
@@ -1648,9 +1650,13 @@ class Net(bool useArray = true,
             {
                 if (existingLemma.lang == lemma.lang &&
                     existingLemma.context == lemma.context &&
+                    existingLemma.manner == lemma.manner &&
+                    existingLemma.isRegexp == lemma.isRegexp &&
                     existingLemma.sense.specializes(lemma.sense))
                 {
-                    // dln("Specializing Lemma ", expr, " sense from ", lemma.sense, " to ", existingLemma.sense);
+                    // dln(`Specializing sense of Lemma "`, expr, `"`,
+                    //     ` from "`, lemma.sense, `"`
+                    //     ` to "`, existingLemma.sense, `"`);
                     // lemma.sense = existingLemma.sense;
                     return existingLemma;
                 }
@@ -5290,15 +5296,15 @@ class Net(bool useArray = true,
     /** If $(D link) node origins unknown propagate them from $(D link)
         itself. */
     bool propagateLinkNodes(ref Link link,
-                            Nd srcRef,
-                            Nd dstRef)
+                            Nd src,
+                            Nd dst)
     {
         bool done = false;
         if (!link.origin.defined)
         {
             // TODO prevent duplicate lookups to at
-            if (!at(srcRef).origin.defined) at(srcRef).origin = link.origin;
-            if (!at(dstRef).origin.defined) at(dstRef).origin = link.origin;
+            if (!at(src).origin.defined) at(src).origin = link.origin;
+            if (!at(dst).origin.defined) at(dst).origin = link.origin;
             done = true;
         }
         return done;
@@ -5746,10 +5752,10 @@ class Net(bool useArray = true,
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise Ln.max.
      */
     Ln areConnectedInOrder(Nd a,
-                            Rel rel, bool negation, bool reversion,
-                            Nd b,
-                            Origin origin = Origin.unknown,
-                            NWeight nweight = 1.0)
+                           Rel rel, bool negation, bool reversion,
+                           Nd b,
+                           Origin origin = Origin.unknown,
+                           NWeight nweight = 1.0)
     {
         const bDir = (rel.isSymmetric ?
                       RelDir.any :
@@ -6317,24 +6323,24 @@ class Net(bool useArray = true,
         help in translating songs with same rhythm.
      */
     Nds rhymesOf(S)(S expr,
-                         Lang[] langs = [],
-                         Origin[] origins = [],
-                         bool withSameSyllableCount = false) if (isSomeString!S)
+                    Lang[] langs = [],
+                    Origin[] origins = [],
+                    bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        foreach (srcRef; nodeRefsOf(expr))
+        foreach (src_; nodeRefsOf(expr))
         {
-            const src = at(srcRef);
-            foreach (link; linksOf(srcRef).filter!(link => link.rel == Rel.hasPronounciation))
+            const src = at(src_);
+            foreach (link; linksOf(src_).filter!(link => link.rel == Rel.hasPronounciation))
             {
-                writeln("srcRef: ", at(srcRef));
+                writeln("src_: ", at(src_));
                 writeln("link.rel: ", link.rel);
                 writeln("link.actors: ", link.actors);
             }
 
-            foreach (dstRef; nearsOf(srcRef, Rel.hasPronounciation, origins))
+            foreach (dstRef; nearsOf(src_, Rel.hasPronounciation, origins))
             {
                 const dst = at(dstRef);
-                writeln("srcRef:", srcRef, " src:", src, " dstRef:", dstRef, " dst:", dst);
+                writeln("src_:", src_, " src:", src, " dstRef:", dstRef, " dst:", dst);
             }
         }
         // auto dstRefs = nearsOf(srcRefs, Rel.hasPronounciation, origins);
