@@ -281,7 +281,7 @@ import std.typecons: Nullable, Tuple, tuple;
 import std.file: readText, exists;
 alias rdT = readText;
 
-import algorithm_ex: isPalindrome, either, append;
+import algorithm_ex: isPalindrome, either, append, commonSuffixLength;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
 import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers;
 import sort_ex: sortBy, rsortBy, sorted;
@@ -6326,11 +6326,13 @@ class Net(bool useArray = true,
     Nds rhymesOf(S)(S expr,
                     Lang[] langs = [],
                     Origin[] origins = [],
+                    size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                     bool withSameSyllableCount = false) if (isSomeString!S)
     {
         foreach (src_; nodeRefsOf(expr))
         {
             const src = at(src_);
+            if (langs.empty) { langs = [src.lemma.lang]; } // stay within language by default
             foreach (link; linksOf(src_).filter!(link => link.rel == Rel.hasPronounciation))
             {
                 writeln("src_: ", at(src_));
@@ -6342,13 +6344,14 @@ class Net(bool useArray = true,
             {
                 const dst = at(dstRef);
                 writeln("src_:", src_, " src:", src, " dstRef:", dstRef, " dst:", dst);
+                auto hits = allNodes.filter!(a => langs.canFind(a.lemma.lang))
+                                    .map!(a => tuple(a, commonSuffixLength(a.lemma.expr,
+                                                                           at(src_).lemma.expr)))
+                                    .filter!(a => a[1] >= commonPhonemeCountMin)
+                                    // .sorted!((a, b) => false)
+                ;
             }
         }
-        // auto dstRefs = nearsOf(srcRefs, Rel.hasPronounciation, origins);
-        // return nodeRefByLemma.values
-        //                      .filter!(nd => at(nd).lemma
-        //                                                         .expr
-        //                                                         .startsWith(prefix));
         return typeof(return).init;
     }
 
