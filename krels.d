@@ -18,16 +18,25 @@ alias Rank = uint;
 
 @safe @nogc pure nothrow
 {
+    /** Lower rank means higher relevance (priority). */
     Rank rank(const Rel rel)
     {
         with (Rel)
             switch (rel)
             {
-                case synonymFor: return 0;
-                case isA: return 1;
-                case hypernymOf: return 2;
-                case meronym: return 3;
-                default: return Rank.max;
+                case synonymFor:
+                    return 0;
+                case isA:
+                    return 1;
+                case hypernymOf:
+                    return 2;
+                case partOf:
+                case memberOf:
+                    return 3;
+                case oppositeOf:
+                    return 4;
+                default:
+                    return Rank.max;
             }
     }
     /* TODO Used to infer that
