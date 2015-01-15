@@ -1703,12 +1703,20 @@ unittest
 /** Get length of Common Prefix of $(D a) and $(D b).
     See also: http://forum.dlang.org/thread/bmbhovkgqomaidnyakvy@forum.dlang.org#post-bmbhovkgqomaidnyakvy:40forum.dlang.org
     */
-auto commonPrefixLength(S, T)(S a, T b)
+auto commonPrefixLength(Ranges...)(Ranges ranges)
 {
-    import std.range: zip, StoppingPolicy;
-    import std.algorithm: countUntil, count;
-    const hit = zip(a, b).countUntil!(ab => ab[0] != ab[1]); // TODO if countUntil return zip(a, b).count upon failre...
-    return hit == -1 ? zip(a, b).count : hit; // TODO ..then this would not have been needed
+    static if (ranges.length == 2)
+    {
+        import std.algorithm: commonPrefix;
+        return commonPrefix(ranges[0], ranges[1]).length;
+    }
+    else
+    {
+        import std.range: zip, StoppingPolicy;
+        import std.algorithm: countUntil, count;
+        const hit = zip(a, b).countUntil!(ab => ab[0] != ab[1]); // TODO if countUntil return zip(a, b).count upon failre...
+        return hit == -1 ? zip(a, b).count : hit; // TODO ..then this would not have been needed
+    }
 }
 
 unittest
@@ -1717,15 +1725,22 @@ unittest
                               [1, 2, 4, 10]) == 2);
     assert(commonPrefixLength([1, 2, 3, 10],
                               [1, 2, 3]) == 3);
+    assert(commonPrefixLength([1, 2, 3, 0, 4],
+                              [1, 2, 3, 9, 4]) == 3);
+    assert(commonPrefixLength(`åäö_`,
+                              `åäö-`) == 6);
 }
 
 /** Get length of Suffix Prefix of $(D a) and $(D b).
     See also: http://forum.dlang.org/thread/bmbhovkgqomaidnyakvy@forum.dlang.org#post-bmbhovkgqomaidnyakvy:40forum.dlang.org
 */
-auto commonSuffixLength(S, T)(S a, T b)
+auto commonSuffixLength(Ranges...)(Ranges ranges)
 {
-    return commonPrefixLength(a.retro,
-                              b.retro);
+    static if (ranges.length == 2)
+    {
+        return commonPrefixLength(ranges[0].retro,
+                                  ranges[1].retro);
+    }
 }
 
 unittest
@@ -1734,6 +1749,8 @@ unittest
                               [1, 2, 4, 10, 11, 12]) == 3);
     assert(commonSuffixLength([10, 1, 2, 3],
                               [1, 2, 3]) == 3);
+    assert(commonSuffixLength(`_åäö`,
+                              `-åäö`) == 3); // TODO this is not desired
 }
 
 /** Get length of Common Prefix of ranges $(D ranges).
