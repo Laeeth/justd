@@ -1594,9 +1594,9 @@ class Net(bool useArray = true,
         If no sense given return all possible.
     */
     Nds nodeRefsOf(S)(S expr,
-                           Lang lang,
-                           Sense sense,
-                           ContextIx context = anyContext) if (isSomeString!S)
+                      Lang lang,
+                      Sense sense,
+                      ContextIx context = anyContext) if (isSomeString!S)
     {
         typeof(return) nodes;
 
