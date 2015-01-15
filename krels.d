@@ -1337,7 +1337,7 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
-        case hasPronouncation:
+        case hasPronounciation:
             if (dir == RelDir.forward)
             {
                 switch (lang)
@@ -1595,6 +1595,7 @@ bool specializes(Rel special,
                                                    hypernymOf);
         case instanceHyponymOf: return special.of(instanceOf,
                                                   hyponymOf);
+        case translationOf: return special.of(hasPronounciation);
         default: return special == general;
     }
 }

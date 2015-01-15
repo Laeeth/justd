@@ -165,7 +165,7 @@
     TODO For lemmas with Sense.unknown lookup its others lemmasOf. If only one
     other non-unknown Sense exists assume it to be its meaning.
 
-    TODO Nd getEmotion(nodeRef start, Rel[] overRels) { walkNodeRefs(); }
+    TODO Nd getEmotion(Nd start, Rel[] overRels) { walkNds(); }
 
     TODO Add randomness to traverser if normalized distance similarity between
     traversed nodes is smaller than a randomnessThreshold
@@ -1259,8 +1259,8 @@ class Net(bool useArray = true,
     else                    { alias Expr = immutable string; }
 
     /// References to Nodes.
-    static if (useArray) { alias NodeRefs = Array!Nd; }
-    else                 { alias NodeRefs = Nd[]; }
+    static if (useArray) { alias Nds = Array!Nd; }
+    else                 { alias Nds = Nd[]; }
 
     /// References to Links.
     static if (useArray) { alias LinkRefs = Array!Ln; }
@@ -1341,10 +1341,10 @@ class Net(bool useArray = true,
                     bool negation = false)
     {
         return node.links[]
-                   .filter!(linkRef => (dir.of(RelDir.any, linkRef.dir) &&  // TODO functionize to match(RelDir, RelDir)
-                                        (at(linkRef).rel == rel ||
-                                         at(linkRef).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
-                                        at(linkRef).negation == negation));
+                   .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize to match(RelDir, RelDir)
+                                   (at(ln).rel == rel ||
+                                    at(ln).rel.specializes(rel)) &&// TODO functionize to match(Rel, Rel)
+                                   at(ln).negation == negation));
     }
 
     auto linksOf(in Node node,
@@ -1352,15 +1352,15 @@ class Net(bool useArray = true,
                  Rel rel = Rel.any,
                  bool negation = false)
     {
-        return linkRefsOf(node, dir, rel, negation).map!(linkRef => at(linkRef));
+        return linkRefsOf(node, dir, rel, negation).map!(ln => at(ln));
     }
 
-    auto linksOf(Nd nodeRef,
+    auto linksOf(Nd nd,
                  RelDir dir = RelDir.any,
                  Rel rel = Rel.any,
                  bool negation = false)
     {
-        return linksOf(at(nodeRef), dir, rel, negation);
+        return linksOf(at(nd), dir, rel, negation);
     }
 
     alias Step = Tuple!(Ln, Nd); // steps from Node
@@ -1413,6 +1413,7 @@ class Net(bool useArray = true,
             this.actors.reserve(this.actors.length + 2);
             this.actors ~= srcRef.backward;
             this.actors ~= dstRef.forward;
+
             this.rel = rel;
             this.negation = negation;
             this.origin = origin;
@@ -1452,7 +1453,7 @@ class Net(bool useArray = true,
         }
 
     private:
-        NodeRefs actors;
+        Nds actors;
 
         PWeight packedWeight;
 
@@ -1462,16 +1463,16 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
-    auto ins(in Link link) { return link.actors[].filter!(nodeRef =>
-                                                          nodeRef.dir() == RelDir.backward); }
-    auto outs(in Link link) { return link.actors[].filter!(nodeRef =>
-                                                           nodeRef.dir() == RelDir.forward); }
+    auto ins(in Link link) { return link.actors[].filter!(nd =>
+                                                          nd.dir() == RelDir.backward); }
+    auto outs(in Link link) { return link.actors[].filter!(nd =>
+                                                           nd.dir() == RelDir.forward); }
 
     pragma(msg, `Expr.sizeof: `, Expr.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
     pragma(msg, `Node.sizeof: `, Node.sizeof);
     pragma(msg, `LinkRefs.sizeof: `, LinkRefs.sizeof);
-    pragma(msg, `NodeRefs.sizeof: `, NodeRefs.sizeof);
+    pragma(msg, `Nds.sizeof: `, Nds.sizeof);
     pragma(msg, `Link.sizeof: `, Link.sizeof);
 
     /* static if (useArray) { alias Nodes = Array!Node; } */
@@ -1510,7 +1511,10 @@ class Net(bool useArray = true,
         size_t[Lang.max + 1] nodeCountByLang;
         size_t[Sense.max + 1] nodeCountBySense; /// Node Counts by Sense Type.
         size_t nodeStringLengthSum = 0;
-        size_t connectednessSum = 0;
+
+        // Connectedness
+        size_t nodeConnectednessSum = 0;
+        size_t linkConnectednessSum = 0;
 
         size_t exprWordCountSum = 0;
 
@@ -1529,10 +1533,11 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) at(Ln linkRef) inout { return allLinks[linkRef.ix]; }
+        ref inout(Link) at(Ln ln) inout { return allLinks[ln.ix]; }
         ref inout(Node) at(Nd cref) inout @nogc { return allNodes[cref.ix]; }
-        alias linkByRef = at;
-        alias nodeByRef = at;
+
+        ref inout(Link) opUnary(string s)(Ln ln) inout if (s == "*") { return at(ln); }
+        ref inout(Node) opUnary(string s)(Nd nd) inout if (s == "*") { return at(nd); }
     }
 
     Nd nodeRefByLemmaMaybe(in Lemma lemma)
@@ -1545,10 +1550,10 @@ class Net(bool useArray = true,
     /** Try to Get Single Node related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    NodeRefs nodeRefsByLemmaDirect(S)(S expr,
-                                      Lang lang,
-                                      Sense sense,
-                                      ContextIx context) if (isSomeString!S)
+    Nds nodeRefsByLemmaDirect(S)(S expr,
+                                 Lang lang,
+                                 Sense sense,
+                                 ContextIx context) if (isSomeString!S)
     {
         typeof(return) nodes;
         auto lemma = Lemma(expr, lang, sense, context);
@@ -1585,7 +1590,7 @@ class Net(bool useArray = true,
         (semantic context) $(D sense).
         If no sense given return all possible.
     */
-    NodeRefs nodeRefsOf(S)(S expr,
+    Nds nodeRefsOf(S)(S expr,
                            Lang lang,
                            Sense sense,
                            ContextIx context = anyContext) if (isSomeString!S)
@@ -1600,9 +1605,9 @@ class Net(bool useArray = true,
         }
         else
         {
-            nodes = NodeRefs(nodeRefsOf(expr).filter!(a => (lang == Lang.unknown ||
-                                                            at(a).lemma.lang == lang))
-                                             .array); // TODO avoid allocations
+            nodes = Nds(nodeRefsOf(expr).filter!(a => (lang == Lang.unknown ||
+                                                       at(a).lemma.lang == lang))
+                                        .array); // TODO avoid allocations
         }
 
         if (nodes.empty)
@@ -2199,7 +2204,7 @@ class Net(bool useArray = true,
                 ipas = split.front.idup;
                 dln("Couldn't decode IPA code ", ipas);
             }
-            connect(store(expr, Lang.en, Sense.unknown, Origin.manual), Rel.hasPronouncation,
+            connect(store(expr, Lang.en, Sense.unknown, Origin.manual), Rel.hasPronounciation,
                     store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
         }
     }
@@ -4968,13 +4973,13 @@ class Net(bool useArray = true,
         existing links is currently too slow
      */
     Ln connect(Nd src,
-                    Rel rel,
-                    Nd dst,
-                    Origin origin = Origin.unknown,
-                    NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
-                    bool negation = false,
-                    bool reversion = false,
-                    bool checkExisting = false) in {
+               Rel rel,
+               Nd dst,
+               Origin origin = Origin.unknown,
+               NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
+               bool negation = false,
+               bool reversion = false,
+               bool checkExisting = false) in {
         assert(src != dst,
                at(src).lemma.expr ~
                " must not be equal to " ~
@@ -5004,7 +5009,7 @@ class Net(bool useArray = true,
 
         // TODO group these
         assert(allLinks.length <= nullIx);
-        auto linkRef = Ln(cast(Ix)allLinks.length);
+        auto ln = Ln(cast(Ix)allLinks.length);
 
         auto link = Link(reversion ? dst : src,
                          rel,
@@ -5012,9 +5017,11 @@ class Net(bool useArray = true,
                          negation,
                          origin);
 
-        at(src).links ~= linkRef.forward;
-        at(dst).links ~= linkRef.backward;
-        connectednessSum += 2;
+        linkConnectednessSum += 2;
+
+        at(src).links ~= ln.forward;
+        at(dst).links ~= ln.backward;
+        nodeConnectednessSum += 2;
 
         symmetricRelCount += rel.isSymmetric;
         transitiveRelCount += rel.isTransitive;
@@ -5056,7 +5063,7 @@ class Net(bool useArray = true,
 
         allLinks ~= link; // TODO Avoid copying here
 
-        return linkRef; // allLinks.back;"
+        return ln; // allLinks.back;"
     }
     alias relate = connect;
 
@@ -5283,17 +5290,15 @@ class Net(bool useArray = true,
     /** If $(D link) node origins unknown propagate them from $(D link)
         itself. */
     bool propagateLinkNodes(ref Link link,
-                               Nd srcRef,
-                               Nd dstRef)
+                            Nd srcRef,
+                            Nd dstRef)
     {
         bool done = false;
         if (!link.origin.defined)
         {
             // TODO prevent duplicate lookups to at
-            if (!at(srcRef).origin.defined)
-                at(srcRef).origin = link.origin;
-            if (!at(dstRef).origin.defined)
-                at(dstRef).origin = link.origin;
+            if (!at(srcRef).origin.defined) at(srcRef).origin = link.origin;
+            if (!at(dstRef).origin.defined) at(dstRef).origin = link.origin;
             done = true;
         }
         return done;
@@ -5733,7 +5738,9 @@ class Net(bool useArray = true,
 
         writeln(indent, `Node Indexes by Lemma Count: `, nodeRefByLemma.length);
         writeln(indent, `Node String Length Average: `, cast(NWeight)nodeStringLengthSum/allNodes.length);
-        writeln(indent, `Node Connectedness Average: `, cast(NWeight)connectednessSum/2/allNodes.length);
+
+        writeln(indent, `Node Connectedness Average: `, cast(NWeight)nodeConnectednessSum/allNodes.length);
+        writeln(indent, `Link Connectedness Average: `, cast(NWeight)linkConnectednessSum/allLinks.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise Ln.max.
@@ -5810,10 +5817,10 @@ class Net(bool useArray = true,
         write(indent, rel.toHuman(dir, negation, lang), `: `);
     }
 
-    void showLinkRef(Ln linkRef)
+    void showLinkRef(Ln ln)
     {
-        auto link = at(linkRef);
-        showLink(link.rel, linkRef.dir, link.negation);
+        auto link = at(ln);
+        showLink(link.rel, ln.dir, link.negation);
     }
 
     void showNode(in Node node, NWeight weight)
@@ -5850,13 +5857,13 @@ class Net(bool useArray = true,
         writeln;
     }
 
-    void showNodeRefs(R)(R nodeRefs,
+    void showNds(R)(R nodeRefs,
                          Rel rel = Rel.any,
                          bool negation = false)
     {
-        foreach (nodeRef; nodeRefs)
+        foreach (nd; nodeRefs)
         {
-            const lineNode = at(nodeRef);
+            const lineNode = at(nd);
 
             write(`  -`);
             if (lineNode.lemma.lang != Lang.unknown)
@@ -5878,14 +5885,14 @@ class Net(bool useArray = true,
                                              at(b).rel.rank),
                                   (a, b) => (at(a).rel <
                                              at(b).rel));
-            foreach (linkRef; linkRefs)
+            foreach (ln; linkRefs)
             {
-                auto link = at(linkRef);
-                showLinkRef(linkRef);
+                auto link = at(ln);
+                showLinkRef(ln);
                 foreach (linkedNode; link.actors[]
                                          .filter!(actorNodeRef => (actorNodeRef.ix !=
-                                                                   nodeRef.ix)) // don't self reference
-                                         .map!(nodeRef => at(nodeRef)))
+                                                                   nd.ix)) // don't self reference
+                                         .map!(nd => at(nd)))
                 {
                     showNode(linkedNode, link.nweight);
                 }
@@ -6118,16 +6125,16 @@ class Net(bool useArray = true,
             return false;
 
         // queried line nodes
-        auto lineNodeRefs = nodeRefsOf(normLine, lang, sense);
+        auto lineNds = nodeRefsOf(normLine, lang, sense);
 
-        if (!lineNodeRefs.empty)
+        if (!lineNds.empty)
         {
             showFixedLine(normLine);
-            showNodeRefs(lineNodeRefs);
+            showNds(lineNds);
         }
 
         // try joined
-        if (lineNodeRefs.empty)
+        if (lineNds.empty)
         {
             auto spaceWords = normLine.splitter(' ').filter!(a => !a.empty);
             if (spaceWords.count >= 2)
@@ -6266,32 +6273,32 @@ class Net(bool useArray = true,
         auto nodes = nodeRefsOf(expr,
                                 lang,
                                 sense);
-        showNodeRefs(nodes, Rel.synonymFor); // TODO traverse synonyms
+        showNds(nodes, Rel.synonymFor); // TODO traverse synonyms
         return nodes;
     }
 
     /** Get Links of $(D currents) type $(D rel) learned from $(D origins).
     */
-    auto linkRefsOf(Nd nodeRef,
+    auto linkRefsOf(Nd nd,
                     Rel rel,
                     Origin[] origins = [])
     {
-        return at(nodeRef).links[]
-                              .filter!(linkRef => (at(linkRef).rel == rel &&
-                                                   (origins.empty ||
-                                                    origins.canFind(at(linkRef).origin))));
+        return at(nd).links[]
+                     .filter!(ln => (at(ln).rel == rel &&
+                                     (origins.empty ||
+                                      origins.canFind(at(ln).origin))));
     }
 
     /** Get Nearest Neighbours of $(D currents) over links of type $(D rel)
         learned from $(D origins).
     */
-    auto nearsOf(Nd nodeRef,
+    auto nearsOf(Nd nd,
                  Rel rel,
                  Origin[] origins = [])
     {
-        return linkRefsOf(nodeRef, rel, origins).map!(linkRef =>
-                                                      at(linkRef).actors[]
-                                                                     .filter!(actor => actor != nodeRef))
+        return linkRefsOf(nd, rel, origins).map!(ln =>
+                                                 at(ln).actors[]
+                                                       .filter!(actor => actor != nd))
                                                 .joiner(); // no self
     }
 
@@ -6302,14 +6309,14 @@ class Net(bool useArray = true,
     //                 Rel rel,
     //                 Origin[] origins = []) if (isSourceOf!(R, Nd))
     // {
-    //     return nodeRefs[].map!(nodeRef => nearsOf(nodeRef, rel, origins));
+    //     return nodeRefs[].map!(nd => nearsOf(nd, rel, origins));
     // }
 
     /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
         Set withSameSyllableCount to true to get synonyms which can be used to
         help in translating songs with same rhythm.
      */
-    NodeRefs rhymesOf(S)(S expr,
+    Nds rhymesOf(S)(S expr,
                          Lang[] langs = [],
                          Origin[] origins = [],
                          bool withSameSyllableCount = false) if (isSomeString!S)
@@ -6317,22 +6324,22 @@ class Net(bool useArray = true,
         foreach (srcRef; nodeRefsOf(expr))
         {
             const src = at(srcRef);
-            foreach (link; linksOf(srcRef).filter!(link => link.rel == Rel.hasPronouncation))
+            foreach (link; linksOf(srcRef).filter!(link => link.rel == Rel.hasPronounciation))
             {
                 writeln("srcRef: ", at(srcRef));
                 writeln("link.rel: ", link.rel);
                 writeln("link.actors: ", link.actors);
             }
 
-            foreach (dstRef; nearsOf(srcRef, Rel.hasPronouncation, origins))
+            foreach (dstRef; nearsOf(srcRef, Rel.hasPronounciation, origins))
             {
                 const dst = at(dstRef);
                 writeln("srcRef:", srcRef, " src:", src, " dstRef:", dstRef, " dst:", dst);
             }
         }
-        // auto dstRefs = nearsOf(srcRefs, Rel.hasPronouncation, origins);
+        // auto dstRefs = nearsOf(srcRefs, Rel.hasPronounciation, origins);
         // return nodeRefByLemma.values
-        //                      .filter!(nodeRef => at(nodeRef).lemma
+        //                      .filter!(nd => at(nd).lemma
         //                                                         .expr
         //                                                         .startsWith(prefix));
         return typeof(return).init;
@@ -6380,35 +6387,35 @@ class Net(bool useArray = true,
         auto nodes = nodeRefsOf(expr,
                                 lang,
                                 sense);
-        showNodeRefs(nodes, Rel.translationOf); // TODO traverse synonyms and translations
+        showNds(nodes, Rel.translationOf); // TODO traverse synonyms and translations
         // en => sv:
         // en-en => sv-sv
         /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         return nodes;
     }
 
-    /** Get NodeRefs whose Lemma Expr starts with $(D prefix). */
+    /** Get Node References whose Lemma Expr starts with $(D prefix). */
     auto canFind(S)(S part,
                     Lang lang = Lang.unknown,
                     Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nodeRef => at(nodeRef).lemma.expr.canFind(part));
+        return nodeRefByLemma.values.filter!(nd => at(nd).lemma.expr.canFind(part));
     }
 
-    /** Get NodeRefs whose Lemma Expr starts with $(D prefix). */
+    /** Get Node References whose Lemma Expr starts with $(D prefix). */
     auto startsWith(S)(S prefix,
                        Lang lang = Lang.unknown,
                        Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nodeRef => at(nodeRef).lemma.expr.startsWith(prefix));
+        return nodeRefByLemma.values.filter!(nd => at(nd).lemma.expr.startsWith(prefix));
     }
 
-    /** Get NodeRefs whose Lemma Expr starts with $(D suffix). */
+    /** Get Node References whose Lemma Expr starts with $(D suffix). */
     auto endsWith(S)(S suffix,
                      Lang lang = Lang.unknown,
                      Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nodeRef => at(nodeRef).lemma.expr.endsWith(suffix));
+        return nodeRefByLemma.values.filter!(nd => at(nd).lemma.expr.endsWith(suffix));
     }
 
     /** Relatedness.

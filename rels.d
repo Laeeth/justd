@@ -102,7 +102,7 @@ enum Rel:ubyte
 
     hasContext,
     hasMeaning,
-    hasPronouncation,
+    hasPronounciation,
     slangFor,
     idiomFor,
 
