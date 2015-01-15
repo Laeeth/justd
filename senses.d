@@ -925,6 +925,7 @@ bool specializes(Sense special,
         assert(nounPlural.specializes(noun));
         assert(integerPositive.specializes(integer));
         assert(integerNegative.specializes(integer));
+        assert(timeAdverb.specializes(adverb));
     }
     assert(Sense.noun.isNoun);
 }
