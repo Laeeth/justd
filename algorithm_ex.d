@@ -1707,8 +1707,8 @@ auto commonPrefixLength(S, T)(S a, T b)
 {
     import std.range: zip, StoppingPolicy;
     import std.algorithm: countUntil, count;
-    const hit = zip(a, b).countUntil!(ab => ab[0] != ab[1]);
-    return hit == -1 ? zip(a, b).count : hit;
+    const hit = zip(a, b).countUntil!(ab => ab[0] != ab[1]); // TODO if countUntil return zip(a, b).count upon failre...
+    return hit == -1 ? zip(a, b).count : hit; // TODO ..then this would not have been needed
 }
 
 unittest
