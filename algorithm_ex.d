@@ -1699,3 +1699,49 @@ unittest
 
     static assert(!__traits(compiles, { data.append(); }));
 }
+
+/** Get length of Common Prefix of $(D a) and $(D b).
+    See also: http://forum.dlang.org/thread/bmbhovkgqomaidnyakvy@forum.dlang.org#post-bmbhovkgqomaidnyakvy:40forum.dlang.org
+    */
+auto commonPrefixLength(S, T)(S a, T b)
+{
+    import std.range: zip;
+    import std.algorithm: countUntil;
+    return zip(a, b).countUntil!(ab => ab[0] != ab[1]);
+}
+
+unittest
+{
+    assert(commonPrefixLength([1, 2, 3, 10],
+                              [1, 2, 4, 10]) == 2);
+}
+
+/** Get length of Suffix Prefix of $(D a) and $(D b).
+    See also: http://forum.dlang.org/thread/bmbhovkgqomaidnyakvy@forum.dlang.org#post-bmbhovkgqomaidnyakvy:40forum.dlang.org
+*/
+auto commonSuffixLength(S, T)(S a, T b)
+{
+    return commonPrefixLength(a.retro,
+                              b.retro);
+}
+
+unittest
+{
+    assert(commonSuffixLength([1, 2, 3, 10, 11, 12],
+                              [1, 2, 4, 10, 11, 12]) == 3);
+}
+
+/** Get length of Common Prefix of ranges $(D ranges).
+    See also: http://forum.dlang.org/thread/bmbhovkgqomaidnyakvy@forum.dlang.org#post-bmbhovkgqomaidnyakvy:40forum.dlang.org
+*/
+// auto commonPrefixLengthN(R...)(R ranges) if (ranges.length == 2)
+// {
+//     import std.range: zip;
+//     return zip!((a, b) => a != b)(ranges);
+// }
+
+// unittest
+// {
+//     assert(commonPrefixLengthN([1, 2, 3, 10],
+//                               [1, 2, 4, 10]) == 2);
+// }
