@@ -4800,7 +4800,7 @@ class Net(bool useArray = true,
     /** Lookup-or-Store $(D Node) at $(D lemma) index.
      */
     Nd store(Lemma lemma,
-                  Node node) in { assert(!lemma.expr.empty); }
+             Node node) in { assert(!lemma.expr.empty); }
     body
     {
         if (lemma in nodeRefByLemma)
