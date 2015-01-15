@@ -1705,15 +1705,18 @@ unittest
     */
 auto commonPrefixLength(S, T)(S a, T b)
 {
-    import std.range: zip;
-    import std.algorithm: countUntil;
-    return zip(a, b).countUntil!(ab => ab[0] != ab[1]);
+    import std.range: zip, StoppingPolicy;
+    import std.algorithm: countUntil, count;
+    const hit = zip(a, b).countUntil!(ab => ab[0] != ab[1]);
+    return hit == -1 ? zip(a, b).count : hit;
 }
 
 unittest
 {
     assert(commonPrefixLength([1, 2, 3, 10],
                               [1, 2, 4, 10]) == 2);
+    assert(commonPrefixLength([1, 2, 3, 10],
+                              [1, 2, 3]) == 3);
 }
 
 /** Get length of Suffix Prefix of $(D a) and $(D b).
@@ -1729,6 +1732,8 @@ unittest
 {
     assert(commonSuffixLength([1, 2, 3, 10, 11, 12],
                               [1, 2, 4, 10, 11, 12]) == 3);
+    assert(commonSuffixLength([10, 1, 2, 3],
+                              [1, 2, 3]) == 3);
 }
 
 /** Get length of Common Prefix of ranges $(D ranges).
