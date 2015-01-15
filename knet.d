@@ -1994,6 +1994,9 @@ class Net(bool useArray = true,
             learnMtoNMaybe(dirPath ~ "/synonym.txt",
                            Sense.unknown, lang, Rel.synonymFor,
                            Sense.unknown, lang, Origin.manual, 1.0);
+            learnMtoNMaybe(dirPath ~ "/obsolescent_synonym.txt",
+                           Sense.unknown, lang, Rel.obsolescentFor,
+                           Sense.unknown, lang, Origin.manual, 1.0);
             learnMtoNMaybe(dirPath ~ "/noun_synonym.txt",
                            Sense.noun, lang, Rel.synonymFor,
                            Sense.noun, lang, Origin.manual, 0.5);

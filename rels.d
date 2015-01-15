@@ -209,6 +209,8 @@ enum Rel:ubyte
                 in WordNet as well. */
     synonym = synonymFor,
 
+    obsolescentFor,
+
     antonymFor, oppositeOf = antonymFor, /**< A and B are opposites in some relevant way, such as being
                 opposite ends of a scale, or fundamentally similar things with a
                 key difference between them. Counterintuitively, two _concepts

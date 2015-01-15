@@ -181,6 +181,14 @@ auto toHuman(const Rel rel,
                 default: words = ["is", not, "a synonym for"]; break;
             }
             break;
+        case obsolescentFor:
+            switch (lang)
+            {
+                case sv: words = ["är", not, "ålderdomlig synonym med"]; break;
+                case en:
+                default: words = ["is", not, "an obsolescent word for"]; break;
+            }
+            break;
         case antonymFor:
             switch (lang)
             {
