@@ -59,6 +59,8 @@
 
     TODO rhymesOf() may reuse Walk.byNode walkOver(Rel.prounounciation)
 
+    BUG Enable readNELLFile and fix bug in it
+
     TODO Support N-way in learnMtoNMaybe en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
 
     TODO specializeUniquely John to name in English if first letter isUpper
@@ -1830,9 +1832,12 @@ class Net(bool useArray = true,
         }
 
         // NELL
-        readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
-                                                            .buildNormalizedPath,
-                     10000);
+        if (false)
+        {
+            readNELLFile("~/Knowledge/nell/NELL.08m.890.esv.csv".expandTilde
+                                                                .buildNormalizedPath,
+                         10000);
+        }
 
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
