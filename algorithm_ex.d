@@ -1719,7 +1719,13 @@ auto commonPrefixLength(Ranges...)(Ranges ranges)
     }
 }
 
-unittest
+@safe pure unittest
+{
+    assert(commonPrefixLength(`åäö_`,
+                              `åäö-`) == 6);
+}
+
+@safe pure nothrow unittest
 {
     assert(commonPrefixLength([1, 2, 3, 10],
                               [1, 2, 4, 10]) == 2);
@@ -1727,8 +1733,6 @@ unittest
                               [1, 2, 3]) == 3);
     assert(commonPrefixLength([1, 2, 3, 0, 4],
                               [1, 2, 3, 9, 4]) == 3);
-    assert(commonPrefixLength(`åäö_`,
-                              `åäö-`) == 6);
 }
 
 /** Get length of Suffix Prefix of $(D a) and $(D b).
@@ -1743,12 +1747,16 @@ auto commonSuffixLength(Ranges...)(Ranges ranges)
     }
 }
 
-unittest
+@safe pure unittest
 {
     assert(commonSuffixLength([1, 2, 3, 10, 11, 12],
                               [1, 2, 4, 10, 11, 12]) == 3);
     assert(commonSuffixLength([10, 1, 2, 3],
                               [1, 2, 3]) == 3);
+}
+
+@safe pure unittest
+{
     assert(commonSuffixLength(`_åäö`,
                               `-åäö`) == 3); // TODO this is not desired
 }
