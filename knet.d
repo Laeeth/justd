@@ -1535,12 +1535,15 @@ class Net(bool useArray = true,
 
     @safe pure nothrow
     {
-        ref inout(Link) at(Ln ln) inout { return allLinks[ln.ix]; }
-        ref inout(Node) at(Nd cref) inout @nogc { return allNodes[cref.ix]; }
+        ref inout(Link) at(const Ln ln) inout { return allLinks[ln.ix]; }
+        ref inout(Node) at(const Nd cref) inout @nogc { return allNodes[cref.ix]; }
 
-        ref inout(Link) opUnary(string s)(Ln ln) inout if (s == "*") { return at(ln); }
-        ref inout(Node) opUnary(string s)(Nd nd) inout if (s == "*") { return at(nd); }
+        ref inout(Link) opUnary(string s)(const Ln ln) inout if (s == "*") { return at(ln); }
+        ref inout(Node) opUnary(string s)(const Nd nd) inout if (s == "*") { return at(nd); }
     }
+
+    ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }
+    ref inout(Node) opIndex(const Nd nd) inout { return at(nd); }
 
     Nd nodeRefByLemmaMaybe(in Lemma lemma)
     {
