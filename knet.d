@@ -2092,6 +2092,9 @@ class Net(bool useArray = true,
 
             try { learnMto1(lang, rdT(dirPath ~ "/uppercase_letter.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
+
+            try { learnMto1(lang, rdT(dirPath ~ "/old_proverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `old proverb`, Sense.unknown, Sense.noun, 1.0); }
+            catch (std.file.FileException e) {}
         }
 
         // Translation

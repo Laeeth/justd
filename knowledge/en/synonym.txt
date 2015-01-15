@@ -18,3 +18,8 @@ uppercase lettercapital letterlarge lettermajuscule
 lowercase lettersmall letterminuscule
 
 Dolch word listsight wordsthe Dolch 220
+
+{1} times {2}{1} multiplied with {2}
+{1} over {2}{1} divided by {2}
+{1} plus {2}{1} added with {2}
+{1} minus {2}{1} subtracted by {2}

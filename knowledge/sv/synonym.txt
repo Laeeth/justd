@@ -1340,3 +1340,23 @@ trennetre
 vardabli
 vorovar
 åstadiväg
+
+ballskräppatestikelpungfeg person
+klingfittakvinna som säljer bröd av illa siktat mjöl
+skalkbedragare
+hundelak människa
+rumpoxedum person
+slamsäckerlättfärdig kvinna
+mashundsnåljåp
+gillbertilövermodig person eller kåt man
+prackareskojareklåpare
+rävopålitlig person
+snorslevotuktig kvinna
+pennalförstaårsstudent
+kofotförstaterminsstudent
+
+{1} gånger {2}{1} multiplicerat med {2}
+{1} över {2}{1} dividerat med {2}
+{1} delat med {2}{1} dividerat med {2}
+{1} plus {2}{1} adderat med {2}
+{1} minus {2}{1} subtraherat med {2}
