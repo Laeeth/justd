@@ -1465,10 +1465,8 @@ class Net(bool useArray = true,
         Origin origin;
     }
 
-    auto ins(in Link link) { return link.actors[].filter!(nd =>
-                                                          nd.dir() == RelDir.backward); }
-    auto outs(in Link link) { return link.actors[].filter!(nd =>
-                                                           nd.dir() == RelDir.forward); }
+    auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward); }
+    auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward); }
 
     pragma(msg, `Expr.sizeof: `, Expr.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
@@ -4840,10 +4838,10 @@ class Net(bool useArray = true,
 
     /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
     Nd store(Expr expr,
-                  Lang lang,
-                  Sense sense,
-                  Origin origin,
-                  ContextIx context = ContextIx.asUndefined) in { assert(!expr.empty); }
+             Lang lang,
+             Sense sense,
+             Origin origin,
+             ContextIx context = ContextIx.asUndefined) in { assert(!expr.empty); }
     body
     {
         const lemma = Lemma(expr, lang, sense, context);
@@ -4853,10 +4851,10 @@ class Net(bool useArray = true,
     /** Try to Lookup-or-Store $(D Node) named $(D expr) in language $(D lang).
      */
     Nd tryStore(Expr expr,
-                     Lang lang,
-                     Sense sense,
-                     Origin origin,
-                     ContextIx context = ContextIx.asUndefined)
+                Lang lang,
+                Sense sense,
+                Origin origin,
+                ContextIx context = ContextIx.asUndefined)
     {
         if (expr.empty)
             return Nd.asUndefined;
@@ -4864,10 +4862,10 @@ class Net(bool useArray = true,
     }
 
     Nd[] store(Exprs)(Exprs exprs,
-                           Lang lang,
-                           Sense sense,
-                           Origin origin,
-                           ContextIx context = ContextIx.asUndefined) if (isIterable!(Exprs))
+                      Lang lang,
+                      Sense sense,
+                      Origin origin,
+                      ContextIx context = ContextIx.asUndefined) if (isIterable!(Exprs))
     {
         typeof(return) nodeRefs;
         foreach (expr; exprs)
