@@ -78,6 +78,8 @@
 
     TODO Infer: {1} isA NOUN => {1} isA NOUN
 
+    TODO If WordNet is loaded explicitly skip it when loading CN5.
+
     TODO Prompt Queries:
     TODO canA(NOUN, VERB), canA(bird, fly), canA(man, walk), canA(dead man, walk)
     TODO isA(NOUN, NOUN), canA(bird, animal)
@@ -5934,16 +5936,25 @@ class Net(bool useArray = true,
         writeln(`> Line "`, line, `"`);
     }
 
-    /** Try Showing nodes and their relations matching content in $(D line).
-        Returns: true if any nodes where shown, false otherwise.
-     */
+    const durationInMsecs = 100; // duration in milliseconds
+
+    import std.datetime: StopWatch;
+    private StopWatch showNodesSW;
+
     bool showNodes(string line,
                    Lang lang = Lang.unknown,
                    Sense sense = Sense.unknown,
                    string lineSeparator = `_`,
                    TriedLines triedLines = TriedLines.init,
-                   string modHint = ``)
+                   bool top = true)
     {
+        if (top) { showNodesSW.start(); } // if top-level call start it
+        if (showNodesSW.peek().msecs >= durationInMsecs)
+        {
+            writeln(`Out of time. Skipping testing of `, line, ` ...`);
+            return false;
+        }
+
         import std.ascii: whitespace;
         import std.algorithm: splitter;
         import std.string: strip;
@@ -6170,7 +6181,7 @@ class Net(bool useArray = true,
                     foreach (separator; [``, `-`, "'"])
                     {
                         showNodes(combWords.joiner(separator).to!string,
-                                  lang, sense, lineSeparator, triedLines);
+                                  lang, sense, lineSeparator, triedLines, false);
                     }
                 }
             }
@@ -6181,7 +6192,7 @@ class Net(bool useArray = true,
                 foreach (separator; [``, ` `, "'"])
                 {
                     showNodes(minusWords.joiner(separator).to!string,
-                              lang, sense, lineSeparator, triedLines);
+                              lang, sense, lineSeparator, triedLines, false);
                 }
             }
 
@@ -6191,7 +6202,7 @@ class Net(bool useArray = true,
                 foreach (separator; [``, ` `, "-"])
                 {
                     showNodes(quoteWords.joiner(separator).to!string,
-                              lang, sense, lineSeparator, triedLines);
+                              lang, sense, lineSeparator, triedLines, false);
                 }
             }
 
@@ -6205,7 +6216,7 @@ class Net(bool useArray = true,
                 if (stemMoreLine == stemLine)
                     break;
                 // writeln(`> Stemmed to "`, stemMoreLine, `" in language `, stemLang);
-                showNodes(stemMoreLine, stemLang, sense, lineSeparator, triedLines);
+                showNodes(stemMoreLine, stemLang, sense, lineSeparator, triedLines, false);
                 stemLine = stemMoreLine;
             }
 
@@ -6214,7 +6225,7 @@ class Net(bool useArray = true,
             {
                 const nonIPLine = normLine.dropOne;
                 // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
-                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines);
+                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, false);
             }
 
             // non-interpuncted
@@ -6222,7 +6233,7 @@ class Net(bool useArray = true,
             {
                 const nonIPLine = normLine.dropBackOne;
                 // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
-                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines);
+                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, false);
             }
 
             // interpuncted
@@ -6233,17 +6244,17 @@ class Net(bool useArray = true,
                 // questioned
                 const questionedLine = normLine ~ '?';
                 // writeln(`> As a question "`, questionedLine, `"`);
-                showNodes(questionedLine, lang, sense, lineSeparator, triedLines);
+                showNodes(questionedLine, lang, sense, lineSeparator, triedLines, false);
 
                 // exclaimed
                 const exclaimedLine = normLine ~ '!';
                 // writeln(`> As an exclamation "`, exclaimedLine, `"`);
-                showNodes(exclaimedLine, lang, sense, lineSeparator, triedLines);
+                showNodes(exclaimedLine, lang, sense, lineSeparator, triedLines, false);
 
                 // dotted
                 const dottedLine = normLine ~ '.';
                 // writeln(`> As a dotted "`, dottedLine, `"`);
-                showNodes(dottedLine, lang, sense, lineSeparator, triedLines);
+                showNodes(dottedLine, lang, sense, lineSeparator, triedLines, false);
             }
 
             // lowered
@@ -6251,7 +6262,7 @@ class Net(bool useArray = true,
             if (loweredLine != normLine)
             {
                 // writeln(`> Lowercased to "`, loweredLine, `"`);
-                showNodes(loweredLine, lang, sense, lineSeparator, triedLines);
+                showNodes(loweredLine, lang, sense, lineSeparator, triedLines, false);
             }
 
             // uppered
@@ -6259,7 +6270,7 @@ class Net(bool useArray = true,
             if (upperedLine != normLine)
             {
                 // writeln(`> Uppercased to "`, upperedLine, `"`);
-                showNodes(upperedLine, lang, sense, lineSeparator, triedLines);
+                showNodes(upperedLine, lang, sense, lineSeparator, triedLines, false);
             }
 
             // capitalized
@@ -6267,7 +6278,7 @@ class Net(bool useArray = true,
             if (capitalizedLine != normLine)
             {
                 // writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
-                showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines);
+                showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines, false);
             }
         }
 
