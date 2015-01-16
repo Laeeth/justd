@@ -1746,8 +1746,19 @@ auto commonSuffixLength(Ranges...)(Ranges ranges)
 {
     static if (ranges.length == 2)
     {
-        return commonPrefixLength(ranges[0].retro,
-                                  ranges[1].retro);
+        import std.traits: isSomeString;
+        static if (isSomeString!(typeof(ranges[0])) &&
+                   isSomeString!(typeof(ranges[1])))
+        {
+            import std.string: representation;
+            return commonPrefixLength(ranges[0].representation.retro,
+                                      ranges[1].representation.retro);
+        }
+        else
+        {
+            return commonPrefixLength(ranges[0].retro,
+                                      ranges[1].retro);
+        }
     }
 }
 
@@ -1768,7 +1779,44 @@ auto commonSuffixLength(Ranges...)(Ranges ranges)
 @safe pure unittest
 {
     assert(commonSuffixLength(`_åäö`,
-                              `-åäö`) == 3); // TODO this is not desired
+                              `-åäö`) == 6);
+}
+
+/** Get Count of Suffix Prefix of $(D a) and $(D b).
+    See also: http://forum.dlang.org/thread/bmbhovkgqomaidnyakvy@forum.dlang.org#post-bmbhovkgqomaidnyakvy:40forum.dlang.org
+*/
+auto commonPrefixCount(Ranges...)(Ranges ranges)
+{
+    static if (ranges.length == 2)
+    {
+        import std.utf: byDchar;
+        return commonPrefixLength(ranges[0].byDchar,
+                                  ranges[1].byDchar);
+    }
+}
+
+@safe pure unittest
+{
+    assert(commonPrefixCount(`åäö_`,
+                             `åäö-`) == 3);
+}
+
+/** Get Count of Suffix Prefix of $(D a) and $(D b).
+    See also: http://forum.dlang.org/thread/bmbhovkgqomaidnyakvy@forum.dlang.org#post-bmbhovkgqomaidnyakvy:40forum.dlang.org
+*/
+auto commonSuffixCount(Ranges...)(Ranges ranges)
+{
+    static if (ranges.length == 2)
+    {
+        return commonPrefixLength(ranges[0].retro,
+                                  ranges[1].retro);
+    }
+}
+
+@safe pure unittest
+{
+    assert(commonSuffixCount(`_åäö`,
+                              `-åäö`) == 3);
 }
 
 /** Get length of Common Prefix of ranges $(D ranges).
