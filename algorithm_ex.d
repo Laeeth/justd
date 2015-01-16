@@ -1727,8 +1727,12 @@ auto commonPrefixLength(Ranges...)(Ranges ranges)
 
 @safe pure nothrow unittest
 {
-    assert(commonPrefixLength([1, 2, 3, 10],
-                              [1, 2, 4, 10]) == 2);
+    const x = [1, 2, 3, 10], y = [1, 2, 4, 10];
+    void f() @safe @nogc pure nothrow
+    {
+        assert(commonPrefixLength(x, y) == 2);
+    }
+    f();
     assert(commonPrefixLength([1, 2, 3, 10],
                               [1, 2, 3]) == 3);
     assert(commonPrefixLength([1, 2, 3, 0, 4],
@@ -1749,8 +1753,14 @@ auto commonSuffixLength(Ranges...)(Ranges ranges)
 
 @safe pure unittest
 {
-    assert(commonSuffixLength([1, 2, 3, 10, 11, 12],
-                              [1, 2, 4, 10, 11, 12]) == 3);
+    const x = [1, 2, 3, 10, 11, 12];
+    const y = [1, 2, 4, 10, 11, 12];
+    void f() @safe @nogc pure nothrow
+    {
+        assert(commonPrefixLength(x, y) == 2);
+    }
+    f();
+    assert(commonSuffixLength(x, y) == 3);
     assert(commonSuffixLength([10, 1, 2, 3],
                               [1, 2, 3]) == 3);
 }
