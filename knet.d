@@ -4778,12 +4778,33 @@ class Net(bool useArray = true,
         connectAll(Rel.formOfAdjective, all.filter!(a => a.defined), lang, origin);
     }
 
+    void learnAdjective(S)(Lang lang,
+                           S[3] forms) if (isSomeString!S)
+    {
+        return learnAdjective(lang, forms[0], forms[1], forms[2]);
+    }
+
+
     /** Learn Swedish Adjectives.
      */
     void learnSwedishAdjectives()
     {
         enum lang = Lang.sv;
         learnAdjective(lang, "tung", "tyngre", "tyngst");
+        learnAdjective(lang, "få", "färre", "färst");
+        learnAdjective(lang, "många", "fler", "flest");
+        learnAdjective(lang, "bra", "bättre", "bäst");
+        learnAdjective(lang, "dålig", "sämre", "sämst");
+        learnAdjective(lang, "liten", "mindre", "minst");
+        learnAdjective(lang, "gammal", "äldre", "äldst");
+        learnAdjective(lang, "hög", "högre", "högst");
+        learnAdjective(lang, "låg", "lägre", "lägst");
+        learnAdjective(lang, "lång", "längre", "längst");
+        learnAdjective(lang, "stor", "större", "störst");
+        learnAdjective(lang, "tung", "tyngre", "tyngst");
+        learnAdjective(lang, "ung", "yngre", "yngst");
+        learnAdjective(lang, "mycket", "mer", "mest");
+        learnAdjective(lang, "gärna", "hellre", "helst");
     }
 
     /** Learn English Adjectives.

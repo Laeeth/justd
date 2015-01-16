@@ -12,9 +12,7 @@ acklimatiseravänja vid klimatethärdaanpassa
 ackuratprecisjust
 adekvatriktig
 afavfrån (ett släkte)
-afbegeranlaga skifte
 affischeraplacera
-affischeringreklam
 agitatorpolitisk uppviglare
 agiterailsken påstridig. med stor intensitet och/eller kraft försöka vinna över någon eller några till en viss synpunkt
 agreabelangenämtilltalandebehaglig
@@ -24,14 +22,12 @@ akribi(vetenskaplig) exakthet
 alarmerandeoroande, t.ex. att man är varnad
 alektopatha svårt att bestämma sigtvekabetänka sig
 alienationfrämmandedistanstagandekänsla ex till arbete
-alikakaja
 alldenstundeftersom
 allegeraanföraåberopa
 allehandaalla slags
 allenaensam
 allenastendast
 allestädesöverallt
-allmogeallmänhet
 allom"för alla", tex i uttrycket allom bekant, "något som alla känner till". se c. vreeswijks låt dekadens 4e versen: "ni har väl hört, kära ni, det är väl allom bekant:"
 allskönsalla sorters, särskilt i negativa sammanhang
 alluderaanspelasyfta på
@@ -39,14 +35,13 @@ altruistmotsats till egoist, person som tänker mer på omgivningen än sig sj�
 ambidextritvå hänt bäggehänt
 ambivalentkluven
 ambulerandekringflackande
-amperskarp/sträv; sträng
-anakronismotidsenlig företeelse
+amperskarpsträv
+ampersträng
 analoglikartadöverensstämmandeenlig med ngtjämförligmotsvarande
 anammata; ta emot; godta
 androgyndubbelkönad varelse
 ankommabero påvara någons uppgift/ansvar
 anledningmed anledning
-anleteansikte
 anländerkommer
 annalkandesom närmar sig
 annekterata i besittning
@@ -54,8 +49,8 @@ annorledesannorlunda / på annat sätt
 annorstädespå annan plats
 annuleradordern är annulerad
 annulleraavbeställaåterkalla
-annullerasägaupp
-annullerarbetyder de tar bort
+annullerasäga upp
+annullerarde tar bort
 annullerarta bort
 anomaliavvikelse
 anomaliavvikelse; regelbrott; undantag
@@ -232,22 +227,18 @@ dävenunkenfuktig
 däventröttdåsig (om personer)
 dånafå dåndimpensvimma
 dåvendämpaddyster
-dåven???betyder ju lat på danska kan det verkligen betyda dyster, dämpad?
-dörrslåbom över dörr
 ecklesiastikdepartementkyrko- och utbildningsdepartement
-edlandtunga
-edlåglänt mark innanför en udde där vattnet inte går över marken-övergångsställe vintertid när isen ligger på sjön
 eduatt du eeller alltid varit
-efemärexisterar under mycket kort tidsrymd och alltså inte har ngt bestående värde (flyktig, förgänglig, kortlivad...)
+efemärflyktigförgängligkortlivad
 egallikgiltig
 egalitäristiskjämnställd
 egenskapkänna till olika egenskaper
 ehurufastän
 ejaacko
 ekivoktvetydighet ofta med sexuell anspelning
-eklektiskmånga olika stilar under samma tak. typ
-ekolalien person som lider av ekolali upprepar samma sak flera gånger
-ekuperatagit över
+eklektiskmånga olika stilar under samma tak
+ekolaliperson som upprepar samma sak flera gånger
+ekuperata över
 ekvivalentvara lika medsamma som
 elanhänförelse
 elevatorhiss för person- eller godsbefordran
@@ -255,54 +246,37 @@ eljestannars
 eljestannorlundaspeciell. används oftast för att beskriva personer. exempel: "n'erik är som lite eljest."
 elokventvältalig
 elyseiskhimmelskparadisisk
-emanationutflöde
 emanera frånha sitt ursprung i
 emedandärför att
 emellertiddock
-emfaseftertryckstark betoning
 empiriskgrundad på erfarenheterfarenhetsmässigfaktabaserad
-en fjäder i hattenuttryck
 endåfast än
-enfaldig1: som till antalet utgör en 2: korkad
-engagemangatt man bryr sig och försöker
+enfaldigsom till antalet utgör
+enfaldigkorkad
 enkannerligeni synnerhetsärskilt
 enkomenbart
-enkätundersökning
 enrakenvis
 ensamallena
 enträgenihärdig
 enäreftersom
-ep-skivaliten grammofonskiva som spelades i 45 varv/min. kallades också för singel
-epigonefterföljare
-epigramkort dikt
-epitomeen person eller sak som är typiskt för eller innehar en hög grad funktionerna i en hel klass: han är epitomen av godhet
 erbarmligusel
 erinrakomma ihågpåminnakomma att tänka på
-erlovavsked
 ernåuppnånåvinnaåstadkommakomma fram tillförvärvaerhålla
 eskaleraöka
 eskatologiläran om de yttersta tingen (som i uppenbarelseboken)
-eskulap
-eskulapläkare
 esoteriskendast för de redan invigda
-ett god hjärtahjärta
 ettuinågot man kan stoppa små saker i
-etyosäker -men något typ "trots det ..." eller "just därför"...
 ety atteftersomalldenstund
 ety detdärför
 evidentuppenbart
-exförra flickvän
 excerptutdrag (ur skrift)
-exegetbibeltolkare
 exhumeringatt gräva upp och flytta ett lik till annan grav
-explosiondetonera
+exploderadetonera
 extravagantytterliggåendefantastisk
 extravagantsvärmandeexcentrisk
 extremöverdriven
 facilitetbillighetmedgörlighetanordning
-fadäsmisslyckande
 fagervacker
-faksimilta kopia
 faktotummedarbetareassistenthjälpredaallt-i-allo
 faleväldigt
 falleramisslyckasen brist föreligger
@@ -311,36 +285,23 @@ famöskänd
 farnötefärdkamrat
 farsotepidemisjukdom med stor och snabb spridning
 fatalödesdiger
-fatal (t)ödesdiger(t)
 fataltenkeltsimpelt
 fatburaffärbetalning skedde via löneavdrag
 fatburäven förråd
 fatburfatabur
 fatofaderskapserkännande
-fekalierexkrementer
-fendergitarr
-festplanerareplanerar en gala
-fetalierlivsmedel
-fettisdagensemeldagen
 fikaeftersträvasträva
 fikadricka kaffe med dopp
-filantropmänniskovän
 filiströskälkborgerlig
-filletrasigt klädesplagg eller tygstycke
-filtrumrännan på överläppen
 fingerfärdighändig
-fjällaflickvänsnygg tjej
-fjätnatten går tunga fjät
-flanigdömt beteende. kanske enbart i göteborskan
 flatmesig
 flitigatt man är kunnig
 fluckertcoolthäftigt
 flukturansegenskapen (hos ett visst förlopp) att vara full av häftiga växlingar/svängningar/variationer
-fly mig(vänligen) ge mig!
+fly migge mig
 foråkte
 foralass
-fordomförr i tiden; tidigare
-fornai staden tjernobyl i det forna sovjet
+fordomförr i tidentidigare
 fortkomstledamöterben (de man går på), ungefär som apostlahästar
 fotostatkopierakopiera i kopieringsmaskin
 framgenti fortsättningenframöver
@@ -352,19 +313,10 @@ frekventofta
 frekventerabesöka ofta
 frivollättsinnigekivok
 frugalsparsamenkel
-frustrationbesvikelse
-frälsarädda
-frälserfrälser någons liv
-frälstablir dem frälsta vid tidens slut
-frändesläkting
-fuktfukt i samband mr rättegång
-fulldricka sin berusad
-fygareballongfarare
-fylka; fylkassamla (ihop); samlas (kring)
-fäkreatur
-fäbless(subst.) svaghet/böjelse/förkärlek för ngt
-fägnagöra (ngn) glad, bereda (ngn) glädje, glädja, fröjda; roa; äv. med avseende på ngns sinnen
-färstsuperlativ av få: få färre färst
+fylkasamla (ihop)
+fylkassamlas (kring)
+fägnagöra någon gladbereda någon glädjeglädjafröjda
+fägnaroa
 fäsörplagiatörefterapare
 fögainte så mycketinte särskilt
 föranstalta ompåbörja (samhälleliga åtgärder mot)
@@ -1307,8 +1259,8 @@ zlataneradominera
 övligsedvanlig
 övligtsedvanligt, brukligt
 
-serveralägga för, hälla upp, bära fram, duka fram, undfägna, bjuda, utspisa, bespisa
-serverapassa upp, uppassa, serva, betjäna
+serveralägga förhälla uppbära framduka framundfägnabjudautspisabespisa
+serverapassa uppuppassaservabetjäna
 serveratillhandahålla
 inget att tacka föringen orsak
 i morsei idag på morgon
@@ -1340,6 +1292,18 @@ trennetre
 vardabli
 vorovar
 åstadiväg
+
+bössskrikigastöriga ungarskitungar
+
+hederstryffeltjockis
+
+mähäbeskedlig stackarevåp
+
+pojkvaskersnorunge
+
+trövlingförståndshandikappad
+
+fubbickdum i huvudet
 
 ballskräppatestikelpungfeg person
 klingfittakvinna som säljer bröd av illa siktat mjöl
