@@ -1746,9 +1746,10 @@ auto commonSuffixLength(Ranges...)(Ranges ranges)
 {
     static if (ranges.length == 2)
     {
-        import std.traits: isSomeString;
-        static if (isSomeString!(typeof(ranges[0])) &&
-                   isSomeString!(typeof(ranges[1])))
+        import std.range: isNarrowString;
+        import std.range: retro;
+        static if (isNarrowString!(typeof(ranges[0])) &&
+                   isNarrowString!(typeof(ranges[1])))
         {
             import std.string: representation;
             return commonPrefixLength(ranges[0].representation.retro,
@@ -1789,14 +1790,26 @@ auto commonPrefixCount(Ranges...)(Ranges ranges)
 {
     static if (ranges.length == 2)
     {
-        import std.utf: byDchar;
-        return commonPrefixLength(ranges[0].byDchar,
-                                  ranges[1].byDchar);
+        import std.range: isNarrowString;
+        static if (isNarrowString!(typeof(ranges[0])) &&
+                   isNarrowString!(typeof(ranges[1])))
+        {
+            import std.utf: byDchar;
+            return commonPrefixLength(ranges[0].byDchar,
+                                      ranges[1].byDchar);
+        }
+        else
+        {
+            return commonPrefixLength(ranges[0],
+                                      ranges[1]);
+        }
     }
 }
 
 @safe pure unittest
 {
+    assert(commonPrefixCount([1, 2, 3, 10],
+                             [1, 2, 3]) == 3);
     assert(commonPrefixCount(`åäö_`,
                              `åäö-`) == 3);
 }
@@ -1808,6 +1821,7 @@ auto commonSuffixCount(Ranges...)(Ranges ranges)
 {
     static if (ranges.length == 2)
     {
+        import std.range: retro;
         return commonPrefixLength(ranges[0].retro,
                                   ranges[1].retro);
     }
