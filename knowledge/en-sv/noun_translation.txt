@@ -16,3 +16,7 @@ interjectioninterjektion
 adjectiveadjektiv
 determinerdeterminativt pronomen
 demonstrativedemonstrativt pronomen
+
+figure of speechstilfigur
+
+sayingproverbadageordspråk

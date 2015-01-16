@@ -2123,6 +2123,11 @@ class Net(bool useArray = true,
                        Rel.translationOf,
                        Sense.idiom, Lang.sv,
                        Origin.manual, 1.0);
+        learnMtoNMaybe("../knowledge/en-sv/interjection_translation.txt",
+                       Sense.interjection, Lang.en,
+                       Rel.translationOf,
+                       Sense.interjection, Lang.sv,
+                       Origin.manual, 1.0);
         learnMtoNMaybe("../knowledge/fr-en/phrase_translation.txt",
                        Sense.unknown, Lang.fr,
                        Rel.translationOf,
@@ -2181,6 +2186,8 @@ class Net(bool useArray = true,
 
         learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adjective`, Sense.adjective, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `adverb`, Sense.adverb, Sense.noun, 1.0);
+
+        learnMto1(Lang.en, rdT("../knowledge/en/figure_of_speech.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `figure of speech`, Sense.unknown, Sense.noun, 1.0);
 
         learnMobyEnglishPronounciations();
     }
