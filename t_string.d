@@ -2,7 +2,7 @@
 
 import std.stdio;
 import std.range: retro, array;
-import std.algorithm: walkLength;
+import std.algorithm: walkLength, count;
 import std.utf: byCodeUnit, byWchar, byDchar;
 import std.uni: byCodePoint, byGrapheme;
 import std.conv: to;
@@ -41,6 +41,7 @@ void main(string[] args)
     writefln(`"é".length: `, "é".length, " bytes: %(%x)", cast(ubyte[])"é");
 
     writeln("åäö".length);
+    writeln("åäö".count);
     writeln("åäö".retro);
     writeln("åäö".byCodeUnit.retro);
     writeln("åäö".byCodePoint.retro);
