@@ -286,7 +286,7 @@ import std.typecons: Nullable, Tuple, tuple;
 import std.file: readText, exists;
 alias rdT = readText;
 
-import algorithm_ex: isPalindrome, either, append, commonSuffixLength;
+import algorithm_ex: isPalindrome, either, append, commonSuffixCount;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
 import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers;
 import sort_ex: sortBy, rsortBy, sorted;
@@ -6385,20 +6385,21 @@ class Net(bool useArray = true,
         {
             const src = at(src_);
             if (langs.empty) { langs = [src.lemma.lang]; } // stay within language by default
-            foreach (link; linksOf(src_).filter!(link => link.rel == Rel.hasPronounciation))
-            {
-                writeln("src_: ", at(src_));
-                writeln("link.rel: ", link.rel);
-                writeln("link.actors: ", link.actors);
-            }
 
-            foreach (dstRef; nearsOf(src_, Rel.hasPronounciation, origins))
+            // foreach (link; linksOf(src_).filter!(link => link.rel == Rel.hasPronounciation))
+            // {
+            //     writeln("src_: ", at(src_));
+            //     writeln("link.rel: ", link.rel);
+            //     writeln("link.actors: ", link.actors);
+            // }
+
+            foreach (dst_; nearsOf(src_, Rel.hasPronounciation, origins))
             {
-                const dst = at(dstRef);
-                writeln("src_:", src_, " src:", src, " dstRef:", dstRef, " dst:", dst);
+                const dst = at(dst_);
+                writeln("src_:", src_, " src:", src, " dst_:", dst_, " dst:", dst);
                 auto hits = allNodes.filter!(a => langs.canFind(a.lemma.lang))
-                                    .map!(a => tuple(a, commonSuffixLength(a.lemma.expr,
-                                                                           at(src_).lemma.expr)))
+                                    .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
+                                                                          at(src_).lemma.expr)))
                                     .filter!(a => a[1] >= commonPhonemeCountMin)
                                     // .sorted!((a, b) => false)
                 ;
