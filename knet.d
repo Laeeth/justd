@@ -276,7 +276,7 @@ import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, multiSort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
 import std.math: abs;
 import std.container: Array;
-import std.string: tr, toLower, toUpper, capitalize;
+import std.string: tr, toLower, toUpper, capitalize, representation;
 import std.array: array, replace;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
@@ -1186,7 +1186,7 @@ Sense sensesOfMobyPoSCode(C)(C code) if (isSomeChar!C)
 class Net(bool useArray = true,
           bool useRCString = true)
 {
-    import std.range: front, split, isInputRange;
+    import std.range: front, split, isInputRange, back;
     import std.algorithm: joiner, clamp;
     import std.path: buildNormalizedPath, expandTilde, extension;
     import std.algorithm: strip, array, until, dropOne, dropBackOne;
@@ -1290,10 +1290,24 @@ class Net(bool useArray = true,
              Sense sense,
              ContextIx context = ContextIx.asUndefined,
              Manner manner = Manner.formal,
-             bool isRegexp = false)
+             bool isRegexp = false,
+             ubyte variantNumber = 0)
         {
             // this.isRegexp = expr.skipOver("regex:") ? true : isRegexp;
-            this.expr = expr;
+            if (expr.length >= 2 &&
+                expr[$ - 2] == ';')
+            {
+                this.variantNumber = cast(ubyte)(expr.representation.back - '0');
+                this.expr = expr[0 .. $ - 2]; // skip variant number suffix
+                assert(variantNumber == 0,
+                       "Cannot override existing variant number" /* ~ this.variantNumber.to!string */);
+            }
+            else
+            {
+                this.variantNumber = variantNumber;
+                this.expr = expr;
+            }
+
             auto split = expr.findSplit(":");
             const subSense = split[0];
             const subExpr = split[2];
@@ -1305,7 +1319,7 @@ class Net(bool useArray = true,
             this.sense = sense;
             this.manner = manner;
             this.context = context;
-            this.isRegexp = isRegexp;
+            // this.isRegexp = isRegexp;
         }
 
         Expr expr;
@@ -1314,8 +1328,11 @@ class Net(bool useArray = true,
         Lang lang;
         Sense sense;
         ContextIx context;
-        Manner manner;
-        bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression
+
+        // TODO pack these into one byte using a bitfields
+        Manner manner; // TODO 2 bits
+        ubyte variantNumber = 0; // 0 means unknown or not needed
+        // bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression. TODO one bit
         /* auto opCast(T : bool)() { return expr !is null; } */
     }
 
@@ -1655,7 +1672,8 @@ class Net(bool useArray = true,
                 if (existingLemma.lang == lemma.lang &&
                     existingLemma.context == lemma.context &&
                     existingLemma.manner == lemma.manner &&
-                    existingLemma.isRegexp == lemma.isRegexp &&
+                    existingLemma.variantNumber == lemma.variantNumber &&
+                    // existingLemma.isRegexp == lemma.isRegexp &&
                     existingLemma.sense.specializes(lemma.sense))
                 {
                     // dln(`Specializing sense of Lemma "`, expr, `"`,
@@ -5878,6 +5896,11 @@ class Net(bool useArray = true,
 
         write(` (`); // open
 
+        if (node.lemma.variantNumber != 0)
+        {
+            write(`[`, node.lemma.variantNumber, `]`);
+        }
+
         if (node.lemma.lang != Lang.unknown)
         {
             write(node.lemma.lang);
@@ -5905,14 +5928,20 @@ class Net(bool useArray = true,
     }
 
     void showNds(R)(R nodeRefs,
-                         Rel rel = Rel.any,
-                         bool negation = false)
+                    Rel rel = Rel.any,
+                    bool negation = false)
     {
         foreach (nd; nodeRefs)
         {
             const lineNode = at(nd);
 
             write(`  -`);
+
+            if (lineNode.lemma.variantNumber != 0)
+            {
+                write(` variant [`, lineNode.lemma.variantNumber, `]`);
+            }
+
             if (lineNode.lemma.lang != Lang.unknown)
             {
                 write(` in `, lineNode.lemma.lang.toHuman);
