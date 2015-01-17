@@ -1280,6 +1280,9 @@ class Net(bool useArray = true,
         ushort _ix = 0;
     }
 
+    // TODO Use in Lemma.
+    enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
+
     /** Node Concept Lemma. */
     struct Lemma
     {
@@ -1291,20 +1294,24 @@ class Net(bool useArray = true,
              ContextIx context = ContextIx.asUndefined,
              Manner manner = Manner.formal,
              bool isRegexp = false,
-             ubyte variantNumber = 0)
+             ubyte meaningNumber = 0)
         {
             // this.isRegexp = expr.skipOver("regex:") ? true : isRegexp;
             if (expr.length >= 2 &&
                 expr[$ - 2] == ';')
             {
-                this.variantNumber = cast(ubyte)(expr.representation.back - '0');
-                this.expr = expr[0 .. $ - 2]; // skip variant number suffix
-                assert(variantNumber == 0,
-                       "Cannot override existing variant number" /* ~ this.variantNumber.to!string */);
+                const ubyte nrCharByte = expr.representation.back;
+                assert(nrCharByte >= '0' &&
+                       nrCharByte <= '9');
+                this.meaningNumber = cast(ubyte)(nrCharByte - '0');
+                this.expr = expr[0 .. $ - 2]; // skip meaning number suffix
+                assert(meaningNumber == 0,
+                       "Cannot override already decoded meaning number"
+                       /* ~ this.meaningNumber.to!string */);
             }
             else
             {
-                this.variantNumber = variantNumber;
+                this.meaningNumber = meaningNumber;
                 this.expr = expr;
             }
 
@@ -1331,7 +1338,7 @@ class Net(bool useArray = true,
 
         // TODO pack these into one byte using a bitfields
         Manner manner; // TODO 2 bits
-        ubyte variantNumber = 0; // 0 means unknown or not needed
+        ubyte meaningNumber = 0; // 0 means unknown or not needed
         // bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression. TODO one bit
         /* auto opCast(T : bool)() { return expr !is null; } */
     }
@@ -1672,7 +1679,7 @@ class Net(bool useArray = true,
                 if (existingLemma.lang == lemma.lang &&
                     existingLemma.context == lemma.context &&
                     existingLemma.manner == lemma.manner &&
-                    existingLemma.variantNumber == lemma.variantNumber &&
+                    existingLemma.meaningNumber == lemma.meaningNumber &&
                     // existingLemma.isRegexp == lemma.isRegexp &&
                     existingLemma.sense.specializes(lemma.sense))
                 {
@@ -5896,9 +5903,9 @@ class Net(bool useArray = true,
 
         write(` (`); // open
 
-        if (node.lemma.variantNumber != 0)
+        if (node.lemma.meaningNumber != 0)
         {
-            write(`[`, node.lemma.variantNumber, `]`);
+            write(`[`, node.lemma.meaningNumber, `]`);
         }
 
         if (node.lemma.lang != Lang.unknown)
@@ -5937,9 +5944,9 @@ class Net(bool useArray = true,
 
             write(`  -`);
 
-            if (lineNode.lemma.variantNumber != 0)
+            if (lineNode.lemma.meaningNumber != 0)
             {
-                write(` variant [`, lineNode.lemma.variantNumber, `]`);
+                write(` meaning [`, lineNode.lemma.meaningNumber, `]`);
             }
 
             if (lineNode.lemma.lang != Lang.unknown)
