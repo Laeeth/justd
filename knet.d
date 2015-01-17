@@ -116,8 +116,6 @@
     nouns, adjectives, adverbs. Use (verb|noun|adjective)(Ir)Regular to indicate regularity
     - Swedish: "ersätt", "ersätta", "ersätter", "ersatte", "ersatt"
 
-    TODO Remove Lang argument to connect()
-
     TODO Group Rel bool negation and bool reversion into a bitfield struct of size 16
     and simplify interfaces. Use CTFE to add instantiator rel!"memberOf"
 
@@ -4995,9 +4993,9 @@ class Net(bool useArray = true,
 
     /** Fan-In Connect $(D first) to Every in $(D rest). */
     Ln[] connectMto1(R)(R rest,
-                             Rel rel, bool reversion,
-                             Nd first,
-                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+                        Rel rel, bool reversion,
+                        Nd first,
+                        Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
         typeof(return) linkIxes;
         foreach (you; rest)
