@@ -218,6 +218,16 @@ enum Rel:ubyte
                 is the antonym relation in WordNet as well. /r/Antonym
                 /c/en/black /c/en/white; /r/Antonym /c/en/hot /c/en/cold */
     antonym = antonymFor,
+
+    homonymFor, // Word with same spelling and pronounciation, but different meaning
+
+    contronymFor,  // Word with same spelling but with different pronounciation and meaning
+    contranymFor = contronymFor,
+    autoantonymFor = contranymFor,
+    homographFor = autoantonymFor,
+
+    homophoneFor, // Word with same pronounication, but different spelling and meaning
+
     reversionOf,
 
     retronymFor, differentation = retronymFor, // $(EM acoustic) guitar. https://en.wikipedia.org/wiki/Retronym
@@ -336,6 +346,7 @@ enum Rel:ubyte
 
     createdAtDate,
     bornIn,
+    foundedIn,
     marriedIn,
     diedIn,
     diedAtAge,

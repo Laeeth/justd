@@ -48,6 +48,9 @@ alias Rank = uint;
                                  translationOf,
                                  synonymFor,
                                  antonymFor,
+                                 contronymFor,
+                                 homophoneFor,
+
                                  reversionOf,
                                  similarSizeTo,
                                  similarTo,
@@ -179,6 +182,14 @@ auto toHuman(const Rel rel,
                 case sv: words = ["är", not, "synonym med"]; break;
                 case en:
                 default: words = ["is", not, "a synonym for"]; break;
+            }
+            break;
+        case homophoneFor:
+            switch (lang)
+            {
+                case sv: words = ["är", not, "homofon med"]; break;
+                case en:
+                default: words = ["is", not, "a homophone for"]; break;
             }
             break;
         case obsolescentFor:

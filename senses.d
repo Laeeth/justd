@@ -68,8 +68,9 @@ enum Sense:ubyte
 
     nameLocation,           /// Stockholm
     namePerson,             /// John
-    nameOrganisation,   /// CIA
-    country,            /// Sweden
+    nameOrganisation,       /// CIA
+    city,                   /// Skänninge
+    country,                /// Sweden
     newspaper,            /// Tidning
 
     timePeriod,
@@ -337,6 +338,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nameLocation: return `location name`;
         case namePerson: return `person name`;
         case nameOrganisation: return `organisation name`;
+        case city: return `city`;
         case country: return `country`;
         case newspaper: return `newspaper`;
 
@@ -660,8 +662,15 @@ import predicates: of;
                                      nameLocation,
                                      namePerson,
                                      nameOrganisation,
+                                     city,
                                      country,
                                      newspaper);
+    }
+    bool isLocation(Sense sense)
+    {
+        with (Sense) return sense.of(nameLocation,
+                                     city,
+                                     country);
     }
     bool isVerb(Sense sense)
     {

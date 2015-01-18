@@ -12,6 +12,11 @@
       type nameMale or nameFemale. Also show "how" they are related (show network walk).
     - Translate text to use age-relevant words. Use pre-train child book word
       histogram for specific ages.
+    - Find dubious words:
+      - Swedish:
+        - trumpétare - trúm-petare
+        - tómtén - tómten
+        - tunnelbánan - tunnel-banán
     - Emotion Detection
 
     See also: http://stevehanov.ca/blog/index.php?id=8
@@ -56,6 +61,10 @@
     Names: http://www.urbandictionary.com/
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
+
+    TODO Find dubious words:
+         - Swedish: trumpetare - trum-petare
+         - Swedish: tunnelbanan - tunnel-banan
 
     TODO rhymesOf() may reuse Walk.byNode walkOver(Rel.prounounciation)
 
@@ -312,6 +321,7 @@ enum syllableSeparator = asciiUS; // separates syllables
 enum alternativesSeparator = asciiRS; // separates alternatives
 enum roleSeparator = asciiFS; // separates subject from object, translations, etc.
 enum qualifierSeparator = ':'; // noun:eka
+enum meaningNrSeparator = ';'; // tomten;1 tomten;2
 enum countSeparator = '#'; // gives occurrence count
 
 /* import stdx.allocator; */
@@ -467,6 +477,7 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `locationlocatedwithinlocation`: return atLocation;
 
             case `borninlocation`: return bornInLocation;
+            case `foundedin`: return foundedIn;
 
             default: break;
         }
@@ -799,6 +810,8 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `wasbornin`:
             case `bornin`:
             case `birthdate`:                                      return bornIn;
+
+            case `foundedIn`:                                      return foundedIn;
 
             case `growingin`: return growsIn;
 
@@ -1294,24 +1307,24 @@ class Net(bool useArray = true,
              ContextIx context = ContextIx.asUndefined,
              Manner manner = Manner.formal,
              bool isRegexp = false,
-             ubyte meaningNumber = 0)
+             ubyte meaningNr = 0)
         {
             // this.isRegexp = expr.skipOver("regex:") ? true : isRegexp;
             if (expr.length >= 2 &&
-                expr[$ - 2] == ';')
+                expr[$ - 2] == meaningNrSeparator)
             {
                 const ubyte nrCharByte = expr.representation.back;
                 assert(nrCharByte >= '0' &&
                        nrCharByte <= '9');
-                this.meaningNumber = cast(ubyte)(nrCharByte - '0');
+                this.meaningNr = cast(ubyte)(nrCharByte - '0');
                 this.expr = expr[0 .. $ - 2]; // skip meaning number suffix
-                assert(meaningNumber == 0,
+                assert(meaningNr == 0,
                        "Cannot override already decoded meaning number"
-                       /* ~ this.meaningNumber.to!string */);
+                       /* ~ this.meaningNr.to!string */);
             }
             else
             {
-                this.meaningNumber = meaningNumber;
+                this.meaningNr = meaningNr;
                 this.expr = expr;
             }
 
@@ -1338,7 +1351,7 @@ class Net(bool useArray = true,
 
         // TODO pack these into one byte using a bitfields
         Manner manner; // TODO 2 bits
-        ubyte meaningNumber = 0; // 0 means unknown or not needed
+        ubyte meaningNr = 0; // 0 means unknown or not needed
         // bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression. TODO one bit
         /* auto opCast(T : bool)() { return expr !is null; } */
     }
@@ -1679,7 +1692,7 @@ class Net(bool useArray = true,
                 if (existingLemma.lang == lemma.lang &&
                     existingLemma.context == lemma.context &&
                     existingLemma.manner == lemma.manner &&
-                    existingLemma.meaningNumber == lemma.meaningNumber &&
+                    existingLemma.meaningNr == lemma.meaningNr &&
                     // existingLemma.isRegexp == lemma.isRegexp &&
                     existingLemma.sense.specializes(lemma.sense))
                 {
@@ -2034,6 +2047,11 @@ class Net(bool useArray = true,
                            Sense.adjective, lang, Rel.synonymFor,
                            Sense.adjective, lang, Origin.manual, 1.0);
 
+            // Homophone
+            learnMtoNMaybe(dirPath ~ "/homophone.txt",
+                           Sense.unknown, lang, Rel.homophoneFor,
+                           Sense.unknown, lang, Origin.manual, 1.0);
+
             // Abbrevation
             learnMtoNMaybe(dirPath ~ "/cardinal_direction_abbrevation.txt",
                            Sense.unknown, lang, Rel.abbreviationFor,
@@ -2109,6 +2127,15 @@ class Net(bool useArray = true,
                            Sense.language, Lang.en,
                            Origin.manual, 1.0);
 
+            // City
+            try
+            {
+                foreach (entry; rdT(dirPath ~ "/city.txt").splitter('\n').filter!(w => !w.empty))
+                {
+                }
+            }
+            catch (std.file.FileException e) {}
+
             try { learnMto1(lang, rdT(dirPath ~ "/vehicle.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `vehicle`, Sense.noun, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
 
@@ -2119,6 +2146,9 @@ class Net(bool useArray = true,
             catch (std.file.FileException e) {}
 
             try { learnMto1(lang, rdT(dirPath ~ "/old_proverb.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `old proverb`, Sense.unknown, Sense.noun, 1.0); }
+            catch (std.file.FileException e) {}
+
+            try { learnMto1(lang, rdT(dirPath ~ "/contronym.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `contronym`, Sense.unknown, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
         }
 
@@ -2978,7 +3008,7 @@ class Net(bool useArray = true,
         derived from $(D second) in language $(D secondLang) both in sense $(D sense).
      */
     Ln learnEtymologicallyDerivedFrom(S1, S2)(S1 first, Lang firstLang, Sense firstSense,
-                                                   S2 second, Lang secondLang, Sense secondSense)
+                                              S2 second, Lang secondLang, Sense secondSense)
     {
         return connect(store(first, firstLang, Sense.noun, Origin.manual),
                        Rel.etymologicallyDerivedFrom,
@@ -2989,9 +3019,9 @@ class Net(bool useArray = true,
     /** Learn English Irregular Verb.
      */
     Ln[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive,
-                                                    S2 past,
-                                                    S3 pastParticiple,
-                                                    Origin origin = Origin.manual)
+                                               S2 past,
+                                               S3 pastParticiple,
+                                               Origin origin = Origin.manual)
     {
         enum lang = Lang.en;
         Nd[] all;
@@ -5911,9 +5941,9 @@ class Net(bool useArray = true,
 
         write(` (`); // open
 
-        if (node.lemma.meaningNumber != 0)
+        if (node.lemma.meaningNr != 0)
         {
-            write(`[`, node.lemma.meaningNumber, `]`);
+            write(`[`, node.lemma.meaningNr, `]`);
         }
 
         if (node.lemma.lang != Lang.unknown)
@@ -5952,9 +5982,9 @@ class Net(bool useArray = true,
 
             write(`  -`);
 
-            if (lineNode.lemma.meaningNumber != 0)
+            if (lineNode.lemma.meaningNr != 0)
             {
-                write(` meaning [`, lineNode.lemma.meaningNumber, `]`);
+                write(` meaning [`, lineNode.lemma.meaningNr, `]`);
             }
 
             if (lineNode.lemma.lang != Lang.unknown)
