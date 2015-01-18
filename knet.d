@@ -62,6 +62,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Decode SENSE:... in Lemma ctor
+
     TODO Find dubious words:
          - Swedish: trumpetare - trum-petare
          - Swedish: tunnelbanan - tunnel-banan
@@ -1299,9 +1301,11 @@ class Net(bool useArray = true,
     /** Node Concept Lemma. */
     struct Lemma
     {
-        @safe @nogc pure nothrow:
+        @safe // @nogc
+        pure // nothrow
+        :
 
-        this(Expr expr,
+        this(string expr,
              Lang lang,
              Sense sense,
              ContextIx context = ContextIx.asUndefined,
@@ -1309,7 +1313,7 @@ class Net(bool useArray = true,
              bool isRegexp = false,
              ubyte meaningNr = 0)
         {
-            // this.isRegexp = expr.skipOver("regex:") ? true : isRegexp;
+            // this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
             if (expr.length >= 2 &&
                 expr[$ - 2] == meaningNrSeparator)
             {
@@ -1317,29 +1321,41 @@ class Net(bool useArray = true,
                 assert(nrCharByte >= '0' &&
                        nrCharByte <= '9');
                 this.meaningNr = cast(ubyte)(nrCharByte - '0');
-                this.expr = expr[0 .. $ - 2]; // skip meaning number suffix
+                expr = expr[0 .. $ - 2]; // skip meaning number suffix
                 assert(meaningNr == 0,
-                       "Cannot override already decoded meaning number"
+                       `Can't override already decoded meaning number`
                        /* ~ this.meaningNr.to!string */);
             }
             else
             {
                 this.meaningNr = meaningNr;
-                this.expr = expr;
             }
 
-            auto split = expr.findSplit(":");
-            const subSense = split[0];
-            const subExpr = split[2];
-            if (!split[1].empty)
-            {
-                // dln(subSense, " ", subExpr);
-            }
             this.lang = lang;
             this.sense = sense;
             this.manner = manner;
             this.context = context;
             // this.isRegexp = isRegexp;
+
+            auto split = expr.findSplit(`:`);
+            if (!split[1].empty)
+            {
+                try
+                {
+                    this.sense = split[0].to!Sense;
+                    assert(sense == Sense.unknown,
+                           `Can't override sense argumented ` ~ sense
+                           ~ ` with ` ~ this.sense);
+                    expr = split[2];
+                    dln(`Decoded expr `, expr, ` to have sense `, this.sense);
+                }
+                catch (std.conv.ConvException e)
+                {
+                    /* ok to not be able to downcase */
+                }
+            }
+
+            this.expr = expr;
         }
 
         Expr expr;
@@ -5001,16 +5017,17 @@ class Net(bool useArray = true,
         }
         return linkIxes;
     }
+    alias connectFanInFanOut = connectMtoN;
 
-     /** Fully Connect Every-to-Every in $(D all).
+    /** Fully Connect Every-to-Every in $(D all).
         See also: http://forum.dlang.org/thread/iqkybajwdzcvdytakgvw@forum.dlang.org#post-iqkybajwdzcvdytakgvw:40forum.dlang.org
         See also: https://issues.dlang.org/show_bug.cgi?id=6788
     */
     Ln[] connectAll(R)(Rel rel,
-                            R all,
-                            Lang lang,
-                            Origin origin,
-                            NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+                       R all,
+                       Lang lang,
+                       Origin origin,
+                       NWeight weight = 1.0) if (isIterableOf!(R, Nd))
         in { assert(rel.isSymmetric); }
     body
     {
@@ -5033,14 +5050,15 @@ class Net(bool useArray = true,
         }
         return linkIxes;
     }
+    alias connectMtoM = connectAll;
     alias connectFully = connectAll;
     alias connectStar = connectAll;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
     Ln[] connect1toM(R)(Nd first,
-                             Rel rel, bool reversion,
-                             R rest,
-                             Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+                        Rel rel, bool reversion,
+                        R rest,
+                        Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
         typeof(return) linkIxes;
         foreach (you; rest)

@@ -132,3 +132,6 @@ lowercaselowercase letter
 
 capitalcapital letter
 capcapital letter
+
+ctorconstructor
+dtordestructor

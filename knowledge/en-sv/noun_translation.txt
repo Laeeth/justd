@@ -67,3 +67,6 @@ jewelerjuvelerare
 teacherlärare
 journalistjournalist
 workmanarbetare
+
+question markfrågetecken
+exclamation markutropstecken
