@@ -62,7 +62,9 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
-    TODO Decode SENSE:... in Lemma ctor
+    BUG WordNet stores proper names in lowercase. This could be detected and
+        fixed in learnLemma() if existing lemmas in uppercase and has sense that
+        specializes noun.
 
     TODO Find dubious words:
          - Swedish: trumpetare - trum-petare
@@ -71,8 +73,6 @@
     TODO rhymesOf() may reuse Walk.byNode walkOver(Rel.prounounciation)
 
     BUG Enable readNELLFile and fix bug in it
-
-    TODO Support N-way in learnMtoNMaybe en/synonym.txt such as the line: baker's dozenLucifers dozenlong dozenlong measure
 
     TODO specializeUniquely John to name in English if first letter isUpper
 
@@ -2148,6 +2148,15 @@ class Net(bool useArray = true,
             {
                 foreach (entry; rdT(dirPath ~ "/city.txt").splitter('\n').filter!(w => !w.empty))
                 {
+                    const items = entry.split(roleSeparator);
+                    const cityName = items[0];
+                    const population = items[1];
+                    const yearFounded = items[2];
+                    const city = store(cityName, lang, Sense.city, Origin.manual);
+                    connect(city, Rel.hasAttribute,
+                            store(population, lang, Sense.population, Origin.manual), Origin.manual, 1.0);
+                    connect(city, Rel.foundedIn,
+                            store(yearFounded, lang, Sense.year, Origin.manual), Origin.manual, 1.0);
                 }
             }
             catch (std.file.FileException e) {}

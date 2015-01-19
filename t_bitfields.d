@@ -29,11 +29,11 @@ void main(string[] args)
         mixin(bf);
     }
 
-
     A obj;
     obj.a = 11;
     obj.x = 2;
     obj.z = obj.x;
+    obj.e2 = E2.a;
 
     writeln(obj);
     writeln(bf);

@@ -643,6 +643,26 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case foundedIn:
+            if (dir == RelDir.forward)
+            {
+                switch (lang)
+                {
+                    case sv: words = ["grundades", not]; break;
+                    case en:
+                    default: words = ["was", not, "founded"]; break;
+                }
+            }
+            else
+            {
+                switch (lang)
+                {
+                    case sv: words = ["grundades", not]; break;
+                    case en:
+                    default: words = [not, "founded"]; break;
+                }
+            }
+            break;
         case generalizes:
             if (dir == RelDir.forward)
             {

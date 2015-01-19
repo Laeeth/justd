@@ -346,7 +346,7 @@ enum Rel:ubyte
 
     createdAtDate,
     bornIn,
-    foundedIn,
+    foundedIn, // TODO replace by higher-order predicate: Skänninge city was founded at 1200
     marriedIn,
     diedIn,
     diedAtAge,

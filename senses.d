@@ -61,6 +61,8 @@ enum Sense:ubyte
     numberTranscendental,   /// pi, e
     numberComplex,          /// 1 + 2i
 
+    population,
+
     name,                   /// proper name
     nameMale,               /// proper name
     nameFemale,             /// proper name
@@ -329,6 +331,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case numberIrrational: return `irrational number`;
         case numberTranscendental: return `transcendental number`;
         case numberComplex: return `complex number`;
+
+        case population: return `population`;
 
         case name: return `name`;
         case nameMale: return `male name`;
@@ -651,7 +655,8 @@ import predicates: of;
         with (Sense) return (sense.isNumeral ||
                              sense.of(integer,
                                       integerPositive,
-                                      integerNegative));
+                                      integerNegative,
+                                      population));
     }
     bool isName(Sense sense)
     {
