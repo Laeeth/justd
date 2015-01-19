@@ -298,7 +298,7 @@ alias rdT = readText;
 
 import algorithm_ex: isPalindrome, either, append, commonSuffixCount;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
-import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers;
+import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers, packedBitSizeOf;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf;
 import predicates: allEqual;
@@ -1312,7 +1312,8 @@ class Net(bool useArray = true,
              ContextIx context = ContextIx.asUndefined,
              Manner manner = Manner.formal,
              bool isRegexp = false,
-             ubyte meaningNr = 0)
+             ubyte meaningNr = 0) in { assert(meaningNr <= MeaningNrMax); }
+        body
         {
             // this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
             if (expr.length >= 2 &&
@@ -1366,9 +1367,9 @@ class Net(bool useArray = true,
         Sense sense;
         ContextIx context;
 
-        enum bitsizeOfManner = Manner.max - Manner.min + 1;
-        static assert(bitsizeOfManner < 2^^2);
+        enum bitsizeOfManner = packedBitSizeOf!Manner;
         enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
+        enum MeaningNrMax = 2^^bitsizeOfMeaningNr - 1;
 
         mixin(bitfields!(Manner, `manner`, bitsizeOfManner,
                          ubyte, `meaningNr`, bitsizeOfMeaningNr,

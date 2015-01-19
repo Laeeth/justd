@@ -399,3 +399,50 @@ auto enumMembers(T)()
     import std.algorithm: sort, uniq;
     return [EnumMembers!T].sort().uniq;
 }
+
+template packedBitSizeOf(T)
+{
+    static if (is(T == enum))
+    {
+        enum range = T.max - T.min;
+        static      if (range ==  0) { enum packedBitSizeOf = 1; }
+        else static if (range ==  1) { enum packedBitSizeOf = 1; }
+
+        else static if (range ==  2) { enum packedBitSizeOf = 2; }
+        else static if (range ==  3) { enum packedBitSizeOf = 2; }
+
+        else static if (range ==  4) { enum packedBitSizeOf = 3; }
+        else static if (range ==  5) { enum packedBitSizeOf = 3; }
+        else static if (range ==  6) { enum packedBitSizeOf = 3; }
+        else static if (range ==  7) { enum packedBitSizeOf = 3; }
+
+        else static if (range ==  8) { enum packedBitSizeOf = 4; }
+        else static if (range ==  9) { enum packedBitSizeOf = 4; }
+        else static if (range == 10) { enum packedBitSizeOf = 4; }
+        else static if (range == 11) { enum packedBitSizeOf = 4; }
+        else static if (range == 12) { enum packedBitSizeOf = 4; }
+        else static if (range == 13) { enum packedBitSizeOf = 4; }
+        else static if (range == 14) { enum packedBitSizeOf = 4; }
+        else static if (range == 15) { enum packedBitSizeOf = 4; }
+
+        else { static assert(false, "Cannot handle enum " ~ T.stringof); }
+    }
+    else
+    {
+        enum packedBitSizeOf = 8*T.sizeof;
+    }
+}
+
+unittest
+{
+    static assert(packedBitSizeOf!ubyte == 8);
+
+    enum E2 { x, y }
+    static assert(packedBitSizeOf!E2 == 1);
+
+    enum E3 { x, y, z }
+    static assert(packedBitSizeOf!E3 == 2);
+
+    enum E4 { x, y, z, w }
+    static assert(packedBitSizeOf!E4 == 2);
+}
