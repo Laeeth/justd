@@ -2,10 +2,13 @@
 
 import std.stdio, std.bitmanip;
 
-enum E2 { a, b, c, d }
+enum E2 { a, b, c, d, e }
 
 void main(string[] args)
 {
+    import std.exception: assertThrown;
+    import core.exception: AssertError;
+
     immutable bf = bitfields!(uint, "x", 2,
                               int, "y", 2,
                               uint, "z", 2,
@@ -21,4 +24,12 @@ void main(string[] args)
     obj.y = 1;
     obj.z = obj.x;
     obj.e2 = E2.a;
+    try
+    {
+        obj.e2 = E2.e;
+        assert(false, "Exception not caught");
+    }
+    catch (core.exception.AssertError e)
+    {
+    }
 }
