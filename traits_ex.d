@@ -400,32 +400,39 @@ auto enumMembers(T)()
     return [EnumMembers!T].sort().uniq;
 }
 
-template packedBitSizeOf(T)
+/** Get Number of Bits Required to store an instance of $(D T).
+    See also: http://forum.dlang.org/thread/okonqhnxzqlqtxijxsfg@forum.dlang.org
+   */
+template packedBitSizeOf(T) if (T.min != T.max) // at least two enumerators
 {
     static if (is(T == enum))
     {
+        import core.bitop: bsr;
         enum range = T.max - T.min;
-        static      if (range ==  0) { enum packedBitSizeOf = 1; }
-        else static if (range ==  1) { enum packedBitSizeOf = 1; }
 
-        else static if (range ==  2) { enum packedBitSizeOf = 2; }
-        else static if (range ==  3) { enum packedBitSizeOf = 2; }
+        enum packedBitSizeOf = range.bsr + 1;
 
-        else static if (range ==  4) { enum packedBitSizeOf = 3; }
-        else static if (range ==  5) { enum packedBitSizeOf = 3; }
-        else static if (range ==  6) { enum packedBitSizeOf = 3; }
-        else static if (range ==  7) { enum packedBitSizeOf = 3; }
+        // static      if (range ==  0) { enum packedBitSizeOf = 1; }
+        // else static if (range ==  1) { enum packedBitSizeOf = 1; }
 
-        else static if (range ==  8) { enum packedBitSizeOf = 4; }
-        else static if (range ==  9) { enum packedBitSizeOf = 4; }
-        else static if (range == 10) { enum packedBitSizeOf = 4; }
-        else static if (range == 11) { enum packedBitSizeOf = 4; }
-        else static if (range == 12) { enum packedBitSizeOf = 4; }
-        else static if (range == 13) { enum packedBitSizeOf = 4; }
-        else static if (range == 14) { enum packedBitSizeOf = 4; }
-        else static if (range == 15) { enum packedBitSizeOf = 4; }
+        // else static if (range ==  2) { enum packedBitSizeOf = 2; }
+        // else static if (range ==  3) { enum packedBitSizeOf = 2; }
 
-        else { static assert(false, "Cannot handle enum " ~ T.stringof); }
+        // else static if (range ==  4) { enum packedBitSizeOf = 3; }
+        // else static if (range ==  5) { enum packedBitSizeOf = 3; }
+        // else static if (range ==  6) { enum packedBitSizeOf = 3; }
+        // else static if (range ==  7) { enum packedBitSizeOf = 3; }
+
+        // else static if (range ==  8) { enum packedBitSizeOf = 4; }
+        // else static if (range ==  9) { enum packedBitSizeOf = 4; }
+        // else static if (range == 10) { enum packedBitSizeOf = 4; }
+        // else static if (range == 11) { enum packedBitSizeOf = 4; }
+        // else static if (range == 12) { enum packedBitSizeOf = 4; }
+        // else static if (range == 13) { enum packedBitSizeOf = 4; }
+        // else static if (range == 14) { enum packedBitSizeOf = 4; }
+        // else static if (range == 15) { enum packedBitSizeOf = 4; }
+
+        // else { static assert(false, "Cannot handle enum " ~ T.stringof); }
     }
     else
     {
@@ -437,12 +444,21 @@ unittest
 {
     static assert(packedBitSizeOf!ubyte == 8);
 
+    static assert(!__traits(compiles, { enum E1 { x } static assert(packedBitSizeOf!E1 == 1);}));
     enum E2 { x, y }
     static assert(packedBitSizeOf!E2 == 1);
-
     enum E3 { x, y, z }
     static assert(packedBitSizeOf!E3 == 2);
-
     enum E4 { x, y, z, w }
     static assert(packedBitSizeOf!E4 == 2);
+    enum E5 { a, b, c, d, e }
+    static assert(packedBitSizeOf!E5 == 3);
+    enum E6 { a, b, c, d, e, f }
+    static assert(packedBitSizeOf!E6 == 3);
+    enum E7 { a, b, c, d, e, f, g }
+    static assert(packedBitSizeOf!E7 == 3);
+    enum E8 { a, b, c, d, e, f, g, h }
+    static assert(packedBitSizeOf!E8 == 3);
+    enum E9 { a, b, c, d, e, f, g, h, i }
+    static assert(packedBitSizeOf!E9 == 4);
 }
