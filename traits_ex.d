@@ -437,7 +437,6 @@ template packedBitSizeOf(T) if (T.min != T.max) // at least two enumerators
 unittest
 {
     static assert(packedBitSizeOf!ubyte == 8);
-
     static assert(!__traits(compiles, { enum E1 { x } static assert(packedBitSizeOf!E1 == 1);}));
     enum E2 { x, y }
     static assert(packedBitSizeOf!E2 == 1);
