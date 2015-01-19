@@ -782,8 +782,8 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `haswikipediaurl`:                                return wikipediaURL;
             case `subpartof`:                                      return partOf;
             case `synonymfor`:                                     return synonymFor;
-            case `generalizations`:                                return generalizes;
-            case `specializationof`: reversion = true;             return generalizes;
+            case `generalizations`:              reversion = true; return isA;
+            case `specializationof`:                               return isA;
             case `conceptprerequisiteof`: reversion = true;        return hasPrerequisite;
             case `usesequipment`:                                  return uses;
             case `usesstadium`:                                    return uses;
@@ -2348,7 +2348,7 @@ class Net(bool useArray = true,
                 {
                     if (i.specializes(j))
                     {
-                        connect(store(i.toHuman, Lang.en, memberSense, origin), Rel.specializes,
+                        connect(store(i.toHuman, Lang.en, memberSense, origin), Rel.isA,
                                 store(j.toHuman, Lang.en, memberSense, origin), origin, 1.0);
                     }
                 }
@@ -2834,7 +2834,7 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/st-patricks-day.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `St. Patrick's Day`, Sense.unknown, Sense.nounUncountable);
         learnMto1(Lang.en, rdT("../knowledge/en/new-years-eve.txt").splitter('\n').filter!(w => !w.empty), Rel.any, false, `New Year's Eve`, Sense.unknown, Sense.nounUncountable);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.specializes, false, `say`, Sense.verb, Sense.verbIrregularInfinitive);
+        learnMto1(Lang.en, rdT("../knowledge/en/say.txt").splitter('\n').filter!(w => !w.empty), Rel.isA, false, `say`, Sense.verb, Sense.verbIrregularInfinitive);
         learnMto1(Lang.en, rdT("../knowledge/en/book_property.txt").splitter('\n').filter!(w => !w.empty), Rel.hasProperty, true, `book`, Sense.adjective, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/informal.txt").splitter('\n').filter!(w => !w.empty), Rel.hasAttribute, false, `informal`, Sense.adjective, Sense.adjective);
 

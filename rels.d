@@ -296,9 +296,6 @@ enum Rel:ubyte
     formOfNoun,
     formOfAdjective,
 
-    generalizes, // TODO Merge with other enumerator?
-    specializes, // TODO reversionOf generalizes
-
     hasNameDay,
 
     hasRelative,

@@ -88,9 +88,7 @@ alias Rank = uint;
     bool isTransitive(const Rel rel)
     {
         with (Rel) return (rel.isSymmetric ||
-                           rel.of(generalizes,
-                                  specializes,
-                                  abbreviationFor,
+                           rel.of(abbreviationFor,
                                   shorthandFor,
                                   partOf,
                                   isA,
@@ -107,12 +105,17 @@ alias Rank = uint;
                                   hasEmotion));
     }
 
+    bool oppositeOfInOrder(const Rel a,
+                           const Rel b)
+    {
+        with (Rel) return (a == hasFriend && b == hasEnemy ||
+                           a == hypernymOf && b == hyponymOf);
+    }
     bool oppositeOf(const Rel a,
                     const Rel b)
     {
-        with (Rel) return (a == hasEnemy  && b == hasFriend ||
-                           a == hasFriend && b == hasEnemy ||
-                           a == specializes && b == generalizes);
+        return (oppositeOfInOrder(a, b) ||
+                oppositeOfInOrder(b, a));
     }
     alias areOpposites = oppositeOf;
 
@@ -660,46 +663,6 @@ auto toHuman(const Rel rel,
                     case sv: words = ["grundades", not]; break;
                     case en:
                     default: words = [not, "founded"]; break;
-                }
-            }
-            break;
-        case generalizes:
-            if (dir == RelDir.forward)
-            {
-                switch (lang)
-                {
-                    case sv: words = ["generaliserar", not]; break;
-                    case en:
-                    default: words = ["does", not, "generalize"]; break;
-                }
-            }
-            else
-            {
-                switch (lang)
-                {
-                    case sv: words = ["kan", not, "generaliseras av"]; break;
-                    case en:
-                    default: words = ["can", not, "be generalized by"]; break;
-                }
-            }
-            break;
-        case specializes:
-            if (dir == RelDir.forward)
-            {
-                switch (lang)
-                {
-                    case sv: words = ["specialiserar", not]; break;
-                    case en:
-                    default: words = ["does", not, "specialize"]; break;
-                }
-            }
-            else
-            {
-                switch (lang)
-                {
-                    case sv: words = ["kan", not, "specialiseras av"]; break;
-                    case en:
-                    default: words = ["can", not, "be specialized by"]; break;
                 }
             }
             break;
