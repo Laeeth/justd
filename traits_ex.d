@@ -409,20 +409,15 @@ template packedBitSizeOf(T) if (T.min != T.max) // at least two enumerators
     {
         import core.bitop: bsr;
         enum range = T.max - T.min;
-
         enum packedBitSizeOf = range.bsr + 1;
-
         // static      if (range ==  0) { enum packedBitSizeOf = 1; }
         // else static if (range ==  1) { enum packedBitSizeOf = 1; }
-
         // else static if (range ==  2) { enum packedBitSizeOf = 2; }
         // else static if (range ==  3) { enum packedBitSizeOf = 2; }
-
         // else static if (range ==  4) { enum packedBitSizeOf = 3; }
         // else static if (range ==  5) { enum packedBitSizeOf = 3; }
         // else static if (range ==  6) { enum packedBitSizeOf = 3; }
         // else static if (range ==  7) { enum packedBitSizeOf = 3; }
-
         // else static if (range ==  8) { enum packedBitSizeOf = 4; }
         // else static if (range ==  9) { enum packedBitSizeOf = 4; }
         // else static if (range == 10) { enum packedBitSizeOf = 4; }
@@ -431,7 +426,6 @@ template packedBitSizeOf(T) if (T.min != T.max) // at least two enumerators
         // else static if (range == 13) { enum packedBitSizeOf = 4; }
         // else static if (range == 14) { enum packedBitSizeOf = 4; }
         // else static if (range == 15) { enum packedBitSizeOf = 4; }
-
         // else { static assert(false, "Cannot handle enum " ~ T.stringof); }
     }
     else
