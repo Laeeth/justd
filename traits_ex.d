@@ -403,10 +403,11 @@ auto enumMembers(T)()
 /** Get Number of Bits Required to store an instance of $(D T).
     See also: http://forum.dlang.org/thread/okonqhnxzqlqtxijxsfg@forum.dlang.org
    */
-template packedBitSizeOf(T) if (T.min != T.max) // at least two enumerators
+template packedBitSizeOf(T)
 {
     static if (is(T == enum))
     {
+        static assert(T.min != T.max, "enum T must have at least two enumerators");
         import core.bitop: bsr;
         enum range = T.max - T.min;
         enum packedBitSizeOf = range.bsr + 1;
