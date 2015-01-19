@@ -293,6 +293,7 @@ import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
 import std.file: readText, exists;
+import std.bitmanip: bitfields;
 alias rdT = readText;
 
 import algorithm_ex: isPalindrome, either, append, commonSuffixCount;
@@ -1365,11 +1366,14 @@ class Net(bool useArray = true,
         Sense sense;
         ContextIx context;
 
-        // TODO pack these into one byte using a bitfields
-        Manner manner; // TODO 2 bits
-        ubyte meaningNr = 0; // 0 means unknown or not needed
-        // bool isRegexp; /// true if $(D expr) should be interpreted as a regular expression. TODO one bit
-        /* auto opCast(T : bool)() { return expr !is null; } */
+        enum bitsizeOfManner = Manner.max - Manner.min + 1;
+        static assert(bitsizeOfManner < 2^^2);
+        enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
+
+        mixin(bitfields!(Manner, `manner`, bitsizeOfManner,
+                         ubyte, `meaningNr`, bitsizeOfMeaningNr,
+                         bool, `isRegexp`, 1 // true if $(D expr) is a regular expression
+                  ));
     }
 
     /** Concept Node/Vertex. */
