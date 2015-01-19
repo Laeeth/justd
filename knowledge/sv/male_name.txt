@@ -532,6 +532,7 @@ Bjarni
 Bjarte
 Bjartmar
 Bjerne
+Bjoern
 Bjursten
 Björn
 Björne
@@ -1580,6 +1581,7 @@ Göran
 Görgen
 Gösse
 Gösta
+Göstav
 Göt
 Götar
 Göte
