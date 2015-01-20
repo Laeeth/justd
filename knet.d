@@ -2053,6 +2053,11 @@ class Net(bool useArray = true,
                            Rel.abbreviationFor,
                            Sense.unknown, lang,
                            Origin.manual, 1.0);
+            learnMtoNMaybe(dirPath ~ "/noun_abbrevation.txt",
+                           Sense.noun, lang,
+                           Rel.abbreviationFor,
+                           Sense.noun, lang,
+                           Origin.manual, 1.0);
 
             // Synonym
             learnMtoNMaybe(dirPath ~ "/synonym.txt",
