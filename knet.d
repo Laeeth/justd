@@ -127,18 +127,11 @@
     nouns, adjectives, adverbs. Use (verb|noun|adjective)(Ir)Regular to indicate regularity
     - Swedish: "ersätt", "ersätta", "ersätter", "ersatte", "ersatt"
 
-    TODO Add Sense Specialization Pass: All other relations specialize
-    Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo
-    Scottish" needless
-
-    TODO Should we index all word forms for nouns, verbs and adjectives? Not if we can avoid it.
-
     TODO Move specific knowledge from wordnet.d to beginning of learnPreciseThings()
 
     TODO Show warning and then exceptions when adding a word as a language that
     doesn't support include its characters
 
-    BUG Skrivn in "att fela är mänskligt" ger språk "English" när det borde ge språk Swedish
     BUG Skriv in smärta i prompt: gives wrong relations: "[give" and "cause] pain; grieve"
     BUG reversion no effect for book_property.txt
 
