@@ -1690,20 +1690,23 @@ class Net(bool useArray = true,
      */
     ref Lemma learnLemma(ref Lemma lemma) @safe
     {
-        const expr = lemma.expr;
-        if (expr in lemmasByExpr)
+        auto existingLemmasRef = lemma.expr in lemmasByExpr;
+        if (existingLemmasRef)
         {
+            auto existingLemmas = *existingLemmasRef;
+            // TODO lemma.expr = existingLemmas.front.expr; // reuse already GC-stored Expr
+
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
-            foreach (ref existingLemma; lemmasByExpr[expr])
+            foreach (ref existingLemma; existingLemmas)
             {
                 if (existingLemma.lang == lemma.lang &&
                     existingLemma.context == lemma.context &&
                     existingLemma.manner == lemma.manner &&
                     existingLemma.meaningNr == lemma.meaningNr &&
-                    // existingLemma.isRegexp == lemma.isRegexp &&
+                    existingLemma.isRegexp == lemma.isRegexp &&
                     existingLemma.sense.specializes(lemma.sense))
                 {
-                    // dln(`Specializing sense of Lemma "`, expr, `"`,
+                    // dln(`Specializing sense of Lemma "`, lemma.expr, `"`,
                     //     ` from "`, lemma.sense, `"`
                     //     ` to "`, existingLemma.sense, `"`);
                     // lemma.sense = existingLemma.sense;
@@ -1711,19 +1714,19 @@ class Net(bool useArray = true,
                 }
             }
 
-            const hitAlt = lemmasByExpr[expr].canFind(lemma);
+            const hitAlt = existingLemmas.canFind(lemma);
             if (!hitAlt) // TODO Make use of binary search
             {
-                lemmasByExpr[expr] ~= lemma;
+                existingLemmas ~= lemma;
             }
         }
         else
         {
             static if (!isDynamicArray!Lemmas)
             {
-                lemmasByExpr[expr] = Lemmas.init; // TODO fix std.container.Array
+                lemmasByExpr[lemma.expr] = Lemmas.init; // TODO fix std.container.Array
             }
-            lemmasByExpr[expr] ~= lemma;
+            lemmasByExpr[lemma.expr] ~= lemma;
         }
         return lemma;
     }
@@ -1847,8 +1850,20 @@ class Net(bool useArray = true,
      */
     this(string dirPath)
     {
+        unittestMe();
         learnDefault(dirPath);
         // inferSpecializedSenses();
+    }
+
+    /** Run unittests.
+    */
+    void unittestMe()
+    {
+        const beInEnglish = store(`be`, Lang.en, Sense.verb, Origin.manual);
+        const beInSwedish = store(`be`, Lang.sv, Sense.verb, Origin.manual);
+        assert(at(beInEnglish).lemma.expr == at(beInSwedish).lemma.expr);
+        // immutable expr should be reused
+        // assert(&at(beInEnglish).lemma.expr == &at(beInSwedish).lemma.expr);
     }
 
     void learnDefault(string dirPath)
@@ -4921,13 +4936,11 @@ class Net(bool useArray = true,
 
     /** Lookup-or-Store $(D Node) at $(D lemma) index.
      */
-    Nd store(Lemma lemma,
-             Node node) in { assert(!lemma.expr.empty); }
+    Nd store(Lemma lemma, Node node) in { assert(!lemma.expr.empty); }
     body
     {
         if (lemma in nodeRefByLemma)
         {
-            // assert(lemma.expr != "house" && lemma.sense != Sense.verb);
             return nodeRefByLemma[lemma]; // lookup
         }
         else
