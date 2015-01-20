@@ -127,11 +127,6 @@
     nouns, adjectives, adverbs. Use (verb|noun|adjective)(Ir)Regular to indicate regularity
     - Swedish: "ersätt", "ersätta", "ersätter", "ersatte", "ersatt"
 
-    TODO Group Rel bool negation and bool reversion into a bitfield struct of size 16
-    and simplify interfaces. Use CTFE to add instantiator rel!"memberOf"
-
-    BUG learnMtoNMaybe has no effect. Test name_day.txt by searching for Sylvester.
-
     TODO Add Sense Specialization Pass: All other relations specialize
     Rel.any/unknown such as "scotch synonymTo scottish" makes "scotch relatedTo
     Scottish" needless
