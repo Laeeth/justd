@@ -6,7 +6,7 @@ public import rels;
 struct Role
 {
     @safe @nogc pure nothrow:
-    this(Rel rel,
+    this(Rel rel = Rel.any,
          bool reversion = false,
          bool negation = false)
     {
