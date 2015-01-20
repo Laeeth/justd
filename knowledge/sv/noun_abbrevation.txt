@@ -1,0 +1,173 @@
+öböverbefälhavareöverskottsbolaget
+ÖoBöverskottsbolaget
+anspr.anspråk
+dial.dialekt
+bokf.bokföring
+inst.institution
+bifl.biflod
+akad.akademi
+med.medicin
+akust.akustik
+log.logik
+fonet.fonetik
+hand.handelsterm
+bildh.bildhuggare
+biokem.biokemi
+biol.biologi
+bot.botanik
+boxn.boxning
+bokb.bokbindarterm
+boktr.boktryckarterm
+blomstersk.blomsterskötsel
+bisk.biskop
+bilj.biljon
+bilj.biljardterm
+Dr.drdr.d:rdoktor
+Fil. Drfil. drfil.drfilosofie doktor
+Teol. Drteol. drteol.drteologie doktor
+adj.adjektiv
+adv.adverb
+interj.interjektion
+belg.belgiska
+adm.administration
+avledn.avledning
+civ.ing.civilingenjör
+civ.ek.civilekonom
+aeareaenhet
+AEastronomisk enhet
+ADBautomatisk databehandling
+ADarbetsdomstolen
+BFBondeförbundet
+befälh.befälhavare
+forts.fortsfortsättning
+v.t.vår tideräkning
+eme.m.eftermiddagen
+dandagen
+måndanmåndagen
+tisdantisdagen
+onsdanonsdagen
+torsdantorsdagen
+fredanfredagen
+lördanlördagen
+söndansöndagen
+exex.exempelexemplar
+fr.fru.fröken
+klklockanklass
+n.b.nedre botten
+nr.nrnummer
+PGpostgiro
+pl.planschpluralpostlåda
+PMpromemoria
+s.sida
+s.sidan
+sidd.sidor
+mån.månad
+skn.Skandinavien
+tfntelefon
+vard.vardag
+ab.aktbilaga
+anm.anmärkning
+art.artikeln
+att.attention
+avd.avdelning
+afd.avdelning
+BBbarnbördshusbarnbördsklinik
+B.B.bäste bror
+B:coB:koBanko, se riksdaler
+bgbankgiro
+bhbysthållare
+bilautomobil
+BrfBostadsrättsförening
+båb.å.byggnadsår
+cdcompact disc
+co.kompani
+dir.direktör
+d.m.denna månad
+dnrdiarienummer
+doc.docent
+ekon.ekonomi
+ex.exempelexemplar
+fig.figur
+fm.f.m.förmiddag
+forts.fortsättning
+ggrgånger
+gr.grader
+g.s.gamla stilen, datum enligt julianska kalendern
+H.K.H.Hans Kungliga Höghet
+H.K.H.Hennes Kungliga Höghet
+H.M.Hans Majestät
+H.M.Hennes Majestät
+hrherr
+hrrherrar
+IKTinformations- och kommunikationsteknik
+ITKinformationsteknik och kommunikation
+ill.illustration
+ISBNinternationellt standardboknummer
+IVAintensivvårdsavdelningKungliga Ingenjörsvetenskapsakademien
+k:akyrka
+kand.kandidat
+kap.kapitel
+kbfdkyrkobokföringsdistrikt
+KBMKrisberedskapsmyndigheten
+KFMKronofogdemyndigheten
+kl.klockanklass
+krkronor
+krmkryddmått
+lliter
+lb.libra, viktenheten pund (lispund, skålpund), även tecknet ℔
+lic.licentiat
+lisp.lispund, äldre svensk viktenhet
+mag.magisterexamen
+Maj:tMajestät
+mcmotorcykel
+minminut
+mdmiljarder
+mdkrmiljarder kronor
+mmmillimeter
+mnmiljoner
+mnkrmiljoner kronor
+mom.moment
+mskmatsked
+m ö.h.meter över havet
+N:oNumero
+N:sNumeris
+ordf.ordförande
+pers.person
+pgpostgiroplusgiro
+prof.professor
+R:drRdrRiksdaler
+ref.referens
+rst.runstycke, äldre svensk myntenhet
+s:asasumma
+sek.sekund
+SEKSvenska kronor
+sekr.sekreterare
+sign.signatursignum
+sk.skilling, äldre svensk myntenhet, även förkortat med ß
+skepp.Sk:pund, Sk#skeppund
+skålp.skålpund
+s.m.silvermynt
+smssammansättning
+sp.spalt
+srsenior
+ssksjuksköterska
+s.st.samma ställe (i fotnoter; jämför: ibid., a.a.)
+st.styck
+stud.studerande
+tab.tabell
+tfn.telefon
+temp.temperatur
+tgmtelegram
+tim.timmetimmar
+tjmtjänsteman
+tkrtusen(tal) kronor
+kkrkilokronor
+tr.trappa
+t:rtunnor
+trpttrsptransport
+TVtvtevetelevision
+w.vecka (week)
+vdverkställande direktör
+vplvärnpliktig
+kvinnon.kvinnonamn
+CorrenÖstgöta Correspondenten
