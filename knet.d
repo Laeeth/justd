@@ -64,9 +64,6 @@
 
     TODO Rename Role to Pred or Act or Conn? What does WordNet call it?
 
-    TODO Reuse lemma expr because its immutable. This requires delaying call to
-         expr.idup or expr.dup to as late as possible.
-
     BUG WordNet stores proper names in lowercase. This could be detected and
         fixed in learnLemma() if existing lemmas in uppercase and has sense that
         specializes noun.
@@ -1865,6 +1862,7 @@ class Net(bool useArray = true,
         unittestMe();
         learnDefault(dirPath);
         // inferSpecializedSenses();
+        showRelations;
     }
 
     /** Run unittests.
@@ -1880,7 +1878,7 @@ class Net(bool useArray = true,
 
     void learnDefault(string dirPath)
     {
-        const quick = false;
+        const quick = true;
         const maxCount = quick ? 10000 : size_t.max;
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
@@ -5451,8 +5449,8 @@ class Net(bool useArray = true,
         return done;
     }
 
-    Origin decodeCN5OriginDirect(char[] path, out Lang lang,
-                                 Origin currentOrigin)
+    Origin decodeCN5OriginDirect(S)(S path, out Lang lang,
+                                    Origin currentOrigin) if (isSomeString!S)
     {
         switch (path) with (Origin)
         {
@@ -5462,22 +5460,30 @@ class Net(bool useArray = true,
                 lang = Lang.en;
                 return dbpedia;
 
-            case `/d/wordnet/3.0`: return wordnet;
-            case `/s/wordnet/3.0`: return wordnet;
-            case `/d/umbel`: return umbel;
-            case `/d/jmdict`: return jmdict;
+            case `/d/wordnet/3.0`:
+            case `/s/wordnet/3.0`:
+                return wordnet;
 
-            case `/s/site/verbosity`: return verbosity;
-            default: /* dln("Handle ", path); */ return unknown;
+            case `/d/umbel`:
+                return umbel;
+
+            case `/d/jmdict`:
+                return jmdict;
+
+            case `/s/site/verbosity`:
+                return verbosity;
+
+            default:
+                // dln("Handle ", path);
+                return unknown;
         }
     }
 
     /** Decode ConceptNet5 Origin $(D path). */
-    Origin decodeCN5OriginPath(char[] path, out Lang lang,
-                               Origin currentOrigin)
+    Origin decodeCN5OriginPath(S)(S path, out Lang lang,
+                                  Origin currentOrigin) if (isSomeString!S)
     {
-        auto origin = decodeCN5OriginDirect(path, lang,
-                                            currentOrigin);
+        auto origin = decodeCN5OriginDirect(path, lang, currentOrigin);
         if (origin != Origin.unknown)
         {
             return origin;
@@ -5515,10 +5521,24 @@ class Net(bool useArray = true,
                         default: break;
                     }
                     break;
+                case 3: // TODO what is this?
+                    break;
                 default:
                     break;
             }
             ++ix;
+        }
+
+        if (origin == Origin.unknown)
+        {
+            if (path.canFind(`wiktionary.org`))
+            {
+                origin = Origin.wiktionary;
+            }
+            else
+            {
+                origin = Origin.cn5;
+            }
         }
 
         return origin;
@@ -5626,7 +5646,6 @@ class Net(bool useArray = true,
     {
         writeln("Reading ConceptNet from ", path, " ...");
         size_t lnr = 0;
-        /* TODO Functionize and merge with wordnet.readIx */
         if (useMmFile)
         {
             version(none)
@@ -5651,7 +5670,6 @@ class Net(bool useArray = true,
             }
         }
         writeln("Reading ConceptNet from ", path, ` having `, lnr, ` lines`);
-        showRelations;
     }
 
     void readSwesaurus()
@@ -5695,7 +5713,6 @@ class Net(bool useArray = true,
         doc.parse;
 
         writeln("Read SynLex ", path, ` having `, lnr, ` lines`);
-        if (lnr >= 1) { showRelations; }
     }
 
     /** Read Folkets Lexikon Synonyms File $(D path) in XML format.
@@ -5790,7 +5807,6 @@ class Net(bool useArray = true,
         doc.parse;
 
         writeln("Read SynLex ", path, ` having `, lnr, ` lines`);
-        if (lnr >= 1) { showRelations; }
     }
 
     /** Read NELL File $(D path) in CSV format.
@@ -5805,7 +5821,6 @@ class Net(bool useArray = true,
             if (++lnr >= maxCount) break;
         }
         writeln("Read NELL ", path, ` having `, lnr, ` lines`);
-        showRelations;
     }
 
     /** Show Network Relations.
