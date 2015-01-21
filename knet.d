@@ -1879,7 +1879,7 @@ class Net(bool useArray = true,
     void learnDefault(string dirPath)
     {
         const quick = true;
-        const maxCount = quick ? 10000 : size_t.max;
+        const maxCount = quick ? 10000 : size_t.max; // 50000 doesn't crash CN5
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnPreciseThings();
