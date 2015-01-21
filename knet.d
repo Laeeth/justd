@@ -5650,7 +5650,7 @@ class Net(bool useArray = true,
         {
             import std.mmfile: MmFile;
             auto mmf = new MmFile(path, MmFile.Mode.read, 0, null, pageSize);
-            auto data = cast(char[])mmf[];
+            const data = cast(char[])mmf[];
             import algorithm_ex: byLine, Newline;
             foreach (line; data.byLine!(Newline.native)) // TODO Compare with File.byLine
             {
