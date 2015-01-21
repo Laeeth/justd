@@ -5503,21 +5503,21 @@ class Net(bool useArray = true,
                 case 1:
                     switch (part)
                     {
-                        case "s": fromSource = true; break;
-                        case "d": fromDictionary = true; break;
+                        case `s`: fromSource = true; break;
+                        case `d`: fromDictionary = true; break;
                         default: break;
                     }
                     break;
                 case 2:
                     switch (part) with (Origin)
                     {
-                        case "dbpedia": origin = dbpedia; break;
-                        case "wordnet": origin = wordnet; break;
-                        case "wiktionary": origin = wiktionary; break;
-                        case "globalmind": origin = globalmind; break;
-                        case "conceptnet": origin = cn5; break;
-                        case "verbosity": origin = verbosity; break;
-                        case "site": fromSite = true; break;
+                        case `dbpedia`: origin = dbpedia; break;
+                        case `wordnet`: origin = wordnet; break;
+                        case `wiktionary`: origin = wiktionary; break;
+                        case `globalmind`: origin = globalmind; break;
+                        case `conceptnet`: origin = cn5; break;
+                        case `verbosity`: origin = verbosity; break;
+                        case `site`: fromSite = true; break;
                         default: break;
                     }
                     break;
