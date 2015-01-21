@@ -524,9 +524,11 @@ static if (__VERSION__ < 2067)
 
 }
 
-public import std.array: byPair;
-
-static if (__VERSION__ < 2067)
+static if (__VERSION__ >= 2067)
+{
+    public import std.array: byPair;
+}
+else
 {
 /** Iterate Associative Array $(D aa) by Key-Value Pair.
     See also: https://github.com/D-Programming-Language/druntime/pull/574
