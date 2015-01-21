@@ -4956,7 +4956,11 @@ class Net(bool useArray = true,
             if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
             {
                 ++multiWordNodeLemmaCount;
-                exprWordCountSum += max(0, lemma.expr.count(expressionWordSeparator) - 1);
+                exprWordCountSum += lemma.expr.count(expressionWordSeparator) + 1;
+            }
+            else
+            {
+                exprWordCountSum += 1;
             }
 
             // store
@@ -5854,7 +5858,7 @@ class Net(bool useArray = true,
                 allNodes.length,
                 `/`,
                 multiWordNodeLemmaCount);
-        writeln(indent, `Lemma Expression Word Length Average: `, exprWordCountSum/nodeRefByLemma.length);
+        writeln(indent, `Lemma Expression Word Length Average: `, cast(real)exprWordCountSum/nodeRefByLemma.length);
         writeln(indent, `Link Count: `, allLinks.length);
         writeln(indent, `Link Count By Group:`);
         writeln(indent, `- Symmetric: `, symmetricRelCount);
