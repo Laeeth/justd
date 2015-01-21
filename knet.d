@@ -4937,11 +4937,15 @@ class Net(bool useArray = true,
                     Origin.manual);
     }
 
-    /** Lookup-or-Store $(D Node) at $(D lemma) index.
-     */
-    Nd store(Lemma lemma, Node node) in { assert(!lemma.expr.empty); }
+    /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
+    Nd store(Expr expr,
+             Lang lang,
+             Sense sense,
+             Origin origin,
+             ContextIx context = ContextIx.asUndefined) in { assert(!expr.empty); }
     body
     {
+        auto lemma = Lemma(expr, lang, sense, context);
         if (lemma in nodeRefByLemma)
         {
             return nodeRefByLemma[lemma]; // lookup
@@ -4964,7 +4968,7 @@ class Net(bool useArray = true,
             // store
             assert(allNodes.length <= nullIx);
             const cix = Nd(cast(Ix)allNodes.length);
-            allNodes ~= node; // .. new node that is stored
+            allNodes ~= Node(lemma, origin); // .. new node that is stored
 
             nodeRefByLemma[lemma] = cix; // store index to ..
             nodeStringLengthSum += lemma.expr.length;
@@ -4974,18 +4978,6 @@ class Net(bool useArray = true,
 
             return cix;
         }
-    }
-
-    /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
-    Nd store(Expr expr,
-             Lang lang,
-             Sense sense,
-             Origin origin,
-             ContextIx context = ContextIx.asUndefined) in { assert(!expr.empty); }
-    body
-    {
-        const lemma = Lemma(expr, lang, sense, context);
-        return store(lemma, Node(lemma, origin));
     }
 
     /** Try to Lookup-or-Store $(D Node) named $(D expr) in language $(D lang).
@@ -5005,7 +4997,7 @@ class Net(bool useArray = true,
                       Lang lang,
                       Sense sense,
                       Origin origin,
-                      ContextIx context = ContextIx.asUndefined) if (isIterable!(Exprs))
+                      ContextIx context = ContextIx.asUndefined) if (isIterable!Exprs)
     {
         typeof(return) nodeRefs;
         foreach (expr; exprs)
