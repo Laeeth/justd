@@ -1544,6 +1544,9 @@ class Net(bool useArray = true,
     private
     {
         Nd[Lemma] nodeRefByLemma;
+
+        // TODO Nds[Lang.max + 1] ndsByLang;
+
         Nodes allNodes;
         Links allLinks;
 
@@ -1924,8 +1927,8 @@ class Net(bool useArray = true,
         learnEnumMemberNameHierarchy!Sense(Sense.nounSingular);
 
         // TODO replace with automatics
-        learnMto1(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
-        learnMto1(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
+        learnMto1(Lang.sv, rdT("../knowledge/sv/uncountable_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
 
         // Part of Speech (PoS)
         learnPartOfSpeech();
@@ -1947,82 +1950,82 @@ class Net(bool useArray = true,
 
         learnNames();
 
-        learnMto1(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `people`, Sense.noun, Sense.nounUncountable, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/people.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `people`, Sense.noun, Sense.nounUncountable, 1.0);
 
         // TODO functionize to learnGroup
-        learnMto1(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `compound word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/compound_word.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `compound word`, Sense.unknown, Sense.nounSingular, 1.0);
 
         // Other
 
         // See also: https://en.wikipedia.org/wiki/Dolch_word_list
-        learnMto1(Lang.en, rdT("../knowledge/en/dolch_singular_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dolch word`, Sense.nounSingular, Sense.nounSingular, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/dolch_preprimer.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dolch pre-primer word`, Sense.unknown, Sense.nounSingular, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/dolch_primer.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dolch primer word`, Sense.unknown, Sense.nounSingular, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/dolch_1st_grade.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dolch 1-st grade word`, Sense.unknown, Sense.nounSingular, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/dolch_2nd_grade.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dolch 2-nd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/dolch_3rd_grade.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dolch 3-rd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_singular_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch word`, Sense.nounSingular, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_preprimer.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch pre-primer word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_primer.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch primer word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_1st_grade.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch 1-st grade word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_2nd_grade.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch 2-nd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dolch_3rd_grade.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch 3-rd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `personal quality`, Sense.adjective, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `color`, Sense.unknown, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `shape`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/personal_quality.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `personal quality`, Sense.adjective, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/color.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `color`, Sense.unknown, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/shapes.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `shape`, Sense.noun, Sense.noun, 1.0);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `fruit`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/plants.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `plant`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/trees.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `tree`, Sense.noun, Sense.plant, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/spice.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `spice`, Sense.spice, Sense.food, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/fruits.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `fruit`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/plants.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `plant`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/trees.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `tree`, Sense.noun, Sense.plant, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/spice.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `spice`, Sense.spice, Sense.food, 1.0);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/shoes.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `shoe`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/dances.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dance`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/landforms.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `landform`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/desserts.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dessert`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/countries.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `country`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/us_states.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `us_state`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/furniture.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `furniture`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/good_luck_symbols.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `good luck symbol`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/leaders.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `leader`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/measurements.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `measurement`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/quantity.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `quantity`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/language.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `language`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/insect.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `insect`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/musical_instrument.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `musical instrument`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/weapon.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `weapon`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/hats.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `hat`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/rooms.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `room`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/containers.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `container`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/virtues.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `virtue`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/vegetables.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `vegetable`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/flower.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `flower`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/reptile.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `reptile`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/famous_pair.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `pair`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/season.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `season`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/holiday.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `holiday`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/shoes.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `shoe`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dances.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dance`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/landforms.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `landform`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/desserts.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dessert`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/countries.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `country`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/us_states.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `us_state`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/furniture.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `furniture`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/good_luck_symbols.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `good luck symbol`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/leaders.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `leader`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/measurements.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `measurement`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/quantity.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `quantity`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/language.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `language`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/insect.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `insect`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/musical_instrument.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `musical instrument`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/weapon.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `weapon`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/hats.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `hat`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/rooms.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `room`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/containers.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `container`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/virtues.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `virtue`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/vegetables.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vegetable`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/flower.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `flower`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/reptile.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `reptile`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/famous_pair.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `pair`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/season.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `season`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/holiday.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `holiday`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/birthday.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.any), `birthday`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/biomes.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `biome`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/dogs.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `dog`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/rodent.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `rodent`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/fish.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `fish`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/birds.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `bird`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/amphibians.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `amphibian`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/animals.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `animal`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/mammals.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `mammal`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/food.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `food`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/cars.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `car`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/building.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `building`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/housing.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `housing`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/occupation.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `occupation`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/cooking_tool.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `cooking tool`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/tool.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `tool`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/biomes.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `biome`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/dogs.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dog`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/rodent.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `rodent`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/fish.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `fish`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/birds.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `bird`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/amphibians.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `amphibian`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/animals.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `animal`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/mammals.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mammal`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/food.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `food`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/cars.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `car`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/building.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `building`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/housing.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `housing`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/occupation.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `occupation`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/cooking_tool.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `cooking tool`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/tool.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `tool`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/carparts.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.partOf), `car`, Sense.noun, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/bodyparts.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.partOf), `body`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/alliterations.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `alliteration`, Sense.unknown, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/alliterations.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `alliteration`, Sense.unknown, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/positives.txt").splitter('\n').filter!(word => !word.empty), Role(Rel.hasAttribute), `positive`, Sense.unknown, Sense.adjective, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/mineral.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `mineral`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/metal.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `metal`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `mineral group`, Sense.noun, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `major mineral group`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/mineral.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mineral`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/metal.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `metal`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/mineral_group.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mineral group`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/major_mineral_group.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `major mineral group`, Sense.noun, Sense.noun, 1.0);
 
         // Swedish
-        learnMto1(Lang.sv, rdT("../knowledge/sv/house.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `hus`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.sv, rdT("../knowledge/sv/house.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `hus`, Sense.noun, Sense.noun, 1.0);
 
         learnChemicalElements();
 
@@ -2177,19 +2180,19 @@ class Net(bool useArray = true,
             }
             catch (std.file.FileException e) {}
 
-            try { learnMto1(lang, rdT(dirPath ~ "/vehicle.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `vehicle`, Sense.noun, Sense.noun, 1.0); }
+            try { learnMto1(lang, rdT(dirPath ~ "/vehicle.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vehicle`, Sense.noun, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
 
-            try { learnMto1(lang, rdT(dirPath ~ "/lowercase_letter.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
+            try { learnMto1(lang, rdT(dirPath ~ "/lowercase_letter.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
 
-            try { learnMto1(lang, rdT(dirPath ~ "/uppercase_letter.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
+            try { learnMto1(lang, rdT(dirPath ~ "/uppercase_letter.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
 
-            try { learnMto1(lang, rdT(dirPath ~ "/old_proverb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `old proverb`, Sense.unknown, Sense.noun, 1.0); }
+            try { learnMto1(lang, rdT(dirPath ~ "/old_proverb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `old proverb`, Sense.unknown, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
 
-            try { learnMto1(lang, rdT(dirPath ~ "/contronym.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `contronym`, Sense.unknown, Sense.noun, 1.0); }
+            try { learnMto1(lang, rdT(dirPath ~ "/contronym.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
         }
 
@@ -2265,14 +2268,14 @@ class Net(bool useArray = true,
         learnTime();
 
         // Verb
-        learnMto1(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/regular_verb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `determiner`, Sense.determiner, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `adverb`, Sense.adverb, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/preposition.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `preposition`, Sense.preposition, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/determiner.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `determiner`, Sense.determiner, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/predeterminer.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/adverbs.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adverb`, Sense.adverb, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/preposition.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `preposition`, Sense.preposition, Sense.noun, 1.0);
 
-        learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Role(Rel.isA), `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
+        learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Role(Rel.instanceOf), `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
 
         learnMobyPoS();
 
@@ -2280,10 +2283,10 @@ class Net(bool useArray = true,
         learnNouns();
         learnVerbs();
 
-        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `adjective`, Sense.adjective, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `adverb`, Sense.adverb, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adjective`, Sense.adjective, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adverb`, Sense.adverb, Sense.noun, 1.0);
 
-        learnMto1(Lang.en, rdT("../knowledge/en/figure_of_speech.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `figure of speech`, Sense.unknown, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/figure_of_speech.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `figure of speech`, Sense.unknown, Sense.noun, 1.0);
 
         learnMobyEnglishPronounciations();
     }
@@ -2382,13 +2385,13 @@ class Net(bool useArray = true,
 
     void learnEnglishNouns()
     {
-        learnMto1(Lang.en, rdT("../knowledge/en/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `collective noun`, Sense.nounCollective, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `noun`, Sense.noun, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `collective noun`, Sense.nounCollective, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `noun`, Sense.noun, Sense.noun, 1.0);
     }
 
     void learnSwedishNouns()
     {
-        learnMto1(Lang.sv, rdT("../knowledge/sv/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `collective noun`, Sense.nounCollective, Sense.noun, 1.0);
+        learnMto1(Lang.sv, rdT("../knowledge/sv/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `collective noun`, Sense.nounCollective, Sense.noun, 1.0);
     }
 
     void learnPronouns()
@@ -2402,55 +2405,55 @@ class Net(bool useArray = true,
         enum lang = Lang.en;
 
         // Singular
-        learnMto1(lang, [`I`, `me`], Role(Rel.isA), `singular personal pronoun`, Sense.pronounPersonalSingular1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`you`], Role(Rel.isA), `singular personal pronoun`, Sense.pronounPersonalSingular2nd, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`it`], Role(Rel.isA), `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`I`, `me`], Role(Rel.instanceOf), `singular personal pronoun`, Sense.pronounPersonalSingular1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`you`], Role(Rel.instanceOf), `singular personal pronoun`, Sense.pronounPersonalSingular2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`it`], Role(Rel.instanceOf), `singular personal pronoun`, Sense.pronounPersonalSingular, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`he`], Role(Rel.isA), `1st-person male singular personal pronoun`, Sense.pronounPersonalSingularMale1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`him`], Role(Rel.isA), `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingularMale2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`he`], Role(Rel.instanceOf), `1st-person male singular personal pronoun`, Sense.pronounPersonalSingularMale1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`him`], Role(Rel.instanceOf), `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingularMale2nd, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`she`], Role(Rel.isA), `1st-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`her`], Role(Rel.isA), `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`she`], Role(Rel.instanceOf), `1st-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`her`], Role(Rel.instanceOf), `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale2nd, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`we`, `us`], Role(Rel.isA), `1st-person plural personal pronoun`, Sense.pronounPersonalPlural1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`you`], Role(Rel.isA), `2nd-person plural personal pronoun`, Sense.pronounPersonalPlural2nd, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`they`, `they`], Role(Rel.isA), `3rd-person plural personal pronoun`, Sense.pronounPersonalPlural3rd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`we`, `us`], Role(Rel.instanceOf), `1st-person plural personal pronoun`, Sense.pronounPersonalPlural1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`you`], Role(Rel.instanceOf), `2nd-person plural personal pronoun`, Sense.pronounPersonalPlural2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`they`, `they`], Role(Rel.instanceOf), `3rd-person plural personal pronoun`, Sense.pronounPersonalPlural3rd, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`this`, `that`], Role(Rel.isA), `singular demonstrative pronoun`, Sense.pronounDemonstrativeSingular, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`these`, `those`], Role(Rel.isA), `plural demonstrative pronoun`, Sense.pronounDemonstrativePlural, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`this`, `that`], Role(Rel.instanceOf), `singular demonstrative pronoun`, Sense.pronounDemonstrativeSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`these`, `those`], Role(Rel.instanceOf), `plural demonstrative pronoun`, Sense.pronounDemonstrativePlural, Sense.nounPhrase, 1.0);
 
         // Possessive
-        learnMto1(lang, [`my`, `your`], Role(Rel.isA), `singular possessive adjective`, Sense.adjectivePossessiveSingular, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`our`, `their`], Role(Rel.isA), `plural possessive adjective`, Sense.adjectivePossessivePlural, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`mine`, `yours`], Role(Rel.isA), `singular possessive pronoun`, Sense.pronounPossessiveSingular, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`his`], Role(Rel.isA), `male singular possessive pronoun`, Sense.pronounPossessiveSingularMale, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`hers`], Role(Rel.isA), `female singular possessive pronoun`, Sense.pronounPossessiveSingularFemale, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`my`, `your`], Role(Rel.instanceOf), `singular possessive adjective`, Sense.adjectivePossessiveSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`our`, `their`], Role(Rel.instanceOf), `plural possessive adjective`, Sense.adjectivePossessivePlural, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`mine`, `yours`], Role(Rel.instanceOf), `singular possessive pronoun`, Sense.pronounPossessiveSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`his`], Role(Rel.instanceOf), `male singular possessive pronoun`, Sense.pronounPossessiveSingularMale, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`hers`], Role(Rel.instanceOf), `female singular possessive pronoun`, Sense.pronounPossessiveSingularFemale, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`ours`], Role(Rel.isA), `1st-person plural possessive pronoun`, Sense.pronounPossessivePlural1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`yours`], Role(Rel.isA), `2nd-person plural possessive pronoun`, Sense.pronounPossessivePlural2nd, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`theirs`], Role(Rel.isA), `3rd-person plural possessive pronoun`, Sense.pronounPossessivePlural3rd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`ours`], Role(Rel.instanceOf), `1st-person plural possessive pronoun`, Sense.pronounPossessivePlural1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`yours`], Role(Rel.instanceOf), `2nd-person plural possessive pronoun`, Sense.pronounPossessivePlural2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`theirs`], Role(Rel.instanceOf), `3rd-person plural possessive pronoun`, Sense.pronounPossessivePlural3rd, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`who`, `whom`, `what`, `which`, `whose`, `whoever`, `whatever`, `whichever`], Role(Rel.isA), `interrogative pronoun`, Sense.pronounInterrogative, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`myself`, `yourself`, `himself`, `herself`, `itself`], Role(Rel.isA), `singular reflexive pronoun`, Sense.pronounReflexiveSingular, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`ourselves`, `yourselves`, `themselves`], Role(Rel.isA), `plural reflexive pronoun`, Sense.pronounReflexivePlural, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`each other`, `one another`], Role(Rel.isA), `reciprocal pronoun`, Sense.pronounReciprocal, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`who`, `whom`, `what`, `which`, `whose`, `whoever`, `whatever`, `whichever`], Role(Rel.instanceOf), `interrogative pronoun`, Sense.pronounInterrogative, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`myself`, `yourself`, `himself`, `herself`, `itself`], Role(Rel.instanceOf), `singular reflexive pronoun`, Sense.pronounReflexiveSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`ourselves`, `yourselves`, `themselves`], Role(Rel.instanceOf), `plural reflexive pronoun`, Sense.pronounReflexivePlural, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`each other`, `one another`], Role(Rel.instanceOf), `reciprocal pronoun`, Sense.pronounReciprocal, Sense.nounPhrase, 1.0);
 
         learnMto1(lang, [`who`, `whom`, // generally only for people
                                `whose`, // possession
                                `which`, // things
                                `that` // things and people
-                            ], Role(Rel.isA), `relative pronoun`, Sense.pronounRelative, Sense.nounPhrase, 1.0);
+                            ], Role(Rel.instanceOf), `relative pronoun`, Sense.pronounRelative, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`all`, `any`, `more`, `most`, `none`, `some`, `such`], Role(Rel.isA), `indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`all`, `any`, `more`, `most`, `none`, `some`, `such`], Role(Rel.instanceOf), `indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.nounPhrase, 1.0);
         learnMto1(lang, [`another`, `anybody`, `anyone`, `anything`, `each`, `either`, `enough`,
                          `everybody`, `everyone`, `everything`, `less`, `little`, `much`, `neither`,
                          `nobody`, `noone`, `one`, `other`,
                          `somebody`, `someone`,
-                         `something`, `you`], Role(Rel.isA), `singular indefinite pronoun`, Sense.pronounIndefiniteSingular, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`both`, `few`, `fewer`, `many`, `others`, `several`, `they`], Role(Rel.isA), `plural indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.nounPhrase, 1.0);
+                         `something`, `you`], Role(Rel.instanceOf), `singular indefinite pronoun`, Sense.pronounIndefiniteSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`both`, `few`, `fewer`, `many`, `others`, `several`, `they`], Role(Rel.instanceOf), `plural indefinite pronoun`, Sense.pronounIndefinitePlural, Sense.nounPhrase, 1.0);
 
         // Rest
-        learnMto1(lang, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `pronoun`, Sense.pronoun, Sense.nounSingular, 1.0); // TODO Remove?
+        learnMto1(lang, rdT("../knowledge/en/pronoun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `pronoun`, Sense.pronoun, Sense.nounSingular, 1.0); // TODO Remove?
     }
 
     void learnSwedishPronouns()
@@ -2458,59 +2461,59 @@ class Net(bool useArray = true,
         enum lang = Lang.sv;
 
         // Personal
-        learnMto1(lang, [`jag`, `mig`], Role(Rel.isA), `1st-person singular personal pronoun`, Sense.pronounPersonalSingular1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`du`, `dig`], Role(Rel.isA), `2nd-person singular personal pronoun`, Sense.pronounPersonalSingular2nd, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`den`, `det`], Role(Rel.isA), `3rd-person singular personal pronoun`, Sense.pronounPersonalSingular3rd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`jag`, `mig`], Role(Rel.instanceOf), `1st-person singular personal pronoun`, Sense.pronounPersonalSingular1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`du`, `dig`], Role(Rel.instanceOf), `2nd-person singular personal pronoun`, Sense.pronounPersonalSingular2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`den`, `det`], Role(Rel.instanceOf), `3rd-person singular personal pronoun`, Sense.pronounPersonalSingular3rd, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`han`], Role(Rel.isA), `1st-person male singular personal pronoun`, Sense.pronounPersonalSingularMale1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`honom`], Role(Rel.isA), `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingularMale2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`han`], Role(Rel.instanceOf), `1st-person male singular personal pronoun`, Sense.pronounPersonalSingularMale1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`honom`], Role(Rel.instanceOf), `2nd-person male singular personal pronoun`, Sense.pronounPersonalSingularMale2nd, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`hon`], Role(Rel.isA), `1st-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`henne`], Role(Rel.isA), `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`hon`], Role(Rel.instanceOf), `1st-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`henne`], Role(Rel.instanceOf), `2nd-person female singular personal pronoun`, Sense.pronounPersonalSingularFemale2nd, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`hen`], Role(Rel.isA), `androgyn singular personal pronoun`, Sense.pronounPersonalSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`hen`], Role(Rel.instanceOf), `androgyn singular personal pronoun`, Sense.pronounPersonalSingular, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`vi`, `oss`], Role(Rel.isA), `1st-person plural personal pronoun`, Sense.pronounPersonalPlural1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`ni`], Role(Rel.isA), `2nd-person plural personal pronoun`, Sense.pronounPersonalPlural2nd, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`de`, `dem`], Role(Rel.isA), `3rd-person plural personal pronoun`, Sense.pronounPersonalPlural3rd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`vi`, `oss`], Role(Rel.instanceOf), `1st-person plural personal pronoun`, Sense.pronounPersonalPlural1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`ni`], Role(Rel.instanceOf), `2nd-person plural personal pronoun`, Sense.pronounPersonalPlural2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`de`, `dem`], Role(Rel.instanceOf), `3rd-person plural personal pronoun`, Sense.pronounPersonalPlural3rd, Sense.nounPhrase, 1.0);
 
         // Possessive
-        learnMto1(lang, [`min`], Role(Rel.isA), `1st-person singular possessive adjective`, Sense.pronounPossessiveSingular1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`din`], Role(Rel.isA), `2nd-person possessive adjective`, Sense.pronounPossessiveSingular2nd, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`hans`], Role(Rel.isA), `male singular possessive pronoun`, Sense.pronounPossessiveSingularMale, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`hennes`], Role(Rel.isA), `female singular possessive pronoun`, Sense.pronounPossessiveSingularFemale, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`hens`], Role(Rel.isA), `singular possessive pronoun`, Sense.pronounPossessiveSingular, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`dens`, `dets`], Role(Rel.isA), `singular possessive pronoun`, Sense.pronounPossessiveSingularNeutral, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`min`], Role(Rel.instanceOf), `1st-person singular possessive adjective`, Sense.pronounPossessiveSingular1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`din`], Role(Rel.instanceOf), `2nd-person possessive adjective`, Sense.pronounPossessiveSingular2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`hans`], Role(Rel.instanceOf), `male singular possessive pronoun`, Sense.pronounPossessiveSingularMale, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`hennes`], Role(Rel.instanceOf), `female singular possessive pronoun`, Sense.pronounPossessiveSingularFemale, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`hens`], Role(Rel.instanceOf), `singular possessive pronoun`, Sense.pronounPossessiveSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`dens`, `dets`], Role(Rel.instanceOf), `singular possessive pronoun`, Sense.pronounPossessiveSingularNeutral, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`vår`], Role(Rel.isA), `1st-person plural possessive pronoun`, Sense.pronounPossessivePlural1st, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`er`], Role(Rel.isA), `2nd-person plural possessive pronoun`, Sense.pronounPossessivePlural2nd, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`deras`], Role(Rel.isA), `3rd-person plural possessive pronoun`, Sense.pronounPossessivePlural3rd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`vår`], Role(Rel.instanceOf), `1st-person plural possessive pronoun`, Sense.pronounPossessivePlural1st, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`er`], Role(Rel.instanceOf), `2nd-person plural possessive pronoun`, Sense.pronounPossessivePlural2nd, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`deras`], Role(Rel.instanceOf), `3rd-person plural possessive pronoun`, Sense.pronounPossessivePlural3rd, Sense.nounPhrase, 1.0);
 
         // Demonstrative
-        learnMto1(lang, [`den här`, `den där`], Role(Rel.isA), `singular demonstrative pronoun`, Sense.pronounDemonstrativeSingular, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`de här`, `de där`], Role(Rel.isA), `plural demonstrative pronoun`, Sense.pronounDemonstrativePlural, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`den här`, `den där`], Role(Rel.instanceOf), `singular demonstrative pronoun`, Sense.pronounDemonstrativeSingular, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`de här`, `de där`], Role(Rel.instanceOf), `plural demonstrative pronoun`, Sense.pronounDemonstrativePlural, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`den`, `det`], Role(Rel.isA),
+        learnMto1(lang, [`den`, `det`], Role(Rel.instanceOf),
                         `singular determinative pronoun`,
                         Sense.pronounDeterminativeSingular, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`de`, `dem`], Role(Rel.isA),
+        learnMto1(lang, [`de`, `dem`], Role(Rel.instanceOf),
                         `singular determinative pronoun`,
                         Sense.pronounDeterminativePlural, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`en sådan`], Role(Rel.isA),
+        learnMto1(lang, [`en sådan`], Role(Rel.instanceOf),
                         `singular determinative pronoun`,
                         Sense.pronounDeterminativeSingular, Sense.nounPhrase, 1.0);
 
-        learnMto1(lang, [`sådant`, `sådana`], Role(Rel.isA),
+        learnMto1(lang, [`sådant`, `sådana`], Role(Rel.instanceOf),
                         `singular determinative pronoun`,
                         Sense.pronounDeterminativePlural, Sense.nounPhrase, 1.0);
 
         // Other
-        learnMto1(lang, [`vem`, `som`, `vad`, `vilken`, `vems`], Role(Rel.isA), `interrogative pronoun`, Sense.pronounInterrogative, Sense.nounPhrase, 1.0);
-        learnMto1(lang, [`mig själv`, `dig själv`, `han själv`, `henne själv`, `hen själv`, `den själv`, `det själv`], Role(Rel.isA), `singular reflexive pronoun`, Sense.pronounReflexiveSingular, Sense.nounPhrase, 1.0); // TODO person
-        learnMto1(lang, [`oss själva`, `er själva`, `dem själva`], Role(Rel.isA), `plural reflexive pronoun`, Sense.pronounReflexivePlural, Sense.nounPhrase, 1.0); // TODO person
-        learnMto1(lang, [`varandra`], Role(Rel.isA), `reciprocal pronoun`, Sense.pronounReciprocal, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`vem`, `som`, `vad`, `vilken`, `vems`], Role(Rel.instanceOf), `interrogative pronoun`, Sense.pronounInterrogative, Sense.nounPhrase, 1.0);
+        learnMto1(lang, [`mig själv`, `dig själv`, `han själv`, `henne själv`, `hen själv`, `den själv`, `det själv`], Role(Rel.instanceOf), `singular reflexive pronoun`, Sense.pronounReflexiveSingular, Sense.nounPhrase, 1.0); // TODO person
+        learnMto1(lang, [`oss själva`, `er själva`, `dem själva`], Role(Rel.instanceOf), `plural reflexive pronoun`, Sense.pronounReflexivePlural, Sense.nounPhrase, 1.0); // TODO person
+        learnMto1(lang, [`varandra`], Role(Rel.instanceOf), `reciprocal pronoun`, Sense.pronounReciprocal, Sense.nounPhrase, 1.0);
     }
 
     void learnVerbs()
@@ -2528,7 +2531,7 @@ class Net(bool useArray = true,
     void learnEnglishVerbs()
     {
         learnEnglishIrregularVerbs();
-        learnMto1(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `verb`, Sense.verb, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `verb`, Sense.verb, Sense.noun, 1.0);
     }
 
     void learnAdverbs()
@@ -2552,29 +2555,29 @@ class Net(bool useArray = true,
                          `nu`, `omedelbart`
                          `sedan`, `senare`, `nyligen`, `just nu`, `på sistone`, `snart`,
                          `redan`, `fortfarande`, `ännu`, `förr`, `förut`],
-                        Role(Rel.isA), `time adverb`, Sense.timeAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `time adverb`, Sense.timeAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`här`, `där`, `där borta`, `överallt`, `var som helst`,
                          `ingenstans`, `hem`, `bort`, `ut`],
-                        Role(Rel.isA), `place adverb`, Sense.placeAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `place adverb`, Sense.placeAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`alltid`, `ofta`, `vanligen`, `ibland`, `emellanåt`, `sällan`, `aldrig`],
-                        Role(Rel.isA), `frequency adverb`, Sense.frequencyAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `frequency adverb`, Sense.frequencyAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`ja`, `japp`, `överallt`, `alltid`],
-                        Role(Rel.isA), `affirming adverb`, Sense.affirmingAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `affirming adverb`, Sense.affirmingAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`ej`, `inte`, `icke`],
-                        Role(Rel.isA), `negating adverb`, Sense.negatingAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `negating adverb`, Sense.negatingAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(Lang.sv,
                         [`emellertid`, `däremot`, `dock`, `likväl`, `ändå`,
                          `trots det`, `trots detta`],
-                        Role(Rel.isA), `adverb`, Sense.adverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `adverb`, Sense.adverb, Sense.nounPhrase, 1.0);
     }
 
     void learnEnglishAdverbs()
@@ -2588,17 +2591,17 @@ class Net(bool useArray = true,
                          `now`, `then`, `later`, `right now`, `already`,
                          `recently`, `lately`, `soon`, `immediately`,
                          `still`, `yet`, `ago`],
-                        Role(Rel.isA), `time adverb`, Sense.timeAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `time adverb`, Sense.timeAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`here`, `there`, `over there`, `out there`, `in there`,
                          `everywhere`, `anywhere`, `nowhere`, `home`, `away`, `out`],
-                        Role(Rel.isA), `place adverb`, Sense.placeAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `place adverb`, Sense.placeAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`always`, `frequently`, `usually`, `sometimes`, `occasionally`, `seldom`,
                          `rarely`, `never`],
-                        Role(Rel.isA), `frequency adverb`, Sense.frequencyAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `frequency adverb`, Sense.frequencyAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`accordingly`, `additionally`, `again`, `almost`,
@@ -2616,55 +2619,55 @@ class Net(bool useArray = true,
                          `undoubtedly`, `uniquely`, `on the other hand`, `also`,
                          `for example`, `for instance`, `of course`, `on the contrary`,
                          `so far`, `until now`, `thus` ],
-                        Role(Rel.isA), `conjunctive adverb`,
+                        Role(Rel.instanceOf), `conjunctive adverb`,
                         Sense.conjunctiveAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`no`, `not`, `never`, `nowhere`, `none`, `nothing`],
-                        Role(Rel.isA), `negating adverb`, Sense.negatingAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `negating adverb`, Sense.negatingAdverb, Sense.nounPhrase, 1.0);
 
         learnMto1(lang,
                         [`yes`, `yeah`],
-                        Role(Rel.isA), `affirming adverb`, Sense.affirmingAdverb, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `affirming adverb`, Sense.affirmingAdverb, Sense.nounPhrase, 1.0);
     }
 
     void learnDefiniteArticles()
     {
         learnMto1(Lang.en, [`the`],
-                        Role(Rel.isA), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.de, [`der`, `die`, `das`, `des`, `dem`, `den`],
-                        Role(Rel.isA), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.fr, [`le`, `la`, `l'`, `les`],
-                        Role(Rel.isA), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.sv, [`den`, `det`],
-                        Role(Rel.isA), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
     }
 
     void learnUndefiniteArticles()
     {
         learnMto1(Lang.en, [`a`, `an`],
-                        Role(Rel.isA), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.de, [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`],
-                        Role(Rel.isA), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.fr, [`un`, `une`, `des`],
-                        Role(Rel.isA), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.sv, [`en`, `ena`, `ett`],
-                        Role(Rel.isA), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
     }
 
     void learnPartitiveArticles()
     {
         learnMto1(Lang.en, [`some`],
-                        Role(Rel.isA), `partitive article`, Sense.articlePartitive, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `partitive article`, Sense.articlePartitive, Sense.nounPhrase, 1.0);
         learnMto1(Lang.fr, [`du`, `de`, `la`, `de`, `l'`, `des`],
-                        Role(Rel.isA), `partitive article`, Sense.articlePartitive, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `partitive article`, Sense.articlePartitive, Sense.nounPhrase, 1.0);
     }
 
     void learnNames()
     {
         // Surnames
-        learnMto1(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `surname`, Sense.surname, Sense.nounSingular, 1.0);
-        learnMto1(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `surname`, Sense.surname, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `surname`, Sense.surname, Sense.nounSingular, 1.0);
+        learnMto1(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `surname`, Sense.surname, Sense.nounSingular, 1.0);
     }
 
     void learnConjunctions()
@@ -2701,25 +2704,25 @@ class Net(bool useArray = true,
                 store("connect independent sentence parts", Lang.en, Sense.unknown, Origin.manual),
                 Origin.manual, 1.0);
         learnMto1(Lang.en, [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`],
-                  Role(Rel.isA), `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.nounPhrase, 1.0);
         learnMto1(Lang.sv, [`och`, `eller`, `men`, `så`, `för`, `ännu`],
-                  Role(Rel.isA), `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`that`],
-                  Role(Rel.isA), `coordinating conjunction`, Sense.conjunctionSubordinating, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating conjunction`, Sense.conjunctionSubordinating, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`though`, `although`, `eventhough`, `even though`, `while`],
-                  Role(Rel.isA), `coordinating concession conjunction`, Sense.conjunctionSubordinatingConcession, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating concession conjunction`, Sense.conjunctionSubordinatingConcession, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`if`, `only if`, `unless`, `until`, `provided that`, `assuming that`, `even if`, `in case`, `in case that`, `lest`],
-                  Role(Rel.isA), `coordinating condition conjunction`, Sense.conjunctionSubordinatingCondition, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating condition conjunction`, Sense.conjunctionSubordinatingCondition, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`than`, `rather than`, `whether`, `as much as`, `whereas`],
-                  Role(Rel.isA), `coordinating comparison conjunction`, Sense.conjunctionSubordinatingComparison, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating comparison conjunction`, Sense.conjunctionSubordinatingComparison, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`after`, `as long as`, `as soon as`, `before`, `by the time`, `now that`, `once`, `since`, `till`, `until`, `when`, `whenever`, `while`],
-                  Role(Rel.isA), `coordinating time conjunction`, Sense.conjunctionSubordinatingTime, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating time conjunction`, Sense.conjunctionSubordinatingTime, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`because`, `since`, `so that`, `in order`, `in order that`, `why`],
-                  Role(Rel.isA), `coordinating reason conjunction`, Sense.conjunctionSubordinatingReason, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating reason conjunction`, Sense.conjunctionSubordinatingReason, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`how`, `as though`, `as if`],
-                  Role(Rel.isA), `coordinating manner conjunction`, Sense.conjunctionSubordinatingManner, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating manner conjunction`, Sense.conjunctionSubordinatingManner, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`where`, `wherever`],
-                  Role(Rel.isA), `coordinating place conjunction`, Sense.conjunctionSubordinatingPlace, Sense.nounPhrase, 1.0);
+                  Role(Rel.instanceOf), `coordinating place conjunction`, Sense.conjunctionSubordinatingPlace, Sense.nounPhrase, 1.0);
         learnMto1(Lang.en, [`as {*} as`,
                             `just as {*} so`,
                             `both {*} and`,
@@ -2734,7 +2737,7 @@ class Net(bool useArray = true,
                             `not only {*} but also`,
                             `no sooner {*} than`,
                             `rather {*} than`],
-                        Role(Rel.isA), `correlative conjunction`, Sense.conjunctionCorrelative, Sense.nounPhrase, 1.0);
+                        Role(Rel.instanceOf), `correlative conjunction`, Sense.conjunctionCorrelative, Sense.nounPhrase, 1.0);
 
         // Subordinating Conjunction
         connect(store("subordinating conjunction", Lang.en, Sense.nounPhrase, Origin.manual),
@@ -2744,27 +2747,27 @@ class Net(bool useArray = true,
                 Origin.manual, 1.0);
 
         // Conjunction
-        learnMto1(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `conjunction`, Sense.conjunction, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/conjunction.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `conjunction`, Sense.conjunction, Sense.nounSingular, 1.0);
 
         enum swedishConjunctions = [`alldenstund`, `allenast`, `ante`, `antingen`, `att`, `bara`, `blott`, `bå`, `båd'`, `både`, `dock`, `att`, `där`, `därest`, `därför`, `att`, `då`, `eftersom`, `ehur`, `ehuru`, `eller`, `emedan`, `enär`, `ety`, `evad`, `fast`, `fastän`, `för`, `förrän`, `försåvida`, `försåvitt`, `fȧst`, `huruvida`, `hvarför`, `hvarken`, `hvarpå`, `ifall`, `innan`, `ity`, `ity`, `att`, `liksom`, `medan`, `medans`, `men`, `mens`, `när`, `närhelst`, `oaktat`, `och`, `om`, `om`, `och`, `endast`, `om`, `plus`, `att`, `samt`, `sedan`, `som`, `sä`, `så`, `såframt`, `såsom`, `såvida`, `såvitt`, `såväl`, `sö`, `tast`, `tills`, `ty`, `utan`, `varför`, `varken`, `än`, `ändock`, `änskönt`, `ävensom`, `å`];
-        learnMto1(Lang.sv, swedishConjunctions, Role(Rel.isA), `conjunction`, Sense.conjunction, Sense.nounSingular, 1.0);
+        learnMto1(Lang.sv, swedishConjunctions, Role(Rel.instanceOf), `conjunction`, Sense.conjunction, Sense.nounSingular, 1.0);
     }
 
     void learnInterjections()
     {
         learnMto1(Lang.en,
                         rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(word => !word.empty),
-                        Role(Rel.isA), `interjection`, Sense.interjection, Sense.nounSingular, 1.0);
+                        Role(Rel.instanceOf), `interjection`, Sense.interjection, Sense.nounSingular, 1.0);
     }
 
     void learnTime()
     {
-        learnMto1(Lang.en, [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`],    Role(Rel.isA), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
-        learnMto1(Lang.de, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Role(Rel.isA), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
-        learnMto1(Lang.sv, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Role(Rel.isA), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`],    Role(Rel.instanceOf), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
+        learnMto1(Lang.de, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Role(Rel.instanceOf), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
+        learnMto1(Lang.sv, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Role(Rel.instanceOf), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
 
-        learnMto1(Lang.en, [`january`, `february`, `mars`, `april`, `may`, `june`, `july`, `august`, `september`, `oktober`, `november`, `december`], Role(Rel.isA), `month`, Sense.month, Sense.nounSingular, 1.0);
-        learnMto1(Lang.sv, [`januari`, `februari`, `mars`, `april`, `maj`, `juni`, `juli`, `augusti`, `september`, `oktober`, `november`, `december`],    Role(Rel.isA), `month`, Sense.month, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, [`january`, `february`, `mars`, `april`, `may`, `june`, `july`, `august`, `september`, `oktober`, `november`, `december`], Role(Rel.instanceOf), `month`, Sense.month, Sense.nounSingular, 1.0);
+        learnMto1(Lang.sv, [`januari`, `februari`, `mars`, `april`, `maj`, `juni`, `juli`, `augusti`, `september`, `oktober`, `november`, `december`],    Role(Rel.instanceOf), `month`, Sense.month, Sense.nounSingular, 1.0);
 
         learnMto1(Lang.en, [`time period`], Role(Rel.isA), `noun`, Sense.noun, Sense.nounSingular, 1.0);
         learnMto1(Lang.en, [`month`], Role(Rel.isA), `time period`, Sense.noun, Sense.nounSingular, 1.0);
@@ -2794,7 +2797,7 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/summer_verb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.atTime), `summer`, Sense.verb, Sense.season);
 
         learnMto1(Lang.en, rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.atLocation), `house`, Sense.noun, Sense.nounSingular);
-        learnMto1(Lang.en, rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `device`, Sense.noun, Sense.nounSingular);
+        learnMto1(Lang.en, rdT("../knowledge/en/household_device.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `device`, Sense.noun, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/farm.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.atLocation), `farm`, Sense.noun, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/school.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.atLocation), `school`, Sense.noun, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/circus.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.atLocation), `circus`, Sense.noun, Sense.nounSingular);
@@ -2851,8 +2854,8 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/informal.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.hasAttribute), `informal`, Sense.adjective, Sense.adjective);
 
         // Red Wine
-        learnMto1(Lang.en, rdT("../knowledge/en/red_wine_color.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `red wine color`, Sense.noun, Sense.nounSingular);
-        learnMto1(Lang.en, rdT("../knowledge/en/red_wine_flavor.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `red wine flavor`, Sense.noun, Sense.nounSingular);
+        learnMto1(Lang.en, rdT("../knowledge/en/red_wine_color.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `red wine color`, Sense.noun, Sense.nounSingular);
+        learnMto1(Lang.en, rdT("../knowledge/en/red_wine_flavor.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `red wine flavor`, Sense.noun, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/red_wine_food.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.servedWith), `red wine`, Sense.noun, Sense.nounSingular);
 
         learnMto1(Lang.en, rdT("../knowledge/en/literary_genre.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `literary genre`, Sense.noun, Sense.nounSingular);
@@ -2860,8 +2863,8 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/classic_major_literary_genre.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `classic major literary genre`, Sense.noun, Sense.nounSingular);
 
         // Female Names
-        learnMto1(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `female name`, Sense.nameFemale, Sense.nounSingular, 1.0);
-        learnMto1(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `female name`, Sense.nameFemale, Sense.nounSingular, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/female_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `female name`, Sense.nameFemale, Sense.nounSingular, 1.0);
+        learnMto1(Lang.sv, rdT("../knowledge/sv/female_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `female name`, Sense.nameFemale, Sense.nounSingular, 1.0);
     }
 
     /// Learn Emotions.
@@ -2872,14 +2875,14 @@ class Net(bool useArray = true,
         {
             learnMto1(Lang.en,
                       rdT("../knowledge/en/" ~ group ~ "_emotion.txt").splitter('\n').filter!(word => !word.empty),
-                      Role(Rel.isA), group ~ ` emotion`, Sense.unknown, Sense.nounSingular);
+                      Role(Rel.instanceOf), group ~ ` emotion`, Sense.unknown, Sense.nounSingular);
         }
     }
 
     /// Learn English Feelings.
     void learnEnglishFeelings()
     {
-        learnMto1(Lang.en, rdT("../knowledge/en/feeling.txt").splitter('\n').filter!(word => !word.empty), Role(Rel.isA), `feeling`, Sense.adjective, Sense.nounSingular);
+        learnMto1(Lang.en, rdT("../knowledge/en/feeling.txt").splitter('\n').filter!(word => !word.empty), Role(Rel.instanceOf), `feeling`, Sense.adjective, Sense.nounSingular);
         const feelings = [`afraid`, `alive`, `angry`, `confused`, `depressed`, `good`, `happy`,
                           `helpless`, `hurt`, `indifferent`, `interested`, `love`,
                           `negative`, `unpleasant`,
@@ -2897,7 +2900,7 @@ class Net(bool useArray = true,
     {
         learnMto1(Lang.sv,
                   rdT("../knowledge/sv/känsla.txt").splitter('\n').filter!(word => !word.empty),
-                  Role(Rel.isA), `känsla`, Sense.noun, Sense.nounSingular);
+                  Role(Rel.instanceOf), `känsla`, Sense.noun, Sense.nounSingular);
     }
 
     /// Read and Learn Assocations.
@@ -2943,7 +2946,7 @@ class Net(bool useArray = true,
             NWeight weight = 1.0;
 
             connect(store(name.idup, lang, Sense.nounUncountable, origin),
-                    Role(Rel.isA),
+                    Role(Rel.instanceOf),
                     store("chemical element", lang, Sense.nounSingular, origin),
                     origin, weight);
 
@@ -4727,14 +4730,14 @@ class Net(bool useArray = true,
      */
     void learnPhysics()
     {
-        learnMto1(Lang.en, rdT("../knowledge/en/si_base_unit_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `SI base unit name noun`, Sense.baseSIUnit, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/si_base_unit_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `SI base unit name noun`, Sense.baseSIUnit, Sense.noun, 1.0);
         // TODO Name Symbol, Quantity, In SI units, In Si base units
-        learnMto1(Lang.en, rdT("../knowledge/en/si_derived_unit_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `SI derived unit name noun`, Sense.derivedSIUnit, Sense.noun, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/si_derived_unit_name.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `SI derived unit name noun`, Sense.derivedSIUnit, Sense.noun, 1.0);
     }
 
     void learnComputers()
     {
-        learnMto1(Lang.en, rdT("../knowledge/en/programming_language.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.isA), `programming language`, Sense.languageProgramming, Sense.language, 1.0);
+        learnMto1(Lang.en, rdT("../knowledge/en/programming_language.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `programming language`, Sense.languageProgramming, Sense.language, 1.0);
     }
 
     /** Learn English Irregular Verbs.
@@ -4918,7 +4921,7 @@ class Net(bool useArray = true,
                            `alert`, `alike`, `alive`, `alone`, `aloof`, `ashamed`, `asleep`,
                            `awake`, `aware`, `fond`, `unaware`],
                           lang, Sense.adjectivePredicateOnly, Origin.manual),
-                    Role(Rel.isA),
+                    Role(Rel.instanceOf),
                     store("predicate only adjective",
                           lang, Sense.noun, Origin.manual),
                     Origin.manual);
@@ -4930,11 +4933,11 @@ class Net(bool useArray = true,
     {
         enum lang = Lang.sv;
         connectMto1(store(["grundform", "genitiv"], lang, Sense.noun, Origin.manual),
-                    Role(Rel.isA),
+                    Role(Rel.instanceOf),
                     store("kasus", lang, Sense.noun, Origin.manual),
                     Origin.manual);
         connectMto1(store(["reale", "neutrum"], lang, Sense.noun, Origin.manual),
-                    Role(Rel.isA),
+                    Role(Rel.instanceOf),
                     store("genus", lang, Sense.noun, Origin.manual),
                     Origin.manual);
     }
@@ -5303,7 +5306,7 @@ class Net(bool useArray = true,
         return tuple(entityIx,
                      contextName,
                      connect(entityIx,
-                             Role(Rel.isA),
+                             Role(Rel.instanceOf),
                              store(contextName.replace(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
                              Origin.nell, 1.0,
                              true)); // need to check duplicates here
