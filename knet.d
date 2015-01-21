@@ -305,6 +305,8 @@ import combinations;
 import permutations;
 version(msgpack) import msgpack;
 
+import arsd.dom;
+
 enum char asciiUS = '';       // ASCII Unit Separator
 enum char asciiRS = '';       // ASCII Record Separator
 enum char asciiGS = '';       // ASCII Group Separator
