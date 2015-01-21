@@ -1488,7 +1488,9 @@ enum Newline
     // Do we require immutability here?
 */
 auto byLine(Newline nl = Newline.any,
-            Range)(Range input) if ((hasSlicing!Range && hasLength!Range) || isNarrowString!Range)
+            Range)(Range input) if ((hasSlicing!Range &&
+                                     hasLength!Range) ||
+                                    isNarrowString!Range)
 {
     static if (nl == Newline.native)
     {
