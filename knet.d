@@ -1338,15 +1338,20 @@ class Net(bool useArray = true,
             {
                 try
                 {
-                    this.sense = split[0].to!Sense;
-                    assert(sense == Sense.unknown,
-                           `Can't override sense argumented ` ~ sense
-                           ~ ` with ` ~ this.sense);
-                    expr = split[2];
-                    if (false)
+                    const exprSense = split[0].to!Sense;
+                    if (sense == Sense.unknown ||
+                        exprSense.specializes(sense))
                     {
-                        dln(`Decoded expr `, expr, ` to have sense `, this.sense);
+                        this.sense = exprSense;
                     }
+                    else if (!sense.specializes(exprSense))
+                    {
+                        assert(sense == Sense.unknown,
+                               `Can't override argumented sense ` ~ sense
+                               ~ ` with ` ~ this.sense);
+                    }
+                    expr = split[2];
+                    if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
                 }
                 catch (std.conv.ConvException e)
                 {
@@ -6006,7 +6011,7 @@ class Net(bool useArray = true,
             }
             if (lineNode.lemma.sense != Sense.unknown)
             {
-                write(` of sense `, lineNode.lemma.sense);
+                write(` of sense `, lineNode.lemma.sense.toHuman);
             }
             writeln;
 
