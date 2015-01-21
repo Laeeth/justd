@@ -317,7 +317,10 @@ enum syllableSeparator = asciiUS; // separates syllables
 enum alternativesSeparator = asciiRS; // separates alternatives
 enum roleSeparator = asciiFS; // separates subject from object, translations, etc.
 enum qualifierSeparator = ':'; // noun:eka
+
 enum meaningNrSeparator = ';'; // tomten;1 tomten;2
+const meaningNrSeparatorString = `:`;
+
 enum countSeparator = '#'; // gives occurrence count
 
 /* import stdx.allocator; */
@@ -1167,7 +1170,9 @@ auto decodeMobyIPA(S)(S code) if (isSomeString!S)
     }
 }
 
-Sense sensesOfMobyPoSCode(C)(C code) if (isSomeChar!C)
+/** Decode Sense of Moby Part of Speech (PoS) Code.
+*/
+Sense decodeSenseOfMobyPoSCode(C)(C code) if (isSomeChar!C)
 {
     switch (code) with (Sense)
     {
@@ -1308,7 +1313,7 @@ class Net(bool useArray = true,
              ubyte meaningNr = 0) in { assert(meaningNr <= MeaningNrMax); }
         body
         {
-            // this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
+            this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
             if (expr.length >= 2 &&
                 expr[$ - 2] == meaningNrSeparator)
             {
@@ -1330,10 +1335,9 @@ class Net(bool useArray = true,
             this.sense = sense;
             this.manner = manner;
             this.context = context;
-            // this.isRegexp = isRegexp;
 
-            auto split = expr.findSplit(`:`);
-            if (!split[1].empty)
+            auto split = expr.findSplit(meaningNrSeparatorString);
+            if (!split[1].empty) // if a split was found
             {
                 try
                 {
@@ -1690,14 +1694,13 @@ class Net(bool useArray = true,
      */
     ref Lemma learnLemma(ref Lemma lemma) @safe
     {
-        auto existingLemmasRef = lemma.expr in lemmasByExpr;
-        if (existingLemmasRef)
+        auto lemmas = lemma.expr in lemmasByExpr;
+        if (lemmas)
         {
-            auto existingLemmas = *existingLemmasRef;
-            // TODO lemma.expr = existingLemmas.front.expr; // reuse already GC-stored Expr
+            // TODO lemma.expr = *lemmas.front.expr; // reuse already GC-stored Expr
 
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
-            foreach (ref existingLemma; existingLemmas)
+            foreach (ref existingLemma; *lemmas)
             {
                 if (existingLemma.lang == lemma.lang &&
                     existingLemma.context == lemma.context &&
@@ -1714,10 +1717,10 @@ class Net(bool useArray = true,
                 }
             }
 
-            const hitAlt = existingLemmas.canFind(lemma);
+            const hitAlt = (*lemmas).canFind(lemma);
             if (!hitAlt) // TODO Make use of binary search
             {
-                existingLemmas ~= lemma;
+                *lemmas ~= lemma;
             }
         }
         else
@@ -2334,7 +2337,7 @@ class Net(bool useArray = true,
         {
             auto split = line.splitter(roleSeparator);
             const expr = split.front.idup; split.popFront;
-            foreach (sense; split.front.map!(a => a.sensesOfMobyPoSCode))
+            foreach (sense; split.front.map!(a => a.decodeSenseOfMobyPoSCode))
             {
                 store(expr, Lang.en, sense, Origin.moby);
             }
