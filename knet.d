@@ -1281,8 +1281,8 @@ class Net(bool useArray = true,
     else                 { alias Nds = Nd[]; }
 
     /// References to Links.
-    static if (useArray) { alias LinkRefs = Array!Ln; }
-    else                 { alias LinkRefs = Ln[]; }
+    static if (useArray) { alias Lns = Array!Ln; }
+    else                 { alias Lns = Ln[]; }
 
     /** Context or Ontology Category Index (currently from NELL). */
     struct ContextIx
@@ -1389,14 +1389,14 @@ class Net(bool useArray = true,
         /* @safe @nogc pure nothrow: */
         this(in Lemma lemma,
              Origin origin = Origin.unknown,
-             LinkRefs links = LinkRefs.init)
+             Lns links = Lns.init)
         {
             this.lemma = lemma;
             this.origin = origin;
             this.links = links;
         }
     private:
-        LinkRefs links;
+        Lns links;
         const(Lemma) lemma;
         Origin origin;
     }
@@ -1531,7 +1531,7 @@ class Net(bool useArray = true,
     pragma(msg, `Expr.sizeof: `, Expr.sizeof);
     pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
     pragma(msg, `Node.sizeof: `, Node.sizeof);
-    pragma(msg, `LinkRefs.sizeof: `, LinkRefs.sizeof);
+    pragma(msg, `Lns.sizeof: `, Lns.sizeof);
     pragma(msg, `Nds.sizeof: `, Nds.sizeof);
     pragma(msg, `Link.sizeof: `, Link.sizeof);
 
@@ -1880,7 +1880,7 @@ class Net(bool useArray = true,
 
     void learnDefault(string dirPath)
     {
-        const quick = true;
+        const quick = false;
         const maxCount = quick ? 10000 : size_t.max;
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
@@ -6023,7 +6023,7 @@ class Net(bool useArray = true,
             writeln;
 
             // TODO Why is cast needed here?
-            auto linkRefs = cast(LinkRefs)linkRefsOf(lineNode, RelDir.any, Role(rel, false, negation));
+            auto linkRefs = cast(Lns)linkRefsOf(lineNode, RelDir.any, Role(rel, false, negation));
 
             linkRefs[].multiSort!((a, b) => (at(a).nweight >
                                              at(b).nweight),
