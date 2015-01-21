@@ -317,11 +317,10 @@ enum syllableSeparator = asciiUS; // separates syllables
 enum alternativesSeparator = asciiRS; // separates alternatives
 enum roleSeparator = asciiFS; // separates subject from object, translations, etc.
 enum qualifierSeparator = ':'; // noun:eka
-
 enum meaningNrSeparator = ';'; // tomten;1 tomten;2
-const meaningNrSeparatorString = `:`;
-
+enum meaningNrSeparatorString = `:`;
 enum countSeparator = '#'; // gives occurrence count
+enum expressionWordSeparator = " "; // Lemma Expression Separator.
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
@@ -1216,8 +1215,6 @@ class Net(bool useArray = true,
     alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
     enum nullIx = Ix.max >> 1;
 
-    enum expressionWordSeparator = "_"; // Lemma Expression Separator.
-
     /** Type-Safe Directed Reference to $(D T). */
     struct Ref(T)
     {
@@ -1697,8 +1694,6 @@ class Net(bool useArray = true,
         auto lemmas = lemma.expr in lemmasByExpr;
         if (lemmas)
         {
-            // TODO lemma.expr = *lemmas.front.expr; // reuse already GC-stored Expr
-
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
             foreach (ref existingLemma; *lemmas)
             {
@@ -1716,7 +1711,6 @@ class Net(bool useArray = true,
                     return existingLemma;
                 }
             }
-
             const hitAlt = (*lemmas).canFind(lemma);
             if (!hitAlt) // TODO Make use of binary search
             {
