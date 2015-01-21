@@ -1216,5 +1216,6 @@ enum Manner:ubyte
 {
     formal,
     informal,
+    slang,
     rude,
 }
