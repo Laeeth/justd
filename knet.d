@@ -1343,7 +1343,10 @@ class Net(bool useArray = true,
                            `Can't override sense argumented ` ~ sense
                            ~ ` with ` ~ this.sense);
                     expr = split[2];
-                    dln(`Decoded expr `, expr, ` to have sense `, this.sense);
+                    if (false)
+                    {
+                        dln(`Decoded expr `, expr, ` to have sense `, this.sense);
+                    }
                 }
                 catch (std.conv.ConvException e)
                 {
@@ -4932,11 +4935,12 @@ class Net(bool useArray = true,
     }
 
     /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
-    Nd store(Expr expr,
-             Lang lang,
-             Sense sense,
-             Origin origin,
-             ContextIx context = ContextIx.asUndefined) in { assert(!expr.empty); }
+    Nd store(S)(S expr,
+                Lang lang,
+                Sense sense,
+                Origin origin,
+                ContextIx context = ContextIx.asUndefined) if (isSomeString!S)
+        in { assert(!expr.empty); }
     body
     {
         auto lemma = Lemma(expr, lang, sense, context);
@@ -4995,7 +4999,8 @@ class Net(bool useArray = true,
                       Lang lang,
                       Sense sense,
                       Origin origin,
-                      ContextIx context = ContextIx.asUndefined) if (isIterable!Exprs)
+                      ContextIx context = ContextIx.asUndefined) if (isIterable!Exprs &&
+                                                                     isSomeString!(ElementType!Exprs))
     {
         typeof(return) nodeRefs;
         foreach (expr; exprs)
