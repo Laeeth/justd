@@ -1898,7 +1898,7 @@ class Net(bool useArray = true,
         foreach (file; fixedPath.dirEntries(SpanMode.shallow)
                                 .filter!(name => name.extension == `.csv`))
         {
-            readCN5File(file, false, maxCount);
+            readCN5File(file, maxCount, false);
         }
 
         // NELL
@@ -5642,23 +5642,20 @@ class Net(bool useArray = true,
     /** Read ConceptNet5 Assertions File $(D path) in CSV format.
         Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
      */
-    void readCN5File(string path, bool useMmFile = false, size_t maxCount = size_t.max)
+    void readCN5File(string path, size_t maxCount = size_t.max, bool useMmFile = true)
     {
         writeln("Reading ConceptNet from ", path, " ...");
         size_t lnr = 0;
         if (useMmFile)
         {
-            version(none)
+            import std.mmfile: MmFile;
+            auto mmf = new MmFile(path, MmFile.Mode.read, 0, null, pageSize);
+            auto data = cast(char[])mmf[];
+            import algorithm_ex: byLine, Newline;
+            foreach (line; data.byLine!(Newline.native)) // TODO Compare with File.byLine
             {
-                import std.mmfile: MmFile;
-                auto mmf = new MmFile(path, MmFile.Mode.read, 0, null, pageSize);
-                auto data = cast(ubyte[])mmf[];
-                /* import algorithm_ex: byLine, Newline; */
-                foreach (line; data.byLine!(Newline.native)) // TODO Compare with File.byLine
-                {
-                    readCN5Line(line, lnr);
-                    if (++lnr >= maxCount) break;
-                }
+                readCN5Line(line, lnr);
+                if (++lnr >= maxCount) break;
             }
         }
         else
