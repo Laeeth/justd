@@ -277,7 +277,7 @@ import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, groupBy, sort, multiSort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, sort, multiSort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
 import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize, representation;
@@ -326,7 +326,11 @@ enum expressionWordSeparator = " "; // Lemma Expression Separator.
 /* import memory.allocators; */
 /* import containers: HashMap; */
 
-static if (__VERSION__ < 2067)
+static if (__VERSION__ >= 2067)
+{
+    import std.algorithm: clamp;
+}
+else
 {
     auto clamp(T, TLow, THigh)(T x, TLow lower, THigh upper)
     @safe pure nothrow
@@ -1200,7 +1204,7 @@ class Net(bool useArray = true,
           bool useRCString = true)
 {
     import std.range: front, split, isInputRange, back;
-    import std.algorithm: joiner, clamp;
+    import std.algorithm: joiner;
     import std.path: buildNormalizedPath, expandTilde, extension;
     import std.algorithm: strip, array, until, dropOne, dropBackOne;
     import wordnet: WordNet;
@@ -6050,9 +6054,9 @@ class Net(bool useArray = true,
         writeln(`> Line "`, line, `"`);
     }
 
-    const durationInMsecs = 1000; // duration in milliseconds
+    enum durationInMsecs = 1000; // duration in milliseconds
 
-    const fuzzyExprMatchMaximumRecursionDepth = 8;
+    enum fuzzyExprMatchMaximumRecursionDepth = 8;
 
     import std.datetime: StopWatch;
     private StopWatch showNodesSW;
