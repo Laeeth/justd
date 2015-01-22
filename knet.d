@@ -281,7 +281,7 @@ import std.array: array, replace;
 import std.uni: isWhite, toLower;
 import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
-import std.file: readText, exists;
+import std.file: readText, exists, dirEntries, SpanMode;
 import std.bitmanip: bitfields;
 import mmfile_ex;
 alias rdT = readText;
@@ -1742,17 +1742,16 @@ class Net(bool useArray = true,
         }
     }
 
-    void readIndexLine(R, N)(const R line,
-                             const N lnr,
-                             const Lang lang = Lang.unknown,
-                             Sense sense = Sense.unknown,
-                             const bool useMmFile = false)
+    void readWordNetIndexLine(R, N)(const R line,
+                                    const N lnr,
+                                    const Lang lang = Lang.unknown,
+                                    Sense sense = Sense.unknown,
+                                    const bool useMmFile = false)
     {
         if (!line.empty &&
             !line.front.isWhite) // if first is not space. TODO move this check
         {
-            static if (isSomeString!R) { const linestr = line; }
-            else                       { const linestr = cast(string)line.idup; }
+            const linestr = line.to!string;
             /* pragma(msg, typeof(line).stringof); */
             /* pragma(msg, typeof(line.idup).stringof); */
             const words = linestr.split; // TODO Use splitter to optimize
@@ -1800,10 +1799,10 @@ class Net(bool useArray = true,
     /** Read WordNet Index File $(D fileName).
         Manual page: wndb
     */
-    void readIndex(string fileName,
-                   bool useMmFile = false,
-                   Lang lang = Lang.unknown,
-                   Sense sense = Sense.unknown)
+    void readWordNetIndex(string fileName,
+                          bool useMmFile = false,
+                          Lang lang = Lang.unknown,
+                          Sense sense = Sense.unknown)
     {
         size_t lnr;
         /* TODO Functionize and merge with conceptnet5.readCSV */
@@ -1811,7 +1810,7 @@ class Net(bool useArray = true,
         {
             foreach (line; mmFileLinesRO(fileName))
             {
-                readIndexLine(line, lnr, lang, sense, useMmFile);
+                readWordNetIndexLine(line, lnr, lang, sense, useMmFile);
                 lnr++;
             }
         }
@@ -1819,7 +1818,7 @@ class Net(bool useArray = true,
         {
             foreach (line; File(fileName).byLine)
             {
-                readIndexLine(line, lnr, lang, sense);
+                readWordNetIndexLine(line, lnr, lang, sense);
                 lnr++;
             }
         }
@@ -1831,10 +1830,10 @@ class Net(bool useArray = true,
     {
         // NOTE: Test both read variants through alternating uses of Mmfile or not
         const lang = Lang.en;
-        readIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
-        readIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
-        readIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
-        readIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
+        readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
+        readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
+        readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
+        readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
 
     /** Construct Network
@@ -1873,17 +1872,7 @@ class Net(bool useArray = true,
         // Learn Less Absolute Things
         learnAssociativeThings();
 
-        // ConceptNet
-        // GC.disabled had no noticeble effect here: import core.memory: GC;
-        const fixedPath = `~/Knowledge/conceptnet5-5.3/data/assertions/`;
-        import std.file: dirEntries, SpanMode;
-        foreach (file; fixedPath.expandTilde
-                                .buildNormalizedPath
-                                .dirEntries(SpanMode.shallow)
-                                .filter!(name => name.extension == `.csv`))
-        {
-            readCN5File(file, maxCount, false);
-        }
+        learnCN5(`~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
 
         // NELL
         if (false)
@@ -1896,6 +1885,18 @@ class Net(bool useArray = true,
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
         /* writefln("Packed size: %.2f", bytes.length/1.0e6); */
+    }
+
+    /// Learn ConceptNet.
+    void learnCN5(string path, size_t maxCount)
+    {
+        foreach (file; path.expandTilde
+                           .buildNormalizedPath
+                           .dirEntries(SpanMode.shallow)
+                           .filter!(name => name.extension == `.csv`))
+        {
+            readCN5File(file, maxCount, false);
+        }
     }
 
     /// Learn Externally (Trained) Supervised Things.
@@ -2263,14 +2264,11 @@ class Net(bool useArray = true,
 
         learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Role(Rel.instanceOf), `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
 
-        learnMobyPoS();
+        // learnMobyPoS();
 
         // learn these after Moby as Moby is more specific
         learnNouns();
         learnVerbs();
-
-        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adjective`, Sense.adjective, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adverb`, Sense.adverb, Sense.noun, 1.0);
 
         learnMto1(Lang.en, rdT("../knowledge/en/figure_of_speech.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `figure of speech`, Sense.unknown, Sense.noun, 1.0);
 
@@ -2358,6 +2356,8 @@ class Net(bool useArray = true,
 
     void learnNouns()
     {
+        writeln("Reading Nouns ...");
+
         const origin = Origin.manual;
 
         connect(store(`male`, Lang.en, Sense.noun, origin), Role(Rel.hasAttribute),
@@ -2371,17 +2371,20 @@ class Net(bool useArray = true,
 
     void learnEnglishNouns()
     {
+        writeln("Reading English Nouns ...");
         learnMto1(Lang.en, rdT("../knowledge/en/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `collective noun`, Sense.nounCollective, Sense.noun, 1.0);
         learnMto1(Lang.en, rdT("../knowledge/en/noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `noun`, Sense.noun, Sense.noun, 1.0);
     }
 
     void learnSwedishNouns()
     {
+        writeln("Reading Swedish Nouns ...");
         learnMto1(Lang.sv, rdT("../knowledge/sv/collective_noun.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `collective noun`, Sense.nounCollective, Sense.noun, 1.0);
     }
 
     void learnPronouns()
     {
+        writeln("Reading Pronouns ...");
         learnEnglishPronouns();
         learnSwedishPronouns();
     }
@@ -2504,30 +2507,36 @@ class Net(bool useArray = true,
 
     void learnVerbs()
     {
+        writeln("Reading Verbs ...");
         learnSwedishIrregularVerbs();
         learnEnglishVerbs();
     }
 
     void learnAdjectives()
     {
+        writeln("Reading Adjectives ...");
         learnSwedishAdjectives();
         learnEnglishAdjectives();
     }
 
     void learnEnglishVerbs()
     {
+        writeln("Reading English Verbs ...");
         learnEnglishIrregularVerbs();
         learnMto1(Lang.en, rdT("../knowledge/en/verbs.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `verb`, Sense.verb, Sense.noun, 1.0);
     }
 
     void learnAdverbs()
     {
+        writeln("Reading Adverbs ...");
         learnEnglishAdverbs();
         learnSwedishAdverbs();
+        learnMto1(Lang.en, rdT("../knowledge/en/adverb.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adverb`, Sense.adverb, Sense.noun, 1.0);
     }
 
     void learnSwedishAdverbs()
     {
+        writeln("Reading Swedish Adverbs ...");
         enum lang = Lang.sv;
 
         learnMto1(lang,
@@ -2568,6 +2577,8 @@ class Net(bool useArray = true,
 
     void learnEnglishAdverbs()
     {
+        writeln("Reading English Adverbs ...");
+
         enum lang = Lang.en;
 
         learnMto1(lang,
@@ -2619,6 +2630,8 @@ class Net(bool useArray = true,
 
     void learnDefiniteArticles()
     {
+        writeln("Reading Definite Articles ...");
+
         learnMto1(Lang.en, [`the`],
                         Role(Rel.instanceOf), `definite article`, Sense.articleDefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.de, [`der`, `die`, `das`, `des`, `dem`, `den`],
@@ -2631,6 +2644,8 @@ class Net(bool useArray = true,
 
     void learnUndefiniteArticles()
     {
+        writeln("Reading Undefinite Articles ...");
+
         learnMto1(Lang.en, [`a`, `an`],
                         Role(Rel.instanceOf), `undefinite article`, Sense.articleIndefinite, Sense.nounPhrase, 1.0);
         learnMto1(Lang.de, [`ein`, `eine`, `eines`, `einem`, `einen`, `einer`],
@@ -2643,6 +2658,8 @@ class Net(bool useArray = true,
 
     void learnPartitiveArticles()
     {
+        writeln("Reading Partitive Articles ...");
+
         learnMto1(Lang.en, [`some`],
                         Role(Rel.instanceOf), `partitive article`, Sense.articlePartitive, Sense.nounPhrase, 1.0);
         learnMto1(Lang.fr, [`du`, `de`, `la`, `de`, `l'`, `des`],
@@ -2651,6 +2668,8 @@ class Net(bool useArray = true,
 
     void learnNames()
     {
+        writeln("Reading Names ...");
+
         // Surnames
         learnMto1(Lang.en, rdT("../knowledge/en/surname.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `surname`, Sense.surname, Sense.nounSingular, 1.0);
         learnMto1(Lang.sv, rdT("../knowledge/sv/surname.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `surname`, Sense.surname, Sense.nounSingular, 1.0);
@@ -2658,6 +2677,8 @@ class Net(bool useArray = true,
 
     void learnConjunctions()
     {
+        writeln("Reading Conjunctions ...");
+
         // TODO merge with conjunctions?
         // TODO categorize like http://www.grammarbank.com/connectives-list.html
         enum connectives = [`the`, `of`, `and`, `to`, `a`, `in`, `that`, `is`,
@@ -2741,6 +2762,8 @@ class Net(bool useArray = true,
 
     void learnInterjections()
     {
+        writeln("Reading Interjections ...");
+
         learnMto1(Lang.en,
                         rdT("../knowledge/en/interjection.txt").splitter('\n').filter!(word => !word.empty),
                         Role(Rel.instanceOf), `interjection`, Sense.interjection, Sense.nounSingular, 1.0);
@@ -2748,6 +2771,8 @@ class Net(bool useArray = true,
 
     void learnTime()
     {
+        writeln("Reading Time ...");
+
         learnMto1(Lang.en, [`monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`],    Role(Rel.instanceOf), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
         learnMto1(Lang.de, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Role(Rel.instanceOf), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
         learnMto1(Lang.sv, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Role(Rel.instanceOf), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
@@ -2762,6 +2787,8 @@ class Net(bool useArray = true,
     /// Learn Assocative Things.
     void learnAssociativeThings()
     {
+        writeln("Reading Associative Things ...");
+
         // TODO lower weights on these are not absolute
         learnMto1(Lang.en, rdT("../knowledge/en/constitution.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.any), `constitution`, Sense.unknown, Sense.nounSingular);
         learnMto1(Lang.en, rdT("../knowledge/en/election.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.any), `election`, Sense.unknown, Sense.nounSingular);
@@ -4219,6 +4246,7 @@ class Net(bool useArray = true,
      */
     void learnEnglishIrregularVerbs()
     {
+        writeln("Reading English Irregular Verbs ...");
         learnEnglishIrregularVerb(`arise`, `arose`, `arisen`);
         learnEnglishIrregularVerb(`rise`, `rose`, `risen`);
         learnEnglishIrregularVerb(`wake`, [`woke`, `awaked`], `woken`);
@@ -4911,6 +4939,7 @@ class Net(bool useArray = true,
                     store("predicate only adjective",
                           lang, Sense.noun, Origin.manual),
                     Origin.manual);
+        learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adjective`, Sense.adjective, Sense.noun, 1.0);
     }
 
     /** Learn Swedish Grammar.
