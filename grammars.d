@@ -821,14 +821,16 @@ enum Gender:ubyte {
 /** (Grammatical) Mood.
     Sometimes also called Mode.
     Modus in Swedish.
+    See also: https://en.wikipedia.org/wiki/Grammatical_mood
 */
 enum Mood:ubyte
 {
-    indicative,
+    indicative, // indikativ in Swedish
     subjunctive,
+    conjunctive = subjunctive, // konjunktiv in Swedish
     conditional,
     optative,
-    imperative,
+    imperative, // imperativ in Swedish
     jussive,
     potential,
     inferential,
