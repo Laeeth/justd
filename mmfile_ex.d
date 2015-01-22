@@ -23,9 +23,20 @@ auto mmFileLinesRO(ElementType = char)(string path)
 
 unittest
 {
-    const path = "~/justd/knowledge/moby/pronounciation.txt";
+    const dirPath = `~/Knowledge/conceptnet5-5.3/data/assertions/`;
     import std.stdio: writeln;
-    foreach (line; mmFileLinesRO(path))
+    import std.file: dirEntries, SpanMode;
+    import std.path: expandTilde, buildNormalizedPath, extension;
+    import std.algorithm: filter;
+    foreach (filePath; dirPath.expandTilde
+                              .buildNormalizedPath
+                              .dirEntries(SpanMode.shallow)
+                              .filter!(name => name.extension == `.csv`))
     {
+        writeln("Reading ", filePath);
+        foreach (line; mmFileLinesRO(filePath))
+        {
+        }
     }
+
 }
