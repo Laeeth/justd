@@ -1840,10 +1840,10 @@ class Net(bool useArray = true,
     /** Construct Network
         Read sources in order of decreasing reliability.
      */
-    this(string dirPath)
+    this()
     {
         unittestMe();
-        learnDefault(dirPath);
+        learnDefault();
         // inferSpecializedSenses();
         showRelations;
     }
@@ -1859,7 +1859,7 @@ class Net(bool useArray = true,
         // assert(&at(beInEnglish).lemma.expr == &at(beInSwedish).lemma.expr);
     }
 
-    void learnDefault(string dirPath)
+    void learnDefault()
     {
         const quick = true;
         const maxCount = quick ? 10000 : size_t.max; // 50000 doesn't crash CN5
@@ -1875,10 +1875,11 @@ class Net(bool useArray = true,
 
         // ConceptNet
         // GC.disabled had no noticeble effect here: import core.memory: GC;
-        const fixedPath = dirPath.expandTilde
-                                 .buildNormalizedPath;
+        const fixedPath = `~/Knowledge/conceptnet5-5.3/data/assertions/`;
         import std.file: dirEntries, SpanMode;
-        foreach (file; fixedPath.dirEntries(SpanMode.shallow)
+        foreach (file; fixedPath.expandTilde
+                                .buildNormalizedPath
+                                .dirEntries(SpanMode.shallow)
                                 .filter!(name => name.extension == `.csv`))
         {
             readCN5File(file, maxCount, false);
@@ -2285,7 +2286,6 @@ class Net(bool useArray = true,
         writeln("Reading Moby pronounciations from ", path, " ...");
         foreach (line; mmFileLinesRO(path))
         {
-            continue;
             auto split = line.splitter(' ');
             string expr;
             try

@@ -10,7 +10,7 @@ int main(string[] args)
     debug backtrace.backtrace.install(stderr);
     registerMemoryErrorHandler();
 
-    auto net = new Net!(true, false)(`~/Knowledge/conceptnet5-5.3/data/assertions/`);
+    auto net = new Net!(true, false)();
     net.showNodes(`car_wash`);
 
     while (true)
