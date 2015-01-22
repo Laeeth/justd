@@ -33,10 +33,12 @@ unittest
                               .dirEntries(SpanMode.shallow)
                               .filter!(name => name.extension == `.csv`))
     {
-        writeln("Reading ", filePath);
+        size_t ix;
         foreach (line; mmFileLinesRO(filePath))
         {
+            ++ix;
         }
+        writeln("Read ", ix, " lines from ", filePath);
     }
 
 }
