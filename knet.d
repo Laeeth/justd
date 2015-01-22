@@ -1857,9 +1857,9 @@ class Net(bool useArray = true,
         const ndA = store("Skänninge", Lang.sv, Sense.city, Origin.manual);
         const ndB = store("3200", Lang.sv, Sense.population, Origin.manual);
         const ln1 = connect(ndA, Role(Rel.hasAttribute),
-                            ndB, Origin.manual, 1.0);
+                            ndB, Origin.manual, 1.0, true);
         const ln2 = connect(ndA, Role(Rel.hasAttribute),
-                            ndB, Origin.manual, 1.0);
+                            ndB, Origin.manual, 1.0, true);
         assert(ln1 == ln2);
 
         // Lemmas with same expr should be reused
@@ -1868,8 +1868,7 @@ class Net(bool useArray = true,
         assert(at(beEn).lemma.expr ==
                at(beSv).lemma.expr);
         assert(at(beEn).lemma.expr.ptr ==
-               at(beSv).lemma.expr.ptr); // assert reuse
-
+               at(beSv).lemma.expr.ptr); // assert clever reuse of already hashed expr
     }
 
     void learnDefault()
@@ -5156,11 +5155,11 @@ class Net(bool useArray = true,
                Nd dst,
                Origin origin = Origin.unknown,
                NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
-               bool checkExisting = false) in {
-        assert(src != dst,
-               at(src).lemma.expr ~
-               " must not be equal to " ~
-               at(dst).lemma.expr);
+               bool checkExisting = false) in
+    {
+        assert(src != dst, (at(src).lemma.expr ~
+                            " must not be equal to " ~
+                            at(dst).lemma.expr));
     }
     body
     {
@@ -5932,9 +5931,15 @@ class Net(bool useArray = true,
                            Origin origin = Origin.unknown,
                            NWeight nweight = 1.0)
     {
-        const bDir = (role.rel.isSymmetric ?
-                      RelDir.any :
-                      RelDir.forward);
+        const dir = (role.rel.isSymmetric ?
+                     RelDir.any :
+                     RelDir.forward);
+
+        dln("dir: ", dir);
+        dln("a: ", a.ix, ",", a.dir);
+        dln("b: ", b.ix, ",", b.dir);
+        dln();
+
         foreach (aLinkRef; at(a).links)
         {
             const aLink = at(aLinkRef);
@@ -5942,7 +5947,7 @@ class Net(bool useArray = true,
                 aLink.role.negation == role.negation && // no need to check reversion (all links are bidirectional)
                 aLink.origin == origin &&
                 (aLink.actors[]
-                      .canFind(Nd(b, bDir))) &&
+                      .canFind(Nd(b, dir))) &&
                 abs(aLink.nweight - nweight) < 1.0e-2) // TODO adjust
             {
                 return aLinkRef;
