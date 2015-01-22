@@ -1262,6 +1262,9 @@ class Net(bool useArray = true,
     static if (useRCString) { alias Expr = RCXString!(immutable char, 24-1); }
     else                    { alias Expr = immutable string; }
 
+    static if (useRCString) { alias MutExpr = RCXString!(char, 24-1); }
+    else                    { alias MutExpr = string; }
+
     /// References to Nodes.
     static if (useArray) { alias Nds = Array!Nd; }
     else                 { alias Nds = Nd[]; }
@@ -1297,12 +1300,20 @@ class Net(bool useArray = true,
                 ContextIx context = ContextIx.asUndefined,
                 Manner manner = Manner.formal,
                 bool isRegexp = false,
-                ubyte meaningNr = 0) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
+                ubyte meaningNr = 0,
+                bool normalizeExpr = true) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
         body
         {
             auto expr = exprString.to!string;
-            this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
-            if (expr.length >= 2 &&
+
+            // check if regular expression
+            if (normalizeExpr)
+            {
+                this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
+            }
+
+            if (normalizeExpr &&
+                expr.length >= 2 &&
                 expr[$ - 2] == meaningNrSeparator)
             {
                 const ubyte nrCharByte = expr.representation.back;
@@ -1324,36 +1335,39 @@ class Net(bool useArray = true,
             this.manner = manner;
             this.context = context;
 
-            auto split = expr.findSplit(meaningNrSeparatorString);
-            if (!split[1].empty) // if a split was found
+            if (normalizeExpr)
             {
-                try
+                auto split = expr.findSplit(meaningNrSeparatorString);
+                if (!split[1].empty) // if a split was found
                 {
-                    const exprSense = split[0].to!Sense;
-                    if (sense == Sense.unknown ||
-                        exprSense.specializes(sense))
+                    try
                     {
-                        this.sense = exprSense;
+                        const exprSense = split[0].to!Sense;
+                        if (sense == Sense.unknown ||
+                            exprSense.specializes(sense))
+                        {
+                            this.sense = exprSense;
+                        }
+                        else if (!sense.specializes(exprSense))
+                        {
+                            assert(sense == Sense.unknown,
+                                   `Can't override argumented sense ` ~ sense
+                                   ~ ` with ` ~ this.sense);
+                        }
+                        expr = split[2];
+                        if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
                     }
-                    else if (!sense.specializes(exprSense))
+                    catch (std.conv.ConvException e)
                     {
-                        assert(sense == Sense.unknown,
-                               `Can't override argumented sense ` ~ sense
-                               ~ ` with ` ~ this.sense);
+                        /* ok to not be able to downcase */
                     }
-                    expr = split[2];
-                    if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
-                }
-                catch (std.conv.ConvException e)
-                {
-                    /* ok to not be able to downcase */
                 }
             }
 
             this.expr = expr;
         }
 
-        Expr expr;
+        MutExpr expr;
         /* The following three are used to disambiguate different semantics
          * meanings of the same word in different languages. */
         Lang lang;
@@ -1595,9 +1609,7 @@ class Net(bool useArray = true,
 
     Nd nodeRefByLemmaMaybe(in Lemma lemma)
     {
-        return (lemma in ndByLemma ?
-                         ndByLemma[lemma] :
-                         typeof(return).init);
+        return get(ndByLemma, lemma, typeof(return).init);
     }
 
     /** Try to Get Single Node related to $(D word) in the interpretation
@@ -1845,7 +1857,8 @@ class Net(bool useArray = true,
     this()
     {
         unittestMe();
-        learnDefault();
+        learnVerbs();
+        // learnDefault();
         // inferSpecializedSenses();
         showRelations;
     }
@@ -1860,15 +1873,15 @@ class Net(bool useArray = true,
                             ndB, Origin.manual, 1.0, true);
         const ln2 = connect(ndA, Role(Rel.hasAttribute),
                             ndB, Origin.manual, 1.0, true);
-        assert(ln1 == ln2);
+        // assert(ln1 == ln2);
 
         // Lemmas with same expr should be reused
         const beEn = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
         const beSv = store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
         assert(at(beEn).lemma.expr ==
                at(beSv).lemma.expr);
-        assert(at(beEn).lemma.expr.ptr ==
-               at(beSv).lemma.expr.ptr); // assert clever reuse of already hashed expr
+        // assert(at(beEn).lemma.expr.ptr ==
+        //        at(beSv).lemma.expr.ptr); // assert clever reuse of already hashed expr
     }
 
     void learnDefault()
@@ -2530,6 +2543,7 @@ class Net(bool useArray = true,
         writeln("Reading Adjectives ...");
         learnSwedishAdjectives();
         learnEnglishAdjectives();
+        learnGermanIrregularAdjectives();
     }
 
     void learnEnglishVerbs()
@@ -4822,8 +4836,10 @@ class Net(bool useArray = true,
     void learnSwedishIrregularVerbs()
     {
         learnSwedishIrregularVerb(`eka`, `eka`, `ekar`, `ekade`, `ekat`); // English:echo
-        learnSwedishIrregularVerb(`ge`, `ge`, `ger`, `gav`, `gett/givit`);
-        learnSwedishIrregularVerb(`ange`, `ange`, `anger`, `angav`, `angett/angivit`);
+        learnSwedishIrregularVerb(`ge`, `ge`, `ger`, `gav`, `gett`);
+        learnSwedishIrregularVerb(`ge`, `ge`, `ger`, `gav`, `givit`);
+        learnSwedishIrregularVerb(`ange`, `ange`, `anger`, `angav`, `angett`);
+        learnSwedishIrregularVerb(`ange`, `ange`, `anger`, `angav`, `angivit`);
         learnSwedishIrregularVerb(`anse`, `anse`, `anser`, `ansåg`, `ansett`);
         learnSwedishIrregularVerb(`avgör`, `avgöra`, `avgör`, `avgjorde`, `avgjort`);
         learnSwedishIrregularVerb(`avstå`, `avstå`, `avstår`, `avstod`, `avstått`);
@@ -4831,8 +4847,10 @@ class Net(bool useArray = true,
         learnSwedishIrregularVerb(`bestå`, `bestå`, `består`, `bestod`, `bestått`);
         learnSwedishIrregularVerb([], [], `bör`, `borde`, `bort`);
         learnSwedishIrregularVerb(`dra`, `dra`, `drar`, `drog`, `dragit`);
-        learnSwedishIrregularVerb([], `duga`, `duger`, `dög/dugde`, `dugit`);
-        learnSwedishIrregularVerb(`dyk`, `dyka`, `dyker`, `dök/dykte`, `dykit`);
+        learnSwedishIrregularVerb([], `duga`, `duger`, `dög`, `dugit`); // TODO ["dög", "dugde"]
+        learnSwedishIrregularVerb([], `duga`, `duger`, `dugde`, `dugit`);
+        learnSwedishIrregularVerb(`dyk`, `dyka`, `dyker`, `dök`, `dykit`); // TODO ["dök", "dykte"]
+        learnSwedishIrregularVerb(`dyk`, `dyka`, `dyker`, `dykte`, `dykit`);
         learnSwedishIrregularVerb(`dö`, `dö`, `dör`, `dog`, `dött`);
         learnSwedishIrregularVerb(`dölj`, `dölja`, `döljer`, `dolde`, `dolt`);
         learnSwedishIrregularVerb(`ersätt`, `ersätta`, `ersätter`, `ersatte`, `ersatt`);
@@ -4901,12 +4919,16 @@ class Net(bool useArray = true,
     void learnAdjective(S)(Lang lang,
                            S nominative,
                            S comparative,
-                           S superlative) if (isSomeString!S)
+                           S superlative,
+                           S elative = [],
+                           S exzessive = []) if (isSomeString!S)
     {
         const origin = Origin.manual;
         auto all = [tryStore(nominative, lang, Sense.adjectiveNominative, origin),
                     tryStore(comparative, lang, Sense.adjectiveComparative, origin),
-                    tryStore(superlative, lang, Sense.adjectiveSuperlative, origin)];
+                    tryStore(superlative, lang, Sense.adjectiveSuperlative, origin),
+                    tryStore(elative, lang, Sense.adjectiveElative, origin),
+                    tryStore(exzessive, lang, Sense.adjectiveExzessive, origin)];
         connectAll(Role(Rel.formOfAdjective), all.filter!(a => a.defined), lang, origin);
     }
 
@@ -4922,27 +4944,28 @@ class Net(bool useArray = true,
     void learnSwedishAdjectives()
     {
         enum lang = Lang.sv;
-        learnAdjective(lang, "tung", "tyngre", "tyngst");
-        learnAdjective(lang, "få", "färre", "färst");
-        learnAdjective(lang, "många", "fler", "flest");
-        learnAdjective(lang, "bra", "bättre", "bäst");
-        learnAdjective(lang, "dålig", "sämre", "sämst");
-        learnAdjective(lang, "liten", "mindre", "minst");
-        learnAdjective(lang, "gammal", "äldre", "äldst");
-        learnAdjective(lang, "hög", "högre", "högst");
-        learnAdjective(lang, "låg", "lägre", "lägst");
-        learnAdjective(lang, "lång", "längre", "längst");
-        learnAdjective(lang, "stor", "större", "störst");
-        learnAdjective(lang, "tung", "tyngre", "tyngst");
-        learnAdjective(lang, "ung", "yngre", "yngst");
-        learnAdjective(lang, "mycket", "mer", "mest");
-        learnAdjective(lang, "gärna", "hellre", "helst");
+        learnAdjective(lang, `tung`, `tyngre`, `tyngst`);
+        learnAdjective(lang, `få`, `färre`, `färst`);
+        learnAdjective(lang, `många`, `fler`, `flest`);
+        learnAdjective(lang, `bra`, `bättre`, `bäst`);
+        learnAdjective(lang, `dålig`, `sämre`, `sämst`);
+        learnAdjective(lang, `liten`, `mindre`, `minst`);
+        learnAdjective(lang, `gammal`, `äldre`, `äldst`);
+        learnAdjective(lang, `hög`, `högre`, `högst`);
+        learnAdjective(lang, `låg`, `lägre`, `lägst`);
+        learnAdjective(lang, `lång`, `längre`, `längst`);
+        learnAdjective(lang, `stor`, `större`, `störst`);
+        learnAdjective(lang, `tung`, `tyngre`, `tyngst`);
+        learnAdjective(lang, `ung`, `yngre`, `yngst`);
+        learnAdjective(lang, `mycket`, `mer`, `mest`);
+        learnAdjective(lang, `gärna`, `hellre`, `helst`);
     }
 
     /** Learn English Adjectives.
      */
     void learnEnglishAdjectives()
     {
+        learnEnglishIrregularAdjectives();
         const lang = Lang.en;
         connectMto1(store([`ablaze`, `abreast`, `afire`, `afloat`, `afraid`, `aghast`, `aglow`,
                            `alert`, `alike`, `alive`, `alone`, `aloof`, `ashamed`, `asleep`,
@@ -4955,18 +4978,64 @@ class Net(bool useArray = true,
         learnMto1(Lang.en, rdT("../knowledge/en/adjective.txt").splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adjective`, Sense.adjective, Sense.noun, 1.0);
     }
 
+    /** Learn English Irregular Adjectives.
+     */
+    void learnEnglishIrregularAdjectives()
+    {
+        enum lang = Lang.en;
+        learnAdjective(lang, `good`, `better`, `best`);
+        learnAdjective(lang, `well`, `better`, `best`);
+
+        learnAdjective(lang, `bad`, `worse`, `worst`);
+
+        learnAdjective(lang, `little`, `less`, `least`);
+        learnAdjective(lang, `little`, `smaller`, `smallest`);
+
+        learnAdjective(lang, `much`, `more`, `most`);
+        learnAdjective(lang, `many`, `more`, `most`);
+
+        learnAdjective(lang, `far`, `further`, `furthest`);
+        learnAdjective(lang, `far`, `farther`, `farthest`);
+
+        learnAdjective(lang, `big`, `larger`, `largest`);
+        learnAdjective(lang, `big`, `bigger`, `biggest`);
+        learnAdjective(lang, `large`, `larger`, `largest`);
+
+        learnAdjective(lang, `old`, `older`, `oldest`);
+        learnAdjective(lang, `old`, `elder`, `eldest`);
+    }
+
+    /** Learn German Irregular Adjectives.
+     */
+    void learnGermanIrregularAdjectives()
+    {
+        enum lang = Lang.de;
+
+        learnAdjective(lang, `schön`, `schöner`, `schönste`);
+        learnAdjective(lang, `wild`, `wilder`, `wildeste`);
+        learnAdjective(lang, `groß`, `größer`, `größte`);
+
+        learnAdjective(lang, `gut`, `besser`, `beste`);
+        learnAdjective(lang, `viel`, `mehr`, `meiste`);
+        learnAdjective(lang, `gern`, `lieber`, `liebste`);
+        learnAdjective(lang, `hoch`, `höher`, `höchste`);
+        learnAdjective(lang, `wenig`, `weniger`, `wenigste`);
+        learnAdjective(lang, `wenig`, `minder`, `mindeste`);
+        learnAdjective(lang, `nahe`, `näher`, `nähchste`);
+    }
+
     /** Learn Swedish Grammar.
      */
     void learnSwedishGrammar()
     {
         enum lang = Lang.sv;
-        connectMto1(store(["grundform", "genitiv"], lang, Sense.noun, Origin.manual),
+        connectMto1(store([`grundform`, `genitiv`], lang, Sense.noun, Origin.manual),
                     Role(Rel.instanceOf),
-                    store("kasus", lang, Sense.noun, Origin.manual),
+                    store(`kasus`, lang, Sense.noun, Origin.manual),
                     Origin.manual);
-        connectMto1(store(["reale", "neutrum"], lang, Sense.noun, Origin.manual),
+        connectMto1(store([`reale`, `neutrum`], lang, Sense.noun, Origin.manual),
                     Role(Rel.instanceOf),
-                    store("genus", lang, Sense.noun, Origin.manual),
+                    store(`genus`, lang, Sense.noun, Origin.manual),
                     Origin.manual);
     }
 
@@ -4975,11 +5044,15 @@ class Net(bool useArray = true,
                 Lang lang,
                 Sense sense,
                 Origin origin,
-                ContextIx context = ContextIx.asUndefined) if (isSomeString!S)
+                ContextIx context = ContextIx.asUndefined,
+                Manner manner = Manner.formal,
+                bool isRegexp = false,
+                ubyte meaningNr = 0,
+                bool normalizeExpr = true) if (isSomeString!S)
         in { assert(!expr.empty); }
     body
     {
-        auto lemma = Lemma(expr, lang, sense, context);
+        auto lemma = Lemma(expr, lang, sense, context, manner, isRegexp, meaningNr, normalizeExpr);
         const lemmaNd = lemma in ndByLemma;
         if (lemmaNd)
         {

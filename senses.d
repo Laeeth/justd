@@ -137,6 +137,9 @@ enum Sense:ubyte
     adjectiveNominative,
     adjectiveComparative,
     adjectiveSuperlative,
+    adjectiveElative,
+    adjectiveExzessive,
+
     adjectivePossessive,
     adjectivePossessiveSingular,
     adjectivePossessivePlural,
@@ -403,6 +406,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case adjectiveNominative: return `adjective nominative`;
         case adjectiveComparative: return `adjective comparative`;
         case adjectiveSuperlative: return `adjective superlative`;
+        case adjectiveElative: return `adjective elative`;
+        case adjectiveExzessive: return `adjective exzessive`;
+
         case adjectivePossessive: return `possessive adjective`;
         case adjectivePossessiveSingular: return `possessive adjective singular`;
         case adjectivePossessivePlural: return `possessive adjective plural`;
@@ -715,6 +721,8 @@ import predicates: of;
                                      adjectiveNominative,
                                      adjectiveComparative,
                                      adjectiveSuperlative,
+                                     adjectiveElative,
+                                     adjectiveExzessive,
                                      adjectivePossessiveSingular,
                                      adjectivePossessivePlural,
                                      adjectivePredicateOnly);

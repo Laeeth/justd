@@ -809,6 +809,19 @@ enum Number:ubyte { singular, plural }
 /** Subject Person. */
 enum Person:ubyte { first, second, third }
 
+/** Comparation.
+    See also: https://en.wikipedia.org/wiki/Comparison_(grammar)
+ */
+enum Comparation:ubyte
+{
+    unknown,
+    positive,
+    comparative,
+    superlative,
+    elative,
+    exzessive
+}
+
 /** Subject Gender. */
 enum Gender:ubyte {
     unknown,
@@ -825,6 +838,7 @@ enum Gender:ubyte {
 */
 enum Mood:ubyte
 {
+    unknown,
     indicative, // indikativ in Swedish
     subjunctive,
     conjunctive = subjunctive, // konjunktiv in Swedish
@@ -918,7 +932,8 @@ static immutable swedishLinkingVerbs = [`är`, `verkar`, `ser`, `kan vara`];
 /** English Word Suffixes. */
 static immutable wordSuffixes = [ allNounSuffixes ~ verbSuffixes ~ adjectiveSuffixes ].uniq.array;
 
-Gender getGender(S)(S lemma, Sense sense) if (isSomeString!S)
+/** Get Gender of expression $(D expr) having sense $(D sense). */
+Gender getGender(S)(S expr, Sense sense) if (isSomeString!S)
 {
     if (sense.isPronounSingularMale)
     {
@@ -995,77 +1010,6 @@ string inPlural(string word, int count = 2,
             return word ~ `s`;
     }
 }
-
-import std.typecons: tuple;
-
-/** Irregular Adjectives.
-    See also: http://www.talkenglish.com/Grammar/comparative-superlative-adjectives.aspx
-*/
-enum irregularAdjectivesEnglish = [tuple(`good`, `better`, `best`),
-                                   tuple(`well`, `better`, `best`),
-
-                                   tuple(`bad`, `worse`, `worst`),
-
-                                   tuple(`little`, `less`, `least`),
-                                   tuple(`little`, `smaller`, `smallest`),
-                                   tuple(`much`, `more`, `most`),
-                                   tuple(`many`, `more`, `most`),
-
-                                   tuple(`far`, `further`, `furthest`),
-                                   tuple(`far`, `farther`, `farthest`),
-
-                                   tuple(`big`, `larger`, `largest`),
-                                   tuple(`old`, `elder`, `eldest`),
-    ];
-
-/** Return true if $(D s) is an adjective in nominative form.
-    TODO Add to ConceptNet instead.
- */
-bool isNominativeAdjective(S)(S s) if (isSomeString!S)
-{
-    import std.range: empty;
-    return (irregularAdjectivesEnglish.map!(a => a[0]).array.canFind(s)); // TODO Check if s[0..$-2] is a wordnet adjective
-}
-
-/** Return true if $(D s) is an adjective in comparative form.
-    TODO Add to ConceptNet instead.
- */
-bool isComparativeAdjective(S)(S s) if (isSomeString!S)
-{
-    import std.range: empty;
-    return (s.startsWith(`more `) || // TODO Check that s[5..$] is a wordnet adjective
-            irregularAdjectivesEnglish.map!(a => a[1]).array.canFind(s) ||
-            s.endsWith(`er`)   // TODO Check if s[0..$-2] is a wordnet adjective
-        );
-}
-
-/** Return true if $(D s) is an adjective in superlative form.
-    TODO Add to ConceptNet instead.
- */
-bool isSuperlativeAdjective(S)(S s) if (isSomeString!S)
-{
-    import std.range: empty;
-    return (s.startsWith(`most `) || // TODO Check that s[5..$] is a wordnet adjective
-            irregularAdjectivesEnglish.map!(a => a[2]).array.canFind(s) ||
-            s.endsWith(`est`)   // TODO Check if s[0..$-3] is a wordnet adjective
-        );
-}
-
-unittest
-{
-    assert(`good`.isNominativeAdjective);
-    assert(!`better`.isNominativeAdjective);
-    assert(`better`.isComparativeAdjective);
-    assert(!`best`.isComparativeAdjective);
-    assert(`more important`.isComparativeAdjective);
-    assert(`best`.isSuperlativeAdjective);
-    assert(!`better`.isSuperlativeAdjective);
-    assert(`most important`.isSuperlativeAdjective);
-}
-
-/** Irregular Adjectives. */
-enum irregularAdjectivesGerman = [tuple(`gut`, `besser`, `besten`)
-    ];
 
 /** Return $(D s) lemmatized (normalized).
     See also: https://en.wikipedia.org/wiki/Lemmatisation
