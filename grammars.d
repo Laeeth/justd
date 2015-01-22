@@ -818,9 +818,54 @@ enum Gender:ubyte {
     reale, utrum = reale // non-human/alive, for example: "någon"
 }
 
-/* Number number(string x, Sense wc) {} */
-/* Person person(string x, Sense wc) {} */
-/* Gender gender(string x, Sense wc) {} */
+/** (Grammatical) Mood.
+    Sometimes also called Mode.
+    Modus in Swedish.
+*/
+enum Mood:ubyte
+{
+    indicative,
+    subjunctive,
+    conditional,
+    optative,
+    imperative,
+    jussive,
+    potential,
+    inferential,
+    interrogative
+}
+
+/** Check if $(D mood) is a Realis Mood.
+    See also: https://en.wikipedia.org/wiki/Grammatical_mood#Realis_moods
+ */
+bool isRealis(Mood mood) @safe pure @nogc nothrow
+{
+    with (Mood) return mood.of(indicative);
+}
+
+enum realisMoods = [Mood.indicative];
+
+/** Check if $(D mood) is a Irrealis Mood.
+    See also: https://en.wikipedia.org/wiki/Grammatical_mood#Irrealis_moods
+*/
+bool isIrrealis(Mood mood) @safe pure @nogc nothrow
+{
+    with (Mood) return mood.of(subjunctive,
+                               conditional,
+                               optative,
+                               imperative,
+                               jussive,
+                               potential,
+                               inferential);
+}
+
+enum irrealisMoods = [Mood.subjunctive,
+                      Mood.conditional,
+                      Mood.optative,
+                      Mood.imperative,
+                      Mood.jussive,
+                      Mood.potential,
+                      Mood.inferential];
 
 /** English Negation Prefixes.
     See also: http://www.english-for-students.com/Negative-Prefixes.html
