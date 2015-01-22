@@ -1291,15 +1291,16 @@ class Net(bool useArray = true,
         pure // nothrow
         :
 
-        this(string expr,
-             Lang lang,
-             Sense sense,
-             ContextIx context = ContextIx.asUndefined,
-             Manner manner = Manner.formal,
-             bool isRegexp = false,
-             ubyte meaningNr = 0) in { assert(meaningNr <= MeaningNrMax); }
+        this(S)(S exprString,
+                Lang lang,
+                Sense sense,
+                ContextIx context = ContextIx.asUndefined,
+                Manner manner = Manner.formal,
+                bool isRegexp = false,
+                ubyte meaningNr = 0) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
         body
         {
+            auto expr = exprString.to!string;
             this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
             if (expr.length >= 2 &&
                 expr[$ - 2] == meaningNrSeparator)
@@ -1608,10 +1609,11 @@ class Net(bool useArray = true,
                                  ContextIx context) if (isSomeString!S)
     {
         typeof(return) nodes;
-        auto lemma = Lemma(expr, lang, sense, context);
-        if (lemma in ndByLemma) // if hashed lookup possible
+        const lemma = Lemma(expr, lang, sense, context);
+        const lemmaNd = lemma in ndByLemma;
+        if (lemmaNd) // if hashed lookup possible
         {
-            nodes ~= ndByLemma[lemma]; // use it
+            nodes ~= *lemmaNd; // use it
         }
         else
         {
@@ -1622,10 +1624,11 @@ class Net(bool useArray = true,
                 const wordsFixed = wordsSplit.joiner("_").to!S;
                 /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
                 // TODO: Functionize
-                auto lemmaFixed = Lemma(wordsFixed, lang, sense, context);
-                if (lemmaFixed in ndByLemma)
+                const lemmaFixed = Lemma(wordsFixed, lang, sense, context);
+                const lemmaFixedNd = lemmaFixed in ndByLemma;
+                if (lemmaFixedNd)
                 {
-                    nodes ~= ndByLemma[lemmaFixed];
+                    nodes ~= *lemmaFixedNd;
                 }
             }
         }
@@ -1839,7 +1842,9 @@ class Net(bool useArray = true,
     this()
     {
         unittestMe();
-        learnDefault();
+
+        learnNouns();
+        // learnDefault();
         // inferSpecializedSenses();
         showRelations;
     }
@@ -2261,7 +2266,7 @@ class Net(bool useArray = true,
 
         learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Role(Rel.instanceOf), `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
 
-        // learnMobyPoS();
+        learnMobyPoS();
 
         // learn these after Moby as Moby is more specific
         learnNouns();
@@ -4963,11 +4968,11 @@ class Net(bool useArray = true,
         in { assert(!expr.empty); }
     body
     {
-        auto lemma = Lemma(expr.to!Expr, lang, sense, context);
-        auto existingNd = lemma in ndByLemma;
-        if (existingNd)
+        auto lemma = Lemma(expr, lang, sense, context);
+        const lemmaNd = lemma in ndByLemma;
+        if (lemmaNd)
         {
-            return *existingNd; // lookup
+            return *lemmaNd; // lookup
         }
         else
         {
@@ -5256,9 +5261,10 @@ class Net(bool useArray = true,
     ContextIx contextByName(S)(S name) if (isSomeString!S)
     {
         auto context = anyContext;
-        if (name in contextIxByName)
+        const contextIx = name in contextIxByName;
+        if (contextIx)
         {
-            context = contextIxByName[name];
+            context = *contextIx;
         }
         else
         {
