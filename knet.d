@@ -283,6 +283,7 @@ import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
 import std.file: readText, exists;
 import std.bitmanip: bitfields;
+import std.mmfile: MmFile;
 alias rdT = readText;
 
 import algorithm_ex: isPalindrome, either, append, commonSuffixCount;
@@ -1810,9 +1811,8 @@ class Net(bool useArray = true,
         {
             version (none)
             {
-                import std.mmfile: MmFile;
                 auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
-                const data = cast(ubyte[])mmf[];
+                const data = cast(char[])mmf[];
                 foreach (line; data.byLine)
                 {
                     readIndexLine(line, lnr, lang, sense, useMmFile);
@@ -5636,11 +5636,10 @@ class Net(bool useArray = true,
         size_t lnr = 0;
         if (useMmFile)
         {
-            import std.mmfile: MmFile;
             auto mmf = new MmFile(path, MmFile.Mode.read, 0, null, pageSize);
             const data = cast(char[])mmf[];
             import algorithm_ex: byLine, Newline;
-            foreach (line; data.byLine!(Newline.native)) // TODO Compare with File.byLine
+            foreach (line; data.byLine!(Newline.native))
             {
                 readCN5Line(line, lnr);
                 if (++lnr >= maxCount) break;
