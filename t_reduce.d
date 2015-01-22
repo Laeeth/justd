@@ -4,10 +4,13 @@
  * \brief
  */
 
-import std.stdio, std.algorithm, std.range, std.traits;
+import all;
 
-void main(string args[])
+void main(string[] args)
 {
     writeln(0.reduce!"a+b"([1, 2, 3]));
     // writeln([1, 2, 3].reduce!"a+b"(0));
+
+    const numbers = 10.iota.map!(_ => uniform01).array;
+    // const minmax = numbers.reduce!(min, max);
 }
