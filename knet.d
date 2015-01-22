@@ -1830,10 +1830,13 @@ class Net(bool useArray = true,
     {
         // NOTE: Test both read variants through alternating uses of Mmfile or not
         const lang = Lang.en;
-        readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
-        readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
-        readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
-        readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
+        if (false)              // these indexes are not needed only data files
+        {
+            readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
+            readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
+            readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
+            readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
+        }
     }
 
     /** Construct Network
@@ -1842,9 +1845,7 @@ class Net(bool useArray = true,
     this()
     {
         unittestMe();
-
-        learnNouns();
-        // learnDefault();
+        learnDefault();
         // inferSpecializedSenses();
         showRelations;
     }
@@ -1853,11 +1854,22 @@ class Net(bool useArray = true,
     */
     void unittestMe()
     {
-        const beInEnglish = store(`be`, Lang.en, Sense.verb, Origin.manual);
-        const beInSwedish = store(`be`, Lang.sv, Sense.verb, Origin.manual);
-        assert(at(beInEnglish).lemma.expr == at(beInSwedish).lemma.expr);
-        // immutable expr should be reused
-        // assert(&at(beInEnglish).lemma.expr == &at(beInSwedish).lemma.expr);
+        const ndA = store("Skänninge", Lang.sv, Sense.city, Origin.manual);
+        const ndB = store("3200", Lang.sv, Sense.population, Origin.manual);
+        const ln1 = connect(ndA, Role(Rel.hasAttribute),
+                            ndB, Origin.manual, 1.0);
+        const ln2 = connect(ndA, Role(Rel.hasAttribute),
+                            ndB, Origin.manual, 1.0);
+        assert(ln1 == ln2);
+
+        // Lemmas with same expr should be reused
+        const beEn = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+        const beSv = store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
+        assert(at(beEn).lemma.expr ==
+               at(beSv).lemma.expr);
+        assert(at(beEn).lemma.expr.ptr ==
+               at(beSv).lemma.expr.ptr); // assert reuse
+
     }
 
     void learnDefault()
