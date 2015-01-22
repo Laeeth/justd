@@ -1533,7 +1533,7 @@ class Net(bool useArray = true,
 
     private
     {
-        Nd[Lemma] nodeRefByLemma;
+        Nd[Lemma] ndByLemma;
 
         // TODO Nds[Lang.max + 1] ndsByLang;
 
@@ -1594,8 +1594,8 @@ class Net(bool useArray = true,
 
     Nd nodeRefByLemmaMaybe(in Lemma lemma)
     {
-        return (lemma in nodeRefByLemma ?
-                         nodeRefByLemma[lemma] :
+        return (lemma in ndByLemma ?
+                         ndByLemma[lemma] :
                          typeof(return).init);
     }
 
@@ -1609,9 +1609,9 @@ class Net(bool useArray = true,
     {
         typeof(return) nodes;
         auto lemma = Lemma(expr, lang, sense, context);
-        if (lemma in nodeRefByLemma) // if hashed lookup possible
+        if (lemma in ndByLemma) // if hashed lookup possible
         {
-            nodes ~= nodeRefByLemma[lemma]; // use it
+            nodes ~= ndByLemma[lemma]; // use it
         }
         else
         {
@@ -1623,9 +1623,9 @@ class Net(bool useArray = true,
                 /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
                 // TODO: Functionize
                 auto lemmaFixed = Lemma(wordsFixed, lang, sense, context);
-                if (lemmaFixed in nodeRefByLemma)
+                if (lemmaFixed in ndByLemma)
                 {
-                    nodes ~= nodeRefByLemma[lemmaFixed];
+                    nodes ~= ndByLemma[lemmaFixed];
                 }
             }
         }
@@ -1635,7 +1635,7 @@ class Net(bool useArray = true,
     /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
     auto nodeRefsOf(S)(S expr) if (isSomeString!S)
     {
-        return lemmasOf(expr).map!(lemma => nodeRefByLemma[lemma]);
+        return lemmasOf(expr).map!(lemma => ndByLemma[lemma]);
     }
 
     /** Get All Possible Nodes related to $(D word) in the interpretation
@@ -1752,11 +1752,8 @@ class Net(bool useArray = true,
             !line.front.isWhite) // if first is not space. TODO move this check
         {
             const linestr = line.to!string;
-            /* pragma(msg, typeof(line).stringof); */
-            /* pragma(msg, typeof(line.idup).stringof); */
             const words = linestr.split; // TODO Use splitter to optimize
 
-            // const lemma = words[0].idup; // NOTE: Stuff fails if this is set
             static if (useRCString) { immutable Lemma lemma = words[0].replace("_", " "); }
             else                    { immutable lemma = words[0].replace("_", " ").idup; }
 
@@ -2236,7 +2233,7 @@ class Net(bool useArray = true,
         {
             auto split = line.splitter(roleSeparator);
             const rank = split.front.idup; split.popFront;
-            const word = split.front.idup; split.popFront;
+            const word = split.front;
             connect(store(word, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasAttribute),
                     store(rank, Lang.en, Sense.rank, Origin.manual), Origin.manual, 1.0);
         }
@@ -4966,17 +4963,18 @@ class Net(bool useArray = true,
         in { assert(!expr.empty); }
     body
     {
-        auto lemma = Lemma(expr, lang, sense, context);
-        if (lemma in nodeRefByLemma)
+        auto lemma = Lemma(expr.to!Expr, lang, sense, context);
+        auto existingNd = lemma in ndByLemma;
+        if (existingNd)
         {
-            return nodeRefByLemma[lemma]; // lookup
+            return *existingNd; // lookup
         }
         else
         {
             const specializedLemma = learnLemma(lemma);
             if (specializedLemma != lemma) // if an existing more specialized lemma was found
             {
-                return nodeRefByLemma[specializedLemma];
+                return ndByLemma[specializedLemma];
             }
 
             auto wordsSplit = lemma.expr.findSplit(expressionWordSeparator);
@@ -4995,7 +4993,7 @@ class Net(bool useArray = true,
             const cix = Nd(cast(Ix)allNodes.length);
             allNodes ~= Node(lemma, origin); // .. new node that is stored
 
-            nodeRefByLemma[lemma] = cix; // store index to ..
+            ndByLemma[lemma] = cix; // store index to ..
             nodeStringLengthSum += lemma.expr.length;
 
             ++nodeCountByLang[lemma.lang];
@@ -5895,7 +5893,7 @@ class Net(bool useArray = true,
                 allNodes.length,
                 `/`,
                 multiWordNodeLemmaCount);
-        writeln(indent, `Lemma Expression Word Length Average: `, cast(real)exprWordCountSum/nodeRefByLemma.length);
+        writeln(indent, `Lemma Expression Word Length Average: `, cast(real)exprWordCountSum/ndByLemma.length);
         writeln(indent, `Link Count: `, allLinks.length);
         writeln(indent, `Link Count By Group:`);
         writeln(indent, `- Symmetric: `, symmetricRelCount);
@@ -5903,7 +5901,7 @@ class Net(bool useArray = true,
 
         writeln(indent, `Lemmas Expression Count: `, lemmasByExpr.length);
 
-        writeln(indent, `Node Indexes by Lemma Count: `, nodeRefByLemma.length);
+        writeln(indent, `Node Indexes by Lemma Count: `, ndByLemma.length);
         writeln(indent, `Node String Length Average: `, cast(NWeight)nodeStringLengthSum/allNodes.length);
 
         writeln(indent, `Node Connectedness Average: `, cast(NWeight)nodeConnectednessSum/allNodes.length);
@@ -5952,12 +5950,12 @@ class Net(bool useArray = true,
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
-        if (a in nodeRefByLemma && // both lemmas exist
-            b in nodeRefByLemma)
+        if (a in ndByLemma && // both lemmas exist
+            b in ndByLemma)
         {
-            return areConnected(nodeRefByLemma[a],
+            return areConnected(ndByLemma[a],
                                 role,
-                                nodeRefByLemma[b],
+                                ndByLemma[b],
                                 origin, weight);
         }
         return typeof(return).asUndefined;
@@ -6597,7 +6595,7 @@ class Net(bool useArray = true,
                     Lang lang = Lang.unknown,
                     Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nd => at(nd).lemma.expr.canFind(part));
+        return ndByLemma.values.filter!(nd => at(nd).lemma.expr.canFind(part));
     }
 
     /** Get Node References whose Lemma Expr starts with $(D prefix). */
@@ -6605,7 +6603,7 @@ class Net(bool useArray = true,
                        Lang lang = Lang.unknown,
                        Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nd => at(nd).lemma.expr.startsWith(prefix));
+        return ndByLemma.values.filter!(nd => at(nd).lemma.expr.startsWith(prefix));
     }
 
     /** Get Node References whose Lemma Expr starts with $(D suffix). */
@@ -6613,7 +6611,7 @@ class Net(bool useArray = true,
                      Lang lang = Lang.unknown,
                      Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return nodeRefByLemma.values.filter!(nd => at(nd).lemma.expr.endsWith(suffix));
+        return ndByLemma.values.filter!(nd => at(nd).lemma.expr.endsWith(suffix));
     }
 
     /** Relatedness.
