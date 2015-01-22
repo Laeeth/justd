@@ -283,7 +283,7 @@ import std.utf: byDchar, UTFException;
 import std.typecons: Nullable, Tuple, tuple;
 import std.file: readText, exists;
 import std.bitmanip: bitfields;
-import std.mmfile: MmFile;
+import mmfile_ex;
 alias rdT = readText;
 
 import algorithm_ex: isPalindrome, either, append, commonSuffixCount;
@@ -1809,15 +1809,10 @@ class Net(bool useArray = true,
         /* TODO Functionize and merge with conceptnet5.readCSV */
         if (useMmFile)
         {
-            version (none)
+            foreach (line; mmFileLinesRO(fileName))
             {
-                auto mmf = new MmFile(fileName, MmFile.Mode.read, 0, null, pageSize);
-                const data = cast(char[])mmf[];
-                foreach (line; data.byLine)
-                {
-                    readIndexLine(line, lnr, lang, sense, useMmFile);
-                    lnr++;
-                }
+                readIndexLine(line, lnr, lang, sense, useMmFile);
+                lnr++;
             }
         }
         else
@@ -2288,8 +2283,9 @@ class Net(bool useArray = true,
     {
         const path = "../knowledge/moby/pronounciation.txt";
         writeln("Reading Moby pronounciations from ", path, " ...");
-        foreach (line; File(path).byLine)
+        foreach (line; mmFileLinesRO(path))
         {
+            continue;
             auto split = line.splitter(' ');
             string expr;
             try
@@ -5555,9 +5551,8 @@ class Net(bool useArray = true,
         auto lang = Lang.unknown;
         auto origin = Origin.unknown;
 
-        auto parts = line.splitter('\t');
         size_t ix;
-        foreach (part; parts)
+        foreach (part; line.splitter('\t'))
         {
             switch (ix)
             {
@@ -5636,10 +5631,7 @@ class Net(bool useArray = true,
         size_t lnr = 0;
         if (useMmFile)
         {
-            auto mmf = new MmFile(path, MmFile.Mode.read, 0, null, pageSize);
-            const data = cast(char[])mmf[];
-            import algorithm_ex: byLine, Newline;
-            foreach (line; data.byLine!(Newline.native))
+            foreach (line; mmFileLinesRO(path))
             {
                 readCN5Line(line, lnr);
                 if (++lnr >= maxCount) break;
