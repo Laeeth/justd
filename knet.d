@@ -62,6 +62,8 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    TODO Use ~/Knowledge/Svåra Ord (1989)/svaraord.txt
+
     TODO Rename Role to Pred or Act or Conn? What does WordNet call it?
 
     BUG WordNet stores proper names in lowercase. This could be detected and
@@ -5321,10 +5323,8 @@ class Net(bool useArray = true,
 
         const lang = items.front.decodeLang; items.popFront;
 
-        static if (useRCString) { immutable expr = items.front.replace("_", " "); }
-        else                    { immutable expr = items.front.replace("_", " ").idup; }
+        const expr = items.front.replace("_", " "); items.popFront;
 
-        items.popFront;
         auto sense = Sense.unknown;
         if (!items.empty)
         {
@@ -5336,7 +5336,9 @@ class Net(bool useArray = true,
             }
         }
 
-        return store(expr.correctLemmaExpr, lang, sense, Origin.cn5, anyContext);
+        return store(expr.correctLemmaExpr,
+                     lang, sense, Origin.cn5, anyContext,
+                     Manner.formal, false, 0, false);
     }
 
     import std.algorithm: splitter;
@@ -5404,7 +5406,8 @@ class Net(bool useArray = true,
                                 entity.front).idup;
         entity.popFront;
 
-        auto entityIx = store(entityName.replace(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context);
+        auto entityIx = store(entityName.replace(`_`, ` `).correctLemmaExpr,
+                              lang, sense, Origin.nell, context);
 
         return tuple(entityIx,
                      contextName,
