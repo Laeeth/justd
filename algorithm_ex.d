@@ -1861,7 +1861,6 @@ else
 
         import std.algorithm.comparison : max, min;
         import std.algorithm.iteration: map, reduce;
-        import std.stdio;
         auto aggregate(RoR)(RoR ror)
         {
             return ror.map!(reduce!funcs);
@@ -1872,7 +1871,6 @@ else
     {
         import std.algorithm.iteration;
         import std.algorithm.comparison: equal;
-        import std.stdio: writeln;
         import std.typecons: tuple;
         assert(equal([293, 453, 600, 929, 339, 812, 222, 680, 529, 768].groupBy!(a => a & 1)
                                                                        .aggregate!(max,min),
