@@ -5336,7 +5336,7 @@ class Net(bool useArray = true,
     import std.algorithm: splitter;
 
     /** Lookup Context by $(D name). */
-    ContextIx contextByName(S)(S name) if (isSomeString!S)
+    ContextIx contextOfName(S)(S name) if (isSomeString!S)
     {
         auto context = anyContext;
         if (const contextIx = name in contextIxByName)
@@ -5380,7 +5380,7 @@ class Net(bool useArray = true,
 
         /* context */
         immutable contextName = entity.front.idup; entity.popFront;
-        const context = contextByName(contextName);
+        const context = contextOfName(contextName);
 
         if (entity.empty)
         {
