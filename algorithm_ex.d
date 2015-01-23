@@ -1865,8 +1865,15 @@ template aggregate(funcs...)
 unittest
 {
     import std.algorithm.iteration;
+    import std.algorithm.comparison: equal;
     import std.stdio: writeln;
-    [293, 453, 600, 929, 339, 812, 222, 680, 529, 768].groupBy!(a => a & 1)
-                                                      .aggregate!(max,min)
-                                                      .writeln;
+    import std.typecons: tuple;
+    assert(equal([293, 453, 600, 929, 339, 812, 222, 680, 529, 768].groupBy!(a => a & 1)
+                                                                   .aggregate!(max,min),
+                 [tuple(453, 293),
+                  tuple(600, 600),
+                  tuple(929, 339),
+                  tuple(812, 222),
+                  tuple(529, 529),
+                  tuple(768, 768)]));
 }
