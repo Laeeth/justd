@@ -1849,3 +1849,24 @@ auto commonSuffixCount(Ranges...)(Ranges ranges)
 //     assert(commonPrefixLengthN([1, 2, 3, 10],
 //                               [1, 2, 4, 10]) == 2);
 // }
+
+template aggregate(funcs...)
+{
+
+    import std.algorithm.comparison : max, min;
+    import std.algorithm.iteration: map, reduce;
+    import std.stdio;
+    auto aggregate(RoR)(RoR ror)
+    {
+        return ror.map!(reduce!funcs);
+    }
+}
+
+unittest
+{
+    import std.algorithm.iteration;
+    import std.stdio: writeln;
+    [293, 453, 600, 929, 339, 812, 222, 680, 529, 768].groupBy!(a => a & 1)
+                                                      .aggregate!(max,min)
+                                                      .writeln;
+}
