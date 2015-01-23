@@ -1036,7 +1036,7 @@ auto pageSize() @trusted
 /** Check if $(D s) contains more than one word. */
 bool isMultiWord(S)(S s) if (isSomeString!S)
 {
-    return s.canFind("_", " ") >= 1;
+    return s.canFind(`_`, ` `) >= 1;
 }
 
 /// Correct Formatting of Lemma Expression $(D s).
@@ -1624,8 +1624,7 @@ class Net(bool useArray = true,
     {
         typeof(return) nodes;
         const lemma = Lemma(expr, lang, sense, context);
-        const lemmaNd = lemma in ndByLemma;
-        if (lemmaNd) // if hashed lookup possible
+        if (const lemmaNd = lemma in ndByLemma)
         {
             nodes ~= *lemmaNd; // use it
         }
@@ -1635,12 +1634,8 @@ class Net(bool useArray = true,
             auto wordsSplit = wordnet.findWordsSplit(expr, [lang]); // split in parts
             if (wordsSplit.length >= 2)
             {
-                const wordsFixed = wordsSplit.joiner("_").to!S;
-                /* dln("wordsFixed: ", wordsFixed, " in ", lang, " as ", sense); */
-                // TODO: Functionize
-                const lemmaFixed = Lemma(wordsFixed, lang, sense, context);
-                const lemmaFixedNd = lemmaFixed in ndByLemma;
-                if (lemmaFixedNd)
+                if (const lemmaFixedNd = Lemma(wordsSplit.joiner(`_`).to!S,
+                                               lang, sense, context) in ndByLemma)
                 {
                     nodes ~= *lemmaFixedNd;
                 }
@@ -1709,8 +1704,7 @@ class Net(bool useArray = true,
      */
     ref Lemma learnLemma(ref Lemma lemma) @safe
     {
-        auto lemmas = lemma.expr in lemmasByExpr;
-        if (lemmas)
+        if (auto lemmas = lemma.expr in lemmasByExpr)
         {
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
             foreach (ref existingLemma; *lemmas)
@@ -1771,8 +1765,8 @@ class Net(bool useArray = true,
             const linestr = line.to!string;
             const words = linestr.split; // TODO Use splitter to optimize
 
-            static if (useRCString) { immutable Lemma lemma = words[0].replace("_", " "); }
-            else                    { immutable lemma = words[0].replace("_", " ").idup; }
+            static if (useRCString) { immutable Lemma lemma = words[0].replace(`_`, ` `); }
+            else                    { immutable lemma = words[0].replace(`_`, ` `).idup; }
 
             const pos          = words[1]; // Part of Speech (PoS)
             const synset_cnt   = words[2].to!uint; // Synonym Set Counter
@@ -5055,8 +5049,7 @@ class Net(bool useArray = true,
     body
     {
         auto lemma = Lemma(expr, lang, sense, context, manner, isRegexp, meaningNr, normalizeExpr);
-        const lemmaNd = lemma in ndByLemma;
-        if (lemmaNd)
+        if (const lemmaNd = lemma in ndByLemma)
         {
             return *lemmaNd; // lookup
         }
@@ -5322,8 +5315,7 @@ class Net(bool useArray = true,
         auto items = part.splitter('/');
 
         const lang = items.front.decodeLang; items.popFront;
-
-        const expr = items.front.replace("_", " "); items.popFront;
+        const expr = items.front.replace(`_`, ` `); items.popFront;
 
         auto sense = Sense.unknown;
         if (!items.empty)
@@ -5347,8 +5339,7 @@ class Net(bool useArray = true,
     ContextIx contextByName(S)(S name) if (isSomeString!S)
     {
         auto context = anyContext;
-        const contextIx = name in contextIxByName;
-        if (contextIx)
+        if (const contextIx = name in contextIxByName)
         {
             context = *contextIx;
         }
@@ -5401,7 +5392,7 @@ class Net(bool useArray = true,
 
         /* name */
         // clean cases such as concept:language:english_language
-        immutable entityName = (entity.front.endsWith("_" ~ contextName) ?
+        immutable entityName = (entity.front.endsWith(`_` ~ contextName) ?
                                 entity.front[0 .. $ - (contextName.length + 1)] :
                                 entity.front).idup;
         entity.popFront;
@@ -5845,7 +5836,7 @@ class Net(bool useArray = true,
                 case "prefix": senses ~= Sense.prefix; break;
                 case "suffix": senses ~= Sense.suffix; break;
                 case "pm": senses ~= Sense.name; break;
-                case "nn": senses ~= Sense.noun; break;
+                case ` `: senses ~= Sense.noun; break;
                 case "vb": senses ~= Sense.verb; break;
                 case "hjälpverb": senses ~= Sense.auxiliaryVerb; break;
                 case "jj": senses ~= Sense.adjective; break;
@@ -6292,24 +6283,24 @@ class Net(bool useArray = true,
         else if (normLine.skipOver(`languagesof(`) ||
                  normLine.skipOver(`languages_of(`))
         {
-            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
-                auto hist = languagesOf(arg.splitter(" "));
+                auto hist = languagesOf(arg.splitter(` `));
                 showTopLanguages(hist);
             }
         }
         else if (normLine.skipOver(`languageof(`) ||
                  normLine.skipOver(`language_of(`))
         {
-            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
-                auto hist = languagesOf(arg.splitter(" "));
+                auto hist = languagesOf(arg.splitter(` `));
                 showTopLanguages(hist, 1);
             }
         }
@@ -6322,7 +6313,7 @@ class Net(bool useArray = true,
                  normLine.skipOver(`hasstart(`) ||
                  normLine.skipOver(`has_start(`))
         {
-            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
@@ -6342,7 +6333,7 @@ class Net(bool useArray = true,
                  normLine.skipOver(`hassuffix(`) ||
                  normLine.skipOver(`has_suffix(`))
         {
-            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
@@ -6360,7 +6351,7 @@ class Net(bool useArray = true,
                  normLine.skipOver(`contain(`) ||
                  normLine.skipOver(`contains(`))
         {
-            normLine.skipOver(" "); // TODO all space using skipOver!isSpace
+            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
@@ -6381,7 +6372,7 @@ class Net(bool useArray = true,
             try
             {
                 const qSense = senseString.toLower.to!Sense;
-                dln(senseString, ", ", arg, " ", qSense);
+                dln(senseString, ", ", arg, ` `, qSense);
             }
             catch (std.conv.ConvException e)
             {
@@ -6395,7 +6386,7 @@ class Net(bool useArray = true,
             try
             {
                 const qLang = langString.toLower.to!Lang;
-                dln(langString, ", ", arg, " ", qLang);
+                dln(langString, ", ", arg, ` `, qLang);
             }
             catch (std.conv.ConvException e)
             {
