@@ -5,8 +5,8 @@ module conv_ex;
 import std.conv: to;
 import std.traits: isSomeString;
 
-/** Get English Order Name of $(D n). */
-string nthString(T)(T n) @safe pure
+/** Get English Ordinal Number of $(D n). */
+string ordinal(T)(T n) @safe pure
 {
     string s;
     switch (n)
