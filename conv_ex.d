@@ -39,29 +39,46 @@ string toOrdinal(T)(T n) @safe pure
     return s;
 }
 
-enum onesPlaceWords = [ `zero`, `one`, `two`, `three`, `four`,
-                        `five`, `six`, `seven`, `eight`, `nine` ];
-enum singleWords = onesPlaceWords ~ [ `ten`, `eleven`, `twelve`, `thirteen`, `fourteen`,
-                                      `fifteen`, `sixteen`, `seventeen`, `eighteen`, `nineteen` ];
-enum tensPlaceWords = [ null, `ten`, `twenty`, `thirty`, `forty`,
-                        `fifty`, `sixty`, `seventy`, `eighty`, `ninety`, ];
+enum onesNumerals = [ `zero`, `one`, `two`, `three`, `four`,
+                      `five`, `six`, `seven`, `eight`, `nine` ];
+enum singleWords = onesNumerals ~ [ `ten`, `eleven`, `twelve`, `thirteen`, `fourteen`,
+                                    `fifteen`, `sixteen`, `seventeen`, `eighteen`, `nineteen` ];
+enum tensNumerals = [ null, `ten`, `twenty`, `thirty`, `forty`,
+                      `fifty`, `sixty`, `seventy`, `eighty`, `ninety`, ];
 
-enum onesPlaceWordsAA = [ `zero`:0, `one`:1, `two`:2, `three`:3, `four`:4,
-                          `five`:5, `six`:6, `seven`:7, `eight`:8, `nine`:9 ];
+enum englishNumeralsMap = [ `zero`:0, `one`:1, `two`:2, `three`:3, `four`:4,
+                            `five`:5, `six`:6, `seven`:7, `eight`:8, `nine`:9,
+                            `ten`:10, `eleven`:11, `twelve`:12, `thirteen`:13, `fourteen`:14,
+                            `fifteen`:15, `sixteen`:16, `seventeen`:17, `eighteen`:18, `nineteen`:19,
+                            `twenty`:20,
+                            `thirty`:30,
+                            `forty`:40,
+                            `fourty`:40, // common missspelling
+                            `fifty`:50,
+                            `sixty`:60,
+                            `seventy`:70,
+                            `eighty`:80,
+                            `ninety`:90,
+                            `hundred`:100,
+                            `thousand`:1000,
+                            `million`:1000000,
+                            `billion`:1000000000 ];
 
-/* NOTE Disabled because this segfaults at run-time.
+static immutable ubyte[string] _onesPlaceWordsAA;
+
+/* NOTE Be careful with this logic
+   This fails: foreach (ubyte i, e; onesNumerals) { _onesPlaceWordsAA[e] = i; }
    See also: http://forum.dlang.org/thread/vtenbjmktplcxxmbyurt@forum.dlang.org#post-iejbrphbqsszlxcxjpef:40forum.dlang.org
    */
-version(none)
+static this()
 {
-    static immutable ubyte[string] _onesPlaceWordsAA;
-    static immutable ubyte[string] _singleWordsAA;
-    static immutable ubyte[string] _tensPlaceWordsAA;
-    static this() {
-        foreach (ubyte i, e; onesPlaceWords) { _onesPlaceWordsAA[e] = i; }
-        foreach (ubyte i, e; singleWords) { _singleWordsAA[e] = i; }
-        foreach (ubyte i, e; tensPlaceWords) { _tensPlaceWordsAA[e] = i; }
+    import std.exception: assumeUnique;
+    ubyte[string] tmp;
+    foreach (ubyte i, e; onesNumerals)
+    {
+        tmp[e] = i;
     }
+    _onesPlaceWordsAA = assumeUnique(tmp); /* Don't alter tmp from here on. */
 }
 
 import std.traits: isIntegral;
@@ -98,7 +115,7 @@ string toNumeral(T)(T number, string minusName = `minus`)
             else
             {
                 auto tens = number / 10;
-                word ~= tensPlaceWords[cast(int) tens];
+                word ~= tensNumerals[cast(int) tens];
                 number = number % 10;
                 if (number)
                     word ~= `-`;
@@ -107,7 +124,7 @@ string toNumeral(T)(T number, string minusName = `minus`)
         else if (number < 1_000)
         {
             auto hundreds = number / 100;
-            word ~= onesPlaceWords[cast(int) hundreds] ~ ` hundred`;
+            word ~= onesNumerals[cast(int) hundreds] ~ ` hundred`;
             number = number % 100;
             if (number)
                 word ~= ` and `;
@@ -171,7 +188,7 @@ unittest {
 
 import std.typecons: Nullable;
 
-// version = show;
+version = show;
 
 /** Convert the number $(D number) to its English textual representation.
     Opposite: toNumeral.
@@ -191,7 +208,7 @@ Nullable!long fromNumeral(S)(S x)
 
     words.skipOver(`plus`); // no semantic effect
 
-    typeof(return) value = get(onesPlaceWordsAA, words.front, typeof(return).init);
+    typeof(return) value = get(englishNumeralsMap, words.front, typeof(return).init);
     if (!value.isNull)
     {
         value *= negative ? -1 : 1;
@@ -208,7 +225,9 @@ Nullable!long fromNumeral(S)(S x)
 
 unittest
 {
-    foreach (i; 0..9)
+    import std.range: iota, chain;
+    foreach (i; chain(iota(0, 20),
+                      iota(20, 100, 10)))
     {
         const ti = i.toNumeral;
         assert(-i == (`minus ` ~ ti).fromNumeral);
