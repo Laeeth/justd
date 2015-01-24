@@ -288,7 +288,8 @@ import std.bitmanip: bitfields;
 import mmfile_ex;
 alias rdT = readText;
 
-import algorithm_ex: isPalindrome, either, append, commonSuffixCount;
+import algorithm_ex: isPalindrome, either, append;
+import ixes: commonSuffixCount;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
 import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers, packedBitSizeOf;
 import sort_ex: sortBy, rsortBy, sorted;
