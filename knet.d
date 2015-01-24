@@ -1900,8 +1900,7 @@ class Net(bool useArray = true,
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnPreciseThings();
 
-        if (true)
-            learnTrainedThings();
+        learnTrainedThings();
 
         // Learn Less Absolute Things
         learnAssociativeThings();
