@@ -3093,6 +3093,8 @@ class Net(bool useArray = true,
                                        `smörgåsbord`, Lang.sv, Sense.noun);
         learnEtymologicallyDerivedFrom(`förgätmigej`, Lang.sv, Sense.noun,
                                        `förgät mig ej`, Lang.sv, Sense.unknown); // TODO uppmaning
+        learnEtymologicallyDerivedFrom(`OK`, Lang.en, Sense.unknown,
+                                       `Old Kinderhook`, Lang.en, Sense.unknown);
     }
 
     /** Learn that $(D first) in language $(D firstLang) is etymologically
