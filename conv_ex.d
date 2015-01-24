@@ -175,19 +175,13 @@ import std.typecons: Nullable;
 Nullable!long toTextualIntegerMaybe(S)(S x)
 @safe pure if (isSomeString!S)
 {
-    typeof(return) value;
     import std.algorithm: splitter, countUntil, skipOver;
 
-    auto words = x.splitter;
+    auto words = x.splitter; // split words by whitespace
 
-    bool negative = words.skipOver(`minus`) || words.skipOver(`negative`);
+    const negative = words.skipOver(`minus`) || words.skipOver(`negative`);
 
-    words.skipOver(`plus`);
-
-    if (words.front in onesPlaceWordsAA)
-    {
-        value = onesPlaceWordsAA[words.front];
-    }
+    words.skipOver(`plus`); // no semantic effect
 
     version(show)
     {
@@ -198,6 +192,7 @@ Nullable!long toTextualIntegerMaybe(S)(S x)
         debug writeln(ones);
     }
 
+    typeof(return) value = get(onesPlaceWordsAA, words.front, typeof(return).init);
     if (!value.isNull)
     {
         value *= negative ? -1 : 1;
