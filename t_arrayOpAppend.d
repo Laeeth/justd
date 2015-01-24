@@ -2,7 +2,7 @@
 
 unittest
 {
-    import std.stdio, std.algorithm, std.range;
+    import std.stdio: writeln;
     import std.container: Array;
 
     alias E = int; // element type
