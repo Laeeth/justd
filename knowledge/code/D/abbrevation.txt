@@ -1,17 +1,0 @@
-AAassociative array
-AAsassociative arrays
-
-mutmutable
-immimmutable
-constconstant
-
-intinteger
-longlong integer
-shortshort integer
-
-uintunsigned integer
-ulongunsigned long integer
-ushortunsigned short integer
-
-ctorconstructor
-dtordestructor
