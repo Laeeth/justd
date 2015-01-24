@@ -5,8 +5,10 @@ module conv_ex;
 import std.conv: to;
 import std.traits: isSomeString;
 
-/** Get English Ordinal Number of $(D n). */
-string ordinal(T)(T n) @safe pure
+/** Get English Ordinal Number of $(D n).
+    See also: https://en.wikipedia.org/wiki/Ordinal_number_(linguistics)
+ */
+string toOrdinal(T)(T n) @safe pure
 {
     string s;
     switch (n)
@@ -64,8 +66,11 @@ version(none)
 
 import std.traits: isIntegral;
 
-/** Convert the number $(D number) to its English textual representation (numeral).
+/** Convert the number $(D number) to its English textual representation
+    (numeral) also called cardinal number.
     Opposite: fromNumeral
+    See also: https://en.wikipedia.org/wiki/Numeral_(linguistics)
+    See also: https://en.wikipedia.org/wiki/Cardinal_number_(linguistics)
 */
 string toNumeral(T)(T number, string minusName = `minus`)
     @safe pure nothrow if (isIntegral!T)

@@ -5200,7 +5200,7 @@ class Scanner(Term)
                 const binKindHit = binHit[0];
                 if (binKindHit)
                 {
-                    import conv_ex: ordinal;
+                    import conv_ex: toOrdinal;
                     const nnKind = binHit[1].enforceNotNull;
                     const kindIndex = binHit[2];
                     if (_showSkipped)
@@ -5211,7 +5211,7 @@ class Scanner(Term)
                             viz.pp(`│  `.repeat(parentDir.depth + 1).join(``) ~ intro ~ `─ `);
                         }
                         viz.ppln(theRegFile, `: Skipped `, nnKind, ` file at `,
-                                 ordinal(kindIndex + 1), ` blind try`);
+                                 toOrdinal(kindIndex + 1), ` blind try`);
                     }
                     final switch (binKindHit)
                     {
@@ -5223,7 +5223,7 @@ class Scanner(Term)
                             break;
                         case KindHit.uncached:
                             printSkipped(viz, theRegFile, subIndex, nnKind, binKindHit,
-                                         ` at ` ~ ordinal(kindIndex + 1) ~ ` extension try`);
+                                         ` at ` ~ toOrdinal(kindIndex + 1) ~ ` extension try`);
                             break;
                     }
                 }
