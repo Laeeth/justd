@@ -313,8 +313,7 @@ class WordNet(bool useArray = true,
                     const Sense sense,
                     const Lang[] langs = []) if (isSomeString!S)
     {
-        return meaningsOf(lemma, langs).canFind!(meaning =>
-                                                 meaning.sense.memberOf(sense));
+        return meaningsOf(lemma, langs).canFind!(entry => entry.sense.specializes(sense));
     }
 
     bool canMeanSomething(S)(const S lemma,
