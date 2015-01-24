@@ -4785,7 +4785,43 @@ class Net(bool useArray = true,
 
     void learnComputers()
     {
-        learnMto1(Lang.en, rdT(`../knowledge/en/programming_language.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `programming language`, Sense.languageProgramming, Sense.language, 1.0);
+        learnMto1(Lang.en, rdT(`../knowledge/en/programming_language.txt`).splitter('\n').filter!(w => !w.empty),
+                  Role(Rel.instanceOf), `programming language`, Sense.languageProgramming, Sense.language, 1.0);
+        learnCode();
+    }
+
+    void learnCode()
+    {
+        learnDCode;
+    }
+
+    void learnDCode()
+    {
+        enum elements = [ tuple(`AA`, `associative array`),
+                          tuple(`AAs`, `associative arrays`),
+
+                          tuple(`mut`, `mutable`),
+                          tuple(`imm`, `immutable`),
+                          tuple(`const`, `constant`),
+
+                          tuple(`int`, `integer`),
+                          tuple(`long`, `long integer`),
+                          tuple(`short`, `short integer`),
+                          tuple(`cent`, `cent integer`),
+
+                          tuple(`uint`, `unsigned integer`),
+                          tuple(`ulong`, `unsigned long integer`),
+                          tuple(`ushort`, `unsigned short integer`),
+                          tuple(`ucent`, `unsigned cent integer`),
+
+                          tuple(`ctor`, `constructor`),
+                          tuple(`dtor`, `destructor`),
+                         ];
+        foreach (e; elements)
+        {
+            connect(store(e[0], Lang.d, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                    store(e[1], Lang.d, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        }
     }
 
     /** Learn English Irregular Verbs.
