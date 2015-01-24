@@ -44,14 +44,19 @@ enum singleWords = onesPlaceWords ~ [ `ten`, `eleven`, `twelve`, `thirteen`, `fo
 enum tensPlaceWords = [ null, `ten`, `twenty`, `thirty`, `forty`,
                         `fifty`, `sixty`, `seventy`, `eighty`, `ninety`, ];
 
-static immutable ubyte[string] onesPlaceWordsAA;
-static immutable ubyte[string] singleWordsAA;
-static immutable ubyte[string] tensPlaceWordsAA;
+enum onesPlaceWordsAA = [ `zero`:0, `one`:1, `two`:2, `three`:3, `four`:4,
+                          `five`:5, `six`:6, `seven`:7, `eight`:8, `nine`:9 ];
 
-static this() {
-    foreach (ubyte i, e; onesPlaceWords) { onesPlaceWordsAA[e] = i; }
-    foreach (ubyte i, e; singleWords) { singleWordsAA[e] = i; }
-    foreach (ubyte i, e; tensPlaceWords) { tensPlaceWordsAA[e] = i; }
+version(none)
+{
+    static immutable ubyte[string] _onesPlaceWordsAA;
+    static immutable ubyte[string] _singleWordsAA;
+    static immutable ubyte[string] _tensPlaceWordsAA;
+    static this() {
+        foreach (ubyte i, e; onesPlaceWords) { _onesPlaceWordsAA[e] = i; }
+        foreach (ubyte i, e; singleWords) { _singleWordsAA[e] = i; }
+        foreach (ubyte i, e; tensPlaceWords) { _tensPlaceWordsAA[e] = i; }
+    }
 }
 
 import std.traits: isIntegral;
