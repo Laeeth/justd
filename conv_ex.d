@@ -166,6 +166,8 @@ unittest {
 
 import std.typecons: Nullable;
 
+version = show;
+
 /** Convert the number $(D number) to its English textual representation.
     Opposite: toTextualString.
     TODO Throw if number doesn't fit in long.
@@ -179,23 +181,21 @@ Nullable!long toTextualIntegerMaybe(S)(S x)
 
     auto words = x.splitter; // split words by whitespace
 
-    const negative = words.skipOver(`minus`) || words.skipOver(`negative`);
+    const negative = (words.skipOver(`minus`) ||
+                      words.skipOver(`negative`));
 
     words.skipOver(`plus`); // no semantic effect
-
-    version(show)
-    {
-        import std.stdio: writeln;
-        debug writeln(onesPlaceWords);
-        debug writeln(words.front);
-        debug writeln(words);
-        debug writeln(ones);
-    }
 
     typeof(return) value = get(onesPlaceWordsAA, words.front, typeof(return).init);
     if (!value.isNull)
     {
         value *= negative ? -1 : 1;
+    }
+
+    version(show)
+    {
+        import dbg;
+        debug dln(`Input "`, x, `" decoded to `, value);
     }
 
     return value;
