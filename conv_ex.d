@@ -166,7 +166,7 @@ unittest {
 
 import std.typecons: Nullable;
 
-version = show;
+// version = show;
 
 /** Convert the number $(D number) to its English textual representation.
     Opposite: toTextualString.
