@@ -132,11 +132,8 @@ unittest
     auto x = [1];
     auto y = [1];
     import assert_ex;
-    import std.stdio;
-    writeln();
-    assertEqual(permutationsInPlace(y),
-                [[1]]);
-    assert(x != y);
+    assert(equal(permutationsInPlace(y),
+                 [[1]]));
 }
 
 Permutations!(doCopy,T) permutations(bool doCopy = true, T)(T[] items) if (isMutable!T)
