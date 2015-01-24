@@ -951,3 +951,24 @@ bool specializes(Sense special,
     }
     assert(Sense.noun.isNoun);
 }
+
+/** Check if $(D general) uniquely specializes $(D special).
+    See also: $(D specializes).
+*/
+bool generalizes(Sense general,
+                 Sense special,
+                 bool uniquely = true,
+                 string expr = null,
+                 Lang lang = Lang.unknown)
+    @safe @nogc pure nothrow
+{
+    return specializes(special, general, uniquely, expr, lang);
+}
+
+@safe @nogc pure nothrow unittest
+{
+    with (Sense)
+    {
+        assert(language.generalizes(languageProgramming));
+    }
+}
