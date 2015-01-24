@@ -65,7 +65,7 @@ version(none)
 import std.traits: isIntegral;
 
 /** Convert the number $(D number) to its English textual representation (numeral).
-    Opposite: toTextualIntegerMaybe
+    Opposite: fromNumeral
 */
 string toNumeral(T)(T number, string minusName = `minus`)
     @safe pure nothrow if (isIntegral!T)
@@ -174,7 +174,7 @@ import std.typecons: Nullable;
     TODO Add variant to toTextualBigIntegerMaybe.
     TODO Could this be merged with to!(T)(string) if (isInteger!T) ?
 */
-Nullable!long toTextualIntegerMaybe(S)(S x)
+Nullable!long fromNumeral(S)(S x)
 @safe pure if (isSomeString!S)
 {
     import std.algorithm: splitter, countUntil, skipOver;
@@ -206,8 +206,8 @@ unittest
     foreach (i; 0..9)
     {
         const ti = i.toNumeral;
-        assert(-i == (`minus ` ~ ti).toTextualIntegerMaybe);
-        assert(+i == (`plus ` ~ ti).toTextualIntegerMaybe);
-        assert(+i == ti.toTextualIntegerMaybe);
+        assert(-i == (`minus ` ~ ti).fromNumeral);
+        assert(+i == (`plus ` ~ ti).fromNumeral);
+        assert(+i == ti.fromNumeral);
     }
 }
