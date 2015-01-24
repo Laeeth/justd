@@ -64,10 +64,10 @@ version(none)
 
 import std.traits: isIntegral;
 
-/** Convert the number $(D number) to its English textual representation.
+/** Convert the number $(D number) to its English textual representation (numeral).
     Opposite: toTextualIntegerMaybe
 */
-string toTextualString(T)(T number, string minusName = `minus`)
+string toNumeral(T)(T number, string minusName = `minus`)
     @safe pure nothrow if (isIntegral!T)
 {
     string word;
@@ -110,7 +110,7 @@ string toTextualString(T)(T number, string minusName = `minus`)
         else if (number < 1_000_000)
         {
             auto thousands = number / 1_000;
-            word ~= toTextualString(thousands) ~ ` thousand`;
+            word ~= toNumeral(thousands) ~ ` thousand`;
             number = number % 1_000;
             if (number)
                 word ~= `, `;
@@ -118,7 +118,7 @@ string toTextualString(T)(T number, string minusName = `minus`)
         else if (number < 1_000_000_000)
         {
             auto millions = number / 1_000_000;
-            word ~= toTextualString(millions) ~ ` million`;
+            word ~= toNumeral(millions) ~ ` million`;
             number = number % 1_000_000;
             if (number)
                 word ~= `, `;
@@ -126,7 +126,7 @@ string toTextualString(T)(T number, string minusName = `minus`)
         else if (number < 1_000_000_000_000)
         {
             auto n = number / 1_000_000_000;
-            word ~= toTextualString(n) ~ ` billion`;
+            word ~= toNumeral(n) ~ ` billion`;
             number = number % 1_000_000_000;
             if (number)
                 word ~= `, `;
@@ -134,7 +134,7 @@ string toTextualString(T)(T number, string minusName = `minus`)
         else if (number < 1_000_000_000_000_000)
         {
             auto n = number / 1_000_000_000_000;
-            word ~= toTextualString(n) ~ ` trillion`;
+            word ~= toNumeral(n) ~ ` trillion`;
             number = number % 1_000_000_000_000;
             if (number)
                 word ~= `, `;
@@ -147,21 +147,21 @@ string toTextualString(T)(T number, string minusName = `minus`)
 
     return word;
 }
-alias toTextual = toTextualString;
+alias toTextual = toNumeral;
 
 unittest {
-    assert(1.toTextualString == `one`);
-    assert(5.toTextualString == `five`);
-    assert(13.toTextualString == `thirteen`);
-    assert(54.toTextualString == `fifty-four`);
-    assert(178.toTextualString == `one hundred and seventy-eight`);
-    assert(592.toTextualString == `five hundred and ninety-two`);
-    assert(1_234.toTextualString == `one thousand, two hundred and thirty-four`);
-    assert(10_234.toTextualString == `ten thousand, two hundred and thirty-four`);
-    assert(105_234.toTextualString == `one hundred and five thousand, two hundred and thirty-four`);
-    assert(71_05_234.toTextualString == `seven million, one hundred and five thousand, two hundred and thirty-four`);
-    assert(3_007_105_234.toTextualString == `three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
-    assert(900_003_007_105_234.toTextualString == `nine hundred trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
+    assert(1.toNumeral == `one`);
+    assert(5.toNumeral == `five`);
+    assert(13.toNumeral == `thirteen`);
+    assert(54.toNumeral == `fifty-four`);
+    assert(178.toNumeral == `one hundred and seventy-eight`);
+    assert(592.toNumeral == `five hundred and ninety-two`);
+    assert(1_234.toNumeral == `one thousand, two hundred and thirty-four`);
+    assert(10_234.toNumeral == `ten thousand, two hundred and thirty-four`);
+    assert(105_234.toNumeral == `one hundred and five thousand, two hundred and thirty-four`);
+    assert(71_05_234.toNumeral == `seven million, one hundred and five thousand, two hundred and thirty-four`);
+    assert(3_007_105_234.toNumeral == `three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
+    assert(900_003_007_105_234.toNumeral == `nine hundred trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
 }
 
 import std.typecons: Nullable;
@@ -169,7 +169,7 @@ import std.typecons: Nullable;
 // version = show;
 
 /** Convert the number $(D number) to its English textual representation.
-    Opposite: toTextualString.
+    Opposite: toNumeral.
     TODO Throw if number doesn't fit in long.
     TODO Add variant to toTextualBigIntegerMaybe.
     TODO Could this be merged with to!(T)(string) if (isInteger!T) ?
@@ -205,7 +205,7 @@ unittest
 {
     foreach (i; 0..9)
     {
-        const ti = i.toTextualString;
+        const ti = i.toNumeral;
         assert(-i == (`minus ` ~ ti).toTextualIntegerMaybe);
         assert(+i == (`plus ` ~ ti).toTextualIntegerMaybe);
         assert(+i == ti.toTextualIntegerMaybe);
