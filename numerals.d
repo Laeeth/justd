@@ -202,51 +202,107 @@ Nullable!long fromNumeral(T = long, S)(S x)
 {
     import std.algorithm: splitter, countUntil, skipOver, endsWith;
 
-    auto words = x.splitter; // split words by whitespace
-
-    // prefixes
-    words.skipOver(`plus`); // no semantic effect
-    const negative = (words.skipOver(`minus`) ||
-                      words.skipOver(`negative`));
-    words.skipOver(`plus`); // no semantic effect
-
-    // main
     typeof(return) total;
-    foreach (const word; words)
-    {
-        if (const value = word in englishNumeralsMap)
-        {
-            total = total.isNull ? *value : *value * total;
-        }
-        else if (word.endsWith(`s`)) // assume plural s for common misspelling millions instead of million
-        {
-            if (const value = word[0 .. $ - 1] in englishNumeralsMap) // without possible plural s
-            {
-                total = total.isNull ? *value : *value * total;
-            }
-        }
-        else
-        {
-            return typeof(return).init; // could not process
-        }
-    }
-    if (!total.isNull)
-    {
-        total *= negative ? -1 : 1;
-    }
 
     version(show)
     {
         import dbg;
-        debug dln(`Input "`, x, `" decoded to `, total);
     }
 
-    return total;
+    T sum = 0;
+    bool defined = false;
+    bool negative = false;
+
+    auto terms = x.splitter(`,`); // comma separate terms
+    foreach (term; terms)
+    {
+        auto factors = term.splitter; // split factors by whitespace
+
+        // prefixes
+        factors.skipOver(`plus`); // no semantic effect
+        if (factors.skipOver(`minus`) ||
+            factors.skipOver(`negative`))
+        {
+            negative = true;
+        }
+        factors.skipOver(`plus`); // no semantic effect
+
+        // main
+        T product = 1;
+        bool tempSum = false;
+        foreach (const factor; factors)
+        {
+            if (factor == `and`)
+            {
+                tempSum = true;
+            }
+            else if (const value = factor in englishNumeralsMap)
+            {
+                if (tempSum)
+                {
+                    product += *value;
+                    tempSum = false;
+                }
+                else
+                {
+                    product *= *value;
+                }
+                defined = true;
+            }
+            else if (factor.endsWith(`s`)) // assume plural s for common misspelling millions instead of million
+            {
+                if (const value = factor[0 .. $ - 1] in englishNumeralsMap) // without possible plural s
+                {
+                    if (tempSum)
+                    {
+                        product += *value;
+                        tempSum = false;
+                    }
+                    else
+                    {
+                        product *= *value;
+                    }
+                    defined = true;
+                }
+            }
+            else
+            {
+                version(show)
+                {
+                    debug dln(`Couldn't decode "`, x, `"`);
+                }
+                return typeof(return).init; // could not process
+            }
+        }
+
+        sum += product;
+    }
+
+    version(show)
+    {
+        debug dln(`Input "`, x, `" decoded to `, sum);
+    }
+
+    if (defined)
+    {
+        return typeof(return)(negative ? -sum : sum);
+    }
+    else
+    {
+        return typeof(return).init;
+    }
 }
 
 @safe pure unittest
 {
     import std.range: chain, iota;
+
+    // undefined cases
+    assert(``.fromNumeral.isNull);
+    assert(`dum`.fromNumeral.isNull);
+    assert(`plus`.fromNumeral.isNull);
+    assert(`minus`.fromNumeral.isNull);
+
     foreach (i; chain(iota(0, 20),
                       iota(20, 100, 10),
                       iota(100, 1000, 100),
@@ -259,10 +315,12 @@ Nullable!long fromNumeral(T = long, S)(S x)
         assert(+i == (`plus ` ~ ti).fromNumeral);
         assert(+i == ti.fromNumeral);
     }
+
     assert(`nine thousands`.fromNumeral == 9_000);
     assert(`two millions`.fromNumeral == 2_000_000);
-    assert(``.fromNumeral.isNull);
-    assert(`dum`.fromNumeral.isNull);
-    assert(`plus`.fromNumeral.isNull);
-    assert(`minus`.fromNumeral.isNull);
+    assert(`one thousand, two hundred`.fromNumeral == 1_200);
+    assert(`three million, one thousand, two hundred`.fromNumeral == 3_001_200);
+
+    assert(`one hundred and five thousand`.fromNumeral == 105_000);
+    assert(`one hundred and fifty thousand`.fromNumeral == 150_000);
 }
