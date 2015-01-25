@@ -216,15 +216,13 @@ Nullable!long fromNumeral(T = long, S)(S x)
     {
         if (const value = word in englishNumeralsMap)
         {
-            const sub = *value;
-            total = total.isNull ? sub : sub*total;
+            total = total.isNull ? *value : *value * total;
         }
         else if (word.endsWith(`s`)) // assume plural s for common misspelling millions instead of million
         {
             if (const value = word[0 .. $ - 1] in englishNumeralsMap) // without possible plural s
             {
-                const sub = *value;
-                total = total.isNull ? sub : sub*total;
+                total = total.isNull ? *value : *value * total;
             }
         }
         else
