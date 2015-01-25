@@ -6,10 +6,16 @@
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
     "sourceFiles": [ "../dbg.d", "../msgpack.d",
-                     "../knet/base.d", "../knet/decodings.d", "../knet/relations.d", "../knet/senses.d", "../knet/lectures/all.d",
+
+                     "../knet/languages.d", "../knet/roles.d",
+                     "../knet/decodings.d", "../knet/relations.d", "../knet/senses.d",
+                     "../knet/base.d",
+                     "../knet/wordnet.d", "../knet/moby.d",
+                     "../knet/lectures/all.d",
+
                      "../rcstring.d", "../predicates.d",
                      "../wordnet.d",
-                     "../grammars.d", "../knet/roles.d", "../knet/wordnet.d", "../knet/moby.d", "../stemming.d", "../ixes.d",
+                     "../grammars.d", "../stemming.d", "../ixes.d",
                      "../assert_ex.d", "../range_ex.d", "../algorithm_ex.d", "../traits_ex.d", "../sort_ex.d", "../mmfile_ex.d",
                      "../rational.d", "../combinations.d", "../permutations.d", "../arsd/dom.d", "../arsd/characterencodings.d",
                      "../backtrace/backtrace.d" ]

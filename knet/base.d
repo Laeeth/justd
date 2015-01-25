@@ -103,6 +103,7 @@ import combinations;
 import permutations;
 version(msgpack) import msgpack;
 
+import knet.languages;
 import knet.senses;
 import knet.relations;
 import knet.roles;
