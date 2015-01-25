@@ -104,6 +104,8 @@ import permutations;
 version(msgpack) import msgpack;
 
 import knet.languages;
+import knet.origins;
+import knet.thematics;
 import knet.senses;
 import knet.relations;
 import knet.roles;
@@ -148,179 +150,6 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
     s.skipOverSuffixes(agents);
 }
 
-/** ConceptNet Thematic. */
-enum Thematic:ubyte
-{
-    unknown,
-    kLines,
-    things,
-    agents,
-    events,
-    spatial,
-    causal,
-    functional,
-    affective,
-    synonym,
-    antonym,
-    retronym,
-    }
-
-/* Thematic toThematic(Rel rel) */
-/*     @safe @nogc pure nothrow */
-/* { */
-/*     with (Rel) */
-/*     { */
-/*         final switch (rel) */
-/*         { */
-/*             case relatedTo: return Thematic.kLines; */
-/*             case isA: return Thematic.things; */
-
-/*             case partOf: return Thematic.things; */
-/*             case memberOf: return Thematic.things; */
-/*             case worksFor: return Thematic.unknown; */
-/*             case leaderOf: return Thematic.unknown; */
-/*             case ceoOf: return Thematic.unknown; */
-
-/*             case hasA: return Thematic.things; */
-/*             case usedFor: return Thematic.functional; */
-/*             case capableOf: return Thematic.agents; */
-/*             case atLocation: return Thematic.spatial; */
-/*             case hasContext: return Thematic.things; */
-
-/*             case locationOf: return Thematic.spatial; */
-/*             case locatedNear: return Thematic.spatial; */
-
-/*             case causes: return Thematic.causal; */
-/*             case hasSubevent: return Thematic.events; */
-/*             case hasFirstSubevent: return Thematic.events; */
-/*             case hasLastSubevent: return Thematic.events; */
-/*             case hasPrerequisite: return Thematic.causal; // TODO Use events, causal, functional */
-
-/*             case hasProperty: return Thematic.things; */
-/*             case hasColor: return Thematic.unknown; */
-/*             case attribute: return Thematic.things; */
-
-/*             case motivatedByGoal: return Thematic.affective; */
-/*             case obstructedBy: return Thematic.causal; */
-/*             case desires: return Thematic.affective; */
-/*             case causesDesire: return Thematic.affective; */
-
-/*             case createdBy: return Thematic.agents; */
-/*             case receivesAction: return Thematic.agents; */
-
-/*             case synonymFor: return Thematic.synonym; */
-/*             case antonymFor: return Thematic.antonym; */
-/*             case retronymFor: return Thematic.retronym; */
-
-/*             case derivedFrom: return Thematic.things; */
-/*             case compoundDerivedFrom: return Thematic.things; */
-/*             case etymologicallyDerivedFrom: return Thematic.things; */
-/*             case translationOf: return Thematic.synonym; */
-
-/*             case definedAs: return Thematic.things; */
-
-/*             case instanceOf: return Thematic.things; */
-/*             case madeOf: return Thematic.things; */
-/*             case inheritsFrom: return Thematic.things; */
-/*             case similarSizeTo: return Thematic.things; */
-/*             case symbolOf: return Thematic.kLines; */
-/*             case similarTo: return Thematic.kLines; */
-/*             case hasPainIntensity: return Thematic.kLines; */
-/*             case hasPainCharacter: return Thematic.kLines; */
-
-/*             case adjectivePertainsTo: return Thematic.unknown; */
-/*             case adverbPertainsTo: return Thematic.unknown; */
-/*             case participleOf: return Thematic.unknown; */
-
-/*             case generalizes: return Thematic.unknown; */
-
-/*             case hasRelative: return Thematic.unknown; */
-/*             case hasFamilyMember: return Thematic.unknown; */
-/*             case hasSpouse: return Thematic.unknown; */
-/*             case hasWife: return Thematic.unknown; */
-/*             case hasHusband: return Thematic.unknown; */
-/*             case hasSibling: return Thematic.unknown; */
-/*             case hasBrother: return Thematic.unknown; */
-/*             case hasSister: return Thematic.unknown; */
-/*             case hasGrandParent: return Thematic.unknown; */
-/*             case hasParent: return Thematic.unknown; */
-/*             case hasFather: return Thematic.unknown; */
-/*             case hasMother: return Thematic.unknown; */
-/*             case hasGrandChild: return Thematic.unknown; */
-/*             case hasChild: return Thematic.unknown; */
-/*             case hasSon: return Thematic.unknown; */
-/*             case hasDaugther: return Thematic.unknown; */
-/*             case hasPet: return Thematic.unknown; */
-
-/*             case wikipediaURL: return Thematic.things; */
-/*         } */
-/*     } */
-
-/* } */
-
-/** Knowledge Origin. */
-enum Origin:ubyte
-{
-    unknown,
-    any = unknown,
-
-    cn5,                        ///< ConceptNet5
-
-    dbpedia,                    ///< DBPedia
-    // dbpedia37,
-    // dbpedia39Umbel,
-    // dbpediaEn,
-
-    wordnet,                    ///< WordNet
-    moby,                       ///< Moby.
-
-    umbel,                      ///< http://www.umbel.org/
-    jmdict,                     ///< http://www.edrdg.org/jmdict/j_jmdict.html
-
-    verbosity,                  ///< Verbosity
-    wiktionary,                 ///< Wiktionary
-    nell,                       ///< NELL
-    yago,                       ///< Yago
-    globalmind,                 ///< GlobalMind
-
-    synlex, ///< Folkets synonymlexikon Synlex http://lexikon.nada.kth.se/synlex.html
-    folketsLexikon,
-    swesaurus, ///< Swesaurus: http://spraakbanken.gu.se/eng/resource/swesaurus
-
-    manual,
-}
-
-bool defined(Origin origin) @safe @nogc pure nothrow { return origin != Origin.unknown; }
-
-string toNice(Origin origin) @safe pure
-{
-    final switch (origin) with (Origin)
-    {
-        case unknown: return `Unknown`;
-        case cn5: return `CN5`;
-        case dbpedia: return `DBpedia`;
-            // case dbpedia37: return `DBpedia37`;
-            // case dbpedia39Umbel: return `DBpedia39Umbel`;
-            // case dbpediaEn: return `DBpediaEnglish`;
-
-        case wordnet: return `WordNet`;
-        case moby: return `Moby`;
-
-        case umbel: return `umbel`;
-        case jmdict: return `JMDict`;
-
-        case verbosity: return `Verbosity`;
-        case wiktionary: return `Wiktionary`;
-        case nell: return `NELL`;
-        case yago: return `Yago`;
-        case globalmind: return `GlobalMind`;
-        case synlex: return `Synlex`;
-        case folketsLexikon: return `FolketsLexikon`;
-        case swesaurus: return `Swesaurus`;
-        case manual: return `Manual`;
-    }
-}
-
 auto pageSize() @trusted
 {
     version(linux)
@@ -354,35 +183,10 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
     }
 }
 
-/** Decode Sense of Moby Part of Speech (PoS) Code.
-*/
-Sense decodeSenseOfMobyPoSCode(C)(C code) if (isSomeChar!C)
-{
-    switch (code) with (Sense)
-    {
-        case 'N': return nounSingular;
-        case 'p': return nounPlural;
-        case 'h': return nounPhrase;
-        case 'V': return verb;
-        case 't': return verbTransitive;
-        case 'i': return verbIntransitive;
-        case 'A': return adjective;
-        case 'v': return adverb;
-        case 'C': return conjunction;
-        case 'P': return preposition;
-        case '!': return interjection;
-        case 'r': return pronoun;
-        case 'D': return articleDefinite;
-        case 'I': return articleIndefinite;
-        case 'o': return nounNominative;
-        default: dln(`warning: Unknown code character ` ~ code); return unknown;
-    }
-}
-
 /** Main Knowledge Network Graph.
 */
 class Graph(bool useArray = true,
-          bool useRCString = true)
+            bool useRCString = true)
 {
     import std.range: front, split, isInputRange, back;
     import std.algorithm: joiner;

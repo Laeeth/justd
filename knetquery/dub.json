@@ -7,7 +7,7 @@
     "importPaths": [ ".." ],
     "sourceFiles": [ "../dbg.d", "../msgpack.d",
 
-                     "../knet/languages.d", "../knet/roles.d",
+                     "../knet/languages.d", "../knet/roles.d", "../knet/origins.d", "../knet/thematics.d",
                      "../knet/decodings.d", "../knet/relations.d", "../knet/senses.d",
                      "../knet/base.d",
                      "../knet/wordnet.d", "../knet/moby.d",

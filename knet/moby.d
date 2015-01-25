@@ -1,6 +1,7 @@
 module knet.moby;
 
-import std.traits: isSomeString;
+import std.traits: isSomeChar, isSomeString;
+import knet.senses: Sense;
 
 /** Decode Moby Pronounciation Code to IPA Language.
     See also: https://en.wikipedia.org/wiki/Moby_Project#Pronunciator
@@ -58,5 +59,33 @@ auto decodeMobyIPA(S)(S code) if (isSomeString!S)
         default:
             // dln(`warning: `, code);
             return code.idup;
+    }
+}
+
+/** Decode Sense of Moby Part of Speech (PoS) Code.
+ */
+Sense decodeSenseOfMobyPoSCode(C)(C code) if (isSomeChar!C)
+{
+    switch (code) with (Sense)
+    {
+        case 'N': return nounSingular;
+        case 'p': return nounPlural;
+        case 'h': return nounPhrase;
+        case 'V': return verb;
+        case 't': return verbTransitive;
+        case 'i': return verbIntransitive;
+        case 'A': return adjective;
+        case 'v': return adverb;
+        case 'C': return conjunction;
+        case 'P': return preposition;
+        case '!': return interjection;
+        case 'r': return pronoun;
+        case 'D': return articleDefinite;
+        case 'I': return articleIndefinite;
+        case 'o': return nounNominative;
+        default:
+            import dbg;
+            dln(`warning: Unknown code character ` ~ code);
+            return unknown;
     }
 }

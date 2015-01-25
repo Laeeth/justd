@@ -1,6 +1,6 @@
 module knet.decodings;
 
-import knet.base: Origin;
+import knet.origins: Origin;
 import knet.relations;
 import grammars: Tense;
 import std.traits: isSomeString;
