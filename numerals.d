@@ -197,39 +197,44 @@ version = show;
     TODO Add variant to toTextualBigIntegerMaybe.
     TODO Could this be merged with to!(T)(string) if (isInteger!T) ?
 */
-Nullable!long fromNumeral(S)(S x)
+Nullable!long fromNumeral(T = long, S)(S x)
 @safe pure if (isSomeString!S)
 {
-    alias T = long;
     import std.algorithm: splitter, countUntil, skipOver, endsWith;
 
     auto words = x.splitter; // split words by whitespace
 
+    // prefixes
     words.skipOver(`plus`); // no semantic effect
-
     const negative = (words.skipOver(`minus`) ||
                       words.skipOver(`negative`));
-
     words.skipOver(`plus`); // no semantic effect
 
-    T total = negative ? -1 : 1;
+    // main
+    typeof(return) total;
     foreach (const word; words)
     {
         if (const value = word in englishNumeralsMap)
         {
-            total *= (*value).to!T;
+            const sub = (*value).to!T;
+            total = total.isNull ? sub : sub*total;
         }
         else if (word.endsWith(`s`)) // assume plural s for common misspelling millions instead of million
         {
             if (const value = word[0 .. $ - 1] in englishNumeralsMap) // without possible plural s
             {
-                total *= (*value).to!T;
+                const sub = (*value).to!T;
+                total = total.isNull ? sub : sub*total;
             }
         }
         else
         {
-            return typeof(return).init;
+            return typeof(return).init; // could not process
         }
+    }
+    if (!total.isNull)
+    {
+        total *= negative ? -1 : 1;
     }
 
     version(show)
@@ -238,7 +243,7 @@ Nullable!long fromNumeral(S)(S x)
         debug dln(`Input "`, x, `" decoded to `, total);
     }
 
-    return Nullable!T(total);
+    return total;
 }
 
 @safe pure unittest
@@ -258,4 +263,8 @@ Nullable!long fromNumeral(S)(S x)
     }
     assert(`nine thousands`.fromNumeral == 9_000);
     assert(`two millions`.fromNumeral == 2_000_000);
+    assert(``.fromNumeral.isNull);
+    assert(`dum`.fromNumeral.isNull);
+    assert(`plus`.fromNumeral.isNull);
+    assert(`minus`.fromNumeral.isNull);
 }
