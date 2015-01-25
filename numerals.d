@@ -181,7 +181,7 @@ alias toTextual = toNumeral;
     assert(1_234.toNumeral == `one thousand, two hundred and thirty-four`);
     assert(10_234.toNumeral == `ten thousand, two hundred and thirty-four`);
     assert(105_234.toNumeral == `one hundred and five thousand, two hundred and thirty-four`);
-    assert(71_05_234.toNumeral == `seven million, one hundred and five thousand, two hundred and thirty-four`);
+    assert(7_105_234.toNumeral == `seven million, one hundred and five thousand, two hundred and thirty-four`);
     assert(3_007_105_234.toNumeral == `three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
     assert(900_003_007_105_234.toNumeral == `nine hundred trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
     assert((-5).toNumeral == `minus five`);
@@ -201,7 +201,7 @@ Nullable!long fromNumeral(S)(S x)
 @safe pure if (isSomeString!S)
 {
     alias T = long;
-    import std.algorithm: splitter, countUntil, skipOver;
+    import std.algorithm: splitter, countUntil, skipOver, endsWith;
 
     auto words = x.splitter; // split words by whitespace
 
@@ -218,6 +218,13 @@ Nullable!long fromNumeral(S)(S x)
         if (const value = word in englishNumeralsMap)
         {
             total *= (*value).to!T;
+        }
+        else if (word.endsWith(`s`)) // assume plural s for common misspelling millions instead of million
+        {
+            if (const value = word[0 .. $ - 1] in englishNumeralsMap) // without possible plural s
+            {
+                total *= (*value).to!T;
+            }
         }
         else
         {
@@ -249,4 +256,6 @@ Nullable!long fromNumeral(S)(S x)
         assert(+i == (`plus ` ~ ti).fromNumeral);
         assert(+i == ti.fromNumeral);
     }
+    assert(`nine thousands`.fromNumeral == 9_000);
+    assert(`two millions`.fromNumeral == 2_000_000);
 }
