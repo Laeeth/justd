@@ -183,6 +183,7 @@ alias toTextual = toNumeral;
     assert(105_234.toNumeral == `one hundred and five thousand, two hundred and thirty-four`);
     assert(7_105_234.toNumeral == `seven million, one hundred and five thousand, two hundred and thirty-four`);
     assert(3_007_105_234.toNumeral == `three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
+    assert(555_555.toNumeral == `five hundred and fifty-five thousand, five hundred and fifty-five`);
     assert(900_003_007_105_234.toNumeral == `nine hundred trillion, three billion, seven million, one hundred and five thousand, two hundred and thirty-four`);
     assert((-5).toNumeral == `minus five`);
 }
@@ -308,7 +309,8 @@ Nullable!long fromNumeral(T = long, S)(S x)
                       iota(100, 1000, 100),
                       iota(1000, 10000, 1000),
                       iota(10000, 100000, 10000),
-                      iota(100000, 1000000, 100000)))
+                      iota(100000, 1000000, 100000),
+                      [1_200, 105_000, 150_000, 3_001_200]))
     {
         const ti = i.toNumeral;
         assert(-i == (`minus ` ~ ti).fromNumeral);
@@ -318,9 +320,4 @@ Nullable!long fromNumeral(T = long, S)(S x)
 
     assert(`nine thousands`.fromNumeral == 9_000);
     assert(`two millions`.fromNumeral == 2_000_000);
-    assert(`one thousand, two hundred`.fromNumeral == 1_200);
-    assert(`three million, one thousand, two hundred`.fromNumeral == 3_001_200);
-
-    assert(`one hundred and five thousand`.fromNumeral == 105_000);
-    assert(`one hundred and fifty thousand`.fromNumeral == 150_000);
 }
