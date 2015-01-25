@@ -21,3 +21,4 @@ UnescoUnited Nations Educational, Scientific and Cultural Organization
 SSGSSG Standard Solutions Group
 CSAConfederate States of America
 ETCElectronic Telecommunications Committee
+OEISOn-Line Encyclopedia of Integer Sequences

@@ -5200,7 +5200,7 @@ class Scanner(Term)
                 const binKindHit = binHit[0];
                 if (binKindHit)
                 {
-                    import conv_ex: toOrdinal;
+                    import numerals: toOrdinal;
                     const nnKind = binHit[1].enforceNotNull;
                     const kindIndex = binHit[2];
                     if (_showSkipped)
