@@ -730,103 +730,6 @@ class Graph(bool useArray = true,
         return lemma;
     }
 
-    void readWordNetIndexLine(R, N)(const R line,
-                                    const N lnr,
-                                    const Lang lang = Lang.unknown,
-                                    Sense sense = Sense.unknown,
-                                    const bool useMmFile = false)
-    {
-        if (!line.empty &&
-            !line.front.isWhite) // if first is not space. TODO move this check
-        {
-            const linestr = line.to!string;
-            const words = linestr.split; // TODO Use splitter to optimize
-
-            static if (useRCString) { immutable Lemma lemma = words[0].replace(`_`, ` `); }
-            else                    { immutable lemma = words[0].replace(`_`, ` `).idup; }
-
-            const pos          = words[1]; // Part of Speech (PoS)
-            const synset_cnt   = words[2].to!uint; // Synonym Set Counter
-            const p_cnt        = words[3].to!uint;
-            const ptr_symbol   = words[4 .. 4+p_cnt];
-
-            // const sense_cnt    = words[4+p_cnt].to!uint; // same as synset_cnt above (redundant)
-            // debug assert(synset_cnt == sense_cnt);
-
-            const tagsense_cnt = words[5+p_cnt].to!uint;
-            const synset_off   = words[6+p_cnt].to!uint;
-            auto ids = words[6+p_cnt .. $].map!(a => a.to!uint); // relating ids
-
-            const posSense = pos.decodeWordSense;
-            if (sense == Sense.unknown) { sense = posSense; }
-            if (posSense != sense) { assert(posSense == sense); }
-
-            if (false)
-            {
-                const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
-            }
-
-            static if (useArray)
-            {
-                // auto links = Links(ids);
-            }
-            else
-            {
-                // auto links = ids.array;
-            }
-
-            auto node = store(lemma, Lang.en, sense, Origin.wordnet);
-
-            // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);
-            // auto meaning = Entry!Links(words[1].front.decodeWordSense,
-            //                            words[2].to!ubyte, links, lang);
-            // _words[lemma] ~= meaning;
-        }
-    }
-
-    /** Read WordNet Index File $(D fileName).
-        Manual page: wndb
-    */
-    void readWordNetIndex(string fileName,
-                          bool useMmFile = false,
-                          Lang lang = Lang.unknown,
-                          Sense sense = Sense.unknown)
-    {
-        size_t lnr;
-        /* TODO Functionize and merge with conceptnet5.readCSV */
-        if (useMmFile)
-        {
-            foreach (line; mmFileLinesRO(fileName))
-            {
-                readWordNetIndexLine(line, lnr, lang, sense, useMmFile);
-                lnr++;
-            }
-        }
-        else
-        {
-            foreach (line; File(fileName).byLine)
-            {
-                readWordNetIndexLine(line, lnr, lang, sense);
-                lnr++;
-            }
-        }
-        writeln(`Read `, lnr, ` words from `, fileName);
-    }
-
-    /// Read WordNet Database (dict) in directory $(D dirPath).
-    void readWordNet(const string dirPath)
-    {
-        // NOTE: Test both read variants through alternating uses of Mmfile or not
-        const lang = Lang.en;
-        if (false)              // these indexes are not needed only data files
-        {
-            readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
-            readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
-            readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
-            readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
-        }
-    }
-
     /** Construct Network
         Read sources in order of decreasing reliability.
      */
@@ -915,7 +818,7 @@ class Graph(bool useArray = true,
     void learnTrainedThings()
     {
         // wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
-        readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
+        this.readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
         // readSwesaurus();
     }
 
@@ -4796,7 +4699,7 @@ class Graph(bool useArray = true,
 
     void readSwesaurus()
     {
-        readSynlexFile(this, `~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
+        this.readSynlexFile(`~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
         readFolketsFile(`~/Knowledge/swesaurus/folkets_en_sv_public.xdxf`.expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
         readFolketsFile(`~/Knowledge/swesaurus/folkets_sv_en_public.xdxf`.expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
     }
