@@ -236,7 +236,7 @@ Nullable!long fromNumeral(T = long, S)(S x)
             else
             {
                 T subSum = 0;
-                foreach (subTerm; factor.splitter(`-`))
+                foreach (subTerm; factor.splitter(`-`)) // split for example fifty-five to [`fifty`, `five`]
                 {
                     if (const value = subTerm in englishNumeralsMap)
                     {
