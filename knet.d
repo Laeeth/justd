@@ -2812,7 +2812,8 @@ class Net(bool useArray = true,
         learnMto1(Lang.sv, [`montag`, `dienstag`, `mittwoch`, `donnerstag`, `freitag`, `samstag`, `sonntag`], Role(Rel.instanceOf), `weekday`, Sense.weekday, Sense.nounSingular, 1.0);
 
         learnMto1(Lang.en, [`january`, `february`, `mars`, `april`, `may`, `june`, `july`, `august`, `september`, `oktober`, `november`, `december`], Role(Rel.instanceOf), `month`, Sense.month, Sense.nounSingular, 1.0);
-        learnMto1(Lang.sv, [`januari`, `februari`, `mars`, `april`, `maj`, `juni`, `juli`, `augusti`, `september`, `oktober`, `november`, `december`],    Role(Rel.instanceOf), `month`, Sense.month, Sense.nounSingular, 1.0);
+        learnMto1(Lang.de, [`Januar`, `Februar`, `März`, `April`, `Mai`, `Juni`, `Juli`, `August`, `September`, `Oktober`, `November`, `Dezember`], Role(Rel.instanceOf), `month`, Sense.month, Sense.nounSingular, 1.0);
+        learnMto1(Lang.sv, [`januari`, `februari`, `mars`, `april`, `maj`, `juni`, `juli`, `augusti`, `september`, `oktober`, `november`, `december`], Role(Rel.instanceOf), `month`, Sense.month, Sense.nounSingular, 1.0);
 
         learnMto1(Lang.en, [`time period`], Role(Rel.isA), `noun`, Sense.noun, Sense.nounSingular, 1.0);
         learnMto1(Lang.en, [`month`], Role(Rel.isA), `time period`, Sense.noun, Sense.nounSingular, 1.0);
@@ -3073,8 +3074,8 @@ class Net(bool useArray = true,
 
     /// Learn Verb Reversion.
     Ln[] learnVerbReversion(S)(S forward,
-                                    S backward,
-                                    Lang lang = Lang.unknown) if (isSomeString!S)
+                               S backward,
+                               Lang lang = Lang.unknown) if (isSomeString!S)
     {
         const origin = Origin.manual;
         auto all = [store(forward, lang, Sense.verbInfinitive, origin),
@@ -3127,10 +3128,10 @@ class Net(bool useArray = true,
     /** Learn English Acronym.
      */
     Ln learnEnglishAcronym(S)(S acronym,
-                                   S expr,
-                                   NWeight weight = 1.0,
-                                   Sense sense = Sense.unknown,
-                                   Origin origin = Origin.manual) if (isSomeString!S)
+                              S expr,
+                              NWeight weight = 1.0,
+                              Sense sense = Sense.unknown,
+                              Origin origin = Origin.manual) if (isSomeString!S)
     {
         enum lang = Lang.en;
         return connect(store(acronym, lang, Sense.nounAcronym, origin),
@@ -3187,10 +3188,10 @@ class Net(bool useArray = true,
     /** Learn English Emoticon.
      */
     Ln[] learnEnglishEmoticon(S)(S[] emoticons,
-                                      S[] exprs,
-                                      NWeight weight = 1.0,
-                                      Sense sense = Sense.unknown,
-                                      Origin origin = Origin.manual) if (isSomeString!S)
+                                 S[] exprs,
+                                 NWeight weight = 1.0,
+                                 Sense sense = Sense.unknown,
+                                 Origin origin = Origin.manual) if (isSomeString!S)
     {
         return connectMtoN(store(emoticons, Lang.any, Sense.unknown, origin),
                            Role(Rel.emoticonFor),
@@ -4688,7 +4689,7 @@ class Net(bool useArray = true,
 
     }
 
-    /** Learn English Ordinal Shorthands.
+    /** Learn English Ordinal Number Shorthands.
      */
     void learnEnglishOrdinalShorthands()
     {
@@ -4726,8 +4727,14 @@ class Net(bool useArray = true,
                        tuple(`1000000000th`, `one billionth`)];
         foreach (pair; pairs)
         {
-            connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                    store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+            const abbr = pair[0];
+            const ordinal = pair[1];
+            connect(store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                    store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+            connect(store(abbr[0 .. $-2] ~ `:` ~ abbr[$-2 .. $],
+                          Lang.sv, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                    store(ordinal,
+                          Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 0.5);
         }
     }
 
