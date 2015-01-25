@@ -201,7 +201,8 @@ version = show;
 Nullable!long fromNumeral(T = long, S)(S x)
 @safe pure if (isSomeString!S)
 {
-    import std.algorithm: splitter, countUntil, skipOver, endsWith;
+    import std.algorithm: splitter, countUntil, skipOver, endsWith, findSplit;
+    import std.range: empty;
 
     typeof(return) total;
 
@@ -237,42 +238,42 @@ Nullable!long fromNumeral(T = long, S)(S x)
             {
                 tempSum = true;
             }
-            else if (const value = factor in englishNumeralsMap)
+            else
             {
+                T subSum = 0;
+                foreach (subTerm; factor.splitter(`-`))
+                {
+                    if (const value = subTerm in englishNumeralsMap)
+                    {
+                        subSum += *value;
+                        defined = true;
+                    }
+                    else if (subTerm.endsWith(`s`)) // assume plural s for common misspelling millions instead of million
+                    {
+                        if (const value = subTerm[0 .. $ - 1] in englishNumeralsMap) // without possible plural s
+                        {
+                            subSum += *value;
+                            defined = true;
+                        }
+                    }
+                    else
+                    {
+                        version(show)
+                        {
+                            debug dln(`Couldn't decode "`, x, `"`);
+                        }
+                        return typeof(return).init; // could not process
+                    }
+                }
                 if (tempSum)
                 {
-                    product += *value;
+                    product += subSum;
                     tempSum = false;
                 }
                 else
                 {
-                    product *= *value;
+                    product *= subSum;
                 }
-                defined = true;
-            }
-            else if (factor.endsWith(`s`)) // assume plural s for common misspelling millions instead of million
-            {
-                if (const value = factor[0 .. $ - 1] in englishNumeralsMap) // without possible plural s
-                {
-                    if (tempSum)
-                    {
-                        product += *value;
-                        tempSum = false;
-                    }
-                    else
-                    {
-                        product *= *value;
-                    }
-                    defined = true;
-                }
-            }
-            else
-            {
-                version(show)
-                {
-                    debug dln(`Couldn't decode "`, x, `"`);
-                }
-                return typeof(return).init; // could not process
             }
         }
 
@@ -310,7 +311,7 @@ Nullable!long fromNumeral(T = long, S)(S x)
                       iota(1000, 10000, 1000),
                       iota(10000, 100000, 10000),
                       iota(100000, 1000000, 100000),
-                      [1_200, 105_000, 150_000, 3_001_200]))
+                      [55, 1_200, 105_000, 155_000, 555_555, 150_000, 3_001_200]))
     {
         const ti = i.toNumeral;
         assert(-i == (`minus ` ~ ti).fromNumeral);
