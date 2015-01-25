@@ -110,8 +110,11 @@ import knet.senses;
 import knet.relations;
 import knet.roles;
 import knet.decodings;
+import knet.lemmas;
+
 import knet.wordnet;
 import knet.moby;
+import knet.synlex;
 import knet.lectures.all;
 
 import arsd.dom;
@@ -131,7 +134,7 @@ else
     in { assert(lower <= upper, `lower > upper`); }
     body
     {
-        import std.algorithm : min, max;
+        import std.algorithm: min, max;
         return min(max(x, lower), upper);
     }
 
@@ -148,19 +151,6 @@ void skipOverNELLNouns(R, A)(ref R s, in A agents)
 {
     s.skipOverPrefixes(agents);
     s.skipOverSuffixes(agents);
-}
-
-auto pageSize() @trusted
-{
-    version(linux)
-    {
-        import core.sys.posix.sys.shm: __getpagesize;
-        return __getpagesize();
-    }
-    else
-    {
-        return 4096;
-    }
 }
 
 /** Check if $(D s) contains more than one word. */
@@ -183,6 +173,77 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
     }
 }
 
+/// Normalized (Link) Weight.
+alias NWeight = real;
+
+/** Ix Precision.
+    Set this to $(D uint) if we get low on memory.
+    Set this to $(D ulong) when number of link nodes exceed Ix.
+*/
+alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
+enum nullIx = Ix.max >> 1;
+
+/** Type-Safe Directed Reference to $(D T). */
+struct Ref(T)
+{
+    import bitop_ex: setTopBit, getTopBit, resetTopBit;
+    @safe @nogc pure nothrow:
+
+    alias type = T;
+
+    this(Ix ix_ = nullIx,
+         bool reversion = true) in { assert(ix_ <= nullIx); }
+    body
+    {
+        _ix = ix_;
+        if (reversion) { _ix.setTopBit; }
+    }
+
+    this(Ref rhs, RelDir dir)
+    {
+        this._ix = rhs.ix;
+
+        // TODO functionize to setDir()
+        if (dir == RelDir.backward)
+        {
+            _ix.setTopBit;
+        }
+        else if (dir == RelDir.forward)
+        {
+            _ix.resetTopBit;
+        }
+    }
+
+    Ref forward() { return Ref(this, RelDir.forward); }
+    Ref backward() { return Ref(this, RelDir.backward); }
+
+    static const(Ref) asUndefined() { return Ref(nullIx); }
+    bool defined() const { return this.ix != nullIx; }
+    auto opCast(U : bool)() { return defined(); }
+
+    /** Get Index. */
+    const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
+
+    /** Get Direction. */
+    const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
+private:
+    Ix _ix = nullIx;
+}
+
+/** Context or Ontology Category Index (currently from NELL). */
+struct ContextIx
+{
+    @safe @nogc pure nothrow:
+    static ContextIx asUndefined() { return ContextIx(0); }
+    bool defined() const { return this != ContextIx.asUndefined; }
+    /* auto opCast(T : bool)() { return defined; } */
+private:
+    ushort _ix = 0;
+}
+
+// TODO Use in Lemma.
+enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
+
 /** Main Knowledge Network Graph.
 */
 class Graph(bool useArray = true,
@@ -193,63 +254,6 @@ class Graph(bool useArray = true,
     import std.path: buildNormalizedPath, expandTilde, extension;
     import std.algorithm: strip, array, until, dropOne, dropBackOne;
     import wordnet: WordNet;
-
-    /// Normalized (Link) Weight.
-    alias NWeight = real;
-
-    /** Ix Precision.
-        Set this to $(D uint) if we get low on memory.
-        Set this to $(D ulong) when number of link nodes exceed Ix.
-    */
-    alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
-    enum nullIx = Ix.max >> 1;
-
-    /** Type-Safe Directed Reference to $(D T). */
-    struct Ref(T)
-    {
-        import bitop_ex: setTopBit, getTopBit, resetTopBit;
-        @safe @nogc pure nothrow:
-
-        alias type = T;
-
-        this(Ix ix_ = nullIx,
-             bool reversion = true) in { assert(ix_ <= nullIx); }
-        body
-        {
-            _ix = ix_;
-            if (reversion) { _ix.setTopBit; }
-        }
-
-        this(Ref rhs, RelDir dir)
-        {
-            this._ix = rhs.ix;
-
-            // TODO functionize to setDir()
-            if (dir == RelDir.backward)
-            {
-                _ix.setTopBit;
-            }
-            else if (dir == RelDir.forward)
-            {
-                _ix.resetTopBit;
-            }
-        }
-
-        Ref forward() { return Ref(this, RelDir.forward); }
-        Ref backward() { return Ref(this, RelDir.backward); }
-
-        static const(Ref) asUndefined() { return Ref(nullIx); }
-        bool defined() const { return this.ix != nullIx; }
-        auto opCast(U : bool)() { return defined(); }
-
-        /** Get Index. */
-        const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
-
-        /** Get Direction. */
-        const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
-    private:
-        Ix _ix = nullIx;
-    }
 
     /// Reference to Node.
     alias Nd = Ref!Node;
@@ -271,20 +275,6 @@ class Graph(bool useArray = true,
     /// References to Links.
     static if (useArray) { alias Lns = Array!Ln; }
     else                 { alias Lns = Ln[]; }
-
-    /** Context or Ontology Category Index (currently from NELL). */
-    struct ContextIx
-    {
-        @safe @nogc pure nothrow:
-        static ContextIx asUndefined() { return ContextIx(0); }
-        bool defined() const { return this != ContextIx.asUndefined; }
-        /* auto opCast(T : bool)() { return defined; } */
-    private:
-        ushort _ix = 0;
-    }
-
-    // TODO Use in Lemma.
-    enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
 
     /** Node Concept Lemma. */
     struct Lemma
@@ -738,19 +728,6 @@ class Graph(bool useArray = true,
             lemmasByExpr[lemma.expr] ~= lemma;
         }
         return lemma;
-    }
-
-    auto pageSize() @trusted
-    {
-        version(linux)
-        {
-            import core.sys.posix.sys.shm: __getpagesize;
-            return __getpagesize();
-        }
-        else
-        {
-            return 4096;
-        }
     }
 
     void readWordNetIndexLine(R, N)(const R line,
@@ -4819,45 +4796,9 @@ class Graph(bool useArray = true,
 
     void readSwesaurus()
     {
-        readSynlexFile(`~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
+        readSynlexFile(this, `~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
         readFolketsFile(`~/Knowledge/swesaurus/folkets_en_sv_public.xdxf`.expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
         readFolketsFile(`~/Knowledge/swesaurus/folkets_sv_en_public.xdxf`.expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
-    }
-
-    /** Read SynLex Synonyms File $(D path) in XML format.
-     */
-    void readSynlexFile(string path, size_t maxCount = size_t.max)
-    {
-        import std.xml: DocumentParser, ElementParser, Element;
-        size_t lnr = 0;
-        writeln(`Reading SynLex from `, path, ` ...`);
-
-        enum lang = Lang.sv;
-        enum origin = Origin.synlex;
-        const str = cast(string)std.file.read(path);
-        auto doc = new DocumentParser(str);
-        doc.onStartTag[`syn`] = (ElementParser elp)
-        {
-            const level = elp.tag.attr[`level`].to!real; // level on a scale from 1 to 5
-            const weight = level/5.0; // normalized weight
-            string w1, w2;
-            elp.onEndTag[`w1`] = (in Element e) { w1 = e.text.toLower.correctLemmaExpr; };
-            elp.onEndTag[`w2`] = (in Element e) { w2 = e.text.toLower.correctLemmaExpr; };
-
-            elp.parse;
-
-            if (w1 != w2) // there might be a bug in the xml...
-            {
-                connect(store(w1, lang, Sense.unknown, origin),
-                        Role(Rel.synonymFor),
-                        store(w2, lang, Sense.unknown, origin),
-                        origin, weight, true);
-                ++lnr;
-            }
-        };
-        doc.parse;
-
-        writeln(`Read SynLex `, path, ` having `, lnr, ` lines`);
     }
 
     /** Read Folkets Lexikon Synonyms File $(D path) in XML format.
@@ -5828,3 +5769,5 @@ class Graph(bool useArray = true,
         }
     }
 }
+
+alias StandardGraph = Graph!(true, false);
