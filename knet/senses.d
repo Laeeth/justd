@@ -1,4 +1,4 @@
-module senses;
+module knet.senses;
 
 import std.traits: isSomeChar, isSomeString;
 

@@ -97,16 +97,18 @@ import rcstring;
 
 import stemming;
 import grammars;
-import senses;
 
 import separators;
 import combinations;
 import permutations;
 version(msgpack) import msgpack;
 
+import knet.senses;
 import knet.relations;
 import knet.roles;
 import knet.decodings;
+import knet.wordnet;
+import knet.moby;
 import knet.lectures.all;
 
 import arsd.dom;
@@ -348,114 +350,6 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
         case `diningroom`: return `dining room`;
         case `livingroom`: return `living room`;
         default: return s;
-    }
-}
-
-static if (false)
-Role decodeWordNetPointerSymbol(string sym, Sense sense) pure
-{
-    typeof(return) role;
-    with (Rel)
-    {
-        switch (sym)
-        {
-            case `!`:  role = Role(antonymFor); break;
-            case `@`:  role = Role(hypernymOf, true); break;
-            case `@i`: role = Role(instanceHypernymOf, true); break;
-            case `~`:  role = Role(hyponymOf); break;
-            case `~i`: role = Role(instanceHyponymOf); break;
-            case `*`:  role = Role(causes, true); break; // entailment.
-
-            case `#m`: role = Role(memberHolonym); break;
-            case `#s`: role = Role(substanceHolonym); break;
-            case `#p`: role = Role(partHolonym); break;
-            case `%m`: role = Role(memberOf); break;
-            case `%s`: role = Role(madeOf); break;
-            case `%p`: role = Role(partOf); break;
-
-            case `=`:  role = Role(attribute); break;
-            case `+`:  role = Role(derivationallyRelatedForm); break;
-            case `;c`: role = Role(domainOfSynset); break; // TOPIC
-            case `-c`: role = Role(memberOfThisDomain); break;  // TOPIC
-            case `;r`: role = Role(domainOfSynset); break; // REGION
-            case `-r`: role = Role(memberOfThisDomain); break; // REGION
-            case `;u`: role = Role(domainOfSynset); break; // USAGE
-            case `-u`: role = Role(memberOfThisDomain); break; // USAGE
-
-            case `>`:  role = Role(causes); break;
-            case `^`:  role = Role(alsoSee); break;
-            case `$`:  role = Role(formOfVerb); break;
-
-            case `&`:  role = Role(similarTo); break;
-            case `<`:  role = Role(participleOfVerb); break;
-
-            case `\`:  role = Role(pertainym); break; // pertains to noun
-            case `=`:  role = Role(attribute); break;
-
-            default:
-                assert(false, `Unexpected relation type ` ~ sym);
-                break;
-        }
-    }
-    return role;
-}
-
-/** Decode Moby Pronounciation Code to IPA Language.
-    See also: https://en.wikipedia.org/wiki/Moby_Project#Pronunciator
-*/
-auto decodeMobyIPA(S)(S code) if (isSomeString!S)
-{
-    switch (code)
-    {
-        case `&`: return `æ`;
-        case `-`: return `ə`;
-        case `@`: return `ʌ`; // both `ʌ` or `ə` are allowed
-        case `[@]`: return `ɜ`; // undocumented?
-        case `(@)`: return `eə`; // undocumented in Moby?
-        case `@r`: return `ɜr`; // alt: `ər`
-        case `A`: return `ɑː`;
-        case `aI`: return `aɪ`;
-        case `Ar`: return `ɑr`;
-        case `AU`: return `aʊ`;
-        case `b`: return `b`;
-        case `d`: return `d`;
-        case `D`: return `ð`;
-        case `dZ`: return `dʒ`;
-        case `E`: return `ɛ`;
-        case `eI`: return `eɪ`;
-        case `f`: return `f`;
-        case `g`: return `ɡ`;
-        case `h`: return `h`;
-        case `hw`: return `hw`;
-        case `i`: return `iː`;
-        case `I`: return `ɪ`;
-        case `j`: return `j`;
-        case `k`: return `k`;
-        case `l`: return `l`;
-        case `m`: return `m`;
-        case `n`: return `n`;
-        case `N`: return `ŋ`;
-        case `O`: return `ɔː`;
-        case `Oi`: return `ɔɪ`;
-        case `oU`: return `oʊ`;
-        case `p`: return `p`;
-        case `r`: return `r`;
-        case `s`: return `s`;
-        case `S`: return `ʃ`;
-        case `t`: return `t`;
-        case `T`: return `θ`;
-        case `tS`: return `tʃ`;
-        case `u`: return `uː`;
-        case `U`: return `ʊ`;
-        case `v`: return `v`;
-        case `w`: return `w`;
-        case `z`: return `z`;
-        case `Z`: return `ʒ`;
-        case `'`: return `'`; // primary stress on the following syllable
-        case `,`: return `,`; // secondary stress on the following syllable
-        default:
-        // dln(`warning: `, code);
-        return code.idup;
     }
 }
 
@@ -1085,7 +979,10 @@ class Graph(bool useArray = true,
             if (sense == Sense.unknown) { sense = posSense; }
             if (posSense != sense) { assert(posSense == sense); }
 
-            // const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
+            if (false)
+            {
+                const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
+            }
 
             static if (useArray)
             {

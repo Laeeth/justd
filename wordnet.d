@@ -12,7 +12,7 @@ import rcstring;
 import dbg;
 import assert_ex;
 import knet.relations;
-import senses;
+import knet.senses;
 
 alias nPath = buildNormalizedPath;
 
