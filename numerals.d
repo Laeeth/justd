@@ -206,11 +206,6 @@ Nullable!long fromNumeral(T = long, S)(S x)
 
     typeof(return) total;
 
-    version(show)
-    {
-        import dbg;
-    }
-
     T sum = 0;
     bool defined = false;
     bool negative = false;
@@ -258,10 +253,6 @@ Nullable!long fromNumeral(T = long, S)(S x)
                     }
                     else
                     {
-                        version(show)
-                        {
-                            debug dln(`Couldn't decode "`, x, `"`);
-                        }
                         return typeof(return).init; // could not process
                     }
                 }
@@ -278,11 +269,6 @@ Nullable!long fromNumeral(T = long, S)(S x)
         }
 
         sum += product;
-    }
-
-    version(show)
-    {
-        debug dln(`Input "`, x, `" decoded to `, sum);
     }
 
     if (defined)
