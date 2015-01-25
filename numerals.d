@@ -308,4 +308,7 @@ Nullable!long fromNumeral(T = long, S)(S x)
     assert(`nine thousands`.fromNumeral == 9_000);
     assert(`two millions`.fromNumeral == 2_000_000);
     assert(`twenty-two hundred`.fromNumeral == 2200);
+    assert(`two fifty`.fromNumeral == 100);
+    assert(`two tens`.fromNumeral == 20);
+    assert(`two ten`.fromNumeral == 20);
 }
