@@ -1055,7 +1055,7 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
 }
 
 static if (false)
-Role decodeWordNetPointerSymbol(string sym, Sense sense)
+Role decodeWordNetPointerSymbol(string sym, Sense sense) pure
 {
     typeof(return) role;
     with (Rel)
@@ -1532,12 +1532,15 @@ class Net(bool useArray = true,
     auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward); }
     auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward); }
 
-    pragma(msg, `Expr.sizeof: `, Expr.sizeof);
-    pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
-    pragma(msg, `Node.sizeof: `, Node.sizeof);
-    pragma(msg, `Lns.sizeof: `, Lns.sizeof);
-    pragma(msg, `Nds.sizeof: `, Nds.sizeof);
-    pragma(msg, `Link.sizeof: `, Link.sizeof);
+    static if (false)
+    {
+        pragma(msg, `Expr.sizeof: `, Expr.sizeof);
+        pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
+        pragma(msg, `Node.sizeof: `, Node.sizeof);
+        pragma(msg, `Lns.sizeof: `, Lns.sizeof);
+        pragma(msg, `Nds.sizeof: `, Nds.sizeof);
+        pragma(msg, `Link.sizeof: `, Link.sizeof);
+    }
 
     /* static if (useArray) { alias Nodes = Array!Node; } */
     /* else                 { alias Nodes = Node[]; } */
@@ -6058,19 +6061,16 @@ class Net(bool useArray = true,
                      RelDir.any :
                      RelDir.forward);
 
-        dln(`dir: `, dir);
-        dln(`a: `, a.ix, `,`, a.dir);
-        dln(`b: `, b.ix, `,`, b.dir);
-        dln();
+        dln("role: ", role, " ", origin, " ", nweight, " ", dir);
 
         foreach (aLinkRef; at(a).links)
         {
             const aLink = at(aLinkRef);
+            dln("aLink.role: ", aLink.role, " ", aLink.origin, " ", aLink.nweight);
             if (aLink.role.rel == role.rel &&
                 aLink.role.negation == role.negation && // no need to check reversion (all links are bidirectional)
                 aLink.origin == origin &&
-                (aLink.actors[]
-                      .canFind(Nd(b, dir))) &&
+                (aLink.actors[].canFind(Nd(b, dir))) &&
                 abs(aLink.nweight - nweight) < 1.0e-2) // TODO adjust
             {
                 return aLinkRef;
