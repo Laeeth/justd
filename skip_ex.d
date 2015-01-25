@@ -177,3 +177,25 @@ size_t skipOverBackShortestOf(alias pred = "a == b", Range, Ranges...)(ref Range
     assert(x.skipOverBackShortestOf("a", "beta") == 1);
     assert(x == "alpha_bet");
 }
+
+/** Drop $(D prefixes) in $(D s).
+    TODO Use multi-argument skipOver when it becomes available http://forum.dlang.org/thread/bug-12335-3@https.d.puremagic.com%2Fissues%2F
+*/
+void skipOverPrefixes(R, A)(ref R s, in A prefixes)
+{
+    foreach (prefix; prefixes)
+    {
+        if (s.length > prefix.length &&
+            s.skipOver(prefix)) { break; }
+    }
+}
+
+/** Drop $(D suffixes) in $(D s). */
+void skipOverSuffixes(R, A)(ref R s, in A suffixes)
+{
+    foreach (suffix; suffixes)
+    {
+        if (s.length > suffix.length &&
+            s.endsWith(suffix)) { s = s[0 .. $ - suffix.length]; break; }
+    }
+}

@@ -1,7 +1,7 @@
-module roles;
+module knet.roles;
 
 import std.bitmanip: bitfields;
-public import rels;
+public import knet.relations;
 
 struct Role
 {

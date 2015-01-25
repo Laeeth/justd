@@ -1,5 +1,6 @@
 import std.stdio;
-import knet;
+import knet.base;
+import knet.lectures.all;
 
 import etc.linux.memoryerror;
 debug import backtrace.backtrace;
@@ -10,8 +11,8 @@ int main(string[] args)
     debug backtrace.backtrace.install(stderr);
     registerMemoryErrorHandler();
 
-    auto net = new Net!(true, false)();
-    net.showNodes(`car_wash`);
+    auto gr = new Graph!(true, false)();
+    gr.showNodes(`car_wash`);
 
     while (true)
     {
@@ -20,7 +21,7 @@ int main(string[] args)
         string line;
         if ((line = readln()) !is null)
         {
-            net.showNodes(line);
+            gr.showNodes(line);
         }
         else
         {
@@ -30,13 +31,13 @@ int main(string[] args)
     }
     /* if (true) */
     /* { */
-    /*     auto netPack = net.pack; */
+    /*     auto netPack = gr.pack; */
     /*     writeln(`Packed to `, netPack.length, ` bytes`); */
     /* } */
 
     if (false) // just to make all variants of compile
     {
-        /* auto netH = new Net!(!useHashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`); */
+        /* auto netH = new Graph!(!useHashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`); */
     }
 
     return 0;
