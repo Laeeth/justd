@@ -93,8 +93,6 @@ import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf, skipOv
 import predicates: allEqual;
 import dbg;
 
-import rcstring;
-
 import stemming;
 import grammars;
 
@@ -238,6 +236,11 @@ enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
 
 enum useArray = true;
 enum useRCString = false;
+
+static if (useRCString)
+{
+    import rcstring;
+}
 
 struct Location
 {
