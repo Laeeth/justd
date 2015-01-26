@@ -113,6 +113,7 @@ import knet.decodings;
 import knet.lemmas;
 
 import knet.cn5;
+import knet.nell;
 import knet.wordnet;
 import knet.moby;
 import knet.synlex;
@@ -236,6 +237,12 @@ enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
 
 enum useArray = true;
 enum useRCString = false;
+
+struct Location
+{
+    double latitude;
+    double longitude;
+}
 
 /** Main Knowledge Network Graph.
 */
@@ -783,9 +790,9 @@ class Graph
         // NELL
         if (false)
         {
-            readNELLFile(`~/Knowledge/nell/NELL.08m.890.esv.csv`.expandTilde
-                                                                .buildNormalizedPath,
-                         10000);
+            this.readNELLFile(`~/Knowledge/nell/NELL.08m.890.esv.csv`.expandTilde
+                                                                     .buildNormalizedPath,
+                              10000);
         }
 
         // TODO msgpack fails to pack
@@ -4224,170 +4231,6 @@ class Graph
         return context;
     }
 
-    /** Read NELL Entity from $(D part). */
-    Tuple!(Nd, string, Ln) readNELLEntity(S)(const S part)
-    {
-        const show = false;
-
-        auto entity = part.splitter(':');
-
-        if (entity.front == `concept`)
-        {
-            entity.popFront; // ignore no-meaningful information
-        }
-
-        if (show) dln(`ENTITY:`, entity);
-
-        auto personContextSplit = entity.front.findSplitAfter(`person`);
-        if (!personContextSplit[0].empty)
-        {
-            /* dln(personContextSplit, ` livesIn `, personContextSplit[1]); */
-            /* lookupOrStoreContext(personContextSplit[0]); */
-        }
-        else
-        {
-            /* lookupOrStoreContext(entity.front); */
-        }
-
-        /* context */
-        immutable contextName = entity.front.idup; entity.popFront;
-        const context = contextOfName(contextName);
-
-        if (entity.empty)
-        {
-            return typeof(return).init;
-        }
-
-        const lang = Lang.en;   // use English for now
-        const sense = Sense.noun;
-
-        /* name */
-        // clean cases such as concept:language:english_language
-        immutable entityName = (entity.front.endsWith(`_` ~ contextName) ?
-                                entity.front[0 .. $ - (contextName.length + 1)] :
-                                entity.front).idup;
-        entity.popFront;
-
-        auto entityIx = store(entityName.replace(`_`, ` `).correctLemmaExpr,
-                              lang, sense, Origin.nell, context);
-
-        return tuple(entityIx,
-                     contextName,
-                     connect(entityIx,
-                             Role(Rel.instanceOf),
-                             store(contextName.replace(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
-                             Origin.nell, 1.0,
-                             true)); // need to check duplicates here
-    }
-
-    /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
-    void readNELLLine(R, N)(R line, N lnr)
-    {
-        auto rel = Rel.any;
-        auto negation = false;
-        auto reversion = false;
-        auto tense = Tense.unknown;
-
-        Nd entityIx;
-        Nd valueIx;
-
-        string entityContextName;
-        char[] relationName;
-        string valueContextName;
-
-        auto ignored = false;
-        NWeight mainWeight;
-        auto show = false;
-
-        auto parts = line.splitter('\t');
-        size_t ix;
-        foreach (part; parts)
-        {
-            switch (ix)
-            {
-                case 0:
-                    auto entity = readNELLEntity(part);
-                    entityIx = entity[0];
-                    entityContextName = entity[1];
-                    if (!entityIx.defined) { return; }
-
-                    break;
-                case 1:
-                    auto predicate = part.splitter(':');
-
-                    if (predicate.front == `concept`)
-                        predicate.popFront; // ignore no-meaningful information
-                    else
-                        if (show) dln(`TODO Handle non-concept predicate `, predicate);
-
-                    relationName = predicate.front;
-
-                    break;
-                case 2:
-                    if (relationName == `haswikipediaurl`)
-                    {
-                        // TODO check if url is special compared to entity and
-                        // store it only if it's not
-                        ignored = true;
-                    }
-                    else
-                    {
-                        if (relationName == `latitudelongitude`)
-                        {
-                            const loc = part.findSplit(`,`);
-                            if (!loc[1].empty)
-                            {
-                                setLocation(entityIx,
-                                            Location(loc[0].to!double,
-                                                     loc[2].to!double));
-                            }
-                        }
-                        else
-                        {
-                            auto value = readNELLEntity(part);
-                            valueIx = value[0];
-                            if (!valueIx.defined) { return; }
-                            valueContextName = value[1];
-
-                            relationName.skipOver(entityContextName); // strip dumb prefix
-                            relationName.skipOverBack(valueContextName); // strip dumb suffix
-
-                            rel = relationName.decodeRelationPredicate(entityContextName,
-                                                              valueContextName,
-                                                              Origin.nell,
-                                                              negation, reversion, tense);
-                        }
-                    }
-                    break;
-                case 4:
-                    mainWeight = part.to!NWeight;
-                    break;
-                default:
-                    if (ix < 5 && !ignored)
-                    {
-                        if (show) dln(` MORE:`, part);
-                    }
-                    break;
-            }
-            ++ix;
-        }
-
-        if (entityIx.defined &&
-            valueIx.defined)
-        {
-            auto mainLinkRef = connect(entityIx, Role(rel, reversion, negation), valueIx,
-                                       Origin.nell, mainWeight);
-        }
-
-        if (show) writeln;
-    }
-
-    struct Location
-    {
-        double latitude;
-        double longitude;
-    }
-
     /** Node Locations. */
     Location[Nd] locations;
 
@@ -4420,20 +4263,6 @@ class Graph
         this.readSynlexFile(`~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
         this.readFolketsFile(`~/Knowledge/swesaurus/folkets_en_sv_public.xdxf`.expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
         this.readFolketsFile(`~/Knowledge/swesaurus/folkets_sv_en_public.xdxf`.expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
-    }
-
-    /** Read NELL File $(D path) in CSV format.
-    */
-    void readNELLFile(string path, size_t maxCount = size_t.max)
-    {
-        writeln(`Reading NELL from `, path, ` ...`);
-        size_t lnr = 0;
-        foreach (line; File(path).byLine)
-        {
-            readNELLLine(line, lnr);
-            if (++lnr >= maxCount) break;
-        }
-        writeln(`Read NELL `, path, ` having `, lnr, ` lines`);
     }
 
     /** Show Network Relations.
