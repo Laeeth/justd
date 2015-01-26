@@ -3683,11 +3683,48 @@ class Graph(bool useArray = true,
 
     void learnCode()
     {
+        learnCodeInGeneral();
         learnDCode;
+    }
+
+    void learnCodeInGeneral()
+    {
+        connect(store(`keyword`, Lang.en, Sense.adjective, Origin.manual), Role(Rel.synonymFor),
+                store(`reserved word`, Lang.en, Sense.adjective, Origin.manual), Origin.manual, 1.0, true);
     }
 
     void learnDCode()
     {
+        enum attributes = [`@property`, `@safe`, `@trusted`, `@system`, `@disable`];
+
+        connectMto1(store(attributes, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
+                    store("attribute", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
+
+        enum keywords = [`abstract`, `alias`, `align`, `asm`,
+                         `assert`, `auto`, `body`, `bool`,
+                         `byte`, `case`, `cast`, `catch`,
+                         `char`, `class`, `const`, `continue`,
+                         `dchar`, `debug`, `default`, `delegate`,
+                         `deprecated`, `do`, `double`, `else`,
+                         `enum`, `export`, `extern`, `false`,
+                         `final`, `finally`, `float`, `for`,
+                         `foreach`, `function`, `goto`, `if`,
+                         `import`, `in`, `inout`, `int`,
+                         `interface`, `invariant`, `is`, `long`,
+                         `macro`, `mixin`, `module`, `new`,
+                         `null`, `out`, `override`, `package`,
+                         `pragma`, `private`, `protected`, `public`,
+                         `real`, `ref`, `return`, `scope`,
+                         `short`, `static`, `struct`, `super`,
+                         `switch`, `synchronized`, `template`, `this`,
+                         `throw`, `true`, `try`, `typeid`,
+                         `typeof`, `ubyte`, `uint`, `ulong`,
+                         `union`, `unittest`, `ushort`, `version`,
+                         `void`, `wchar`, `while`, `with` ];
+
+        connectMto1(store(keywords, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
+                    store("keyword", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
+
         enum elements = [ tuple(`AA`, `associative array`),
                           tuple(`AAs`, `associative arrays`),
 
@@ -3708,10 +3745,11 @@ class Graph(bool useArray = true,
                           tuple(`ctor`, `constructor`),
                           tuple(`dtor`, `destructor`),
                          ];
+
         foreach (e; elements)
         {
-            connect(store(e[0], Lang.d, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                    store(e[1], Lang.d, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+            connect(store(e[0], Lang.d, Sense.unknown, Origin.manual), Role(Rel.abbreviationFor),
+                    store(e[1], Lang.d, Sense.unknown, Origin.manual), Origin.manual, 1.0);
         }
     }
 
