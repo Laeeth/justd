@@ -53,7 +53,7 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense) pure
     return role;
 }
 
-void readWordNetIndexLine(R, N)(Graph gr,
+void readWordNetIndexLine(R, N)(Graph graph,
                                 const R line,
                                 const N lnr,
                                 const Lang lang = Lang.unknown,
@@ -109,7 +109,7 @@ void readWordNetIndexLine(R, N)(Graph gr,
         // }
 
         import knet.origins: Origin;
-        auto node = gr.store(lemma, Lang.en, sense, Origin.wordnet);
+        auto node = graph.store(lemma, Lang.en, sense, Origin.wordnet);
 
         // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);
         // auto meaning = Entry!Links(words[1].front.decodeWordSense,
@@ -121,7 +121,7 @@ void readWordNetIndexLine(R, N)(Graph gr,
 /** Read WordNet Index File $(D fileName).
     Manual page: wndb
 */
-void readWordNetIndex(Graph gr,
+void readWordNetIndex(Graph graph,
                       string fileName,
                       bool useMmFile = false,
                       Lang lang = Lang.unknown,
@@ -134,7 +134,7 @@ void readWordNetIndex(Graph gr,
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            gr.readWordNetIndexLine(line, lnr, lang, sense, useMmFile);
+            graph.readWordNetIndexLine(line, lnr, lang, sense, useMmFile);
             lnr++;
         }
     }
@@ -143,7 +143,7 @@ void readWordNetIndex(Graph gr,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            gr.readWordNetIndexLine(line, lnr, lang, sense);
+            graph.readWordNetIndexLine(line, lnr, lang, sense);
             lnr++;
         }
     }
@@ -153,7 +153,7 @@ void readWordNetIndex(Graph gr,
 }
 
 /// Read WordNet Database (dict) in directory $(D dirPath).
-void readWordNet(Graph gr,
+void readWordNet(Graph graph,
                  const string dirPath)
 {
     // NOTE: Test both read variants through alternating uses of Mmfile or not
@@ -161,9 +161,9 @@ void readWordNet(Graph gr,
     if (false)              // these indexes are not needed only data files
     {
         import std.path: buildNormalizedPath;
-        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
-        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
-        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
-        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
+        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
+        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
+        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
+        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
 }

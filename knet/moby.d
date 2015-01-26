@@ -79,7 +79,7 @@ auto decodeMobyIPA(S)(S code) if (isSomeString!S)
 /** Learn English Pronouncation Patterns from Moby.
     See also: https://en.wikipedia.org/wiki/Moby_Project#Hyphenator
 */
-void learnMobyEnglishPronounciations(Graph gr)
+void learnMobyEnglishPronounciations(Graph graph)
 {
     const path = `../knowledge/moby/pronounciation.txt`;
     writeln(`Reading Moby pronounciations from `, path, ` ...`);
@@ -116,8 +116,8 @@ void learnMobyEnglishPronounciations(Graph gr)
             ipas = split.front.idup;
             writeln(`warning: Couldn't decode Moby IPA code `, ipas);
         }
-        gr.connect(gr.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasPronounciation),
-                   gr.store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasPronounciation),
+                      graph.store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -148,7 +148,7 @@ Sense decodeSenseOfMobyPoSCode(C)(C code) if (isSomeChar!C)
     }
 }
 
-void learnMobyPoS(Graph gr)
+void learnMobyPoS(Graph graph)
 {
     const path = `../knowledge/moby/part_of_speech.txt`;
     writeln(`Reading Moby Part of Speech (PoS) from `, path, ` ...`);
@@ -159,7 +159,7 @@ void learnMobyPoS(Graph gr)
         const expr = split.front.idup; split.popFront;
         foreach (sense; split.front.map!(a => a.decodeSenseOfMobyPoSCode))
         {
-            gr.store(expr, Lang.en, sense, Origin.moby);
+            graph.store(expr, Lang.en, sense, Origin.moby);
         }
     }
 }

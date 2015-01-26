@@ -9,7 +9,7 @@ import knet.origins: Origin;
 
 /** Read Folkets Lexikon Synonyms File $(D path) in XML format.
  */
-void readFolketsFile(Graph gr,
+void readFolketsFile(Graph graph,
                      string path,
                      Lang srcLang,
                      Lang dstLang,
@@ -98,10 +98,10 @@ void readFolketsFile(Graph gr,
                 auto src_ = src.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
                 auto dst_ = dst.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
 
-                gr.connectMtoN(gr.store(src_, srcLang, sense, origin),
-                               Role(Rel.translationOf),
-                               gr.store(dst_, dstLang, sense, origin),
-                               origin, 1.0, true);
+                graph.connectMtoN(graph.store(src_, srcLang, sense, origin),
+                                  Role(Rel.translationOf),
+                                  graph.store(dst_, dstLang, sense, origin),
+                                  origin, 1.0, true);
             }
         }
     };

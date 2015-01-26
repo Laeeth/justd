@@ -4,7 +4,7 @@ import knet.base: Graph;
 
 /** Read SynLex Synonyms File $(D path) in XML format.
  */
-void readSynlexFile(Graph gr,
+void readSynlexFile(Graph graph,
                     string path, size_t maxCount = size_t.max)
 {
     import std.stdio: writeln;
@@ -45,10 +45,10 @@ void readSynlexFile(Graph gr,
             import knet.senses: Sense;
             import knet.relations: Rel;
             import knet.roles: Role;
-            gr.connect(gr.store(w1, lang, Sense.unknown, origin),
-                       Role(Rel.synonymFor),
-                       gr.store(w2, lang, Sense.unknown, origin),
-                       origin, weight, true);
+            graph.connect(graph.store(w1, lang, Sense.unknown, origin),
+                          Role(Rel.synonymFor),
+                          graph.store(w2, lang, Sense.unknown, origin),
+                          origin, weight, true);
             ++lnr;
         }
     };
