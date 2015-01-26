@@ -1,7 +1,19 @@
 module knet.moby;
 
+import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;
+import std.array: array, replace;
+import std.algorithm: splitter, map, joiner;
+import std.conv: to;
+import std.stdio: File;
+
+import mmfile_ex;
+
+import knet.origins: Origin;
 import knet.senses: Sense;
+import knet.base: Graph;
+import knet.languages: Lang;
+import knet.roles: Role, Rel;
 
 /** Decode Moby Pronounciation Code to IPA Language.
     See also: https://en.wikipedia.org/wiki/Moby_Project#Pronunciator
@@ -62,6 +74,53 @@ auto decodeMobyIPA(S)(S code) if (isSomeString!S)
     }
 }
 
+/** Learn English Pronouncation Patterns from Moby.
+    See also: https://en.wikipedia.org/wiki/Moby_Project#Hyphenator
+*/
+void learnMobyEnglishPronounciations(Graph gr)
+{
+    const path = `../knowledge/moby/pronounciation.txt`;
+    writeln(`Reading Moby pronounciations from `, path, ` ...`);
+    foreach (line; mmFileLinesRO(path))
+    {
+        auto split = line.splitter(' ');
+        string expr;
+        import core.exception: UnicodeException;
+
+        try
+        {
+            expr = split.front.replace(`_`, ` `).idup;
+        }
+        catch (UnicodeException e)
+        {
+            expr = split.front.idup;
+            writeln(`warning: Couldn't decode Moby expression `, expr);
+        }
+        split.popFront;
+        string ipas;
+
+        import std.utf: UTFException;
+        try
+        {
+            ipas = split.front
+                        .splitter('_') // word separator
+                        .map!(word =>
+                              word.splitter('/') // phoneme separator
+                                  .map!(a => a.decodeMobyIPA)
+                                  .joiner)
+                        .joiner(` `)
+                        .to!string;
+        }
+        catch (UTFException e)
+        {
+            ipas = split.front.idup;
+            writeln(`warning: Couldn't decode Moby IPA code `, ipas);
+        }
+        gr.connect(gr.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasPronounciation),
+                   gr.store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
+    }
+}
+
 /** Decode Sense of Moby Part of Speech (PoS) Code.
  */
 Sense decodeSenseOfMobyPoSCode(C)(C code) if (isSomeChar!C)
@@ -84,8 +143,23 @@ Sense decodeSenseOfMobyPoSCode(C)(C code) if (isSomeChar!C)
         case 'I': return articleIndefinite;
         case 'o': return nounNominative;
         default:
-            import dbg;
-            dln(`warning: Unknown code character ` ~ code);
+            writeln(`warning: Unknown Moby Part of Speech (PoS) code character ` ~ code);
             return unknown;
+    }
+}
+
+void learnMobyPoS(Graph gr)
+{
+    const path = `../knowledge/moby/part_of_speech.txt`;
+    writeln(`Reading Moby Part of Speech (PoS) from `, path, ` ...`);
+    foreach (line; File(path).byLine)
+    {
+        import knet.separators;
+        auto split = line.splitter(roleSeparator);
+        const expr = split.front.idup; split.popFront;
+        foreach (sense; split.front.map!(a => a.decodeSenseOfMobyPoSCode))
+        {
+            gr.store(expr, Lang.en, sense, Origin.moby);
+        }
     }
 }

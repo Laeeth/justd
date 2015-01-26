@@ -98,7 +98,7 @@ import rcstring;
 import stemming;
 import grammars;
 
-import separators;
+import knet.separators;
 import combinations;
 import permutations;
 version(msgpack) import msgpack;
@@ -1168,7 +1168,7 @@ class Graph
 
         learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Role(Rel.instanceOf), `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
 
-        learnMobyPoS();
+        this.learnMobyPoS();
 
         // learn these after Moby as Moby is more specific
         learnNouns();
@@ -1176,65 +1176,7 @@ class Graph
 
         learnMto1(Lang.en, rdT(`../knowledge/en/figure_of_speech.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `figure of speech`, Sense.unknown, Sense.noun, 1.0);
 
-        learnMobyEnglishPronounciations();
-    }
-
-    /** Learn English Pronouncation Patterns from Moby.
-        See also: https://en.wikipedia.org/wiki/Moby_Project#Hyphenator
-     */
-    void learnMobyEnglishPronounciations()
-    {
-        const path = `../knowledge/moby/pronounciation.txt`;
-        writeln(`Reading Moby pronounciations from `, path, ` ...`);
-        foreach (line; mmFileLinesRO(path))
-        {
-            auto split = line.splitter(' ');
-            string expr;
-            try
-            {
-                expr = split.front.replace(`_`, ` `).idup;
-            }
-            catch (core.exception.UnicodeException e)
-            {
-                expr = split.front.idup;
-                dln(`Couldn't decode expression `, expr);
-            }
-            split.popFront;
-            string ipas;
-            try
-            {
-                ipas = split.front
-                            .splitter('_') // word separator
-                            .map!(word =>
-                                  word.splitter('/') // phoneme separator
-                                      .map!(a => a.decodeMobyIPA)
-                                      .joiner)
-                            .joiner(` `)
-                            .to!string;
-            }
-            catch (std.utf.UTFException e)
-            {
-                ipas = split.front.idup;
-                dln(`Couldn't decode IPA code `, ipas);
-            }
-            connect(store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasPronounciation),
-                    store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
-        }
-    }
-
-    void learnMobyPoS()
-    {
-        const path = `../knowledge/moby/part_of_speech.txt`;
-        writeln(`Reading Moby Part of Speech (PoS) from `, path, ` ...`);
-        foreach (line; File(path).byLine)
-        {
-            auto split = line.splitter(roleSeparator);
-            const expr = split.front.idup; split.popFront;
-            foreach (sense; split.front.map!(a => a.decodeSenseOfMobyPoSCode))
-            {
-                store(expr, Lang.en, sense, Origin.moby);
-            }
-        }
+        this.learnMobyEnglishPronounciations();
     }
 
     void learnEnumMemberNameHierarchy(T)(Sense memberSense = Sense.unknown) if (is(T == enum))
