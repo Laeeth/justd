@@ -118,6 +118,7 @@ import knet.wordnet;
 import knet.moby;
 import knet.synlex;
 import knet.folklex;
+import knet.swesaurus;
 import knet.lectures.all;
 
 import arsd.dom;
@@ -805,7 +806,7 @@ class Graph
     {
         // wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
         this.readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
-        // readSwesaurus();
+        this.readSwesaurus();
     }
 
     /** Learn Precise (Absolute) Thing.
@@ -4256,13 +4257,6 @@ class Graph
             done = true;
         }
         return done;
-    }
-
-    void readSwesaurus()
-    {
-        this.readSynlexFile(`~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
-        this.readFolketsFile(`~/Knowledge/swesaurus/folkets_en_sv_public.xdxf`.expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
-        this.readFolketsFile(`~/Knowledge/swesaurus/folkets_sv_en_public.xdxf`.expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
     }
 
     /** Show Network Relations.
