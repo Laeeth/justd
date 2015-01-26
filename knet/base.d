@@ -229,6 +229,8 @@ private:
     ushort _ix = 0;
 }
 
+enum anyContext = ContextIx.asUndefined; // reserve 0 for anyContext (unknown)
+
 // TODO Use in Lemma.
 enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
 
@@ -542,7 +544,6 @@ class Graph
         string[ContextIx] contextNameByIx; /** Ontology Context Names by Index. */
         ContextIx[string] contextIxByName; /** Ontology Context Indexes by Name. */
 
-        enum anyContext = ContextIx.asUndefined; // reserve 0 for anyContext (unknown)
         ushort contextIxCounter = ContextIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyContext (unknown)
 
         size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
@@ -4202,32 +4203,6 @@ class Graph
         return ln; // allLinks.back;
     }
     alias relate = connect;
-
-    /** Read ConceptNet5 URI.
-        See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
-    */
-    Nd readCN5ConceptURI(T)(const T part)
-    {
-        auto items = part.splitter('/');
-
-        const lang = items.front.decodeLang; items.popFront;
-        const expr = items.front.replace(`_`, ` `); items.popFront;
-
-        auto sense = Sense.unknown;
-        if (!items.empty)
-        {
-            const item = items.front;
-            sense = item.decodeWordSense;
-            if (sense == Sense.unknown && item != `_`)
-            {
-                dln(`Unknown Sense code `, items.front);
-            }
-        }
-
-        return store(expr.correctLemmaExpr,
-                     lang, sense, Origin.cn5, anyContext,
-                     Manner.formal, false, 0, false);
-    }
 
     import std.algorithm: splitter;
 

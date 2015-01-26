@@ -13,7 +13,7 @@ import std.file: dirEntries;
 
 import mmfile_ex;
 import predicates: of;
-import grammars: Tense;
+import grammars: Tense, Manner;
 
 import knet.origins: Origin;
 import knet.senses: Sense;
@@ -125,6 +125,36 @@ Rel decodeCN5RelationPath(S)(S path,
     import knet.decodings: decodeRelationPredicate;
     return path[3..$].decodeRelationPredicate(null, null, Origin.cn5,
                                               negation, reversion, tense);
+}
+
+/** Read ConceptNet5 URI.
+    See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
+*/
+Graph.Nd readCN5ConceptURI(T)(Graph graph,
+                              const T part)
+{
+    auto items = part.splitter('/');
+
+    import knet.languages: decodeLang;
+    const lang = items.front.decodeLang; items.popFront;
+    const expr = items.front.replace(`_`, ` `); items.popFront;
+
+    auto sense = Sense.unknown;
+    if (!items.empty)
+    {
+        const item = items.front;
+        import knet.senses: decodeWordSense;
+        sense = item.decodeWordSense;
+        if (sense == Sense.unknown && item != `_`)
+        {
+            writeln(`warning: Unknown Sense code `, items.front);
+        }
+    }
+
+    import knet.lemmas: correctLemmaExpr;
+    return graph.store(expr.correctLemmaExpr,
+                       lang, sense, Origin.cn5, anyContext,
+                       Manner.formal, false, 0, false);
 }
 
 /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
