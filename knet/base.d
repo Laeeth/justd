@@ -112,6 +112,7 @@ import knet.roles;
 import knet.decodings;
 import knet.lemmas;
 
+import knet.cn5;
 import knet.wordnet;
 import knet.moby;
 import knet.synlex;
@@ -776,7 +777,7 @@ class Graph
         // Learn Less Absolute Things
         learnAssociativeThings();
 
-        learnCN5(`~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
+        this.learnCN5(`~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
 
         // NELL
         if (false)
@@ -789,18 +790,6 @@ class Graph
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
         /* writefln(`Packed size: %.2f`, bytes.length/1.0e6); */
-    }
-
-    /// Learn ConceptNet.
-    void learnCN5(string path, size_t maxCount)
-    {
-        foreach (file; path.expandTilde
-                           .buildNormalizedPath
-                           .dirEntries(SpanMode.shallow)
-                           .filter!(name => name.extension == `.csv`))
-        {
-            readCN5File(file, maxCount, false);
-        }
     }
 
     /// Learn Externally (Trained) Supervised Things.
@@ -4449,221 +4438,6 @@ class Graph
             done = true;
         }
         return done;
-    }
-
-    Origin decodeCN5OriginDirect(S)(S path, out Lang lang,
-                                    Origin currentOrigin) if (isSomeString!S)
-    {
-        switch (path) with (Origin)
-        {
-            case `/s/dbpedia/3.7`:
-            case `/s/dbpedia/3.9/umbel`:
-            case `/d/dbpedia/en`:
-                lang = Lang.en;
-                return dbpedia;
-
-            case `/d/wordnet/3.0`:
-            case `/s/wordnet/3.0`:
-                return wordnet;
-
-            case `/d/umbel`:
-                return umbel;
-
-            case `/d/jmdict`:
-                return jmdict;
-
-            case `/s/site/verbosity`:
-                return verbosity;
-
-            default:
-                // dln(`Handle `, path);
-                return unknown;
-        }
-    }
-
-    /** Decode ConceptNet5 Origin $(D path). */
-    Origin decodeCN5OriginPath(S)(S path, out Lang lang,
-                                  Origin currentOrigin) if (isSomeString!S)
-    {
-        auto origin = decodeCN5OriginDirect(path, lang, currentOrigin);
-        if (origin != Origin.unknown)
-        {
-            return origin;
-        }
-
-        bool fromSource = false;
-        bool fromDictionary = false;
-        bool fromSite = false;
-
-        size_t ix = 0;
-        foreach (part; path.splitter('/'))
-        {
-            switch (ix)
-            {
-                case 0:
-                    break;
-                case 1:
-                    switch (part)
-                    {
-                        case `s`: fromSource = true; break;
-                        case `d`: fromDictionary = true; break;
-                        default: break;
-                    }
-                    break;
-                case 2:
-                    switch (part) with (Origin)
-                    {
-                        case `dbpedia`: origin = dbpedia; break;
-                        case `wordnet`: origin = wordnet; break;
-                        case `wiktionary`: origin = wiktionary; break;
-                        case `globalmind`: origin = globalmind; break;
-                        case `conceptnet`: origin = cn5; break;
-                        case `verbosity`: origin = verbosity; break;
-                        case `site`: fromSite = true; break;
-                        default: break;
-                    }
-                    break;
-                case 3: // TODO what is this?
-                    break;
-                default:
-                    break;
-            }
-            ++ix;
-        }
-
-        if (origin == Origin.unknown)
-        {
-            if (path.canFind(`wiktionary.org`))
-            {
-                origin = Origin.wiktionary;
-            }
-            else
-            {
-                origin = Origin.cn5;
-            }
-        }
-
-        return origin;
-    }
-
-    /** Decode ConceptNet5 Relation $(D path). */
-    Rel decodeCN5RelationPath(S)(S path,
-                                 out bool negation,
-                                 out bool reversion,
-                                 out Tense tense) if (isSomeString!S)
-    {
-        return path[3..$].decodeRelationPredicate(null, null, Origin.cn5,
-                                                  negation, reversion, tense);
-    }
-
-    /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
-    Ln readCN5Line(R, N)(R line, N lnr)
-    {
-        auto rel = Rel.any;
-        auto negation = false;
-        auto reversion = false;
-        auto tense = Tense.unknown;
-
-        Nd src, dst;
-        NWeight weight;
-        auto lang = Lang.unknown;
-        auto origin = Origin.unknown;
-
-        size_t ix;
-        foreach (part; line.splitter('\t'))
-        {
-            switch (ix)
-            {
-                case 1:
-                    rel = decodeCN5RelationPath(part, negation, reversion, tense);
-                    break;
-                case 2:         // source concept
-                    try
-                    {
-                        if (part.skipOver(`/c/`)) { src = readCN5ConceptURI(part); }
-                        else { /* dln(`TODO `, part); */ }
-                        /* dln(part); */
-                    }
-                    catch (std.utf.UTFException e)
-                    {
-                        /* dln(`UTFException when reading line:`, line, */
-                        /*     ` part:`, part, */
-                        /*     ` lnr:`, lnr); */
-                    }
-                    break;
-                case 3:         // destination concept
-                    if (part.skipOver(`/c/`)) { dst = readCN5ConceptURI(part); }
-                    else { /* dln(`TODO `, part); */ }
-                    break;
-                case 4:
-                    if (part != `/ctx/all`) { /* dln(`TODO `, part); */ }
-                    break;
-                case 5:
-                    weight = part.to!NWeight;
-                    break;
-                case 6:
-                    origin = decodeCN5OriginPath(part, lang, origin);
-                    break;
-                case 7:
-                    break;
-                case 8:
-                    if (origin.of(Origin.any)) // if still nothing special
-                    {
-                        origin = decodeCN5OriginPath(part, lang, origin);
-                    }
-                    if (origin.of(Origin.any)) // if still nothing special
-                    {
-                        dln(`Couldn't decode origin `, part);
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            ix++;
-        }
-
-        if (origin.of(Origin.any)) // if still nothing special
-        {
-            origin = Origin.cn5;
-        }
-
-        if (src.defined &&
-            dst.defined &&
-            src != dst)
-        {
-            return connect(src, Role(rel, reversion, negation), dst, origin, weight);
-        }
-        else
-        {
-            return Ln.asUndefined;
-        }
-    }
-
-    /** Read ConceptNet5 Assertions File $(D path) in CSV format.
-        Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
-     */
-    void readCN5File(string path, size_t maxCount = size_t.max, bool useMmFile = true)
-    {
-        writeln(`Reading ConceptNet from `, path, ` ...`);
-        size_t lnr = 0;
-        if (useMmFile)
-        {
-            foreach (line; mmFileLinesRO(path))
-            {
-                readCN5Line(line, lnr);
-                if (++lnr >= maxCount) break;
-            }
-        }
-        else
-        {
-            foreach (line; File(path).byLine)
-            {
-                readCN5Line(line, lnr);
-                if (++lnr >= maxCount) break;
-            }
-        }
-        writeln(`Reading ConceptNet from `, path, ` having `, lnr, ` lines`);
     }
 
     void readSwesaurus()

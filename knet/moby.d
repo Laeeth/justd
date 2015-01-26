@@ -6,6 +6,8 @@ import std.array: array, replace;
 import std.algorithm: splitter, map, joiner;
 import std.conv: to;
 import std.stdio: File;
+import core.exception: UnicodeException;
+import std.utf: UTFException;
 
 import mmfile_ex;
 
@@ -85,7 +87,6 @@ void learnMobyEnglishPronounciations(Graph gr)
     {
         auto split = line.splitter(' ');
         string expr;
-        import core.exception: UnicodeException;
 
         try
         {
@@ -99,7 +100,6 @@ void learnMobyEnglishPronounciations(Graph gr)
         split.popFront;
         string ipas;
 
-        import std.utf: UTFException;
         try
         {
             ipas = split.front

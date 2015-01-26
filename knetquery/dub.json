@@ -10,7 +10,7 @@
                      "../knet/languages.d", "../knet/roles.d", "../knet/origins.d", "../knet/thematics.d",
                      "../knet/decodings.d", "../knet/relations.d", "../knet/senses.d", "../knet/lemmas.d",
                      "../knet/base.d",
-                     "../knet/wordnet.d", "../knet/moby.d", "../knet/synlex.d", "../knet/folklex.d",
+                     "../knet/cn5.d", "../knet/wordnet.d", "../knet/moby.d", "../knet/synlex.d", "../knet/folklex.d",
                      "../knet/lectures/all.d",
 
                      "../rcstring.d", "../predicates.d",
