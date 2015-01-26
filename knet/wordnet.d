@@ -1,6 +1,6 @@
 module knet.wordnet;
 
-import knet.base: StandardGraph;
+import knet.base: Graph;
 import knet.relations: Rel;
 import knet.roles: Role;
 import knet.senses: Sense;
@@ -53,7 +53,7 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense) pure
     return role;
 }
 
-void readWordNetIndexLine(R, N)(StandardGraph gr,
+void readWordNetIndexLine(R, N)(Graph gr,
                                 const R line,
                                 const N lnr,
                                 const Lang lang = Lang.unknown,
@@ -121,7 +121,7 @@ void readWordNetIndexLine(R, N)(StandardGraph gr,
 /** Read WordNet Index File $(D fileName).
     Manual page: wndb
 */
-void readWordNetIndex(StandardGraph gr,
+void readWordNetIndex(Graph gr,
                       string fileName,
                       bool useMmFile = false,
                       Lang lang = Lang.unknown,
@@ -153,7 +153,7 @@ void readWordNetIndex(StandardGraph gr,
 }
 
 /// Read WordNet Database (dict) in directory $(D dirPath).
-void readWordNet(StandardGraph gr,
+void readWordNet(Graph gr,
                  const string dirPath)
 {
     // NOTE: Test both read variants through alternating uses of Mmfile or not

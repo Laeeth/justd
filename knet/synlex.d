@@ -1,10 +1,10 @@
 module knet.synlex;
 
-import knet.base: StandardGraph;
+import knet.base: Graph;
 
 /** Read SynLex Synonyms File $(D path) in XML format.
  */
-void readSynlexFile(StandardGraph gr,
+void readSynlexFile(Graph gr,
                     string path, size_t maxCount = size_t.max)
 {
     import std.stdio: writeln;

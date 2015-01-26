@@ -534,14 +534,14 @@ unittest
     enum useArray = true;
     enum useRCString = false;
 
-    const netLangs = [Lang.en,
-                      Lang.de,
-                      Lang.sv,
-                      Lang.br];
+    enum netLangs = [Lang.en,
+                     Lang.de,
+                     Lang.sv,
+                     Lang.br];
 
     auto wn = new WordNet!(useArray, useRCString)(netLangs);
 
-    /* const words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`]; */
+    /* enum words = [`car`, `trout`, `seal`, `and`, `or`, `script`, `shell`, `soon`, `long`, `longing`, `at`, `a`]; */
     /* foreach (word; words) */
     /* { */
     /*     writeln(word, ` has meanings `, */
@@ -592,7 +592,7 @@ unittest
 
     if (netLangs.canFind(Lang.en))
     {
-        const langs = [Lang.en];
+        enum langs = [Lang.en];
         assert(wn.findWordsSplit(`hashusband`, langs, false, 2, false) == [`has`, `husband`]);
         assert(wn.findWordsSplit(`physicalaction`, langs) == [`physical`, `action`]);
         assert(wn.findWordsSplit(`physicsexam`, langs) == [`physics`, `exam`]);
@@ -602,7 +602,7 @@ unittest
 
     if (netLangs.canFind(Lang.en))
     {
-        const langs = [Lang.en];
+        enum langs = [Lang.en];
         assert(wn.formalize(`Jack run`, langs) == [SentencePart.subject,
                                                    SentencePart.predicate]);
         assert(wn.formalize(`Men swim`, langs) == [SentencePart.subject,

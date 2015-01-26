@@ -244,10 +244,12 @@ private:
 // TODO Use in Lemma.
 enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
 
+enum useArray = true;
+enum useRCString = false;
+
 /** Main Knowledge Network Graph.
 */
-class Graph(bool useArray = true,
-            bool useRCString = true)
+class Graph
 {
     import std.range: front, split, isInputRange, back;
     import std.algorithm: joiner;
@@ -692,7 +694,7 @@ class Graph(bool useArray = true,
     /** Learn $(D Lemma) of $(D expr).
         Returns: either existing specialized lemma or a reference to the newly stored one.
      */
-    ref Lemma learnLemma(ref Lemma lemma) @safe
+    ref Lemma learnLemma(return ref Lemma lemma) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
     {
         if (auto lemmas = lemma.expr in lemmasByExpr)
         {
@@ -735,9 +737,9 @@ class Graph(bool useArray = true,
      */
     this()
     {
-        unittestMe();
+        // unittestMe();
         learnVerbs();
-        // learnDefault();
+        learnDefault();
         // inferSpecializedSenses();
         showRelations;
     }
@@ -1800,7 +1802,7 @@ class Graph(bool useArray = true,
     /// Learn Emotions.
     void learnEmotions()
     {
-        const groups = [`basic`, `positive`, `negative`, `strong`, `medium`, `light`];
+        enum groups = [`basic`, `positive`, `negative`, `strong`, `medium`, `light`];
         foreach (group; groups)
         {
             learnMto1(Lang.en,
@@ -1813,11 +1815,11 @@ class Graph(bool useArray = true,
     void learnEnglishFeelings()
     {
         learnMto1(Lang.en, rdT(`../knowledge/en/feeling.txt`).splitter('\n').filter!(word => !word.empty), Role(Rel.instanceOf), `feeling`, Sense.adjective, Sense.nounSingular);
-        const feelings = [`afraid`, `alive`, `angry`, `confused`, `depressed`, `good`, `happy`,
-                          `helpless`, `hurt`, `indifferent`, `interested`, `love`,
-                          `negative`, `unpleasant`,
-                          `positive`, `pleasant`,
-                          `open`, `sad`, `strong`];
+        enum feelings = [`afraid`, `alive`, `angry`, `confused`, `depressed`, `good`, `happy`,
+                         `helpless`, `hurt`, `indifferent`, `interested`, `love`,
+                         `negative`, `unpleasant`,
+                         `positive`, `pleasant`,
+                         `open`, `sad`, `strong`];
         foreach (feeling; feelings)
         {
             const path = `../knowledge/en/` ~ feeling ~ `_feeling.txt`;
@@ -3575,38 +3577,38 @@ class Graph(bool useArray = true,
      */
     void learnEnglishOrdinalShorthands()
     {
-        const pairs = [tuple(`1st`, `first`),
-                       tuple(`2nd`, `second`),
-                       tuple(`3rd`, `third`),
-                       tuple(`4th`, `fourth`),
-                       tuple(`5th`, `fifth`),
-                       tuple(`6th`, `sixth`),
-                       tuple(`7th`, `seventh`),
-                       tuple(`8th`, `eighth`),
-                       tuple(`9th`, `ninth`),
-                       tuple(`10th`, `tenth`),
-                       tuple(`11th`, `eleventh`),
-                       tuple(`12th`, `twelfth`),
-                       tuple(`13th`, `thirteenth`),
-                       tuple(`14th`, `fourteenth`),
-                       tuple(`15th`, `fifteenth`),
-                       tuple(`16th`, `sixteenth`),
-                       tuple(`17th`, `seventeenth`),
-                       tuple(`18th`, `eighteenth`),
-                       tuple(`19th`, `nineteenth`),
-                       tuple(`20th`, `twentieth`),
-                       tuple(`21th`, `twenty-first`),
-                       tuple(`30th`, `thirtieth`),
-                       tuple(`40th`, `fourtieth`),
-                       tuple(`50th`, `fiftieth`),
-                       tuple(`60th`, `sixtieth`),
-                       tuple(`70th`, `seventieth`),
-                       tuple(`80th`, `eightieth`),
-                       tuple(`90th`, `ninetieth`),
-                       tuple(`100th`, `one hundredth`),
-                       tuple(`1000th`, `one thousandth`),
-                       tuple(`1000000th`, `one millionth`),
-                       tuple(`1000000000th`, `one billionth`)];
+        enum pairs = [tuple(`1st`, `first`),
+                      tuple(`2nd`, `second`),
+                      tuple(`3rd`, `third`),
+                      tuple(`4th`, `fourth`),
+                      tuple(`5th`, `fifth`),
+                      tuple(`6th`, `sixth`),
+                      tuple(`7th`, `seventh`),
+                      tuple(`8th`, `eighth`),
+                      tuple(`9th`, `ninth`),
+                      tuple(`10th`, `tenth`),
+                      tuple(`11th`, `eleventh`),
+                      tuple(`12th`, `twelfth`),
+                      tuple(`13th`, `thirteenth`),
+                      tuple(`14th`, `fourteenth`),
+                      tuple(`15th`, `fifteenth`),
+                      tuple(`16th`, `sixteenth`),
+                      tuple(`17th`, `seventeenth`),
+                      tuple(`18th`, `eighteenth`),
+                      tuple(`19th`, `nineteenth`),
+                      tuple(`20th`, `twentieth`),
+                      tuple(`21th`, `twenty-first`),
+                      tuple(`30th`, `thirtieth`),
+                      tuple(`40th`, `fourtieth`),
+                      tuple(`50th`, `fiftieth`),
+                      tuple(`60th`, `sixtieth`),
+                      tuple(`70th`, `seventieth`),
+                      tuple(`80th`, `eightieth`),
+                      tuple(`90th`, `ninetieth`),
+                      tuple(`100th`, `one hundredth`),
+                      tuple(`1000th`, `one thousandth`),
+                      tuple(`1000000th`, `one millionth`),
+                      tuple(`1000000000th`, `one billionth`)];
         foreach (pair; pairs)
         {
             const abbr = pair[0];
@@ -3624,40 +3626,40 @@ class Graph(bool useArray = true,
      */
     void learnSwedishOrdinalShorthands()
     {
-        const pairs = [tuple(`1:a`, `första`),
-                       tuple(`2:a`, `andra`),
-                       tuple(`3:a`, `tredje`),
-                       tuple(`4:e`, `fjärde`),
-                       tuple(`5:e`, `femte`),
-                       tuple(`6:e`, `sjätte`),
-                       tuple(`7:e`, `sjunde`),
-                       tuple(`8:e`, `åttonde`),
-                       tuple(`9:e`, `nionde`),
-                       tuple(`10:e`, `tionde`),
-                       tuple(`11:e`, `elfte`),
-                       tuple(`12:e`, `tolfte`),
-                       tuple(`13:e`, `trettonde`),
-                       tuple(`14:e`, `fjortonde`),
-                       tuple(`15:e`, `femtonde`),
-                       tuple(`16:e`, `sextonde`),
-                       tuple(`17:e`, `sjuttonde`),
-                       tuple(`18:e`, `artonde`),
-                       tuple(`19:e`, `nittonde`),
-                       tuple(`20:e`, `tjugonde`),
-                       tuple(`21:a`, `tjugoförsta`),
-                       tuple(`22:a`, `tjugoandra`),
-                       tuple(`23:e`, `tjugotredje`),
-                       // ..
-                       tuple(`30:e`, `trettionde`),
-                       tuple(`40:e`, `fyrtionde`),
-                       tuple(`50:e`, `femtionde`),
-                       tuple(`60:e`, `sextionde`),
-                       tuple(`70:e`, `sjuttionde`),
-                       tuple(`80:e`, `åttionde`),
-                       tuple(`90:e`, `nittionde`),
-                       tuple(`100:e`, `hundrade`),
-                       tuple(`1000:e`, `tusende`),
-                       tuple(`1000000:e`, `miljonte`)];
+        enum pairs = [tuple(`1:a`, `första`),
+                      tuple(`2:a`, `andra`),
+                      tuple(`3:a`, `tredje`),
+                      tuple(`4:e`, `fjärde`),
+                      tuple(`5:e`, `femte`),
+                      tuple(`6:e`, `sjätte`),
+                      tuple(`7:e`, `sjunde`),
+                      tuple(`8:e`, `åttonde`),
+                      tuple(`9:e`, `nionde`),
+                      tuple(`10:e`, `tionde`),
+                      tuple(`11:e`, `elfte`),
+                      tuple(`12:e`, `tolfte`),
+                      tuple(`13:e`, `trettonde`),
+                      tuple(`14:e`, `fjortonde`),
+                      tuple(`15:e`, `femtonde`),
+                      tuple(`16:e`, `sextonde`),
+                      tuple(`17:e`, `sjuttonde`),
+                      tuple(`18:e`, `artonde`),
+                      tuple(`19:e`, `nittonde`),
+                      tuple(`20:e`, `tjugonde`),
+                      tuple(`21:a`, `tjugoförsta`),
+                      tuple(`22:a`, `tjugoandra`),
+                      tuple(`23:e`, `tjugotredje`),
+                      // ..
+                      tuple(`30:e`, `trettionde`),
+                      tuple(`40:e`, `fyrtionde`),
+                      tuple(`50:e`, `femtionde`),
+                      tuple(`60:e`, `sextionde`),
+                      tuple(`70:e`, `sjuttionde`),
+                      tuple(`80:e`, `åttionde`),
+                      tuple(`90:e`, `nittionde`),
+                      tuple(`100:e`, `hundrade`),
+                      tuple(`1000:e`, `tusende`),
+                      tuple(`1000000:e`, `miljonte`)];
         foreach (pair; pairs)
         {
             connect(store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
@@ -5342,14 +5344,14 @@ class Graph(bool useArray = true,
             showNds(lineNds);
         }
 
-        const commonSplitters = [` `, // prefer space
+        enum commonSplitters = [` `, // prefer space
                                 `-`,
                                 `'`];
 
-        const commonJoiners = [` `, // prefer space
-                               `-`,
-                               ``,
-                               `'`];
+        enum commonJoiners = [` `, // prefer space
+                              `-`,
+                              ``,
+                              `'`];
 
         // try joined
         if (lineNds.empty)
@@ -5710,5 +5712,3 @@ class Graph(bool useArray = true,
         }
     }
 }
-
-alias StandardGraph = Graph!(true, false);

@@ -11,7 +11,7 @@ int main(string[] args)
     debug backtrace.backtrace.install(stderr);
     registerMemoryErrorHandler();
 
-    auto gr = new Graph!(true, false)();
+    auto gr = new Graph();
     gr.showNodes(`car_wash`);
 
     while (true)
@@ -28,16 +28,6 @@ int main(string[] args)
             writeln();
             break;
         }
-    }
-    /* if (true) */
-    /* { */
-    /*     auto netPack = gr.pack; */
-    /*     writeln(`Packed to `, netPack.length, ` bytes`); */
-    /* } */
-
-    if (false) // just to make all variants of compile
-    {
-        /* auto netH = new Graph!(!useHashedStorage)(`~/Knowledge/conceptnet5-5.3/data/assertions/`); */
     }
 
     return 0;
