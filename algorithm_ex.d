@@ -426,7 +426,7 @@ unittest
     assert([1, 2, 2, 1].isPalindrome);
     assert(![1, 2, 2, 1].isPalindrome(5));
 }
-alias isSymmetrical = isPalindrome;
+alias isSymmetric = isPalindrome;
 
 /* ref Unqual!T unqual(T)(in T x) pure nothrow if isStuct!T { return cast(Unqual!T)x; } */
 /* unittest { */
