@@ -1354,6 +1354,7 @@ class Graph
     void learnVerbs()
     {
         writeln(`Reading Verbs ...`);
+        learnSwedishRegularVerbs();
         learnSwedishIrregularVerbs();
         learnEnglishVerbs();
     }
@@ -3732,6 +3733,14 @@ class Graph
                     tryStore(past, lang, Sense.verbPast, origin),
                     tryStore(pastParticiple, lang, Sense.verbPastParticiple, origin)];
         connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), lang, origin);
+    }
+
+    /** Learn Swedish (Regular) Verbs.
+     */
+    void learnSwedishRegularVerbs()
+    {
+        learnSwedishIrregularVerb(`kläd`, `kläda`, `kläder`, `klädde`, `klätt`);
+        learnSwedishIrregularVerb(`pryd`, `pryda`, `pryder`, `prydde`, `prytt`);
     }
 
     /** Learn Swedish (Irregular) Verbs.
