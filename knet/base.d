@@ -3187,32 +3187,19 @@ class Graph
         learnEnglishIrregularVerb(`lay`, `laid`, `laid`); // lays	laying
         learnEnglishIrregularVerb(`lead`, `led`, `led`); // leads	leading
         learnEnglishIrregularVerb(`lean`, [`leant`, `leaned`], [`leant`, `leaned`]); // leans	leaning
-
-        learnEnglishIrregularVerb(`leap`, [`leaped`, `leapt`], [`leaped`, `leapt`]);
         learnEnglishIrregularVerb(`leap`, [`leapt`, `leaped`], [`leapt`, `leaped`]); // leaps	leaping
-        learnEnglishIrregularVerb(`learn`, [`learned`, `learnt`], [`learned`, `learnt`]);
         learnEnglishIrregularVerb(`learn`, [`learnt`, `learned`], [`learnt`, `learned`]); // learns	learning
-        learnEnglishIrregularVerb(`leave`, `left`, `left`);
         learnEnglishIrregularVerb(`leave`, `left`, `left`); // leaves	leaving
-        learnEnglishIrregularVerb(`lend`, `lent`, `lent`);
         learnEnglishIrregularVerb(`lend`, `lent`, `lent`); // lends	lending
-        learnEnglishIrregularVerb(`let`, `let`, `let`);
         learnEnglishIrregularVerb(`let`, `let`, `let`); // lets	letting
-        learnEnglishIrregularVerb(`lie`, `lay`, `lain`);
         learnEnglishIrregularVerb(`lie`, `lay`, `lain`); // lies	lying
-        learnEnglishIrregularVerb(`light`, [`lighted`, `lit`], [`lighted`, `lit`]);
         learnEnglishIrregularVerb(`light`, `lit`, `lit`); // lights	lighting
-        learnEnglishIrregularVerb(`lose`, `lost`, `lost`);
         learnEnglishIrregularVerb(`lose`, `lost`, `lost`); // loses	losing
-        learnEnglishIrregularVerb(`make`, `made`, `made`);
         learnEnglishIrregularVerb(`make`, `made`, `made`); // makes	making
-        learnEnglishIrregularVerb(`mean`, `meant`, `meant`);
         learnEnglishIrregularVerb(`mean`, `meant`, `meant`); // means	meaning
-        learnEnglishIrregularVerb(`meet`, `met`, `met`);
         learnEnglishIrregularVerb(`meet`, `met`, `met`); // meets	meeting
         learnEnglishIrregularVerb(`melt`, `melted`, [`molten`, `melted`]); // melts	melting
         learnEnglishIrregularVerb(`mislead`, `misled`, `misled`); // misleads	misleading
-        learnEnglishIrregularVerb(`mistake`, `mistook`, `mistaken`);
         learnEnglishIrregularVerb(`mistake`, `mistook`, `mistaken`); // mistakes	mistaking
         learnEnglishIrregularVerb(`misunderstand`, `misunderstood`, `misunderstood`); // misunderstands	misunderstanding
         learnEnglishIrregularVerb(`miswed`, [`miswed`, `miswedded`], [`miswed`, `miswedded`]); // misweds	miswedding
@@ -3221,172 +3208,111 @@ class Graph
         learnEnglishIrregularVerb(`overhear`, `overheard`, `overheard`); // overhears	overhearing
         learnEnglishIrregularVerb(`overtake`, `overtook`, `overtaken`); // overtakes	overtaking
         learnEnglishIrregularVerb(`partake`, `partook`, `partaken`);
-        learnEnglishIrregularVerb(`pay`, `paid`, `paid`);
         learnEnglishIrregularVerb(`pay`, `paid`, `paid`); // pays	paying
         learnEnglishIrregularVerb(`preset`, `preset`, `preset`); // presets	presetting
         learnEnglishIrregularVerb(`prove`, `proved`, [`proven`, `proved`]); // proves	proving
-        learnEnglishIrregularVerb(`put`, `put`, `put`);
         learnEnglishIrregularVerb(`put`, `put`, `put`); // puts	putting
         learnEnglishIrregularVerb(`quit`, `quit`, `quit`); // quits	quitting
         learnEnglishIrregularVerb(`re-prove`, `re-proved`, `re-proven/re-proved`); // re-proves	re-proving
-        learnEnglishIrregularVerb(`read`, `read`, `read`);
         learnEnglishIrregularVerb(`read`, `read`, `read`); // reads	reading
         learnEnglishIrregularVerb(`rend`, `rent`, `rent`);
         learnEnglishIrregularVerb(`rid`, [`rid`, `ridded`], [`rid`, `ridded`]); // rids	ridding
-        learnEnglishIrregularVerb(`rid`, `rid`, `rid`);
-        learnEnglishIrregularVerb(`ride`, `rode`, `ridden`);
         learnEnglishIrregularVerb(`ride`, `rode`, `ridden`); // rides	riding
         learnEnglishIrregularVerb(`ring`, `rang`, `rung`); // rings	ringing
-        learnEnglishIrregularVerb(`rise`, `rose`, `risen`);
         learnEnglishIrregularVerb(`rise`, `rose`, `risen`); // rises	rising
         learnEnglishIrregularVerb(`rive`, `rived`, [`riven`, `rived`]); // rives	riving
-        learnEnglishIrregularVerb(`run`, `ran`, `run`);
         learnEnglishIrregularVerb(`run`, `ran`, `run`); // runs	running
         learnEnglishIrregularVerb(`saw`, `sawed`, [`sawn`, `sawed`]); // saws	sawing
-        learnEnglishIrregularVerb(`say`, `said`, `said`);
         learnEnglishIrregularVerb(`say`, `said`, `said`); // says	saying
-        learnEnglishIrregularVerb(`see`, `saw`, `seen`);
         learnEnglishIrregularVerb(`see`, `saw`, `seen`); // sees	seeing
-        learnEnglishIrregularVerb(`seek`, `sought`, `sought`);
         learnEnglishIrregularVerb(`seek`, `sought`, `sought`); // seeks	seeking
-        learnEnglishIrregularVerb(`sell`, `sold`, `sold`);
         learnEnglishIrregularVerb(`sell`, `sold`, `sold`); // sells	selling
-        learnEnglishIrregularVerb(`send`, `sent`, `sent`);
         learnEnglishIrregularVerb(`send`, `sent`, `sent`); // sends	sending
-        learnEnglishIrregularVerb(`set`, `set`, `set`);
         learnEnglishIrregularVerb(`set`, `set`, `set`); // sets	setting
         learnEnglishIrregularVerb(`sew`, `sewed`, [`sewn`, `sewed`]); // sews	sewing
-        learnEnglishIrregularVerb(`shake`, `shook`, `shaken`);
         learnEnglishIrregularVerb(`shake`, `shook`, `shaken`); // shakes	shaking
         learnEnglishIrregularVerb(`shave`, `shaved`, [`shaven`, `shaved`]); // shaves	shaving
         learnEnglishIrregularVerb(`shear`, [`shore`, `sheared`], [`shorn`, `sheared`]); // shears	shearing
-        learnEnglishIrregularVerb(`shed`, `shed`, `shed`);
         learnEnglishIrregularVerb(`shed`, `shed`, `shed`); // sheds	shedding
-        learnEnglishIrregularVerb(`shine`, `shone`, `shone`);
         learnEnglishIrregularVerb(`shine`, `shone`, `shone`); // shines	shining
         learnEnglishIrregularVerb(`shoe`, `shod`, `shod`); // shoes	shoeing
-        learnEnglishIrregularVerb(`shoot`, `shot`, `shot`);
         learnEnglishIrregularVerb(`shoot`, `shot`, `shot`); // shoots	shooting
         learnEnglishIrregularVerb(`show`, `showed`, `shown`); // shows	showing
-        learnEnglishIrregularVerb(`shrink`, `shrank`, `shrunk`);
         learnEnglishIrregularVerb(`shrink`, `shrank`, `shrunk`); // shrinks	shrinking
-        learnEnglishIrregularVerb(`shut`, `shut`, `shut`);
         learnEnglishIrregularVerb(`shut`, `shut`, `shut`); // shuts	shutting
-        learnEnglishIrregularVerb(`sing`, `sang`, `sung`);
         learnEnglishIrregularVerb(`sing`, `sang`, `sung`); // sings	singing
-        learnEnglishIrregularVerb(`sink`, `sank`, `sank`);
         learnEnglishIrregularVerb(`sink`, `sank`, `sunk`); // sinks	sinking
-        learnEnglishIrregularVerb(`sit`, `sat`, `sat`);
         learnEnglishIrregularVerb(`sit`, `sat`, `sat`); // sits	sitting
-        learnEnglishIrregularVerb(`slay`, `slew`, `slain`);
         learnEnglishIrregularVerb(`slay`, `slew`, `slain`); // slays	slaying
-        learnEnglishIrregularVerb(`sleep`, `slept`, `slept`);
         learnEnglishIrregularVerb(`sleep`, `slept`, `slept`); // sleeps	sleeping
-        learnEnglishIrregularVerb(`slide`, `slid`, [`slid`, `slidden`]);
         learnEnglishIrregularVerb(`slide`, `slid`, [`slid`, `slidden`]); // slides	sliding
-        learnEnglishIrregularVerb(`sling`, `slung`, `slung`);
         learnEnglishIrregularVerb(`sling`, `slung`, `slung`); // slings	slinging
         learnEnglishIrregularVerb(`slink`, `slunk`, `slunk`); // slinks	slinking
-        learnEnglishIrregularVerb(`slit`, `slit`, `slit`);
         learnEnglishIrregularVerb(`slit`, `slit`, `slit`); // slits	slitting
         learnEnglishIrregularVerb(`smell`, [`smelt`, `smelled`], [`smelt`, `smelled`]); // smells	smelling
         learnEnglishIrregularVerb(`sneak`, [`sneaked`, `snuck`], [`sneaked`, `snuck`]); // sneaks	sneaking
         learnEnglishIrregularVerb(`soothsay`, `soothsaid`, `soothsaid`); // soothsays	soothsaying
         learnEnglishIrregularVerb(`sow`, `sowed`, `sown`); // sows	sowing
-        learnEnglishIrregularVerb(`speak`, `spoke`, `spoken`);
         learnEnglishIrregularVerb(`speak`, `spoke`, `spoken`); // speaks	speaking
-        learnEnglishIrregularVerb(`speed`, [`sped`, `speeded`], [`sped`, `speeded`]);
         learnEnglishIrregularVerb(`speed`, [`sped`, `speeded`], [`sped`, `speeded`]); // speeds	speeding
         learnEnglishIrregularVerb(`spell`, [`spelt`, `spelled`], [`spelt`, `spelled`]); // spells	spelling
         learnEnglishIrregularVerb(`spend`, `spent`, `spent`); // spends	spending
         learnEnglishIrregularVerb(`spill`, [`spilt`, `spilled`], [`spilt`, `spilled`]); // spills	spilling
         learnEnglishIrregularVerb(`spin`, [`span`, `spun`], `spun`); // spins	spinning
-        learnEnglishIrregularVerb(`spin`, `spun`, `spun`);
         learnEnglishIrregularVerb(`spit`, [`spat`, `spit`], [`spat`, `spit`]); // spits	spitting
-        learnEnglishIrregularVerb(`spit`, `spat`, `spat`);
-        learnEnglishIrregularVerb(`split`, `split`, `split`);
         learnEnglishIrregularVerb(`split`, `split`, `split`); // splits	splitting
         learnEnglishIrregularVerb(`spoil`, [`spoilt`, `spoiled`], [`spoilt`, `spoiled`]); // spoils	spoiling
         learnEnglishIrregularVerb(`spread`, `spread`, `spread`); // spreads	spreading
-        learnEnglishIrregularVerb(`spring`, `sprang`, `sprung`);
         learnEnglishIrregularVerb(`spring`, `sprang`, `sprung`); // springs	springing
-        learnEnglishIrregularVerb(`stand`, `stood`, `stood`);
         learnEnglishIrregularVerb(`stand`, `stood`, `stood`); // stands	standing
-        learnEnglishIrregularVerb(`steal`, `stole`, `stolen`);
         learnEnglishIrregularVerb(`steal`, `stole`, `stolen`); // steals	stealing
-        learnEnglishIrregularVerb(`stick`, `stuck`, `stuck`);
         learnEnglishIrregularVerb(`stick`, `stuck`, `stuck`); // sticks	sticking
-        learnEnglishIrregularVerb(`sting`, `stung`, `stung`);
         learnEnglishIrregularVerb(`sting`, `stung`, `stung`); // stings	stinging
-        learnEnglishIrregularVerb(`stink`, `stank`, `stunk`);
         learnEnglishIrregularVerb(`stink`, `stank`, `stunk`); // stinks	stinking
         learnEnglishIrregularVerb(`stride`, [`strode`, `strided`], `stridden`); // strides	striding
-        learnEnglishIrregularVerb(`stride`, `strode`, `stridden`);
         learnEnglishIrregularVerb(`strike`, `struck`, [`struck`, `stricken`]); // strikes	striking
         learnEnglishIrregularVerb(`string`, `strung`, `strung`); // strings	stringing
         learnEnglishIrregularVerb(`strip`, [`stript`, `stripped`], [`stript`, `stripped`]); // strips	stripping
-        learnEnglishIrregularVerb(`strive`, `strove`, `striven`);
         learnEnglishIrregularVerb(`strive`, `strove`, `striven`); // strives	striving
         learnEnglishIrregularVerb(`sublet`, `sublet`, `sublet`); // sublets	subletting
         learnEnglishIrregularVerb(`sunburn`, [`sunburned`, `sunburnt`], [`sunburned`, `sunburnt`]); // sunburns	sunburning
-        learnEnglishIrregularVerb(`swear`, `swore`, `sworn`);
         learnEnglishIrregularVerb(`swear`, `swore`, `sworn`); // swears	swearing
         learnEnglishIrregularVerb(`sweat`, [`sweat`, `sweated`], [`sweat`, `sweated`]); // sweats	sweating
         learnEnglishIrregularVerb(`sweep`, [`swept`, `sweeped`], [`swept`, `sweeped`]); // sweeps	sweeping
-        learnEnglishIrregularVerb(`sweep`, `swept`, `swept`);
         learnEnglishIrregularVerb(`swell`, `swelled`, `swollen`); // swells	swelling
-        learnEnglishIrregularVerb(`swim`, `swam`, `swum`);
         learnEnglishIrregularVerb(`swim`, `swam`, `swum`); // swims	swimming
-        learnEnglishIrregularVerb(`swing`, `swung`, `swung`);
         learnEnglishIrregularVerb(`swing`, `swung`, `swung`); // swings	swinging
-        learnEnglishIrregularVerb(`take`, `took`, `taken`);
         learnEnglishIrregularVerb(`take`, `took`, `taken`); // takes	taking
-        learnEnglishIrregularVerb(`teach`, `taught`, `taught`);
         learnEnglishIrregularVerb(`teach`, `taught`, `taught`); // teaches	teaching
-        learnEnglishIrregularVerb(`tear`, `tore`, `torn`);
         learnEnglishIrregularVerb(`tear`, `tore`, `torn`); // tears	tearing
-        learnEnglishIrregularVerb(`tell`, `told`, `told`);
         learnEnglishIrregularVerb(`tell`, `told`, `told`); // tells	telling
-        learnEnglishIrregularVerb(`think`, `thought`, `thought`);
         learnEnglishIrregularVerb(`think`, `thought`, `thought`); // thinks	thinking
         learnEnglishIrregularVerb(`thrive`, [`throve`, `thrived`], [`thriven`, `thrived`]); // thrives	thriving
-        learnEnglishIrregularVerb(`throw`, `threw`, `thrown`);
         learnEnglishIrregularVerb(`throw`, `threw`, `thrown`); // throws	throwing
         learnEnglishIrregularVerb(`thrust`, `thrust`, `thrust`); // thrusts	thrusting
-        learnEnglishIrregularVerb(`tread`, `trod`, [`trodden`, `trod`]);
-        learnEnglishIrregularVerb(`tread`, `trod`, `trodden`); // treads	treading
+        learnEnglishIrregularVerb(`tread`, `trod`, [`trodden`, `trod`]); // treads	treading
         learnEnglishIrregularVerb(`undergo`, `underwent`, `undergone`); // undergoes	undergoing
-        learnEnglishIrregularVerb(`understand`, `understood`, `understood`);
         learnEnglishIrregularVerb(`understand`, `understood`, `understood`); // understands	understanding
         learnEnglishIrregularVerb(`undertake`, `undertook`, `undertaken`); // undertakes	undertaking
         learnEnglishIrregularVerb(`upsell`, `upsold`, `upsold`); // upsells	upselling
-        learnEnglishIrregularVerb(`upset`, `upset`, `upset`);
         learnEnglishIrregularVerb(`upset`, `upset`, `upset`); // upsets	upsetting
         learnEnglishIrregularVerb(`vex`, [`vext`, `vexed`], [`vext`, `vexed`]); // vexes	vexing
-        learnEnglishIrregularVerb(`wake`, [`woke`, `awaked`], `woken`);
         learnEnglishIrregularVerb(`wake`, `woke`, `woken`); // wakes	waking
-        learnEnglishIrregularVerb(`wear`, `wore`, `worn`);
         learnEnglishIrregularVerb(`wear`, `wore`, `worn`); // wears	wearing
-        learnEnglishIrregularVerb(`weave`, `wove`, `woven`);
         learnEnglishIrregularVerb(`weave`, `wove`, `woven`); // weaves	weaving
         learnEnglishIrregularVerb(`wed`, [`wed`, `wedded`], [`wed`, `wedded`]); // weds	wedding
-        learnEnglishIrregularVerb(`weep`, `wept`, `wept`);
         learnEnglishIrregularVerb(`weep`, `wept`, `wept`); // weeps	weeping
         learnEnglishIrregularVerb(`wend`, [`wended`, `went`], [`wended`, `went`]); // wends	wending
         learnEnglishIrregularVerb(`wet`, [`wet`, `wetted`], [`wet`, `wetted`]); // wets	wetting
-        learnEnglishIrregularVerb(`win`, `won`, `won`);
         learnEnglishIrregularVerb(`win`, `won`, `won`); // wins	winning
-        learnEnglishIrregularVerb(`wind`, `wound`, `wound`);
         learnEnglishIrregularVerb(`wind`, `wound`, `wound`); // winds	winding
         learnEnglishIrregularVerb(`withdraw`, `withdrew`, `withdrawn`); // withdraws	withdrawing
         learnEnglishIrregularVerb(`withhold`, `withheld`, `withheld`); // withholds	withholding
         learnEnglishIrregularVerb(`withstand`, `withstood`, `withstood`); // withstands	withstanding
-        learnEnglishIrregularVerb(`wring`, `wrung`, `wrung`);
         learnEnglishIrregularVerb(`wring`, `wrung`, `wrung`); // wrings	wringing
-        learnEnglishIrregularVerb(`write`, `wrote`, `written`);
         learnEnglishIrregularVerb(`write`, `wrote`, `written`); // writes	writing
         learnEnglishIrregularVerb(`zinc`, [`zinced`, `zincked`], [`zinced`, `zincked`]); // zincs/zincks	zincking
-    learnEnglishIrregularVerb(`abide`, [`abode`, `abided`], [`abode`, `abided`, `abidden`]); // abides	abiding
+        learnEnglishIrregularVerb(`abide`, [`abode`, `abided`], [`abode`, `abided`, `abidden`]); // abides	abiding
     }
 
     void learnMath()
