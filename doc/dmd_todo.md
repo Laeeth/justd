@@ -14,6 +14,12 @@ Note that `x[m .. n]` evaluates to null slice if `m > n`.
 
 ### DMD Source Symbols
 
-- `SliceExp`
+- (`SliceExp::lowerIsLessThanUpper` and `SliceExp::upperIsInBounds`) infers `SliceExp::lowerIsInBounds`
+- `SliceExp::upperIsInBounds`
+
 - `IndexExp::indexIsInBounds`
+
 - `IntRange`
+
+### Implement foreach restrictions
+- Scope::fes maybe of interest to checking foreach scope
