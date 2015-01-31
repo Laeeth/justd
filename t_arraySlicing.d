@@ -8,6 +8,8 @@ void main()
     const x1 = x[1 + $ .. $ + 1];
     const x3 = x[$ - 1 .. $];
 
+    static assert(!__traits(compiles, { const E = x[-1 .. 0]; }));
+    static assert(!__traits(compiles, { const E = x[-1 .. $]; }));
     static assert(!__traits(compiles, { const E = x[$     .. $*3]; }));
     static assert(!__traits(compiles, { const E = x[$     .. 1 + $]; }));
     static assert(!__traits(compiles, { const E = x[$     .. $ + 1]; }));
