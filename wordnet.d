@@ -4,13 +4,19 @@
     */
 module wordnet;
 
+enum useRCString = false;
+
 import grammars;
 import std.algorithm, std.stdio, std.string, std.range, std.ascii, std.utf, std.path, std.conv, std.typecons, std.array;
 import std.algorithm: canFind;
 import std.container: Array;
-import rcstring;
 import dbg;
 import assert_ex;
+
+static if (useRCString)
+{
+    import rcstring;
+}
 
 import knet.relations;
 import knet.senses;
@@ -32,8 +38,7 @@ struct Entry(Links = uint[])
     TODO aspell -d sv dump master > my.dict
     TODO https://superuser.com/questions/814761/dumping-all-words-with-properties-from-an-aspell-database
  */
-class WordNet(bool useArray = true,
-              bool useRCString = true)
+class WordNet(bool useArray = true)
 {
     /** WordNet Semantic Relation Type Code.
         See also: conceptnet5.Relation

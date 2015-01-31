@@ -559,7 +559,7 @@ class Graph
 
         size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
 
-        WordNet!(true, true) wordnet;
+        WordNet!(true) wordnet;
 
         size_t symmetricRelCount = 0; /// Symmetric Relation Count.
         size_t transitiveRelCount = 0; /// Transitive Relation Count.
