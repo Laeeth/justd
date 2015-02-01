@@ -2,13 +2,13 @@ void main()
 {
     const x = [1, 2, 3, 4];
 
-    const x4 = x[-1 .. 1];
-    const x4 = x[-1 .. $*3];
-    const x4 = x[0 .. 3*$];
-    const x5 = x[0 ..- $*3];
-    const x4 = x[$ .. $*3];
-    const x1 = x[1 + $ .. $ + 1];
-    const x3 = x[$ - 1 .. $];
+    // const x4 = x[-1 .. 1];
+    // const x4 = x[-1 .. $*3];
+    // const x4 = x[0 .. 3*$];
+    // const x5 = x[0 ..- $*3];
+    // const x4 = x[$ .. $*3];
+    // const x1 = x[1 + $ .. $ + 1];
+    // const x3 = x[$ - 1 .. $];
 
     static assert(!__traits(compiles, { const E = x[-1 .. 0]; }));
     static assert(!__traits(compiles, { const E = x[0 .. -$]; }));
