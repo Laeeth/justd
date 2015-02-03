@@ -760,6 +760,8 @@ class Graph
             const ln2 = connect(ndA, Role(Rel.hasAttribute),
                                 ndB, Origin.manual, 1.0, true);
             dln("c");
+            dln("ln1: ", ln1);
+            dln("ln2: ", ln2);
             assert(ln1 == ln2);
             dln("d");
         }
@@ -4222,7 +4224,7 @@ class Graph
             {
                 if (true)
                 {
-                    dln(`warning: Nodes `,
+                    dln(`info: Nodes `,
                         at(src).lemma.expr, ` and `,
                         at(dst).lemma.expr, ` already related as `,
                         role.rel);
