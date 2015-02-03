@@ -2,7 +2,7 @@ module mmfile_ex;
 
 /** Read-Only Lines of Contents of file $(D path).
    */
-auto mmFileLinesRO(ElementType = char)(string path)
+auto mmFileLinesRO(ElementType = char)(string path) if (ElementType.sizeof == 1)
 {
     version(linux)
     {
