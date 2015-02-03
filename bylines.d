@@ -1,9 +1,10 @@
 module bylines;
 
-/** Type of NewLine Encoding. */
+/** Type of NewLine Encoding.
+ */
 enum Newline
 {
-    any,                        // Any of win, mac or UNIX
+    any,                        // Any of win, mac or unix
     win,                        // Windows: "\r\n"
     mac,                        // Mac OS: '\r'
     unix,                       // UNIX/Linux: '\n'
@@ -15,9 +16,8 @@ import std.range: hasSlicing, hasLength, isNarrowString;
 /** Split Input by line.
     See also: http://forum.dlang.org/thread/fjqpdfzmitcxxzpwlbgb@forum.dlang.org#post-rwxrytxqqurrazifugje:40forum.dlang.org
     TODO Restrict using isSomeString!Range?
-    // TODO This should fail with better errro message:
+    // TODO This should fail with better error message:
     // assert(equal((cast(ubyte[])"a\nb").byLine!(Newline.any), ["a", "b"]));
-    // Do we require immutability here?
     */
 auto byLine(Newline nl = Newline.any,
             Range)(Range input) if ((hasSlicing!Range &&
@@ -46,20 +46,21 @@ auto byLine(Newline nl = Newline.any,
             import std.regex: splitter, regex;
             return input.splitter(regex("\n|\r\n|\r"));
         }
-        else static if (nl == Newline.win)
+        else
         {
             import std.algorithm: splitter;
-            return input.splitter("\r\n");
-        }
-        else static if (nl == Newline.mac)
-        {
-            import std.algorithm: splitter;
-            return input.splitter('\r');
-        }
-        else static if (nl == Newline.unix)
-        {
-            import std.algorithm: splitter;
-            return input.splitter('\n');
+            static if (nl == Newline.win)
+            {
+                return input.splitter("\r\n");
+            }
+            else static if (nl == Newline.mac)
+            {
+                return input.splitter('\r');
+            }
+            else static if (nl == Newline.unix)
+            {
+                return input.splitter('\n');
+            }
         }
     }
 }
