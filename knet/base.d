@@ -738,7 +738,7 @@ class Graph
      */
     this()
     {
-        // unittestMe();
+        unittestMe();
         learnVerbs();
         learnDefault();
         // inferSpecializedSenses();
@@ -749,16 +749,22 @@ class Graph
     */
     void unittestMe()
     {
+        // link should be reused
         {
             const ndA = store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
             const ndB = store(`3200`, Lang.sv, Sense.population, Origin.manual);
+            dln("a");
             const ln1 = connect(ndA, Role(Rel.hasAttribute),
                                 ndB, Origin.manual, 1.0, true);
+            dln("b");
             const ln2 = connect(ndA, Role(Rel.hasAttribute),
                                 ndB, Origin.manual, 1.0, true);
+            dln("c");
             assert(ln1 == ln2);
+            dln("d");
         }
 
+        // symmetric link should be reused in reverse order
         {
             const ndA = store(`big`, Lang.en, Sense.adjective, Origin.manual);
             const ndB = store(`large`, Lang.en, Sense.adjective, Origin.manual);
@@ -4212,16 +4218,16 @@ class Graph
 
         if (checkExisting)
         {
-            if (auto existingIx = areConnected(src, role, dst, origin, weight))
+            if (auto existingLn = areConnected(src, role, dst, origin, weight))
             {
-                if (false)
+                if (true)
                 {
                     dln(`warning: Nodes `,
                         at(src).lemma.expr, ` and `,
                         at(dst).lemma.expr, ` already related as `,
                         role.rel);
                 }
-                return existingIx;
+                return existingLn;
             }
         }
 
@@ -4425,17 +4431,25 @@ class Graph
 
         dln("role: ", role, " ", origin, " ", nweight, " ", dir);
 
-        foreach (aLinkRef; at(a).links)
+        foreach (aLn; at(a).links)
         {
-            const aLink = at(aLinkRef);
+            const aLink = at(aLn);
+
             dln("aLink.role: ", aLink.role, " ", aLink.origin, " ", aLink.nweight);
+
+            dln(aLink.role.rel == role.rel, ", ",
+                aLink.role.negation == role.negation, ", ",
+                aLink.origin == origin, ", ",
+                (aLink.actors[].canFind(Nd(b, dir))), ", ",
+                abs(aLink.nweight - nweight) < 1.0e-2);
+
             if (aLink.role.rel == role.rel &&
                 aLink.role.negation == role.negation && // no need to check reversion (all links are bidirectional)
                 aLink.origin == origin &&
                 (aLink.actors[].canFind(Nd(b, dir))) &&
                 abs(aLink.nweight - nweight) < 1.0e-2) // TODO adjust
             {
-                return aLinkRef;
+                return aLn;
             }
         }
 
@@ -4478,7 +4492,7 @@ class Graph
         write(indent, rel.toHuman(dir, negation, lang), `: `);
     }
 
-    void showLinkRef(Ln ln)
+    void showLn(Ln ln)
     {
         auto link = at(ln);
         showLink(link.role.rel, ln.dir, link.role.negation);
@@ -4560,7 +4574,7 @@ class Graph
             foreach (ln; linkRefs)
             {
                 auto link = at(ln);
-                showLinkRef(ln);
+                showLn(ln);
                 foreach (linkedNode; link.actors[]
                                          .filter!(actorNodeRef => (actorNodeRef.ix !=
                                                                    nd.ix)) // don't self reference
