@@ -17,7 +17,7 @@ auto mmFileLinesRO(ElementType = char)(string path)
     import std.path: expandTilde, buildNormalizedPath;
     auto mmf = new MmFile(path.expandTilde.buildNormalizedPath,
                           MmFile.Mode.read, 0, null, pageSize);
-    import algorithm_ex: byLine, Newline;
+    import bylines: byLine, Newline;
     return (cast(ElementType[])mmf[]).byLine!(Newline.native);
 }
 

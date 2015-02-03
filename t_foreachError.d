@@ -4,10 +4,11 @@ import std.stdio, std.algorithm;
 
 void main(string[] args)
 {
+    class C
     {
-        int  x = [1, 2, 3].map!"a*2";
     }
+    C x;
+    foreach (e; x)
     {
-        int[] x = [1, 2, 3].map!"a*2";
     }
 }
