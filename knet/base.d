@@ -180,8 +180,7 @@ struct Ref(T)
 
     alias type = T;
 
-    this(Ix ix_ = nullIx,
-         bool reversion = true) in { assert(ix_ <= nullIx); }
+    this(Ix ix_ = nullIx, bool reversion = false) in { assert(ix_ <= nullIx); }
     body
     {
         _ix = ix_;
@@ -203,6 +202,7 @@ struct Ref(T)
         }
     }
 
+    Ref raw() { return Ref(this, RelDir.forward); }
     Ref forward() { return Ref(this, RelDir.forward); }
     Ref backward() { return Ref(this, RelDir.backward); }
 
@@ -753,17 +753,11 @@ class Graph
         {
             const ndA = store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
             const ndB = store(`3200`, Lang.sv, Sense.population, Origin.manual);
-            dln("a");
             const ln1 = connect(ndA, Role(Rel.hasAttribute),
                                 ndB, Origin.manual, 1.0, true);
-            dln("b");
             const ln2 = connect(ndA, Role(Rel.hasAttribute),
                                 ndB, Origin.manual, 1.0, true);
-            dln("c");
-            dln("ln1: ", ln1);
-            dln("ln2: ", ln2);
             assert(ln1 == ln2);
-            dln("d");
         }
 
         // symmetric link should be reused in reverse order
@@ -4431,19 +4425,18 @@ class Graph
                      RelDir.any :
                      RelDir.forward);
 
-        dln("role: ", role, " ", origin, " ", nweight, " ", dir);
+        // dln("role: ", role, " ", origin, " ", nweight, " ", dir);
 
-        foreach (aLn; at(a).links)
+        foreach (aLn; at(a).links[].map!(ln => ln.raw))
         {
             const aLink = at(aLn);
 
-            dln("aLink.role: ", aLink.role, " ", aLink.origin, " ", aLink.nweight);
-
-            dln(aLink.role.rel == role.rel, ", ",
-                aLink.role.negation == role.negation, ", ",
-                aLink.origin == origin, ", ",
-                (aLink.actors[].canFind(Nd(b, dir))), ", ",
-                abs(aLink.nweight - nweight) < 1.0e-2);
+            // dln("aLink.role: ", aLink.role, " ", aLink.origin, " ", aLink.nweight, " aLn: ", aLn);
+            // dln(aLink.role.rel == role.rel, ", ",
+            //     aLink.role.negation == role.negation, ", ",
+            //     aLink.origin == origin, ", ",
+            //     (aLink.actors[].canFind(Nd(b, dir))), ", ",
+            //     abs(aLink.nweight - nweight) < 1.0e-2);
 
             if (aLink.role.rel == role.rel &&
                 aLink.role.negation == role.negation && // no need to check reversion (all links are bidirectional)
