@@ -719,6 +719,7 @@ class Graph
             const hitAlt = (*lemmas).canFind(lemma);
             if (!hitAlt) // TODO Make use of binary search
             {
+                lemma.expr = (*lemmas).front.expr; // reuse existing stored Lemma
                 *lemmas ~= lemma;
             }
         }
@@ -773,11 +774,17 @@ class Graph
         }
 
         // Lemmas with same expr should be reused
+        const beEn1 = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+        const beEn2 = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+        assert(at(beEn1).lemma.expr.ptr ==
+               at(beEn2).lemma.expr.ptr); // assert clever reuse of already hashed expr
+
+        // Lemmas with same expr should be reused
         const beEn = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
         const beSv = store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
-        // assert(at(beEn).lemma.expr.ptr ==
-        //        at(beSv).lemma.expr.ptr); // assert clever reuse of already hashed expr
-    }
+        assert(at(beEn).lemma.expr.ptr ==
+               at(beSv).lemma.expr.ptr); // assert clever reuse of already hashed expr
+}
 
     void learnDefault()
     {
