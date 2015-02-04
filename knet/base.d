@@ -716,7 +716,7 @@ class Graph
                     return existingLemma;
                 }
             }
-            const hitAlt = (*lemmas).canFind(lemma);
+            const hitAlt = (*lemmas).canFind(lemma); // TODO is this really correct?
             if (!hitAlt) // TODO Make use of binary search
             {
                 lemma.expr = (*lemmas).front.expr; // reuse existing stored Lemma
