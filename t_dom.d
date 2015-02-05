@@ -8,7 +8,8 @@ pragma(lib, "curl");
 
 void main()
 {
-    auto document = new Document(cast(string)get("http://www.google.com"));
+    string url = "http://www.google.com";
+    auto document = new Document(get(url).dup);
     foreach (a; document.querySelectorAll("a[href]"))
         writeln(a.href);
 }
