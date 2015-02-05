@@ -30,7 +30,6 @@
     See also: http://programmers.stackexchange.com/q/261163/38719
     See also: http://www.mindmachineproject.org/proj/prop/
 
-
     Data:
     - https://www.wordnik.com/
     - Open Multilingual Wordnet: http://compling.hss.ntu.edu.sg/omw/
@@ -53,6 +52,7 @@
     - http://www.thefreedictionary.com/
     - http://www.paengelska.com/engelska_uttryck_a.htm
     - http://www.ego4u.com/en/cram-up/grammar/prepositions
+    - http://www.woxikon.se/
 
     English Phrases: http://www.talkenglish.com
     Names: http://www.nordicnames.de/
@@ -692,10 +692,21 @@ class Graph
         }
     }
 
-    /** Learn $(D Lemma) of $(D expr).
+    /** Try Lookup Already Interned $(D expr.
+     */
+    auto tryReuseExpr(S)(S expr) @safe
+    {
+        if (auto lemmas = expr in lemmasByExpr)
+        {
+            return (*lemmas).front.expr;
+        }
+        return expr;
+    }
+
+    /** Internalize $(D Lemma) of $(D expr).
         Returns: either existing specialized lemma or a reference to the newly stored one.
      */
-    ref Lemma learnLemma(return ref Lemma lemma) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
+    ref Lemma internLemma(return ref Lemma lemma) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
     {
         if (auto lemmas = lemma.expr in lemmasByExpr)
         {
@@ -719,7 +730,6 @@ class Graph
             const hitAlt = (*lemmas).canFind(lemma); // TODO is this really correct?
             if (!hitAlt) // TODO Make use of binary search
             {
-                lemma.expr = (*lemmas).front.expr; // reuse existing stored Lemma
                 *lemmas ~= lemma;
             }
         }
@@ -4034,14 +4044,14 @@ class Graph
         in { assert(!expr.empty); }
     body
     {
-        auto lemma = Lemma(expr, lang, sense, context, manner, isRegexp, meaningNr, normalizeExpr);
+        auto lemma = Lemma(tryReuseExpr(expr), lang, sense, context, manner, isRegexp, meaningNr, normalizeExpr);
         if (const lemmaNd = lemma in ndByLemma)
         {
             return *lemmaNd; // lookup
         }
         else
         {
-            const specializedLemma = learnLemma(lemma);
+            const specializedLemma = internLemma(lemma);
             if (specializedLemma != lemma) // if an existing more specialized lemma was found
             {
                 return ndByLemma[specializedLemma];
