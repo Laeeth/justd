@@ -14,7 +14,7 @@ void readNordicNames()
     import std.net.curl;
     import std.array: array;
     import arsd.dom;
-    import separators;
+    import knet.separators;
     import grammars: Gender;
     import skip_ex: skipOverBack;
 

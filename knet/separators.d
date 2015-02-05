@@ -2,7 +2,7 @@
 
 /** Separators used in Knowledge Encoding.
  */
-module separators;
+module knet.separators;
 
 enum char asciiUS = '';       // ASCII Unit Separator
 enum char asciiRS = '';       // ASCII Record Separator
