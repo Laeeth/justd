@@ -822,8 +822,8 @@ class Graph
     void learnTrainedThings()
     {
         // wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
-        this.readWordNet(`~/Knowledge/wordnet/dict-3.1`.expandTilde);
-        this.readSwesaurus();
+        readWordNet(this, `~/Knowledge/wordnet/dict-3.1`);
+        readSwesaurus(this);
     }
 
     /** Learn Precise (Absolute) Thing.

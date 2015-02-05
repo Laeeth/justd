@@ -10,7 +10,7 @@ void readSwesaurus(Graph graph)
     import knet.synlex: readSynlexFile;
     import knet.folklex: readFolketsFile;
 
-    graph.readSynlexFile(`~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
-    graph.readFolketsFile(`~/Knowledge/swesaurus/folkets_en_sv_public.xdxf`.expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
-    graph.readFolketsFile(`~/Knowledge/swesaurus/folkets_sv_en_public.xdxf`.expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
+    readSynlexFile(graph, `~/Knowledge/swesaurus/synpairs.xml`.expandTilde.buildNormalizedPath);
+    readFolketsFile(graph, `~/Knowledge/swesaurus/folkets_en_sv_public.xdxf`.expandTilde.buildNormalizedPath, Lang.en, Lang.sv);
+    readFolketsFile(graph, `~/Knowledge/swesaurus/folkets_sv_en_public.xdxf`.expandTilde.buildNormalizedPath, Lang.sv, Lang.en);
 }

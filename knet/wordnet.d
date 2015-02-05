@@ -154,13 +154,14 @@ void readWordNetIndex(Graph graph,
 
 /// Read WordNet Database (dict) in directory $(D dirPath).
 void readWordNet(Graph graph,
-                 const string dirPath)
+                 string dirPath)
 {
+    import std.path: expandTilde, buildNormalizedPath;
+    dirPath = dirPath.expandTilde;
     // NOTE: Test both read variants through alternating uses of Mmfile or not
     const lang = Lang.en;
     if (false)              // these indexes are not needed only data files
     {
-        import std.path: buildNormalizedPath;
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
