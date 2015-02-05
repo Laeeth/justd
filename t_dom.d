@@ -11,5 +11,7 @@ void main()
     const url = "http://www.google.com";
     auto doc = new Document(get(url).dup);
     foreach (a; doc.querySelectorAll("a[href]")) // get all anchors with href
+    {
         writeln(a.href);
+    }
 }
