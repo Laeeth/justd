@@ -8,7 +8,7 @@ void readNordicNames()
     import std.range: empty;
     import std.path: expandTilde, buildNormalizedPath;
     import std.file: dirEntries, SpanMode, readText;
-    import std.stdio: writeln;
+    import std.stdio: writeln, File;
     import std.algorithm: joiner, findSplitBefore, findSplitAfter, endsWith, startsWith, until, split, findSkip;
     import std.conv: to;
     import std.net.curl;
@@ -21,15 +21,23 @@ void readNordicNames()
     const dirPath = `~/Knowledge/nordic_names/wiki`;
     const fixedPath = dirPath.expandTilde.buildNormalizedPath;
 
+    auto outFile = File("nordic_names.txt", "w");
+
     size_t nameIx = 0;
     foreach (fileName; fixedPath.dirEntries(SpanMode.shallow))
     {
         writeln(`Scanning `, fileName, ` ...`);
         auto doc = new Document(readText(fileName));
 
+        string[] fields;
+
         // decode name and gender
         Gender gender;
-        if (!doc.title.empty)
+        if (doc.title.empty)
+        {
+            continue;
+        }
+        else
         {
             auto name = doc.title.until(`-`).array.strip;
             if (name.skipOverBack(` m`))
@@ -40,6 +48,10 @@ void readNordicNames()
             {
                 gender = Gender.female;
             }
+
+            fields ~= name.to!string;
+            fields ~= gender.to!string;
+
             writeln("Name: ", name);
             writeln("Gender: ", gender);
         }
@@ -52,11 +64,11 @@ void readNordicNames()
         foreach (h2; doc.querySelectorAll(`h2`)) { /* writeln(h2.children); */ }
 
         size_t pIx = 0;
-        string[] fields;
         string[] langs;
         string explanation;
         string seeAlso;
         string stat;
+
         foreach (p; doc.querySelectorAll(`h2 + p`))
         {
             const text = p.innerText.strip;
@@ -64,14 +76,17 @@ void readNordicNames()
             {
                 case 0:
                     langs = text.split;
+                    fields ~= langs.joiner(alternativesSeparator.to!string).to!string;
                     writeln("Languages: ", langs);
                     break;
                 case 1:
-                    explanation = text.findSplitBefore(`[`)[0];
+                    explanation = text.findSplitBefore(`[`)[0].strip;
+                    fields ~= explanation.to!string;
                     writeln("Explanation: ", explanation);
                     break;
                 case 2:
-                    seeAlso = text.findSplitAfter(`See `)[1].findSplitBefore(`[`)[0];
+                    seeAlso = text.findSplitAfter(`See `)[1].findSplitBefore(`[`)[0].strip;
+                    fields ~= seeAlso.to!string;
                     writeln("See: ", seeAlso);
                     break;
                 case 3:
@@ -88,10 +103,13 @@ void readNordicNames()
             ++pIx;
         }
 
-        const line = fields.joiner(roleSeparator.to!string);
+        const line = fields.joiner(roleSeparator.to!string).to!string;
+        writeln(line);
+        outFile.writeln(line);
+
         writeln(``);
 
-        if (nameIx >= 100000) break;
+        if (nameIx >= 1000) break;
         ++nameIx;
     }
 }
