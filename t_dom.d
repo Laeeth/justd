@@ -10,6 +10,6 @@ void main()
 {
     const url = "http://www.google.com";
     auto document = new Document(get(url).dup);
-    foreach (a; document.querySelectorAll("a[href]"))
+    foreach (a; document.querySelectorAll("a[href]")) // get all anchors with href
         writeln(a.href);
 }
