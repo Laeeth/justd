@@ -9,7 +9,7 @@ import std.stdio: File;
 import core.exception: UnicodeException;
 import std.utf: UTFException;
 import std.path: buildNormalizedPath, expandTilde, extension;
-import std.file: dirEntries;
+import std.file;
 
 import mmfile_ex;
 import predicates: of;
@@ -250,34 +250,48 @@ void readCN5File(Graph graph,
 {
     writeln(`Reading ConceptNet from `, path, ` ...`);
     size_t lnr = 0;
-    if (useMmFile)
+    try
     {
-        foreach (line; mmFileLinesRO(path))
+        if (useMmFile)
         {
-            graph.readCN5Line(line, lnr);
-            if (++lnr >= maxCount) break;
+            foreach (line; mmFileLinesRO(path))
+            {
+                graph.readCN5Line(line, lnr);
+                if (++lnr >= maxCount) break;
+            }
         }
+        else
+        {
+            foreach (line; File(path).byLine)
+            {
+                graph.readCN5Line(line, lnr);
+                if (++lnr >= maxCount) break;
+            }
+        }
+        writeln(`Reading ConceptNet from `, path, ` having `, lnr, ` lines`);
     }
-    else
+    catch (std.file.FileException e)
     {
-        foreach (line; File(path).byLine)
-        {
-            graph.readCN5Line(line, lnr);
-            if (++lnr >= maxCount) break;
-        }
+        writeln(`Failed Reading ConceptNet File from `, path);
     }
-    writeln(`Reading ConceptNet from `, path, ` having `, lnr, ` lines`);
 }
 
-/// Learn ConceptNet.
-void learnCN5(Graph graph,
-              string path, size_t maxCount)
+/// Read ConceptNet.
+void readCN5(Graph graph,
+             string path, size_t maxCount)
 {
-    foreach (file; path.expandTilde
-                       .buildNormalizedPath
-                       .dirEntries(SpanMode.shallow)
-                       .filter!(name => name.extension == `.csv`))
+    try
     {
-        graph.readCN5File(file, maxCount, false);
+        foreach (file; path.expandTilde
+                           .buildNormalizedPath
+                           .dirEntries(SpanMode.shallow)
+                           .filter!(name => name.extension == `.csv`))
+        {
+            graph.readCN5File(file, maxCount, false);
+        }
+    }
+    catch (std.file.FileException e)
+    {
+        writeln(`Failed Reading ConceptNet File Set from `, path);
     }
 }

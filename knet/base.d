@@ -809,15 +809,9 @@ class Graph
         // Learn Less Absolute Things
         learnAssociativeThings();
 
-        this.learnCN5(`~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
-
-        // NELL
-        if (false)
-        {
-            this.readNELLFile(`~/Knowledge/nell/NELL.08m.890.esv.csv`.expandTilde
-                                                                     .buildNormalizedPath,
-                              10000);
-        }
+        // CN5 and NELL
+        readCN5(this, `~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
+        readNELLFile(this, `~/Knowledge/nell/NELL.08m.895.esv.csv`, 1000);
 
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */

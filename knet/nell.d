@@ -28,14 +28,22 @@ import knet.roles: Role, Rel;
 void readNELLFile(Graph graph,
                   string path, size_t maxCount = size_t.max)
 {
+    import std.exception;
     writeln(`Reading NELL from `, path, ` ...`);
     size_t lnr = 0;
-    foreach (line; File(path).byLine)
+    try
     {
-        graph.readNELLLine(line, lnr);
-        if (++lnr >= maxCount) break;
+        foreach (line; File(path.expandTilde.buildNormalizedPath).byLine)
+        {
+            graph.readNELLLine(line, lnr);
+            if (++lnr >= maxCount) break;
+        }
+        writeln(`Read NELL `, path, ` having `, lnr, ` lines`);
     }
-    writeln(`Read NELL `, path, ` having `, lnr, ` lines`);
+    catch (std.exception.ErrnoException e)
+    {
+        writeln(`Failed reading NELL `, path);
+    }
 }
 
 /** Read NELL CSV Line $(D line) at 0-offset line number $(D lnr). */
