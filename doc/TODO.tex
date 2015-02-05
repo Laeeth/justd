@@ -49,6 +49,11 @@
 
 \item Better diagnositics when forgetting parentheses in expressions such as
 
+\item Hint about using .dup when calling f(string data) with char[] as argument.
+t_dom.d(12,21): Error: None of the overloads of '__ctor' are callable using argument types (char[]), candidates are:
+/home/per/Work/justd/arsd/dom.d(3366,5):        arsd.dom.Document.this(string data, bool caseSensitive = false, bool strict = false)
+/home/per/Work/justd/arsd/dom.d(3373,5):        arsd.dom.Document.this()
+
 \begin{lstlisting}[frame=single]
 b.byLine!(Newline.unix)
 \end{lstlisting}
