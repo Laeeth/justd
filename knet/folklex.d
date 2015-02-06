@@ -45,7 +45,7 @@ void readFolketsFile(Graph graph,
             case `prefix`: senses ~= Sense.prefix; break;
             case `suffix`: senses ~= Sense.suffix; break;
             case `pm`: senses ~= Sense.name; break;
-            case ` `: senses ~= Sense.noun; break;
+            case `nn`: senses ~= Sense.noun; break;
             case `vb`: senses ~= Sense.verb; break;
             case `hjälpverb`: senses ~= Sense.auxiliaryVerb; break;
             case `jj`: senses ~= Sense.adjective; break;

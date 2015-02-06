@@ -268,7 +268,7 @@ void readCN5File(Graph graph,
                 if (++lnr >= maxCount) break;
             }
         }
-        writeln(`Reading ConceptNet from `, path, ` having `, lnr, ` lines`);
+        writeln(`Read ConceptNet from `, path, ` having `, lnr, ` lines`);
     }
     catch (std.file.FileException e)
     {

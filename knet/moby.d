@@ -83,6 +83,7 @@ void learnMobyEnglishPronounciations(Graph graph)
 {
     const path = `../knowledge/moby/pronounciation.txt`;
     writeln(`Reading Moby pronounciations from `, path, ` ...`);
+    size_t lnr = 0;
     foreach (line; mmFileLinesRO(path))
     {
         auto split = line.splitter(' ');
@@ -100,25 +101,34 @@ void learnMobyEnglishPronounciations(Graph graph)
         split.popFront;
         string ipas;
 
-        try
+        if (!split.empty)
         {
-            ipas = split.front
-                        .splitter('_') // word separator
-                        .map!(word =>
-                              word.splitter('/') // phoneme separator
-                                  .map!(a => a.decodeMobyIPA)
-                                  .joiner)
-                        .joiner(` `)
-                        .to!string;
+            try
+            {
+                ipas = split.front
+                            .splitter('_') // word separator
+                            .map!(word =>
+                                  word.splitter('/') // phoneme separator
+                                      .map!(a => a.decodeMobyIPA)
+                                      .joiner)
+                            .joiner(` `)
+                            .to!string;
+            }
+            catch (UTFException e)
+            {
+                ipas = split.front.idup;
+                writeln(`warning: Couldn't decode Moby IPA code `, ipas);
+            }
+            graph.connect(graph.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasPronounciation),
+                          graph.store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
         }
-        catch (UTFException e)
+        else
         {
-            ipas = split.front.idup;
-            writeln(`warning: Couldn't decode Moby IPA code `, ipas);
+            writeln(`warning: Split became empty for line of length `, line.length);
         }
-        graph.connect(graph.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasPronounciation),
-                      graph.store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
+        ++lnr;
     }
+    writeln(`Read Moby pronounciations from `, path, ` having `, lnr, ` lines`);
 }
 
 /** Decode Sense of Moby Part of Speech (PoS) Code.

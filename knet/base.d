@@ -4582,14 +4582,14 @@ class Graph
             }
             writeln;
 
-            auto lns = lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
+            auto lns = lnsOf(lineNode, RelDir.any, Role(rel, false, negation));
 
-            lns.multiSort!((a, b) => (at(a).nweight >
-                                        at(b).nweight),
-                             (a, b) => (at(a).role.rel.rank <
-                                        at(b).role.rel.rank),
-                             (a, b) => (at(a).role.rel <
-                                        at(b).role.rel));
+            // lns.multiSort!((a, b) => (at(a).nweight >
+            //                             at(b).nweight),
+            //                  (a, b) => (at(a).role.rel.rank <
+            //                             at(b).role.rel.rank),
+            //                  (a, b) => (at(a).role.rel <
+            //                             at(b).role.rel));
             foreach (ln; lns)
             {
                 auto link = at(ln);
