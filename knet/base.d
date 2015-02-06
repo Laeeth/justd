@@ -67,7 +67,7 @@
 
 module knet.base;
 
-/* version = msgpack; */
+version = msgpack;
 
 import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable, Unqual;
