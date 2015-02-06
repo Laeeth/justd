@@ -962,202 +962,210 @@ class Graph
 
         learnChemicalElements();
 
-        foreach (lang; enumMembers!Lang.filter!(lang =>
-                                                (`../knowledge/` ~ lang.to!string).exists))
+        foreach (dirEntry; dirEntries("../knowledge/", SpanMode.shallow))
         {
-            const langString = lang.to!string;
-            const dirPath = `../knowledge/` ~ langString;
-
-            // Male Name
-            learnMtoNMaybe(dirPath ~ `/male_name.txt`, // TODO isA male name
-                           Sense.nameMale, lang,
-                           Role(Rel.hasMeaning),
-                           Sense.unknown, lang,
-                           Origin.manual, 1.0);
-
-            // Female Name
-            learnMtoNMaybe(dirPath ~ `/female_name.txt`, // TODO isA female name
-                           Sense.nameFemale, lang,
-                           Role(Rel.hasMeaning),
-                           Sense.unknown, lang,
-                           Origin.manual, 1.0);
-
-            // Irregular Noun
-            learnMtoNMaybe(dirPath ~ `/irregular_noun.txt`,
-                           Sense.nounSingular, lang,
-                           Role(Rel.formOfNoun),
-                           Sense.nounPlural, lang,
-                           Origin.manual, 1.0);
-
-            // Abbrevation
-            learnMtoNMaybe(dirPath ~ `/abbrevation.txt`,
-                           Sense.unknown, lang,
-                           Role(Rel.abbreviationFor),
-                           Sense.unknown, lang,
-                           Origin.manual, 1.0);
-            learnMtoNMaybe(dirPath ~ `/noun_abbrevation.txt`,
-                           Sense.noun, lang,
-                           Role(Rel.abbreviationFor),
-                           Sense.noun, lang,
-                           Origin.manual, 1.0);
-
-            // Synonym
-            learnMtoNMaybe(dirPath ~ `/synonym.txt`,
-                           Sense.unknown, lang, Role(Rel.synonymFor),
-                           Sense.unknown, lang, Origin.manual, 1.0);
-            learnMtoNMaybe(dirPath ~ `/obsolescent_synonym.txt`,
-                           Sense.unknown, lang, Role(Rel.obsolescentFor),
-                           Sense.unknown, lang, Origin.manual, 1.0);
-            learnMtoNMaybe(dirPath ~ `/noun_synonym.txt`,
-                           Sense.noun, lang, Role(Rel.synonymFor),
-                           Sense.noun, lang, Origin.manual, 0.5);
-            learnMtoNMaybe(dirPath ~ `/adjective_synonym.txt`,
-                           Sense.adjective, lang, Role(Rel.synonymFor),
-                           Sense.adjective, lang, Origin.manual, 1.0);
-
-            // Homophone
-            learnMtoNMaybe(dirPath ~ `/homophone.txt`,
-                           Sense.unknown, lang, Role(Rel.homophoneFor),
-                           Sense.unknown, lang, Origin.manual, 1.0);
-
-            // Abbrevation
-            learnMtoNMaybe(dirPath ~ `/cardinal_direction_abbrevation.txt`,
-                           Sense.unknown, lang, Role(Rel.abbreviationFor),
-                           Sense.unknown, lang, Origin.manual, 1.0);
-            learnMtoNMaybe(dirPath ~ `/language_abbrevation.txt`,
-                           Sense.language, lang, Role(Rel.abbreviationFor),
-                           Sense.language, lang, Origin.manual, 1.0);
-
-            // Noun
-            learnMto1Maybe(lang, dirPath ~ `/concrete_noun.txt`,
-                           Role(Rel.hasAttribute), `concrete`,
-                           Sense.nounConcrete, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ `/abstract_noun.txt`,
-                           Role(Rel.hasAttribute), `abstract`,
-                           Sense.nounAbstract, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ `/masculine_noun.txt`,
-                           Role(Rel.hasAttribute), `masculine`,
-                           Sense.noun, Sense.adjective, 1.0);
-            learnMto1Maybe(lang, dirPath ~ `/feminine_noun.txt`,
-                           Role(Rel.hasAttribute), `feminine`,
-                           Sense.noun, Sense.adjective, 1.0);
-
-            // Acronym
-            learnMtoNMaybe(dirPath ~ `/acronym.txt`,
-                           Sense.nounAcronym, lang, Role(Rel.acronymFor),
-                           Sense.unknown, lang, Origin.manual, 1.0);
-            learnMtoNMaybe(dirPath ~ `/newspaper_acronym.txt`,
-                           Sense.newspaper, lang,
-                           Role(Rel.acronymFor),
-                           Sense.newspaper, lang,
-                           Origin.manual, 1.0);
-
-            // Idioms
-            learnMtoNMaybe(dirPath ~ `/idiom_meaning.txt`,
-                           Sense.idiom, lang,
-                           Role(Rel.idiomFor),
-                           Sense.unknown, lang,
-                           Origin.manual, 0.7);
-
-            // Slang
-            learnMtoNMaybe(dirPath ~ `/slang_meaning.txt`,
-                           Sense.unknown, lang,
-                           Role(Rel.slangFor),
-                           Sense.unknown, lang,
-                           Origin.manual, 0.7);
-
-            // Slang Adjectives
-            learnMtoNMaybe(dirPath ~ `/slang_adjective_meaning.txt`,
-                           Sense.adjective, lang,
-                           Role(Rel.slangFor),
-                           Sense.unknown, lang,
-                           Origin.manual, 0.7);
-
-            // Name
-            learnMtoNMaybe(dirPath ~ `/male_name_meaning.txt`,
-                           Sense.nameMale, lang,
-                           Role(Rel.hasMeaning),
-                           Sense.unknown, lang,
-                           Origin.manual, 0.7);
-            learnMtoNMaybe(dirPath ~ `/female_name_meaning.txt`,
-                           Sense.nameFemale, lang,
-                           Role(Rel.hasMeaning),
-                           Sense.unknown, lang,
-                           Origin.manual, 0.7);
-            learnMtoNMaybe(dirPath ~ `/name_day.txt`,
-                           Sense.name, lang,
-                           Role(Rel.hasNameDay),
-                           Sense.nounDate, Lang.en,
-                           Origin.manual, 1.0);
-            learnMtoNMaybe(dirPath ~ `/surname_languages.txt`,
-                           Sense.surname, Lang.unknown,
-                           Role(Rel.hasOrigin),
-                           Sense.language, Lang.en,
-                           Origin.manual, 1.0);
-
-            // City
+            const langString = dirEntry.name.baseName;
             try
             {
-                foreach (entry; rdT(dirPath ~ `/city.txt`).splitter('\n').filter!(w => !w.empty))
+                const lang = langString.to!Lang;
+                const dirPath = `../knowledge/` ~ langString;
+
+                // Male Name
+                learnMtoNMaybe(dirPath ~ `/male_name.txt`, // TODO isA male name
+                               Sense.nameMale, lang,
+                               Role(Rel.hasMeaning),
+                               Sense.unknown, lang,
+                               Origin.manual, 1.0);
+
+                // Female Name
+                learnMtoNMaybe(dirPath ~ `/female_name.txt`, // TODO isA female name
+                               Sense.nameFemale, lang,
+                               Role(Rel.hasMeaning),
+                               Sense.unknown, lang,
+                               Origin.manual, 1.0);
+
+                // Irregular Noun
+                learnMtoNMaybe(dirPath ~ `/irregular_noun.txt`,
+                               Sense.nounSingular, lang,
+                               Role(Rel.formOfNoun),
+                               Sense.nounPlural, lang,
+                               Origin.manual, 1.0);
+
+                // Abbrevation
+                learnMtoNMaybe(dirPath ~ `/abbrevation.txt`,
+                               Sense.unknown, lang,
+                               Role(Rel.abbreviationFor),
+                               Sense.unknown, lang,
+                               Origin.manual, 1.0);
+                learnMtoNMaybe(dirPath ~ `/noun_abbrevation.txt`,
+                               Sense.noun, lang,
+                               Role(Rel.abbreviationFor),
+                               Sense.noun, lang,
+                               Origin.manual, 1.0);
+
+                // Synonym
+                learnMtoNMaybe(dirPath ~ `/synonym.txt`,
+                               Sense.unknown, lang, Role(Rel.synonymFor),
+                               Sense.unknown, lang, Origin.manual, 1.0);
+                learnMtoNMaybe(dirPath ~ `/obsolescent_synonym.txt`,
+                               Sense.unknown, lang, Role(Rel.obsolescentFor),
+                               Sense.unknown, lang, Origin.manual, 1.0);
+                learnMtoNMaybe(dirPath ~ `/noun_synonym.txt`,
+                               Sense.noun, lang, Role(Rel.synonymFor),
+                               Sense.noun, lang, Origin.manual, 0.5);
+                learnMtoNMaybe(dirPath ~ `/adjective_synonym.txt`,
+                               Sense.adjective, lang, Role(Rel.synonymFor),
+                               Sense.adjective, lang, Origin.manual, 1.0);
+
+                // Homophone
+                learnMtoNMaybe(dirPath ~ `/homophone.txt`,
+                               Sense.unknown, lang, Role(Rel.homophoneFor),
+                               Sense.unknown, lang, Origin.manual, 1.0);
+
+                // Abbrevation
+                learnMtoNMaybe(dirPath ~ `/cardinal_direction_abbrevation.txt`,
+                               Sense.unknown, lang, Role(Rel.abbreviationFor),
+                               Sense.unknown, lang, Origin.manual, 1.0);
+                learnMtoNMaybe(dirPath ~ `/language_abbrevation.txt`,
+                               Sense.language, lang, Role(Rel.abbreviationFor),
+                               Sense.language, lang, Origin.manual, 1.0);
+
+                // Noun
+                learnMto1Maybe(lang, dirPath ~ `/concrete_noun.txt`,
+                               Role(Rel.hasAttribute), `concrete`,
+                               Sense.nounConcrete, Sense.adjective, 1.0);
+                learnMto1Maybe(lang, dirPath ~ `/abstract_noun.txt`,
+                               Role(Rel.hasAttribute), `abstract`,
+                               Sense.nounAbstract, Sense.adjective, 1.0);
+                learnMto1Maybe(lang, dirPath ~ `/masculine_noun.txt`,
+                               Role(Rel.hasAttribute), `masculine`,
+                               Sense.noun, Sense.adjective, 1.0);
+                learnMto1Maybe(lang, dirPath ~ `/feminine_noun.txt`,
+                               Role(Rel.hasAttribute), `feminine`,
+                               Sense.noun, Sense.adjective, 1.0);
+
+                // Acronym
+                learnMtoNMaybe(dirPath ~ `/acronym.txt`,
+                               Sense.nounAcronym, lang, Role(Rel.acronymFor),
+                               Sense.unknown, lang, Origin.manual, 1.0);
+                learnMtoNMaybe(dirPath ~ `/newspaper_acronym.txt`,
+                               Sense.newspaper, lang,
+                               Role(Rel.acronymFor),
+                               Sense.newspaper, lang,
+                               Origin.manual, 1.0);
+
+                // Idioms
+                learnMtoNMaybe(dirPath ~ `/idiom_meaning.txt`,
+                               Sense.idiom, lang,
+                               Role(Rel.idiomFor),
+                               Sense.unknown, lang,
+                               Origin.manual, 0.7);
+
+                // Slang
+                learnMtoNMaybe(dirPath ~ `/slang_meaning.txt`,
+                               Sense.unknown, lang,
+                               Role(Rel.slangFor),
+                               Sense.unknown, lang,
+                               Origin.manual, 0.7);
+
+                // Slang Adjectives
+                learnMtoNMaybe(dirPath ~ `/slang_adjective_meaning.txt`,
+                               Sense.adjective, lang,
+                               Role(Rel.slangFor),
+                               Sense.unknown, lang,
+                               Origin.manual, 0.7);
+
+                // Name
+                learnMtoNMaybe(dirPath ~ `/male_name_meaning.txt`,
+                               Sense.nameMale, lang,
+                               Role(Rel.hasMeaning),
+                               Sense.unknown, lang,
+                               Origin.manual, 0.7);
+                learnMtoNMaybe(dirPath ~ `/female_name_meaning.txt`,
+                               Sense.nameFemale, lang,
+                               Role(Rel.hasMeaning),
+                               Sense.unknown, lang,
+                               Origin.manual, 0.7);
+                learnMtoNMaybe(dirPath ~ `/name_day.txt`,
+                               Sense.name, lang,
+                               Role(Rel.hasNameDay),
+                               Sense.nounDate, Lang.en,
+                               Origin.manual, 1.0);
+                learnMtoNMaybe(dirPath ~ `/surname_languages.txt`,
+                               Sense.surname, Lang.unknown,
+                               Role(Rel.hasOrigin),
+                               Sense.language, Lang.en,
+                               Origin.manual, 1.0);
+
+                // City
+                try
                 {
-                    const items = entry.split(roleSeparator);
-                    const cityName = items[0];
-                    const population = items[1];
-                    const yearFounded = items[2];
-                    const city = store(cityName, lang, Sense.city, Origin.manual);
-                    connect(city, Role(Rel.hasAttribute),
-                            store(population, lang, Sense.population, Origin.manual), Origin.manual, 1.0);
-                    connect(city, Role(Rel.foundedIn),
-                            store(yearFounded, lang, Sense.year, Origin.manual), Origin.manual, 1.0);
-                }
-            }
-            catch (std.file.FileException e) {}
-
-            try { learnMto1(lang, rdT(dirPath ~ `/vehicle.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vehicle`, Sense.noun, Sense.noun, 1.0); }
-            catch (std.file.FileException e) {}
-
-            try { learnMto1(lang, rdT(dirPath ~ `/lowercase_letter.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
-            catch (std.file.FileException e) {}
-
-            try { learnMto1(lang, rdT(dirPath ~ `/uppercase_letter.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
-            catch (std.file.FileException e) {}
-
-            try { learnMto1(lang, rdT(dirPath ~ `/old_proverb.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `old proverb`, Sense.unknown, Sense.noun, 1.0); }
-            catch (std.file.FileException e) {}
-
-            try { learnMto1(lang, rdT(dirPath ~ `/contronym.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
-            catch (std.file.FileException e) {}
-
-            try { learnOpposites(lang); }
-            catch (std.exception.ErrnoException e) {}
-        }
-
-        // handle knowledge/X-Y/*.txt such as knowledge/en-sv/*.txt
-        foreach (dirEntry; dirEntries("../knowledge", SpanMode.shallow))
-        {
-            const split = dirEntry.name.baseName.findSplit(`-`);
-            if (!split[1].empty) // if subdirectory of knowledge container space
-            {
-                // try decoding them as iso language codes
-                const srcLang = split[0].to!Lang;
-                const dstLang = split[2].to!Lang;
-                foreach (txtFile; dirEntries(dirEntry.name, SpanMode.shallow))
-                {
-                    Sense sense;
-                    Rel rel;
-                    switch (txtFile.name.baseName)
+                    foreach (entry; rdT(dirPath ~ `/city.txt`).splitter('\n').filter!(w => !w.empty))
                     {
-                        case "noun_translation.txt":         sense = Sense.noun;         rel = Rel.translationOf; break;
-                        case "phrase_translation.txt":       sense = Sense.phrase;       rel = Rel.translationOf; break;
-                        case "idiom_translation.txt":        sense = Sense.idiom;        rel = Rel.translationOf; break;
-                        case "interjection_translation.txt": sense = Sense.interjection; rel = Rel.translationOf; break;
-                        default: break;
+                        const items = entry.split(roleSeparator);
+                        const cityName = items[0];
+                        const population = items[1];
+                        const yearFounded = items[2];
+                        const city = store(cityName, lang, Sense.city, Origin.manual);
+                        connect(city, Role(Rel.hasAttribute),
+                                store(population, lang, Sense.population, Origin.manual), Origin.manual, 1.0);
+                        connect(city, Role(Rel.foundedIn),
+                                store(yearFounded, lang, Sense.year, Origin.manual), Origin.manual, 1.0);
                     }
+                }
+                catch (std.file.FileException e) {}
 
-                    learnMtoNMaybe(txtFile.name,
-                                   sense, srcLang, Role(rel),
-                                   sense, dstLang,
-                                   Origin.manual, 1.0);
+                try { learnMto1(lang, rdT(dirPath ~ `/vehicle.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vehicle`, Sense.noun, Sense.noun, 1.0); }
+                catch (std.file.FileException e) {}
+
+                try { learnMto1(lang, rdT(dirPath ~ `/lowercase_letter.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
+                catch (std.file.FileException e) {}
+
+                try { learnMto1(lang, rdT(dirPath ~ `/uppercase_letter.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
+                catch (std.file.FileException e) {}
+
+                try { learnMto1(lang, rdT(dirPath ~ `/old_proverb.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `old proverb`, Sense.unknown, Sense.noun, 1.0); }
+                catch (std.file.FileException e) {}
+
+                try { learnMto1(lang, rdT(dirPath ~ `/contronym.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
+                catch (std.file.FileException e) {}
+
+                try { learnOpposites(lang); }
+                catch (std.exception.ErrnoException e) {}
+            }
+            catch (std.conv.ConvException e)
+            {
+                // handle knowledge/X-Y/*.txt such as knowledge/en-sv/*.txt
+                const split = dirEntry.name.baseName.findSplit(`-`);
+                if (!split[1].empty) // if subdirectory of knowledge container space
+                {
+                    // try decoding them as iso language codes
+                    const srcLang = split[0].to!Lang;
+                    const dstLang = split[2].to!Lang;
+                    foreach (txtFile; dirEntries(dirEntry.name, SpanMode.shallow))
+                    {
+                        Sense sense;
+                        Rel rel;
+                        switch (txtFile.name.baseName)
+                        {
+                            case "noun_translation.txt":         sense = Sense.noun;         rel = Rel.translationOf; break;
+                            case "phrase_translation.txt":       sense = Sense.phrase;       rel = Rel.translationOf; break;
+                            case "idiom_translation.txt":        sense = Sense.idiom;        rel = Rel.translationOf; break;
+                            case "interjection_translation.txt": sense = Sense.interjection; rel = Rel.translationOf; break;
+                            default:
+                                writeln("Don't know how to decode sense and rel of ", txtFile.name);
+                                break;
+                        }
+
+                        learnMtoNMaybe(txtFile.name,
+                                       sense, srcLang, Role(rel),
+                                       sense, dstLang,
+                                       Origin.manual, 1.0);
+                    }
+                }
+                else
+                {
+                    writeln("TODO Process ", dirEntry.name);
                 }
             }
         }
