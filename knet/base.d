@@ -70,7 +70,7 @@ module knet.base;
 /* version = msgpack; */
 
 import core.exception: UnicodeException;
-import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable;
+import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable, Unqual;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, sort, multiSort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
@@ -190,8 +190,11 @@ struct Ref(T)
     this(Ref rhs, RelDir dir)
     {
         this._ix = rhs.ix;
+        setDir(dir);
+    }
 
-        // TODO functionize to setDir()
+    void setDir(RelDir dir)
+    {
         if (dir == RelDir.backward)
         {
             _ix.setTopBit;
@@ -208,7 +211,7 @@ struct Ref(T)
 
     static const(Ref) asUndefined() { return Ref(nullIx); }
     bool defined() const { return this.ix != nullIx; }
-    auto opCast(U : bool)() { return defined(); }
+    auto opCast(U : bool)() const { return defined(); }
 
     /** Get Index. */
     const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
@@ -235,7 +238,7 @@ enum anyContext = ContextIx.asUndefined; // reserve 0 for anyContext (unknown)
 // TODO Use in Lemma.
 enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
 
-enum useArray = true;
+enum useArray = false;
 enum useRCString = false;
 
 static if (useRCString)
@@ -398,9 +401,9 @@ class Graph
     /** Get Links Refs of $(D node) with direction $(D dir).
         TODO what to do with role.reversion here?
      */
-    auto linkRefsOf(in Node node,
-                    RelDir dir = RelDir.any,
-                    Role role = Role.init)
+    auto lnsOf(in Node node,
+               RelDir dir = RelDir.any,
+               Role role = Role.init)
     {
         return node.links[]
                    .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize to match(RelDir, RelDir)
@@ -413,7 +416,7 @@ class Graph
                  RelDir dir = RelDir.any,
                  Role role = Role.init)
     {
-        return linkRefsOf(node, dir, role).map!(ln => at(ln));
+        return lnsOf(node, dir, role).map!(ln => at(ln));
     }
 
     auto linksOf(Nd nd,
@@ -439,7 +442,7 @@ class Graph
 
         auto front()
         {
-            return linkRefsOf(at(current));
+            return lnsOf(at(current));
         }
 
         Nd first;
@@ -610,10 +613,10 @@ class Graph
     /** Try to Get Single Node related to $(D word) in the interpretation
         (semantic context) $(D sense).
     */
-    Nds nodeRefsByLemmaDirect(S)(S expr,
-                                 Lang lang,
-                                 Sense sense,
-                                 ContextIx context) if (isSomeString!S)
+    Nds ndsByLemmaDirect(S)(S expr,
+                            Lang lang,
+                            Sense sense,
+                            ContextIx context) if (isSomeString!S)
     {
         typeof(return) nodes;
         const lemma = Lemma(expr, lang, sense, context);
@@ -638,7 +641,7 @@ class Graph
     }
 
     /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
-    auto nodeRefsOf(S)(S expr) if (isSomeString!S)
+    auto ndsOf(S)(S expr) if (isSomeString!S)
     {
         return lemmasOf(expr).map!(lemma => ndByLemma[lemma]);
     }
@@ -647,10 +650,10 @@ class Graph
         (semantic context) $(D sense).
         If no sense given return all possible.
     */
-    Nds nodeRefsOf(S)(S expr,
-                      Lang lang,
-                      Sense sense,
-                      ContextIx context = anyContext) if (isSomeString!S)
+    Nds ndsOf(S)(S expr,
+                 Lang lang,
+                 Sense sense,
+                 ContextIx context = anyContext) if (isSomeString!S)
     {
         typeof(return) nodes;
 
@@ -658,13 +661,21 @@ class Graph
             sense != Sense.unknown &&
             context != anyContext) // if exact Lemma key can be used
         {
-            return nodeRefsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
+            return ndsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
         }
         else
         {
-            nodes = Nds(nodeRefsOf(expr).filter!(a => (lang == Lang.unknown ||
-                                                       at(a).lemma.lang == lang))
-                                        .array); // TODO avoid allocations
+            auto tmp = ndsOf(expr).filter!(a => (lang == Lang.unknown ||
+                                                 at(a).lemma.lang == lang))
+                                  .array;
+            static if (useArray)
+            {
+                nodes = Nds(tmp); // TODO avoid allocations
+            }
+            else
+            {
+                nodes = tmp;
+            }
         }
 
         if (nodes.empty)
@@ -1848,11 +1859,13 @@ class Graph
                 auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
 
-                auto firstRefs = store(first.splitter(alternativesSeparator).map!idup, firstLang, firstSense, origin);
+                auto firstRefs = store(first.splitter(alternativesSeparator).map!idup,
+                                       firstLang, firstSense, origin);
 
                 if (!second.empty)
                 {
-                    auto secondRefs = store(second.splitter(alternativesSeparator).map!idup, secondLang, secondSense, origin);
+                    auto secondRefs = store(second.splitter(alternativesSeparator).map!idup,
+                                            secondLang, secondSense, origin);
                     connectMtoN(firstRefs, role, secondRefs, origin, weight, true);
                 }
             }
@@ -4097,12 +4110,12 @@ class Graph
                       ContextIx context = ContextIx.asUndefined) if (isIterable!Exprs &&
                                                                      isSomeString!(ElementType!Exprs))
     {
-        typeof(return) nodeRefs;
+        typeof(return) nds;
         foreach (expr; exprs)
         {
-            nodeRefs ~= store(expr, lang, sense, origin, context);
+            nds ~= store(expr, lang, sense, origin, context);
         }
-        return nodeRefs;
+        return nds;
     }
 
     /** Directed Connect Many Sources $(D srcs) to Many Destinations $(D dsts).
@@ -4226,7 +4239,7 @@ class Graph
 
         if (checkExisting)
         {
-            if (auto existingLn = areConnected(src, role, dst, origin, weight))
+            if (const existingLn = areConnected(src, role, dst, origin, weight))
             {
                 if (warnExisting)
                 {
@@ -4544,11 +4557,11 @@ class Graph
         writeln;
     }
 
-    void showNds(R)(R nodeRefs,
+    void showNds(R)(R nds,
                     Rel rel = Rel.any,
                     bool negation = false)
     {
-        foreach (nd; nodeRefs)
+        foreach (nd; nds)
         {
             const lineNode = at(nd);
 
@@ -4569,16 +4582,15 @@ class Graph
             }
             writeln;
 
-            // TODO Why is cast needed here?
-            auto linkRefs = cast(Lns)linkRefsOf(lineNode, RelDir.any, Role(rel, false, negation));
+            auto lns = lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
 
-            linkRefs[].multiSort!((a, b) => (at(a).nweight >
-                                             at(b).nweight),
-                                  (a, b) => (at(a).role.rel.rank <
-                                             at(b).role.rel.rank),
-                                  (a, b) => (at(a).role.rel <
-                                             at(b).role.rel));
-            foreach (ln; linkRefs)
+            lns.multiSort!((a, b) => (at(a).nweight >
+                                        at(b).nweight),
+                             (a, b) => (at(a).role.rel.rank <
+                                        at(b).role.rel.rank),
+                             (a, b) => (at(a).role.rel <
+                                        at(b).role.rel));
+            foreach (ln; lns)
             {
                 auto link = at(ln);
                 showLn(ln);
@@ -4836,7 +4848,7 @@ class Graph
             return false;
 
         // queried line nodes
-        auto lineNds = nodeRefsOf(normLine, lang, sense);
+        auto lineNds = ndsOf(normLine, lang, sense);
 
         if (!lineNds.empty)
         {
@@ -4990,18 +5002,18 @@ class Graph
                        Sense sense = Sense.unknown,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto nodes = nodeRefsOf(expr,
-                                lang,
-                                sense);
-        showNds(nodes, Rel.synonymFor); // TODO traverse synonyms
-        return nodes;
+        auto nds = ndsOf(expr,
+                         lang,
+                         sense);
+        showNds(nds, Rel.synonymFor); // TODO traverse synonyms
+        return nds;
     }
 
     /** Get Links of $(D currents) type $(D rel) learned from $(D origins).
     */
-    auto linkRefsOf(Nd nd,
-                    Rel rel,
-                    Origin[] origins = [])
+    auto lnsOf(Nd nd,
+               Rel rel,
+               Origin[] origins = [])
     {
         return at(nd).links[]
                      .filter!(ln => (at(ln).role.rel == rel &&
@@ -5016,20 +5028,20 @@ class Graph
                  Rel rel,
                  Origin[] origins = [])
     {
-        return linkRefsOf(nd, rel, origins).map!(ln =>
-                                                 at(ln).actors[]
-                                                       .filter!(actor => actor != nd))
-                                                .joiner(); // no self
+        return lnsOf(nd, rel, origins).map!(ln =>
+                                            at(ln).actors[]
+                                                  .filter!(actor => actor != nd))
+                                      .joiner(); // no self
     }
 
     /** Get Nearest Neighbours of $(D srcs) over links of type $(D rel) learned
         from $(D origins).
     */
-    // auto nearsOf(R)(R nodeRefs,
+    // auto nearsOf(R)(R nds,
     //                 Rel rel,
     //                 Origin[] origins = []) if (isSourceOf!(R, Nd))
     // {
-    //     return nodeRefs[].map!(nd => nearsOf(nd, rel, origins));
+    //     return nds[].map!(nd => nearsOf(nd, rel, origins));
     // }
 
     /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
@@ -5043,7 +5055,7 @@ class Graph
                     size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                     bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        foreach (src_; nodeRefsOf(expr))
+        foreach (src_; ndsOf(expr))
         {
             const src = at(src_);
             if (langs.empty) { langs = [src.lemma.lang]; } // stay within language by default
@@ -5109,13 +5121,13 @@ class Graph
                            Sense sense = Sense.unknown,
                            Lang[] toLangs = []) if (isSomeString!S)
     {
-        auto nodes = nodeRefsOf(expr,
-                                lang,
-                                sense);
+        auto nodes = ndsOf(expr,
+                           lang,
+                           sense);
         showNds(nodes, Rel.translationOf); // TODO traverse synonyms and translations
         // en => sv:
         // en-en => sv-sv
-        /* auto translations = nodes.map!(node => linkRefsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
+        /* auto translations = nodes.map!(node => lnsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
         return nodes;
     }
 
