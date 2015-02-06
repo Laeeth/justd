@@ -1972,3 +1972,68 @@ bool generalizes(T)(T general,
 {
     return specializes(special, general);
 }
+
+/** Ix Precision.
+    Set this to $(D uint) if we get low on memory.
+    Set this to $(D ulong) when number of link nodes exceed Ix.
+*/
+alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
+enum nullIx = Ix.max >> 1;
+
+/** Type-Safe Directed Reference to $(D T). */
+struct Ref(T)
+{
+    import bitop_ex: setTopBit, getTopBit, resetTopBit;
+    @safe @nogc pure nothrow:
+
+    this(Ix ix = nullIx, bool reversion = false) in { assert(ix <= nullIx); }
+    body
+    {
+        this._ix = ix;
+        if (reversion) { _ix.setTopBit; }
+    }
+
+    this(Ref rhs, RelDir dir)
+    {
+        this._ix = rhs.ix;
+        setDir(dir);
+    }
+
+    void setDir(RelDir dir)
+    {
+        if (dir == RelDir.backward)
+        {
+            _ix.setTopBit;
+        }
+        else if (dir == RelDir.forward)
+        {
+            _ix.resetTopBit;
+        }
+    }
+
+    Ref raw() { return Ref(this, RelDir.forward); }
+    Ref forward() { return Ref(this, RelDir.forward); }
+    Ref backward() { return Ref(this, RelDir.backward); }
+
+    static const(Ref) asUndefined() { return Ref(nullIx); }
+    bool defined() const { return this.ix != nullIx; }
+    auto opCast(U : bool)() const { return defined(); }
+
+    /** Get Index. */
+    const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
+
+    /** Get Direction. */
+    const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
+private:
+    Ix _ix = nullIx;
+}
+
+unittest
+{
+    alias T = Ref!int;
+    T a, b;
+    import std.algorithm: swap, sort;
+    swap(a, b);
+    T[] x;
+    x.sort;
+}

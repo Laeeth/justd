@@ -165,63 +165,6 @@ bool isMultiWord(S)(S s) if (isSomeString!S)
 /// Normalized (Link) Weight.
 alias NWeight = real;
 
-/** Ix Precision.
-    Set this to $(D uint) if we get low on memory.
-    Set this to $(D ulong) when number of link nodes exceed Ix.
-*/
-alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
-enum nullIx = Ix.max >> 1;
-
-/** Type-Safe Directed Reference to $(D T). */
-struct Ref(T)
-{
-    import bitop_ex: setTopBit, getTopBit, resetTopBit;
-    @safe @nogc pure nothrow:
-
-    alias type = T;
-
-    this(Ix ix_ = nullIx, bool reversion = false) in { assert(ix_ <= nullIx); }
-    body
-    {
-        _ix = ix_;
-        if (reversion) { _ix.setTopBit; }
-    }
-
-    this(Ref rhs, RelDir dir)
-    {
-        this._ix = rhs.ix;
-        setDir(dir);
-    }
-
-    void setDir(RelDir dir)
-    {
-        if (dir == RelDir.backward)
-        {
-            _ix.setTopBit;
-        }
-        else if (dir == RelDir.forward)
-        {
-            _ix.resetTopBit;
-        }
-    }
-
-    Ref raw() { return Ref(this, RelDir.forward); }
-    Ref forward() { return Ref(this, RelDir.forward); }
-    Ref backward() { return Ref(this, RelDir.backward); }
-
-    static const(Ref) asUndefined() { return Ref(nullIx); }
-    bool defined() const { return this.ix != nullIx; }
-    auto opCast(U : bool)() const { return defined(); }
-
-    /** Get Index. */
-    const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
-
-    /** Get Direction. */
-    const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
-private:
-    Ix _ix = nullIx;
-}
-
 /** Context or Ontology Category Index (currently from NELL). */
 struct ContextIx
 {
@@ -394,14 +337,14 @@ class Graph
         }
     private:
         Lns links;
-        const(Lemma) lemma;
+        Lemma lemma;
         Origin origin;
     }
 
     /** Get Links Refs of $(D node) with direction $(D dir).
         TODO what to do with role.reversion here?
      */
-    auto lnsOf(in Node node,
+    auto lnsOf(Node node,
                RelDir dir = RelDir.any,
                Role role = Role.init)
     {
@@ -412,7 +355,7 @@ class Graph
                                     at(ln).role.rel.specializes(role.rel))));
     }
 
-    auto linksOf(in Node node,
+    auto linksOf(Node node,
                  RelDir dir = RelDir.any,
                  Role role = Role.init)
     {
@@ -822,7 +765,7 @@ class Graph
 
         // CN5 and NELL
         readCN5(this, `~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
-        readNELLFile(this, `~/Knowledge/nell/NELL.08m.895.esv.csv`, 1000);
+        //readNELLFile(this, `~/Knowledge/nell/NELL.08m.895.esv.csv`, 1000);
 
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
@@ -4239,7 +4182,8 @@ class Graph
 
         if (checkExisting)
         {
-            if (const existingLn = areConnected(src, role, dst, origin, weight))
+            const existingLn = areConnected(src, role, dst, origin, weight);
+            if (existingLn.defined)
             {
                 if (warnExisting)
                 {
@@ -4483,8 +4427,14 @@ class Graph
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
-        return either(areConnectedInOrder(a, role, b, origin, weight),
-                      areConnectedInOrder(b, role, a, origin, weight));
+        const ab = areConnectedInOrder(a, role, b, origin, weight);
+        if (ab.defined)
+        {
+            return ab;
+        }
+        return areConnectedInOrder(b, role, a, origin, weight);
+        // return either(areConnectedInOrder(a, role, b, origin, weight),
+        //               areConnectedInOrder(b, role, a, origin, weight));
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
@@ -4563,7 +4513,7 @@ class Graph
     {
         foreach (nd; nds)
         {
-            const lineNode = at(nd);
+            auto lineNode = at(nd);
 
             write(`  -`);
 
@@ -4582,14 +4532,18 @@ class Graph
             }
             writeln;
 
-            auto lns = lnsOf(lineNode, RelDir.any, Role(rel, false, negation));
+            auto lns = lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
 
-            // lns.multiSort!((a, b) => (at(a).nweight >
-            //                             at(b).nweight),
-            //                  (a, b) => (at(a).role.rel.rank <
-            //                             at(b).role.rel.rank),
-            //                  (a, b) => (at(a).role.rel <
-            //                             at(b).role.rel));
+            static if (true)
+            {
+                lns.multiSort!((a, b) => (at(a).nweight >
+                                          at(b).nweight),
+                               (a, b) => (at(a).role.rel.rank <
+                                          at(b).role.rel.rank),
+                               (a, b) => (at(a).role.rel <
+                                          at(b).role.rel));
+            }
+
             foreach (ln; lns)
             {
                 auto link = at(ln);

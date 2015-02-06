@@ -5,13 +5,11 @@ import std.traits: isSomeChar, isSomeString;
 import std.array: array, replace;
 import std.algorithm: splitter, map, joiner;
 import std.conv: to;
-import std.stdio: File;
 import core.exception: UnicodeException;
 import std.utf: UTFException;
 import std.path: buildNormalizedPath, expandTilde, extension;
 import std.file;
 
-import mmfile_ex;
 import predicates: of;
 import grammars: Tense, Manner;
 
@@ -246,7 +244,7 @@ Graph.Ln readCN5Line(R, N)(Graph graph,
     Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
 */
 void readCN5File(Graph graph,
-                 string path, size_t maxCount = size_t.max, bool useMmFile = true)
+                 string path, size_t maxCount = size_t.max, bool useMmFile = false)
 {
     writeln(`Reading ConceptNet from `, path, ` ...`);
     size_t lnr = 0;
@@ -254,6 +252,7 @@ void readCN5File(Graph graph,
     {
         if (useMmFile)
         {
+            import mmfile_ex: mmFileLinesRO;
             foreach (line; mmFileLinesRO(path))
             {
                 graph.readCN5Line(line, lnr);
@@ -262,6 +261,7 @@ void readCN5File(Graph graph,
         }
         else
         {
+            import std.stdio: File;
             foreach (line; File(path).byLine)
             {
                 graph.readCN5Line(line, lnr);

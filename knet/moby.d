@@ -9,8 +9,6 @@ import std.stdio: File;
 import core.exception: UnicodeException;
 import std.utf: UTFException;
 
-import mmfile_ex;
-
 import knet.origins: Origin;
 import knet.senses: Sense;
 import knet.base: Graph;
@@ -84,7 +82,7 @@ void learnMobyEnglishPronounciations(Graph graph)
     const path = `../knowledge/moby/pronounciation.txt`;
     writeln(`Reading Moby pronounciations from `, path, ` ...`);
     size_t lnr = 0;
-    foreach (line; mmFileLinesRO(path))
+    foreach (line; File(path).byLine)
     {
         auto split = line.splitter(' ');
         string expr;
