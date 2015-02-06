@@ -20,39 +20,46 @@ void readSynlexFile(Graph graph,
     enum lang = Lang.sv;
     enum origin = Origin.synlex;
 
-    import std.file: read;
+    import std.file;
 
-    const str = cast(string)read(path);
-
-    auto doc = new DocumentParser(str);
-    doc.onStartTag[`syn`] = (ElementParser elp)
+    try
     {
-        import std.conv: to;
-        const level = elp.tag.attr[`level`].to!real; // level on a scale from 1 to 5
-        const weight = level/5.0; // normalized weight
-        string w1, w2;
+        const str = cast(string)read(path);
 
-        import std.uni: toLower;
-        import knet.lemmas: correctLemmaExpr;
-
-        elp.onEndTag[`w1`] = (in Element e) { w1 = e.text.toLower.correctLemmaExpr; };
-        elp.onEndTag[`w2`] = (in Element e) { w2 = e.text.toLower.correctLemmaExpr; };
-
-        elp.parse;
-
-        if (w1 != w2) // there might be a bug in the xml...
+        auto doc = new DocumentParser(str);
+        doc.onStartTag[`syn`] = (ElementParser elp)
         {
-            import knet.senses: Sense;
-            import knet.relations: Rel;
-            import knet.roles: Role;
-            graph.connect(graph.store(w1, lang, Sense.unknown, origin),
-                          Role(Rel.synonymFor),
-                          graph.store(w2, lang, Sense.unknown, origin),
-                          origin, weight, true);
-            ++lnr;
-        }
-    };
-    doc.parse;
+            import std.conv: to;
+            const level = elp.tag.attr[`level`].to!real; // level on a scale from 1 to 5
+            const weight = level/5.0; // normalized weight
+            string w1, w2;
 
-    writeln(`Read SynLex `, path, ` having `, lnr, ` lines`);
+            import std.uni: toLower;
+            import knet.lemmas: correctLemmaExpr;
+
+            elp.onEndTag[`w1`] = (in Element e) { w1 = e.text.toLower.correctLemmaExpr; };
+            elp.onEndTag[`w2`] = (in Element e) { w2 = e.text.toLower.correctLemmaExpr; };
+
+            elp.parse;
+
+            if (w1 != w2) // there might be a bug in the xml...
+            {
+                import knet.senses: Sense;
+                import knet.relations: Rel;
+                import knet.roles: Role;
+                graph.connect(graph.store(w1, lang, Sense.unknown, origin),
+                              Role(Rel.synonymFor),
+                              graph.store(w2, lang, Sense.unknown, origin),
+                              origin, weight, true);
+                ++lnr;
+            }
+        };
+        doc.parse;
+
+        writeln(`Read SynLex `, path, ` having `, lnr, ` lines`);
+    }
+    catch (std.file.FileException e)
+    {
+        writeln(`Failed Reading SynLex from `, path);
+    }
 }
