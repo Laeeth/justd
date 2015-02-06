@@ -234,7 +234,8 @@ struct Lemma
             Manner manner = Manner.formal,
             bool isRegexp = false,
             ubyte meaningNr = 0,
-            bool normalizeExpr = true) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
+            bool normalizeExpr = true,
+            bool uniqueSense = false) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
     body
     {
         auto expr = exprString.to!string;
@@ -267,6 +268,7 @@ struct Lemma
         this.sense = sense;
         this.manner = manner;
         this.context = context;
+        this.uniqueSense = uniqueSense;
 
         if (normalizeExpr)
         {
@@ -303,9 +305,12 @@ struct Lemma
     MutExpr expr;
     /* The following three are used to disambiguate different semantics
      * meanings of the same word in different languages. */
+
+    // TODO bitfields
     Lang lang;
     Sense sense;
-    ContextIx context;
+    ContextIx context; // TODO bitfield
+    bool uniqueSense; // Expr has unique Sense in Lang
 
     enum bitsizeOfManner = packedBitSizeOf!Manner;
     enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
