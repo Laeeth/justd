@@ -753,7 +753,7 @@ class Graph
     void learnDefault()
     {
         const quick = true;
-        const maxCount = quick ? 10000 : size_t.max; // 50000 doesn't crash CN5
+        const maxCount = quick ? 50000 : size_t.max; // 50000 doesn't crash CN5
 
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnPreciseThings();
@@ -765,7 +765,7 @@ class Graph
 
         // CN5 and NELL
         readCN5(this, `~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
-        //readNELLFile(this, `~/Knowledge/nell/NELL.08m.895.esv.csv`, 1000);
+        //readNELLFile(this, `~/Knowledge/nell/NELL.08m.895.esv.csv`, maxCount);
 
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
@@ -4182,8 +4182,7 @@ class Graph
 
         if (checkExisting)
         {
-            const existingLn = areConnected(src, role, dst, origin, weight);
-            if (existingLn.defined)
+            if (const existingLn = areConnected(src, role, dst, origin, weight))
             {
                 if (warnExisting)
                 {
@@ -4427,14 +4426,8 @@ class Graph
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
-        const ab = areConnectedInOrder(a, role, b, origin, weight);
-        if (ab.defined)
-        {
-            return ab;
-        }
-        return areConnectedInOrder(b, role, a, origin, weight);
-        // return either(areConnectedInOrder(a, role, b, origin, weight),
-        //               areConnectedInOrder(b, role, a, origin, weight));
+        return either(areConnectedInOrder(a, role, b, origin, weight),
+                      areConnectedInOrder(b, role, a, origin, weight));
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
