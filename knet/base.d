@@ -757,7 +757,10 @@ class Graph
         learnDefault();
         // inferSpecializedSenses();
         showRelations;
-        save("~/.cache");
+        if (false)
+        {
+            save("~/.cache");
+        }
     }
 
     /** Run unittests.
