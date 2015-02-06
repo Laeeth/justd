@@ -5,6 +5,7 @@ adoration
 adventure
 amazement
 anger
+annoyance
 anxiety
 appearance
 apprehension
@@ -12,10 +13,13 @@ artistry
 awe
 beauty
 behavior
+behaviour
 belief
+beliefs
 belonging
 bravery
 brilliance
+brotherhood
 brutality
 calm
 chaos
@@ -71,6 +75,7 @@ excitement
 exhaustion
 exhilaration
 failure
+fairness
 faith
 faithfulness
 faithlessness
@@ -81,6 +86,7 @@ forgiveness
 fragility
 frailty
 freedom
+freshness
 friendship
 frustration
 generosity
@@ -120,6 +126,7 @@ inspiration
 integrity
 intelligence
 invitation
+ire
 jealousy
 joke
 joy
@@ -153,6 +160,7 @@ motherhood
 motivation
 movement
 music
+nature
 need
 neighborhood
 newness
@@ -166,6 +174,7 @@ patience
 patriotism
 peace
 peculiarity
+performance
 permission
 perseverance
 pleasure
@@ -178,8 +187,12 @@ reality
 redemption
 refreshment
 refusal
+relationship
 relaxation
+reliability
 relief
+religion
+revenge
 riches
 romance
 rumor
@@ -236,3 +249,4 @@ width
 wisdom
 wit
 worry
+wrath
