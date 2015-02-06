@@ -213,6 +213,24 @@ enum Tense:ubyte
     futureDuration,
 }
 
+@safe @nogc pure nothrow
+{
+    bool isPast(Tense tense)
+    {
+        with (Tense) return tense.of(past, pastMoment, pastPeriod, pastResult, pastDuration);
+    }
+
+    bool isPresent(Tense tense)
+    {
+        with (Tense) return tense.of(present, presentMoment, presentPeriod, presentResult, presentDuration);
+    }
+
+    bool isFuture(Tense tense)
+    {
+        with (Tense) return tense.of(future, futureMoment, futurePeriod, futureResult, futureDuration);
+    }
+}
+
 /** Part of a Sentence. */
 enum SentencePart:ubyte
 {
@@ -429,8 +447,7 @@ S lemmatize(S)(S s) if (isSomeString!S)
 /**
    Reuse knet translation query instead.
  */
-string negationIn(Lang lang = Lang.en)
-    @safe pure nothrow
+string negationIn(Lang lang = Lang.en) @safe pure nothrow
 {
     switch (lang) with (Lang)
     {
