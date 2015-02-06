@@ -1986,7 +1986,9 @@ struct Ref(T)
     import bitop_ex: setTopBit, getTopBit, resetTopBit;
 
     @safe pure:
-    string toString() const { return ix().to!string ~ `_` ~ dir().to!string; }
+    string toString() const { return (ix().to!string ~
+                                      `_` ~
+                                      dir().to!string); }
 
     @nogc nothrow:
 
@@ -2005,13 +2007,13 @@ struct Ref(T)
 
     void setDir(RelDir dir)
     {
-        if (dir == RelDir.backward)
+        final switch (dir)
         {
-            _ix.setTopBit;
-        }
-        else if (dir == RelDir.forward)
-        {
-            _ix.resetTopBit;
+            case RelDir.backward: _ix.setTopBit; break;
+            case RelDir.forward: _ix.resetTopBit; break;
+            case RelDir.any:
+                // TODO give warning: debug writeln(`Cannot use RelDir.any here`);
+                break;
         }
     }
 

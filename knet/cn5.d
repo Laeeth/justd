@@ -128,8 +128,8 @@ Rel decodeCN5RelationPath(S)(S path,
 /** Read ConceptNet5 URI.
     See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
 */
-Graph.Nd readCN5ConceptURI(T)(Graph graph,
-                              const T part)
+Nd readCN5ConceptURI(T)(Graph graph,
+                        const T part)
 {
     auto items = part.splitter('/');
 
@@ -156,15 +156,15 @@ Graph.Nd readCN5ConceptURI(T)(Graph graph,
 }
 
 /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
-Graph.Ln readCN5Line(R, N)(Graph graph,
-                           R line, N lnr)
+Ln readCN5Line(R, N)(Graph graph,
+                     R line, N lnr)
 {
     auto rel = Rel.any;
     auto negation = false;
     auto reversion = false;
     auto tense = Tense.unknown;
 
-    Graph.Nd src, dst;
+    Nd src, dst;
     NWeight weight;
     auto lang = Lang.unknown;
     auto origin = Origin.unknown;
@@ -236,7 +236,7 @@ Graph.Ln readCN5Line(R, N)(Graph graph,
     }
     else
     {
-        return Graph.Ln.asUndefined;
+        return Ln.asUndefined;
     }
 }
 

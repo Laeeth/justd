@@ -73,7 +73,7 @@ import core.exception: UnicodeException;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable, Unqual;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, sort, multiSort, skipOver, filter, array, canFind, count, setUnion, setIntersection, min, max;
+import std.algorithm: findSplit, findSplitBefore, findSplitAfter, sort, multiSort, skipOver, filter, canFind, count, setUnion, setIntersection, min, max, joiner, strip, until, dropOne, dropBackOne;
 import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize, representation;
@@ -85,6 +85,10 @@ import std.file: readText, exists, dirEntries, SpanMode;
 import std.bitmanip: bitfields;
 import mmfile_ex;
 alias rdT = readText;
+
+import std.range: front, split, isInputRange, back;
+import std.path: buildNormalizedPath, expandTilde, extension;
+import wordnet: WordNet;
 
 import algorithm_ex: isPalindrome, either, append;
 import ixes: commonSuffixCount;
@@ -195,152 +199,213 @@ struct Location
     double longitude;
 }
 
+/** Expression (String). */
+static if (useRCString) { alias Expr = RCXString!(immutable char, 24-1); }
+else                    { alias Expr = immutable string; }
+
+static if (useRCString) { alias MutExpr = RCXString!(char, 24-1); }
+else                    { alias MutExpr = string; }
+
+/// Reference to Node.
+alias Nd = Ref!Node;
+
+/// Reference to Link.
+alias Ln = Ref!Link;
+
+/// References to Nodes.
+static if (useArray) { alias Nds = Array!Nd; }
+else                 { alias Nds = Nd[]; }
+
+/// References to Links.
+static if (useArray) { alias Lns = Array!Ln; }
+else                 { alias Lns = Ln[]; }
+
+/** Node Concept Lemma. */
+struct Lemma
+{
+    @safe // @nogc
+    pure // nothrow
+    :
+
+    this(S)(S exprString,
+            Lang lang,
+            Sense sense,
+            ContextIx context = ContextIx.asUndefined,
+            Manner manner = Manner.formal,
+            bool isRegexp = false,
+            ubyte meaningNr = 0,
+            bool normalizeExpr = true) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
+    body
+    {
+        auto expr = exprString.to!string;
+
+        // check if regular expression
+        if (normalizeExpr)
+        {
+            this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
+        }
+
+        if (normalizeExpr &&
+            expr.length >= 2 &&
+            expr[$ - 2] == meaningNrSeparator)
+        {
+            const ubyte nrCharByte = expr.representation.back;
+            assert(nrCharByte >= '0' &&
+                   nrCharByte <= '9');
+            this.meaningNr = cast(ubyte)(nrCharByte - '0');
+            expr = expr[0 .. $ - 2]; // skip meaning number suffix
+            assert(meaningNr == 0,
+                   `Can't override already decoded meaning number`
+                   /* ~ this.meaningNr.to!string */);
+        }
+        else
+        {
+            this.meaningNr = meaningNr;
+        }
+
+        this.lang = lang;
+        this.sense = sense;
+        this.manner = manner;
+        this.context = context;
+
+        if (normalizeExpr)
+        {
+            auto split = expr.findSplit(meaningNrSeparatorString);
+            if (!split[1].empty) // if a split was found
+            {
+                try
+                {
+                    const exprSense = split[0].to!Sense;
+                    if (sense == Sense.unknown ||
+                        exprSense.specializes(sense))
+                    {
+                        this.sense = exprSense;
+                    }
+                    else if (!sense.specializes(exprSense))
+                    {
+                        assert(sense == Sense.unknown,
+                               `Can't override argumented sense ` ~ sense
+                               ~ ` with ` ~ this.sense);
+                    }
+                    expr = split[2];
+                    if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
+                }
+                catch (std.conv.ConvException e)
+                {
+                    /* ok to not be able to downcase */
+                }
+            }
+        }
+
+        this.expr = expr;
+    }
+
+    MutExpr expr;
+    /* The following three are used to disambiguate different semantics
+     * meanings of the same word in different languages. */
+    Lang lang;
+    Sense sense;
+    ContextIx context;
+
+    enum bitsizeOfManner = packedBitSizeOf!Manner;
+    enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
+    enum MeaningNrMax = 2^^bitsizeOfMeaningNr - 1;
+
+    mixin(bitfields!(Manner, `manner`, bitsizeOfManner,
+                     ubyte, `meaningNr`, bitsizeOfMeaningNr,
+                     bool, `isRegexp`, 1 // true if $(D expr) is a regular expression
+              ));
+}
+
+/** Concept Node/Vertex. */
+struct Node
+{
+    /* @safe @nogc pure nothrow: */
+    this(in Lemma lemma,
+         Origin origin = Origin.unknown,
+         Lns links = Lns.init)
+    {
+        this.lemma = lemma;
+        this.origin = origin;
+        this.links = links;
+    }
+private:
+    Lns links;
+    Lemma lemma;
+    Origin origin;
+}
+
+alias PWeight = ubyte; // link weight pack type
+
+/** Many-Nodes-to-Many-Nodes Link (Edge).
+ */
+struct Link
+{
+    alias WeightHistogram = size_t[PWeight];
+
+    /* @safe @nogc pure nothrow: */
+
+    this(Nd src,
+         Role role,
+         Nd dst,
+         Origin origin = Origin.unknown) in { assert(src.defined && dst.defined); }
+    body
+    {
+        // http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org#post-zhndpadqtfareymbnfis:40forum.dlang.org
+        // this.actors.append(src.backward,
+        //                    dst.forward);
+        this.actors.reserve(this.actors.length + 2);
+        this.actors ~= src.backward;
+        this.actors ~= dst.forward;
+
+        this.role = role;
+        this.origin = origin;
+    }
+
+    this(Origin origin = Origin.unknown)
+    {
+        this.origin = origin;
+    }
+
+    /** Set ConceptNet5 PWeight $(weight). */
+    void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
+    {
+        // pack from 0..about10 to PWeight to save memory
+        pweight = cast(PWeight)(weight.clamp(0,10)/10*PWeight.max);
+    }
+
+    /** Set NELL Probability PWeight $(weight). */
+    void setNELLWeight(T)(T weight) if (isFloatingPoint!T)
+    {
+        // pack from 0..1 to PWeight to save memory
+        pweight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
+    }
+
+    /** Set Manual Probability PWeight $(weight). */
+    void setManualWeight(T)(T weight) if (isFloatingPoint!T)
+    {
+        // pack from 0..1 to PWeight to save memory
+        pweight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
+    }
+
+    /** Get Normalized Link PWeight. */
+    @property NWeight nweight() const
+    {
+        return ((cast(typeof(return))pweight)/
+                (cast(typeof(return))PWeight.max));
+    }
+
+private:
+    Nds actors;
+    PWeight pweight;
+    Role role;
+    Origin origin;
+}
+
 /** Main Knowledge Network Graph.
 */
 class Graph
 {
-    import std.range: front, split, isInputRange, back;
-    import std.algorithm: joiner;
-    import std.path: buildNormalizedPath, expandTilde, extension;
-    import std.algorithm: strip, array, until, dropOne, dropBackOne;
-    import wordnet: WordNet;
-
-    /// Reference to Node.
-    alias Nd = Ref!Node;
-
-    /// Reference to Link.
-    alias Ln = Ref!Link;
-
-    /** Expression (String). */
-    static if (useRCString) { alias Expr = RCXString!(immutable char, 24-1); }
-    else                    { alias Expr = immutable string; }
-
-    static if (useRCString) { alias MutExpr = RCXString!(char, 24-1); }
-    else                    { alias MutExpr = string; }
-
-    /// References to Nodes.
-    static if (useArray) { alias Nds = Array!Nd; }
-    else                 { alias Nds = Nd[]; }
-
-    /// References to Links.
-    static if (useArray) { alias Lns = Array!Ln; }
-    else                 { alias Lns = Ln[]; }
-
-    /** Node Concept Lemma. */
-    struct Lemma
-    {
-        @safe // @nogc
-        pure // nothrow
-        :
-
-        this(S)(S exprString,
-                Lang lang,
-                Sense sense,
-                ContextIx context = ContextIx.asUndefined,
-                Manner manner = Manner.formal,
-                bool isRegexp = false,
-                ubyte meaningNr = 0,
-                bool normalizeExpr = true) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
-        body
-        {
-            auto expr = exprString.to!string;
-
-            // check if regular expression
-            if (normalizeExpr)
-            {
-                this.isRegexp = expr.skipOver(`regex:`) ? true : isRegexp;
-            }
-
-            if (normalizeExpr &&
-                expr.length >= 2 &&
-                expr[$ - 2] == meaningNrSeparator)
-            {
-                const ubyte nrCharByte = expr.representation.back;
-                assert(nrCharByte >= '0' &&
-                       nrCharByte <= '9');
-                this.meaningNr = cast(ubyte)(nrCharByte - '0');
-                expr = expr[0 .. $ - 2]; // skip meaning number suffix
-                assert(meaningNr == 0,
-                       `Can't override already decoded meaning number`
-                       /* ~ this.meaningNr.to!string */);
-            }
-            else
-            {
-                this.meaningNr = meaningNr;
-            }
-
-            this.lang = lang;
-            this.sense = sense;
-            this.manner = manner;
-            this.context = context;
-
-            if (normalizeExpr)
-            {
-                auto split = expr.findSplit(meaningNrSeparatorString);
-                if (!split[1].empty) // if a split was found
-                {
-                    try
-                    {
-                        const exprSense = split[0].to!Sense;
-                        if (sense == Sense.unknown ||
-                            exprSense.specializes(sense))
-                        {
-                            this.sense = exprSense;
-                        }
-                        else if (!sense.specializes(exprSense))
-                        {
-                            assert(sense == Sense.unknown,
-                                   `Can't override argumented sense ` ~ sense
-                                   ~ ` with ` ~ this.sense);
-                        }
-                        expr = split[2];
-                        if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
-                    }
-                    catch (std.conv.ConvException e)
-                    {
-                        /* ok to not be able to downcase */
-                    }
-                }
-            }
-
-            this.expr = expr;
-        }
-
-        MutExpr expr;
-        /* The following three are used to disambiguate different semantics
-         * meanings of the same word in different languages. */
-        Lang lang;
-        Sense sense;
-        ContextIx context;
-
-        enum bitsizeOfManner = packedBitSizeOf!Manner;
-        enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
-        enum MeaningNrMax = 2^^bitsizeOfMeaningNr - 1;
-
-        mixin(bitfields!(Manner, `manner`, bitsizeOfManner,
-                         ubyte, `meaningNr`, bitsizeOfMeaningNr,
-                         bool, `isRegexp`, 1 // true if $(D expr) is a regular expression
-                  ));
-    }
-
-    /** Concept Node/Vertex. */
-    struct Node
-    {
-        /* @safe @nogc pure nothrow: */
-        this(in Lemma lemma,
-             Origin origin = Origin.unknown,
-             Lns links = Lns.init)
-        {
-            this.lemma = lemma;
-            this.origin = origin;
-            this.links = links;
-        }
-    private:
-        Lns links;
-        Lemma lemma;
-        Origin origin;
-    }
-
     /** Get Links Refs of $(D node) with direction $(D dir).
         TODO what to do with role.reversion here?
      */
@@ -399,8 +464,6 @@ class Graph
         return trav;
     }
 
-    alias PWeight = ubyte; // link weight pack type
-
     /** Binary Relation Link.
      */
     struct Link2
@@ -435,71 +498,6 @@ class Graph
         Nd second;
         Nd third;
         Nd fourth;
-        PWeight pweight;
-        Role role;
-        Origin origin;
-    }
-
-    /** Many-Nodes-to-Many-Nodes Link (Edge).
-     */
-    struct Link
-    {
-        alias WeightHistogram = size_t[PWeight];
-
-        /* @safe @nogc pure nothrow: */
-
-        this(Nd src,
-             Role role,
-             Nd dst,
-             Origin origin = Origin.unknown) in { assert(src.defined && dst.defined); }
-        body
-        {
-            // http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org#post-zhndpadqtfareymbnfis:40forum.dlang.org
-            // this.actors.append(src.backward,
-            //                    dst.forward);
-            this.actors.reserve(this.actors.length + 2);
-            this.actors ~= src.backward;
-            this.actors ~= dst.forward;
-
-            this.role = role;
-            this.origin = origin;
-        }
-
-        this(Origin origin = Origin.unknown)
-        {
-            this.origin = origin;
-        }
-
-        /** Set ConceptNet5 PWeight $(weight). */
-        void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
-        {
-            // pack from 0..about10 to PWeight to save memory
-            pweight = cast(PWeight)(weight.clamp(0,10)/10*PWeight.max);
-        }
-
-        /** Set NELL Probability PWeight $(weight). */
-        void setNELLWeight(T)(T weight) if (isFloatingPoint!T)
-        {
-            // pack from 0..1 to PWeight to save memory
-            pweight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
-        }
-
-        /** Set Manual Probability PWeight $(weight). */
-        void setManualWeight(T)(T weight) if (isFloatingPoint!T)
-        {
-            // pack from 0..1 to PWeight to save memory
-            pweight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
-        }
-
-        /** Get Normalized Link PWeight. */
-        @property NWeight nweight() const
-        {
-            return ((cast(typeof(return))pweight)/
-                    (cast(typeof(return))PWeight.max));
-        }
-
-    private:
-        Nds actors;
         PWeight pweight;
         Role role;
         Origin origin;

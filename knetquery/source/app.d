@@ -12,7 +12,6 @@ int main(string[] args)
     registerMemoryErrorHandler();
 
     auto gr = new Graph();
-    gr.showNodes(`car_wash`);
 
     while (true)
     {

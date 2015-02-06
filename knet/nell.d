@@ -55,8 +55,8 @@ void readNELLLine(R, N)(Graph graph,
     auto reversion = false;
     auto tense = Tense.unknown;
 
-    Graph.Nd entityIx;
-    Graph.Nd valueIx;
+    Nd entityIx;
+    Nd valueIx;
 
     string entityContextName;
     char[] relationName;
@@ -151,8 +151,8 @@ void readNELLLine(R, N)(Graph graph,
 }
 
 /** Read NELL Entity from $(D part). */
-Tuple!(Graph.Nd, string, Graph.Ln) readNELLEntity(S)(Graph graph,
-                                                     const S part)
+Tuple!(Nd, string, Ln) readNELLEntity(S)(Graph graph,
+                                         const S part)
 {
     const show = false;
 
