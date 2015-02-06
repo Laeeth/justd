@@ -488,20 +488,25 @@ class Graph
     static if (useArray) { alias Links = Array!Link; }
     else                 { alias Links = Link[]; }
 
+    // Data and Indexes
     private
     {
-        Nd[Lemma] ndByLemma;
-
-        // TODO Nds[Lang.max + 1] ndsByLang;
-
+        // Data
         Nodes allNodes;
         Links allLinks;
+        // TODO Nds[Lang.max + 1] ndsByLang;
 
+        // Indexes
+        Nd[Lemma] ndByLemma;
         Lemmas[Expr] lemmasByExpr;
 
         string[ContextIx] contextNameByIx; /** Ontology Context Names by Index. */
         ContextIx[string] contextIxByName; /** Ontology Context Indexes by Name. */
+    }
 
+    // Statistics
+    private
+    {
         ushort contextIxCounter = ContextIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyContext (unknown)
 
         size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
@@ -708,6 +713,7 @@ class Graph
         learnDefault();
         // inferSpecializedSenses();
         showRelations;
+        save("~/.cache");
     }
 
     /** Run unittests.
@@ -770,6 +776,23 @@ class Graph
         // TODO msgpack fails to pack
         /* auto bytes = this.pack; */
         /* writefln(`Packed size: %.2f`, bytes.length/1.0e6); */
+    }
+
+    void save(string cacheDirPath)
+    {
+        import std.range: chain;
+        const cachePath = buildNormalizedPath(cacheDirPath.expandTilde, `knet.msgpack`);
+        writeln(`Writing cache in msgpack format to `, cachePath, ` ...`);
+        auto db = chain(allNodes.pack,
+                        allLinks.pack,
+                        ndByLemma.pack,
+                        lemmasByExpr.pack);
+        auto file = File(cachePath, "w");
+        file.write(db);
+    }
+
+    void load(string path)
+    {
     }
 
     /// Learn Externally (Trained) Supervised Things.
