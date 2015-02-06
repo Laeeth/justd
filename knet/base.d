@@ -399,11 +399,51 @@ class Graph
         return trav;
     }
 
+    alias PWeight = ubyte; // link weight pack type
+
+    /** Binary Relation Link.
+     */
+    struct Link2
+    {
+    private:
+        Nd first;
+        Nd second;
+        PWeight pweight;
+        Role role;
+        Origin origin;
+    }
+
+    /** Ternary Relation Link.
+     */
+    struct Link3
+    {
+    private:
+        Nd first;
+        Nd second;
+        Nd third;
+        PWeight pweight;
+        Role role;
+        Origin origin;
+    }
+
+    /** Quarnary Relation Link.
+     */
+    struct Link4
+    {
+    private:
+        Nd first;
+        Nd second;
+        Nd third;
+        Nd fourth;
+        PWeight pweight;
+        Role role;
+        Origin origin;
+    }
+
     /** Many-Nodes-to-Many-Nodes Link (Edge).
      */
     struct Link
     {
-        alias PWeight = ubyte; // link weight pack type
         alias WeightHistogram = size_t[PWeight];
 
         /* @safe @nogc pure nothrow: */
@@ -434,33 +474,33 @@ class Graph
         void setCN5Weight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..about10 to PWeight to save memory
-            packedWeight = cast(PWeight)(weight.clamp(0,10)/10*PWeight.max);
+            pweight = cast(PWeight)(weight.clamp(0,10)/10*PWeight.max);
         }
 
         /** Set NELL Probability PWeight $(weight). */
         void setNELLWeight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..1 to PWeight to save memory
-            packedWeight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
+            pweight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
         }
 
         /** Set Manual Probability PWeight $(weight). */
         void setManualWeight(T)(T weight) if (isFloatingPoint!T)
         {
             // pack from 0..1 to PWeight to save memory
-            packedWeight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
+            pweight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
         }
 
         /** Get Normalized Link PWeight. */
         @property NWeight nweight() const
         {
-            return ((cast(typeof(return))packedWeight)/
+            return ((cast(typeof(return))pweight)/
                     (cast(typeof(return))PWeight.max));
         }
 
     private:
         Nds actors;
-        PWeight packedWeight;
+        PWeight pweight;
         Role role;
         Origin origin;
     }
@@ -468,13 +508,17 @@ class Graph
     auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward); }
     auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward); }
 
-    static if (false)
+    static if (true)
     {
         pragma(msg, `Expr.sizeof: `, Expr.sizeof);
+        pragma(msg, `Role.sizeof: `, Role.sizeof);
         pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
         pragma(msg, `Node.sizeof: `, Node.sizeof);
         pragma(msg, `Lns.sizeof: `, Lns.sizeof);
         pragma(msg, `Nds.sizeof: `, Nds.sizeof);
+        pragma(msg, `Link2.sizeof: `, Link2.sizeof);
+        pragma(msg, `Link3.sizeof: `, Link3.sizeof);
+        pragma(msg, `Link4.sizeof: `, Link4.sizeof);
         pragma(msg, `Link.sizeof: `, Link.sizeof);
     }
 
@@ -532,13 +576,13 @@ class Graph
         NWeight weightMinCN5 = NWeight.max;
         NWeight weightMaxCN5 = NWeight.min_normal;
         NWeight weightSumCN5 = 0; // Sum of all link weights.
-        Link.WeightHistogram packedWeightHistogramCN5; // CN5 Packed Weight Histogram
+        Link.WeightHistogram pweightHistogramCN5; // CN5 Packed Weight Histogram
 
         // TODO Group to WeightsStatistics
         NWeight weightMinNELL = NWeight.max;
         NWeight weightMaxNELL = NWeight.min_normal;
         NWeight weightSumNELL = 0; // Sum of all link weights.
-        Link.WeightHistogram packedWeightHistogramNELL; // NELL Packed Weight Histogram
+        Link.WeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
     }
 
     @safe pure nothrow
@@ -4244,7 +4288,7 @@ class Graph
             weightSumCN5 += weight;
             weightMinCN5 = min(weight, weightMinCN5);
             weightMaxCN5 = max(weight, weightMaxCN5);
-            ++packedWeightHistogramCN5[link.packedWeight];
+            ++pweightHistogramCN5[link.pweight];
         }
         else if (origin == Origin.nell)
         {
@@ -4252,7 +4296,7 @@ class Graph
             weightSumNELL += weight;
             weightMinNELL = min(weight, weightMinNELL);
             weightMaxNELL = max(weight, weightMaxNELL);
-            ++packedWeightHistogramNELL[link.packedWeight];
+            ++pweightHistogramNELL[link.pweight];
         }
         else
         {
@@ -4379,12 +4423,12 @@ class Graph
         if (weightSumCN5)
         {
             writeln(indent, `CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(NWeight)weightSumCN5/allLinks.length);
-            writeln(indent, `CN5 Packed Weights Histogram: `, packedWeightHistogramCN5);
+            writeln(indent, `CN5 Packed Weights Histogram: `, pweightHistogramCN5);
         }
         if (weightSumNELL)
         {
             writeln(indent, `NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(NWeight)weightSumNELL/allLinks.length);
-            writeln(indent, `NELL Packed Weights Histogram: `, packedWeightHistogramNELL);
+            writeln(indent, `NELL Packed Weights Histogram: `, pweightHistogramNELL);
         }
 
         writeln(indent, `Node Count (All/Multi-Word): `,
