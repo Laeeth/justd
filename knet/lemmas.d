@@ -12,6 +12,7 @@ auto ref correctLemmaExpr(S)(S s) if (isSomeString!S)
         case `bed room`: return `bedroom`;
         case `diningroom`: return `dining room`;
         case `livingroom`: return `living room`;
+        case `resturant`: return `restaurant`; // CN5 misspelling
         default: return s;
     }
 }
