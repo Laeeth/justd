@@ -33,7 +33,10 @@ void readFolketsFile(Graph graph,
             string[] dsts;
             elp.onEndTag[`k`] = (in Element e) { src = e.text.correctLemmaExpr; };
             elp.onEndTag[`gr`] = (in Element e) { gr_ = e.text.correctLemmaExpr; };
-            elp.onEndTag[`dtrn`] = (in Element e) { dsts ~= e.text; };
+            elp.onEndTag[`dtrn`] = (in Element e)
+            {
+                dsts ~= e.text;
+            };
 
             elp.parse;
 
