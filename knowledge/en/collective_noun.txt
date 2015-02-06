@@ -14,3 +14,9 @@ herd
 school class
 team
 village
+range
+deck
+pile
+pack
+swarm
+network

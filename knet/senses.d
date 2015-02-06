@@ -26,8 +26,9 @@ enum Sense:ubyte
 
     noun,
 
+    nounNeuter,
+
     nounAbstract,
-    nounConcrete,
 
     nounCollective,
     nounRegular,
@@ -41,9 +42,13 @@ enum Sense:ubyte
 
     numeric,
 
+    nounConcrete,
     plant,
     food,
     spice,
+
+    material,
+    substance,
 
     numeral,
     numeralOrdinal,
@@ -305,6 +310,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case punctuation: return `punctuation`;
 
         case noun: return `noun`;
+        case nounNeuter: return `neuter noun`;
         case nounAbstract: return `abstract noun`;
         case nounConcrete: return `concrete noun`;
         case nounCollective: return `collective noun`;
@@ -320,6 +326,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case plant: return `plant`;
         case food: return `food`;
         case spice: return `spice`;
+
+        case substance: return `substance`;
+        case material: return `material`;
 
         case numeral: return `numeral`;
         case numeralOrdinal: return `ordinal numeral`;
@@ -594,11 +603,17 @@ import predicates: of;
         with (Sense) return (sense.of(food,
                                       spice));
     }
-    bool isAbstract(Sense sense)
+    bool isNounAbstract(Sense sense)
     {
         with (Sense) return (sense.isNumeric ||
                              sense.isLanguage ||
                              sense.isTimePeriod);
+    }
+    bool isNounConcrete(Sense sense)
+    {
+        with (Sense) return (sense.of(plant,
+                                      material,
+                                      substance));
     }
     bool isLanguage(Sense sense)
     {
@@ -618,6 +633,7 @@ import predicates: of;
                              sense.isFood ||
                              sense.isLanguage ||
                              sense.of(noun,
+                                      nounNeuter,
                                       nounAbstract,
                                       nounConcrete,
                                       nounCollective,
@@ -896,6 +912,8 @@ bool specializes(Sense special,
         case phrase: return special.isPhrase;
         case noun: return (special.isNoun ||
                            special.isPronoun);
+        case nounNeuter: return (special.isNounAbstract);
+        case nounConcrete: return (special.isNounConcrete);
         case food: return special.isFood;
         case numeral: return special.isNumeral;
         case integer: return special.isInteger;

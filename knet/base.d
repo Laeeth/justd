@@ -87,7 +87,7 @@ import mmfile_ex;
 alias rdT = readText;
 
 import std.range: front, split, isInputRange, back;
-import std.path: buildNormalizedPath, expandTilde, extension;
+import std.path: buildNormalizedPath, expandTilde, extension, baseName;
 import wordnet: WordNet;
 
 import algorithm_ex: isPalindrome, either, append;
@@ -1127,46 +1127,40 @@ class Graph
 
             try { learnMto1(lang, rdT(dirPath ~ `/contronym.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
             catch (std.file.FileException e) {}
+
+            try { learnOpposites(lang); }
+            catch (std.exception.ErrnoException e) {}
         }
 
-        // Translation
-        learnMtoNMaybe(`../knowledge/en-sv/noun_translation.txt`,
-                       Sense.noun, Lang.en,
-                       Role(Rel.translationOf),
-                       Sense.noun, Lang.sv,
-                       Origin.manual, 1.0);
-        learnMtoNMaybe(`../knowledge/en-sv/phrase_translation.txt`,
-                       Sense.unknown, Lang.en,
-                       Role(Rel.translationOf),
-                       Sense.unknown, Lang.sv,
-                       Origin.manual, 1.0);
-        learnMtoNMaybe(`../knowledge/la-sv/phrase_translation.txt`,
-                       Sense.unknown, Lang.la,
-                       Role(Rel.translationOf),
-                       Sense.unknown, Lang.sv,
-                       Origin.manual, 1.0);
-        learnMtoNMaybe(`../knowledge/la-en/phrase_translation.txt`,
-                       Sense.unknown, Lang.la,
-                       Role(Rel.translationOf),
-                       Sense.unknown, Lang.en,
-                       Origin.manual, 1.0);
-        learnMtoNMaybe(`../knowledge/en-sv/idiom_translation.txt`,
-                       Sense.idiom, Lang.en,
-                       Role(Rel.translationOf),
-                       Sense.idiom, Lang.sv,
-                       Origin.manual, 1.0);
-        learnMtoNMaybe(`../knowledge/en-sv/interjection_translation.txt`,
-                       Sense.interjection, Lang.en,
-                       Role(Rel.translationOf),
-                       Sense.interjection, Lang.sv,
-                       Origin.manual, 1.0);
-        learnMtoNMaybe(`../knowledge/fr-en/phrase_translation.txt`,
-                       Sense.unknown, Lang.fr,
-                       Role(Rel.translationOf),
-                       Sense.unknown, Lang.en,
-                       Origin.manual, 1.0);
+        // handle knowledge/X-Y/*.txt such as knowledge/en-sv/*.txt
+        foreach (dirEntry; dirEntries("../knowledge", SpanMode.shallow))
+        {
+            const split = dirEntry.name.baseName.findSplit(`-`);
+            if (!split[1].empty) // if subdirectory of knowledge container space
+            {
+                // try decoding them as iso language codes
+                const srcLang = split[0].to!Lang;
+                const dstLang = split[2].to!Lang;
+                foreach (txtFile; dirEntries(dirEntry.name, SpanMode.shallow))
+                {
+                    Sense sense;
+                    Rel rel;
+                    switch (txtFile.name.baseName)
+                    {
+                        case "noun_translation.txt":         sense = Sense.noun;         rel = Rel.translationOf; break;
+                        case "phrase_translation.txt":       sense = Sense.phrase;       rel = Rel.translationOf; break;
+                        case "idiom_translation.txt":        sense = Sense.idiom;        rel = Rel.translationOf; break;
+                        case "interjection_translation.txt": sense = Sense.interjection; rel = Rel.translationOf; break;
+                        default: break;
+                    }
 
-        learnOpposites();
+                    learnMtoNMaybe(txtFile.name,
+                                   sense, srcLang, Role(rel),
+                                   sense, dstLang,
+                                   Origin.manual, 1.0);
+                }
+            }
+        }
 
         learnEmotions();
         learnEnglishFeelings();
@@ -1905,9 +1899,9 @@ class Graph
     }
 
     /// Learn Opposites.
-    void learnOpposites(Lang lang = Lang.en, Origin origin = Origin.manual)
+    void learnOpposites(Lang lang, Origin origin = Origin.manual)
     {
-        foreach (expr; File(`../knowledge/en/opposites.txt`).byLine.filter!(a => !a.empty))
+        foreach (expr; File(`../knowledge/` ~ lang.to!string ~ `/opposites.txt`).byLine.filter!(a => !a.empty))
         {
             auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
             const auto first = split[0], second = split[2];
