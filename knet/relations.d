@@ -1984,7 +1984,11 @@ enum nullIx = Ix.max >> 1;
 struct Ref(T)
 {
     import bitop_ex: setTopBit, getTopBit, resetTopBit;
-    @safe @nogc pure nothrow:
+
+    @safe pure:
+    string toString() const { return ix().to!string ~ `_` ~ dir().to!string; }
+
+    @nogc nothrow:
 
     this(Ix ix = nullIx, bool reversion = false) in { assert(ix <= nullIx); }
     body
