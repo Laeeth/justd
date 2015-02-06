@@ -709,7 +709,7 @@ class Graph
     /** Internalize $(D Lemma) of $(D expr).
         Returns: either existing specialized lemma or a reference to the newly stored one.
      */
-    ref Lemma internLemma(return ref Lemma lemma) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
+    ref Lemma internLemma(ref Lemma lemma) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
     {
         if (auto lemmas = lemma.expr in lemmasByExpr)
         {
