@@ -1410,7 +1410,7 @@ auto toHuman(const Rel rel,
                 {
                     case sv: words = ["är", not, "en instans av"]; break;
                     case en:
-                    default: words = ["is ", not, "an instance of"]; break;
+                    default: words = ["is", not, "an instance of"]; break;
                 }
             }
             else
