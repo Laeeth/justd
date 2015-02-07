@@ -108,6 +108,7 @@ enum Sense:ubyte
 
     verbTransitive,
     verbIntransitive,
+    verbReflexive,
 
     verbRegular,
     verbIrregular,
@@ -388,6 +389,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case verb: return `verb`;
         case verbTransitive: return `transitive verb`;
         case verbIntransitive: return `intransitive verb`;
+        case verbReflexive: return `reflexive verb`;
         case verbRegular: return `regular verb`;
         case verbIrregular: return `irregular verb`;
 
@@ -718,6 +720,7 @@ import predicates: of;
                              sense.of(verb,
                                       verbTransitive,
                                       verbIntransitive,
+                                      verbReflexive,
                                       verbInfinitive,
                                       verbPast,
                                       verbPastParticiple,
@@ -898,6 +901,11 @@ import predicates: of;
         with (Sense) return (sense.of(abbrevation,
                                       nounAbbrevation,
                                       nounAcronym));
+    }
+    bool isReflexive(Sense sense)
+    {
+        with (Sense) return (sense.of(verbReflexive) ||
+                             sense.isPronounReflexive);
     }
 }
 
