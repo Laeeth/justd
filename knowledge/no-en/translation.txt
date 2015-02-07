@@ -246,14 +246,10 @@ etaone
 etasjefloorstory
 etc. (Latin)et ceteraand so on
 etternavnsurnamelast
-evne
-intelligence
-fabrikk
-factory
-faddere
-christening witnessesgodparents
-fallesyke
-epilepsy
+evneintelligence
+fabrikkfactory
+fadderechristening witnessesgodparents
+fallesykeepilepsy
 falt fallbe killed in war
 familiefamily
 familie historielinage books
@@ -276,28 +272,17 @@ femtiendefiftieth
 fengselprison
 festeseddelrental contract
 festningfortress
-fetter
-cousin (male)
-Finnland
-Finland
-finsk
-Finnish
-fore
-four
-fisker
-fisherman
-fjell
-mountain
-fjerde
-fourth
-fjorten
-fourteen
-fjortende
-fourteenth
-flere
-severalmore
-flittig
-diligent
+fettercousin (male)
+FinnlandFinland
+finskFinnish
+forefour
+fiskerfisherman
+fjellmountain
+fjerdefourth
+fjortenfourteen
+fjortendefourteenth
+flereseveralmore
+flittigdiligent
 flyttemove
 fogedfogdbailiffsheriff
 foliopage (double)
@@ -690,7 +675,6 @@ onsdagWednesday
 oppup
 oppeaboveupstairs
 oppfostrefosterto rear
-residence
 opptegnelserecord
 ordbokdictionary
 ordførermayor
