@@ -11,8 +11,10 @@ enum Sense:ubyte
     languageNatural, languageHuman = languageNatural,
     languageProgramming,
 
-    prefix,
-    suffix,
+    prefix,                     /// Word prefix, commin in Latin
+    beginning = prefix,         /// Word beginning
+    suffix,                     /// Word suffix, common in Latin languages
+    ending = suffix,            /// Word ending
 
     letter,
     letterLowercase,
