@@ -4,7 +4,10 @@
  * \brief
  */
 
-import all;
+import std.stdio: writeln;
+import std.algorithm.iteration: splitter, joiner;
+import std.array: array;
+import std.conv: to;
 
 void main(string[] args)
 {
@@ -19,4 +22,8 @@ void main(string[] args)
     auto c = b.array;
     pragma(msg, typeof(c));
     writeln("c: ", c);
+
+    auto d = b.to!string;
+    pragma(msg, typeof(d));
+    writeln("d: ", d);
 }
