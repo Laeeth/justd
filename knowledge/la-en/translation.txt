@@ -16,64 +16,113 @@ verb:abscidoverb:cut offVERB:separateVERB:take away
 adjective:absconditusadjective:hiddenadjective:concealed
 
 adjective:absensadjective:absentisadjective:absentmissingawaygone
-absorbeoverb:swallowgulp downcarry awayengross
+verb:absorbeoverb:swallowgulp downcarry awayengross
 absque(+ abl.) without
-abstergoverb:wipe offclean away
-absumverb:be absentbe awaybe missing
-abundansadjective:abundantadjective:overflowingadjective:abounding in
+verb:abstergoverb:wipe offclean away
+verb:absumverb:be absentbe awaybe missing
+adjective:abundansadjective:abundantadjective:overflowingadjective:abounding in
 noun:abundantianoun:abundancenoun:bountynoun:plenty
-abutorverb:make full use ofverb:abuse
-abutorverb:use abusive language / use a word incorrectly
-ac(atque)and
-accedoverb:approachcome near / (things) to be added
-accendoverb:kindleilluminateinflame
-acceptusadjective:welcomeadjective:pleasantadjective:agreeable
-accipioverb:consider oneself indebtedreceivelearntake
-accommodoverb:adjustadaptaccommodate oneself
-accusatoraccusorplaintiff
-accusoverb:accuseblamefind fault with
-acersharpkeeneagerseverefierce
-acerbitasharshnessbitterness
-acerbusbittergloomydark
+
+verb:abutorverb:make full use ofverb:abuse
+verb:abutorverb:use abusive language / use a word incorrectly
+
+acand
+atqueand
+
+verb:accedoverb:approachverb:come near
+noun:accedonoun:things to be added
+accedoto be added
+
+verb:accendoverb:kindleverb:illuminateverb:inflame
+adjective:acceptusadjective:welcomeadjective:pleasantadjective:agreeable
+verb:accipioverb:consider oneself indebtedverb:receiveverb:learnverb:take
+verb:accommodoverb:adjustverb:adaptverb:accommodate oneself
+
+noun:accusatornoun:accusornoun:plaintiff
+verb:accusoverb:accuseverb:blameverb:find fault with
+
+adjective:aceradjective:sharpadjective:keenadjective:eageradjective:severeadjective:fierce
+
+noun:acerbitasnoun:harshnessnoun:bitterness
+adjective:acerbusadjective:bitteradjective:gloomyadjective:dark
+
 acervusa heapmass
-acidussharpsour
-acieskeennessedgesharpnessbattle-linebattlefield
-acquiroverb:acquiregaingetobtain
-acsias if(Herimann p. 283293)
-adamoverb:fall in love withfind pleasure in
-adaugeoverb:make greateraddincrease
-addoverb:givebringplace/ inspirecause/ addjoin
-adducoverb:leadinducepersuade
-ademptioa taking away
-adeoverb:such a pointsuch an extentso farso long
-adeoverb:approachvisitcome toundertake
-adeptioattainmentobtaining
-adeptoverb:obtaingetacquire
-adfectus affectus(fr. adficio)influencedworked upon
-adfero afferoverb:causebring aboutcontribute
-adfero afferoverb:bring newsreport / applybring to bear
-adficioverb:affectafflictweakensapexhaustdrain
-adflicto affligoverb:injureweakendiscouragedamagebreak
-adhaeroverb:hang tostick toadhere
+adjective:acidusadjective:sharpadjective:sour
+
+noun:aciesnoun:keennessnoun:edgenoun:sharpnessnoun:battle-linenoun:battlefield
+
+verb:acquiroverb:acquireverb:gainverb:getverb:obtain
+
+phrase:acsiphrase:as if
+
+verb:adamoverb:fall in love withverb:find pleasure in
+
+verb:adaugeoverb:make greaterverb:addverb:increase
+
+verb:addoverb:giveverb:bringverb:place
+verb:addoverb:inspireverb:cause
+verb:addoverb:addverb:join
+
+verb:adducoverb:leadverb:induceverb:persuade
+
+noun:ademptionoun:taking away
+
+verb:adeoto such a pointto such an extentso farso long
+verb:adeoverb:approachverb:visitverb:come toverb:undertake
+
+noun:adeptionoun:attainmentnoun:obtaining
+verb:adeptoverb:obtainverb:getverb:acquire
+
+adfectus affectus(fr. adficio)
+adfectus affectusinfluencedworked upon
+
+verb:adfero afferoverb:causeverb:bring aboutverb:contribute
+verb:adfero afferoverb:bring newsverb:report
+verb:adfero afferoverb:applyverb:bring to bear
+
+verb:adficioverb:affectverb:afflictverb:weakenverb:sapverb:exhaustverb:drain
+verb:adflicto affligoverb:injureverb:weakenverb:discourageverb:damageverb:break
+
+verb:adhaeroverb:hang toverb:stick toverb:adhere
+
 adhuctill thentill nowstilleven nowbesidesalsoyet
-adicioverb:directaddressapply / verb:throw to
-adimpleoverb:fulfillperform
+
+verb:adicioverb:directverb:addressverb:apply
+verb:adicioverb:throw to
+
+verb:adimpleoverb:fulfillverb:perform
+
 adinventitias(?) Herimanncap 2
-adipiscorverb:come up toovertakeobtain
-adiuvoverb:helpaidassist
-administratiogiving of helpadministrationgovernment
-admiratiowonderastonishmentsurpriseadmiration
-admirorverb:wonder atadmiremarvel at
-admittoverb:admitreceive
-admoneoadmonishadvise
-admonitiowarningreminder (insult - Herimannp. 282)
-admoveoverb:move tobring upapply
+
+verb:adipiscorverb:come up toverb:overtakeverb:obtain
+
+verb:adiuvoverb:helpverb:aidverb:assist
+
+noun:administrationoun:giving of helpnoun:administrationnoun:government
+
+noun:admirationoun:wondernoun:astonishmentnoun:surprisenoun:admiration
+
+verb:admirorverb:wonder atadmiremarvel at
+
+verb:admittoverb:admitverb:receive
+
+verb:admoneoverb:admonishverb:advise
+
+noun:admonitionoun:warningnoun:reminder
+noun:admonitionoun:insult
+
+verb:admoveoverb:move toverb:bring upverb:apply
+
 adnuoverb:nod assent
-adoptoverb:wish for oneselfadoptselectpick out
-adsidue assiduecontinuouslywithout remission
+
+verb:adoptoverb:wish for oneselfadoptselectpick out
+
+adverb:adsidue assidueadverb:continuouslyadverb:without remission
+
 adstringo(persons) bindoblige(+ refl.) commit oneself to
-adstringoverb:tightcompresscompact /
-adstringoverb:draw togethertightenbind
+adstringoverb:tightverb:compressverb:compact
+adstringoverb:draw togetherverb:tightenverb:bind
+
 adsuesco assuescoverb:grow accustomed toused tomake familiar
 adsumverb:assistbe presentbe nearbe in attendance
 adsumo (assumo)verb:take to oneselfclaimappropriatecall
