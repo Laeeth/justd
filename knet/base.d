@@ -1148,6 +1148,7 @@ class Graph
                         Rel rel;
                         switch (txtFile.name.baseName)
                         {
+                            case "translation.txt":              sense = Sense.unknown;      rel = Rel.translationOf; continue; break;
                             case "noun_translation.txt":         sense = Sense.noun;         rel = Rel.translationOf; break;
                             case "phrase_translation.txt":       sense = Sense.phrase;       rel = Rel.translationOf; break;
                             case "idiom_translation.txt":        sense = Sense.idiom;        rel = Rel.translationOf; break;
