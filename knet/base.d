@@ -1148,7 +1148,7 @@ class Graph
                         Rel rel;
                         switch (txtFile.name.baseName)
                         {
-                            case "translation.txt":              sense = Sense.unknown;      rel = Rel.translationOf; continue; break;
+                            case "translation.txt":              sense = Sense.unknown;      rel = Rel.translationOf; break;
                             case "noun_translation.txt":         sense = Sense.noun;         rel = Rel.translationOf; break;
                             case "phrase_translation.txt":       sense = Sense.phrase;       rel = Rel.translationOf; break;
                             case "idiom_translation.txt":        sense = Sense.idiom;        rel = Rel.translationOf; break;
@@ -1873,14 +1873,12 @@ class Graph
     {
         try
         {
-            foreach (expr; File(path).byLine.filter!(a => !a.empty))
+            foreach (line; File(path).byLine.filter!(a => !a.empty))
             {
-                auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
+                auto split = line.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
-
                 auto firstRefs = store(first.splitter(alternativesSeparator).map!idup,
                                        firstLang, firstSense, origin);
-
                 if (!second.empty)
                 {
                     auto secondRefs = store(second.splitter(alternativesSeparator).map!idup,
@@ -1889,7 +1887,10 @@ class Graph
                 }
             }
         }
-        catch (std.exception.ErrnoException e) { /* OK: If file doesn't exist */ }
+        catch (std.exception.ErrnoException e)
+        {
+            writeln(`Could not open file `, path);
+        }
     }
 
     /// Get Learn Possible Senses for $(D expr).
