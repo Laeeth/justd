@@ -235,56 +235,56 @@ nounSingular:enebarnnounSingular:only child
 adjective:engelskadjective:English
 country:Englandcountry:England
 enhvereach
-enkewidow
-enkemannwidower
-enkestandwidowed
-ennuyetstill
-epilepsiepilepsy
-erisare
-erhvervlivelihood
-erkjenneacknowledge
-etaone
-etasjefloorstory
+nounSingular:enkenounSingular:widow
+nounSingular:enkemannnounSingular:widower
+adjective:enkestandadjective:widowed
+adverb:ennuadverb:yetadverb:still
+nounSingular:epilepsinounSingular:epilepsy
+verb:erverb:isverb:areverb:be
+nounSingular:erhvervnounSingular:livelihood
+verb:erkjenneverb:acknowledge
+numeral:etanumeral:one
+nounSingular:etasjenounSingular:floornounSingular:story
 etc. (Latin)et ceteraand so on
-etternavnsurnamelast
-evneintelligence
-fabrikkfactory
-fadderechristening witnessesgodparents
-fallesykeepilepsy
+nounSingular:etternavnnounSingular:surnamenounSingular:last
+nounUncountable:evnenounUncountableintelligence
+nounSingular:fabrikknounSingular:factory
+nounPlural:fadderenounPlural:christening witnessesnounPlural:godparents
+nounSingular:fallesykenounSingular:epilepsy
 falt fallbe killed in war
-familiefamily
-familie historielinage books
-farfather
-farfarpaternal grandfather
-farger dyertanner
-farmorpaternal grandmother
-farsotpestilenceplague
-fartøyvesselcraft
-fattigpoor
-fattigvesentewelfare agency
-februarFebruary
-fellescommonjoint
-femfive
-femtefifth
-femtenfifteen
-femtendefifteenth
-femtififty
-femtiendefiftieth
-fengselprison
-festeseddelrental contract
-festningfortress
-fettercousin (male)
-FinnlandFinland
-finskFinnish
-forefour
-fiskerfisherman
-fjellmountain
-fjerdefourth
-fjortenfourteen
-fjortendefourteenth
+nounCollective:familienounCollective:family
+nounSingular:familie historienounSingular:linage books
+nounSingular:farnounSingular:father
+nounSingular:farfarnounSingular:paternal grandfather
+nounSingular:farger dyernounSingular:tanner
+nounSingular:farmornounSingular:paternal grandmother
+nounSingular:farsotnounSingular:pestilencenounSingular:plague
+nounSingular:fartøynounSingular:vesselnounSingular:craft
+adjective:fattigadjective:poor
+adjective:fattigvesenteadjective:welfare agency
+month:februarmonth:February
+adjective:fellesadjective:commonadjective:joint
+numeral:femnumeral:five
+numeralOrdinal:femtenumeralOrdinal:fifth
+numeral:femtennumeral:fifteen
+numeralOrdinal:femtendenumeralOrdinal:fifteenth
+numeral:femtinumeral:fifty
+numeralOrdinal:femtiendenumeralOrdinal:fiftieth
+nounSingular:fengselnounSingular:prison
+nounSingular:festeseddelnounSingular:rental contract
+nounSingular:festningnounSingular:fortress
+nounSingularMale:fetternounSingular:cousin
+country:Finnlandcountry:Finland
+adjective:finskadjective:Finnish
+numeral:forenumeral:four
+nounSingular:fiskernounSingular:fisherman
+nounSingular:fjellnounSingular:mountain
+numeralOrdinal:fjerdenumeralOrdinal:fourth
+numeral:fjortennumeral:fourteen
+numeralOrdinal:fjortendenumeralOrdinal:fourteenth
 flereseveralmore
-flittigdiligent
-flyttemove
+adjective:flittigadjective:diligent
+verb:flytteverb:move
 fogedfogdbailiffsheriff
 foliopage (double)
 folkpeople
