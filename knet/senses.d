@@ -53,6 +53,10 @@ enum Sense:ubyte
     substance,
 
     numeral,
+    numeralMasculine,
+    numeralFeminine,
+    numeralNeuter,
+
     numeralOrdinal,
     ordinalNumber = numeralOrdinal, ///< https://en.wikipedia.org/wiki/Ordinal_number_%28linguistics%29
     rank = ordinalNumber,
@@ -334,6 +338,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case numeral: return `numeral`;
         case numeralOrdinal: return `ordinal numeral`;
+        case numeralMasculine: return `masculine numeral`;
+        case numeralFeminine: return `feminine numeral`;
+        case numeralNeuter: return `neuter numeral`;
 
         case integer: return `integer`;
         case integerPositive: return `positive integer`;
@@ -672,6 +679,9 @@ import predicates: of;
     bool isNumeral(Sense sense)
     {
         with (Sense) return (sense.of(numeral,
+                                      numeralMasculine,
+                                      numeralFeminine,
+                                      numeralNeuter,
                                       ordinalNumber));
     }
     bool isInteger(Sense sense)
