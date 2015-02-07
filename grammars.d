@@ -66,7 +66,7 @@ bool isSwedishVowel(C)(C c) if (isSomeChar!C)
 }
 
 /** Spanish Accented Vowels. */
-enum spanishAccentedVowels = ['é', 'í', 'ó', 'ú', 'ü', 'ñ', 'ü'];
+enum spanishAccentedVowels = ['á', 'é', 'í', 'ó', 'ú'];
 
 /** Check if $(D c) is a Spanish Accented Vowel. */
 bool isSpanishAccentedVowel(C)(C c) if (isSomeChar!C)
@@ -249,7 +249,7 @@ class Predicate : Part
 }
 
 // TODO: Conversion to Sense
-enum Article:ubyte { unindefinite, definite,  partitive }
+enum Article:ubyte { indefinite, definite,  partitive }
 
 class Subject : Part
 {
