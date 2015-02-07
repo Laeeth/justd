@@ -8,6 +8,7 @@ adjective:högadjective:låg
 adjective:bredadjective:smal
 adjective:fetadjective:mager
 adjective:tjockadjective:smal
+adjective:tjockadjective:tunn
 adjective:konstigadjective:normal
 adjective:godadjective:äcklig
 adjective:finadjective:ful
