@@ -40,6 +40,12 @@ adjective:nyadjective:gammal
 adjective:heladjective:trasig
 adjective:heladjective:sönder
 
+adjective:lugnadjective:orolig
+adjective:slätadjective:skrynklig
+adjective:ledigadjective:upptagen
+adjective:billigadjective:dyr
+adjective:tillåtenadjective:förbjuden
+
 långt bortanära
 litemycket
 förstsist
@@ -69,3 +75,11 @@ adverb:framåtadverb:bakåt
 
 noun:heltidnoun:deltid
 noun:vardagnoun:helg
+
+adjective:blondinnoun:brunett
+
+adjective:öppnadadjective:oöppnad
+adjective:bäddadadjective:obäddad
+adjective:rakadadjective:orakad
+adjective:bekvämadjective:obekväm
+adjective:modernadjective:omodern

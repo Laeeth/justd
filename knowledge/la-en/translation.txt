@@ -123,65 +123,100 @@ verb:adstringo(persons) verb:bindverb:oblige(+ refl.) verbReflexive:commit on
 verb:adstringoverb:tightverb:compressverb:compact
 verb:adstringoverb:draw togetherverb:tightenverb:bind
 
-adsuesco assuescoverb:grow accustomed toused tomake familiar
-adsumverb:assistbe presentbe nearbe in attendance
-adsumo (assumo)verb:take to oneselfclaimappropriatecall
-adulatiofawningflatterysycophancybuttering up
-adulescensyoung manyouthlad
-adulescentiayouth
+verb:adsuesco assuescoverb:grow accustomed toused toverb:make familiar
+verb:adsumverb:assistverb:be presentverb:be nearverb:be in attendance
+verb:adsumoassumoverb:take to oneselfverb:claimverb:appropriateverb:call
+
+noun:adulationoun:fawningnoun:flatterynoun:sycophancynoun:buttering up
+noun:adulescensnoun:young mannoun:youthnoun:lad
+noun:adulescentianoun:youth
 adultusadjective:grown upmatureadultof age
-aduro (adustum)verb:set fire toburnsingekindlelight
-advenioverb:comearrivereach
-adversus(prep. + acc.) towardagainstfacing
-adversusadjective:facingoppositeopposing
-advertoverb:turn towardsdirect one's attention toattract
-advocoverb:summoncall / call in an advisor
-aedificium edificiumbuildingstructure
-aeger egersickill
-aegre egreadverb:hardlyscarcelywith difficultylaboriously
-aegresco egrescoverb:fall illbecome troubledgrow worse
-aegrescoverb:become illgrow worsebe ill
-aegretudo egretudosicknessmental illness
-aegrotatio egrotatiosicknessillness
-aegrusilldiseasedunwell
-aeneus eneusmade of copper or bronzebrazen
-aequitas equitasjusticefairnessequity
-aequusequuslevelevencalmequalfavorablejust
-aeraerisairatmosphereetherweather
-aestas estassummer
+
+verb:aduroadustumverb:set fire toverb:burnsingekindlelight
+
+verb:advenioverb:comeverb:arriveverb:reach
+preposition:adversus(prep. + acc.) preposition:towardpreposition:againstfacing
+adjective:adversusadjective:facingadjective:oppositeadjective:opposing
+verb:advertoverb:turn towardsverb:direct one's attention toverb:attract
+
+verb:advocoverb:summoncall / call in an advisor
+
+noun:aedificium edificiumnoun:buildingnoun:structure
+
+adjective:aeger egeradjective:sickadjective:ill
+adverb:aegre egreadverb:hardlyadverb:scarcelyadverb:with difficultyadverb:laboriously
+
+verb:aegresco egrescoverb:fall illverb:become troubledverb:grow worse
+verb:aegrescoverb:become illverb:grow worseverb:be ill
+noun:aegretudo egretudonoun:sicknessnoun:mental illness
+noun:aegrotatio egrotationoun:sicknessnoun:illness
+adjective:aegrusadjective:illadjective:diseasedadjective:unwell
+
+adjective:aeneus eneusadjective:made of copper or bronzeadjective:brazen
+
+noun:aequitas equitasnoun:justicenoun:fairnessnoun:equity
+
+adjective:aequusadjective:equusadjective:leveladjective:evenadjective:calmadjective:equaladjective:favorableadjective:just
+
+noun:aernoun:aerisnoun:airnoun:atmospherenoun:ethernoun:weather
+
+noun:aestas estasnoun:summer
 aestivus estivuspertaining to summer
-aestus estusheattide
-aetasan agestageperiod of lifetimeera
-aeternus eternuseternaleverlastingwithout end
+noun:aestus estusnoun:heatnoun:tide
+
+noun:aetasnoun:agenoun:stagenoun:period of lifenoun:timenoun:era
+adjective:aeternus eternusadjective:eternaladjective:everlastingadjective:without end
+
 AffligeniensisHaffligeniensisAfflighem
-ager (agri)farmfieldacre
-aggeroverb:make a moundheap upincrease
-aggrediorverb:go toapproachaddressattack
-agnitiorecognitionknowledge
+noun:agernoun:agrinoun:farmnoun:fieldnoun:acre
+
+verb:aggeroverb:make a moundverb:heap upverb:increase
+verb:aggrediorverb:go toverb:approachverb:addressverb:attack
+
+noun:agnitionoun:recognitionnoun:knowledge
+
 agnoscoverb:know againrecognizereportunderstandadmit
-agnoscoacknowledge
-agnoscoverb:recognizeunderstandperceive
-ago (egi actum )verb:spend timelive / managedrivelead
-aithe says
-aiuntthey say
+
+verb:agnoscoverb:acknowledge
+verb:agnoscoverb:recognizeverb:understandverb:perceive
+
+verb:agoverb:egi actumverb:spend timeverb:live
+verb:agoverb:egi actumverb:manageverb:driveverb:lead
+
+phrase:aitphrase:he says
+phrase:aiuntphrase:they say
+
 AldenardAudenarde
-alienussomebody else'sforeignalienstrangedifferent
+
+adjective:alienusadjective:somebody else'sadjective:foreignadjective:alienadjective:strangeadjective:different
+
 alii ... aliisome ... others
-alioquiadverb:otherwise
-alioquinadverb:otherwisein some respects / in general
-aliquasome
-aliquandoat any timesometimesoccasionallyat last
-aliquantaadjective:moderateor some size
-aliquantosomewhatconsiderably
-aliquantum(noun) a good deal
-aliquantusadjective:of some sizemoderate
-aliquisome
-aliquidsomeonesomebodysomething
+
+adverb:alioquiadverb:otherwise
+
+adverb:alioquinadverb:otherwiseadverb:in some respects
+adverb:alioquinadverb:in general
+
+adverb:aliquāadverb:somehow
+pronoun:aliquāpronoun:someone
+
+adverb:aliquandoadverb:at any timeadverb:sometimeadverb:sometimesadverb:occasionallyadverb:at lastadverb:finally
+adjective:aliquantaadjective:moderateadjective:or some size
+adjective:aliquantoadjective:somewhatadjective:considerably
+
+adverb:aliquantumadverb:to some extent
+aliquantusadjective:considerableadjective:considerable amountadjective:somewhat
+adjectiveMale:aliquīadjective:some
+
+adverb:aliquidadverb:somewhat
+pronoun:aliquidpronoun:somebodypronoun:something
+
 aliquissomeoneanyoneanythingadverb:in any respect
 aliquoadverb:in some direction
 aliquotsomeseveral
 aliquotienssome times
 alius alia aliudotheranothersomeone elsesomething else
+
 allatus (=adfero)having been brought
 alo (alui altum)nourishcherishsupportsustainmaintainkeep
 Alosalquodsome
