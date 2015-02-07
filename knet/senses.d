@@ -37,6 +37,8 @@ enum Sense:ubyte
     nounIrregular,
 
     nounSingular,
+    nounSingularMale,
+    nounSingularFemale,
     nounPlural,
     nounUncountable,
 
@@ -329,6 +331,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nounIrregular: return `irregular noun`;
 
         case nounSingular: return `singular noun`;
+        case nounSingularMale: return `male singular noun`;
+        case nounSingularFemale: return `female singular noun`;
         case nounPlural: return `plural noun`;
         case nounNominative: return `nominative noun`;
 
@@ -658,6 +662,8 @@ import predicates: of;
                                       nounRegular,
                                       nounIrregular,
                                       nounSingular,
+                                      nounSingularMale,
+                                      nounSingularFemale,
                                       nounPlural,
                                       nounNominative,
                                       nounUncountable,
