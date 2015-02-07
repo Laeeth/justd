@@ -206,33 +206,34 @@ nounPlural:efterlattenounPlural:survivors
 nounPlural:efterlevendenounPlural:surviving
 nounSingular:eftermiddagnounSingular:afternoon
 nounSingular:efternavnnounSingular:surnamenounSingular:last name
-egenown
-egentligactual
-egteviedemarriage
-eieejeverb:own
-eiendompropertyreal estate
-ektelegitimateverb:marry
-ektefellespouse
-ektemannhusband
-ekteparmarried couple
-ekteskapmarriage
-ekteskapeligmaritalconjugal
-ektevietmarried
-eldreolder
-eldstoldesteldest
-elevstudent
+adjective:egenadjective:own
+adjective:egneadjective:own
+adjective:egentligadjective:actual
+nounSingular:egteviedenounSingular:marriage
+verb:verb:eieejeverb:own
+nounSingular:eiendomnounSingular:propertynounSingular:real estate
+verbTransitive:ekteverbTransitive:legitimateverbTransitive:marry
+nounSingular:ektefellenounSingular:spouse
+nounSingular:nounSingular:ektemannhusband
+nounSingular:ekteparnounSingular:married couple
+nounUncountable:ekteskapnounUncountable:marriage
+adjective:ekteskapeligadjective:maritaladjective:conjugal
+adjective:ektevietadjective:married
+adjective:eldreadjective:older
+adjective:eldstadjective:oldestadjective:eldest
+nounSingular:elevnounSingular:student
 elleroror else
-elleveeleven
-ellevteeleventh
-elvriverstream
-embetepublic office
-embetsmannpublic official
-emigrantemigrant
-emigrereemigrate
+numeral:ellevenumeral:eleven
+numeral:ellevtenumeral:eleventh
+nounSingular:elvnounSingular:rivernounSingular:stream
+nounSingular:embetenounSingular:public office
+nounSingular:embetsmannnounSingular:public official
+nounSingular:emigrantnounSingular:emigrant
+verbIntransitive:emigrereverbIntransitive:emigrate
 enetaone
-enebarnonly child
-engelskEnglish
-EnglandEngland
+nounSingular:enebarnnounSingular:only child
+adjective:engelskadjective:English
+country:Englandcountry:England
 enhvereach
 enkewidow
 enkemannwidower
