@@ -81,12 +81,12 @@ void readNordicNames()
                     break;
                 case 1:
                     explanation = text.findSplitBefore(`[`)[0].strip;
-                    fields ~= explanation.to!string;
+                    fields ~= explanation;
                     writeln("Explanation: ", explanation);
                     break;
                 case 2:
                     seeAlso = text.findSplitAfter(`See `)[1].findSplitBefore(`[`)[0].strip;
-                    fields ~= seeAlso.to!string;
+                    fields ~= seeAlso;
                     writeln("See: ", seeAlso);
                     break;
                 case 3:
