@@ -27,7 +27,7 @@ nounSingular:annonounSingular:year
 verb:annonsereverb:publishverb:announce
 noun:antallnoun:numbernoun:count
 month:aprilmonth:April
-nounSingulararbeidernounSingular:laborer
+nounSingular:arbeidernounSingular:laborer
 nounSingular:arkivnounSingular:archive
 nounSingular:arvnounSingular:inheritance
 nounSingular:arveloddnounSingular:share of inheritance
@@ -80,90 +80,90 @@ verbPast:bemerkningverbPast:remark
 nounSingular:bennounSingular:leg
 nounSingular:bennounSingular:bone
 
-benektedeny
-benådepardon
-berusetdrunk
-besetninglivestockcrew
-beskrivelsedescription
-beslektetrelated
-bestefargrandfather
-besteforeldregrandparents
-bestemorgrandmother
-besvangreimpregnateget with childmake pregnant
-betalepay
-betlerbeggar
-bevilgegrant
-bevisproof
-biblioteklibrary
-bindvolume (book)
-biografibiography
-biskopbishop
-bispedømmediocese
-blibecome
-blikkenslagertinsmith
+verb:benekteverb:deny
+verb:benådeverb:pardon
+adjective:berusetadjective:drunk
+nounCollective:besetningnounCollective:livestocknounCollective:crew
+nounSingular:beskrivelsenounSingular:description
+adjective:beslektetadjective:related
+nounSingularMale:bestefarnounSingularMale:grandfather
+nounPlural:besteforeldrenounPlural:grandparents
+nounSingularFemale:bestemornounSingularFemale:grandmother
+verb:besvangreverb:impregnateverb:get with childverb:make pregnant
+verb:betaleverb:pay
+nounSingular:betlernounSingular:beggar
+verb:bevilgeverb:grant
+nounSingular:bevisnounSingular:proof
+nounSingular:biblioteknounSingular:library
+nounSingular:bindnounSingular:volume (book)
+nounSingular:biografinounSingular:biography
+nounSingular:biskopnounSingular:bishop
+nounSingular:bispedømmenounSingular:diocese
+verb:bliverb:become
+nounSingular:blikkenslagernounSingular:tinsmith
 blindblind
-blodblood
-blodgangdysentery
-blodskamincest
-blodsottabnormal loss of blood during illness
-boverb:live at
-boddelived
-bokbook
-bokhandlerbookseller
-bokholderbokførerbookkeeper
-bokstavlettercharacter
-boligresidencehouse
-bondefarmer
-bopelresidencedomicile
-borgercitizen
-borgermestermayor
-borgerskapcitizenship
-botfinepenalty
-brannfire
-brennevinsbrennerdistiller of spirits
-brevletter (correspondence)
-brobridge
-brorbrother
-brordatterbrother’s daughter
-brorsønnbrother’s son
-brudbride
-brudgombridegroom
-brukfarmuse
-bryggerbrewer
-bryllupwedding
-budeiemilkmaid
-buskaplivestockcrew
-bytowncity
-bygdsmall country communityvillage
-bygdebokrural chronicles
-bygsellease
-byllabscess
-byllepestplague (bubonic)
-bærecarry
-bøkkercooperbarrel maker
+nounUncountable:blodnounUncountable:blood
+nounSingular:blodgangnounSingular:dysentery
+nounUncountable:blodskamnounUncountable:incest
+nounSingular:blodsottnounSingular:abnormal loss of blood during illness
+verb:boverb:live at
+verbPast:boddeverbPast:lived
+nounSingular:boknounSingular:book
+nounSingular:bokhandlernounSingular:bookseller
+nounSingular:bokholdernounSingular:bokførernounSingular:bookkeeper
+nounSingular:bokstavnounSingular:letternounSingular:character
+nounSingular:bolignounSingular:residencenounSingular:house
+nounSingular:bondenounSingular:farmer
+nounSingular:nounSingular:bopelnounSingular:residencenounSingular:domicile
+nounSingular:borgernounSingular:citizen
+nounSingular:borgermesternounSingular:mayor
+nounSingular:borgerskapnounSingular:citizenship
+nounSingular:botnounSingular:finenounSingular:penalty
+nounSingular:brannnounSingular:fire
+nounSingular:brennevinsbrennernounSingular:distiller of spirits
+nounSingular:brevnounSingular:letter (correspondence)
+nounSingular:bronounSingular:bridge
+nounSingular:brornounSingular:brother
+nounSingular:brordatternounSingular:brother’s daughter
+nounSingular:brorsønnnounSingular:brother’s son
+nounSingular:brudnounSingular:bride
+nounSingular:brudgomnounSingular:bridegroom
+nounSingular:bruknounSingular:farmnounSingular:use
+nounSingular:bryggernounSingular:brewer
+nounSingular:bryllupnounSingular:wedding
+nounSingular:budeienounSingular:milkmaid
+nounCollective:buskapnounCollective:livestocknounCollective:crew
+nounSingular:bynounSingular:townnounSingular:city
+nounSingular:bygdnounSingular:small country communitynounSingular:village
+nounSingular:bygdeboknounSingular:rural chronicles
+nounSingular:bygselnounSingular:lease
+nounSingular:byllnounSingular:abscess
+nounSingular:byllepestnounSingular:plague (bubonic)
+verb:bæreverb:carry
+nounSingular:bøkkernounSingular:coopernounSingular:barrel maker
 bådebotheither
-båretcarried
-båtboatship
-båtbyggershipbuilder
-båtsmannboatswainbosun
+verbPast:båretverbPast:carried
+nounSingular:båtnounSingular:boatnounSingular:ship
+nounSingular:båtbyggernounSingular:shipbuilder
+nounSingular:båtsmannnounSingular:boatswainnounSingular:bosun
 cirkaapproximately
-communionCommunion
-confirmeredeconfirmed
-copuleredemarriage
-dagday
+nounSingular:communionnounSingular:Communion
+verbPast:confirmeredeverbPast:confirmed
+nounSingular:copuleredenounSingular:marriage
+nounSingular:dagnounSingular:day
 dagen førthe previous day
-dagsarbeiderday laborer
-dalvalley
-DanmarkDenmark
-dannekvindegentlewoman
-dannemandgentleman
-danskDanish
-datodate (noun)
-datterdaughter
-datterdatterdaughter’s daughter
-dattersønndaughter’s son
-datum (Latin)date
-deleverb:divideto share
+nounSingular:dagsarbeidernounSingular:day laborer
+nounSingular:dalnounSingular:valley
+country:Danmarkcountry:Denmark
+nounSingular:dannekvindenounSingular:gentlewoman
+nounSingular:dannemandnounSingular:gentleman
+nounSingular:dansknounSingular:Danish
+nounSingular:datonounSingular:date (noun)
+nounSingular:datternounSingular:daughter
+nounSingular:datterdatternounSingular:daughter’s daughter
+nounSingular:dattersønnnounSingular:daughter’s son
+nounSingular:datumnounSingular:date
+verb:deleverb:divideverb:share
 demthemthey
 dentheitthat
 dennethis
@@ -211,7 +211,7 @@ egentligactual
 egteviedemarriage
 eieejeverb:own
 eiendompropertyreal estate
-ektelegitimateto marry
+ektelegitimateverb:marry
 ektefellespouse
 ektemannhusband
 ekteparmarried couple
@@ -317,7 +317,7 @@ fortidpast
 forvaltermanager
 fosterfetus
 fosterbarnfoster child
-fostrefosterto rear
+fostrefosterverb:rear
 frafrom
 fraflytteleavemove away
 fraværendeabsent
@@ -674,7 +674,7 @@ onkeluncle
 onsdagWednesday
 oppup
 oppeaboveupstairs
-oppfostrefosterto rear
+oppfostrefosterverb:rear
 opptegnelserecord
 ordbokdictionary
 ordførermayor
