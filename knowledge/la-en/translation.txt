@@ -1,18 +1,28 @@
-abbas abbatisnoun:father / noun:abbot
-abbatianoun:abbeynoun:monastery
-abducoverb:leadverb:take away / verb:detachverb:withdraw
-abeoverb:go awayverb:retire / depart from lifedie
-abeoverb:digress / change / vanishdisappear
-abscidoverb:cut offto separatetake away
-absconditushiddenconcealed
-absensabsentisadjective:absentmissingawaygone
+nounPhrase:abbas abbatisnounSingular:fathernoun:abbot
+
+noun:abbatianoun:abbeynoun:monastery
+
+verb:abducoverb:leadverb:take away
+verb:abducoverb:detachverb:withdraw
+
+verb:abeoverb:go awayverb:retire
+verb:abeodepart from lifedie
+
+verb:abeoverb:digress
+verb:abeoverb:change
+verb:abeoverb:vanishverb:disappear
+
+verb:abscidoverb:cut offVERB:separateVERB:take away
+adjective:absconditusadjective:hiddenadjective:concealed
+
+adjective:absensadjective:absentisadjective:absentmissingawaygone
 absorbeoverb:swallowgulp downcarry awayengross
 absque(+ abl.) without
 abstergoverb:wipe offclean away
 absumverb:be absentbe awaybe missing
-abundansabundantoverflowingabounding in
-abundantiaabundancebountyplenty
-abutorverb:make full use ofto abuse
+abundansadjective:abundantadjective:overflowingadjective:abounding in
+noun:abundantianoun:abundancenoun:bountynoun:plenty
+abutorverb:make full use ofverb:abuse
 abutorverb:use abusive language / use a word incorrectly
 ac(atque)and
 accedoverb:approachcome near / (things) to be added
@@ -46,7 +56,7 @@ adficioverb:affectafflictweakensapexhaustdrain
 adflicto affligoverb:injureweakendiscouragedamagebreak
 adhaeroverb:hang tostick toadhere
 adhuctill thentill nowstilleven nowbesidesalsoyet
-adicioverb:directaddressapply / to throw to
+adicioverb:directaddressapply / verb:throw to
 adimpleoverb:fulfillperform
 adinventitias(?) Herimanncap 2
 adipiscorverb:come up toovertakeobtain
@@ -65,7 +75,7 @@ adstringo(persons) bindoblige(+ refl.) commit oneself to
 adstringoverb:tightcompresscompact /
 adstringoverb:draw togethertightenbind
 adsuesco assuescoverb:grow accustomed toused tomake familiar
-adsumverb:assistbe presentbe nearbe in attendance
+adsumverb:assistbe presentbe nearbe in attendance
 adsumo (assumo)verb:take to oneselfclaimappropriatecall
 adulatiofawningflatterysycophancybuttering up
 adulescensyoung manyouthlad
@@ -163,7 +173,7 @@ ansergoose
 ante(prep. + acc.) before / in front of / adverb:beforepreviously
 anteaadverb:beforepreviouslyformerly
 antepono(+ dat.) put beforepreferfavorpromote
-antiquusancientoldhoary
+antiquusancientoldhoary
 aperioverb:uncoverlay barerevealmake clear
 aperteopenlyfrankly
 apostolus(legal) notice sent to a higher tribunal / ecc. Apostle
@@ -304,24 +314,38 @@ caput capitishead / topsummit / chief
 carbo carboniscarboncoalcharcoal
 carcerprisoncelljaildungeon
 careo(+ abl. of sep.) be withoutbe deprived oflackwant
-cariesrottennesscorruptiondecay
-cariosusrottendecayed
-caritasdearnessaffection / charity
-carmensongpoem
+
+noun:cariesnoun:rottennessnoun:corruptionnoun:decay
+
+verb:cariosusverb:rottenverb:decayed
+
+noun:caritasnoun:dearnessnoun:affection
+noun:caritasnoun:charity
+
+noun:carmennoun:songnoun:poem
+
 CarnotenseChartres
 Carnutum CarnotumChartres
-carpoverb:pluckseizegrablay hold ofhold on to
-carusdearbeloved / costlyhigh-pricedexpensive
-cassoverb:bring to naughtdestroyannulmake void
-castepurelyspotlesslypurelyuprightlychastely
+
+verb:carpoverb:pluckverb:seizeverb:grabverb:lay hold ofverb:hold on to
+
+adjective:carusadjective:dearadjective:beloved
+adjective:carusadjective:costlyadjective:high-pricedadjective:expensive
+
+verb:cassoverb:bring to naughtverb:destroyverb:annulverb:make void
+adverb:casteadverb:purelyadverb:spotlesslyadverb:uprightlyadverb:chastely
 CastellandumChateaudun
-casusaccidentchancefortune
-catenachainfetters
-catervacrowdtroopflock
-catervatimin troopsin masses
+
+noun:casusnounSingular:accidentnounSingular:chancenoun:fortune
+noun:catenanounSingular:chainnoun:fetters
+noun:catervanoun:crowdnoun:troopnoun:flock
+catervatimadverb:in troopsadverb:in masses
+
 CathalaunensesChalons
-cattuscat
-caudathe tail of an animal
+
+noun:cattusnoun:cat
+noun:caudanoun:the tail of an animal
+
 causa(in the abl.) on account offor the sake of
 causacause / reasonmotivepretext / interest
 causacase at lawcaselaw-suit / situationcondition
@@ -346,7 +370,7 @@ centum(indecl.) one hundred100
 cernoverb:separatesiftdistinguish / decideresolvedetermine
 cernuusfalling headlong
 certe certo(adv) certainlyassuredly
-certoverb:contendsettledisputeto settle by combat
+certoverb:contendsettledisputeverb:settle by combat
 certusundoubtedcertainsure
 certussettledresolveddecided / definitecertainsure
 cervusstagdeer
@@ -375,7 +399,7 @@ clamoverb:callshoutcry aloudproclaimdeclare
 clamorloud shoutingcry
 claroverb:make bright or clearmake clear in the mind
 clarusclearbright / renownedfamousillustrious
-claudeoverb:limphaltbe lameto hobble
+claudeoverb:limphaltbe lameverb:hobble
 claudo (clausus)verb:confineshut upcloseblockadebesiege
 clauduslame
 claustrumboltbarprisondenpenenclosure / cloister
@@ -404,7 +428,7 @@ coloratuscolored / dark-complexioned
 coloroverb:color
 comahair of the headleavesrays of light
 combiboverb:drink upsuck in
-comburoverb:burn upto ruinconsume
+verb:comburoverb:burn upverb:ruinverb:consume
 comedo comedi comesumverb:eat upconsume / wastesquander
 comes comitiscompanionfriendcomrade / count
 cometescomet
@@ -421,13 +445,13 @@ comminuoverb:scatterweakendamage
 comminushand to handin close combat
 commisceoverb:interminglejoinmix
 commissumundertakingthat which is entrusted
-commodo(+ acc.) to furnishlendgive
+commodo(+ acc.) verb:furnishlendgive
 commodoverb:make fitadaptpleaseobligeserve
 commodumsuitable timeopportunityconvenienceuse
 commodumconvenienceadvantageopportunitycomfort
 commoneoverb:remind someone forcibly of something
 commoneoverb:rememberrecollect
-commoneoverb:impress upon one. to remind
+commoneoverb:impress upon one. verb:remind
 commoveoverb:move violentlydisturbshake / exciteupset
 communiscommongeneralrun of the mill
 comparoverb:compare
@@ -449,7 +473,7 @@ compositusorderlymatchingmade up of pieces
 comprehendoverb:seizearresttake prisonercatch red-handed
 comprehendoverb:grasptake togetherunite / comprehend
 comprehendoverb:embracetake firmlyincludeseize
-comproboverb:approve fully / to confirmproveestablish
+comproboverb:approve fully / verb:confirmproveestablish
 comprovincialisborn in the same province
 comptusa head-dressa hairband
 conatusexertioneffort / undertaking / impulseinclination
@@ -482,7 +506,7 @@ congregoverb:gather togetherassembleconvene
 congruusagreeingfitsuitable
 conicioverb:hurlthrow / put togetherconjecture
 coniectoverb:throw togetherinferguessconclude
-conitorverb:press uponto struggle to reach
+conitorverb:press uponverb:struggle to reach
 coniuratioconspiracyplot
 coniuratusconspiratorplotter
 coniuroverb:take an oath togetherplotconspire
@@ -493,14 +517,14 @@ conscientiaconscienceconsciousnessknowledge
 conscindoverb:tear in pieces
 consciusconscious ofaware of
 conservoverb:preserveconservemaintainkeephold to
-consideroverb:look atregard carefully
+consideroverb:look atregard carefully
 considoverb:set downsettle
 consiliointentionallyon purposedesignedly
 consiliumdeliberationconsultationassemblycouncil
 consiliumadvicesuggestionwisdomplanpurposejudgment
-consisto(+ in) to depend onrely on
+consisto(+ in) verb:depend onrely on
 consistoverb:take one's standstand stillstopbe posted
-consisto(+ abl. etc.) to be formed ofconsist / stopstay
+consisto(+ abl. etc.) verb:be formed ofconsist / stopstay
 consitorsowerplanter
 conspergoverb:sprinklebestrew
 conspicioverb:catch sight ofperceivebeholdunderstand
@@ -529,7 +553,7 @@ consummatiocompletionsumming upadding up
 consummoverb:add togethersum upmake perfectcomplete
 consumoverb:spendemployuse upfinishwaste awaydestroy
 consuo consui consutumverb:sew togetherstitch
-consurgoverb:stand uprise up / to arisebreak out
+consurgoverb:stand uprise up / verb:arisebreak out
 contabescoverb:waste slowly awaydecline in health
 contactustouchingcontact / contagion
 contagesa touchcontact
@@ -548,13 +572,13 @@ contendoverb:assertmaintain / shoot (a missile)cast
 contenteeagerlyearnestly
 contentuscontentedsatisfied
 contentusstrainedstretched / eagerzealous
-contigo(with dat.)to happenbefall
+contigo(with dat.)verb:happenbefall
 contineoverb:touchreachgraspaffectinfect
 contineo contigicontectumborder on / befall (good luck)
 contineoverb:keep insurroundcontainconfineinclude
 contineohold togetherkeep togetherconnectjoin
 contineoverb:hold backrestrain
-contingo(contactum) to touch closelyhappen tobefall
+contingo(contactum) verb:touch closelyhappen tobefall
 continuoadverb:immediatelyat once
 continuusconnected togethercontinuousuninterrupted
 contra(+ acc.) against
@@ -566,7 +590,7 @@ contristoverb:saddenafflictdamage (of crops)
 conturboverb:confusescatterthrow into confusiondistress
 conventuscoming togetherassemblyunioncongress
 conversatiowaymanner of life / monastic life
-convertoverb:turn aroundcause to turn / to adopt the monastic life
+convertoverb:turn aroundcause to turn / verb:adopt the monastic life
 convocoverb:call togetherconvene
 copiaabundancesupply
 copiae copiesuppliestroopsforces
@@ -580,7 +604,7 @@ corrigo(correctum)verb:make correctmake right
 corripioverb:seizesnatch upsteal(of a disease) attack
 corroboroverb:strengthen
 corrumpoverb:break updestroyannihilate / spoilweaken
-corrumpo(documents) to falsify / (character) to corrupt
+corrumpo(documents) verb:falsify / (character) verb:corrupt
 corruoverb:fall to the groundsink down / be ruineddestroyed
 CorturiacumCourtrai
 coruscus(a) flashingtwinklingshakingtrembling
@@ -634,7 +658,7 @@ cum(with subjunctive) whenaswhilesincealthough
 cunabulacradle
 cunaenest for young birds
 cunctatiodelay
-cunctatordelayerprocrastinator
+cunctatordelayerprocrastinator
 cunctorverb:delayimpedehold up
 cunctusallall collectivelythe whole
 cupiditasambitionavariceparty spiriteager desire
@@ -652,7 +676,7 @@ curiosuscarefulattentive / curiousinquisitive / worn out by cares
 curis qurisa spear
 curoverb:care fortrouble aboutpay attention to
 curomanageadminister / provide money
-curo(+gerundive) to see to a thing being done / curerest
+curo(+gerundive) verb:see to a thing being done / curerest
 curriculuma runningracelap around the trackcourse
 curruscart / a plow with wheels
 cursimhastilyquicklyrapidly
@@ -672,7 +696,7 @@ damnatiocondemnation
 damnoverb:condemndamn
 dapiferseneschal
 de(prep. + abl.) down fromfromconcerningabout
-debeoverb:oweto be morally bound toto be bound by
+debeoverb:oweverb:be morally bound toverb:be bound by
 debilitoverb:weakenenervatesapexhaust
 decensdecenterproperlyfittinglysuitably
 decernoverb:decidedeterminesettle
@@ -693,8 +717,8 @@ defaecoverb:cleansepurifypurge
 defendoverb:defendward offprotectshelter
 deferoverb:hand overcarry downcommunicateofferrefer
 defessuswearytired
-defetiscor (defessus)verb:grow tiredweary.
-deficio(defectum)verb:failto weakento be in want
+defetiscor (defessus)verb:grow tiredweary.
+deficio(defectum)verb:failverb:weakenverb:be in want
 defigofasten downsecurefix firmly / concentratefix upon
 defleoverb:weep forbewail
 defleoverb:bewailweep for
@@ -709,7 +733,7 @@ deindenextthenthereafterfrom that place
 delectatiodelightpleasureenjoyment
 delectoverb:attractdelight / (pass + abl) take delight in
 delegoverb:transfercommitassignimputeattributeascribe
-deleo(deletum ) to destroywipe outerase
+deleo(deletum ) verb:destroywipe outerase
 deliberoverb:considerdeliberate
 delicateluxuriouslydelicatelyslowly
 delicateadverb:luxuriously
@@ -734,11 +758,11 @@ deorsumdownwards
 depereoverb:perishbe utterly ruined
 deponoverb:put downlay aside
 depopulo depopulorverb:lay wasteravagedevastate
-deportoverb:carry offto take away
+deportoverb:carry offverb:take away
 depraedor depredorverb:plunderlay wastepillageravage
 deprecatorintercessorone who pleads on behalf
 deprecorverb:entreat forbeg for / intercede / curse
-deprecorverb:beg by entreatyto excuse oneself / curse
+deprecorverb:beg by entreatyverb:excuse oneself / curse
 deprehensiodetection
 deprimo (depressus)verb:press downdepresslow-lying
 depromoverb:take downproducefetch out
@@ -747,12 +771,12 @@ deputoverb:countestimate / prunecut off
 derelinquoverb:forsakedesertabandon
 derideoverb:laugh atmockderide
 deripioverb:tear downsnatch away
-desideroverb:long forwish for greatlyto miss
+desideroverb:long forwish for greatlyverb:miss
 desidiosuslazyunmotivated
 desino (desiit)verb:leave offgive overceasestopdesist
 desinoceasestopenddesist
 desipioverb:act foolishlyplay the foolmake an ass of one's self
-desoloverb:leave desolateabandonedto forsake
+desoloverb:leave desolateabandonedverb:forsake
 desparatusgiven up on / desperate
 despectooverlookdespiselook down upon
 desperoverb:have no hopedespairgive up
@@ -775,7 +799,7 @@ devoveoverb:consecratesacrificedevote / curseexecrate
 dexterrighton the right
 dexterathe right hand
 diabolusdevilSatan
-dico(dictum ) to saytellspeaknamecallpronounce
+dico(dictum ) verb:saytellspeaknamecallpronounce
 dictatathings dictatedlessonspresents
 dictatordictator
 dictitoverb:say oftenreiterate
@@ -787,7 +811,7 @@ dies dieiday
 diffama -tusspread aroundmade known
 differoverb:spread news / delaydeferpostpone
 differoverb:spread aboutspread news / harrassdisturb
-differoverb:delaypostpone / to differbe different
+differoverb:delaypostpone / verb:differbe different
 differtusstuffed fullcrammedjammed
 difficilisdifficulthardtroublesome
 difficultasdifficultyneedtroubledistress
@@ -805,7 +829,7 @@ diligensdiligentcareful
 diligentiadiligenceindustryperseverancepersistence
 diligoverb:choose outesteem highlyprizelove
 diluculodawndaybreak
-diluo(of troubles) to removeresolve
+diluo(of troubles) verb:removeresolve
 dimidiumhalf
 dimittoverb:break updismissleaveabandon
 directusplainsimpledirectopenstraightforward
@@ -817,7 +841,7 @@ discedo(discessum )verb:break updepartgo awaypass away
 discidiumseparationdivisiondisagreementtearing apart
 discipulusdisciplestudentlearnerpupil
 discoverb:learnbecome acquainted with
-discrepoverb:differto be differentvarydisagree
+discrepoverb:differverb:be differentvarydisagree
 disponoverb:arrangeput in orderdraw up (troops)
 disputatiodebatedisputediscussion
 disputodiscuss
@@ -829,7 +853,7 @@ dissolutuslaxweakwanting in energydissoluteprofligate
 distinguoverb:mark offdistinguishdivide / separate
 distribuoverb:distributedivide
 districtus (fr. distringo)strictsevere / hesitating / busy
-distulo(past) to delay [MGHss 25268]
+distulo(past) verb:delay [MGHss 25268]
 ditoverb:enrichmake wealthy
 diuby dayfor a long timea long time ago
 diuadv. a long whilelong timefor a long time
@@ -847,7 +871,7 @@ doctorteacher
 doctrinadoctrineteachinginstructionlearning
 doctustaughtinstructedlearnedtutored
 dolenspainfully
-doleoverb:suffer painto be painedgrieve
+doleoverb:suffer painverb:be painedgrieve
 dolorpaingrief. miserypainsuffering
 doloseslylydeceitfully
 dolosuscraftycunningslydeceitful
@@ -880,8 +904,8 @@ duroverb:hardenlastendure
 durushardharshtoughstrongenduring/ roughrudeuncouth
 Dusiol petramDuissenpierre
 dux ducisleaderguidecommandergeneralduke
-eatenusso farthus farup to then
-ebullioverb:boil upbubble upto appearproduce in abundance
+eatenusso farthus farup verb:then
+ebullioverb:boil upbubble upverb:appearproduce in abundance
 ecclesiachurch
 econtrathe same as contraagainstoppositeetc
 ecquandoat any time? ever?
@@ -947,10 +971,10 @@ erogoverb:pay outexpenddisburse
 erroverb:wanderstrayrove / be mistakenerrgo astray
 errorerrormistakegoing astray
 erubescoverb:blushgrow redbe ashamed
-erubesco(+ inf.) to blush to(+acc.) blush forrespect
+erubesco(+ inf.) verb:blush to(+acc.) blush forrespect
 erudioverb:instructteacheducate
 eruoverb:dig uppull out / razedemolish
-esurioverb:be hungryto hunger
+esurioverb:be hungryverb:hunger
 et ... etboth ... and
 etenimfor indeed
 etiamadverb:evenalso
@@ -958,11 +982,11 @@ etsi(acsi) even ifalthough
 evenioverb:come to passhappenbefall
 eventusconsequenceissueresultoccurrenceexperience
 evertoverb:turn outejectdislodgeoverturn / destroyruin
-evitoverb:shunavoid; alsoto kill
+evitoverb:shunavoid; alsoverb:kill
 evocoverb:draw outdraw onproducerecall to the colors
 ex(= e )(prep. + abl.) out offrom withinfrom / on account of
 exaequo exequoverb:be likeequal / make level or evenrelate
-excedo(trans.) to exceedleavepass beyond
+excedo(trans.) verb:exceedleavepass beyond
 excellentiaexcellencemeritworth
 excessumdeparturedeathdigression
 excipio(excepi exceptum )verb:take outexcept / takecapture
@@ -984,7 +1008,7 @@ exheresdisinherited
 exhibeo exibeoverb:produceshowdisplayofferallowcause
 exhibeoverb:showpresentallowdisplaypresentoffer
 exhilaroverb:make cheerful
-exhorrescoverb:be horrifiedto shakeshudder / dreadtremble at
+exhorrescoverb:be horrifiedverb:shakeshudder / dreadtremble at
 exigodrive outforce outexactdemandsell
 exigocompletefinishdeterminedecidesettle
 exilisthinslendermeager
@@ -1017,7 +1041,7 @@ explicatusexplanationexposition
 explicoverb:unfoldunrolldisentangle / explainexpound
 expono (exposui expositum )verb:set forthexplainexpose
 expositusopenaccessibleexposed
-expostuloverb:demand earnestly / to make a claim
+expostuloverb:demand earnestly / verb:make a claim
 expugnoverb:captureovercomesubduetake by stormgain
 exquisitussought afterexquisiteexcellentfinedelicate
 exsequor exequorverb:follow to the gravefollow to the end
@@ -1044,8 +1068,8 @@ faciliseasyagreeableaffablepleasant
 facillimuseasiestmost agreeablepleasantest
 facina -orisbad deedcrimevillainy / deedaction
 facioverb:sacrificesuithelpbe of service
-facioverb:give permission / to experiencesuffer (troubles)
-facio(trans.) to makedoactperformcausebring about
+facioverb:give permission / verb:experiencesuffer (troubles)
+facio(trans.) verb:makedoactperformcausebring about
 factumdeedaccomplishmentworkactachievement
 facultaspowermeansopportunitycapacityabilitystock
 facundiafacultasfeasibilityopportunityresourcesabundance
@@ -1063,7 +1087,7 @@ fateorverb:confessadmitallowrevealmake known
 fatigoworryfatiguevexharasstease
 fatumfatedestinydoomlotweird
 fautorfavorerpromoterpatronpartisansupporter
-faveo(+ inf.) To be inclined to do
+faveo(+ inf.) Verb:be inclined to do
 faveo(+ dat.) be favorable toaidsupporthelp. fawning like that of a dogcringing flattery
 feculentiadregsleesimpuritiesfilth
 fefelloverb:be failed bydisappointed by something. Herimannp. 278
@@ -1136,19 +1160,19 @@ fructuariusfruitfulfertile
 fructus fructusfruitprofitenjoymentproduce
 frugalitasfrugalityeconomypinching pennies
 frumentumgrain
-fruorverb:have the benefit ofto enjoy
-frustra esseverb:be deceivedto be mistaken
+fruorverb:have the benefit ofverb:enjoy
+frustra esseverb:be deceivedverb:be mistaken
 frustrain vainmistakenlywantonlywithout reason
 fruxfrugifruits of the earth
-fugaflightescape
+fugaflightescape
 fugioverb:fleeescaperun away / avoidshun
 fugitivusfugitivedeserterrunaway slave
-fugoverb:put to flightchase awaydrive into exilepursue
-fulcioverb:supportstrengthenuphold / to besiegeoppress
+fugoverb:put verb:flightchase awaydrive into exilepursue
+fulcioverb:supportstrengthenuphold / verb:besiegeoppress
 fulgeo (fulsi )verb:flashshinebeam
 fultussupporter
 fundoverb:pourpour out (like molten metal)meltcast
-fundo(milit.) to routscatterdefeatput to flight
+fundo(milit.) verb:routscatterdefeatput to flight
 fungorfungifunctusverb:occupy oneselfperformdoexecute
 funis -isropecordline
 furibundusragingfurious / inspired
@@ -1165,7 +1189,7 @@ GemblacensisGembloux
 gemoverb:sighgroanwail
 gensclanracenationpeopletribe
 genuskindsortclasscategory
-geroverb:carrybearwear / beargive birth to / to carry about
+geroverb:carrybearwear / beargive birth to / verb:carry about
 gestoverb:carrybear about
 gestum (gero)carrying aboutconduct (oneself)
 gestum (gero)carriagebearing / having borne
@@ -1176,7 +1200,7 @@ gloriafamerenownglory
 gloriorverb:gloryboastpride oneself
 grandoonishailstorm
 grassorgo aboutgo aheadproceedattack
-gratia agere(+ dat.) to thank
+gratia agere(+ dat.) verb:thank
 gratiagratitudefavor
 gratiain order tofor the sake ofto
 gratia(in the abl.) on account of
@@ -1251,7 +1275,7 @@ huius(fem. sing. gen.) They are fond OF THIS (change)
 humanitaskindnessculturerefinement
 humanuspertaining to manhumanehumaneculturedrefined
 humilislowlyhumble
-humocover with earthbury
+humocover with earthbury
 humusgroundearthsoil / landcountry
 hunc(masc. sing. acc.) He ate THIS (fruit)
 HunnamBunna
@@ -1275,14 +1299,14 @@ ignarusignorantnot knowing
 ignavuslazylistlessinertsluggish cowardlya coward
 ignisfire
 ignoroverb:be ignorant ofnot know / rarelyneglectoverlook
-ignosco(+ dat.) to overlookforgivepardon
+ignosco(+ dat.) verb:overlookforgivepardon
 ignotusunknownobscureignorantignoble
 ilicoon the spotimmediately
 illa(fem. sing. nom.) THAT (sword) is more expensive
 illa(neut. pl. acc.) Deborah always won THESE (wars)
 illa(fem. sing. abl.) He who lives BY THAT (the sword)..
 illa(neut. pl. nom.) THOSE (arms) belong to the victor
-illacrimo(+ dat.) to weep over
+illacrimo(+ dat.) verb:weep over
 illae ille(fem. pl. nom.) THOSE (women) must die!
 illarum(fem. pl. gen.) The city wall had four OF THOSE (gates)
 illas(fem. pl. acc.) They gave THOSE (their lives) for the Faith
@@ -1319,7 +1343,7 @@ imagoimagelikeness
 imber ymberrain showerrain stormpelting rain
 imbriumof rain
 imcompositeadv from incompositusincompositione in Herimann
-imitabilisthat can be imitated
+imitabilisthat can be imitated
 imitorverb:imitate
 immanitassavageryfrightfulness
 immeritoadv. undeservinglywithout meritunjustifiably
@@ -1342,10 +1366,10 @@ impendoverb:lay outexpandweigh out
 impenetrabiilisimpenetrable
 impensaexpenseoutlay
 imperatorcommander in chiefgeneralemperor
-imperceptusunperceived / unknown
+imperceptusunperceived / unknown
 imperiosusimperiousdomineeringpowerful
 imperiumpower to commandauthoritycommandrulecontrol
-imperoverb:give orderscommand / to rulehold sway
+imperoverb:give orderscommand / verb:rulehold sway
 impetroverb:getaccomplisheffectobtain (by asking)
 impetusattackonsetrapid motion / impulsepassionforce
 impleoverb:fill in (or up)satisfycontentfulfilperform
@@ -1383,7 +1407,7 @@ incontinencialack of restrainincontinence
 incorruptusuncorruptedgenuinepure
 incredibilisincredibleunbelievable
 increpareverb:rebukechidescold
-increpo(of persons) to chiderebuke
+increpo(of persons) verb:chiderebuke
 incuboverb:hang overdwell inlie heavily upon
 incurroverb:run intoassailattackraid intocome upon
 IndaCornelism / Anster
@@ -1403,7 +1427,7 @@ industriaindustrydiligence
 industriusindustriousdiligentassiduoushard-working
 indutiaetrucearmisticesuspension of hostilities
 inedicabilisunexplainableinexplicable
-ineptioverb:play the foolto trifle
+ineptioverb:play the foolverb:trifle
 inexpugnabilisimpregnableunconquerablenot to be taken by force
 infamoverb:put to shamedisgrace
 infantiainfancybabyhood
@@ -1412,7 +1436,7 @@ infectum reddereverb:revokerender impossiblemake voidannul
 infectusunworked / not doneunfinishedincomplete
 infecunditasbarrennesssterility
 infecundusbarrensterile
-infelicitasbad luckmisfortune
+infelicitasbad luckmisfortune
 infeliciterunhappily
 infelixarbor infelixthe gallows
 infelixunfruitfulbarrenunproductiveinfertile
@@ -1421,7 +1445,7 @@ infensushostileaggressive / (arms) aimedready / (spirit) dangerous
 inferithose down belowthe dead
 inferneon the lower sidebelow
 inferoverb:carry input or place on
-infero(in logic) to inferconclude
+infero(in logic) verb:inferconclude
 infero(abstract things)bring onoccasioncause
 inferusbelowundersouthern
 infervescoverb:come to a boilbecome hot
@@ -1434,7 +1458,7 @@ infidelisunfaithfuldisloyaluntrue
 infidelitasfaithlessnessdisloyalty
 infideliterfaithlesslydisloyally
 infidusuntruedisloyal
-infigoverb:fixfasten / to imprintimpress
+infigoverb:fixfasten / verb:imprintimpress
 infindo infidi infissumverb:cut into
 infinitas infinitioeternityinfinityendlessness
 infinitusunlimitedinfinitewithout boundsboundlesslimitless
@@ -1448,7 +1472,7 @@ infitialisnegativecontaining a norejection
 infitias ireverb:deny
 infitiorverb:deny / deny a debtrefuse to return something
 inflammatiosetting afire / (people) inflaming / (souls) inspiring
-inflammoverb:set on fireinflameto torchkindle
+inflammoverb:set on fireinflameverb:torchkindle
 inflatioinflationflatulence
 inflatiustoo pompous / on a grander scale
 inflatuspompousswollenpuffed upinflated
@@ -1459,8 +1483,8 @@ infletusunweptunmournedunlamented
 inflexioa bendingsswaying
 inflexusbendingcurving
 infligo inflixi inflictumverb:strikehitknock / cause damage
-infloverb:blow into / to inspirepuff upelate
-influo influi influxumverb:flow in / to rush insteal in
+infloverb:blow into / verb:inspirepuff upelate
+influo influi influxumverb:flow in / verb:rush insteal in
 infodio infodi infossumverb:dig inbury
 informatioconceptidea
 informisformlessshapeless / deformedhideous
@@ -1548,7 +1572,7 @@ invenioverb:come uponfinddiscover
 inventorinventordiscoverer
 investigoverb:track downinvestigate
 inveteratushardened by ageof long-standing
-inveteroverb:give durationto render old
+inveteroverb:give durationverb:render old
 invicemone after the otherby turnsmutuallyeach other
 invictusunconquerunconquerableundefeated
 invideoverb:envybe jealous oflook upon with envy
@@ -1562,7 +1586,7 @@ iocusjokejestjapegag
 ipse ipsa ipsumhimselfherselfitself
 ipsemethis own very self
 iraangerwrath
-irascor iratusverb:be angryto be wrathful
+irascor iratusverb:be angryverb:be wrathful
 iratusangrywrathful
 irritoverb:irritateexasperateexcite
 irritumnothingnessworthlessnessvanity
@@ -1570,7 +1594,7 @@ irritusvainuselessineffectualof not effect
 irritusundecidedvoidunfixedof no effect
 is ea idthisthat / hesheit
 iste ista istudthat / sometimes pejorative
-ita ut(with subj.) in such a way that
+ita ut(with subj.) in such a way that
 itasothus
 ita(in narration) and so; (with adj. or adv.) soso very
 itaqueadverb:andsotherefore
@@ -1587,12 +1611,12 @@ iugiseperpetualcontinuous
 iugis iugeperpetualcontinuous
 iumentumbeast of burden
 iungo iunxi iunctumverb:join
-iuroverb:swearto make an oath
+iuroverb:swearverb:make an oath
 ius iurandum iuris iurandi etc.oath
 ius iurisjusticelawright
 iussu(abl.) at the command ofby order of
 iustusjustrightequitable
-iuvoverb:helpaidassist / to please
+iuvoverb:helpaidassist / verb:please
 iuxtajust short of
 iuxtaclose bynear / in like mannerequally
 iuxta(+ acc.) close tonear to / (time) just before
@@ -1616,7 +1640,7 @@ labor lapsusverb:slipglideslide
 labores soliseclipse of the sun
 laborioselaboriouslywith great effort
 laboriosustoilsomelaborious / (persons) industrioustoiling
-laboro(intrans.) to worktoilsufferbe afflictedbe troubled
+laboro(intrans.) verb:worktoilsufferbe afflictedbe troubled
 laboro(trans.) work outpreparearrangeformelaborate
 labrumlipedgerim / bathing tub
 labruscawild grape vine
@@ -1633,7 +1657,7 @@ lacrima Heliandumamber
 lacrimatears / exudations from some plants
 lacrimabilislamentabledeplorablewoeful
 lacrimoverb:weepshed tears / exudedrip
-lacrimosustearfulmournfulshedding tears
+lacrimosustearfulmournfulshedding tears
 lactansgiving milk
 lactatioenticementcome-on
 lacteusmilkyof milkmilk-white
@@ -1659,11 +1683,11 @@ laevus levusfoolishsilly / unluckyunpropitious
 laevus levusthe left handleft sideleft-handed
 laganuma cake
 lamabogslough
-lamboverb:lick / (of rivers) to wash
+lamboverb:lick / (of rivers) verb:wash
 lamenta (neut. pl)weepingwailing
 lamentabilislamentablemournful
 lamentatioweepingwailinglamenting
-lamentorverb:weepwaillament / (trans.) to bewail
+lamentorverb:weepwaillament / (trans.) verb:bewail
 lamiawitchvampire
 lamnia lammina lamnasheet of metalcoinknife bladenutshell
 lapsusfallfaulterrorslidinggraduate movement
@@ -1682,10 +1706,10 @@ lecticalitterbier
 lectorreader
 lectusbed
 legatariuslegatee
-legatusdeputyambassadorenvoy
+legatusdeputyambassadorenvoy
 legens legentisa reader
 legiolegion
-legoverb:gatherchoosecollectpass throughread
+legoverb:gatherchoosecollectpass throughread
 lemiscusa ribbon
 lemmathemetitleepigram
 lemures(pl. only) ghostsphantoms
@@ -1695,10 +1719,10 @@ lenissmooth / gentlekindmild
 lenitas lenitudosmoothnessgentlenessmildness
 lenoprocurergo-between
 lenociniumenticementallurement
-lenocinorverb:panderflattermake up to / to promoteadvance
+lenocinorverb:panderflattermake up to / verb:promoteadvance
 lens lentislentil
 lenteslowlycalmlycoolydeliberately
-lentescoverb:become softflexiblesticky / to weakenslacken
+lentescoverb:become softflexiblesticky / verb:weakenslacken
 lentitudoslownessapathysluggishness
 lentoverb:bend
 lentulusrather slowa little slow
@@ -1780,7 +1804,7 @@ ludio ludiusactorplayer
 ludo lusi lusumverb:playsport / imitatebanter / deludedeceive
 ludusgamesportschool
 luesplaguepestilencecalamity
-lugeoverb:mournbe in mourninggrieve / (tans) to lamentbewail
+lugeoverb:mournbe in mourninggrieve / (tans) verb:lamentbewail
 lunamoon
 lupuswolf
 LutosensisLeuze
@@ -1825,7 +1849,7 @@ manentiapermanency
 maneoverb:remainstaystay the nightlastendureabide by
 mansuetusmildsoftgentle
 manus manushandbandhandwriting
-MarcenienseMarchiennes
+MarcenienseMarchiennes
 MarcieniensisMarchiennes
 mare marissea
 maritushusband
@@ -1950,7 +1974,7 @@ mussitoverb:grumblemutter
 mutatiochangealterationtransformation
 mutoverb:changealter / exchange
 mutopunishfinemulct
-mutuoborrowedlend
+mutuoborrowedlend
 mutuusinterchangedmutuallyreciprocal / reciprocity
 mutuusa loan. dare mutuumverb:make a loan. N namnamque(conj.) for
 NamucenseNamur
@@ -2056,12 +2080,12 @@ obruoverb:overwhelmdestroy
 obsequiumindulgencepliancysubmission
 obstinatusfirmresolvedstaunch
 obtestorverb:imploreentreatbegcall as a witness
-obtineoverb:holdkeeppossessmaintain / to continue
-obviam ire(+ dat.) to go to meetoppose / helpremedy
+obtineoverb:holdkeeppossessmaintain / verb:continue
+obviam ire(+ dat.) verb:go verb:meetoppose / helpremedy
 obviamon the wayin the way / (+ dat.) towardsagainst
 obviuson the wayin the way / (in dat.) openaccessible
 occasiofavorable momentopportunity
-occido occidi occasumverb:fallfall down(for the sun) to set
+occido occidi occasumverb:fallfall down(for the sun) verb:set
 occultosecretly
 occupoverb:take possessiongraspseizeenjoyget a start on
 occurroverb:fall uponattackwork againstcounteract
@@ -2099,7 +2123,7 @@ opportunusfitsuitable / (time) favorable / (+dat.) liable to
 opprimo oppressi oppressumverb:suppressoverwhelmoverpowercheck
 opprobriumreproachdisgrace
 oppugnoverb:fight againstattackassaultassail
-opssingularpowerpower to aidpower to help
+opssingularpowerpower verb:aidpower verb:help
 optimatesthe aristocratic party
 optimusone of the bestaristocratnoble
 optoverb:desirewish forwant
@@ -2139,10 +2163,10 @@ parequallike
 paratuspreparedreadyprovidedequipped
 paratuspreparedreadyequipped; (of persons) skilled
 paratuspreparationfitting outequipment
-parco(with dative) to sparerefrain from injuring
+parco(with dative) verb:sparerefrain from injuring
 parco(+inf.verb:forbear to)avoidsparekeep oneself from
 parens parentisparent
-pareo(+ dat.) to be obedient toobey
+pareo(+ dat.) verb:be obedient toobey
 paries parietiswall
 parilissimilarlikeequal
 parioverb:bearbring forthproduce / createmakeget
@@ -2156,7 +2180,7 @@ pascoverb:grazeforagebrowse
 passersparrow
 passimadv. far and wideeverywherescattered about
 patefacioverb:discloseexposeopenmake open
-pateoverb:be revealedto stand opento be clearplain
+pateoverb:be revealedverb:stand openverb:be clearplain
 pater patrisfather
 paternusof a fatherpaternalnative
 patienspatient / (+ gen.) capable of enduring
@@ -2174,7 +2198,7 @@ paupertasbeggardrypovertyhumble circumstances
 pax pacispeace
 peccatussin
 peccoverb:do wrongerrsingo astray
-pectoverb:combcardthrash (to card wool)
+pectoverb:combcardthrash (verb:card wool)
 pectus pectorisheartbreast
 pecuniamoney
 pecusa single head of cattleespecially a sheep
@@ -2204,7 +2228,7 @@ pereoverb:pass awaybe destroyedperish
 perfectuscompletefinisheddone / perfectwithout flaw
 perferoverb:bearsufferendure
 perficio perfeci perfectumverb:do thoroughlyaccomplishbring about
-perfruorverb:execute completelyenjoy to the full
+perfruorverb:execute completelyenjoy verb:the full
 perfusussteepedsoakeddrenched
 pergoverb:continueproceedgo on with
 periclitatusput in perilendangered
@@ -2231,7 +2255,7 @@ persistoverb:persistpersevere
 persolvoverb:unlooseexplainexpound / pay off a debtpay
 personam geroverb:act a part
 perspicuustransparentbrightclearevident
-persuadeo persuasi persuasum(+ dat.) to persuade
+persuadeo persuasi persuasum(+ dat.) verb:persuade
 perterreoverb:terrify
 pertimescoverb:become very much afraid
 pertinaciafirmnessobstinacystubbornness
@@ -2245,7 +2269,7 @@ perturboverb:disturbtroubleperturbdisrupt
 perturpisvery disgraceful
 peruro perussi perustumverb:burn upconsume / inflamegallchafe
 pervalidusvery strong
-pervenio(+ acc.) to reachattainreachbe passed to
+pervenio(+ acc.) verb:reachattainreachbe passed to
 perverto perverti perversumverb:turn upside downoverturnoverthrow
 pervideo pervidi pervisumverb:look oversurveyinspectdiscern
 pes pedisfoot
@@ -2253,12 +2277,12 @@ pessimusworst (see malus)
 pessum doverb:destroyruinwreck
 pessum ireverb:sinkbe ruineddestroyedbe put to an end
 pessumverb:the groundto the bottomdownward
-pestiferpestilentialinjuriousdamagingplaguey
+pestiferpestilentialinjuriousdamagingplaguey
 pestiferedestructivelyinjuriously
 pestis pestisplagueepidemicpestilence / destructioncurse
 petitusinclining toward
 petoverb:make forgo toseekstrive after
-petoverb:ask forbegrequestdemand / to sue for
+petoverb:ask forbegrequestdemand / verb:sue for
 PevelaPevlenear Cisoing
 pharetraa quiver
 phasma phasmatisghostspiritspecter
@@ -2277,7 +2301,7 @@ piruspear tree
 piscatorfisherman
 piscis piscisfish
 piusdutifulgodlyholyuprightkindhonestaffectionate
-placeo(+ dat.) to pleasebe agreeable to
+placeo(+ dat.) verb:pleasebe agreeable to
 placetit is agreedit is resolvedit seems good
 placidequitelygently
 placidusquietstillgentle
@@ -2348,17 +2372,17 @@ postquam(conj.) after
 postuloverb:ask
 potensablemightypowerfulstrong
 potestaspowerabilityauthority / opportunity
-potior(+ gen. or dat.) to possessholdget possession of
+potior(+ gen. or dat.) verb:possessholdget possession of
 potissimumadverb:chieflymost of all
 potissimusbest of allchiefprincipal
 potiusratherpreferably
 prae dulcis / pre dulcisexceedingly sweet
 prae se ferre / pre se ferreverb:showexhibiton account of
 prae quam / pre quamin comparison with
-prae pre(prep. with abl.) before
+prae pre(prep. with abl.) before
 prae preadverb:beforein front
 praebeo prebeoverb:offerhold outsupplyprovideallow
-praebeo prebeo(+ refl.) to show oneselfpresent oneself
+praebeo prebeo(+ refl.) verb:show oneselfpresent oneself
 praecedo precedoverb:precedego before / surpassexcel
 praecelsus precelsusexceedingly high
 praecepio precepiopreceptpreconception
@@ -2367,11 +2391,11 @@ praecidoverb:cut shortlopmutilate
 praecipioprecipioverb:instructadvisewarnanticipate
 praecipuus precipuusexcellentdistinguishedextraordinary
 praeclarus preclarusexcellentfamousbeautifulstriking
-praeconor preconorverb:be a public crierto heraldproclaim
+praeconor preconorverb:be a public crierverb:heraldproclaim
 praecox precoxripe beforehandpremature
 praeda predaplunderbootyspoils of warlootgainprey
 praedico predicoverb:warnadmonishinstructforetell
-praeeo preeoverb:go beforeprecede / to say in advance / to order
+praeeo preeoverb:go beforeprecede / verb:say in advance / verb:order
 praefero preferoverb:carry in frontdisplayprefer
 praefero preferoanticipatecarry byride by
 praeficio preficio / prefeci prefectumverb:put in charge of
@@ -2455,9 +2479,9 @@ profectotrulyreallyindeed
 proferoverb:carry outbring forth
 proficioverb:make progressadvance
 proficioadvanceassisthelpaidbe of use
-proficiscorverb:departset outto start forwardto arise
+proficiscorverb:departset outverb:start forwardverb:arise
 proficuusproficiscorverb:start forwardset outdepartarise
-profiteorverb:make a public statement / to declare oneself
+profiteorverb:make a public statement / verb:declare oneself
 profiteorverb:acknowledgeconfess / offerpromise
 profor profari profatusverb:speak out
 profugusfleeingfugitivebanishedmigratory
@@ -2509,7 +2533,7 @@ promoveo promovi promotumpush forwardmove aheadadvance
 promptepromptlyresolutelyreadily
 promptuin promptu habereverb:have readdisplayhave on show
 promptuin promptu ponereverb:make clearrevealdisclose
-promptuin promptu esseverb:be readyto be easyto be clear
+promptuin promptu esseverb:be readyverb:be easyverb:be clear
 promptus(persons) preparedresoluteprompt
 promptusready at handvisibleapparent
 promulgatiopublicationpromulgation (of a law)
@@ -2522,7 +2546,7 @@ propenearnear tonot farnot long from now
 propelloverb:drive before onedrive away
 properoverb:hastenspeedmove rapidlycome quickly
 properoverb:hasten / acceleratespeed up
-propinquo(intrans) to come neardraw nearapproach
+propinquo(intrans) verb:come neardraw nearapproach
 propinquusnearclosesimilarnearly related
 proponodisplaypublishrelatetellproposepromise
 proposituma designpurposeschemetheme of discourse
@@ -2531,19 +2555,19 @@ propriusone's ownspecialcharacteristicparticular
 propriusone's ownpermanentspecialpeculiar
 propter(+ acc.) nearcloseon account ofbecause of
 propugnaculumfortificationrampartdefense
-prorsusforwardstraight aheadto sum uputterlywholly
+prorsusforwardstraight aheadverb:sum uputterlywholly
 prosequor (prosecutus)verb:attackgo withpursueattend
 prosperfavorablefortunateluckyprosperous
 prosperitasprosperitygood fortune
 prosum (profuturus)verb:be usefulof benefitdo good
 prosumverb:be usefuldo goodbenefit (+ dative)
-prosum(with dat.) to be usefuldo goodbenefit
+prosum(with dat.) verb:be usefuldo goodbenefit
 protestorprotestoverb:declare in publicaffirmbear witness
 protinusforwardfurther oncontinuouslyimmediately
 protraho (protractus)verb:draw outprotractdefermake known
 proutjust asaccording to
 provectusadvancedadvanced in age
-provehoverb:carry oncarry forwardadvancepromote
+provehoverb:carry oncarry forwardadvancepromote
 proventusa growing upincreasecropyieldor issue
 provideoverb:foreseeprovidemake provision for
 provisorone who provides foror against
@@ -2556,7 +2580,7 @@ PrumaPrums
 publicusof the peoplepublicopen to all
 puchrebeautifullyfinelyhandsomely
 pudendusshamefuldisgraceful
-pudeoverb:be ashamed
+pudeoverb:be ashamed
 pudicusmodest. chaste
 pudormodestybashfulness
 puellagirl
@@ -2700,11 +2724,11 @@ quidemindeedcertainlyat least / ne ... quidemnot ... even
 quies quietisquietrestpeace
 quilibetanyoneanything
 quin etiamwhy evenin factmoreover
-quinbut come nowratherindeed
+quinbut come nowratherindeed
 quinam quaenam quenam quodnamwhich? what?
 quingentifive hundred
 quinquennisfive years old
-quippecertainlyto be sureindeedof course
+quippecertainlyverb:be sureindeedof course
 quisnamquidnamwhowhat
 quisquamanyoneanything
 quisqueeach oneeach person
@@ -2758,7 +2782,7 @@ reddoverb:repeatreciterepresentimitatepay updeliver
 reddoverb:give backrestorereturnanswertranslaterender
 redemptioransomingredemptionbuying backfarming taxes
 redemptorredeemer (Christ)
-redeoverb:go backcome backreturn / (revenue) to come in
+redeoverb:go backcome backreturn / (revenue) verb:come in
 redeoverb:fall back uponbe reduced tobe brought to
 redigo (redactum)verb:bring or reduce to a conditionlessen
 redonoverb:give backgive up
@@ -2771,7 +2795,7 @@ reformoverb:form againmould anew
 reginaqueen
 regiusroyalregal
 regnumruleauthoritykingdomrealm
-rego rexi rectumverb:guidedirectto rule
+rego rexi rectumverb:guidedirectverb:rule
 regularule / monastic rule
 relaxoverb:loosenenlargerelaxeaselighten
 relego relegi relectumverb:read againre-read
@@ -2866,7 +2890,7 @@ Sanctus EleutheriusSt. Eligius
 Sanctus EgidiusSt. Gilles
 sanctusholysacred/ saint
 Sanctus RodoenusSt. Ouen
-sanerationallysensiblyreallyindeedto be sure
+sanerationallysensiblyreallyindeedverb:be sure
 sanitashealthsoundness of mendsanity
 sanoverb:heal
 SantiagoSt. James
@@ -2929,7 +2953,7 @@ senex senisoldagedold man
 sensusfeelingsense
 sententiaopinionthoughtway of thinkingmeaningpurpose
 sentioverb:judgesupposevote
-sentiofeelperceiveexperiencehold an opinion
+sentiofeelperceiveexperiencehold an opinion
 seorsumapartseparately
 sepelioverb:ruindestroybury
 septemseven
@@ -2942,7 +2966,7 @@ seriusseriousgravesolemn
 sermotalkcommon talkrumorreportdiscussion
 sermodiscussiontalkcommon talkconversationrumor
 seroverb:sowplant. alsolateat a late hour
-servio(+ dat.) to be a slave toserve
+servio(+ dat.) verb:be a slave toserve
 servitusservitudeslavery
 servoverb:watch overkeepprotectobservesavereserve
 servusslaveserf
@@ -2969,7 +2993,7 @@ similitudolikenessresemblance / uniformity
 simplexsimpleunaffected
 simul atqueas soon as
 simulat onceat the same timetogether
-simulatiopretense
+simulatiopretense
 sine(+ abl.) without
 singularisaloneuniqueextraordinaryindividualsingular
 singulione eachone apiecesingleseparate
@@ -3005,11 +3029,11 @@ solutioloosening / payment / solution / explanation
 solvoverb:loosenuntiereleasefreedissolvebreak up
 somniculosussleepydrowsy
 somniculousesleepilydrowsily
-somnioverb:dream / (+ acc.) to dream ofimagine foolishly
+somnioverb:dream / (+ acc.) verb:dream ofimagine foolishly
 somniumdreamfancyday-dream / foolishnessnonsense
 somnussleep
 sonitusnoisesound
-sonoverb:make a noise / sing / celebrate / (of words) to mean
+sonoverb:make a noise / sing / celebrate / (of words) verb:mean
 sophismatafalse conclusionslogical fallacies
 sopordeep sleep
 sordeoverb:be dirtyappear vile
@@ -3047,7 +3071,7 @@ stipsstipissmall coingift
 stostetistatumverb:standstand stillstand firm
 strenuusbriskactivevigorous / turbulentrestive
 struespilesheapsmasses
-studio(+ dat.) to studypursue eagerlybe eager for
+studio(+ dat.) verb:studypursue eagerlybe eager for
 studioseeagerly
 studiumeagernesszeal
 stultusfoolish / a fool
@@ -3058,7 +3082,7 @@ subitoadv. suddenlyunexpectedly
 subitussuddenunexpected
 subiungoverb:yoke beneathjoinattachsubduesubjugate
 sublimeon highaloft
-subnectoverb:bind on beneathto tie
+subnectoverb:bind on beneathverb:tie
 subsecoverb:cut awaypare
 subsequorverb:follow after
 substantiasubstanceessencemeans of subsistenceproperty
@@ -3092,7 +3116,7 @@ supernanortheast by north wind
 supernefrom aboveabove
 supernusabovesuperior
 superoverb:be abovehave the upper handsurpassconquerovercome
-supersumverb:be superfluousto remain
+supersumverb:be superfluousverb:remain
 superus superior supremus or summusaboveupperhigh
 supervacuussuperfluousunnecessaryextrasupervenioverb:arrivecome uparrive unexpectedly
 suppellex suppellectilusornaments
@@ -3123,7 +3147,7 @@ tactussense of feelingtouch
 taediumtediumdisgustwearinessboredom
 talio-onisretribution
 talisof such a kindsuch
-talusthe ankleankle bone
+talusthe ankleankle bone
 tam ... quamas ... as possible
 tamverb:such a degreesoso far
 tamdiufor such a long time
@@ -3145,8 +3169,8 @@ temeritasrashnesstemerity
 temperantiamoderationself-controltemperance
 temperoverb:mix properlytemperregulatemitigate
 temperobe moderatecontrol oneself
-tempero(+abl. or with ab) to keep fromrefrain from
-tempero(+ dat.) to controluse with moderationspare
+tempero(+abl. or with ab) verb:keep fromrefrain from
+tempero(+ dat.) verb:controluse with moderationspare
 tempestasstormweather
 TemploviumTempleuvevilla near Cisoing
 templumsacred precincttemplesometimes church
@@ -3234,14 +3258,14 @@ transmittoverb:sendcarryor convey across
 tredecim(indecl.) thirteen
 TrellumTre Bloncastle in Hannonia
 tremoverb:trembleshakeshudder
-trepidewith trepidationin confusion
+trepidewith trepidationin confusion
 tres triathree
 TreverimTriers
 tribuoverb:give outdivideallotassigngrantgiveallow
-tricesimusthirtieth
-triduanalasting three days
-triduanusthree days' durationlasting three days
-triduuma period of three days
+tricesimusadjective:thirtieth
+triduananoun:lasting three days
+triduanusthree days' durationnoun:lasting three days
+triduumnoun:a period of three days
 triginta(inedl.) thirty
 tripudioverb:leapjumpdance (as in a religious procession)
 tristissadgloomydowncast
@@ -3337,7 +3361,7 @@ velutadv. just aslikeeven as
 VendoliusVendeuil
 veniagraceindulgencefavorpardonforgiveness
 venio veni ventumverb:come
-ventitoverb:come oftento visit frequently
+ventitoverb:come oftenverb:visit frequently
 ventosusfull of windwindybreezy
 ventuswindrumorfavor
 ventuswind
@@ -3347,17 +3371,17 @@ verbera(in pl.) blowsa beatingthrashing
 verbumword
 veretrulyreallyactuallyrightly
 verecundiafeeling of shameshamebashfulness
-vereorverb:respectfearbe in dread ofto be afraid
-vergoverb:bendinclinevergeto draw to an end
+vereorverb:respectfearbe in dread ofverb:be afraid
+vergoverb:bendinclinevergeverb:draw to an end
 veritastruth
 VernandenseVermandois
-veroin truthindeedto be sure / however
+veroin truthindeedverb:be sure / however
 versuslineverse
-vertoverb:turnturn aroundturn up / to put to flightrout
+vertoverb:turnturn aroundturn up / verb:put to flightrout
 vertoverb:flee / interpretunderstand / upsetoverthrow
 verumtamen verumptamennotwithstandingnevertheless
 verustruerealproperright
-vescovescorverb:feedto eat
+vescovescorverb:feedverb:eat
 vesicabladderbladder-like tumor
 vesperevening starevening
 vesperaevening prayervespers
@@ -3375,12 +3399,12 @@ victorvictorwinner
 victoriavictory
 victuslivingmanner of life / nourishmentfood
 videlicetit is clear / adverb:clearlyplainlynamely
-videlicetadverb:(ironically) of courseto be sure
+videlicetadverb:(ironically) of courseverb:be sure
 video vidi visumverb:seeobserveunderstandcomprehend
 videorverb:be seenseemappear
 viduatadeprivedwidowedbereft
 viduoverb:deprive
-vigiloverb:be awakewatchbe vigilant / to keep vigil
+vigiloverb:be awakewatchbe vigilant / verb:keep vigil
 vigornoun:vigornoun:liveliness
 vilicusvillicusnoun:pertaining to an estatenoun:overseernoun:steward
 vilisadjective:cheapadjective:worth little
