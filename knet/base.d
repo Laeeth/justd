@@ -19,18 +19,10 @@
         - tunnelbánan - tunnel-banán
     - Emotion Detection
 
-    See also: http://stevehanov.ca/blog/index.php?id=8
-    See also: http://www.mindmachineproject.org/proj/omcs/
-    See also: https://github.com/commonsense/conceptnet5/wiki
-    See also: https://en.wikipedia.org/wiki/Hypergraph
-    See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
-    See also: http://www.eturner.net/omcsnetcpp/
-    See also: http://wwww.abbreviations.com
-    See also: www.oneacross.com/crosswords for inspiring applications
-    See also: http://programmers.stackexchange.com/q/261163/38719
-    See also: http://www.mindmachineproject.org/proj/prop/
+    People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
-    Data:
+    Data Resources:
+    - http://meta-guide.com/software-meta-guide/100-best-ai-nlp-resources-aiml/
     - https://www.wordnik.com/
     - Open Multilingual Wordnet: http://compling.hss.ntu.edu.sg/omw/
     - Svensk Etymologisk Ordbok: http://runeberg.org/svetym/
@@ -62,7 +54,16 @@
     Names: http://surnames.behindthename.com
     Names: http://www.urbandictionary.com/
 
-    People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
+    See also: http://stevehanov.ca/blog/index.php?id=8
+    See also: http://www.mindmachineproject.org/proj/omcs/
+    See also: https://github.com/commonsense/conceptnet5/wiki
+    See also: https://en.wikipedia.org/wiki/Hypergraph
+    See also: http://forum.dlang.org/thread/fysokgrgqhplczgmpfws@forum.dlang.org#post-fysokgrgqhplczgmpfws:40forum.dlang.org
+    See also: http://www.eturner.net/omcsnetcpp/
+    See also: http://wwww.abbreviations.com
+    See also: www.oneacross.com/crosswords for inspiring applications
+    See also: http://programmers.stackexchange.com/q/261163/38719
+    See also: http://www.mindmachineproject.org/proj/prop/
 */
 
 module knet.base;
