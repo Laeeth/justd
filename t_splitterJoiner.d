@@ -9,8 +9,14 @@ import all;
 void main(string[] args)
 {
     auto a = "a  b   c   d e";
+    pragma(msg, typeof(a));
+    writeln("a: ", a);
+
     auto b = a.splitter.joiner(" ");
-    auto c = b.array;
     pragma(msg, typeof(b));
-    writeln(b);
+    writeln("b: ", b);
+
+    auto c = b.array;
+    pragma(msg, typeof(c));
+    writeln("c: ", c);
 }
