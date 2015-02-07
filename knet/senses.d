@@ -648,10 +648,8 @@ import predicates: of;
     }
     bool isNoun(Sense sense)
     {
-        with (Sense) return (sense.isNumeric ||
-                             sense.isTimePeriod ||
+        with (Sense) return (sense.isNounAbstract ||
                              sense.isFood ||
-                             sense.isLanguage ||
                              sense.of(noun,
                                       nounNeuter,
                                       nounAbstract,
@@ -924,6 +922,7 @@ import predicates: of;
         return (sense.isNoun ||
                 sense.isPronoun);
     }
+    alias isRole = isActor;
 }
 
 import grammars: Lang;
