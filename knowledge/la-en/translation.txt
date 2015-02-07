@@ -119,9 +119,9 @@ verb:adoptoverb:wish for oneselfadoptselectpick out
 
 adverb:adsidue assidueadverb:continuouslyadverb:without remission
 
-adstringo(persons) bindoblige(+ refl.) commit oneself to
-adstringoverb:tightverb:compressverb:compact
-adstringoverb:draw togetherverb:tightenverb:bind
+verb:adstringo(persons) verb:bindverb:oblige(+ refl.) verbReflexive:commit oneself to
+verb:adstringoverb:tightverb:compressverb:compact
+verb:adstringoverb:draw togetherverb:tightenverb:bind
 
 adsuesco assuescoverb:grow accustomed toused tomake familiar
 adsumverb:assistbe presentbe nearbe in attendance
