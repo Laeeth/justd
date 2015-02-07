@@ -142,6 +142,10 @@ enum Sense:ubyte
     /* Adjective */
 
     adjective,
+    adjectiveMale,
+    adjectiveFeminine,
+    adjectiveNeuter,
+
     adjectiveRegular,
     adjectiveIrregular,
     adjectiveAbbrevation,
@@ -418,6 +422,11 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case auxiliaryVerbModal: return `modal auxiliary verb`;
 
         case adjective: return `adjective`;
+
+        case adjectiveMale: return `male adjective`;
+        case adjectiveFeminine: return `feminine adjective`;
+        case adjectiveNeuter: return `neuter adjective`;
+
         case adjectivePredicateOnly: return `predicate only adjective`;
         case adjectiveRegular: return `regular adjective`;
         case adjectiveIrregular: return `irregular adjective`;
@@ -503,8 +512,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case pronounReciprocal: return `reciprocal pronoun`;
 
         case pronounIndefinite: return `indefinite pronoun`;
-        case pronounIndefiniteSingular: return `indefinite pronoun Singular`;
-        case pronounIndefinitePlural: return `indefinite pronoun Plural`;
+        case pronounIndefiniteSingular: return `indefinite pronoun singular`;
+        case pronounIndefinitePlural: return `indefinite pronoun plural`;
 
         case pronounRelative: return `relative pronoun`;
 
@@ -519,9 +528,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case conjunction: return `conjunction`;
         case conjunctionCoordinating: return `coordinating conjunction`;
         case conjunctionSubordinating: return `subordinating conjunction`;
-        case conjunctionSubordinatingConcession: return `subordinating conjunction Concession`;
-        case conjunctionSubordinatingCondition: return `subordinating conjunction Condition`;
-        case conjunctionSubordinatingComparison: return `subordinating conjunction Comparison`;
+        case conjunctionSubordinatingConcession: return `subordinating conjunction concession`;
+        case conjunctionSubordinatingCondition: return `subordinating conjunction condition`;
+        case conjunctionSubordinatingComparison: return `subordinating conjunction comparison`;
         case conjunctionSubordinatingTime: return `subordinating conjunction time`;
         case conjunctionSubordinatingReason: return `subordinating conjunction reason`;
         case conjunctionSubordinatingAdjective: return `subordinating conjunction adjective`;
@@ -746,6 +755,9 @@ import predicates: of;
     bool isAdjective(Sense sense)
     {
         with (Sense) return sense.of(adjective,
+                                     adjectiveMale,
+                                     adjectiveFeminine,
+                                     adjectiveNeuter,
                                      adjectiveRegular,
                                      adjectiveIrregular,
                                      adjectiveAbbrevation,
