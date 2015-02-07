@@ -3615,7 +3615,8 @@ class Graph
         */
     void learnRomanLatinNumerals()
     {
-        // Roman (Latin) Numeral
+        enum origin = Origin.manual;
+
         enum pairs = [tuple(`I`, `1`),
                       tuple(`V`, `5`),
                       tuple(`X`, `10`),
@@ -3628,6 +3629,60 @@ class Graph
             connect(store(pair[0], Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
                     store(pair[1], Lang.math, Sense.integer, origin), origin, 1.0);
         }
+
+        connect(store(`ūnus`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
+                store(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
+        connect(store(`ūna`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
+                store(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
+        connect(store(`ūnum`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
+                store(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`duo`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
+                store(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
+        connect(store(`duae`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
+                store(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
+        connect(store(`duo`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
+                store(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`trēs`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
+                store(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
+        connect(store(`trēs`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
+                store(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
+        connect(store(`tria`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
+                store(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`quattuor`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`4`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`quīnque`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`5`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`sex`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`6`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`septem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`7`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`octō`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`8`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`novem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`9`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`decem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`10`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`quīnquāgintā`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`50`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`Centum`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`50`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`Quīngentī`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`100`, Lang.math, Sense.integer, origin), origin, 1.0);
+
+        connect(store(`Mīlle`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                store(`500`, Lang.math, Sense.integer, origin), origin, 1.0);
     }
 
     /** Learn English Ordinal Number Shorthands.
