@@ -36,7 +36,8 @@ dear madambästa fru
 dear madamsbästa fruar
 dear missbästa fröken
 dear sirbäste herrn
-dear sir / madambästa herr eller fru
+dear sirbästa herr
+dear madambästa fru
 dear sirsbästa herrar
 do you like it?gillar du den?
 do you speak {1}?pratar du {1}?
@@ -254,7 +255,8 @@ the day after tomorrowi övermorgon
 the wild westvilda västern
 time hung heavy on his handstiden släpade sig fram [för honom]
 tomorrow morningimorgon bitti
-tomorrow/ yesterdayimorgon/ igår
+tomorrowimorgon
+yesterdayigår
 touchdown locationlandningsplats
 turn leftsväng vänster
 turn rightsväng höger
