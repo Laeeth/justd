@@ -143,7 +143,6 @@ whiteout
 wind
 wind chill factor
 windy
-winter
 wintertime
 wintry
 wood stove
