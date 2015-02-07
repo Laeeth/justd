@@ -919,6 +919,11 @@ import predicates: of;
         with (Sense) return (sense.of(verbReflexive) ||
                              sense.isPronounReflexive);
     }
+    bool isActor(Sense sense)
+    {
+        return (sense.isNoun ||
+                sense.isPronoun);
+    }
 }
 
 import grammars: Lang;
