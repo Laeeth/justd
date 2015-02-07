@@ -1,151 +1,150 @@
-December
-February
-Jack Frost (the personification of winter)
-January
-anorak
-arctic
-balaclava
-below zero
+month:December
+month:February
+name:Jack Frost (the personification of winter)
+month:January
+noun:anorak
+adjective:arctic
+noun:balaclava
+phrase:below zero
 beret
-biting
-bitter cold
-black ice
-blanket
+adjective:biting
+adjective:bitter cold
+nounPhrase:black ice
+noun:blanket
 bleak
-blizzard
-blustery
-boot
-brisk
-cap
-chill
+noun:blizzard
+noun:blustery
+noun:boot
+adjective:brisk
+noun:cap
+noun:chill
 chills
-chilly
-chimney
-coat
-cocoon
-cold
-cold snap
-comforter
-cough
-curling
-dog sled
-down coat
-drafty
-dreary
-duvet
-earflap hat
-earmuff
-eggnog
-evergreen
-fire
-fireplace
-firewood
-flannel
-fleece
-flu
+adjective:chilly
+noun:chimney
+noun:coat
+noun:cocoon
+noun:cold
+noun:cold snap
+noun:comforter
+noun:cough
+noun:curling
+noun:dog sled
+noun:down coat
+adjective:drafty
+adjective:dreary
+noun:duvet
+noun:earflap hat
+noun:earmuff
+noun:eggnog
+noun:evergreen
+noun:fire
+noun:fireplace
+noun:firewood
+noun:flannel
+noun:fleece
+noun:flu
 flurry
-fog
-freezing
-freezing rain
-frigid
-frostbite
-frostbitten
-frosty
-frozen
-fruitcake
-furnace
-gale
-gingerbread
-gingerbread house
-gingerbread man
-gingerbread woman
-glacial
-glacier
-glove
-gust
-hailstone
-harsh
-heat
-heater
-hibernate
-hockey
+noun:fog
+adjective:freezing
+nounPhrase:freezing rain
+adjective:frigid
+noun:frostbite
+noun:frost
+adjective:frozen
+noun:fruitcake
+noun:furnace
+noun:gale
+noun:gingerbread
+nounPhrase:gingerbread house
+nounPhrase:gingerbread man
+nounPhrase:gingerbread woman
+adjective:glacial
+noun:glacier
+noun:glove
+noun:gust
+noun:hailstone
+adjective:harsh
+noun:heat
+noun:heater
+verb:hibernate
+noun:hockey
 hoodie
-hot chocolate
-hypothermia
-ice
-ice cap
-ice crystal
-ice dam
-ice fishing
-ice hockey
-ice scraper
-ice skate
-ice storm
-iceberg
-icicle
-icy
-insulation
-jacket
-lake effect
-log
-longjohn
+nounPhrase:hot chocolate
+noun:hypothermia
+noun:ice
+noun:ice cap
+noun:ice crystal
+noun:ice dam
+noun:ice fishing
+noun:ice hockey
+noun:ice scraper
+noun:ice skate
+noun:ice storm
+noun:iceberg
+noun:icicle
+adjective:icy
+noun:insulation
+noun:jacket
+noun:lake effect
+noun:log
+noun:longjohn
 luge
-melt
-mitten
-muffler
-nippy
+verb:melt
+noun:mitten
+noun:muffler
+adjective:nippy
 nor'easter
-overcast
-overcoat
-overshoe
-parka
-pinecone
-polar
-pullover
+noun:overcast
+noun:overcoat
+noun:overshoe
+noun:parka
+noun:pinecone
+adjective:polar
+noun:pullover
 quilt
-radiator
-raw
-reindeer
-scarf
-shiver
-show shoe
-skate
-ski
-sled
+noun:radiator
+adjective:raw
+noun:reindeer
+noun:scarf
+verb:shiver
+noun:show shoe
+noun:skate
+noun:ski
+noun:sled
 sledge
 sleet
-slippery
-slush
-sneeze
+adjective:slippery
+noun:slush
+verb:sneeze
 sniffle
-snow
-snow shovel
-snowball
-snowboard
+noun:snow
+noun:snow shovel
+noun:snowball
+noun:snowboard
 snowbound
-snowfall
-snowflake
-snowman
-snowplow
-snowstorm
-snowy
-sock
-solstice
-storm
-stove
-sugarplum
-sweater
+noun:snowfall
+noun:snowflake
+noun:snowman
+noun:snowplow
+noun:snowstorm
+adjective:snowy
+noun:sock
+noun:solstice
+noun:storm
+noun:stove
+noun:sugarplum
+noun:sweater
 thaw
-thermometer
+noun:thermometer
 toboggan
-turtleneck
-whiteout
-wind
-wind chill factor
-windy
-wintertime
-wintry
-wood stove
-wool
-woolen
-zero degree
+noun:turtleneck
+noun:whiteout
+noun:wind
+noun:wind chill factor
+adjective:windy
+noun:wintertime
+adjective:wintry
+noun:wood stove
+noun:wool
+adjective:woolen
+noun:zero degree
