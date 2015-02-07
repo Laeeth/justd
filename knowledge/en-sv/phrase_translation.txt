@@ -31,7 +31,7 @@ coming right upkommer strax
 congratsgrattis
 congratulationsgrattis
 core messageskärnargument
-core visual aidcentrala visuella hjälpmedlet
+core visual aidcentral visuell hjälpmedel
 dear madambästa fru
 dear madamsbästa fruar
 dear missbästa fröken
@@ -48,8 +48,9 @@ don't worryoroa dig inte
 don't worry about thatdet gör inget
 down to earthjordnära
 easier said than donelättare sagt än gjort
-enjoy [meals]smaklig måltid
-enjoy you mealsmaklig måltid
+enjoysmaklig måltid
+enjoy mealssmaklig måltid
+enjoy your mealsmaklig måltid
 every now and thendå och då
 excuse meursäkta
 excuse meursäkta mig
