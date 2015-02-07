@@ -3483,9 +3483,11 @@ class Graph
         learnNumerals();
     }
 
-    // Learn Numerals (Groupings/Aggregates) (MÄngdmått)
+    /// Learn Numerals (Groupings/Aggregates) (MÄngdmått)
     void learnNumerals()
     {
+        learnRomanLatinNumerals();
+
         const origin = Origin.manual;
 
         connect(store(`single`, Lang.en, Sense.numeral, origin),
@@ -3606,7 +3608,26 @@ class Graph
                 Role(Rel.definedAs),
                 store(`1728`, Lang.math, Sense.integer, origin),
                 origin, 1.0);
+    }
 
+    /** Learn Roman (Latin) Numerals.
+        See also: https://en.wikipedia.org/wiki/Roman_numerals#Reading_Roman_numerals
+        */
+    void learnRomanLatinNumerals()
+    {
+        // Roman (Latin) Numeral
+        enum pairs = [tuple(`I`, `1`),
+                      tuple(`V`, `5`),
+                      tuple(`X`, `10`),
+                      tuple(`L`, `50`),
+                      tuple(`C`, `100`),
+                      tuple(`D`, `500`),
+                      tuple(`M`, `1000`)];
+        foreach (pair; pairs)
+        {
+            connect(store(pair[0], Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                    store(pair[1], Lang.math, Sense.integer, origin), origin, 1.0);
+        }
     }
 
     /** Learn English Ordinal Number Shorthands.
@@ -4557,6 +4578,14 @@ class Graph
         if (node.lemma.sense != Sense.unknown)
         {
             write(`:`, node.lemma.sense);
+            if (node.lemma.uniqueSense)
+            {
+                write("(unique)");
+            }
+        }
+        if (node.lemma.isRegexp)
+        {
+            write(`:rx`);
         }
         if (node.lemma.context != ContextIx.asUndefined)
         {
