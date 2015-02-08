@@ -341,6 +341,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nounIrregular: return `irregular noun`;
 
         case nounSingular: return `singular noun`;
+        case nounSingularDefinite: return `definite singular noun`;
+        case nounSingularIndefinite: return `indefinite singular noun`;
         case nounSingularMale: return `male singular noun`;
         case nounSingularFemale: return `female singular noun`;
         case nounSingularNeuter: return `neuter singular noun`;
@@ -672,7 +674,8 @@ import predicates: of;
     bool isNounSingular(Sense sense)
     {
         with (Sense) return (sense.of(nounSingular,
-                                      nounSingularMale,
+                                      nounSingularIndefinite,
+                                      nounSingularDefinite,
                                       nounSingularFemale,
                                       nounSingularNeuter));
     }
