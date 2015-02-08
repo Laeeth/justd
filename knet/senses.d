@@ -947,7 +947,7 @@ bool specializes(Sense special,
     if (special == general) return false;
     switch (general) with (Sense)
     {
-        case unknown: return false;
+        case unknown: return false; // be strict as an unknown meaning can have different meaning say both a noun and verb
         case language: return special.isLanguage;
         case letter: return special.of(letterLowercase,
                                        letterUppercase);
