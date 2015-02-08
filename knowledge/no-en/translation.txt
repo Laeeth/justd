@@ -1,448 +1,448 @@
-verb:absolvereverb:give absolution
-nounUncountable:adelnounUncountable:nobility
-adjective:adeligadjective:noble
-nounSingular:adelsmannnounSingular:nobleman
-adjective:adoptertadjective:adopted
-nounSingular:adressenounSingular:address
-nounSingular:aftennounSingular:evening
-nounSingular:aldernounSingular:age
-nounSingular:alderdomssvakhetnounSingular:weakness of old age
+verb:absolveregive absolution
+nounUncountable:adelnobility
+adjective:adelignoble
+nounSingular:adelsmannnobleman
+adjective:adoptertadopted
+nounSingular:adresseaddress
+nounSingular:aftenevening
+nounSingular:alderage
+nounSingular:alderdomssvakhetweakness of old age
 aldrinever
 alleall
 alltidalways
-nounUncountable:almissenounUncountable:charity
-adjective:almisselemadjective:indigentadjective:poor
-noun:altergangnoun:Communion
-noun:amtnoun:county
-noun:amtmannnoun:chief county administrator
+nounUncountable:almissecharity
+adjective:almisselemindigentadjective:poor
+noun:altergangCommunion
+noun:amtcounty
+noun:amtmannchief county administrator
 andreothersothernext
-nounSingular:anetavlenounSingular:pedigree chart
-nounSingular:anfallnounSingular:seizurenounSingular:attack
-verbPast:anførteverbPast:enteredverbPast:mentioned
-nounSingular:ankomstnounSingular:arrival
-nounSingular:anmerkningnounSingular:remarknounSingular:noticenounSingular:note
+nounSingular:anetavlepedigree chart
+nounSingular:anfallseizurenounSingular:attack
+verbPast:anførteenteredverbPast:mentioned
+nounSingular:ankomstarrival
+nounSingular:anmerkningremarknounSingular:noticenounSingular:note
 annenannetsecondanother
-noun:annen gangnoun:second time
-nounSingular:annonounSingular:year
-verb:annonsereverb:publishverb:announce
-noun:antallnoun:numbernoun:count
-month:aprilmonth:April
-nounSingular:arbeidernounSingular:laborer
-nounSingular:arkivnounSingular:archive
-nounSingular:arvnounSingular:inheritance
-nounSingular:arveloddnounSingular:share of inheritance
-nounSingular:arvingnounSingular:heir
-nounUncountable:astmanounUncountable:asthma
+noun:annen gangsecond time
+nounSingular:annoyear
+verb:annonserepublishverb:announce
+noun:antallnumbernoun:count
+month:aprilApril
+nounSingular:arbeiderlaborer
+nounSingular:arkivarchive
+nounSingular:arvinheritance
+nounSingular:arveloddshare of inheritance
+nounSingular:arvingheir
+nounUncountable:astmaasthma
 atthat
-numeral:attennumeral:eighteen
-numeral:attendenumeral:eighteenth
-nounSingular:attestnounSingular:certificate
-month:augustmonth:August
-preposition:avpreposition:ofpreposition:atpreposition:bypreposition:from
-nounSingular:avdelingnounSingular:partnounSingular:division
+numeral:atteneighteen
+numeral:attendeeighteenth
+nounSingular:attestcertificate
+month:augustAugust
+preposition:avofpreposition:atpreposition:bypreposition:from
+nounSingular:avdelingpartnounSingular:division
 avdøddeceased
-adjective:avgangenadjective:departed
-nounSingular:avgiftnounSingular:duty (monetary)nounSingular:fee
-nounSingular:avkomnounSingular:offspringnounSingular:issue
-nounSingular:avtalenounSingular:agreement
-nounSingular:bakbygningnounSingular:back building (additional residence behind the main building)
-nounSingular:bakernounSingular:baker
-nounSingular:bakkenounSingular:hill
-verb:bannlyseverb:excommunicate
-nounSingular:baptistnounSingular:Baptist
-verbPast:barverbPast:carried
+adjective:avgangendeparted
+nounSingular:avgiftduty (monetary)nounSingular:fee
+nounSingular:avkomoffspringnounSingular:issue
+nounSingular:avtaleagreement
+nounSingular:bakbygningback building (additional residence behind the main building)
+nounSingular:bakerbaker
+nounSingular:bakkehill
+verb:bannlyseexcommunicate
+nounSingular:baptistBaptist
+verbPast:barcarried
 bareonly
-nounSingular:barnnounSingular:child
-nounPlural:barnanounSingular:children
-nounUncountable:barndomnounUncountable:childhood
-nounSingular:barnebarnnounSingular:grandchild
-nounSingular:barnedåpnounSingular:child baptism
-nounSingular:barnefarnounSingular:child’s father
-adjective:barnløsadjective:childless
-nounSingular:barselnounSingular:birth
-nounSingular:barselfebernounSingular:childbed fever
-nounSingular:barselsengnounSingular:birthing bed
+nounSingular:barnchild
+nounPlural:barnachildren
+nounUncountable:barndomchildhood
+nounSingular:barnebarngrandchild
+nounSingular:barnedåpchild baptism
+nounSingular:barnefarchild’s father
+adjective:barnløschildless
+nounSingular:barselbirth
+nounSingular:barselfeberchildbed fever
+nounSingular:barselsengbirthing bed
 
-verb:beverb:pray
-verb:beverb:request
+verb:bepray
+verb:berequest
 
-nounSingular:beboernounSingular:occupantnounSingular:resident
-nounSingular:bededagnounSingular:prayer day
-verb:bedrive horverb:commit adultery
-nounCollective:befolkningnounCollective:populationnounCollective:people
+nounSingular:beboeroccupantnounSingular:resident
+nounSingular:bededagprayer day
+verb:bedrive horcommit adultery
+nounCollective:befolkningpopulationnounCollective:people
 beggeboth
-nounSingular:begivenhetnounSingular:eventnounSingular:occurrence
-nounSingular:begravelsenounSingular:funeralnounSingular:burial
-verbPast:begravetverbPast:buried
-verb:behandleverb:handleverb:treatverb:manage
-verbPast:bemerkningverbPast:remark
+nounSingular:begivenheteventnounSingular:occurrence
+nounSingular:begravelsefuneralnounSingular:burial
+verbPast:begravetburied
+verb:behandlehandleverb:treatverb:manage
+verbPast:bemerkningremark
 
-nounSingular:bennounSingular:leg
-nounSingular:bennounSingular:bone
+nounSingular:benleg
+nounSingular:benbone
 
-verb:benekteverb:deny
-verb:benådeverb:pardon
-adjective:berusetadjective:drunk
-nounCollective:besetningnounCollective:livestocknounCollective:crew
-nounSingular:beskrivelsenounSingular:description
-adjective:beslektetadjective:related
-nounSingularMale:bestefarnounSingularMale:grandfather
-nounPlural:besteforeldrenounPlural:grandparents
-nounSingularFemale:bestemornounSingularFemale:grandmother
-verb:besvangreverb:impregnateverb:get with childverb:make pregnant
-verb:betaleverb:pay
-nounSingular:betlernounSingular:beggar
-verb:bevilgeverb:grant
-nounSingular:bevisnounSingular:proof
-nounSingular:biblioteknounSingular:library
-nounSingular:bindnounSingular:volume (book)
-nounSingular:biografinounSingular:biography
-nounSingular:biskopnounSingular:bishop
-nounSingular:bispedømmenounSingular:diocese
-verb:bliverb:become
-nounSingular:blikkenslagernounSingular:tinsmith
+verb:benektedeny
+verb:benådepardon
+adjective:berusetdrunk
+nounCollective:besetninglivestocknounCollective:crew
+nounSingular:beskrivelsedescription
+adjective:beslektetrelated
+nounSingularMale:bestefargrandfather
+nounPlural:besteforeldregrandparents
+nounSingularFemale:bestemorgrandmother
+verb:besvangreimpregnateverb:get with childverb:make pregnant
+verb:betalepay
+nounSingular:betlerbeggar
+verb:bevilgegrant
+nounSingular:bevisproof
+nounSingular:biblioteklibrary
+nounSingular:bindvolume (book)
+nounSingular:biografibiography
+nounSingular:biskopbishop
+nounSingular:bispedømmediocese
+verb:blibecome
+nounSingular:blikkenslagertinsmith
 blindblind
-nounUncountable:blodnounUncountable:blood
-nounSingular:blodgangnounSingular:dysentery
-nounUncountable:blodskamnounUncountable:incest
-nounSingular:blodsottnounSingular:abnormal loss of blood during illness
-verb:boverb:live at
-verbPast:boddeverbPast:lived
-nounSingular:boknounSingular:book
-nounSingular:bokhandlernounSingular:bookseller
-nounSingular:bokholdernounSingular:bokførernounSingular:bookkeeper
-nounSingular:bokstavnounSingular:letternounSingular:character
-nounSingular:bolignounSingular:residencenounSingular:house
-nounSingular:bondenounSingular:farmer
-nounSingular:nounSingular:bopelnounSingular:residencenounSingular:domicile
-nounSingular:borgernounSingular:citizen
-nounSingular:borgermesternounSingular:mayor
-nounSingular:borgerskapnounSingular:citizenship
-nounSingular:botnounSingular:finenounSingular:penalty
-nounSingular:brannnounSingular:fire
-nounSingular:brennevinsbrennernounSingular:distiller of spirits
-nounSingular:brevnounSingular:letter (correspondence)
-nounSingular:bronounSingular:bridge
-nounSingular:brornounSingular:brother
-nounSingular:brordatternounSingular:brother’s daughter
-nounSingular:brorsønnnounSingular:brother’s son
-nounSingular:brudnounSingular:bride
-nounSingular:brudgomnounSingular:bridegroom
-nounSingular:bruknounSingular:farmnounSingular:use
-nounSingular:bryggernounSingular:brewer
-nounSingular:bryllupnounSingular:wedding
-nounSingular:budeienounSingular:milkmaid
-nounCollective:buskapnounCollective:livestocknounCollective:crew
-nounSingular:bynounSingular:townnounSingular:city
-nounSingular:bygdnounSingular:small country communitynounSingular:village
-nounSingular:bygdeboknounSingular:rural chronicles
-nounSingular:bygselnounSingular:lease
-nounSingular:byllnounSingular:abscess
-nounSingular:byllepestnounSingular:plague (bubonic)
-verb:bæreverb:carry
-nounSingular:bøkkernounSingular:coopernounSingular:barrel maker
+nounUncountable:blodblood
+nounSingular:blodgangdysentery
+nounUncountable:blodskamincest
+nounSingular:blodsottabnormal loss of blood during illness
+verb:bolive at
+verbPast:boddelived
+nounSingular:bokbook
+nounSingular:bokhandlerbookseller
+nounSingular:bokholdernounSingular:bokførerbookkeeper
+nounSingular:bokstavletternounSingular:character
+nounSingular:boligresidencenounSingular:house
+nounSingular:bondefarmer
+nounSingular:nounSingular:bopelresidencenounSingular:domicile
+nounSingular:borgercitizen
+nounSingular:borgermestermayor
+nounSingular:borgerskapcitizenship
+nounSingular:botfinenounSingular:penalty
+nounSingular:brannfire
+nounSingular:brennevinsbrennerdistiller of spirits
+nounSingular:brevletter (correspondence)
+nounSingular:brobridge
+nounSingular:brorbrother
+nounSingular:brordatterbrother’s daughter
+nounSingular:brorsønnbrother’s son
+nounSingular:brudbride
+nounSingular:brudgombridegroom
+nounSingular:brukfarmnounSingular:use
+nounSingular:bryggerbrewer
+nounSingular:bryllupwedding
+nounSingular:budeiemilkmaid
+nounCollective:buskaplivestocknounCollective:crew
+nounSingular:bytownnounSingular:city
+nounSingular:bygdsmall country communitynounSingular:village
+nounSingular:bygdebokrural chronicles
+nounSingular:bygsellease
+nounSingular:byllabscess
+nounSingular:byllepestplague (bubonic)
+verb:bærecarry
+nounSingular:bøkkercoopernounSingular:barrel maker
 bådebotheither
-verbPast:båretverbPast:carried
-nounSingular:båtnounSingular:boatnounSingular:ship
-nounSingular:båtbyggernounSingular:shipbuilder
-nounSingular:båtsmannnounSingular:boatswainnounSingular:bosun
+verbPast:båretcarried
+nounSingular:båtboatnounSingular:ship
+nounSingular:båtbyggershipbuilder
+nounSingular:båtsmannboatswainnounSingular:bosun
 cirkaapproximately
-nounSingular:communionnounSingular:Communion
-verbPast:confirmeredeverbPast:confirmed
-nounSingular:copuleredenounSingular:marriage
-nounSingular:dagnounSingular:day
+nounSingular:communionCommunion
+verbPast:confirmeredeconfirmed
+nounSingular:copuleredemarriage
+nounSingular:dagday
 dagen førthe previous day
-nounSingular:dagsarbeidernounSingular:day laborer
-nounSingular:dalnounSingular:valley
-country:Danmarkcountry:Denmark
-nounSingular:dannekvindenounSingular:gentlewoman
-nounSingular:dannemandnounSingular:gentleman
-nounSingular:dansknounSingular:Danish
-nounSingular:datonounSingular:date (noun)
-nounSingular:datternounSingular:daughter
-nounSingular:datterdatternounSingular:daughter’s daughter
-nounSingular:dattersønnnounSingular:daughter’s son
-nounSingular:datumnounSingular:date
-verb:deleverb:divideverb:share
-pronoun:dempronoun:thempronoun:they
-pronoun:denpronoun:thepronoun:itpronoun:that
-pronoun:dennepronoun:this
-adverb:deradverb:there
-pronoun:derespronoun:their
+nounSingular:dagsarbeiderday laborer
+nounSingular:dalvalley
+country:DanmarkDenmark
+nounSingular:dannekvindegentlewoman
+nounSingular:dannemandgentleman
+nounSingular:danskDanish
+nounSingular:datodate (noun)
+nounSingular:datterdaughter
+nounSingular:datterdatterdaughter’s daughter
+nounSingular:dattersønndaughter’s son
+nounSingular:datumdate
+verb:deledivideverb:share
+pronoun:demthempronoun:they
+pronoun:denthepronoun:itpronoun:that
+pronoun:dennethis
+adverb:derthere
+pronoun:derestheir
 derfortherefore
-month:desembermonth:December
+month:desemberDecember
 detitthatthe
-nounUncountable:difterinounUncountable:diphtheria
-pronounPossessive:dinpronounPossessive:your
-pronounDemonstrativePlural:dissepronounDemonstrativePlural:these
+nounUncountable:difteridiphtheria
+pronounPossessive:dinyour
+pronounDemonstrativePlural:dissethese
 diversevarious
-nounSingular:dokumentnounSingular:document
-nounSingular:domkirkenounSingular:cathedral
-nounSingular:dommernounSingular:judge
-nounSingular:dragonnounSingular:dragoonnounSingular:light cavalryman
-nounSingular:drengnounSingular:boy
-nounSingular:drengebarnnounSingular:male child
-verb:drepeverb:kill
-nounSingular:dronningnounSingular:queen
-verbPast:druknetverbPast:drowned
-adjective:dydigadjective:virtuous
-verbIntransitive:døverbIntransitive:die
-nounSingular:døbtnounSingular:christening
-nounSingular:dødnounSingular:deadnounSingular:death
-verbPast:dødeverbPast:diedverbPast:death
-adjective:dødfødtadjective:stillborn
-nounSingular:dødsfallnounSingular:death
-nounSingular:døgnnounPhrase:24-hour period of time
-verbPast:døptverbPast:baptizedverbPast:christened
-nounPlural:døtrenounPlural:daughters
-adjective:døvadjective:deaf
-adjective:døvstumadjective:deaf and dumb
-nounSingular:dåpnounSingular:baptism
-nounSingular:dåpsattestnounSingular:certificate of baptism
-nounSingular:dåpsdagnounSingular:day of baptism
-preposition:efterpreposition:after
-nounSingular:efterkommernounSingular:descendant
-nounPlural:efterlattenounPlural:survivors
-nounPlural:efterlevendenounPlural:surviving
-nounSingular:eftermiddagnounSingular:afternoon
-nounSingular:efternavnnounSingular:surnamenounSingular:last name
-adjective:egenadjective:own
-adjective:egneadjective:own
-adjective:egentligadjective:actual
-nounSingular:egteviedenounSingular:marriage
-verb:verb:eieejeverb:own
-nounSingular:eiendomnounSingular:propertynounSingular:real estate
-verbTransitive:ekteverbTransitive:legitimateverbTransitive:marry
-nounSingular:ektefellenounSingular:spouse
+nounSingular:dokumentdocument
+nounSingular:domkirkecathedral
+nounSingular:dommerjudge
+nounSingular:dragondragoonnounSingular:light cavalryman
+nounSingular:drengboy
+nounSingular:drengebarnmale child
+verb:drepekill
+nounSingular:dronningqueen
+verbPast:druknetdrowned
+adjective:dydigvirtuous
+verbIntransitive:dødie
+nounSingular:døbtchristening
+nounSingular:døddeadnounSingular:death
+verbPast:dødediedverbPast:death
+adjective:dødfødtstillborn
+nounSingular:dødsfalldeath
+nounSingular:døgn24-hour period of time
+verbPast:døptbaptizedverbPast:christened
+nounPlural:døtredaughters
+adjective:døvdeaf
+adjective:døvstumdeaf and dumb
+nounSingular:dåpbaptism
+nounSingular:dåpsattestcertificate of baptism
+nounSingular:dåpsdagday of baptism
+preposition:efterafter
+nounSingular:efterkommerdescendant
+nounPlural:efterlattesurvivors
+nounPlural:efterlevendesurviving
+nounSingular:eftermiddagafternoon
+nounSingular:efternavnsurnamenounSingular:last name
+adjective:egenown
+adjective:egneown
+adjective:egentligactual
+nounSingular:egteviedemarriage
+verb:verb:eieejeown
+nounSingular:eiendompropertynounSingular:real estate
+verbTransitive:ektelegitimateverbTransitive:marry
+nounSingular:ektefellespouse
 nounSingular:nounSingular:ektemannhusband
-nounSingular:ekteparnounSingular:married couple
-nounUncountable:ekteskapnounUncountable:marriage
-adjective:ekteskapeligadjective:maritaladjective:conjugal
-adjective:ektevietadjective:married
-adjective:eldreadjective:older
-adjective:eldstadjective:oldestadjective:eldest
-nounSingular:elevnounSingular:student
+nounSingular:ekteparmarried couple
+nounUncountable:ekteskapmarriage
+adjective:ekteskapeligmaritaladjective:conjugal
+adjective:ektevietmarried
+adjective:eldreolder
+adjective:eldstoldestadjective:eldest
+nounSingular:elevstudent
 elleroror else
-numeral:ellevenumeral:eleven
-numeral:ellevtenumeral:eleventh
-nounSingular:elvnounSingular:rivernounSingular:stream
-nounSingular:embetenounSingular:public office
-nounSingular:embetsmannnounSingular:public official
-nounSingular:emigrantnounSingular:emigrant
-verbIntransitive:emigrereverbIntransitive:emigrate
+numeral:elleveeleven
+numeral:ellevteeleventh
+nounSingular:elvrivernounSingular:stream
+nounSingular:embetepublic office
+nounSingular:embetsmannpublic official
+nounSingular:emigrantemigrant
+verbIntransitive:emigrereemigrate
 enetaone
-nounSingular:enebarnnounSingular:only child
-adjective:engelskadjective:English
-country:Englandcountry:England
+nounSingular:enebarnonly child
+adjective:engelskEnglish
+country:EnglandEngland
 enhvereach
-nounSingular:enkenounSingular:widow
-nounSingular:enkemannnounSingular:widower
-adjective:enkestandadjective:widowed
-adverb:ennuadverb:yetadverb:still
-nounSingular:epilepsinounSingular:epilepsy
-verb:erverb:isverb:areverb:be
-nounSingular:erhvervnounSingular:livelihood
-verb:erkjenneverb:acknowledge
+nounSingular:enkewidow
+nounSingular:enkemannwidower
+adjective:enkestandwidowed
+adverb:ennuyetadverb:still
+nounSingular:epilepsiepilepsy
+verb:erisverb:areverb:be
+nounSingular:erhvervlivelihood
+verb:erkjenneacknowledge
 numeral:etanumeral:one
-nounSingular:etasjenounSingular:floornounSingular:story
+nounSingular:etasjefloornounSingular:story
 etc. (Latin)et ceteraand so on
-nounSingular:etternavnnounSingular:surnamenounSingular:last
-nounUncountable:evnenounUncountableintelligence
-nounSingular:fabrikknounSingular:factory
-nounPlural:fadderenounPlural:christening witnessesnounPlural:godparents
-nounSingular:fallesykenounSingular:epilepsy
+nounSingular:etternavnsurnamenounSingular:last
+nounUncountable:evneintelligence
+nounSingular:fabrikkfactory
+nounPlural:fadderechristening witnessesnounPlural:godparents
+nounSingular:fallesykeepilepsy
 falt fallbe killed in war
-nounCollective:familienounCollective:family
-nounSingular:familie historienounSingular:linage books
-nounSingular:farnounSingular:father
-nounSingular:farfarnounSingular:paternal grandfather
-nounSingular:farger dyernounSingular:tanner
-nounSingular:farmornounSingular:paternal grandmother
-nounSingular:farsotnounSingular:pestilencenounSingular:plague
-nounSingular:fartøynounSingular:vesselnounSingular:craft
-adjective:fattigadjective:poor
-adjective:fattigvesenteadjective:welfare agency
-month:februarmonth:February
-adjective:fellesadjective:commonadjective:joint
-numeral:femnumeral:five
-numeralOrdinal:femtenumeralOrdinal:fifth
-numeral:femtennumeral:fifteen
-numeralOrdinal:femtendenumeralOrdinal:fifteenth
-numeral:femtinumeral:fifty
-numeralOrdinal:femtiendenumeralOrdinal:fiftieth
-nounSingular:fengselnounSingular:prison
-nounSingular:festeseddelnounSingular:rental contract
-nounSingular:festningnounSingular:fortress
-nounSingularMale:fetternounSingular:cousin
-country:Finnlandcountry:Finland
-adjective:finskadjective:Finnish
-numeral:forenumeral:four
-nounSingular:fiskernounSingular:fisherman
-nounSingular:fjellnounSingular:mountain
-numeralOrdinal:fjerdenumeralOrdinal:fourth
-numeral:fjortennumeral:fourteen
-numeralOrdinal:fjortendenumeralOrdinal:fourteenth
+nounCollective:familiefamily
+nounSingular:familie historielinage books
+nounSingular:farfather
+nounSingular:farfarpaternal grandfather
+nounSingular:farger dyertanner
+nounSingular:farmorpaternal grandmother
+nounSingular:farsotpestilencenounSingular:plague
+nounSingular:fartøyvesselnounSingular:craft
+adjective:fattigpoor
+adjective:fattigvesentewelfare agency
+month:februarFebruary
+adjective:fellescommonadjective:joint
+numeral:femfive
+numeralOrdinal:femtefifth
+numeral:femtenfifteen
+numeralOrdinal:femtendefifteenth
+numeral:femtififty
+numeralOrdinal:femtiendefiftieth
+nounSingular:fengselprison
+nounSingular:festeseddelrental contract
+nounSingular:festningfortress
+nounSingularMale:fettercousin
+country:FinnlandFinland
+adjective:finskFinnish
+numeral:forefour
+nounSingular:fiskerfisherman
+nounSingular:fjellmountain
+numeralOrdinal:fjerdefourth
+numeral:fjortenfourteen
+numeralOrdinal:fjortendefourteenth
 flereseveralmore
-adjective:flittigadjective:diligent
-verb:flytteverb:move
-fogedfogdbailiffsheriff
-foliopage (double)
-folkpeople
-folkemengdepopulation
-folkeregistercitizen registernational register
-folketellingcensus
-foratbeforeby
-foranin front of
-forblødningbled to death
-foreldreparents
-foreldreløsorphan
-foreningsociety
-forfedreancestorsforefathers
-forhenværendeformerpreviouspreceding
-forhushouse in front (usually the main house on a farm)
-forkjøletverb:have a cold
-forklaringexplanation
-forlateleaveforgive
-forlovelseengagement
-forloveremarriage witnesses
-formiddagbetween morning and afternoon
-formynderguardian
-fornavnfirst namegiven name
-forpaktermanager of estate
-forrigeformer
-forstandintellectmind
-forstoppelseconstipationobstruction
-forsørgessupported
-fortelletellrelate
-fortidpast
-forvaltermanager
-fosterfetus
-fosterbarnfoster child
-fostrefosterverb:rear
-frafrom
-fraflytteleavemove away
-fraværendeabsent
-fredagFriday
-fremmedforeignforeigner
-fremtidfuture
+adjective:flittigdiligent
+verb:flyttemove
+nounSingular:fogednounSingular:fogdbailiffnounSingular:sheriff
+nounSingular:foliopage (double)
+nounCollective:folkpeople
+nounCollective:folkemengdepopulation
+nounSingular:folkeregistercitizen registernounSingular:national register
+nounSingular:folketellingcensus
+preposition:forpreposition:atbeforepreposition:by
+preposition:foranin front of
+nounSingular:forblødningbled to death
+nounPlural:foreldreparents
+nounSingular:foreldreløsorphan
+nounSingular:foreningsociety
+nounPlural:forfedreancestorsnounPlural:forefathers
+adjective:forhenværendeformeradjective:previousadjective:preceding
+nounSingular:forhushouse in front (usually the main house on a farm)
+verb:forkjølethave a cold
+nounSingular:forklaringexplanation
+verb:forlateleaveverb:forgive
+nounSingular:forlovelseengagement
+nounPlural:forloveremarriage witnesses
+nounSingular:formiddagbetween morning and afternoon
+nounSingular:formynderguardian
+nounSingular:fornavnfirst namenounSingular:given name
+nounSingular:forpaktermanager of estate
+adjective:forrigeformer
+nounSingular:forstandintellectnounSingular:mind
+nounSingular:forstoppelseconstipationnounSingular:obstruction
+adjective:forsørgessupported
+verb:fortelletellverb:relate
+nounSingular:fortidpast
+nounSingular:forvaltermanager
+nounSingular:fosterfetus
+nounSingular:fosterbarnfoster child
+verb:fostrefosterverb:rear
+preposition:frafrom
+verb:fraflytteleaveverb:move away
+adjective:fraværendeabsent
+weekday:fredagFriday
+adjective:fremmedforeignadjective:foreigner
+nounSingular:fremtidfuture
 fruMrs.
-fruentimmerunmarried motherfemale person (derogatory)
-fruktsommeligpregnant
-frøkenMiss
-fullfullcompletedrunk
-fullmektighead clerkagent
-fylkecounty
-fyrlighthouse
-fæstebrevverb:acquire land
-føderådsupport received after giving one's estate to another
-føderådskonewoman recieving support
-føderådsmannman receiving support
-fødestedbirthplace
-fødselbirth
-fødselsattestbirth certificate
-fødselsdagbirthday
-født(e)born (birth)
+nounSingular:fruentimmerunmarried mothernounSingular:female person (derogatory)
+adjective:fruktsommeligpregnant
+nounSingularFemale:frøkenMiss
+adjective:fullfulladjective:completeadjective:drunk
+nounSingular:fullmektighead clerknounSingular:agent
+nounSingular:fylkecounty
+nounSingular:fyrlighthouse
+verb:fæstebrevacquire land
+nounSingular:føderådsupport received after giving one's estate to another
+nounSingular:føderådskonewoman receiving support
+nounSingular:føderådsmannman receiving support
+nounSingular:fødestedbirthplace
+nounSingular:fødselbirth
+nounSingular:fødselsattestbirth certificate
+nounSingular:fødselsdagbirthday
+verb:født(e)born (birth)
 følgendefollowingnext
-føllaugretired
-førbefore
-førstefirst
-førtiforty
-førtiendefortieth
-fårsheepreceives
-gammelold
-gartnergardener
-garvertanner
-gatestreet
-gavegiftendowment
-geistligecclesiastical
-geografisk leksikongazetteer
-giftmarriagemarriedpoison
-giktrheumatism
-gjelddebt
-gjenlevendesurvivors
-gjennomthrough
-gjestgiverinnkeeper
-gjetgjeitgoat
-gjeterherdsman
-gjørtlerbrazierbrass smith
-godgood
-godsestate
-godseierestate owner
-gratisfree
-gravgrave
-gravergravediggersexton
-gravlundcemetery
-gravstedburial place
-grenbranch
-grenaderinfantryman
-grenseboundaryborder
-greveCount (nobility)
-grevinneCountess
-grunngroundreason
-gruveminepit
-gruvearbeiderminer
-grønngreen
-gudfargodfather
-gudmorgodmother
-gullgold
-gulsotjaundice
-gulvfloor
-guttboy
-gågowalk
-gårdfarm
-gårdbrukerfarmer
-gårdeierfarm owner
-gårsdagensof yesterday
-haverb:have
-haddehad
-halshuggetdecapitated
-halvhalf
-halvbrorhalf brother
-halvsøsterhalf sister
-hamhim
-hanhe
-handelsmannmerchanttrader
-hanshis
-hanskemakerglove maker
-harhashave
-hattemakerhatmaker
-havnharbor
+adjective:føllaugretired
+preposition:førbefore
+numeralOrdinal:førstefirst
+numeral:førtiforty
+numeralOrdinal:førtiendefortieth
+verb:fårsheepverb:receives
+adjective:gammelold
+nounSingular:gartnergardener
+nounSingular:garvertanner
+nounSingular:gatestreet
+nounSingular:gavegiftnounSingular:endowment
+adjective:geistligecclesiastical
+nounSingular:geografisk leksikongazetteer
+nounSingular:giftmarriagenounSingular:poison
+nounUncountable:giktrheumatism
+nounUncountable:gjelddebt
+nounPlural:gjenlevendesurvivors
+preposition:gjennomthrough
+nounSingular:gjestgiverinnkeeper
+nounSingular:gjetnounSingular:gjeitgoat
+nounSingular:gjeterherdsman
+nounSingular:gjørtlerbraziernounSingular:brass smith
+adjective:godgood
+nounUncountable:godsestate
+nounSingular:godseierestate owner
+adjective:gratisfree
+nounSingular:gravgrave
+nounSingular:gravergravediggernounSingular:sexton
+nounSingular:gravlundcemetery
+nounSingular:gravstedburial place
+nounSingular:grenbranch
+nounSingular:grenaderinfantryman
+nounSingular:grenseboundarynounSingular:border
+nounSingularMale:greveCount (nobility)
+nounSingularFemale:grevinneCountess
+nounSingular:grunngroundnounSingular:reason
+nounSingular:gruveminenounSingular:pit
+nounSingular:gruvearbeiderminer
+adjective:grønngreen
+nounSingularMale:gudfargodfather
+nounSingularMale:gudmorgodmother
+nounUncountable:gullgold
+nounUncountable:gulsotjaundice
+nounSingular:gulvfloor
+nounSingularMale:guttboy
+verb:gågoverb:walk
+nounSingular:gårdfarm
+nounSingular:gårdbrukerfarmer
+nounSingular:gårdeierfarm owner
+adjective:gårsdagensof yesterday
+verb:hahave
+verbPast:haddehad
+verbPast:halshuggetdecapitated
+adjective:halvhalf
+nounSingularMale:halvbrorhalf brother
+nounSingularFemale:halvsøsterhalf sister
+pronoun:hamhim
+pronoun:hanhe
+nounSingularMale:handelsmannmerchantnounSingularMale:trader
+pronoun:hanshis
+nounSingular:hanskemakerglove maker
+verb:harhasverb:have
+nounSingular:hattemakerhatmaker
+nounSingular:havnharbor
 hellerrather
-helligdagholiday
-hengt seghanged himself or herself
-henneher
+nounSingular:helligdagholiday
+verb:hengt seghanged himself or herself
+pronounPersonal:hennepronounPersonalher
 herhere
 HerrMr.
-herredjudicial district
-Herrenthe Lord
-hesthorse
-heteris named
-historiehistory
-hittebarnorphanfoundling
-hjemhome
+nounSingular:herredjudicial district
+nounSingularMale:Herrenthe Lord
+nounSingular:hesthorse
+adjective:heteris named
+noun:historiehistory
+nounSingular:hittebarnorphannounSingular:foundling
+nounSingular:hjemhome
 hjemmeat home
 hjemmedøptbaptized at home
 hjemmehørenderesiding
-hjerteheart
-hjertefeilheart disease
-hjulwheel
-hjulmakerwheelwright
-holdeholdstop
-horeriadultery
-hoswithat
-hostecough
-hovedlistecensus list
-hunshe
-hundre(de)hundred (hundredth)
-hushouse
-husarhussarcavalryman
-husbondehead of household
-husholderskehousekeeper
-husmanncottagertenant farmer
-husmorhousewife
-hustruwife
+nounSingular:hjerteheart
+nounSingular:hjertefeilheart disease
+nounSingular:hjulwheel
+nounSingular:hjulmakerwheelwright
+nounSingular:holdeholdnounSingular:stop
+nounUncountable:horeriadultery
+preposition:hoswithat
+verb:hostecough
+nounSingular:hovedlistecensus list
+pronoun:hunshe
+numeral:hundre(de)hundred (hundredth)
+nounSingular:hushouse
+nounSingularMale:husarhussarcavalryman
+nounSingularMale:husbondehead of household
+nounSingularFemale:husholderskehousekeeper
+nounSingularMale:husmanncottagertenant farmer
+nounSingularFemale:husmorhousewife
+nounSingularFemale:hustruwife
 hvawhat
-hvemwho
+pronoun:hvemwho
 hverevery
 hvilkenwhich
 hvisifwhose
@@ -452,13 +452,13 @@ hvordanhow
 hvorforwhy
 hvorvidtwhether
 høstenin the fall
-høytallhighhay
-høyreright (side)
-håndarbeidehandwork
-håndteringoccupation
-håndverktradehandicraft
-iin
-idiotidiot
+adjective:høytallhighhay
+adjective:høyreright (side)
+nounSingular:håndarbeidehandwork
+nounSingular:håndteringoccupation
+nounUncountable:håndverktradehandicraft
+preposition:iin
+nounSingular:idiotidiot
 ifølgeaccording to
 igåryesterday
 igjenagain
@@ -924,101 +924,101 @@ tusen(de)thousand(th)
 tvangsarbeidehard laborcompulsory labor
 tvillingtwin
 tyfustyphoid fever
-tyskGerman
-TysklandGermany
-tyvthief
-tyve (tjue)twenty
-tyvende (tjvende)twentieth
-tæringtuberculosis
-tømmermanncarpenterframership’s carpenter
-tønnebarrel
-udøptunbaptized
-uekteillegitimate
-ugiftunmarried
-ukeweek
-ukjentunknownforeign
-ulovligillegal
-ulykkeaccident
-umoralskimmoral
+nounSingular:tyskGerman
+country:TysklandGermany
+nounSingular:tyvthief
+numeral:tyve (tjue)twenty
+numeralOrdinal:tyvende (tjvende)twentieth
+nounUncountabletuberculosis
+nounSingular:tømmermanncarpenterframership’s carpenter
+nounSingular:tønnebarrel
+adjective:udøptunbaptized
+adjective:uekteillegitimate
+adjective:ugiftunmarried
+nounSingular:ukeweek
+adjective:ukjentunknownforeign
+adjective:ulovligillegal
+nounSingular:ulykkeaccident
+adjective:umoralskimmoral
 umyndigunder legal age
-underunderbelow
-underholdesupport
-underskrevnethe undersigned
-underskriftsignature
-undertegnetsigned
-ungyoung
-ungkarlbachelor
-unntattexcept
-uskyldiginnocent
-usselmiserablepoor
-usømmeligindecent
-utdragextract
-utenwithout
-utenforoutside of
-utfattogdestitutepenniless
-utflyttningmoving out
-utføreperformdo
-utgipublish
-utiatin
+preposition:underunderbelow
+nounSingular:underholdesupport
+nounSingular:underskrevnethe undersigned
+nounSingular:underskriftsignature
+adjective:undertegnetsigned
+adjective:ungyoung
+nounSingular:ungkarlbachelor
+preposition:unntattexcept
+adjective:uskyldiginnocent
+adjective:usselmiserableadjective:poor
+adjective:usømmeligindecent
+nounSingular:utdragextract
+preposition:utenwithout
+preposition:utenforoutside of
+adjective:utfattogdestituteadjective:penniless
+nounSingular:utflyttningmoving out
+verb:utføreperformverb:do
+verbTransitive:utgipublish
+preposition:utiatpreposition:in
 utlagtnamed asalleged
-utlandetforeign country
-utuktlecheryfornication
-utvandreemigrate
-utvandreremigrant
-utvandringemigration
-vaccineredevaccination
-vaksinertvaccinationvaccinated
-vanførcrippleddisabled
+nounSingular:utlandetforeign country
+nounUncountable:utuktlecherynounUncountable:fornication
+verbIntransitive:utvandreemigrate
+nounSingular:utvandreremigrant
+nounSingular:utvandringemigration
+nounSingular:vaccineredevaccination
+adjective:vaksinertvaccinated
+adjective:vanførcrippledadjective:disabled
 vanskaptdeformedhandicapped
-varwaswere
-vattersotdropsy
-vedatby
+verbPast:varwaswere
+nounSingular:vattersotdropsy
+preposition:vedatby
 vedkommendeperson concerned
-ved siden avnext to
-velstandprosperity
-vennfriend
-venstreleft (side)
-vergeguardian
-vernepliktmilitary duty
-vertshusinn
-vestwest
-veverweaver
-vielsemarriagewedding
-vielsesattestmarriage certificate
-vietmarried
-vitnewitness
-vitnesbyrdtestimony
-vogncarriagewagonvehicle
-vognmanncoachman
-voldtarape
-værdigworthy
-værebe
-vårour
-vårenin the spring
-yngreyounger
-yngstyoungest
-yrkeprofession
-ærbødigrespectful
-ærehonor
-ærlighonest
+preposition:ved siden avnext to
+nounUncountable:velstandprosperity
+nounSingular:vennfriend
+nounSingular:venstreleft (side)
+nounSingular:vergeguardian
+nounSingular:vernepliktmilitary duty
+nounSingular:vertshusinn
+nounSingular:vestwest
+nounSingular:veverweaver
+nounSingular:vielsemarriagenounSingular:wedding
+nounSingular:vielsesattestmarriage certificate
+adjective:vietmarried
+nounSingular:vitnewitness
+nounSingular:vitnesbyrdtestimony
+nounSingular:vogncarriagenounSingular:wagonnounSingular:vehicle
+nounSingular:vognmanncoachman
+verbTransitive:voldtarape
+adjective:værdigworthy
+nounSingular:værebe
+pronounPossessivePlural1st:vårpronounPossessivePlural1st:our
+nounSingular:vårspring
+adjectiveNominative:yngreyounger
+adjectiveSuperlative:yngstyoungest
+nounSingular:yrkeprofession
+adjective:ærbødigrespectful
+noun:ærehonor
+adjective:ærlighonest
 ættegranskinggenealogy
 ødedesolatewaste
 ødeleggedestroy
 ødemarkwastelandwilderness
 ønskewishdesirewant
-øreear
-østeast
+nounSingular:øreear
+nounSingular:østeast
 øvreupper
-øyisland
-øyeøieeye
-åndspirit
-åndsvakmentally deficient
-åryear
-århundrecentury
-årligannualyearly
-årsakcausereason
+nounSingular:øyisland
+nounSingular:øyenounSingular:øieeye
+nounSingular:åndspirit
+adjective:åndsvakmentally deficient
+nounSingular:åryear
+nounSingular:århundrecentury
+adjective:årligannualadjective:yearly
+nounSingular:årsakcausenounSingular:reason
 åstedwhere event took place (place of event)
-åtteeight
-åttendeeighth
-åttieighty
-åttiedeeightieth
+numeral:åtteeight
+numeralOrdinal:åttendeeighth
+numeral:åttieighty
+numeralOrdinal:åttiedeeightieth
