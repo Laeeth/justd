@@ -933,9 +933,10 @@ import predicates: of;
 
 import grammars: Lang;
 
-/** Check if $(D special) uniquely specializes $(D general), that is if a word
+/** Check if $(D special) (uniquely) specializes $(D general), that is if a word
     has been found to have sense $(D special) which is a more specialized sense
-    than $(D general it must not have any other meaning less specialized thatn $(D special).
+    than $(D general it must not have any other meaning less specialized thatn
+    $(D special).
 */
 bool specializes(Sense special,
                  Sense general,
