@@ -21,6 +21,8 @@ enum Rel:ubyte
           * make that distinction.) This is the hyponym relation in WordNet. */
     hyponymOf = isA, ///< WordNet. Use isA instead.
     subordinateOf = hyponymOf, ///< WordNet. Use isA instead.
+    subclasses = subordinateOf,
+    subclassOf = subclasses,
 
     instanceHyponymOf, ///< WordNet.
 
@@ -1852,9 +1854,7 @@ auto toHuman(const Rel rel,
     TODO extend to apply specialization in several steps:
     If A specializes B and B specializes C then A specializes C
 */
-bool specializes(Rel special,
-                 Rel general)
-    @safe @nogc pure nothrow
+bool specializes(Rel special, Rel general) @safe @nogc pure nothrow
 {
     switch (general) with (Rel)
     {
@@ -1971,6 +1971,13 @@ bool generalizes(T)(T general,
                     T special)
 {
     return specializes(special, general);
+}
+
+bool infersSense(Rel rel) @safe @nogc pure nothrow
+{
+    with (Rel) return rel.of(translationOf,
+                             synonymFor,
+                             antonymFor);
 }
 
 /** Ix Precision.
