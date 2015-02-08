@@ -282,13 +282,14 @@ struct Lemma
                     if (sense == Sense.unknown ||
                         exprSense.specializes(sense))
                     {
-                        this.sense = exprSense;
+                        sense = exprSense;
                     }
-                    else if (!sense.specializes(exprSense))
+                    else if (sense != exprSense &&
+                             !sense.specializes(exprSense))
                     {
                         assert(sense == Sense.unknown,
-                               `Can't override argumented sense ` ~ sense
-                               ~ ` with ` ~ this.sense);
+                               `Can't override argumented sense ` ~ sense.to!string
+                               ~ ` with ` ~ exprSense.to!string);
                     }
                     expr = split[2];
                     if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
@@ -547,6 +548,8 @@ class Graph
         // Indexes
         Nd[Lemma] ndByLemma;
         Lemmas[Expr] lemmasByExpr;
+        Lemmas[Expr] lemmasBySubWord; // Lemmas index by part of (word) expression
+        Lemmas[ubyte] lemmasBySyllableCount; // TODO
 
         string[ContextIx] contextNameByIx; /** Ontology Context Names by Index. */
         ContextIx[string] contextIxByName; /** Ontology Context Indexes by Name. */
@@ -1876,6 +1879,22 @@ class Graph
         {
             foreach (line; File(path).byLine.filter!(a => !a.empty))
             {
+                auto senseFact = line.findSplit([qualifierSeparator]);
+                const senseCode = senseFact[0];
+                if (role.rel.infersSense &&
+                    !senseCode.empty)
+                {
+                    try
+                    {
+                        import std.conv: to;
+                        const sense = senseCode.to!Sense;
+                        if (firstSense  == Sense.unknown) { firstSense = sense; }
+                        if (secondSense == Sense.unknown) { secondSense = sense; }
+                        writeln("senseCode: ", senseCode, ", sense: ", sense, ", line: ", line, ", senseFact[2]", senseFact[2]);
+                        // line = senseFact[2]; // rest
+                    }
+                    catch (std.conv.ConvException e) { /* ok for now */ }
+                }
                 auto split = line.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
                 auto firstRefs = store(first.splitter(alternativesSeparator).map!idup,

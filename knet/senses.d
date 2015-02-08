@@ -36,9 +36,13 @@ enum Sense:ubyte
     nounRegular,
     nounIrregular,
 
-    nounSingular,
+    nounSingular,               // skog, forest
+    nounSingularIndefinite, // en skog, a forest
+    nounSingularDefinite, // skogen, the forest
     nounSingularMale,
     nounSingularFemale,
+    nounSingularNeuter,
+
     nounPlural,
     nounUncountable,
 
@@ -124,6 +128,12 @@ enum Sense:ubyte
     verbIrregularInfinitive,
 
     verbPresent,
+    verbPresentSingular1st,
+    verbPresentSingular2nd,
+    verbPresentSingular3rd,
+    verbPresentPlural1st,
+    verbPresentPlural2nd,
+    verbPresentPlural3rd,
 
     verbPast, verbImperfect = verbPast, /// See also: https://en.wikipedia.org/wiki/Imperfect
     verbRegularPast,
@@ -333,6 +343,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nounSingular: return `singular noun`;
         case nounSingularMale: return `male singular noun`;
         case nounSingularFemale: return `female singular noun`;
+        case nounSingularNeuter: return `neuter singular noun`;
         case nounPlural: return `plural noun`;
         case nounNominative: return `nominative noun`;
 
@@ -406,7 +417,15 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case verbImperative: return `verb imperative`;
 
         case verbInfinitive: return `verb infinitive`;
+
         case verbPresent: return `verb present`;
+        case verbPresentSingular1st: return `verb present 1st person singular`;
+        case verbPresentSingular2nd: return `verb present 2nd person singular`;
+        case verbPresentSingular3rd: return `verb present 3rd person singular`;
+        case verbPresentPlural1st: return `verb present 1st person plural`;
+        case verbPresentPlural2nd: return `verb present 2nd person plural`;
+        case verbPresentPlural3rd: return `verb present 3rd person plural`;
+
         case verbRegularInfinitive: return `verb regular infinitive`;
         case verbIrregularInfinitive: return `verb irregular infinitive`;
 
@@ -650,10 +669,18 @@ import predicates: of;
         with (Sense) return (sense.of(phrase,
                                       nounPhrase));
     }
+    bool isNounSingular(Sense sense)
+    {
+        with (Sense) return (sense.of(nounSingular,
+                                      nounSingularMale,
+                                      nounSingularFemale,
+                                      nounSingularNeuter));
+    }
     bool isNoun(Sense sense)
     {
         with (Sense) return (sense.isNounAbstract ||
                              sense.isFood ||
+                             sense.isNounSingular ||
                              sense.of(noun,
                                       nounNeuter,
                                       nounAbstract,
@@ -661,9 +688,6 @@ import predicates: of;
                                       nounCollective,
                                       nounRegular,
                                       nounIrregular,
-                                      nounSingular,
-                                      nounSingularMale,
-                                      nounSingularFemale,
                                       nounPlural,
                                       nounNominative,
                                       nounUncountable,
@@ -740,6 +764,12 @@ import predicates: of;
                                       verbAbbrevation,
                                       verbImperative,
                                       verbPresent,
+                                      verbPresentSingular1st,
+                                      verbPresentSingular2nd,
+                                      verbPresentSingular3rd,
+                                      verbPresentPlural1st,
+                                      verbPresentPlural2nd,
+                                      verbPresentPlural3rd,
                                       verbFuture));
     }
     bool isVerbRegular(Sense sense)
@@ -955,6 +985,7 @@ bool specializes(Sense special,
         case phrase: return special.isPhrase;
         case noun: return (special.isNoun ||
                            special.isPronoun);
+        case nounSingular: return (special.isNounSingular);
         case nounNeuter: return (special.isNounAbstract);
         case nounConcrete: return (special.isNounConcrete);
         case food: return special.isFood;

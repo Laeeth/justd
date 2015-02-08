@@ -12,7 +12,7 @@ enum char asciiFS = '';       // ASCII File Separator
 enum syllableSeparator = asciiUS; // separates syllables
 enum alternativesSeparator = asciiRS; // separates alternatives
 enum roleSeparator = asciiFS; // separates subject from object, translations, etc.
-enum qualifierSeparator = ':'; // noun:eka
+enum qualifierSeparator = ':'; // noun:human
 enum meaningNrSeparator = ';'; // tomten;1 tomten;2
 enum meaningNrSeparatorString = `:`;
 enum countSeparator = '#'; // gives occurrence count
