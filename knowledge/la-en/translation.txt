@@ -46,7 +46,7 @@ adjective:acersharpkeeneagerseverefierce
 noun:acerbitasharshnessbitterness
 adjective:acerbusbittergloomydark
 
-acervusa heapmass
+nounCollective:acervusa heapmass
 adjective:acidussharpsour
 
 noun:acieskeennessedgesharpnessbattle-linebattlefield
@@ -74,7 +74,7 @@ noun:adeptioattainmentobtaining
 verb:adeptoobtaingetacquire
 
 adfectus affectus(fr. adficio)
-adfectus affectusinfluencedworked upon
+adjective:adfectus affectusinfluencedworked upon
 
 verb:adfero afferocausebring aboutcontribute
 verb:adfero afferobring newsreport
@@ -119,7 +119,7 @@ verb:adoptowish for oneselfadoptselectpick out
 
 adverb:adsidue assiduecontinuouslywithout remission
 
-verb:adstringo(persons) verb:bindoblige(+ refl.) verbReflexive:commit oneself to
+verb:adstringo(persons) bindoblige(+ refl.) verbReflexive:commit oneself to
 verb:adstringotightcompresscompact
 verb:adstringodraw togethertightenbind
 
@@ -186,9 +186,9 @@ verb:agoegi actummanagedrivelead
 phrase:aithe says
 phrase:aiuntthey say
 
-AldenardAudenarde
+name:AldenardAudenarde
 
-adjective:alienusadjective:somebody else'sforeignalienstrangedifferent
+adjective:alienussomebody else'sforeignalienstrangedifferent
 
 alii ... aliisome ... others
 
@@ -198,22 +198,22 @@ adverb:alioquinotherwisein some respects
 adverb:alioquinin general
 
 adverb:aliquāsomehow
-pronoun:aliquāpronoun:someone
+pronoun:aliquāsomeone
 
 adverb:aliquandoat any timesometimesometimesoccasionallyat lastfinally
-adjective:aliquantaadjective:moderateor some size
-adjective:aliquantoadjective:somewhatconsiderably
+adjective:aliquantamoderateor some size
+adjective:aliquantosomewhatconsiderably
 
 adverb:aliquantumto some extent
-aliquantusadjective:considerableconsiderable amountsomewhat
-adjectiveMale:aliquīadjective:some
+adjective:aliquantusconsiderableconsiderable amountsomewhat
+adjective:aliquīsome
 
 adverb:aliquidsomewhat
-pronoun:aliquidpronoun:somebodypronoun:something
+pronoun:aliquidsomebodysomething
 
-aliquissomeoneanyoneanything
-aliquisadverb:in any respect
-aliquoadverb:in some direction
+pronoun:aliquissomeoneanyoneanything
+adverb:aliquisin any respect
+adverb:aliquoin some direction
 aliquotsomeseveral
 aliquotienssome times
 alius alia aliudotheranothersomeone elsesomething else
@@ -221,7 +221,7 @@ alius alia aliudotheranothersomeone elsesomething else
 allatus (=adfero)having been brought
 alo (alui altum)nourishcherishsupportsustainmaintainkeep
 Alosalquodsome
-alteradverb:otherwise
+adverb:alterotherwise
 alter altera alterumthe secondthe other one
 alter ... alterthe one ... the other
 altushighdeep
@@ -243,7 +243,7 @@ verb:amoveomove awayremovetake outshift
 verb:amplexusan embracingsurroundingloving embrace[euphemism] amplioenlargeincreaseimprove
 amplitudosizebreadthdignitygrandeurgreatness
 ampluslargespaciousamplegreat importanthonorable
-anadverb:or "Are you going OR are you staying?"
+adverb:anor "Are you going OR are you staying?"
 ancillamaidservantalso used by nuns to describe themselves
 AndegavenseAnjou
 nounSingular:angelusangel
@@ -414,8 +414,8 @@ Carnutum CarnotumChartres
 
 verb:carpopluckseizegrablay hold ofhold on to
 
-adjective:carusadjective:dearbeloved
-adjective:carusadjective:costlyhigh-pricedexpensive
+adjective:carusdearbeloved
+adjective:caruscostlyhigh-pricedexpensive
 
 verb:cassobring to naughtdestroyannulmake void
 adverb:castepurelyspotlesslyuprightlychastely
@@ -424,7 +424,7 @@ CastellandumChateaudun
 noun:casusnounSingular:accidentnounSingular:chancefortune
 noun:catenanounSingular:chainfetters
 noun:catervacrowdtroopflock
-adverb:catervatimadverb:in troopsin masses
+adverb:catervatimin troopsin masses
 
 CathalaunensesChalons
 
@@ -461,7 +461,7 @@ certussettledresolveddecideddefinitecertainsure
 cervusstagdeer
 ceterafor the restotherwise
 ceterithe remainingthe restthe others
-ceterumadverb:otherwisemoreoverbut
+adverb:ceterumotherwisemoreoverbut
 ceterusthe otherthe rest
 charisma carismagiftpresent
 chirographumautographperson's own handwritingwritten charter
@@ -495,7 +495,7 @@ verb:coaegrescobecome sick at the same time
 coepi(pres. incipio )beganstartedundertookinitiated
 coerceosurroundencloserestrainconfine
 verb:cogitothinkruminateponderconsiderplan
-cognatusadjective:related by blood (noun) a relativekinsman
+adjective:cognatusrelated by blood (noun) a relativekinsman
 cognomensurnamefamily namenick-name
 verb:cognoscoexamineinquirelearn
 verb:cogocoegicoactumcompelrestrictconfine
@@ -536,7 +536,7 @@ commodumsuitable timeopportunityconvenienceuse
 commodumconvenienceadvantageopportunitycomfort
 verb:commoneoremind someone forcibly of something
 verb:commoneorememberrecollect
-verb:commoneoimpress upon one. verb:remind
+verb:commoneoimpress upon one. remind
 verb:commoveomove violentlydisturbshakeexciteupset
 communiscommongeneralrun of the mill
 verb:comparocompare
@@ -664,7 +664,7 @@ verb:contineokeep insurroundcontainconfineinclude
 contineohold togetherkeep togetherconnectjoin
 verb:contineohold backrestrain
 contingo(contactum) verb:touch closelyhappen tobefall
-continuoadverb:immediatelyat once
+adverb:continuoimmediatelyat once
 continuusconnected togethercontinuousuninterrupted
 contra(+ acc.) against
 contradictioa speaking againstcontradiction
@@ -689,14 +689,14 @@ verb:corrigo(correctum)make correctmake right
 verb:corripioseizesnatch upsteal(of a disease) attack
 verb:corroborostrengthen
 verb:corrumpobreak updestroyannihilatespoilweaken
-corrumpo(documents) verb:falsify(character) verb:corrupt
+corrumpo(documents) verb:falsify(character) corrupt
 verb:corruofall to the groundsink downbe ruineddestroyed
 CorturiacumCourtrai
 coruscus(a) flashingtwinklingshakingtrembling
 cotidiedailyevery day
 CourtacumCourtrai
 crapulawine-drinkingintoxicationdrunkenness
-crasadverb:tomorrowon the morrow
+adverb:crastomorrowon the morrow
 crastinusof the morrowthe morrow
 creatorcreatorfounder
 creaturacreatureservant
@@ -821,7 +821,7 @@ verb:delegotransfercommitassignimputeattributeascribe
 deleo(deletum ) verb:destroywipe outerase
 verb:deliberoconsiderdeliberate
 delicateluxuriouslydelicatelyslowly
-delicateadverb:luxuriously
+adverb:delicateluxuriously
 deliciaeallurementscharmsdelightsfanciessweetheart
 verb:delinquofailbe wantingfail in dutycommit a crime
 verb:deludomockcheat
@@ -1049,7 +1049,7 @@ equushorsesteedmount
 verb:erepocreep outcreep overcreep up
 erga(+ acc.) towardabout
 ergo(gen. +) on account ofbecause of
-ergoadverb:accordinglythentherefore
+adverb:ergoaccordinglythentherefore
 verb:eripio(eripui ereptum )snatch awaytake awayrescue
 verb:erogopay out
 verb:erogopay outexpenddisburse
@@ -1062,7 +1062,7 @@ verb:eruodig uppull outrazedemolish
 verb:esuriobe hungryhunger
 et ... etboth ... and
 etenimfor indeed
-etiamadverb:evenalso
+adverb:etiamevenalso
 etsi(acsi) even ifalthough
 verb:eveniocome to passhappenbefall
 eventusconsequenceissueresultoccurrenceexperience
@@ -1252,7 +1252,7 @@ fruxfrugifruits of the earth
 fugaflightescape
 verb:fugiofleeescaperun awayavoidshun
 fugitivusfugitivedeserterrunaway slave
-verb:fugoput verb:flightchase awaydrive into exilepursue
+verb:fugoput flightchase awaydrive into exilepursue
 verb:fulciosupportstrengthenupholdbesiegeoppress
 verb:fulgeo (fulsi )flashshinebeam
 fultussupporter
@@ -1319,7 +1319,7 @@ Heniis HarniisHames
 hereditasinheritanceoften simply "property."
 verb:hesito (haesito)be unsureuncertainwavering
 hi(masc. pl. nom.) THESE (men) are loyal to the king
-hicadverb:here
+adverb:hichere
 hic haec (hec ) hocthisthe latterhesheit
 hic(masc. nom. sing.) THIS (house) is filthy
 hilarischeerfulmerrygay
@@ -1576,7 +1576,7 @@ informisformlessshapelessdeformedhideous
 infortunatusunfortunateunhappyunlucky
 infortuniummisfortunebad luckpunishment
 infra inferius infimuslow down
-infraadverb:belowunderneathto the southin the underworld
+adverb:infrabelowunderneathto the southin the underworld
 infra(+ acc.) belowunder(time) later than
 infulainsignia of office
 verb:ingemuo = dat.groansigh over
@@ -1682,7 +1682,7 @@ iste ista istudthatsometimes pejorative
 ita ut(with subj.) in such a way that
 itasothus
 ita(in narration) and so; (with adj. or adv.) soso very
-itaqueadverb:andsotherefore
+adverb:itaqueandsotherefore
 iter itinerisroadroutejourney
 verb:iterorepeatsay againiterate
 iterumagaina second timeonce more
@@ -1768,11 +1768,11 @@ laevus levusfoolishsillyunluckyunpropitious
 laevus levusthe left handleft sideleft-handed
 laganuma cake
 lamabogslough
-verb:lambolick(of rivers) verb:wash
+verb:lambolick(of rivers) wash
 lamenta (neut. pl)weepingwailing
 lamentabilislamentablemournful
 lamentatioweepingwailinglamenting
-verb:lamentorweepwaillament(trans.) verb:bewail
+verb:lamentorweepwaillament(trans.) bewail
 lamiawitchvampire
 lamnia lammina lamnasheet of metalcoinknife bladenutshell
 lapsusfallfaulterrorslidinggraduate movement
@@ -1889,7 +1889,7 @@ ludio ludiusactorplayer
 verb:ludo lusi lusumplaysportimitatebanterdeludedeceive
 ludusgamesportschool
 luesplaguepestilencecalamity
-verb:lugeomournbe in mourninggrieve(tans) verb:lamentbewail
+verb:lugeomournbe in mourninggrieve(tans) lamentbewail
 lunamoon
 lupuswolf
 LutosensisLeuze
@@ -2076,7 +2076,7 @@ ne ... quidemnot ... even
 ne(conj.) that ... notin order that ... notin order not to
 necdum (neque dum)and not yet
 necessariusnecessaryneededessential
-necesseadjective:necessaryunavoidableindispensable
+adjective:necessenecessaryunavoidableindispensable
 necneor not
 verb:necokillslayput to death
 nefaswrongsin
@@ -2098,8 +2098,8 @@ nigerblack
 nihil(undeclinable) nothing
 nihilumnothing
 nimirumof courseundoubtedlycertainly (sometimes ironical)
-nimisadverb:too muchovermuchexcessively
-nimiumadverb:too muchovermuchexcessively
+adverb:nimistoo muchovermuchexcessively
+adverb:nimiumtoo muchovermuchexcessively
 nisiif notunlessexcept
 verb:niteoshineglitterbe brightglowbe sleekflourish
 verb:nitescobegin to shinegrow sleek
@@ -2166,11 +2166,11 @@ obsequiumindulgencepliancysubmission
 obstinatusfirmresolvedstaunch
 verb:obtestorimploreentreatbegcall as a witness
 verb:obtineoholdkeeppossessmaintaincontinue
-obviam ire(+ dat.) verb:go verb:meetopposehelpremedy
+obviam ire(+ dat.) verb:go meetopposehelpremedy
 obviamon the wayin the way(+ dat.) towardsagainst
 obviuson the wayin the way(in dat.) openaccessible
 occasiofavorable momentopportunity
-verb:occido occidi occasumfallfall down(for the sun) verb:set
+verb:occido occidi occasumfallfall down(for the sun) set
 occultosecretly
 verb:occupotake possessiongraspseizeenjoyget a start on
 verb:occurrofall uponattackwork againstcounteract
@@ -2208,7 +2208,7 @@ opportunusfitsuitable(time) favorable(+dat.) liable to
 verb:opprimo oppressi oppressumsuppressoverwhelmoverpowercheck
 opprobriumreproachdisgrace
 verb:oppugnofight againstattackassaultassail
-opssingularpowerpower verb:aidpower verb:help
+opssingularpowerpower verb:aidpower help
 optimatesthe aristocratic party
 optimusone of the bestaristocratnoble
 verb:optodesirewish forwant
@@ -2259,7 +2259,7 @@ pariterequallyin like manneras well
 verb:paroprepareget readysetputfurnishsupplybuy
 pars partispartsharedirection
 partimpartlysome
-parum minus minimeadverb:littletoo littlenot enough
+adverb:parum minus minimelittletoo littlenot enough
 parvus minor minimussmalllittle
 verb:pascograzeforagebrowse
 passersparrow
@@ -2283,7 +2283,7 @@ paupertasbeggardrypovertyhumble circumstances
 pax pacispeace
 peccatussin
 verb:peccodo wrongerrsingo astray
-verb:pectocombcardthrash (verb:card wool)
+verb:pectocombcardthrash (card wool)
 pectus pectorisheartbreast
 pecuniamoney
 pecusa single head of cattleespecially a sheep
@@ -2292,7 +2292,7 @@ verb:pello pepulli pulsumhitbeatexiledrive awaybanish
 verb:pendeohangdependbe suspendedbe uncertainundecided
 verb:pendoweighvalueconsiderjudgeesteem
 penitusinwardinnerinterior
-penitusadverb:insidewidelythrough and throughcompletely
+adverb:penitusinsidewidelythrough and throughcompletely
 penususprovendersuppliesvictuals
 pepulo? Herimanncap. 3
 per(+ acc.) (cause) because ofon account of
@@ -2313,7 +2313,7 @@ verb:pereopass awaybe destroyedperish
 perfectuscompletefinisheddoneperfectwithout flaw
 verb:perferobearsufferendure
 verb:perficio perfeci perfectumdo thoroughlyaccomplishbring about
-verb:perfruorexecute completelyenjoy verb:the full
+verb:perfruorexecute completelyenjoy the full
 perfusussteepedsoakeddrenched
 verb:pergocontinueproceedgo on with
 periclitatusput in perilendangered
@@ -2458,14 +2458,14 @@ verb:postuloask
 potensablemightypowerfulstrong
 potestaspowerabilityauthorityopportunity
 potior(+ gen. or dat.) verb:possessholdget possession of
-potissimumadverb:chieflymost of all
+adverb:potissimumchieflymost of all
 potissimusbest of allchiefprincipal
 potiusratherpreferably
 prae dulcispre dulcisexceedingly sweet
 verb:prae se ferrepre se ferreshowexhibiton account of
 prae quampre quamin comparison with
 prae pre(prep. with abl.) before
-prae preadverb:beforein front
+adverb:prae prebeforein front
 verb:praebeo prebeoofferhold outsupplyprovideallow
 praebeo prebeo(+ refl.) verb:show oneselfpresent oneself
 verb:praecedo precedoprecedego beforesurpassexcel
@@ -2720,7 +2720,7 @@ verb:putoclearsettle upconsiderthinkbelievesupposejudge
 putuspureunmixedunadulterated
 pyropusbronze
 pyus pyxidisa little boxcasket
-quaadverb:by which routewhere
+adverb:quaby which routewhere
 qua(fem. sing. abl.) (the abbess) BY WHOM she was advised
 quadragintaforty (indecl.)
 quadratussquarea square
@@ -2867,7 +2867,7 @@ verb:reddorepeatreciterepresentimitatepay updeliver
 verb:reddogive backrestorereturnanswertranslaterender
 redemptioransomingredemptionbuying backfarming taxes
 redemptorredeemer (Christ)
-verb:redeogo backcome backreturn(revenue) verb:come in
+verb:redeogo backcome backreturn(revenue) come in
 verb:redeofall back uponbe reduced tobe brought to
 verb:redigo (redactum)bring or reduce to a conditionlessen
 verb:redonogive backgive up
@@ -3017,7 +3017,7 @@ verb:se geroconduct oneselfconductcarry on
 verb:se astringocommit oneself to
 verb:secedogo apartwithdraw
 verb:secerno secrevi secretumseparate
-secundumadverb:afterbehind
+adverb:secundumafterbehind
 secundum(+ inf.)followingafterduringaccording to
 secundussecond
 securussafesecurefree from careunworriedunconcerned
@@ -3114,11 +3114,11 @@ solutiolooseningpaymentsolutionexplanation
 verb:solvoloosenuntiereleasefreedissolvebreak up
 somniculosussleepydrowsy
 somniculousesleepilydrowsily
-verb:somniodream(+ acc.) verb:dream ofimagine foolishly
+verb:somniodream(+ acc.) dream ofimagine foolishly
 somniumdreamfancyday-dreamfoolishnessnonsense
 somnussleep
 sonitusnoisesound
-verb:sonomake a noisesingcelebrate(of words) verb:mean
+verb:sonomake a noisesingcelebrate(of words) mean
 sophismatafalse conclusionslogical fallacies
 sopordeep sleep
 verb:sordeobe dirtyappear vile
@@ -3192,7 +3192,7 @@ verb:sumotakechooseobtainbuy.take for grantedassume
 sumptusexpensecost
 supellex supellectilisfurnitureapparatusgear
 super(prep.) (+ abl.) overaboveconcerningaboutbesides
-superadverb:overabovebesidesbeyondmoreoverremaining
+adverb:superoverabovebesidesbeyondmoreoverremaining
 superbiapridearrogance
 superbusoverbearingarroganthaughtyproud
 superficiessurfacetop
@@ -3347,7 +3347,7 @@ trepidewith trepidationin confusion
 tres triathree
 TreverimTriers
 verb:tribuogive outdivideallotassigngrantgiveallow
-tricesimusadjective:thirtieth
+adjective:tricesimusthirtieth
 noun:triduanalasting three days
 triduanusthree days' durationnoun:lasting three days
 noun:triduuma period of three days
@@ -3357,7 +3357,7 @@ tristissadgloomydowncast
 Trium FontiumTrois-FontainesMarneVitry-le-Francais
 triumphustriumphal processiontriumph
 verb:trucidokill cruellyslaybutchermassacreslaughter
-truculenteradverb:wildlysavagelyfiercelycruellyroughly
+adverb:truculenterwildlysavagelyfiercelycruellyroughly
 tuyouOld Heidelbergyou are the finest
 tubineuscone shaped
 tuiyour yoursI read YOUR letter that saiddear John
@@ -3387,7 +3387,7 @@ ultra(+ acc.) beyondon the far side of
 umbrashadeshadow
 umerus humerusshoulderupper arm
 umquameverat any time
-unaadverb:in onetogether
+adverb:unain onetogether
 undewhencefrom wherehowfrom whom
 undiquefrom all sideseverywhereon all sidesaltogether
 universegenerallyin general
@@ -3484,7 +3484,7 @@ victorvictorwinner
 victoriavictory
 victuslivingmanner of lifenourishmentfood
 adverb:videlicetit is clearclearlyplainlynamely
-videlicetadverb:(ironically) of coursebe sure
+adverb:videlicet(ironically) of coursebe sure
 verb:video vidi visumseeobserveunderstandcomprehend
 verb:videorbe seenseemappear
 viduatadeprivedwidowedbereft
@@ -3492,9 +3492,9 @@ verb:viduodeprive
 verb:vigilobe awakewatchbe vigilantkeep vigil
 noun:vigorvigorliveliness
 noun:vilicusvillicuspertaining to an estateoverseersteward
-vilisadjective:cheapworth little
+adjective:vilischeapworth little
 noun:vilitascheapnesslow-priceworthlessness
-noun:villacountry housecountry estate(med.) noun:manorvillage
+noun:villacountry housecountry estate(med.) manorvillage
 verb:vinco vici victumconquerovercomemasterwinsurpassexcel
 noun:vinculumbondfettertie
 verb:vindico (vindicatum)claimarrogateassumeappropriate
@@ -3505,14 +3505,14 @@ noun:vinumwine
 noun:virmanheroman of courage
 noun:virgaa green twigrodstickwandbroomstreakstripe
 nounSingular:virgonounSingular:maidennounSingular:virginnounSingular:young girl
-adjective:viridisadjective:green
-viriliteradverb:manfully
+adjective:viridisgreen
+adverb:virilitermanfully
 noun:virtusmanlinessexcellencecharacterworthcourage
 nounSingular:visnounUncountable:violencea large numbernoun:quantitya forcenature
 nounPlural:vis viresnounSingular:forcenounSingular:powernounSingular:strengthnounSingular:mightnounSingular:influence
 noun:viscusfleshinternal organsbowelsentrailsheart
 noun:vitalifeway of life
-vitiosusadjective:viciousfull of vicecorrupt
+adjective:vitiosusviciousfull of vicecorrupt
 noun:vitiumfaultvicecrime
 verb:vitoavoidshun
 verb:vivo vixi victumlivebe alive
@@ -3524,27 +3524,27 @@ verb:voco in dubiumcall into question
 verb:vococallsummonname invite
 volaticuswingedflyinginconstantunreliableflighty
 volatiliswingedflyingswiftrapidfleetingtransitory
-volensadjective:willingfavorable
+adjective:volenswillingfavorable
 verb:volo (sibi velle)meansignifydenote
 verb:voloflyspeedmove rapidly
 verb:volowishwantwillordainsupposemaintain thatbe willing
-volubilisadjective:(of speech) rapidfluentvoluble
-volubilisadjective:rollingrevolvingturning aroundchangeableinconstant
-volubiliteradverb:fluently
-voluntariusadjective:voluntary
+adjective:volubilis(of speech) rapidfluentvoluble
+adjective:volubilisrollingrevolvingturning aroundchangeableinconstant
+adverb:volubiliterfluently
+adjective:voluntariusvoluntary
 voluntaswishwillinclinationgood will
 voluntaslast willtestamentmeaningsense
-adverb:volupadverb:agreeablypleasantly
-voluptariusadjective:pleasantone devoted to pleasure
-voluptaspleasure
-voluptuosusadjective:delightfulpleasurable
+adverb:volupagreeablypleasantly
+adjective:voluptariuspleasantone devoted to pleasure
+nounUncountable:voluptaspleasure
+adjective:voluptuosusdelightfulpleasurable
 noun:volutabrumpigstyslough
 noun:volva vulvawomb (particularly that of a sow)
 noun:vomerplowshare
 verb:vomicaulcersoreboilplaguecurse
 verb:vomitovomitvomit forththrow up
 voragochasmpitabyss
-voraxadjective:gluttonousvoracious
+adjective:voraxgluttonousvoracious
 verb:voroeat greedilyswallow upconsumegorge oneself
 vos(acc.) youI'll fight YOU allthen ... bring me giants!
 vosyou (pl)YOU can't catch mei'm the gingerbread man
@@ -3552,15 +3552,15 @@ noun:votumprayerverb:wishdesirepromise to God
 verb:voveo vovi votumpromise to Godvowpray for
 vox vocisvoiceword(med.) powerrightauthority
 vulariterin the common wayordinary manner
-vulgarisadjective:commonordinaryusual
-vulgivagusadjective:wanderingvagrantitinerant
+adjective:vulgariscommonordinaryusual
+adjective:vulgivaguswanderingvagrantitinerant
 verb:vulgospreadpublishimpartmake accessible
 noun:vulguscommon peoplemobrabble
 verb:vulnerowoundinjurehurtharm
 noun:vulnuswound
 vulpes volpesanimal:fox
 noun:vulticuluslookaspectappearance
-vultuosusadjective:grimacingaffected
+adjective:vultuosusgrimacingaffected
 noun:vultur voltur vulturius volturiusvulture
 noun:vultusface
 noun:vultusexpression of the facecountenancelookaspect
