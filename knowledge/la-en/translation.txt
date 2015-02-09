@@ -1,4 +1,4 @@
-nounPhrase:abbas abbatisnounSingular:FathernounSingular:abbot
+nounSingular:abbas abbatisnounSingular:Holy FathernounSingular:abbot
 
 noun:abbatiaabbeymonastery
 
