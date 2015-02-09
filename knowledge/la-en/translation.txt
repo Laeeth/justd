@@ -818,130 +818,130 @@ verb:degenerobe unlike one's kindfall offdegenerate
 verb:degeropass timelive
 verb:degustotaste
 deindenextthenthereafterfrom that place
-delectatiodelightpleasureenjoyment
+nounSingular:delectatiodelightpleasureenjoyment
 verb:delectoattractdelight(pass + abl) take delight in
 verb:delegotransfercommitassignimputeattributeascribe
-deleo(deletum ) verb:destroywipe outerase
+verb:deleodeletumdestroywipe outerase
 verb:deliberoconsiderdeliberate
-delicateluxuriouslydelicatelyslowly
+adverb:delicateluxuriouslydelicatelyslowly
 adverb:delicateluxuriously
-deliciaeallurementscharmsdelightsfanciessweetheart
+nounPlural:deliciaeallurementscharmsdelightsfanciessweetheart
 verb:delinquofailbe wantingfail in dutycommit a crime
 verb:deludomockcheat
-demens(dementis )insanemadout of one's mindfoolish
+adjective:demensdementisinsanemadout of one's mindfoolish
 verb:demergosinkplunge intodip undergo into debt
-demittoset downlet fall (to offer payment to the church)lower
+verb:demittoset downlet fall (to offer payment to the church)lower
 verb:demotake awaysubtract
 verb:demonstroindicateshowdescribeexplain
 verb:demororloiterlingertarrybelay
 verb:demulceostroke downcaress by stroking
-demumat length at lastfinally
+adverb:demumat length at lastfinally
 verb:denegorefusedenyreject
-deniqueat lastfinallyagainin short
-dens(dentis )tooth
-denunciodeclaregive noticeannounce
+adveb:deniqueat lastfinallyagainin short
+nounSingular:densdentistooth
+verb:denunciodeclaregive noticeannounce
 verb:denuntioannounce officiallypronouncedeclare
 denuoanewagaina second timeafresh
-deorsumdownwards
+adverb:deorsumdownwards
 verb:depereoperishbe utterly ruined
 verb:deponoput downlay aside
 verb:depopulo depopulorlay wasteravagedevastate
 verb:deportocarry offtake away
 verb:depraedor depredorplunderlay wastepillageravage
-deprecatorintercessorone who pleads on behalf
+nounSingular:deprecatorintercessorone who pleads on behalf
 verb:deprecorentreat forbeg forintercedecurse
 verb:deprecorbeg by entreatyexcuse oneselfcurse
-deprehensiodetection
+nounSingular:deprehensiodetection
 verb:deprimo (depressus)press downdepresslow-lying
 verb:depromotake downproducefetch out
-depulsopush asidethrust away
+verb:depulsopush asidethrust away
 verb:deputocountestimateprunecut off
 verb:derelinquoforsakedesertabandon
 verb:derideolaugh atmockderide
 verb:deripiotear downsnatch away
 verb:desiderolong forwish for greatlymiss
-desidiosuslazyunmotivated
+adjective:desidiosuslazyunmotivated
 verb:desino (desiit)leave offgive overceasestopdesist
-desinoceasestopenddesist
+verb:desinoceasestopenddesist
 verb:desipioact foolishlyplay the foolmake an ass of one's self
 verb:desololeave desolateabandonedforsake
-desparatusgiven up ondesperate
-despectooverlookdespiselook down upon
+adjective:desparatusgiven up ondesperate
+verb:despectooverlookdespiselook down upon
 verb:desperohave no hopedespairgive up
 verb:desperobe without hopedespairdespair ofgive up
-despicienscontemptuous
+adjective:despicienscontemptuous
 verb:despiciolook downregard from abovedespise
 verb:desposcodemand
-destinatusresolutefirmdeterminedwith one's mind made up
+adjective:destinatusresolutefirmdeterminedwith one's mind made up
 verb:destituoset downplaceabandonleave in the lurch
 verb:detego detectumuncoverlay baredisclose
 verb:determinofix the limits ofset boundaries todelimit
-detineohold offhold backdetain
-detrimentumdamagelossdetriment
-deusgod
+verb:detineohold offhold backdetain
+nounSingular:detrimentumdamagelossdetriment
+nounSingular:deusgod
 verb:deveniocome toarrive atreach
 verb:devitoavoid
 verb:devococall awaycall downcall aside
 devotio(Christian) pietydevotionzeal
 verb:devoveoconsecratesacrificedevotecurseexecrate
-dexterrighton the right
-dexterathe right hand
-diabolusdevilSatan
-dico(dictum ) verb:saytellspeaknamecallpronounce
-dictatathings dictatedlessonspresents
-dictatordictator
+adjective:dexterright
+adverb:dexteron the right
+nounSingular:dexterathe right hand
+nounSingular:diabolusdevilSatan
+say:dicodictumsaytellspeaknamecallpronounce
+nounPlural:dictatathings dictatedlessonspresents
+nounSingular:dictatordictator
 verb:dictitosay oftenreiterate
 verb:dictosay oftendictateget written down
-didicerat(?) Herimannp. 281
-verb:didicobe told (Herimann cap. 3944)
+verb:didicobe told
 verb:dido dididi didtumseparatedividedistribute
-dies dieiday
-diffama -tusspread aroundmade known
+nounSingular:diesday
+verb:diffamaspread aroundmade known
 verb:differospread newsdelaydeferpostpone
 verb:differospread aboutspread newsharrassdisturb
 verb:differodelaypostponedifferbe different
-differtusstuffed fullcrammedjammed
-difficilisdifficulthardtroublesome
-difficultasdifficultyneedtroubledistress
-digestorarrangercomposerone who makes a pattern
-dignitasmeritworthprestigedignity
+verb:differtusstuffed fullcrammedjammed
+adjective:difficilisdifficulthardtroublesome
+nounSingular:difficultasdifficultyneedtroubledistress
+nounSingular:digestorarrangercomposerone who makes a pattern
+nounSingular:dignitasmeritworthprestigedignity
 verb:dignosco dignoscodistinguishrecognize as different
-dignus(+ abl.) worthyworthy ofmeritorious
+adjective:dignus(+ abl.) worthyworthy ofmeritorious
 verb:digredior digredi digressusdepartdeviatedigress
-digressioseparationdeparturedigression
-digressusseparationdeparturedigression
+nounSingular:digressioseparationdeparturedigression
+nounSingular:digressusseparationdeparturedigression
 verb:dilaborbreak upscatterdissolveslip awayfall apart
 verb:dilatospread outextendexpandincrease
-dilgenterattentivelyearnestlycarefullydiligently
-diligensdiligentcareful
-diligentiadiligenceindustryperseverancepersistence
+adverb:dilgenterattentivelyearnestlycarefullydiligently
+adjective:diligensdiligentcareful
+nounSingular:diligentiadiligenceindustryperseverancepersistence
 verb:diligochoose outesteem highlyprizelove
-diluculodawndaybreak
-diluo(of troubles) verb:removeresolve
-dimidiumhalf
+nounSingular:diluculodawndaybreak
+verb:diluo(of troubles) removeresolve
+adjective:dimidiumhalf
 verb:dimittobreak updismissleaveabandon
-directusplainsimpledirectopenstraightforward
+adjective:directusplainsimpledirectopenstraightforward
 verb:diripiotear in pieceslay wastedevastateplunder
 verb:diripioseparatetear apartpillagedevastatelay waste
-dirunitaslong duration
+nounSingular:dirunitaslong duration
 verb:diruodemolishdestroyruin
 verb:discedo(discessum )break updepartgo awaypass away
-discidiumseparationdivisiondisagreementtearing apart
-discipulusdisciplestudentlearnerpupil
+nounSingular:discidiumseparationdivisiondisagreementtearing apart
+nounSingular:discipulusdisciplestudentlearnerpupil
 verb:discolearnbecome acquainted with
 verb:discrepodifferbe differentvarydisagree
 verb:disponoarrangeput in orderdraw up (troops)
-disputatiodebatedisputediscussion
-disputodiscuss
+nounSingular:disputatiodebatedisputediscussion
+verb:disputodiscuss
 verb:disseroexaminetreat ofdiscuss
-dissimilisunlikedifferentdisparatedissimilardistinct
+adjective:dissimilisunlikedifferentdisparatedissimilardistinct
 verb:dissimuloignoreleave unnoticed
 verb:dissimuloconcealdisguisekeep secret
-dissolutuslaxweakwanting in energydissoluteprofligate
+adjective:dissolutuslaxweakwanting in energydissoluteprofligate
 verb:distinguomark offdistinguishdivideseparate
 verb:distribuodistributedivide
 districtus (fr. distringo)strictseverehesitatingbusy
-distulo(past) verb:delay [MGHss 25268]
+verbPast:distulodelay
 verb:ditoenrichmake wealthy
 diuby dayfor a long timea long time ago
 diuadv. a long whilelong timefor a long time
@@ -949,94 +949,95 @@ diutinuslasting a long timeenduringlong-lived
 diutiuslongertoo long (a period of time)
 diuturnuslasting a long timeof long duration
 diversusdifferentunlikeopposedhostile
-divesrichopulentwealthy
-divinitusdivine influenceadmirablynoblyby inspiration
-divinusdivinesacred
-divitiae divitiericheswealth
+adjective:divesrichopulentwealthy
+adverb:divinitusadmirablynoblyby inspiration
+divinitusdivine influence
+adjective:divinusdivinesacred
+nounUncountable:divitiae divitiericheswealth
 verb:do dare dedi datumgiveofferconveyofferdonatefurnish
 verb:doceo docui doctuminstructteachtutor
-doctorteacher
-doctrinadoctrineteachinginstructionlearning
-doctustaughtinstructedlearnedtutored
-dolenspainfully
+nounSingular:doctorteacher
+nounSingular:doctrinadoctrineteachinginstructionlearning
+adjective:doctustaughtinstructedlearnedtutored
+adverb:dolenspainfully
 verb:doleosuffer painbe painedgrieve
-dolorpaingrief. miserypainsuffering
-doloseslylydeceitfully
-dolosuscraftycunningslydeceitful
-dolusfrauddeceitguiletreacherya trap
-domesticusdomesticcivil
-domina dominaladymistress
-dominatusrulemasterytyrannydomination
-dominus dominomasterlord
+nounSingular:dolorpaingrief. miserypainsuffering
+adverb:doloseslylydeceitfully
+adjective:dolosuscraftycunningslydeceitful
+nounSingular:dolusfrauddeceitguiletreacherya trap
+adjective:domesticusdomesticcivil
+nounSingularFemale:domina dominaladymistress
+nounSingular:dominatusrulemasterytyrannydomination
+nounSingular:dominus dominomasterlord
 verb:domitotamesubduebreak in
-domushousehomeresidence
+nounSingular:domushousehomeresidence
 donecup to the time whenuntilas long aswhile
-donumgiftpresentdonation
+nounSingular:donumgiftpresentdonation
 verb:dormiosleepslumbersiestanap
 verb:dubitodoubthesitate
-dubiumdoubthesitationreservation
+nounSingular:dubiumdoubthesitationreservation
 verb:ducolead on the marchmarry a wifecommand
 verb:ducoleaddrawesteemconsider
 verb:ducodrawshapeconstruct(time) spenddelay
 verb:ducocharminfluencemisleaddraw in
 verb:ducocalculatecountreckonesteemconsidered
 dudumfor a long whilea long while agosome time age
-dulcedosweetnesspleasantnesscharm
-dulcidinesweetlypleasantlycharmingly
-dulcissweetpleasantagreeable
-dulcitudo dulcitudinisdumwhileas long asuntil
+nounSingular:dulcedosweetnesspleasantnesscharm
+adverb:dulcidinesweetlypleasantlycharmingly
+adjective:dulcissweetpleasantagreeable
+adjective:dulcitudo dulcitudinisdumwhileas long asuntil
 dummodo(conj. + subj.) provided
 dumtaxatat leastnot less thanat mostnot more than
-duotwo
+numeral:duotwo
 verb:durohardenlastendure
-durushardharshtoughstrongenduring/ roughrudeuncouth
+adjective:durushardharshtoughstrongenduring
+adjective:durusroughrudeuncouth
 Dusiol petramDuissenpierre
 dux ducisleaderguidecommandergeneralduke
 eatenusso farthus farup verb:then
 verb:ebullioboil upbubble upappearproduce in abundance
-ecclesiachurch
-econtrathe same as contraagainstoppositeetc
+nounSingular:ecclesiachurch
+preposition:econtrathe same as contraagainstoppositeetc
 ecquandoat any time? ever?
 verb:edicoannouncedeclare
-editiothe publishing of a bookan announcement
-edoput forthgive out
+nounSingular:editiothe publishing of a bookan announcement
+verb:edoput forthgive out
 verb:edo edi essumeatconsumedevourwaste
 verb:edoceoinform fullyinstruct thoroughly
 verb:educodraw outlead outmarch outbring uprearsue
-effectusdoingexecutionperformanceeffectresult
+nounSingular:effectusdoingexecutionperformanceeffectresult
 verb:effero extuli elatumcarry outburylift upexalt
 verb:effervoboil up
 verb:efficiodoproduceeffectmakebring aboutcauseprove
-effringo effregobreakbreak open
-effugio(effugi effugiturus )flee fromescapeeluderun away
+verb:effringo effregobreakbreak open
+verb:effugio(effugi effugiturus )flee fromescapeeluderun away
 verb:effundopour outpour forthshedutter
-egenusin want ofin need ofdestitute
+adverb:egenusin want ofin need ofdestitute
 verb:egeoneedlackwantbe without
-egoI ; I can't live without youbaby
 verb:egredior(egressus )go outleavedepartexit
 verb:eicio eiectumthrow outejectdrive out
 elatuspuff-upproud of oneselfarrogant
 electuschosenselect
-elementumfirst principleelementbasic constituent
-elemosinaalms
-elemosinariusalmonerperson in charge of providing charity
+nounSingular:elementumfirst principleelementbasic constituent
+noun:elemosinaalms
+nounSingular:elemosinariusalmonerperson in charge of providing charity
 verb:eligopick outselectchoose
-eloquenseloquentpersuasivefluent
-eloquentiaeloquencereadiness of speechfluencypersuasiveness
+adjective:eloquenseloquentpersuasivefluent
+nounSingular:eloquentiaeloquencereadiness of speechfluencypersuasiveness
 verb:eluowash outrinse cleansesquanderwaste
-eluviesa flowing overfloodinnundation
-eluvioinundation
+nounSingular:eluviesflowing overfloodinnundation
+nounSingular:eluvioinundation
 verb:emanioflow outspreadariseemanateoriginate
 verb:emendoamendcorrect
 verb:emercorbuy up
 verb:emerioobtain by serviceearn completelydeserve well
 verb:emineostand outprojectbe remarkableconspicuous
 verb:eminorthreatenmenace
-eminusat a distancefrom a distance
+adverb:eminusat a distancefrom a distance
 verb:emirorwonder at exceedingly
 verb:emo emi emptumbuypurchase
 verb:emoveomove awayremovetake away
-emptioa buyinga purchase
+nounSingular:emptioa buyinga purchase
 enimforin facttruly (may often be omitted)
 verb:enumerocountcount upenumerate
 verb:eo ire itumgoadvanceproceedtravelmove alongprogress
