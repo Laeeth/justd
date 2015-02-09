@@ -4,6 +4,10 @@
 
 ### TODO Rename Role to Pred or Act or Conn? What does WordNet call it?
 
+### BUG in sv/homophone.txt
+    - noun:bor (är ett grundämne), verb:bor (i Sverige)
+    - noun:te (är en dryc), verb:te (sig)
+
 ### BUG WordNet stores proper names in lowercase
 
 This could be detected and fixed in learnLemma() if existing lemmas in uppercase
