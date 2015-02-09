@@ -57,6 +57,7 @@ enum Sense:ubyte
 
     material,
     substance,
+    metal,
 
     numeral,
     numeralMasculine,
@@ -357,6 +358,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case substance: return `substance`;
         case material: return `material`;
+        case metal: return `metal`;
 
         case numeral: return `numeral`;
         case numeralOrdinal: return `ordinal numeral`;
@@ -658,6 +660,7 @@ import predicates: of;
     {
         with (Sense) return (sense.of(plant,
                                       material,
+                                      metal,
                                       substance));
     }
     bool isLanguage(Sense sense)
@@ -682,6 +685,7 @@ import predicates: of;
     bool isNoun(Sense sense)
     {
         with (Sense) return (sense.isNounAbstract ||
+                             sense.isNounConcrete ||
                              sense.isFood ||
                              sense.isNounSingular ||
                              sense.of(noun,
