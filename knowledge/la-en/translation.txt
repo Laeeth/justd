@@ -504,230 +504,230 @@ verb:cognoscoexamineinquirelearn
 verb:cogocoegicoactumcompelrestrictconfine
 verb:cogocoegicoactumbring togetherdrivedraw
 verb:cohaero cohero cohesi cohesumadherestick together
-cohibeoconfinerestrainhold backrepress
-cohorsa yardenclosuretroop110 of a legion
+verb:cohibeoconfinerestrainhold backrepress
+nounSingular:cohorsa yardenclosuretroop110 of a legion
 verb:cohortorencourageinciteexhort
 verb:colligogather togethercollectassemble
 verb:collocoplaceputarrange
-collumneck
-colo colui cultumcultivatecherish
-colorcolor
-coloratuscoloreddark-complexioned
+nounSingular:collumneck
+verb:colo colui cultumcultivatecherish
+nounSingular:colorcolor
+adjective:coloratuscoloreddark-complexioned
 verb:colorocolor
-comahair of the headleavesrays of light
+nounPlural:comahair of the headleavesrays of light
 verb:combibodrink upsuck in
 verb:comburoburn upruinconsume
 verb:comedo comedi comesumeat upconsumewastesquander
-comes comitiscompanionfriendcomradecount
-cometescomet
-cometissa comitissacountess
-comiscourteouskindfriendly
-comitatustrainretinuefollowingwar band
-comitercourteouslyin a kindlyfriendly manner
+nounSingular:comes comitiscompanionfriendcomradecount
+nounSingular:cometescomet
+nounSingularFemale:cometissa comitissacountess
+adverb:comiscourteouskindfriendly
+nounSingular:comitatustrainretinuefollowingwar band
+adverb:comitercourteouslyin a kindlyfriendly manner
 verb:comittoentrustcommit
 verb:commemororemindrelatemention
 verb:commeogo up and downback and forthin and out
-commessatiooniseating together
+nounSingular:commessatiooniseating together
 verb:comminorthreaten
 verb:comminuoscatterweakendamage
-comminushand to handin close combat
+adverb:comminushand to handin close combat
 verb:commisceointerminglejoinmix
-commissumundertakingthat which is entrusted
-commodo(+ acc.) verb:furnishlendgive
+nounSingular:commissumundertakingthat which is entrusted
+verb:commodo(+ acc.) furnishlendgive
 verb:commodomake fitadaptpleaseobligeserve
-commodumsuitable timeopportunityconvenienceuse
-commodumconvenienceadvantageopportunitycomfort
+nounSingular:commodumsuitable timeopportunityconvenienceuseadvantagecomfort
 verb:commoneoremind someone forcibly of something
 verb:commoneorememberrecollect
 verb:commoneoimpress upon one. remind
 verb:commoveomove violentlydisturbshakeexciteupset
-communiscommongeneralrun of the mill
+adjective:communiscommongeneralrun of the mill
 verb:comparocompare
-compaterthe godfather of a man's child
+nounSingular:compaterthe godfather of a man's child
 verb:compatiorsuffer with onefeel pityhave compassion
 verb:compellodrive togethercollectforcecompel
 verb:comperiodisclose whollylay openlearnfind out
 verb:comperiodisclose fullyfind out with certainty
 comperteon good authority
 compescompedisfettersshackleschained
-compesfettersshackleschains
+nounPlural:compesfettersshackleschains
 verb:competobe appropriatesuitablefit
-complectusembracegrasp
+verb:complectusembracegrasp
 verb:compleofinish
 verb:compleofill upmanbring up to strengthfulfill
 verb:componoput togethercompose
-compositiocompositionagreementpactarrangement
+nounSingular:compositiocompositionagreementpactarrangement
 compositusorderlymatchingmade up of pieces
 verb:comprehendoseizearresttake prisonercatch red-handed
 verb:comprehendograsptake togetherunitecomprehend
 verb:comprehendoembracetake firmlyincludeseize
 verb:comproboapprove fullyconfirmproveestablish
 comprovincialisborn in the same province
-comptusa head-dressa hairband
-conatusexertioneffortundertakingimpulseinclination
+nounSingular:comptusa head-dressa hairband
+nounSingular:conatusexertioneffortundertakingimpulseinclination
 verb:concedoconcedeyieldallowgrantwithdrawgive up
-conceptameasurescapacity
-conceroconnect jointwinejoin in conflict
+noun:conceptameasurescapacity
+verb:conceroconnectjointwinejoin in conflict
 verb:concidofall downsinkperish(wind) subside
 verb:concidobe ruinedfailcut upcut downdestroy
-conciliumcouncil
+nounSingular:conciliumcouncil
 verb:concipiotake or lay hold ofreceivetake in
-concisuscut upbrokenbriefconcise
+verb:concisuscut upbrokenbriefconcise
 verb:concitomove violentlystir upexcite
 verb:conculcotread under footdespiseoppresssuppress
-concupiscentiaavaricecovetousness
+nounUncountable:concupiscentiaavaricecovetousness
 verb:concupiscocovetaim atdesire eagerly
 verb:concutioshakedisturbagitate
 verb:concutioshake togetheragitatealarmdisturbshatter
-CondatoCond
+name:CondatoCond
 verb:condicoagreefixsettlemake arrangements
-conducohireemploy for wagesamong many other meanings
+verb:conducohireemploy for wagesamong many other meanings
 verb:conferobring togetherput togethercollect /
-conferodiscussdebateconferbetake oneselfdevote
-confestimimmediatelywithout delay
-confidohave confidence inbe confident ofrely upon
+verb:conferodiscussdebateconferbetake oneselfdevote
+adverb:confestimimmediatelywithout delay
+verb:confidohave confidence inbe confident ofrely upon
 verb:confiteor confessusconfessown upadmitacknowledge
 verb:confortostrengthen much
 verb:confugofleehave recourse totake refuge
-congregatioassemblysocietyunion
+nounSingular:congregatioassemblysocietyunion
 verb:congregogather togetherassembleconvene
-congruusagreeingfitsuitable
+adjective:congruusagreeingfitsuitable
 verb:coniciohurlthrowput togetherconjecture
 verb:coniectothrow togetherinferguessconclude
 verb:conitorpress uponstruggle to reach
-coniuratioconspiracyplot
-coniuratusconspiratorplotter
+nounSingular:coniuratioconspiracyplot
+nounSingular:coniuratusconspiratorplotter
 verb:coniurotake an oath togetherplotconspire
 verb:conorundertaketryventurepresumeattempt
 verb:conquerorcomplain loudly
 verb:conscendoascendmountgo up
-conscientiaconscienceconsciousnessknowledge
+nounUncountable:conscientiaconscienceconsciousnessknowledge
 verb:conscindotear in pieces
-consciusconscious ofaware of
+adjective:consciusconscious ofaware of
 verb:conservopreserveconservemaintainkeephold to
 verb:considerolook atregard carefully
 verb:considoset downsettle
-consiliointentionallyon purposedesignedly
-consiliumdeliberationconsultationassemblycouncil
-consiliumadvicesuggestionwisdomplanpurposejudgment
-consisto(+ in) verb:depend onrely on
+adverb:consiliointentionallyon purposedesignedly
+nounSingular:consiliumdeliberationconsultationassemblycouncil
+nounSingular:consiliumadvicesuggestionwisdomplanpurposejudgment
+verb:consisto(+ in) depend onrely on
 verb:consistotake one's standstand stillstopbe posted
 consisto(+ abl. etc.) verb:be formed ofconsiststopstay
-consitorsowerplanter
+nounSingular:consitorsowerplanter
 verb:conspergosprinklebestrew
 verb:conspiciocatch sight ofperceivebeholdunderstand
-constanssteadyfirmunchangingconstantunwavering
-constantersteadilyfirmly
+adjective:constanssteadyfirmunchangingconstantunwavering
+adverb:constantersteadilyfirmly
 verb:constituoset upplaceestablishpoststation
 verb:constituoarrangedecideappointsettlefoundset up
 verb:constobe establishedstand firmstopendure
 verb:constringo constrixi constrictumbindconfinerestrain
 verb:construo construxi constructumconstructbuildarrange
-constupatorravisherdebaucher
+nounSingular:constupatorravisherdebaucher
 verb:constuproravishcorrupt
-consuasoradvisorcounselor
+nounSingular:consuasoradvisorcounselor
 verb:consuefacioaccustomacclimatebecome used to
 verb:consuescoaccustominurehabituate
-consuetacustomaryusual
-consuetudocustomusagehabitintimacyfamiliar acquaintance
-consulatiodeliberationinquiryfull consideration
+adverb:consuetacustomaryusual
+nounSingular:consuetudocustomusagehabitintimacyfamiliar acquaintance
+nounSingular:consulatiodeliberationinquiryfull consideration
 verb:consuloreflectconsiderponderreflect
-consulo(+ dat.) look to the interests ofconsultask advice
+verb:consulo(+ dat.) look to the interests ofconsultask advice
 verb:consulolook to the interests ofcome to a conclusion
 verb:consultoask the advice ofconsult
 verb:consultoconsider carefullyweighponder
 consultumdecree
-consummatiocompletionsumming upadding up
+nounSingular:consummatiocompletionsumming upadding up
 verb:consummoadd togethersum upmake perfectcomplete
 verb:consumospendemployuse upfinishwaste awaydestroy
 verb:consuo consui consutumsew togetherstitch
 verb:consurgostand uprise uparisebreak out
 verb:contabescowaste slowly awaydecline in health
-contactustouchingcontactcontagion
-contagesa touchcontact
-contagio contagiumcontagioninfectiontouchingcontact
+nounSingular:contactustouchingcontactcontagion
+nounSingular:contagesa touchcontact
+nounSingular:contagio contagiumcontagioninfectiontouchingcontact
 verb:contaminopolluteinfect
 verb:contegocovershieldprotectdefend
 verb:contemnothink meanly ofdespisecondemnhate
-contemplatiosurveycontemplation
+nounSingular:contemplatiosurveycontemplation
 verb:contemplormark outregardconsider carefullysurvey
-contemptimcontemptuously
-contemptioscorndisdaincontempt
-contemptusdespiseddespicablecontemptible
+adverb:contemptimcontemptuously
+verb:contemptioscorndisdaincontempt
+adjective:contemptusdespiseddespicablecontemptible
 verb:contendocomparecontrastcompete
 verb:contendocontendstrivestrugglehasten
 verb:contendoassertmaintainshoot (a missile)cast
-contenteeagerlyearnestly
-contentuscontentedsatisfied
-contentusstrainedstretchedeagerzealous
-contigo(with dat.)verb:happenbefall
+adverb:contenteeagerlyearnestly
+adjective:contentuscontentedsatisfied
+adjective:contentusstrainedstretchedeagerzealous
+verb:contigo(with dat.)happenbefall
 verb:contineotouchreachgraspaffectinfect
 contineo contigicontectumborder onbefall (good luck)
 verb:contineokeep insurroundcontainconfineinclude
-contineohold togetherkeep togetherconnectjoin
+verb:contineohold togetherkeep togetherconnectjoin
 verb:contineohold backrestrain
-contingo(contactum) verb:touch closelyhappen tobefall
+verb:contingo(contactum) touch closelyhappen tobefall
 adverb:continuoimmediatelyat once
-continuusconnected togethercontinuousuninterrupted
+adjective:continuusconnected togethercontinuousuninterrupted
 contra(+ acc.) against
-contradictioa speaking againstcontradiction
+nounSingular:contradictioa speaking againstcontradiction
 verb:contradodeliver togetheror wholly
 verb:contrahodraw togethercollectassemblecarry out
 verb:contristomake sad or gloomy
 verb:contristosaddenafflictdamage (of crops)
 verb:conturboconfusescatterthrow into confusiondistress
-conventuscoming togetherassemblyunioncongress
-conversatiowaymanner of lifemonastic life
+nounCollective:conventuscoming togetherassemblyunioncongress
+nounSingular:conversatiowaymanner of lifemonastic life
 verb:convertoturn aroundcause to turnadopt the monastic life
 verb:convococall togetherconvene
-copiaabundancesupply
-copiae copiesuppliestroopsforces
-copiosefullyat lengthcopiously
-CorbeiamCorbie
-cornuhorn
-coronacrowndiadem
-corpus corporisbodycorpse
-correptiusmore shortly
+nounUncountable:copiaabundancesupply
+nounPlural:copiae copiesuppliestroopsforces
+adverb:copiosefullyat lengthcopiously
+name:CorbeiamCorbie
+nounSingular:cornuhorn
+nounSingular:coronacrowndiadem
+nounSingular:corpus corporisbodycorpse
+adverb:correptiusmore shortly
 verb:corrigo(correctum)make correctmake right
 verb:corripioseizesnatch upsteal(of a disease) attack
 verb:corroborostrengthen
 verb:corrumpobreak updestroyannihilatespoilweaken
-corrumpo(documents) verb:falsify(character) corrupt
+verb:corrumpo(documents) falsify(character) corrupt
 verb:corruofall to the groundsink downbe ruineddestroyed
-CorturiacumCourtrai
-coruscus(a) flashingtwinklingshakingtrembling
-cotidiedailyevery day
-CourtacumCourtrai
-crapulawine-drinkingintoxicationdrunkenness
+name:CorturiacumCourtrai
+adjective:coruscus(a) flashingtwinklingshakingtrembling
+adjective:cotidiedailyevery day
+name:CourtacumCourtrai
+nounSingular:crapulawine-drinkingintoxicationdrunkenness
 adverb:crastomorrowon the morrow
 crastinusof the morrowthe morrow
-creatorcreatorfounder
-creaturacreatureservant
-creberthickfrequentnumerous
-crebrorepeatedlyoftenone after the othertime after time
+nounSingular:creatorcreatorfounder
+nounSingular:creaturacreatureservant
+adjective:creberthickfrequentnumerous
+adverb:crebrorepeatedlyoftenone after the othertime after time
 verb:credobelievetrustcommittrust inrely onthink
 verb:creocreatemake
-creptiotaking by forceseizure
-crepusculumdusktwilight
+nounSingular:creptiotaking by forceseizure
+nounSingular:crepusculumdusktwilight
 verb:cresco(cretum)growincreaseexpand
-cretachalkfuller's earth
+substance:cretachalkfuller's earth
 verb:cribrosift
-cribrumsieve
-crinishair
-crinituslong haired
-cruciamentumtorturetorment
+nounSingular:cribrumsieve
+nounUncountable:crinishair
+adjective:crinituslong haired
+nounSingular:cruciamentumtorturetorment
 verb:cruciotorturetorment
-crudeliscruel
+adjective:crudeliscruel
 verb:cruentusmake bloodystain with blood
-cruentusbloodybloodthirstyblood-red
-crurcrurislegshankshinalso foot
-crustulumpastrycookie
-crux cruciscross
-cubicularispertaining to a bedroom
-cubiculariusbed-chamber servantchamberlain
-cubiculumbedroomsleeping chamber
+adjective:cruentusbloodybloodthirstyblood-red
+nounSingular:crurcrurislegshankshinalso foot
+nounSingular:crustulumpastrycookie
+nounSingular:cruxcross
+nounSingular:cruciscross
+nounSingular:cubicularispertaining to a bedroom
+nounSingular:cubiculariusbed-chamber servantchamberlain
+nounSingular:cubiculumbedroomsleeping chamber
 verb:cubitum irego to bedretire
-cubitumthe elbowa cubit
+nounSingular:cubitumelbowcubit
 verb:cubolie downrecline
 cui(masc. sing. dat.) TO WHOM did you give it?
 cui(fem. sing. dat.) IN WHICH (province) did you live?
@@ -736,78 +736,78 @@ cuius(neut. sing. gen) (the building) the size OF WHICH was great
 cuius(masc. sing. gen.) (the saint) WHOSE virtues were many
 cuius(fem. sing. gen.) (the queen)the vices OF WHOM were many
 cuiusmodiof what kind
-culpafaultblame(esp. against chastity)
+nounSingular:culpafaultblame(esp. against chastity)
 verb:culpoblamecensureaccuse
-cultellusa little knife
-culturacultivation
-cum(prep + abl.) with
+nounSingular:cultellusa little knife
+nounUncountable:culturacultivation
+preposition:cum(prep + abl.) with
 cum(with indicative) when
 cum(with subjunctive) whenaswhilesincealthough
-cunabulacradle
-cunaenest for young birds
-cunctatiodelay
-cunctatordelayerprocrastinator
+nounSingular:cunabulacradle
+nounSingular:cunaenest for young birds
+nounSingular:cunctatiodelay
+nounSingular:cunctatordelayerprocrastinator
 verb:cunctordelayimpedehold up
 cunctusallall collectivelythe whole
-cupiditasambitionavariceparty spiriteager desire
-cupidopassiondesirewantingyearninglonging
+nounSingular:cupiditasambitionavariceparty spiriteager desire
+nounSingular:cupidopassiondesirewantingyearninglonging
 verb:cupiodesirewishlong fordesire
-cuppediadelicaciescandiessweetmeats
-cupressuscypresscypress wooda cypress-wood casket
+nounPlural:cuppediadelicaciescandiessweetmeats
+nounSingular:cupressuscypresscypress wooda cypress-wood casket
 curwhywherefore
-curamanagementadministrationcareconcerncharge
-curatioattentionmedical attentionhealingcuring
-curatorguardianoverseer
-curiacourt
-curiositascuriosityinquisitivenessnosiness
-curiosuscarefulattentivecuriousinquisitiveworn out by cares
-curis qurisa spear
+nounSingular:curamanagementadministrationcareconcerncharge
+nounSingular:curatioattentionmedical attentionhealingcuring
+nounSingular:curatorguardianoverseer
+nounSingular:curiacourt
+nounSingular:curiositascuriosityinquisitivenessnosiness
+adjective:curiosuscarefulattentivecuriousinquisitiveworn out by cares
+nounSingular:curis qurisa spear
 verb:curocare fortrouble aboutpay attention to
-curomanageadministerprovide money
-curo(+gerundive) verb:see to a thing being donecurerest
-curriculuma runningracelap around the trackcourse
-curruscarta plow with wheels
-cursimhastilyquicklyrapidly
+verb:curomanageadministerprovide money
+verb:curo(+gerundive) see to a thing being donecurerest
+nounSingular:curriculuma runningracelap around the trackcourse
+nounSingular:curruscarta plow with wheels
+adverb:cursimhastilyquicklyrapidly
 verb:cursitorun up and down
 verb:cursorun back and forth
-cursorrunnercarriermessenger
-cursusa racea runningrace courserace trackcourse
+nounSingular:cursorrunnercarriermessenger
+nounSingular:cursusa racea runningrace courserace trackcourse
 verb:curtoshortenabbreviate
-CurtracusCourtrai
-curtusshortenedmutilateddefectivegelded
+name:CurtracusCourtrai
+adjective:curtusshortenedmutilateddefectivegelded
 verb:curvobendarchcurveinfluence
 curvusarchedbentbowedcurvedcrookedwrong (morally crooked)
-custodiaprotectioncustody
-custodiae custodieguardswardens
-custos(custodis)guardiankeeperwatchmanattendantguardspy
-damnatiocondemnation
+nounSingular:custodiaprotectioncustody
+nounPlural:custodiae custodieguardswardens
+nounSingular:custos(custodis)guardiankeeperwatchmanattendantguardspy
+nounSingular:damnatiocondemnation
 verb:damnocondemndamn
 dapiferseneschal
 de(prep. + abl.) down fromfromconcerningabout
 verb:debeoowebe morally bound tobe bound by
 verb:debilitoweakenenervatesapexhaust
-decensdecenterproperlyfittinglysuitably
+adverb:decensdecenterproperlyfittinglysuitably
 verb:decernodecidedeterminesettle
 verb:decertocontendfight to the finish
 decetit is seemlycomelysuitableproper
-decimustenth
-decipio(deceptus) ensnaretrapbeguiledeceivecheat
-decorbeautygrace
-decorobeautifyembellishadorn
-decorusbeautifulgracefulcharmingproperfitbecoming
-decretumdecreejudgmentedictorder
+numeralOrdinal:decimustenth
+verb:decipio(deceptus) ensnaretrapbeguiledeceivecheat
+nounSingular:decorbeautygrace
+verb:decorobeautifyembellishadorn
+adjective:decorusbeautifulgracefulcharmingproperfitbecoming
+nounSingular:decretumdecreejudgmentedictorder
 verb:decumbofallfall intolie down
-dedecorunseemlyshamefuldisgracefuldishonorable
-dedecusshamedishonordisgracecrimedishonorable act
+adjective:dedecorunseemlyshamefuldisgracefuldishonorable
+nounSingular:dedecusshamedishonordisgracecrimedishonorable act
 verb:dedicodedicate
 verb:deducolad out colonistsfound a colony
 verb:defaecocleansepurifypurge
 verb:defendodefendward offprotectshelter
 verb:deferohand overcarry downcommunicateofferrefer
-defessuswearytired
+adjective:defessuswearytired
 verb:defetiscor (defessus)grow tiredweary.
 verb:deficio(defectum)failweakenbe in want
-defigofasten downsecurefix firmlyconcentratefix upon
+nounSingular:defigofasten downsecurefix firmlyconcentratefix upon
 verb:defleoweep forbewail
 verb:defleobewailweep for
 verb:defluoflow downwastedisappear
