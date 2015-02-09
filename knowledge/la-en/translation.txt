@@ -285,7 +285,8 @@ arca archachestboxmoney boxcoffincell
 verb:arceoshut upenclose
 verb:arcessoaccersobringfetchsummoncall for
 arcusbow (BOW and arrows)archbendarc
-argentumsilvermoney
+metal:argentumsilver
+nounUncountable:argentummoney
 argumentumproofevidence
 verb:arguoshowmake clearattempt to show
 armaarmsweapons
@@ -329,75 +330,77 @@ verb:audeo(part. ausus )dare
 verb:audiohearhearkenlisten to
 auditorhearerlistener
 verb:auferocarry awayremovestealcarry offmake away with
-aureusgolden
-aurisear
+adjective:aureusgolden
+nounSingular:aurisear
 AurissiodorensesAuxerredept. Yonnebetween Paris and Dijon
-aurumgold
+metal:aurumgold
 aut ... auteither ... or
 autemmoreoverhoweverbutalso
-autusincreaseenlargementgrowth
-AuxatiaAlsace
-auxiliumaidhelpassistancesupport
-avaritiaavaricegreed
-avarusgreedyavaricious
+nounUncountable:autusincreaseenlargementgrowth
+name:AuxatiaAlsace
+nounUncountable:auxiliumaidhelpassistancesupport
+nounUncountable:avaritiaavaricegreed
+adjective:avarusgreedyavaricious
 verb:avehocarry awayremove (avexi avectum )
 verb:avertoturn awayavertavoid. turn back
-AvesniisAvesnes
+name:AvesniisAvesnes
 verb:avococall awaydivert
-baiulusporterpall-bearercarrier of a burden
-balbusstammeringstutteringfumbling
-barbabeardwhiskers
-bardusstupidslowdull
-basiumkiss
-beatusblessedfortunatesometimes "saint"
-bellicusmartialmilitarywar-like
-bellumwar
-bellusbeautifulprettycharminghandsome
-benemelioroptimewellbetterbest
-beneficiumbenefitfavorserviceprivilegeright
-benevolentiabenevolencekindnessgood will
-benignekindlygenerously
-BerlinmonteBerlaimontnear Le Quesnoy
-bestiaanimalbeast
+nounSingular:baiulusporterpall-bearercarrier of a burden
+nounUncountable:balbusstammeringstutteringfumbling
+nounUncountable:barbabeard
+nounPlural:barbawhiskers
+adjective:bardusstupidslowdull
+nounSingular:basiumkiss
+adjective:beatusblessedfortunatesometimes "saint"
+adjective:bellicusmartialmilitarywar-like
+nounSingular:bellumwar
+adjective:bellusbeautifulprettycharminghandsome
+adjective:benemelioroptimewellbetterbest
+nounSingular:beneficiumbenefitfavorserviceprivilegeright
+nounSingular:benevolentiabenevolencekindnessgood will
+adverb:benignekindlygenerously
+name:BerlinmonteBerlaimont
+Berlinmontenear Le Quesnoy
+nounSingular:bestiaanimalbeast
 verb:bibodrinkquaff
-bistwice
+adverb:bistwice
 verb:blandiorflattercaress(+ dat.) coax
-blanditiablandishmentsattractionsallurementcharm
-BlesenseBlois
-BolonienseBouillon
-bonus melior optimusgoodbetterbest
-bos (bovis )cowoxbull
-BrabatensiumBrabant
-BrachantsBrabant
-brevisshortsmallbrief
-brevitasshortnessbrevity
-breviterbriefly
-BrocherotaBroqueroi
+nounSingular:blanditiablandishmentsattractionsallurementcharm
+name:BlesenseBlois
+name:BolonienseBouillon
+adjective:bonus melior optimusgoodbetterbest
+nounSingular:bosboviscowoxbull
+name:BrabatensiumBrabant
+name:BrachantsBrabant
+adjective:brevisshortsmallbrief
+nounUncountable:brevitasshortnessbrevity
+adverb:breviterbriefly
+name:BrocherotaBroqueroi
 verb:cadofalldropplummettopple
-caecusblindsightless
-caelestisheavenlycelestialnouna goddweller in heaven
-caelumskyheaven
-calamitascalamitymisfortunedisaster
-calamusanything made or reed -- penarrowpipeetc
-calcar-isspur
+adjective:caecusblindsightless
+adjective:caelestisheavenlycelestialnouna goddweller in heaven
+nounSingular:caelumskyheaven
+nounUncountable:calamitascalamitymisfortunedisaster
+nounSingular:calamusanything made or reed -- penarrowpipeetc
+nounSingular:calcarspur
 verb:calcotreadtrample upon
-calculuspebblestone
-callideskillfullycleverlycunninglyslylysubtly
-calliduscleverdextrousexperiencedskilfulcunningsly
-CameracumCambrai
-campanabell
-candidusbrightshiningwhite
-canisdog
-canonicuscanonicalaccording to the canonslegallawfulright
-canonuscanonmember of a cathedral chapter or canonryAugustinian
+nounSingular:calculuspebblestone
+adverb:callideskillfullycleverlycunninglyslylysubtly
+adjective:calliduscleverdextrousexperiencedskilfulcunningsly
+name:CameracumCambrai
+nounSingular:campanabell
+adjective:candidusbrightshiningwhite
+nounSingular:canisdog
+adjective:canonicuscanonicalaccording to the canonslegallawfulright
+nounSingular:canonuscanonmember of a cathedral chapter or canonryAugustinian
 verb:cantosing
-capillushair
+nounUncountable:capillushair
 verb:capioseizetakechooseattackinjurecomprehend
-capituluschapterchapter meetingchapter house
+nounSingular:capituluschapterchapter meetingchapter house
 verb:captograbtry to getgrab at
-caput capitisheadtopsummitchief
-carbo carboniscarboncoalcharcoal
-carcerprisoncelljaildungeon
+nounSingular:caput capitisheadtopsummitchief
+material:carbo carboniscarboncoalcharcoal
+nounSingular:carcerprisoncelljaildungeon
 careo(+ abl. of sep.) be withoutbe deprived oflackwant
 
 noun:cariesrottennesscorruptiondecay
@@ -409,8 +412,8 @@ noun:caritascharity
 
 noun:carmensongpoem
 
-CarnotenseChartres
-Carnutum CarnotumChartres
+name:CarnotenseChartres
+name:Carnutum CarnotumChartres
 
 verb:carpopluckseizegrablay hold ofhold on to
 
@@ -419,84 +422,84 @@ adjective:caruscostlyhigh-pricedexpensive
 
 verb:cassobring to naughtdestroyannulmake void
 adverb:castepurelyspotlesslyuprightlychastely
-CastellandumChateaudun
+name:CastellandumChateaudun
 
 noun:casusnounSingular:accidentnounSingular:chancefortune
 noun:catenanounSingular:chainfetters
 noun:catervacrowdtroopflock
 adverb:catervatimin troopsin masses
 
-CathalaunensesChalons
+name:CathalaunensesChalons
 
 noun:cattuscat
 noun:caudathe tail of an animal
 
 causa(in the abl.) on account offor the sake of
-causacausereasonmotivepretextinterest
-causacase at lawcaselaw-suitsituationcondition
-caute cautimcautiouslywith security
-cautelacautionprecautionsecurity
-caveo cavi cautumbewareavoidlook out for
-cavusholepit
+nounSingular:causacausereasonmotivepretextinterest
+nounSingular:causacase at lawcaselaw-suitsituationcondition
+adverb:caute cautimcautiouslywith security
+nounUncountable:cautelacautionprecautionsecurity
+verb:caveo cavi cautumbewareavoidlook out for
+nounSingular:cavusholepit
 verb:cedogoproceedturn outhappengo awaywithdraw
 verb:cedo cessi cessumgrantyield
 cedo(+ dat.) give ground tosubmit tobe inferior to
-celebrerfamousrenowned
-celebrusabounding inrich inmuch frequentedrespected
-celerquickswiftrapidspeedyfast
-celeritasspeedswiftnessrapidityquickness
-celeriterrapidlyquicklyswiftlyspeedily
+adjective:celebrerfamousrenowned
+adjective:celebrusabounding inrich inmuch frequentedrespected
+adjective:celerquickswiftrapidspeedyfast
+nounSingular:celeritasspeedswiftnessrapidityquickness
+adverb:celeriterrapidlyquicklyswiftlyspeedily
 verb:celohideconcealkeep secret
-cenadinnermeal
-cenaculumgarretattic
+nounSingular:cenadinnermeal
+nounSingular:cenaculumgarretattic
 verb:cenodine
-censurajudgement
-centum(indecl.) one hundred100
+nounUncountable:censurajudgement
+numeral:centum(indecl.) one hundredmath:100
 verb:cernoseparatesiftdistinguishdecideresolvedetermine
-cernuusfalling headlong
-certe certo(adv) certainlyassuredly
+verb:cernuusfalling headlong
+adverb:certe certo(adv) certainlyassuredly
 verb:certocontendsettledisputesettle by combat
-certusundoubtedcertainsure
-certussettledresolveddecideddefinitecertainsure
-cervusstagdeer
+adjective:certusundoubtedcertainsure
+adjective:certussettledresolveddecideddefinitecertainsure
+nounSingular:cervusstagdeer
 ceterafor the restotherwise
 ceterithe remainingthe restthe others
 adverb:ceterumotherwisemoreoverbut
 ceterusthe otherthe rest
-charisma carismagiftpresent
-chirographumautographperson's own handwritingwritten charter
-cibofood for animals
-cibusfood for men and animals
+nounSingular:charisma carismagiftpresent
+nounSingular:chirographumautographperson's own handwritingwritten charter
+nounUncountable:cibofood for animals
+nounUncountable:cibusfood for men and animals
 cicutahemlock
 cilicium(? Herimannp. 311)
-cimentariusmason?
-ciminatioaccusationcalumnycharge
-ciminosusreproachfulslanderous
-cinis cinerisashesembers
+nounSingular:cimentariusmason?
+nounSingular:ciminatioaccusationcalumnycharge
+adjective:ciminosusreproachfulslanderous
+nounUncountable:cinis cinerisashesembers
 verb:circumveniocome aroundsurroundcheatdefraud
 verb:circumveniobesetassail
-citoquicklyrapidlyspeedily
-civiliscivilcivic
-civiscitizentownsmanbourgeoisburgess
-civitasstatecitizenshipcity-state
-clamsecretlyin secret
+adverb:citoquicklyrapidlyspeedily
+adjective:civiliscivilcivic
+nounSingular:civiscitizentownsmanbourgeoisburgess
+nounSingular:civitasstatecitizenshipcity-state
+adverb:clamsecretlyin secret
 verb:clamocallshoutcry aloudproclaimdeclare
-clamorloud shoutingcry
+nounSingular:clamorloud shoutingcry
 verb:claromake bright or clearmake clear in the mind
-clarusclearbrightrenownedfamousillustrious
+adjective:clarusclearbrightrenownedfamousillustrious
 verb:claudeolimphaltbe lamehobble
 verb:claudo (clausus)confineshut upcloseblockadebesiege
-clauduslame
-claustrumboltbarprisondenpenenclosurecloister
-clementiaindulgenceforbearancehumanitymercygentlenessetc
-clibanusovenfurnacetray for bread making
-coadunatioa gathering togethera summing upa uniting
+adjective:clauduslame
+nounSingular:claustrumboltbarprisondenpenenclosurecloister
+nounUncountable:clementiaindulgenceforbearancehumanitymercygentlenessetc
+nounSingular:clibanusovenfurnacetray for bread making
+nounSingular:coadunatioa gathering togethera summing upa uniting
 verb:coaegrescobecome sick at the same time
-coepi(pres. incipio )beganstartedundertookinitiated
-coerceosurroundencloserestrainconfine
+verbPast:coepi(pres. incipio )beganstartedundertookinitiated
+verb:coerceosurroundencloserestrainconfine
 verb:cogitothinkruminateponderconsiderplan
 adjective:cognatusrelated by blood (noun) a relativekinsman
-cognomensurnamefamily namenick-name
+nounSingular:cognomensurnamefamily namenick-name
 verb:cognoscoexamineinquirelearn
 verb:cogocoegicoactumcompelrestrictconfine
 verb:cogocoegicoactumbring togetherdrivedraw
