@@ -287,9 +287,11 @@ struct Lemma
                     else if (sense != exprSense &&
                              !sense.specializes(exprSense))
                     {
-                        assert(sense == Sense.unknown,
-                               `Can't override argumented sense ` ~ sense.to!string
-                               ~ ` with ` ~ exprSense.to!string);
+                        debug writeln(`warning: Overriding `, expr, `'s parameterized sense `, sense,
+                                ` with `, exprSense);
+                        // assert(sense == Sense.unknown,
+                        //        `Can't override ` ~ expr ~ `'s parameterized sense ` ~ sense.to!string
+                        //        ~ ` with ` ~ exprSense.to!string);
                     }
                     expr = split[2];
                     if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
@@ -1890,7 +1892,7 @@ class Graph
                         const sense = senseCode.to!Sense;
                         if (firstSense  == Sense.unknown) { firstSense = sense; }
                         if (secondSense == Sense.unknown) { secondSense = sense; }
-                        writeln("senseCode: ", senseCode, ", sense: ", sense, ", line: ", line, ", senseFact[2]", senseFact[2]);
+                        // writeln("senseCode: ", senseCode, ", sense: ", sense, ", line: ", line, ", senseFact[2]", senseFact[2]);
                         // line = senseFact[2]; // rest
                     }
                     catch (std.conv.ConvException e) { /* ok for now */ }
@@ -1899,7 +1901,8 @@ class Graph
                 const first = split[0], second = split[2];
                 auto firstRefs = store(first.splitter(alternativesSeparator).map!idup,
                                        firstLang, firstSense, origin);
-                if (!second.empty)
+                if (!first.empty &&
+                    !second.empty)
                 {
                     auto secondRefs = store(second.splitter(alternativesSeparator).map!idup,
                                             secondLang, secondSense, origin);
@@ -4345,9 +4348,9 @@ class Graph
                bool checkExisting = false,
                bool warnExisting = false) in
     {
-        assert(src != dst, (at(src).lemma.expr ~
+        assert(src != dst, (at(src).lemma.to!string ~
                             ` must not be equal to ` ~
-                            at(dst).lemma.expr));
+                            at(dst).lemma.to!string));
     }
     body
     {
