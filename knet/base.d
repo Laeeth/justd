@@ -200,10 +200,15 @@ struct Location
     double longitude;
 }
 
+/** Word (String). */
+static if (useRCString) { alias Word = RCXString!(immutable char, 16-1); }
+else                    { alias Word = immutable string; }
+static if (useRCString) { alias MutWord = RCXString!(char, 16-1); }
+else                    { alias MutWord = string; }
+
 /** Expression (String). */
 static if (useRCString) { alias Expr = RCXString!(immutable char, 24-1); }
 else                    { alias Expr = immutable string; }
-
 static if (useRCString) { alias MutExpr = RCXString!(char, 24-1); }
 else                    { alias MutExpr = string; }
 
@@ -545,8 +550,8 @@ class Graph
 
         // Indexes
         Nd[Lemma] ndByLemma;
+        Lemmas[Word] lemmasByWord; // Lemmas index by word of expression has more than one word
         Lemmas[Expr] lemmasByExpr;
-        Lemmas[Expr] lemmasByWord; // Lemmas index by word of expression has more than one word
         Lemmas[ubyte] lemmasBySyllableCount; // TODO
 
         string[Ctx] contextNameByCtx; /** Ontology Context Names by Index. */
