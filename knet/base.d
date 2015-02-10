@@ -4904,11 +4904,14 @@ class Graph
                 showTopLanguages(hist, 1);
             }
         }
-        else if (normLine.skipOver(`startswith(`) ||
+        else if (normLine.skipOver(`begin(`) ||
+                 normLine.skipOver(`begins(`) ||
+                 normLine.skipOver(`startswith(`) ||
                  normLine.skipOver(`starts_with(`) ||
                  normLine.skipOver(`beginswith(`) ||
                  normLine.skipOver(`begins_with(`) ||
                  normLine.skipOver(`hasbegin(`) ||
+                 normLine.skipOver(`hasbeginning(`) ||
                  normLine.skipOver(`has_begin(`) ||
                  normLine.skipOver(`hasstart(`) ||
                  normLine.skipOver(`has_start(`))
@@ -4926,7 +4929,9 @@ class Graph
                 }
             }
         }
-        else if (normLine.skipOver(`endswith(`) ||
+        else if (normLine.skipOver(`end(`) ||
+                 normLine.skipOver(`ends(`) ||
+                 normLine.skipOver(`endswith(`) ||
                  normLine.skipOver(`ends_with(`) ||
                  normLine.skipOver(`hasend(`) ||
                  normLine.skipOver(`has_end(`) ||
