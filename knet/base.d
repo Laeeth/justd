@@ -236,7 +236,7 @@ struct Lemma
     pure // nothrow
     :
 
-    this(S)(S exprString,
+    this(S)(S expr,
             Lang lang,
             Sense sense,
             Ctx context = Ctx.asUndefined,
@@ -247,8 +247,6 @@ struct Lemma
             bool hasUniqueSense = false) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
     body
     {
-        auto expr = exprString.to!string;
-
         // check if regular expression
         if (normalizeExpr)
         {
@@ -307,7 +305,7 @@ struct Lemma
             }
         }
 
-        this.expr = expr;
+        this.expr = expr.to!(typeof(this.expr)); // do this at the end to minimize size of allocated string
     }
 
     MutExpr expr;
@@ -788,7 +786,9 @@ class Graph
         // loadUniquelySensedLemmas("~/.cache");
         loadData(cachePath);
 
-        learnVerbs();
+        this.learnMobyEnglishPronounciations();
+        return;
+
         learnDefault();
 
         // inferSpecializedSenses();
@@ -5224,7 +5224,8 @@ class Graph
                                             at(ln).actors[]
                                                   .filter!(actor => (actor != nd &&
                                                                      (dstLangs.empty ||
-                                                                      dstLangs.canFind(at(actor).lemma.lang)) // TODO functionize to Lemma.ofLang
+                                                                      dstLangs.canFind(Lang.en// at(actor).lemma.lang
+                                                                          )) // TODO functionize to Lemma.ofLang
                                                                )))
                                       .joiner(); // no self
     }
@@ -5249,7 +5250,11 @@ class Graph
                 langs = [srcNode.lemma.lang]; // stay within language by default
             }
 
-            foreach (dstNd; nearsOf(srcNd, Rel.translationOf, [Lang.ipa], origins)) // translations to IPA-language
+            dln("before");
+            auto dstNds = nearsOf(srcNd, Rel.translationOf, [Lang.ipa], origins);
+            dln("after");
+
+            foreach (dstNd; dstNds) // translations to IPA-language
             {
                 const dstNode = at(dstNd);
                 auto hits = allNodes.filter!(a => langs.canFind(a.lemma.lang))
