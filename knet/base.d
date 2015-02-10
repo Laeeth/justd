@@ -525,8 +525,8 @@ class Graph
         return trav;
     }
 
-    auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward); }
-    auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward); }
+    auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward).map!(nd => nd.raw); }
+    auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward).map!(ln => ln.raw); }
 
     /* static if (useArray) { alias Nodes = Array!Node; } */
     /* else                 { alias Nodes = Node[]; } */
@@ -5209,7 +5209,8 @@ class Graph
         return at(nd).links[]
                      .filter!(ln => (at(ln).role.rel == rel &&
                                      (origins.empty ||
-                                      origins.canFind(at(ln).origin))));
+                                      origins.canFind(at(ln).origin))))
+                     .map!(ln => ln.raw);
     }
 
     /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
