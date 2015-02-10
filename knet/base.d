@@ -88,7 +88,7 @@ import mmfile_ex;
 alias rdT = readText;
 
 import std.range: front, split, isInputRange, back;
-import std.path: buildNormalizedPath, expandTilde, extension, baseName;
+import std.path: buildPath, buildNormalizedPath, expandTilde, extension, baseName;
 import wordnet: WordNet;
 
 import algorithm_ex: isPalindrome, either, append;
@@ -171,17 +171,17 @@ bool isMultiWord(S)(S s) if (isSomeString!S)
 alias NWeight = real;
 
 /** Context or Ontology Category Index (currently from NELL). */
-struct ContextIx
+struct Ctx
 {
     @safe @nogc pure nothrow:
-    static ContextIx asUndefined() { return ContextIx(0); }
-    bool defined() const { return this != ContextIx.asUndefined; }
+    static Ctx asUndefined() { return Ctx(0); }
+    bool defined() const { return this != Ctx.asUndefined; }
     /* auto opCast(T : bool)() { return defined; } */
 private:
     ushort _ix = 0;
 }
 
-enum anyContext = ContextIx.asUndefined; // reserve 0 for anyContext (unknown)
+enum anyContext = Ctx.asUndefined; // reserve 0 for anyContext (unknown)
 
 // TODO Use in Lemma.
 enum MeaningVariant { unknown = 0, first = 1, second = 2, third = 3 }
@@ -231,7 +231,7 @@ struct Lemma
     this(S)(S exprString,
             Lang lang,
             Sense sense,
-            ContextIx context = ContextIx.asUndefined,
+            Ctx context = Ctx.asUndefined,
             Manner manner = Manner.formal,
             bool isRegexp = false,
             ubyte meaningNr = 0,
@@ -279,6 +279,7 @@ struct Lemma
                 try
                 {
                     const exprSense = split[0].to!Sense;
+                    expr = split[2];
                     if (sense == Sense.unknown ||
                         exprSense.specializes(sense))
                     {
@@ -287,14 +288,9 @@ struct Lemma
                     else if (sense != exprSense &&
                              !sense.specializes(exprSense))
                     {
-                        debug writeln(`warning: Overriding `, expr, `'s parameterized sense `, sense,
+                        debug writeln(`warning: Can't override `, expr, `'s parameterized sense `, sense,
                                 ` with `, exprSense);
-                        // assert(sense == Sense.unknown,
-                        //        `Can't override ` ~ expr ~ `'s parameterized sense ` ~ sense.to!string
-                        //        ~ ` with ` ~ exprSense.to!string);
                     }
-                    expr = split[2];
-                    if (false) { dln(`Decoded expr `, expr, ` to have sense `, this.sense); }
                 }
                 catch (std.conv.ConvException e)
                 {
@@ -311,10 +307,10 @@ struct Lemma
      * meanings of the same word in different languages. */
 
     // TODO bitfields
-    Lang lang;
-    Sense sense;
-    ContextIx context; // TODO bitfield
-    bool uniqueSense; // Expr has unique Sense in Lang
+    Lang lang = Lang.unknown;
+    Sense sense = Sense.unknown;
+    Ctx context = Ctx.asUndefined; // TODO bitfield
+    bool uniqueSense = false; // Expr has unique Sense in Lang
 
     enum bitsizeOfManner = packedBitSizeOf!Manner;
     enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
@@ -550,17 +546,17 @@ class Graph
         // Indexes
         Nd[Lemma] ndByLemma;
         Lemmas[Expr] lemmasByExpr;
-        Lemmas[Expr] lemmasBySubWord; // Lemmas index by part of (word) expression
+        Lemmas[Expr] lemmasByWord; // Lemmas index by word of expression has more than one word
         Lemmas[ubyte] lemmasBySyllableCount; // TODO
 
-        string[ContextIx] contextNameByIx; /** Ontology Context Names by Index. */
-        ContextIx[string] contextIxByName; /** Ontology Context Indexes by Name. */
+        string[Ctx] contextNameByCtx; /** Ontology Context Names by Index. */
+        Ctx[string] ctxByName; /** Ontology Context Indexes by Name. */
     }
 
     // Statistics
     private
     {
-        ushort contextIxCounter = ContextIx.asUndefined._ix + 1; // 1 because 0 is reserved for anyContext (unknown)
+        ushort ctxCounter = Ctx.asUndefined._ix + 1; // 1 because 0 is reserved for anyContext (unknown)
 
         size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
 
@@ -617,7 +613,7 @@ class Graph
     Nds ndsByLemmaDirect(S)(S expr,
                             Lang lang,
                             Sense sense,
-                            ContextIx context) if (isSomeString!S)
+                            Ctx context) if (isSomeString!S)
     {
         typeof(return) nodes;
         const lemma = Lemma(expr, lang, sense, context);
@@ -644,7 +640,7 @@ class Graph
     /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
     auto ndsOf(S)(S expr) if (isSomeString!S)
     {
-        return lemmasOf(expr).map!(lemma => ndByLemma[lemma]);
+        return lemmasOfExpr(expr).map!(lemma => ndByLemma[lemma]);
     }
 
     /** Get All Possible Nodes related to $(D word) in the interpretation
@@ -654,7 +650,7 @@ class Graph
     Nds ndsOf(S)(S expr,
                  Lang lang,
                  Sense sense,
-                 ContextIx context = anyContext) if (isSomeString!S)
+                 Ctx context = anyContext) if (isSomeString!S)
     {
         typeof(return) nodes;
 
@@ -690,9 +686,9 @@ class Graph
         return nodes;
     }
 
-    /** Get All Possible Lemmas related to $(D word).
+    /** Get All Possible Lemmas related to Expression (set of words) $(D expr).
      */
-    Lemmas lemmasOf(S)(S expr) if (isSomeString!S)
+    Lemmas lemmasOfExpr(S)(S expr) if (isSomeString!S)
     {
         static if (is(S == string)) // TODO Is there a prettier way to do this?
         {
@@ -700,7 +696,21 @@ class Graph
         }
         else
         {
-            return lemmasByExpr.get(expr.dup, typeof(return).init);
+            return lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
+        }
+    }
+
+    /** Get All Possible Lemmas related to Word $(D word).
+     */
+    Lemmas lemmasOfWord(S)(S word) if (isSomeString!S)
+    {
+        static if (is(S == string)) // TODO Is there a prettier way to do this?
+        {
+            return lemmasByWord.get(word, typeof(return).init);
+        }
+        else
+        {
+            return lemmasByWord.get(word.dup, typeof(return).init); // TODO Why is dup needed here?
         }
     }
 
@@ -761,6 +771,8 @@ class Graph
      */
     this()
     {
+        import core.memory: GC;
+        // GC.disable;
         unittestMe();
         learnVerbs();
         learnDefault();
@@ -810,7 +822,7 @@ class Graph
         const beSv = store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
         assert(at(beEn).lemma.expr.ptr ==
                at(beSv).lemma.expr.ptr); // assert clever reuse of already hashed expr
-}
+    }
 
     void learnDefault()
     {
@@ -974,130 +986,130 @@ class Graph
             try
             {
                 const lang = langString.to!Lang;
-                const dirPath = `../knowledge/` ~ langString;
+                const dirPath = `../knowledge/` ~ langString; // TODO reuse dirEntry
 
                 // Male Name
-                learnMtoNMaybe(dirPath ~ `/male_name.txt`, // TODO isA male name
+                learnMtoNMaybe(buildPath(dirPath, `male_name.txt`), // TODO isA male name
                                Sense.nameMale, lang,
                                Role(Rel.hasMeaning),
                                Sense.unknown, lang,
                                Origin.manual, 1.0);
 
                 // Female Name
-                learnMtoNMaybe(dirPath ~ `/female_name.txt`, // TODO isA female name
+                learnMtoNMaybe(buildPath(dirPath, `female_name.txt`), // TODO isA female name
                                Sense.nameFemale, lang,
                                Role(Rel.hasMeaning),
                                Sense.unknown, lang,
                                Origin.manual, 1.0);
 
                 // Irregular Noun
-                learnMtoNMaybe(dirPath ~ `/irregular_noun.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `irregular_noun.txt`),
                                Sense.nounSingular, lang,
                                Role(Rel.formOfNoun),
                                Sense.nounPlural, lang,
                                Origin.manual, 1.0);
 
                 // Abbrevation
-                learnMtoNMaybe(dirPath ~ `/abbrevation.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `abbrevation.txt`),
                                Sense.unknown, lang,
                                Role(Rel.abbreviationFor),
                                Sense.unknown, lang,
                                Origin.manual, 1.0);
-                learnMtoNMaybe(dirPath ~ `/noun_abbrevation.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `noun_abbrevation.txt`),
                                Sense.noun, lang,
                                Role(Rel.abbreviationFor),
                                Sense.noun, lang,
                                Origin.manual, 1.0);
 
                 // Synonym
-                learnMtoNMaybe(dirPath ~ `/synonym.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `synonym.txt`),
                                Sense.unknown, lang, Role(Rel.synonymFor),
                                Sense.unknown, lang, Origin.manual, 1.0);
-                learnMtoNMaybe(dirPath ~ `/obsolescent_synonym.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `obsolescent_synonym.txt`),
                                Sense.unknown, lang, Role(Rel.obsolescentFor),
                                Sense.unknown, lang, Origin.manual, 1.0);
-                learnMtoNMaybe(dirPath ~ `/noun_synonym.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `noun_synonym.txt`),
                                Sense.noun, lang, Role(Rel.synonymFor),
                                Sense.noun, lang, Origin.manual, 0.5);
-                learnMtoNMaybe(dirPath ~ `/adjective_synonym.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `adjective_synonym.txt`),
                                Sense.adjective, lang, Role(Rel.synonymFor),
                                Sense.adjective, lang, Origin.manual, 1.0);
 
                 // Homophone
-                learnMtoNMaybe(dirPath ~ `/homophone.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `homophone.txt`),
                                Sense.unknown, lang, Role(Rel.homophoneFor),
                                Sense.unknown, lang, Origin.manual, 1.0);
 
                 // Abbrevation
-                learnMtoNMaybe(dirPath ~ `/cardinal_direction_abbrevation.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `cardinal_direction_abbrevation.txt`),
                                Sense.unknown, lang, Role(Rel.abbreviationFor),
                                Sense.unknown, lang, Origin.manual, 1.0);
-                learnMtoNMaybe(dirPath ~ `/language_abbrevation.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `language_abbrevation.txt`),
                                Sense.language, lang, Role(Rel.abbreviationFor),
                                Sense.language, lang, Origin.manual, 1.0);
 
                 // Noun
-                learnMto1Maybe(lang, dirPath ~ `/concrete_noun.txt`,
+                learnMto1Maybe(lang, buildPath(dirPath, `concrete_noun.txt`),
                                Role(Rel.hasAttribute), `concrete`,
                                Sense.nounConcrete, Sense.adjective, 1.0);
-                learnMto1Maybe(lang, dirPath ~ `/abstract_noun.txt`,
+                learnMto1Maybe(lang, buildPath(dirPath, `abstract_noun.txt`),
                                Role(Rel.hasAttribute), `abstract`,
                                Sense.nounAbstract, Sense.adjective, 1.0);
-                learnMto1Maybe(lang, dirPath ~ `/masculine_noun.txt`,
+                learnMto1Maybe(lang, buildPath(dirPath, `masculine_noun.txt`),
                                Role(Rel.hasAttribute), `masculine`,
                                Sense.noun, Sense.adjective, 1.0);
-                learnMto1Maybe(lang, dirPath ~ `/feminine_noun.txt`,
+                learnMto1Maybe(lang, buildPath(dirPath, `feminine_noun.txt`),
                                Role(Rel.hasAttribute), `feminine`,
                                Sense.noun, Sense.adjective, 1.0);
 
                 // Acronym
-                learnMtoNMaybe(dirPath ~ `/acronym.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `acronym.txt`),
                                Sense.nounAcronym, lang, Role(Rel.acronymFor),
                                Sense.unknown, lang, Origin.manual, 1.0);
-                learnMtoNMaybe(dirPath ~ `/newspaper_acronym.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `newspaper_acronym.txt`),
                                Sense.newspaper, lang,
                                Role(Rel.acronymFor),
                                Sense.newspaper, lang,
                                Origin.manual, 1.0);
 
                 // Idioms
-                learnMtoNMaybe(dirPath ~ `/idiom_meaning.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `idiom_meaning.txt`),
                                Sense.idiom, lang,
                                Role(Rel.idiomFor),
                                Sense.unknown, lang,
                                Origin.manual, 0.7);
 
                 // Slang
-                learnMtoNMaybe(dirPath ~ `/slang_meaning.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `slang_meaning.txt`),
                                Sense.unknown, lang,
                                Role(Rel.slangFor),
                                Sense.unknown, lang,
                                Origin.manual, 0.7);
 
                 // Slang Adjectives
-                learnMtoNMaybe(dirPath ~ `/slang_adjective_meaning.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `slang_adjective_meaning.txt`),
                                Sense.adjective, lang,
                                Role(Rel.slangFor),
                                Sense.unknown, lang,
                                Origin.manual, 0.7);
 
                 // Name
-                learnMtoNMaybe(dirPath ~ `/male_name_meaning.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `male_name_meaning.txt`),
                                Sense.nameMale, lang,
                                Role(Rel.hasMeaning),
                                Sense.unknown, lang,
                                Origin.manual, 0.7);
-                learnMtoNMaybe(dirPath ~ `/female_name_meaning.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `female_name_meaning.txt`),
                                Sense.nameFemale, lang,
                                Role(Rel.hasMeaning),
                                Sense.unknown, lang,
                                Origin.manual, 0.7);
-                learnMtoNMaybe(dirPath ~ `/name_day.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `name_day.txt`),
                                Sense.name, lang,
                                Role(Rel.hasNameDay),
                                Sense.nounDate, Lang.en,
                                Origin.manual, 1.0);
-                learnMtoNMaybe(dirPath ~ `/surname_languages.txt`,
+                learnMtoNMaybe(buildPath(dirPath, `surname_languages.txt`),
                                Sense.surname, Lang.unknown,
                                Role(Rel.hasOrigin),
                                Sense.language, Lang.en,
@@ -1106,7 +1118,7 @@ class Graph
                 // City
                 try
                 {
-                    foreach (entry; rdT(dirPath ~ `/city.txt`).splitter('\n').filter!(w => !w.empty))
+                    foreach (entry; rdT(buildPath(dirPath, `city.txt`)).splitter('\n').filter!(w => !w.empty))
                     {
                         const items = entry.split(roleSeparator);
                         const cityName = items[0];
@@ -1121,19 +1133,19 @@ class Graph
                 }
                 catch (std.file.FileException e) {}
 
-                try { learnMto1(lang, rdT(dirPath ~ `/vehicle.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vehicle`, Sense.noun, Sense.noun, 1.0); }
+                try { learnMto1(lang, rdT(buildPath(dirPath, `vehicle.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vehicle`, Sense.noun, Sense.noun, 1.0); }
                 catch (std.file.FileException e) {}
 
-                try { learnMto1(lang, rdT(dirPath ~ `/lowercase_letter.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
+                try { learnMto1(lang, rdT(buildPath(dirPath, `lowercase_letter.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
                 catch (std.file.FileException e) {}
 
-                try { learnMto1(lang, rdT(dirPath ~ `/uppercase_letter.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
+                try { learnMto1(lang, rdT(buildPath(dirPath, `uppercase_letter.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
                 catch (std.file.FileException e) {}
 
-                try { learnMto1(lang, rdT(dirPath ~ `/old_proverb.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `old proverb`, Sense.unknown, Sense.noun, 1.0); }
+                try { learnMto1(lang, rdT(buildPath(dirPath, `old_proverb.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `old proverb`, Sense.unknown, Sense.noun, 1.0); }
                 catch (std.file.FileException e) {}
 
-                try { learnMto1(lang, rdT(dirPath ~ `/contronym.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
+                try { learnMto1(lang, rdT(buildPath(dirPath, `contronym.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
                 catch (std.file.FileException e) {}
 
                 try { learnOpposites(lang); }
@@ -1150,7 +1162,7 @@ class Graph
                     const dstLang = split[2].to!Lang;
                     foreach (txtFile; dirEntries(dirEntry.name, SpanMode.shallow))
                     {
-                        Sense sense;
+                        Sense sense = Sense.unknown;
                         Rel rel;
                         switch (txtFile.name.baseName)
                         {
@@ -1161,6 +1173,7 @@ class Graph
                             case "interjection_translation.txt": sense = Sense.interjection; rel = Rel.translationOf; break;
                             default:
                                 writeln("Don't know how to decode sense and rel of ", txtFile.name);
+                                sense = Sense.unknown;
                                 break;
                         }
 
@@ -1870,12 +1883,12 @@ class Graph
         }
     }
 
-    void learnMtoNMaybe(string path,
-                        Sense firstSense, Lang firstLang,
-                        Role role,
-                        Sense secondSense, Lang secondLang,
-                        Origin origin = Origin.manual,
-                        NWeight weight = 0.5)
+    void learnMtoNMaybe(const string path,
+                        const Sense firstSense, const Lang firstLang,
+                        const Role role,
+                        const Sense secondSense, const Lang secondLang,
+                        const Origin origin = Origin.manual,
+                        const NWeight weight = 0.5)
     {
         try
         {
@@ -1883,6 +1896,10 @@ class Graph
             {
                 auto senseFact = line.findSplit([qualifierSeparator]);
                 const senseCode = senseFact[0];
+
+                Sense firstSpecializedSense = firstSense;
+                Sense secondSpecializedSense = secondSense;
+
                 if (role.rel.infersSense &&
                     !senseCode.empty)
                 {
@@ -1890,22 +1907,23 @@ class Graph
                     {
                         import std.conv: to;
                         const sense = senseCode.to!Sense;
-                        if (firstSense  == Sense.unknown) { firstSense = sense; }
-                        if (secondSense == Sense.unknown) { secondSense = sense; }
-                        // writeln("senseCode: ", senseCode, ", sense: ", sense, ", line: ", line, ", senseFact[2]", senseFact[2]);
-                        // line = senseFact[2]; // rest
+                        if (firstSense  == Sense.unknown) { firstSpecializedSense = sense; }
+                        if (secondSense == Sense.unknown) { secondSpecializedSense = sense; }
                     }
-                    catch (std.conv.ConvException e) { /* ok for now */ }
+                    catch (std.conv.ConvException e)
+                    {
+                        /* ok for now */
+                    }
                 }
                 auto split = line.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
                 auto firstRefs = store(first.splitter(alternativesSeparator).map!idup,
-                                       firstLang, firstSense, origin);
+                                       firstLang, firstSpecializedSense, origin);
                 if (!first.empty &&
                     !second.empty)
                 {
                     auto secondRefs = store(second.splitter(alternativesSeparator).map!idup,
-                                            secondLang, secondSense, origin);
+                                            secondLang, secondSpecializedSense, origin);
                     connectMtoN(firstRefs, role, secondRefs, origin, weight, true);
                 }
             }
@@ -1917,17 +1935,17 @@ class Graph
     }
 
     /// Get Learn Possible Senses for $(D expr).
-    auto sensesOf(S)(S expr) if (isSomeString!S)
+    auto sensesOfExpr(S)(S expr) if (isSomeString!S)
     {
-        return lemmasOf(expr).map!(lemma => lemma.sense).filter!(sense => sense != Sense.unknown);
+        return lemmasOfExpr(expr).map!(lemma => lemma.sense).filter!(sense => sense != Sense.unknown);
     }
 
     /// Get Possible Common Sense for $(D a) and $(D b). TODO N-ary
     Sense commonSense(S1, S2)(S1 a, S2 b) if (isSomeString!S1 &&
                                               isSomeString!S2)
     {
-        auto commonSenses = setIntersection(sensesOf(a).sorted,
-                                            sensesOf(b).sorted);
+        auto commonSenses = setIntersection(sensesOfExpr(a).sorted,
+                                            sensesOfExpr(b).sorted);
         return commonSenses.count == 1 ? commonSenses.front : Sense.unknown;
     }
 
@@ -4162,7 +4180,7 @@ class Graph
                 Lang lang,
                 Sense sense,
                 Origin origin,
-                ContextIx context = ContextIx.asUndefined,
+                Ctx context = Ctx.asUndefined,
                 Manner manner = Manner.formal,
                 bool isRegexp = false,
                 ubyte meaningNr = 0,
@@ -4215,7 +4233,7 @@ class Graph
                 Lang lang,
                 Sense sense,
                 Origin origin,
-                ContextIx context = ContextIx.asUndefined)
+                Ctx context = Ctx.asUndefined)
     {
         if (expr.empty)
             return Nd.asUndefined;
@@ -4226,7 +4244,7 @@ class Graph
                       Lang lang,
                       Sense sense,
                       Origin origin,
-                      ContextIx context = ContextIx.asUndefined) if (isIterable!Exprs &&
+                      Ctx context = Ctx.asUndefined) if (isIterable!Exprs &&
                                                                      isSomeString!(ElementType!Exprs))
     {
         typeof(return) nds;
@@ -4433,19 +4451,19 @@ class Graph
     import std.algorithm: splitter;
 
     /** Lookup Context by $(D name). */
-    ContextIx contextOfName(S)(S name) if (isSomeString!S)
+    Ctx contextOfName(S)(S name) if (isSomeString!S)
     {
         auto context = anyContext;
-        if (const contextIx = name in contextIxByName)
+        if (const ctx = name in ctxByName)
         {
-            context = *contextIx;
+            context = *ctx;
         }
         else
         {
-            assert(contextIxCounter != contextIxCounter.max);
-            context._ix = contextIxCounter++;
-            contextNameByIx[context] = name;
-            contextIxByName[name] = context;
+            assert(ctxCounter != ctxCounter.max);
+            context._ix = ctxCounter++;
+            contextNameByCtx[context] = name;
+            ctxByName[name] = context;
         }
         return context;
     }
@@ -4666,9 +4684,9 @@ class Graph
         {
             write(`:rx`);
         }
-        if (node.lemma.context != ContextIx.asUndefined)
+        if (node.lemma.context != Ctx.asUndefined)
         {
-            write(`:`, contextNameByIx[node.lemma.context]);
+            write(`:`, contextNameByCtx[node.lemma.context]);
         }
 
         writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
@@ -5223,7 +5241,7 @@ class Graph
         typeof(return) hist;
         foreach (word; text)
         {
-            foreach (lemma; lemmasOf(word))
+            foreach (lemma; lemmasOfExpr(word))
             {
                 ++hist[lemma.lang];
             }
