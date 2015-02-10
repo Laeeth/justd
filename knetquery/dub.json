@@ -11,7 +11,7 @@
                      "../knet/base.d",
                      "../knet/cn5.d", "../knet/nell.d", "../knet/wordnet.d", "../knet/moby.d",
                      "../knet/synlex.d", "../knet/folklex.d", "../knet/swesaurus.d",
-                     "../knet/lectures/all.d", "../knet/dummy.d",
+                     "../knet/lectures/all.d",
                      "../wordnet.d",
                      "../grammars.d", "../stemming.d", "../ixes.d",
                      "../assert_ex.d", "../range_ex.d", "../algorithm_ex.d", "../traits_ex.d", "../sort_ex.d", "../mmfile_ex.d", "../skip_ex.d",
