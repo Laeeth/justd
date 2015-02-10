@@ -654,7 +654,7 @@ class Graph
     */
     Nds ndsOf(S)(S expr,
                  Lang lang,
-                 Sense sense,
+                 Sense sense = Sense.unknown,
                  Ctx context = anyContext) if (isSomeString!S)
     {
         typeof(return) nodes;
@@ -780,11 +780,13 @@ class Graph
      */
     this()
     {
+        const cachePath = "~/.cache";
         import core.memory: GC;
         // GC.disable;
         unittestMe();
 
         // loadUniquelySensedLemmas("~/.cache");
+        loadData(cachePath);
 
         learnVerbs();
         learnDefault();
@@ -794,7 +796,7 @@ class Graph
         saveUniquelySensedLemmas("~/.cache");
         if (true)
         {
-            storeData("~/.cache");
+            storeData(cachePath);
         }
     }
 
@@ -864,8 +866,8 @@ class Graph
     void storeData(string dirPath)
     {
         const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
-        writeln(`Storing tables in MessagePack format to `, cachePath, ` ...`);
-        auto file = File(cachePath, "w");
+        writeln(`Storing Tables to `, cachePath, ` ...`);
+        auto file = File(cachePath, "wb");
 
         // Data
         file.rawWrite(allNodes.pack);
@@ -882,8 +884,15 @@ class Graph
         file.rawWrite(ctxByName.pack);
     }
 
-    void load(string path)
+    void loadData(string dirPath)
     {
+        const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
+        writeln(`Loading Tables from `, cachePath, ` ...`);
+        try
+        {
+            auto file = File(cachePath, "rb");
+        }
+        catch (std.file.FileException e) {}
     }
 
     /// Learn Externally (Trained) Supervised Things.
