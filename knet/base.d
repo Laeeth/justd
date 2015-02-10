@@ -691,6 +691,9 @@ class Graph
         return nodes;
     }
 
+    alias meaningsOf = ndsOf;
+    alias interpretationsOf = ndsOf;
+
     /** Get All Possible Lemmas related to Expression (set of words) $(D expr).
      */
     Lemmas lemmasOfExpr(S)(S expr) if (isSomeString!S)
@@ -5234,16 +5237,21 @@ class Graph
                     size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                     bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        foreach (src_; ndsOf(expr))
+        foreach (srcNd; ndsOf(expr)) // for each interpretation of expr
         {
-            const src = at(src_);
-            if (langs.empty) { langs = [src.lemma.lang]; } // stay within language by default
-            foreach (dst_; nearsOf(src_, Rel.hasPronounciation, origins))
+            const srcNode = at(srcNd);
+
+            if (langs.empty)
             {
-                const dst = at(dst_);
+                langs = [srcNode.lemma.lang]; // stay within language by default
+            }
+
+            foreach (dstNd; nearsOf(srcNd, Rel.hasPronounciation, origins))
+            {
+                const dstNode = at(dstNd);
                 auto hits = allNodes.filter!(a => langs.canFind(a.lemma.lang))
                                     .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
-                                                                          at(src_).lemma.expr)))
+                                                                          at(srcNd).lemma.expr)))
                                     .filter!(a => a[1] >= commonPhonemeCountMin)
                                     // .sorted!((a, b) => false)
                 ;
