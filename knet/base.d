@@ -5251,6 +5251,7 @@ class Graph
                 ++hist[lemma.lang];
             }
         }
+        writeln(hist);
         return hist;
     }
 
