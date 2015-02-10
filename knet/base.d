@@ -593,15 +593,10 @@ class Graph
         Link.WeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
     }
 
-    @safe pure nothrow
+    @safe pure nothrow @nogc
     {
-        ref inout(Link) at(const Ln ln) inout
-        {
-            return allLinks[ln.ix];
-        }
-        ref inout(Node) at(const Nd nd) inout {
-            return allNodes[nd.ix];
-        }
+        ref inout(Link) at(const Ln ln) inout { return allLinks[ln.ix]; }
+        ref inout(Node) at(const Nd nd) inout { return allNodes[nd.ix]; }
 
         ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }
         ref inout(Node) opIndex(const Nd nd) inout { return at(nd); }
