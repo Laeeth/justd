@@ -595,8 +595,13 @@ class Graph
 
     @safe pure nothrow
     {
-        ref inout(Link) at(const Ln ln) inout { return allLinks[ln.ix]; }
-        ref inout(Node) at(const Nd cref) inout @nogc { return allNodes[cref.ix]; }
+        ref inout(Link) at(const Ln ln) inout
+        {
+            return allLinks[ln.ix];
+        }
+        ref inout(Node) at(const Nd nd) inout {
+            return allNodes[nd.ix];
+        }
 
         ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }
         ref inout(Node) opIndex(const Nd nd) inout { return at(nd); }
@@ -5200,7 +5205,7 @@ class Graph
         return nds;
     }
 
-    /** Get Links of $(D currents) type $(D rel) learned from $(D origins).
+    /** Get Links of $(D nd) type $(D rel) learned from $(D origins).
     */
     auto lnsOf(Nd nd,
                Rel rel,
@@ -5212,20 +5217,19 @@ class Graph
                                       origins.canFind(at(ln).origin))));
     }
 
-    /** Get Nearest Neighbours of $(D currents) over links of type $(D rel)
+    /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
         learned from $(D origins).
     */
-    auto nearsOf(Nd nd,
-                 Rel rel,
-                 Lang[] dstLangs = [],
-                 Origin[] origins = [])
+    auto nnsOf(Nd nd,
+               Rel rel,
+               Lang[] dstLangs = [],
+               Origin[] origins = [])
     {
         return lnsOf(nd, rel, origins).map!(ln =>
                                             at(ln).actors[]
                                                   .filter!(actor => (actor != nd &&
                                                                      (dstLangs.empty ||
-                                                                      dstLangs.canFind(Lang.en// at(actor).lemma.lang
-                                                                          )) // TODO functionize to Lemma.ofLang
+                                                                      dstLangs.canFind(at(actor).lemma.lang)) // TODO functionize to Lemma.ofLang
                                                                )))
                                       .joiner(); // no self
     }
@@ -5251,7 +5255,7 @@ class Graph
             }
 
             dln("before");
-            auto dstNds = nearsOf(srcNd, Rel.translationOf, [Lang.ipa], origins);
+            auto dstNds = nnsOf(srcNd, Rel.translationOf, [Lang.ipa], origins);
             dln("after");
 
             foreach (dstNd; dstNds) // translations to IPA-language
