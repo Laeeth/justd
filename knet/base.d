@@ -87,7 +87,7 @@ import std.bitmanip: bitfields;
 import mmfile_ex;
 alias rdT = readText;
 
-import std.range: front, split, isInputRange, back;
+import std.range: front, split, isInputRange, back, chain;
 import std.path: buildPath, buildNormalizedPath, expandTilde, extension, baseName;
 import wordnet: WordNet;
 
@@ -241,7 +241,7 @@ struct Lemma
             bool isRegexp = false,
             ubyte meaningNr = 0,
             bool normalizeExpr = true,
-            bool uniqueSense = false) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
+            bool hasUniqueSense = false) if (isSomeString!S) in { assert(meaningNr <= MeaningNrMax); }
     body
     {
         auto expr = exprString.to!string;
@@ -274,7 +274,7 @@ struct Lemma
         this.sense = sense;
         this.manner = manner;
         this.context = context;
-        this.uniqueSense = uniqueSense;
+        this.hasUniqueSense = hasUniqueSense;
 
         if (normalizeExpr)
         {
@@ -315,7 +315,7 @@ struct Lemma
     Lang lang = Lang.unknown;
     Sense sense = Sense.unknown;
     Ctx context = Ctx.asUndefined; // TODO bitfield
-    bool uniqueSense = false; // Expr has unique Sense in Lang
+    bool hasUniqueSense = false; // Expr has unique Sense in Lang
 
     enum bitsizeOfManner = packedBitSizeOf!Manner;
     enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
@@ -733,7 +733,8 @@ class Graph
     /** Internalize $(D Lemma) of $(D expr).
         Returns: either existing specialized lemma or a reference to the newly stored one.
      */
-    ref Lemma internLemma(ref Lemma lemma) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
+    ref Lemma internLemma(ref Lemma lemma,
+                          bool hasUniqueSense = false) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
     {
         if (auto lemmas = lemma.expr in lemmasByExpr)
         {
@@ -779,15 +780,18 @@ class Graph
         import core.memory: GC;
         // GC.disable;
         unittestMe();
+
+        // loadUniquelySensedLemmas("~/.cache");
+
         learnVerbs();
         learnDefault();
 
         // inferSpecializedSenses();
         showRelations;
-        storeUniquelySensedLemmas("~/.cache");
-        if (false)
+        saveUniquelySensedLemmas("~/.cache");
+        if (true)
         {
-            save("~/.cache");
+            storeData("~/.cache");
         }
     }
 
@@ -853,17 +857,26 @@ class Graph
         /* writefln(`Packed size: %.2f`, bytes.length/1.0e6); */
     }
 
-    void save(string cacheDirPath)
+    /** Store all Data to disk. */
+    void storeData(string dirPath)
     {
-        import std.range: chain;
-        const cachePath = buildNormalizedPath(cacheDirPath.expandTilde, `knet.msgpack`);
-        writeln(`Writing cache in msgpack format to `, cachePath, ` ...`);
-        auto db = chain(allNodes.pack,
-                        allLinks.pack,
-                        ndByLemma.pack,
-                        lemmasByExpr.pack);
+        const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
+        writeln(`Storing tables in MessagePack format to `, cachePath, ` ...`);
         auto file = File(cachePath, "w");
-        file.write(db);
+
+        // Data
+        file.rawWrite(allNodes.pack);
+        file.rawWrite(allLinks.pack);
+
+        // Indexes
+        file.rawWrite(ndByLemma.pack);
+        file.rawWrite(lemmasByWord.pack);
+        file.rawWrite(lemmasByExpr.pack);
+        file.rawWrite(lemmasBySyllableCount.pack);
+
+        // Context
+        file.rawWrite(contextNameByCtx.pack);
+        file.rawWrite(ctxByName.pack);
     }
 
     void load(string path)
@@ -4682,7 +4695,7 @@ class Graph
         if (node.lemma.sense != Sense.unknown)
         {
             write(`:`, node.lemma.sense);
-            if (node.lemma.uniqueSense)
+            if (node.lemma.hasUniqueSense)
             {
                 write("(unique)");
             }
@@ -5346,16 +5359,50 @@ class Graph
         return lang;
     }
 
-    /// Store all Lemmas that have unique a sense in a given language.
-    auto storeUniquelySensedLemmas(string cacheDirPath,
-                                   bool ignoreUnknownSense = true)
+    enum uniquelySenseLemmasFilename = `knet_uniquely_sensed_lemmas_within_language.msgpack`;
+
+    /** Load all Lemmas that have unique a Sense in a given language.
+     */
+    auto loadUniquelySensedLemmas(string dirPath)
     {
-        const cachePath = buildNormalizedPath(cacheDirPath.expandTilde,
-                                              `knet_uniquely_sensed_lemmas_within_language.txt`);
+        try
+        {
+            const cachePath = buildNormalizedPath(dirPath.expandTilde,
+                                                  uniquelySenseLemmasFilename);
+            writeln(`Loading all Lemmas that have unique a sense in a given language from `,
+                    cachePath,
+                    ` ...`);
+            auto file = File(cachePath, "wb");
+            ubyte[] data; file.rawRead(data);
+            size_t cnt = 0;
+            while (!data.empty)
+            {
+                auto expr = data.unpack!MutExpr;
+                auto lemma = data.unpack!Lemma;
+
+                // TODO Use learnLemma(lemma, true) instead of these two lines
+                lemma.hasUniqueSense = true;
+                lemmasByExpr[expr] = [lemma];
+
+                ++cnt;
+            }
+            writeln(`Loaded `, cnt, ` Lemmas with a unique a Sense in a given language from `,
+                    cachePath);
+        }
+        catch (std.file.FileException e) {}
+    }
+
+    /** Save all Lemmas that have unique a Sense in a given language.
+     */
+    auto saveUniquelySensedLemmas(string dirPath,
+                                  bool ignoreUnknownSense = true)
+    {
+        const cachePath = buildNormalizedPath(dirPath.expandTilde,
+                                              uniquelySenseLemmasFilename);
         writeln(`Storing all Lemmas that have unique a sense in a given language to `,
                 cachePath,
                 ` ...`);
-        auto file = File(cachePath, "w");
+        auto file = File(cachePath, "wb");
         size_t cnt = 0;
         foreach (pair; lemmasByExpr.byPair)
         {
@@ -5365,11 +5412,12 @@ class Graph
             if (!filteredLemmas.empty &&
                 filteredLemmas.allEqual)
             {
-                file.write(lemmas.front.pack);
+                file.rawWrite(expr.pack);
+                file.rawWrite(lemmas.front.pack);
                 ++cnt;
             }
         }
-        writeln(`Stored `, cnt, ` number of Lemmas that have unique a Sense in a given language to `,
+        writeln(`Stored `, cnt, ` number of Lemmas with a unique a Sense in a given language to `,
                 cachePath);
     }
 
