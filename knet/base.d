@@ -781,8 +781,10 @@ class Graph
         unittestMe();
         learnVerbs();
         learnDefault();
+
         // inferSpecializedSenses();
         showRelations;
+        storeUniquelySensedLemmas("~/.cache");
         if (false)
         {
             save("~/.cache");
@@ -5342,6 +5344,33 @@ class Graph
     {
         auto lang = Lang.unknown;
         return lang;
+    }
+
+    /// Store all Lemmas that have unique a sense in a given language.
+    auto storeUniquelySensedLemmas(string cacheDirPath,
+                                   bool ignoreUnknownSense = true)
+    {
+        const cachePath = buildNormalizedPath(cacheDirPath.expandTilde,
+                                              `knet_uniquely_sensed_lemmas_within_language.txt`);
+        writeln(`Storing all Lemmas that have unique a sense in a given language to `,
+                cachePath,
+                ` ...`);
+        auto file = File(cachePath, "w");
+        size_t cnt = 0;
+        foreach (pair; lemmasByExpr.byPair)
+        {
+            const expr = pair[0];
+            auto lemmas = pair[1];
+            auto filteredLemmas = lemmas.filter!(lemma => lemma.sense != Sense.unknown);
+            if (!filteredLemmas.empty &&
+                filteredLemmas.allEqual)
+            {
+                file.write(lemmas.front.pack);
+                ++cnt;
+            }
+        }
+        writeln(`Stored `, cnt, ` number of Lemmas that have unique a Sense in a given language to `,
+                cachePath);
     }
 
     void inferSpecializedSenses()
