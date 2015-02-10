@@ -104,7 +104,6 @@ enum Rel:ubyte
 
     hasContext,
     hasMeaning,
-    hasPronounciation,
     slangFor,
     idiomFor,
 
@@ -1707,26 +1706,26 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
-        case hasPronounciation:
-            if (dir == RelDir.forward)
-            {
-                switch (targetLang)
-                {
-                    case sv: words = ["utalas", not]; break;
-                    case en:
-                    default: words = ["does", not, "have pronouncation"]; break;
-                }
-            }
-            else
-            {
-                switch (targetLang)
-                {
-                    case sv: words = ["kan", not, "vara uttal av"]; break;
-                    case en:
-                    default: words = ["can", not, "be pronouncation of"]; break;
-                }
-            }
-            break;
+        // case hasPronounciation:
+        //     if (dir == RelDir.forward)
+        //     {
+        //         switch (targetLang)
+        //         {
+        //             case sv: words = ["utalas", not]; break;
+        //             case en:
+        //             default: words = ["does", not, "have pronouncation"]; break;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         switch (targetLang)
+        //         {
+        //             case sv: words = ["kan", not, "vara uttal av"]; break;
+        //             case en:
+        //             default: words = ["can", not, "be pronouncation of"]; break;
+        //         }
+        //     }
+        //     break;
         case slangFor:
             if (dir == RelDir.forward)
             {
@@ -1963,7 +1962,6 @@ bool specializes(Rel special, Rel general) @safe @nogc pure nothrow
                                                    hypernymOf);
         case instanceHyponymOf: return special.of(instanceOf,
                                                   hyponymOf);
-        case translationOf: return special.of(hasPronounciation);
         default: return special == general;
     }
 }

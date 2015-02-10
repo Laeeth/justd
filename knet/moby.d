@@ -117,7 +117,7 @@ void learnMobyEnglishPronounciations(Graph graph)
                 ipas = split.front.idup;
                 writeln(`warning: Couldn't decode Moby IPA code `, ipas);
             }
-            graph.connect(graph.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasPronounciation),
+            graph.connect(graph.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.translationOf),
                           graph.store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
         }
         else
