@@ -1244,33 +1244,33 @@ class Graph
 
     void learnPartOfSpeech()
     {
-        learnPronouns();
-        learnAdjectives();
-        learnAdverbs();
-        learnUndefiniteArticles();
-        learnDefiniteArticles();
-        learnPartitiveArticles();
-        learnConjunctions();
-        learnInterjections();
-        learnTime();
+        this.learnPronouns();
+        this.learnAdjectives();
+        this.learnAdverbs();
+        this.learnUndefiniteArticles();
+        this.learnDefiniteArticles();
+        this.learnPartitiveArticles();
+        this.learnConjunctions();
+        this.learnInterjections();
+        this.learnTime();
 
         // Verb
-        learnMto1(Lang.en, rdT(`../knowledge/en/regular_verb.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
+        this.learnMto1(Lang.en, rdT(`../knowledge/en/regular_verb.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
 
-        learnMto1(Lang.en, rdT(`../knowledge/en/determiner.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `determiner`, Sense.determiner, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT(`../knowledge/en/predeterminer.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT(`../knowledge/en/adverbs.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adverb`, Sense.adverb, Sense.noun, 1.0);
-        learnMto1(Lang.en, rdT(`../knowledge/en/preposition.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `preposition`, Sense.preposition, Sense.noun, 1.0);
+        this.learnMto1(Lang.en, rdT(`../knowledge/en/determiner.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `determiner`, Sense.determiner, Sense.noun, 1.0);
+        this.learnMto1(Lang.en, rdT(`../knowledge/en/predeterminer.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `predeterminer`, Sense.predeterminer, Sense.noun, 1.0);
+        this.learnMto1(Lang.en, rdT(`../knowledge/en/adverbs.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adverb`, Sense.adverb, Sense.noun, 1.0);
+        this.learnMto1(Lang.en, rdT(`../knowledge/en/preposition.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `preposition`, Sense.preposition, Sense.noun, 1.0);
 
-        learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Role(Rel.instanceOf), `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
+        this.learnMto1(Lang.en, [`since`, `ago`, `before`, `past`], Role(Rel.instanceOf), `time preposition`, Sense.prepositionTime, Sense.noun, 1.0);
 
         this.learnMobyPoS();
 
         // learn these after Moby as Moby is more specific
-        learnNouns();
-        learnVerbs();
+        this.learnNouns();
+        this.learnVerbs();
 
-        learnMto1(Lang.en, rdT(`../knowledge/en/figure_of_speech.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `figure of speech`, Sense.unknown, Sense.noun, 1.0);
+        this.learnMto1(Lang.en, rdT(`../knowledge/en/figure_of_speech.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `figure of speech`, Sense.unknown, Sense.noun, 1.0);
 
         this.learnMobyEnglishPronounciations();
     }
@@ -5217,23 +5217,17 @@ class Graph
     */
     auto nearsOf(Nd nd,
                  Rel rel,
+                 Lang[] dstLangs = [],
                  Origin[] origins = [])
     {
         return lnsOf(nd, rel, origins).map!(ln =>
                                             at(ln).actors[]
-                                                  .filter!(actor => actor != nd))
+                                                  .filter!(actor => (actor != nd &&
+                                                                     (dstLangs.empty ||
+                                                                      dstLangs.canFind(at(actor).lemma.lang)) // TODO functionize to Lemma.ofLang
+                                                               )))
                                       .joiner(); // no self
     }
-
-    /** Get Nearest Neighbours of $(D srcs) over links of type $(D rel) learned
-        from $(D origins).
-    */
-    // auto nearsOf(R)(R nds,
-    //                 Rel rel,
-    //                 Origin[] origins = []) if (isSourceOf!(R, Nd))
-    // {
-    //     return nds[].map!(nd => nearsOf(nd, rel, origins));
-    // }
 
     /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
         Set withSameSyllableCount to true to get synonyms which can be used to
@@ -5255,7 +5249,7 @@ class Graph
                 langs = [srcNode.lemma.lang]; // stay within language by default
             }
 
-            foreach (dstNd; nearsOf(srcNd, Rel.hasPronounciation, origins))
+            foreach (dstNd; nearsOf(srcNd, Rel.translationOf, [Lang.ipa], origins)) // translations to IPA-language
             {
                 const dstNode = at(dstNd);
                 auto hits = allNodes.filter!(a => langs.canFind(a.lemma.lang))
