@@ -218,6 +218,9 @@ alias Nd = Ref!Node;
 /// Reference to Link.
 alias Ln = Ref!Link;
 
+alias Step = Tuple!(Ln, Nd); // steps from Node
+alias Path = Step[]; // path of steps from Node
+
 /// References to Nodes.
 static if (useArray) { alias Nds = Array!Nd; }
 else                 { alias Nds = Nd[]; }
@@ -412,6 +415,59 @@ private:
     Origin origin;
 }
 
+/** Binary Relation Link.
+ */
+struct Link2
+{
+private:
+    Nd first;
+    Nd second;
+    PWeight pweight;
+    Role role;
+    Origin origin;
+}
+
+/** Ternary Relation Link.
+ */
+struct Link3
+{
+private:
+    Nd first;
+    Nd second;
+    Nd third;
+    PWeight pweight;
+    Role role;
+    Origin origin;
+}
+
+/** Quarnary Relation Link.
+ */
+struct Link4
+{
+private:
+    Nd first;
+    Nd second;
+    Nd third;
+    Nd fourth;
+    PWeight pweight;
+    Role role;
+    Origin origin;
+}
+
+static if (true)
+{
+    pragma(msg, `Expr.sizeof: `, Expr.sizeof);
+    pragma(msg, `Role.sizeof: `, Role.sizeof);
+    pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
+    pragma(msg, `Node.sizeof: `, Node.sizeof);
+    pragma(msg, `Lns.sizeof: `, Lns.sizeof);
+    pragma(msg, `Nds.sizeof: `, Nds.sizeof);
+    pragma(msg, `Link2.sizeof: `, Link2.sizeof);
+    pragma(msg, `Link3.sizeof: `, Link3.sizeof);
+    pragma(msg, `Link4.sizeof: `, Link4.sizeof);
+    pragma(msg, `Link.sizeof: `, Link.sizeof);
+}
+
 /** Main Knowledge Network Graph.
 */
 class Graph
@@ -444,9 +500,6 @@ class Graph
         return linksOf(at(nd), dir, role);
     }
 
-    alias Step = Tuple!(Ln, Nd); // steps from Node
-    alias Path = Step[]; // path of steps from Node
-
     /** Network Traverser.
         TODO: Returns Path
      */
@@ -474,61 +527,8 @@ class Graph
         return trav;
     }
 
-    /** Binary Relation Link.
-     */
-    struct Link2
-    {
-    private:
-        Nd first;
-        Nd second;
-        PWeight pweight;
-        Role role;
-        Origin origin;
-    }
-
-    /** Ternary Relation Link.
-     */
-    struct Link3
-    {
-    private:
-        Nd first;
-        Nd second;
-        Nd third;
-        PWeight pweight;
-        Role role;
-        Origin origin;
-    }
-
-    /** Quarnary Relation Link.
-     */
-    struct Link4
-    {
-    private:
-        Nd first;
-        Nd second;
-        Nd third;
-        Nd fourth;
-        PWeight pweight;
-        Role role;
-        Origin origin;
-    }
-
     auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward); }
     auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward); }
-
-    static if (true)
-    {
-        pragma(msg, `Expr.sizeof: `, Expr.sizeof);
-        pragma(msg, `Role.sizeof: `, Role.sizeof);
-        pragma(msg, `Lemma.sizeof: `, Lemma.sizeof);
-        pragma(msg, `Node.sizeof: `, Node.sizeof);
-        pragma(msg, `Lns.sizeof: `, Lns.sizeof);
-        pragma(msg, `Nds.sizeof: `, Nds.sizeof);
-        pragma(msg, `Link2.sizeof: `, Link2.sizeof);
-        pragma(msg, `Link3.sizeof: `, Link3.sizeof);
-        pragma(msg, `Link4.sizeof: `, Link4.sizeof);
-        pragma(msg, `Link.sizeof: `, Link.sizeof);
-    }
 
     /* static if (useArray) { alias Nodes = Array!Node; } */
     /* else                 { alias Nodes = Node[]; } */
@@ -5229,6 +5229,7 @@ class Graph
                     size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                     bool withSameSyllableCount = false) if (isSomeString!S)
     {
+        dln("expr: ", expr);
         foreach (src_; ndsOf(expr))
         {
             const src = at(src_);
@@ -5271,7 +5272,6 @@ class Graph
                 ++hist[lemma.lang];
             }
         }
-        writeln(hist);
         return hist;
     }
 
