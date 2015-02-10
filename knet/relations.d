@@ -504,8 +504,8 @@ auto toHuman(const Rel rel,
              const RelDir dir,
              const bool negation = false,
              const Lang targetLang = Lang.en, // present statement in this language
-             const Lang srcLang = Lang.en, // TODO add use
-             const Lang dstLang = Lang.en) // TODO add use
+             const Lang srcLang = Lang.en, // TODO use
+             const Lang dstLang = Lang.en) // TODO use
     @safe pure
 {
     string[] words;
