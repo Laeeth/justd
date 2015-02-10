@@ -4835,8 +4835,8 @@ class Graph
                              RelDir.backward);
             }
         }
-        else if (normLine.skipOver(`anagramsof(`) ||
-                 normLine.skipOver(`anagrams_of(`))
+        else if (normLine.skipOverShortestOf(`anagramsof(`,
+                                             `anagrams_of(`))
         {
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
@@ -4851,8 +4851,8 @@ class Graph
                 }
             }
         }
-        else if (normLine.skipOver(`synonymsof(`) ||
-                 normLine.skipOver(`synonyms_of(`))
+        else if (normLine.skipOverShortestOf(`synonymsof(`,
+                                             `synonyms_of(`))
         {
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
@@ -4867,13 +4867,14 @@ class Graph
                 }
             }
         }
-        else if (normLine.skipOver(`rhymesof(`) ||
-                 normLine.skipOver(`rhymes_of(`))
+        else if (normLine.skipOverShortestOf(`rhymesof(`,
+                                             `rhymes_of(`))
         {
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
             if (!arg.empty)
             {
+                writeln(`> Rhymes of "`, arg, `" are:`);
                 foreach (rhymingNode; rhymesOf(arg))
                 {
                     showLinkNode(at(rhymingNode),
@@ -4883,9 +4884,9 @@ class Graph
                 }
             }
         }
-        else if (normLine.skipOver(`translationsof(`) ||
-                 normLine.skipOver(`translations_of(`) ||
-                 normLine.skipOver(`translate(`))
+        else if (normLine.skipOverShortestOf(`translationsof(`,
+                                             `translations_of(`,
+                                             `translate(`))
         {
             const split = normLine.findSplitBefore(`)`);
             const arg = split[0];
@@ -4900,8 +4901,10 @@ class Graph
                 }
             }
         }
-        else if (normLine.skipOver(`languagesof(`) ||
-                 normLine.skipOver(`languages_of(`))
+        else if (normLine.skipOverShortestOf(`languagesof(`,
+                                             `languages_of(`,
+                                             `langsof(`,
+                                             `langs(`))
         {
             normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -4912,8 +4915,10 @@ class Graph
                 showTopLanguages(hist);
             }
         }
-        else if (normLine.skipOver(`languageof(`) ||
-                 normLine.skipOver(`language_of(`))
+        else if (normLine.skipOverShortestOf(`languageof(`,
+                                             `language_of(`,
+                                             `langof(`,
+                                             `lang(`))
         {
             normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -4924,17 +4929,17 @@ class Graph
                 showTopLanguages(hist, 1);
             }
         }
-        else if (normLine.skipOver(`begin(`) ||
-                 normLine.skipOver(`begins(`) ||
-                 normLine.skipOver(`startswith(`) ||
-                 normLine.skipOver(`starts_with(`) ||
-                 normLine.skipOver(`beginswith(`) ||
-                 normLine.skipOver(`begins_with(`) ||
-                 normLine.skipOver(`hasbegin(`) ||
-                 normLine.skipOver(`hasbeginning(`) ||
-                 normLine.skipOver(`has_begin(`) ||
-                 normLine.skipOver(`hasstart(`) ||
-                 normLine.skipOver(`has_start(`))
+        else if (normLine.skipOverShortestOf(`begin(`,
+                                             `begins(`,
+                                             `startswith(`,
+                                             `starts_with(`,
+                                             `beginswith(`,
+                                             `begins_with(`,
+                                             `hasbegin(`,
+                                             `hasbeginning(`,
+                                             `has_begin(`,
+                                             `hasstart(`,
+                                             `has_start(`))
         {
             normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -4949,14 +4954,14 @@ class Graph
                 }
             }
         }
-        else if (normLine.skipOver(`end(`) ||
-                 normLine.skipOver(`ends(`) ||
-                 normLine.skipOver(`endswith(`) ||
-                 normLine.skipOver(`ends_with(`) ||
-                 normLine.skipOver(`hasend(`) ||
-                 normLine.skipOver(`has_end(`) ||
-                 normLine.skipOver(`hassuffix(`) ||
-                 normLine.skipOver(`has_suffix(`))
+        else if (normLine.skipOverShortestOf(`end(`,
+                                             `ends(`,
+                                             `endswith(`,
+                                             `ends_with(`,
+                                             `hasend(`,
+                                             `has_end(`,
+                                             `hassuffix(`,
+                                             `has_suffix(`))
         {
             normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -4971,10 +4976,10 @@ class Graph
                 }
             }
         }
-        else if (normLine.skipOver(`canfind(`) ||
-                 normLine.skipOver(`can_find(`) ||
-                 normLine.skipOver(`contain(`) ||
-                 normLine.skipOver(`contains(`))
+        else if (normLine.skipOverShortestOf(`canfind(`,
+                                             `can_find(`,
+                                             `contain(`,
+                                             `contains(`))
         {
             normLine.skipOver(` `); // TODO all space using skipOver!isSpace
             const split = normLine.findSplitBefore(`)`);
@@ -5229,23 +5234,13 @@ class Graph
                     size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                     bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        dln("expr: ", expr);
         foreach (src_; ndsOf(expr))
         {
             const src = at(src_);
             if (langs.empty) { langs = [src.lemma.lang]; } // stay within language by default
-
-            // foreach (link; linksOf(src_).filter!(link => link.rel == Rel.hasPronounciation))
-            // {
-            //     writeln(`src_: `, at(src_));
-            //     writeln(`link.rel: `, link.rel);
-            //     writeln(`link.actors: `, link.actors);
-            // }
-
             foreach (dst_; nearsOf(src_, Rel.hasPronounciation, origins))
             {
                 const dst = at(dst_);
-                writeln(`src_:`, src_, ` src:`, src, ` dst_:`, dst_, ` dst:`, dst);
                 auto hits = allNodes.filter!(a => langs.canFind(a.lemma.lang))
                                     .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
                                                                           at(src_).lemma.expr)))
@@ -5369,7 +5364,7 @@ class Graph
         {
             const cachePath = buildNormalizedPath(dirPath.expandTilde,
                                                   uniquelySenseLemmasFilename);
-            writeln(`Loading all Lemmas that have unique a sense in a given language from `,
+            writeln(`Loading all Lemmas with unique Sense in a given language from `,
                     cachePath,
                     ` ...`);
             auto file = File(cachePath, "wb");
@@ -5386,7 +5381,7 @@ class Graph
 
                 ++cnt;
             }
-            writeln(`Loaded `, cnt, ` Lemmas with a unique a Sense in a given language from `,
+            writeln(`Loaded `, cnt, ` Lemmas with unique Sense in a given language from `,
                     cachePath);
         }
         catch (std.file.FileException e) {}
