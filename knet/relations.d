@@ -2024,9 +2024,9 @@ struct Ref(T)
         }
     }
 
-    Ref raw() { return Ref(this, RelDir.forward); }
-    Ref forward() { return Ref(this, RelDir.forward); }
-    Ref backward() { return Ref(this, RelDir.backward); }
+    Ref raw() const { return Ref(this, RelDir.forward); }
+    Ref forward() const { return Ref(this, RelDir.forward); }
+    Ref backward() const { return Ref(this, RelDir.backward); }
 
     static const(Ref) asUndefined() { return Ref(nullIx); }
     bool defined() const { return this.ix != nullIx; }
