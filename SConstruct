@@ -3,7 +3,7 @@
 env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd")
 env.CacheDir("~/.cache/scons")
 
-libraries    = ['phobos', 'pthread', 'm']
+libraries = ['phobos', 'pthread', 'm']
 # libraryPaths = ['/usr/share/dmd/lib',
 #                 '/usr/share/dmd/src/druntime/import',
 #                 '/usr/share/dmd/src/phobos']
