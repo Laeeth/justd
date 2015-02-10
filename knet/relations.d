@@ -503,17 +503,19 @@ alias Rank = uint;
 auto toHuman(const Rel rel,
              const RelDir dir,
              const bool negation = false,
-             const Lang lang = Lang.en)
+             const Lang targetLang = Lang.en, // present statement in this language
+             const Lang srcLang = Lang.en, // TODO add use
+             const Lang dstLang = Lang.en) // TODO add use
     @safe pure
 {
     string[] words;
     import std.algorithm: array, filter, joiner;
 
-    auto not = negation ? negationIn(lang) : null;
+    auto not = negation ? negationIn(targetLang) : null;
     switch (rel) with (Rel) with (Lang)
     {
         case relatedTo:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "relaterat till"]; break;
                 case en:
@@ -521,7 +523,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case translationOf:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["kan", not, "översättas till"]; break;
                 case en:
@@ -529,7 +531,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case reversionOf:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "en omvändning av"]; break;
                 case en:
@@ -537,7 +539,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case synonymFor:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "synonym med"]; break;
                 case en:
@@ -545,7 +547,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case homophoneFor:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "homofon med"]; break;
                 case en:
@@ -553,7 +555,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case obsolescentFor:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "ålderdomlig synonym med"]; break;
                 case en:
@@ -561,7 +563,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case antonymFor:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "motsatsen till"]; break;
                 case en:
@@ -569,7 +571,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case similarSizeTo:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "lika stor som"]; break;
                 case en:
@@ -577,7 +579,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case similarTo:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "likvärdig med"]; break;
                 case en:
@@ -585,7 +587,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case looksLike:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["ser", not, "ut som"]; break;
                 case en:
@@ -595,7 +597,7 @@ auto toHuman(const Rel rel,
         case isA:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en"]; break;
                     case de: words = ["ist", not, "ein"]; break;
@@ -605,7 +607,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "vara en"]; break;
                     case de: words = ["can", not, "sein ein"]; break;
@@ -617,7 +619,7 @@ auto toHuman(const Rel rel,
         case mayBeA:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "vara en"]; break;
                     case en:
@@ -626,7 +628,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "vara en"]; break;
                     case en:
@@ -637,7 +639,7 @@ auto toHuman(const Rel rel,
         case partOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en del av"]; break;
                     case en:
@@ -646,7 +648,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "del"]; break;
                     case en:
@@ -657,7 +659,7 @@ auto toHuman(const Rel rel,
         case madeOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "gjord av"]; break;
                     case en:
@@ -666,7 +668,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["används", not, "till att göra"]; break;
                     case en:
@@ -677,7 +679,7 @@ auto toHuman(const Rel rel,
         case madeBy:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "skapad av"]; break;
                     case en:
@@ -686,7 +688,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["används", not, "till att skapa"]; break;
                     case en:
@@ -697,7 +699,7 @@ auto toHuman(const Rel rel,
         case memberOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en medlem av"]; break;
                     case de: words = ["ist", not, "ein Mitglied von"]; break;
@@ -707,7 +709,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "medlem"]; break;
                     case de: words = ["hat", not, "Mitgleid"]; break;
@@ -719,7 +721,7 @@ auto toHuman(const Rel rel,
         case topMemberOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "huvudmedlem av"]; break;
                     case en:
@@ -728,7 +730,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "toppmedlem"]; break;
                     case en:
@@ -739,7 +741,7 @@ auto toHuman(const Rel rel,
         case participatesIn:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["deltog", not, "i"]; break;
                     case en:
@@ -748,7 +750,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "deltagare"]; break;
                     case en:
@@ -759,7 +761,7 @@ auto toHuman(const Rel rel,
         case worksFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["arbetar", not, "för"]; break;
                     case de: words = ["arbeitet", not, "für"]; break;
@@ -769,7 +771,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "arbetare"]; break;
                     case de: words = ["hat", not, "Arbeiter"]; break;
@@ -781,7 +783,7 @@ auto toHuman(const Rel rel,
         case playsIn:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["spelar", not, "i"]; break;
                     case de: words = ["spielt", not, "in"]; break;
@@ -791,7 +793,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "spelare"]; break;
                     case de: words = ["hat", not, "Spieler"]; break;
@@ -803,7 +805,7 @@ auto toHuman(const Rel rel,
         case plays:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["spelar", not]; break;
                     case de: words = ["spielt", not]; break;
@@ -813,7 +815,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["spelas", not, "av"]; break;
                     case en:
@@ -824,7 +826,7 @@ auto toHuman(const Rel rel,
         case contributesTo:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["bidrar", not, "till"]; break;
                     case en:
@@ -833,7 +835,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "bidragare"]; break;
                     case en:
@@ -844,7 +846,7 @@ auto toHuman(const Rel rel,
         case leaderOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["leder", not]; break;
                     case en:
@@ -853,7 +855,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["leds", not, "av"]; break;
                     case en:
@@ -864,7 +866,7 @@ auto toHuman(const Rel rel,
         case coaches:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["coachar", not]; break;
                     case en:
@@ -873,7 +875,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["coachad", not, "av"]; break;
                     case en:
@@ -884,7 +886,7 @@ auto toHuman(const Rel rel,
         case represents:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["representerar", not]; break;
                     case en:
@@ -893,7 +895,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["representeras", not, "av"]; break;
                     case en:
@@ -904,7 +906,7 @@ auto toHuman(const Rel rel,
         case ceoOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "VD för"]; break;
                     case en:
@@ -913,7 +915,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["is", not, "led by"]; break;
                     case en:
@@ -924,7 +926,7 @@ auto toHuman(const Rel rel,
         case hasA:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "en"]; break;
                     case de: words = ["hat", not, "ein"]; break;
@@ -934,7 +936,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["tillhör", not]; break;
                     case en:
@@ -945,7 +947,7 @@ auto toHuman(const Rel rel,
         case atLocation:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan hittas", not, "vid"]; break;
                     case en:
@@ -954,7 +956,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "innehålla"]; break;
                     case en:
@@ -965,7 +967,7 @@ auto toHuman(const Rel rel,
         case causes:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["leder", not, "till"]; break;
                     case en:
@@ -974,7 +976,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "orsakas av"]; break;
                     case en:
@@ -985,7 +987,7 @@ auto toHuman(const Rel rel,
         case creates:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["skapar", not]; break;
                     case de: words = ["schafft", not]; break;
@@ -995,7 +997,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "skapas av"]; break;
                     case en:
@@ -1006,7 +1008,7 @@ auto toHuman(const Rel rel,
         case foundedIn:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["grundades", not]; break;
                     case en:
@@ -1015,7 +1017,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["grundades", not]; break;
                     case en:
@@ -1026,7 +1028,7 @@ auto toHuman(const Rel rel,
         case eats:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["äter", not]; break;
                     case en:
@@ -1035,7 +1037,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "ätas av"]; break;
                     case en:
@@ -1046,7 +1048,7 @@ auto toHuman(const Rel rel,
         case atTime:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["inträffar", not, "vid tidpunkt"]; break;
                     case en:
@@ -1055,7 +1057,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "händelse"]; break;
                     case en:
@@ -1066,7 +1068,7 @@ auto toHuman(const Rel rel,
         case capableOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är ", not, "kapabel till"]; break;
                     case en:
@@ -1075,7 +1077,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "orsakas av"]; break;
                     case en:
@@ -1086,7 +1088,7 @@ auto toHuman(const Rel rel,
         case definedAs:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["definieras", not, "som"]; break;
                     case en:
@@ -1095,7 +1097,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "definiera"]; break;
                     case en:
@@ -1106,7 +1108,7 @@ auto toHuman(const Rel rel,
         case derivedFrom:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["härleds", not, "från"]; break;
                     case en:
@@ -1115,7 +1117,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["härleder", not]; break;
                     case en:
@@ -1126,7 +1128,7 @@ auto toHuman(const Rel rel,
         case compoundDerivedFrom:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["härleds sammansatt", not, "från"]; break;
                     case en:
@@ -1135,7 +1137,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["härleder sammansatt", not]; break;
                     case en:
@@ -1146,7 +1148,7 @@ auto toHuman(const Rel rel,
         case etymologicallyDerivedFrom:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["härleds", not, "etymologiskt från"]; break;
                     case en:
@@ -1155,7 +1157,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["härleder etymologiskt", not]; break;
                     case en:
@@ -1166,7 +1168,7 @@ auto toHuman(const Rel rel,
         case hasProperty:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "egenskap"]; break;
                     case en:
@@ -1175,7 +1177,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "egenskap av"]; break;
                     case en:
@@ -1186,7 +1188,7 @@ auto toHuman(const Rel rel,
         case hasAttribute:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "attribut"]; break;
                     case en:
@@ -1195,7 +1197,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "attribut av"]; break;
                     case en:
@@ -1206,7 +1208,7 @@ auto toHuman(const Rel rel,
         case hasEmotion:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "känsla"]; break;
                     case en:
@@ -1215,7 +1217,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "uttryckas med"]; break;
                     case en:
@@ -1224,7 +1226,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasBrother:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "bror"]; break;
                 case de: words = ["hat", not, "Bruder"]; break;
@@ -1233,7 +1235,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasSister:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "syster"]; break;
                 case de: words = ["hat", not, "Schwester"]; break;
@@ -1242,7 +1244,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasFamilyMember:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "familjemedlem"]; break;
                 case en:
@@ -1250,7 +1252,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasSibling:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "syskon"]; break;
                 case en:
@@ -1258,7 +1260,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasSpouse:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "gemål"]; break;
                 case en:
@@ -1268,7 +1270,7 @@ auto toHuman(const Rel rel,
         case hasParent:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "förälder"]; break;
                     case en:
@@ -1277,7 +1279,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "förälder till"]; break;
                     case en:
@@ -1288,7 +1290,7 @@ auto toHuman(const Rel rel,
         case hasChild:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "barn"]; break;
                     case en:
@@ -1297,7 +1299,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "barn till"]; break;
                     case en:
@@ -1308,7 +1310,7 @@ auto toHuman(const Rel rel,
         case hasHusband:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "make"]; break;
                     case en:
@@ -1317,7 +1319,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "make till"]; break;
                     case en:
@@ -1328,7 +1330,7 @@ auto toHuman(const Rel rel,
         case hasWife:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "maka"]; break;
                     case en:
@@ -1337,7 +1339,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "maka till"]; break;
                     case en:
@@ -1348,7 +1350,7 @@ auto toHuman(const Rel rel,
         case hasOfficeIn:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "kontor i"]; break;
                     case en:
@@ -1357,7 +1359,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "ett kontor för"]; break;
                     case en:
@@ -1368,7 +1370,7 @@ auto toHuman(const Rel rel,
         case causesDesire:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["skapar", not, "begär"]; break;
                     case en:
@@ -1377,7 +1379,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = [not, "begär skapad av"]; break;
                     case en:
@@ -1388,7 +1390,7 @@ auto toHuman(const Rel rel,
         case proxyFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en ställföreträdare för"]; break;
                     case en:
@@ -1397,7 +1399,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "ställföreträdare"]; break;
                     case en:
@@ -1408,7 +1410,7 @@ auto toHuman(const Rel rel,
         case instanceOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en instans av"]; break;
                     case en:
@@ -1417,7 +1419,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "instans"]; break;
                     case en:
@@ -1428,7 +1430,7 @@ auto toHuman(const Rel rel,
         case decreasesRiskOf:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["minskar", not, "risken av"]; break;
                     case en:
@@ -1437,7 +1439,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["blir", not, "mindre sannolik av"]; break;
                     case en:
@@ -1448,7 +1450,7 @@ auto toHuman(const Rel rel,
         case desires:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["önskar", not]; break;
                     case en:
@@ -1457,7 +1459,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["önskas", not, "av"]; break;
                     case en:
@@ -1468,7 +1470,7 @@ auto toHuman(const Rel rel,
         case uses:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["använder", not]; break;
                     case en:
@@ -1477,7 +1479,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["används", not, "av"]; break;
                     case en:
@@ -1488,7 +1490,7 @@ auto toHuman(const Rel rel,
         case controls:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kontrollerar", not]; break;
                     case en:
@@ -1497,7 +1499,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kontrolleras", not, "av"]; break;
                     case en:
@@ -1508,7 +1510,7 @@ auto toHuman(const Rel rel,
         case treats:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["hanteras", not]; break;
                     case en:
@@ -1517,7 +1519,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["hanteras", not, "av"]; break;
                     case en:
@@ -1528,7 +1530,7 @@ auto toHuman(const Rel rel,
         case togetherWritingFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en ihopskrivning för"]; break;
                     case en:
@@ -1537,7 +1539,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "ihopskrivning"]; break;
                     case en:
@@ -1548,7 +1550,7 @@ auto toHuman(const Rel rel,
         case symbolFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en symbol för"]; break;
                     case en:
@@ -1557,7 +1559,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "symbolen"]; break;
                     case en:
@@ -1568,7 +1570,7 @@ auto toHuman(const Rel rel,
         case abbreviationFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "förkortning för"]; break;
                     case en:
@@ -1577,7 +1579,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "förkortning"]; break;
                     case en:
@@ -1588,7 +1590,7 @@ auto toHuman(const Rel rel,
         case acronymFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en acronym för"]; break;
                     case en:
@@ -1597,7 +1599,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "acronym"]; break;
                     case en:
@@ -1608,7 +1610,7 @@ auto toHuman(const Rel rel,
         case emoticonFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en emotikon för"]; break;
                     case en:
@@ -1617,7 +1619,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "emotikon"]; break;
                     case en:
@@ -1628,7 +1630,7 @@ auto toHuman(const Rel rel,
         case playsInstrument:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["spelar", not, "instrument"]; break;
                     case en:
@@ -1637,7 +1639,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "ett instrument som spelas av"]; break;
                     case en:
@@ -1648,7 +1650,7 @@ auto toHuman(const Rel rel,
         case hasNameDay:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "namnsdag"]; break;
                     case en:
@@ -1657,7 +1659,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "namnsdag för"]; break;
                     case en:
@@ -1668,7 +1670,7 @@ auto toHuman(const Rel rel,
         case hasOrigin:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "ursprung"]; break;
                     case en:
@@ -1677,7 +1679,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "ursprung för"]; break;
                     case en:
@@ -1688,7 +1690,7 @@ auto toHuman(const Rel rel,
         case hasMeaning:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["har", not, "betydelsen"]; break;
                     case en:
@@ -1697,7 +1699,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "beskrivas av"]; break;
                     case en:
@@ -1708,7 +1710,7 @@ auto toHuman(const Rel rel,
         case hasPronounciation:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["utalas", not]; break;
                     case en:
@@ -1717,7 +1719,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["kan", not, "vara uttal av"]; break;
                     case en:
@@ -1728,7 +1730,7 @@ auto toHuman(const Rel rel,
         case slangFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "slang för"]; break;
                     case en:
@@ -1737,7 +1739,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en beskrivning av slang"]; break;
                     case en:
@@ -1748,7 +1750,7 @@ auto toHuman(const Rel rel,
         case idiomFor:
             if (dir == RelDir.forward)
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "idiom för"]; break;
                     case en:
@@ -1757,7 +1759,7 @@ auto toHuman(const Rel rel,
             }
             else
             {
-                switch (lang)
+                switch (targetLang)
                 {
                     case sv: words = ["är", not, "en beskrivning av idiomet"]; break;
                     case en:
@@ -1766,7 +1768,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case mutualProxyFor:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["är", not, "en ömsesidig ställföreträdare för"]; break;
                 case en:
@@ -1774,7 +1776,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case formOfWord:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "ord form"]; break;
                 case en:
@@ -1782,7 +1784,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case formOfVerb:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "verb form"]; break;
                 case en:
@@ -1790,7 +1792,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case formOfNoun:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "substantiv form"]; break;
                 case en:
@@ -1798,7 +1800,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case formOfAdjective:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["har", not, "adjektiv form"]; break;
                 case en:
@@ -1806,7 +1808,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case cookedWith:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["kan", not, "lagas med"]; break;
                 case en:
@@ -1814,7 +1816,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case servedWith:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["kan", not, "serveras med"]; break;
                 case en:
@@ -1822,7 +1824,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case competesWith:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["tävlar", not, "med"]; break;
                 case en:
@@ -1830,7 +1832,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case collaboratesWith:
-            switch (lang)
+            switch (targetLang)
             {
                 case sv: words = ["samarbetar", not, "med"]; break;
                 case en:
