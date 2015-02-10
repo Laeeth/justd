@@ -5220,9 +5220,32 @@ class Graph
                Lang[] dstLangs = [],
                Origin[] origins = [])
     {
+        writeln("nd: ", nd);
+        foreach (ln; lnsOf(nd, rel, origins))
+        {
+            writeln("ln: ", ln);
+            foreach (nd2; at(ln).actors[])
+            {
+                writeln("nd2: ", nd2);
+                if (nd2.ix != nd.ix) // no self-recursion
+                {
+                    writeln("differs");
+                    writeln("node: ", at(nd));
+                    writeln("lang: ", at(nd).lemma.lang);
+                    writeln("dstLangs: ", dstLangs);
+                    writeln("it: ", dstLangs.canFind(at(nd).lemma.lang));
+                    if (dstLangs.empty ||
+                        dstLangs.canFind(at(nd).lemma.lang)) // TODO functionize to Lemma.ofLang
+                    {
+                        writeln("nd2: ", nd);
+                    }
+                }
+            }
+        }
+        writeln("xx");
         return lnsOf(nd, rel, origins).map!(ln =>
                                             at(ln).actors[]
-                                                  .filter!(actor => (actor != nd &&
+                                                  .filter!(actor => (actor.ix != nd.ix &&
                                                                      (dstLangs.empty ||
                                                                       dstLangs.canFind(at(actor).lemma.lang)) // TODO functionize to Lemma.ofLang
                                                                )))
