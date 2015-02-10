@@ -1,7 +1,9 @@
 #!/usr/bin/env scons-file
 
+import os.path
+
 env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd")
-env.CacheDir("~/.cache/scons")
+env.CacheDir(os.path.expanduser("~/.cache/scons"))
 
 libraries = ['phobos', 'pthread', 'm']
 # libraryPaths = ['/usr/share/dmd/lib',
