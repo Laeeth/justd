@@ -1,3 +1,0 @@
-module dummy;
-
-void foo();
