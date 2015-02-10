@@ -452,7 +452,7 @@ private:
     Origin origin;
 }
 
-static if (true)
+static if (false)
 {
     pragma(msg, `Expr.sizeof: `, Expr.sizeof);
     pragma(msg, `Role.sizeof: `, Role.sizeof);
