@@ -13,7 +13,6 @@ int main(string[] args)
 
     auto gr = new Graph();
 
-
     while (true)
     {
         write("_____________\n" ~
