@@ -6,9 +6,6 @@ env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd
 env.CacheDir(os.path.expanduser("~/.cache/scons"))
 
 libraries = ['phobos', 'pthread', 'm']
-# libraryPaths = ['/usr/share/dmd/lib',
-#                 '/usr/share/dmd/src/druntime/import',
-#                 '/usr/share/dmd/src/phobos']
 
 env.Program(target="knetquery/knetquery",
             source=[ "knetquery/source/app.d",
@@ -25,3 +22,7 @@ env.Program(target="knetquery/knetquery",
                      "bylines.d",
                      "rational.d", "combinations.d", "permutations.d", "arsd/dom.d", "arsd/characterencodings.d",
                      "backtrace/backtrace.d" ])
+
+# libraryPaths = ['/usr/share/dmd/lib',
+#                 '/usr/share/dmd/src/druntime/import',
+#                 '/usr/share/dmd/src/phobos']
