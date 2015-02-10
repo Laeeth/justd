@@ -1,4 +1,4 @@
-nounSingular:abbas abbatisnounSingular:Holy FathernounSingular:abbot
+nounSingular:abbas abbatisHoly Fatherabbot
 
 noun:abbatiaabbeymonastery
 
@@ -135,7 +135,7 @@ adjective:adultusgrown upmatureadultof age
 verb:aduroadustumset fire toburnsingekindlelight
 
 verb:adveniocomearrivereach
-preposition:adversus(prep. + acc.) preposition:towardpreposition:againstfacing
+preposition:adversus(prep. + acc.) towardagainstfacing
 adjective:adversusfacingoppositeopposing
 verb:advertoturn towardsdirect one's attention toattract
 
@@ -2385,10 +2385,10 @@ piger pigra pigrumlazyslowdull
 pignuspawnpledgetoken(in pl.) persons in pledges of
 noun:piperpiperispepper
 pipiochirptweetpipe
-nounSingular:pirumnounSingular:pear
-nounSingular:pirusnounSingular:pear tree
-nounSingular:piscatornounSingular:fisherman
-nounSingular:piscis piscisnounSingular:fish
+nounSingular:pirumpear
+nounSingular:piruspear tree
+nounSingular:piscatorfisherman
+nounSingular:piscis piscisfish
 piusdutifulgodlyholyuprightkindhonestaffectionate
 placeo(+ dat.) verb:pleasebe agreeable to
 placetit is agreedit is resolvedit seems good
@@ -3508,7 +3508,7 @@ noun:vinitorvine-dresser (a man who prunes grape vines)
 noun:vinumwine
 noun:virmanheroman of courage
 noun:virgaa green twigrodstickwandbroomstreakstripe
-nounSingular:virgonounSingular:maidennounSingular:virginnounSingular:young girl
+nounSingular:virgomaidenvirginyoung girl
 adjective:viridisgreen
 adverb:virilitermanfully
 noun:virtusmanlinessexcellencecharacterworthcourage
@@ -3552,7 +3552,7 @@ adjective:voraxgluttonousvoracious
 verb:voroeat greedilyswallow upconsumegorge oneself
 vos(acc.) youI'll fight YOU allthen ... bring me giants!
 vosyou (pl)YOU can't catch mei'm the gingerbread man
-noun:votumprayerverb:wishdesirepromise to God
+nounSingular:votumprayerwishdesirepromise to God
 verb:voveo vovi votumpromise to Godvowpray for
 vox vocisvoiceword(med.) powerrightauthority
 vulariterin the common wayordinary manner
