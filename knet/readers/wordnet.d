@@ -158,7 +158,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
                                Sense sense = Sense.unknown,
                                const bool useMmFile = false)
 {
-    import std.conv: to;
+    import std.conv: to, parse;
     import std.algorithm: splitter;
     import std.stdio;
     import std.range: empty;
@@ -172,6 +172,9 @@ bool readWordNetDataLine(R, N)(Graph graph,
     uint synset_offset = 0;
     uint lex_filenum = 0;
     dchar ss_type;
+    uint w_cnt = 0;
+
+    writeln("line: ", line);
 
     size_t ix = 0;
     foreach (part; line.splitter)
@@ -186,6 +189,9 @@ bool readWordNetDataLine(R, N)(Graph graph,
                 break;
             case 2:
                 ss_type = part.front;
+                break;
+            case 3:
+                w_cnt = part.parse!(typeof(w_cnt))(16); // decode hex string
                 break;
             default:
                 break;
@@ -204,7 +210,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     }
     assert(sense == ssSense);
 
-    // writeln(synset_offset, ", ", lex_filenum, ", ", ss_type);
+    writeln(synset_offset, ", ", lex_filenum, ", ", ss_type, ", ", w_cnt);
 
     return true;
 }
