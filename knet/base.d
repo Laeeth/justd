@@ -4537,19 +4537,9 @@ class Graph
                      RelDir.any :
                      RelDir.forward);
 
-        // dln("role: ", role, " ", origin, " ", nweight, " ", dir);
-
         foreach (aLn; at(a).links[].map!(ln => ln.raw))
         {
             const aLink = at(aLn);
-
-            // dln("aLink.role: ", aLink.role, " ", aLink.origin, " ", aLink.nweight, " aLn: ", aLn);
-            // dln(aLink.role.rel == role.rel, ", ",
-            //     aLink.role.negation == role.negation, ", ",
-            //     aLink.origin == origin, ", ",
-            //     (aLink.actors[].canFind(Nd(b, dir))), ", ",
-            //     abs(aLink.nweight - nweight) < 1.0e-2);
-
             if (aLink.role.rel == role.rel &&
                 aLink.role.negation == role.negation && // no need to check reversion (all links are bidirectional)
                 aLink.origin == origin &&
@@ -4696,9 +4686,7 @@ class Graph
                 langs = [srcNode.lemma.lang]; // stay within language by default
             }
 
-            dln("before");
             auto dstNds = nnsOf(srcNd, Rel.translationOf, [Lang.ipa], origins);
-            dln("after");
 
             foreach (dstNd; dstNds) // translations to IPA-language
             {
