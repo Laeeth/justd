@@ -10,8 +10,6 @@ import knet.origins: Origin, toNice;
 import knet.relations: Rel, RelDir, toHuman;
 import std.conv;
 
-alias TriedLines = bool[string]; // TODO use std.container.set
-
 /** Show Network Relations.
  */
 void showRelations(Graph graph,
@@ -187,6 +185,7 @@ void showNds(R)(Graph graph,
         }
         writeln;
 
+        import knet.iteration;
         auto lns = graph.lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
 
         import std.algorithm: multiSort;
@@ -234,6 +233,8 @@ void showTopLanguages(Graph graph,
     }
 }
 
+alias TriedLines = bool[string]; // TODO use std.container.set
+
 bool showNodes(Graph graph,
                string line,
                Lang lang = Lang.unknown,
@@ -260,6 +261,8 @@ bool showNodes(Graph graph,
     import std.algorithm: splitter;
     import std.string: strip;
     import std.range: empty;
+
+    import knet.iteration;
 
     if (line in triedLines) // if already tested
         return false;

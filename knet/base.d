@@ -102,11 +102,10 @@ import dbg;
 
 import stemming;
 import grammars;
-
-import knet.separators;
 import combinations;
 import permutations;
 
+import knet.separators;
 import knet.languages;
 import knet.origins;
 import knet.thematics;
@@ -116,6 +115,8 @@ import knet.roles;
 import knet.decodings;
 import knet.lemmas;
 
+import knet.lectures.all;
+
 import knet.readers.cn5;
 import knet.readers.nell;
 import knet.readers.wordnet;
@@ -123,8 +124,6 @@ import knet.readers.moby;
 import knet.readers.synlex;
 import knet.readers.folklex;
 import knet.readers.swesaurus;
-
-import knet.lectures.all;
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
@@ -410,6 +409,9 @@ struct Link
     Origin origin;
 }
 
+auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward).map!(nd => nd.raw); }
+auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward ).map!(ln => ln.raw); }
+
 /** Binary Relation Link.
  */
 struct Link2
@@ -526,81 +528,10 @@ struct Stat
 */
 class Graph
 {
-    /** Get Links Refs of $(D node) with direction $(D dir).
-        TODO what to do with role.reversion here?
-     */
-    auto lnsOf(Node node,
-               RelDir dir = RelDir.any,
-               Role role = Role.init)
-    {
-        return node.links[]
-                   .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize to match(RelDir, RelDir)
-                                   at(ln).role.negation == role.negation &&
-                                   (at(ln).role.rel == role.rel ||
-                                    at(ln).role.rel.specializes(role.rel))));
-    }
-
-    auto linksOf(Node node,
-                 RelDir dir = RelDir.any,
-                 Role role = Role.init)
-    {
-        return lnsOf(node, dir, role).map!(ln => at(ln));
-    }
-
-    auto linksOf(Nd nd,
-                 RelDir dir = RelDir.any,
-                 Role role = Role.init)
-    {
-        return linksOf(at(nd), dir, role);
-    }
-
-    /** Network Walker (Input Range).
-        TODO: Returns Path
-     */
-    class Walk
-    {
-        this(Nd first_)
-        {
-            first = first_;
-            current = first;
-        }
-
-        auto front()
-        {
-            return lnsOf(at(current));
-        }
-
-        void popFront()
-        {
-        }
-
-        bool empty() const { return true; }
-
-        Nd first;
-        Nd current;
-        NWeight[Nd] dists;
-    }
-
-    Walk walk(in Node start)
-    {
-        typeof(return) walk;
-        return walk;
-    }
-    alias traverse = walk;
-
-    auto ins (in Link link)
-    {
-        return link.actors[].filter!(nd => nd.dir() == RelDir.backward).map!(nd => nd.raw);
-    }
-    auto outs(in Link link)
-    {
-        return link.actors[].filter!(nd => nd.dir() == RelDir.forward).map!(ln => ln.raw);
-    }
 
     Db db;
     Stat stat;
     WordNet!(true) wordnet;
-
 
     @safe pure nothrow @nogc
     {
@@ -614,7 +545,7 @@ class Graph
         ref inout(Link) opUnary(string s)(const Ln ln) inout if (s == `*`) { return at(ln); }
     }
 
-    Nd nodeRefByLemmaMaybe(in Lemma lemma)
+    Nd ndByLemmaMaybe(in Lemma lemma)
     {
         return get(db.ndByLemma, lemma, typeof(return).init);
     }
@@ -4487,190 +4418,6 @@ class Graph
     import std.datetime: StopWatch;
     StopWatch showNodesSW;
 
-    auto anagramsOf(S)(S expr) if (isSomeString!S)
-    {
-        const lsWord = expr.sorted; // letter-sorted expr
-        return db.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
-                                         lsWord == node.lemma.expr.toLower.sorted));
-    }
-
-    /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
-    auto derangedAnagramsOf(S)(S expr) if (isSomeString!S)
-    {
-        return anagramsOf(expr);
-    }
-
-    /** Get Synonyms of $(D word) optionally with Matching Syllable Count.
-        Set withSameSyllableCount to true to get synonyms which can be used to
-        help in translating songs with same rhythm.
-     */
-    auto synonymsOf(S)(S expr,
-                       Lang lang = Lang.unknown,
-                       Sense sense = Sense.unknown,
-                       bool withSameSyllableCount = false) if (isSomeString!S)
-    {
-        auto nds = ndsOf(expr, lang, sense);
-        return nds;
-    }
-
-    /** Get Links of $(D nd) type $(D rel) learned from $(D origins).
-    */
-    auto lnsOf(Nd nd,
-               Rel rel,
-               Origin[] origins = [])
-    {
-        return at(nd).links[]
-                     .filter!(ln => (at(ln).role.rel == rel &&
-                                     (origins.empty ||
-                                      origins.canFind(at(ln).origin))))
-                     .map!(ln => ln.raw);
-    }
-
-    /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
-        learned from $(D origins).
-    */
-    auto nnsOf(Nd nd,
-               Rel rel,
-               Lang[] dstLangs = [],
-               Origin[] origins = [])
-    {
-        writeln("nd: ", nd);
-        foreach (ln; lnsOf(nd, rel, origins))
-        {
-            writeln("ln: ", ln);
-            foreach (nd2; at(ln).actors[])
-            {
-                writeln("nd2: ", nd2);
-                if (nd2.ix != nd.ix) // no self-recursion
-                {
-                    writeln("differs");
-                    writeln("node: ", at(nd));
-                    writeln("lang: ", at(nd).lemma.lang);
-                    writeln("dstLangs: ", dstLangs);
-                    writeln("it: ", dstLangs.canFind(at(nd).lemma.lang));
-                    if (dstLangs.empty ||
-                        dstLangs.canFind(at(nd).lemma.lang)) // TODO functionize to Lemma.ofLang
-                    {
-                        writeln("nd2: ", nd);
-                    }
-                }
-            }
-        }
-        writeln("xx");
-        return lnsOf(nd, rel, origins).map!(ln =>
-                                            at(ln).actors[]
-                                                  .filter!(actor => (actor.ix != nd.ix &&
-                                                                     (dstLangs.empty ||
-                                                                      dstLangs.canFind(at(actor).lemma.lang)) // TODO functionize to Lemma.ofLang
-                                                               )))
-                                      .joiner(); // no self
-    }
-
-    /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
-        Set withSameSyllableCount to true to get synonyms which can be used to
-        help in translating songs with same rhythm.
-        See also: http://stevehanov.ca/blog/index.php?id=8
-     */
-    Nds rhymesOf(S)(S expr,
-                    Lang[] langs = [],
-                    Origin[] origins = [],
-                    size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
-                    bool withSameSyllableCount = false) if (isSomeString!S)
-    {
-        foreach (srcNd; ndsOf(expr)) // for each interpretation of expr
-        {
-            const srcNode = at(srcNd);
-
-            if (langs.empty)
-            {
-                langs = [srcNode.lemma.lang]; // stay within language by default
-            }
-
-            auto dstNds = nnsOf(srcNd, Rel.translationOf, [Lang.ipa], origins);
-
-            foreach (dstNd; dstNds) // translations to IPA-language
-            {
-                const dstNode = at(dstNd);
-                auto hits = db.allNodes.filter!(a => langs.canFind(a.lemma.lang))
-                                    .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
-                                                                          at(srcNd).lemma.expr)))
-                                    .filter!(a => a[1] >= commonPhonemeCountMin)
-                                    // .sorted!((a, b) => false)
-                ;
-            }
-        }
-        return typeof(return).init;
-    }
-
-    /** Get Possible Languages of $(D text) sorted by falling strength.
-        TODO Weight hits with word node connectedness relative to average word
-        connectedness in that language.
-     */
-    NWeight[Lang] languagesOf(R)(R text) if (isIterable!R &&
-                                             isSomeString!(ElementType!R))
-    {
-        typeof(return) hist;
-        foreach (word; text)
-        {
-            foreach (lemma; lemmasOfExpr(word))
-            {
-                ++hist[lemma.lang];
-            }
-        }
-        return hist;
-    }
-
-    /** Get Translations of $(D word) in language $(D lang).
-        If several $(D toLangs) are specified pick the closest match (highest
-        relation weight).
-    */
-    auto translationsOf(S)(S expr,
-                           Lang lang = Lang.unknown,
-                           Sense sense = Sense.unknown,
-                           Lang[] toLangs = []) if (isSomeString!S)
-    {
-        auto nodes = ndsOf(expr, lang, sense);
-        // en => sv:
-        // en-en => sv-sv
-        /* auto translations = nodes.map!(node => lnsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
-        return nodes;
-    }
-
-    /** Get Node References whose Lemma Expr starts with $(D prefix). */
-    auto canFind(S)(S part,
-                    Lang lang = Lang.unknown,
-                    Sense sense = Sense.unknown) if (isSomeString!S)
-    {
-        return db.ndByLemma.values.filter!(nd => at(nd).lemma.expr.canFind(part));
-    }
-
-    /** Get Node References whose Lemma Expr starts with $(D prefix). */
-    auto startsWith(S)(S prefix,
-                       Lang lang = Lang.unknown,
-                       Sense sense = Sense.unknown) if (isSomeString!S)
-    {
-        return db.ndByLemma.values.filter!(nd => at(nd).lemma.expr.startsWith(prefix));
-    }
-
-    /** Get Node References whose Lemma Expr starts with $(D suffix). */
-    auto endsWith(S)(S suffix,
-                     Lang lang = Lang.unknown,
-                     Sense sense = Sense.unknown) if (isSomeString!S)
-    {
-        return db.ndByLemma.values.filter!(nd => at(nd).lemma.expr.endsWith(suffix));
-    }
-
-    /** Relatedness.
-        Sum of all paths relating a to b where each path is the path weight
-        product.
-    */
-    real relatedness(Nd a,
-                     Nd b) const @safe @nogc pure nothrow
-    {
-        typeof(return) value;
-        return value;
-    }
-
     /** Get Node with strongest relatedness to $(D text).
         TODO Compare with function Context() in ConceptNet API.
      */
@@ -4680,12 +4427,4 @@ class Graph
         return node;
     }
     alias topicOf = contextOf;
-
-    /** Guess Language of $(D text).
-    */
-    Lang guessLanguageOf(T)(R text) const if (isSourceOfSomeString!R)
-    {
-        auto lang = Lang.unknown;
-        return lang;
-    }
 }
