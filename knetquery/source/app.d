@@ -1,5 +1,6 @@
 import std.stdio;
 import knet.base;
+import knet.tests;
 import knet.lectures.all;
 
 import etc.linux.memoryerror;
@@ -12,6 +13,8 @@ int main(string[] args)
     registerMemoryErrorHandler();
 
     auto gr = new Graph();
+    gr.testAll;
+    gr.initialize();
 
     while (true)
     {

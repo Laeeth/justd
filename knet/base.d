@@ -342,7 +342,6 @@ struct Node
         this.origin = origin;
         this.links = links;
     }
-private:
     Lns links;
     Lemma lemma;
     Origin origin;
@@ -486,6 +485,7 @@ struct Db
     // TODO Nds[Lang.max + 1] ndsByLang;
 
     // Indexes
+    Location[Nd] locations;
     Nd[Lemma] ndByLemma;
     Lemmas[Word] lemmasByWord; // Lemmas index by word of expression has more than one word
     Lemmas[Expr] lemmasByExpr; // Two or More Words
@@ -611,14 +611,14 @@ class Graph
 
     @safe pure nothrow @nogc
     {
-        ref inout(Link) at(const Ln ln) inout { return db.allLinks[ln.ix]; }
         ref inout(Node) at(const Nd nd) inout { return db.allNodes[nd.ix]; }
+        ref inout(Link) at(const Ln ln) inout { return db.allLinks[ln.ix]; }
 
-        ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }
         ref inout(Node) opIndex(const Nd nd) inout { return at(nd); }
+        ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }
 
-        ref inout(Link) opUnary(string s)(const Ln ln) inout if (s == `*`) { return at(ln); }
         ref inout(Node) opUnary(string s)(const Nd nd) inout if (s == `*`) { return at(nd); }
+        ref inout(Link) opUnary(string s)(const Ln ln) inout if (s == `*`) { return at(ln); }
     }
 
     Nd nodeRefByLemmaMaybe(in Lemma lemma)
@@ -789,16 +789,17 @@ class Graph
         return lemma;
     }
 
-    /** Construct Network
-        Read sources in order of decreasing reliability.
-     */
     this()
     {
-        const cachePath = "~/.cache";
-        unittestMe();
+    }
 
-        // loadUniquelySensedLemmas("~/.cache");
-        loadData(cachePath);
+    /** Construct Network
+        Read sources in order of decreasing reliability.
+    */
+    void initialize(string cachePath = "~/.cache")
+    {
+        // loadUniquelySensedLemmas(cachePath);
+        // loadData(cachePath);
 
         this.learnMobyEnglishPronounciations();
         return;
@@ -807,51 +808,11 @@ class Graph
 
         // inferSpecializedSenses();
         showRelations;
-        saveUniquelySensedLemmas("~/.cache");
+        saveUniquelySensedLemmas(cachePath);
         if (true)
         {
             storeData(cachePath);
         }
-    }
-
-    /** Run unittests.
-    */
-    void unittestMe()
-    {
-        // link should be reused
-        {
-            const ndA = store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
-            const ndB = store(`3200`, Lang.sv, Sense.population, Origin.manual);
-            const ln1 = connect(ndA, Role(Rel.hasAttribute),
-                                ndB, Origin.manual, 1.0, true);
-            const ln2 = connect(ndA, Role(Rel.hasAttribute),
-                                ndB, Origin.manual, 1.0, true);
-            assert(ln1 == ln2);
-        }
-
-        // symmetric link should be reused in reverse order
-        {
-            const ndA = store(`big`, Lang.en, Sense.adjective, Origin.manual);
-            const ndB = store(`large`, Lang.en, Sense.adjective, Origin.manual);
-            const ln1 = connect(ndA, Role(Rel.synonymFor),
-                                ndB, Origin.manual, 1.0, true);
-            // reversion order should return same link because synonymFor is symmetric
-            const ln2 = connect(ndB, Role(Rel.synonymFor),
-                                ndA, Origin.manual, 1.0, true);
-            assert(ln1 == ln2);
-        }
-
-        // Lemmas with same expr should be reused
-        const beEn1 = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-        const beEn2 = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-        assert(at(beEn1).lemma.expr.ptr ==
-               at(beEn2).lemma.expr.ptr); // assert clever reuse of already hashed expr
-
-        // Lemmas with same expr should be reused
-        const beEn = store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-        const beSv = store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
-        assert(at(beEn).lemma.expr.ptr ==
-               at(beSv).lemma.expr.ptr); // assert clever reuse of already hashed expr
     }
 
     void learnDefault()
@@ -4502,14 +4463,12 @@ class Graph
         return context;
     }
 
-    /** Node Locations. */
-    Location[Nd] locations;
-
     /** Set Location of Node $(D cix) to $(D location) */
-    void setLocation(Nd cix, in Location location)
+    void setLocation(Nd nd, in Location location)
     {
-        assert (cix !in locations);
-        locations[cix] = location;
+        writeln(this[nd]);
+        assert (nd !in db.locations);
+        db.locations[nd] = location;
     }
 
     /** If $(D link) node origins unknown propagate them from $(D link)
