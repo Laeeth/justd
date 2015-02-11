@@ -2,6 +2,7 @@ import std.stdio;
 import knet.base;
 import knet.tests;
 import knet.inference;
+import knet.persistence;
 import knet.io;
 import knet.lectures.all;
 
@@ -14,10 +15,23 @@ int main(string[] args)
     debug backtrace.backtrace.install(stderr);
     registerMemoryErrorHandler();
 
+    const cachePath = "~/.cache";
+
     auto graph = new Graph();
+
     graph.testAll;
-    graph.initialize;
+
+    // loads
+    if (false) graph.loadUniquelySensedLemmas(cachePath);
+    if (false) { graph.load(cachePath); }
+
+    graph.initialize(cachePath);
+
+    // saves
     if (false) graph.inferSpecializedSenses;
+    if (false) graph.saveUniquelySensedLemmas(cachePath);
+
+    if (false) { graph.save(cachePath); }
 
     while (true)
     {
