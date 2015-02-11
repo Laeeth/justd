@@ -9,8 +9,15 @@
                      "../knet/languages.d", "../knet/roles.d", "../knet/origins.d", "../knet/thematics.d",
                      "../knet/decodings.d", "../knet/relations.d", "../knet/senses.d", "../knet/lemmas.d",
                      "../knet/base.d", "../knet/tests.d", "../knet/inference.d", "../knet/persistence.d", "../knet/io.d",
-                     "../knet/cn5.d", "../knet/nell.d", "../knet/wordnet.d", "../knet/moby.d",
-                     "../knet/synlex.d", "../knet/folklex.d", "../knet/swesaurus.d",
+
+                     "../knet/readers/cn5.d",
+                     "../knet/readers/nell.d",
+                     "../knet/readers/wordnet.d",
+                     "../knet/readers/moby.d",
+                     "../knet/readers/synlex.d",
+                     "../knet/readers/folklex.d",
+                     "../knet/readers/swesaurus.d",
+
                      "../knet/lectures/all.d",
                      "../wordnet.d",
                      "../grammars.d", "../stemming.d", "../ixes.d",
