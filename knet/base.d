@@ -407,7 +407,6 @@ struct Link
                 (cast(typeof(return))PWeight.max));
     }
 
-private:
     Nds actors;
     PWeight pweight;
     Role role;
@@ -418,7 +417,6 @@ private:
  */
 struct Link2
 {
-private:
     Nd first;
     Nd second;
     PWeight pweight;
@@ -430,7 +428,6 @@ private:
  */
 struct Link3
 {
-private:
     Nd first;
     Nd second;
     Nd third;
@@ -443,7 +440,6 @@ private:
  */
 struct Link4
 {
-private:
     Nd first;
     Nd second;
     Nd third;
@@ -4632,504 +4628,12 @@ class Graph
         return typeof(return).asUndefined;
     }
 
-    void showLink(Rel rel,
-                  RelDir dir,
-                  bool negation = false,
-                  Lang lang = Lang.en)
-    {
-        auto indent = `    - `;
-        write(indent, rel.toHuman(dir, negation, lang), `: `);
-    }
-
-    void showLn(Ln ln)
-    {
-        auto link = at(ln);
-        showLink(link.role.rel, ln.dir, link.role.negation);
-    }
-
-    void showNode(in Node node, NWeight weight)
-    {
-        if (node.lemma.expr)
-            write(` "`, node.lemma.expr, // .replace(`_`, ` `)
-                  `"`);
-
-        write(` (`); // open
-
-        if (node.lemma.meaningNr != 0)
-        {
-            write(`[`, node.lemma.meaningNr, `]`);
-        }
-
-        if (node.lemma.lang != Lang.unknown)
-        {
-            write(node.lemma.lang);
-        }
-        if (node.lemma.sense != Sense.unknown)
-        {
-            write(`:`, node.lemma.sense);
-            if (node.lemma.hasUniqueSense)
-            {
-                write("(unique)");
-            }
-        }
-        if (node.lemma.isRegexp)
-        {
-            write(`:rx`);
-        }
-        if (node.lemma.context != Ctx.asUndefined)
-        {
-            write(`:`, db.contextNameByCtx[node.lemma.context]);
-        }
-
-        writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
-    }
-
-    void showLinkNode(in Node node,
-                      Rel rel,
-                      NWeight weight,
-                      RelDir dir)
-    {
-        showLink(rel, dir);
-        showNode(node, weight);
-        writeln;
-    }
-
-    void showNds(R)(R nds,
-                    Rel rel = Rel.any,
-                    bool negation = false)
-    {
-        foreach (nd; nds)
-        {
-            auto lineNode = at(nd);
-
-            write(`  -`);
-
-            if (lineNode.lemma.meaningNr != 0)
-            {
-                write(` meaning [`, lineNode.lemma.meaningNr, `]`);
-            }
-
-            if (lineNode.lemma.lang != Lang.unknown)
-            {
-                write(` in `, lineNode.lemma.lang.toHuman);
-            }
-            if (lineNode.lemma.sense != Sense.unknown)
-            {
-                write(` of sense `, lineNode.lemma.sense.toHuman);
-            }
-            writeln;
-
-            auto lns = lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
-
-            static if (true)
-            {
-                lns.multiSort!((a, b) => (at(a).nweight >
-                                          at(b).nweight),
-                               (a, b) => (at(a).role.rel.rank <
-                                          at(b).role.rel.rank),
-                               (a, b) => (at(a).role.rel <
-                                          at(b).role.rel));
-            }
-
-            foreach (ln; lns)
-            {
-                auto link = at(ln);
-                showLn(ln);
-                foreach (linkedNode; link.actors[]
-                                         .filter!(actorNodeRef => (actorNodeRef.ix !=
-                                                                   nd.ix)) // don't self reference
-                                         .map!(nd => at(nd)))
-                {
-                    showNode(linkedNode, link.nweight);
-                }
-                writeln;
-            }
-        }
-    }
-
-    alias TriedLines = bool[string]; // TODO use std.container.set
-
-    void showFixedLine(string line)
-    {
-        writeln(`> Line "`, line, `"`);
-    }
-
     enum durationInMsecs = 1000; // duration in milliseconds
 
     enum fuzzyExprMatchMaximumRecursionDepth = 8;
 
     import std.datetime: StopWatch;
-    private StopWatch showNodesSW;
-
-    bool showNodes(string line,
-                   Lang lang = Lang.unknown,
-                   Sense sense = Sense.unknown,
-                   string lineSeparator = `_`,
-                   TriedLines triedLines = TriedLines.init,
-                   uint depth = 0)
-    {
-        if      (depth == 0) { showNodesSW.start(); } // if top-level call start it
-        else if (depth >= fuzzyExprMatchMaximumRecursionDepth)
-        {
-            // writeln(`Maximum recursion depth reached for `, line, ` ...`);
-            return false;       // limit maximum recursion depth
-        }
-        if (showNodesSW.peek().msecs >= durationInMsecs)
-        {
-            // writeln(`Out of time. Skipping testing of `, line, ` ...`);
-            return false;
-        }
-
-        import std.ascii: whitespace;
-        import std.algorithm: splitter;
-        import std.string: strip;
-
-        if (line in triedLines) // if already tested
-            return false;
-        triedLines[line] = true;
-
-        // dln(`depth:`, depth, ` line: `, line);
-
-        // auto normLine = line.strip.splitter!isWhite.filter!(a => !a.empty).joiner(lineSeparator).to!S;
-        // See also: http://forum.dlang.org/thread/pyabxiraeabfxujiyamo@forum.dlang.org#post-euqwxskfypblfxiqqtga:40forum.dlang.org
-        auto normLine = line.strip.tr(std.ascii.whitespace, ` `, `s`);
-        if (normLine.empty)
-            return false;
-
-        if (normLine == `palindrome`)
-        {
-            foreach (palindromeNode; db.allNodes.filter!(node =>
-                                                      node.lemma.expr.toLower.isPalindrome(3)))
-            {
-                showLinkNode(palindromeNode,
-                             Rel.instanceOf,
-                             NWeight.infinity,
-                             RelDir.backward);
-            }
-        }
-        else if (normLine.skipOverShortestOf(`anagramsof(`,
-                                             `anagrams_of(`))
-        {
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                foreach (anagramNode; anagramsOf(arg))
-                {
-                    showLinkNode(anagramNode,
-                                 Rel.instanceOf,
-                                 NWeight.infinity,
-                                 RelDir.backward);
-                }
-            }
-        }
-        else if (normLine.skipOverShortestOf(`synonymsof(`,
-                                             `synonyms_of(`))
-        {
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                foreach (synonymNode; synonymsOf(arg))
-                {
-                    showLinkNode(at(synonymNode),
-                                 Rel.instanceOf,
-                                 NWeight.infinity,
-                                 RelDir.backward);
-                }
-            }
-        }
-        else if (normLine.skipOverShortestOf(`rhymesof(`,
-                                             `rhymes_of(`))
-        {
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                writeln(`> Rhymes of "`, arg, `" are:`);
-                foreach (rhymingNode; rhymesOf(arg))
-                {
-                    showLinkNode(at(rhymingNode),
-                                 Rel.instanceOf,
-                                 NWeight.infinity,
-                                 RelDir.backward);
-                }
-            }
-        }
-        else if (normLine.skipOverShortestOf(`translationsof(`,
-                                             `translations_of(`,
-                                             `translate(`))
-        {
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                foreach (translationNode; translationsOf(arg))
-                {
-                    showLinkNode(at(translationNode),
-                                 Rel.instanceOf,
-                                 NWeight.infinity,
-                                 RelDir.backward);
-                }
-            }
-        }
-        else if (normLine.skipOverShortestOf(`languagesof(`,
-                                             `languages_of(`,
-                                             `langsof(`,
-                                             `langs(`))
-        {
-            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                auto hist = languagesOf(arg.splitter(` `));
-                showTopLanguages(hist);
-            }
-        }
-        else if (normLine.skipOverShortestOf(`languageof(`,
-                                             `language_of(`,
-                                             `langof(`,
-                                             `lang(`))
-        {
-            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                auto hist = languagesOf(arg.splitter(` `));
-                showTopLanguages(hist, 1);
-            }
-        }
-        else if (normLine.skipOverShortestOf(`begin(`,
-                                             `begins(`,
-                                             `startswith(`,
-                                             `starts_with(`,
-                                             `beginswith(`,
-                                             `begins_with(`,
-                                             `hasbegin(`,
-                                             `hasbeginning(`,
-                                             `has_begin(`,
-                                             `hasstart(`,
-                                             `has_start(`))
-        {
-            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                auto hits = startsWith(arg);
-                foreach (node; hits.map!(a => at(a)))
-                {
-                    showNode(node, 1.0);
-                    writeln;
-                }
-            }
-        }
-        else if (normLine.skipOverShortestOf(`end(`,
-                                             `ends(`,
-                                             `endswith(`,
-                                             `ends_with(`,
-                                             `hasend(`,
-                                             `has_end(`,
-                                             `hassuffix(`,
-                                             `has_suffix(`))
-        {
-            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                auto hits = endsWith(arg);
-                foreach (node; hits.map!(a => at(a)))
-                {
-                    showNode(node, 1.0);
-                    writeln;
-                }
-            }
-        }
-        else if (normLine.skipOverShortestOf(`canfind(`,
-                                             `can_find(`,
-                                             `contain(`,
-                                             `contains(`))
-        {
-            normLine.skipOver(` `); // TODO all space using skipOver!isSpace
-            const split = normLine.findSplitBefore(`)`);
-            const arg = split[0];
-            if (!arg.empty)
-            {
-                auto hits = canFind(arg);
-                foreach (node; hits.map!(a => at(a)))
-                {
-                    showNode(node, 1.0);
-                    writeln;
-                }
-            }
-        }
-        else if (normLine.skipOver(`as`)) // asSense
-        {
-            const split = normLine.findSplit(`(`);
-            const senseString = split[0].strip;
-            const arg = split[2].until(')').array.strip;
-            try
-            {
-                const qSense = senseString.toLower.to!Sense;
-                dln(senseString, `, `, arg, ` `, qSense);
-            }
-            catch (std.conv.ConvException e)
-            {
-            }
-        }
-        else if (normLine.skipOver(`in`)) // inLanguage
-        {
-            const split = normLine.findSplit(`(`);
-            const langString = split[0].strip;
-            const arg = split[2].until(')').array.strip;
-            try
-            {
-                const qLang = langString.toLower.to!Lang;
-                dln(langString, `, `, arg, ` `, qLang);
-            }
-            catch (std.conv.ConvException e)
-            {
-            }
-        }
-
-        if (normLine.empty)
-            return false;
-
-        // queried line nodes
-        auto lineNds = ndsOf(normLine, lang, sense);
-
-        if (!lineNds.empty)
-        {
-            showFixedLine(normLine);
-            showNds(lineNds);
-        }
-
-        enum commonSplitters = [` `, // prefer space
-                                `-`,
-                                `'`];
-
-        enum commonJoiners = [` `, // prefer space
-                              `-`,
-                              ``,
-                              `'`];
-
-        // try joined
-        if (lineNds.empty)
-        {
-            auto spaceWords = normLine.splitter(' ').filter!(a => !a.empty);
-            if (spaceWords.count >= 2)
-            {
-                foreach (combWords; permutations.permutations(spaceWords.array)) // TODO remove .array
-                {
-                    foreach (separator; commonJoiners)
-                    {
-                        showNodes(combWords.joiner(separator).to!string,
-                                  lang, sense, lineSeparator, triedLines, depth + 1);
-                    }
-                }
-            }
-
-            auto minusWords = normLine.splitter('-').filter!(a => !a.empty);
-            if (minusWords.count >= 2)
-            {
-                foreach (separator; commonJoiners)
-                {
-                    showNodes(minusWords.joiner(separator).to!string,
-                              lang, sense, lineSeparator, triedLines, depth + 1);
-                }
-            }
-
-            auto quoteWords = normLine.splitter(`'`).filter!(a => !a.empty);
-            if (quoteWords.count >= 2)
-            {
-                foreach (separator; commonJoiners)
-                {
-                    showNodes(quoteWords.joiner(separator).to!string,
-                              lang, sense, lineSeparator, triedLines, depth + 1);
-                }
-            }
-
-            // stemmed
-            auto stemLine = normLine;
-            while (true)
-            {
-                const stemResult = stemLine.stemIn(lang);
-                auto stemMoreLine = stemResult[0];
-                const stemLang = stemResult[1];
-                if (stemMoreLine == stemLine)
-                    break;
-                // writeln(`> Stemmed to ``, stemMoreLine, `` in language `, stemLang);
-                showNodes(stemMoreLine, stemLang, sense, lineSeparator, triedLines, depth + 1);
-                stemLine = stemMoreLine;
-            }
-
-            // non-interpuncted
-            if (normLine.startsWith('.', '?', '!'))
-            {
-                const nonIPLine = normLine.dropOne;
-                // writeln(`> As a non-interpuncted ``, nonIPLine, `"`);
-                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
-            }
-
-            // non-interpuncted
-            if (normLine.endsWith('.', '?', '!'))
-            {
-                const nonIPLine = normLine.dropBackOne;
-                // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
-                showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
-            }
-
-            // interpuncted
-            if (!normLine.endsWith('.') &&
-                !normLine.endsWith('?') &&
-                !normLine.endsWith('!'))
-            {
-                // questioned
-                const questionedLine = normLine ~ '?';
-                // writeln(`> As a question "`, questionedLine, `"`);
-                showNodes(questionedLine, lang, sense, lineSeparator, triedLines, depth + 1);
-
-                // exclaimed
-                const exclaimedLine = normLine ~ '!';
-                // writeln(`> As an exclamation "`, exclaimedLine, `"`);
-                showNodes(exclaimedLine, lang, sense, lineSeparator, triedLines, depth + 1);
-
-                // dotted
-                const dottedLine = normLine ~ '.';
-                // writeln(`> As a dotted "`, dottedLine, `"`);
-                showNodes(dottedLine, lang, sense, lineSeparator, triedLines, depth + 1);
-            }
-
-            // lowered
-            const loweredLine = normLine.toLower;
-            if (loweredLine != normLine)
-            {
-                // writeln(`> Lowercased to "`, loweredLine, `"`);
-                showNodes(loweredLine, lang, sense, lineSeparator, triedLines, depth + 1);
-            }
-
-            // uppered
-            const upperedLine = normLine.toUpper;
-            if (upperedLine != normLine)
-            {
-                // writeln(`> Uppercased to "`, upperedLine, `"`);
-                showNodes(upperedLine, lang, sense, lineSeparator, triedLines, depth + 1);
-            }
-
-            // capitalized
-            const capitalizedLine = normLine.capitalize;
-            if (capitalizedLine != normLine)
-            {
-                // writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
-                showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines, depth + 1);
-            }
-        }
-
-        return false;
-    }
+    StopWatch showNodesSW;
 
     auto anagramsOf(S)(S expr) if (isSomeString!S)
     {
@@ -5153,10 +4657,7 @@ class Graph
                        Sense sense = Sense.unknown,
                        bool withSameSyllableCount = false) if (isSomeString!S)
     {
-        auto nds = ndsOf(expr,
-                         lang,
-                         sense);
-        showNds(nds, Rel.synonymFor); // TODO traverse synonyms
+        auto nds = ndsOf(expr, lang, sense);
         return nds;
     }
 
@@ -5269,18 +4770,6 @@ class Graph
         return hist;
     }
 
-    /** Show Languages Sorted By Falling Weight. */
-    void showTopLanguages(NWeight[Lang] hist, size_t maxCount = size_t.max)
-    {
-        size_t i = 0;
-        foreach (e; hist.pairs.sort!((a, b) => (a[1] > b[1])))
-        {
-            if (i == maxCount) { break; }
-            writeln(`  - `, e[0].toHuman, `: `, e[1], ` #hits`);
-            ++i;
-        }
-    }
-
     /** Get Translations of $(D word) in language $(D lang).
         If several $(D toLangs) are specified pick the closest match (highest
         relation weight).
@@ -5290,10 +4779,7 @@ class Graph
                            Sense sense = Sense.unknown,
                            Lang[] toLangs = []) if (isSomeString!S)
     {
-        auto nodes = ndsOf(expr,
-                           lang,
-                           sense);
-        showNds(nodes, Rel.translationOf); // TODO traverse synonyms and translations
+        auto nodes = ndsOf(expr, lang, sense);
         // en => sv:
         // en-en => sv-sv
         /* auto translations = nodes.map!(node => lnsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */

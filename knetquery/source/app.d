@@ -2,6 +2,7 @@ import std.stdio;
 import knet.base;
 import knet.tests;
 import knet.inference;
+import knet.io;
 import knet.lectures.all;
 
 import etc.linux.memoryerror;
@@ -13,10 +14,10 @@ int main(string[] args)
     debug backtrace.backtrace.install(stderr);
     registerMemoryErrorHandler();
 
-    auto gr = new Graph();
-    gr.testAll;
-    gr.initialize;
-    if (false) gr.inferSpecializedSenses;
+    auto graph = new Graph();
+    graph.testAll;
+    graph.initialize;
+    if (false) graph.inferSpecializedSenses;
 
     while (true)
     {
@@ -25,7 +26,7 @@ int main(string[] args)
         string line;
         if ((line = readln()) !is null)
         {
-            gr.showNodes(line);
+            graph.showNodes(line);
         }
         else
         {

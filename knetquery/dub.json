@@ -8,7 +8,7 @@
     "sourceFiles": [ "../dbg.d", "../msgpack.d", "../predicates.d",
                      "../knet/languages.d", "../knet/roles.d", "../knet/origins.d", "../knet/thematics.d",
                      "../knet/decodings.d", "../knet/relations.d", "../knet/senses.d", "../knet/lemmas.d",
-                     "../knet/base.d", "../knet/tests.d", "../knet/inference.d",
+                     "../knet/base.d", "../knet/tests.d", "../knet/inference.d", "../knet/io.d",
                      "../knet/cn5.d", "../knet/nell.d", "../knet/wordnet.d", "../knet/moby.d",
                      "../knet/synlex.d", "../knet/folklex.d", "../knet/swesaurus.d",
                      "../knet/lectures/all.d",
