@@ -22,6 +22,8 @@ int main(string[] args)
 
     graph.testAll;
 
+    graph.readWordNet(`../knowledge/en/wordnet-3.1`);
+
     // loads
     if (false) graph.loadUniquelySensedLemmas(cachePath);
     if (false) { graph.load(cachePath); }
