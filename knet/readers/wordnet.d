@@ -173,6 +173,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     uint lex_filenum = 0;
     dchar ss_type;
     uint w_cnt = 0;
+    const(char)[] word;
 
     writeln("line: ", line);
 
@@ -193,6 +194,9 @@ bool readWordNetDataLine(R, N)(Graph graph,
             case 3:
                 w_cnt = part.parse!(typeof(w_cnt))(16); // decode hex string
                 break;
+            case 4:
+                word = part;
+                break;
             default:
                 break;
         }
@@ -210,7 +214,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     }
     assert(sense == ssSense);
 
-    writeln(synset_offset, ", ", lex_filenum, ", ", ss_type, ", ", w_cnt);
+    writeln(synset_offset, ", ", lex_filenum, ", ", ss_type, ", ", w_cnt, ", ", word);
 
     return true;
 }
