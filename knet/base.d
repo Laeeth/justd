@@ -604,9 +604,9 @@ class Graph
         return link.actors[].filter!(nd => nd.dir() == RelDir.forward).map!(ln => ln.raw);
     }
 
-    private Db db;
-    private Stat stat;
-    private WordNet!(true) wordnet;
+    Db db;
+    Stat stat;
+    WordNet!(true) wordnet;
 
 
     @safe pure nothrow @nogc
@@ -806,7 +806,6 @@ class Graph
 
         learnDefault();
 
-        // inferSpecializedSenses();
         showRelations;
         saveUniquelySensedLemmas(cachePath);
         if (true)
@@ -5416,43 +5415,4 @@ class Graph
                 cachePath);
     }
 
-    void inferSpecializedSenses()
-    {
-        bool show = true;
-        foreach (pair; db.lemmasByExpr.byPair)
-        {
-            const expr = pair[0];
-            auto lemmas = pair[1];
-            if (lemmas.map!(lemma => lemma.lang).allEqual)
-            {
-                switch (lemmas.length)
-                {
-                    case 2:
-                        if (lemmas[0].sense.specializes(lemmas[1].sense))
-                        {
-                            if (show)
-                            {
-                                dln(`Specializing Lemma expr "`, expr,
-                                    `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
-                                    lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
-                            }
-                            // lemmas[1].sense = lemmas[0].sense;
-                        }
-                        else if (lemmas[1].sense.specializes(lemmas[0].sense))
-                        {
-                            if (show)
-                            {
-                                dln(`Specializing Lemma expr "`, expr,
-                                    `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
-                                    lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
-                            }
-                            // lemmas[0].sense = lemmas[1].sense;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
 }

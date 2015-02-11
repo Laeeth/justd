@@ -1,6 +1,7 @@
 import std.stdio;
 import knet.base;
 import knet.tests;
+import knet.inference;
 import knet.lectures.all;
 
 import etc.linux.memoryerror;
@@ -14,7 +15,8 @@ int main(string[] args)
 
     auto gr = new Graph();
     gr.testAll;
-    gr.initialize();
+    gr.initialize;
+    if (false) gr.inferSpecializedSenses;
 
     while (true)
     {
