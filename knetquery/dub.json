@@ -32,8 +32,11 @@
                      "../knet/readers/synlex.d",
                      "../knet/readers/folklex.d",
                      "../knet/readers/swesaurus.d",
+                     "../knet/readers/packaged.d",
 
-                     "../knet/lectures/all.d",
+                     "../knet/lectures/standard.d",
+                     "../knet/lectures/package.d",
+
                      "../wordnet.d",
                      "../grammars.d", "../stemming.d", "../ixes.d",
                      "../assert_ex.d", "../range_ex.d", "../algorithm_ex.d", "../traits_ex.d", "../sort_ex.d", "../mmfile_ex.d", "../skip_ex.d",
