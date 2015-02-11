@@ -1,4 +1,4 @@
-module knet.synlex;
+module knet.readers.synlex;
 
 import knet.base: Graph;
 

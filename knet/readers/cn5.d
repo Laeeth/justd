@@ -1,4 +1,4 @@
-module knet.cn5;
+module knet.readers.cn5;
 
 import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;

@@ -1,4 +1,4 @@
-module knet.moby;
+module knet.readers.moby;
 
 import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;

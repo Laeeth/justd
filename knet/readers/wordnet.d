@@ -1,4 +1,4 @@
-module knet.wordnet;
+module knet.readers.wordnet;
 
 import knet.base: Graph;
 import knet.relations: Rel;

@@ -116,13 +116,14 @@ import knet.roles;
 import knet.decodings;
 import knet.lemmas;
 
-import knet.cn5;
-import knet.nell;
-import knet.wordnet;
-import knet.moby;
-import knet.synlex;
-import knet.folklex;
-import knet.swesaurus;
+import knet.readers.cn5;
+import knet.readers.nell;
+import knet.readers.wordnet;
+import knet.readers.moby;
+import knet.readers.synlex;
+import knet.readers.folklex;
+import knet.readers.swesaurus;
+
 import knet.lectures.all;
 
 /* import stdx.allocator; */

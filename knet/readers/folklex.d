@@ -1,4 +1,4 @@
-module knet.folklex;
+module knet.readers.folklex;
 
 import knet.base: Graph;
 import knet.languages: Lang;

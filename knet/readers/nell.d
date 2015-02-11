@@ -1,4 +1,4 @@
-module knet.nell;
+module knet.readers.nell;
 
 import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;
