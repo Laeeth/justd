@@ -4,7 +4,7 @@ import knet.tests;
 import knet.inference;
 import knet.persistence;
 import knet.io;
-import knet.lectures.all;
+import knet.lectures;
 
 import etc.linux.memoryerror;
 debug import backtrace.backtrace;

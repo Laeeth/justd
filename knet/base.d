@@ -121,15 +121,8 @@ public import knet.relations: Rel;
 public import knet.roles: Role;
 public import knet.origins: Origin;
 
-import knet.lectures.all;
-
-import knet.readers.cn5;
-import knet.readers.nell;
-import knet.readers.wordnet;
-import knet.readers.moby;
-import knet.readers.synlex;
-import knet.readers.folklex;
-import knet.readers.swesaurus;
+import knet.lectures;
+import knet.readers;
 
 /* import stdx.allocator; */
 /* import memory.allocators; */
