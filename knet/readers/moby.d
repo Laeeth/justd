@@ -9,10 +9,7 @@ import std.stdio: File;
 import core.exception: UnicodeException;
 import std.utf: UTFException;
 
-import knet.origins: Origin;
 import knet.base;
-import knet.languages: Lang;
-import knet.roles: Role, Rel;
 
 /** Decode Moby Pronounciation Code to IPA Language.
     See also: https://en.wikipedia.org/wiki/Moby_Project#Pronunciator

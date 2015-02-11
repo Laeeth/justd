@@ -1,12 +1,11 @@
 module knet.readers.swesaurus;
 
-import knet.base: Graph;
+import knet.base;
 
 void readSwesaurus(Graph graph)
 {
     import std.path: buildNormalizedPath, expandTilde;
 
-    import knet.languages: Lang;
     import knet.readers.synlex: readSynlexFile;
     import knet.readers.folklex: readFolketsFile;
 

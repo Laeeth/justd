@@ -119,6 +119,7 @@ public import knet.senses: Sense;
 public import knet.languages: Lang;
 public import knet.relations: Rel;
 public import knet.roles: Role;
+public import knet.origins: Origin;
 
 import knet.lectures.all;
 

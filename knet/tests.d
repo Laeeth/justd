@@ -6,11 +6,6 @@ import knet.base;
  */
 void testAll(Graph graph)
 {
-    import knet.languages: Lang;
-    import knet.origins: Origin;
-    import knet.relations: Rel;
-    import knet.roles: Role;
-
     // link should be reused
     {
         const ndA = graph.store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);

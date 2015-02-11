@@ -1,9 +1,6 @@
 module knet.readers.wordnet;
 
 import knet.base;
-import knet.relations: Rel;
-import knet.roles: Role;
-import knet.languages: Lang;
 
 Role decodeWordNetPointerSymbol(string sym, Sense sense) pure
 {
@@ -107,7 +104,6 @@ void readWordNetIndexLine(R, N)(Graph graph,
         //     // auto links = ids.array;
         // }
 
-        import knet.origins: Origin;
         auto node = graph.store(lemma, Lang.en, sense, Origin.wordnet);
 
         // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);

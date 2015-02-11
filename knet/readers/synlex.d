@@ -14,9 +14,6 @@ void readSynlexFile(Graph graph,
 
     writeln(`Reading SynLex from `, path, ` ...`);
 
-    import knet.languages: Lang;
-    import knet.origins: Origin;
-
     enum lang = Lang.sv;
     enum origin = Origin.synlex;
 
@@ -44,8 +41,6 @@ void readSynlexFile(Graph graph,
 
             if (w1 != w2) // there might be a bug in the xml...
             {
-                import knet.relations: Rel;
-                import knet.roles: Role;
                 graph.connect(graph.store(w1, lang, Sense.unknown, origin),
                               Role(Rel.synonymFor),
                               graph.store(w2, lang, Sense.unknown, origin),

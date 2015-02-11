@@ -15,7 +15,7 @@ void inferSpecializedSenses(Graph graph)
         {
             import dbg: dln;
             import knet.senses: specializes;
-            import knet.languages: Lang, toHuman;
+            import knet.languages: toHuman;
 
             switch (lemmas.length)
             {

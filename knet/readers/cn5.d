@@ -13,10 +13,7 @@ import std.file;
 import predicates: of;
 import grammars: Tense, Manner;
 
-import knet.origins: Origin;
 import knet.base;
-import knet.languages: Lang;
-import knet.roles: Role, Rel;
 
 Origin decodeCN5OriginDirect(S)(S path, out Lang lang,
                                 Origin currentOrigin) if (isSomeString!S)

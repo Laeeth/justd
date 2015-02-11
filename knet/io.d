@@ -3,11 +3,10 @@ module knet.io;
 import std.algorithm: map;
 
 import knet.base;
-import knet.languages: Lang, toHuman;
+import knet.languages: toHuman;
 import knet.senses: toHuman;
-import knet.roles: Role;
-import knet.origins: Origin, toNice;
-import knet.relations: Rel, RelDir, toHuman;
+import knet.origins: toNice;
+import knet.relations: RelDir, toHuman;
 import std.conv;
 
 /** Show Network Relations.

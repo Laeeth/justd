@@ -5,10 +5,7 @@ import std.algorithm.iteration: filter, map;
 
 import predicates: of;
 
-import knet.relations: Rel, RelDir, specializes;
-import knet.roles: Role;
-import knet.origins: Origin;
-import knet.languages: Lang;
+import knet.relations: RelDir, specializes;
 import knet.base;
 
 /** Get Links Refs of $(D node) with direction $(D dir).

@@ -17,10 +17,7 @@ import predicates: of;
 import grammars: Tense, Manner;
 import dbg: dln;
 
-import knet.origins: Origin;
 import knet.base;
-import knet.languages: Lang;
-import knet.roles: Role, Rel;
 
 /** Read NELL File $(D path) in CSV format.
  */
