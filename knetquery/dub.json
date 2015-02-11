@@ -32,7 +32,7 @@
                      "../knet/readers/synlex.d",
                      "../knet/readers/folklex.d",
                      "../knet/readers/swesaurus.d",
-                     "../knet/readers/packaged.d",
+                     "../knet/readers/package.d",
 
                      "../knet/lectures/standard.d",
                      "../knet/lectures/package.d",
