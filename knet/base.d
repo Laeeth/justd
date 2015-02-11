@@ -452,6 +452,16 @@ private:
     Origin origin;
 }
 
+/* static if (useArray) { alias Nodes = Array!Node; } */
+/* else                 { alias Nodes = Node[]; } */
+alias Nodes = Node[]; // no need to use std.container.Array here
+
+static if (false) { alias Lemmas = Array!Lemma; }
+else              { alias Lemmas = Lemma[]; }
+
+static if (useArray) { alias Links = Array!Link; }
+else                 { alias Links = Link[]; }
+
 static if (false)
 {
     pragma(msg, `Expr.sizeof: `, Expr.sizeof);
@@ -464,6 +474,57 @@ static if (false)
     pragma(msg, `Link3.sizeof: `, Link3.sizeof);
     pragma(msg, `Link4.sizeof: `, Link4.sizeof);
     pragma(msg, `Link.sizeof: `, Link.sizeof);
+}
+
+struct Db
+{
+    // Data
+    Nodes allNodes;
+    Links allLinks;
+    // TODO Nds[Lang.max + 1] ndsByLang;
+
+    // Indexes
+    Nd[Lemma] ndByLemma;
+    Lemmas[Word] lemmasByWord; // Lemmas index by word of expression has more than one word
+    Lemmas[Expr] lemmasByExpr; // Two or More Words
+    Lemmas[ubyte] lemmasBySyllableCount; // TODO
+
+    string[Ctx] contextNameByCtx; /** Ontology Context Names by Index. */
+    Ctx[string] ctxByName; /** Ontology Context Indexes by Name. */
+}
+
+struct Stat
+{
+    ushort ctxCounter = Ctx.asUndefined._ix + 1; // 1 because 0 is reserved for anyContext (unknown)
+
+    size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
+
+    size_t symmetricRelCount = 0; /// Symmetric Relation Count.
+    size_t transitiveRelCount = 0; /// Transitive Relation Count.
+
+    size_t[Rel.max + 1] relCounts; /// Link Counts by Relation Type.
+    size_t[Origin.max + 1] linkSourceCounts;
+    size_t[Lang.max + 1] nodeCountByLang;
+    size_t[Sense.max + 1] nodeCountBySense; /// Node Counts by Sense Type.
+    size_t nodeStringLengthSum = 0;
+
+    // Connectedness
+    size_t nodeConnectednessSum = 0;
+    size_t linkConnectednessSum = 0;
+
+    size_t exprWordCountSum = 0;
+
+    // TODO Group to WeightsStatistics
+    NWeight weightMinCN5 = NWeight.max;
+    NWeight weightMaxCN5 = NWeight.min_normal;
+    NWeight weightSumCN5 = 0; // Sum of all link weights.
+    Link.WeightHistogram pweightHistogramCN5; // CN5 Packed Weight Histogram
+
+    // TODO Group to WeightsStatistics
+    NWeight weightMinNELL = NWeight.max;
+    NWeight weightMaxNELL = NWeight.min_normal;
+    NWeight weightSumNELL = 0; // Sum of all link weights.
+    Link.WeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
 }
 
 /** Main Knowledge Network Graph.
@@ -498,10 +559,10 @@ class Graph
         return linksOf(at(nd), dir, role);
     }
 
-    /** Network Traverser.
+    /** Network Walker (Input Range).
         TODO: Returns Path
      */
-    class Traverser
+    class Walk
     {
         this(Nd first_)
         {
@@ -514,89 +575,42 @@ class Graph
             return lnsOf(at(current));
         }
 
+        void popFront()
+        {
+        }
+
+        bool empty() const { return true; }
+
         Nd first;
         Nd current;
         NWeight[Nd] dists;
     }
 
-    Traverser traverse(in Node node)
+    Walk walk(in Node start)
     {
-        typeof(return) trav;
-        return trav;
+        typeof(return) walk;
+        return walk;
+    }
+    alias traverse = walk;
+
+    auto ins (in Link link)
+    {
+        return link.actors[].filter!(nd => nd.dir() == RelDir.backward).map!(nd => nd.raw);
+    }
+    auto outs(in Link link)
+    {
+        return link.actors[].filter!(nd => nd.dir() == RelDir.forward).map!(ln => ln.raw);
     }
 
-    auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward).map!(nd => nd.raw); }
-    auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward).map!(ln => ln.raw); }
+    private Db db;
+    private Stat stat;
+    private WordNet!(true) wordnet;
 
-    /* static if (useArray) { alias Nodes = Array!Node; } */
-    /* else                 { alias Nodes = Node[]; } */
-    alias Nodes = Node[]; // no need to use std.container.Array here
-
-    static if (false) { alias Lemmas = Array!Lemma; }
-    else              { alias Lemmas = Lemma[]; }
-
-    static if (useArray) { alias Links = Array!Link; }
-    else                 { alias Links = Link[]; }
-
-    // Data and Indexes
-    private
-    {
-        // Data
-        Nodes allNodes;
-        Links allLinks;
-        // TODO Nds[Lang.max + 1] ndsByLang;
-
-        // Indexes
-        Nd[Lemma] ndByLemma;
-        Lemmas[Word] lemmasByWord; // Lemmas index by word of expression has more than one word
-        Lemmas[Expr] lemmasByExpr; // Two or More Words
-        Lemmas[ubyte] lemmasBySyllableCount; // TODO
-
-        string[Ctx] contextNameByCtx; /** Ontology Context Names by Index. */
-        Ctx[string] ctxByName; /** Ontology Context Indexes by Name. */
-    }
-
-    // Statistics
-    private
-    {
-        ushort ctxCounter = Ctx.asUndefined._ix + 1; // 1 because 0 is reserved for anyContext (unknown)
-
-        size_t multiWordNodeLemmaCount = 0; // number of nodes that whose lemma contain several expr
-
-        WordNet!(true) wordnet;
-
-        size_t symmetricRelCount = 0; /// Symmetric Relation Count.
-        size_t transitiveRelCount = 0; /// Transitive Relation Count.
-
-        size_t[Rel.max + 1] relCounts; /// Link Counts by Relation Type.
-        size_t[Origin.max + 1] linkSourceCounts;
-        size_t[Lang.max + 1] nodeCountByLang;
-        size_t[Sense.max + 1] nodeCountBySense; /// Node Counts by Sense Type.
-        size_t nodeStringLengthSum = 0;
-
-        // Connectedness
-        size_t nodeConnectednessSum = 0;
-        size_t linkConnectednessSum = 0;
-
-        size_t exprWordCountSum = 0;
-
-        // TODO Group to WeightsStatistics
-        NWeight weightMinCN5 = NWeight.max;
-        NWeight weightMaxCN5 = NWeight.min_normal;
-        NWeight weightSumCN5 = 0; // Sum of all link weights.
-        Link.WeightHistogram pweightHistogramCN5; // CN5 Packed Weight Histogram
-
-        // TODO Group to WeightsStatistics
-        NWeight weightMinNELL = NWeight.max;
-        NWeight weightMaxNELL = NWeight.min_normal;
-        NWeight weightSumNELL = 0; // Sum of all link weights.
-        Link.WeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
-    }
 
     @safe pure nothrow @nogc
     {
-        ref inout(Link) at(const Ln ln) inout { return allLinks[ln.ix]; }
-        ref inout(Node) at(const Nd nd) inout { return allNodes[nd.ix]; }
+        ref inout(Link) at(const Ln ln) inout { return db.allLinks[ln.ix]; }
+        ref inout(Node) at(const Nd nd) inout { return db.allNodes[nd.ix]; }
 
         ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }
         ref inout(Node) opIndex(const Nd nd) inout { return at(nd); }
@@ -607,7 +621,7 @@ class Graph
 
     Nd nodeRefByLemmaMaybe(in Lemma lemma)
     {
-        return get(ndByLemma, lemma, typeof(return).init);
+        return get(db.ndByLemma, lemma, typeof(return).init);
     }
 
     /** Try to Get Single Node related to $(D word) in the interpretation
@@ -620,7 +634,7 @@ class Graph
     {
         typeof(return) nodes;
         const lemma = Lemma(expr, lang, sense, context);
-        if (const lemmaNd = lemma in ndByLemma)
+        if (const lemmaNd = lemma in db.ndByLemma)
         {
             nodes ~= *lemmaNd; // use it
         }
@@ -631,7 +645,7 @@ class Graph
             if (wordsSplit.length >= 2)
             {
                 if (const lemmaFixedNd = Lemma(wordsSplit.joiner(`_`).to!S,
-                                               lang, sense, context) in ndByLemma)
+                                               lang, sense, context) in db.ndByLemma)
                 {
                     nodes ~= *lemmaFixedNd;
                 }
@@ -643,7 +657,7 @@ class Graph
     /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
     auto ndsOf(S)(S expr) if (isSomeString!S)
     {
-        return lemmasOfExpr(expr).map!(lemma => ndByLemma[lemma]);
+        return lemmasOfExpr(expr).map!(lemma => db.ndByLemma[lemma]);
     }
 
     /** Get All Possible Nodes related to $(D word) in the interpretation
@@ -698,11 +712,11 @@ class Graph
     {
         static if (is(S == string)) // TODO Is there a prettier way to do this?
         {
-            return lemmasByExpr.get(expr, typeof(return).init);
+            return db.lemmasByExpr.get(expr, typeof(return).init);
         }
         else
         {
-            return lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
+            return db.lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
         }
     }
 
@@ -712,11 +726,11 @@ class Graph
     {
         static if (is(S == string)) // TODO Is there a prettier way to do this?
         {
-            return lemmasByWord.get(word, typeof(return).init);
+            return db.lemmasByWord.get(word, typeof(return).init);
         }
         else
         {
-            return lemmasByWord.get(word.dup, typeof(return).init); // TODO Why is dup needed here?
+            return db.lemmasByWord.get(word.dup, typeof(return).init); // TODO Why is dup needed here?
         }
     }
 
@@ -724,7 +738,7 @@ class Graph
      */
     auto tryReuseExpr(S)(S expr) @safe
     {
-        if (auto lemmas = expr in lemmasByExpr)
+        if (auto lemmas = expr in db.lemmasByExpr)
         {
             return (*lemmas).front.expr;
         }
@@ -737,7 +751,7 @@ class Graph
     ref Lemma internLemma(ref Lemma lemma,
                           bool hasUniqueSense = false) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
     {
-        if (auto lemmas = lemma.expr in lemmasByExpr)
+        if (auto lemmas = lemma.expr in db.lemmasByExpr)
         {
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
             foreach (ref existingLemma; *lemmas)
@@ -766,9 +780,9 @@ class Graph
         {
             static if (!isDynamicArray!Lemmas)
             {
-                lemmasByExpr[lemma.expr] = Lemmas.init; // TODO fix std.container.Array
+                db.lemmasByExpr[lemma.expr] = Lemmas.init; // TODO fix std.container.Array
             }
-            lemmasByExpr[lemma.expr] ~= lemma;
+            db.lemmasByExpr[lemma.expr] ~= lemma;
         }
         return lemma;
     }
@@ -868,20 +882,8 @@ class Graph
         const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
         writeln(`Storing Tables to `, cachePath, ` ...`);
         auto file = File(cachePath, "wb");
-
-        // Data
-        file.rawWrite(allNodes.pack);
-        file.rawWrite(allLinks.pack);
-
-        // Indexes
-        file.rawWrite(ndByLemma.pack);
-        file.rawWrite(lemmasByWord.pack);
-        file.rawWrite(lemmasByExpr.pack);
-        file.rawWrite(lemmasBySyllableCount.pack);
-
-        // Context
-        file.rawWrite(contextNameByCtx.pack);
-        file.rawWrite(ctxByName.pack);
+        file.rawWrite(db.pack);
+        file.rawWrite(stat.pack);
     }
 
     void loadData(string dirPath)
@@ -4221,7 +4223,7 @@ class Graph
     body
     {
         auto lemma = Lemma(tryReuseExpr(expr), lang, sense, context, manner, isRegexp, meaningNr, normalizeExpr);
-        if (const lemmaNd = lemma in ndByLemma)
+        if (const lemmaNd = lemma in db.ndByLemma)
         {
             return *lemmaNd; // lookup
         }
@@ -4230,30 +4232,30 @@ class Graph
             const specializedLemma = internLemma(lemma);
             if (specializedLemma != lemma) // if an existing more specialized lemma was found
             {
-                return ndByLemma[specializedLemma];
+                return db.ndByLemma[specializedLemma];
             }
 
             auto wordsSplit = lemma.expr.findSplit(expressionWordSeparator);
             if (!wordsSplit[1].empty) // TODO add implicit bool conversion to return of findSplit()
             {
-                ++multiWordNodeLemmaCount;
-                exprWordCountSum += lemma.expr.count(expressionWordSeparator) + 1;
+                ++stat.multiWordNodeLemmaCount;
+                stat.exprWordCountSum += lemma.expr.count(expressionWordSeparator) + 1;
             }
             else
             {
-                exprWordCountSum += 1;
+                stat.exprWordCountSum += 1;
             }
 
             // store
-            assert(allNodes.length <= nullIx);
-            const cix = Nd(cast(Ix)allNodes.length);
-            allNodes ~= Node(lemma, origin); // .. new node that is stored
+            assert(db.allNodes.length <= nullIx);
+            const cix = Nd(cast(Ix)db.allNodes.length);
+            db.allNodes ~= Node(lemma, origin); // .. new node that is stored
 
-            ndByLemma[lemma] = cix; // store index to ..
-            nodeStringLengthSum += lemma.expr.length;
+            db.ndByLemma[lemma] = cix; // store index to ..
+            stat.nodeStringLengthSum += lemma.expr.length;
 
-            ++nodeCountByLang[lemma.lang];
-            ++nodeCountBySense[lemma.sense];
+            ++stat.nodeCountByLang[lemma.lang];
+            ++stat.nodeCountBySense[lemma.sense];
 
             return cix;
         }
@@ -4422,40 +4424,40 @@ class Graph
         }
 
         // TODO group these
-        assert(allLinks.length <= nullIx);
-        auto ln = Ln(cast(Ix)allLinks.length);
+        assert(db.allLinks.length <= nullIx);
+        auto ln = Ln(cast(Ix)db.allLinks.length);
 
         auto link = Link(role.reversion ? dst : src,
                          Role(role.rel, false, role.negation),
                          role.reversion ? src : dst,
                          origin);
 
-        linkConnectednessSum += 2;
+        stat.linkConnectednessSum += 2;
 
         at(src).links ~= ln.forward;
         at(dst).links ~= ln.backward;
-        nodeConnectednessSum += 2;
+        stat.nodeConnectednessSum += 2;
 
-        symmetricRelCount += role.rel.isSymmetric;
-        transitiveRelCount += role.rel.isTransitive;
-        ++relCounts[role.rel];
-        ++linkSourceCounts[origin];
+        stat.symmetricRelCount += role.rel.isSymmetric;
+        stat.transitiveRelCount += role.rel.isTransitive;
+        ++stat.relCounts[role.rel];
+        ++stat.linkSourceCounts[origin];
 
         if (origin == Origin.cn5)
         {
             link.setCN5Weight(weight);
-            weightSumCN5 += weight;
-            weightMinCN5 = min(weight, weightMinCN5);
-            weightMaxCN5 = max(weight, weightMaxCN5);
-            ++pweightHistogramCN5[link.pweight];
+            stat.weightSumCN5 += weight;
+            stat.weightMinCN5 = min(weight, stat.weightMinCN5);
+            stat.weightMaxCN5 = max(weight, stat.weightMaxCN5);
+            ++stat.pweightHistogramCN5[link.pweight];
         }
         else if (origin == Origin.nell)
         {
             link.setNELLWeight(weight);
-            weightSumNELL += weight;
-            weightMinNELL = min(weight, weightMinNELL);
-            weightMaxNELL = max(weight, weightMaxNELL);
-            ++pweightHistogramNELL[link.pweight];
+            stat.weightSumNELL += weight;
+            stat.weightMinNELL = min(weight, stat.weightMinNELL);
+            stat.weightMaxNELL = max(weight, stat.weightMaxNELL);
+            ++stat.pweightHistogramNELL[link.pweight];
         }
         else
         {
@@ -4474,9 +4476,9 @@ class Graph
                 ` reversion:`, role.reversion);
         }
 
-        allLinks ~= link; // TODO Avoid copying here
+        db.allLinks ~= link; // TODO Avoid copying here
 
-        return ln; // allLinks.back;
+        return ln; // db.allLinks.back;
     }
     alias relate = connect;
 
@@ -4486,16 +4488,16 @@ class Graph
     Ctx contextOfName(S)(S name) if (isSomeString!S)
     {
         auto context = anyContext;
-        if (const ctx = name in ctxByName)
+        if (const ctx = name in db.ctxByName)
         {
             context = *ctx;
         }
         else
         {
-            assert(ctxCounter != ctxCounter.max);
-            context._ix = ctxCounter++;
-            contextNameByCtx[context] = name;
-            ctxByName[name] = context;
+            assert(stat.ctxCounter != stat.ctxCounter.max);
+            context._ix = stat.ctxCounter++;
+            db.contextNameByCtx[context] = name;
+            db.ctxByName[name] = context;
         }
         return context;
     }
@@ -4538,19 +4540,19 @@ class Graph
 
         foreach (rel; enumMembers!Rel)
         {
-            const count = relCounts[rel];
+            const count = stat.relCounts[rel];
             if (count)
             {
                 writeln(indent, rel.to!string, `: `, count);
             }
         }
 
-        writeln(`Node Count: `, allNodes.length);
+        writeln(`Node Count: `, db.allNodes.length);
 
         writeln(`Node Count by Origin:`);
         foreach (source; enumMembers!Origin)
         {
-            const count = linkSourceCounts[source];
+            const count = stat.linkSourceCounts[source];
             if (count)
             {
                 writeln(indent, source.toNice, `: `, count);
@@ -4560,7 +4562,7 @@ class Graph
         writeln(`Node Count by Language:`);
         foreach (lang; enumMembers!Lang)
         {
-            const count = nodeCountByLang[lang];
+            const count = stat.nodeCountByLang[lang];
             if (count)
             {
                 writeln(indent, lang.toHuman, ` : `, count);
@@ -4570,7 +4572,7 @@ class Graph
         writeln(`Node Count by Sense:`);
         foreach (sense; enumMembers!Sense)
         {
-            const count = nodeCountBySense[sense];
+            const count = stat.nodeCountBySense[sense];
             if (count)
             {
                 writeln(indent, sense.toHuman, ` : `, count);
@@ -4579,34 +4581,34 @@ class Graph
 
         writeln(`Stats:`);
 
-        if (weightSumCN5)
+        if (stat.weightSumCN5)
         {
-            writeln(indent, `CN5 Weights Min,Max,Average: `, weightMinCN5, ',', weightMaxCN5, ',', cast(NWeight)weightSumCN5/allLinks.length);
-            writeln(indent, `CN5 Packed Weights Histogram: `, pweightHistogramCN5);
+            writeln(indent, `CN5 Weights Min,Max,Average: `, stat.weightMinCN5, ',', stat.weightMaxCN5, ',', cast(NWeight)stat.weightSumCN5/db.allLinks.length);
+            writeln(indent, `CN5 Packed Weights Histogram: `, stat.pweightHistogramCN5);
         }
-        if (weightSumNELL)
+        if (stat.weightSumNELL)
         {
-            writeln(indent, `NELL Weights Min,Max,Average: `, weightMinNELL, ',', weightMaxNELL, ',', cast(NWeight)weightSumNELL/allLinks.length);
-            writeln(indent, `NELL Packed Weights Histogram: `, pweightHistogramNELL);
+            writeln(indent, `NELL Weights Min,Max,Average: `, stat.weightMinNELL, ',', stat.weightMaxNELL, ',', cast(NWeight)stat.weightSumNELL/db.allLinks.length);
+            writeln(indent, `NELL Packed Weights Histogram: `, stat.pweightHistogramNELL);
         }
 
         writeln(indent, `Node Count (All/Multi-Word): `,
-                allNodes.length,
+                db.allNodes.length,
                 `/`,
-                multiWordNodeLemmaCount);
-        writeln(indent, `Lemma Expression Word Length Average: `, cast(real)exprWordCountSum/ndByLemma.length);
-        writeln(indent, `Link Count: `, allLinks.length);
+                stat.multiWordNodeLemmaCount);
+        writeln(indent, `Lemma Expression Word Length Average: `, cast(real)stat.exprWordCountSum/db.ndByLemma.length);
+        writeln(indent, `Link Count: `, db.allLinks.length);
         writeln(indent, `Link Count By Group:`);
-        writeln(indent, `- Symmetric: `, symmetricRelCount);
-        writeln(indent, `- Transitive: `, transitiveRelCount);
+        writeln(indent, `- Symmetric: `, stat.symmetricRelCount);
+        writeln(indent, `- Transitive: `, stat.transitiveRelCount);
 
-        writeln(indent, `Lemmas Expression Count: `, lemmasByExpr.length);
+        writeln(indent, `Lemmas Expression Count: `, db.lemmasByExpr.length);
 
-        writeln(indent, `Node Indexes by Lemma Count: `, ndByLemma.length);
-        writeln(indent, `Node String Length Average: `, cast(NWeight)nodeStringLengthSum/allNodes.length);
+        writeln(indent, `Node Indexes by Lemma Count: `, db.ndByLemma.length);
+        writeln(indent, `Node String Length Average: `, cast(NWeight)stat.nodeStringLengthSum/db.allNodes.length);
 
-        writeln(indent, `Node Connectedness Average: `, cast(NWeight)nodeConnectednessSum/allNodes.length);
-        writeln(indent, `Link Connectedness Average: `, cast(NWeight)linkConnectednessSum/allLinks.length);
+        writeln(indent, `Node Connectedness Average: `, cast(NWeight)stat.nodeConnectednessSum/db.allNodes.length);
+        writeln(indent, `Link Connectedness Average: `, cast(NWeight)stat.linkConnectednessSum/db.allLinks.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise Ln.max.
@@ -4661,12 +4663,12 @@ class Graph
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
-        if (a in ndByLemma && // both lemmas exist
-            b in ndByLemma)
+        if (a in db.ndByLemma && // both lemmas exist
+            b in db.ndByLemma)
         {
-            return areConnected(ndByLemma[a],
+            return areConnected(db.ndByLemma[a],
                                 role,
-                                ndByLemma[b],
+                                db.ndByLemma[b],
                                 origin, weight);
         }
         return typeof(return).asUndefined;
@@ -4718,7 +4720,7 @@ class Graph
         }
         if (node.lemma.context != Ctx.asUndefined)
         {
-            write(`:`, contextNameByCtx[node.lemma.context]);
+            write(`:`, db.contextNameByCtx[node.lemma.context]);
         }
 
         writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
@@ -4838,7 +4840,7 @@ class Graph
 
         if (normLine == `palindrome`)
         {
-            foreach (palindromeNode; allNodes.filter!(node =>
+            foreach (palindromeNode; db.allNodes.filter!(node =>
                                                       node.lemma.expr.toLower.isPalindrome(3)))
             {
                 showLinkNode(palindromeNode,
@@ -5174,7 +5176,7 @@ class Graph
     auto anagramsOf(S)(S expr) if (isSomeString!S)
     {
         const lsWord = expr.sorted; // letter-sorted expr
-        return allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
+        return db.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
                                          lsWord == node.lemma.expr.toLower.sorted));
     }
 
@@ -5280,7 +5282,7 @@ class Graph
             foreach (dstNd; dstNds) // translations to IPA-language
             {
                 const dstNode = at(dstNd);
-                auto hits = allNodes.filter!(a => langs.canFind(a.lemma.lang))
+                auto hits = db.allNodes.filter!(a => langs.canFind(a.lemma.lang))
                                     .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
                                                                           at(srcNd).lemma.expr)))
                                     .filter!(a => a[1] >= commonPhonemeCountMin)
@@ -5345,7 +5347,7 @@ class Graph
                     Lang lang = Lang.unknown,
                     Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return ndByLemma.values.filter!(nd => at(nd).lemma.expr.canFind(part));
+        return db.ndByLemma.values.filter!(nd => at(nd).lemma.expr.canFind(part));
     }
 
     /** Get Node References whose Lemma Expr starts with $(D prefix). */
@@ -5353,7 +5355,7 @@ class Graph
                        Lang lang = Lang.unknown,
                        Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return ndByLemma.values.filter!(nd => at(nd).lemma.expr.startsWith(prefix));
+        return db.ndByLemma.values.filter!(nd => at(nd).lemma.expr.startsWith(prefix));
     }
 
     /** Get Node References whose Lemma Expr starts with $(D suffix). */
@@ -5361,7 +5363,7 @@ class Graph
                      Lang lang = Lang.unknown,
                      Sense sense = Sense.unknown) if (isSomeString!S)
     {
-        return ndByLemma.values.filter!(nd => at(nd).lemma.expr.endsWith(suffix));
+        return db.ndByLemma.values.filter!(nd => at(nd).lemma.expr.endsWith(suffix));
     }
 
     /** Relatedness.
@@ -5416,7 +5418,7 @@ class Graph
 
                 // TODO Use learnLemma(lemma, true) instead of these two lines
                 lemma.hasUniqueSense = true;
-                lemmasByExpr[expr] = [lemma];
+                db.lemmasByExpr[expr] = [lemma];
 
                 ++cnt;
             }
@@ -5438,7 +5440,7 @@ class Graph
                 ` ...`);
         auto file = File(cachePath, "wb");
         size_t cnt = 0;
-        foreach (pair; lemmasByExpr.byPair)
+        foreach (pair; db.lemmasByExpr.byPair)
         {
             const expr = pair[0];
             auto lemmas = pair[1];
@@ -5458,7 +5460,7 @@ class Graph
     void inferSpecializedSenses()
     {
         bool show = true;
-        foreach (pair; lemmasByExpr.byPair)
+        foreach (pair; db.lemmasByExpr.byPair)
         {
             const expr = pair[0];
             auto lemmas = pair[1];
