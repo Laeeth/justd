@@ -49,7 +49,7 @@ Role decodeWordNetPointerSymbol(string sym, Sense sense) pure
     return role;
 }
 
-void readWordNetIndexLine(R, N)(Graph graph,
+bool readWordNetIndexLine(R, N)(Graph graph,
                                 const R line,
                                 const N lnr,
                                 const Lang lang = Lang.unknown,
@@ -63,54 +63,58 @@ void readWordNetIndexLine(R, N)(Graph graph,
     import std.algorithm: map;
     import std.array: replace;
 
-    if (!line.empty &&
-        !line.front.isWhite) // if first is not space. TODO move this check
+    if (line.empty ||
+        line.front.isWhite) // if first is not space. TODO move this check
     {
-        const linestr = line.to!string;
-        const words = linestr.split; // TODO Use splitter to optimize
-
-        // static if (useRCString) { immutable Lemma lemma = words[0].replace(`_`, ` `); }
-        // else                    { immutable lemma = words[0].replace(`_`, ` `).idup; }
-        const lemma = words[0].replace(`_`, ` `);
-
-        const pos          = words[1]; // Part of Speech (PoS)
-        const synset_cnt   = words[2].to!uint; // Synonym Set Counter
-        const p_cnt        = words[3].to!uint;
-        const ptr_symbol   = words[4 .. 4+p_cnt];
-
-        // const sense_cnt    = words[4+p_cnt].to!uint; // same as synset_cnt above (redundant)
-        // debug assert(synset_cnt == sense_cnt);
-
-        const tagsense_cnt = words[5+p_cnt].to!uint;
-        const synset_off   = words[6+p_cnt].to!uint;
-        auto ids = words[6+p_cnt .. $].map!(a => a.to!uint); // relating ids
-
-        import knet.senses: decodeWordSense;
-        const posSense = pos.decodeWordSense;
-        if (sense == Sense.unknown) { sense = posSense; }
-        if (posSense != sense) { assert(posSense == sense); }
-
-        if (false)
-        {
-            const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
-        }
-
-        // static if (useArray)
-        // {
-        //     // auto links = Links(ids);
-        // }
-        // else
-        // {
-        //     // auto links = ids.array;
-        // }
-
-        auto node = graph.store(lemma, Lang.en, sense, Origin.wordnet);
-
-        // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);
-        // auto meaning = Entry!Links(words[1].front.decodeWordSense,
-        //                            words[2].to!ubyte, links, lang);
-        // _words[lemma] ~= meaning;
+        return false;
     }
+
+    const linestr = line.to!string;
+    const words = linestr.split; // TODO Use splitter to optimize
+
+    // static if (useRCString) { immutable Lemma lemma = words[0].replace(`_`, ` `); }
+    // else                    { immutable lemma = words[0].replace(`_`, ` `).idup; }
+    const lemma = words[0].replace(`_`, ` `);
+
+    const pos          = words[1]; // Part of Speech (PoS)
+    const synset_cnt   = words[2].to!uint; // Synonym Set Counter
+    const p_cnt        = words[3].to!uint;
+    const ptr_symbol   = words[4 .. 4+p_cnt];
+
+    // const sense_cnt    = words[4+p_cnt].to!uint; // same as synset_cnt above (redundant)
+    // debug assert(synset_cnt == sense_cnt);
+
+    const tagsense_cnt = words[5+p_cnt].to!uint;
+    const synset_off   = words[6+p_cnt].to!uint;
+    auto ids = words[6+p_cnt .. $].map!(a => a.to!uint); // relating ids
+
+    import knet.senses: decodeWordSense;
+    const posSense = pos.decodeWordSense;
+    if (sense == Sense.unknown) { sense = posSense; }
+    if (posSense != sense) { assert(posSense == sense); }
+
+    if (false)
+    {
+        const roles = ptr_symbol.map!(sym => sym.decodeWordNetPointerSymbol(sense));
+    }
+
+    // static if (useArray)
+    // {
+    //     // auto links = Links(ids);
+    // }
+    // else
+    // {
+    //     // auto links = ids.array;
+    // }
+
+    auto node = graph.store(lemma, Lang.en, sense, Origin.wordnet);
+
+    // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);
+    // auto meaning = Entry!Links(words[1].front.decodeWordSense,
+    //                            words[2].to!ubyte, links, lang);
+    // _words[lemma] ~= meaning;
+
+    return true;
 }
 
 /** Read WordNet Index File $(D fileName).
@@ -147,6 +151,97 @@ void readWordNetIndex(Graph graph,
     writeln(`Read `, lnr, ` words from `, fileName);
 }
 
+bool readWordNetDataLine(R, N)(Graph graph,
+                               const R line,
+                               const N lnr,
+                               const Lang lang = Lang.unknown,
+                               Sense sense = Sense.unknown,
+                               const bool useMmFile = false)
+{
+    import std.conv: to;
+    import std.algorithm: splitter;
+    import std.stdio;
+    import std.range: empty;
+
+    if (line.empty ||
+        line.front.isWhite) // if first is not space. TODO move this check
+    {
+        return false;
+    }
+
+    uint synset_offset = 0;
+    uint lex_filenum = 0;
+    dchar ss_type;
+
+    size_t ix = 0;
+    foreach (part; line.splitter)
+    {
+        switch (ix)
+        {
+            case 0:
+                synset_offset = part.to!(typeof(synset_offset));
+                break;
+            case 1:
+                lex_filenum = part.to!(typeof(lex_filenum));
+                break;
+            case 2:
+                ss_type = part.front;
+                break;
+            default:
+                break;
+        }
+        ++ix;
+    }
+
+    Sense ssSense;
+    final switch (ss_type)
+    {
+        case 'n': ssSense = Sense.noun; break;
+        case 'v': ssSense = Sense.verb; break;
+        case 'a': ssSense = Sense.adjective; break;
+        case 's': ssSense = Sense.adjective; break; // TODO adjectiveSattelite
+        case 'r': ssSense = Sense.adverb; break;
+    }
+    assert(sense == ssSense);
+
+    // writeln(synset_offset, ", ", lex_filenum, ", ", ss_type);
+
+    return true;
+}
+
+/** Read WordNet Data File $(D fileName).
+    Manual page: wndb
+*/
+void readWordNetData(Graph graph,
+                     string fileName,
+                     bool useMmFile = false,
+                     Lang lang = Lang.unknown,
+                     Sense sense = Sense.unknown)
+{
+    size_t lnr;
+    if (useMmFile)
+    {
+        import mmfile_ex: mmFileLinesRO;
+        foreach (line; mmFileLinesRO(fileName))
+        {
+            graph.readWordNetDataLine(line, lnr, lang, sense, useMmFile);
+            lnr++;
+        }
+    }
+    else
+    {
+        import std.stdio: File;
+        foreach (line; File(fileName).byLine)
+        {
+            graph.readWordNetDataLine(line, lnr, lang, sense);
+            lnr++;
+        }
+    }
+
+    import std.stdio: writeln;
+    writeln(`Read `, lnr, ` words from `, fileName);
+}
+
 /// Read WordNet Database (dict) in directory $(D dirPath).
 void readWordNet(Graph graph,
                  string dirPath)
@@ -155,6 +250,7 @@ void readWordNet(Graph graph,
     dirPath = dirPath.expandTilde;
     // NOTE: Test both read variants through alternating uses of Mmfile or not
     const lang = Lang.en;
+
     if (false)              // these indexes are not needed only data files
     {
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
@@ -162,4 +258,9 @@ void readWordNet(Graph graph,
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
+
+    graph.readWordNetData(dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
+    graph.readWordNetData(dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
+    graph.readWordNetData(dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
+    graph.readWordNetData(dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
 }
