@@ -790,10 +790,7 @@ class Graph
     */
     void initialize(string cachePath)
     {
-        this.learnMobyEnglishPronounciations();
-        return;
         learnDefault();
-        showRelations;
     }
 
     void learnDefault()

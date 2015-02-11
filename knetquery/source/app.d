@@ -27,10 +27,11 @@ int main(string[] args)
 
     graph.initialize(cachePath);
 
+    graph.showRelations;
+
     // saves
     if (false) graph.inferSpecializedSenses;
     if (false) graph.saveUniquelySensedLemmas(cachePath);
-
     if (false) { graph.save(cachePath); }
 
     while (true)
