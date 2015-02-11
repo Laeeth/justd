@@ -71,6 +71,8 @@ module knet.base;
 version = msgpack;
 
 import core.exception: UnicodeException;
+import core.memory: GC; // GC.disable;
+
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable, Unqual;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
@@ -793,8 +795,6 @@ class Graph
     this()
     {
         const cachePath = "~/.cache";
-        import core.memory: GC;
-        // GC.disable;
         unittestMe();
 
         // loadUniquelySensedLemmas("~/.cache");
