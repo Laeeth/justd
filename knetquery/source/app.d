@@ -25,7 +25,7 @@ int main(string[] args)
     if (false) graph.loadUniquelySensedLemmas(cachePath);
     if (false) { graph.load(cachePath); }
 
-    graph.initialize(cachePath);
+    graph.learnDefault;
 
     graph.showRelations;
 

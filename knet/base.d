@@ -782,38 +782,12 @@ class Graph
         return lemma;
     }
 
-    this()
-    {
-    }
-
-    /** Construct Network
-        Read sources in order of decreasing reliability.
-    */
-    void initialize(string cachePath)
-    {
-        learnDefault();
-    }
-
     void learnDefault()
     {
-        const quick = true;
-        const maxCount = quick ? 50000 : size_t.max; // 50000 doesn't crash CN5
-
         // Learn Absolute (Trusthful) Things before untrusted machine generated data is read
         learnPreciseThings();
-
         learnTrainedThings();
-
-        // Learn Less Absolute Things
         learnAssociativeThings();
-
-        // CN5 and NELL
-        readCN5(this, `~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
-        //readNELLFile(this, `~/Knowledge/nell/NELL.08m.895.esv.csv`, maxCount);
-
-        // TODO msgpack fails to pack
-        /* auto bytes = this.pack; */
-        /* writefln(`Packed size: %.2f`, bytes.length/1.0e6); */
     }
 
     /// Learn Externally (Trained) Supervised Things.
@@ -822,6 +796,15 @@ class Graph
         // wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
         this.readWordNet(`~/Knowledge/wordnet/dict-3.1`);
         this.readSwesaurus;
+
+        const quick = true;
+        const maxCount = quick ? 50000 : size_t.max; // 50000 doesn't crash CN5
+
+        // CN5
+        this.readCN5(`~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
+
+        // NELL
+        //this.readNELLFile(`~/Knowledge/nell/NELL.08m.895.esv.csv`, maxCount);
     }
 
     /** Learn Precise (Absolute) Thing.
@@ -4431,9 +4414,7 @@ class Graph
 
     /** If $(D link) node origins unknown propagate them from $(D link)
         itself. */
-    bool propagateLinkNodes(ref Link link,
-                            Nd src,
-                            Nd dst)
+    bool propagateLinkNodes(ref Link link, Nd src, Nd dst)
     {
         bool done = false;
         if (!link.origin.defined)
@@ -4444,88 +4425,6 @@ class Graph
             done = true;
         }
         return done;
-    }
-
-    /** Show Network Relations.
-     */
-    void showRelations(uint indent_depth = 2)
-    {
-        writeln(`Link Count by Relation Type:`);
-
-        import std.range: cycle;
-        auto indent = `- `; // TODO use clever range plus indent_depth
-
-        foreach (rel; enumMembers!Rel)
-        {
-            const count = stat.relCounts[rel];
-            if (count)
-            {
-                writeln(indent, rel.to!string, `: `, count);
-            }
-        }
-
-        writeln(`Node Count: `, db.allNodes.length);
-
-        writeln(`Node Count by Origin:`);
-        foreach (source; enumMembers!Origin)
-        {
-            const count = stat.linkSourceCounts[source];
-            if (count)
-            {
-                writeln(indent, source.toNice, `: `, count);
-            }
-        }
-
-        writeln(`Node Count by Language:`);
-        foreach (lang; enumMembers!Lang)
-        {
-            const count = stat.nodeCountByLang[lang];
-            if (count)
-            {
-                writeln(indent, lang.toHuman, ` : `, count);
-            }
-        }
-
-        writeln(`Node Count by Sense:`);
-        foreach (sense; enumMembers!Sense)
-        {
-            const count = stat.nodeCountBySense[sense];
-            if (count)
-            {
-                writeln(indent, sense.toHuman, ` : `, count);
-            }
-        }
-
-        writeln(`Stats:`);
-
-        if (stat.weightSumCN5)
-        {
-            writeln(indent, `CN5 Weights Min,Max,Average: `, stat.weightMinCN5, ',', stat.weightMaxCN5, ',', cast(NWeight)stat.weightSumCN5/db.allLinks.length);
-            writeln(indent, `CN5 Packed Weights Histogram: `, stat.pweightHistogramCN5);
-        }
-        if (stat.weightSumNELL)
-        {
-            writeln(indent, `NELL Weights Min,Max,Average: `, stat.weightMinNELL, ',', stat.weightMaxNELL, ',', cast(NWeight)stat.weightSumNELL/db.allLinks.length);
-            writeln(indent, `NELL Packed Weights Histogram: `, stat.pweightHistogramNELL);
-        }
-
-        writeln(indent, `Node Count (All/Multi-Word): `,
-                db.allNodes.length,
-                `/`,
-                stat.multiWordNodeLemmaCount);
-        writeln(indent, `Lemma Expression Word Length Average: `, cast(real)stat.exprWordCountSum/db.ndByLemma.length);
-        writeln(indent, `Link Count: `, db.allLinks.length);
-        writeln(indent, `Link Count By Group:`);
-        writeln(indent, `- Symmetric: `, stat.symmetricRelCount);
-        writeln(indent, `- Transitive: `, stat.transitiveRelCount);
-
-        writeln(indent, `Lemmas Expression Count: `, db.lemmasByExpr.length);
-
-        writeln(indent, `Node Indexes by Lemma Count: `, db.ndByLemma.length);
-        writeln(indent, `Node String Length Average: `, cast(NWeight)stat.nodeStringLengthSum/db.allNodes.length);
-
-        writeln(indent, `Node Connectedness Average: `, cast(NWeight)stat.nodeConnectednessSum/db.allNodes.length);
-        writeln(indent, `Link Connectedness Average: `, cast(NWeight)stat.linkConnectednessSum/db.allLinks.length);
     }
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise Ln.max.

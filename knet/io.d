@@ -6,11 +6,94 @@ import knet.base;
 import knet.languages: Lang, toHuman;
 import knet.senses: Sense, toHuman;
 import knet.roles: Role;
-import knet.origins: toNice;
+import knet.origins: Origin, toNice;
 import knet.relations: Rel, RelDir, toHuman;
 import std.conv;
 
 alias TriedLines = bool[string]; // TODO use std.container.set
+
+/** Show Network Relations.
+ */
+void showRelations(Graph graph,
+                   uint indent_depth = 2)
+{
+    writeln(`Link Count by Relation Type:`);
+
+    import std.range: cycle;
+    auto indent = `- `; // TODO use clever range plus indent_depth
+
+    foreach (rel; enumMembers!Rel)
+    {
+        const count = graph.stat.relCounts[rel];
+        if (count)
+        {
+            writeln(indent, rel.to!string, `: `, count);
+        }
+    }
+
+    writeln(`Node Count: `, graph.db.allNodes.length);
+
+    writeln(`Node Count by Origin:`);
+    foreach (source; enumMembers!Origin)
+    {
+        const count = graph.stat.linkSourceCounts[source];
+        if (count)
+        {
+            writeln(indent, source.toNice, `: `, count);
+        }
+    }
+
+    writeln(`Node Count by Language:`);
+    foreach (lang; enumMembers!Lang)
+    {
+        const count = graph.stat.nodeCountByLang[lang];
+        if (count)
+        {
+            writeln(indent, lang.toHuman, ` : `, count);
+        }
+    }
+
+    writeln(`Node Count by Sense:`);
+    foreach (sense; enumMembers!Sense)
+    {
+        const count = graph.stat.nodeCountBySense[sense];
+        if (count)
+        {
+            writeln(indent, sense.toHuman, ` : `, count);
+        }
+    }
+
+    writeln(`Stats:`);
+
+    if (graph.stat.weightSumCN5)
+    {
+        writeln(indent, `CN5 Weights Min,Max,Average: `, graph.stat.weightMinCN5, ',', graph.stat.weightMaxCN5, ',', cast(NWeight)graph.stat.weightSumCN5/graph.db.allLinks.length);
+        writeln(indent, `CN5 Packed Weights Histogram: `, graph.stat.pweightHistogramCN5);
+    }
+    if (graph.stat.weightSumNELL)
+    {
+        writeln(indent, `NELL Weights Min,Max,Average: `, graph.stat.weightMinNELL, ',', graph.stat.weightMaxNELL, ',', cast(NWeight)graph.stat.weightSumNELL/graph.db.allLinks.length);
+        writeln(indent, `NELL Packed Weights Histogram: `, graph.stat.pweightHistogramNELL);
+    }
+
+    writeln(indent, `Node Count (All/Multi-Word): `,
+            graph.db.allNodes.length,
+            `/`,
+            graph.stat.multiWordNodeLemmaCount);
+    writeln(indent, `Lemma Expression Word Length Average: `, cast(real)graph.stat.exprWordCountSum/graph.db.ndByLemma.length);
+    writeln(indent, `Link Count: `, graph.db.allLinks.length);
+    writeln(indent, `Link Count By Group:`);
+    writeln(indent, `- Symmetric: `, graph.stat.symmetricRelCount);
+    writeln(indent, `- Transitive: `, graph.stat.transitiveRelCount);
+
+    writeln(indent, `Lemmas Expression Count: `, graph.db.lemmasByExpr.length);
+
+    writeln(indent, `Node Indexes by Lemma Count: `, graph.db.ndByLemma.length);
+    writeln(indent, `Node String Length Average: `, cast(NWeight)graph.stat.nodeStringLengthSum/graph.db.allNodes.length);
+
+    writeln(indent, `Node Connectedness Average: `, cast(NWeight)graph.stat.nodeConnectednessSum/graph.db.allNodes.length);
+    writeln(indent, `Link Connectedness Average: `, cast(NWeight)graph.stat.linkConnectednessSum/graph.db.allLinks.length);
+}
 
 void showLink(Graph graph,
               Rel rel,
