@@ -1,7 +1,7 @@
 {
     "name": "fdo",
     "description": "A File Scanning Application.",
-    "copyright": "Copyright © 2014, Per Nordlöw",
+    "copyright": "Copyright © 2015, Per Nordlöw",
     "authors": ["Per Nordlöw"],
     "dependencies": {
 	"gfm": "~master",

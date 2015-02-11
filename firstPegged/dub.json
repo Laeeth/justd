@@ -1,6 +1,6 @@
 {
     "name": "firstPegged",
-    "copyright": "Copyright © 2014, Per Nordlöw",
+    "copyright": "Copyright © 2015, Per Nordlöw",
     "authors": ["Per Nordlöw"],
     "dependencies": {
         "pegged": "~master"

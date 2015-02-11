@@ -2,7 +2,7 @@
     "name": "cn5serve",
     "targetType": "executable",
     "description": "A Conceptnet Server.",
-    "copyright": "Copyright © 2014, Per Nordlöw",
+    "copyright": "Copyright © 2015, Per Nordlöw",
     "dependencies": {
 	"vibe-d": "~master"
     },

@@ -2,7 +2,7 @@
     "name": "knetquery",
     "targetType": "executable",
     "description": "A Knowledge Network/Graph Command Line Query tool.",
-    "copyright": "Copyright © 2014, Per Nordlöw",
+    "copyright": "Copyright © 2015, Per Nordlöw",
     "buildRequirements": ["allowWarnings"],
     "importPaths": [ ".." ],
     "sourceFiles": [ "../dbg.d", "../msgpack.d", "../predicates.d",
