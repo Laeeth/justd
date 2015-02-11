@@ -1,10 +1,9 @@
 module knet.readers.folklex;
 
-import knet.base: Graph;
+import knet.base;
 import knet.languages: Lang;
 import knet.roles: Role, Rel;
 import knet.lemmas: correctLemmaExpr;
-import knet.senses: Sense;
 import knet.origins: Origin;
 
 /** Read Folkets Lexikon Synonyms File $(D path) in XML format.

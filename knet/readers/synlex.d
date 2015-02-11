@@ -1,6 +1,6 @@
 module knet.readers.synlex;
 
-import knet.base: Graph;
+import knet.base;
 
 /** Read SynLex Synonyms File $(D path) in XML format.
  */
@@ -44,7 +44,6 @@ void readSynlexFile(Graph graph,
 
             if (w1 != w2) // there might be a bug in the xml...
             {
-                import knet.senses: Sense;
                 import knet.relations: Rel;
                 import knet.roles: Role;
                 graph.connect(graph.store(w1, lang, Sense.unknown, origin),

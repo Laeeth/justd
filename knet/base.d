@@ -115,6 +115,11 @@ import knet.roles;
 import knet.decodings;
 import knet.lemmas;
 
+public import knet.senses: Sense;
+public import knet.languages: Lang;
+public import knet.relations: Rel;
+public import knet.roles: Role;
+
 import knet.lectures.all;
 
 import knet.readers.cn5;

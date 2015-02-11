@@ -1,9 +1,8 @@
 module knet.readers.wordnet;
 
-import knet.base: Graph;
+import knet.base;
 import knet.relations: Rel;
 import knet.roles: Role;
-import knet.senses: Sense;
 import knet.languages: Lang;
 
 Role decodeWordNetPointerSymbol(string sym, Sense sense) pure

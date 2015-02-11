@@ -4,7 +4,7 @@ import std.algorithm: map;
 
 import knet.base;
 import knet.languages: Lang, toHuman;
-import knet.senses: Sense, toHuman;
+import knet.senses: toHuman;
 import knet.roles: Role;
 import knet.origins: Origin, toNice;
 import knet.relations: Rel, RelDir, toHuman;
@@ -263,6 +263,7 @@ bool showNodes(Graph graph,
     import std.range: empty;
 
     import knet.iteration;
+    import knet.searching;
 
     if (line in triedLines) // if already tested
         return false;

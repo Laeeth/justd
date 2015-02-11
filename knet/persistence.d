@@ -78,7 +78,6 @@ auto saveUniquelySensedLemmas(Graph graph,
     {
         const expr = pair[0];
         auto lemmas = pair[1];
-        import knet.senses: Sense;
         auto filteredLemmas = lemmas.filter!(lemma => lemma.sense != Sense.unknown);
         if (!filteredLemmas.empty &&
             filteredLemmas.allEqual)

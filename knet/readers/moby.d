@@ -10,8 +10,7 @@ import core.exception: UnicodeException;
 import std.utf: UTFException;
 
 import knet.origins: Origin;
-import knet.senses: Sense;
-import knet.base: Graph;
+import knet.base;
 import knet.languages: Lang;
 import knet.roles: Role, Rel;
 

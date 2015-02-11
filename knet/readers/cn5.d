@@ -14,7 +14,6 @@ import predicates: of;
 import grammars: Tense, Manner;
 
 import knet.origins: Origin;
-import knet.senses: Sense;
 import knet.base;
 import knet.languages: Lang;
 import knet.roles: Role, Rel;

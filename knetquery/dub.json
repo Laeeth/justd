@@ -15,6 +15,7 @@
                      "../knet/base.d",
                      "../knet/tests.d",
                      "../knet/iteration.d",
+                     "../knet/searching.d",
                      "../knet/inference.d",
                      "../knet/persistence.d",
                      "../knet/io.d",

@@ -7,7 +7,6 @@ import knet.base;
 void testAll(Graph graph)
 {
     import knet.languages: Lang;
-    import knet.senses: Sense;
     import knet.origins: Origin;
     import knet.relations: Rel;
     import knet.roles: Role;
