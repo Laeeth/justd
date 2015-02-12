@@ -1,7 +1,7 @@
 CTAGS = ~/opt/x86_64-unknown-linux-gnu/ctags-snapshot/bin/ctags-exuberant
 ECTAGS_LANGS = Make,C,C++,D,Pascal,Sh,Ada,Lisp,Go,Protobuf
-TAGS_FILES = *.d */*.d Makefile $(shell find ~/opt/x86_64-unknown-linux-gnu/dmd -type f -iname '*.d')
-TAGS_D_FILES = *.d */*.d $(shell find ~/opt/x86_64-unknown-linux-gnu/dmd -type f -iname '*.d')
+TAGS_FILES = *.d */*.d */*/*.d Makefile $(shell find ~/opt/x86_64-unknown-linux-gnu/dmd -type f -iname '*.d')
+TAGS_D_FILES = *.d */*.d  */*/*.d $(shell find ~/opt/x86_64-unknown-linux-gnu/dmd -type f -iname '*.d')
 
 all: tags
 deps:

@@ -20,7 +20,7 @@ void learnTrainedThings(Graph graph)
 {
     // wordnet = new WordNet!(true, true)([Lang.en]); // TODO Remove
     import knet.readers.wordnet;
-    graph.readWordNet(`../knowledge/en/wordnet-3.1`);
+    graph.readWordNet(`../knowledge/en/wordnet`);
 
     import knet.readers.swesaurus;
     graph.readSwesaurus;
