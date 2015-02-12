@@ -95,9 +95,9 @@ auto nnsOf(Graph graph,
                 .map!(ln =>
                       graph[ln].actors[]
                                .filter!(actor => (actor.ix != nd.ix &&
+                                                  // TODO functionize to Lemma.ofLang
                                                   (dstLangs.empty ||
-                                                   dstLangs.canFind(graph[actor].lemma.lang)) // TODO functionize to Lemma.ofLang
-                                            )))
+                                                   dstLangs.canFind(graph[actor].lemma.lang)))))
                 .joiner(); // no self
 }
 
