@@ -208,7 +208,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     SynSet synset;
     while (w_cnt--)
     {
-        const word = parts.front;
+        const word = parts.front.replace(`_`, ` `);
         parts.popFront;
 
         auto lex_id_s = parts.front; // TODO post issue?
