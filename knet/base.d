@@ -802,9 +802,9 @@ class Graph
     }
 
     /// Learn Verb Reversion.
-    Ln[] learnVerbReversion(S)(S forward,
-                               S backward,
-                               Lang lang = Lang.unknown) if (isSomeString!S)
+    Lns learnVerbReversion(S)(S forward,
+                              S backward,
+                              Lang lang = Lang.unknown) if (isSomeString!S)
     {
         const origin = Origin.manual;
         auto all = [store(forward, lang, Sense.verbInfinitive, origin),
@@ -826,13 +826,13 @@ class Graph
 
     /** Learn English Irregular Verb.
      */
-    Ln[] learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive, // base form
-                                               S2 pastSimple,
-                                               S3 pastParticiple,
-                                               Origin origin = Origin.manual)
+    Lns learnEnglishIrregularVerb(S1, S2, S3)(S1 infinitive, // base form
+                                              S2 pastSimple,
+                                              S3 pastParticiple,
+                                              Origin origin = Origin.manual)
     {
         enum lang = Lang.en;
-        Nd[] all;
+        Nds all;
         all ~= store(infinitive, lang, Sense.verbIrregularInfinitive, origin);
         all ~= store(pastSimple, lang, Sense.verbIrregularPast, origin);
         all ~= store(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
@@ -856,16 +856,16 @@ class Graph
 
     /** Learn English $(D words) related to attribute.
      */
-    Ln[] learnMto1(R, S)(Lang lang,
-                         R words,
-                         Role role,
-                         S attribute,
-                         Sense wordSense = Sense.unknown,
-                         Sense attributeSense = Sense.noun,
-                         NWeight weight = 0.5,
-                         Origin origin = Origin.manual) if (isInputRange!R &&
-                                                            (isSomeString!(ElementType!R)) &&
-                                                            isSomeString!S)
+    Lns learnMto1(R, S)(Lang lang,
+                        R words,
+                        Role role,
+                        S attribute,
+                        Sense wordSense = Sense.unknown,
+                        Sense attributeSense = Sense.noun,
+                        NWeight weight = 0.5,
+                        Origin origin = Origin.manual) if (isInputRange!R &&
+                                                           (isSomeString!(ElementType!R)) &&
+                                                           isSomeString!S)
     {
         return connectMto1(store(words, lang, wordSense, origin),
                            role,
@@ -873,14 +873,14 @@ class Graph
                            origin, weight);
     }
 
-    Ln[] learnMto1Maybe(S)(Lang lang,
-                           string wordsPath,
-                           Role role,
-                           S attribute,
-                           Sense wordSense = Sense.unknown,
-                           Sense attributeSense = Sense.noun,
-                           NWeight weight = 0.5,
-                           Origin origin = Origin.manual) if (isSomeString!S)
+    Lns learnMto1Maybe(S)(Lang lang,
+                          string wordsPath,
+                          Role role,
+                          S attribute,
+                          Sense wordSense = Sense.unknown,
+                          Sense attributeSense = Sense.noun,
+                          NWeight weight = 0.5,
+                          Origin origin = Origin.manual) if (isSomeString!S)
     {
         try
         {
@@ -901,11 +901,11 @@ class Graph
 
     /** Learn English Emoticon.
      */
-    Ln[] learnEnglishEmoticon(S)(S[] emoticons,
-                                 S[] exprs,
-                                 NWeight weight = 1.0,
-                                 Sense sense = Sense.unknown,
-                                 Origin origin = Origin.manual) if (isSomeString!S)
+    Lns learnEnglishEmoticon(S)(S[] emoticons,
+                                S[] exprs,
+                                NWeight weight = 1.0,
+                                Sense sense = Sense.unknown,
+                                Origin origin = Origin.manual) if (isSomeString!S)
     {
         return connectMtoN(store(emoticons, Lang.any, Sense.unknown, origin),
                            Role(Rel.emoticonFor),
@@ -1021,12 +1021,12 @@ class Graph
         return store(expr, lang, sense, origin, context);
     }
 
-    Nd[] store(Exprs)(Exprs exprs,
-                      Lang lang,
-                      Sense sense,
-                      Origin origin,
-                      Ctx context = Ctx.asUndefined) if (isIterable!Exprs &&
-                                                                     isSomeString!(ElementType!Exprs))
+    Nds store(Exprs)(Exprs exprs,
+                     Lang lang,
+                     Sense sense,
+                     Origin origin,
+                     Ctx context = Ctx.asUndefined) if (isIterable!Exprs &&
+                                                        isSomeString!(ElementType!Exprs))
     {
         typeof(return) nds;
         foreach (expr; exprs)
@@ -1038,23 +1038,23 @@ class Graph
 
     /** Directed Connect Many Sources $(D srcs) to Many Destinations $(D dsts).
      */
-    Ln[] connectMtoN(S, D)(S srcs,
-                           Role role,
-                           D dsts,
-                           Origin origin,
-                           NWeight weight = 1.0,
-                           bool checkExisting = false) if (isIterableOf!(S, Nd) &&
-                                                           isIterableOf!(D, Nd))
+    Lns connectMtoN(S, D)(S srcs,
+                          Role role,
+                          D dsts,
+                          Origin origin,
+                          NWeight weight = 1.0,
+                          bool checkExisting = false) if (isIterableOf!(S, Nd) &&
+                                                          isIterableOf!(D, Nd))
     {
-        typeof(return) linkIxes;
+        typeof(return) lns;
         foreach (src; srcs)
         {
             foreach (dst; dsts)
             {
-                linkIxes ~= connect(src, role, dst, origin, weight, checkExisting);
+                lns ~= connect(src, role, dst, origin, weight, checkExisting);
             }
         }
-        return linkIxes;
+        return lns;
     }
     alias connectFanInFanOut = connectMtoN;
 
@@ -1062,15 +1062,15 @@ class Graph
         See also: http://forum.dlang.org/thread/iqkybajwdzcvdytakgvw@forum.dlang.org#post-iqkybajwdzcvdytakgvw:40forum.dlang.org
         See also: https://issues.dlang.org/show_bug.cgi?id=6788
     */
-    Ln[] connectAll(R)(Role role,
-                       R all,
-                       Lang lang,
-                       Origin origin,
-                       NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+    Lns connectAll(R)(Role role,
+                      R all,
+                      Lang lang,
+                      Origin origin,
+                      NWeight weight = 1.0) if (isIterableOf!(R, Nd))
         in { assert(role.rel.isSymmetric); }
     body
     {
-        typeof(return) linkIxes;
+        typeof(return) lns;
         size_t i = 0;
         // TODO use combinations.pairwise() when ForwardRange support has been addded
         foreach (me; all)
@@ -1082,58 +1082,73 @@ class Graph
                 {
                     break;
                 }
-                linkIxes ~= connect(me, role, you, origin, weight);
+                lns ~= connect(me, role, you, origin, weight);
                 ++j;
             }
             ++i;
         }
-        return linkIxes;
+        return lns;
     }
     alias connectMtoM = connectAll;
     alias connectFully = connectAll;
     alias connectStar = connectAll;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
-    Ln[] connect1toM(R)(Nd first,
-                        Role role,
-                        R rest,
-                        Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+    Lns connect1toM(R)(Nd first,
+                       Role role,
+                       R rest,
+                       Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
-        typeof(return) linkIxes;
+        typeof(return) lns;
         foreach (you; rest)
         {
             if (first != you)
             {
-                linkIxes ~= connect(first, role, you, origin, weight, false);
+                lns ~= connect(first, role, you, origin, weight, false);
             }
         }
-        return linkIxes;
+        return lns;
     }
     alias connectFanOut = connect1toM;
 
     /** Fan-In Connect $(D first) to Every in $(D rest). */
-    Ln[] connectMto1(R)(R rest,
-                        Role role,
-                        Nd first,
-                        Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+    Lns connectMto1(R)(R rest,
+                       Role role,
+                       Nd first,
+                       Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
-        typeof(return) linkIxes;
+        typeof(return) lns;
         foreach (you; rest)
         {
             if (first != you)
             {
-                linkIxes ~= connect(you, role, first, origin, weight);
+                lns ~= connect(you, role, first, origin, weight);
             }
         }
-        return linkIxes;
+        return lns;
     }
     alias connectFanIn = connectMto1;
 
-    /** Cyclic Connect Every in $(D all). */
-    void connectCycle(R)(Rel rel, R all) if (isIterableOf!(R, Nd))
+    /** Cyclic Connect Every $(D ring) to a ring. */
+    Lns connectCycle(R)(R ring,
+                        Rel rel,
+                        Origin origin,
+                        NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
+        typeof(return) lns;
+        const length = ring.count;
+        if (length >= 2)
+        {
+            for (size_t i = 0; i < length; ++i) // TODO reuse cycle?
+            {
+                const j = i == length - 1 ? 0 : i + 1;
+                lns ~= connect(ring[i], Role(rel), ring[j], origin, weight);
+            }
+        }
+        return lns;
     }
     alias connectCircle = connectCycle;
+    alias connectRing = connectCycle;
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight).
         TODO checkExisting is currently set to false because searching

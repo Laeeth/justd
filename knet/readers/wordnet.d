@@ -189,6 +189,16 @@ bool readWordNetDataLine(R, N)(Graph graph,
     // ss_type: synset type (sense)
     const char ss_type = parts.front[0];
     parts.popFront;
+    Sense ssSense;
+    final switch (ss_type)
+    {
+        case 'n': ssSense = Sense.noun; break;
+        case 'v': ssSense = Sense.verb; break;
+        case 'a': ssSense = Sense.adjective; break;
+        case 's': ssSense = Sense.adjective; break; // TODO adjectiveSatellite
+        case 'r': ssSense = Sense.adverb; break;
+    }
+    assert(sense == ssSense);
 
     // w_cnt: word count
     auto w_cnt_s = parts.front; // TODO post issue?
@@ -211,6 +221,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     // store it in local associative array
     assert(synset_offset !in synsetNdsByOffset); // assert unique ids
     synsetNdsByOffset[synset_offset] = synsetNds;
+    graph.connectCycle(synsetNds, Rel.synonymFor, Origin.wordnet); // TODO use connectFully instead?
 
     struct Pointer
     {
@@ -241,17 +252,6 @@ bool readWordNetDataLine(R, N)(Graph graph,
         }
 
     // decoding done
-
-    Sense ssSense;
-    final switch (ss_type)
-    {
-        case 'n': ssSense = Sense.noun; break;
-        case 'v': ssSense = Sense.verb; break;
-        case 'a': ssSense = Sense.adjective; break;
-        case 's': ssSense = Sense.adjective; break; // TODO adjectiveSatellite
-        case 'r': ssSense = Sense.adverb; break;
-    }
-    assert(sense == ssSense);
 
     // writeln(synset_offset, " ", lex_filenum, " ", ss_type, " ", w_cnt, " ", word, " ", lex_id);
 
