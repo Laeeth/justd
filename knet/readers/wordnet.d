@@ -2,7 +2,7 @@ module knet.readers.wordnet;
 
 import knet.base;
 
-Role decodeWordNetPointerSymbol(string sym, Sense sense) pure
+Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
 {
     typeof(return) role;
     with (Rel)
@@ -148,7 +148,13 @@ void readWordNetIndex(Graph graph,
     writeln(`Read `, lnr, ` words from `, fileName);
 }
 
+/** Current byte offset in the file represented as an 8 digit decimal integer.
+ */
+alias SynSetOffset = uint;
+alias SynSet = Nds; // TODO use Array!Nd
+
 bool readWordNetDataLine(R, N)(Graph graph,
+                               SynSet[SynSetOffset] synsetNdsByOffset,
                                const R line,
                                const N lnr,
                                const Lang lang = Lang.unknown,
@@ -158,6 +164,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     import std.conv: to, parse;
     import std.stdio;
     import std.range: front;
+    import std.ascii: isDigit;
 
     if (line.empty ||
         line.front.isWhite) // if first is not space. TODO move this check
@@ -165,53 +172,75 @@ bool readWordNetDataLine(R, N)(Graph graph,
         return false;
     }
 
-    uint synset_offset = 0;
-    uint lex_filenum = 0;
-    dchar ss_type;
-    uint w_cnt = 0;
-    const(char)[] word;
-    uint lex_id = 0;
-    uint p_cnt = 0; // pointer counter
-
     import std.container: Array;
-    Array!int pointer;
 
-    writeln("line: ", line);
+    // writeln("line: ", line);
 
-    size_t ix = 0;
-    foreach (part; line.splitter)
+    auto parts = line.splitter;
+
+    // synset_offset: unique synset id
+    const synset_offset = parts.front.to!SynSetOffset;
+    parts.popFront;
+
+    // lex_filenum
+    const lex_filenum = parts.front.to!uint;
+    parts.popFront;
+
+    // ss_type: synset type (sense)
+    const char ss_type = parts.front[0];
+    parts.popFront;
+
+    // w_cnt: word count
+    auto w_cnt_s = parts.front; // TODO post issue?
+    uint w_cnt = w_cnt_s.parse!uint(16);
+    parts.popFront; // decode hex string
+
+    // (word lex_id)+
+    SynSet synsetNds;
+    while (w_cnt--)
     {
-        switch (ix)
-        {
-            case 0:
-                synset_offset = part.to!(typeof(synset_offset));
-                break;
-            case 1:
-                lex_filenum = part.to!(typeof(lex_filenum));
-                break;
-            case 2:
-                assert(part.length == 1);
-                ss_type = part.front;
-                break;
-            case 3:
+        const word = parts.front;
+        parts.popFront;
 
-                w_cnt = part.parse!(typeof(w_cnt))(16); // decode hex string
-                break;
-            case 4:
-                word = part;
-                break;
-            case 5:
-                lex_id = part.parse!(typeof(lex_id))(16); // decode hex string
-                break;
-            case 6:
-                writeln("6: ", part);
-                p_cnt = part.to!(typeof(p_cnt));
-                break;
-            default:
-                break;
-        }
-        ++ix;
+        auto lex_id_s = parts.front; // TODO post issue?
+        const lex_id = lex_id_s.parse!uint(16);
+        parts.popFront;
+
+        synsetNds ~= graph.store(word, lang, sense, Origin.wordnet);
     }
+    // store it in local associative array
+    assert(synset_offset !in synsetNdsByOffset); // assert unique ids
+    synsetNdsByOffset[synset_offset] = synsetNds;
+
+    struct Pointer
+    {
+        Role role;
+        SynSetOffset synset_offset;
+        uint pos;
+        uint sourceSynSetWordNr;
+        uint targetSynSetWordNr;
+    }
+
+    // p_cnt: pointer count
+    auto p_cnt = parts.front.to!uint; parts.popFront;
+    Array!Pointer refs;
+    refs.reserve(p_cnt);
+
+    // [ptr...]: pointers
+    if (false)
+        while (p_cnt--)
+        {
+            Pointer ptr;
+
+            // pointer_symbol
+            ptr.role = parts.front.decodeWordNetPointerSymbol(sense);
+            parts.popFront;
+
+            ptr.synset_offset = parts.front.to!SynSetOffset;
+            parts.popFront;
+        }
+
+    // decoding done
 
     Sense ssSense;
     final switch (ss_type)
@@ -219,12 +248,12 @@ bool readWordNetDataLine(R, N)(Graph graph,
         case 'n': ssSense = Sense.noun; break;
         case 'v': ssSense = Sense.verb; break;
         case 'a': ssSense = Sense.adjective; break;
-        case 's': ssSense = Sense.adjective; break; // TODO adjectiveSattelite
+        case 's': ssSense = Sense.adjective; break; // TODO adjectiveSatellite
         case 'r': ssSense = Sense.adverb; break;
     }
     assert(sense == ssSense);
 
-    writeln(synset_offset, ", ", lex_filenum, ", ", ss_type, ", ", w_cnt, ", ", word, ", ", lex_id, ", ", p_cnt);
+    // writeln(synset_offset, " ", lex_filenum, " ", ss_type, " ", w_cnt, " ", word, " ", lex_id);
 
     return true;
 }
@@ -239,12 +268,14 @@ void readWordNetData(Graph graph,
                      Sense sense = Sense.unknown)
 {
     size_t lnr;
+    SynSet[SynSetOffset] synsetNdsByOffset;
     if (useMmFile)
     {
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            graph.readWordNetDataLine(line, lnr, lang, sense, useMmFile);
+            graph.readWordNetDataLine(synsetNdsByOffset,
+                                      line, lnr, lang, sense, useMmFile);
             lnr++;
         }
     }
@@ -253,7 +284,8 @@ void readWordNetData(Graph graph,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            graph.readWordNetDataLine(line, lnr, lang, sense);
+            graph.readWordNetDataLine(synsetNdsByOffset,
+                                      line, lnr, lang, sense);
             lnr++;
         }
     }
@@ -261,6 +293,7 @@ void readWordNetData(Graph graph,
     import std.stdio: writeln;
     writeln(`Read `, lnr, ` words from `, fileName);
 }
+
 
 /// Read WordNet Database (dict) in directory $(D dirPath).
 void readWordNet(Graph graph,
@@ -279,7 +312,6 @@ void readWordNet(Graph graph,
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
 
-    return;
     graph.readWordNetData(dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
     graph.readWordNetData(dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
     graph.readWordNetData(dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
