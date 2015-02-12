@@ -35,6 +35,16 @@ enum Rel:ubyte
     memberOf, /**< A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
 
+    memberHolonym,             ///< WordNet.
+    substanceHolonym,          ///< WordNet.
+    partHolonym,               ///< WordNet.
+    attribute,                 ///< WordNet.
+    derivationallyRelatedForm, ///< WordNet.
+    domainOfSynset,            ///< WordNet.
+    memberOfThisDomain,        ///< WordNet.
+    alsoSee,                   ///< WordNet.
+    pertainym,                 ///< WordNet.
+
     memberOfEconomicSector,
     participatesIn,
     growsIn,

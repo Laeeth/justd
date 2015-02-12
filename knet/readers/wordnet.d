@@ -18,31 +18,30 @@ Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
             case `~i`: role = Role(instanceHyponymOf); break;
             case `*`:  role = Role(causes, true); break; // entailment.
 
-            // case `#m`: role = Role(memberHolonym); break;
-            // case `#s`: role = Role(substanceHolonym); break;
-            // case `#p`: role = Role(partHolonym); break;
+            case `#m`: role = Role(memberHolonym); break;
+            case `#s`: role = Role(substanceHolonym); break;
+            case `#p`: role = Role(partHolonym); break;
             case `%m`: role = Role(memberOf); break;
             case `%s`: role = Role(madeOf); break;
             case `%p`: role = Role(partOf); break;
 
-            // case `=`:  role = Role(attribute); break;
-            // case `+`:  role = Role(derivationallyRelatedForm); break;
-            // case `;c`: role = Role(domainOfSynset); break; // TOPIC
-            // case `-c`: role = Role(memberOfThisDomain); break;  // TOPIC
-            // case `;r`: role = Role(domainOfSynset); break; // REGION
-            // case `-r`: role = Role(memberOfThisDomain); break; // REGION
-            // case `;u`: role = Role(domainOfSynset); break; // USAGE
-            // case `-u`: role = Role(memberOfThisDomain); break; // USAGE
+            case `=`:  role = Role(attribute); break;
+            case `+`:  role = Role(derivationallyRelatedForm); break;
+            case `;c`: role = Role(domainOfSynset); break; // TOPIC
+            case `-c`: role = Role(memberOfThisDomain); break;  // TOPIC
+            case `;r`: role = Role(domainOfSynset); break; // REGION
+            case `-r`: role = Role(memberOfThisDomain); break; // REGION
+            case `;u`: role = Role(domainOfSynset); break; // USAGE
+            case `-u`: role = Role(memberOfThisDomain); break; // USAGE
 
             case `>`:  role = Role(causes); break;
-            // case `^`:  role = Role(alsoSee); break;
+            case `^`:  role = Role(alsoSee); break;
             case `$`:  role = Role(formOfVerb); break;
 
             case `&`:  role = Role(similarTo); break;
             case `<`:  role = Role(participleOfVerb); break;
 
-            // case `\`:  role = Role(pertainym); break; // pertains to noun
-            // case `=`:  role = Role(attribute); break;
+            case `\`:  role = Role(pertainym); break; // pertains to noun
 
             default:
                 assert(false, `Unexpected relation type ` ~ sym);
@@ -221,15 +220,17 @@ bool readWordNetDataLine(R, N)(Graph graph,
     // store it in local associative array
     assert(synset_offset !in synsetByOffset); // assert unique ids
     synsetByOffset[synset_offset] = synset;
-    graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet); // TODO use connectFully instead?
+    graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet, true); // TODO use connectFully instead?
+
+    alias WordNr = uint;
 
     struct Pointer
     {
         Role role;
         SynSetOffset synset_offset;
         uint pos;
-        uint sourceSynSetWordNr;
-        uint targetSynSetWordNr;
+        WordNr sourceSynSetWordNr;
+        WordNr targetSynSetWordNr;
     }
 
     // p_cnt: pointer count
@@ -238,18 +239,33 @@ bool readWordNetDataLine(R, N)(Graph graph,
     refs.reserve(p_cnt);
 
     // [ptr...]: pointers
-    if (false)
-        while (p_cnt--)
+    while (p_cnt--)
+    {
+        Pointer ptr;
+
+        // pointer_symbol
+        ptr.role = parts.front.decodeWordNetPointerSymbol(sense);
+        parts.popFront;
+
+        // synset_offset
+        ptr.synset_offset = parts.front.to!SynSetOffset;
+        parts.popFront;
+
+        // pos
+        parts.popFront;
+
+        // source/target
+        auto source = parts.front[0..2];
+        auto target = parts.front[2..4];
+        ptr.sourceSynSetWordNr = source.parse!WordNr(16);
+        ptr.targetSynSetWordNr = target.parse!WordNr(16);
+        if (ptr.sourceSynSetWordNr == 0 &&
+            ptr.targetSynSetWordNr == 0)
         {
-            Pointer ptr;
-
-            // pointer_symbol
-            ptr.role = parts.front.decodeWordNetPointerSymbol(sense);
-            parts.popFront;
-
-            ptr.synset_offset = parts.front.to!SynSetOffset;
-            parts.popFront;
+            // connectMtoN(currentSynSet, pointerSynSet)
         }
+        parts.popFront;
+    }
 
     // decoding done
 

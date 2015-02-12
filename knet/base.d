@@ -1043,8 +1043,8 @@ class Graph
                           D dsts,
                           Origin origin,
                           NWeight weight = 1.0,
-                          bool checkExisting = false) if (isIterableOf!(S, Nd) &&
-                                                          isIterableOf!(D, Nd))
+                          bool checkExisting = true) if (isIterableOf!(S, Nd) &&
+                                                         isIterableOf!(D, Nd))
     {
         typeof(return) lns;
         foreach (src; srcs)
@@ -1133,7 +1133,8 @@ class Graph
     Lns connectCycle(R)(R ring,
                         Rel rel,
                         Origin origin,
-                        NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+                        NWeight weight = 1.0,
+                        bool checkExisting = true) if (isIterableOf!(R, Nd))
     {
         typeof(return) lns;
         import std.range: hasLength;
@@ -1150,7 +1151,7 @@ class Graph
             for (size_t i = 0; i < length; ++i) // TODO reuse cycle?
             {
                 const j = i == length - 1 ? 0 : i + 1;
-                lns ~= connect(ring[i], Role(rel), ring[j], origin, weight);
+                lns ~= connect(ring[i], Role(rel), ring[j], origin, weight, checkExisting);
             }
         }
         return lns;
@@ -1167,7 +1168,7 @@ class Graph
                Nd dst,
                Origin origin = Origin.unknown,
                NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
-               bool checkExisting = false,
+               bool checkExisting = true,
                bool warnExisting = false) in
     {
         assert(src != dst, (at(src).lemma.to!string ~

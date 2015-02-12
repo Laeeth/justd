@@ -123,7 +123,7 @@ traversed nodes is smaller than a randomnessThreshold
 
 ### TODO Integrate Hits from Google: "list of word emotions" using new relations hasEmotionLove
 
-### TODO See checkExisting in connect() to true only for Origin.manual
+### TODO Set checkExisting in connect() to true only for Origin.manual
 
 ### TODO Make use of stealFront and stealBack
 
