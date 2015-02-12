@@ -175,6 +175,10 @@ bool readWordNetDataLine(R, N)(Graph graph,
     uint w_cnt = 0;
     const(char)[] word;
     uint lex_id = 0;
+    uint p_cnt = 0; // pointer counter
+
+    import std.container: Array;
+    Array!int pointer;
 
     writeln("line: ", line);
 
@@ -190,6 +194,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
                 lex_filenum = part.to!(typeof(lex_filenum));
                 break;
             case 2:
+                assert(part.length == 1);
                 ss_type = part.front;
                 break;
             case 3:
@@ -200,6 +205,10 @@ bool readWordNetDataLine(R, N)(Graph graph,
                 break;
             case 5:
                 lex_id = part.parse!(typeof(lex_id))(16); // decode hex string
+                break;
+            case 6:
+                writeln("6: ", part);
+                p_cnt = part.to!(typeof(p_cnt));
                 break;
             default:
                 break;
@@ -218,7 +227,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     }
     assert(sense == ssSense);
 
-    writeln(synset_offset, ", ", lex_filenum, ", ", ss_type, ", ", w_cnt, ", ", word, ", ", lex_id);
+    writeln(synset_offset, ", ", lex_filenum, ", ", ss_type, ", ", w_cnt, ", ", word, ", ", lex_id, ", ", p_cnt);
 
     return true;
 }
