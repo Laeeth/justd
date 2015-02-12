@@ -1,270 +1,271 @@
 a prioriinnan sinneserfarenheter har beblandats; exempelvis "människan kan inte inneha kunskap a priori."
-abderitiskenfaldig
-abekaleriskey lenabo
-abstrusdunkelsvårbegripligsvårförståelig
+adjective:abderitiskenfaldig
+adjective:abekaleriskey lenabo
+adjective:abstrusdunkelsvårbegripligsvårförståelig
 ackack så sköna
-acklimatiseravänja vid klimatethärdaanpassa
+verb:acklimatiseravänja vid klimatethärdaanpassa
 ackuratprecisjust
-adekvatriktig
-afavfrån (ett släkte)
-affischeraplacera
-agiterailsken påstridig. med stor intensitet och/eller kraft försöka vinna över någon eller några till en viss synpunkt
-agreabelangenämtilltalandebehaglig
-akerbitter
-aklameraskrika utsvara jakande på
-akribi(vetenskaplig) exakthet
+adjective:adekvatriktig
+preposition:afavfrån (ett släkte)
+verb:affischeraplacera
+verb:agiterailsken påstridig. med stor intensitet och/eller kraft försöka vinna över någon eller några till en viss synpunkt
+adjective:agreabelangenämtilltalandebehaglig
+adjective:akerbitter
+verb:aklameraskrika utsvara jakande på
+nounUncountable:akribi(vetenskaplig) exakthet
 alarmerandeoroande, t.ex. att man är varnad
 alektopatha svårt att bestämma sigtvekabetänka sig
-alienationfrämmandedistanstagandekänsla ex till arbete
-alldenstundeftersom
-allegeraanföraåberopa
-allehandaalla slags
-allenaensam
+noun:alienationdistanstagandekänsla ex till arbete
+conjunction:alldenstundeftersom
+verb:allegeraanföraåberopa
+adjective:allehandaalla slags
+adjective:allenaensam
 allenastendast
 allestädesöverallt
 allom"för alla", tex i uttrycket allom bekant, "något som alla känner till". se c. vreeswijks låt dekadens 4e versen: "ni har väl hört, kära ni, det är väl allom bekant:"
 allskönsalla sorters, särskilt i negativa sammanhang
-alluderaanspelasyfta på
+verb:alluderaanspelasyfta på
 ambidextritvå häntbäggehänt
-ambivalentkluven
-ambulerandekringflackande
-amper;1skarpsträv
-amper;2sträng
-analoglikartadöverensstämmandeenlig med ngtjämförligmotsvarande
-anammata; ta emot; godta
-androgyndubbelkönad varelse
-ankommabero påvara någons uppgift/ansvar
+adjective:ambivalentkluven
+adjective:ambulerandekringflackande
+adjective:amper;1skarpsträv
+adjective:amper;2sträng
+adjective:analoglikartadöverensstämmandeenlig med ngtjämförligmotsvarande
+verb:anamma;1ta
+verb:anamma;2ta emot
+verb:anamma;3godta
+adjective:androgyndubbelkönad varelse
+verb:ankommabero påvara någons uppgift/ansvar
 anledningmed anledning
-anländerkommer
-annalkandesom närmar sig
-annekterata i besittning
+verb:anländerkommer
+adjective:annalkandesom närmar sig
+verb:annekterata i besittning
 annorledesannorlunda / på annat sätt
 annorstädespå annan plats
-annulleraavbeställaåterkalla
-annullerasäga upp
-annullerata bort
-ansertycka
-anskrämligmycket ful
-anspelarikta tanken påsyfta på
-antastavåldta
-antediluvianskuråldrig (eg. före syndafloden)
-antereradupphetsad
-antichambrerauppehålla sig i väntrum (hos högt uppsatta personer)
-antvardaöverlämna
-apoteosgudsförhöjande av människan; man blir en gud
-aramefterblivendumretaderad
-arbetsvilligman arbetar gärna
-arkebuseraavliva dödsdömd person genom skjutning
-arlatidig
-arlatidigt på dagen
-askglädja med ett gammalt ord
-atavistiskprimitivuråldrig
-auskulterainhämta kunskap
-autodidaktsjälvlärd
+verb:annullera;1avbeställaåterkalla
+verb:annullera;2säga upp
+verb:annullera;3ta bort
+verb:ansetycka
+adjective:anskrämligmycket ful
+verb:anspelarikta tanken påsyfta på
+verb:antastavåldta
+adjective:antediluvianskuråldrig
+adjective:antediluvianskföre syndafloden
+adjective:antereradupphetsad
+verb:antichambrerauppehålla sig i väntrum (hos högt uppsatta personer)
+verb:antvardaöverlämna
+nounSingular:apoteosgudsförhöjande av människan; man blir en gud
+adjective:aramefterblivendumretaderad
+adjective:arbetsvilligman arbetar gärna
+verb:arkebuseraavliva dödsdömd person genom skjutning
+adjective:arlatidig
+adverb:arlatidigt på dagen
+verb:askglädja med ett gammalt ord
+adjective:atavistiskprimitivuråldrig
+verb:auskulterainhämta kunskap
+adjective:autodidaktsjälvlärd
 avecinbjudan med avec
-avlidadö
-avsidestagenperson som är förhindrad (oftast på grund av sjukdom) att närvara vid en sammankomst. var ett vanligt förekommande ord vid bön inom frikyrkan
-avyttrage bortöverlåta
-bakdantaförtala
-ballotagesluten omröstning
-banalenkel
-barrikaderaförskansasätta upp barriär
-bat`nasvälla
-beger gud ett uppdrag
-bedrivagöra
-befinnavara
-befågandekonstigt
-begagnaanvända
-begeistradförtjust
-begynnabörja
-begå sigöverleva t.ex. en olycka
+verb:avlidadö
+nounSingular:avsidestagenperson som är förhindrad (oftast på grund av sjukdom) att närvara vid en sammankomst. var ett vanligt förekommande ord vid bön inom frikyrkan
+verb:avyttrage bortöverlåta
+verb:bakdantaförtala
+nounSingular:ballotagesluten omröstning
+adjective:banalenkel
+verbTransitive:barrikaderaförskansasätta upp barriär
+verbIntransitive:bat`nasvälla
+verb:beger gud ett uppdrag
+verbTransitive:bedrivagöra
+verbIntransitive:befinnavara
+adjective:befågandekonstigt
+verbTransitive:begagnaanvända
+adjective:begeistradförtjust
+verb:begynnabörja
+verbIntransitive:begå sigöverleva t.ex. en olycka
 behövermåste ha
-beivrastarkt avråda från
-belamraöverhopa på ett hindrande, besvärande eller skrymmande sätt
-bestefardansk humor. kan tros vara "farfar"
-bestrida1: förneka 2: betala (t ex myndigheten bestrider eventuella...)
-besuttenförmögenvälbärgadrik
-betacka sigsäga nej tillundanbedja sig
-bidaväntainvänta
+verbTransitive:beivrastarkt avråda från
+verbTransitive:belamraöverhopa på ett hindrande, besvärande eller skrymmande sätt
+nounSingular:bestefardansk humor. kan tros vara "farfar"
+verbTransitive:bestrida1: förneka 2: betala (t ex myndigheten bestrider eventuella...)
+adjective:besuttenförmögenvälbärgadrik
+verbIntransitive:betacka sigsäga nej tillundanbedja sig
+verb:bidaväntainvänta
 bilettskrattat åt
-biltogfredlös
-bindgalenheltokig
-bitigmuskulösbiffig
-bjärtskarp och tydlig
-blackpank
-bligastirra
-blotaoffra
-blott;1endast
+nounSingular:biltogfredlös
+adjective:bindgalenheltokig
+adjective:bitigmuskulösbiffig
+adjective:bjärtskarp och tydlig
+adjective:blackpank
+verb:bligastirra
+verb:blotaoffra
+adverb:blott;1endast
 blott;2såframt
-blåkopierakopiering av dokument på en trumma som vevas för hand
-boksyntförtrogen med böcker
-bolabedriva otukt
+verbTransitive:blåkopierakopiering av dokument på en trumma som vevas för hand
+adjective:boksyntförtrogen med böcker
+verb:bolabedriva otukt
 borderlineemotionellt instabil personlighetsstörning (ips)
-bortklemadbortskämd
-bra slagbra sort
+adjective:bortklemadbortskämd
+nounSingular:bra slagbra sort
 bragts'bragts med livet
-brandgulorange
-brisslorställning att torka fisknät på (gammalskånska?)
-brysktvärhäftig
-bröstgängesbryskt
-gå bröstgänges tillvägahandla bryskt
-burgenvälbärgadförmögen
-burlesktöverdrivet roligt
+adjective:brandgulorange
+nounSingular:brandgultorange
+nounSingular:brisslorställning att torka fisknät på (gammalskånska?)
+adjective:brysktvärhäftig
+adverb:bröstgängesbryskt
+verb:gå bröstgänges tillvägahandla bryskt
+adjective:burgenvälbärgadförmögen
+adverb:burlesktöverdrivet roligt
 bällvill
-båta;1hjälpagagna
-båta;2fara med båt
-båta;3frakta med båt
-båtnadgagnnyttavara till hjälp
+verbTransitive:båta;1hjälpagagna
+verbIntransitive:båta;2fara med båt
+verbTransitive:båta;3frakta med båt
+nounSingular:båtnadgagnnytta
 börska
-cederaöverlåtaavstå från
-celestsom hör till himlavalvet
-chackagammalt ord för köpa
-changeramärkbart förändras till det sämre
-chargeradöverdriven
-chevalereskartighjälpsam
-chikaneragenera någon
-chikaneraskämma ut
-chimäriskinbillad
-coolgrymballhäftigfrän
-dapurledsen
-debilefterbliven
-defenstrerakasta ut något genom ett fönster
-deklasseradutstött
-demagogfolkuppviglare
-desillusioneradbesviken eller illusionslös (man känner inte för att göra något alls)
-deskriptivbeskrivande
-diastemaglugg mellan framtänderna
-diffusaoklara
-digerstorvidlyftig
-diminutivmycket liten
-disparatolikartad
+verb:cederaöverlåtaavstå från
+adjective:celestsom hör till himlavalvet
+verbTransitive:chackagammalt ord för köpa
+verbIntransitive:changeramärkbart förändras till det sämre
+adjective:chargeradöverdriven
+adjective:chevalereskartighjälpsam
+verbTransitive:chikaneragenera någon
+verb:chikaneraskämma ut
+adjective:chimäriskinbillad
+adjective:coolgrymballhäftigfrän
+adjective:dapurledsen
+adjective:debilefterbliven
+verbTransitive:defenstrerakasta ut något genom ett fönster
+adjective:deklasseradutstött
+nounSingular:demagogfolkuppviglare
+adjective:desillusioneradbesviken eller illusionslös (man känner inte för att göra något alls)
+adjective:deskriptivbeskrivande
+nounSingular:diastemaglugg mellan framtänderna
+adjective:diffusoklar
+adjective:digerstorvidlyftig
+adjective:diminutivmycket liten
+adjective:disparatolikartad
 disseden här.... av slaske
 ditodet sammajag håller med
-ditplaceradplacerad i efterhand på en plats
-divergerandeavvikandeannorlundautanför ramarna
+adjective:ditplaceradplacerad i efterhand på en plats
+adjective:divergerandeavvikandeannorlundautanför ramarna
 dockändå
-donafixasysslaordna
-dorsklat
-drakoniskövermåttan sträng
-dryftata upp till diskussion
-drygseg
-dröna;1dåsa
-dröna;2slå dank
-duktavkrokigböjd
-duperaföra bakom ljuset
+verb:donafixasysslaordna
+adjective:dorsklat
+adjective:drakoniskövermåttan sträng
+verb:dryftata upp till diskussion
+adjective:drygseg
+verbIntransitive:dröna;1dåsa
+verbIntransitive:dröna;2slå dank
+adjective:duktavkrokigböjd
+verbTransitive:duperaföra bakom ljuset
 dvakulantismdvakulantism är ideologin som säger att man alltid ska presentera korrekt fakta, och först därefter argument för eller emot. dvs förvräng aldrig fakta i syfte att vinkla något
 dväljsfinns i
-dyliktliknande
+adverb:dyliktliknande
 dymedelstdärigenom
 dädandärifrånundan
 dädaneftersedandärefter
 därstädesnämnda ställe
 därutinnani denna sak
-däven;1avslagen
-däven;2unkenfuktig
-däven;3tröttdåsig (om personer)
-dånafå dåndimpensvimma
-dåvendämpaddyster
+adjective:däven;1avslagen
+adjective:däven;2unkenfuktig
+adjective:däven;3tröttdåsig (om personer)
+verbIntransitive:dånafå dåndimpensvimma
+adjective:dåvendämpaddyster
 eduatt du eeller alltid varit
-efemärflyktigförgängligkortlivad
-egallikgiltig
-egalitäristiskjämnställd
+adjective:efemärflyktigförgängligkortlivad
+adjective:egallikgiltig
+adjective:egalitäristiskjämnställd
 ehurufastän
 ejaacko
-ekivoktvetydighet ofta med sexuell anspelning
-eklektiskmånga olika stilar under samma tak
-ekuperata över
-ekvivalentvara lika medsamma som
-elanhänförelse
+adjective:ekivoktvetydighet ofta med sexuell anspelning
+adjective:eklektiskmånga olika stilar under samma tak
+verbTransitive:ekuperata över
+adjective:ekvivalentvara lika medsamma som
+nounSingular:elanhänförelse
 eljestannars
 eljestannorlundaspeciell. används oftast för att beskriva personer. exempel: "n'erik är som lite eljest."
-elokventvältalig
-elyseiskhimmelskparadisisk
-emanera frånha sitt ursprung i
+adjective:elokventvältalig
+adjective:elyseiskhimmelskparadisisk
+verb:emanera frånha sitt ursprung i
 emedandärför att
 emellertiddock
-empiriskgrundad på erfarenheterfarenhetsmässigfaktabaserad
+adjective:empiriskgrundad på erfarenheterfarenhetsmässigfaktabaserad
 endåfast än
-enfaldig;1som till antalet utgör
-enfaldig;2korkad
+adjective:enfaldig;1som till antalet utgör
+adjective:enfaldig;2korkad
 enkannerligeni synnerhetsärskilt
 enkomenbart
-enrakenvis
+adjective:enrakenvis
 ensamallena
-enträgenihärdig
+adjective:enträgenihärdig
 enäreftersom
-erbarmligusel
-erinrakomma ihågpåminnakomma att tänka på
+adjective:erbarmligusel
+verb:erinrakomma ihågpåminnakomma att tänka på
 ernåuppnånåvinnaåstadkommakomma fram tillförvärvaerhålla
-eskaleraöka
-eskatologiläran om de yttersta tingen (som i uppenbarelseboken)
-esoteriskendast för de redan invigda
+verb:eskaleraöka
+nounUncountable:eskatologiläran om de yttersta tingen (som i uppenbarelseboken)
+adjective:esoteriskendast för de redan invigda
 ety atteftersomalldenstund
 ety detdärför
-evidentuppenbart
-exhumeragräva upp och flytta ett lik till annan grav
-exploderadetonera
-extravagantytterliggåendefantastisk
-extravagantsvärmandeexcentrisk
-extremöverdriven
-fagervacker
+adverb:evidentuppenbart
+verbTransitive:exhumeragräva upp och flytta ett lik till annan grav
+verbIntransitive:exploderadetonera
+adjective:extravagant;1ytterliggåendefantastisk
+adjective:extravagant;2svärmandeexcentrisk
+adjective:extremöverdriven
+adjective:fagervacker
 faleväldigt
-falleramisslyckasen brist föreligger
-falnableknabli askgrå
-famöskänd
-fatalödesdiger
-fataltenkeltsimpelt
-fatburaffärbetalning skedde via löneavdrag
-fatburäven förråd
-fika;1eftersträvasträva
-fika;2dricka kaffe med dopp
-filiströskälkborgerlig
-fingerfärdighändig
-flatmesig
-flitigkunnig
-fluckertcoolthäftigt
-fly migge mig
-foråkte
-fordomförr i tidentidigare
-fotostatkopierakopiera i kopieringsmaskin
-framgenti fortsättningenframöver
-frankfrimodigorädd
-frapperandeslåendepåfallande
-fraterniseraumgåsförbrödra sig
-frejdadberömd
-frekventofta
-frekventerabesöka ofta
-frivollättsinnigekivok
-frugalsparsamenkel
-fylkasamla (ihop)
-fylkassamlas (kring)
-fägnagöra någon gladbereda någon glädjeglädjafröjda
-fägnaroa
+verbIntransitive:falleramisslyckasen brist föreligger
+verbIntransitive:falnableknabli askgrå
+adjective:famöskänd
+adjective:fatalödesdiger
+adverb:fataltenkeltsimpelt
+nounSingular:fatburaffärbetalning skedde via löneavdrag
+nounSingular:fatburförråd
+verb:fika;1eftersträvasträva
+verb;2dricka kaffe med dopp
+adjective:filiströskälkborgerlig
+adjective:fingerfärdighändig
+adjective:flatmesig
+adjective:flitigkunnig
+adverb:fluckertcoolthäftigt
+verbPhrase:fly migge mig
+verbPast:foråkte
+adjective:fordomförr i tidentidigare
+verbTransitive:fotostatkopierakopiera i kopieringsmaskin
+adverb:framgenti fortsättningenframöver
+adjective:frankfrimodigorädd
+adjective:frapperandeslåendepåfallande
+verbTransitive:fraterniseraumgåsförbrödra sig
+adjective:frejdadberömd
+adverb:frekventofta
+verbTransitive:frekventerabesöka ofta
+adjective:frivollättsinnigekivok
+adjective:frugalsparsamenkel
+verbTransitive:fylkasamla (ihop)
+verbIntransitive:fylkassamlas (kring)
+verbTransitive:fägnagöra någon gladbereda någon glädjeglädjafröjdaroa
 fögainte så mycketinte särskilt
-föranstalta ompåbörja (samhälleliga åtgärder mot)
-förargligtdet är synd. "det var ju förargligt att det var stängd" t ex
-förbiseendevårdslöshet
-förblommeramaskeradöljai förtäckta ordalag
+verbTransitive:föranstalta ompåbörja (samhälleliga åtgärder mot)
+nounSingular:förbiseendevårdslöshet
+verbTransitive:förblommeramaskeradölja
 förbåltförbaskat
-fördrastå ut medtåla
-förebråklandra
-företev. visa upp
-förfasaman förfasar sig över något
-förfördeladmissgynnad
-förgaddrasamla militär trupp
-förhärjadförintad
-förlänage
-förmersnobbigöverlägsen ("han tror sig vara så förmer än oss andra")
-förmodatro
-förmätenanspråksfullövermodigoblyg
-förnumstigsnusförnuftig
-förruckladutsvävandefördärvad
-försakaavstå från
-förslåräcka till
-försmädlig;1retsamspydig
-försmädlig;2förarglig
-förtroendeingivandeförtroende
-förtryckatrycka ner
+verbIntransitive:fördrastå ut medtåla
+verbTransitive:förebråklandra
+verbTransitive:företevisa upp
+adjective:förfördeladmissgynnad
+verbTransitive:förgaddrasamla militär trupp
+adjective:förhärjadförintad
+verbTransitive:förlänage
+adjective:förmersnobbigöverlägsen ("han tror sig vara så förmer än oss andra")
+verb:förmodatro
+adjective:förmätenanspråksfullövermodigoblyg
+adjective:förnumstigsnusförnuftig
+adjective:förruckladutsvävandefördärvad
+verbIntransitive:försakaavstå från
+verbIntransitive:förslåräcka till
+adjective:försmädlig;1retsamspydig
+adjective:försmädlig;2förarglig
+adjective:förtroendeingivandeförtroende
+verbTransitive:förtryckatrycka ner
 förtydärför
 förtäljaberättasägaförklara
 förtörnadarguppbragtursinnigvred
@@ -475,63 +476,62 @@ livremskärp
 logibo eller sova i
 logogryfordgåta
 lokalplats för tex. servering
-lubbav. springa
-lubrikationden kvinnliga motsvarigheten till erektion
-lugubermörkdyster
-lukarensa i trädgårdsland eller dyl..ta bort ogräs i tr.land
-luminösljus; lysande; klar
-lumpgammla slitna eller förstörda kläder
+verb:lubbaspringa
+nounSingular:lubrikationden kvinnliga motsvarigheten till erektion
+adjective:lugubermörkdyster
+verb:lukarensa i trädgårdsland eller dyl..ta bort ogräs i tr.land
+adjective:luminösljuslysandeklar
+nounUncountable:lumpgammla slitna eller förstörda kläder
 lyftadesjag är inte säker ska man skriva (bers ellerbars
-lymmeldrummelslyngel
-lynnesinnelagtemperament
-lyseräkningelräkning
-lägenhetfastighet
-lärospånerfarenheter
-läsa lusen avläxa upp
+nounSingular:lymmeldrummelslyngel
+nounSingular:lynnesinnelagtemperament
+nounSingular:lyseräkningelräkning
+nounSingular:lägenhetfastighet
+noun:lärospånerfarenheter
+verb:läsa lusen avläxa upp
 låsmästarearbetar med lås
 låtsaspåhittat
 lönndomi hemlighet
-lönnfetfet på ett mindre synligt sätt
+adjective:lönnfetfet på ett mindre synligt sätt
 maktpåliggandeansvarsfull
-malstrandgrus
+nounUncountable:malstrandgrus
 manifestpå iva vårdas patienter med hotande och manifest svikt av vitala funktioner (andning, cirkulation, medvetande)
-marodörlymmel; strövplundrare; ngn som förstör saker
-maruffeltölpaktig drummel
-matttrött
+nounSingular:marodörlymmel; strövplundrare; ngn som förstör saker
+nounSingular:maruffeltölpaktig drummel
+adjective:matttrött
 mausoleumen stor och praktfull grav "de gamla sovjetiska ledarna ligger i ett mausoleum på röda torget"
 maximaltså mycket som det går
-medskena
+nounSingular:medskena
 medelstmed hjälp av el. med
 medföljernågoting ingår
-medlidandeömkan
-medolitgammal gravsten
-megalomanistorhetsvansinne
-menlösoskyldigutan onda avsikter
-menorasjuarmad ljusstake
-mentorläromästare
+nounUncountable:medlidandeömkan
+nounSingular:medolitgammal gravsten
+nounUncountable:megalomanistorhetsvansinne
+adjective:menlösoskyldigutan onda avsikter
+nounSingular:menorasjuarmad ljusstake
+nounSingular:mentorläromästare
 mestligenmest
-minutiösytterst noggrann
-misantropiskmänniskohatande
-miserabeleländigurusel
-misogynhatar kvinnor
-misogynkvinnohatande
-misogynmanshat
-misskundförbarmandebarmhärtighet
-missunnsamavundsjuk
+adjective:minutiösytterst noggrann
+adjective:misantropiskmänniskohatande
+adjective:miserabeleländigurusel
+adjective:misogynhatar kvinnor
+adjective:misogynkvinnohatande
+adjective:misogynmanshat
+nounUncountable:misskundförbarmandebarmhärtighet
+adjective:missunnsamavundsjuk
 i mjuggi smyg
-mjällfinlättlenskärspäd
-mjärdefiskeredskap
-mjölkskorvutslag i hårbotten på små barn
-molokendyster
-molokennedstämd
-mondänelegant
-motorvelocipedmoped
-mufffittasnippapulla
-multimodalsjuk
+nounUncountable:mjällfinlättlenskärspäd
+nounSingular:mjärdefiskeredskap
+nounSingular:mjölkskorvutslag i hårbotten på små barn
+adjective:molokendysternedstämd
+adjective:mondänelegant
+nounSingular:motorvelocipedmoped
+nounSingular:mufffittasnippapulla
+adjective:multimodalsjuk
 mycketlika mycket
-mystiskunderlig
-måkänna sigmå bramå illa
-måndemåtte;kan
+adjective:mystiskunderlig
+verb:måkänna sigmå bramå illa
+måndemåttekan
 månnekanhända
 månntrokanhända
 mödosamtensamt
@@ -908,7 +908,8 @@ sylfidspäd och graciös
 symbiossamlevnad
 synförstavelse i tid
 synergistisksamverkande
-synnerligenadv. särskilt; ytterst
+adverb:synnerligensärskilt
+adverb:synnerligenytterst
 sysslaarbeta
 sytligtmycket äckligt, motbjudande
 säljarverkur
