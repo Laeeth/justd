@@ -115,6 +115,12 @@ import knet.roles;
 import knet.decodings;
 import knet.lemmas;
 
+// make often used stuff public for convenience
+public import std.range: front, empty;
+public import std.conv: to;
+public import std.algorithm.iteration: splitter, map, filter, joiner;
+public import std.algorithm.searching: startsWith, endsWith;
+public import knet.separators;
 public import knet.senses: Sense;
 public import knet.languages: Lang;
 public import knet.relations: Rel;
@@ -274,6 +280,7 @@ struct Lemma
         if (normalizeExpr)
         {
             auto split = expr.findSplit(meaningNrSeparatorString);
+            import std.conv: ConvException;
             if (!split[1].empty) // if a split was found
             {
                 try
@@ -292,7 +299,7 @@ struct Lemma
                                 ` with `, exprSense);
                     }
                 }
-                catch (std.conv.ConvException e)
+                catch (ConvException e)
                 {
                     /* ok to not be able to downcase */
                 }
@@ -566,6 +573,7 @@ class Graph
             auto wordsSplit = wordnet.findWordsSplit(expr, [lang]); // split in parts
             if (wordsSplit.length >= 2)
             {
+                import std.algorithm.iteration: joiner;
                 if (const lemmaFixedNd = Lemma(wordsSplit.joiner(`_`).to!S,
                                                lang, sense, context) in db.ndByLemma)
                 {
@@ -662,6 +670,7 @@ class Graph
     {
         if (auto lemmas = expr in db.lemmasByExpr)
         {
+            import std.range: front;
             return (*lemmas).front.expr;
         }
         return expr;
@@ -729,6 +738,7 @@ class Graph
                 if (role.rel.infersSense &&
                     !senseCode.empty)
                 {
+                    import std.conv: ConvException;
                     try
                     {
                         import std.conv: to;
@@ -736,7 +746,7 @@ class Graph
                         if (firstSense  == Sense.unknown) { firstSpecializedSense = sense; }
                         if (secondSense == Sense.unknown) { secondSpecializedSense = sense; }
                     }
-                    catch (std.conv.ConvException e)
+                    catch (ConvException e)
                     {
                         /* ok for now */
                     }
@@ -1218,8 +1228,6 @@ class Graph
         return ln; // db.allLinks.back;
     }
     alias relate = connect;
-
-    import std.algorithm: splitter;
 
     /** Lookup Context by $(D name). */
     Ctx contextOfName(S)(S name) if (isSomeString!S)

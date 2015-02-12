@@ -22,7 +22,7 @@ int main(string[] args)
 
     graph.testAll;
 
-    graph.readWordNet(`../knowledge/en/wordnet-3.1`);
+    graph.readWordNet(`../knowledge/en/wordnet`);
 
     // loads
     if (false) graph.loadUniquelySensedLemmas(cachePath);

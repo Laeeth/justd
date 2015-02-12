@@ -35,6 +35,9 @@
                      "../knet/readers/package.d",
 
                      "../knet/lectures/standard.d",
+                     "../knet/lectures/trained.d",
+                     "../knet/lectures/precise.d",
+                     "../knet/lectures/pos.d",
                      "../knet/lectures/package.d",
 
                      "../wordnet.d",

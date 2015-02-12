@@ -3,7 +3,7 @@ module knet.readers.moby;
 import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;
 import std.array: array, replace;
-import std.algorithm: splitter, map, joiner;
+import std.algorithm: joiner;
 import std.conv: to;
 import std.stdio: File;
 import core.exception: UnicodeException;

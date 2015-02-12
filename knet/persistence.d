@@ -83,6 +83,7 @@ auto saveUniquelySensedLemmas(Graph graph,
             filteredLemmas.allEqual)
         {
             file.rawWrite(expr.pack);
+            import std.range: front;
             file.rawWrite(lemmas.front.pack);
             ++cnt;
         }

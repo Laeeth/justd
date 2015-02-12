@@ -10,7 +10,6 @@ void inferSpecializedSenses(Graph graph)
         const expr = pair[0];
         auto lemmas = pair[1];
 
-        import std.algorithm.iteration: map;
         if (lemmas.map!(lemma => lemma.lang).allEqual)
         {
             import dbg: dln;

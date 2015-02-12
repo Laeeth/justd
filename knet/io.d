@@ -1,13 +1,11 @@
 module knet.io;
 
-import std.algorithm: map;
-
 import knet.base;
 import knet.languages: toHuman;
 import knet.senses: toHuman;
 import knet.origins: toNice;
 import knet.relations: RelDir, toHuman;
-import std.conv;
+import std.conv: ConvException;
 
 /** Show Network Relations.
  */
@@ -24,6 +22,7 @@ void showRelations(Graph graph,
         const count = graph.stat.relCounts[rel];
         if (count)
         {
+            import std.conv: to;
             writeln(indent, rel.to!string, `: `, count);
         }
     }
@@ -257,9 +256,7 @@ bool showNodes(Graph graph,
     }
 
     import std.ascii: whitespace;
-    import std.algorithm: splitter;
     import std.string: strip;
-    import std.range: empty;
 
     import knet.iteration;
     import knet.searching;
@@ -456,7 +453,7 @@ bool showNodes(Graph graph,
             const qSense = senseString.toLower.to!Sense;
             dln(senseString, `, `, arg, ` `, qSense);
         }
-        catch (std.conv.ConvException e)
+        catch (ConvException e)
         {
         }
     }
@@ -470,7 +467,7 @@ bool showNodes(Graph graph,
             const qLang = langString.toLower.to!Lang;
             dln(langString, `, `, arg, ` `, qLang);
         }
-        catch (std.conv.ConvException e)
+        catch (ConvException e)
         {
         }
     }
@@ -495,6 +492,8 @@ bool showNodes(Graph graph,
                           `-`,
                           ``,
                           `'`];
+
+    import std.algorithm.iteration: joiner;
 
     // try joined
     if (lineNds.empty)

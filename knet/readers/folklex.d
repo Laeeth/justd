@@ -89,10 +89,6 @@ void readFolketsFile(Graph graph,
 
             foreach (sense; senses)
             {
-                import std.algorithm: filter, map;
-                import std.algorithm.iteration: splitter;
-                import std.range: empty;
-
                 foreach (dst; dsts.filter!(a => !a.empty))
                 {
                     import std.algorithm: strip;

@@ -508,7 +508,7 @@ auto toHuman(const Rel rel,
     @safe pure
 {
     string[] words;
-    import std.algorithm: array, filter, joiner;
+    import std.algorithm: array, joiner;
 
     auto not = negation ? negationIn(targetLang) : null;
     switch (rel) with (Rel) with (Lang)
@@ -1847,6 +1847,7 @@ auto toHuman(const Rel rel,
             break;
     }
 
+    import std.algorithm.iteration: filter;
     return words.filter!(word => word !is null) // strip not
                 .joiner(" "); // add space
 }

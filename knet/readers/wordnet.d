@@ -57,10 +57,7 @@ bool readWordNetIndexLine(R, N)(Graph graph,
                                 const bool useMmFile = false)
 {
     import std.uni: isWhite;
-    import std.range: empty, front;
-    import std.conv: to;
-    import std.range: split;
-    import std.algorithm: map;
+    import std.range: split, front;
     import std.array: replace;
 
     if (line.empty ||
@@ -159,9 +156,8 @@ bool readWordNetDataLine(R, N)(Graph graph,
                                const bool useMmFile = false)
 {
     import std.conv: to, parse;
-    import std.algorithm: splitter;
     import std.stdio;
-    import std.range: empty;
+    import std.range: front;
 
     if (line.empty ||
         line.front.isWhite) // if first is not space. TODO move this check
@@ -198,6 +194,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
                 ss_type = part.front;
                 break;
             case 3:
+
                 w_cnt = part.parse!(typeof(w_cnt))(16); // decode hex string
                 break;
             case 4:
@@ -282,6 +279,7 @@ void readWordNet(Graph graph,
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
 
+    return;
     graph.readWordNetData(dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
     graph.readWordNetData(dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
     graph.readWordNetData(dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);

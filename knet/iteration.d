@@ -1,8 +1,5 @@
 module knet.iteration;
 
-import std.range: empty;
-import std.algorithm.iteration: filter, map;
-
 import predicates: of;
 
 import knet.relations: RelDir, specializes;
@@ -91,6 +88,7 @@ auto nnsOf(Graph graph,
         }
     }
     writeln("xx");
+    import std.algorithm.iteration: joiner;
     return graph.lnsOf(nd, rel, origins)
                 .map!(ln =>
                       graph[ln].actors[]

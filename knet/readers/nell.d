@@ -3,14 +3,12 @@ module knet.readers.nell;
 import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;
 import std.array: array, replace;
-import std.algorithm: splitter, map, joiner, endsWith;
-import std.conv: to;
+import std.algorithm: joiner;
 import std.stdio: File;
 import core.exception: UnicodeException;
 import std.utf: UTFException;
 import std.path: buildNormalizedPath, expandTilde, extension;
 import std.file: dirEntries;
-import std.range: empty;
 
 import mmfile_ex;
 import predicates: of;

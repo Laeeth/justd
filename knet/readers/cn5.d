@@ -3,7 +3,7 @@ module knet.readers.cn5;
 import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;
 import std.array: array, replace;
-import std.algorithm: splitter, map, joiner;
+import std.algorithm: joiner;
 import std.conv: to;
 import core.exception: UnicodeException;
 import std.utf: UTFException;
