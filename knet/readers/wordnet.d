@@ -1,5 +1,7 @@
 module knet.readers.wordnet;
 
+import std.container: Array;
+
 import knet.base;
 
 Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
@@ -151,10 +153,10 @@ void readWordNetIndex(Graph graph,
 /** Current byte offset in the file represented as an 8 digit decimal integer.
  */
 alias SynSetOffset = uint;
-alias SynSet = Nds; // TODO use Array!Nd
+alias SynSet = Array!Nd; // TODO use Array!Nd
 
 bool readWordNetDataLine(R, N)(Graph graph,
-                               SynSet[SynSetOffset] synsetNdsByOffset,
+                               SynSet[SynSetOffset] synsetByOffset,
                                const R line,
                                const N lnr,
                                const Lang lang = Lang.unknown,
@@ -171,8 +173,6 @@ bool readWordNetDataLine(R, N)(Graph graph,
     {
         return false;
     }
-
-    import std.container: Array;
 
     // writeln("line: ", line);
 
@@ -206,7 +206,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     parts.popFront; // decode hex string
 
     // (word lex_id)+
-    SynSet synsetNds;
+    SynSet synset;
     while (w_cnt--)
     {
         const word = parts.front;
@@ -216,12 +216,12 @@ bool readWordNetDataLine(R, N)(Graph graph,
         const lex_id = lex_id_s.parse!uint(16);
         parts.popFront;
 
-        synsetNds ~= graph.store(word, lang, sense, Origin.wordnet);
+        synset ~= graph.store(word, lang, sense, Origin.wordnet);
     }
     // store it in local associative array
-    assert(synset_offset !in synsetNdsByOffset); // assert unique ids
-    synsetNdsByOffset[synset_offset] = synsetNds;
-    graph.connectCycle(synsetNds, Rel.synonymFor, Origin.wordnet); // TODO use connectFully instead?
+    assert(synset_offset !in synsetByOffset); // assert unique ids
+    synsetByOffset[synset_offset] = synset;
+    graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet); // TODO use connectFully instead?
 
     struct Pointer
     {
@@ -268,13 +268,13 @@ void readWordNetData(Graph graph,
                      Sense sense = Sense.unknown)
 {
     size_t lnr;
-    SynSet[SynSetOffset] synsetNdsByOffset;
+    SynSet[SynSetOffset] synsetByOffset;
     if (useMmFile)
     {
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            graph.readWordNetDataLine(synsetNdsByOffset,
+            graph.readWordNetDataLine(synsetByOffset,
                                       line, lnr, lang, sense, useMmFile);
             lnr++;
         }
@@ -284,7 +284,7 @@ void readWordNetData(Graph graph,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            graph.readWordNetDataLine(synsetNdsByOffset,
+            graph.readWordNetDataLine(synsetByOffset,
                                       line, lnr, lang, sense);
             lnr++;
         }
