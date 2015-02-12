@@ -1136,7 +1136,15 @@ class Graph
                         NWeight weight = 1.0) if (isIterableOf!(R, Nd))
     {
         typeof(return) lns;
-        const length = ring.count;
+        import std.range: hasLength;
+        static if (hasLength!R)
+        {
+            const length = ring.length; // workaround because std.container.Array doesn't directly support count
+        }
+        else
+        {
+            const length = ring.count;
+        }
         if (length >= 2)
         {
             for (size_t i = 0; i < length; ++i) // TODO reuse cycle?
