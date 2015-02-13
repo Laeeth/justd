@@ -518,7 +518,7 @@ adjective:misogynkvinnohatande
 adjective:misogynmanshat
 nounUncountable:misskundförbarmandebarmhärtighet
 adjective:missunnsamavundsjuk
-i mjuggi smyg
+adverb:i mjuggi smyg
 nounUncountable:mjällfinlättlenskärspäd
 nounSingular:mjärdefiskeredskap
 nounSingular:mjölkskorvutslag i hårbotten på små barn
@@ -527,131 +527,130 @@ adjective:mondänelegant
 nounSingular:motorvelocipedmoped
 nounSingular:mufffittasnippapulla
 adjective:multimodalsjuk
-mycketlika mycket
+adverb:mycketlika mycket
 adjective:mystiskunderlig
 verb:måkänna sigmå bramå illa
 måndemåttekan
 månnekanhända
 månntrokanhända
-mödosamtensamt
-nabogranne eller närboende
-nalkasnärma sig
-narcissismsjälvupptagen
-negeragöra (ett påstående eller numeriskt uttryck) till sin motsats
-negligerastrunta iförringa
-nekkärve
-nepotismgynnande av egna släktingar
-nihilistiskförneka alla moraliska värderingar
+adjective:mödosamensam
+nounSingular:nabogranne eller närboende
+verbIntransitive:nalkasnärma sig
+nounSingular:narcissismsjälvupptagen
+verb:negeragöra (ett påstående eller numeriskt uttryck) till sin motsats
+verbTransitive:negligerastrunta iförringa
+nounSingular:nekkärve
+nounSingular:nepotismgynnande av egna släktingar
+adjective:nihilistiskförneka alla moraliska värderingar
 nimmetenkelt
 nitälskaivra (för)
 nivellerasläta utjämna
-njuggsnålknapp
-nogrannpetig om olika skaer
-
-nojsaskämtaskoja
-nojsalekabråka
-nojsaflörta
-
-norpaplocka
+adjective:njuggsnålknapp
+adjective:nogrannpetig om olika skaer
+verb:nojsa;1skämtaskoja
+verb:nojsa;2lekabråka
+verb:nojsa;3flörta
+verbTransitive:norpaplocka
 nudåvad var det jag skulle säga?
-nyingstockeld
-nyterglad och nöjd (inte samma som nykter). används t.ex. "hon är pigg och nyter"
-nytta(verb) löna sigtjäna till (t ex vad nyttar det oss? = vad tjänar vi på det?)
-nännasvåga
-näpenliten och flickaktigt söt
+nounSingular:nyingstockeld
+verb:nyterglad och nöjd (inte samma som nykter). används t.ex. "hon är pigg och nyter"
+verb:nyttalöna sigtjäna till
+verb:nännasvåga
+adjective:näpenliten och flickaktigt söt
 näppeligenknappast
-närigsnålogenerös
+adjective:närigsnålogenerös
 närmer och fjärmerhöger och vänster
-närståendemänniskor runt om mig
+nounCollective:närståendemänniskor runt om mig
 nättoppjustprecis
-nödbeddsvårövertaladsom måste krusas för att acceptera t.ex. en gåva
-nöjaktigtillräcklig
+adjective:nödbeddsvårövertaladsom måste krusas för att acceptera t.ex. en gåva
+adjective:nöjaktigtillräcklig
 oavsättmotsatsen
-obehagligolust
-obestridbaroöverträfflig
-observandumannat ord för "obs" eller "observera"
-obskyr(moraliskt) tvivelaktig
-obsoletföråldrad
-obstinattrotsig
-obönhörligendefinitivtorubbligt
+adjective:obehagligolust
+adjective:obestridbaroöverträfflig
+observandumobsobservera
+adjective:obskyr(moraliskt) tvivelaktig
+adjective:obsoletföråldrad
+adjective:obstinattrotsig
+obönhörligdefinitivorubblig
 ockocksåäven (inte samma som 'och')
-odiöshemskfruktansvärd
-ofantligstor
+adjective:odiöshemskfruktansvärd
+adjective:ofantligmycket stor
 oförblommeratrakt på saköppet
-oförtruten(enl. bonniers) uthålligouttröttlig(enl. nor. o. neo) som präglas av energi och ihärdighet
+adjective:oförtrutenuthålligouttröttligpräglas av energi och ihärdighet
 
-oginohjälpsam
-oginotjänstvillig
-oginmissunnsam
+adjective:oginohjälpsam
+adjective:oginotjänstvillig
+adjective:oginmissunnsam
 
-ohemulobefogadgrundlös
-ojävadäv. ojävaktig. obestridlig
+adjective:ohemulobefogadgrundlös
+adjective:ojävadojävaktigobestridlig
 
-okdragtyg för oxeanordning för bärning av börda över axlarna
-oktvångförtryckbörda
+nounSingular:ok;1dragtyg för oxeanordning för bärning av börda över axlarna
+nounSingular:ok;2tvångförtryckbörda
 
 adjective:okulärnågot som utföres med ögonen
-okynneställa till förtret för
-omeldelbartdirekt
-omhuldadinsveptomsluten
-omintetgörafå något att upphöra
-omnejdomgivningtrakt
-omnipotentallsidigkan utföra allt
-områdearea
-omvändelseatt vända om från otro / hedninska kulter etc och tro på gud och jesus, lyda buden om att vörda gud, vara kärleksfull mot sin nästa osv
+nounSingular:okynneförtret
+adjective:omedelbardirekt
+adjective:omhuldadinsveptomsluten
+verb:omintetgörafå något att upphöra
+nounSingular:omnejdomgivningtrakt
+adjective:omnipotentallsidigkan utföra allt
+nounSingular:områdearea
+nounSingular:omvändelseatt vända om från otro / hedninska kulter etc och tro på gud och jesus, lyda buden om att vörda gud, vara kärleksfull mot sin nästa osv
 omäntrots att - dock. ex: jag fick ett grattis, omän litet försent
-onavak
-onduleravåga/krusa hår
-onduleringhårets läggande i vågor på konstgjord väg
+nounSingular:onavak
+verb:onduleravåga/krusa hår
+nounSingular:onduleringhårets läggande i vågor på konstgjord väg
 oneuedsmtåtberätelse
-onomatopoetiskljudhärmande (kråka t.ex.)
-onuspålagaskattbördabesvär
-oomkullrunkeligobestridbarkan inte motbevisas
-oomkullrunkeligsom inte kan bestridas eller motbevisas: med ~ logik, äv. som inte låter sig påverkas: en ~ bundsförvant
-oomkullrunkligomöjlig att stöta omkullsom står säkert
-openhagalen
-oplaneradej planerad
-opplegafrost/snö på trädgrenar (ångermanland)
-opulentöverflödande
-oration(fest)tal
-ordnaskommer att ordnas en arbetsdag
-oreratala vitt och brett; hålla tal
-orkestrerainstrumenteraarrangera
-orlovansökt ledighet från tjänst (jfr. "urlaub", ty)
-orlovgammal form av uppsägning
-ormfobirädd för ormar
-ornegalt - grisman alltså
-orunkeligorubblig
-orvskaft till lie
-osarosmynningutloppåmynning
-otidigotrevligkränkandeoförskämd
-ovisshetatt inte veta
-ovulenovarsam slarvig
-oäveni uttrycket "inte oäven": inte så dålig, rätt bra
-paltkomamycket trött efter att ha ätit
-panegyrisköverdrivet lovprisande
-parakommer från balkan länder vilket betyder pengar
-parabolarfrivillig vårdare av pestsmittadesamarit
-paraferaunderteckna (internationellt) avtal icke-bindande
-parantpåfallande stilig och elegant, om kvinnor
-paratbereddredofärdig
-pareraavvärja
-parkasanorak
-parkasjacka
-passéföråldradförlegad
-pastilltablett
-patibulumden horisontella delen av ett kors
-patibulumtvärslån på ett kors
-patrasknedvärderande ord om människaslödder
-paulunhimmelssängsäng
-pedelvaktmästare
-pekorallöjlig och dum men allvarligt menad (skrift)
-pengmyntpengarstålardeg
-penibelpinsampatetisk
-penissnopp
-pentbracoolt
-perfidlömsksvekfull
-periferiomkretsutkant
+adjective:onomatopoetiskljudhärmande
+nounSingular:onuspålagaskattbördabesvär
+adjective:oomkullrunkelig;1obestridbarkan inte motbevisas
+adjective:oomkullrunkelig;2som inte kan bestridas eller motbevisas: med ~ logik, äv. som inte låter sig påverkas: en ~ bundsförvant
+adjective:oomkullrunklig;3omöjlig att stöta omkullsom står säkert
+adjective:openhagalen
+adjective:oplaneradej planerad
+nounSingular:opplegafrost/snö på trädgrenar (ångermanland)
+adjective:opulentöverflödande
+nounSingular:oration(fest)tal
+verb:orera;1tala vitt och brett
+verb:orera;2hålla tal
+verb:orkestrerainstrumenteraarrangera
+nounSingular:orlov;1ansökan om ledighet från tjänst (jfr. "urlaub", ty)
+nounSingular:orlov;2gammal form av uppsägning
+nounSingular:ormfobiormrädsla
+nounSingular:ornegalt
+nounSingular:ornegrisman
+adjective:orunkeligorubblig
+nounSingular:orvskaft till lie
+nounSingular:osarosmynningutloppåmynning
+adjective:otidigotrevligkränkandeoförskämd
+nounSingular:ovisshetatt inte veta
+adjective:ovulenovarsam slarvig
+adjective:oävendålig
+nounSingular:paltkomatrötthet efter måltid
+adjective:panegyrisköverdrivet lovprisande
+nounUncountable:parapengar
+nounSingular:parabolarfrivillig vårdare av pestsmittadesamarit
+verbTransitive:paraferaunderteckna (internationellt) avtal icke-bindande
+adjective:parantpåfallande stilig och elegant, om kvinnor
+adjective:paratbereddredofärdig
+verb:pareraavvärja
+nounSingular:parkasanorak
+nounSingular:parkasjacka
+adjective:passéföråldradförlegad
+nounSingular:pastilltablett
+nounSingular:patibulumden horisontella delen av ett kors
+nounSingular:patibulumtvärslån på ett kors
+nounCollective:patrasknedvärderande ord om människaslödder
+nounSingular:paulunhimmelssängsäng
+nounSingularpedelvaktmästare
+adjective:pekorallöjlig och dum men allvarligt menad (skrift)
+nounSingular:pengmyntpengarstålardeg
+adjective:penibelpinsampatetisk
+nounSingular:penissnopp
+adjective:pentbracoolt
+adjective:perfidlömsksvekfull
+nounSingular:periferiomkretsutkant
 peripetihöjdpunktvändpunkt
 perongnågot du väntar på när du väntar på tågen. platformen mellan tågen
 perplexförbluffadhandfallenförvånadhäpen
