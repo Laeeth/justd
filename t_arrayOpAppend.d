@@ -1,8 +1,28 @@
 #!/usr/bin/env rdmd-dev-module
 
+void f(int[] x)
+{
+    x ~= 13;
+}
+
+void g(ref int[] x)
+{
+    x ~= 13;
+}
+
+import std.stdio: writeln;
+
 unittest
 {
-    import std.stdio: writeln;
+    int[] y;
+    f(y);
+    writeln(y);
+    g(y);
+    writeln(y);
+}
+
+unittest
+{
     import std.container: Array;
 
     alias E = int; // element type
