@@ -11,12 +11,12 @@ Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
     {
         switch (sym)
         {
-            case `!`:  role = Role(antonymFor); break;
-            case `@`:  role = Role(hypernymOf, true); break;
+            case  `!`: role = Role(antonymFor); break;
+            case  `@`: role = Role(hypernymOf, true); break;
             case `@i`: role = Role(instanceHypernymOf, true); break;
-            case `~`:  role = Role(hyponymOf); break;
+            case  `~`: role = Role(hyponymOf); break;
             case `~i`: role = Role(instanceHyponymOf); break;
-            case `*`:  role = Role(causes, true); break; // entailment.
+            case  `*`: role = Role(causes, true); break; // entailment.
 
             case `#m`: role = Role(memberHolonym); break;
             case `#s`: role = Role(substanceHolonym); break;
@@ -25,8 +25,8 @@ Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
             case `%s`: role = Role(madeOf); break;
             case `%p`: role = Role(partOf); break;
 
-            case `=`:  role = Role(attribute); break;
-            case `+`:  role = Role(derivationallyRelatedForm); break;
+            case  `=`: role = Role(attribute); break;
+            case  `+`: role = Role(derivationallyRelatedForm); break;
 
             case `;c`: role = Role(topicDomainOfSynset); break;
             case `-c`: role = Role(memberOfTopicDomain); break;
@@ -37,14 +37,14 @@ Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
             case `;u`: role = Role(usageDomainOfSynset); break;
             case `-u`: role = Role(memberOfUsageDomain); break;
 
-            case `>`:  role = Role(causes); break;
-            case `^`:  role = Role(alsoSee); break;
-            case `$`:  role = Role(formOfVerb); break;
+            case  `>`: role = Role(causes); break;
+            case  `^`: role = Role(alsoSee); break;
+            case  `$`: role = Role(formOfVerb); break;
 
-            case `&`:  role = Role(similarTo); break;
-            case `<`:  role = Role(participleOfVerb); break;
+            case  `&`: role = Role(similarTo); break;
+            case  `<`: role = Role(participleOfVerb); break;
 
-            case `\`:  role = Role(pertainym); break; // pertains to noun
+            case  `\`: role = Role(pertainym); break; // pertains to noun
 
             default:
                 assert(false, `Unexpected relation type ` ~ sym);
