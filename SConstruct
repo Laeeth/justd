@@ -1,6 +1,12 @@
 #!/usr/bin/env scons-file
 
 import os.path
+import multiprocessing
+
+# half because DMD is currently too heavy on memory
+num_jobs = int(multiprocessing.cpu_count() / 2 + 1)
+SetOption("num_jobs", num_jobs)
+print "scons: Using at maximum " + str(num_jobs) + " number of jobs"
 
 env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
                   DFLAGS=["-vcolumns", "-g", "-gs", "-debug", "-wi"])
