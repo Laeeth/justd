@@ -1047,15 +1047,20 @@ class Graph
                           D dsts,
                           Origin origin,
                           NWeight weight = 1.0,
-                          bool checkExisting = true) if (isIterableOf!(S, Nd) &&
-                                                         isIterableOf!(D, Nd))
+                          bool checkExisting = true,
+                          bool skipSelfConnects = false) if (isIterableOf!(S, Nd) &&
+                                                             isIterableOf!(D, Nd))
     {
         typeof(return) lns;
         foreach (src; srcs)
         {
             foreach (dst; dsts)
             {
-                lns ~= connect(src, role, dst, origin, weight, checkExisting);
+                if ((!skipSelfConnects) ||
+                    src != dst)
+                {
+                    lns ~= connect(src, role, dst, origin, weight, checkExisting);
+                }
             }
         }
         return lns;

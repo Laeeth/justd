@@ -376,7 +376,10 @@ void readWordNet(Graph graph,
                 {
                     if (ptr.isSemantic)
                     {
-                        // graph.connectMtoN(*srcSynSet, ptr.role, *dstSynSet, Origin.wordnet, 1.0, true);
+                        graph.connectMtoN(*srcSynSet_,
+                                          ptr.role,
+                                          *dstSynSet_,
+                                          Origin.wordnet, 1.0, true, true);
                     }
                     else
                     {
