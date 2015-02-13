@@ -1,6 +1,7 @@
 module mmfile_ex;
 
 /** Read-Only Lines of Contents of file $(D path).
+    TODO Use new std.string.splitLines() (via Phobos pull 2982).
    */
 auto mmFileLinesRO(ElementType = char)(string path) if (ElementType.sizeof == 1)
 {
