@@ -267,239 +267,238 @@ adjective:försmädlig;2förarglig
 adjective:förtroendeingivandeförtroende
 verbTransitive:förtryckatrycka ner
 förtydärför
-förtäljaberättasägaförklara
-förtörnadarguppbragtursinnigvred
+verb:förtäljaberättasägaförklara
+adjective:förtörnadarguppbragtursinnigvred
 förvissovisserligen
-förövarenöversittare
-gagnahjälpavara till nytta
-garrotteraavrätta genom att skära någons hals. (http://sv.wiktionary.org/wiki/garrottera)
-garrotteraavrätta genom strypning
-gemytligväl till modstrevlig
-gentilhänsynsfullgrannlagaridderlig
-gesantsändebud gammalt
-gingogick
-gisselplågaelände
-gisseltidigare namn på redskap som djupt religiösa "gisslade" (bestraffade) sig själva med under medeltiden
-givitgett
-givmildgenerös
-gottståendeskuldfri
-gramseuppbragtarg
-grunnafundera
-gruvligförskräcklighemsk
-grymbrafett
-grötmyndigövermodigdryg
-gällakastrera
-gå dän!försvinn!
-gålarensa
-habilduglig men inte mycket mer
-habilskickligsmidig
-habildugligkompetent
+nounSingular:förövareöversittare
+verb:gagnahjälpavara till nytta
+verb:garrotteraavrätta genom att skära någons hals. (http://sv.wiktionary.org/wiki/garrottera)
+verb:garrotteraavrätta genom strypning
+adjective:gemytligväl till modstrevlig
+adjective:gentilhänsynsfullgrannlagaridderlig
+nounSingular:gesantsändebud (gammalt)
+verbPast:gingogick
+nounSingular:gisselplågaelände
+nounSingular:gisseltidigare namn på redskap som djupt religiösa "gisslade" (bestraffade) sig själva med under medeltiden
+verbPast:givitgett
+adjective:givmildgenerös
+adjective:gottståendeskuldfri
+adjective:gramseuppbragdarg
+verb:grunnafundera
+adjective:gruvligförskräcklighemsk
+adjective:grymbrafett
+adjective:grötmyndigövermodigdryg
+verb:gällakastrera
+verbImperative:gå dän!försvinn!
+verb:gålarensa
+adjective:habilduglig men inte mycket mer
+adjective:habilskickligsmidig
+adjective:habildugligkompetent
 halvannanen och en halv
-harangeramångordigt (överdrivet) berömma i tal
-havarsgammalt
-hekatomb;1stort offer
-hekatomb;2ofantlig mängd
+verb:harangeramångordigt (överdrivet) berömma i tal
+adjective:havarsgammalt
+nounSingular:hekatomb;1stort offer
+nounSingular:hekatomb;2ofantlig mängd
 hestälta
-hetskupprorisk stämning
-hialösvårdslösslarvig
-hiedhialösotålig
-hinsidesbortom
-holkonhårig
-hugfästasäkra hågkomsten av något
-hugsainsemärkafatta
-hugsvalatröstavederkvicka
-hummafiska
-hundsvotteradskymfligt behandladförödmjukad
-hungnesamrogivande
+adjective:hetskupprorisk stämning
+adjective:hialösvårdslösslarvig
+adjective:hiedhialösotålig
+preposition:hinsidesbortom
+adjective:holkonhårig
+verb:hugfästasäkra hågkomsten av något
+verb:hugsainsemärkafatta
+verb:hugsvalatröstavederkvicka
+verb:hummafiska
+adjective:hundsvotteradskymfligt behandladförödmjukad
+adjective:hungnesamrogivande
 huruvidaom
-huttakasta
+verb:huttakasta
 hvahva heter du
-hyperbolmedvetet överdriva
-hyskaöglamärla
-hystakasta nedifrån uppåt
-hyvenstrevligsympatisk
-hädauttrycka sig ringaktande om något heligt
+nounSingular:hyperbolöverdrift
+verb:hyskaöglamärla
+verb:hystakasta nedifrån uppåt
+adjective:hyvenstrevligsympatisk
+verb:hädauttrycka sig ringaktande om något heligt
 hädanhär ifrån (även dö; gå hädan)
-häftigcool
-häftigtcooltuppfriskande
-hällöradskenhelig
-hängigsjuk
-härbärgabo
-härbärgereralåta någon övernattabo
+adjective:häftigcool
+adverb:häftigtcooltuppfriskande
+adjective:hällöradskenhelig
+adjective:hängigsjuk
+verb:härbärgabo
+verbTransitive:härbärgereralåta någon övernatta
 häromom det härdetta
 häromstädespå denna plats
-hötavifta
-iinuti
-i fåvitskoi oförståndi oförnufti dåraktighet (t.ex. offra sig i fåvitsko)
-i fåvitskot.ex. offra sig i fåvitsko
-ickeej
+verb:hötavifta
+preposition:iinuti
+adverb:i fåvitskoi oförståndi oförnufti dåraktighet
+adverb:ickeej
 icke förtytrots det "icke förty så gör han tvärtemot"
 ickeförtytrots det
-idiomatisk(adj)översättning med språklig finess
-idiosynkratisköverkänslig
-idogflitig arbetsam
-idogvara verkligen hängiven givna uppgifterarbeta bra
-idsorka
-ilahullengirig
-illfundigillistig
-illfänasbråkaväsnas
-illfänaskrånglabråka
-illistigsom medelst list söker vinna orättmätiga fördelar
-illitterat(adj) analfabet
-illustermycket framstående och berömd
-imbecillmycket enfaldig
-immerfort el. immerbadoavbrutethela tiden
-imminentomedelbartbrådskande
-immiterarhärmat
-impertinentrespektlöst uppriktig eller närgången
-inadvertens;1ouppmärksamhetförbiseendevårdslöshet
-inadvertens;2inkonsekvens
+adjective:idiomatisköversättning med språklig finess
+adjective:idiosynkratisköverkänslig
+adjective:idogflitig arbetsam
+adjective:idogvara verkligen hängiven givna uppgifter
+verb:idsorka
+adjective:ilahullengirig
+adjective:illfundigillistig
+verb:illfänasbråkaväsnas
+verb:illfänaskrånglabråka
+adjective:illistigsom medelst list söker vinna orättmätiga fördelar
+adjective:illitteratanalfabet
+adjective:illustermycket framstående och berömd
+adjective:imbecillmycket enfaldig
+adverb:immerfortimmerbadoavbrutethela tiden
+adjective:imminentomedelbartbrådskande
+verbTransitive:immiterahärma
+adjective:impertinentrespektlöst uppriktig eller närgången
+nounSingular:inadvertens;1ouppmärksamhetförbiseendevårdslöshet
+nounSingular:inadvertens;2inkonsekvens
 inallessammanlagtallt i alltallt som allt
 inbördesrelaterande
-indolentlojhåglös
-infamtdåligt
-infantilbarnslig
-infernaliskmycket svår att stå ut med: en ~ hetta. äv. allmänt förstärkande: en ~ skicklighet
+adjective:indolentlojhåglös
+adjective:infamtdåligt
+adjective:infantilbarnslig
+adjective:infernaliskmycket svår att stå ut med: en ~ hetta. äv. allmänt förstärkande: en ~ skicklighet
 ingalundaknappastnäppeligen
-inhiberainställa
-inlagdeposition
+verbTransitive:inhiberainställa
+nounSingular:inlagdeposition
 inte oäveninte så dåligrätt bra
-intuitivjag har en intuitiv känsla
-invektivförolämpande ord
-inverteravända upp och ned
-istadigenvismotspänstig (mest om djur)
+adjective:intuitivjag har en intuitiv känsla
+nounSingular:invektivförolämpande ord
+verbTransitive:inverteravända upp och ned
+adjective:istadigenvismotspänstig (mest om djur)
 itydärfördärför att (obs. stavas ej ety)
-jallaskynda
-joffastoffigstollig
-juvenilungdomligbarnslig
-kalfatrasträngt och kritiskt granska
-kalmeralugna
-kangerovelanti sexuell
+verb:jallaskynda
+adjective:joffastoffigstollig
+adjective:juvenilungdomligbarnslig
+verbTransitive:kalfatrasträngt och kritiskt granska
+verbTransitive:kalmeralugna
+adjective:kangerovelanti sexuell
 kanhändakanske
-kartaklättra
-kascheradölja något genom något annat
-kavatoräddfrimodig
-kinesaövernatta hos någon
-kippskoddgå med bara fötter i skorna, utan strumpor
-kitsligsmåaktig
-klema bortskämma bort
-klockrenfantasisk
-klyptopiläran om hur man klyver potatis för att få optimal storlek ur koksynpunkt
-klärvoajantsynskvisionärframsynt
-knasselsmåsakersmåprylar
-kniarycka upp gräs
-knosterliten slägga
-knucklakardhuvudbonad
-knusslasnålavisa brist på generositet
-knäsättagodkänna
-knösvälbärgad "en rik knös"
-koafförfrisör
-koketttillgjordbehagsjuk
-kolifejfesttillställningsammankomst
-kolifelfe
-kommershandel
-kompilerasammanställa
+verb:kartaklättra
+verb:kascheradölja något genom något annat
+adjective:kavatoräddfrimodig
+verb:kinesaövernatta hos någon
+adjective:kippskoddgå med bara fötter i skorna, utan strumpor
+adjective:kitsligsmåaktig
+verbTransitive:klema bortskämma bort
+adjective:klockrenfantastisk
+nounUncountable:klyptopiläran om hur man klyver potatis för att få optimal storlek ur koksynpunkt
+adjective:klärvoajantsynskvisionärframsynt
+nounUncountable:knasselsmåsakersmåprylar
+verbTransitive:kniarycka upp gräs
+nounSingular:knosterliten slägga
+nounSingular:knucklakardhuvudbonad
+verb:knusslasnålavisa brist på generositet
+verb:knäsättagodkänna
+nounSingular:knösvälbärgad "en rik knös"
+nounSingular:koafförfrisör
+adjective:koketttillgjordbehagsjuk
+nounSingular:kolifejfesttillställningsammankomst
+nounSingular:kolifelfe
+nounUncountable:kommershandel
+verbTransitive:kompilerasammanställa
 kondefiselltstanna mellan oss
-konfluxkonstant förändring
-kongrospindel
-konstituerandemöte
-kontamineraförorenabesmittafläcka
+nounSingular:konfluxkonstant förändring
+nounSingular:kongrospindel
+nounSingular:konstituerandemöte
+verbTransitive:kontamineraförorenabesmittafläcka
 kontaterajag menar
-kontempleratänka djupt/intensivt
-kontingentavgift
-kontrahentmotpart
-kontraktionsammandragning
-kontraproduktivnågot/någon som motverkar sitt eget syfte, som är mer till skada än hjälp
-kontrollerdet man styr en radiostyrdbil med
-konträrmotsägelsefull
-konungkung
-konvergeranärma sig
-kopiöstväldigt mycket
-koprolaliofrivilliga utbrott av fula ord
-kopuleraha samlag
-kordialhjärtligförtrolig
-korigeraändra
-korpulentkraftig
-korpulentöverviktig
-korpulentfet
-korrigeratillrättavisa
-krasletermår inte så bra
-kravallenpåfrestande person/situation
-kredensapå ett högtidligt sätt hälla upp dryck och bjuda runt den
-kretinidiot
-kringsvävarflyr
-kräsligläckeröverdådig
-ktoniskunderjordisk
-kufunderlig personlite egen personkonstig person
-kurtiseraflirtasmåprata
-kuttrasjuhångelsmekatt vänslas
-kutymgod sed
-kveruleraklaga och bråka
-kvintileraleka på strängarna el. tangenterna; småsjunga
-kältringbesvärlig person
+verbIntransitive:kontempleratänka djupt/intensivt
+nounSingular:kontingentavgift
+nounSingular:kontrahentmotpart
+nounSingular:kontraktionsammandragning
+adjective:kontraproduktivnågot/någon som motverkar sitt eget syfte, som är mer till skada än hjälp
+adjective:konträrmotsägelsefull
+nounSingular:konungkung
+verbIntransitive:konvergeranärma sig
+adjective:kopiöstväldigt mycket
+adjective:koprolaliofrivilliga utbrott av fula ord
+verb:kopuleraha samlag
+adjective:kordialhjärtligförtrolig
+adjective:korpulentkraftig
+adjective:korpulentöverviktig
+adjective:korpulentfet
+verbTransitive:korrigera;1ändra
+verbTransitive:korrigera;2tillrättavisa
+verb:krasletermår inte så bra
+nounSingular:kravall;1påfrestande person
+nounSingular:kravall;2påfrestande situation
+nounSingular:kredensapå ett högtidligt sätt hälla upp dryck och bjuda runt den
+nounSingular:kretinidiot
+verbIntransitive:kringsvävarflyr
+adjective:kräsligläckeröverdådig
+adjective:ktoniskunderjordisk
+nounSingular:kufunderlig personlite egen personkonstig person
+verbTransitive:kurtiseraflirtasmåprata
+nounSingular:kuttrasjuhångelsmekvänslan
+nounSingular:kutymgod sed
+verb:kveruleraklaga och bråka
+verb:kvintileraleka på strängarna el. tangenterna; småsjunga
+nounSingular:kältringbesvärlig person
 käppeskobarfota i skona
-kära2 personer som är kära
-kärkommenefterlängtadmycket välkommen
-kättjasexuell åtra
-kåtatälja på litet trästycke
-kåveliten obetydlig mark av mindre värde
-laboreraarbeta
-laglöshettotal oreda
-lagninglanga alkohol
-lakonisk1. spartansk (normalt denna betydelse) 2. ordkarg 3. korthuggen (om replik etc). lakonism = 1. ordkarghet 2. korthuggenhet 3. kärnsats
-lamentationjämmerklagan
-lapidariskkortfattad
-lappristruntobetydlighet
-lastseglareskepp
-latorisksynonym på retorisk. jag har hört, läst och sett. men ej förstått
-laudaturbetyget stora a
-lavastaplavedlava
-leddesstyrdes
-ledsennedstämdbesväradsorgsen
+adjective:kärkommenefterlängtadmycket välkommen
+nounSingular:kättjasexuell åtra
+verbTransitive:kåtatälja på litet trästycke
+nounSingular:kåveliten obetydlig mark av mindre värde
+verb:laboreraarbeta
+nounSingular:laglöshettotal oreda
+nounSingular:lagninglanga alkohol
+adjective:lakonisk;1spartansk (normalt denna betydelse)
+adjective:lakonisk;2ordkarg
+adjective:lakonisk;3korthuggen (om replik)
+nounSingular:lamentationjämmerklagan
+adjective:lapidariskkortfattad
+nounSingular:lappristruntobetydlighet
+nounSingular:lastseglareskepp
+adjective:latoriskretorisk
+nounSingular:laudaturbetyget stora a
+verbTransitive:lavastaplavedlava
+verbPast:leddesstyrdes
+adjective:ledsennedstämdbesväradsorgsen
 legahyra (beträffande lös sak)
-legiostort antaloräknelig mängd
-legärlättvändigvårdslös
+nounUncountable:legiostort antaloräknelig mängd
+adjective:legärlättvändigvårdslös
 lejonpartstörre delen av
-lekamenkropp. (exempelvis kristi lekamen, kristi kropp)
-lemonadläsk
-leptosomkraftlösorkeslössvagvek
-letargidvalaslöher
-libertinutan några moraliska begränsningar
-libidobegärkönsdrift
-ligreten del av ladugård för verktyg redskap även utrymme för reperationer
-likafulltändå; iallafall
-lisalindring av smärta eller bekymmer (något högtidligt eller skämtsamt)
-litaniabönklagovisa
-litteratörförfattare
-livrembälte
-livremskärp
-logibo eller sova i
-logogryfordgåta
-lokalplats för tex. servering
+nounSingular:lekamenkropp
+nounSingular:lemonadläsk
+adjective:leptosomkraftlösorkeslössvagvek
+nounSingular:letargidvalaslöher
+adjective:libertinutan några moraliska begränsningar
+nounSingular:libidobegärkönsdrift
+nounSingular:ligreten del av ladugård för verktyg redskap även utrymme för reperationer
+likafulltändåiallafall
+nounSingular:lisalindring av smärta eller bekymmer (något högtidligt eller skämtsamt)
+nounSingular:litaniabönklagovisa
+adjective:litteratörförfattare
+nounSingular:livrembälte
+nounSingular:livremskärp
+nounSingular:logibo eller sova i
+nounSingular:logogryfordgåta
+nounSingular:lokalplats
 verb:lubbaspringa
 nounSingular:lubrikationden kvinnliga motsvarigheten till erektion
 adjective:lugubermörkdyster
 verb:lukarensa i trädgårdsland eller dyl..ta bort ogräs i tr.land
 adjective:luminösljuslysandeklar
 nounUncountable:lumpgammla slitna eller förstörda kläder
-lyftadesjag är inte säker ska man skriva (bers ellerbars
 nounSingular:lymmeldrummelslyngel
 nounSingular:lynnesinnelagtemperament
 nounSingular:lyseräkningelräkning
 nounSingular:lägenhetfastighet
 noun:lärospånerfarenheter
 verb:läsa lusen avläxa upp
-låsmästarearbetar med lås
-låtsaspåhittat
-lönndomi hemlighet
+nounSingular:låsmästareperson som arbetar med lås
+adverb:låtsaspåhittat
+nounSingular:lönndomhemlighet
 adjective:lönnfetfet på ett mindre synligt sätt
-maktpåliggandeansvarsfull
+adjective:maktpåliggandeansvarsfull
 nounUncountable:malstrandgrus
-manifestpå iva vårdas patienter med hotande och manifest svikt av vitala funktioner (andning, cirkulation, medvetande)
+nounSingular:manifestpå iva vårdas patienter med hotande och manifest svikt av vitala funktioner (andning, cirkulation, medvetande)
 nounSingular:marodörlymmel; strövplundrare; ngn som förstör saker
 nounSingular:maruffeltölpaktig drummel
 adjective:matttrött
-mausoleumen stor och praktfull grav "de gamla sovjetiska ledarna ligger i ett mausoleum på röda torget"
+nounSingular:mausoleumstor och praktfull grav
 maximaltså mycket som det går
 nounSingular:medskena
 medelstmed hjälp av el. med
