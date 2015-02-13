@@ -40,8 +40,16 @@ enum Rel:ubyte
     partHolonym,               ///< WordNet.
     attribute,                 ///< WordNet.
     derivationallyRelatedForm, ///< WordNet.
-    domainOfSynset,            ///< WordNet.
-    memberOfThisDomain,        ///< WordNet.
+
+    topicDomainOfSynset,       ///< WordNet.
+    memberOfTopicDomain,       ///< WordNet.
+
+    regionDomainOfSynset,      ///< WordNet.
+    memberOfRegionDomain,      ///< WordNet.
+
+    usageDomainOfSynset,       ///< WordNet.
+    memberOfUsageDomain,       ///< WordNet.
+
     alsoSee,                   ///< WordNet.
     pertainym,                 ///< WordNet.
 

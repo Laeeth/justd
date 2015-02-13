@@ -27,12 +27,15 @@ Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
 
             case `=`:  role = Role(attribute); break;
             case `+`:  role = Role(derivationallyRelatedForm); break;
-            case `;c`: role = Role(domainOfSynset); break; // TOPIC
-            case `-c`: role = Role(memberOfThisDomain); break;  // TOPIC
-            case `;r`: role = Role(domainOfSynset); break; // REGION
-            case `-r`: role = Role(memberOfThisDomain); break; // REGION
-            case `;u`: role = Role(domainOfSynset); break; // USAGE
-            case `-u`: role = Role(memberOfThisDomain); break; // USAGE
+
+            case `;c`: role = Role(topicDomainOfSynset); break;
+            case `-c`: role = Role(memberOfTopicDomain); break;
+
+            case `;r`: role = Role(regionDomainOfSynset); break;
+            case `-r`: role = Role(memberOfRegionDomain); break;
+
+            case `;u`: role = Role(usageDomainOfSynset); break;
+            case `-u`: role = Role(memberOfUsageDomain); break;
 
             case `>`:  role = Role(causes); break;
             case `^`:  role = Role(alsoSee); break;
@@ -154,8 +157,25 @@ void readWordNetIndex(Graph graph,
 alias SynSetOffset = uint;
 alias SynSet = Array!Nd; // TODO use Array!Nd
 
+alias WordNr = uint;
+
+struct Pointer
+{
+    Role role;
+    SynSetOffset synset_offset;
+    uint pos;
+    WordNr sourceSynSetWordNr;
+    WordNr targetSynSetWordNr;
+}
+alias Pointers = Array!Pointer;
+
+import std.typecons: Tuple;
+alias Row = Tuple!(SynSetOffset, Pointers);
+alias Rows = Array!Row;
+
 bool readWordNetDataLine(R, N)(Graph graph,
                                SynSet[SynSetOffset] synsetByOffset,
+                               ref Rows rows,
                                const R line,
                                const N lnr,
                                const Lang lang = Lang.unknown,
@@ -222,21 +242,12 @@ bool readWordNetDataLine(R, N)(Graph graph,
     synsetByOffset[synset_offset] = synset;
     graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet, true); // TODO use connectFully instead?
 
-    alias WordNr = uint;
-
-    struct Pointer
-    {
-        Role role;
-        SynSetOffset synset_offset;
-        uint pos;
-        WordNr sourceSynSetWordNr;
-        WordNr targetSynSetWordNr;
-    }
-
     // p_cnt: pointer count
     auto p_cnt = parts.front.to!uint; parts.popFront;
-    Array!Pointer refs;
-    refs.reserve(p_cnt);
+
+    Row row;
+    row[0] = synset_offset;
+    row[1].reserve(p_cnt);
 
     // [ptr...]: pointers
     while (p_cnt--)
@@ -265,7 +276,11 @@ bool readWordNetDataLine(R, N)(Graph graph,
             // connectMtoN(currentSynSet, pointerSynSet)
         }
         parts.popFront;
+
+        row[1] ~= ptr;
     }
+
+    // rows ~= row;
 
     // decoding done
 
@@ -284,13 +299,16 @@ void readWordNetData(Graph graph,
                      Sense sense = Sense.unknown)
 {
     size_t lnr;
+
     SynSet[SynSetOffset] synsetByOffset;
+    Rows rows;
+
     if (useMmFile)
     {
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            graph.readWordNetDataLine(synsetByOffset,
+            graph.readWordNetDataLine(synsetByOffset, rows,
                                       line, lnr, lang, sense, useMmFile);
             lnr++;
         }
@@ -300,14 +318,16 @@ void readWordNetData(Graph graph,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            graph.readWordNetDataLine(synsetByOffset,
+            graph.readWordNetDataLine(synsetByOffset, rows,
                                       line, lnr, lang, sense);
             lnr++;
         }
     }
 
+    // TODO process rows
+
     import std.stdio: writeln;
-    writeln(`Read `, lnr, ` words from `, fileName);
+    writeln(`Read `, lnr, ` synonym sets (synsets) from `, fileName);
 }
 
 
