@@ -323,6 +323,28 @@ void readWordNetData(Graph graph,
         }
     }
 
+    foreach (const row; rows)
+    {
+        if (auto src = row[0] in synsetByOffset)
+        {
+            foreach (const ptr; row[1])
+            {
+                if (auto dst = ptr.synset_offset in synsetByOffset)
+                {
+                    graph.connectMtoN(*src, ptr.role, *dst, Origin.wordnet, 1.0, true);
+                }
+                else
+                {
+                    writeln("Could not lookup destination SynSet ", ptr.synset_offset);
+                }
+            }
+        }
+        else
+        {
+            writeln("Could not lookup source SynSet ", row[0]);
+        }
+    }
+
     // TODO process rows
 
     import std.stdio: writeln;
