@@ -154,27 +154,30 @@ void readWordNetIndex(Graph graph,
 
 /** Current byte offset in the file represented as an 8 digit decimal integer.
  */
-alias SynSetOffset = uint;
-alias SynSet = Array!Nd; // TODO use Array!Nd
 
 alias WordNr = uint;
 
-struct Pointer
+struct Ptr
 {
+    @safe pure nothrow @nogc:
+
+    bool isSemantic() const { return (srcSynSetWordNr == 0 &&
+                                      dstSynSetWordNr == 0); }
+
     Role role;
     SynSetOffset synset_offset;
     uint pos;
-    WordNr sourceSynSetWordNr;
-    WordNr targetSynSetWordNr;
+    WordNr srcSynSetWordNr;
+    WordNr dstSynSetWordNr;
 }
-alias Pointers = Array!Pointer;
+alias Ptrs = Array!Ptr;
 
 import std.typecons: Tuple;
-alias Row = Tuple!(SynSetOffset, Pointers);
+alias Row = Tuple!(SynSetOffset, Ptrs);
 alias Rows = Row[];
 
 size_t readWordNetDataLine(R, N)(Graph graph,
-                                 SynSet[SynSetOffset] synsetByOffset,
+                                 ref SynSet[SynSetOffset] synsetByOffset,
                                  ref Rows rows,
                                  const R line,
                                  const N lnr,
@@ -238,9 +241,17 @@ size_t readWordNetDataLine(R, N)(Graph graph,
 
         synset ~= graph.store(word, lang, sense, Origin.wordnet);
     }
+
     // store it in local associative array
-    assert(synset_offset !in synsetByOffset); // assert unique ids
-    synsetByOffset[synset_offset] = synset;
+    if (auto existingSynSet = synset_offset in synsetByOffset)
+    {
+        *existingSynSet ~= synset;
+    }
+    else
+    {
+        synsetByOffset[synset_offset] = synset;
+    }
+
     graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet, true); // TODO use connectFully instead?
 
     // p_cnt: pointer count
@@ -253,7 +264,7 @@ size_t readWordNetDataLine(R, N)(Graph graph,
     // [ptr...]: pointers
     while (p_cnt--)
     {
-        Pointer ptr;
+        Ptr ptr;
 
         // pointer_symbol
         ptr.role = parts.front.decodeWordNetPointerSymbol(sense);
@@ -267,13 +278,13 @@ size_t readWordNetDataLine(R, N)(Graph graph,
         ptr.pos = 0; // TODO
         parts.popFront;
 
-        // source/target
-        auto source = parts.front[0..2];
-        auto target = parts.front[2..4];
-        ptr.sourceSynSetWordNr = source.parse!WordNr(16);
-        ptr.targetSynSetWordNr = target.parse!WordNr(16);
-        if (ptr.sourceSynSetWordNr == 0 &&
-            ptr.targetSynSetWordNr == 0)
+        // source/target: distinguishes between lexical and semantic pointers
+        auto src = parts.front[0..2];
+        auto dst = parts.front[2..4];
+        ptr.srcSynSetWordNr = src.parse!WordNr(16);
+        ptr.dstSynSetWordNr = dst.parse!WordNr(16);
+        if (ptr.srcSynSetWordNr == 0 &&
+            ptr.dstSynSetWordNr == 0)
         {
             // connectMtoN(currentSynSet, pointerSynSet)
         }
@@ -291,6 +302,8 @@ size_t readWordNetDataLine(R, N)(Graph graph,
     Manual page: wndb
 */
 void readWordNetData(Graph graph,
+                     ref SynSet[SynSetOffset] synsetByOffset,
+                     ref Rows rows,
                      string fileName,
                      bool useMmFile = false,
                      Lang lang = Lang.unknown,
@@ -298,9 +311,6 @@ void readWordNetData(Graph graph,
 {
     size_t lnr = 0;
     size_t wordCount = 0;
-
-    SynSet[SynSetOffset] synsetByOffset;
-    Rows rows;
 
     if (useMmFile)
     {
@@ -320,28 +330,6 @@ void readWordNetData(Graph graph,
             wordCount += graph.readWordNetDataLine(synsetByOffset, rows,
                                                    line, lnr, lang, sense);
             lnr++;
-        }
-    }
-
-    foreach (const row; rows)
-    {
-        if (auto src = row[0] in synsetByOffset)
-        {
-            foreach (const ptr; row[1])
-            {
-                if (auto dst = ptr.synset_offset in synsetByOffset)
-                {
-                    graph.connectMtoN(*src, ptr.role, *dst, Origin.wordnet, 1.0, true);
-                }
-                else
-                {
-                    writeln("Could not lookup destination SynSet ", ptr.synset_offset);
-                }
-            }
-        }
-        else
-        {
-            writeln("Could not lookup source SynSet ", row[0]);
         }
     }
 
@@ -369,8 +357,59 @@ void readWordNet(Graph graph,
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
 
-    graph.readWordNetData(dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
-    graph.readWordNetData(dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
-    graph.readWordNetData(dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
-    graph.readWordNetData(dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
+    SynSet[SynSetOffset] synsetByOffset;
+    Rows rows;
+
+    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
+    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
+    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
+    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
+
+    // link them together
+    foreach (const row; rows)
+    {
+        if (auto srcSynSet_ = row[0] in synsetByOffset)
+        {
+            foreach (const ptr; row[1])
+            {
+                if (auto dstSynSet_ = ptr.synset_offset in synsetByOffset)
+                {
+                    if (ptr.isSemantic)
+                    {
+                        // graph.connectMtoN(*srcSynSet, ptr.role, *dstSynSet, Origin.wordnet, 1.0, true);
+                    }
+                    else
+                    {
+                        assert(ptr.srcSynSetWordNr != 0);
+                        assert(ptr.dstSynSetWordNr != 0);
+                        const Nd srcNd = (*srcSynSet_)[ptr.srcSynSetWordNr - 1];
+                        const Nd dstNd = (*dstSynSet_)[ptr.dstSynSetWordNr - 1];
+                        if (srcNd != dstNd)
+                        {
+                            graph.connect(srcNd, ptr.role, dstNd, Origin.wordnet, 1.0, true);
+                        }
+                        else
+                        {
+                            if (false)
+                            {
+                                writeln("Skipping self connection of ",
+                                        graph[srcNd].lemma.expr,
+                                        " >=", ptr.role.rel, " => ",
+                                        graph[dstNd].lemma.expr,
+                                        "");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    writeln("Could not lookup destination SynSet ", ptr.synset_offset);
+                }
+            }
+        }
+        else
+        {
+            writeln("Could not lookup source SynSet ", row[0]);
+        }
+    }
 }

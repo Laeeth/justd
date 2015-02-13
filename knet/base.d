@@ -225,6 +225,10 @@ alias Path = Step[]; // path of steps from Node
 static if (useArray) { alias Nds = Array!Nd; }
 else                 { alias Nds = Nd[]; }
 
+/// WordNet.
+alias SynSet = Array!Nd;        /// WordNet Synonym Set
+alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
+
 /// References to Links.
 static if (useArray) { alias Lns = Array!Ln; }
 else                 { alias Lns = Ln[]; }
