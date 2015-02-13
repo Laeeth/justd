@@ -173,14 +173,14 @@ import std.typecons: Tuple;
 alias Row = Tuple!(SynSetOffset, Pointers);
 alias Rows = Array!Row;
 
-bool readWordNetDataLine(R, N)(Graph graph,
-                               SynSet[SynSetOffset] synsetByOffset,
-                               ref Rows rows,
-                               const R line,
-                               const N lnr,
-                               const Lang lang = Lang.unknown,
-                               Sense sense = Sense.unknown,
-                               const bool useMmFile = false)
+size_t readWordNetDataLine(R, N)(Graph graph,
+                                 SynSet[SynSetOffset] synsetByOffset,
+                                 ref Rows rows,
+                                 const R line,
+                                 const N lnr,
+                                 const Lang lang = Lang.unknown,
+                                 Sense sense = Sense.unknown,
+                                 const bool useMmFile = false)
 {
     import std.conv: to, parse;
     import std.stdio;
@@ -190,7 +190,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     if (line.empty ||
         line.front.isWhite) // if first is not space. TODO move this check
     {
-        return false;
+        return 0;
     }
 
     // writeln("line: ", line);
@@ -222,6 +222,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
     // w_cnt: word count
     auto w_cnt_s = parts.front; // TODO post issue?
     uint w_cnt = w_cnt_s.parse!uint(16);
+    const wordCount = w_cnt;
     parts.popFront; // decode hex string
 
     // (word lex_id)+
@@ -286,7 +287,7 @@ bool readWordNetDataLine(R, N)(Graph graph,
 
     // writeln(synset_offset, " ", lex_filenum, " ", ss_type, " ", w_cnt, " ", word, " ", lex_id);
 
-    return true;
+    return wordCount;
 }
 
 /** Read WordNet Data File $(D fileName).
@@ -298,7 +299,8 @@ void readWordNetData(Graph graph,
                      Lang lang = Lang.unknown,
                      Sense sense = Sense.unknown)
 {
-    size_t lnr;
+    size_t lnr = 0;
+    size_t wordCount = 0;
 
     SynSet[SynSetOffset] synsetByOffset;
     Rows rows;
@@ -308,8 +310,8 @@ void readWordNetData(Graph graph,
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            graph.readWordNetDataLine(synsetByOffset, rows,
-                                      line, lnr, lang, sense, useMmFile);
+            wordCount += graph.readWordNetDataLine(synsetByOffset, rows,
+                                                   line, lnr, lang, sense, useMmFile);
             lnr++;
         }
     }
@@ -318,8 +320,8 @@ void readWordNetData(Graph graph,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            graph.readWordNetDataLine(synsetByOffset, rows,
-                                      line, lnr, lang, sense);
+            wordCount += graph.readWordNetDataLine(synsetByOffset, rows,
+                                                   line, lnr, lang, sense);
             lnr++;
         }
     }
@@ -327,7 +329,7 @@ void readWordNetData(Graph graph,
     // TODO process rows
 
     import std.stdio: writeln;
-    writeln(`Read `, lnr, ` synonym sets (synsets) from `, fileName);
+    writeln(`Read `, lnr, ` synonym sets (synsets) with `, wordCount, ` words from `, fileName);
 }
 
 
