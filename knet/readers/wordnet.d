@@ -171,7 +171,7 @@ alias Pointers = Array!Pointer;
 
 import std.typecons: Tuple;
 alias Row = Tuple!(SynSetOffset, Pointers);
-alias Rows = Array!Row;
+alias Rows = Row[];
 
 size_t readWordNetDataLine(R, N)(Graph graph,
                                  SynSet[SynSetOffset] synsetByOffset,
@@ -264,6 +264,7 @@ size_t readWordNetDataLine(R, N)(Graph graph,
         parts.popFront;
 
         // pos
+        ptr.pos = 0; // TODO
         parts.popFront;
 
         // source/target
@@ -281,11 +282,7 @@ size_t readWordNetDataLine(R, N)(Graph graph,
         row[1] ~= ptr;
     }
 
-    // rows ~= row;
-
-    // decoding done
-
-    // writeln(synset_offset, " ", lex_filenum, " ", ss_type, " ", w_cnt, " ", word, " ", lex_id);
+    rows ~= row;
 
     return wordCount;
 }
