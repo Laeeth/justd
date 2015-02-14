@@ -1,0 +1,12 @@
+pretty
+lovely
+beautiful
+ugly
+gorgeous
+awesome
+cool
+good
+bad
+nice
+poor
+rich

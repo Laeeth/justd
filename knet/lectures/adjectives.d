@@ -49,6 +49,7 @@ void learnEnglishAdjectives(Graph graph)
                                   lang, Sense.noun, Origin.manual),
                       Origin.manual);
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/adjective.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adjective`, Sense.adjective, Sense.noun, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/subjective_adjective.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.hasAttribute), `subjective`, Sense.adjective, Sense.adjective, 1.0);
 }
 
 /** Learn English Irregular Adjectives.
