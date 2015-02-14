@@ -8,8 +8,19 @@ num_jobs = int(multiprocessing.cpu_count() / 2 + 1)
 SetOption("num_jobs", num_jobs)
 print "scons: Using at maximum " + str(num_jobs) + " number of jobs"
 
+dflags = ["-vcolumns", "-wi"]
+
+build_type = ""
+
+if build_type == "debug":
+    dflags += ["-debug", "-g", "-gs"]
+if build_type == "debug-unittest":
+    dflags += ["-debug", "-g", "-gs", "-unittest"]
+elif build_type == "release":
+    dflags += ["-release"]
+
 env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
-                  DFLAGS=["-vcolumns", "-g", "-gs", "-debug", "-wi"])
+                  DFLAGS=dflags)
 env.CacheDir(os.path.expanduser("~/.cache/scons"))
 
 env.Program(target="knetquery/knetquery",
