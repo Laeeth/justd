@@ -177,7 +177,6 @@ alias Row = Tuple!(SynSetOffset, Ptrs);
 alias Rows = Row[];
 
 size_t readWordNetDataLine(R, N)(Graph graph,
-                                 ref SynSet[SynSetOffset] synsetByOffset,
                                  ref Rows rows,
                                  const R line,
                                  const N lnr,
@@ -243,13 +242,13 @@ size_t readWordNetDataLine(R, N)(Graph graph,
     }
 
     // store it in local associative array
-    if (auto existingSynSet = synset_offset in synsetByOffset)
+    if (auto existingSynSet = synset_offset in graph.db.synsetByOffset)
     {
         *existingSynSet ~= synset;
     }
     else
     {
-        synsetByOffset[synset_offset] = synset;
+        graph.db.synsetByOffset[synset_offset] = synset;
     }
 
     graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet, true); // TODO use connectFully instead?
@@ -302,7 +301,6 @@ size_t readWordNetDataLine(R, N)(Graph graph,
     Manual page: wndb
 */
 void readWordNetData(Graph graph,
-                     ref SynSet[SynSetOffset] synsetByOffset,
                      ref Rows rows,
                      string fileName,
                      bool useMmFile = false,
@@ -317,8 +315,7 @@ void readWordNetData(Graph graph,
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            wordCount += graph.readWordNetDataLine(synsetByOffset, rows,
-                                                   line, lnr, lang, sense, useMmFile);
+            wordCount += graph.readWordNetDataLine(rows, line, lnr, lang, sense, useMmFile);
             lnr++;
         }
     }
@@ -327,8 +324,7 @@ void readWordNetData(Graph graph,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            wordCount += graph.readWordNetDataLine(synsetByOffset, rows,
-                                                   line, lnr, lang, sense);
+            wordCount += graph.readWordNetDataLine(rows, line, lnr, lang, sense);
             lnr++;
         }
     }
@@ -357,22 +353,21 @@ void readWordNet(Graph graph,
         graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
 
-    SynSet[SynSetOffset] synsetByOffset;
     Rows rows;
 
-    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
-    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
-    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
-    graph.readWordNetData(synsetByOffset, rows, dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
+    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
+    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
+    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
+    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
 
     // link them together
     foreach (const row; rows)
     {
-        if (auto srcSynSet_ = row[0] in synsetByOffset)
+        if (auto srcSynSet_ = row[0] in graph.db.synsetByOffset)
         {
             foreach (const ptr; row[1])
             {
-                if (auto dstSynSet_ = ptr.synset_offset in synsetByOffset)
+                if (auto dstSynSet_ = ptr.synset_offset in graph.db.synsetByOffset)
                 {
                     if (ptr.isSemantic)
                     {

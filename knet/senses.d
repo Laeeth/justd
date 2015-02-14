@@ -203,16 +203,16 @@ enum Sense:ubyte
 
     pronounPersonalSingular, /// See also: https://www.englishclub.com/grammar/pronouns-personal.htm
 
-    pronounPersonalSingular1st,
+    pronounPersonalSingular1st, pronounPersonalSingularSubjective = pronounPersonalSingular1st,
     pronounPersonalSingular2nd,
     pronounPersonalSingular3rd,
 
     pronounPersonalSingularMale,
-    pronounPersonalSingularMale1st,
+    pronounPersonalSingularMale1st, pronounPersonalSingularMaleSubjective = pronounPersonalSingularMale1st,
     pronounPersonalSingularMale2nd,
 
     pronounPersonalSingularFemale,
-    pronounPersonalSingularFemale1st,
+    pronounPersonalSingularFemale1st, pronounPersonalSingularFemaleSubjective = pronounPersonalSingularFemale1st,
     pronounPersonalSingularFemale2nd,
 
     pronounPersonalSingularNeutral,

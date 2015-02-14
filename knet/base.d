@@ -227,7 +227,7 @@ else                 { alias Nds = Nd[]; }
 
 /// WordNet.
 alias SynSet = Array!Nd;        /// WordNet Synonym Set
-alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
+alias SynSetOffset = Ix;      /// WordNet Synonym Set Offset (Id)
 
 /// References to Links.
 static if (useArray) { alias Lns = Array!Ln; }
@@ -486,6 +486,8 @@ struct Db
     Links allLinks;
     // TODO Nds[Lang.max + 1] ndsByLang;
 
+    SynSet[SynSetOffset] synsetByOffset;
+
     // Indexes
     Location[Nd] locations;
     Nd[Lemma] ndByLemma;
@@ -535,7 +537,6 @@ struct Stat
 */
 class Graph
 {
-
     Db db;
     Stat stat;
     WordNet!(true) wordnet;
