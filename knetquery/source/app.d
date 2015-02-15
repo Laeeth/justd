@@ -1,4 +1,5 @@
 import std.stdio;
+import getopt_ex;
 import knet.base;
 import knet.tests;
 import knet.inference;
@@ -16,6 +17,26 @@ int main(string[] args)
     debug backtrace.backtrace.install(stderr);
     registerMemoryErrorHandler();
 
+    bool loadCache = false;
+    bool saveCache = false;
+    bool useCache = false;
+    bool helpPrinted = getoptEx("knetquery --- Command Line interface to knet.\n",
+                                args,
+                                std.getopt.config.caseInsensitive,
+                                "load-cache", "\tLoad database cache upon startup.",  &loadCache,
+                                "save-cache", "\tSave database cache upon shutdown.",  &saveCache,
+                                "use-cache|c", "\tUse caching of database.",  &useCache);
+    if (helpPrinted)
+    {
+        return 0;
+    }
+
+    if (useCache)               // wildcard
+    {
+        loadCache = true;
+        saveCache = true;
+    }
+
     const cachePath = "~/.cache";
 
     auto graph = new Graph();
@@ -24,16 +45,22 @@ int main(string[] args)
 
     // loads
     if (false) graph.loadUniquelySensedLemmas(cachePath);
-    if (false) { graph.load(cachePath); }
 
-    graph.learnDefault;
+    if (loadCache)
+    {
+        graph.load(cachePath);
+    }
+    else
+    {
+        graph.learnDefault;
+    }
 
     graph.showRelations;
 
     // saves
     if (false) graph.inferSpecializedSenses;
-    if (false) graph.saveUniquelySensedLemmas(cachePath);
-    if (false) { graph.save(cachePath); }
+    if (saveCache) graph.saveUniquelySensedLemmas(cachePath);
+    if (saveCache) { graph.save(cachePath); }
 
     while (true)
     {
