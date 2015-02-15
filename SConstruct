@@ -41,9 +41,8 @@ knetquery = env.Program(target="knetquery/knetquery",
                                 env.Glob("knet/*/*.d")))
 Default(knetquery)
 
-AddOption('--list-targets', dest='list-targets', type='string')
-list_targets = GetOption('list-targets')
+AddOption('--list-default-targets', dest='list-default-targets', type='string')
+list_targets = GetOption('list-default-targets')
 
 if list_targets:
-    print "Default targets are:"
-    print map(str, DEFAULT_TARGETS)
+    print "scons: Default targets are", map(str, DEFAULT_TARGETS)
