@@ -77,7 +77,6 @@ import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, sort, multiSort, skipOver, filter, canFind, count, setUnion, setIntersection, min, max, joiner, strip, until, dropOne, dropBackOne;
 import std.math: abs;
 import std.container: Array;
-import stdx.container.sorted: Sorted;
 import std.string: tr, toLower, toUpper, capitalize, representation;
 import std.array: array, replace;
 import std.uni: isWhite, toLower;
@@ -225,18 +224,19 @@ alias Path = Step[]; // path of steps from Node
 /// References to Nodes.
 static if (useArray) { alias Nds = Array!Nd; }
 else                 { alias Nds = Nd[]; }
-
-alias SortedNds = Sorted!(Nds, "a.ix < b.ix");
-
-/// WordNet.
-alias SynSet = Array!Nd;        /// WordNet Synonym Set
-alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
-
 /// References to Links.
 static if (useArray) { alias Lns = Array!Ln; }
 else                 { alias Lns = Ln[]; }
 
+import stdx.container.sorted: Sorted;
+/// Sorted References to Nodes.
+alias SortedNds = Sorted!(Nds, "a.ix < b.ix");
+/// Sorted References to Links.
 alias SortedLns = Sorted!(Lns, "a.ix < b.ix");
+
+/// WordNet.
+alias SynSet = Array!Nd;        /// WordNet Synonym Set
+alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
 
 /** Node Concept Lemma. */
 struct Lemma
@@ -1225,8 +1225,14 @@ class Graph
 
         stat.linkConnectednessSum += 2;
 
+        at(src).links.reserve(at(src).links.length + 2);
         at(src).links ~= ln.forward;
         at(dst).links ~= ln.backward;
+        // at(src).links.linearInsert([ln.forward, ln.backward]);
+        // at(dst).links.linearInsert(ln.forward);
+        // at(dst).links.linearInsert(ln.backward);
+        // TODO Add variadic linearInsert() to Sorted
+
         stat.nodeConnectednessSum += 2;
 
         stat.symmetricRelCount += role.rel.isSymmetric;
