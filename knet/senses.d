@@ -96,7 +96,7 @@ enum Sense:ubyte
     nameOrganisation,       /// CIA
     city,                   /// Skänninge
     country,                /// Sweden
-    newspaper,            /// Tidning
+    newspaper,              /// Tidning
 
     timePeriod,
     weekday,
@@ -108,6 +108,7 @@ enum Sense:ubyte
     season,
 
     abbrevation,
+    contraction,            /// can't instead of can not
     nounAbbrevation,
     nounAcronym,
 
@@ -413,6 +414,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nounUncountable: return `uncountable`;
 
         case abbrevation: return `abbrevation`;
+        case contraction: return `contraction`;
         case nounAbbrevation: return `noun abbrevation`;
         case nounAcronym: return `noun acronym`;
 
@@ -970,7 +972,8 @@ import predicates: of;
     {
         with (Sense) return (sense.of(abbrevation,
                                       nounAbbrevation,
-                                      nounAcronym));
+                                      nounAcronym,
+                                      contraction));
     }
     bool isReflexive(Sense sense)
     {

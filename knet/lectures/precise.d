@@ -156,7 +156,7 @@ void learnPreciseThings(Graph graph)
 
             // Abbrevation
             graph.learnMtoNMaybe(buildPath(dirPath, `abbrevation.txt`),
-                                 Sense.unknown, lang,
+                                 Sense.abbrevation, lang,
                                  Role(Rel.abbreviationFor),
                                  Sense.unknown, lang,
                                  Origin.manual, 1.0);
@@ -164,6 +164,13 @@ void learnPreciseThings(Graph graph)
                                  Sense.noun, lang,
                                  Role(Rel.abbreviationFor),
                                  Sense.noun, lang,
+                                 Origin.manual, 1.0);
+
+            // Contraction
+            graph.learnMtoNMaybe(buildPath(dirPath, `contraction.txt`),
+                                 Sense.contraction, lang,
+                                 Role(Rel.contractionFor),
+                                 Sense.unknown, lang,
                                  Origin.manual, 1.0);
 
             // Synonym

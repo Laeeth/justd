@@ -255,6 +255,7 @@ enum Rel:ubyte
 
     symbolFor,
     abbreviationFor, shorthandFor = abbreviationFor,
+    contractionFor,  // sammandragning
 
     acronymFor,
     emoticonFor,
@@ -1589,7 +1590,7 @@ auto toHuman(const Rel rel,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["är", not, "förkortning för"]; break;
+                    case sv: words = ["är", not, "en förkortning för"]; break;
                     case en:
                     default: words = ["is", not, "an abbreviation for"]; break;
                 }
@@ -1601,6 +1602,26 @@ auto toHuman(const Rel rel,
                     case sv: words = ["har", not, "förkortning"]; break;
                     case en:
                     default: words = ["does", not, "have abbreviation"]; break;
+                }
+            }
+            break;
+        case contractionFor:
+            if (dir == RelDir.forward)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en sammandragning av"]; break;
+                    case en:
+                    default: words = ["is", not, "a contraction for"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "sammandragningen"]; break;
+                    case en:
+                    default: words = ["does", not, "have contraction"]; break;
                 }
             }
             break;
@@ -1941,8 +1962,9 @@ bool specializes(Rel special, Rel general) @safe @nogc pure nothrow
                                             hasEmotion);
         case derivedFrom: return special.of(acronymFor,
                                             abbreviationFor,
+                                            contractionFor,
                                             emoticonFor);
-        case abbreviationFor: return special.of(acronymFor);
+        case abbreviationFor: return special.of(acronymFor, contractionFor);
         case symbolFor: return special.of(emoticonFor);
         case atLocation: return special.of(bornInLocation,
                                            hasCitizenship,
