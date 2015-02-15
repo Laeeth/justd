@@ -59,6 +59,8 @@ enum Sense:ubyte
     substance,
     metal,
 
+    quantifier,
+
     numeral,
     numeralMasculine,
     numeralFeminine,
@@ -359,6 +361,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case substance: return `substance`;
         case material: return `material`;
         case metal: return `metal`;
+
+        case quantifier: return `quantifier`;
 
         case numeral: return `numeral`;
         case numeralOrdinal: return `ordinal numeral`;
@@ -996,6 +1000,7 @@ bool specializes(Sense special,
         case nounNeuter: return (special.isNounAbstract);
         case nounConcrete: return (special.isNounConcrete);
         case food: return special.isFood;
+        case quantifier: return special == numeral;
         case numeral: return special.isNumeral;
         case integer: return special.isInteger;
         case numeric: return special.isNumeric;
