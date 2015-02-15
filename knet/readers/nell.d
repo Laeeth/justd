@@ -3,7 +3,7 @@ module knet.readers.nell;
 import std.stdio: writeln;
 import std.traits: isSomeChar, isSomeString;
 import std.array: array, replace;
-import std.algorithm: joiner;
+import std.algorithm: joiner, findSplitAfter, findSplitBefore;
 import std.stdio: File;
 import core.exception: UnicodeException;
 import std.utf: UTFException;

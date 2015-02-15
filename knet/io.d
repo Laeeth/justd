@@ -1,11 +1,13 @@
 module knet.io;
 
+import std.conv: ConvException;
+import std.algorithm: findSplitBefore;
+
 import knet.base;
 import knet.languages: toHuman;
 import knet.senses: toHuman;
 import knet.origins: toNice;
 import knet.relations: RelDir, toHuman;
-import std.conv: ConvException;
 
 /** Show Network Relations.
  */

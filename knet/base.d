@@ -74,7 +74,7 @@ import core.memory: GC; // GC.disable;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable, Unqual;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, findSplitBefore, findSplitAfter, sort, multiSort, skipOver, filter, canFind, count, setUnion, setIntersection, min, max, joiner, strip, until, dropOne, dropBackOne;
+import std.algorithm: findSplit, sort, skipOver, filter, canFind, count, setUnion, setIntersection, min, max, joiner, strip, until, dropOne, dropBackOne;
 import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize, representation;
