@@ -191,12 +191,8 @@ void showNds(R)(Graph graph,
         import std.algorithm: multiSort;
         import dbg: dln;
         dln("warning: multiSort is disabled");
-        // lns.multiSort!((a, b) => (graph[a].nweight >
-        //                           graph[b].nweight),
-        //                (a, b) => (graph[a].role.rel.rank <
-        //                           graph[b].role.rel.rank),
-        //                (a, b) => (graph[a].role.rel <
-        //                           graph[b].role.rel));
+
+        graph.sortLns(lns);
 
         foreach (ln; lns)
         {

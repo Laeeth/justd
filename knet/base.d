@@ -1388,4 +1388,19 @@ class Graph
         return node;
     }
     alias topicOf = contextOf;
+
+    /** Sort Lns on relevance.
+        TODO Figure out how to put this in knet.sorting
+    */
+    void sortLns(Lns lns)
+    {
+        import std.algorithm: multiSort;
+        lns.multiSort!((a, b) => (at(a).nweight >
+                                  at(b).nweight),
+                       (a, b) => (at(a).role.rel.rank <
+                                  at(b).role.rel.rank),
+                       (a, b) => (at(a).role.rel <
+                                  at(b).role.rel));
+    }
+
 }
