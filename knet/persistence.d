@@ -22,7 +22,7 @@ void load(Graph graph,
     writeln(`Loading tables from "`, cachePath, `" ...`);
     try
     {
-        auto file = File(cachePath, "rb");
+        auto file = File(cachePath, `rb`);
         ubyte[] dbData; dbData.length = file.size; file.rawRead(dbData);
         // dbData.unpack(graph.db); // TODO make this compile
         // dbData.unpack(graph.stat); // TODO make this compile
