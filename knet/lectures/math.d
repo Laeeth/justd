@@ -31,7 +31,29 @@ void learnMath(Graph graph)
     graph.learnMto1(Lang.en, [`quaternary`, `quinary`, `senary`, `octal`, `decimal`, `duodecimal`, `vigesimal`, `quadrovigesimal`, `duotrigesimal`, `sexagesimal`, `octogesimal`],
                     Role(Rel.hasProperty, true), `counting system`, Sense.adjective, Sense.noun, 1.0);
 
+    graph.learnQuantifiers();
+
     graph.learnNumerals();
+}
+
+/// Learn Quantifiers.
+void learnQuantifiers(Graph graph)
+{
+    const origin = Origin.manual;
+
+    enum words = [`all`, `any`, `both`, `each`, `enough`, `every`,
+                  `few`, `a few`, `fewer`, `fewest`
+                  `little`, `a little`, `less`,
+                  `lots of`, `a lot of,`
+                  `many`, `more`, `no`, `none`, `several`, `some`];
+
+    foreach (word; words)
+    {
+        graph.connect(graph.store(word, Lang.en, Sense.quantifier, origin),
+                      Role(Rel.instanceOf),
+                      graph.store(`quantifier`, Lang.en, Sense.integer, origin),
+                      origin, 1.0);
+    }
 }
 
 /// Learn Numerals (Groupings/Aggregates) (MÄngdmått)
