@@ -25,7 +25,7 @@ int main(string[] args)
                                 std.getopt.config.caseInsensitive,
                                 "load-cache", "\tLoad database cache upon startup.",  &loadCache,
                                 "save-cache", "\tSave database cache upon shutdown.",  &saveCache,
-                                "use-cache|c", "\tUse caching of database.",  &useCache);
+                                "use-cache", "\tUse caching of database.",  &useCache);
     if (helpPrinted)
     {
         return 0;
