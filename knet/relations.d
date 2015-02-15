@@ -2026,7 +2026,7 @@ struct Idx(R)
 {
     @safe pure: @nogc nothrow:
 
-    this(Ix idx = nullIx)
+    this(Idx idx = nullIx)
     {
         this._idx = idx;
     }

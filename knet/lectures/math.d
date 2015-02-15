@@ -96,6 +96,8 @@ void learnNumerals(Graph graph)
 {
     graph.learnRomanLatinNumerals();
 
+    graph.learnFrenchNumerals();
+
     const origin = Origin.manual;
 
     graph.connect(graph.store(`single`, Lang.en, Sense.numeral, origin),
@@ -170,6 +172,7 @@ void learnNumerals(Graph graph)
 
     graph.learnEnglishOrdinalShorthands();
     graph.learnSwedishOrdinalShorthands();
+    graph.learnFrenchOrdinalNumbers();
 
     // Aggregate
     graph.connect(graph.store(`dozen`, Lang.en, Sense.numeral, origin),
@@ -216,6 +219,35 @@ void learnNumerals(Graph graph)
                   Role(Rel.definedAs),
                   graph.store(`1728`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
+}
+
+/** Learn French Numerals.
+*/
+void learnFrenchNumerals(Graph graph)
+{
+    enum lang = Lang.fr;
+    enum numerals = [`zero`,
+                     `un`, `duex`, `trois`, `quatre`, `cinq`,
+                     `six`, `sept`, `huit`, `neuf`, `dix`,
+                     `onze`, `douze`, `treize`, `quatorze`, `quinze`,
+                     `seize`, `dix-sept`, `dix-huit`, `dix-neuf`,
+                     `vingt`];
+    enum tens = [`vingt`, `trente`, `quarante`, `cinquante`,
+                 `soixante`, `soixante-dix`, `quatre-vingts`, `quatre-vingt-dix`,
+                 `cent`];
+
+    foreach (ix, ten; tens)
+    {
+        graph.connect(graph.store(ten, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                      graph.store((10*(ix + 2)).to!string, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
+    }
+
+    graph.connect(graph.store(`mille`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                  graph.store(`1000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
+    graph.connect(graph.store(`million`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                  graph.store(`1000000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
+    graph.connect(graph.store(`milliard`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                  graph.store(`1000000000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
 }
 
 /** Learn Roman (Latin) Numerals.
@@ -297,6 +329,7 @@ void learnRomanLatinNumerals(Graph graph)
  */
 void learnEnglishOrdinalShorthands(Graph graph)
 {
+    enum lang = Lang.en;
     enum pairs = [tuple(`1st`, `first`),
                   tuple(`2nd`, `second`),
                   tuple(`3rd`, `third`),
@@ -335,10 +368,61 @@ void learnEnglishOrdinalShorthands(Graph graph)
         const ordinal = pair[1];
         graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
                       graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        // variant spelling
         graph.connect(graph.store(abbr[0 .. $-2] ~ `:` ~ abbr[$-2 .. $],
-                                  Lang.sv, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                                  lang, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
                       graph.store(ordinal,
-                                  Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 0.5);
+                                  lang, Sense.numeralOrdinal, Origin.manual), Origin.manual, 0.5);
+    }
+}
+
+/** Learn French Ordinal Numbers.
+ */
+void learnFrenchOrdinalNumbers(Graph graph)
+{
+    enum lang = Lang.fr;
+    enum pairs = [tuple(`1er`, `premier`),
+                  tuple(`1re`, `premier`),
+                  tuple(`1er`, `premiére`),
+                  tuple(`1re`, `premiére`),
+                  tuple(`2e`, `deuxième`),
+                  tuple(`3e`, `troisième`),
+                  tuple(`4e`, `quatrième`),
+                  tuple(`5e`, `cinquième`),
+                  tuple(`6e`, `sixième`),
+                  tuple(`7e`, `septième`),
+                  tuple(`8e`, `huitième`),
+                  tuple(`9e`, `neuvième`),
+                  tuple(`10e`, `dixième`)];
+    foreach (pair; pairs)
+    {
+        const abbr = pair[0];
+        const ordinal = pair[1];
+        graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+    }
+}
+
+/** Learn French Fractions.
+ */
+void learnFrenchFractions(Graph graph)
+{
+    enum lang = Lang.fr;
+    enum pairs = [tuple(`1/2`, `un demi`),
+                  tuple(`1/3`, `un tiers`),
+                  tuple(`1/4`, `un quart`),
+                  tuple(`1/5`, `un cinquième`),
+                  tuple(`1/6`, `un sixième`),
+                  tuple(`1/7`, `un septième`),
+                  tuple(`1/8`, `un huitième`),
+                  tuple(`1/9`, `un neuvième`),
+                  tuple(`1/10`, `un dixième`)];
+    foreach (pair; pairs)
+    {
+        const fraction = pair[0];
+        const ordinal = pair[1];
+        graph.connect(graph.store(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.store(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -346,6 +430,7 @@ void learnEnglishOrdinalShorthands(Graph graph)
  */
 void learnSwedishOrdinalShorthands(Graph graph)
 {
+    enum lang = Lang.sv;
     enum pairs = [tuple(`1:a`, `första`),
                   tuple(`2:a`, `andra`),
                   tuple(`3:a`, `tredje`),
@@ -382,7 +467,7 @@ void learnSwedishOrdinalShorthands(Graph graph)
                   tuple(`1000000:e`, `miljonte`)];
     foreach (pair; pairs)
     {
-        graph.connect(graph.store(pair[0], Lang.sv, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(pair[1], Lang.sv, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.store(pair[0], lang, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.store(pair[1], lang, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
     }
 }
