@@ -226,6 +226,8 @@ alias Path = Step[]; // path of steps from Node
 static if (useArray) { alias Nds = Array!Nd; }
 else                 { alias Nds = Nd[]; }
 
+alias SortedNds = Sorted!(Nds, "a.ix < b.ix");
+
 /// WordNet.
 alias SynSet = Array!Nd;        /// WordNet Synonym Set
 alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
@@ -233,6 +235,8 @@ alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
 /// References to Links.
 static if (useArray) { alias Lns = Array!Ln; }
 else                 { alias Lns = Ln[]; }
+
+alias SortedLns = Sorted!(Lns, "a.ix < b.ix");
 
 /** Node Concept Lemma. */
 struct Lemma

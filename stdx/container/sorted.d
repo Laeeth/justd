@@ -265,6 +265,7 @@ store is a range and has not enough space left, throws an exception.
     void linearRemove(Range r)
     {
         import std.algorithm : swapRanges;
+        import std.algorithm.sorting : sort;
         size_t count = r.length;
         // if the underlying store supports it natively
         static if(__traits(compiles, _store.remove(r)))

@@ -2088,6 +2088,8 @@ struct Ref(T)
     bool defined() const { return this.ix != nullIx; }
     auto opCast(U : bool)() const { return defined(); }
 
+    // int opCmp(const Ref y) const { return this.ix.opCmp(y.ix); }
+
     /** Get Index. */
     const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
 

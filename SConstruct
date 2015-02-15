@@ -30,6 +30,8 @@ env.CacheDir(os.path.expanduser("~/.cache/scons"))
 
 knetquery = env.Program(target="knetquery/knetquery",
                         source=(["knetquery/source/app.d",
+                                 "stdx/container/fixed_array.d",
+                                 "stdx/container/sorted.d",
                                  "dbg.d", "msgpack.d", "predicates.d",
                                  "wordnet.d",
                                  "grammars.d", "stemming.d", "ixes.d",
