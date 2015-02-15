@@ -10,7 +10,7 @@ void save(Graph graph,
 {
     const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
     writeln(`Saving tables to "`, cachePath, `" ...`);
-    auto file = File(cachePath, "wb");
+    auto file = File(cachePath, `wb`);
     file.rawWrite(graph.db.pack);
     file.rawWrite(graph.stat.pack);
 }
@@ -47,7 +47,7 @@ auto loadUniquelySensedLemmas(Graph graph,
         writeln(`Loading all Lemmas with unique Sense in a given language from "`,
                 cachePath,
                 `" ...`);
-        auto file = File(cachePath, "wb");
+        auto file = File(cachePath, `wb`);
         ubyte[] data; file.rawRead(data);
         size_t cnt = 0;
         while (!data.empty)
@@ -78,7 +78,7 @@ auto saveUniquelySensedLemmas(Graph graph,
     writeln(`Saving all Lemmas that have unique a sense in a given language to "`,
             cachePath,
             `" ...`);
-    auto file = File(cachePath, "wb");
+    auto file = File(cachePath, `wb`);
     size_t cnt = 0;
     foreach (pair; graph.db.lemmasByExpr.byPair)
     {
