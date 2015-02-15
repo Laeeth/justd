@@ -1,4 +1,4 @@
-module std.container.fixed_array;
+module stdx.container.fixed_array;
 
 import core.exception, std.algorithm, std.conv, std.exception, std.range,
         std.traits, std.typecons;
@@ -131,14 +131,14 @@ Precondition: $(D nlength <= capacity)
 Complexity: $(BIGOH 1).
      */
 
-    @property void length(size_t nlength) 
+    @property void length(size_t nlength)
     {
         version(assert) if (nlength > capacity) throw new RangeError();
         // TODO initialize the new elements?
         payload.length = nlength;
     }
 /**
-Returns the maximum number of elements the container can store 
+Returns the maximum number of elements the container can store
 
 Complexity: $(BIGOH 1)
      */
@@ -268,7 +268,7 @@ Forwards to $(LREF insertBack).
     }
 
 /**
-Removes all contents from the container. 
+Removes all contents from the container.
 
 Postcondition: $(D empty)
 
@@ -342,11 +342,11 @@ elements in $(D stuff)
             if(stuff.length > (capacity - length))
                 throw new RangeError("not enough room to insert stuff");
         }
-            
+
         size_t count;
         foreach(s; stuff)
             count += insertBack(s);
-        
+
         return count;
     }
 
@@ -368,7 +368,7 @@ Complexity: $(BIGOH log(1)).
         /* static if superfluos? */
         static if (hasElaborateDestructor!Element)
             .destroy(store[length - 1]);
-        
+
         length = length - 1;
     }
     /// ditto
@@ -412,7 +412,7 @@ unittest
 
     foreach(i; 0 .. store.length)
         fx.insertBack(i);
-    
+
     foreach(i; 1 .. store.length)
     {
         assert(fx[i] > fx[i - 1]);

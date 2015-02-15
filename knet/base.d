@@ -77,6 +77,7 @@ import std.stdio: writeln, File, write, writef;
 import std.algorithm: findSplit, findSplitBefore, findSplitAfter, sort, multiSort, skipOver, filter, canFind, count, setUnion, setIntersection, min, max, joiner, strip, until, dropOne, dropBackOne;
 import std.math: abs;
 import std.container: Array;
+import stdx.container.sorted: Sorted;
 import std.string: tr, toLower, toUpper, capitalize, representation;
 import std.array: array, replace;
 import std.uni: isWhite, toLower;
@@ -331,6 +332,11 @@ struct Lemma
                      ubyte, `meaningNr`, bitsizeOfMeaningNr,
                      bool, `isRegexp`, 1 // true if $(D expr) is a regular expression
               ));
+}
+
+struct LazilySorted(T)
+{
+    T storage;
 }
 
 /** Concept Node/Vertex. */

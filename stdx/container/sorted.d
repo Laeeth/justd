@@ -1,5 +1,5 @@
-module std.container.sorted;
-            
+module stdx.container.sorted;
+
 import std.range;
 import std.traits;
 
@@ -27,9 +27,9 @@ unittest
     static assert(!isRAContainer!(int[]));
 }
 
-// Sorted adapter 
+// Sorted adapter
 /**
-Implements a automatically sorted 
+Implements a automatically sorted
 container on top of a given random-access range type (usually $(D
 T[])) or a random-access container type (usually $(D Array!T)).
 The documentation of $(D Sorted) will refer to the underlying range or
@@ -44,8 +44,8 @@ struct Sorted(Store, alias less = "a < b")
     import std.exception : enforce;
     import std.range: SortedRange;
     import std.algorithm : move, min;
-    
-    private: 
+
+    private:
     // Comparison predicate
     alias comp = binaryFun!(less);
     static if(isRAContainer!(Store))
@@ -55,7 +55,7 @@ struct Sorted(Store, alias less = "a < b")
     }
     else static if(isRandomAccessRange!(Store) && hasLength!Store)
     {
-        import std.container.fixedarray;
+        import stdx.container.fixed_array;
         alias _Store = FixedArray!Store;
         enum storeIsContainer = false;
     }
@@ -64,7 +64,7 @@ struct Sorted(Store, alias less = "a < b")
 
     _Store _store;
 
-    // Asserts that the store is sorted 
+    // Asserts that the store is sorted
     void assertSorted()
     {
         assert(std.algorithm.isSorted!(comp)(_store[]));
@@ -108,7 +108,7 @@ brake Sorted
         _store.length = initialSize;
         if (length < 2) return;
 
-        std.algorithm.sort!(comp)(_store[0 .. length]);     
+        std.algorithm.sort!(comp)(_store[0 .. length]);
         assertSorted();
     }
 
@@ -169,7 +169,7 @@ Returns the number of sorted elements.
     {
         return _store.length;
     }
-  
+
 /**
 Returns the _capacity of the store, which is the length of the
 underlying store (if the store is a range) or the _capacity of the
@@ -222,12 +222,12 @@ and $(D length == capacity), throws an exception.
         debug(Sorted) assertSorted();
         return 1;
     }
-/** 
+/**
 Inserts all elements of range $(D stuff) into store. If the underlying
 store is a range and has not enough space left, throws an exception.
     */
     size_t linearInsert(Range)(Range stuff)
-        if (isInputRange!Range 
+        if (isInputRange!Range
            && isImplicitlyConvertible!(ElementType!Range, ElementType!Store))
     {
 
@@ -243,15 +243,15 @@ store is a range and has not enough space left, throws an exception.
         }
         else
         {
-            foreach(s; stuff) 
-            { 
+            foreach(s; stuff)
+            {
                 insertBack(s);
                 count += 1;
             }
         }
 
         assert(count <= length);
-        std.algorithm.completeSort!(comp)(assumeSorted!comp(_store[0 .. length-count]), _store[length-count .. length]);    
+        std.algorithm.completeSort!(comp)(assumeSorted!comp(_store[0 .. length-count]), _store[length-count .. length]);
         debug(Sorted) assertSorted();
         return count;
     }
@@ -274,12 +274,12 @@ store is a range and has not enough space left, throws an exception.
             swapRanges(r, retro(this[]));
 
         _store.length = length - count;
-        sort!comp(_store[]);    
-        assertSorted(); 
+        sort!comp(_store[]);
+        assertSorted();
     }
 
 /**
-Removes the largest element 
+Removes the largest element
      */
     void removeBack()
     {
@@ -302,7 +302,7 @@ it. This will use the removeBack function of the underlying store.
         return result;
     }
 
-/** 
+/**
 Return SortedRange for _store
     */
     Range opIndex()
@@ -328,7 +328,7 @@ Return SortedRange for _store
         return _store[idx];
     }
 
-    size_t opDollar() { return length; }    
+    size_t opDollar() { return length; }
 
 
 /**
@@ -350,19 +350,19 @@ Container primitives
     Range lowerBound(Value)(Value val)
     {
         return this[].lowerBound(val);
-    }   
+    }
 
 /// ditto
     Range upperBound(Value)(Value val)
     {
         return this[].upperBound(val);
-    }   
+    }
 
 /// ditto
     Range equalRange(Value)(Value val)
     {
         return this[].equalRange(val);
-    }   
+    }
 }
 
 /**
@@ -390,12 +390,12 @@ unittest
     assert(s.back == 16);
     // smallest element
     assert(s.front == 1);
-    
-    // aassert that s is sorted 
-    assert(isSorted(s.release()));  
+
+    // aassert that s is sorted
+    assert(isSorted(s.release()));
 }
 
-/// Call opIndex on $(D Sorted) to optain a $(D SortedRange). 
+/// Call opIndex on $(D Sorted) to optain a $(D SortedRange).
 unittest
 {
     import std.container : Array;
@@ -409,12 +409,12 @@ unittest
         auto sr = sortedArray[];
         auto top5 = sr.take(5);
         assert(top5.equal([16, 14, 10, 9, 8]));
-        
+
         assert(equal(sr.lowerBound(7), [16, 14, 10, 9, 8]));
         assert(equal(sr.upperBound(7), [4, 3, 2, 1]));
         assert(equal(sr.equalRange(7), [7]));
 
-        // lowerBound, upperBound and equalRange are 
+        // lowerBound, upperBound and equalRange are
         // container primitives and should work on Sorted directly
         assert(equal(sortedArray.lowerBound(7), [16, 14, 10, 9, 8]));
         assert(equal(sortedArray.upperBound(7), [4, 3, 2, 1]));
@@ -424,8 +424,8 @@ unittest
         // test for subranges as well
         sr = sortedArray[0 .. 5];
         assert(equal(sr, [16, 14, 10, 9, 8]));
-    }   
-    
+    }
+
 }
 
 unittest
@@ -474,7 +474,7 @@ unittest
 }
 
 // test insertion
-unittest 
+unittest
 {
     import std.array, std.random, std.container;
     {
@@ -495,7 +495,7 @@ unittest
 
         foreach(idx; 1 .. sa.length())
             assert(sa[idx-1] <= sa[idx]);
-        
+
         assert(sa.length == 20);
     }
 }
