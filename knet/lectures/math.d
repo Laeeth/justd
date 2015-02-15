@@ -174,6 +174,10 @@ void learnNumerals(Graph graph)
     graph.learnSwedishOrdinalShorthands();
     graph.learnFrenchOrdinalNumbers();
 
+    graph.learnEnglishFractions();
+    graph.learnSwedishFractions();
+    graph.learnFrenchFractions();
+
     // Aggregate
     graph.connect(graph.store(`dozen`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
@@ -400,6 +404,52 @@ void learnFrenchOrdinalNumbers(Graph graph)
         const ordinal = pair[1];
         graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
                       graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+    }
+}
+
+/** Learn English Fractions.
+ */
+void learnEnglishFractions(Graph graph)
+{
+    enum lang = Lang.en;
+    enum pairs = [tuple(`1/2`, `one half`),
+                  tuple(`1/3`, `one third`),
+                  tuple(`1/4`, `one quarter`),
+                  tuple(`1/5`, `one fifth`),
+                  tuple(`1/6`, `one sixth`),
+                  tuple(`1/7`, `one seventh`),
+                  tuple(`1/8`, `one eighth`),
+                  tuple(`1/9`, `one ninth`),
+                  tuple(`1/10`, `one tenth`)];
+    foreach (pair; pairs)
+    {
+        const fraction = pair[0];
+        const ordinal = pair[1];
+        graph.connect(graph.store(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.store(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
+    }
+}
+
+/** Learn Swedish Fractions.
+ */
+void learnSwedishFractions(Graph graph)
+{
+    enum lang = Lang.sv;
+    enum pairs = [tuple(`1/2`, `en halv`),
+                  tuple(`1/3`, `en tredjedel`),
+                  tuple(`1/4`, `en fjärdedel`),
+                  tuple(`1/5`, `en femtedel`),
+                  tuple(`1/6`, `en sjättedel`),
+                  tuple(`1/7`, `en sjundedel`),
+                  tuple(`1/8`, `en åttondedel`),
+                  tuple(`1/9`, `en niondedel`),
+                  tuple(`1/10`, `en tiondel`)];
+    foreach (pair; pairs)
+    {
+        const fraction = pair[0];
+        const ordinal = pair[1];
+        graph.connect(graph.store(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.store(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
     }
 }
 
