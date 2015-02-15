@@ -28,7 +28,9 @@ void learnMath(Graph graph)
                               Lang.math, Sense.decimal, origin),
                   origin, 1.0);
 
-    graph.learnMto1(Lang.en, [`quaternary`, `quinary`, `senary`, `octal`, `decimal`, `duodecimal`, `vigesimal`, `quadrovigesimal`, `duotrigesimal`, `sexagesimal`, `octogesimal`],
+    graph.learnMto1(Lang.en, [`quaternary`, `quinary`, `senary`, `octal`,
+                              `decimal`, `duodecimal`, `vigesimal`,
+                              `quadrovigesimal`, `duotrigesimal`, `sexagesimal`, `octogesimal`],
                     Role(Rel.hasProperty, true), `counting system`, Sense.adjective, Sense.noun, 1.0);
 
     graph.learnQuantifiers();
