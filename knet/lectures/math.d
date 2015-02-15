@@ -172,6 +172,7 @@ void learnNumerals(Graph graph)
 
     graph.learnEnglishOrdinalShorthands();
     graph.learnSwedishOrdinalShorthands();
+    graph.learnSwedishOrdinalNumbers();
     graph.learnGermanOrdinalNumbers();
     graph.learnFrenchOrdinalNumbers();
 
@@ -378,6 +379,40 @@ void learnEnglishOrdinalShorthands(Graph graph)
                                   lang, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
                       graph.store(ordinal,
                                   lang, Sense.numeralOrdinal, Origin.manual), Origin.manual, 0.5);
+    }
+}
+
+/** Learn Swedish Ordinal Numbers.
+ */
+void learnSwedishOrdinalNumbers(Graph graph)
+{
+    enum lang = Lang.sv;
+    enum pairs = [tuple(`1:a`, `första`),
+                  tuple(`2:a`, `andra`),
+                  tuple(`3:e`, `tredje`),
+                  tuple(`4:e`, `fjärde`),
+                  tuple(`5:e`, `femte`),
+                  tuple(`6:e`, `sjätte`),
+                  tuple(`7:e`, `sjunde`),
+                  tuple(`8:e`, `åttonde`),
+                  tuple(`9:e`, `nionde`),
+                  tuple(`10:e`, `tionde`),
+                  tuple(`11:e`, `elfte`),
+                  tuple(`12:e`, `tolfte`),
+                  tuple(`13:e`, `trettonde`),
+                  tuple(`14:e`, `fjortonde`),
+                  tuple(`15:e`, `femtonde`),
+                  tuple(`16:e`, `sextonde`),
+                  tuple(`17:e`, `sjuttonde`),
+                  tuple(`18:e`, `artonde`),
+                  tuple(`19:e`, `nittonde`),
+                  tuple(`20:e`, `tjugonde`)];
+    foreach (pair; pairs)
+    {
+        const abbr = pair[0];
+        const ordinal = pair[1];
+        graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
     }
 }
 
