@@ -74,7 +74,7 @@ import core.memory: GC; // GC.disable;
 import std.traits: isSomeString, isFloatingPoint, EnumMembers, isDynamicArray, isIterable, Unqual;
 import std.conv: to, emplace;
 import std.stdio: writeln, File, write, writef;
-import std.algorithm: findSplit, sort, skipOver, filter, canFind, count, setUnion, setIntersection, min, max, joiner, strip, until, dropOne, dropBackOne;
+import std.algorithm: findSplit, sort, skipOver, filter, canFind, count, min, max, joiner, strip, until;
 import std.math: abs;
 import std.container: Array;
 import std.string: tr, toLower, toUpper, capitalize, representation;
@@ -795,6 +795,7 @@ class Graph
     Sense commonSense(S1, S2)(S1 a, S2 b) if (isSomeString!S1 &&
                                               isSomeString!S2)
     {
+        import std.algorithm: setIntersection;
         auto commonSenses = setIntersection(sensesOfExpr(a).sorted,
                                             sensesOfExpr(b).sorted);
         return commonSenses.count == 1 ? commonSenses.front : Sense.unknown;

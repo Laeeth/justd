@@ -553,6 +553,7 @@ bool showNodes(Graph graph,
         // non-interpuncted
         if (normLine.startsWith('.', '?', '!'))
         {
+            import std.algorithm: dropOne;
             const nonIPLine = normLine.dropOne;
             // writeln(`> As a non-interpuncted ``, nonIPLine, `"`);
             graph.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
@@ -561,6 +562,7 @@ bool showNodes(Graph graph,
         // non-interpuncted
         if (normLine.endsWith('.', '?', '!'))
         {
+            import std.algorithm: dropBackOne;
             const nonIPLine = normLine.dropBackOne;
             // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
             graph.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
