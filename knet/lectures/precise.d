@@ -187,6 +187,14 @@ void learnPreciseThings(Graph graph)
                                  Sense.adjective, lang, Role(Rel.synonymFor),
                                  Sense.adjective, lang, Origin.manual, 1.0);
 
+            // Prefix
+            graph.learnMtoNMaybe(buildPath(dirPath, `word_prefix.txt`),
+                                 Sense.prefix, lang, Role(Rel.hasMeaning),
+                                 Sense.unknown, lang, Origin.manual, 1.0);
+            graph.learnMtoNMaybe(buildPath(dirPath, `word_suffix.txt`),
+                                 Sense.suffix, lang, Role(Rel.hasMeaning),
+                                 Sense.unknown, lang, Origin.manual, 1.0);
+
             // Homophone
             graph.learnMtoNMaybe(buildPath(dirPath, `homophone.txt`),
                                  Sense.unknown, lang, Role(Rel.homophoneFor),
