@@ -166,7 +166,7 @@ void learnPreciseThings(Graph graph)
                                  Sense.noun, lang,
                                  Origin.manual, 1.0);
 
-            // Contraction
+            // Contraction. See also: http://www.enchantedlearning.com/grammar/contractions/list.shtml
             graph.learnMtoNMaybe(buildPath(dirPath, `contraction.txt`),
                                  Sense.contraction, lang,
                                  Role(Rel.contractionFor),
