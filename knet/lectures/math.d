@@ -172,6 +172,7 @@ void learnNumerals(Graph graph)
 
     graph.learnEnglishOrdinalShorthands();
     graph.learnSwedishOrdinalShorthands();
+    graph.learnGermanOrdinalNumbers();
     graph.learnFrenchOrdinalNumbers();
 
     graph.learnEnglishFractions();
@@ -377,6 +378,32 @@ void learnEnglishOrdinalShorthands(Graph graph)
                                   lang, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
                       graph.store(ordinal,
                                   lang, Sense.numeralOrdinal, Origin.manual), Origin.manual, 0.5);
+    }
+}
+
+/** Learn German Ordinal Numbers.
+ */
+void learnGermanOrdinalNumbers(Graph graph)
+{
+    enum lang = Lang.de;
+    enum pairs = [tuple(`1.`, `erste`),
+                  tuple(`2.`, `zweite`),
+                  tuple(`3.`, `dritte`),
+                  tuple(`4.`, `vierte`),
+                  tuple(`5.`, `fünfte`),
+                  tuple(`6.`, `sechste`),
+                  tuple(`7.`, `siebte`),
+                  tuple(`8.`, `achte`),
+                  tuple(`9.`, `neunte`),
+                  tuple(`10.`, `zehnte`),
+                  tuple(`11.`, `elfte`),
+                  tuple(`12.`, `zwölfte`)];
+    foreach (pair; pairs)
+    {
+        const abbr = pair[0];
+        const ordinal = pair[1];
+        graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
     }
 }
 
