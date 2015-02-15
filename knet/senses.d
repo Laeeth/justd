@@ -60,6 +60,9 @@ enum Sense:ubyte
     metal,
 
     quantifier,
+    quantifierOfSingularNoun,
+    quantifierOfPluralNoun,
+    quantifierOfUncountableNoun,
 
     numeral,
     numeralMasculine,
@@ -363,6 +366,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case metal: return `metal`;
 
         case quantifier: return `quantifier`;
+        case quantifierOfSingularNoun: return `quantifier of singular noun`;
+        case quantifierOfPluralNoun: return `quantifier of plural noun`;
+        case quantifierOfUncountableNoun: return `quantifier of uncountable noun`;
 
         case numeral: return `numeral`;
         case numeralOrdinal: return `ordinal numeral`;
@@ -726,6 +732,13 @@ import predicates: of;
                                       numberTranscendental,
                                       numberComplex));
     }
+    bool isQuantifier(Sense sense)
+    {
+        with (Sense) return (sense.of(quantifier,
+                                      quantifierOfSingularNoun,
+                                      quantifierOfPluralNoun,
+                                      quantifierOfUncountableNoun));
+    }
     bool isNumeral(Sense sense)
     {
         with (Sense) return (sense.of(numeral,
@@ -1000,7 +1013,8 @@ bool specializes(Sense special,
         case nounNeuter: return (special.isNounAbstract);
         case nounConcrete: return (special.isNounConcrete);
         case food: return special.isFood;
-        case quantifier: return special == numeral;
+        case quantifier: return (special.isQuantifier &&
+                                 special == numeral);
         case numeral: return special.isNumeral;
         case integer: return special.isInteger;
         case numeric: return special.isNumeric;

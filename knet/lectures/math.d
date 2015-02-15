@@ -33,29 +33,62 @@ void learnMath(Graph graph)
                               `quadrovigesimal`, `duotrigesimal`, `sexagesimal`, `octogesimal`],
                     Role(Rel.hasProperty, true), `counting system`, Sense.adjective, Sense.noun, 1.0);
 
-    graph.learnQuantifiers();
+    graph.learnEnglishQuantifiers();
 
     graph.learnNumerals();
 }
 
 /// Learn Quantifiers.
-void learnQuantifiers(Graph graph)
+void learnEnglishQuantifiers(Graph graph)
 {
-    const origin = Origin.manual;
+    enum lang = Lang.en;
+    enum origin = Origin.manual;
 
-    enum words = [`all`, `any`, `both`, `each`, `enough`, `every`,
-                  `few`, `a few`, `fewer`, `fewest`
-                  `little`, `a little`, `less`,
-                  `lots of`, `a lot of,`
-                  `many`, `more`, `no`, `none`, `several`, `some`];
-
-    foreach (word; words)
+    enum quantifiers = [`all`, `any`, `both`, `each`, `enough`, `every`,
+                        `few`, `a few`, `fewer`,
+                        `little`, `a little`, `less`,
+                        `lots of`, `a lot of,`
+                        `many`, `more`, `no`, `none`, `several`, `some`];
+    foreach (word; quantifiers)
     {
-        graph.connect(graph.store(word, Lang.en, Sense.quantifier, origin),
+        graph.connect(graph.store(word, lang, Sense.quantifier, origin),
                       Role(Rel.instanceOf),
-                      graph.store(`quantifier`, Lang.en, Sense.integer, origin),
+                      graph.store(`quantifier`, lang, Sense.integer, origin),
                       origin, 1.0);
     }
+
+    enum quantifiersOfSingularNoun = [`each`, `every`, `no`];
+    foreach (word; quantifiersOfSingularNoun)
+    {
+        graph.connect(graph.store(word, lang, Sense.quantifierOfSingularNoun, origin),
+                      Role(Rel.instanceOf),
+                      graph.store(`quantifier`, lang, Sense.integer, origin),
+                      origin, 1.0);
+    }
+
+    enum quantifiersOfPluralNoun = [`all`, `any`, `both`, `enough`,
+                                    `few`, `a few`, `fewer`,
+                                    `lots of`, `a lot of,`
+                                    `many`, `more`, `no`, `none`, `several`, `some`];
+    foreach (word; quantifiersOfPluralNoun)
+    {
+        graph.connect(graph.store(word, lang, Sense.quantifierOfPluralNoun, origin),
+                      Role(Rel.instanceOf),
+                      graph.store(`quantifier`, lang, Sense.integer, origin),
+                      origin, 1.0);
+    }
+
+    enum quantifiersOfUncountableNouns = [`all`, `any`, `enough`,
+                                          `lots of`, `a lot of,`
+                                          `more`, `no`, `none`, `some`];
+    foreach (word; quantifiersOfUncountableNouns)
+    {
+        graph.connect(graph.store(word, lang, Sense.quantifierOfPluralNoun, origin),
+                      Role(Rel.instanceOf),
+                      graph.store(`quantifier`, lang, Sense.integer, origin),
+                      origin, 1.0);
+    }
+
 }
 
 /// Learn Numerals (Groupings/Aggregates) (MÄngdmått)
