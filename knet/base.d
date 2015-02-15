@@ -1346,13 +1346,11 @@ class Graph
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
-        if (a in db.ndByLemma && // both lemmas exist
-            b in db.ndByLemma)
+        const aNd = a in db.ndByLemma;
+        const bNd = b in db.ndByLemma;
+        if (aNd && bNd)         // both lemmas exist
         {
-            return areConnected(db.ndByLemma[a],
-                                role,
-                                db.ndByLemma[b],
-                                origin, weight);
+            return areConnected(*aNd, role, *bNd, origin, weight);
         }
         return typeof(return).asUndefined;
     }
