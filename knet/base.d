@@ -227,7 +227,7 @@ else                 { alias Nds = Nd[]; }
 
 /// WordNet.
 alias SynSet = Array!Nd;        /// WordNet Synonym Set
-alias SynSetOffset = Ix;      /// WordNet Synonym Set Offset (Id)
+alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
 
 /// References to Links.
 static if (useArray) { alias Lns = Array!Ln; }
@@ -999,8 +999,8 @@ class Graph
             }
 
             // store
-            assert(db.allNodes.length <= nullIx);
-            const cix = Nd(cast(Ix)db.allNodes.length);
+            assert(db.allNodes.length <= Nd.nullIx);
+            const cix = Nd(cast(Nd.Ix)db.allNodes.length);
             db.allNodes ~= Node(lemma, origin); // .. new node that is stored
 
             db.ndByLemma[lemma] = cix; // store index to ..
@@ -1205,8 +1205,8 @@ class Graph
         }
 
         // TODO group these
-        assert(db.allLinks.length <= nullIx);
-        auto ln = Ln(cast(Ix)db.allLinks.length);
+        assert(db.allLinks.length <= Ln.nullIx);
+        auto ln = Ln(cast(Ln.Ix)db.allLinks.length);
 
         auto link = Link(role.reversion ? dst : src,
                          Role(role.rel, false, role.negation),

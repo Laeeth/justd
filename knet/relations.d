@@ -2021,16 +2021,31 @@ bool infersSense(Rel rel) @safe @nogc pure nothrow
                              antonymFor);
 }
 
-/** Ix Precision.
-    Set this to $(D uint) if we get low on memory.
-    Set this to $(D ulong) when number of link nodes exceed Ix.
-*/
-alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
-enum nullIx = Ix.max >> 1;
+/** Type-Safe Index into RandomAccessRange $(D R). */
+struct Idx(R)
+{
+    @safe pure: @nogc nothrow:
+
+    this(Ix idx = nullIx)
+    {
+        this._idx = idx;
+    }
+
+    alias _idx this;
+private:
+    Idx _idx = 0;
+}
 
 /** Type-Safe Directed Reference to $(D T). */
 struct Ref(T)
 {
+    /** Ix Precision.
+        Set this to $(D uint) if we get low on memory.
+        Set this to $(D ulong) when number of link nodes exceed Ix.
+    */
+    alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
+    enum nullIx = Ix.max >> 1;
+
     import bitop_ex: setTopBit, getTopBit, resetTopBit;
 
     @safe pure:
