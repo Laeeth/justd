@@ -1,5 +1,8 @@
 # TODO
 
+## TODO Skip prepositions:
+   can be found at location:  "at bank" (en:20%-CN5)
+
 ### TODO Use ~/Knowledge/Svåra Ord (1989)/svaraord.txt
 
 ### TODO Rename Role to Pred or Act or Conn? What does WordNet call it?
