@@ -10,6 +10,13 @@ cannotcan not
 you'reyou are
 they'rethey are
 
+are notaren't
+is notisn't
+
+I'llI will
+you'llyou will
+I'mI am
+
 he'she is
 she'sshe is
 it'sit is
