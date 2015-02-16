@@ -40,7 +40,7 @@ enum Rel:ubyte
     memberHolonym,             ///< WordNet.
     substanceHolonym,          ///< WordNet.
     partHolonym,               ///< WordNet.
-    attribute,                 ///< WordNet.
+    attribute,                 ///< WordNet. A noun for which adjectives express values. The noun weight is an attribute, for which the adjectives light and heavy express values.
     derivationallyRelatedForm, ///< WordNet.
 
     topicDomainOfSynset,       ///< WordNet.
