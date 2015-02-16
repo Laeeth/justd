@@ -8,13 +8,15 @@ import knet.iteration;
 void testAll(Graph graph)
 {
     {
+        enum sense = Sense.letter;
+        enum lang = Lang.en;
         enum role = Role(Rel.any);
         enum origin = Origin.manual;
 
-        const ndA = graph.store(`A`, Lang.sv, Sense.letter, origin);
-        const ndB1 = graph.store(`B1`, Lang.sv, Sense.letter, origin);
-        const ndB2 = graph.store(`B2`, Lang.sv, Sense.letter, origin);
-        const ndC = graph.store(`C`, Lang.sv, Sense.letter, origin);
+        const ndA = graph.store(`A`, lang, sense, origin);
+        const ndB1 = graph.store(`B1`, lang, sense, origin);
+        const ndB2 = graph.store(`B2`, lang, sense, origin);
+        const ndC = graph.store(`C`, lang, sense, origin);
 
         const lnAB1 = graph.connect(ndA, role, ndB1, origin, 0.5, true);
         const lnAB2 = graph.connect(ndA, role, ndB2, origin, 0.5, true);
