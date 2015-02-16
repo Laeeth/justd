@@ -7,13 +7,19 @@ import knet.iteration;
  */
 void testAll(Graph graph)
 {
-    // link should be reused
     {
-        const ndA = graph.store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
-        const ndB = graph.store(`3200`, Lang.sv, Sense.population, Origin.manual);
-        const ln1 = graph.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
-        const ln2 = graph.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
-        assert(ln1 == ln2);
+        enum role = Role(Rel.any);
+        enum origin = Origin.manual;
+
+        const ndA = graph.store(`A`, Lang.sv, Sense.letter, origin);
+        const ndB1 = graph.store(`B1`, Lang.sv, Sense.letter, origin);
+        const ndB2 = graph.store(`B2`, Lang.sv, Sense.letter, origin);
+        const ndC = graph.store(`C`, Lang.sv, Sense.letter, origin);
+
+        const lnAB1 = graph.connect(ndA, role, ndB1, origin, 0.5, true);
+        const lnAB2 = graph.connect(ndA, role, ndB2, origin, 0.5, true);
+        const lnB1C = graph.connect(ndB1, role, ndC, origin, 0.5, true);
+        const lnB2C = graph.connect(ndB2, role, ndC, origin, 0.5, true);
 
         foreach (const nds; graph.walk(ndA))
         {
@@ -22,6 +28,15 @@ void testAll(Graph graph)
                 writeln(graph[nd]);
             }
         }
+    }
+
+    // link should be reused
+    {
+        const ndA = graph.store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
+        const ndB = graph.store(`3200`, Lang.sv, Sense.population, Origin.manual);
+        const ln1 = graph.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
+        const ln2 = graph.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
+        assert(ln1 == ln2);
     }
 
     // symmetric link should be reused in reverse order
