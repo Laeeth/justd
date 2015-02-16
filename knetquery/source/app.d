@@ -39,9 +39,10 @@ int main(string[] args)
 
     const cachePath = "~/.cache";
 
-    auto graph = new Graph();
+    auto testGraph = new Graph();
+    testGraph.testAll;
 
-    graph.testAll;
+    auto graph = new Graph();
 
     // loads
     if (false) graph.loadUniquelySensedLemmas(cachePath);
