@@ -1,5 +1,5 @@
 Gila monster
-June bugs
+June bug
 Persian
 Siamese
 Van
@@ -8,8 +8,8 @@ alligator
 alpaca
 anteater
 antelope
-antlers
-ants
+antler
+ant
 ape
 Armadillo
 baboon
@@ -27,7 +27,7 @@ calico
 camel
 capon
 capuchin monkey
-cats
+cat
 cattle
 cheetah
 chick
@@ -37,13 +37,12 @@ cockroach
 colt
 cow
 crocodile
-crows
+crow
 cub
 deer
 dinosaur
 doe
 dog
-dogs
 dolphin
 donkey
 drake
@@ -76,12 +75,12 @@ hawk
 hedgehog
 hen
 hog
-honeybees
-hoofs
+honeybee
+hoof
 horn
-hornets
+hornet
 horse
-horse flies
+fly
 house
 hyena
 jack and jenny
@@ -92,7 +91,6 @@ kangaroo
 kid
 kingfish
 kitten
-kittens
 koala
 lamb
 lark
@@ -117,13 +115,13 @@ otter
 owl
 oxen
 panda
-paws
+paw
 peacock
 pelt
 photograph
 pig
 pinto
-pinworms
+pinworm
 platypus
 polar bear
 pony
@@ -146,7 +144,7 @@ sheep
 shoat
 skunk
 sloth
-snakes
+snake
 songbird
 sow
 spider
@@ -165,13 +163,52 @@ turtle
 vixen
 vulture
 wallaby
-wasps
+wasp
 weasel
 whale
 whisker
-wings
+wing
 wolf
 wombat
 worm
 wren
 zebra
+aunt
+boy
+butcher
+carpenter
+cousin
+father
+girl
+lady
+man
+mother
+tailor
+woman
+bicycle
+book
+car
+computer
+dress
+hammer
+key
+pencil
+ship
+table
+vase
+wallet
+armadillo
+bee
+caterpillar
+airport
+beach
+bullring
+cemetery
+church
+country
+hospital
+library
+mall
+park
+restaurant
+zoo
