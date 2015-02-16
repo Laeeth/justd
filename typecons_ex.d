@@ -85,7 +85,7 @@ struct IndexedBy(R, I)
     auto ref opIndex(I ix) inout { return _r[ix]; }
     auto ref opSlice(I lower, I upper) inout { return _r[lower .. upper]; }
     R _r;
-    alias _r this;
+    // TODO Use opDispatch instead of alias _r this; to override only opSlice and opIndex
 }
 
 auto indexedBy(I, R)(R range)
@@ -95,14 +95,14 @@ auto indexedBy(I, R)(R range)
 
 unittest
 {
-    import std.stdio;
     auto x = [1, 2, 3];
+
     alias I = int;
     auto ix = x.indexedBy!I;
     ix[0] = 11;
 
     alias J = Ix!size_t;
     auto jx = x.indexedBy!J;
-    jx[J(0)] = 11;              // should compile
-    jx[0] = 11;                 // how can I make this not compile?
+    jx[J(0)] = 11;
+    static assert(!__traits(compiles, { jx[0] = 11; }));
 }
