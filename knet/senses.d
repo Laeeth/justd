@@ -34,8 +34,8 @@ enum Sense:ubyte
 
     nounCollective,
     nounCollectivePeople,
-    nounCollectiveThings,
     nounCollectiveCreatures,
+    nounCollectiveThings,
 
     nounRegular,
     nounIrregular,
@@ -350,8 +350,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nounConcrete: return `concrete noun`;
         case nounCollective: return `collective noun`;
         case nounCollectivePeople: return `collective noun people`;
-        case nounCollectiveThings: return `collective noun things`;
         case nounCollectiveCreatures: return `collective noun creatures`;
+        case nounCollectiveThings: return `collective noun things`;
         case nounRegular: return `regular noun`;
         case nounIrregular: return `irregular noun`;
 
@@ -703,20 +703,24 @@ import predicates: of;
                                       nounSingularFemale,
                                       nounSingularNeuter));
     }
+    bool isNounCollective(Sense sense)
+    {
+        with (Sense) return (sense.of(nounCollective,
+                                      nounCollectivePeople,
+                                      nounCollectiveCreatures,
+                                      nounCollectiveThings));
+    }
     bool isNoun(Sense sense)
     {
         with (Sense) return (sense.isNounAbstract ||
                              sense.isNounConcrete ||
                              sense.isFood ||
                              sense.isNounSingular ||
+                             sense.isNounCollective ||
                              sense.of(noun,
                                       nounNeuter,
                                       nounAbstract,
                                       nounConcrete,
-                                      nounCollective,
-                                      nounCollectivePeople,
-                                      nounCollectiveThings,
-                                      nounCollectiveCreatures,
                                       nounRegular,
                                       nounIrregular,
                                       nounPlural,
@@ -1027,6 +1031,7 @@ bool specializes(Sense special,
         case noun: return (special.isNoun ||
                            special.isPronoun);
         case nounSingular: return (special.isNounSingular);
+        case nounCollective: return (special.isNounCollective);
         case nounNeuter: return (special.isNounAbstract);
         case nounConcrete: return (special.isNounConcrete);
         case food: return special.isFood;

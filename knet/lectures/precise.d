@@ -147,6 +147,24 @@ void learnPreciseThings(Graph graph)
                                  Sense.unknown, lang,
                                  Origin.manual, 1.0);
 
+            graph.learnMtoNMaybe(buildPath(dirPath, `collective_people_noun.txt`),
+                                 Sense.nounPlural, lang,
+                                 Role(Rel.formOfNoun),
+                                 Sense.nounCollectivePeople, lang,
+                                 Origin.manual, 1.0);
+
+            graph.learnMtoNMaybe(buildPath(dirPath, `collective_creatures_noun.txt`),
+                                 Sense.nounPlural, lang,
+                                 Role(Rel.formOfNoun),
+                                 Sense.nounCollectiveCreatures, lang,
+                                 Origin.manual, 1.0);
+
+            graph.learnMtoNMaybe(buildPath(dirPath, `collective_things_noun.txt`),
+                                 Sense.nounPlural, lang,
+                                 Role(Rel.formOfNoun),
+                                 Sense.nounCollectiveThings, lang,
+                                 Origin.manual, 1.0);
+
             // Irregular Noun
             graph.learnMtoNMaybe(buildPath(dirPath, `irregular_noun.txt`),
                                  Sense.nounSingular, lang,
