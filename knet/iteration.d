@@ -5,7 +5,7 @@ import predicates: of;
 import knet.relations: RelDir, specializes;
 import knet.base;
 
-/** Get Links Refs of $(D node) with direction $(D dir).
+/** Get Links Refs (Ln) of $(D node) with direction $(D dir).
     TODO what to do with role.reversion here?
 */
 auto lnsOf(Graph graph,
@@ -14,7 +14,7 @@ auto lnsOf(Graph graph,
            Role role = Role.init)
 {
     return node.links[]
-               .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize to match(RelDir, RelDir)
+               .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize match(RelDir, RelDir)
                                graph[ln].role.negation == role.negation &&
                                (graph[ln].role.rel == role.rel ||
                                 graph[ln].role.rel.specializes(role.rel))));
@@ -24,12 +24,12 @@ auto lnsOf(Graph graph,
  */
 auto lnsOf(Graph graph,
            Nd nd,
-           Rel rel,
+           Role role = Role.init,
            Origin[] origins = [])
 {
     import std.algorithm.searching: canFind;
     return graph[nd].links[]
-                    .filter!(ln => (graph[ln].role.rel == rel &&
+                    .filter!(ln => (graph[ln].role == role &&
                                     (origins.empty ||
                                      origins.canFind(graph[ln].origin))))
                     .map!(ln => ln.raw);
@@ -65,31 +65,31 @@ auto nnsOf(Graph graph,
            Origin[] origins = [])
 {
     import std.algorithm.searching: canFind;
-    writeln("nd: ", nd);
-    foreach (ln; graph.lnsOf(nd, rel, origins))
+    debug writeln("nd: ", nd);
+    foreach (ln; graph.lnsOf(nd, Role(rel), origins))
     {
-        writeln("ln: ", ln);
+        debug writeln("ln: ", ln);
         foreach (nd2; graph[ln].actors[])
         {
-            writeln("nd2: ", nd2);
+            debug writeln("nd2: ", nd2);
             if (nd2.ix != nd.ix) // no self-recursion
             {
-                writeln("differs");
-                writeln("node: ", graph[nd]);
-                writeln("lang: ", graph[nd].lemma.lang);
-                writeln("dstLangs: ", dstLangs);
-                writeln("it: ", dstLangs.canFind(graph[nd].lemma.lang));
+                debug writeln("differs");
+                debug writeln("node: ", graph[nd]);
+                debug writeln("lang: ", graph[nd].lemma.lang);
+                debug writeln("dstLangs: ", dstLangs);
+                debug writeln("it: ", dstLangs.canFind(graph[nd].lemma.lang));
                 if (dstLangs.empty ||
                     dstLangs.canFind(graph[nd].lemma.lang)) // TODO functionize to Lemma.ofLang
                 {
-                    writeln("nd2: ", nd);
+                    debug writeln("nd2: ", nd);
                 }
             }
         }
     }
-    writeln("xx");
+    debug writeln("xx");
     import std.algorithm.iteration: joiner;
-    return graph.lnsOf(nd, rel, origins)
+    return graph.lnsOf(nd, Role(rel), origins)
                 .map!(ln =>
                       graph[ln].actors[]
                                .filter!(actor => (actor.ix != nd.ix &&
@@ -173,46 +173,72 @@ auto translationsOf(S)(Graph graph,
     return nodes;
 }
 
-/** Network Walker (Input Range).
-    TODO: Returns Step
+/** Breadth-First Graph Walker (Traverser)
+    Modelled as an (Input Range).
 */
 struct Walk
 {
-    this(Graph graph, Nd firstNd)
+    this(Graph graph,
+         const Nd firstNd,
+         Lang[] langs = [],
+         Role[] roles = [],
+         Origin[] origins = [])
     {
         this.graph = graph;
-        firstNd = firstNd;
-        currentNd = firstNd;
+
+        this.langs = langs;
+        this.roles = roles;
+        this.origins = origins;
+
+        pendingNds ~= firstNd.raw;
+        minDistanceByNd[firstNd.raw] = 0; // tag firstNd as visited
     }
 
     auto front()
     {
-        return currentNd;
+        import std.range: front;
+        assert(!currentNds.empty, "Attempting to fetch the front of an empty Walk");
+        return currentNds;
     }
 
     void popFront()
     {
         import std.range: front, popFront;
-        if (!pending.empty)
+        currentNds = pendingNds;
+
+        pendingNds.length = 0;
+        foreach (currentNd; currentNds)
         {
-            currentNd = pending.front;
-            pending.popFront;
+            auto lns = graph.lnsOf(currentNd);
+            foreach (ln; lns)
+            {
+                foreach (nd2; graph[ln].actors[].filter!(actor => actor.raw !in minDistanceByNd))
+                {
+                    pendingNds ~= nd2.raw;
+                    minDistanceByNd[nd2.raw] = 0;
+                }
+            }
         }
-        else
-        {
-            currentNd = Nd.asUndefined;
-        }
-        // return graph.lnsOf(graph[currentNd]);
     }
 
-    bool empty() const { return true; }
+    bool empty() const
+    {
+        import std.range: empty;
+        return pendingNds.empty;
+    }
 
+private:
     Graph graph;
-    Nd firstNd;                 // walk start
-    Nd currentNd;               // current walk positin
-    NWeight[Nd] minDistanceByNd; // maps current minimum distance from visited to firstNd
 
-    Nds pending;               // pending nodes to visit
+    // internal state
+    NWeight[Nd] minDistanceByNd; // maps currentNds minimum distance from visited to firstNd
+    Nds currentNds;              // current nodes
+    Nds pendingNds;              // pending nodes to visit
+
+    // filters
+    const Lang[] langs;         // languages to match
+    const Role[] roles;         // roles to match
+    const Origin[] origins;     // origins to match
 }
 
 Walk walk(Graph graph, Nd start)
