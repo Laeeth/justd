@@ -33,6 +33,10 @@ enum Sense:ubyte
     nounAbstract,
 
     nounCollective,
+    nounCollectivePeople,
+    nounCollectiveThings,
+    nounCollectiveCreatures,
+
     nounRegular,
     nounIrregular,
 
@@ -87,7 +91,7 @@ enum Sense:ubyte
 
     population,
 
-    name,                   /// proper name
+    name, properNoun = name, properName = properNoun, /// name, or proper noun
     nameMale,               /// proper name
     nameFemale,             /// proper name
     surname,                /// proper surname
@@ -345,6 +349,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nounAbstract: return `abstract noun`;
         case nounConcrete: return `concrete noun`;
         case nounCollective: return `collective noun`;
+        case nounCollectivePeople: return `collective noun people`;
+        case nounCollectiveThings: return `collective noun things`;
+        case nounCollectiveCreatures: return `collective noun creatures`;
         case nounRegular: return `regular noun`;
         case nounIrregular: return `irregular noun`;
 
@@ -707,6 +714,9 @@ import predicates: of;
                                       nounAbstract,
                                       nounConcrete,
                                       nounCollective,
+                                      nounCollectivePeople,
+                                      nounCollectiveThings,
+                                      nounCollectiveCreatures,
                                       nounRegular,
                                       nounIrregular,
                                       nounPlural,
