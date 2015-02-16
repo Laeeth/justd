@@ -221,17 +221,26 @@ struct Walk
         import std.range: front, popFront;
         Nds pendingNds;
 
-        foreach (currentNd; frontNds)
+        foreach (frontNd; frontNds)
         {
-            foreach (currentLn; graph.lnsOf(currentNd, roles, origins))
+            foreach (frontLn; graph.lnsOf(frontNd, roles, origins))
             {
-                foreach (nextNd; graph[currentLn].actors[]
-                                                 .filter!(actor =>
-                                                          actor.raw !in minDistanceByNd)
-                                                 .map!(actor => actor.raw))
+                foreach (nextNd; graph[frontLn].actors[]
+                                               .map!(actor => actor.raw)
+                                               .filter!(actor =>
+                                                        actor !in minDistanceByNd))
                 {
                     pendingNds ~= nextNd;
-                    minDistanceByNd[nextNd] = 0;
+                    const minDistance = minDistanceByNd[frontNd] * graph[frontLn].nweight;
+                    if (auto minDistancePtr = nextNd in minDistanceByNd)
+                    {
+                        import std.algorithm: min;
+                        *minDistancePtr = min(*minDistancePtr, minDistance);
+                    }
+                    else
+                    {
+                        minDistanceByNd[nextNd] = minDistance;
+                    }
                 }
             }
         }

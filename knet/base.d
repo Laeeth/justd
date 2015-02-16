@@ -387,6 +387,8 @@ struct Link
         this.origin = origin;
     }
 
+    pure:
+
     this(Origin origin = Origin.unknown)
     {
         this.origin = origin;
