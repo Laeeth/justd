@@ -231,15 +231,15 @@ struct Walk
                                                         actor !in connectivenessByNd))
                 {
                     pendingNds ~= nextNd;
-                    const minDistance = connectivenessByNd[frontNd] * graph[frontLn].nweight;
-                    if (auto minDistancePtr = nextNd in connectivenessByNd)
+                    const connectiveness = connectivenessByNd[frontNd] * graph[frontLn].nweight;
+                    if (auto nextConnectiveness = nextNd in connectivenessByNd)
                     {
-                        import std.algorithm: min;
-                        *minDistancePtr = min(*minDistancePtr, minDistance);
+                        import std.algorithm: max;
+                        *nextConnectiveness = max(*nextConnectiveness, connectiveness);
                     }
                     else
                     {
-                        connectivenessByNd[nextNd] = minDistance;
+                        connectivenessByNd[nextNd] = connectiveness;
                     }
                 }
             }
