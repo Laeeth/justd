@@ -37,12 +37,12 @@ int main(string[] args)
         saveCache = true;
     }
 
-    const cachePath = "~/.cache";
-
     auto testGraph = new Graph();
     testGraph.testAll;
 
     auto graph = new Graph();
+
+    const cachePath = "~/.cache";
 
     // loads
     if (false) graph.loadUniquelySensedLemmas(cachePath);
