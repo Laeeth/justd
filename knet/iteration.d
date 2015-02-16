@@ -209,14 +209,14 @@ struct Walk
         connectivenessByNd[firstNd.raw] = 1; // tag firstNd as visited
     }
 
-    auto front() pure
+    auto front() const
     {
         import std.range: front;
         assert(!frontNds.empty, "Attempting to fetch the front of an empty Walk");
         return frontNds;
     }
 
-    void popFront() pure
+    void popFront()
     {
         import std.range: front, popFront;
         Nds pendingNds;
