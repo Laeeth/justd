@@ -563,7 +563,7 @@ class Graph
         ref inout(Link) opUnary(string s)(const Ln ln) inout if (s == `*`) { return at(ln); }
     }
 
-    Nd ndByLemmaMaybe(in Lemma lemma)
+    Nd ndByLemmaMaybe(in Lemma lemma) pure
     {
         return get(db.ndByLemma, lemma, typeof(return).init);
     }
@@ -600,7 +600,7 @@ class Graph
     }
 
     /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
-    auto ndsOf(S)(S expr) if (isSomeString!S)
+    auto ndsOf(S)(S expr) pure if (isSomeString!S)
     {
         return lemmasOfExpr(expr).map!(lemma => db.ndByLemma[lemma]);
     }
@@ -695,7 +695,7 @@ class Graph
         Returns: either existing specialized lemma or a reference to the newly stored one.
      */
     ref Lemma internLemma(ref Lemma lemma,
-                          bool hasUniqueSense = false) @safe // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
+                          bool hasUniqueSense = false) @safe pure // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
     {
         if (auto lemmas = lemma.expr in db.lemmasByExpr)
         {
@@ -1299,16 +1299,15 @@ class Graph
     }
 
     /** Set Location of Node $(D cix) to $(D location) */
-    void setLocation(Nd nd, in Location location)
+    void setLocation(Nd nd, in Location location) pure
     {
-        writeln(this[nd]);
         assert (nd !in db.locations);
         db.locations[nd] = location;
     }
 
     /** If $(D link) node origins unknown propagate them from $(D link)
         itself. */
-    bool propagateLinkNodes(ref Link link, Nd src, Nd dst)
+    bool propagateLinkNodes(ref Link link, Nd src, Nd dst) pure
     {
         bool done = false;
         if (!link.origin.defined)
