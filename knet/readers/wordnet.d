@@ -74,7 +74,7 @@ bool readWordNetIndexLine(R, N)(Graph graph,
     const words = linestr.split; // TODO Use splitter to optimize
 
     // static if (useRCString) { immutable Lemma lemma = words[0].replace(`_`, ` `); }
-    // else                    { immutable lemma = words[0].replace(`_`, ` `).idup; }
+    // else                    { immutable lemma = words[0].replace(`_`, ` `).to!string; }
     const lemma = words[0].replace(`_`, ` `);
 
     const pos          = words[1]; // Part of Speech (PoS)

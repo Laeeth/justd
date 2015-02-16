@@ -66,7 +66,7 @@ auto decodeMobyIPA(S)(S code) if (isSomeString!S)
         case `,`: return `,`; // secondary stress on the following syllable
         default:
             // dln(`warning: `, code);
-            return code.idup;
+            return code.to!string;
     }
 }
 
@@ -81,15 +81,15 @@ void learnMobyEnglishPronounciations(Graph graph)
     foreach (line; File(path).byLine)
     {
         auto split = line.splitter(' ');
-        string expr;
+        const(char)[] expr;
 
         try
         {
-            expr = split.front.replace(`_`, ` `).idup;
+            expr = split.front.replace(`_`, ` `);
         }
         catch (UnicodeException e)
         {
-            expr = split.front.idup;
+            expr = split.front;
             writeln(`warning: Couldn't decode Moby expression `, expr);
         }
         split.popFront;
@@ -106,11 +106,11 @@ void learnMobyEnglishPronounciations(Graph graph)
                                       .map!(a => a.decodeMobyIPA)
                                       .joiner)
                             .joiner(` `)
-                            .to!string;
+                            .to!(typeof(ipas));
             }
             catch (UTFException e)
             {
-                ipas = split.front.idup;
+                ipas = split.front.to!(typeof(ipas));
                 writeln(`warning: Couldn't decode Moby IPA code `, ipas);
             }
             graph.connect(graph.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.translationOf),
@@ -160,7 +160,7 @@ void learnMobyPoS(Graph graph)
     {
         import knet.separators;
         auto split = line.splitter(roleSeparator);
-        const expr = split.front.idup; split.popFront;
+        const expr = split.front; split.popFront;
         foreach (sense; split.front.map!(a => a.decodeSenseOfMobyPoSCode))
         {
             graph.store(expr, Lang.en, sense, Origin.moby);

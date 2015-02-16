@@ -8,7 +8,7 @@ void learnEnglishWordUsageRanks(Graph graph)
     foreach (line; File(path).byLine)
     {
         auto split = line.splitter(roleSeparator);
-        const rank = split.front.idup; split.popFront;
+        const rank = split.front; split.popFront;
         const word = split.front;
         graph.connect(graph.store(word, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasAttribute),
                       graph.store(rank, Lang.en, Sense.rank, Origin.manual), Origin.manual, 1.0);

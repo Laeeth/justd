@@ -768,12 +768,12 @@ class Graph
                 }
                 auto split = line.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
-                auto firstRefs = store(first.splitter(alternativesSeparator).map!idup,
+                auto firstRefs = store(first.splitter(alternativesSeparator),
                                        firstLang, firstSpecializedSense, origin);
                 if (!first.empty &&
                     !second.empty)
                 {
-                    auto secondRefs = store(second.splitter(alternativesSeparator).map!idup,
+                    auto secondRefs = store(second.splitter(alternativesSeparator),
                                             secondLang, secondSpecializedSense, origin);
                     connectMtoN(firstRefs, role, secondRefs, origin, weight, true);
                 }

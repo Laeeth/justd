@@ -21,14 +21,14 @@ void learnChemicalElements(Graph graph,
         const name = split[0], sym = split[2];
         NWeight weight = 1.0;
 
-        graph.connect(graph.store(name.idup, lang, Sense.nounUncountable, origin),
+        graph.connect(graph.store(name, lang, Sense.nounUncountable, origin),
                       Role(Rel.instanceOf),
                       graph.store(`chemical element`, lang, Sense.nounSingular, origin),
                       origin, weight);
 
-        graph.connect(graph.store(sym.idup, lang, Sense.noun, origin),
+        graph.connect(graph.store(sym, lang, Sense.noun, origin),
                       Role(Rel.symbolFor),
-                      graph.store(name.idup, lang, Sense.noun, origin),
+                      graph.store(name, lang, Sense.noun, origin),
                       origin, weight);
     }
 }

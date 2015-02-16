@@ -171,7 +171,7 @@ Tuple!(Nd, string, Ln) readNELLEntity(S)(Graph graph,
     }
 
     /* context */
-    immutable contextName = entity.front.idup; entity.popFront;
+    const contextName = entity.front.to!string; entity.popFront;
     const context = graph.contextOfName(contextName);
 
     if (entity.empty)
@@ -184,9 +184,9 @@ Tuple!(Nd, string, Ln) readNELLEntity(S)(Graph graph,
 
     /* name */
     // clean cases such as concept:language:english_language
-    immutable entityName = (entity.front.endsWith(`_` ~ contextName) ?
-                            entity.front[0 .. $ - (contextName.length + 1)] :
-                            entity.front).idup;
+    const entityName = (entity.front.endsWith(`_` ~ contextName) ?
+                        entity.front[0 .. $ - (contextName.length + 1)] :
+                        entity.front).to!string;
     entity.popFront;
 
     import knet.lemmas: correctLemmaExpr;
