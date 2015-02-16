@@ -1,6 +1,6 @@
 # TODO
 
-## TODO Skip prepositions:
+## TODO Skip prepositions before noun:
    can be found at location:  "at bank" (en:20%-CN5)
 
 ### TODO Use ~/Knowledge/Svåra Ord (1989)/svaraord.txt
