@@ -77,6 +77,9 @@ struct Ix(T = size_t)
     private T _ix = 0;
 }
 
+/** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
+    See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
+   */
 struct IndexedBy(R, I)
 {
     auto ref opIndex(I ix) inout { return _r[ix]; }
