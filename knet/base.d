@@ -786,14 +786,15 @@ class Graph
     }
 
     /// Get Learn Possible Senses for $(D expr).
-    auto sensesOfExpr(S)(S expr) if (isSomeString!S)
+    auto sensesOfExpr(S)(S expr) @safe pure if (isSomeString!S)
     {
-        return lemmasOfExpr(expr).map!(lemma => lemma.sense).filter!(sense => sense != Sense.unknown);
+        return lemmasOfExpr(expr).map!(lemma => lemma.sense)
+                                 .filter!(sense => sense != Sense.unknown);
     }
 
     /// Get Possible Common Sense for $(D a) and $(D b). TODO N-ary
-    Sense commonSense(S1, S2)(S1 a, S2 b) if (isSomeString!S1 &&
-                                              isSomeString!S2)
+    Sense commonSense(S1, S2)(S1 a, S2 b) @safe pure if (isSomeString!S1 &&
+                                                         isSomeString!S2)
     {
         import std.algorithm: setIntersection;
         auto commonSenses = setIntersection(sensesOfExpr(a).sorted,
