@@ -2014,6 +2014,7 @@ bool generalizes(T)(T general,
     return specializes(special, general);
 }
 
+/** Check if $(D rel) infers Senses. */
 bool infersSense(Rel rel) @safe @nogc pure nothrow
 {
     with (Rel) return rel.of(translationOf,
