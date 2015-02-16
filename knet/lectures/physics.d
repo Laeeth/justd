@@ -17,7 +17,7 @@ void learnChemicalElements(Graph graph,
 {
     foreach (expr; File(`../knowledge/en/chemical_elements.txt`).byLine.filter!(a => !a.empty))
     {
-        auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
+        auto split = expr.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
         const name = split[0], sym = split[2];
         NWeight weight = 1.0;
 

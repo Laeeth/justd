@@ -1,5 +1,7 @@
 module knet.relations;
 
+import knet.senses: Sense;
+
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
@@ -103,6 +105,7 @@ enum Rel:ubyte
                    of B. Some instances of this would be considered meronyms in
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
+    locatedAt = atLocation,
     hasCitizenship,
     livesIn = hasCitizenship,
 
@@ -2015,7 +2018,17 @@ bool generalizes(T)(T general,
 }
 
 /** Check if $(D rel) infers Senses. */
-bool infersSense(Rel rel) @safe @nogc pure nothrow
+Sense infersSense(Rel rel) @safe @nogc pure nothrow
+{
+    switch (rel) with (Rel) with (Sense)
+    {
+        case atLocation: return noun;
+        default: return Sense.unknown;
+    }
+}
+
+/** Check if $(D rel) propagates Sense(s). */
+bool propagatesSense(Rel rel) @safe @nogc pure nothrow
 {
     with (Rel) return rel.of(translationOf,
                              synonymFor,

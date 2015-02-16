@@ -110,7 +110,7 @@ void learnAssociations(S)(Graph graph,
 {
     foreach (expr; File(path).byLine.filter!(a => !a.empty))
     {
-        auto split = expr.findSplit([countSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
+        auto split = expr.findSplit(countSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
         const name = split[0], count = split[2];
 
         if (expr == `ack#2`)

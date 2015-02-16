@@ -744,13 +744,13 @@ class Graph
         {
             foreach (line; File(path).byLine.filter!(a => !a.empty))
             {
-                auto senseFact = line.findSplit([qualifierSeparator]);
+                auto senseFact = line.findSplit(qualifierSeparatorString);
                 const senseCode = senseFact[0];
 
                 Sense firstSpecializedSense = firstSense;
                 Sense secondSpecializedSense = secondSense;
 
-                if (role.rel.infersSense &&
+                if (role.rel.propagatesSense &&
                     !senseCode.empty)
                 {
                     import std.conv: ConvException;
@@ -766,7 +766,7 @@ class Graph
                         /* ok for now */
                     }
                 }
-                auto split = line.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
+                auto split = line.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
                 auto firstRefs = store(first.splitter(alternativesSeparator).map!idup,
                                        firstLang, firstSpecializedSense, origin);
@@ -807,7 +807,7 @@ class Graph
     {
         foreach (expr; File(`../knowledge/` ~ lang.to!string ~ `/opposites.txt`).byLine.filter!(a => !a.empty))
         {
-            auto split = expr.findSplit([roleSeparator]); // TODO allow key to be ElementType of Range to prevent array creation here
+            auto split = expr.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
             const auto first = split[0], second = split[2];
             NWeight weight = 1.0;
             const sense = commonSense(first, second);
