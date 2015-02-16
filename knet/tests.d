@@ -1,6 +1,7 @@
 module knet.tests;
 
 import knet.base;
+import knet.iteration;
 
 /** Run unittests.
  */
@@ -15,6 +16,14 @@ void testAll(Graph graph)
         const ln2 = graph.connect(ndA, Role(Rel.hasAttribute),
                             ndB, Origin.manual, 1.0, true);
         assert(ln1 == ln2);
+
+        foreach (nds; graph.walk(ndA))
+        {
+            foreach (nd; nds)
+            {
+                writeln(graph[nd]);
+            }
+        }
     }
 
     // symmetric link should be reused in reverse order
