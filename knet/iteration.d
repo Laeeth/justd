@@ -173,7 +173,7 @@ auto translationsOf(S)(Graph graph,
     return nodes;
 }
 
-/** Breadth-First Graph Walker (Traverser)
+/** Graph Walk(er) (Traverser)
     Modelled as an (Input Range) of Nds.
 */
 struct Walk
@@ -247,9 +247,12 @@ private:
     const Origin[] origins;     // origins to match
 }
 
-Walk walk(Graph graph, Nd start) pure
+Walk walk(Graph graph, Nd start,
+          Lang[] langs = [],
+          Role[] roles = [],
+          Origin[] origins = []) pure
 {
-    auto range = typeof(return)(graph, start);
+    auto range = typeof(return)(graph, start, langs, roles, origins);
     return range;
 }
 alias traverse = walk;
