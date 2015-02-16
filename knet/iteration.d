@@ -255,7 +255,7 @@ Walk walk(Graph graph, Nd start) pure
 alias traverse = walk;
 
 auto anagramsOf(S)(Graph graph,
-                   S expr) if (isSomeString!S)
+                   S expr) pure if (isSomeString!S)
 {
     const lsWord = expr.sorted; // letter-sorted expr
     return graph.db.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
@@ -264,7 +264,7 @@ auto anagramsOf(S)(Graph graph,
 
 /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
 auto derangedAnagramsOf(S)(Graph graph,
-                           S expr) if (isSomeString!S)
+                           S expr) pure if (isSomeString!S)
 {
     return graph.anagramsOf(expr);
 }
@@ -277,7 +277,7 @@ auto synonymsOf(S)(Graph graph,
                    S expr,
                    Lang lang = Lang.unknown,
                    Sense sense = Sense.unknown,
-                   bool withSameSyllableCount = false) if (isSomeString!S)
+                   bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
     return graph.ndsOf(expr, lang, sense);
 }
