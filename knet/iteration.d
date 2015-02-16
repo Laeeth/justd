@@ -178,6 +178,8 @@ auto translationsOf(S)(Graph graph,
 */
 struct Walk
 {
+    pure:
+
     enum Order { breadFirst, nearestFirst } // TODO use
 
     this(Graph graph,
@@ -245,7 +247,7 @@ private:
     const Origin[] origins;     // origins to match
 }
 
-Walk walk(Graph graph, Nd start)
+Walk walk(Graph graph, Nd start) pure
 {
     auto range = typeof(return)(graph, start);
     return range;
