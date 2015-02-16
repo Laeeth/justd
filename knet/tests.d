@@ -11,15 +11,13 @@ void testAll(Graph graph)
     {
         const ndA = graph.store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
         const ndB = graph.store(`3200`, Lang.sv, Sense.population, Origin.manual);
-        const ln1 = graph.connect(ndA, Role(Rel.hasAttribute),
-                            ndB, Origin.manual, 1.0, true);
-        const ln2 = graph.connect(ndA, Role(Rel.hasAttribute),
-                            ndB, Origin.manual, 1.0, true);
+        const ln1 = graph.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
+        const ln2 = graph.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
         assert(ln1 == ln2);
 
-        foreach (nds; graph.walk(ndA))
+        foreach (const nds; graph.walk(ndA))
         {
-            foreach (nd; nds)
+            foreach (const nd; nds)
             {
                 writeln(graph[nd]);
             }

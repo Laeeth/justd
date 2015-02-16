@@ -192,51 +192,52 @@ struct Walk
         this.roles = roles;
         this.origins = origins;
 
-        pendingNds ~= firstNd.raw;
+        frontNds ~= firstNd.raw;
         minDistanceByNd[firstNd.raw] = 0; // tag firstNd as visited
     }
 
     auto front() pure
     {
         import std.range: front;
-        assert(!currentNds.empty, "Attempting to fetch the front of an empty Walk");
-        return currentNds;
+        assert(!frontNds.empty, "Attempting to fetch the front of an empty Walk");
+        return frontNds;
     }
 
     void popFront() pure
     {
         import std.range: front, popFront;
-        currentNds = pendingNds;
+        Nds pendingNds;
 
-        pendingNds.length = 0;
-        foreach (currentNd; currentNds)
+        foreach (currentNd; frontNds)
         {
             foreach (currentLn; graph.lnsOf(currentNd))
             {
-                foreach (pendingNd; graph[currentLn].actors[].filter!(actor =>
-                                                                      actor.raw !in minDistanceByNd)
-                                                    .map!(actor => actor.raw))
+                foreach (nextNd; graph[currentLn].actors[]
+                                                 .filter!(actor =>
+                                                          actor.raw !in minDistanceByNd)
+                                                 .map!(actor => actor.raw))
                 {
-                    pendingNds ~= pendingNd;
-                    minDistanceByNd[pendingNd] = 0;
+                    pendingNds ~= nextNd;
+                    minDistanceByNd[nextNd] = 0;
                 }
             }
         }
+
+        frontNds = pendingNds;
     }
 
     bool empty() const
     {
         import std.range: empty;
-        return pendingNds.empty;
+        return frontNds.empty;
     }
 
 private:
     Graph graph;
 
     // internal state
-    NWeight[Nd] minDistanceByNd; // maps currentNds minimum distance from visited to firstNd
-    Nds currentNds;              // current nodes
-    Nds pendingNds;              // pending nodes to visit
+    NWeight[Nd] minDistanceByNd; // maps frontNds minimum distance from visited to firstNd
+    Nds frontNds;              // current nodes
 
     // filters
     const Lang[] langs;         // languages to match
