@@ -2035,21 +2035,6 @@ bool propagatesSense(Rel rel) @safe @nogc pure nothrow
                              antonymFor);
 }
 
-/** Type-Safe Index into RandomAccessRange $(D R). */
-struct Idx(R)
-{
-    @safe pure: @nogc nothrow:
-
-    this(Idx idx = nullIx)
-    {
-        this._idx = idx;
-    }
-
-    alias _idx this;
-private:
-    Idx _idx = 0;
-}
-
 /** Type-Safe Directed Reference to $(D T). */
 struct Ref(T)
 {
