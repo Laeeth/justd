@@ -68,3 +68,38 @@ template New(T) if (is(T == class))
 /*     class C { int x, y; } */
 /*     assert(New!C == new C); */
 /* } */
+
+struct Ix(T = size_t)
+{
+    @safe pure: @nogc nothrow:
+    this(T ix) { this._ix = ix; }
+    alias _ix this;
+    private T _ix = 0;
+}
+
+struct IndexedBy(R, I)
+{
+    auto ref opIndex(I ix) inout { return _r[ix]; }
+    auto ref opSlice(I lower, I upper) inout { return _r[lower .. upper]; }
+    R _r;
+    alias _r this;
+}
+
+auto indexedBy(I, R)(R range)
+{
+    return IndexedBy!(R, I)(range);
+}
+
+unittest
+{
+    import std.stdio;
+    auto x = [1, 2, 3];
+    alias I = int;
+    auto ix = x.indexedBy!I;
+    ix[0] = 11;
+
+    alias J = Ix!size_t;
+    auto jx = x.indexedBy!J;
+    jx[J(0)] = 11;              // should compile
+    jx[0] = 11;                 // how can I make this not compile?
+}
