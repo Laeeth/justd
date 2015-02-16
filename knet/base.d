@@ -574,7 +574,7 @@ class Graph
     Nds ndsByLemmaDirect(S)(S expr,
                             Lang lang,
                             Sense sense,
-                            Ctx context) if (isSomeString!S)
+                            Ctx context) pure if (isSomeString!S)
     {
         typeof(return) nodes;
         const lemma = Lemma(expr, lang, sense, context);
@@ -584,15 +584,18 @@ class Graph
         }
         else
         {
-            // try to lookup parts of word
-            auto wordsSplit = wordnet.findWordsSplit(expr, [lang]); // split in parts
-            if (wordsSplit.length >= 2)
+            static if (false) // TODO Enable this logic by moving findWordsSplit to Graph
             {
-                import std.algorithm.iteration: joiner;
-                if (const lemmaFixedNd = Lemma(wordsSplit.joiner(`_`).to!S,
-                                               lang, sense, context) in db.ndByLemma)
+                // try to lookup parts of word
+                const wordsSplit = wordnet.findWordsSplit(expr, [lang]); // split in parts
+                if (wordsSplit.length >= 2)
                 {
-                    nodes ~= *lemmaFixedNd;
+                    import std.algorithm.iteration: joiner;
+                    if (const lemmaFixedNd = Lemma(wordsSplit.joiner(`_`).to!S,
+                                                   lang, sense, context) in db.ndByLemma)
+                    {
+                        nodes ~= *lemmaFixedNd;
+                    }
                 }
             }
         }
@@ -612,7 +615,7 @@ class Graph
     Nds ndsOf(S)(S expr,
                  Lang lang,
                  Sense sense = Sense.unknown,
-                 Ctx context = anyContext) if (isSomeString!S)
+                 Ctx context = anyContext) pure if (isSomeString!S)
     {
         typeof(return) nodes;
 

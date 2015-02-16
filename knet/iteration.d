@@ -11,7 +11,7 @@ import knet.base;
 auto lnsOf(Graph graph,
            Node node,
            RelDir dir = RelDir.any,
-           Role role = Role.init)
+           Role role = Role.init) pure
 {
     return node.links[]
                .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize match(RelDir, RelDir)
@@ -25,7 +25,7 @@ auto lnsOf(Graph graph,
 auto lnsOf(Graph graph,
            Nd nd,
            Role role = Role.init,
-           Origin[] origins = [])
+           Origin[] origins = []) pure
 {
     import std.algorithm.searching: canFind;
     return graph[nd].links[]
@@ -40,7 +40,7 @@ auto lnsOf(Graph graph,
 auto linksOf(Graph graph,
              Node node,
              RelDir dir = RelDir.any,
-             Role role = Role.init)
+             Role role = Role.init) pure
 {
     return graph.lnsOf(node, dir, role).map!(ln => graph[ln]);
 }
@@ -50,7 +50,7 @@ auto linksOf(Graph graph,
 auto linksOf(Graph graph,
              Nd nd,
              RelDir dir = RelDir.any,
-             Role role = Role.init)
+             Role role = Role.init) pure
 {
     return graph.linksOf(graph[nd], dir, role);
 }
@@ -62,7 +62,7 @@ auto nnsOf(Graph graph,
            Nd nd,
            Rel rel,
            Lang[] dstLangs = [],
-           Origin[] origins = [])
+           Origin[] origins = []) pure
 {
     import std.algorithm.searching: canFind;
     debug writeln("nd: ", nd);
@@ -109,7 +109,7 @@ Nds rhymesOf(S)(Graph graph,
                 Lang[] langs = [],
                 Origin[] origins = [],
                 size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
-                bool withSameSyllableCount = false) if (isSomeString!S)
+                bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
     foreach (srcNd; graph.ndsOf(expr)) // for each interpretation of expr
     {
@@ -142,8 +142,8 @@ Nds rhymesOf(S)(Graph graph,
     connectedness in that language.
 */
 NWeight[Lang] languagesOf(R)(Graph graph,
-                             R text) if (isIterable!R &&
-                                         isSomeString!(ElementType!R))
+                             R text) pure if (isIterable!R &&
+                                              isSomeString!(ElementType!R))
 {
     typeof(return) hist;
     foreach (word; text)
@@ -164,7 +164,7 @@ auto translationsOf(S)(Graph graph,
                        S expr,
                        Lang lang = Lang.unknown,
                        Sense sense = Sense.unknown,
-                       Lang[] toLangs = []) if (isSomeString!S)
+                       Lang[] toLangs = []) pure if (isSomeString!S)
 {
     auto nodes = graph.ndsOf(expr, lang, sense);
     // en => sv:
@@ -174,10 +174,12 @@ auto translationsOf(S)(Graph graph,
 }
 
 /** Breadth-First Graph Walker (Traverser)
-    Modelled as an (Input Range).
+    Modelled as an (Input Range) of Nds.
 */
 struct Walk
 {
+    enum Order { breadFirst, nearestFirst } // TODO use
+
     this(Graph graph,
          const Nd firstNd,
          Lang[] langs = [],
@@ -194,14 +196,14 @@ struct Walk
         minDistanceByNd[firstNd.raw] = 0; // tag firstNd as visited
     }
 
-    auto front()
+    auto front() pure
     {
         import std.range: front;
         assert(!currentNds.empty, "Attempting to fetch the front of an empty Walk");
         return currentNds;
     }
 
-    void popFront()
+    void popFront() pure
     {
         import std.range: front, popFront;
         currentNds = pendingNds;
@@ -209,13 +211,14 @@ struct Walk
         pendingNds.length = 0;
         foreach (currentNd; currentNds)
         {
-            auto lns = graph.lnsOf(currentNd);
-            foreach (ln; lns)
+            foreach (currentLn; graph.lnsOf(currentNd))
             {
-                foreach (nd2; graph[ln].actors[].filter!(actor => actor.raw !in minDistanceByNd))
+                foreach (pendingNd; graph[currentLn].actors[].filter!(actor =>
+                                                                      actor.raw !in minDistanceByNd)
+                                                    .map!(actor => actor.raw))
                 {
-                    pendingNds ~= nd2.raw;
-                    minDistanceByNd[nd2.raw] = 0;
+                    pendingNds ~= pendingNd;
+                    minDistanceByNd[pendingNd] = 0;
                 }
             }
         }
