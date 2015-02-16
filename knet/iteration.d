@@ -24,15 +24,26 @@ auto lnsOf(Graph graph,
  */
 auto lnsOf(Graph graph,
            Nd nd,
-           Role role = Role.init,
-           Origin[] origins = []) pure
+           const Role[] roles = [],
+           const Origin[] origins = []) pure
 {
     import std.algorithm.searching: canFind;
     return graph[nd].links[]
-                    .filter!(ln => (graph[ln].role == role &&
+                    .filter!(ln => ((roles.empty ||
+                                     roles.canFind(graph[ln].role)) &&
                                     (origins.empty ||
                                      origins.canFind(graph[ln].origin))))
                     .map!(ln => ln.raw);
+}
+
+/** Get Links References of $(D nd) type $(D rel) learned from $(D origins).
+ */
+auto lnsOf(Graph graph,
+           Nd nd,
+           Role role,
+           const Origin[] origins = []) pure
+{
+    return graph.lnsOf(nd, [role], origins);
 }
 
 /** Get Links of Node $(D node).
@@ -61,8 +72,8 @@ auto linksOf(Graph graph,
 auto nnsOf(Graph graph,
            Nd nd,
            Rel rel,
-           Lang[] dstLangs = [],
-           Origin[] origins = []) pure
+           const Lang[] dstLangs = [],
+           const Origin[] origins = []) pure
 {
     import std.algorithm.searching: canFind;
     debug writeln("nd: ", nd);
@@ -107,7 +118,7 @@ auto nnsOf(Graph graph,
 Nds rhymesOf(S)(Graph graph,
                 S expr,
                 Lang[] langs = [],
-                Origin[] origins = [],
+                const Origin[] origins = [],
                 size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                 bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
@@ -184,9 +195,9 @@ struct Walk
 
     this(Graph graph,
          const Nd firstNd,
-         Lang[] langs = [],
-         Role[] roles = [],
-         Origin[] origins = [])
+         const Lang[] langs = [],
+         const Role[] roles = [],
+         const Origin[] origins = [])
     {
         this.graph = graph;
 
@@ -212,7 +223,7 @@ struct Walk
 
         foreach (currentNd; frontNds)
         {
-            foreach (currentLn; graph.lnsOf(currentNd))
+            foreach (currentLn; graph.lnsOf(currentNd, roles, origins))
             {
                 foreach (nextNd; graph[currentLn].actors[]
                                                  .filter!(actor =>
@@ -248,8 +259,8 @@ private:
 }
 
 Walk walk(Graph graph, Nd start,
-          Lang[] langs = [],
-          Role[] roles = [],
+          const Lang[] langs = [],
+          const Role[] roles = [],
           Origin[] origins = []) pure
 {
     auto range = typeof(return)(graph, start, langs, roles, origins);
