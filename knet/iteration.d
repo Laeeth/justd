@@ -174,32 +174,45 @@ auto translationsOf(S)(Graph graph,
 }
 
 /** Network Walker (Input Range).
-    TODO: Returns Path
+    TODO: Returns Step
 */
 struct Walk
 {
-    this(Graph graph, Nd first)
+    this(Graph graph, Nd firstNd)
     {
         this.graph = graph;
-        first = first;
-        current = first;
+        firstNd = firstNd;
+        currentNd = firstNd;
     }
 
     auto front()
     {
-        return graph.lnsOf(graph[current]);
+        return currentNd;
     }
 
     void popFront()
     {
+        import std.range: front, popFront;
+        if (!pending.empty)
+        {
+            currentNd = pending.front;
+            pending.popFront;
+        }
+        else
+        {
+            currentNd = Nd.asUndefined;
+        }
+        // return graph.lnsOf(graph[currentNd]);
     }
 
     bool empty() const { return true; }
 
     Graph graph;
-    Nd first;
-    Nd current;
-    NWeight[Nd] dists;
+    Nd firstNd;                 // walk start
+    Nd currentNd;               // current walk positin
+    NWeight[Nd] minDistanceByNd; // maps current minimum distance from visited to firstNd
+
+    Nds pending;               // pending nodes to visit
 }
 
 Walk walk(Graph graph, Nd start)
