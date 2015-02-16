@@ -13,23 +13,27 @@ void testAll(Graph graph)
         enum role = Role(Rel.any);
         enum origin = Origin.manual;
 
-        const ndA = graph.store(`A`, lang, sense, origin);
-        const ndB1 = graph.store(`B1`, lang, sense, origin);
-        const ndB2 = graph.store(`B2`, lang, sense, origin);
-        const ndC = graph.store(`C`, lang, sense, origin);
+        auto ndA = graph.store(`A`, lang, sense, origin);
+        auto ndB1 = graph.store(`B1`, lang, sense, origin);
+        auto ndB2 = graph.store(`B2`, lang, sense, origin);
+        auto ndC = graph.store(`C`, lang, sense, origin);
 
-        const lnAB1 = graph.connect(ndA, role, ndB1, origin, 0.5, true);
-        const lnAB2 = graph.connect(ndA, role, ndB2, origin, 0.5, true);
-        const lnB1C = graph.connect(ndB1, role, ndC, origin, 0.5, true);
-        const lnB2C = graph.connect(ndB2, role, ndC, origin, 0.5, true);
+        graph.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
+        graph.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
 
-        foreach (const nds; graph.walk(ndA))
+        auto walk = graph.walk(ndA);
+        foreach (const nds; walk) // for each "connectivity expansion"
         {
             foreach (const nd; nds)
             {
                 writeln(graph[nd]);
             }
         }
+
+        writeln("Connectiveness with ndA ", walk.connectivenessByNd[ndA]);
+        writeln("Connectiveness with ndB1 ", walk.connectivenessByNd[ndB1]);
+        writeln("Connectiveness with ndB2 ", walk.connectivenessByNd[ndB2]);
+        writeln("Connectiveness with ndC ", walk.connectivenessByNd[ndC]);
     }
 
     // link should be reused

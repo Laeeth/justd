@@ -206,7 +206,7 @@ struct Walk
         this.origins = origins;
 
         frontNds ~= firstNd.raw;
-        minDistanceByNd[firstNd.raw] = 0; // tag firstNd as visited
+        connectivenessByNd[firstNd.raw] = 1; // tag firstNd as visited
     }
 
     auto front() pure
@@ -228,18 +228,18 @@ struct Walk
                 foreach (nextNd; graph[frontLn].actors[]
                                                .map!(actor => actor.raw)
                                                .filter!(actor =>
-                                                        actor !in minDistanceByNd))
+                                                        actor !in connectivenessByNd))
                 {
                     pendingNds ~= nextNd;
-                    const minDistance = minDistanceByNd[frontNd] * graph[frontLn].nweight;
-                    if (auto minDistancePtr = nextNd in minDistanceByNd)
+                    const minDistance = connectivenessByNd[frontNd] * graph[frontLn].nweight;
+                    if (auto minDistancePtr = nextNd in connectivenessByNd)
                     {
                         import std.algorithm: min;
                         *minDistancePtr = min(*minDistancePtr, minDistance);
                     }
                     else
                     {
-                        minDistanceByNd[nextNd] = minDistance;
+                        connectivenessByNd[nextNd] = minDistance;
                     }
                 }
             }
@@ -254,11 +254,13 @@ struct Walk
         return frontNds.empty;
     }
 
+    // internal state
+    NWeight[Nd] connectivenessByNd; // maps frontNds minimum distance from visited to firstNd
+
 private:
     Graph graph;
 
     // internal state
-    NWeight[Nd] minDistanceByNd; // maps frontNds minimum distance from visited to firstNd
     Nds frontNds;              // current nodes
 
     // filters

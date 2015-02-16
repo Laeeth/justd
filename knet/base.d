@@ -1060,9 +1060,9 @@ class Graph
 
     /** Directed Connect Many Sources $(D srcs) to Many Destinations $(D dsts).
      */
-    Lns connectMtoN(S, D)(S srcs,
+    Lns connectMtoN(S, D)(const S srcs,
                           Role role,
-                          D dsts,
+                          const D dsts,
                           Origin origin,
                           NWeight weight = 1.0,
                           bool checkExisting = true,
@@ -1121,17 +1121,16 @@ class Graph
     alias connectStar = connectAll;
 
     /** Fan-Out Connect $(D first) to Every in $(D rest). */
-    Lns connect1toM(R)(Nd first,
-                       Role role,
-                       R rest,
-                       Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+    Lns connect1toM(R)(Nd first, Role role, const R rest,
+                       Origin origin, NWeight weight = 1.0,
+                       bool checkExisting = true) if (isIterableOf!(R, Nd))
     {
         typeof(return) lns;
         foreach (you; rest)
         {
             if (first != you)
             {
-                lns ~= connect(first, role, you, origin, weight, false);
+                lns ~= connect(first, role, you, origin, weight, checkExisting);
             }
         }
         return lns;
@@ -1139,17 +1138,16 @@ class Graph
     alias connectFanOut = connect1toM;
 
     /** Fan-In Connect $(D first) to Every in $(D rest). */
-    Lns connectMto1(R)(R rest,
-                       Role role,
-                       Nd first,
-                       Origin origin, NWeight weight = 1.0) if (isIterableOf!(R, Nd))
+    Lns connectMto1(R)(const R rest, Role role, Nd first,
+                       Origin origin, NWeight weight = 1.0,
+                       bool checkExisting = true) if (isIterableOf!(R, Nd))
     {
         typeof(return) lns;
         foreach (you; rest)
         {
             if (first != you)
             {
-                lns ~= connect(you, role, first, origin, weight);
+                lns ~= connect(you, role, first, origin, weight, checkExisting);
             }
         }
         return lns;
@@ -1157,7 +1155,7 @@ class Graph
     alias connectFanIn = connectMto1;
 
     /** Cyclic Connect Every $(D ring) to a ring. */
-    Lns connectCycle(R)(R ring,
+    Lns connectCycle(R)(const R ring,
                         Rel rel,
                         Origin origin,
                         NWeight weight = 1.0,
