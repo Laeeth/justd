@@ -110,7 +110,7 @@ BFWalk bfWalk(Graph graph, Nd start,
 */
 struct DijkstraWalk(bool useArray)
 {
-    import std.typecons: tuple, Tuple;
+    import std.typecons: Tuple;
     // TODO enable pure:
 
     alias Visit = Tuple!(NWeight, Nd);
@@ -129,6 +129,8 @@ struct DijkstraWalk(bool useArray)
         this.origins = origins;
 
         untraversedNds ~= startNd.raw;
+
+        import std.typecons: tuple;
         mapByNd[startNd.raw] = tuple(0, // TODO parameterize on distance function
                                      Nd.asUndefined); // first node has parent
     }
