@@ -831,7 +831,7 @@ class Graph
         const origin = Origin.manual;
         auto all = [store(forward, lang, Sense.verbInfinitive, origin),
                     store(backward, lang, Sense.verbPastParticiple, origin)];
-        return connectAll(Role(Rel.reversionOf), all.filter!(a => a.defined), lang, origin);
+        return connectAll(Role(Rel.reversionOf), all.filter!(a => a.defined), origin);
     }
 
     /** Learn that $(D first) in language $(D firstLang) is etymologically
@@ -858,7 +858,7 @@ class Graph
         all ~= store(infinitive, lang, Sense.verbIrregularInfinitive, origin);
         all ~= store(pastSimple, lang, Sense.verbIrregularPast, origin);
         all ~= store(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
-        return connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), lang, origin);
+        return connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), origin);
     }
 
     /** Learn English Acronym.
@@ -951,7 +951,7 @@ class Graph
                     tryStore(present, lang, Sense.verbPresent, origin),
                     tryStore(pastSimple, lang, Sense.verbPast, origin),
                     tryStore(pastParticiple, lang, Sense.verbPastParticiple, origin)];
-        connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), lang, origin);
+        connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), origin);
     }
 
     /** Learn Adjective in language $(D lang).
@@ -969,7 +969,7 @@ class Graph
                     tryStore(superlative, lang, Sense.adjectiveSuperlative, origin),
                     tryStore(elative, lang, Sense.adjectiveElative, origin),
                     tryStore(exzessive, lang, Sense.adjectiveExzessive, origin)];
-        connectAll(Role(Rel.formOfAdjective), all.filter!(a => a.defined), lang, origin);
+        connectAll(Role(Rel.formOfAdjective), all.filter!(a => a.defined), origin);
     }
 
     void learnAdjective(S)(Lang lang,
@@ -1091,7 +1091,6 @@ class Graph
     */
     Lns connectAll(R)(Role role,
                       R all,
-                      Lang lang,
                       Origin origin,
                       NWeight weight = 1.0) if (isIterableOf!(R, Nd))
         in { assert(role.rel.isSymmetric); }
