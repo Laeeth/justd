@@ -29,10 +29,8 @@ auto lnsOf(Graph graph,
 {
     import std.algorithm.searching: canFind;
     return graph[nd].links[]
-                    .filter!(ln => ((roles.empty ||
-                                     roles.canFind(graph[ln].role)) &&
-                                    (origins.empty ||
-                                     origins.canFind(graph[ln].origin))))
+                    .filter!(ln => ((roles.empty || roles.canFind(graph[ln].role)) &&
+                                    (origins.empty || origins.canFind(graph[ln].origin))))
                     .map!(ln => ln.raw);
 }
 
