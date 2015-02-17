@@ -21,7 +21,7 @@ void testAll(Graph graph)
         graph.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
         graph.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
 
-        auto walk = graph.walk(ndA);
+        auto walk = graph.bfWalk(ndA);
         foreach (const nds; walk) // for each "connectivity expansion"
         {
             foreach (const nd; nds)
