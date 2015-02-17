@@ -103,10 +103,10 @@ auto nnsOf(Graph graph,
     return graph.lnsOf(nd, roles, origins)
                 .map!(ln =>
                       graph[ln].actors[]
-                               .filter!(actor => (actor.ix != nd.ix &&
+                               .filter!(actorNd => (actorNd.ix != nd.ix &&
                                                   // TODO functionize to Lemma.ofLang
                                                   (dstLangs.empty ||
-                                                   dstLangs.canFind(graph[actor].lemma.lang)))))
+                                                   dstLangs.canFind(graph[actorNd].lemma.lang)))))
                 .joiner(); // no self
 }
 
@@ -224,11 +224,12 @@ struct BFWalk
             foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
             {
                 foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
-                                                     .map!(actor => actor.raw)
-                                                     .filter!(actor =>
-                                                              (langs.empty || langs.canFind(graph[actor].lemma.lang)) &&
-                                                              (senses.empty || senses.canFind(graph[actor].lemma.sense)) &&
-                                                              actor !in connectivenessByNd))
+                                                     .map!(actorNd => actorNd.raw)
+                                                     .filter!(actorNd =>
+                                                              actorNd != frontNd &&
+                                                              (langs.empty || langs.canFind(graph[actorNd].lemma.lang)) &&
+                                                              (senses.empty || senses.canFind(graph[actorNd].lemma.sense)) &&
+                                                              actorNd !in connectivenessByNd))
                 {
                     pendingNds ~= nextNd;
                     const connectiveness = connectivenessByNd[frontNd] * graph[frontLn].nweight;
@@ -326,6 +327,8 @@ struct DijkstraWalk(bool useArray)
     {
         assert(!untraversedNds.empty, "Can't pop front from an empty DijkstraWalk");
 
+        writeln(untraversedNds.length);
+
         import std.range: moveFront;
         const frontNd = untraversedNds.moveFront;
 
@@ -333,10 +336,11 @@ struct DijkstraWalk(bool useArray)
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
             foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
-                                                 .map!(actor => actor.raw)
-                                                 .filter!(actor =>
-                                                          (langs.empty || langs.canFind(graph[actor].lemma.lang)) &&
-                                                          (senses.empty || senses.canFind(graph[actor].lemma.sense))))
+                                                 .map!(actorNd => actorNd.raw)
+                                                 .filter!(actorNd =>
+                                                          actorNd != frontNd &&
+                                                          (langs.empty || langs.canFind(graph[actorNd].lemma.lang)) &&
+                                                          (senses.empty || senses.canFind(graph[actorNd].lemma.sense))))
             {
                 const newDist = mapByNd[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
                 if (auto hit = nextNd in mapByNd)
