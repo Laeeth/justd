@@ -13,8 +13,10 @@ unittest
     a ~= 2;
     a ~= 4;
 
+    import std.stdio;
+
+    writeln(a[]);
     import std.algorithm.sorting: partialSort;
     a[].partialSort(0);
-    import std.stdio;
     writeln(a[]);
 }
