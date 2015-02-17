@@ -311,8 +311,8 @@ struct DijkstraWalk
         this.origins = origins;
 
         untraversedNds ~= startNd.raw;
-        mapByNd[startNd.raw] = tuple(0, // zero distance
-                                               Nd.asUndefined); // no parent Nd
+        mapByNd[startNd.raw] = tuple(0, // TODO parameterize on distance function
+                                     Nd.asUndefined); // first node has parent
     }
 
     auto front() const
@@ -384,7 +384,7 @@ private:
     // filters
     // TODO group into structure
     const Lang[] langs;         // languages to match
-    const Sense[] senses;       // sense to match
+    const Sense[] senses;       // senses to match
 
     const Role[] roles;         // roles to match
     const Origin[] origins;     // origins to match
