@@ -289,10 +289,10 @@ BFWalk bfWalk(Graph graph, Nd start,
     closest parent node) to walk starting point (startNd). This can be used to
     reconstruct the closest path from any given Nd to startNd.
 */
-struct DijkstraWalk
+struct DijkstraWalk(bool useArray)
 {
     import std.typecons: tuple, Tuple;
-    pure:
+    // TODO enable pure:
 
     alias Visit = Tuple!(NWeight, Nd);
 
@@ -357,8 +357,8 @@ struct DijkstraWalk
         }
 
         import std.algorithm.sorting: partialSort;
-        untraversedNds.partialSort!((aNd, bNd) => (mapByNd[aNd][0] <
-                                                   mapByNd[bNd][0]))(savedLength);
+        untraversedNds[].partialSort!((aNd, bNd) => (mapByNd[aNd][0] <
+                                                     mapByNd[bNd][0]))(savedLength);
     }
 
     bool empty() const
@@ -372,8 +372,17 @@ struct DijkstraWalk
 private:
     Graph graph;
 
+    static if (useArray)
+    {
+        import std.container: Array;
+        Array!Nd untraversedNds; // sorted by smallest distance to startNd
+    }
+    else
+    {
+        Nds untraversedNds; // sorted by smallest distance to startNd
+    }
+
     // TODO how can I make use of BinaryHeap here instead?
-    Nds untraversedNds; // sorted by smallest distance to startNd
     static if (false)
     {
         import std.container.binaryheap: BinaryHeap;
@@ -390,13 +399,13 @@ private:
     const Origin[] origins;     // origins to match
 }
 
-DijkstraWalk dijkstraWalk(Graph graph, Nd start,
-                          const Lang[] langs = [],
-                          const Sense[] senses = [],
-                          const Role[] roles = [],
-                          const Origin[] origins = [])
+auto dijkstraWalk(bool useArray = true)(Graph graph, Nd start,
+                                        const Lang[] langs = [],
+                                        const Sense[] senses = [],
+                                        const Role[] roles = [],
+                                        const Origin[] origins = [])
 {
-    auto range = typeof(return)(graph, start, langs, senses, roles, origins);
+    auto range = DijkstraWalk!(useArray)(graph, start, langs, senses, roles, origins);
     return range;
 }
 
