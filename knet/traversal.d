@@ -108,10 +108,9 @@ BFWalk bfWalk(Graph graph, Nd start,
     closest parent node) to walk starting point (startNd). This can be used to
     reconstruct the closest path from any given Nd to startNd.
 */
-struct DijkstraWalk(bool useArray)
+struct DijkstraWalk
 {
     import std.typecons: Tuple;
-    // TODO enable pure:
 
     alias Visit = Tuple!(NWeight, Nd);
 
@@ -146,8 +145,6 @@ struct DijkstraWalk(bool useArray)
     void popFront()
     {
         assert(!untraversedNds.empty, "Can't pop front from an empty DijkstraWalk");
-
-        writeln(untraversedNds.length);
 
         import std.range: moveFront;
         const frontNd = untraversedNds.moveFront;
@@ -205,15 +202,8 @@ struct DijkstraWalk(bool useArray)
 private:
     Graph graph;
 
-    static if (useArray)
-    {
-        import std.container: Array;
-        Array!Nd untraversedNds; // sorted by smallest distance to startNd
-    }
-    else
-    {
-        Nds untraversedNds; // sorted by smallest distance to startNd
-    }
+    import std.container: Array;
+    Array!Nd untraversedNds; // sorted by smallest distance to startNd
 
     // TODO how can I make use of BinaryHeap here instead?
     static if (false)
@@ -232,12 +222,11 @@ private:
     const Origin[] origins;     // origins to match
 }
 
-auto dijkstraWalk(bool useArray = true)(Graph graph, Nd start,
-                                        const Lang[] langs = [],
-                                        const Sense[] senses = [],
-                                        const Role[] roles = [],
-                                        const Origin[] origins = [])
+DijkstraWalk dijkstraWalk(Graph graph, Nd start,
+                          const Lang[] langs = [],
+                          const Sense[] senses = [],
+                          const Role[] roles = [],
+                          const Origin[] origins = [])
 {
-    auto range = DijkstraWalk!(useArray)(graph, start, langs, senses, roles, origins);
-    return range;
+    return typeof(return)(graph, start, langs, senses, roles, origins);
 }
