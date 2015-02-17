@@ -100,9 +100,9 @@ BFWalk bfWalk(Graph graph, Nd start,
     return range;
 }
 
-/** Nearest First Graph Walk(er) (Traverser).
+/** Nearest First Graph Walker/Traverser Range.
     Similar to Dijkstra's Railroad Algorithm.
-    Modelled as an (Input Range) with ElementType being a Nd.
+    Modelled as a Forward Range with ElementType being a Nd.
 
     Upon iteration completion mapByNd contains a map from node to (distance, and
     closest parent node) to walk starting point (startNd). This can be used to
@@ -189,6 +189,15 @@ struct DijkstraWalk(bool useArray)
     bool empty() const @safe pure nothrow @nogc
     {
         return untraversedNds.empty;
+    }
+
+    // makes this a ForwardRange
+    @property DijkstraWalk save()
+    {
+        typeof(return) copy = this;
+        copy.untraversedNds = this.untraversedNds.dup;
+        copy.mapByNd = this.mapByNd.dup;
+        return copy;
     }
 
     // Nd => tuple(Nd origin distance, parent Nd)
