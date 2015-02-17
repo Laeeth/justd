@@ -530,7 +530,8 @@ auto toHuman(const Rel rel,
     @safe pure
 {
     string[] words;
-    import std.algorithm: array, joiner;
+    import std.array: array;
+    import std.algorithm: joiner;
 
     auto not = negation ? negationIn(targetLang) : null;
     switch (rel) with (Rel) with (Lang)
