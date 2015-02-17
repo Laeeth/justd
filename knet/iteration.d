@@ -217,7 +217,6 @@ struct BFWalk
 
     void popFront()
     {
-        import std.range: front, popFront;
         Nds pendingNds;
 
         foreach (const frontNd; frontNds)
