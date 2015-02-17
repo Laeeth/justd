@@ -15,7 +15,7 @@ struct BFWalk
          const Lang[] langs = [],
          const Sense[] senses = [],
          const Role[] roles = [],
-         const Origin[] origins = [])
+         const Origin[] origins = []) @safe nothrow
     {
         this.graph = graph;
 
@@ -27,7 +27,7 @@ struct BFWalk
         connectivenessByNd[startNd.raw] = 1; // tag startNd as visited
     }
 
-    auto front() const
+    auto front() const @safe pure nothrow @nogc
     {
         import std.range: front;
         assert(!frontNds.empty, "Attempting to fetch the front of an empty Walk");
@@ -43,12 +43,11 @@ struct BFWalk
             foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
             {
                 foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
-                                                     .map!(actorNd => actorNd.raw)
-                                                     .filter!(actorNd =>
-                                                              actorNd != frontNd &&
-                                                              (langs.empty || langs.canFind(graph[actorNd].lemma.lang)) &&
-                                                              (senses.empty || senses.canFind(graph[actorNd].lemma.sense)) &&
-                                                              actorNd !in connectivenessByNd))
+                                                     .filter!(nd =>
+                                                              nd.raw != frontNd &&
+                                                              (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
+                                                              (senses.empty || senses.canFind(graph[nd].lemma.sense)) &&
+                                                              nd.raw !in connectivenessByNd))
                 {
                     pendingNds ~= nextNd;
                     const connectiveness = connectivenessByNd[frontNd] * graph[frontLn].nweight;
@@ -68,7 +67,7 @@ struct BFWalk
         frontNds = pendingNds;
     }
 
-    bool empty() const
+    bool empty() const @safe pure nothrow @nogc
     {
         import std.range: empty;
         return frontNds.empty;
@@ -134,7 +133,7 @@ struct DijkstraWalk(bool useArray)
                                      Nd.asUndefined); // first node has parent
     }
 
-    auto front() const
+    auto front() const @safe pure nothrow
     {
         import std.range: empty;
         assert(!untraversedNds.empty, "Can't fetch front from an empty DijkstraWalk");
@@ -155,11 +154,10 @@ struct DijkstraWalk(bool useArray)
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
             foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
-                                                 .map!(actorNd => actorNd.raw)
-                                                 .filter!(actorNd =>
-                                                          actorNd != frontNd &&
-                                                          (langs.empty || langs.canFind(graph[actorNd].lemma.lang)) &&
-                                                          (senses.empty || senses.canFind(graph[actorNd].lemma.sense))))
+                                                 .filter!(nd =>
+                                                          nd.raw != frontNd &&
+                                                          (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
+                                                          (senses.empty || senses.canFind(graph[nd].lemma.sense))))
             {
                 const newDist = mapByNd[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
                 if (auto hit = nextNd in mapByNd)
@@ -184,7 +182,7 @@ struct DijkstraWalk(bool useArray)
                                                      mapByNd[bNd][0]))(savedLength);
     }
 
-    bool empty() const
+    bool empty() const @safe pure nothrow @nogc
     {
         return untraversedNds.empty;
     }
