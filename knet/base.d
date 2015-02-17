@@ -377,11 +377,11 @@ struct Link
     body
     {
         // http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org#post-zhndpadqtfareymbnfis:40forum.dlang.org
-        // this.actors.append(src.backward,
-        //                    dst.forward);
+        // this.actors.append(src.bwd,
+        //                    dst.fwd);
         this.actors.reserve(this.actors.length + 2);
-        this.actors ~= src.backward;
-        this.actors ~= dst.forward;
+        this.actors ~= src.bwd;
+        this.actors ~= dst.fwd;
 
         this.role = role;
         this.origin = origin;
@@ -428,8 +428,8 @@ struct Link
     Origin origin;
 }
 
-auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.backward).map!(nd => nd.raw); }
-auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.forward ).map!(ln => ln.raw); }
+auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.bwd).map!(nd => nd.raw); }
+auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.fwd ).map!(ln => ln.raw); }
 
 /** Binary Relation Link.
  */
@@ -1230,11 +1230,11 @@ class Graph
         stat.linkConnectednessSum += 2;
 
         at(src).links.reserve(at(src).links.length + 2);
-        at(src).links ~= ln.forward;
-        at(dst).links ~= ln.backward;
-        // at(src).links.linearInsert([ln.forward, ln.backward]);
-        // at(dst).links.linearInsert(ln.forward);
-        // at(dst).links.linearInsert(ln.backward);
+        at(src).links ~= ln.fwd;
+        at(dst).links ~= ln.bwd;
+        // at(src).links.linearInsert([ln.fwd, ln.bwd]);
+        // at(dst).links.linearInsert(ln.fwd);
+        // at(dst).links.linearInsert(ln.bwd);
         // TODO Add variadic linearInsert() to Sorted
 
         stat.nodeConnectednessSum += 2;
@@ -1331,7 +1331,7 @@ class Graph
     {
         const dir = (role.rel.isSymmetric ?
                      RelDir.any :
-                     RelDir.forward);
+                     RelDir.fwd);
 
         foreach (aLn; at(a).links[].map!(ln => ln.raw))
         {

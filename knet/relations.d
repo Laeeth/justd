@@ -388,8 +388,8 @@ import predicates: of;
 enum RelDir
 {
     any,                        /// Any direction wildcard used in Dir-matchers.
-    backward,                   /// Forward.
-    forward                     /// Backward.
+    bwd,                        /// Forward.
+    fwd                         /// Backward.
 }
 
 alias Rank = uint;
@@ -617,7 +617,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case isA:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -639,7 +639,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case mayBeA:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -659,7 +659,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case partOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -679,7 +679,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case madeOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -699,7 +699,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case madeBy:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -719,7 +719,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case memberOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -741,7 +741,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case topMemberOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -761,7 +761,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case participatesIn:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -781,7 +781,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case worksFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -803,7 +803,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case playsIn:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -825,7 +825,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case plays:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -846,7 +846,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case contributesTo:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -866,7 +866,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case leaderOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -886,7 +886,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case coaches:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -906,7 +906,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case represents:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -926,7 +926,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case ceoOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -946,7 +946,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasA:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -967,7 +967,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case atLocation:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -987,7 +987,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case causes:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1007,7 +1007,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case creates:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1028,7 +1028,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case foundedIn:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1048,7 +1048,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case eats:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1068,7 +1068,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case atTime:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1088,7 +1088,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case capableOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1108,7 +1108,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case definedAs:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1128,7 +1128,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case derivedFrom:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1148,7 +1148,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case compoundDerivedFrom:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1168,7 +1168,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case etymologicallyDerivedFrom:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1188,7 +1188,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasProperty:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1208,7 +1208,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasAttribute:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1228,7 +1228,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasEmotion:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1290,7 +1290,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasParent:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1310,7 +1310,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasChild:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1330,7 +1330,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasHusband:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1350,7 +1350,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasWife:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1370,7 +1370,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasOfficeIn:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1390,7 +1390,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case causesDesire:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1410,7 +1410,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case proxyFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1430,7 +1430,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case instanceOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1450,7 +1450,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case decreasesRiskOf:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1470,7 +1470,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case desires:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1490,7 +1490,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case uses:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1510,7 +1510,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case controls:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1530,7 +1530,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case treats:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1550,7 +1550,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case togetherWritingFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1570,7 +1570,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case symbolFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1590,7 +1590,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case abbreviationFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1610,7 +1610,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case contractionFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1630,7 +1630,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case acronymFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1650,7 +1650,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case emoticonFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1670,7 +1670,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case playsInstrument:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1690,7 +1690,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasNameDay:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1710,7 +1710,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasOrigin:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1730,7 +1730,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasMeaning:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1750,7 +1750,7 @@ auto toHuman(const Rel rel,
             }
             break;
         // case hasPronounciation:
-        //     if (dir == RelDir.forward)
+        //     if (dir == RelDir.fwd)
         //     {
         //         switch (targetLang)
         //         {
@@ -1770,7 +1770,7 @@ auto toHuman(const Rel rel,
         //     }
         //     break;
         case slangFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1790,7 +1790,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case idiomFor:
-            if (dir == RelDir.forward)
+            if (dir == RelDir.fwd)
             {
                 switch (targetLang)
                 {
@@ -1884,8 +1884,8 @@ auto toHuman(const Rel rel,
         default:
             import std.conv: to;
             const ordered = !rel.isSymmetric;
-            const prefix = (ordered && dir == RelDir.backward ? `<` : ``);
-            const suffix = (ordered && dir == RelDir.forward ? `>` : ``);
+            const prefix = (ordered && dir == RelDir.bwd ? `<` : ``);
+            const suffix = (ordered && dir == RelDir.fwd ? `>` : ``);
             words = [prefix ~ `-` ~ rel.to!string ~ `-` ~ suffix];
             break;
     }
@@ -2072,17 +2072,17 @@ struct Ref(T)
     {
         final switch (dir)
         {
-            case RelDir.backward: _ix.setTopBit; break;
-            case RelDir.forward: _ix.resetTopBit; break;
+            case RelDir.bwd: _ix.setTopBit; break;
+            case RelDir.fwd: _ix.resetTopBit; break;
             case RelDir.any:
                 // TODO give warning: debug writeln(`Cannot use RelDir.any here`);
                 break;
         }
     }
 
-    Ref raw() const { return Ref(this, RelDir.forward); }
-    Ref forward() const { return Ref(this, RelDir.forward); }
-    Ref backward() const { return Ref(this, RelDir.backward); }
+    Ref raw() const { return Ref(this, RelDir.fwd); }
+    Ref fwd() const { return Ref(this, RelDir.fwd); }
+    Ref bwd() const { return Ref(this, RelDir.bwd); }
 
     static const(Ref) asUndefined() { return Ref(nullIx); }
     bool defined() const { return this.ix != nullIx; }
@@ -2111,7 +2111,7 @@ struct Ref(T)
     const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
 
     /** Get Direction. */
-    const(RelDir) dir() const { return _ix.getTopBit ? RelDir.backward : RelDir.forward; }
+    const(RelDir) dir() const { return _ix.getTopBit ? RelDir.bwd : RelDir.fwd; }
 private:
     Ix _ix = nullIx;
 }

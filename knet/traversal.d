@@ -43,8 +43,9 @@ struct BFWalk
             foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
             {
                 foreach (const nextNd; graph[frontLn].actors[] // TODO functionize using .ndsOf if we can find a way to include frontNd
+                                                     .map!(nd => nd.raw)
                                                      .filter!(nd =>
-                                                              nd.raw != frontNd &&
+                                                              nd != frontNd &&
                                                               (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
                                                               (senses.empty || senses.canFind(graph[nd].lemma.sense)) &&
                                                               nd.raw !in connectivenessByNd))
@@ -165,8 +166,9 @@ struct DijkstraWalk
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
             foreach (const nextNd; graph[frontLn].actors[] // TODO functionize using .ndsOf if we can find a way to include frontNd
+                                                 .map!(nd => nd.raw)
                                                  .filter!(nd =>
-                                                          nd.raw != frontNd &&
+                                                          nd != frontNd &&
                                                           (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
                                                           (senses.empty || senses.canFind(graph[nd].lemma.sense))))
             {
@@ -191,7 +193,7 @@ struct DijkstraWalk
         import std.algorithm.sorting: partialSort;
         // TODO use my radixSort for better performance
         nextNds[].partialSort!((a, b) => (mapByNd[a][0] <
-                                                 mapByNd[b][0]))(savedLength);
+                                          mapByNd[b][0]))(savedLength);
     }
 
     bool empty() const @safe pure nothrow @nogc

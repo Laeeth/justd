@@ -279,7 +279,7 @@ bool showNodes(Graph graph,
             graph.showLinkNode(palindromeNode,
                                Rel.instanceOf,
                                NWeight.infinity,
-                               RelDir.backward);
+                               RelDir.bwd);
         }
     }
     else if (normLine.skipOverShortestOf(`anagramsof(`,
@@ -294,7 +294,7 @@ bool showNodes(Graph graph,
                 graph.showLinkNode(anagramNode,
                                    Rel.instanceOf,
                                    NWeight.infinity,
-                                   RelDir.backward);
+                                   RelDir.bwd);
             }
         }
     }
@@ -310,7 +310,7 @@ bool showNodes(Graph graph,
                 graph.showLinkNode(graph[synonymNode],
                                    Rel.instanceOf,
                                    NWeight.infinity,
-                                   RelDir.backward);
+                                   RelDir.bwd);
             }
         }
     }
@@ -327,7 +327,7 @@ bool showNodes(Graph graph,
                 graph.showLinkNode(graph[rhymingNode],
                                    Rel.instanceOf,
                                    NWeight.infinity,
-                                   RelDir.backward);
+                                   RelDir.bwd);
             }
         }
     }
@@ -344,7 +344,7 @@ bool showNodes(Graph graph,
                 graph.showLinkNode(graph[translationNode],
                                    Rel.instanceOf,
                                    NWeight.infinity,
-                                   RelDir.backward);
+                                   RelDir.bwd);
             }
         }
     }

@@ -14,6 +14,7 @@ auto lnsOf(Graph graph,
 {
     import knet.relations: specializes;
     return node.links[]
+               .map!(ln => ln.raw)
                .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize match(RelDir, RelDir)
                                graph[ln].role.negation == role.negation &&
                                // TODO graph[ln].role.reversion == role.reversion &&
@@ -30,9 +31,9 @@ auto lnsOf(Graph graph,
 {
     import std.algorithm.searching: canFind;
     return graph[nd].links[]
+                    .map!(ln => ln.raw)
                     .filter!(ln => ((roles.empty || roles.canFind(graph[ln].role)) &&
-                                    (origins.empty || origins.canFind(graph[ln].origin))))
-                    .map!(ln => ln.raw);
+                                    (origins.empty || origins.canFind(graph[ln].origin))));
 }
 
 /** Get Links References of $(D nd) type $(D rel) learned from $(D origins).
@@ -74,9 +75,10 @@ auto ndsOf(Graph graph,
 {
     import std.algorithm.searching: canFind;
     return graph[ln].actors[]
+                    .map!(nd => nd.raw)
                     .filter!(nd =>
-                             (langs.empty || langs.canFind(graph[nd.raw].lemma.lang)) &&
-                             (senses.empty || senses.canFind(graph[nd.raw].lemma.sense)));
+                             (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
+                             (senses.empty || senses.canFind(graph[nd].lemma.sense)));
 }
 
 /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
