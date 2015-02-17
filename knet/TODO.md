@@ -1,5 +1,7 @@
 # TODO
 
+## TODO hasWikipediaURL: if (!endsWith/X)) X.capitalize() store it
+
 ## TODO Skip prepositions before noun:
    can be found at location:  "at bank" (en:20%-CN5)
 
