@@ -82,10 +82,22 @@ struct Ix(T = size_t)
    */
 struct IndexedBy(R, I)
 {
+    alias RI = size_t; /* TODO: Extract this from R somehow. */
+
     auto ref opIndex(I ix) inout { return _r[ix]; }
+    void opIndexAssign(V)(V value, I ix) {_r[ix] = value;}
+
+    static if(!is(RI == I))
+    {
+        @disable void opIndex(RI i);
+        @disable void opIndexAssign(V)(V value, RI i);
+    }
+
     auto ref opSlice(I lower, I upper) inout { return _r[lower .. upper]; }
     R _r;
     // TODO Use opDispatch instead of alias _r this; to override only opSlice and opIndex
+
+    alias _r this;
 }
 
 auto indexedBy(I, R)(R range)
@@ -105,4 +117,8 @@ unittest
     auto jx = x.indexedBy!J;
     jx[J(0)] = 11;
     static assert(!__traits(compiles, { jx[0] = 11; }));
+
+    import std.algorithm: equal;
+    import std.algorithm.iteration: filter;
+    assert(equal(jx.filter!(a => a < 11), [2, 3]));
 }
