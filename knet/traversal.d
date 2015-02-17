@@ -127,7 +127,7 @@ struct DijkstraWalk
         this.roles = roles;
         this.origins = origins;
 
-        untraversedNds ~= startNd.raw;
+        nextNds ~= startNd.raw;
 
         import std.typecons: tuple;
         mapByNd[startNd.raw] = tuple(0, // TODO parameterize on distance function
@@ -137,29 +137,29 @@ struct DijkstraWalk
     auto front() const @safe pure nothrow
     {
         import std.range: empty;
-        assert(!untraversedNds.empty, "Can't fetch front from an empty DijkstraWalk");
+        assert(!nextNds.empty, "Can't fetch front from an empty DijkstraWalk");
         import std.range: front;
-        return untraversedNds.front;
+        return nextNds.front;
     }
 
     enum useArray = true;
 
     void popFront()
     {
-        assert(!untraversedNds.empty, "Can't pop front from an empty DijkstraWalk");
+        assert(!nextNds.empty, "Can't pop front from an empty DijkstraWalk");
 
         static if (useArray)
         {
-            const frontNd = untraversedNds.front;
-            untraversedNds = Array!Nd(untraversedNds[1 .. $]); // TODO too costly?
+            const frontNd = nextNds.front;
+            nextNds = Array!Nd(nextNds[1 .. $]); // TODO too costly?
         }
         else
         {
             import std.range: moveFront;
-            const frontNd = untraversedNds.moveFront;
+            const frontNd = nextNds.moveFront;
         }
 
-        const savedLength = untraversedNds.length;
+        const savedLength = nextNds.length;
 
         import knet.iteration: lnsOf;
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
@@ -183,26 +183,26 @@ struct DijkstraWalk
                 else
                 {
                     mapByNd[nextNd] = Visit(newDist, frontNd); // best yet
-                    untraversedNds ~= nextNd;
+                    nextNds ~= nextNd;
                 }
             }
         }
 
         import std.algorithm.sorting: partialSort;
         // TODO use my radixSort for better performance
-        untraversedNds[].partialSort!((a, b) => (mapByNd[a][0] <
+        nextNds[].partialSort!((a, b) => (mapByNd[a][0] <
                                                  mapByNd[b][0]))(savedLength);
     }
 
     bool empty() const @safe pure nothrow @nogc
     {
-        return untraversedNds.empty;
+        return nextNds.empty;
     }
 
     @property DijkstraWalk save() // makes this a ForwardRange
     {
         typeof(return) copy = this;
-        copy.untraversedNds = this.untraversedNds.dup;
+        copy.nextNds = this.nextNds.dup;
         copy.mapByNd = this.mapByNd.dup;
         return copy;
     }
@@ -213,14 +213,15 @@ struct DijkstraWalk
 private:
     Graph graph;
 
+    // yet to be untraversed nodes sorted by smallest distance to startNd
     static if (useArray)
     {
         import std.container: Array;
-        Array!Nd untraversedNds; // sorted by smallest distance to startNd
+        Array!Nd nextNds;
     }
     else
     {
-        Nd[] untraversedNds;
+        Nd[] nextNds;
     }
 
     // TODO how can I make use of BinaryHeap here instead?
