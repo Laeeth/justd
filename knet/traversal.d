@@ -42,7 +42,7 @@ struct BFWalk
             import knet.iteration: lnsOf;
             foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
             {
-                foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
+                foreach (const nextNd; graph[frontLn].actors[] // TODO functionize using .ndsOf if we can find a way to include frontNd
                                                      .filter!(nd =>
                                                               nd.raw != frontNd &&
                                                               (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
@@ -157,7 +157,7 @@ struct DijkstraWalk(bool useArray)
         import knet.iteration: lnsOf;
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
-            foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
+            foreach (const nextNd; graph[frontLn].actors[] // TODO functionize using .ndsOf if we can find a way to include frontNd
                                                  .filter!(nd =>
                                                           nd.raw != frontNd &&
                                                           (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
@@ -182,8 +182,8 @@ struct DijkstraWalk(bool useArray)
         }
 
         import std.algorithm.sorting: partialSort;
-        untraversedNds[].partialSort!((aNd, bNd) => (mapByNd[aNd][0] <
-                                                     mapByNd[bNd][0]))(savedLength);
+        untraversedNds[].partialSort!((a, b) => (mapByNd[a][0] <
+                                                 mapByNd[b][0]))(savedLength);
     }
 
     bool empty() const @safe pure nothrow @nogc
@@ -191,8 +191,7 @@ struct DijkstraWalk(bool useArray)
         return untraversedNds.empty;
     }
 
-    // makes this a ForwardRange
-    @property DijkstraWalk save()
+    @property DijkstraWalk save() // makes this a ForwardRange
     {
         typeof(return) copy = this;
         copy.untraversedNds = this.untraversedNds.dup;
