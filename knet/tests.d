@@ -2,7 +2,7 @@ module knet.tests;
 
 import knet.base;
 
-/** Run unittests.
+/** Run Unittestsx.
  */
 void testAll(Graph graph)
 {
@@ -16,9 +16,12 @@ void testAll(Graph graph)
         auto ndB1 = graph.store(`B1`, lang, sense, origin);
         auto ndB2 = graph.store(`B2`, lang, sense, origin);
         auto ndC = graph.store(`C`, lang, sense, origin);
+        auto ndD = graph.store(`D`, lang, sense, origin);
 
         graph.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
         graph.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
+        graph.connect(ndC, role, ndD, origin, 0.5, true);
+        graph.connect(ndA, role, ndD, origin, 0.5, true);
 
         import knet.traversal: bfWalk;
         auto bw = graph.bfWalk(ndA);
@@ -40,6 +43,17 @@ void testAll(Graph graph)
         foreach (const nd; dw)
         {
             writeln(graph[nd]);
+        }
+
+        foreach (const pair; dw.mapByNd.byPair)
+        {
+            write("Shortest distance from ", graph[ndA].lemma.expr,
+                  " to ", graph[pair[0]].lemma.expr, " is ", pair[1][0]);
+            if (pair[1][1].defined)
+            {
+                write(" and came out of ", graph[pair[1][1]].lemma.expr);
+            }
+            writeln();
         }
     }
 
