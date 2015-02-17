@@ -142,12 +142,22 @@ struct DijkstraWalk
         return untraversedNds.front;
     }
 
+    enum useArray = true;
+
     void popFront()
     {
         assert(!untraversedNds.empty, "Can't pop front from an empty DijkstraWalk");
 
-        import std.range: moveFront;
-        const frontNd = untraversedNds.moveFront;
+        static if (useArray)
+        {
+            const frontNd = untraversedNds.front;
+            untraversedNds = Array!Nd(untraversedNds[1 .. $]); // TODO probably too costly
+        }
+        else
+        {
+            import std.range: moveFront;
+            const frontNd = untraversedNds.moveFront;
+        }
 
         const savedLength = untraversedNds.length;
 
@@ -179,6 +189,7 @@ struct DijkstraWalk
         }
 
         import std.algorithm.sorting: partialSort;
+        // TODO use my radixSort for better performance
         untraversedNds[].partialSort!((a, b) => (mapByNd[a][0] <
                                                  mapByNd[b][0]))(savedLength);
     }
@@ -202,8 +213,15 @@ struct DijkstraWalk
 private:
     Graph graph;
 
-    import std.container: Array;
-    Array!Nd untraversedNds; // sorted by smallest distance to startNd
+    static if (useArray)
+    {
+        import std.container: Array;
+        Array!Nd untraversedNds; // sorted by smallest distance to startNd
+    }
+    else
+    {
+        Nd[] untraversedNds;
+    }
 
     // TODO how can I make use of BinaryHeap here instead?
     static if (false)
