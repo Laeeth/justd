@@ -151,7 +151,7 @@ struct DijkstraWalk
         static if (useArray)
         {
             const frontNd = untraversedNds.front;
-            untraversedNds = Array!Nd(untraversedNds[1 .. $]); // TODO probably too costly
+            untraversedNds = Array!Nd(untraversedNds[1 .. $]); // TODO too costly?
         }
         else
         {
