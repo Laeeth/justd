@@ -317,14 +317,15 @@ struct DijkstraWalk
     auto front() const
     {
         import std.range: empty;
-        assert(!untraversedNds.empty,
-               "Attempting to fetch the front of an empty DijkstraWalk");
+        assert(!untraversedNds.empty, "Can't fetch front from an empty DijkstraWalk");
         import std.range: front;
         return untraversedNds.front;
     }
 
     void popFront()
     {
+        assert(!untraversedNds.empty, "Cann't pop front from an empty DijkstraWalk");
+
         import std.range: front, moveFront;
 
         // pick front
