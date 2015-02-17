@@ -325,7 +325,7 @@ struct DijkstraWalk
 
     void popFront()
     {
-        assert(!untraversedNds.empty, "Cann't pop front from an empty DijkstraWalk");
+        assert(!untraversedNds.empty, "Can't pop front from an empty DijkstraWalk");
 
         import std.range: moveFront;
         const frontNd = untraversedNds.moveFront;
