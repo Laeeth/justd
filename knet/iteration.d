@@ -194,6 +194,7 @@ struct BFWalk
     this(Graph graph,
          const Nd firstNd,
          const Lang[] langs = [],
+         const Sense[] senses = [],
          const Role[] roles = [],
          const Origin[] origins = [])
     {
@@ -223,10 +224,12 @@ struct BFWalk
         {
             foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
             {
-                foreach (const nextNd; graph[frontLn].actors[]
-                                               .map!(actor => actor.raw)
-                                               .filter!(actor =>
-                                                        actor !in connectivenessByNd))
+                foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
+                                                     .map!(actor => actor.raw)
+                                                     .filter!(actor =>
+                                                              (langs.empty || langs.canFind(graph[actor].lemma.lang)) &&
+                                                              (senses.empty || senses.canFind(graph[actor].lemma.sense)) &&
+                                                              actor !in connectivenessByNd))
                 {
                     pendingNds ~= nextNd;
                     const connectiveness = connectivenessByNd[frontNd] * graph[frontLn].nweight;
@@ -262,17 +265,20 @@ private:
     Nds frontNds;              // current nodes
 
     // filters
+    // TODO group into structure
     const Lang[] langs;         // languages to match
+    const Sense[] senses;       // senses to match
     const Role[] roles;         // roles to match
     const Origin[] origins;     // origins to match
 }
 
 BFWalk bfWalk(Graph graph, Nd start,
               const Lang[] langs = [],
+              const Sense[] senses = [],
               const Role[] roles = [],
-              Origin[] origins = []) pure
+              const Origin[] origins = []) pure
 {
-    auto range = typeof(return)(graph, start, langs, roles, origins);
+    auto range = typeof(return)(graph, start, langs, senses, roles, origins);
     return range;
 }
 
@@ -294,6 +300,7 @@ struct DijkstraWalk
     this(Graph graph,
          const Nd startNd,
          const Lang[] langs = [],
+         const Sense[] senses = [],
          const Role[] roles = [],
          const Origin[] origins = [])
     {
@@ -326,8 +333,11 @@ struct DijkstraWalk
 
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
-            foreach (const nextNd; graph[frontLn].actors[]
-                                                 .map!(actor => actor.raw))
+            foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
+                                                 .map!(actor => actor.raw)
+                                                 .filter!(actor =>
+                                                          (langs.empty || langs.canFind(graph[actor].lemma.lang)) &&
+                                                          (senses.empty || senses.canFind(graph[actor].lemma.sense))))
             {
                 const newDist = distAndParentByNd[frontNd][0] + graph[frontLn].nweight;
                 if (auto hit = nextNd in distAndParentByNd)
@@ -373,17 +383,21 @@ private:
     }
 
     // filters
-    const Role[] roles;         // roles to match
+    // TODO group into structure
     const Lang[] langs;         // languages to match
+    const Sense[] senses;       // sense to match
+
+    const Role[] roles;         // roles to match
     const Origin[] origins;     // origins to match
 }
 
 DijkstraWalk dijkstraWalk(Graph graph, Nd start,
                           const Lang[] langs = [],
+                          const Sense[] senses = [],
                           const Role[] roles = [],
-                          Origin[] origins = [])
+                          const Origin[] origins = [])
 {
-    auto range = typeof(return)(graph, start, langs, roles, origins);
+    auto range = typeof(return)(graph, start, langs, senses, roles, origins);
     return range;
 }
 
