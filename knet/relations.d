@@ -2087,7 +2087,24 @@ struct Ref(T)
     bool defined() const { return this.ix != nullIx; }
     auto opCast(U : bool)() const { return defined(); }
 
-    // int opCmp(const Ref y) const { return this.ix.opCmp(y.ix); }
+    // auto opEquals(const Ref y) const
+    // {
+    //     assert(this.dir == y.dir);
+    //     return this.ix == y.ix;
+    // }
+
+    hash_t toHash() const @property
+    {
+        return this.ix;
+    }
+
+    auto opCmp(const Ref y) const
+    {
+        assert(this.dir == y.dir);
+        if      (this.ix < y.ix) { return -1; }
+        else if (this.ix > y.ix) { return +1; }
+        else                     { return 0; }
+    }
 
     /** Get Index. */
     const(Ix) ix() const { Ix ixCopy = _ix; ixCopy.resetTopBit; return ixCopy; }
