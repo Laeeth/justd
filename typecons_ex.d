@@ -69,7 +69,7 @@ template New(T) if (is(T == class))
 /*     assert(New!C == new C); */
 /* } */
 
-struct Ix(T = size_t)
+struct Index(T = size_t)
 {
     @safe pure: @nogc nothrow:
     this(T ix) { this._ix = ix; }
@@ -113,7 +113,7 @@ unittest
     auto ix = x.indexedBy!I;
     ix[0] = 11;
 
-    alias J = Ix!size_t;
+    alias J = Index!size_t;
     auto jx = x.indexedBy!J;
     jx[J(0)] = 11;
     static assert(!__traits(compiles, { jx[0] = 11; }));
