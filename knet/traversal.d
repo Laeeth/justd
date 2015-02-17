@@ -1,7 +1,6 @@
 module knet.traversal;
 
 import knet.base;
-import knet.iteration: lnsOf;
 
 /** Bread First Graph Walk(er) (Traverser)
     Modelled as an (Input Range) with ElementType being an Nd-array (Nd[]).
@@ -40,6 +39,7 @@ struct BFWalk
 
         foreach (const frontNd; frontNds)
         {
+            import knet.iteration: lnsOf;
             foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
             {
                 foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
@@ -151,6 +151,8 @@ struct DijkstraWalk(bool useArray)
         const frontNd = untraversedNds.moveFront;
 
         const savedLength = untraversedNds.length;
+
+        import knet.iteration: lnsOf;
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
             foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
