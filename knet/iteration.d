@@ -291,7 +291,6 @@ BFWalk bfWalk(Graph graph, Nd start,
 */
 struct DijkstraWalk
 {
-    import std.container.binaryheap;
     import std.typecons: tuple, Tuple;
     pure:
 
@@ -377,6 +376,7 @@ private:
     Nds untraversedNds; // sorted by smallest distance to startNd
     static if (false)
     {
+        import std.container.binaryheap: BinaryHeap;
         BinaryHeap!(Nds, ((a, b) => (this.mapByNd[a][0] <
                                      this.mapByNd[b][0]))) pendingNds;
     }
