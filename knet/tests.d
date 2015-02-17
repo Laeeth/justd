@@ -37,10 +37,10 @@ void testAll(Graph graph)
         writeln("Connectiveness with ndC ", bfWalk.connectivenessByNd[ndC]);
 
         auto dWalk = graph.dijkstraWalk(ndA);
-        // foreach (const nd; dWalk)
-        // {
-        //     writeln(graph[nd]);
-        // }
+        foreach (const nd; dWalk)
+        {
+            writeln(graph[nd]);
+        }
     }
 
     // link should be reused
