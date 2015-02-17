@@ -6,7 +6,6 @@ import knet.relations: RelDir, specializes;
 import knet.base;
 
 /** Get Links Refs (Ln) of $(D node) with direction $(D dir).
-    TODO what to do with role.reversion here?
 */
 auto lnsOf(Graph graph,
            Node node,
@@ -16,6 +15,7 @@ auto lnsOf(Graph graph,
     return node.links[]
                .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize match(RelDir, RelDir)
                                graph[ln].role.negation == role.negation &&
+                               // TODO graph[ln].role.reversion == role.reversion &&
                                (graph[ln].role.rel == role.rel ||
                                 graph[ln].role.rel.specializes(role.rel))));
 }
@@ -71,13 +71,13 @@ auto linksOf(Graph graph,
 */
 auto nnsOf(Graph graph,
            Nd nd,
-           Rel rel,
+           const Role[] roles = [],
            const Lang[] dstLangs = [],
            const Origin[] origins = []) pure
 {
     import std.algorithm.searching: canFind;
     debug writeln("nd: ", nd);
-    foreach (ln; graph.lnsOf(nd, Role(rel), origins))
+    foreach (ln; graph.lnsOf(nd, roles, origins))
     {
         debug writeln("ln: ", ln);
         foreach (nd2; graph[ln].actors[])
@@ -100,7 +100,7 @@ auto nnsOf(Graph graph,
     }
     debug writeln("xx");
     import std.algorithm.iteration: joiner;
-    return graph.lnsOf(nd, Role(rel), origins)
+    return graph.lnsOf(nd, roles, origins)
                 .map!(ln =>
                       graph[ln].actors[]
                                .filter!(actor => (actor.ix != nd.ix &&
@@ -184,14 +184,12 @@ auto translationsOf(S)(Graph graph,
     return nodes;
 }
 
-/** Graph Walk(er) (Traverser)
-    Modelled as an (Input Range) of Nds.
+/** Bread First Graph Walk(er) (Traverser)
+    Modelled as an (Input Range) with ElementType being an Nd-array (Nd[]).
 */
-struct Walk
+struct BFWalk
 {
     pure:
-
-    enum Order { breadFirst, nearestFirst } // TODO use
 
     this(Graph graph,
          const Nd firstNd,
@@ -269,15 +267,123 @@ private:
     const Origin[] origins;     // origins to match
 }
 
-Walk walk(Graph graph, Nd start,
-          const Lang[] langs = [],
-          const Role[] roles = [],
-          Origin[] origins = []) pure
+BFWalk bfWalk(Graph graph, Nd start,
+              const Lang[] langs = [],
+              const Role[] roles = [],
+              Origin[] origins = []) pure
 {
     auto range = typeof(return)(graph, start, langs, roles, origins);
     return range;
 }
-alias traverse = walk;
+
+/** Nearest First Graph Walk(er) (Traverser).
+    Similar to Dijkstra's Railroad Algorithm.
+    Modelled as an (Input Range) with ElementType being a Nd.
+*/
+struct DijkstraWalk
+{
+    import std.container.binaryheap;
+    import std.typecons: tuple, Tuple;
+    pure:
+
+    alias Visit = Tuple!(NWeight, const(Nd));
+
+    this(Graph graph,
+         const Nd firstNd,
+         const Lang[] langs = [],
+         const Role[] roles = [],
+         const Origin[] origins = [])
+    {
+        this.graph = graph;
+
+        this.langs = langs;
+        this.roles = roles;
+        this.origins = origins;
+
+        untraversedNdsSortedByDistance ~= firstNd.raw;
+        distAndParentByNd[firstNd.raw] = tuple(0, // zero distance
+                                               Nd.asUndefined); // no parent Nd
+    }
+
+    auto front() const
+    {
+        import std.range: empty;
+        assert(!untraversedNdsSortedByDistance.empty,
+               "Attempting to fetch the front of an empty DijkstraWalk");
+        import std.range: front;
+        return untraversedNdsSortedByDistance.front;
+    }
+
+    void popFront()
+    {
+        import std.range: front, popFront;
+
+        // pick front
+        const frontNd = untraversedNdsSortedByDistance.front;
+        untraversedNdsSortedByDistance.popFront;
+
+        foreach (frontLn; graph.lnsOf(frontNd, roles, origins))
+        {
+            foreach (nextNd; graph[frontLn].actors[]
+                                           .map!(actor => actor.raw))
+            {
+                const newDist = distAndParentByNd[frontNd][0] + graph[frontLn].nweight;
+                if (auto ptr = nextNd in distAndParentByNd)
+                {
+                    const dist = (*ptr)[0];
+                    const parentNd = (*ptr)[1];
+                    if (newDist < dist)
+                    {
+                        *ptr = Visit(newDist, frontNd); // best yet
+                    }
+                }
+                else
+                {
+                    *ptr = Visit(newDist, frontNd); // best yet
+                }
+
+                // TODO use partialSort (previousNd, newNd) outside of all loops
+                // register next adjacent nodes
+                untraversedNdsSortedByDistance ~= nextNd;
+                untraversedNdsSortedByDistance.sort!((aNd, bNd) => (distAndParentByNd[aNd][0] >
+                                                                    distAndParentByNd[bNd][0]));
+            }
+        }
+    }
+
+    bool empty() const
+    {
+        return untraversedNdsSortedByDistance.empty;
+    }
+
+    // Nd => tuple(Nd origin distance, parent Nd)
+    Visit[Nd] distAndParentByNd;
+
+private:
+    Graph graph;
+
+    // TODO how can I make use of BinaryHeap here instead?
+    Nds untraversedNdsSortedByDistance;
+    static if (false)
+    {
+        BinaryHeap!(Nds, ((a, b) => (this.distAndParentByNd[a][0] >
+                                     this.distAndParentByNd[b][0]))) pendingNds;
+    }
+
+    // filters
+    const Role[] roles;         // roles to match
+    const Lang[] langs;         // languages to match
+    const Origin[] origins;     // origins to match
+}
+
+DijkstraWalk dijkstraWalk(Graph graph, Nd start,
+                          const Lang[] langs = [],
+                          const Role[] roles = [],
+                          Origin[] origins = [])
+{
+    auto range = typeof(return)(graph, start, langs, roles, origins);
+    return range;
+}
 
 auto anagramsOf(S)(Graph graph,
                    S expr) pure if (isSomeString!S)
