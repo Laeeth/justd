@@ -77,10 +77,10 @@ auto nnsOf(Graph graph,
 {
     import std.algorithm.searching: canFind;
     debug writeln("nd: ", nd);
-    foreach (ln; graph.lnsOf(nd, roles, origins))
+    foreach (const ln; graph.lnsOf(nd, roles, origins))
     {
         debug writeln("ln: ", ln);
-        foreach (nd2; graph[ln].actors[])
+        foreach (const nd2; graph[ln].actors[])
         {
             debug writeln("nd2: ", nd2);
             if (nd2.ix != nd.ix) // no self-recursion
@@ -122,7 +122,7 @@ Nds rhymesOf(S)(Graph graph,
                 size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                 bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
-    foreach (srcNd; graph.ndsOf(expr)) // for each interpretation of expr
+    foreach (const srcNd; graph.ndsOf(expr)) // for each interpretation of expr
     {
         const srcNode = graph[srcNd];
 
@@ -133,7 +133,7 @@ Nds rhymesOf(S)(Graph graph,
 
         auto dstNds = graph.nnsOf(srcNd, [Role(Rel.translationOf)], [Lang.ipa], origins);
 
-        foreach (dstNd; dstNds) // translations to IPA-language
+        foreach (const dstNd; dstNds) // translations to IPA-language
         {
             const dstNode = graph[dstNd];
             import std.algorithm.searching: canFind;
@@ -157,9 +157,9 @@ NWeight[Lang] languagesOf(R)(Graph graph,
                                               isSomeString!(ElementType!R))
 {
     typeof(return) hist;
-    foreach (word; text)
+    foreach (const word; text)
     {
-        foreach (lemma; graph.lemmasOfExpr(word))
+        foreach (const lemma; graph.lemmasOfExpr(word))
         {
             ++hist[lemma.lang];
         }
@@ -219,11 +219,11 @@ struct BFWalk
         import std.range: front, popFront;
         Nds pendingNds;
 
-        foreach (frontNd; frontNds)
+        foreach (const frontNd; frontNds)
         {
-            foreach (frontLn; graph.lnsOf(frontNd, roles, origins))
+            foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
             {
-                foreach (nextNd; graph[frontLn].actors[]
+                foreach (const nextNd; graph[frontLn].actors[]
                                                .map!(actor => actor.raw)
                                                .filter!(actor =>
                                                         actor !in connectivenessByNd))
@@ -319,16 +319,15 @@ struct DijkstraWalk
 
     void popFront()
     {
-        import std.range: front, popFront;
+        import std.range: front, moveFront;
 
         // pick front
-        const frontNd = untraversedNds.front;
-        untraversedNds.popFront;
+        const frontNd = untraversedNds.moveFront;
 
-        foreach (frontLn; graph.lnsOf(frontNd, roles, origins))
+        foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
-            foreach (nextNd; graph[frontLn].actors[]
-                                           .map!(actor => actor.raw))
+            foreach (const nextNd; graph[frontLn].actors[]
+                                                 .map!(actor => actor.raw))
             {
                 const newDist = distAndParentByNd[frontNd][0] + graph[frontLn].nweight;
                 if (auto hit = nextNd in distAndParentByNd)
@@ -369,7 +368,7 @@ private:
     Nds untraversedNds; // sorted by smallest distance to startNd
     static if (false)
     {
-        BinaryHeap!(Nds, ((a, b) => (this.distAndParentByNd[a][0] >
+        BinaryHeap!(Nds, ((a, b) => (this.distAndParentByNd[a][0] <
                                      this.distAndParentByNd[b][0]))) pendingNds;
     }
 
