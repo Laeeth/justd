@@ -2,7 +2,7 @@ module knet.iteration;
 
 import predicates: of;
 
-import knet.relations: RelDir, specializes;
+import knet.relations: RelDir;
 import knet.base;
 
 /** Get Links Refs (Ln) of $(D node) with direction $(D dir).
@@ -12,6 +12,7 @@ auto lnsOf(Graph graph,
            RelDir dir = RelDir.any,
            Role role = Role.init) pure
 {
+    import knet.relations: specializes;
     return node.links[]
                .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize match(RelDir, RelDir)
                                graph[ln].role.negation == role.negation &&
