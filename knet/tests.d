@@ -35,7 +35,8 @@ void testAll(Graph graph)
         writeln("Connectiveness with ndB2 ", bfWalk.connectivenessByNd[ndB2]);
         writeln("Connectiveness with ndC ", bfWalk.connectivenessByNd[ndC]);
 
-        foreach (const nd; graph.dijkstraWalk(ndA))
+        auto dWalk = graph.dijkstraWalk(ndA);
+        foreach (const nd; dWalk)
         {
             writeln(graph[nd]);
         }
