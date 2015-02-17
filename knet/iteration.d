@@ -66,6 +66,20 @@ auto linksOf(Graph graph,
     return graph.linksOf(graph[nd], dir, role);
 }
 
+/** Get Node References of $(D ln) matchin $(D langs) and $(D senses).
+ */
+auto ndsOf(Graph graph,
+           Ln ln,
+           const Lang[] langs = [],
+           const Sense[] senses = []) pure
+{
+    import std.algorithm.searching: canFind;
+    return graph[ln].actors[]
+                    .filter!(nd =>
+                             (langs.empty || langs.canFind(graph[nd.raw].lemma.lang)) &&
+                             (senses.empty || senses.canFind(graph[nd.raw].lemma.sense)));
+}
+
 /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
     learned from $(D origins).
 */
@@ -76,37 +90,13 @@ auto nnsOf(Graph graph,
            const Origin[] origins = []) pure
 {
     import std.algorithm.searching: canFind;
-    debug writeln("nd: ", nd);
-    foreach (const ln; graph.lnsOf(nd, roles, origins))
-    {
-        debug writeln("ln: ", ln);
-        foreach (const nd2; graph[ln].actors[])
-        {
-            debug writeln("nd2: ", nd2);
-            if (nd2.ix != nd.ix) // no self-recursion
-            {
-                debug writeln("differs");
-                debug writeln("node: ", graph[nd]);
-                debug writeln("lang: ", graph[nd].lemma.lang);
-                debug writeln("dstLangs: ", dstLangs);
-                debug writeln("it: ", dstLangs.canFind(graph[nd].lemma.lang));
-                if (dstLangs.empty ||
-                    dstLangs.canFind(graph[nd].lemma.lang)) // TODO functionize to Lemma.ofLang
-                {
-                    debug writeln("nd2: ", nd);
-                }
-            }
-        }
-    }
-    debug writeln("xx");
     import std.algorithm.iteration: joiner;
     return graph.lnsOf(nd, roles, origins)
                 .map!(ln =>
                       graph[ln].actors[]
                                .filter!(actorNd => (actorNd.ix != nd.ix &&
-                                                  // TODO functionize to Lemma.ofLang
-                                                  (dstLangs.empty ||
-                                                   dstLangs.canFind(graph[actorNd].lemma.lang)))))
+                                                    // TODO functionize to Lemma.ofLang
+                                                    (dstLangs.empty || dstLangs.canFind(graph[actorNd].lemma.lang)))))
                 .joiner(); // no self
 }
 
