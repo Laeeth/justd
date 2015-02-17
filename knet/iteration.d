@@ -192,7 +192,7 @@ struct BFWalk
     pure:
 
     this(Graph graph,
-         const Nd firstNd,
+         const Nd startNd,
          const Lang[] langs = [],
          const Sense[] senses = [],
          const Role[] roles = [],
@@ -204,8 +204,8 @@ struct BFWalk
         this.roles = roles;
         this.origins = origins;
 
-        frontNds ~= firstNd.raw;
-        connectivenessByNd[firstNd.raw] = 1; // tag firstNd as visited
+        frontNds ~= startNd.raw;
+        connectivenessByNd[startNd.raw] = 1; // tag startNd as visited
     }
 
     auto front() const
@@ -255,7 +255,7 @@ struct BFWalk
     }
 
     // internal state
-    NWeight[Nd] connectivenessByNd; // maps frontNds minimum distance from visited to firstNd
+    NWeight[Nd] connectivenessByNd; // maps frontNds minimum distance from visited to startNd
 
 private:
     Graph graph;
@@ -285,8 +285,9 @@ BFWalk bfWalk(Graph graph, Nd start,
     Similar to Dijkstra's Railroad Algorithm.
     Modelled as an (Input Range) with ElementType being a Nd.
 
-    Upon iteration completion distAndParentByNd contains a distance map to walk
-    starting point (startNd).
+    Upon iteration completion mapByNd contains a map from node to (distance, and
+    closest parent node) to walk starting point (startNd). This can be used to
+    reconstruct the closest path from any given Nd to startNd.
 */
 struct DijkstraWalk
 {
@@ -310,7 +311,7 @@ struct DijkstraWalk
         this.origins = origins;
 
         untraversedNds ~= startNd.raw;
-        distAndParentByNd[startNd.raw] = tuple(0, // zero distance
+        mapByNd[startNd.raw] = tuple(0, // zero distance
                                                Nd.asUndefined); // no parent Nd
     }
 
@@ -326,11 +327,10 @@ struct DijkstraWalk
     {
         assert(!untraversedNds.empty, "Cann't pop front from an empty DijkstraWalk");
 
-        import std.range: front, moveFront;
-
-        // pick front
+        import std.range: moveFront;
         const frontNd = untraversedNds.moveFront;
 
+        const savedLength = untraversedNds.length;
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
             foreach (const nextNd; graph[frontLn].actors[] // TODO functionize
@@ -339,8 +339,8 @@ struct DijkstraWalk
                                                           (langs.empty || langs.canFind(graph[actor].lemma.lang)) &&
                                                           (senses.empty || senses.canFind(graph[actor].lemma.sense))))
             {
-                const newDist = distAndParentByNd[frontNd][0] + graph[frontLn].nweight;
-                if (auto hit = nextNd in distAndParentByNd)
+                const newDist = mapByNd[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
+                if (auto hit = nextNd in mapByNd)
                 {
                     const dist = (*hit)[0];
                     const parentNd = (*hit)[1];
@@ -351,16 +351,15 @@ struct DijkstraWalk
                 }
                 else
                 {
-                    distAndParentByNd[nextNd] = Visit(newDist, frontNd); // best yet
+                    mapByNd[nextNd] = Visit(newDist, frontNd); // best yet
+                    untraversedNds ~= nextNd;
                 }
-
-                // TODO use partialSort (previousNd, newNd) outside of all loops
-                // register next adjacent nodes
-                untraversedNds ~= nextNd;
-                untraversedNds.sort!((aNd, bNd) => (distAndParentByNd[aNd][0] <
-                                                    distAndParentByNd[bNd][0]));
             }
         }
+
+        import std.algorithm.sorting: partialSort;
+        untraversedNds.partialSort!((aNd, bNd) => (mapByNd[aNd][0] <
+                                                   mapByNd[bNd][0]))(savedLength);
     }
 
     bool empty() const
@@ -369,7 +368,7 @@ struct DijkstraWalk
     }
 
     // Nd => tuple(Nd origin distance, parent Nd)
-    Visit[Nd] distAndParentByNd;
+    Visit[Nd] mapByNd;
 
 private:
     Graph graph;
@@ -378,8 +377,8 @@ private:
     Nds untraversedNds; // sorted by smallest distance to startNd
     static if (false)
     {
-        BinaryHeap!(Nds, ((a, b) => (this.distAndParentByNd[a][0] <
-                                     this.distAndParentByNd[b][0]))) pendingNds;
+        BinaryHeap!(Nds, ((a, b) => (this.mapByNd[a][0] <
+                                     this.mapByNd[b][0]))) pendingNds;
     }
 
     // filters
