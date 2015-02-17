@@ -1,8 +1,6 @@
 module knet.tests;
 
 import knet.base;
-import knet.iteration;
-import knet.traversal;
 
 /** Run unittests.
  */
@@ -22,8 +20,9 @@ void testAll(Graph graph)
         graph.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
         graph.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
 
-        auto bfWalk = graph.bfWalk(ndA);
-        foreach (const nds; bfWalk) // for each "connectivity expansion"
+        import knet.traversal: bfWalk;
+        auto bfWalking = graph.bfWalk(ndA);
+        foreach (const nds; bfWalking) // for each "connectivity expansion"
         {
             foreach (const nd; nds)
             {
@@ -31,13 +30,14 @@ void testAll(Graph graph)
             }
         }
 
-        writeln("Connectiveness with ndA ", bfWalk.connectivenessByNd[ndA]);
-        writeln("Connectiveness with ndB1 ", bfWalk.connectivenessByNd[ndB1]);
-        writeln("Connectiveness with ndB2 ", bfWalk.connectivenessByNd[ndB2]);
-        writeln("Connectiveness with ndC ", bfWalk.connectivenessByNd[ndC]);
+        writeln("Connectiveness with ndA ", bfWalking.connectivenessByNd[ndA]);
+        writeln("Connectiveness with ndB1 ", bfWalking.connectivenessByNd[ndB1]);
+        writeln("Connectiveness with ndB2 ", bfWalking.connectivenessByNd[ndB2]);
+        writeln("Connectiveness with ndC ", bfWalking.connectivenessByNd[ndC]);
 
-        auto dWalk = graph.dijkstraWalk(ndA);
-        foreach (const nd; dWalk)
+        import knet.traversal: dijkstraWalk;
+        auto dWalking = graph.dijkstraWalk(ndA);
+        foreach (const nd; dWalking)
         {
             writeln(graph[nd]);
         }
