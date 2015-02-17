@@ -35,7 +35,7 @@ void testAll(Graph graph)
         writeln("Connectiveness with ndB2 ", bfWalk.connectivenessByNd[ndB2]);
         writeln("Connectiveness with ndC ", bfWalk.connectivenessByNd[ndC]);
 
-        foreach (const nd; graph.dijkstraWalk(ndA)) // for each "connectivity expansion"
+        foreach (const nd; graph.dijkstraWalk(ndA))
         {
             writeln(graph[nd]);
         }
