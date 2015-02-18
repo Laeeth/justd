@@ -237,6 +237,7 @@ alias SortedLns = Sorted!(Lns, "a.ix < b.ix");
 /// WordNet.
 alias SynSet = Array!Nd;        /// WordNet Synonym Set
 alias SynSetOffset = uint;      /// WordNet Synonym Set Offset (Id)
+alias SynSetByOffset = SynSet[SynSetOffset]; // TODO use [Ii]ndexedBy!SynSetOffset
 
 /** Node Concept Lemma. */
 struct Lemma
@@ -503,18 +504,23 @@ struct Tabs
  */
 struct Ixes
 {
-    // TODO Nds[Lang.max + 1] ndsByLang;
-    SynSet[SynSetOffset] synsetByOffset; // TODO use [Ii]ndexedBy
-
-    // Indexes
-    Location[Nd] locations;
+    // Most important index
     Nd[Lemma] ndByLemma;
+
+    // TODO Nds[Lang.max + 1] ndsByLang;
+    Location[Nd] locations;
+
+    // Lemmas
     Lemmas[Word] lemmasByWord; // Lemmas index by word of expression has more than one word
     Lemmas[Expr] lemmasByExpr; // Two or More Words
     Lemmas[ubyte] lemmasBySyllableCount; // TODO
 
+    // Context
     string[Ctx] contextNameByCtx; /** Ontology Context Names by Index. */
     Ctx[string] ctxByName; /** Ontology Context Indexes by Name. */
+
+    // WordNet Specific
+    SynSetByOffset synsetByOffset;
 }
 
 /** Database.
