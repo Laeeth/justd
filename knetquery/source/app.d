@@ -31,18 +31,16 @@ int main(string[] args)
         return 0;
     }
 
+    const cachePath = "~/.cache";
     if (useCache)               // wildcard
     {
         loadCache = true;
         saveCache = true;
     }
 
-    auto testGraph = new Graph();
-    testGraph.testAll;
+    testAll;
 
     auto graph = new Graph();
-
-    const cachePath = "~/.cache";
 
     // loads
     if (false) graph.loadUniquelySensedLemmas(cachePath);
