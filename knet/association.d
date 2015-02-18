@@ -8,19 +8,24 @@ import knet.base;
 Nd contextOf(Nds)(Graph gr,
                   Nds nds,
                   const Lang[] langs = [],
-                  const Sense[] senses = []) if (isIterable!Nds &&
-                                                 is(Nd == ElementType!Nds))
+                  const Sense[] senses = [],
+                  const Role[] roles = [],
+                  const Origin[] origins = []) if (isIterable!Nds &&
+                                                   is(Nd == ElementType!Nds))
 {
     auto node = typeof(return).init;
     import knet.traversal: dijkstraWalk;
-    auto walks = nds.map!(nd => gr.dijkstraWalk(nd, langs, senses));
+    auto walks = nds.map!(nd => gr.dijkstraWalk(nd, langs, senses, roles, origins));
 
+    // iterate walks in Round Robin fashion. TODO functionize
     import std.algorithm.searching: any;
     while (walks.any!(walk => !walk.empty)) // while we still have walk
     {
         foreach (ref activeWalk; walks.filter!(walk => !walk.empty))
         {
-            activeWalk.popFront;
+            import std.range: moveFront;
+            const front = activeWalk.moveFront;
+            writeln("front: ", front);
         }
     }
 
@@ -32,13 +37,15 @@ Nd contextOf(Nds)(Graph gr,
 Nd contextOf(Exprs)(Graph gr,
                     Exprs exprs,
                     const Lang[] langs = [],
-                    const Sense[] senses = []) if (isIterable!Exprs &&
+                    const Sense[] senses = [],
+                    const Role[] roles = [],
+                    const Origin[] origins = []) if (isIterable!Exprs &&
                                                    isSomeString!(ElementType!Exprs))
 {
     import std.algorithm: joiner;
     auto lemmas = exprs.map!(expr => gr.lemmasOfExpr(expr)).joiner;
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
-    return gr.contextOf(nds, langs, senses);
+    return gr.contextOf(nds, langs, senses, roles, origins);
 }
 
 alias topicOf = contextOf;
