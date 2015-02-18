@@ -49,10 +49,16 @@ void testAll(Graph gr)
         auto diW = gr.dijkstraWalk(ndA);
         auto diWcopy = diW.save; // copy
         auto diWref = diW; // new reference
+        writeln("length: ", diW.nextNds.length);
         foreach (const nd; diW)
         {
+            writeln("diW.nextNds.length: ", diW.nextNds.length);
             writeln(gr[nd]);
         }
+        writeln("length: ", diW.nextNds.length);
+        assert(diW.empty);
+        assert(diWref.empty);
+        assert(!diWcopy.empty);
 
         foreach (const pair; diW.distMap.byPair)
         {
@@ -65,10 +71,6 @@ void testAll(Graph gr)
             write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
             writeln();
         }
-
-        assert(diW.empty);
-        assert(diWref.empty);
-        assert(!diWcopy.empty);
 
         assert(diW.distMap != diWcopy.distMap);
         foreach (const nd; diWcopy) {}
