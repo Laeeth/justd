@@ -14,17 +14,19 @@ Nd contextOf(Nds)(Graph gr,
                                                    is(Nd == ElementType!Nds))
 {
     auto node = typeof(return).init;
-    import knet.traversal: dijkstraWalk;
-    auto walks = nds.map!(nd => gr.dijkstraWalk(nd, langs, senses, roles, origins));
+    import knet.traversal: dijkstraWalker;
 
-    // iterate walks in Round Robin fashion. TODO functionize
+    // do we need array here?
+    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, langs, senses, roles, origins)).array;
+
+    // iterate walkers in Round Robin fashion. TODO functionize
     import std.algorithm.searching: any;
-    while (walks.any!(walk => !walk.empty)) // while we still have walk
+    while (walkers.any!(walker => !walker.empty)) // while we still have walker
     {
-        foreach (ref activeWalk; walks.filter!(walk => !walk.empty))
+        foreach (ref activeWalker; walkers.filter!(walker => !walker.empty))
         {
             import std.range: moveFront;
-            const front = activeWalk.moveFront;
+            const front = activeWalker.moveFront;
             writeln("front: ", front);
         }
     }

@@ -4,7 +4,7 @@ import knet.base;
 
 /** Bread First Graph Walk(er) (Traverser)
 */
-struct BFWalk
+struct BFWalker
 {
     pure:
 
@@ -25,13 +25,15 @@ struct BFWalk
 
         frontNds ~= startNd.raw;
         connectivenessByNd[startNd.raw] = 1; // tag startNd as visited
+
+        assert(!frontNds.empty);
         assert(connectivenessByNd !is null); // must be initialized to enable reference semantics
     }
 
     auto front() const @safe pure nothrow @nogc
     {
         import std.range: front;
-        assert(!frontNds.empty, "Attempting to fetch the front of an empty Walk");
+        assert(!frontNds.empty, "Attempting to fetch the front of an empty Walker");
         return frontNds;
     }
 
@@ -76,7 +78,7 @@ struct BFWalk
         return frontNds.empty;
     }
 
-    BFWalk save() @property // makes this a ForwardRange
+    BFWalker save() @property // makes this a ForwardRange
     {
         typeof(return) copy = this;
         copy.frontNds = copy.frontNds.dup;
@@ -101,7 +103,7 @@ private:
     const Origin[] origins;     // origins to match
 }
 
-BFWalk bfWalk(Graph graph, Nd start,
+BFWalker bfWalker(Graph graph, Nd start,
               const Lang[] langs = [],
               const Sense[] senses = [],
               const Role[] roles = [],
@@ -117,10 +119,10 @@ BFWalk bfWalk(Graph graph, Nd start,
     Modelled as a Forward Range with ElementType being Nd.
 
     Upon iteration completion distMap contains a map from node to (distance, and
-    closest parent node) to walk starting point (startNd). This can be used to
+    closest parent node) to walker starting point (startNd). This can be used to
     reconstruct the closest path from any given Nd to startNd.
 */
-struct DijkstraWalk
+struct DijkstraWalker
 {
     import std.typecons: Tuple;
 
@@ -147,13 +149,20 @@ struct DijkstraWalk
         distMap[startNd.raw] = tuple(0, // TODO parameterize on distance function
                                      Nd.asUndefined); // first node has parent
 
+        assert(!nextNds.empty); // must be initialized to enable reference semantics
         assert(distMap !is null); // must be initialized to enable reference semantics
+    }
+
+    this(this)
+    {
+        nextNds = nextNds.dup;
+        distMap = distMap.dup;
     }
 
     auto front() const @safe pure nothrow
     {
         import std.range: empty;
-        assert(!nextNds.empty, "Can't fetch front from an empty DijkstraWalk");
+        assert(!nextNds.empty, "Can't fetch front from an empty DijkstraWalker");
         import std.range: front;
         return nextNds.front;
     }
@@ -166,7 +175,7 @@ struct DijkstraWalk
 
     void popFront()
     {
-        assert(!nextNds.empty, "Can't pop front from an empty DijkstraWalk");
+        assert(!nextNds.empty, "Can't pop front from an empty DijkstraWalker");
 
         static if (useArray)
         {
@@ -216,25 +225,17 @@ struct DijkstraWalk
         return nextNds.empty;
     }
 
-    DijkstraWalk save() @property // makes this a ForwardRange
+    DijkstraWalker save() @property // makes this a ForwardRange
     {
         typeof(return) copy = this;
-        /** TODO duplicate all non-const members with reference semantics except
-            Graph.  Use MemberTypeTuple to iterate corresponding member of this
-            and copy.
-            */
-        // duplicate mutable internal states
-        copy.nextNds = copy.nextNds.dup;
-        copy.distMap = copy.distMap.dup; // because distMap have reference semantics
         return copy;
     }
 
-    // Nd => tuple(Nd origin distance, parent Nd)
     // WARNING distMap must initialized here to provide reference semantics in for range behaviour to work correctly
     // See also: http://forum.dlang.org/thread/xrxejicnoakanvkyasso@forum.dlang.org#post-yipmrrdilsxcaypeoqhz:40forum.dlang.org
-    Visit[Nd] distMap;
+    Visit[Nd] distMap;          // Nd => tuple(Nd origin distance, parent Nd)
 
-public:
+private:
     Graph graph;
 
     // yet to be untraversed nodes sorted by smallest distance to startNd
@@ -264,11 +265,11 @@ public:
     const Origin[] origins;     // origins to match
 }
 
-DijkstraWalk dijkstraWalk(Graph graph, Nd start,
-                          const Lang[] langs = [],
-                          const Sense[] senses = [],
-                          const Role[] roles = [],
-                          const Origin[] origins = [])
+DijkstraWalker dijkstraWalker(Graph graph, Nd start,
+                              const Lang[] langs = [],
+                              const Sense[] senses = [],
+                              const Role[] roles = [],
+                              const Origin[] origins = [])
 {
     return typeof(return)(graph, start, langs, senses, roles, origins);
 }

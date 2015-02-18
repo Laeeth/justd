@@ -30,51 +30,55 @@ void testAll(Graph gr)
         gr.connect(ndD, role, ndE, origin, 0.1, true);
         gr.connect(ndE, role, ndF, origin, 0.1, true);
 
-        import knet.traversal: bfWalk;
-        auto bfW = gr.bfWalk(ndA);
-        foreach (const nds; bfW) // for each `connectivity expansion`
         {
-            foreach (const nd; nds)
+            import knet.traversal: bfWalker;
+            auto walker = gr.bfWalker(ndA);
+            foreach (const nds; walker) // for each `connectivity expansion`
+            {
+                foreach (const nd; nds)
+                {
+                    writeln(gr[nd]);
+                }
+            }
+
+            writeln(`Connectiveness with ndA `, walker.connectivenessByNd[ndA]);
+            writeln(`Connectiveness with ndB1 `, walker.connectivenessByNd[ndB1]);
+            writeln(`Connectiveness with ndB2 `, walker.connectivenessByNd[ndB2]);
+            writeln(`Connectiveness with ndC `, walker.connectivenessByNd[ndC]);
+        }
+
+        {
+            import knet.traversal: dijkstraWalker;
+            auto dW = gr.dijkstraWalker(ndA);
+            auto dWref = dW; // new reference
+            auto dWcopy = dW.save; // copy
+            foreach (const nd; dW)
             {
                 writeln(gr[nd]);
             }
-        }
+            assert(dW == dWref);  // iteration should not change copy
+            assert(dW == dWcopy);  // iteration should not change saved copy
+            assert(!dW.empty);
+            assert(!dWref.empty);
+            assert(!dWcopy.empty);
 
-        writeln(`Connectiveness with ndA `, bfW.connectivenessByNd[ndA]);
-        writeln(`Connectiveness with ndB1 `, bfW.connectivenessByNd[ndB1]);
-        writeln(`Connectiveness with ndB2 `, bfW.connectivenessByNd[ndB2]);
-        writeln(`Connectiveness with ndC `, bfW.connectivenessByNd[ndC]);
-
-        import knet.traversal: dijkstraWalk;
-        auto diW = gr.dijkstraWalk(ndA);
-        auto diWcopy = diW.save; // copy
-        auto diWref = diW; // new reference
-        writeln("length: ", diW.nextNds.length);
-        foreach (const nd; diW)
-        {
-            writeln("diW.nextNds.length: ", diW.nextNds.length);
-            writeln(gr[nd]);
-        }
-        writeln("length: ", diW.nextNds.length);
-        assert(diW.empty);
-        assert(diWref.empty);
-        assert(!diWcopy.empty);
-
-        foreach (const pair; diW.distMap.byPair)
-        {
-            write(`Shortest distance from `, gr[ndA].lemma.expr,
-                  ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
-            if (pair[1][1].defined)
+            foreach (const pair; dW.distMap.byPair)
             {
-                write(` and came out of `, gr[pair[1][1]].lemma.expr);
+                write(`Shortest distance from `, gr[ndA].lemma.expr,
+                      ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
+                if (pair[1][1].defined)
+                {
+                    write(` and came out of `, gr[pair[1][1]].lemma.expr);
+                }
+                write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
+                writeln();
             }
-            write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
-            writeln();
+
+            // assert(dW.distMap != dWcopy.distMap);
+            // foreach (const nd; dWcopy) {}
+            // assert(dW.distMap == dWcopy.distMap);
         }
 
-        assert(diW.distMap != diWcopy.distMap);
-        foreach (const nd; diWcopy) {}
-        assert(diW.distMap == diWcopy.distMap);
     }
 
     // link should be reused
