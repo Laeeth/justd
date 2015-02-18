@@ -475,20 +475,18 @@ struct BitSet(size_t len, Block = size_t)
     alias empty = allZero;
 
     /**
-     * Check if this $(D BitSet) has only ones.
+     * Check if this $(D BitSet) has only ones in range [ $(d low), $(d high) [.
      */
-    bool allOne() const @safe @nogc pure nothrow
+    bool allOneBetween(size_t low, size_t high) const @safe @nogc pure nothrow
     {
-        foreach (block; _data)
+        foreach (i; low .. high)
         {
-            if (block != 1) {
-                return false;
-            }
+            if (!this[i]) { return false; }
         }
         return true;
     }
-    alias allSet = allOne;
-    alias full = allOne;
+    alias allSetBetween = allOneBetween;
+    alias fullBetween = allOneBetween;
 
     alias Q = Rational!ulong;
 
