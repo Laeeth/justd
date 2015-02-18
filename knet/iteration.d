@@ -27,12 +27,14 @@ auto lnsOf(Graph graph,
 auto lnsOf(Graph graph,
            Nd nd,
            const Role[] roles = [],
-           const Origin[] origins = []) pure
+           const Origin[] origins = [],
+           const Ln skipLn = Ln.init) pure
 {
     import std.algorithm.searching: canFind;
     return graph[nd].links[]
                     .map!(ln => ln.raw)
-                    .filter!(ln => ((roles.empty || roles.canFind(graph[ln].role)) &&
+                    .filter!(ln => (ln != skipLn &&
+                                    (roles.empty || roles.canFind(graph[ln].role)) &&
                                     (origins.empty || origins.canFind(graph[ln].origin))));
 }
 
@@ -71,14 +73,15 @@ auto linksOf(Graph graph,
 auto ndsOf(Graph graph,
            Ln ln,
            const Lang[] langs = [],
-           const Sense[] senses = []) pure
+           const Sense[] senses = [],
+           const Nd skipNd = Nd.init) pure
 {
     import std.algorithm.searching: canFind;
     return graph[ln].actors[]
                     .map!(nd => nd.raw)
-                    .filter!(nd =>
-                             (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
-                             (senses.empty || senses.canFind(graph[nd].lemma.sense)));
+                    .filter!(nd => (nd != skipNd &&
+                                    (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
+                                    (senses.empty || senses.canFind(graph[nd].lemma.sense))));
 }
 
 /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
