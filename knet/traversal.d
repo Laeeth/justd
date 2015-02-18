@@ -210,6 +210,7 @@ class DijkstraWalk
             and copy.
             */
         copy.nextNds = this.nextNds.dup;
+        copy.distMap = this.distMap.dup; // TODO is this needed?
         return copy;
     }
 
