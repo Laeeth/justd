@@ -47,13 +47,14 @@ void testAll(Graph gr)
 
         import knet.traversal: dijkstraWalk;
         auto diW = gr.dijkstraWalk(ndA);
-        auto diW2 = diW; // new reference
+        auto diWcopy = diW.save; // copy
+        auto diWref = diW; // new reference
         foreach (const nd; diW)
         {
             writeln(gr[nd]);
         }
 
-        foreach (const pair; diW.mapByNd.byPair)
+        foreach (const pair; diW.distMap.byPair)
         {
             write(`Shortest distance from `, gr[ndA].lemma.expr,
                   ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
@@ -66,7 +67,8 @@ void testAll(Graph gr)
         }
 
         assert(diW.empty);
-        assert(diW2.empty);
+        assert(diWref.empty);
+        assert(!diWcopy.empty);
     }
 
     // link should be reused

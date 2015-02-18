@@ -15,6 +15,15 @@ unittest
 
 unittest
 {
+    import std.container: Array;
+    auto x = Array!int ([1, 2, 3]);
+    auto y = x.dup;
+    x ~= 4;
+    assert(x != y);
+}
+
+unittest
+{
     string[int] x;
     auto y = x;
     x[0] = "zero";
@@ -23,7 +32,7 @@ unittest
     writeln(x);
     writeln(y);
 
-    assert(x == y);
+    assert(x != y);
 }
 
 void main(string[] args)

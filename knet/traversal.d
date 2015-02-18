@@ -119,7 +119,7 @@ class DijkstraWalk
     alias Visit = Tuple!(NWeight, Nd);
 
     this(Graph graph,
-         const Nd startNd,
+         const Nd startNd = Nd.init,
          const Lang[] langs = [],
          const Sense[] senses = [],
          const Role[] roles = [],
@@ -132,11 +132,14 @@ class DijkstraWalk
         this.roles = roles;
         this.origins = origins;
 
-        nextNds ~= startNd.raw;
+        if (startNd != Nd.init)
+        {
+            nextNds ~= startNd.raw;
 
-        import std.typecons: tuple;
-        distMap[startNd.raw] = tuple(0, // TODO parameterize on distance function
-                                     Nd.asUndefined); // first node has parent
+            import std.typecons: tuple;
+            distMap[startNd.raw] = tuple(0, // TODO parameterize on distance function
+                                         Nd.asUndefined); // first node has parent
+        }
     }
 
     auto front() const @safe pure nothrow
@@ -148,6 +151,10 @@ class DijkstraWalk
     }
 
     enum useArray = true;
+    static if (useArray)
+    {
+        import std.container: Array;
+    }
 
     void popFront()
     {
@@ -203,11 +210,12 @@ class DijkstraWalk
 
     DijkstraWalk save() @property // makes this a ForwardRange
     {
-        typeof(return) copy = this;
+        typeof(return) copy = new DijkstraWalk(graph, Nd.init, langs, senses, roles, origins);
         /** TODO duplicate all non-const members with reference semantics except
             Graph.  Use MemberTypeTuple to iterate corresponding member of this
             and copy.
             */
+        // duplicate mutable internal states
         copy.nextNds = this.nextNds.dup;
         copy.distMap = this.distMap.dup; // TODO is this needed?
         return copy;
@@ -222,7 +230,6 @@ private:
     // yet to be untraversed nodes sorted by smallest distance to startNd
     static if (useArray)
     {
-        import std.container: Array;
         Array!Nd nextNds;
     }
     else
