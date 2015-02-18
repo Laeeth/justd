@@ -39,6 +39,7 @@ alias tail = dropOne;
     TODO Is inout Conversion!T the correct return value?
 
     TODO Special operator, say |||, for this?
+    TODO should we limit this template to a.length >= 2
 */
 CommonType!T either(T...)(lazy T a) pure if (a.length >= 1)
 {
@@ -52,7 +53,9 @@ CommonType!T either(T...)(lazy T a) pure if (a.length >= 1)
         return a0 ? a0 : either(a[1 .. $]); // recurse
     }
 }
-/** This overload enables, when possible, lvalue return. */
+/** This overload enables, when possible, lvalue return.
+    TODO should we limit this template to a.length >= 2
+ */
 auto ref either(T...)(ref T a) pure if (a.length >= 1 && allSame!T)
 {
     static if (T.length == 1)
