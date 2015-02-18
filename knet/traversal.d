@@ -3,9 +3,8 @@ module knet.traversal;
 import knet.base;
 
 /** Bread First Graph Walk(er) (Traverser)
-    Modelled as an (Input Range) with ElementType being an Nd-array (Nd[]).
 */
-class BFWalk
+struct BFWalk
 {
     pure:
 
@@ -14,7 +13,8 @@ class BFWalk
          const Lang[] langs = [],
          const Sense[] senses = [],
          const Role[] roles = [],
-         const Origin[] origins = []) @safe nothrow
+         const Origin[] origins = []) @safe nothrow in { assert(startNd.defined); }
+    body
     {
         this.graph = graph;
 
@@ -25,6 +25,7 @@ class BFWalk
 
         frontNds ~= startNd.raw;
         connectivenessByNd[startNd.raw] = 1; // tag startNd as visited
+        assert(connectivenessByNd !is null); // must be initialized to enable reference semantics
     }
 
     auto front() const @safe pure nothrow @nogc
@@ -75,6 +76,14 @@ class BFWalk
         return frontNds.empty;
     }
 
+    BFWalk save() @property // makes this a ForwardRange
+    {
+        typeof(return) copy = this;
+        copy.frontNds = copy.frontNds.dup;
+        copy.connectivenessByNd = copy.connectivenessByNd.dup;
+        return copy;
+    }
+
     // internal state
     NWeight[Nd] connectivenessByNd; // maps frontNds minimum distance from visited to startNd
 
@@ -98,8 +107,7 @@ BFWalk bfWalk(Graph graph, Nd start,
               const Role[] roles = [],
               const Origin[] origins = []) pure
 {
-    auto range = new typeof(return)(graph, start, langs, senses, roles, origins);
-    return range;
+    return typeof(return)(graph, start, langs, senses, roles, origins);
 }
 
 /** Nearest-Origin-First Graph Walker/Traverser Range.
@@ -112,18 +120,19 @@ BFWalk bfWalk(Graph graph, Nd start,
     closest parent node) to walk starting point (startNd). This can be used to
     reconstruct the closest path from any given Nd to startNd.
 */
-class DijkstraWalk
+struct DijkstraWalk
 {
     import std.typecons: Tuple;
 
     alias Visit = Tuple!(NWeight, Nd);
 
     this(Graph graph,
-         const Nd startNd = Nd.init,
+         const Nd startNd,
          const Lang[] langs = [],
          const Sense[] senses = [],
          const Role[] roles = [],
-         const Origin[] origins = [])
+         const Origin[] origins = []) in { assert(startNd.defined); }
+    body
     {
         this.graph = graph;
 
@@ -132,14 +141,13 @@ class DijkstraWalk
         this.roles = roles;
         this.origins = origins;
 
-        if (startNd != Nd.init)
-        {
-            nextNds ~= startNd.raw;
+        nextNds ~= startNd.raw;
+        import std.typecons: tuple;
+        // WARNING distMap must initialized here to provide reference semantics
+        distMap[startNd.raw] = tuple(0, // TODO parameterize on distance function
+                                     Nd.asUndefined); // first node has parent
 
-            import std.typecons: tuple;
-            distMap[startNd.raw] = tuple(0, // TODO parameterize on distance function
-                                         Nd.asUndefined); // first node has parent
-        }
+        assert(distMap !is null); // must be initialized to enable reference semantics
     }
 
     auto front() const @safe pure nothrow
@@ -210,21 +218,23 @@ class DijkstraWalk
 
     DijkstraWalk save() @property // makes this a ForwardRange
     {
-        typeof(return) copy = new DijkstraWalk(graph, Nd.init, langs, senses, roles, origins);
+        typeof(return) copy = this;
         /** TODO duplicate all non-const members with reference semantics except
             Graph.  Use MemberTypeTuple to iterate corresponding member of this
             and copy.
             */
         // duplicate mutable internal states
-        copy.nextNds = this.nextNds.dup;
-        copy.distMap = this.distMap.dup; // TODO is this needed?
+        copy.nextNds = copy.nextNds.dup;
+        copy.distMap = copy.distMap.dup; // because distMap have reference semantics
         return copy;
     }
 
     // Nd => tuple(Nd origin distance, parent Nd)
+    // WARNING distMap must initialized here to provide reference semantics in for range behaviour to work correctly
+    // See also: http://forum.dlang.org/thread/xrxejicnoakanvkyasso@forum.dlang.org#post-yipmrrdilsxcaypeoqhz:40forum.dlang.org
     Visit[Nd] distMap;
 
-private:
+public:
     Graph graph;
 
     // yet to be untraversed nodes sorted by smallest distance to startNd
@@ -260,5 +270,5 @@ DijkstraWalk dijkstraWalk(Graph graph, Nd start,
                           const Role[] roles = [],
                           const Origin[] origins = [])
 {
-    return new typeof(return)(graph, start, langs, senses, roles, origins);
+    return typeof(return)(graph, start, langs, senses, roles, origins);
 }
