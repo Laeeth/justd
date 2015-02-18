@@ -96,9 +96,18 @@ void testAll()
         auto gr = new Graph();
         const ndA = gr.store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
         const ndB = gr.store(`3200`, Lang.sv, Sense.population, Origin.manual);
+
         const ln1 = gr.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
+
         const ln2 = gr.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
         assert(ln1 == ln2);
+
+        const ln3 = gr.connect(ndB, Role(Rel.hasAttribute, true), ndA, Origin.manual, 1.0, true);
+        assert(ln1 == ln3);
+
+        // TODO fix this!
+        // const ln4 = gr.connect(ndB, Role(Rel.hasAttribute), ndA, Origin.manual, 1.0, true);
+        // assert(ln1 != ln4);
     }
 
     // symmetric link should be reused in reverse order
