@@ -179,6 +179,8 @@ void testContextOf()
     import knet.association: contextOf;
     const ndContext = gr.contextOf(bs);
     assert(ndContext == c);
+
+    const ctxNd2 = gr.contextOf("B1 B2 B3 B4 B5".splitter(` `));
 }
 
 /** Run Unittestsx.

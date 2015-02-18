@@ -156,7 +156,7 @@ struct DijkstraWalker
     /** Postblit. */
     this(this)
     {
-        writeln("Called postblit when nextNd is ", graph[nextNds.front].lemma.expr);
+        writeln("Called postblit when nextNd is ", graph[nextNds.front].lemma);
         nextNds = nextNds.dup;
         distMap = distMap.dup;
     }
@@ -242,12 +242,10 @@ struct DijkstraWalker
         return copy;
     }
 
+public:
     // WARNING distMap must initialized here to provide reference semantics in for range behaviour to work correctly
     // See also: http://forum.dlang.org/thread/xrxejicnoakanvkyasso@forum.dlang.org#post-yipmrrdilsxcaypeoqhz:40forum.dlang.org
     Visit[Nd] distMap;          // Nd => tuple(Nd origin distance, parent Nd)
-
-private:
-    Graph graph;
 
     // yet to be untraversed nodes sorted by smallest distance to start
     static if (useArray)
@@ -274,6 +272,9 @@ private:
 
     const Role[] roles;         // roles to match
     const Origin[] origins;     // origins to match
+
+private:
+    Graph graph;
 }
 
 DijkstraWalker dijkstraWalker(Graph graph, Nd start,

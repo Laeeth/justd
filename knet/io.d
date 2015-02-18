@@ -462,10 +462,13 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            import knet.association;
-            const ctxNd = graph.contextOf(arg.splitter);
-            graph.showNode(ctxNd, 1.0);
-            writeln;
+            import knet.association: contextOf;
+            const ctxNd = graph.contextOf(arg.splitter, [], [], [], [], 10000);
+            if (ctxNd.defined)
+            {
+                graph.showNode(ctxNd, 1.0);
+                writeln;
+            }
         }
     }
     else if (normLine.skipOver(`as`)) // asSense
