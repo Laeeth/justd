@@ -35,7 +35,7 @@ knetquery = env.Program(target="knetquery/knetquery",
                                  "dbg.d", "msgpack.d", "predicates.d", "getopt_ex.d",
                                  "wordnet.d",
                                  "grammars.d", "stemming.d", "ixes.d",
-                                 "assert_ex.d", "range_ex.d", "algorithm_ex.d", "traits_ex.d", "sort_ex.d", "mmfile_ex.d", "skip_ex.d",
+                                 "bitset.d", "assert_ex.d", "range_ex.d", "algorithm_ex.d", "traits_ex.d", "sort_ex.d", "mmfile_ex.d", "skip_ex.d",
                                  "bylines.d",
                                  "rational.d", "combinations.d", "permutations.d", "arsd/dom.d", "arsd/characterencodings.d",
                                  "backtrace/backtrace.d" ] +
