@@ -34,6 +34,14 @@ Nd contextOf(Nds)(Graph gr,
     auto node = typeof(return).init;
     import knet.traversal: dijkstraWalker;
 
+    // log walker visits
+    import bitset;
+    alias Block = size_t;
+    enum maxCount = 8*Block.sizeof;
+    assert(nds.count <= maxCount);
+    alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
+    Visits[Nd] visitsByNd;
+
     import std.datetime: StopWatch;
     StopWatch stopWatch;
     stopWatch.start();
@@ -42,15 +50,33 @@ Nd contextOf(Nds)(Graph gr,
     auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, langs, senses, roles, origins)).array;
 
     // iterate walkers in Round Robin fashion
-    import std.algorithm.searching: any;
-    while (stopWatch.peek().msecs >= durationInMsecs &&
-           walkers.any!(walker => !walker.empty)) // while we still have walker
+    while (stopWatch.peek.msecs < durationInMsecs)
     {
-        foreach (ref activeWalker; walkers.filter!(walker => !walker.empty))
+        uint emptyCount = 0;
+        foreach (wix, ref walker; walkers)
         {
-            import std.range: moveFront;
-            const front = activeWalker.moveFront;
-            // find node overlaps of walkers.
+            if (!walker.empty)
+            {
+                import std.range: moveFront;
+                const visitedNd = walker.moveFront; // visit new node
+                visitsByNd[visitedNd][wix] = true;
+                // if (auto visits = visitedNd in visitsByNd)
+                // {
+                //     (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
+                // }
+                // else
+                // {
+                //     (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
+                // }
+            }
+            else
+            {
+                ++emptyCount;
+            }
+        }
+        if (emptyCount == walkers.length) // if all walkers are empty
+        {
+            break; // we're done
         }
     }
 
