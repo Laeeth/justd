@@ -165,18 +165,13 @@ struct DijkstraWalk
         import knet.iteration: lnsOf;
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
-            foreach (const nextNd; graph[frontLn].actors[] // TODO functionize using .ndsOf if we can find a way to include frontNd
-                                                 .map!(nd => nd.raw)
-                                                 .filter!(nd =>
-                                                          nd != frontNd &&
-                                                          (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
-                                                          (senses.empty || senses.canFind(graph[nd].lemma.sense))))
+            import knet.iteration: ndsOf;
+            foreach (const nextNd; knet.iteration.ndsOf(graph, frontLn, langs, senses, frontNd))
             {
                 const newDist = mapByNd[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
                 if (auto hit = nextNd in mapByNd)
                 {
-                    const dist = (*hit)[0];
-                    const parentNd = (*hit)[1];
+                    const dist = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here
                     if (newDist < dist) // a closer way was found
                     {
                         *hit = Visit(newDist, frontNd); // best yet

@@ -9,8 +9,8 @@ import knet.base;
 */
 auto lnsOf(Graph graph,
            Node node,
-           RelDir dir = RelDir.any,
-           Role role = Role.init) pure
+           const RelDir dir = RelDir.any,
+           const Role role = Role.init) pure
 {
     import knet.relations: specializes;
     return node.links[]
@@ -25,7 +25,7 @@ auto lnsOf(Graph graph,
 /** Get Links References of $(D nd) type $(D rel) learned from $(D origins).
  */
 auto lnsOf(Graph graph,
-           Nd nd,
+           const Nd nd,
            const Role[] roles = [],
            const Origin[] origins = [],
            const Ln skipLn = Ln.init) pure
@@ -41,8 +41,8 @@ auto lnsOf(Graph graph,
 /** Get Links References of $(D nd) type $(D rel) learned from $(D origins).
  */
 auto lnsOf(Graph graph,
-           Nd nd,
-           Role role,
+           const Nd nd,
+           const Role role,
            const Origin[] origins = []) pure
 {
     return graph.lnsOf(nd, [role], origins);
@@ -52,8 +52,8 @@ auto lnsOf(Graph graph,
  */
 auto linksOf(Graph graph,
              Node node,
-             RelDir dir = RelDir.any,
-             Role role = Role.init) pure
+             const RelDir dir = RelDir.any,
+             const Role role = Role.init) pure
 {
     return graph.lnsOf(node, dir, role).map!(ln => graph[ln]);
 }
@@ -61,9 +61,9 @@ auto linksOf(Graph graph,
 /** Get Links of Node Reference $(D nd).
  */
 auto linksOf(Graph graph,
-             Nd nd,
-             RelDir dir = RelDir.any,
-             Role role = Role.init) pure
+             const Nd nd,
+             const RelDir dir = RelDir.any,
+             const Role role = Role.init) pure
 {
     return graph.linksOf(graph[nd], dir, role);
 }
@@ -71,7 +71,7 @@ auto linksOf(Graph graph,
 /** Get Node References of $(D ln) matchin $(D langs) and $(D senses).
  */
 auto ndsOf(Graph graph,
-           Ln ln,
+           const Ln ln,
            const Lang[] langs = [],
            const Sense[] senses = [],
            const Nd skipNd = Nd.init) pure
@@ -88,7 +88,7 @@ auto ndsOf(Graph graph,
     learned from $(D origins).
 */
 auto nnsOf(Graph graph,
-           Nd nd,
+           const Nd nd,
            const Role[] roles = [],
            const Lang[] dstLangs = [],
            const Origin[] origins = []) pure
@@ -113,8 +113,8 @@ Nds rhymesOf(S)(Graph graph,
                 S expr,
                 Lang[] langs = [],
                 const Origin[] origins = [],
-                size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
-                bool withSameSyllableCount = false) pure if (isSomeString!S)
+                const size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
+                const bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
     foreach (const srcNd; graph.ndsOf(expr)) // for each interpretation of expr
     {
@@ -167,9 +167,9 @@ NWeight[Lang] languagesOf(R)(Graph graph,
 */
 auto translationsOf(S)(Graph graph,
                        S expr,
-                       Lang lang = Lang.unknown,
-                       Sense sense = Sense.unknown,
-                       Lang[] toLangs = []) pure if (isSomeString!S)
+                       const Lang lang = Lang.unknown,
+                       const Sense sense = Sense.unknown,
+                       const Lang[] toLangs = []) pure if (isSomeString!S)
 {
     auto nodes = graph.ndsOf(expr, lang, sense);
     // en => sv:
@@ -199,9 +199,9 @@ auto derangedAnagramsOf(S)(Graph graph,
 */
 auto synonymsOf(S)(Graph graph,
                    S expr,
-                   Lang lang = Lang.unknown,
-                   Sense sense = Sense.unknown,
-                   bool withSameSyllableCount = false) pure if (isSomeString!S)
+                   const Lang lang = Lang.unknown,
+                   const Sense sense = Sense.unknown,
+                   const bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
     return graph.ndsOf(expr, lang, sense);
 }
