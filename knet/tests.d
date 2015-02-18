@@ -162,17 +162,23 @@ void testContextOf()
     enum role = Role(Rel.any);
     enum origin = Origin.manual;
 
-    auto ndA  = gr.store(`A`, lang, sense, origin);
+    auto b1 = gr.store(`B1`, lang, sense, origin);
+    auto b2 = gr.store(`B2`, lang, sense, origin);
+    auto b3 = gr.store(`B3`, lang, sense, origin);
+    auto b4 = gr.store(`B4`, lang, sense, origin);
+    auto b5 = gr.store(`B5`, lang, sense, origin);
 
-    auto ndB1 = gr.store(`B1`, lang, sense, origin);
-    auto ndB2 = gr.store(`B2`, lang, sense, origin);
-    auto ndB3 = gr.store(`B3`, lang, sense, origin);
+    auto c  = gr.store(`A`, lang, sense, origin);
+    auto d  = gr.store(`D`, lang, sense, origin);
 
-    gr.connect1toM(ndA, role, [ndB1, ndB2, ndB3], origin, 0.5, true);
+    auto bs = [b1, b2, b3, b4, b5];
 
-    auto ndsB = [ndB1, ndB2, ndB3];
+    auto cLns = gr.connect1toM(c, role, bs, origin, 0.5, true);
+    auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
+
     import knet.association: contextOf;
-    const ndContext = gr.contextOf(ndsB);
+    const ndContext = gr.contextOf(bs);
+    assert(ndContext == c);
 }
 
 /** Run Unittestsx.

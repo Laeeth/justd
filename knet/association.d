@@ -2,7 +2,7 @@ module knet.association;
 
 import knet.base;
 
-/** Get Node with strongest relatedness to $(D exprs).
+/** Get Context (node) of Expressions $(D exprs).
  */
 Nd contextOf(Exprs)(Graph gr,
                     Exprs exprs,
@@ -19,9 +19,13 @@ Nd contextOf(Exprs)(Graph gr,
     return gr.contextOf(nds, langs, senses, roles, origins, durationInMsecs);
 }
 
-alias Block = size_t;
+/** Get Context (node) of Nodes $(D nds).
+    Context means the node (Nd) which is most strongly related to $(D nds).
 
-/** Get Node with strongest relatedness to $(D text).
+    Either exists
+    - after $(D durationInMsecs) millseconds has passed, or
+    - a common (context) node has been found
+
     TODO Compare with function Context() in ConceptNet API.
 */
 Nd contextOf(Nds)(Graph gr,
@@ -36,8 +40,7 @@ Nd contextOf(Nds)(Graph gr,
     auto node = typeof(return).init;
     import knet.traversal: dijkstraWalker;
 
-    // log walker visits
-    import bitset;
+    alias Block = size_t;
 
     enum maxCount = 8*Block.sizeof;
     const count = nds.count;
@@ -45,6 +48,7 @@ Nd contextOf(Nds)(Graph gr,
     assert(nds.count >= 2);
     assert(nds.count <= maxCount);
 
+    import bitset: BitSet;
     alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
     Visits[Nd] visitedWalkersIndexesByNd;
 
@@ -52,8 +56,7 @@ Nd contextOf(Nds)(Graph gr,
     StopWatch stopWatch;
     stopWatch.start();
 
-    // do we need array here?
-    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, langs, senses, roles, origins)).array;
+    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, langs, senses, roles, origins)).array; // TODO avoid Walker postblit
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)
@@ -63,20 +66,19 @@ Nd contextOf(Nds)(Graph gr,
         {
             if (!walker.empty)
             {
-                import std.range: moveFront;
                 const visitedNd = walker.moveFront; // visit new node
-                writeln("visitedNd: ", visitedNd, ", wix: ", wix);
                 if (auto visits = visitedNd in visitedWalkersIndexesByNd)
                 {
-                    (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
+                    // log that $(D walker) now (among others) have visited visitedNd
+                    (*visits)[wix] = true;
                     if ((*visits).allOneBetween(0, count))
                     {
-                        writeln("allOne: ", *visits);
                         return visitedNd;
                     }
                 }
                 else
                 {
+                    // log that $(D walker) is (the first) to visit visitedNd
                     Visits visits;
                     visits[wix] = true;
                     visitedWalkersIndexesByNd[visitedNd] = visits;
@@ -87,10 +89,9 @@ Nd contextOf(Nds)(Graph gr,
                 ++emptyCount;
             }
         }
-        if (emptyCount == walkers.length) // if all walkers are empty
+        if (emptyCount == count) // if all walkers are empty traversal is complete
         {
             break; // we're done
-            writeln("Search complete");
         }
     }
 

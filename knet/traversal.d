@@ -156,6 +156,7 @@ struct DijkstraWalker
     /** Postblit. */
     this(this)
     {
+        writeln("Called postblit when nextNd is ", graph[nextNds.front].lemma.expr);
         nextNds = nextNds.dup;
         distMap = distMap.dup;
     }
@@ -218,6 +219,16 @@ struct DijkstraWalker
         // TODO use my radixSort for better performance
         nextNds[].partialSort!((a, b) => (distMap[a][0] <
                                           distMap[b][0]))(savedLength);
+    }
+
+    /** This needs to be explicit, otherwise std.range.moveFront calls postblit
+     * makes traverser.moveFront a no-op. I don't know why.
+     */
+    Nd moveFront()
+    {
+        const nd = front;
+        popFront;
+        return nd;
     }
 
     bool empty() const @safe pure nothrow @nogc
