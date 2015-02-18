@@ -148,6 +148,12 @@ void showNode(Graph graph,
     writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
 }
 
+void showNode(Graph graph,
+              const Nd nd, NWeight weight)
+{
+    graph.showNode(graph[nd], weight);
+}
+
 void showLinkNode(Graph graph,
                   in Node node,
                   Rel rel,
@@ -445,6 +451,21 @@ bool showNodes(Graph graph,
                 graph.showNode(node, 1.0);
                 writeln;
             }
+        }
+    }
+    else if (normLine.skipOverShortestOf(`context(`,
+                                         `context_of(`,
+                                         `contextof(`))
+    {
+        normLine.skipOver(` `); // TODO all space using skipOver!isSpace
+        const split = normLine.findSplitBefore(`)`);
+        const arg = split[0];
+        if (!arg.empty)
+        {
+            import knet.association;
+            const ctxNd = graph.contextOf(arg.splitter);
+            graph.showNode(ctxNd, 1.0);
+            writeln;
         }
     }
     else if (normLine.skipOver(`as`)) // asSense

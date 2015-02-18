@@ -1346,8 +1346,8 @@ class Graph
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise Ln.max.
      */
     Ln areLinkedInOrder(Nd a, Role role, Nd b,
-                           Origin origin = Origin.unknown,
-                           NWeight nweight = 1.0)
+                        Origin origin = Origin.unknown,
+                        NWeight nweight = 1.0)
     {
         const dir = (role.rel.isSymmetric ?
                      RelDir.any :
@@ -1373,8 +1373,8 @@ class Graph
         TODO warn about negation and reversion on existing rels
      */
     Ln areLinked(Nd a, Role role, Nd b,
-                    Origin origin = Origin.unknown,
-                    NWeight weight = 1.0)
+                 Origin origin = Origin.unknown,
+                 NWeight weight = 1.0)
     {
         return either(areLinkedInOrder(a, role, b, origin, weight),
                       areLinkedInOrder(b, role, a, origin, weight));
@@ -1382,8 +1382,8 @@ class Graph
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     Ln areLinked(in Lemma a, Role role, in Lemma b,
-                    Origin origin = Origin.unknown,
-                    NWeight weight = 1.0)
+                 Origin origin = Origin.unknown,
+                 NWeight weight = 1.0)
     {
         const aNd = a in db.ixes.ndByLemma;
         const bNd = b in db.ixes.ndByLemma;
@@ -1400,16 +1400,6 @@ class Graph
 
     import std.datetime: StopWatch;
     StopWatch showNodesSW;
-
-    /** Get Node with strongest relatedness to $(D text).
-        TODO Compare with function Context() in ConceptNet API.
-     */
-    Node contextOf(R)(R text) const if (isSourceOfSomeString!R)
-    {
-        auto node = typeof(return).init;
-        return node;
-    }
-    alias topicOf = contextOf;
 
     /** Sort Lns on relevance.
         TODO Figure out how to put this in knet.sorting

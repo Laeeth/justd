@@ -6,6 +6,9 @@ import knet.base;
  */
 void testAll(Graph gr)
 {
+    assert(Nd.init == Nd.asUndefined);
+    assert(Ln.init == Ln.asUndefined);
+
     {
         enum sense = Sense.letter;
         enum lang = Lang.en;
@@ -44,6 +47,7 @@ void testAll(Graph gr)
 
         import knet.traversal: dijkstraWalk;
         auto diW = gr.dijkstraWalk(ndA);
+        auto diW2 = diW; // new reference
         foreach (const nd; diW)
         {
             writeln(gr[nd]);
@@ -60,6 +64,9 @@ void testAll(Graph gr)
             write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
             writeln();
         }
+
+        assert(diW.empty);
+        assert(diW2.empty);
     }
 
     // link should be reused

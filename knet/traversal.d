@@ -5,7 +5,7 @@ import knet.base;
 /** Bread First Graph Walk(er) (Traverser)
     Modelled as an (Input Range) with ElementType being an Nd-array (Nd[]).
 */
-struct BFWalk
+class BFWalk
 {
     pure:
 
@@ -19,6 +19,7 @@ struct BFWalk
         this.graph = graph;
 
         this.langs = langs;
+        this.senses = senses;
         this.roles = roles;
         this.origins = origins;
 
@@ -97,7 +98,7 @@ BFWalk bfWalk(Graph graph, Nd start,
               const Role[] roles = [],
               const Origin[] origins = []) pure
 {
-    auto range = typeof(return)(graph, start, langs, senses, roles, origins);
+    auto range = new typeof(return)(graph, start, langs, senses, roles, origins);
     return range;
 }
 
@@ -109,7 +110,7 @@ BFWalk bfWalk(Graph graph, Nd start,
     closest parent node) to walk starting point (startNd). This can be used to
     reconstruct the closest path from any given Nd to startNd.
 */
-struct DijkstraWalk
+class DijkstraWalk
 {
     import std.typecons: Tuple;
 
@@ -125,6 +126,7 @@ struct DijkstraWalk
         this.graph = graph;
 
         this.langs = langs;
+        this.senses = senses;
         this.roles = roles;
         this.origins = origins;
 
@@ -197,10 +199,14 @@ struct DijkstraWalk
         return nextNds.empty;
     }
 
-    @property DijkstraWalk save() // makes this a ForwardRange
+    DijkstraWalk save() @property // makes this a ForwardRange
     {
         typeof(return) copy = this;
         // TODO unittest this
+        /** TODO duplicate all non-const members with reference semantics except
+            Graph.  Use MemberTypeTuple to iterate corresponding member of this
+            and copy.
+            */
         copy.nextNds = this.nextNds.dup;
         copy.mapByNd = this.mapByNd.dup;
         return copy;
@@ -246,5 +252,5 @@ DijkstraWalk dijkstraWalk(Graph graph, Nd start,
                           const Role[] roles = [],
                           const Origin[] origins = [])
 {
-    return typeof(return)(graph, start, langs, senses, roles, origins);
+    return new typeof(return)(graph, start, langs, senses, roles, origins);
 }
