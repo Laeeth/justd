@@ -69,7 +69,7 @@ Nd contextOf(Nds)(Graph gr,
                 if (auto visits = visitedNd in visitedWalkersIndexesByNd)
                 {
                     (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
-                    if ((*visits).allOne)
+                    if ((*visits).allOneBetween(0, count))
                     {
                         writeln("allOne: ", *visits);
                         return visitedNd;
