@@ -204,7 +204,6 @@ class DijkstraWalk
     DijkstraWalk save() @property // makes this a ForwardRange
     {
         typeof(return) copy = this;
-        // TODO unittest this
         /** TODO duplicate all non-const members with reference semantics except
             Graph.  Use MemberTypeTuple to iterate corresponding member of this
             and copy.
