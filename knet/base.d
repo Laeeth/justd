@@ -1225,7 +1225,7 @@ class Graph
 
         if (checkExisting)
         {
-            if (const existingLn = areConnected(src, role, dst, origin, weight))
+            if (const existingLn = areLinked(src, role, dst, origin, weight))
             {
                 if (warnExisting)
                 {
@@ -1345,7 +1345,7 @@ class Graph
 
     /** Return Index to Link from $(D a) to $(D b) if present, otherwise Ln.max.
      */
-    Ln areConnectedInOrder(Nd a, Role role, Nd b,
+    Ln areLinkedInOrder(Nd a, Role role, Nd b,
                            Origin origin = Origin.unknown,
                            NWeight nweight = 1.0)
     {
@@ -1372,16 +1372,16 @@ class Graph
     /** Return Index to Link relating $(D a) to $(D b) in any direction if present, otherwise Ln.max.
         TODO warn about negation and reversion on existing rels
      */
-    Ln areConnected(Nd a, Role role, Nd b,
+    Ln areLinked(Nd a, Role role, Nd b,
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
-        return either(areConnectedInOrder(a, role, b, origin, weight),
-                      areConnectedInOrder(b, role, a, origin, weight));
+        return either(areLinkedInOrder(a, role, b, origin, weight),
+                      areLinkedInOrder(b, role, a, origin, weight));
     }
 
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
-    Ln areConnected(in Lemma a, Role role, in Lemma b,
+    Ln areLinked(in Lemma a, Role role, in Lemma b,
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
@@ -1389,7 +1389,7 @@ class Graph
         const bNd = b in db.ixes.ndByLemma;
         if (aNd && bNd)         // both lemmas exist
         {
-            return areConnected(*aNd, role, *bNd, origin, weight);
+            return areLinked(*aNd, role, *bNd, origin, weight);
         }
         return typeof(return).asUndefined;
     }
