@@ -69,6 +69,7 @@ Nd contextOf(Nds)(Graph gr,
                     (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
                     if ((*visits).allOne)
                     {
+                        writeln("allOne");
                         return visitedNd;
                     }
                 }
