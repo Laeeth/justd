@@ -69,6 +69,10 @@ void testAll(Graph gr)
         assert(diW.empty);
         assert(diWref.empty);
         assert(!diWcopy.empty);
+
+        assert(diW.distMap != diWcopy.distMap);
+        foreach (const nd; diWcopy) {}
+        assert(diW.distMap == diWcopy.distMap);
     }
 
     // link should be reused
