@@ -131,7 +131,7 @@ Nds rhymesOf(S)(Graph graph,
         {
             const dstNode = graph[dstNd];
             import std.algorithm.searching: canFind;
-            auto hits = graph.db.allNodes.filter!(a => langs.canFind(a.lemma.lang))
+            auto hits = graph.db.tabs.allNodes.filter!(a => langs.canFind(a.lemma.lang))
                              .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
                                                                    graph[srcNd].lemma.expr)))
                              .filter!(a => a[1] >= commonPhonemeCountMin)
@@ -182,7 +182,7 @@ auto anagramsOf(S)(Graph graph,
                    S expr) pure if (isSomeString!S)
 {
     const lsWord = expr.sorted; // letter-sorted expr
-    return graph.db.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
+    return graph.db.tabs.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
                                               lsWord == node.lemma.expr.toLower.sorted));
 }
 

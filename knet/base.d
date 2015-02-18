@@ -491,13 +491,21 @@ static if (false)
     pragma(msg, `Link.sizeof: `, Link.sizeof);
 }
 
-struct Db
+/** Tables.
+ */
+struct Tabs
 {
     // Data
     Nodes allNodes;
     Links allLinks;
-    // TODO Nds[Lang.max + 1] ndsByLang;
+}
 
+/** Indexes.
+ */
+struct Ixes
+{
+
+    // TODO Nds[Lang.max + 1] ndsByLang;
     SynSet[SynSetOffset] synsetByOffset;
 
     // Indexes
@@ -509,6 +517,14 @@ struct Db
 
     string[Ctx] contextNameByCtx; /** Ontology Context Names by Index. */
     Ctx[string] ctxByName; /** Ontology Context Indexes by Name. */
+}
+
+/** Database.
+ */
+struct Db
+{
+    Tabs tabs;
+    Ixes ixes;
 }
 
 struct Stat
@@ -555,8 +571,8 @@ class Graph
 
     @safe pure nothrow @nogc
     {
-        ref inout(Node) at(const Nd nd) inout { return db.allNodes[nd.ix]; }
-        ref inout(Link) at(const Ln ln) inout { return db.allLinks[ln.ix]; }
+        ref inout(Node) at(const Nd nd) inout { return db.tabs.allNodes[nd.ix]; }
+        ref inout(Link) at(const Ln ln) inout { return db.tabs.allLinks[ln.ix]; }
 
         ref inout(Node) opIndex(const Nd nd) inout { return at(nd); }
         ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }
@@ -567,7 +583,7 @@ class Graph
 
     Nd ndByLemmaMaybe(in Lemma lemma) pure
     {
-        return get(db.ndByLemma, lemma, typeof(return).init);
+        return get(db.ixes.ndByLemma, lemma, typeof(return).init);
     }
 
     /** Try to Get Single Node related to $(D word) in the interpretation
@@ -580,7 +596,7 @@ class Graph
     {
         typeof(return) nodes;
         const lemma = Lemma(expr, lang, sense, context);
-        if (const lemmaNd = lemma in db.ndByLemma)
+        if (const lemmaNd = lemma in db.ixes.ndByLemma)
         {
             nodes ~= *lemmaNd; // use it
         }
@@ -594,7 +610,7 @@ class Graph
                 {
                     import std.algorithm.iteration: joiner;
                     if (const lemmaFixedNd = Lemma(wordsSplit.joiner(`_`).to!S,
-                                                   lang, sense, context) in db.ndByLemma)
+                                                   lang, sense, context) in db.ixes.ndByLemma)
                     {
                         nodes ~= *lemmaFixedNd;
                     }
@@ -607,7 +623,7 @@ class Graph
     /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
     auto ndsOf(S)(S expr) pure if (isSomeString!S)
     {
-        return lemmasOfExpr(expr).map!(lemma => db.ndByLemma[lemma]);
+        return lemmasOfExpr(expr).map!(lemma => db.ixes.ndByLemma[lemma]);
     }
 
     /** Get All Possible Nodes related to $(D word) in the interpretation
@@ -662,11 +678,11 @@ class Graph
     {
         static if (is(S == string)) // TODO Is there a prettier way to do this?
         {
-            return db.lemmasByExpr.get(expr, typeof(return).init);
+            return db.ixes.lemmasByExpr.get(expr, typeof(return).init);
         }
         else
         {
-            return db.lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
+            return db.ixes.lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
         }
     }
 
@@ -688,7 +704,7 @@ class Graph
      */
     auto tryReuseExpr(S)(S expr) @safe
     {
-        if (auto lemmas = expr in db.lemmasByExpr)
+        if (auto lemmas = expr in db.ixes.lemmasByExpr)
         {
             import std.range: front;
             return (*lemmas).front.expr;
@@ -702,7 +718,7 @@ class Graph
     ref Lemma internLemma(ref Lemma lemma,
                           bool hasUniqueSense = false) @safe pure // See also: http://wiki.dlang.org/DIP25 for doc on `return ref`
     {
-        if (auto lemmas = lemma.expr in db.lemmasByExpr)
+        if (auto lemmas = lemma.expr in db.ixes.lemmasByExpr)
         {
             // reuse senses that specialize lemma.sense and modify lemma.sense to it
             foreach (ref existingLemma; *lemmas)
@@ -731,9 +747,9 @@ class Graph
         {
             static if (!isDynamicArray!Lemmas)
             {
-                db.lemmasByExpr[lemma.expr] = Lemmas.init; // TODO fix std.container.Array
+                db.ixes.lemmasByExpr[lemma.expr] = Lemmas.init; // TODO fix std.container.Array
             }
-            db.lemmasByExpr[lemma.expr] ~= lemma;
+            db.ixes.lemmasByExpr[lemma.expr] ~= lemma;
         }
         return lemma;
     }
@@ -992,7 +1008,7 @@ class Graph
     body
     {
         auto lemma = Lemma(tryReuseExpr(expr), lang, sense, context, manner, isRegexp, meaningNr, normalizeExpr);
-        if (const lemmaNd = lemma in db.ndByLemma)
+        if (const lemmaNd = lemma in db.ixes.ndByLemma)
         {
             return *lemmaNd; // lookup
         }
@@ -1001,7 +1017,7 @@ class Graph
             const specializedLemma = internLemma(lemma);
             if (specializedLemma != lemma) // if an existing more specialized lemma was found
             {
-                return db.ndByLemma[specializedLemma];
+                return db.ixes.ndByLemma[specializedLemma];
             }
 
             auto wordsSplit = lemma.expr.findSplit(expressionWordSeparator);
@@ -1016,11 +1032,11 @@ class Graph
             }
 
             // store
-            assert(db.allNodes.length <= Nd.nullIx);
-            const cix = Nd(cast(Nd.Ix)db.allNodes.length);
-            db.allNodes ~= Node(lemma, origin); // .. new node that is stored
+            assert(db.tabs.allNodes.length <= Nd.nullIx);
+            const cix = Nd(cast(Nd.Ix)db.tabs.allNodes.length);
+            db.tabs.allNodes ~= Node(lemma, origin); // .. new node that is stored
 
-            db.ndByLemma[lemma] = cix; // store index to ..
+            db.ixes.ndByLemma[lemma] = cix; // store index to ..
             stat.nodeStringLengthSum += lemma.expr.length;
 
             ++stat.nodeCountByLang[lemma.lang];
@@ -1219,8 +1235,8 @@ class Graph
         }
 
         // TODO group these
-        assert(db.allLinks.length <= Ln.nullIx);
-        auto ln = Ln(cast(Ln.Ix)db.allLinks.length);
+        assert(db.tabs.allLinks.length <= Ln.nullIx);
+        auto ln = Ln(cast(Ln.Ix)db.tabs.allLinks.length);
 
         auto link = Link(role.reversion ? dst : src,
                          Role(role.rel, false, role.negation),
@@ -1277,9 +1293,9 @@ class Graph
                 ` reversion:`, role.reversion);
         }
 
-        db.allLinks ~= link; // TODO Avoid copying here
+        db.tabs.allLinks ~= link; // TODO Avoid copying here
 
-        return ln; // db.allLinks.back;
+        return ln; // db.tabs.allLinks.back;
     }
     alias relate = connect;
 
@@ -1287,7 +1303,7 @@ class Graph
     Ctx contextOfName(S)(S name) if (isSomeString!S)
     {
         auto context = anyContext;
-        if (const ctx = name in db.ctxByName)
+        if (const ctx = name in db.ixes.ctxByName)
         {
             context = *ctx;
         }
@@ -1295,8 +1311,8 @@ class Graph
         {
             assert(stat.ctxCounter != stat.ctxCounter.max);
             context._ix = stat.ctxCounter++;
-            db.contextNameByCtx[context] = name;
-            db.ctxByName[name] = context;
+            db.ixes.contextNameByCtx[context] = name;
+            db.ixes.ctxByName[name] = context;
         }
         return context;
     }
@@ -1304,8 +1320,8 @@ class Graph
     /** Set Location of Node $(D cix) to $(D location) */
     void setLocation(Nd nd, in Location location) pure
     {
-        assert (nd !in db.locations);
-        db.locations[nd] = location;
+        assert (nd !in db.ixes.locations);
+        db.ixes.locations[nd] = location;
     }
 
     /** If $(D link) node origins unknown propagate them from $(D link)
@@ -1365,8 +1381,8 @@ class Graph
                     Origin origin = Origin.unknown,
                     NWeight weight = 1.0)
     {
-        const aNd = a in db.ndByLemma;
-        const bNd = b in db.ndByLemma;
+        const aNd = a in db.ixes.ndByLemma;
+        const bNd = b in db.ixes.ndByLemma;
         if (aNd && bNd)         // both lemmas exist
         {
             return areConnected(*aNd, role, *bNd, origin, weight);

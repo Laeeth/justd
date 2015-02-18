@@ -11,7 +11,7 @@ void save(Graph graph,
     const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
     writeln(`Saving tables to "`, cachePath, `" ...`);
     auto file = File(cachePath, `wb`);
-    file.rawWrite(graph.db.pack);
+    file.rawWrite(graph.db.ixes.pack);
     file.rawWrite(graph.stat.pack);
 }
 
@@ -57,7 +57,7 @@ auto loadUniquelySensedLemmas(Graph graph,
 
             // TODO Use learnLemma(lemma, true) instead of these two lines
             lemma.hasUniqueSense = true;
-            graph.db.lemmasByExpr[expr] = [lemma];
+            graph.db.ixes.lemmasByExpr[expr] = [lemma];
 
             ++cnt;
         }
@@ -80,7 +80,7 @@ auto saveUniquelySensedLemmas(Graph graph,
             `" ...`);
     auto file = File(cachePath, `wb`);
     size_t cnt = 0;
-    foreach (pair; graph.db.lemmasByExpr.byPair)
+    foreach (pair; graph.db.ixes.lemmasByExpr.byPair)
     {
         const expr = pair[0];
         auto lemmas = pair[1];

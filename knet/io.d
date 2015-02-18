@@ -29,7 +29,7 @@ void showRelations(Graph graph,
         }
     }
 
-    writeln(`Node Count: `, graph.db.allNodes.length);
+    writeln(`Node Count: `, graph.db.tabs.allNodes.length);
 
     writeln(`Node Count by Origin:`);
     foreach (source; enumMembers!Origin)
@@ -65,32 +65,32 @@ void showRelations(Graph graph,
 
     if (graph.stat.weightSumCN5)
     {
-        writeln(indent, `CN5 Weights Min,Max,Average: `, graph.stat.weightMinCN5, ',', graph.stat.weightMaxCN5, ',', cast(NWeight)graph.stat.weightSumCN5/graph.db.allLinks.length);
+        writeln(indent, `CN5 Weights Min,Max,Average: `, graph.stat.weightMinCN5, ',', graph.stat.weightMaxCN5, ',', cast(NWeight)graph.stat.weightSumCN5/graph.db.tabs.allLinks.length);
         writeln(indent, `CN5 Packed Weights Histogram: `, graph.stat.pweightHistogramCN5);
     }
     if (graph.stat.weightSumNELL)
     {
-        writeln(indent, `NELL Weights Min,Max,Average: `, graph.stat.weightMinNELL, ',', graph.stat.weightMaxNELL, ',', cast(NWeight)graph.stat.weightSumNELL/graph.db.allLinks.length);
+        writeln(indent, `NELL Weights Min,Max,Average: `, graph.stat.weightMinNELL, ',', graph.stat.weightMaxNELL, ',', cast(NWeight)graph.stat.weightSumNELL/graph.db.tabs.allLinks.length);
         writeln(indent, `NELL Packed Weights Histogram: `, graph.stat.pweightHistogramNELL);
     }
 
     writeln(indent, `Node Count (All/Multi-Word): `,
-            graph.db.allNodes.length,
+            graph.db.tabs.allNodes.length,
             `/`,
             graph.stat.multiWordNodeLemmaCount);
-    writeln(indent, `Lemma Expression Word Length Average: `, cast(real)graph.stat.exprWordCountSum/graph.db.ndByLemma.length);
-    writeln(indent, `Link Count: `, graph.db.allLinks.length);
+    writeln(indent, `Lemma Expression Word Length Average: `, cast(real)graph.stat.exprWordCountSum/graph.db.ixes.ndByLemma.length);
+    writeln(indent, `Link Count: `, graph.db.tabs.allLinks.length);
     writeln(indent, `Link Count By Group:`);
     writeln(indent, `- Symmetric: `, graph.stat.symmetricRelCount);
     writeln(indent, `- Transitive: `, graph.stat.transitiveRelCount);
 
-    writeln(indent, `Lemmas Expression Count: `, graph.db.lemmasByExpr.length);
+    writeln(indent, `Lemmas Expression Count: `, graph.db.ixes.lemmasByExpr.length);
 
-    writeln(indent, `Node Indexes by Lemma Count: `, graph.db.ndByLemma.length);
-    writeln(indent, `Node String Length Average: `, cast(NWeight)graph.stat.nodeStringLengthSum/graph.db.allNodes.length);
+    writeln(indent, `Node Indexes by Lemma Count: `, graph.db.ixes.ndByLemma.length);
+    writeln(indent, `Node String Length Average: `, cast(NWeight)graph.stat.nodeStringLengthSum/graph.db.tabs.allNodes.length);
 
-    writeln(indent, `Node Connectedness Average: `, cast(NWeight)graph.stat.nodeConnectednessSum/graph.db.allNodes.length);
-    writeln(indent, `Link Connectedness Average: `, cast(NWeight)graph.stat.linkConnectednessSum/graph.db.allLinks.length);
+    writeln(indent, `Node Connectedness Average: `, cast(NWeight)graph.stat.nodeConnectednessSum/graph.db.tabs.allNodes.length);
+    writeln(indent, `Link Connectedness Average: `, cast(NWeight)graph.stat.linkConnectednessSum/graph.db.tabs.allLinks.length);
 }
 
 void showLink(Graph graph,
@@ -142,7 +142,7 @@ void showNode(Graph graph,
     }
     if (node.lemma.context != Ctx.asUndefined)
     {
-        write(`:`, graph.db.contextNameByCtx[node.lemma.context]);
+        write(`:`, graph.db.ixes.contextNameByCtx[node.lemma.context]);
     }
 
     writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
@@ -273,8 +273,8 @@ bool showNodes(Graph graph,
 
     if (normLine == `palindrome`)
     {
-        foreach (palindromeNode; graph.db.allNodes.filter!(node =>
-                                                           node.lemma.expr.toLower.isPalindrome(3)))
+        foreach (palindromeNode; graph.db.tabs.allNodes.filter!(node =>
+                                                                node.lemma.expr.toLower.isPalindrome(3)))
         {
             graph.showLinkNode(palindromeNode,
                                Rel.instanceOf,

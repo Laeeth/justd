@@ -242,13 +242,13 @@ size_t readWordNetDataLine(R, N)(Graph graph,
     }
 
     // store it in local associative array
-    if (auto existingSynSet = synset_offset in graph.db.synsetByOffset)
+    if (auto existingSynSet = synset_offset in graph.db.ixes.synsetByOffset)
     {
         *existingSynSet ~= synset;
     }
     else
     {
-        graph.db.synsetByOffset[synset_offset] = synset;
+        graph.db.ixes.synsetByOffset[synset_offset] = synset;
     }
 
     graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet, true); // TODO use connectFully instead?
@@ -363,11 +363,11 @@ void readWordNet(Graph graph,
     // link them together
     foreach (const row; rows)
     {
-        if (auto srcSynSet_ = row[0] in graph.db.synsetByOffset)
+        if (auto srcSynSet_ = row[0] in graph.db.ixes.synsetByOffset)
         {
             foreach (const ptr; row[1])
             {
-                if (auto dstSynSet_ = ptr.synset_offset in graph.db.synsetByOffset)
+                if (auto dstSynSet_ = ptr.synset_offset in graph.db.ixes.synsetByOffset)
                 {
                     if (ptr.isSemantic)
                     {

@@ -9,7 +9,7 @@ auto canFind(S)(Graph graph,
                 Sense sense = Sense.unknown) if (isSomeString!S)
 {
     import std.algorithm.searching: canFind;
-    return graph.db.ndByLemma.values.filter!(nd => graph[nd].lemma.expr.canFind(part));
+    return graph.db.ixes.ndByLemma.values.filter!(nd => graph[nd].lemma.expr.canFind(part));
 }
 
 /** Get Node References whose Lemma Expr starts with $(D prefix). */
@@ -19,7 +19,7 @@ auto startsWith(S)(Graph graph,
                    Sense sense = Sense.unknown) if (isSomeString!S)
 {
     import std.algorithm.searching: startsWith;
-    return graph.db.ndByLemma.values.filter!(nd => graph[nd].lemma.expr.startsWith(prefix));
+    return graph.db.ixes.ndByLemma.values.filter!(nd => graph[nd].lemma.expr.startsWith(prefix));
 }
 
 /** Get Node References whose Lemma Expr starts with $(D suffix). */
@@ -29,5 +29,5 @@ auto endsWith(S)(Graph graph,
                  Sense sense = Sense.unknown) if (isSomeString!S)
 {
     import std.algorithm.searching: endsWith;
-    return graph.db.ndByLemma.values.filter!(nd => graph[nd].lemma.expr.endsWith(suffix));
+    return graph.db.ixes.ndByLemma.values.filter!(nd => graph[nd].lemma.expr.endsWith(suffix));
 }

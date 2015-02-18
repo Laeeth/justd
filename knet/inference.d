@@ -5,7 +5,7 @@ import knet.base;
 void inferSpecializedSenses(Graph graph)
 {
     bool show = true;
-    foreach (pair; graph.db.lemmasByExpr.byPair)
+    foreach (pair; graph.db.ixes.lemmasByExpr.byPair)
     {
         const expr = pair[0];
         auto lemmas = pair[1];
