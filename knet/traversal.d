@@ -200,6 +200,7 @@ struct DijkstraWalk
     @property DijkstraWalk save() // makes this a ForwardRange
     {
         typeof(return) copy = this;
+        // TODO unittest this
         copy.nextNds = this.nextNds.dup;
         copy.mapByNd = this.mapByNd.dup;
         return copy;
