@@ -19,6 +19,8 @@ Nd contextOf(Exprs)(Graph gr,
     return gr.contextOf(nds, langs, senses, roles, origins, durationInMsecs);
 }
 
+alias Block = size_t;
+
 /** Get Node with strongest relatedness to $(D text).
     TODO Compare with function Context() in ConceptNet API.
 */
@@ -36,10 +38,10 @@ Nd contextOf(Nds)(Graph gr,
 
     // log walker visits
     import bitset;
-    alias Block = size_t;
 
     enum maxCount = 8*Block.sizeof;
     const count = nds.count;
+
     assert(nds.count >= 2);
     assert(nds.count <= maxCount);
 
@@ -69,7 +71,7 @@ Nd contextOf(Nds)(Graph gr,
                     (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
                     if ((*visits).allOne)
                     {
-                        writeln("allOne");
+                        writeln("allOne: ", *visits);
                         return visitedNd;
                     }
                 }
@@ -88,6 +90,7 @@ Nd contextOf(Nds)(Graph gr,
         if (emptyCount == walkers.length) // if all walkers are empty
         {
             break; // we're done
+            writeln("Search complete");
         }
     }
 
