@@ -15,13 +15,14 @@ void testAll(Graph gr)
         enum role = Role(Rel.any);
         enum origin = Origin.manual;
 
-        auto ndA = gr.store(`A`, lang, sense, origin);
-        auto ndB1 = gr.store(`B1`, lang, sense, origin);
-        auto ndB2 = gr.store(`B2`, lang, sense, origin);
-        auto ndC = gr.store(`C`, lang, sense, origin);
-        auto ndD = gr.store(`D`, lang, sense, origin);
-        auto ndE = gr.store(`E`, lang, sense, origin);
-        auto ndF = gr.store(`F`, lang, sense, origin);
+        auto ndCount = 0;
+        auto ndA = gr.store(`A`, lang, sense, origin); ++ndCount;
+        auto ndB1 = gr.store(`B1`, lang, sense, origin); ++ndCount;
+        auto ndB2 = gr.store(`B2`, lang, sense, origin); ++ndCount;
+        auto ndC = gr.store(`C`, lang, sense, origin); ++ndCount;
+        auto ndD = gr.store(`D`, lang, sense, origin); ++ndCount;
+        auto ndE = gr.store(`E`, lang, sense, origin); ++ndCount;
+        auto ndF = gr.store(`F`, lang, sense, origin); ++ndCount;
 
         gr.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
         gr.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
@@ -49,20 +50,28 @@ void testAll(Graph gr)
 
         {
             import knet.traversal: dijkstraWalker;
-            auto dW = gr.dijkstraWalker(ndA);
-            auto dWref = dW; // new reference
-            auto dWcopy = dW.save; // copy
-            foreach (const nd; dW)
+            auto w = gr.dijkstraWalker(ndA);
+            auto wRef = w; // new reference
+            auto wCopy = w.save; // copy
+
+            // iterate with side-effects
+            foreach (const nd; w)
             {
                 writeln(gr[nd]);
             }
-            assert(dW == dWref);  // iteration should not change copy
-            assert(dW == dWcopy);  // iteration should not change saved copy
-            assert(!dW.empty);
-            assert(!dWref.empty);
-            assert(!dWcopy.empty);
+            assert(w == wRef);  // iteration should not change copy
+            assert(w == wCopy);  // iteration should not change saved copy
+            assert(!w.empty);
+            assert(!wRef.empty);
+            assert(!wCopy.empty);
+            assert(w.distMap.length == 1);
 
-            foreach (const pair; dW.distMap.byPair)
+            // iterate side-effects
+            while (!w.empty) { w.popFront; }
+            assert(w.empty);
+            assert(w != wRef);
+            assert(w != wCopy);
+            foreach (const pair; w.distMap.byPair)
             {
                 write(`Shortest distance from `, gr[ndA].lemma.expr,
                       ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
@@ -73,10 +82,10 @@ void testAll(Graph gr)
                 write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
                 writeln();
             }
-
-            // assert(dW.distMap != dWcopy.distMap);
-            // foreach (const nd; dWcopy) {}
-            // assert(dW.distMap == dWcopy.distMap);
+            assert(w.distMap.length == ndCount);
+            while (!wRef.empty) { wRef.popFront; } // empty with side effects
+            assert(wRef.empty);
+            assert(w == wRef);
         }
 
     }
