@@ -2049,6 +2049,8 @@ struct Ref(T)
     import bitop_ex: setTopBit, getTopBit, resetTopBit;
 
     @safe pure:
+
+    // TODO nothrow
     string toString() const { return (ix().to!string ~
                                       `_` ~
                                       dir().to!string); }
