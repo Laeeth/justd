@@ -28,8 +28,8 @@ void testAll(Graph gr)
         gr.connect(ndE, role, ndF, origin, 0.1, true);
 
         import knet.traversal: bfWalk;
-        auto bw = gr.bfWalk(ndA);
-        foreach (const nds; bw) // for each `connectivity expansion`
+        auto bfW = gr.bfWalk(ndA);
+        foreach (const nds; bfW) // for each `connectivity expansion`
         {
             foreach (const nd; nds)
             {
@@ -37,19 +37,19 @@ void testAll(Graph gr)
             }
         }
 
-        writeln(`Connectiveness with ndA `, bw.connectivenessByNd[ndA]);
-        writeln(`Connectiveness with ndB1 `, bw.connectivenessByNd[ndB1]);
-        writeln(`Connectiveness with ndB2 `, bw.connectivenessByNd[ndB2]);
-        writeln(`Connectiveness with ndC `, bw.connectivenessByNd[ndC]);
+        writeln(`Connectiveness with ndA `, bfW.connectivenessByNd[ndA]);
+        writeln(`Connectiveness with ndB1 `, bfW.connectivenessByNd[ndB1]);
+        writeln(`Connectiveness with ndB2 `, bfW.connectivenessByNd[ndB2]);
+        writeln(`Connectiveness with ndC `, bfW.connectivenessByNd[ndC]);
 
         import knet.traversal: dijkstraWalk;
-        auto dw = gr.dijkstraWalk(ndA);
-        foreach (const nd; dw)
+        auto diW = gr.dijkstraWalk(ndA);
+        foreach (const nd; diW)
         {
             writeln(gr[nd]);
         }
 
-        foreach (const pair; dw.mapByNd.byPair)
+        foreach (const pair; diW.mapByNd.byPair)
         {
             write(`Shortest distance from `, gr[ndA].lemma.expr,
                   ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
