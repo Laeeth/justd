@@ -4,12 +4,13 @@ import knet.base;
 
 /** Run Unittestsx.
  */
-void testAll(Graph gr)
+void testAll()
 {
     assert(Nd.init == Nd.asUndefined);
     assert(Ln.init == Ln.asUndefined);
 
     {
+        auto gr = new Graph();
         enum sense = Sense.letter;
         enum lang = Lang.en;
         enum role = Role(Rel.any);
@@ -92,6 +93,7 @@ void testAll(Graph gr)
 
     // link should be reused
     {
+        auto gr = new Graph();
         const ndA = gr.store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
         const ndB = gr.store(`3200`, Lang.sv, Sense.population, Origin.manual);
         const ln1 = gr.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
@@ -101,6 +103,7 @@ void testAll(Graph gr)
 
     // symmetric link should be reused in reverse order
     {
+        auto gr = new Graph();
         const ndA = gr.store(`big`, Lang.en, Sense.adjective, Origin.manual);
         const ndB = gr.store(`large`, Lang.en, Sense.adjective, Origin.manual);
         const ln1 = gr.connect(ndA, Role(Rel.synonymFor),
@@ -112,14 +115,20 @@ void testAll(Graph gr)
     }
 
     // Lemmas with same expr should be reused
-    const beEn1 = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-    const beEn2 = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-    assert(gr[beEn1].lemma.expr.ptr ==
-           gr[beEn2].lemma.expr.ptr); // assert clever reuse of already hashed expr
+    {
+        auto gr = new Graph();
+        const beEn1 = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+        const beEn2 = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+        assert(gr[beEn1].lemma.expr.ptr ==
+               gr[beEn2].lemma.expr.ptr); // assert clever reuse of already hashed expr
+    }
 
     // Lemmas with same expr should be reused
-    const beEn = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-    const beSv = gr.store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
-    assert(gr[beEn].lemma.expr.ptr ==
-           gr[beSv].lemma.expr.ptr); // assert clever reuse of already hashed expr
+    {
+        auto gr = new Graph();
+        const beEn = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+        const beSv = gr.store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
+        assert(gr[beEn].lemma.expr.ptr ==
+               gr[beSv].lemma.expr.ptr); // assert clever reuse of already hashed expr
+    }
 }
