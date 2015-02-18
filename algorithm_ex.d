@@ -37,6 +37,8 @@ alias tail = dropOne;
     be a problem, though, since qualifiers are inferred for templated functions.
 
     TODO Is inout Conversion!T the correct return value?
+
+    TODO Special operator, say |||, for this?
 */
 CommonType!T either(T...)(lazy T a) pure if (a.length >= 1)
 {
