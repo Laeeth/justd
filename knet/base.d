@@ -624,58 +624,6 @@ class Graph
         return nodes;
     }
 
-    /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
-    auto ndsOf(S)(S expr) pure if (isSomeString!S)
-    {
-        return lemmasOfExpr(expr).map!(lemma => db.ixes.ndByLemma[lemma]);
-    }
-
-    /** Get All Possible Nodes related to $(D word) in the interpretation
-        (semantic context) $(D sense).
-        If no sense given return all possible.
-    */
-    Nds ndsOf(S)(S expr,
-                 Lang lang,
-                 Sense sense = Sense.unknown,
-                 Ctx context = anyContext) pure if (isSomeString!S)
-    {
-        typeof(return) nodes;
-
-        if (lang != Lang.unknown &&
-            sense != Sense.unknown &&
-            context != anyContext) // if exact Lemma key can be used
-        {
-            return ndsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
-        }
-        else
-        {
-            auto tmp = ndsOf(expr).filter!(a => (lang == Lang.unknown ||
-                                                 at(a).lemma.lang == lang))
-                                  .array;
-            static if (useArray)
-            {
-                nodes = Nds(tmp); // TODO avoid allocations
-            }
-            else
-            {
-                nodes = tmp;
-            }
-        }
-
-        if (nodes.empty)
-        {
-            /* writeln(`Lookup translation of individual expr; bil_tvätt => car-wash`); */
-            /* foreach (word; expr.splitter(`_`)) */
-            /* { */
-            /*     writeln(`Translate word "`, word, `" from `, lang, ` to English`); */
-            /* } */
-        }
-        return nodes;
-    }
-
-    alias meaningsOf = ndsOf;
-    alias interpretationsOf = ndsOf;
-
     /** Get All Possible Lemmas related to Expression (set of words) $(D expr).
      */
     Lemmas lemmasOfExpr(S)(S expr) if (isSomeString!S)

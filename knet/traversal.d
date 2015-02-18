@@ -195,8 +195,7 @@ struct DijkstraWalker
         foreach (const frontLn; graph.lnsOf(frontNd, roles, origins))
         {
             import knet.iteration: ndsOf;
-            // TODO make UFCS work here by moving Graph members ndsOf to knet.iteration
-            foreach (const nextNd; knet.iteration.ndsOf(graph, frontLn, langs, senses, frontNd))
+            foreach (const nextNd; graph.ndsOf(frontLn, langs, senses, frontNd))
             {
                 const newDist = distMap[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
                 if (auto hit = nextNd in distMap)

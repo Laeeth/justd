@@ -68,6 +68,57 @@ auto linksOf(Graph graph,
     return graph.linksOf(graph[nd], dir, role);
 }
 
+/** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
+auto ndsOf(S)(Graph graph,
+              S expr) pure if (isSomeString!S)
+{
+    return graph.lemmasOfExpr(expr).map!(lemma => graph.db.ixes.ndByLemma[lemma]);
+}
+
+/** Get All Possible Nodes related to $(D word) in the interpretation
+    (semantic context) $(D sense).
+    If no sense given return all possible.
+*/
+Nds ndsOf(S)(Graph graph,
+             S expr,
+             Lang lang,
+             Sense sense = Sense.unknown,
+             Ctx context = anyContext) pure if (isSomeString!S)
+{
+    typeof(return) nodes;
+
+    if (lang != Lang.unknown &&
+        sense != Sense.unknown &&
+        context != anyContext) // if exact Lemma key can be used
+    {
+        return graph.ndsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
+    }
+    else
+    {
+        auto tmp = graph.ndsOf(expr).filter!(a => (lang == Lang.unknown ||
+                                                   graph[a].lemma.lang == lang))
+                              .array;
+        static if (useArray)
+        {
+            nodes = Nds(tmp); // TODO avoid allocations
+        }
+        else
+        {
+            nodes = tmp;
+        }
+    }
+
+    if (nodes.empty)
+    {
+        /* writeln(`Lookup translation of individual expr; bil_tvätt => car-wash`); */
+        /* foreach (word; expr.splitter(`_`)) */
+        /* { */
+        /*     writeln(`Translate word "`, word, `" from `, lang, ` to English`); */
+        /* } */
+    }
+    return nodes;
+}
+
 /** Get Node References of $(D ln) matchin $(D langs) and $(D senses).
  */
 auto ndsOf(Graph graph,
@@ -83,6 +134,9 @@ auto ndsOf(Graph graph,
                                     (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
                                     (senses.empty || senses.canFind(graph[nd].lemma.sense))));
 }
+
+alias meaningsOf = ndsOf;
+alias interpretationsOf = ndsOf;
 
 /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
     learned from $(D origins).
