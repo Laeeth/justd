@@ -27,11 +27,6 @@ unittest
     string[int] x;
     auto y = x;
     x[0] = "zero";
-
-    import std.stdio;
-    writeln(x);
-    writeln(y);
-
     assert(x != y);
 }
 
