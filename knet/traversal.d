@@ -102,11 +102,13 @@ BFWalk bfWalk(Graph graph, Nd start,
     return range;
 }
 
-/** Nearest First Graph Walker/Traverser Range.
-    Similar to Dijkstra's Railroad Algorithm.
-    Modelled as a Forward Range with ElementType being a Nd.
+/** Nearest-Origin-First Graph Walker/Traverser Range.
 
-    Upon iteration completion mapByNd contains a map from node to (distance, and
+    Dijkstra's Railroad Algorithm turned into a D Range.
+
+    Modelled as a Forward Range with ElementType being Nd.
+
+    Upon iteration completion distMap contains a map from node to (distance, and
     closest parent node) to walk starting point (startNd). This can be used to
     reconstruct the closest path from any given Nd to startNd.
 */
@@ -133,7 +135,7 @@ class DijkstraWalk
         nextNds ~= startNd.raw;
 
         import std.typecons: tuple;
-        mapByNd[startNd.raw] = tuple(0, // TODO parameterize on distance function
+        distMap[startNd.raw] = tuple(0, // TODO parameterize on distance function
                                      Nd.asUndefined); // first node has parent
     }
 
@@ -171,8 +173,8 @@ class DijkstraWalk
             // TODO make UFCS work here by moving Graph members ndsOf to knet.iteration
             foreach (const nextNd; knet.iteration.ndsOf(graph, frontLn, langs, senses, frontNd))
             {
-                const newDist = mapByNd[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
-                if (auto hit = nextNd in mapByNd)
+                const newDist = distMap[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
+                if (auto hit = nextNd in distMap)
                 {
                     const dist = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here
                     if (newDist < dist) // a closer way was found
@@ -182,7 +184,7 @@ class DijkstraWalk
                 }
                 else
                 {
-                    mapByNd[nextNd] = Visit(newDist, frontNd); // best yet
+                    distMap[nextNd] = Visit(newDist, frontNd); // best yet
                     nextNds ~= nextNd;
                 }
             }
@@ -190,8 +192,8 @@ class DijkstraWalk
 
         import std.algorithm.sorting: partialSort;
         // TODO use my radixSort for better performance
-        nextNds[].partialSort!((a, b) => (mapByNd[a][0] <
-                                          mapByNd[b][0]))(savedLength);
+        nextNds[].partialSort!((a, b) => (distMap[a][0] <
+                                          distMap[b][0]))(savedLength);
     }
 
     bool empty() const @safe pure nothrow @nogc
@@ -208,12 +210,12 @@ class DijkstraWalk
             and copy.
             */
         copy.nextNds = this.nextNds.dup;
-        copy.mapByNd = this.mapByNd.dup;
+        copy.distMap = this.distMap.dup;
         return copy;
     }
 
     // Nd => tuple(Nd origin distance, parent Nd)
-    Visit[Nd] mapByNd;
+    Visit[Nd] distMap;
 
 private:
     Graph graph;
@@ -233,8 +235,8 @@ private:
     static if (false)
     {
         import std.container.binaryheap: BinaryHeap;
-        BinaryHeap!(Nds, ((a, b) => (this.mapByNd[a][0] <
-                                     this.mapByNd[b][0]))) pendingNds;
+        BinaryHeap!(Nds, ((a, b) => (this.distMap[a][0] <
+                                     this.distMap[b][0]))) pendingNds;
     }
 
     // filters
