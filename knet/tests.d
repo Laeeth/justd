@@ -17,11 +17,15 @@ void testAll(Graph graph)
         auto ndB2 = graph.store(`B2`, lang, sense, origin);
         auto ndC = graph.store(`C`, lang, sense, origin);
         auto ndD = graph.store(`D`, lang, sense, origin);
+        auto ndE = graph.store(`E`, lang, sense, origin);
+        auto ndF = graph.store(`F`, lang, sense, origin);
 
         graph.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
         graph.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
         graph.connect(ndC, role, ndD, origin, 0.5, true);
-        graph.connect(ndA, role, ndD, origin, 0.5, true);
+        graph.connect(ndA, role, ndD, origin, 0.1, true);
+        graph.connect(ndD, role, ndE, origin, 0.1, true);
+        graph.connect(ndE, role, ndF, origin, 0.1, true);
 
         import knet.traversal: bfWalk;
         auto bw = graph.bfWalk(ndA);
