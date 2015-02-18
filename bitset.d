@@ -472,7 +472,23 @@ struct BitSet(size_t len, Block = size_t)
         }
         return true;
     }
-    alias allZero empty;
+    alias empty = allZero;
+
+    /**
+     * Check if this $(D BitSet) has only ones.
+     */
+    bool allOne() const @safe @nogc pure nothrow
+    {
+        foreach (block; _data)
+        {
+            if (block != 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+    alias allSet = allOne;
+    alias full = allOne;
 
     alias Q = Rational!ulong;
 

@@ -37,10 +37,14 @@ Nd contextOf(Nds)(Graph gr,
     // log walker visits
     import bitset;
     alias Block = size_t;
+
     enum maxCount = 8*Block.sizeof;
+    const count = nds.count;
+    assert(nds.count >= 2);
     assert(nds.count <= maxCount);
+
     alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
-    Visits[Nd] visitsByNd;
+    Visits[Nd] visitedWalkersIndexesByNd;
 
     import std.datetime: StopWatch;
     StopWatch stopWatch;
@@ -59,15 +63,21 @@ Nd contextOf(Nds)(Graph gr,
             {
                 import std.range: moveFront;
                 const visitedNd = walker.moveFront; // visit new node
-                visitsByNd[visitedNd][wix] = true;
-                // if (auto visits = visitedNd in visitsByNd)
-                // {
-                //     (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
-                // }
-                // else
-                // {
-                //     (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
-                // }
+                writeln("visitedNd: ", visitedNd, ", wix: ", wix);
+                if (auto visits = visitedNd in visitedWalkersIndexesByNd)
+                {
+                    (*visits)[wix] = true; // log that walker now *also* have visited visitedNd
+                    if ((*visits).allOne)
+                    {
+                        return visitedNd;
+                    }
+                }
+                else
+                {
+                    Visits visits;
+                    visits[wix] = true;
+                    visitedWalkersIndexesByNd[visitedNd] = visits;
+                }
             }
             else
             {
