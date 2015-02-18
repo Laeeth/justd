@@ -491,20 +491,18 @@ static if (false)
     pragma(msg, `Link.sizeof: `, Link.sizeof);
 }
 
-/** Tables.
+/** Tables (Data).
  */
 struct Tabs
 {
-    // Data
     Nodes allNodes;
     Links allLinks;
 }
 
-/** Indexes.
+/** Indexes (Maps).
  */
 struct Ixes
 {
-
     // TODO Nds[Lang.max + 1] ndsByLang;
     SynSet[SynSetOffset] synsetByOffset;
 
@@ -523,8 +521,8 @@ struct Ixes
  */
 struct Db
 {
-    Tabs tabs;
-    Ixes ixes;
+    Tabs tabs;                  // tables
+    Ixes ixes;                  // indexes
 }
 
 struct Stat
