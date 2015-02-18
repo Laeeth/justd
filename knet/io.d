@@ -376,8 +376,11 @@ bool showNodes(Graph graph,
             graph.showTopLanguages(hist, 1);
         }
     }
-    else if (normLine.skipOverShortestOf(`begin(`,
+    else if (normLine.skipOverShortestOf(`prefix(`,
+                                         `begin(`,
                                          `begins(`,
+                                         `start(`,
+                                         `starts(`,
                                          `startswith(`,
                                          `starts_with(`,
                                          `beginswith(`,
@@ -401,8 +404,11 @@ bool showNodes(Graph graph,
             }
         }
     }
-    else if (normLine.skipOverShortestOf(`end(`,
+    else if (normLine.skipOverShortestOf(`suffix(`,
+                                         `end(`,
                                          `ends(`,
+                                         `finish(`,
+                                         `finishes(`,
                                          `endswith(`,
                                          `ends_with(`,
                                          `hasend(`,
