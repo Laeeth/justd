@@ -504,7 +504,7 @@ struct Tabs
 struct Ixes
 {
     // TODO Nds[Lang.max + 1] ndsByLang;
-    SynSet[SynSetOffset] synsetByOffset;
+    SynSet[SynSetOffset] synsetByOffset; // TODO use [Ii]ndexedBy
 
     // Indexes
     Location[Nd] locations;
