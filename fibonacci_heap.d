@@ -97,7 +97,7 @@ private:
 
     N* _singleton(V value)
     {
-        N* n = new N;
+        N* n = new N;           // TODO use std.allocator instead
         n.value = value;
         n.prev = n.next = n;
         n.degree = 0;
@@ -135,7 +135,7 @@ private:
                 N* d = c;
                 c = c.next;
                 _deleteAll(d.child);
-                delete d;
+                delete d;       // TODO use std.allocator instead
             } while(c !is n);
         }
     }
