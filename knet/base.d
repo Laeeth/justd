@@ -571,6 +571,16 @@ struct Stat
     Link.WeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
 }
 
+/** Node/Link (Traversal) Filter.
+ */
+struct Filter
+{
+    Lang[] langs;
+    Sense[] senses;
+    Role[] roles;
+    Origin[] origins;
+}
+
 /** Main Knowledge Network Graph.
 */
 class Graph

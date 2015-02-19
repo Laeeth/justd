@@ -7,7 +7,7 @@ import knet.base;
 
 /** Get Links Refs (Ln) of $(D node) with direction $(D dir).
 */
-auto lnsOf(Graph graph,
+auto lnsOf(Graph gr,
            Node node,
            const RelDir dir = RelDir.any,
            const Role role = Role.init) pure
@@ -16,70 +16,70 @@ auto lnsOf(Graph graph,
     return node.links[]
                .map!(ln => ln.raw)
                .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize match(RelDir, RelDir)
-                               graph[ln].role.negation == role.negation &&
-                               // TODO graph[ln].role.reversion == role.reversion &&
-                               (graph[ln].role.rel == role.rel ||
-                                graph[ln].role.rel.specializes(role.rel))));
+                               gr[ln].role.negation == role.negation &&
+                               // TODO gr[ln].role.reversion == role.reversion &&
+                               (gr[ln].role.rel == role.rel ||
+                                gr[ln].role.rel.specializes(role.rel))));
 }
 
 /** Get Links References of $(D nd) type $(D rel) learned from $(D origins).
  */
-auto lnsOf(Graph graph,
+auto lnsOf(Graph gr,
            const Nd nd,
            const Role[] roles = [],
            const Origin[] origins = [],
            const Ln skipLn = Ln.init) pure
 {
     import std.algorithm.searching: canFind;
-    return graph[nd].links[]
-                    .map!(ln => ln.raw)
-                    .filter!(ln => (ln != skipLn &&
-                                    (roles.empty || roles.canFind(graph[ln].role)) &&
-                                    (origins.empty || origins.canFind(graph[ln].origin))));
+    return gr[nd].links[]
+                 .map!(ln => ln.raw)
+                 .filter!(ln => (ln != skipLn &&
+                                 (roles.empty || roles.canFind(gr[ln].role)) &&
+                                 (origins.empty || origins.canFind(gr[ln].origin))));
 }
 
 /** Get Links References of $(D nd) type $(D rel) learned from $(D origins).
  */
-auto lnsOf(Graph graph,
+auto lnsOf(Graph gr,
            const Nd nd,
            const Role role,
            const Origin[] origins = []) pure
 {
-    return graph.lnsOf(nd, [role], origins);
+    return gr.lnsOf(nd, [role], origins);
 }
 
 /** Get Links of Node $(D node).
  */
-auto linksOf(Graph graph,
+auto linksOf(Graph gr,
              Node node,
              const RelDir dir = RelDir.any,
              const Role role = Role.init) pure
 {
-    return graph.lnsOf(node, dir, role).map!(ln => graph[ln]);
+    return gr.lnsOf(node, dir, role).map!(ln => gr[ln]);
 }
 
 /** Get Links of Node Reference $(D nd).
  */
-auto linksOf(Graph graph,
+auto linksOf(Graph gr,
              const Nd nd,
              const RelDir dir = RelDir.any,
              const Role role = Role.init) pure
 {
-    return graph.linksOf(graph[nd], dir, role);
+    return gr.linksOf(gr[nd], dir, role);
 }
 
 /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
-auto ndsOf(S)(Graph graph,
+auto ndsOf(S)(Graph gr,
               S expr) pure if (isSomeString!S)
 {
-    return graph.lemmasOfExpr(expr).map!(lemma => graph.db.ixes.ndByLemma[lemma]);
+    return gr.lemmasOfExpr(expr).map!(lemma => gr.db.ixes.ndByLemma[lemma]);
 }
 
 /** Get All Possible Nodes related to $(D word) in the interpretation
     (semantic context) $(D sense).
     If no sense given return all possible.
 */
-Nds ndsOf(S)(Graph graph,
+Nds ndsOf(S)(Graph gr,
              S expr,
              Lang lang,
              Sense sense = Sense.unknown,
@@ -91,12 +91,12 @@ Nds ndsOf(S)(Graph graph,
         sense != Sense.unknown &&
         context != anyContext) // if exact Lemma key can be used
     {
-        return graph.ndsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
+        return gr.ndsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
     }
     else
     {
-        auto tmp = graph.ndsOf(expr).filter!(a => (lang == Lang.unknown ||
-                                                   graph[a].lemma.lang == lang))
+        auto tmp = gr.ndsOf(expr).filter!(a => (lang == Lang.unknown ||
+                                                   gr[a].lemma.lang == lang))
                               .array;
         static if (useArray)
         {
@@ -121,18 +121,18 @@ Nds ndsOf(S)(Graph graph,
 
 /** Get Node References of $(D ln) matchin $(D langs) and $(D senses).
  */
-auto ndsOf(Graph graph,
+auto ndsOf(Graph gr,
            const Ln ln,
            const Lang[] langs = [],
            const Sense[] senses = [],
            const Nd skipNd = Nd.init) pure
 {
     import std.algorithm.searching: canFind;
-    return graph[ln].actors[]
-                    .map!(nd => nd.raw)
-                    .filter!(nd => (nd != skipNd &&
-                                    (langs.empty || langs.canFind(graph[nd].lemma.lang)) &&
-                                    (senses.empty || senses.canFind(graph[nd].lemma.sense))));
+    return gr[ln].actors[]
+                 .map!(nd => nd.raw)
+                 .filter!(nd => (nd != skipNd &&
+                                 (langs.empty || langs.canFind(gr[nd].lemma.lang)) &&
+                                 (senses.empty || senses.canFind(gr[nd].lemma.sense))));
 }
 
 alias meaningsOf = ndsOf;
@@ -141,7 +141,7 @@ alias interpretationsOf = ndsOf;
 /** Get Nearest Neighbours (Nears) of $(D nd) over links of type $(D rel)
     learned from $(D origins).
 */
-auto nnsOf(Graph graph,
+auto nnsOf(Graph gr,
            const Nd nd,
            const Role[] roles = [],
            const Lang[] dstLangs = [],
@@ -149,13 +149,13 @@ auto nnsOf(Graph graph,
 {
     import std.algorithm.searching: canFind;
     import std.algorithm.iteration: joiner;
-    return graph.lnsOf(nd, roles, origins)
-                .map!(ln =>
-                      graph[ln].actors[]
-                               .filter!(actorNd => (actorNd.ix != nd.ix &&
-                                                    // TODO functionize to Lemma.ofLang
-                                                    (dstLangs.empty || dstLangs.canFind(graph[actorNd].lemma.lang)))))
-                .joiner(); // no self
+    return gr.lnsOf(nd, roles, origins)
+             .map!(ln =>
+                   gr[ln].actors[]
+                         .filter!(actorNd => (actorNd.ix != nd.ix &&
+                                              // TODO functionize to Lemma.ofLang
+                                              (dstLangs.empty || dstLangs.canFind(gr[actorNd].lemma.lang)))))
+             .joiner(); // no self
 }
 
 /** Get Possible Rhymes of $(D text) sorted by falling rhymness (relevance).
@@ -163,32 +163,32 @@ auto nnsOf(Graph graph,
     help in translating songs with same rhythm.
     See also: http://stevehanov.ca/blog/index.php?id=8
 */
-Nds rhymesOf(S)(Graph graph,
+Nds rhymesOf(S)(Graph gr,
                 S expr,
                 Lang[] langs = [],
                 const Origin[] origins = [],
                 const size_t commonPhonemeCountMin = 2,  // at least two phonenes in common at the end
                 const bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
-    foreach (const srcNd; graph.ndsOf(expr)) // for each interpretation of expr
+    foreach (const srcNd; gr.ndsOf(expr)) // for each interpretation of expr
     {
-        const srcNode = graph[srcNd];
+        const srcNode = gr[srcNd];
 
         if (langs.empty)
         {
             langs = [srcNode.lemma.lang]; // stay within language by default
         }
 
-        auto dstNds = graph.nnsOf(srcNd, [Role(Rel.translationOf)], [Lang.ipa], origins);
+        auto dstNds = gr.nnsOf(srcNd, [Role(Rel.translationOf)], [Lang.ipa], origins);
 
         foreach (const dstNd; dstNds) // translations to IPA-language
         {
-            const dstNode = graph[dstNd];
+            const dstNode = gr[dstNd];
             import std.algorithm.searching: canFind;
-            auto hits = graph.db.tabs.allNodes.filter!(a => langs.canFind(a.lemma.lang))
-                             .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
-                                                                   graph[srcNd].lemma.expr)))
-                             .filter!(a => a[1] >= commonPhonemeCountMin)
+            auto hits = gr.db.tabs.allNodes.filter!(a => langs.canFind(a.lemma.lang))
+                          .map!(a => tuple(a, commonSuffixCount(a.lemma.expr,
+                                                                gr[srcNd].lemma.expr)))
+                          .filter!(a => a[1] >= commonPhonemeCountMin)
             // .sorted!((a, b) => false)
             ;
         }
@@ -200,14 +200,14 @@ Nds rhymesOf(S)(Graph graph,
     TODO Weight hits with word node connectedness relative to average word
     connectedness in that language.
 */
-NWeight[Lang] languagesOf(R)(Graph graph,
+NWeight[Lang] languagesOf(R)(Graph gr,
                              R text) pure if (isIterable!R &&
                                               isSomeString!(ElementType!R))
 {
     typeof(return) hist;
     foreach (const word; text)
     {
-        foreach (const lemma; graph.lemmasOfExpr(word))
+        foreach (const lemma; gr.lemmasOfExpr(word))
         {
             ++hist[lemma.lang];
         }
@@ -219,43 +219,43 @@ NWeight[Lang] languagesOf(R)(Graph graph,
     If several $(D toLangs) are specified pick the closest match (highest
     relation weight).
 */
-auto translationsOf(S)(Graph graph,
+auto translationsOf(S)(Graph gr,
                        S expr,
                        const Lang lang = Lang.unknown,
                        const Sense sense = Sense.unknown,
                        const Lang[] toLangs = []) pure if (isSomeString!S)
 {
-    auto nodes = graph.ndsOf(expr, lang, sense);
+    auto nodes = gr.ndsOf(expr, lang, sense);
     // en => sv:
     // en-en => sv-sv
     /* auto translations = nodes.map!(node => lnsOf(node, RelDir.any, rel, false))/\* .joiner *\/; */
     return nodes;
 }
 
-auto anagramsOf(S)(Graph graph,
+auto anagramsOf(S)(Graph gr,
                    S expr) pure if (isSomeString!S)
 {
     const lsWord = expr.sorted; // letter-sorted expr
-    return graph.db.tabs.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
+    return gr.db.tabs.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
                                               lsWord == node.lemma.expr.toLower.sorted));
 }
 
 /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
-auto derangedAnagramsOf(S)(Graph graph,
+auto derangedAnagramsOf(S)(Graph gr,
                            S expr) pure if (isSomeString!S)
 {
-    return graph.anagramsOf(expr);
+    return gr.anagramsOf(expr);
 }
 
 /** Get Synonyms of $(D word) optionally with Matching Syllable Count.
     Set withSameSyllableCount to true to get synonyms which can be used to
     help in translating songs with same rhythm.
 */
-auto synonymsOf(S)(Graph graph,
+auto synonymsOf(S)(Graph gr,
                    S expr,
                    const Lang lang = Lang.unknown,
                    const Sense sense = Sense.unknown,
                    const bool withSameSyllableCount = false) pure if (isSomeString!S)
 {
-    return graph.ndsOf(expr, lang, sense);
+    return gr.ndsOf(expr, lang, sense);
 }

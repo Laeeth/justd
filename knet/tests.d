@@ -117,12 +117,15 @@ void testDijkstraWalker()
 
     import knet.traversal: dijkstraWalker;
     auto w = gr.dijkstraWalker(ndA);
+    writeln("x");
     auto wRef = w; // new reference
+    writeln("y");
     auto wCopy = w.save; // copy
 
     // iterate without side-effects
     foreach (const nd; w)
     {
+        pragma(msg, typeof(nd));
         writeln(gr[nd]);
     }
     assert(w == wRef);  // iteration should not change copy

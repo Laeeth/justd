@@ -6,17 +6,14 @@ import knet.base;
  */
 Nd contextOf(Exprs)(Graph gr,
                     Exprs exprs,
-                    const Lang[] langs = [],
-                    const Sense[] senses = [],
-                    const Role[] roles = [],
-                    const Origin[] origins = [],
+                    const Filter filter = Filter.init,
                     uint durationInMsecs = 1000) if (isIterable!Exprs &&
                                                      isSomeString!(ElementType!Exprs))
 {
     import std.algorithm: joiner;
     auto lemmas = exprs.map!(expr => gr.lemmasOfExpr(expr)).joiner;
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
-    return gr.contextOf(nds, langs, senses, roles, origins, durationInMsecs);
+    return gr.contextOf(nds, filter, durationInMsecs);
 }
 
 /** Get Context (node) of Nodes $(D nds).
@@ -30,10 +27,7 @@ Nd contextOf(Exprs)(Graph gr,
 */
 Nd contextOf(Nds)(Graph gr,
                   Nds nds,
-                  const Lang[] langs = [],
-                  const Sense[] senses = [],
-                  const Role[] roles = [],
-                  const Origin[] origins = [],
+                  const Filter filter = Filter.init,
                   uint durationInMsecs = 1000) if (isIterable!Nds &&
                                                    is(Nd == ElementType!Nds))
 {
@@ -65,7 +59,7 @@ Nd contextOf(Nds)(Graph gr,
     StopWatch stopWatch;
     stopWatch.start();
 
-    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, langs, senses, roles, origins)).array; // TODO avoid Walker postblit
+    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, filter)).array; // TODO avoid Walker postblit
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)
@@ -109,7 +103,7 @@ Nd contextOf(Nds)(Graph gr,
     foreach (ix, ref walker; walkers)
     {
         writeln("walker#", ix, ":",
-                " nextNds.length:", walker.nextNds.length,
+                " ndQ.length:", walker.ndQ.length,
                 " distMap.length:", walker.distMap.length);
     }
 

@@ -463,7 +463,7 @@ bool showNodes(Graph graph,
         if (!arg.empty)
         {
             import knet.association: contextOf;
-            const ctxNd = graph.contextOf(arg.splitter, [], [], [], [], 30000);
+            const ctxNd = graph.contextOf(arg.splitter, Filter.init, 30000);
             if (ctxNd.defined)
             {
                 graph.showNode(ctxNd, 1.0);
