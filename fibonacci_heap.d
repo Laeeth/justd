@@ -16,17 +16,19 @@ struct Node(V)
     bool hasChildren() const { return child !is null; }
     bool hasParent() const { return parent !is null; }
 private:
-    Node* prev;
-    Node* next;
+    Node* prev;                 // also called left
+    Node* next;                 // also called right
     Node* child;
     Node* parent;
-    V value;
     int degree;
-    bool marked;
+    bool marked;                // also called mark
+
+    V value;
 };
 
 /** Fibonacci Heap Container.
     See also: http://www.codeproject.com/Articles/42561/Dijkstra-s-Algorithm-for-Network-Optimization-Usin
+    See also: http://www.sanfoundry.com/cpp-program-implement-fibonacci-heap/
  */
 struct FibonacciHeap(V)
 {
