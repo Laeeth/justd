@@ -25,6 +25,9 @@ private:
     bool marked;
 };
 
+/** Fibonacci Heap Container.
+    See also: http://www.codeproject.com/Articles/42561/Dijkstra-s-Algorithm-for-Network-Optimization-Usin
+ */
 struct FibonacciHeap(V)
 {
     @safe pure nothrow:
