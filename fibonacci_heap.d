@@ -5,8 +5,6 @@ struct Node(V)
     @safe pure nothrow @nogc:
 
 public:
-    struct FibonacciHeap(V);
-
     inout(Node*) getPrev() inout { return prev; }
     inout(Node*) getNext() inout { return next; }
     inout(Node*) getChild() inout { return child; }
@@ -136,12 +134,14 @@ private:
         if (n !is null)
         {
             N* c = n;
-            do {
+            do
+            {
                 N* d = c;
                 c = c.next;
                 _deleteAll(d.child);
                 delete d;       // TODO use std.allocator instead
-            } while(c !is n);
+            }
+            while(c !is n);
         }
     }
 
@@ -172,7 +172,9 @@ private:
         if (n.next == n)
         {
             n = n.child;
-        } else {
+        }
+        else
+        {
             n.next.prev = n.prev;
             n.prev.next = n.next;
             n = _merge(n.next, n.child);
@@ -186,7 +188,8 @@ private:
             if (trees[n.degree] !is null)
             {
                 N* t = trees[n.degree];
-                if (t == n) break;
+                if (t == n)
+                    break;
                 trees[n.degree] = null;
                 if (n.value < t.value)
                 {
@@ -215,16 +218,20 @@ private:
                     }
                 }
                 continue;
-            } else {
+            }
+            else
+            {
                 trees[n.degree] = n;
             }
             n = n.next;
         }
         N* min = n;
-        do {
+        do
+        {
             if (n.value < min.value) min = n;
             n = n.next;
-        } while (n !is n);
+        }
+        while (n !is n);
         return min;
     }
 
@@ -233,7 +240,9 @@ private:
         if (n.next == n)
         {
             n.parent.child = null;
-        } else {
+        }
+        else
+        {
             n.next.prev = n.prev;
             n.prev.next = n.next;
             n.parent.child = n.next;
@@ -259,7 +268,11 @@ private:
                 parent = n.parent;
                 n.parent = null;
             }
-            if (parent !is null && parent.parent !is null) parent.marked = true;
+            if (parent !is null &&
+                parent.parent !is null)
+            {
+                parent.marked = true;
+            }
         }
         return heap;
     }
@@ -268,7 +281,8 @@ private:
     {
         N* n = heap;
 
-        if (n is null) return null;
+        if (n is null)
+            return null;
 
         do
         {
