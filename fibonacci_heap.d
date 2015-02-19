@@ -61,9 +61,9 @@ public:
         other.heap = _empty();
     }
 
-    bool isEmpty() const
+    bool empty() const
     {
-        return heap == null;
+        return heap is null;
     }
 
     V getMinimum()
@@ -109,8 +109,8 @@ private:
 
     N* _merge(N* a, N* b)
     {
-        if (a == null) return b;
-        if (b == null) return a;
+        if (a is null) return b;
+        if (b is null) return a;
         if (a.value > b.value)
         {
             N* temp = a;
@@ -150,7 +150,7 @@ private:
 
     void _unMarkAndUnParentAll(N* n)
     {
-        if (n == null) return;
+        if (n is null) return;
         N* c = n;
         do
         {
@@ -172,7 +172,7 @@ private:
             n.prev.next = n.next;
             n = _merge(n.next, n.child);
         }
-        if (n == null) return n;
+        if (n is null) return n;
         N*[64] trees; // = { null };
 
         while(true)
@@ -262,7 +262,7 @@ private:
     {
         N* n = heap;
 
-        if (n == null) return null;
+        if (n is null) return null;
 
         do
         {
