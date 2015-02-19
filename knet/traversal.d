@@ -143,6 +143,8 @@ struct DijkstraWalker
         this.roles = roles;
         this.origins = origins;
 
+        this.start = start;
+
         nextNds ~= start.raw;
         import std.typecons: tuple;
         // WARNING distMap must initialized here to provide reference semantics
@@ -261,9 +263,11 @@ public:
     static if (false)
     {
         import std.container.binaryheap: BinaryHeap;
-        BinaryHeap!(Nds, ((a, b) => (this.distMap[a][0] <
-                                     this.distMap[b][0]))) pendingNds;
+        BinaryHeap!(Nds, ((a, b) => (distMap[a][0] <
+                                     distMap[b][0]))) pendingNds;
     }
+
+    const Nd start;             // search start node
 
     // filters
     // TODO group into structure
