@@ -2,6 +2,8 @@ module fibonacci_heap;
 
 struct Node(V)
 {
+    @safe pure nothrow @nogc:
+
 public:
     struct FibonacciHeap(V);
 
@@ -28,6 +30,8 @@ private:
 
 struct FibonacciHeap(V)
 {
+    @safe pure nothrow:
+
     alias N = Node!V;
 
 protected:
@@ -66,7 +70,7 @@ public:
         return root is null;
     }
 
-    V getMinimum()
+    inout(V) getMinimum() inout
     {
         return root.value;
     }
@@ -89,6 +93,7 @@ public:
     {
         return _find(root, value);
     }
+
 private:
     N* _empty()
     {
@@ -172,6 +177,7 @@ private:
             n.prev.next = n.next;
             n = _merge(n.next, n.child);
         }
+
         if (n is null) return n;
         N*[64] trees; // = { null };
 
@@ -277,7 +283,7 @@ private:
     }
 };
 
-void dumpDot(V)(ref FibonacciHeap!V _fh)
+void dumpDot(V)(ref FibonacciHeap!V _fh) @safe
 {
     import std.stdio: writeln, writefln;
 
@@ -300,7 +306,7 @@ void dumpDot(V)(ref FibonacciHeap!V _fh)
     writeln(`}`);
 }
 
-void dumpDotChildren(ref Node!int* n)
+void dumpDotChildren(ref Node!int* n) @safe
 {
     import std.stdio: writeln, writefln;
 
@@ -330,11 +336,9 @@ void dumpDotChildren(ref Node!int* n)
     }
 }
 
-// Write output to file X and process it with: "dot -O -Tsvg X"
-unittest
+version(unittest)
+void generate(ref FibonacciHeap!int h) @safe pure nothrow
 {
-    FibonacciHeap!int h;
-
     h.insert(2);
     h.insert(3);
     h.insert(1);
@@ -371,6 +375,19 @@ unittest
     h.decreaseKey(nine, 1);
     h.decreaseKey(h.find(28), 2);
     h.decreaseKey(h.find(23), 3);
+}
+
+// Write output to file X and process it with: "dot -O -Tsvg X"
+@safe pure nothrow unittest
+{
+    FibonacciHeap!int h;
+    generate(h);
+}
+
+@safe unittest
+{
+    FibonacciHeap!int h;
+    generate(h);
 
     h.dumpDot();
 }
