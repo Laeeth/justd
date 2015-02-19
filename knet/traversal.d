@@ -198,7 +198,7 @@ struct DijkstraWalker
             import knet.iteration: ndsOf;
             foreach (const nextNd; graph.ndsOf(frontLn, langs, senses, frontNd))
             {
-                const newDist = distMap[frontNd][0] + graph[frontLn].nweight; // TODO parameterize on distance funtion
+                const newDist = distMap[frontNd][0] + graph[frontLn].ndist; // TODO parameterize on distance funtion
                 if (auto hit = nextNd in distMap)
                 {
                     const dist = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here

@@ -168,7 +168,7 @@ bool isMultiWord(S)(S s) if (isSomeString!S)
 }
 
 /// Normalized (Link) Weight.
-alias NWeight = real;
+alias NWeight = double;
 
 /** Context or Ontology Category Index (currently from NELL). */
 struct Ctx
@@ -416,11 +416,17 @@ struct Link
         pweight = cast(PWeight)(weight.clamp(0, 1)*PWeight.max);
     }
 
-    /** Get Normalized Link PWeight. */
+    /** Get Normalized Link Weight. */
     @property NWeight nweight() const
     {
         return ((cast(typeof(return))pweight)/
                 (cast(typeof(return))PWeight.max));
+    }
+
+    /** Get Normalized Distance. */
+    @property NWeight ndist() const
+    {
+        return (1.0 - nweight);
     }
 
     Nds actors;
