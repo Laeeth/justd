@@ -103,7 +103,7 @@ Nd contextOf(Nds)(Graph gr,
     foreach (ix, ref walker; walkers)
     {
         writeln("walker#", ix, ":",
-                " ndQ.length:", walker.ndQ.length,
+                " pending.length:", walker.pending.length,
                 " distMap.length:", walker.distMap.length);
     }
 
