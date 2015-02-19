@@ -125,7 +125,6 @@ void testDijkstraWalker()
     // iterate without side-effects
     foreach (const nd; w)
     {
-        pragma(msg, typeof(nd));
         writeln(gr[nd]);
     }
     assert(w == wRef);  // iteration should not change copy
