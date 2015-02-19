@@ -4,7 +4,6 @@ struct Node(V)
 {
     @safe pure nothrow @nogc:
 
-public:
     inout(Node*) getPrev() inout { return prev; }
     inout(Node*) getNext() inout { return next; }
     inout(Node*) getChild() inout { return child; }
@@ -42,7 +41,8 @@ public:
     //     heap = _empty();
     // }
 
-    /*virtual*/ ~this()
+    /*virtual*/
+    ~this()
     {
         if (root)
         {
@@ -141,7 +141,7 @@ private:
                 _deleteAll(d.child);
                 delete d;       // TODO use std.allocator instead
             }
-            while(c !is n);
+            while (c !is n);
         }
     }
 
@@ -183,7 +183,7 @@ private:
         if (n is null) return n;
         N*[64] trees; // = { null };
 
-        while(true)
+        while (true)
         {
             if (trees[n.degree] !is null)
             {
@@ -261,13 +261,15 @@ private:
             heap = _cut(heap, n);
             N* parent = n.parent;
             n.parent = null;
-            while(parent !is null && parent.marked)
+
+            while (parent !is null && parent.marked)
             {
                 heap = _cut(heap, parent);
                 n = parent;
                 parent = n.parent;
                 n.parent = null;
             }
+
             if (parent !is null &&
                 parent.parent !is null)
             {
