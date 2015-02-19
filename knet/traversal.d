@@ -125,9 +125,9 @@ struct DijkstraWalker
         auto visit = Visit(0, Nd.asUndefined);
         distMap[start.raw] = visit;
 
-        writeln("start: ", start);
+        writeln("this: start: ", start);
         pending = redBlackTree(visit);
-        writeln("pending.front: ", pending.front);
+        writeln("this: pending.front: ", pending.front);
 
         assert(!pending.empty); // must be initialized to enable reference semantics
         assert(distMap !is null); // must be initialized to enable reference semantics
@@ -136,8 +136,6 @@ struct DijkstraWalker
     /** Postblit. */
     this(this)
     {
-        writeln("start: ", start);
-        writeln("pending.front: ", pending.front);
         writeln("Called postblit when nextNd is ", gr[pending.front[1]].lemma);
         pending = pending.dup;
         distMap = distMap.dup;
