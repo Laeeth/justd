@@ -1,3 +1,5 @@
+module fibonacci_heap;
+
 struct Node(V)
 {
 public:
@@ -331,10 +333,6 @@ void dumpDotChildren(ref Node!int* n)
 // Write output to file X and process it with: "dot -O -Tsvg X"
 unittest
 {
-    import backtrace.backtrace;
-    debug import std.stdio: stderr;
-    debug backtrace.backtrace.install(stderr);
-
     FibonacciHeap!int h;
 
     h.insert(2);
