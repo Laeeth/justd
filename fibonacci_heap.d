@@ -68,7 +68,7 @@ public:
         return root is null;
     }
 
-    inout(V) getMinimum() inout
+    inout(V) minimum() inout
     {
         return root.value;
     }
@@ -391,6 +391,25 @@ void generate(ref FibonacciHeap!int h) @safe pure nothrow
     h.decreaseKey(nine, 1);
     h.decreaseKey(h.find(28), 2);
     h.decreaseKey(h.find(23), 3);
+}
+
+@safe pure nothrow unittest
+{
+    FibonacciHeap!int h;
+
+    h.insert(4); assert(h.minimum == 4);
+    h.insert(3); assert(h.minimum == 3);
+    h.insert(2); assert(h.minimum == 2);
+    h.insert(1); assert(h.minimum == 1);
+
+    h.removeMinimum; assert(h.minimum == 2);
+    h.removeMinimum; assert(h.minimum == 3);
+
+    h.insert(0); assert(h.minimum == 0);
+
+    h.removeMinimum; assert(h.minimum == 3);
+    h.removeMinimum; assert(h.minimum == 4);
+    h.removeMinimum; assert(h.empty);
 }
 
 // Write output to file X and process it with: "dot -O -Tsvg X"
