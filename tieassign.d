@@ -1,4 +1,4 @@
-module tieassign; // letassign;
+module tieassign; // was called letassign;
 import std.typecons, std.typetuple, std.range, std.exception;
 //version = chatty; // print stuff on stdout in unittests. comment this out to make them silent
 version(chatty) import std.stdio;
