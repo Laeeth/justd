@@ -68,12 +68,12 @@ public:
         other.root = _empty();
     }
 
-    bool empty() const
+    bool empty() const @nogc
     {
         return root is null;
     }
 
-    inout(V) minimum() inout
+    inout(V) minimum() inout @nogc
     {
         return root.value;
     }
@@ -92,13 +92,13 @@ public:
         root = _decreaseKey(root, n, value);
     }
 
-    N* find(V value)
+    N* find(V value) @nogc
     {
         return _find(root, value);
     }
 
 private:
-    N* _empty()
+    N* _empty() @nogc
     {
         return null;
     }
@@ -115,7 +115,7 @@ private:
         return n;
     }
 
-    N* _merge(N* a, N* b)
+    N* _merge(N* a, N* b) @nogc
     {
         if (a is null) return b;
         if (b is null) return a;
@@ -150,7 +150,7 @@ private:
         }
     }
 
-    void _addChild(N* parent, N* child)
+    void _addChild(N* parent, N* child) @nogc
     {
         child.prev = child.next = child;
         child.parent = parent;
@@ -158,7 +158,7 @@ private:
         parent.child = _merge(parent.child, child);
     }
 
-    void _unMarkAndUnParentAll(N* n)
+    void _unMarkAndUnParentAll(N* n) @nogc
     {
         if (n is null) return;
         N* c = n;
@@ -240,7 +240,7 @@ private:
         return min;
     }
 
-    N* _cut(N* heap, N* n)
+    N* _cut(N* heap, N* n) @nogc
     {
         if (n.next == n)
         {
@@ -257,7 +257,7 @@ private:
         return _merge(heap, n);
     }
 
-    N* _decreaseKey(N* heap, N* n, V value)
+    N* _decreaseKey(N* heap, N* n, V value) @nogc
     {
         if (n.value < value) return heap;
         n.value = value;
@@ -284,7 +284,7 @@ private:
         return heap;
     }
 
-    N* _find(N* heap, V value)
+    N* _find(N* heap, V value) @nogc
     {
         N* n = heap;
 
