@@ -31,7 +31,7 @@ struct FibonacciHeap(V)
     alias N = Node!V;
 
 protected:
-    N* heap = null;             // root node
+    N* root = null;             // root node
 
 public:
 
@@ -42,39 +42,39 @@ public:
 
     /*virtual*/ ~this()
     {
-        if (heap)
+        if (root)
         {
-            _deleteAll(heap);
+            _deleteAll(root);
         }
     }
 
     N* insert(V value)
     {
         N* ret = _singleton(value);
-        heap = _merge(heap, ret);
+        root = _merge(root, ret);
         return ret;
     }
 
     void merge(FibonacciHeap other)
     {
-        heap = _merge(heap, other.heap);
-        other.heap = _empty();
+        root = _merge(root, other.root);
+        other.root = _empty();
     }
 
     bool empty() const
     {
-        return heap is null;
+        return root is null;
     }
 
     V getMinimum()
     {
-        return heap.value;
+        return root.value;
     }
 
     V removeMinimum()
     {
-        N* old = heap;
-        heap = _removeMinimum(heap);
+        N* old = root;
+        root = _removeMinimum(root);
         V ret = old.value;
         delete old;
         return ret;
@@ -82,12 +82,12 @@ public:
 
     void decreaseKey(N* n, V value)
     {
-        heap = _decreaseKey(heap, n, value);
+        root = _decreaseKey(root, n, value);
     }
 
     N* find(V value)
     {
-        return _find(heap, value);
+        return _find(root, value);
     }
 private:
     N* _empty()
@@ -282,20 +282,20 @@ void dumpDot(V)(ref FibonacciHeap!V _fh)
     import std.stdio: writeln, writefln;
 
     writeln(`digraph G {`);
-    if (_fh.heap is null)
+    if (_fh.root is null)
     {
         writeln(`empty;\n}`);
         return;
     }
-    writefln(`minimum -> "%x" [constraint = false];`, _fh.heap);
-    Node!int* c = _fh.heap;
+    writefln(`minimum -> "%x" [constraint = false];`, _fh.root);
+    Node!int* c = _fh.root;
 
     do
     {
         dumpDotChildren(c);
         c = c.getNext();
     }
-    while (c !is _fh.heap);
+    while (c !is _fh.root);
 
     writeln(`}`);
 }
