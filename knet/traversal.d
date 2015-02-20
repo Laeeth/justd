@@ -122,12 +122,8 @@ struct DijkstraWalker
         this.start = start;
 
         // WARNING distMap must initialized here to provide reference semantics
-        auto visit = Visit(0, Nd.asUndefined);
-        distMap[start.raw] = visit;
-
-        writeln("this: start: ", start);
-        pending = redBlackTree(visit);
-        writeln("this: pending.front: ", pending.front);
+        pending = redBlackTree(Visit(0, start));
+        distMap[start.raw] = Visit(0, Nd.asUndefined);
 
         assert(!pending.empty); // must be initialized to enable reference semantics
         assert(distMap !is null); // must be initialized to enable reference semantics
