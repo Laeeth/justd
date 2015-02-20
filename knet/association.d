@@ -31,12 +31,6 @@ Nd contextOf(Nds)(Graph gr,
                   uint durationInMsecs = 1000) if (isIterable!Nds &&
                                                    is(Nd == ElementType!Nds))
 {
-    writeln("nds: ", nds);
-    foreach (lemma; nds.map!(nd => gr[nd.raw].lemma))
-    {
-        writeln("lemma: ", lemma);
-    }
-
     auto node = typeof(return).init;
     import knet.traversal: dijkstraWalker;
 
@@ -75,7 +69,6 @@ Nd contextOf(Nds)(Graph gr,
                     // log that $(D walker) now (among others) have visited visitedNd
                     (*visits)[wix] = true;
 
-                    writeln(`more than one: expr:"`, gr[visitedNd].lemma);
                     if ((*visits).allOneBetween(0, count))
                     {
                         return visitedNd;
