@@ -178,21 +178,22 @@ struct DijkstraWalker
             import knet.iteration: ndsOf;
             foreach (const nextNd; gr.ndsOf(frontLn, filter.langs, filter.senses, currNd))
             {
-                const newDist = currW + gr[frontLn].ndist; // TODO parameterize on distance funtion
-                if (auto hit = nextNd in distMap)
+                const newNextDist = currW + gr[frontLn].ndist; // TODO parameterize on distance funtion
+                if (auto hit = nextNd in distMap)          // if nextNd already visited
                 {
-                    const NWeight currDist = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here
-                    if (newDist < currDist) // a closer way was found
+                    const NWeight currNextDist = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here
+                    if (newNextDist < currNextDist) // a closer way was found
                     {
-                        *hit = Visit(newDist, currNd); // update distMap with best yet
+                        *hit = Visit(newNextDist, currNd); // update distMap with best yet
+                        pending.removeKey(Visit(currNextDist, nextNd)); // remove old
+                        pending.insert(Visit(newNextDist, nextNd));
                     }
-                    pending.removeKey(Visit(currDist, currNd)); // remove old
                 }
-                else
+                else            // if first time we visit nextNd
                 {
-                    distMap[nextNd] = Visit(newDist, currNd); // first is best
+                    distMap[nextNd] = Visit(newNextDist, currNd); // first is best
+                    pending.insert(Visit(newNextDist, nextNd));
                 }
-                pending.insert(Visit(newDist, currNd));
             }
         }
 
