@@ -117,9 +117,7 @@ void testDijkstraWalker()
 
     import knet.traversal: dijkstraWalker;
     auto w = gr.dijkstraWalker(ndA);
-    writeln("x");
     auto wRef = w; // new reference
-    writeln("y");
     auto wCopy = w.save; // copy
 
     // iterate without side-effects
