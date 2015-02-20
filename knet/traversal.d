@@ -104,6 +104,11 @@ BFWalker bfWalker(Graph gr, Nd start,
     reconstruct the closest path from any given Nd to start.
 
     See also: http://rosettacode.org/wiki/Dijkstra%27s_algorithm#D
+
+    WARNING pending and distMap must initialized here to provide reference semantics in for
+    range behaviour to work correctly
+
+    See also: http://forum.dlang.org/thread/xrxejicnoakanvkyasso@forum.dlang.org#post-yipmrrdilsxcaypeoqhz:40forum.dlang.org
 */
 struct DijkstraWalker
 {
@@ -111,6 +116,7 @@ struct DijkstraWalker
     import std.container: redBlackTree, RedBlackTree;
 
     alias Visit = Tuple!(NWeight, Nd);
+    alias Queue = RedBlackTree!Visit;
 
     this(Graph gr,
          const Nd start,
@@ -159,16 +165,6 @@ struct DijkstraWalker
         const curr = pending.front; pending.removeFront;
         const currW = curr[0];
         const currNd = curr[1];
-        // static if (useArray)
-        // {
-        //     const curr = pending.front;
-        //     pending = Array!Nd(pending[1 .. $]); // TODO too costly?
-        // }
-        // else
-        // {
-        //     import std.range: moveFront;
-        //     const curr = pending.moveFront;
-        // }
 
         const savedLength = pending.length;
 
@@ -196,11 +192,6 @@ struct DijkstraWalker
                 }
             }
         }
-
-        // import std.algorithm.sorting: partialSort;
-        // // TODO use my radixSort for better performance
-        // pending[].partialSort!((a, b) => (distMap[a][0] <
-        //                                   distMap[b][0]))(savedLength);
     }
 
     /** This needs to be explicit, otherwise std.range.moveFront calls postblit
@@ -225,31 +216,8 @@ struct DijkstraWalker
     }
 
 public:
-    // WARNING distMap must initialized here to provide reference semantics in for range behaviour to work correctly
-    // See also: http://forum.dlang.org/thread/xrxejicnoakanvkyasso@forum.dlang.org#post-yipmrrdilsxcaypeoqhz:40forum.dlang.org
     Visit[Nd] distMap;          // Nd => tuple(Nd origin distance, parent Nd)
-
-    // yet to be untraversed nodes sorted by smallest distance to start
-    // static if (useArray)
-    // {
-    //     Array!Nd pending;
-    // }
-    // else
-    // {
-    //     Nd[] pending;
-    // }
-
-    alias Queue = RedBlackTree!Visit;
     Queue pending;              // queue of pending (untraversed) nodes
-
-    // TODO how can I make use of BinaryHeap here instead?
-    static if (false)
-    {
-        import std.container.binaryheap: BinaryHeap;
-        BinaryHeap!(Nds, ((a, b) => (distMap[a][0] <
-                                     distMap[b][0]))) pending;
-    }
-
     const Nd start;             // search start node
     const Filter filter;
 private:
