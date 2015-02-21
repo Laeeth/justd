@@ -10,10 +10,10 @@ void learnNouns(Graph graph)
 
     const origin = Origin.manual;
 
-    graph.connect(graph.store(`male`, Lang.en, Sense.noun, origin), Role(Rel.hasAttribute),
-                  graph.store(`masculine`, Lang.en, Sense.adjective, origin), origin, 1.0);
-    graph.connect(graph.store(`female`, Lang.en, Sense.noun, origin), Role(Rel.hasAttribute),
-                  graph.store(`feminine`, Lang.en, Sense.adjective, origin), origin, 1.0);
+    graph.connect(graph.add(`male`, Lang.en, Sense.noun, origin), Role(Rel.hasAttribute),
+                  graph.add(`masculine`, Lang.en, Sense.adjective, origin), origin, 1.0);
+    graph.connect(graph.add(`female`, Lang.en, Sense.noun, origin), Role(Rel.hasAttribute),
+                  graph.add(`feminine`, Lang.en, Sense.adjective, origin), origin, 1.0);
 
     graph.learnEnglishNouns();
     graph.learnSwedishNouns();

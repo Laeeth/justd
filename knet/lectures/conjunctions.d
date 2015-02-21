@@ -34,9 +34,9 @@ void learnConjunctions(Graph graph)
                         `used`, `take`, `three`];
 
     // Coordinating Conjunction
-    graph.connect(graph.store(`coordinating conjunction`, Lang.en, Sense.nounPhrase, Origin.manual),
+    graph.connect(graph.add(`coordinating conjunction`, Lang.en, Sense.nounPhrase, Origin.manual),
                   Role(Rel.uses),
-                  graph.store(`graph.connect independent sentence parts`, Lang.en, Sense.unknown, Origin.manual),
+                  graph.add(`graph.connect independent sentence parts`, Lang.en, Sense.unknown, Origin.manual),
                   Origin.manual, 1.0);
     graph.learnMto1(Lang.en, [`and`, `or`, `but`, `nor`, `so`, `for`, `yet`],
                     Role(Rel.instanceOf), `coordinating conjunction`, Sense.conjunctionCoordinating, Sense.nounPhrase, 1.0);
@@ -75,9 +75,9 @@ void learnConjunctions(Graph graph)
                     Role(Rel.instanceOf), `correlative conjunction`, Sense.conjunctionCorrelative, Sense.nounPhrase, 1.0);
 
     // Subordinating Conjunction
-    graph.connect(graph.store(`subordinating conjunction`, Lang.en, Sense.nounPhrase, Origin.manual),
+    graph.connect(graph.add(`subordinating conjunction`, Lang.en, Sense.nounPhrase, Origin.manual),
                   Role(Rel.uses),
-                  graph.store(`establish the relationship between the dependent clause and the rest of the sentence`,
+                  graph.add(`establish the relationship between the dependent clause and the rest of the sentence`,
                               Lang.en, Sense.unknown, Origin.manual),
                   Origin.manual, 1.0);
 

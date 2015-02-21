@@ -305,11 +305,11 @@ void learnPreciseThings(Graph graph)
                     const cityName = items[0];
                     const population = items[1];
                     const yearFounded = items[2];
-                    const city = graph.store(cityName, lang, Sense.city, Origin.manual);
+                    const city = graph.add(cityName, lang, Sense.city, Origin.manual);
                     graph.connect(city, Role(Rel.hasAttribute),
-                                  graph.store(population, lang, Sense.population, Origin.manual), Origin.manual, 1.0);
+                                  graph.add(population, lang, Sense.population, Origin.manual), Origin.manual, 1.0);
                     graph.connect(city, Role(Rel.foundedIn),
-                                  graph.store(yearFounded, lang, Sense.year, Origin.manual), Origin.manual, 1.0);
+                                  graph.add(yearFounded, lang, Sense.year, Origin.manual), Origin.manual, 1.0);
                 }
             }
             catch (FileException e) {}
@@ -396,8 +396,8 @@ void learnEnumMemberNameHierarchy(T)(Graph graph,
                 import knet.senses: specializes, toHuman;
                 if (i.specializes(j))
                 {
-                    graph.connect(graph.store(i.toHuman, Lang.en, memberSense, origin), Role(Rel.isA),
-                                  graph.store(j.toHuman, Lang.en, memberSense, origin), origin, 1.0);
+                    graph.connect(graph.add(i.toHuman, Lang.en, memberSense, origin), Role(Rel.isA),
+                                  graph.add(j.toHuman, Lang.en, memberSense, origin), origin, 1.0);
                 }
             }
         }

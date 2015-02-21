@@ -1095,16 +1095,16 @@ void learnCode(Graph graph)
 
 void learnCodeInGeneral(Graph graph)
 {
-    graph.connect(graph.store(`keyword`, Lang.en, Sense.adjective, Origin.manual), Role(Rel.synonymFor),
-                  graph.store(`reserved word`, Lang.en, Sense.adjective, Origin.manual), Origin.manual, 1.0, true);
+    graph.connect(graph.add(`keyword`, Lang.en, Sense.adjective, Origin.manual), Role(Rel.synonymFor),
+                  graph.add(`reserved word`, Lang.en, Sense.adjective, Origin.manual), Origin.manual, 1.0, true);
 }
 
 void learnDCode(Graph graph)
 {
     enum attributes = [`@property`, `@safe`, `@trusted`, `@system`, `@disable`];
 
-    graph.connectMto1(graph.store(attributes, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
-                      graph.store("attribute", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
+    graph.connectMto1(graph.add(attributes, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
+                      graph.add("attribute", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
 
     enum keywords = [`abstract`, `alias`, `align`, `asm`,
                      `assert`, `auto`, `body`, `bool`,
@@ -1128,8 +1128,8 @@ void learnDCode(Graph graph)
                      `union`, `unittest`, `ushort`, `version`,
                      `void`, `wchar`, `while`, `with` ];
 
-    graph.connectMto1(graph.store(keywords, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
-                      graph.store("keyword", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
+    graph.connectMto1(graph.add(keywords, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
+                      graph.add("keyword", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
 
     enum elements = [ tuple(`AA`, `associative array`),
                       tuple(`AAs`, `associative arrays`),
@@ -1154,7 +1154,7 @@ void learnDCode(Graph graph)
 
     foreach (e; elements)
     {
-        graph.connect(graph.store(e[0], Lang.d, Sense.unknown, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(e[1], Lang.d, Sense.unknown, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(e[0], Lang.d, Sense.unknown, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(e[1], Lang.d, Sense.unknown, Origin.manual), Origin.manual, 1.0);
     }
 }

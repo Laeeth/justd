@@ -146,7 +146,7 @@ Nd readCN5ConceptURI(T)(Graph graph,
     }
 
     import knet.lemmas: correctLemmaExpr;
-    return graph.store(expr.correctLemmaExpr,
+    return graph.add(expr.correctLemmaExpr,
                        lang, sense, Origin.cn5, anyContext,
                        Manner.formal, false, 0, false);
 }

@@ -6,25 +6,25 @@ void learnMath(Graph graph)
 {
     const origin = Origin.manual;
 
-    graph.connect(graph.store(`π`, Lang.math, Sense.numberIrrational, origin),
+    graph.connect(graph.add(`π`, Lang.math, Sense.numberIrrational, origin),
                   Role(Rel.translationOf),
-                  graph.store(`pi`, Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
+                  graph.add(`pi`, Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
                   origin, 1.0);
-    graph.connect(graph.store(`e`, Lang.math, Sense.numberIrrational, origin),
+    graph.connect(graph.add(`e`, Lang.math, Sense.numberIrrational, origin),
                   Role(Rel.translationOf),
-                  graph.store(`e`, Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
+                  graph.add(`e`, Lang.en, Sense.numberIrrational, origin), // TODO other Langs?
                   origin, 1.0);
 
     /// http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
-    graph.connect(graph.store(`π`, Lang.math, Sense.numberIrrational, origin),
+    graph.connect(graph.add(`π`, Lang.math, Sense.numberIrrational, origin),
                   Role(Rel.definedAs),
-                  graph.store(`3.14159265358979323846264338327950288419716939937510`,
+                  graph.add(`3.14159265358979323846264338327950288419716939937510`,
                               Lang.math, Sense.decimal, origin),
                   origin, 1.0);
 
-    graph.connect(graph.store(`e`, Lang.math, Sense.numberIrrational, origin),
+    graph.connect(graph.add(`e`, Lang.math, Sense.numberIrrational, origin),
                   Role(Rel.definedAs),
-                  graph.store(`2.71828182845904523536028747135266249775724709369995`,
+                  graph.add(`2.71828182845904523536028747135266249775724709369995`,
                               Lang.math, Sense.decimal, origin),
                   origin, 1.0);
 
@@ -51,18 +51,18 @@ void learnEnglishQuantifiers(Graph graph)
                         `many`, `more`, `no`, `none`, `several`, `some`];
     foreach (word; quantifiers)
     {
-        graph.connect(graph.store(word, lang, Sense.quantifier, origin),
+        graph.connect(graph.add(word, lang, Sense.quantifier, origin),
                       Role(Rel.instanceOf),
-                      graph.store(`quantifier`, lang, Sense.integer, origin),
+                      graph.add(`quantifier`, lang, Sense.integer, origin),
                       origin, 1.0);
     }
 
     enum quantifiersOfSingularNoun = [`each`, `every`, `no`];
     foreach (word; quantifiersOfSingularNoun)
     {
-        graph.connect(graph.store(word, lang, Sense.quantifierOfSingularNoun, origin),
+        graph.connect(graph.add(word, lang, Sense.quantifierOfSingularNoun, origin),
                       Role(Rel.instanceOf),
-                      graph.store(`quantifier`, lang, Sense.integer, origin),
+                      graph.add(`quantifier`, lang, Sense.integer, origin),
                       origin, 1.0);
     }
 
@@ -72,9 +72,9 @@ void learnEnglishQuantifiers(Graph graph)
                                     `many`, `more`, `no`, `none`, `several`, `some`];
     foreach (word; quantifiersOfPluralNoun)
     {
-        graph.connect(graph.store(word, lang, Sense.quantifierOfPluralNoun, origin),
+        graph.connect(graph.add(word, lang, Sense.quantifierOfPluralNoun, origin),
                       Role(Rel.instanceOf),
-                      graph.store(`quantifier`, lang, Sense.integer, origin),
+                      graph.add(`quantifier`, lang, Sense.integer, origin),
                       origin, 1.0);
     }
 
@@ -83,9 +83,9 @@ void learnEnglishQuantifiers(Graph graph)
                                           `more`, `no`, `none`, `some`];
     foreach (word; quantifiersOfUncountableNouns)
     {
-        graph.connect(graph.store(word, lang, Sense.quantifierOfPluralNoun, origin),
+        graph.connect(graph.add(word, lang, Sense.quantifierOfPluralNoun, origin),
                       Role(Rel.instanceOf),
-                      graph.store(`quantifier`, lang, Sense.integer, origin),
+                      graph.add(`quantifier`, lang, Sense.integer, origin),
                       origin, 1.0);
     }
 
@@ -100,75 +100,75 @@ void learnNumerals(Graph graph)
 
     const origin = Origin.manual;
 
-    graph.connect(graph.store(`single`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`single`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`1`, Lang.math, Sense.integer, origin),
+                  graph.add(`1`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`pair`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`pair`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`2`, Lang.math, Sense.integer, origin),
+                  graph.add(`2`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`duo`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`duo`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`2`, Lang.math, Sense.integer, origin),
+                  graph.add(`2`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`triple`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`triple`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`3`, Lang.math, Sense.integer, origin),
+                  graph.add(`3`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`quadruple`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`quadruple`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`4`, Lang.math, Sense.integer, origin),
+                  graph.add(`4`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`quintuple`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`quintuple`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`5`, Lang.math, Sense.integer, origin),
+                  graph.add(`5`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`sextuple`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`sextuple`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`6`, Lang.math, Sense.integer, origin),
+                  graph.add(`6`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`septuple`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`septuple`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`7`, Lang.math, Sense.integer, origin),
+                  graph.add(`7`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
 
     // Greek Numbering
     // TODO Also Latin?
-    graph.connect(graph.store(`tetra`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`4`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`penta`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`5`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`hexa`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`6`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`hepta`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`7`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`octa`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`8`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`nona`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`9`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`deca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`10`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`hendeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`11`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`dodeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`12`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`trideca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`13`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`tetradeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`14`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`pentadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`15`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`hexadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`16`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`heptadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`17`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`octadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`18`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`enneadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`19`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`icosa`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`20`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`tetra`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`4`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`penta`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`5`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`hexa`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`6`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`hepta`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`7`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`octa`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`8`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`nona`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`9`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`deca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`10`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`hendeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`11`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`dodeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`12`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`trideca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`13`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`tetradeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`14`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`pentadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`15`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`hexadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`16`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`heptadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`17`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`octadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`18`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`enneadeca`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`19`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`icosa`, Lang.el, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`20`, Lang.math, Sense.integer, origin), origin, 1.0);
 
     graph.learnEnglishOrdinalShorthands();
     graph.learnSwedishOrdinalShorthands();
@@ -181,49 +181,49 @@ void learnNumerals(Graph graph)
     graph.learnFrenchFractions();
 
     // Aggregate
-    graph.connect(graph.store(`dozen`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`dozen`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`12`, Lang.math, Sense.integer, origin),
+                  graph.add(`12`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`baker's dozen`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`baker's dozen`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`13`, Lang.math, Sense.integer, origin),
+                  graph.add(`13`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`tjog`, Lang.sv, Sense.numeral, origin),
+    graph.connect(graph.add(`tjog`, Lang.sv, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`20`, Lang.math, Sense.integer, origin),
+                  graph.add(`20`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`flak`, Lang.sv, Sense.numeral, origin),
+    graph.connect(graph.add(`flak`, Lang.sv, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`24`, Lang.math, Sense.integer, origin),
+                  graph.add(`24`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`skock`, Lang.sv, Sense.numeral, origin),
+    graph.connect(graph.add(`skock`, Lang.sv, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`60`, Lang.math, Sense.integer, origin),
+                  graph.add(`60`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
 
-    graph.connectMto1(graph.store([`dussin`, `tolft`], Lang.sv, Sense.numeral, origin),
+    graph.connectMto1(graph.add([`dussin`, `tolft`], Lang.sv, Sense.numeral, origin),
                       Role(Rel.definedAs),
-                      graph.store(`12`, Lang.math, Sense.integer, origin),
+                      graph.add(`12`, Lang.math, Sense.integer, origin),
                       origin, 1.0);
 
-    graph.connect(graph.store(`gross`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`gross`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`144`, Lang.math, Sense.integer, origin),
+                  graph.add(`144`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
-    graph.connect(graph.store(`gross`, Lang.sv, Sense.numeral, origin), // TODO Support [Lang.en, Lang.sv]
+    graph.connect(graph.add(`gross`, Lang.sv, Sense.numeral, origin), // TODO Support [Lang.en, Lang.sv]
                   Role(Rel.definedAs),
-                  graph.store(`144`, Lang.math, Sense.integer, origin),
-                  origin, 1.0);
-
-    graph.connect(graph.store(`small gross`, Lang.en, Sense.numeral, origin),
-                  Role(Rel.definedAs),
-                  graph.store(`120`, Lang.math, Sense.integer, origin),
+                  graph.add(`144`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
 
-    graph.connect(graph.store(`great gross`, Lang.en, Sense.numeral, origin),
+    graph.connect(graph.add(`small gross`, Lang.en, Sense.numeral, origin),
                   Role(Rel.definedAs),
-                  graph.store(`1728`, Lang.math, Sense.integer, origin),
+                  graph.add(`120`, Lang.math, Sense.integer, origin),
+                  origin, 1.0);
+
+    graph.connect(graph.add(`great gross`, Lang.en, Sense.numeral, origin),
+                  Role(Rel.definedAs),
+                  graph.add(`1728`, Lang.math, Sense.integer, origin),
                   origin, 1.0);
 }
 
@@ -244,16 +244,16 @@ void learnFrenchNumerals(Graph graph)
 
     foreach (ix, ten; tens)
     {
-        graph.connect(graph.store(ten, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
-                      graph.store((10*(ix + 2)).to!string, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(ten, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                      graph.add((10*(ix + 2)).to!string, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
     }
 
-    graph.connect(graph.store(`mille`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
-                  graph.store(`1000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
-    graph.connect(graph.store(`million`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
-                  graph.store(`1000000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
-    graph.connect(graph.store(`milliard`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
-                  graph.store(`1000000000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
+    graph.connect(graph.add(`mille`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                  graph.add(`1000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
+    graph.connect(graph.add(`million`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                  graph.add(`1000000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
+    graph.connect(graph.add(`milliard`, lang, Sense.numeral, Origin.manual), Role(Rel.definedAs),
+                  graph.add(`1000000000`, Lang.math, Sense.integer, Origin.manual), Origin.manual, 1.0);
 }
 
 /** Learn Roman (Latin) Numerals.
@@ -272,63 +272,63 @@ void learnRomanLatinNumerals(Graph graph)
                   tuple(`M`, `1000`)];
     foreach (pair; pairs)
     {
-        graph.connect(graph.store(pair[0], Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                      graph.store(pair[1], Lang.math, Sense.integer, origin), origin, 1.0);
+        graph.connect(graph.add(pair[0], Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                      graph.add(pair[1], Lang.math, Sense.integer, origin), origin, 1.0);
     }
 
-    graph.connect(graph.store(`ūnus`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
-                  graph.store(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`ūna`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
-                  graph.store(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`ūnum`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
-                  graph.store(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`ūnus`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
+                  graph.add(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`ūna`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
+                  graph.add(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`ūnum`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
+                  graph.add(`1`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`duo`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
-                  graph.store(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`duae`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
-                  graph.store(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`duo`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
-                  graph.store(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`duo`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
+                  graph.add(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`duae`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
+                  graph.add(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`duo`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
+                  graph.add(`2`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`trēs`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
-                  graph.store(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`trēs`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
-                  graph.store(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
-    graph.connect(graph.store(`tria`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
-                  graph.store(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`trēs`, Lang.la, Sense.numeralMasculine, origin), Role(Rel.definedAs),
+                  graph.add(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`trēs`, Lang.la, Sense.numeralFeminine, origin), Role(Rel.definedAs),
+                  graph.add(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`tria`, Lang.la, Sense.numeralNeuter, origin), Role(Rel.definedAs),
+                  graph.add(`3`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`quattuor`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`4`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`quattuor`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`4`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`quīnque`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`5`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`quīnque`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`5`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`sex`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`6`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`sex`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`6`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`septem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`7`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`septem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`7`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`octō`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`8`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`octō`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`8`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`novem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`9`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`novem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`9`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`decem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`10`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`decem`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`10`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`quīnquāgintā`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`50`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`quīnquāgintā`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`50`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`Centum`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`50`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`Centum`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`50`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`Quīngentī`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`100`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`Quīngentī`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`100`, Lang.math, Sense.integer, origin), origin, 1.0);
 
-    graph.connect(graph.store(`Mīlle`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
-                  graph.store(`500`, Lang.math, Sense.integer, origin), origin, 1.0);
+    graph.connect(graph.add(`Mīlle`, Lang.la, Sense.numeral, origin), Role(Rel.definedAs),
+                  graph.add(`500`, Lang.math, Sense.integer, origin), origin, 1.0);
 }
 
 /** Learn English Ordinal Number Shorthands.
@@ -372,12 +372,12 @@ void learnEnglishOrdinalShorthands(Graph graph)
     {
         const abbr = pair[0];
         const ordinal = pair[1];
-        graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
         // variant spelling
-        graph.connect(graph.store(abbr[0 .. $-2] ~ `:` ~ abbr[$-2 .. $],
+        graph.connect(graph.add(abbr[0 .. $-2] ~ `:` ~ abbr[$-2 .. $],
                                   lang, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal,
+                      graph.add(ordinal,
                                   lang, Sense.numeralOrdinal, Origin.manual), Origin.manual, 0.5);
     }
 }
@@ -411,8 +411,8 @@ void learnSwedishOrdinalNumbers(Graph graph)
     {
         const abbr = pair[0];
         const ordinal = pair[1];
-        graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -437,8 +437,8 @@ void learnGermanOrdinalNumbers(Graph graph)
     {
         const abbr = pair[0];
         const ordinal = pair[1];
-        graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -464,8 +464,8 @@ void learnFrenchOrdinalNumbers(Graph graph)
     {
         const abbr = pair[0];
         const ordinal = pair[1];
-        graph.connect(graph.store(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(abbr, Lang.en, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(ordinal, Lang.en, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -487,8 +487,8 @@ void learnEnglishFractions(Graph graph)
     {
         const fraction = pair[0];
         const ordinal = pair[1];
-        graph.connect(graph.store(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -510,8 +510,8 @@ void learnSwedishFractions(Graph graph)
     {
         const fraction = pair[0];
         const ordinal = pair[1];
-        graph.connect(graph.store(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -533,8 +533,8 @@ void learnFrenchFractions(Graph graph)
     {
         const fraction = pair[0];
         const ordinal = pair[1];
-        graph.connect(graph.store(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(fraction, Lang.math, Sense.numberRational, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(ordinal, Lang.en, Sense.numeralFraction, Origin.manual), Origin.manual, 1.0);
     }
 }
 
@@ -579,7 +579,7 @@ void learnSwedishOrdinalShorthands(Graph graph)
                   tuple(`1000000:e`, `miljonte`)];
     foreach (pair; pairs)
     {
-        graph.connect(graph.store(pair[0], lang, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
-                      graph.store(pair[1], lang, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(pair[0], lang, Sense.numeralOrdinal, Origin.manual), Role(Rel.abbreviationFor),
+                      graph.add(pair[1], lang, Sense.numeralOrdinal, Origin.manual), Origin.manual, 1.0);
     }
 }

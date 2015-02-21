@@ -108,7 +108,7 @@ bool readWordNetIndexLine(R, N)(Graph graph,
     //     // auto links = ids.array;
     // }
 
-    auto node = graph.store(lemma, Lang.en, sense, Origin.wordnet);
+    auto node = graph.add(lemma, Lang.en, sense, Origin.wordnet);
 
     // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);
     // auto meaning = Entry!Links(words[1].front.decodeWordSense,
@@ -238,7 +238,7 @@ size_t readWordNetDataLine(R, N)(Graph graph,
         const lex_id = lex_id_s.parse!uint(16);
         parts.popFront;
 
-        synset ~= graph.store(word, lang, sense, Origin.wordnet);
+        synset ~= graph.add(word, lang, sense, Origin.wordnet);
     }
 
     // store it in local associative array

@@ -113,8 +113,8 @@ void learnMobyEnglishPronounciations(Graph graph)
                 ipas = split.front.to!(typeof(ipas));
                 writeln(`warning: Couldn't decode Moby IPA code `, ipas);
             }
-            graph.connect(graph.store(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.translationOf),
-                          graph.store(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
+            graph.connect(graph.add(expr, Lang.en, Sense.unknown, Origin.manual), Role(Rel.translationOf),
+                          graph.add(ipas, Lang.ipa, Sense.unknown, Origin.manual), Origin.manual, 1.0);
         }
         else
         {
@@ -163,7 +163,7 @@ void learnMobyPoS(Graph graph)
         const expr = split.front; split.popFront;
         foreach (sense; split.front.map!(a => a.decodeSenseOfMobyPoSCode))
         {
-            graph.store(expr, Lang.en, sense, Origin.moby);
+            graph.add(expr, Lang.en, sense, Origin.moby);
         }
     }
 }

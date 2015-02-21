@@ -10,7 +10,7 @@ void learnEnglishWordUsageRanks(Graph graph)
         auto split = line.splitter(roleSeparator);
         const rank = split.front; split.popFront;
         const word = split.front;
-        graph.connect(graph.store(word, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasAttribute),
-                      graph.store(rank, Lang.en, Sense.rank, Origin.manual), Origin.manual, 1.0);
+        graph.connect(graph.add(word, Lang.en, Sense.unknown, Origin.manual), Role(Rel.hasAttribute),
+                      graph.add(rank, Lang.en, Sense.rank, Origin.manual), Origin.manual, 1.0);
     }
 }

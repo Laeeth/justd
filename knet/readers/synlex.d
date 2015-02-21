@@ -41,9 +41,9 @@ void readSynlexFile(Graph graph,
 
             if (w1 != w2) // there might be a bug in the xml...
             {
-                graph.connect(graph.store(w1, lang, Sense.unknown, origin),
+                graph.connect(graph.add(w1, lang, Sense.unknown, origin),
                               Role(Rel.synonymFor),
-                              graph.store(w2, lang, Sense.unknown, origin),
+                              graph.add(w2, lang, Sense.unknown, origin),
                               origin, weight, true);
                 ++lnr;
             }

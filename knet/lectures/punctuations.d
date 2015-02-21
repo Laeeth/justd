@@ -6,87 +6,87 @@ void learnPunctuation(Graph graph)
 {
     const origin = Origin.manual;
 
-    graph.connect(graph.store(`:`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`:`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`colon`,
+                  graph.add(`colon`,
                               Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connect(graph.store(`;`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`;`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`semicolon`,
+                  graph.add(`semicolon`,
                               Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connectMto1(graph.store([`,`, `،`, `、`], Lang.unknown, Sense.punctuation, origin),
+    graph.connectMto1(graph.add([`,`, `،`, `、`], Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store(`comma`,
+                      graph.add(`comma`,
                                   Lang.en, Sense.noun, origin),
                       origin, 1.0);
 
-    graph.connectMtoN(graph.store([`/`, `⁄`], Lang.unknown, Sense.punctuation, origin),
+    graph.connectMtoN(graph.add([`/`, `⁄`], Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store([`slash`, `stroke`, `solidus`],
+                      graph.add([`slash`, `stroke`, `solidus`],
                                   Lang.en, Sense.noun, origin),
                       origin, 1.0);
 
-    graph.connect(graph.store(`-`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`-`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`hyphen`, Lang.en, Sense.noun, origin),
+                  graph.add(`hyphen`, Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connect(graph.store(`-`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`-`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`hyphen-minus`, Lang.en, Sense.noun, origin),
+                  graph.add(`hyphen-minus`, Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connect(graph.store(`?`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`?`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`question mark`, Lang.en, Sense.noun, origin),
+                  graph.add(`question mark`, Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connect(graph.store(`!`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`!`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`exclamation mark`, Lang.en, Sense.noun, origin),
+                  graph.add(`exclamation mark`, Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connect1toM(graph.store(`.`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect1toM(graph.add(`.`, Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store([`full stop`, `period`], Lang.en, Sense.noun, origin),
+                      graph.add([`full stop`, `period`], Lang.en, Sense.noun, origin),
                       origin, 1.0);
 
-    graph.connectMto1(graph.store([`’`, `'`], Lang.unknown, Sense.punctuation, origin),
+    graph.connectMto1(graph.add([`’`, `'`], Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store(`apostrophe`, Lang.en, Sense.noun, origin),
+                      graph.add(`apostrophe`, Lang.en, Sense.noun, origin),
                       origin, 1.0);
 
-    graph.connectMto1(graph.store([`‒`, `–`, `—`, `―`], Lang.unknown, Sense.punctuation, origin),
+    graph.connectMto1(graph.add([`‒`, `–`, `—`, `―`], Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store(`dash`, Lang.en, Sense.noun, origin),
+                      graph.add(`dash`, Lang.en, Sense.noun, origin),
                       origin, 1.0);
 
-    graph.connectMto1(graph.store([`‘’`, `“”`, `''`, `""`], Lang.unknown, Sense.punctuation, origin),
+    graph.connectMto1(graph.add([`‘’`, `“”`, `''`, `""`], Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store(`quotation marks`, Lang.en, Sense.noun, origin),
+                      graph.add(`quotation marks`, Lang.en, Sense.noun, origin),
                       origin, 1.0);
 
-    graph.connectMto1(graph.store([`…`, `...`], Lang.unknown, Sense.punctuation, origin),
+    graph.connectMto1(graph.add([`…`, `...`], Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store(`ellipsis`, Lang.en, Sense.noun, origin),
+                      graph.add(`ellipsis`, Lang.en, Sense.noun, origin),
                       origin, 1.0);
 
-    graph.connect(graph.store(`()`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`()`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`parenthesis`, Lang.en, Sense.noun, origin),
+                  graph.add(`parenthesis`, Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connect(graph.store(`{}`, Lang.unknown, Sense.punctuation, origin),
+    graph.connect(graph.add(`{}`, Lang.unknown, Sense.punctuation, origin),
                   Role(Rel.definedAs),
-                  graph.store(`curly braces`, Lang.en, Sense.noun, origin),
+                  graph.add(`curly braces`, Lang.en, Sense.noun, origin),
                   origin, 1.0);
 
-    graph.connectMto1(graph.store([`[]`, `()`, `{}`, `⟨⟩`], Lang.unknown, Sense.punctuation, origin),
+    graph.connectMto1(graph.add([`[]`, `()`, `{}`, `⟨⟩`], Lang.unknown, Sense.punctuation, origin),
                       Role(Rel.definedAs),
-                      graph.store(`brackets`, Lang.en, Sense.noun, origin),
+                      graph.add(`brackets`, Lang.en, Sense.noun, origin),
                       origin, 1.0);
 }

@@ -40,12 +40,12 @@ void learnEnglishAdjectives(Graph graph)
 {
     graph.learnEnglishIrregularAdjectives();
     const lang = Lang.en;
-    graph.connectMto1(graph.store([`ablaze`, `abreast`, `afire`, `afloat`, `afraid`, `aghast`, `aglow`,
+    graph.connectMto1(graph.add([`ablaze`, `abreast`, `afire`, `afloat`, `afraid`, `aghast`, `aglow`,
                                    `alert`, `alike`, `alive`, `alone`, `aloof`, `ashamed`, `asleep`,
                                    `awake`, `aware`, `fond`, `unaware`],
                                   lang, Sense.adjectivePredicateOnly, Origin.manual),
                       Role(Rel.instanceOf),
-                      graph.store(`predicate only adjective`,
+                      graph.add(`predicate only adjective`,
                                   lang, Sense.noun, Origin.manual),
                       Origin.manual);
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/adjective.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `adjective`, Sense.adjective, Sense.noun, 1.0);

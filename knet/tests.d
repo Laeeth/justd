@@ -5,8 +5,8 @@ import knet.base;
 void testLinkReusage()
 {
     auto gr = new Graph();
-    const ndA = gr.store(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
-    const ndB = gr.store(`3200`, Lang.sv, Sense.population, Origin.manual);
+    const ndA = gr.add(`Skänninge`, Lang.sv, Sense.city, Origin.manual);
+    const ndB = gr.add(`3200`, Lang.sv, Sense.population, Origin.manual);
 
     const ln1 = gr.connect(ndA, Role(Rel.hasAttribute), ndB, Origin.manual, 1.0, true);
 
@@ -24,8 +24,8 @@ void testLinkReusage()
 void testSymmetricLinkReusage()
 {
     auto gr = new Graph();
-    const ndA = gr.store(`big`, Lang.en, Sense.adjective, Origin.manual);
-    const ndB = gr.store(`large`, Lang.en, Sense.adjective, Origin.manual);
+    const ndA = gr.add(`big`, Lang.en, Sense.adjective, Origin.manual);
+    const ndB = gr.add(`large`, Lang.en, Sense.adjective, Origin.manual);
     const ln1 = gr.connect(ndA, Role(Rel.synonymFor),
                            ndB, Origin.manual, 1.0, true);
     // reversion order should return same link because synonymFor is symmetric
@@ -37,8 +37,8 @@ void testSymmetricLinkReusage()
 void testLemmasWithSameExprReusage()
 {
     auto gr = new Graph();
-    const beEn1 = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-    const beEn2 = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+    const beEn1 = gr.add(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+    const beEn2 = gr.add(`be`.idup, Lang.en, Sense.verb, Origin.manual);
     assert(gr[beEn1].lemma.expr.ptr ==
            gr[beEn2].lemma.expr.ptr); // assert clever reuse of already hashed expr
 }
@@ -47,8 +47,8 @@ void testLemmasWithSameExprReusage()
 void testLemmasExprReusage()
 {
     auto gr = new Graph();
-    const beEn = gr.store(`be`.idup, Lang.en, Sense.verb, Origin.manual);
-    const beSv = gr.store(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
+    const beEn = gr.add(`be`.idup, Lang.en, Sense.verb, Origin.manual);
+    const beSv = gr.add(`be`.idup, Lang.sv, Sense.verb, Origin.manual);
     assert(gr[beEn].lemma.expr.ptr ==
            gr[beSv].lemma.expr.ptr); // assert clever reuse of already hashed expr
 }
@@ -61,13 +61,13 @@ void testBFWalker()
     enum role = Role(Rel.any);
     enum origin = Origin.manual;
 
-    auto ndA = gr.store(`A`, lang, sense, origin);
-    auto ndB1 = gr.store(`B1`, lang, sense, origin);
-    auto ndB2 = gr.store(`B2`, lang, sense, origin);
-    auto ndC = gr.store(`C`, lang, sense, origin);
-    auto ndD = gr.store(`D`, lang, sense, origin);
-    auto ndE = gr.store(`E`, lang, sense, origin);
-    auto ndF = gr.store(`F`, lang, sense, origin);
+    auto ndA = gr.add(`A`, lang, sense, origin);
+    auto ndB1 = gr.add(`B1`, lang, sense, origin);
+    auto ndB2 = gr.add(`B2`, lang, sense, origin);
+    auto ndC = gr.add(`C`, lang, sense, origin);
+    auto ndD = gr.add(`D`, lang, sense, origin);
+    auto ndE = gr.add(`E`, lang, sense, origin);
+    auto ndF = gr.add(`F`, lang, sense, origin);
 
     gr.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
     gr.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
@@ -100,13 +100,13 @@ void testDijkstraWalker()
     enum role = Role(Rel.any);
     enum origin = Origin.manual;
 
-    auto ndA = gr.store(`A`, lang, sense, origin);
-    auto ndB1 = gr.store(`B1`, lang, sense, origin);
-    auto ndB2 = gr.store(`B2`, lang, sense, origin);
-    auto ndC = gr.store(`C`, lang, sense, origin);
-    auto ndD = gr.store(`D`, lang, sense, origin);
-    auto ndE = gr.store(`E`, lang, sense, origin);
-    auto ndF = gr.store(`F`, lang, sense, origin);
+    auto ndA = gr.add(`A`, lang, sense, origin);
+    auto ndB1 = gr.add(`B1`, lang, sense, origin);
+    auto ndB2 = gr.add(`B2`, lang, sense, origin);
+    auto ndC = gr.add(`C`, lang, sense, origin);
+    auto ndD = gr.add(`D`, lang, sense, origin);
+    auto ndE = gr.add(`E`, lang, sense, origin);
+    auto ndF = gr.add(`F`, lang, sense, origin);
 
     gr.connect1toM(ndA, role, [ndB1, ndB2], origin, 0.5, true);
     gr.connectMto1([ndB1, ndB2], role, ndC, origin, 0.5, true);
@@ -162,14 +162,14 @@ void testContextOf()
     enum role = Role(Rel.any);
     enum origin = Origin.manual;
 
-    auto b1 = gr.store(`B1`, lang, sense, origin);
-    auto b2 = gr.store(`B2`, lang, sense, origin);
-    auto b3 = gr.store(`B3`, lang, sense, origin);
-    auto b4 = gr.store(`B4`, lang, sense, origin);
-    auto b5 = gr.store(`B5`, lang, sense, origin);
+    auto b1 = gr.add(`B1`, lang, sense, origin);
+    auto b2 = gr.add(`B2`, lang, sense, origin);
+    auto b3 = gr.add(`B3`, lang, sense, origin);
+    auto b4 = gr.add(`B4`, lang, sense, origin);
+    auto b5 = gr.add(`B5`, lang, sense, origin);
 
-    auto c  = gr.store(`A`, lang, sense, origin);
-    auto d  = gr.store(`D`, lang, sense, origin);
+    auto c  = gr.add(`A`, lang, sense, origin);
+    auto d  = gr.add(`D`, lang, sense, origin);
 
     auto bs = [b1, b2, b3, b4, b5];
 

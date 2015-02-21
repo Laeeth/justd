@@ -96,9 +96,9 @@ void readFolketsFile(Graph graph,
                     auto dst_ = dst.splitter(',').map!(a => a.strip(' ')).filter!(a => !a.empty);
 
                     enum origin = Origin.folketsLexikon;
-                    graph.connectMtoN(graph.store(src_, srcLang, sense, origin),
+                    graph.connectMtoN(graph.add(src_, srcLang, sense, origin),
                                       Role(Rel.translationOf),
-                                      graph.store(dst_, dstLang, sense, origin),
+                                      graph.add(dst_, dstLang, sense, origin),
                                       origin, 1.0, true);
                 }
             }

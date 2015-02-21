@@ -758,13 +758,13 @@ class Graph
                 }
                 auto split = line.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
-                auto firstRefs = store(first.splitter(alternativesSeparator),
-                                       firstLang, firstSpecializedSense, origin);
+                auto firstRefs = add(first.splitter(alternativesSeparator),
+                                     firstLang, firstSpecializedSense, origin);
                 if (!first.empty &&
                     !second.empty)
                 {
-                    auto secondRefs = store(second.splitter(alternativesSeparator),
-                                            secondLang, secondSpecializedSense, origin);
+                    auto secondRefs = add(second.splitter(alternativesSeparator),
+                                          secondLang, secondSpecializedSense, origin);
                     connectMtoN(firstRefs, role, secondRefs, origin, weight, true);
                 }
             }
@@ -801,9 +801,9 @@ class Graph
             const auto first = split[0], second = split[2];
             NWeight weight = 1.0;
             const sense = commonSense(first, second);
-            connect(store(first.idup, lang, sense, origin),
+            connect(add(first.idup, lang, sense, origin),
                     Role(Rel.oppositeOf),
-                    store(second.idup, lang, sense, origin),
+                    add(second.idup, lang, sense, origin),
                     origin, weight);
         }
     }
@@ -814,8 +814,8 @@ class Graph
                               Lang lang = Lang.unknown) if (isSomeString!S)
     {
         const origin = Origin.manual;
-        auto all = [store(forward, lang, Sense.verbInfinitive, origin),
-                    store(backward, lang, Sense.verbPastParticiple, origin)];
+        auto all = [add(forward, lang, Sense.verbInfinitive, origin),
+                    add(backward, lang, Sense.verbPastParticiple, origin)];
         return connectAll(Role(Rel.reversionOf), all.filter!(a => a.defined), origin);
     }
 
@@ -825,9 +825,9 @@ class Graph
     Ln learnEtymologicallyDerivedFrom(S1, S2)(S1 first, Lang firstLang, Sense firstSense,
                                               S2 second, Lang secondLang, Sense secondSense)
     {
-        return connect(store(first, firstLang, Sense.noun, Origin.manual),
+        return connect(add(first, firstLang, Sense.noun, Origin.manual),
                        Role(Rel.etymologicallyDerivedFrom),
-                       store(second, secondLang, Sense.noun, Origin.manual),
+                       add(second, secondLang, Sense.noun, Origin.manual),
                        Origin.manual, 1.0);
     }
 
@@ -840,9 +840,9 @@ class Graph
     {
         enum lang = Lang.en;
         Nds all;
-        all ~= store(infinitive, lang, Sense.verbIrregularInfinitive, origin);
-        all ~= store(pastSimple, lang, Sense.verbIrregularPast, origin);
-        all ~= store(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
+        all ~= add(infinitive, lang, Sense.verbIrregularInfinitive, origin);
+        all ~= add(pastSimple, lang, Sense.verbIrregularPast, origin);
+        all ~= add(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
         return connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), origin);
     }
 
@@ -855,9 +855,9 @@ class Graph
                               Origin origin = Origin.manual) if (isSomeString!S)
     {
         enum lang = Lang.en;
-        return connect(store(acronym, lang, Sense.nounAcronym, origin),
+        return connect(add(acronym, lang, Sense.nounAcronym, origin),
                        Role(Rel.acronymFor),
-                       store(expr.toLower, lang, sense, origin),
+                       add(expr.toLower, lang, sense, origin),
                        origin, weight);
     }
 
@@ -874,9 +874,9 @@ class Graph
                                                            (isSomeString!(ElementType!R)) &&
                                                            isSomeString!S)
     {
-        return connectMto1(store(words, lang, wordSense, origin),
+        return connectMto1(add(words, lang, wordSense, origin),
                            role,
-                           store(attribute, lang, attributeSense, origin),
+                           add(attribute, lang, attributeSense, origin),
                            origin, weight);
     }
 
@@ -914,9 +914,9 @@ class Graph
                                 Sense sense = Sense.unknown,
                                 Origin origin = Origin.manual) if (isSomeString!S)
     {
-        return connectMtoN(store(emoticons, Lang.any, Sense.unknown, origin),
+        return connectMtoN(add(emoticons, Lang.any, Sense.unknown, origin),
                            Role(Rel.emoticonFor),
-                           store(exprs, Lang.en, sense, origin),
+                           add(exprs, Lang.en, sense, origin),
                            origin, weight);
     }
 
@@ -931,11 +931,11 @@ class Graph
     {
         const lang = Lang.sv;
         const origin = Origin.manual;
-        auto all = [tryStore(imperative, lang, Sense.verbImperative, origin),
-                    tryStore(infinitive, lang, Sense.verbInfinitive, origin),
-                    tryStore(present, lang, Sense.verbPresent, origin),
-                    tryStore(pastSimple, lang, Sense.verbPast, origin),
-                    tryStore(pastParticiple, lang, Sense.verbPastParticiple, origin)];
+        auto all = [tryAdd(imperative, lang, Sense.verbImperative, origin),
+                    tryAdd(infinitive, lang, Sense.verbInfinitive, origin),
+                    tryAdd(present, lang, Sense.verbPresent, origin),
+                    tryAdd(pastSimple, lang, Sense.verbPast, origin),
+                    tryAdd(pastParticiple, lang, Sense.verbPastParticiple, origin)];
         connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), origin);
     }
 
@@ -949,11 +949,11 @@ class Graph
                            S exzessive = []) if (isSomeString!S)
     {
         const origin = Origin.manual;
-        auto all = [tryStore(nominative, lang, Sense.adjectiveNominative, origin),
-                    tryStore(comparative, lang, Sense.adjectiveComparative, origin),
-                    tryStore(superlative, lang, Sense.adjectiveSuperlative, origin),
-                    tryStore(elative, lang, Sense.adjectiveElative, origin),
-                    tryStore(exzessive, lang, Sense.adjectiveExzessive, origin)];
+        auto all = [tryAdd(nominative, lang, Sense.adjectiveNominative, origin),
+                    tryAdd(comparative, lang, Sense.adjectiveComparative, origin),
+                    tryAdd(superlative, lang, Sense.adjectiveSuperlative, origin),
+                    tryAdd(elative, lang, Sense.adjectiveElative, origin),
+                    tryAdd(exzessive, lang, Sense.adjectiveExzessive, origin)];
         connectAll(Role(Rel.formOfAdjective), all.filter!(a => a.defined), origin);
     }
 
@@ -964,15 +964,15 @@ class Graph
     }
 
     /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */
-    Nd store(S)(S expr,
-                Lang lang,
-                Sense sense,
-                Origin origin,
-                Ctx context = Ctx.asUndefined,
-                Manner manner = Manner.formal,
-                bool isRegexp = false,
-                ubyte meaningNr = 0,
-                bool normalizeExpr = true) if (isSomeString!S)
+    Nd add(S)(S expr,
+              Lang lang,
+              Sense sense,
+              Origin origin,
+              Ctx context = Ctx.asUndefined,
+              Manner manner = Manner.formal,
+              bool isRegexp = false,
+              ubyte meaningNr = 0,
+              bool normalizeExpr = true) if (isSomeString!S)
         in { assert(!expr.empty); }
     body
     {
@@ -1017,28 +1017,28 @@ class Graph
 
     /** Try to Lookup-or-Store $(D Node) named $(D expr) in language $(D lang).
      */
-    Nd tryStore(Expr expr,
-                Lang lang,
-                Sense sense,
-                Origin origin,
-                Ctx context = Ctx.asUndefined)
+    Nd tryAdd(Expr expr,
+              Lang lang,
+              Sense sense,
+              Origin origin,
+              Ctx context = Ctx.asUndefined)
     {
         if (expr.empty)
             return Nd.asUndefined;
-        return store(expr, lang, sense, origin, context);
+        return add(expr, lang, sense, origin, context);
     }
 
-    Nds store(Exprs)(Exprs exprs,
-                     Lang lang,
-                     Sense sense,
-                     Origin origin,
-                     Ctx context = Ctx.asUndefined) if (isIterable!Exprs &&
-                                                        isSomeString!(ElementType!Exprs))
+    Nds add(Exprs)(Exprs exprs,
+                   Lang lang,
+                   Sense sense,
+                   Origin origin,
+                   Ctx context = Ctx.asUndefined) if (isIterable!Exprs &&
+                                                      isSomeString!(ElementType!Exprs))
     {
         typeof(return) nds;
         foreach (expr; exprs)
         {
-            nds ~= store(expr, lang, sense, origin, context);
+            nds ~= add(expr, lang, sense, origin, context);
         }
         return nds;
     }

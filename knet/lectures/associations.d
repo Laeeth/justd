@@ -126,9 +126,9 @@ void learnAssociations(S)(Graph graph,
             nweight = w/(1 + w); // count to normalized weight
         }
 
-        graph.connect(graph.store(name, lang, wordSense, origin),
+        graph.connect(graph.add(name, lang, wordSense, origin),
                       Role(rel),
-                      graph.store(attribute, lang, attributeSense, origin),
+                      graph.add(attribute, lang, attributeSense, origin),
                       origin, nweight);
     }
 }

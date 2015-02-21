@@ -190,14 +190,14 @@ Tuple!(Nd, string, Ln) readNELLEntity(S)(Graph graph,
     entity.popFront;
 
     import knet.lemmas: correctLemmaExpr;
-    auto entityIx = graph.store(entityName.replace(`_`, ` `).correctLemmaExpr,
+    auto entityIx = graph.add(entityName.replace(`_`, ` `).correctLemmaExpr,
                                 lang, sense, Origin.nell, context);
 
     return tuple(entityIx,
                  contextName,
                  graph.connect(entityIx,
                                Role(Rel.instanceOf),
-                               graph.store(contextName.replace(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
+                               graph.add(contextName.replace(`_`, ` `).correctLemmaExpr, lang, sense, Origin.nell, context),
                                Origin.nell, 1.0,
                                true)); // need to check duplicates here
 }
