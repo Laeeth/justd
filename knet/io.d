@@ -223,7 +223,8 @@ void showFixedLine(string line)
 
 /** Show Languages Sorted By Falling Weight. */
 void showTopLanguages(Graph graph,
-                      NWeight[Lang] hist, size_t maxCount = size_t.max)
+                      NWeight[Lang] hist,
+                      size_t maxCount = size_t.max)
 {
     size_t i = 0;
     import std.algorithm: sort;
@@ -231,6 +232,19 @@ void showTopLanguages(Graph graph,
     {
         if (i == maxCount) { break; }
         writeln(`  - `, e[0].toHuman, `: `, e[1], ` #hits`);
+        ++i;
+    }
+}
+
+void showSenses(Senses)(Graph graph,
+                        Senses senses,
+                        size_t maxCount = size_t.max) if (isIterableOf!(Senses, Sense))
+{
+    size_t i = 0;
+    foreach (e; senses)
+    {
+        if (i == maxCount) { break; }
+        writeln(`  - `, e.toHuman);
         ++i;
     }
 }
@@ -354,9 +368,23 @@ bool showNodes(Graph graph,
             }
         }
     }
+    else if (normLine.skipOverShortestOf(`sensesof(`,
+                                         `senses_of(`,
+                                         `senses(`))
+    {
+        normLine.skipOver(` `); // TODO all space using skipOver!isSpace
+        const split = normLine.findSplitBefore(`)`);
+        const arg = split[0];
+        if (!arg.empty)
+        {
+            auto senses = graph.sensesOfExpr(arg);
+            graph.showSenses(senses);
+        }
+    }
     else if (normLine.skipOverShortestOf(`languagesof(`,
                                          `languages_of(`,
                                          `langsof(`,
+                                         `languages(`,
                                          `langs(`))
     {
         normLine.skipOver(` `); // TODO all space using skipOver!isSpace
@@ -371,6 +399,7 @@ bool showNodes(Graph graph,
     else if (normLine.skipOverShortestOf(`languageof(`,
                                          `language_of(`,
                                          `langof(`,
+                                         `language(`,
                                          `lang(`))
     {
         normLine.skipOver(` `); // TODO all space using skipOver!isSpace
