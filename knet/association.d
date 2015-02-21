@@ -35,7 +35,6 @@ Nd contextOf(Nds)(Graph gr,
     import knet.traversal: dijkstraWalker;
 
     alias Block = size_t;
-
     enum maxCount = 8*Block.sizeof;
     const count = nds.count;
 
@@ -66,7 +65,7 @@ Nd contextOf(Nds)(Graph gr,
                 const visitedNd = walker.moveFront; // visit new node
                 if (auto visits = visitedNd in visitsByNd)
                 {
-                    // log that $(D walker) now (among others) have visited visitedNd
+                    // log that $(D walker) now (among at least one other) have visited visitedNd
                     (*visits)[wix] = true;
 
                     if ((*visits).allOneBetween(0, count))
@@ -92,6 +91,8 @@ Nd contextOf(Nds)(Graph gr,
             break; // we're done
         }
     }
+
+    writeln("contextOf: Sort visitsByNd on connectiveness");
 
     foreach (ix, ref walker; walkers)
     {
