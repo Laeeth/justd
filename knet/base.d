@@ -643,16 +643,46 @@ class Graph
 
     /** Get All Possible Lemmas related to Expression (set of words) $(D expr).
      */
-    Lemmas lemmasOfExpr(S)(S expr) if (isSomeString!S)
+    Lemmas lemmasOfQualifiedExpr(S)(S expr)
+        @safe pure nothrow if (isSomeString!S)
+    {
+        auto split = expr.findSplit(qualifierSeparatorString); // TODO use splitter instead to support en:noun:city
+        const senseCode = split[0];
+        if (!senseCode.empty)
+        {
+            import std.conv: ConvException;
+            try
+            {
+                import std.conv: to;
+                const sense = senseCode.to!Sense;
+                return lemmasOfExpr(split[2], false).filter!(lemma => (sense != Sense.unknown &&
+                                                                       (lemma.sense == sense ||
+                                                                        lemma.sense.specializes(sense)))).array; // TODO functionize
+            }
+            catch (Exception e) { /* ok for now */ }
+        }
+        return [];
+    }
+
+    /** Get All Possible Lemmas related to Expression (set of words) $(D expr).
+     */
+    Lemmas lemmasOfExpr(S)(S expr, bool tryQualifierSplit = true)
+        @safe pure /*nothrow*/ if (isSomeString!S)
     {
         static if (is(S == string)) // TODO Is there a prettier way to do this?
         {
-            return db.ixes.lemmasByExpr.get(expr, typeof(return).init);
+            typeof(return) lemmas =  db.ixes.lemmasByExpr.get(expr, typeof(return).init);
         }
         else
         {
-            return db.ixes.lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
+            typeof(return) lemmas = db.ixes.lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
         }
+        if (tryQualifierSplit &&
+            lemmas.empty)
+        {
+            return lemmasOfQualifiedExpr(expr); // don't try multiple qualifiers for now
+        }
+        return lemmas;
     }
 
     /** Get All Possible Lemmas related to Word $(D word).
@@ -752,10 +782,7 @@ class Graph
                         if (firstSense  == Sense.unknown) { firstSpecializedSense = sense; }
                         if (secondSense == Sense.unknown) { secondSpecializedSense = sense; }
                     }
-                    catch (ConvException e)
-                    {
-                        /* ok for now */
-                    }
+                    catch (ConvException e) { /* ok for now */ }
                 }
                 auto split = line.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
                 const first = split[0], second = split[2];
