@@ -1,6 +1,23 @@
 # TODO
 
+## TODO
+ - in English of sense singular noun
+  - in English of sense male name
+  - in Swedish of sense male name
+    - does have name day:  "Dec 5" (en:dayOfYear:100%-Manual),
+    - does have meaning:  "Swedish form of Old Norse Sveinn, meaning "boy."" (sv:70%-Manual),
+
+singular noun should specialize to male name
+
+Check if specializes handles this
+
 ## TODO hasWikipediaURL: if (!endsWith/X)) X.capitalize() store it
+
+## TODO Use moveFront instead of front and popFront in knet
+
+## TODO Learn
+- instanceOf "universal quantifier"
+- instanceOf "existential quantifier"
 
 ## TODO Skip prepositions before noun:
    can be found at location:  "at bank" (en:20%-CN5)
