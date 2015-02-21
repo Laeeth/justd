@@ -144,10 +144,9 @@ struct DijkstraWalker
     {
         pending = pending.dup;
         distMap = distMap.dup;
-        import dbg;
-        dln("Called postblit when nextNd is ", gr[pending.front[1]].lemma,
-            " and pending.length=", pending.length,
-            " and distMap.length=", distMap.length);
+        writeln("Called postblit when nextNd is ", gr[pending.front[1]].lemma,
+                " and pending.length=", pending.length,
+                " and distMap.length=", distMap.length);
     }
 
     Nd front() @safe pure nothrow // TODO make const when pending.empty is const
