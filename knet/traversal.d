@@ -93,21 +93,17 @@ BFWalker bfWalker(Graph gr, Nd start,
     return typeof(return)(gr, start, filter);
 }
 
-/** Nearest-Origin-First Graph Walker/Traverser Range.
+/** Nearest-Origin-First Walker/Visitor/Traverser; Dijkstra's Railroad Algorithm
+    as a lazy $(D ForwardRange).
 
-    Dijkstra's Railroad Algorithm turned into a D Range.
+    IMPORTANT: A lazy range is needed in this case in order for knet graph
+    searching algorithms to execute in constant (user) time.
 
-    Modelled as a Forward Range with ElementType being Nd.
-
-    Upon iteration completion distMap contains a map from node to (distance, and
-    closest parent node) to walker starting point (start). This can be used to
-    reconstruct the closest path from any given Nd to start.
+    Upon iteration completion $(D distMap) contains a map from node to
+    (distance, and closest parent node) to walker starting point (start). This
+    can be used to reconstruct the closest path from any given $D(Nd) to start.
 
     See also: http://rosettacode.org/wiki/Dijkstra%27s_algorithm#D
-
-    WARNING pending and distMap must initialized here to provide reference semantics in for
-    range behaviour to work correctly
-
     See also: http://forum.dlang.org/thread/xrxejicnoakanvkyasso@forum.dlang.org#post-yipmrrdilsxcaypeoqhz:40forum.dlang.org
 
     TODO: Use containers.hashmap.HashMap and tag as @nogc
