@@ -93,7 +93,7 @@
 	url = https://github.com/nordlow/elf-d.git
 [submodule "containers"]
 	path = containers-em
-	url = https://github.com/economicmodeling/containers.git
+	url = https://github.com/nordlow/containers.git
 [submodule "FReD"]
 	path = FReD
 	url = https://github.com/DmitryOlshansky/FReD.git
