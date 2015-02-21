@@ -777,20 +777,29 @@ class Graph
     }
 
     /// Get Learn Possible Senses for $(D expr).
-    auto sensesOfExpr(S)(S expr) @safe pure if (isSomeString!S)
+    auto sensesOfExpr(S)(S expr, bool includeUnknown = false) @safe pure if (isSomeString!S)
     {
         return lemmasOfExpr(expr).map!(lemma => lemma.sense)
-                                 .filter!(sense => sense != Sense.unknown);
+                                 .filter!(sense => includeUnknown || sense != Sense.unknown);
     }
 
     /// Get Possible Common Sense for $(D a) and $(D b). TODO N-ary
-    Sense commonSense(S1, S2)(S1 a, S2 b) @safe pure if (isSomeString!S1 &&
-                                                         isSomeString!S2)
+    auto commonSenses(S1, S2)(S1 a, S2 b,
+                              bool includeUnknown = false) @safe pure if (isSomeString!S1 &&
+                                                                          isSomeString!S2)
     {
         import std.algorithm: setIntersection;
-        auto commonSenses = setIntersection(sensesOfExpr(a).sorted,
-                                            sensesOfExpr(b).sorted);
-        return commonSenses.count == 1 ? commonSenses.front : Sense.unknown;
+        return setIntersection(sensesOfExpr(a, includeUnknown).sorted,
+                               sensesOfExpr(b, includeUnknown).sorted);
+    }
+
+    /// Get Possible Unique Common Sense for $(D a) and $(D b). TODO N-ary
+    Sense uniqueCommonSense(S1, S2)(S1 a, S2 b,
+                                    bool includeUnknown = false) @safe pure if (isSomeString!S1 &&
+                                                                                isSomeString!S2)
+    {
+        auto senses = commonSenses(a, b, includeUnknown);
+        return senses.count == 1 ? senses.front : Sense.unknown;
     }
 
     /// Learn Opposites.
@@ -801,7 +810,7 @@ class Graph
             auto split = expr.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
             const auto first = split[0], second = split[2];
             NWeight weight = 1.0;
-            const sense = commonSense(first, second);
+            const sense = uniqueCommonSense(first, second);
             connect(add(first.idup, lang, sense, origin),
                     Role(Rel.oppositeOf),
                     add(second.idup, lang, sense, origin),
