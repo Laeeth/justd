@@ -11,7 +11,7 @@ import knet.relations: RelDir, toHuman;
 
 /** Show Network Relations.
  */
-void showRelations(Graph graph,
+void showRelations(Graph gr,
                    uint indent_depth = 2)
 {
     writeln(`Link Count by Relation Type:`);
@@ -21,7 +21,7 @@ void showRelations(Graph graph,
 
     foreach (rel; enumMembers!Rel)
     {
-        const count = graph.stat.relCounts[rel];
+        const count = gr.stat.relCounts[rel];
         if (count)
         {
             import std.conv: to;
@@ -29,12 +29,12 @@ void showRelations(Graph graph,
         }
     }
 
-    writeln(`Node Count: `, graph.db.tabs.allNodes.length);
+    writeln(`Node Count: `, gr.db.tabs.allNodes.length);
 
     writeln(`Node Count by Origin:`);
     foreach (source; enumMembers!Origin)
     {
-        const count = graph.stat.linkSourceCounts[source];
+        const count = gr.stat.linkSourceCounts[source];
         if (count)
         {
             writeln(indent, source.toNice, `: `, count);
@@ -44,7 +44,7 @@ void showRelations(Graph graph,
     writeln(`Node Count by Language:`);
     foreach (lang; enumMembers!Lang)
     {
-        const count = graph.stat.nodeCountByLang[lang];
+        const count = gr.stat.nodeCountByLang[lang];
         if (count)
         {
             writeln(indent, lang.toHuman, ` : `, count);
@@ -54,7 +54,7 @@ void showRelations(Graph graph,
     writeln(`Node Count by Sense:`);
     foreach (sense; enumMembers!Sense)
     {
-        const count = graph.stat.nodeCountBySense[sense];
+        const count = gr.stat.nodeCountBySense[sense];
         if (count)
         {
             writeln(indent, sense.toHuman, ` : `, count);
@@ -63,37 +63,37 @@ void showRelations(Graph graph,
 
     writeln(`Stats:`);
 
-    if (graph.stat.weightSumCN5)
+    if (gr.stat.weightSumCN5)
     {
-        writeln(indent, `CN5 Weights Min,Max,Average: `, graph.stat.weightMinCN5, ',', graph.stat.weightMaxCN5, ',', cast(NWeight)graph.stat.weightSumCN5/graph.db.tabs.allLinks.length);
-        writeln(indent, `CN5 Packed Weights Histogram: `, graph.stat.pweightHistogramCN5);
+        writeln(indent, `CN5 Weights Min,Max,Average: `, gr.stat.weightMinCN5, ',', gr.stat.weightMaxCN5, ',', cast(NWeight)gr.stat.weightSumCN5/gr.db.tabs.allLinks.length);
+        writeln(indent, `CN5 Packed Weights Histogram: `, gr.stat.pweightHistogramCN5);
     }
-    if (graph.stat.weightSumNELL)
+    if (gr.stat.weightSumNELL)
     {
-        writeln(indent, `NELL Weights Min,Max,Average: `, graph.stat.weightMinNELL, ',', graph.stat.weightMaxNELL, ',', cast(NWeight)graph.stat.weightSumNELL/graph.db.tabs.allLinks.length);
-        writeln(indent, `NELL Packed Weights Histogram: `, graph.stat.pweightHistogramNELL);
+        writeln(indent, `NELL Weights Min,Max,Average: `, gr.stat.weightMinNELL, ',', gr.stat.weightMaxNELL, ',', cast(NWeight)gr.stat.weightSumNELL/gr.db.tabs.allLinks.length);
+        writeln(indent, `NELL Packed Weights Histogram: `, gr.stat.pweightHistogramNELL);
     }
 
     writeln(indent, `Node Count (All/Multi-Word): `,
-            graph.db.tabs.allNodes.length,
+            gr.db.tabs.allNodes.length,
             `/`,
-            graph.stat.multiWordNodeLemmaCount);
-    writeln(indent, `Lemma Expression Word Length Average: `, cast(real)graph.stat.exprWordCountSum/graph.db.ixes.ndByLemma.length);
-    writeln(indent, `Link Count: `, graph.db.tabs.allLinks.length);
+            gr.stat.multiWordNodeLemmaCount);
+    writeln(indent, `Lemma Expression Word Length Average: `, cast(real)gr.stat.exprWordCountSum/gr.db.ixes.ndByLemma.length);
+    writeln(indent, `Link Count: `, gr.db.tabs.allLinks.length);
     writeln(indent, `Link Count By Group:`);
-    writeln(indent, `- Symmetric: `, graph.stat.symmetricRelCount);
-    writeln(indent, `- Transitive: `, graph.stat.transitiveRelCount);
+    writeln(indent, `- Symmetric: `, gr.stat.symmetricRelCount);
+    writeln(indent, `- Transitive: `, gr.stat.transitiveRelCount);
 
-    writeln(indent, `Lemmas Expression Count: `, graph.db.ixes.lemmasByExpr.length);
+    writeln(indent, `Lemmas Expression Count: `, gr.db.ixes.lemmasByExpr.length);
 
-    writeln(indent, `Node Indexes by Lemma Count: `, graph.db.ixes.ndByLemma.length);
-    writeln(indent, `Node String Length Average: `, cast(NWeight)graph.stat.nodeStringLengthSum/graph.db.tabs.allNodes.length);
+    writeln(indent, `Node Indexes by Lemma Count: `, gr.db.ixes.ndByLemma.length);
+    writeln(indent, `Node String Length Average: `, cast(NWeight)gr.stat.nodeStringLengthSum/gr.db.tabs.allNodes.length);
 
-    writeln(indent, `Node Connectedness Average: `, cast(NWeight)graph.stat.nodeConnectednessSum/graph.db.tabs.allNodes.length);
-    writeln(indent, `Link Connectedness Average: `, cast(NWeight)graph.stat.linkConnectednessSum/graph.db.tabs.allLinks.length);
+    writeln(indent, `Node Connectedness Average: `, cast(NWeight)gr.stat.nodeConnectednessSum/gr.db.tabs.allNodes.length);
+    writeln(indent, `Link Connectedness Average: `, cast(NWeight)gr.stat.linkConnectednessSum/gr.db.tabs.allLinks.length);
 }
 
-void showLink(Graph graph,
+void showLink(Graph gr,
               Rel rel,
               RelDir dir,
               bool negation = false,
@@ -103,14 +103,14 @@ void showLink(Graph graph,
     write(indent, rel.toHuman(dir, negation, lang), `: `);
 }
 
-void showLn(Graph graph,
+void showLn(Graph gr,
             Ln ln)
 {
-    auto link = graph[ln];
-    graph.showLink(link.role.rel, ln.dir, link.role.negation);
+    auto link = gr[ln];
+    gr.showLink(link.role.rel, ln.dir, link.role.negation);
 }
 
-void showNode(Graph graph,
+void showNode(Graph gr,
               in Node node, NWeight weight)
 {
     if (node.lemma.expr)
@@ -142,37 +142,37 @@ void showNode(Graph graph,
     }
     if (node.lemma.context != Ctx.asUndefined)
     {
-        write(`:`, graph.db.ixes.contextNameByCtx[node.lemma.context]);
+        write(`:`, gr.db.ixes.contextNameByCtx[node.lemma.context]);
     }
 
     writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
 }
 
-void showNode(Graph graph,
+void showNode(Graph gr,
               const Nd nd, NWeight weight)
 {
-    graph.showNode(graph[nd], weight);
+    gr.showNode(gr[nd], weight);
 }
 
-void showLinkNode(Graph graph,
+void showLinkNode(Graph gr,
                   in Node node,
                   Rel rel,
                   NWeight weight,
                   RelDir dir)
 {
-    graph.showLink(rel, dir);
-    graph.showNode(node, weight);
+    gr.showLink(rel, dir);
+    gr.showNode(node, weight);
     writeln;
 }
 
-void showNds(R)(Graph graph,
+void showNds(R)(Graph gr,
                 R nds,
                 Rel rel = Rel.any,
                 bool negation = false)
 {
     foreach (nd; nds)
     {
-        auto lineNode = graph[nd];
+        auto lineNode = gr[nd];
 
         write(`  -`);
 
@@ -192,24 +192,24 @@ void showNds(R)(Graph graph,
         writeln;
 
         import knet.iteration;
-        auto lns = graph.lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
+        auto lns = gr.lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
 
         import std.algorithm: multiSort;
         import dbg: dln;
         dln("warning: multiSort is disabled");
 
-        graph.sortLns(lns);
+        gr.sortLns(lns);
 
         foreach (ln; lns)
         {
-            auto link = graph[ln];
-            graph.showLn(ln);
+            auto link = gr[ln];
+            gr.showLn(ln);
             foreach (linkedNode; link.actors[]
                                      .filter!(actorNodeRef => (actorNodeRef.ix !=
                                                                nd.ix)) // don't self reference
-                                     .map!(nd => graph[nd]))
+                                     .map!(nd => gr[nd]))
             {
-                graph.showNode(linkedNode, link.nweight);
+                gr.showNode(linkedNode, link.nweight);
             }
             writeln;
         }
@@ -222,7 +222,7 @@ void showFixedLine(string line)
 }
 
 /** Show Languages Sorted By Falling Weight. */
-void showTopLanguages(Graph graph,
+void showTopLanguages(Graph gr,
                       NWeight[Lang] hist,
                       size_t maxCount = size_t.max)
 {
@@ -236,7 +236,7 @@ void showTopLanguages(Graph graph,
     }
 }
 
-void showSenses(Senses)(Graph graph,
+void showSenses(Senses)(Graph gr,
                         Senses senses,
                         size_t maxCount = size_t.max) if (isIterableOf!(Senses, Sense))
 {
@@ -251,7 +251,7 @@ void showSenses(Senses)(Graph graph,
 
 alias TriedLines = bool[string]; // TODO use std.container.set
 
-bool showNodes(Graph graph,
+bool showNodes(Graph gr,
                string line,
                Lang lang = Lang.unknown,
                Sense sense = Sense.unknown,
@@ -261,13 +261,13 @@ bool showNodes(Graph graph,
 {
     import dbg: dln;
 
-    if      (depth == 0) { graph.showNodesSW.start(); } // if top-level call start it
-    else if (depth >= graph.fuzzyExprMatchMaximumRecursionDepth)
+    if      (depth == 0) { gr.showNodesSW.start(); } // if top-level call start it
+    else if (depth >= gr.fuzzyExprMatchMaximumRecursionDepth)
     {
         // writeln(`Maximum recursion depth reached for `, line, ` ...`);
         return false;       // limit maximum recursion depth
     }
-    if (graph.showNodesSW.peek().msecs >= graph.durationInMsecs)
+    if (gr.showNodesSW.peek().msecs >= gr.durationInMsecs)
     {
         // writeln(`Out of time. Skipping testing of `, line, ` ...`);
         return false;
@@ -293,13 +293,13 @@ bool showNodes(Graph graph,
 
     if (normLine == `palindrome`)
     {
-        foreach (palindromeNode; graph.db.tabs.allNodes.filter!(node =>
-                                                                node.lemma.expr.toLower.isPalindrome(3)))
+        foreach (palindromeNode; gr.db.tabs.allNodes.filter!(node =>
+                                                             node.lemma.expr.toLower.isPalindrome(3)))
         {
-            graph.showLinkNode(palindromeNode,
-                               Rel.instanceOf,
-                               NWeight.infinity,
-                               RelDir.bwd);
+            gr.showLinkNode(palindromeNode,
+                            Rel.instanceOf,
+                            NWeight.infinity,
+                            RelDir.bwd);
         }
     }
     else if (normLine.skipOverShortestOf(`anagramsof(`,
@@ -309,12 +309,12 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            foreach (anagramNode; graph.anagramsOf(arg))
+            foreach (anagramNode; gr.anagramsOf(arg))
             {
-                graph.showLinkNode(anagramNode,
-                                   Rel.instanceOf,
-                                   NWeight.infinity,
-                                   RelDir.bwd);
+                gr.showLinkNode(anagramNode,
+                                Rel.instanceOf,
+                                NWeight.infinity,
+                                RelDir.bwd);
             }
         }
     }
@@ -325,9 +325,9 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            foreach (synonymNode; graph.synonymsOf(arg))
+            foreach (synonymNode; gr.synonymsOf(arg))
             {
-                graph.showLinkNode(graph[synonymNode],
+                gr.showLinkNode(gr[synonymNode],
                                    Rel.instanceOf,
                                    NWeight.infinity,
                                    RelDir.bwd);
@@ -342,12 +342,12 @@ bool showNodes(Graph graph,
         if (!arg.empty)
         {
             writeln(`> Rhymes of "`, arg, `" are:`);
-            foreach (rhymingNode; graph.rhymesOf(arg))
+            foreach (rhymingNode; gr.rhymesOf(arg))
             {
-                graph.showLinkNode(graph[rhymingNode],
-                                   Rel.instanceOf,
-                                   NWeight.infinity,
-                                   RelDir.bwd);
+                gr.showLinkNode(gr[rhymingNode],
+                                Rel.instanceOf,
+                                NWeight.infinity,
+                                RelDir.bwd);
             }
         }
     }
@@ -359,12 +359,12 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            foreach (translationNode; graph.translationsOf(arg))
+            foreach (translationNode; gr.translationsOf(arg))
             {
-                graph.showLinkNode(graph[translationNode],
-                                   Rel.instanceOf,
-                                   NWeight.infinity,
-                                   RelDir.bwd);
+                gr.showLinkNode(gr[translationNode],
+                                Rel.instanceOf,
+                                NWeight.infinity,
+                                RelDir.bwd);
             }
         }
     }
@@ -377,8 +377,8 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            auto senses = graph.sensesOfExpr(arg, true);
-            graph.showSenses(senses);
+            auto senses = gr.sensesOfExpr(arg, true);
+            gr.showSenses(senses);
         }
     }
     else if (normLine.skipOverShortestOf(`languagesof(`,
@@ -392,8 +392,8 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            auto hist = graph.languagesOf(arg.splitter(` `));
-            graph.showTopLanguages(hist);
+            auto hist = gr.languagesOf(arg.splitter(` `));
+            gr.showTopLanguages(hist);
         }
     }
     else if (normLine.skipOverShortestOf(`languageof(`,
@@ -407,8 +407,8 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            auto hist = graph.languagesOf(arg.splitter(` `));
-            graph.showTopLanguages(hist, 1);
+            auto hist = gr.languagesOf(arg.splitter(` `));
+            gr.showTopLanguages(hist, 1);
         }
     }
     else if (normLine.skipOverShortestOf(`prefix(`,
@@ -431,10 +431,10 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            auto hits = graph.startsWith(arg);
-            foreach (node; hits.map!(a => graph[a]))
+            auto hits = gr.startsWith(arg);
+            foreach (node; hits.map!(a => gr[a]))
             {
-                graph.showNode(node, 1.0);
+                gr.showNode(node, 1.0);
                 writeln;
             }
         }
@@ -456,10 +456,10 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            auto hits = graph.endsWith(arg);
-            foreach (node; hits.map!(a => graph[a]))
+            auto hits = gr.endsWith(arg);
+            foreach (node; hits.map!(a => gr[a]))
             {
-                graph.showNode(node, 1.0);
+                gr.showNode(node, 1.0);
                 writeln;
             }
         }
@@ -474,10 +474,10 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            auto hits = graph.canFind(arg);
-            foreach (node; hits.map!(a => graph[a]))
+            auto hits = gr.canFind(arg);
+            foreach (node; hits.map!(a => gr[a]))
             {
-                graph.showNode(node, 1.0);
+                gr.showNode(node, 1.0);
                 writeln;
             }
         }
@@ -492,10 +492,10 @@ bool showNodes(Graph graph,
         if (!arg.empty)
         {
             import knet.association: contextOf;
-            const ctxNd = graph.contextOf(arg.splitter, Filter.init, 30000);
+            const ctxNd = gr.contextOf(arg.splitter, Filter.init, 30000);
             if (ctxNd.defined)
             {
-                graph.showNode(ctxNd, 1.0);
+                gr.showNode(ctxNd, 1.0);
                 writeln;
             }
         }
@@ -533,12 +533,12 @@ bool showNodes(Graph graph,
         return false;
 
     // queried line nodes
-    auto lineNds = graph.ndsOf(normLine, lang, sense);
+    auto lineNds = gr.ndsOf(normLine, lang, sense);
 
     if (!lineNds.empty)
     {
         showFixedLine(normLine);
-        graph.showNds(lineNds);
+        gr.showNds(lineNds);
     }
 
     enum commonSplitters = [` `, // prefer space
@@ -562,8 +562,8 @@ bool showNodes(Graph graph,
             {
                 foreach (separator; commonJoiners)
                 {
-                    graph.showNodes(combWords.joiner(separator).to!string,
-                                    lang, sense, lineSeparator, triedLines, depth + 1);
+                    gr.showNodes(combWords.joiner(separator).to!string,
+                                 lang, sense, lineSeparator, triedLines, depth + 1);
                 }
             }
         }
@@ -573,8 +573,8 @@ bool showNodes(Graph graph,
         {
             foreach (separator; commonJoiners)
             {
-                graph.showNodes(minusWords.joiner(separator).to!string,
-                                lang, sense, lineSeparator, triedLines, depth + 1);
+                gr.showNodes(minusWords.joiner(separator).to!string,
+                             lang, sense, lineSeparator, triedLines, depth + 1);
             }
         }
 
@@ -583,8 +583,8 @@ bool showNodes(Graph graph,
         {
             foreach (separator; commonJoiners)
             {
-                graph.showNodes(quoteWords.joiner(separator).to!string,
-                                lang, sense, lineSeparator, triedLines, depth + 1);
+                gr.showNodes(quoteWords.joiner(separator).to!string,
+                             lang, sense, lineSeparator, triedLines, depth + 1);
             }
         }
 
@@ -599,7 +599,7 @@ bool showNodes(Graph graph,
             if (stemMoreLine == stemLine)
                 break;
             // writeln(`> Stemmed to ``, stemMoreLine, `` in language `, stemLang);
-            graph.showNodes(stemMoreLine, stemLang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(stemMoreLine, stemLang, sense, lineSeparator, triedLines, depth + 1);
             stemLine = stemMoreLine;
         }
 
@@ -611,7 +611,7 @@ bool showNodes(Graph graph,
             import std.range: dropOne;
             const nonIPLine = normLine.dropOne;
             // writeln(`> As a non-interpuncted ``, nonIPLine, `"`);
-            graph.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
         }
 
         // non-interpuncted
@@ -620,7 +620,7 @@ bool showNodes(Graph graph,
             import std.range: dropBackOne;
             const nonIPLine = normLine.dropBackOne;
             // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
-            graph.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
         }
 
         // interpuncted
@@ -631,17 +631,17 @@ bool showNodes(Graph graph,
             // questioned
             const questionedLine = normLine ~ '?';
             // writeln(`> As a question "`, questionedLine, `"`);
-            graph.showNodes(questionedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(questionedLine, lang, sense, lineSeparator, triedLines, depth + 1);
 
             // exclaimed
             const exclaimedLine = normLine ~ '!';
             // writeln(`> As an exclamation "`, exclaimedLine, `"`);
-            graph.showNodes(exclaimedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(exclaimedLine, lang, sense, lineSeparator, triedLines, depth + 1);
 
             // dotted
             const dottedLine = normLine ~ '.';
             // writeln(`> As a dotted "`, dottedLine, `"`);
-            graph.showNodes(dottedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(dottedLine, lang, sense, lineSeparator, triedLines, depth + 1);
         }
 
         // lowered
@@ -649,7 +649,7 @@ bool showNodes(Graph graph,
         if (loweredLine != normLine)
         {
             // writeln(`> Lowercased to "`, loweredLine, `"`);
-            graph.showNodes(loweredLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(loweredLine, lang, sense, lineSeparator, triedLines, depth + 1);
         }
 
         // uppered
@@ -657,7 +657,7 @@ bool showNodes(Graph graph,
         if (upperedLine != normLine)
         {
             // writeln(`> Uppercased to "`, upperedLine, `"`);
-            graph.showNodes(upperedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(upperedLine, lang, sense, lineSeparator, triedLines, depth + 1);
         }
 
         // capitalized
@@ -665,7 +665,7 @@ bool showNodes(Graph graph,
         if (capitalizedLine != normLine)
         {
             // writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
-            graph.showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines, depth + 1);
         }
     }
 
