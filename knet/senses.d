@@ -31,8 +31,6 @@ enum Sense:ubyte
 
     nounNeuter,
 
-    nounAbstract,
-
     nounCollective,
     nounCollectivePeople,
     nounCollectiveCreatures,
@@ -55,7 +53,6 @@ enum Sense:ubyte
 
     numeric,
 
-    nounConcrete,
     plant,
     food,
     spice,
@@ -347,8 +344,6 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case noun: return `noun`;
         case nounNeuter: return `neuter noun`;
-        case nounAbstract: return `abstract noun`;
-        case nounConcrete: return `concrete noun`;
         case nounCollective: return `collective noun`;
         case nounCollectivePeople: return `collective noun people`;
         case nounCollectiveCreatures: return `collective noun creatures`;
@@ -720,8 +715,6 @@ import std.algorithm.comparison: among;
                              sense.isNounCollective ||
                              sense.among!(noun,
                                           nounNeuter,
-                                          nounAbstract,
-                                          nounConcrete,
                                           nounRegular,
                                           nounIrregular,
                                           nounPlural,
@@ -1032,8 +1025,6 @@ bool specializes(Sense special,
                            special.isPronoun);
         case nounSingular: return (special.isNounSingular);
         case nounCollective: return (special.isNounCollective);
-        case nounNeuter: return (special.isNounAbstract);
-        case nounConcrete: return (special.isNounConcrete);
         case food: return special.isFood;
         case quantifier: return (special.isQuantifier &&
                                  special == numeral);

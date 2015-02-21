@@ -229,10 +229,10 @@ void learnPreciseThings(Graph graph)
             // Noun
             graph.learnMto1Maybe(lang, buildPath(dirPath, `concrete_noun.txt`),
                                  Role(Rel.hasAttribute), `concrete`,
-                                 Sense.nounConcrete, Sense.adjective, 1.0);
+                                 Sense.noun, Sense.adjective, 1.0);
             graph.learnMto1Maybe(lang, buildPath(dirPath, `abstract_noun.txt`),
                                  Role(Rel.hasAttribute), `abstract`,
-                                 Sense.nounAbstract, Sense.adjective, 1.0);
+                                 Sense.noun, Sense.adjective, 1.0);
             graph.learnMto1Maybe(lang, buildPath(dirPath, `masculine_noun.txt`),
                                  Role(Rel.hasAttribute), `masculine`,
                                  Sense.noun, Sense.adjective, 1.0);

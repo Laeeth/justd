@@ -1104,7 +1104,7 @@ void learnDCode(Graph graph)
     enum attributes = [`@property`, `@safe`, `@trusted`, `@system`, `@disable`];
 
     graph.connectMto1(graph.add(attributes, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
-                      graph.add("attribute", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
+                      graph.add("attribute", Lang.d, Sense.nounSingular, Origin.manual), Origin.manual, 1.0);
 
     enum keywords = [`abstract`, `alias`, `align`, `asm`,
                      `assert`, `auto`, `body`, `bool`,
@@ -1129,7 +1129,7 @@ void learnDCode(Graph graph)
                      `void`, `wchar`, `while`, `with` ];
 
     graph.connectMto1(graph.add(keywords, Lang.d, Sense.unknown, Origin.manual), Role(Rel.instanceOf),
-                      graph.add("keyword", Lang.d, Sense.nounAbstract, Origin.manual), Origin.manual, 1.0);
+                      graph.add("keyword", Lang.d, Sense.nounSingular, Origin.manual), Origin.manual, 1.0);
 
     enum elements = [ tuple(`AA`, `associative array`),
                       tuple(`AAs`, `associative arrays`),

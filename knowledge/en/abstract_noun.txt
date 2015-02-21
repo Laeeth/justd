@@ -22,7 +22,6 @@ beauty
 behavior
 behaviour
 belief
-beliefs
 belonging
 boyhood
 bravery
@@ -78,7 +77,6 @@ disturbance
 divorce
 doubt
 dream
-dreams
 education
 ego
 elegance
@@ -124,6 +122,7 @@ gratitude
 grief
 growth
 happiness
+happyness
 hardness
 hate
 hatred
