@@ -510,6 +510,7 @@ struct BitSet(size_t len, Block = size_t)
         }
         return n;
     }
+    alias count = countOnes;
 
     alias Q = Rational!ulong;
 
@@ -774,15 +775,15 @@ struct BitSet(size_t len, Block = size_t)
         if (leftover && len > 8)
             sink.put("_");
 
-        size_t count;
+        size_t cnt;
         foreach (idx; leftover .. len)
         {
             char[1] res = cast(char)(bt(ptr, idx) + '0');
             sink.put(res[]);
-            if (++count == 8 && idx != len - 1)
+            if (++cnt == 8 && idx != len - 1)
             {
                 sink.put("_");
-                count = 0;
+                cnt = 0;
             }
         }
     }
