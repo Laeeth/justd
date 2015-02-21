@@ -138,11 +138,16 @@ struct DijkstraWalker
     }
 
     /** Postblit. */
-    this(this)
+    this(this) in { assert(pending !is null &&
+                           distMap !is null); }
+    body
     {
-        writeln("Called postblit when nextNd is ", gr[pending.front[1]].lemma);
         pending = pending.dup;
         distMap = distMap.dup;
+        import dbg;
+        dln("Called postblit when nextNd is ", gr[pending.front[1]].lemma,
+            " and pending.length=", pending.length,
+            " and distMap.length=", distMap.length);
     }
 
     Nd front() @safe pure nothrow // TODO make const when pending.empty is const
@@ -151,12 +156,6 @@ struct DijkstraWalker
         assert(!pending.empty, "Can't fetch front from an empty DijkstraWalker");
         import std.range: front;
         return pending.front[1];
-    }
-
-    enum useArray = true;
-    static if (useArray)
-    {
-        import std.container: Array;
     }
 
     void popFront()

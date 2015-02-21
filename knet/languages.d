@@ -342,8 +342,8 @@ enum Lang:ushort
 /** Return true if $(D lang) is case-sensitive. */
 bool hasCase(Lang lang) @safe pure @nogc nothrow
 {
-    import predicates: of;
-    with (Lang) return lang.of(bg, ada);
+    import std.algorithm.comparison: among;
+    with (Lang) return lang.among!(bg, ada) != 0;
 }
 alias isCaseSensitive = hasCase;
 

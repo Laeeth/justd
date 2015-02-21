@@ -10,7 +10,7 @@ import std.utf: UTFException;
 import std.path: buildNormalizedPath, expandTilde, extension;
 import std.file;
 
-import predicates: of;
+import std.algorithm.comparison: among;
 import grammars: Tense, Manner;
 
 import knet.base;
@@ -203,11 +203,11 @@ Ln readCN5Line(R, N)(Graph graph,
             case 7:
                 break;
             case 8:
-                if (origin.of(Origin.any)) // if still nothing special
+                if (origin.among!(Origin.any)) // if still nothing special
                 {
                     origin = decodeCN5OriginPath(part, lang, origin);
                 }
-                if (origin.of(Origin.any)) // if still nothing special
+                if (origin.among!(Origin.any)) // if still nothing special
                 {
                     writeln(`warning: Couldn't decode Origin `, part);
                 }
@@ -219,7 +219,7 @@ Ln readCN5Line(R, N)(Graph graph,
         ix++;
     }
 
-    if (origin.of(Origin.any)) // if still nothing special
+    if (origin.among!(Origin.any)) // if still nothing special
     {
         origin = Origin.cn5;
     }

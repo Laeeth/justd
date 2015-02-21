@@ -2,12 +2,12 @@
  */
 module stemming;
 
+import std.algorithm.comparison: among;
 import std.algorithm: endsWith, canFind;
 import std.range: empty;
 import std.traits: isSomeString;
 import std.typecons: Tuple, tuple;
 
-import predicates: of;
 import grammars: Lang, isEnglishVowel, isSwedishVowel, isSwedishConsonant, isEnglishConsonant;
 import skip_ex: skipOverBack;
 
@@ -459,7 +459,7 @@ private:
     {
         _j = _k;
         if (_b[_k] == 'e' &&
-            !_b[0 .. _k].of(`false`))
+            _b[0 .. _k] != `false`)
         {
             auto a = m();
             if (a > 1 || (a == 1 && !cvc(_k - 1)))
@@ -558,11 +558,11 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
         if (s.endsWith(en))
         {
             const t = s[0 .. $ - en.length];
-            if (s.of(`även`))
+            if (s.among!(`även`) != 0)
             {
                 return s;
             }
-            else if (t.of(`sann`))
+            else if (t.among!(`sann`) != 0)
             {
                 return t;
             }
@@ -609,7 +609,7 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
 
     if (s.endsWith(na))
     {
-        if (s.of(`sina`, `dina`, `mina`))
+        if (s.among!(`sina`, `dina`, `mina`) != 0)
         {
             return s[0 .. $ - 1];
         }
@@ -672,7 +672,7 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     if (s.endsWith(aste))
     {
         const t = s[0 .. $ - aste.length];
-        if (t.of(`sann`))
+        if (t.among!(`sann`) != 0)
         {
             return t;
         }
@@ -689,7 +689,7 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
     if (s.endsWith(are, ast))
     {
         const t = s[0 .. $ - are.length];
-        if (t.of(`sann`))
+        if (t.among!(`sann`) != 0)
         {
             return t;
         }
@@ -728,7 +728,7 @@ auto ref stemSwedish(S)(S s) if (isSomeString!S)
             }
             return t;
         }
-        if (s.of(`hade`))
+        if (s.among!(`hade`) != 0)
         {
             return s;
         }

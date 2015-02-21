@@ -120,6 +120,7 @@ public import std.range: front, empty;
 public import std.conv: to;
 public import std.algorithm.iteration: splitter, map, filter, joiner;
 public import std.algorithm.searching: startsWith, endsWith;
+public import std.algorithm.comparison: among;
 public import knet.separators;
 public import knet.senses: Sense;
 public import knet.languages: Lang;

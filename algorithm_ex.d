@@ -17,7 +17,6 @@ import traits_ex: isStruct, isClass, allSame;
 import std.functional: unaryFun, binaryFun;
 
 version(print) import dbg;
-public import predicates;
 
 // ==============================================================================================
 

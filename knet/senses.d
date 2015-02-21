@@ -309,17 +309,17 @@ enum Sense:ubyte
 /// Check if $(D sense) is a noun acting as subject.
 bool isSubjectivePronoun(Sense sense)
 {
-    with (Sense) return sense.of(pronounPersonalSingular1st,
-                                 pronounPersonalSingular2nd,
-                                 pronounPersonalPlural1st,
-                                 pronounPersonalPlural2nd);
+    with (Sense) return sense.among!(pronounPersonalSingular1st,
+                                     pronounPersonalSingular2nd,
+                                     pronounPersonalPlural1st,
+                                     pronounPersonalPlural2nd) != 0;
 }
 
 /// Check if $(D sense) is a noun acting as object.
 bool isObjectivePronoun(Sense sense)
 {
-    with (Sense) return sense.of(pronounPersonalSingular3rd,
-                                 pronounPersonalPlural3rd);
+    with (Sense) return sense.among!(pronounPersonalSingular3rd,
+                                     pronounPersonalPlural3rd) != 0;
 }
 
 string toHuman(Sense sense) @safe pure @nogc nothrow
@@ -652,25 +652,25 @@ unittest
     /* assert('n'.to!Sense == Sense.noun); */
 }
 
-import predicates: of;
+import std.algorithm.comparison: among;
 
 @safe pure @nogc nothrow
 {
     bool isCode(Sense sense)
     {
-        with (Sense) return (sense.of(code,
-                                      codeOperator,
-                                      codeOperatorAssignment,
-                                      codeFunction,
-                                      codeFunctionReference,
-                                      codeVariable,
-                                      codeVariableReference,
-                                      codeType));
+        with (Sense) return (sense.among!(code,
+                                          codeOperator,
+                                          codeOperatorAssignment,
+                                          codeFunction,
+                                          codeFunctionReference,
+                                          codeVariable,
+                                          codeVariableReference,
+                                          codeType) != 0);
     }
     bool isFood(Sense sense)
     {
-        with (Sense) return (sense.of(food,
-                                      spice));
+        with (Sense) return (sense.among!(food,
+                                          spice) != 0);
     }
     bool isNounAbstract(Sense sense)
     {
@@ -680,36 +680,36 @@ import predicates: of;
     }
     bool isNounConcrete(Sense sense)
     {
-        with (Sense) return (sense.of(plant,
-                                      material,
-                                      metal,
-                                      substance));
+        with (Sense) return (sense.among!(plant,
+                                          material,
+                                          metal,
+                                          substance) != 0);
     }
     bool isLanguage(Sense sense)
     {
-        with (Sense) return (sense.of(language,
-                                      languageNatural,
-                                      languageProgramming));
+        with (Sense) return (sense.among!(language,
+                                          languageNatural,
+                                          languageProgramming) != 0);
     }
     bool isPhrase(Sense sense)
     {
-        with (Sense) return (sense.of(phrase,
-                                      nounPhrase));
+        with (Sense) return (sense.among!(phrase,
+                                          nounPhrase) != 0);
     }
     bool isNounSingular(Sense sense)
     {
-        with (Sense) return (sense.of(nounSingular,
-                                      nounSingularIndefinite,
-                                      nounSingularDefinite,
-                                      nounSingularFemale,
-                                      nounSingularNeuter));
+        with (Sense) return (sense.among!(nounSingular,
+                                          nounSingularIndefinite,
+                                          nounSingularDefinite,
+                                          nounSingularFemale,
+                                          nounSingularNeuter) != 0);
     }
     bool isNounCollective(Sense sense)
     {
-        with (Sense) return (sense.of(nounCollective,
-                                      nounCollectivePeople,
-                                      nounCollectiveCreatures,
-                                      nounCollectiveThings));
+        with (Sense) return (sense.among!(nounCollective,
+                                          nounCollectivePeople,
+                                          nounCollectiveCreatures,
+                                          nounCollectiveThings) != 0);
     }
     bool isNoun(Sense sense)
     {
@@ -718,147 +718,146 @@ import predicates: of;
                              sense.isFood ||
                              sense.isNounSingular ||
                              sense.isNounCollective ||
-                             sense.of(noun,
-                                      nounNeuter,
-                                      nounAbstract,
-                                      nounConcrete,
-                                      nounRegular,
-                                      nounIrregular,
-                                      nounPlural,
-                                      nounNominative,
-                                      nounUncountable,
-                                      nounAbbrevation,
-                                      nounAcronym,
-                                      plant) ||
+                             sense.among!(noun,
+                                          nounNeuter,
+                                          nounAbstract,
+                                          nounConcrete,
+                                          nounRegular,
+                                          nounIrregular,
+                                          nounPlural,
+                                          nounNominative,
+                                          nounUncountable,
+                                          nounAbbrevation,
+                                          nounAcronym,
+                                          plant) != 0||
                              sense.isName);
     }
     bool isTimePeriod(Sense sense)
     {
-        with (Sense) return sense.of(timePeriod,
-                                     weekday,
-                                     month,
-                                     dayOfMonth,
-                                     year,
-                                     season);
+        with (Sense) return sense.among!(timePeriod,
+                                         weekday,
+                                         month,
+                                         dayOfMonth,
+                                         year,
+                                         season) != 0;
     }
     bool isNumeric(Sense sense)
     {
         with (Sense) return (sense.isInteger ||
-                             sense.of(numeric,
-                                      decimal,
-                                      numberRational,
-                                      numberIrrational,
-                                      numberTranscendental,
-                                      numberComplex));
+                             sense.among!(numeric,
+                                          decimal,
+                                          numberRational,
+                                          numberIrrational,
+                                          numberTranscendental,
+                                          numberComplex) != 0);
     }
     bool isQuantifier(Sense sense)
     {
-        with (Sense) return (sense.of(quantifier,
-                                      quantifierOfSingularNoun,
-                                      quantifierOfPluralNoun,
-                                      quantifierOfUncountableNoun));
+        with (Sense) return (sense.among!(quantifier,
+                                          quantifierOfSingularNoun,
+                                          quantifierOfPluralNoun,
+                                          quantifierOfUncountableNoun) != 0);
     }
     bool isNumeral(Sense sense)
     {
-        with (Sense) return (sense.of(numeral,
-                                      numeralOrdinal,
-                                      numeralFraction,
-                                      numeralMasculine,
-                                      numeralFeminine,
-                                      numeralNeuter,
-                                      ordinalNumber));
+        with (Sense) return (sense.among!(numeral,
+                                          numeralOrdinal,
+                                          numeralFraction,
+                                          numeralMasculine,
+                                          numeralFeminine,
+                                          numeralNeuter) != 0);
     }
     bool isInteger(Sense sense)
     {
         with (Sense) return (sense.isNumeral ||
-                             sense.of(integer,
-                                      integerPositive,
-                                      integerNegative,
-                                      population));
+                             sense.among!(integer,
+                                          integerPositive,
+                                          integerNegative,
+                                          population) != 0);
     }
     bool isName(Sense sense)
     {
-        with (Sense) return sense.of(name,
-                                     nameMale,
-                                     nameFemale,
-                                     surname,
-                                     nameLocation,
-                                     namePerson,
-                                     nameOrganisation,
-                                     city,
-                                     country,
-                                     newspaper);
+        with (Sense) return sense.among!(name,
+                                         nameMale,
+                                         nameFemale,
+                                         surname,
+                                         nameLocation,
+                                         namePerson,
+                                         nameOrganisation,
+                                         city,
+                                         country,
+                                         newspaper) != 0;
     }
     bool isLocation(Sense sense)
     {
-        with (Sense) return sense.of(nameLocation,
-                                     city,
-                                     country);
+        with (Sense) return sense.among!(nameLocation,
+                                         city,
+                                         country) != 0;
     }
     bool isVerb(Sense sense)
     {
         with (Sense) return (sense.isVerbRegular ||
                              sense.isVerbIrregular ||
-                             sense.of(verb,
-                                      verbTransitive,
-                                      verbIntransitive,
-                                      verbReflexive,
-                                      verbInfinitive,
-                                      verbPast,
-                                      verbPastParticiple,
-                                      verbAbbrevation,
-                                      verbImperative,
-                                      verbPresent,
-                                      verbPresentSingular1st,
-                                      verbPresentSingular2nd,
-                                      verbPresentSingular3rd,
-                                      verbPresentPlural1st,
-                                      verbPresentPlural2nd,
-                                      verbPresentPlural3rd,
-                                      verbFuture));
+                             sense.among!(verb,
+                                          verbTransitive,
+                                          verbIntransitive,
+                                          verbReflexive,
+                                          verbInfinitive,
+                                          verbPast,
+                                          verbPastParticiple,
+                                          verbAbbrevation,
+                                          verbImperative,
+                                          verbPresent,
+                                          verbPresentSingular1st,
+                                          verbPresentSingular2nd,
+                                          verbPresentSingular3rd,
+                                          verbPresentPlural1st,
+                                          verbPresentPlural2nd,
+                                          verbPresentPlural3rd,
+                                          verbFuture) != 0);
     }
     bool isVerbRegular(Sense sense)
     {
-        with (Sense) return sense.of(verbRegular,
-                                     verbRegularInfinitive,
-                                     verbRegularPast,
-                                     verbRegularPastParticiple);
+        with (Sense) return sense.among!(verbRegular,
+                                         verbRegularInfinitive,
+                                         verbRegularPast,
+                                         verbRegularPastParticiple) != 0;
     }
     bool isVerbIrregular(Sense sense)
     {
-        with (Sense) return sense.of(verbIrregular,
-                                     verbIrregularInfinitive,
-                                     verbIrregularPast,
-                                     verbIrregularPastParticiple);
+        with (Sense) return sense.among!(verbIrregular,
+                                         verbIrregularInfinitive,
+                                         verbIrregularPast,
+                                         verbIrregularPastParticiple) != 0;
     }
     bool isAdjective(Sense sense)
     {
-        with (Sense) return sense.of(adjective,
-                                     adjectiveMale,
-                                     adjectiveFeminine,
-                                     adjectiveNeuter,
-                                     adjectiveRegular,
-                                     adjectiveIrregular,
-                                     adjectiveAbbrevation,
-                                     adjectiveNominative,
-                                     adjectiveComparative,
-                                     adjectiveSuperlative,
-                                     adjectiveElative,
-                                     adjectiveExzessive,
-                                     adjectivePossessiveSingular,
-                                     adjectivePossessivePlural,
-                                     adjectivePredicateOnly);
+        with (Sense) return sense.among!(adjective,
+                                         adjectiveMale,
+                                         adjectiveFeminine,
+                                         adjectiveNeuter,
+                                         adjectiveRegular,
+                                         adjectiveIrregular,
+                                         adjectiveAbbrevation,
+                                         adjectiveNominative,
+                                         adjectiveComparative,
+                                         adjectiveSuperlative,
+                                         adjectiveElative,
+                                         adjectiveExzessive,
+                                         adjectivePossessiveSingular,
+                                         adjectivePossessivePlural,
+                                         adjectivePredicateOnly) != 0;
     }
     bool isAdverb(Sense sense)
     {
-        with (Sense) return sense.of(adverb,
-                                     normalAdverb,
-                                     timeAdverb,
-                                     placeAdverb,
-                                     frequencyAdverb,
-                                     negatingAdverb,
-                                     affirmingAdverb,
-                                     conjunctiveAdverb);
+        with (Sense) return sense.among!(adverb,
+                                         normalAdverb,
+                                         timeAdverb,
+                                         placeAdverb,
+                                         frequencyAdverb,
+                                         negatingAdverb,
+                                         affirmingAdverb,
+                                         conjunctiveAdverb) != 0;
     }
     bool isPronoun(Sense sense)
     {
@@ -879,28 +878,28 @@ import predicates: of;
     }
     bool isPronounPersonalSingular(Sense sense)
     {
-        with (Sense) return sense.of(pronounPersonalSingular,
+        with (Sense) return sense.among!(pronounPersonalSingular,
 
-                                     pronounPersonalSingular1st,
-                                     pronounPersonalSingular2nd,
-                                     pronounPersonalSingular3rd,
+                                         pronounPersonalSingular1st,
+                                         pronounPersonalSingular2nd,
+                                         pronounPersonalSingular3rd,
 
-                                     pronounPersonalSingularMale,
-                                     pronounPersonalSingularMale1st,
-                                     pronounPersonalSingularMale2nd,
+                                         pronounPersonalSingularMale,
+                                         pronounPersonalSingularMale1st,
+                                         pronounPersonalSingularMale2nd,
 
-                                     pronounPersonalSingularFemale,
-                                     pronounPersonalSingularFemale1st,
-                                     pronounPersonalSingularFemale2nd,
+                                         pronounPersonalSingularFemale,
+                                         pronounPersonalSingularFemale1st,
+                                         pronounPersonalSingularFemale2nd,
 
-                                     pronounPersonalSingularNeutral);
+                                         pronounPersonalSingularNeutral) != 0;
     }
     bool isPronounPersonalPlural(Sense sense)
     {
-        with (Sense) return sense.of(pronounPersonalPlural,
-                                     pronounPersonalPlural1st,
-                                     pronounPersonalPlural2nd,
-                                     pronounPersonalPlural3rd);
+        with (Sense) return sense.among!(pronounPersonalPlural,
+                                         pronounPersonalPlural1st,
+                                         pronounPersonalPlural2nd,
+                                         pronounPersonalPlural3rd) != 0;
     }
     bool isPronounPossessive(Sense sense)
     {
@@ -910,31 +909,31 @@ import predicates: of;
     }
     bool isPronounPossessiveSingular(Sense sense)
     {
-        with (Sense) return sense.of(pronounPossessiveSingular,
-                                     pronounPossessiveSingular1st,
-                                     pronounPossessiveSingular2nd,
-                                     pronounPossessiveSingularMale,
-                                     pronounPossessiveSingularFemale,
-                                     pronounPossessiveSingularNeutral);
+        with (Sense) return sense.among!(pronounPossessiveSingular,
+                                         pronounPossessiveSingular1st,
+                                         pronounPossessiveSingular2nd,
+                                         pronounPossessiveSingularMale,
+                                         pronounPossessiveSingularFemale,
+                                         pronounPossessiveSingularNeutral) != 0;
     }
     bool isPronounPossessivePlural(Sense sense)
     {
-        with (Sense) return sense.of(pronounPossessivePlural,
-                                     pronounPossessivePlural1st,
-                                     pronounPossessivePlural2nd,
-                                     pronounPossessivePlural3rd);
+        with (Sense) return sense.among!(pronounPossessivePlural,
+                                         pronounPossessivePlural1st,
+                                         pronounPossessivePlural2nd,
+                                         pronounPossessivePlural3rd) != 0;
     }
     bool isPronounDemonstrative(Sense sense)
     {
-        with (Sense) return sense.of(pronounDemonstrative,
-                                     pronounDemonstrativeSingular,
-                                     pronounDemonstrativePlural);
+        with (Sense) return sense.among!(pronounDemonstrative,
+                                         pronounDemonstrativeSingular,
+                                         pronounDemonstrativePlural) != 0;
     }
     bool isPronounDeterminative(Sense sense)
     {
-        with (Sense) return sense.of(pronounDeterminative,
-                                     pronounDeterminativeSingular,
-                                     pronounDeterminativePlural);
+        with (Sense) return sense.among!(pronounDeterminative,
+                                         pronounDeterminativeSingular,
+                                         pronounDeterminativePlural) != 0;
     }
     bool isPronounPlural(Sense sense)
     {
@@ -943,60 +942,60 @@ import predicates: of;
     }
     bool isPronounReflexive(Sense sense)
     {
-        with (Sense) return sense.of(pronounReflexive,
-                                     pronounReflexiveSingular,
-                                     pronounReflexivePlural);
+        with (Sense) return sense.among!(pronounReflexive,
+                                         pronounReflexiveSingular,
+                                         pronounReflexivePlural) != 0;
     }
     bool isPronounIndefinite(Sense sense)
     {
-        with (Sense) return sense.of(pronounIndefinite,
-                                     pronounIndefiniteSingular,
-                                     pronounIndefinitePlural);
+        with (Sense) return sense.among!(pronounIndefinite,
+                                         pronounIndefiniteSingular,
+                                         pronounIndefinitePlural) != 0;
     }
     bool isPreposition(Sense sense)
     {
-        with (Sense) return sense.of(preposition,
-                                     prepositionTime,
-                                     prepositionPosition,
-                                     prepositionDirection);
+        with (Sense) return sense.among!(preposition,
+                                         prepositionTime,
+                                         prepositionPosition,
+                                         prepositionDirection) != 0;
     }
     bool isArticle(Sense sense)
     {
-        with (Sense) return sense.of(article,
-                                     articleIndefinite,
-                                     articleDefinite,
-                                     articlePartitive);
+        with (Sense) return sense.among!(article,
+                                         articleIndefinite,
+                                         articleDefinite,
+                                         articlePartitive) != 0;
     }
     bool isConjunction(Sense sense)
     {
-        with (Sense) return (sense.of(conjunction,
-                                      conjunctionCoordinating,
-                                      conjunctionCorrelative) ||
+        with (Sense) return (sense.among!(conjunction,
+                                          conjunctionCoordinating,
+                                          conjunctionCorrelative) != 0||
                              sense.isConjunctionSubordinating);
     }
     bool isConjunctionSubordinating(Sense sense)
     {
-        with (Sense) return sense.of(conjunctionSubordinating,
-                                     conjunctionSubordinatingConcession,
-                                     conjunctionSubordinatingCondition,
-                                     conjunctionSubordinatingComparison,
-                                     conjunctionSubordinatingTime,
-                                     conjunctionSubordinatingReason,
-                                     conjunctionSubordinatingAdjective,
-                                     conjunctionSubordinatingPronoun,
-                                     conjunctionSubordinatingManner,
-                                     conjunctionSubordinatingPlace);
+        with (Sense) return sense.among!(conjunctionSubordinating,
+                                         conjunctionSubordinatingConcession,
+                                         conjunctionSubordinatingCondition,
+                                         conjunctionSubordinatingComparison,
+                                         conjunctionSubordinatingTime,
+                                         conjunctionSubordinatingReason,
+                                         conjunctionSubordinatingAdjective,
+                                         conjunctionSubordinatingPronoun,
+                                         conjunctionSubordinatingManner,
+                                         conjunctionSubordinatingPlace) != 0;
     }
     bool isAbbrevation(Sense sense)
     {
-        with (Sense) return (sense.of(abbrevation,
-                                      nounAbbrevation,
-                                      nounAcronym,
-                                      contraction));
+        with (Sense) return (sense.among!(abbrevation,
+                                          nounAbbrevation,
+                                          nounAcronym,
+                                          contraction) != 0);
     }
     bool isReflexive(Sense sense)
     {
-        with (Sense) return (sense.of(verbReflexive) ||
+        with (Sense) return (sense.among!(verbReflexive) != 0||
                              sense.isPronounReflexive);
     }
     bool isActor(Sense sense)
@@ -1026,8 +1025,8 @@ bool specializes(Sense special,
     {
         case unknown: return false; // be strict as an unknown meaning can have different meaning say both a noun and verb
         case language: return special.isLanguage;
-        case letter: return special.of(letterLowercase,
-                                       letterUppercase);
+        case letter: return special.among!(letterLowercase,
+                                           letterUppercase) != 0;
         case phrase: return special.isPhrase;
         case noun: return (special.isNoun ||
                            special.isPronoun);

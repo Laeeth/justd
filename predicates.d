@@ -20,8 +20,10 @@ bool of(S, T...)(in S x, in T ys) pure if (ys.length >= 1 &&
                                                        CommonType!(T).init; })))
 {
     foreach (y; ys)
+    {
         if (x == y)
             return true;
+    }
     return false;
 }
 
@@ -148,7 +150,8 @@ bool allZero(T, bool useStatic = true)(in T x) @safe @nogc pure nothrow
     }
 }
 alias zeroed = allZero;
-unittest {
+unittest
+{
     ubyte[20] d;
     assert(d.allZero);     // note that [] is needed here
 
@@ -177,7 +180,8 @@ unittest {
     assert(!ones3d.allZero);
 }
 
-unittest {
+unittest
+{
     struct Vec { real x, y; }
     const v0 = Vec(0, 0);
     assert(v0.zeroed);
@@ -185,8 +189,10 @@ unittest {
     assert(!v1.zeroed);
 }
 
-unittest {
-    class Vec {
+unittest
+{
+    class Vec
+    {
         this(real x, real y) { this.x = x; this.y = y; }
         real x, y;
     }
@@ -203,9 +209,13 @@ bool defaulted(T)(in T a) @safe pure nothrow @nogc
     import std.traits: isInstanceOf;
     import std.typecons: Nullable;
     static if (isInstanceOf!(Nullable, T))
+    {
         return a.isNull;
+    }
     else
-    return a == T.init;
+    {
+        return a == T.init;
+    }
 }
 alias untouched = defaulted;
 alias inited = defaulted;

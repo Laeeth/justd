@@ -1,7 +1,5 @@
 module knet.iteration;
 
-import predicates: of;
-
 import knet.relations: RelDir;
 import knet.base;
 
@@ -15,7 +13,7 @@ auto lnsOf(Graph gr,
     import knet.relations: specializes;
     return node.links[]
                .map!(ln => ln.raw)
-               .filter!(ln => (dir.of(RelDir.any, ln.dir) &&  // TODO functionize match(RelDir, RelDir)
+               .filter!(ln => (dir.among(RelDir.any, ln.dir) != 0 &&  // TODO functionize match(RelDir, RelDir)
                                gr[ln].role.negation == role.negation &&
                                // TODO gr[ln].role.reversion == role.reversion &&
                                (gr[ln].role.rel == role.rel ||

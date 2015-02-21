@@ -59,22 +59,22 @@ Sense infersSense(Rel rel) @safe @nogc pure nothrow
     }
 }
 
-import predicates: of;
+import std.algorithm.comparison: among;
 
 /** Check if $(D rel) propagates Sense(s). */
 bool propagatesSense(Rel rel) @safe @nogc pure nothrow
 {
-    with (Rel) return rel.of(translationOf,
-                             synonymFor,
-                             antonymFor);
+    with (Rel) return rel.among!(translationOf,
+                                 synonymFor,
+                                 antonymFor) != 0;
 }
 
 /** Check if $(D sense) always infers instanceOf relation. */
 bool infersInstanceOf(Sense sense) @safe @nogc pure nothrow
 {
-    with (Sense) return sense.of(weekday,
-                                 month,
-                                 dayOfMonth,
-                                 year,
-                                 season);
+    with (Sense) return sense.among!(weekday,
+                                     month,
+                                     dayOfMonth,
+                                     year,
+                                     season) != 0;
 }

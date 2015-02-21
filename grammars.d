@@ -9,10 +9,10 @@ module grammars;
 
 import std.traits: isSomeChar, isSomeString;
 import std.typecons: Nullable;
+import std.algorithm.comparison: among;
 import std.algorithm: uniq, map, find, canFind, startsWith, endsWith, among;
 import std.array: array;
 import std.conv;
-import predicates: of;
 
 import knet.languages: Lang;
 
@@ -30,7 +30,7 @@ enum englishVowels = ['a', 'o', 'u', 'e', 'i', 'y'];
 /** Check if $(D c) is a Vowel. */
 bool isEnglishVowel(C)(C c) if (isSomeChar!C)
 {
-    return c.of('a', 'o', 'u', 'e', 'i', 'y'); // TODO Reuse englishVowels and hash-table
+    return c.among!('a', 'o', 'u', 'e', 'i', 'y') != 0; // TODO Reuse englishVowels and hash-table
 }
 
 /** English Accented Vowels. */
@@ -39,7 +39,7 @@ enum englishAccentedVowels = ['é'];
 /** Check if $(D c) is an Accented Vowel. */
 bool isEnglishAccentedVowel(C)(C c) if (isSomeChar!C)
 {
-    return c.of(['é']); // TODO Reuse englishAccentedVowels and hash-table
+    return c.among!('é') != 0; // TODO Reuse englishAccentedVowels and hash-table
 }
 
 unittest
@@ -61,8 +61,8 @@ enum swedishVowels = (swedishHardVowels ~
 bool isSwedishVowel(C)(C c) if (isSomeChar!C)
 {
     // TODO Reuse swedishVowels and hash-table
-    return c.of('a', 'o', 'u', 'å',
-                'e', 'i', 'y', 'ä', 'ö');
+    return c.among!('a', 'o', 'u', 'å',
+                    'e', 'i', 'y', 'ä', 'ö') != 0;
 }
 
 /** Spanish Accented Vowels. */
@@ -71,7 +71,7 @@ enum spanishAccentedVowels = ['á', 'é', 'í', 'ó', 'ú'];
 /** Check if $(D c) is a Spanish Accented Vowel. */
 bool isSpanishAccentedVowel(C)(C c) if (isSomeChar!C)
 {
-    return c.of(spanishAccentedVowels);
+    return c.among!(spanishAccentedVowels) != 0;
 }
 
 /** Check if $(D c) is a Spanish Vowel. */
@@ -115,7 +115,7 @@ enum englishConsonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n',
 bool isEnglishConsonant(C)(C c) if (isSomeChar!C)
 {
     // TODO Reuse englishConsonants and hash-table
-    return c.of('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x');
+    return c.among!('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x') != 0;
 }
 alias isSwedishConsonant = isEnglishConsonant;
 
@@ -131,7 +131,7 @@ enum englishLetters = englishVowels ~ englishConsonants;
 /** Check if $(D c) is a Letter. */
 bool isEnglishLetter(C)(C c) if (isSomeChar!C)
 {
-    return c.of(englishLetters);
+    return c.among!(englishLetters) != 0;
 }
 alias isEnglish = isEnglishLetter;
 
@@ -146,7 +146,7 @@ enum EnglishDoubleConsonants = [`bb`, `dd`, `ff`, `gg`, `mm`, `nn`, `pp`, `rr`, 
 /** Check if $(D c) is a Consonant. */
 bool isEnglishDoubleConsonant(S)(S s) if (isSomeString!S)
 {
-    return c.of(`bb`, `dd`, `ff`, `gg`, `mm`, `nn`, `pp`, `rr`, `tt`);
+    return c.among!(`bb`, `dd`, `ff`, `gg`, `mm`, `nn`, `pp`, `rr`, `tt`) != 0;
 }
 
 /** computer Token. */
@@ -217,17 +217,17 @@ enum Tense:ubyte
 {
     bool isPast(Tense tense)
     {
-        with (Tense) return tense.of(past, pastMoment, pastPeriod, pastResult, pastDuration);
+        with (Tense) return tense.among!(past, pastMoment, pastPeriod, pastResult, pastDuration) != 0;
     }
 
     bool isPresent(Tense tense)
     {
-        with (Tense) return tense.of(present, presentMoment, presentPeriod, presentResult, presentDuration);
+        with (Tense) return tense.among!(present, presentMoment, presentPeriod, presentResult, presentDuration) != 0;
     }
 
     bool isFuture(Tense tense)
     {
-        with (Tense) return tense.of(future, futureMoment, futurePeriod, futureResult, futureDuration);
+        with (Tense) return tense.among!(future, futureMoment, futurePeriod, futureResult, futureDuration) != 0;
     }
 }
 
@@ -311,7 +311,7 @@ enum Mood:ubyte
  */
 bool isRealis(Mood mood) @safe pure @nogc nothrow
 {
-    with (Mood) return mood.of(indicative);
+    with (Mood) return mood.among!(indicative) != 0;
 }
 
 enum realisMoods = [Mood.indicative];
@@ -321,13 +321,13 @@ enum realisMoods = [Mood.indicative];
 */
 bool isIrrealis(Mood mood) @safe pure @nogc nothrow
 {
-    with (Mood) return mood.of(subjunctive,
-                               conditional,
-                               optative,
-                               imperative,
-                               jussive,
-                               potential,
-                               inferential);
+    with (Mood) return mood.among!(subjunctive,
+                                   conditional,
+                                   optative,
+                                   imperative,
+                                   jussive,
+                                   potential,
+                                   inferential) != 0;
 }
 
 enum irrealisMoods = [Mood.subjunctive,
@@ -439,8 +439,8 @@ string inPlural(string word, int count = 2,
  */
 S lemmatize(S)(S s) if (isSomeString!S)
 {
-    if      (s.of(`be`, `is`, `am`, `are`)) return `be`;
-    else if (s.of(`do`, `does`))            return `do`;
+    if      (s.among!(`be`, `is`, `am`, `are`) != 0) return `be`;
+    else if (s.among!(`do`, `does`) != 0)            return `do`;
     else return s;
 }
 

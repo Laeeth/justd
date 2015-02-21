@@ -11,7 +11,7 @@ import std.path: buildNormalizedPath, expandTilde, extension;
 import std.file: dirEntries;
 
 import mmfile_ex;
-import predicates: of;
+import std.algorithm.comparison: among;
 import grammars: Tense, Manner;
 import dbg: dln;
 

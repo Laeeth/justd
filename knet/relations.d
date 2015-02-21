@@ -1,5 +1,7 @@
 module knet.relations;
 
+import std.algorithm.comparison: among;
+
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
@@ -380,7 +382,7 @@ enum Rel:ubyte
 
 import grammars: Lang, negationIn;
 import std.conv: to;
-import predicates: of;
+import std.algorithm.comparison: among;
 
 /** Relation Direction. */
 enum RelDir
@@ -420,39 +422,39 @@ alias Rank = uint;
     */
     bool isSymmetric(const Rel rel)
     {
-        with (Rel) return rel.of(relatedTo,
-                                 translationOf,
-                                 synonymFor,
-                                 antonymFor,
-                                 contronymFor,
-                                 homophoneFor,
+        with (Rel) return rel.among!(relatedTo,
+                                     translationOf,
+                                     synonymFor,
+                                     antonymFor,
+                                     contronymFor,
+                                     homophoneFor,
 
-                                 reversionOf,
-                                 similarSizeTo,
-                                 similarTo,
-                                 similarAppearanceTo,
+                                     reversionOf,
+                                     similarSizeTo,
+                                     similarTo,
+                                     similarAppearanceTo,
 
-                                 hasFriend,
-                                 hasTeamMate,
-                                 hasEnemy,
+                                     hasFriend,
+                                     hasTeamMate,
+                                     hasEnemy,
 
-                                 hasRelative,
-                                 hasFamilyMember,
-                                 hasSpouse,
-                                 hasSibling,
+                                     hasRelative,
+                                     hasFamilyMember,
+                                     hasSpouse,
+                                     hasSibling,
 
-                                 competesWith,
-                                 collaboratesWith,
-                                 cookedWith,
-                                 servedWith,
-                                 physicallyConnectedWith,
+                                     competesWith,
+                                     collaboratesWith,
+                                     cookedWith,
+                                     servedWith,
+                                     physicallyConnectedWith,
 
-                                 mutualProxyFor,
+                                     mutualProxyFor,
 
-                                 formOfWord,
-                                 formOfVerb,
-                                 formOfNoun,
-                                 formOfAdjective);
+                                     formOfWord,
+                                     formOfVerb,
+                                     formOfNoun,
+                                     formOfAdjective) != 0;
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
@@ -464,21 +466,20 @@ alias Rank = uint;
     bool isTransitive(const Rel rel)
     {
         with (Rel) return (rel.isSymmetric ||
-                           rel.of(abbreviationFor,
-                                  shorthandFor,
-                                  partOf,
-                                  isA,
-                                  memberOf,
-                                  hasA,
-                                  atLocation,
-                                  hasContext,
-                                  locatedNear,
-                                  borderedBy,
-                                  causes,
-                                  hasSubevent,
-                                  hasPrerequisite,
-                                  hasShape,
-                                  hasEmotion));
+                           rel.among!(abbreviationFor,
+                                      partOf,
+                                      isA,
+                                      memberOf,
+                                      hasA,
+                                      atLocation,
+                                      hasContext,
+                                      locatedNear,
+                                      borderedBy,
+                                      causes,
+                                      hasSubevent,
+                                      hasPrerequisite,
+                                      hasShape,
+                                      hasEmotion) != 0);
     }
 
     bool oppositeOfInOrder(const Rel a,
@@ -500,11 +501,11 @@ alias Rank = uint;
     */
     bool isStrong(Rel rel)
     {
-        with (Rel) return rel.of(hasProperty,
-                                 hasShape,
-                                 hasColor,
-                                 hasAge,
-                                 motivatedByGoal);
+        with (Rel) return rel.among!(hasProperty,
+                                     hasShape,
+                                     hasColor,
+                                     hasAge,
+                                     motivatedByGoal) != 0;
     }
 
     /** Return true if $(D rel) is a weak.
@@ -512,8 +513,8 @@ alias Rank = uint;
     */
     bool isWeak(Rel rel)
     {
-        with (Rel) return rel.of(isA,
-                                 locatedNear);
+        with (Rel) return rel.among!(isA,
+                                     locatedNear) != 0;
     }
 
 }
@@ -1905,106 +1906,105 @@ bool specializes(Rel special, Rel general) @safe @nogc pure nothrow
          * relevant cases: */
         case relatedTo:   return special != relatedTo;
         case hasRelative: return special == hasFamilyMember;
-        case hasFamilyMember: return special.of(hasSpouse,
-                                                hasSibling,
-                                                hasParent,
-                                                hasChild,
-                                                hasPet);
-        case hasSpouse: return special.of(hasWife,
-                                          hasHusband);
-        case hasSibling: return special.of(hasBrother,
-                                           hasSister);
-        case hasParent: return special.of(hasFather,
-                                          hasMother);
-        case hasChild: return special.of(hasSon,
-                                         hasDaugther);
-        case hasScore: return special.of(hasLoserScore,
-                                         hasWinnerScore);
-        case isA: return !special.of(isA,
-                                     relatedTo);
-        case worksFor: return special.of(ceoOf,
-                                         writesForPublication,
-                                         worksInAcademicField);
-        case creates: return special.of(writes,
-                                        develops,
-                                        produces);
-        case leaderOf: return special.of(ceoOf);
-        case plays: return special.of(playsInstrument);
-        case memberOf: return special.of(participatesIn,
-                                         worksFor,
-                                         playsFor,
-                                         memberOfEconomicSector,
-                                         topMemberOf,
-                                         attends,
-                                         hasEthnicity);
-        case hasProperty: return special.of(hasAge,
+        case hasFamilyMember: return special.among!(hasSpouse,
+                                                    hasSibling,
+                                                    hasParent,
+                                                    hasChild,
+                                                    hasPet) != 0;
+        case hasSpouse: return special.among!(hasWife,
+                                              hasHusband) != 0;
+        case hasSibling: return special.among!(hasBrother,
+                                               hasSister) != 0;
+        case hasParent: return special.among!(hasFather,
+                                              hasMother) != 0;
+        case hasChild: return special.among!(hasSon,
+                                             hasDaugther) != 0;
+        case hasScore: return special.among!(hasLoserScore,
+                                             hasWinnerScore) != 0;
+        case isA: return !special.among!(isA,
+                                         relatedTo) != 0;
+        case worksFor: return special.among!(ceoOf,
+                                             writesForPublication,
+                                             worksInAcademicField) != 0;
+        case creates: return special.among!(writes,
+                                            develops,
+                                            produces) != 0;
+        case leaderOf: return special.among!(ceoOf) != 0;
+        case plays: return special.among!(playsInstrument) != 0;
+        case memberOf: return special.among!(participatesIn,
+                                             worksFor,
+                                             playsFor,
+                                             memberOfEconomicSector,
+                                             topMemberOf,
+                                             attends,
+                                             hasEthnicity) != 0;
+        case hasProperty: return special.among!(hasAge,
 
-                                            hasColor,
-                                            hasShape,
+                                                hasColor,
+                                                hasShape,
 
-                                            hasDiameter,
-                                            hasArea,
-                                            hasLength,
-                                            hasHeight,
-                                            hasWidth,
-                                            hasThickness,
-                                            hasWeight,
+                                                hasDiameter,
+                                                hasArea,
+                                                hasLength,
+                                                hasHeight,
+                                                hasWidth,
+                                                hasThickness,
+                                                hasWeight,
 
-                                            hasTeamPosition,
-                                            hasTournament,
-                                            hasCapital,
-                                            hasExpert,
-                                            hasJobPosition,
-                                            hasWebsite,
-                                            hasOfficialWebsite,
-                                            hasScore, hasLoserScore, hasWinnerScore,
-                                            hasLanguage,
-                                            hasOrigin,
-                                            hasCurrency,
-                                            hasEmotion);
-        case derivedFrom: return special.of(acronymFor,
-                                            abbreviationFor,
-                                            contractionFor,
-                                            emoticonFor);
-        case abbreviationFor: return special.of(acronymFor, contractionFor);
-        case symbolFor: return special.of(emoticonFor);
-        case atLocation: return special.of(bornInLocation,
-                                           hasCitizenship,
-                                           hasResidenceIn,
-                                           hasHome,
-                                           diedInLocation,
-                                           hasOfficeIn,
-                                           headquarteredIn,
-                                           languageSchoolInCity,
-                                           hasTeamPosition,
-                                           grownAtLocation,
-                                           producedAtLocation,
-                                           inRoom);
-        case buys: return special.of(acquires);
-        case shapes: return special.of(cutsInto, breaksInto);
-        case desires: return special.of(eats, buys, acquires);
-        case similarTo: return special.of(similarSizeTo,
-                                          similarAppearanceTo);
-        case injures: return special.of(selfinjures);
-        case causes: return special.of(causesSideEffect);
-        case uses: return special.of(usesLanguage,
-                                     usesTool);
-        case physicallyConnectedWith: return special.of(arisesFrom);
-        case locatedNear: return special.of(borderedBy);
-        case hasWebsite: return special.of(hasOfficialWebsite);
-        case hasSubevent: return special.of(hasFirstSubevent,
-                                            hasLastSubevent);
-        case formOfWord: return special.of(formOfVerb,
-                                         participleOfVerb,
-                                         formOfNoun,
-                                         formOfAdjective);
-        case synonymFor: return special.of(abbreviationFor,
-                                           togetherWritingFor,
-                                           shorthandFor);
-        case instanceHypernymOf: return special.of(instanceOf,
-                                                   hypernymOf);
-        case instanceHyponymOf: return special.of(instanceOf,
-                                                  hyponymOf);
+                                                hasTeamPosition,
+                                                hasTournament,
+                                                hasCapital,
+                                                hasExpert,
+                                                hasJobPosition,
+                                                hasWebsite,
+                                                hasOfficialWebsite,
+                                                hasScore, hasLoserScore, hasWinnerScore,
+                                                hasLanguage,
+                                                hasOrigin,
+                                                hasCurrency,
+                                                hasEmotion) != 0;
+        case derivedFrom: return special.among!(acronymFor,
+                                                abbreviationFor,
+                                                contractionFor,
+                                                emoticonFor) != 0;
+        case abbreviationFor: return special.among!(acronymFor, contractionFor) != 0;
+        case symbolFor: return special.among!(emoticonFor) != 0;
+        case atLocation: return special.among!(bornInLocation,
+                                               hasCitizenship,
+                                               hasResidenceIn,
+                                               hasHome,
+                                               diedInLocation,
+                                               hasOfficeIn,
+                                               headquarteredIn,
+                                               languageSchoolInCity,
+                                               hasTeamPosition,
+                                               grownAtLocation,
+                                               producedAtLocation,
+                                               inRoom) != 0;
+        case buys: return special.among!(acquires) != 0;
+        case shapes: return special.among!(cutsInto, breaksInto) != 0;
+        case desires: return special.among!(eats, buys, acquires) != 0;
+        case similarTo: return special.among!(similarSizeTo,
+                                              similarAppearanceTo) != 0;
+        case injures: return special.among!(selfinjures) != 0;
+        case causes: return special.among!(causesSideEffect) != 0;
+        case uses: return special.among!(usesLanguage,
+                                         usesTool) != 0;
+        case physicallyConnectedWith: return special.among!(arisesFrom) != 0;
+        case locatedNear: return special.among!(borderedBy) != 0;
+        case hasWebsite: return special.among!(hasOfficialWebsite) != 0;
+        case hasSubevent: return special.among!(hasFirstSubevent,
+                                                hasLastSubevent) != 0;
+        case formOfWord: return special.among!(formOfVerb,
+                                               participleOfVerb,
+                                               formOfNoun,
+                                               formOfAdjective) != 0;
+        case synonymFor: return special.among!(abbreviationFor,
+                                               togetherWritingFor) != 0;
+        case instanceHypernymOf: return special.among!(instanceOf,
+                                                       hypernymOf) != 0;
+        case instanceHyponymOf: return special.among!(instanceOf,
+                                                      hyponymOf) != 0;
         default: return special == general;
     }
 }
