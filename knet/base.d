@@ -780,7 +780,8 @@ class Graph
     auto sensesOfExpr(S)(S expr, bool includeUnknown = false) @safe pure if (isSomeString!S)
     {
         return lemmasOfExpr(expr).map!(lemma => lemma.sense)
-                                 .filter!(sense => includeUnknown || sense != Sense.unknown);
+                                 .filter!(sense => (includeUnknown ||
+                                                    sense != Sense.unknown));
     }
 
     /// Get Possible Common Sense for $(D a) and $(D b). TODO N-ary
