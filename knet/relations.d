@@ -637,6 +637,28 @@ auto toHuman(const Rel rel,
                 }
             }
             break;
+        case hypernymOf:
+            if (dir == RelDir.bwd) // just a reversion of isA for now
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en"]; break;
+                    case de: words = ["ist", not, "ein"]; break;
+                    case en:
+                    default: words = ["is", not, "a"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["kan", not, "vara en"]; break;
+                    case de: words = ["can", not, "sein ein"]; break;
+                    case en:
+                    default: words = ["can", not, "be a"]; break;
+                }
+            }
+            break;
         case mayBeA:
             if (dir == RelDir.fwd)
             {
