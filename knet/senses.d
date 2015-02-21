@@ -21,6 +21,7 @@ enum Sense:ubyte
     letterUppercase,
     word,
     phrase,                     /// Phrase.
+
     nounPhrase, /// Noun Phrase. See also: https://en.wikipedia.org/wiki/Moby_Project#Hyphenator
     idiom,                      /// Idiomatic Expression.
 

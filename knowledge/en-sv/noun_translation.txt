@@ -70,3 +70,11 @@ workmanarbetare
 
 question markfrågetecken
 exclamation markutropstecken
+
+weekday:Fridayweekday:fredag
+weekday:Saturdayweekday:lördag
+weekday:Mondayweekday:måndag
+weekday:Wednesdayweekday:onsdag
+weekday:Sundayweekday:söndag
+weekday:Tuesdayweekday:tisdag
+weekday:Thursdayweekday:torsdag

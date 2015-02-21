@@ -739,6 +739,7 @@ class Graph
                 Sense firstSpecializedSense = firstSense;
                 Sense secondSpecializedSense = secondSense;
 
+                import knet.inference: propagatesSense;
                 if (role.rel.propagatesSense &&
                     !senseCode.empty)
                 {

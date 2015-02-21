@@ -177,6 +177,7 @@ void testContextOf()
     auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
 
     import knet.association: contextOf;
+
     const ndContext = gr.contextOf(bs);
     assert(ndContext == d);
 

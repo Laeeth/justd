@@ -1,7 +1,5 @@
 module knet.relations;
 
-import knet.senses: Sense;
-
 /** Semantic Relation Type Code.
     See also: https://github.com/commonsense/conceptnet5/wiki/Relations
 */
@@ -2016,24 +2014,6 @@ bool generalizes(T)(T general,
                     T special)
 {
     return specializes(special, general);
-}
-
-/** Check if $(D rel) infers Senses. */
-Sense infersSense(Rel rel) @safe @nogc pure nothrow
-{
-    switch (rel) with (Rel) with (Sense)
-    {
-        case atLocation: return noun;
-        default: return Sense.unknown;
-    }
-}
-
-/** Check if $(D rel) propagates Sense(s). */
-bool propagatesSense(Rel rel) @safe @nogc pure nothrow
-{
-    with (Rel) return rel.of(translationOf,
-                             synonymFor,
-                             antonymFor);
 }
 
 /** Type-Safe Directed Reference to $(D T). */

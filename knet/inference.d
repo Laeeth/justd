@@ -46,3 +46,35 @@ void inferSpecializedSenses(Graph graph)
         }
     }
 }
+
+import knet.senses: Sense;
+
+/** Check if $(D rel) infers Senses. */
+Sense infersSense(Rel rel) @safe @nogc pure nothrow
+{
+    switch (rel) with (Rel) with (Sense)
+    {
+        case atLocation: return noun;
+        default: return Sense.unknown;
+    }
+}
+
+import predicates: of;
+
+/** Check if $(D rel) propagates Sense(s). */
+bool propagatesSense(Rel rel) @safe @nogc pure nothrow
+{
+    with (Rel) return rel.of(translationOf,
+                             synonymFor,
+                             antonymFor);
+}
+
+/** Check if $(D sense) always infers instanceOf relation. */
+bool infersInstanceOf(Sense sense) @safe @nogc pure nothrow
+{
+    with (Sense) return sense.of(weekday,
+                                 month,
+                                 dayOfMonth,
+                                 year,
+                                 season);
+}

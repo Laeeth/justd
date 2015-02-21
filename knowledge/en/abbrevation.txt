@@ -1,55 +1,49 @@
-subsubmarinesubwaysubwoofer
-idiomidiomatic expression
-personpersonus
+nounSingular:subsubmarinesubwaysubwoofer
+nounSingular:idiomnounPhrase:idiomatic expression
+nounSingular:personpersonus
 
-HzHertz
-VVolt
-AAmpere
-KKelvin
-CdCandela
+baseSIUnit:mmeter
+baseSIUnit:mmetre
+baseSIUnit:ssecond
+baseSIUnit:Vvolt
+baseSIUnit:Aampere
+baseSIUnit:Kkelvin
+baseSIUnit:Cdcandela
 
-mmeter
-mmetre
-ssecond
-sseconds
+noun:degreedegree Celsius
+noun:degreedegree Fahrenheit
+noun:degreedegree Kelvin
 
-kkilo
-MMega
-GGiga
+nounSingular:infinfinity
+nounSingular:minminimum
+nounSingular:maxmaximum
 
-kgkilogram
+nounSingular:dozdozen
+nounSingular:dzdozen
 
-degreedegree Celsius
-degreedegree Fahrenheit
-degreedegree Kelvin
+nounSingular:quadquadruple
 
-infinfinity
-minminimum
-maxmaximum
+nounSingular:∞infinity
+nounSingular:πpi
 
-dozdozen
-dzdozen
+code:operator:++verb:increment
+code:operator:--verb:decrement
 
-quadquadruple
+code:verb:incincrement
+code:verb:decdecrement
 
-∞infinity
-πpi
+code:nounSingular:incincrement
+code:nounSingular:decdecrement
 
-++increment
---decrement
+verb:addadd
+verb:subsubtract
+verb:mulmultiply
+verb:divdivide
 
-en:code:incincrement
-en:code:decdecrement
-
-addaddition
-subsubtraction
-mulmultiply
-divdivide
-
-+plus
--minus
-*times
-*star
+nounSingular:+plus
+nounSingular:-minus
+nounSingular:*times
+nounSingular:*star
 
 math:+add
 math:-subtract
@@ -57,21 +51,24 @@ math:*multiply
 math:/divide
 math:/over
 
-code:^power
-code:^xor
+code:operator:^power
+code:operator:^xor
 
 code:xorexclusive or
 logic:xorexclusive or
 
 code:expexponent
 
+nounSingular:supsuperset
+nounSingular:subsubset
+
 supsuper
-subsubset
+subsub
 
-uncountableuncountable noun
-periodtime period
+nounSingular:uncountablenounPhrase:uncountable noun
+nounSingular:periodnounPhrase:time period
 
-PoSPart of Speech
+noun:PoSPart of Speech
 
 etcet cetera
 
@@ -80,46 +77,48 @@ aealmost everywhere
 dim.diminutive
 dim.diminuendo
 
-VATvalue added tax
-GSTgoods and services tax
+non:VATvalue added tax
+noun:GSTgoods and services tax
 
-dial.dialect
+nounSingular:dial.dialect
 
-Dr.doctor
-Drs.doctors
+nounSingular:Dr.doctor
+nounPlural:Drs.doctors
 
-PhDPh.D.D.Phil.DPhildoctor of Philosophy
+nounSingular:PhDPh.D.D.Phil.DPhildoctor of Philosophy
 
-inc.incorporated
-inst.instituteinstant
+adjective:inc.incorporated
+nounSingular:inst.institute
+adjective:inst.instant
 
-AcAir-conditioningAcetateAcetyl
+noun:AcAir-conditioningAcetateAcetyl
 
-inf.infinitiveinformal
+adjective:inf.infinitive
+adjective:inf.informal
 
 ADA.D.A. D.anno Domini
 BCB.C.B. C.before Christ
 
-limolimousine
+nounSingular:limolimousine
 
-cabtaxi cab
-taxitaxi cab
-taxi cabtaxicab
+nounSingular:cabtaxi cab
+nounSingular:taxitaxi cab
+nounSingular:taxi cabtaxicab
 
-a.k.a.also known as
+idiom:a.k.a.also known as
 
-GingerGinger Root
-FennelFennel Seed
+noun:GingerGinger Root
+noun:FennelFennel Seed
 
-cshC shell
+noun:cshC shell
 
-elementchemical element
+nounSingular:elementchemical element
 
-uppercaseuppercase letter
-lowercaselowercase letter
+nounSingular:uppercaseuppercase letter
+nounSingular:lowercaselowercase letter
 
-capitalcapital letter
-capcapital letter
+nounSingular:capitalcapital letter
+nounSingular:capcapital letter
 
-ctorconstructor
-dtordestructor
+nounSingular:ctorconstructor
+nounSingular:dtordestructor

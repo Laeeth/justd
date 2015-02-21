@@ -109,6 +109,8 @@ BFWalker bfWalker(Graph gr, Nd start,
     range behaviour to work correctly
 
     See also: http://forum.dlang.org/thread/xrxejicnoakanvkyasso@forum.dlang.org#post-yipmrrdilsxcaypeoqhz:40forum.dlang.org
+
+    TODO: Use containers.hashmap.HashMap and tag as @nogc
 */
 struct DijkstraWalker
 {
