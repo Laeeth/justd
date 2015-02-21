@@ -477,7 +477,10 @@ struct BitSet(size_t len, Block = size_t)
     /**
      * Check if this $(D BitSet) has only ones in range [ $(d low), $(d high) [.
      */
-    bool allOneBetween(size_t low, size_t high) const @safe @nogc pure nothrow
+    bool allOneBetween(size_t low, size_t high)
+        const @safe @nogc pure nothrow
+        in { assert(low + 1 <= len && high <= len); }
+    body
     {
         foreach (i; low .. high)
         {
@@ -488,29 +491,38 @@ struct BitSet(size_t len, Block = size_t)
     alias allSetBetween = allOneBetween;
     alias fullBetween = allOneBetween;
 
-    alias Q = Rational!ulong;
-
-    /** Returns: Number of Bits Set in $(D this).  */
-    Q denseness(int depth = -1) const @safe @nogc pure nothrow
+    /** Returns: Number of Bits Set in $(D this).
+     */
+    ulong countOnes() const @safe @nogc pure nothrow
     {
-        ulong y = 0;
+        ulong n = 0;
         foreach (ix, block; _data)
         {
             if (block != 0) {
                 static if (block.sizeof == 4)
-                    y += cast(uint)block.popcnt;
+                    n += cast(uint)block.popcnt;
                 else static if (block.sizeof == 8)
-                    y += (cast(ulong)((cast(uint)(block)).popcnt) +
+                    n += (cast(ulong)((cast(uint)(block)).popcnt) +
                           cast(ulong)((cast(uint)(block >> 32)).popcnt));
                 else
                     assert(false, "Insupported blocks size " ~ to!string(block.sizeof));
             }
         }
-        return Q(y, length);
+        return n;
+    }
+
+    alias Q = Rational!ulong;
+
+    /** Returns: Number of Bits Set in $(D this).
+     */
+    Q denseness(int depth = -1) const @safe @nogc pure nothrow
+    {
+        return Q(countOnes, length);
     }
 
     /** Returns: Number of Bits Unset in $(D this).  */
-    Q sparseness(int depth = -1) const @safe @nogc pure nothrow {
+    Q sparseness(int depth = -1) const @safe @nogc pure nothrow
+    {
         return 1 - denseness(depth);
     }
 
@@ -798,7 +810,10 @@ unittest
 
     BitSet!m b0;
     b0[0] = 1;
-    assert(b0.denseness == Q(1, m));
+    b0[m/2] = 1;
+    b0[m - 1] = 1;
+    assert(b0.countOnes == 3);
+    assert(b0.denseness == Q(3, m));
 
     BitSet!m[n] b1;
     b1[0][0] = 1;
@@ -807,7 +822,8 @@ unittest
     BitSet!m[n][n] b2;
     b2[0][0][0] = 1;
     b2[0][0][1] = 1;
-    assert(b2.denseness == Q(2, m*n*n));
+    b2[0][0][4] = 1;
+    assert(b2.denseness == Q(3, m*n*n));
 
     /* const BitSet!256 cb0; */
     /* assert(cb0.denseness == Q(0, 256)); */
