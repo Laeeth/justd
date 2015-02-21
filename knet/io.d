@@ -377,7 +377,7 @@ bool showNodes(Graph graph,
         const arg = split[0];
         if (!arg.empty)
         {
-            auto senses = graph.sensesOfExpr(arg);
+            auto senses = graph.sensesOfExpr(arg, true);
             graph.showSenses(senses);
         }
     }
