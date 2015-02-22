@@ -163,7 +163,6 @@ unittest
 
 unittest
 {
-
     auto x = [1, 2, 3];
     alias J = Index!size_t;
     enum E { e0, e1, e2 }
