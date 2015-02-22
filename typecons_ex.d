@@ -77,11 +77,11 @@ struct Index(T = size_t)
     private T _ix = 0;
 }
 
-import std.traits: isIntegral, isInstanceOf;
+import std.traits: isUnsigned, isInstanceOf;
 import std.range: hasSlicing;
 
 enum IndexableBy(R, I) = (hasSlicing!R &&
-                          (isIntegral!I || // TODO should we allo isIntegral here?
+                          (isUnsigned!I || // TODO should we allow isUnsigned here?
                            isInstanceOf!(Index, I) ||
                            is(I == enum)));
 
@@ -102,14 +102,14 @@ struct IndexedBy(R, I) if (IndexableBy!(R, I))
                                                              cast(size_t)j] = value; }
 
     // TODO is this needed?
-    alias RI = size_t; /* TODO: Extract this from R somehow. */
-    static if (!is(RI == I))
-    {
-        @disable void opIndex(RI i);
-        @disable void opIndexAssign(V)(V value, RI i);
-        @disable void opSlice(RI i, RI j);
-        @disable void opSliceAssign(V)(V value, RI i, RI j);
-    }
+    // alias RI = size_t; /* TODO: Extract this from R somehow. */
+    // static if (!is(RI == I))
+    // {
+    //     @disable void opIndex(RI i);
+    //     @disable void opIndexAssign(V)(V value, RI i);
+    //     @disable void opSlice(RI i, RI j);
+    //     @disable void opSliceAssign(V)(V value, RI i, RI j);
+    // }
 
     R _r;
     alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
@@ -128,30 +128,46 @@ unittest
 
     auto x = [1, 2, 3];
 
-    alias I = int;
     alias J = Index!size_t;
+    enum E { e0, e1, e2 }
 
-    auto ix = x.indexedBy!I;
-    auto jx = x.indexedBy!J;
+    with (E)
+    {
+        auto xb = x.indexedBy!ubyte;
+        auto xi = x.indexedBy!uint;
+        auto xj = x.indexedBy!J;
+        auto xe = x.indexedBy!E;
 
-    // indexing with correct type
-    ix[  0 ] = 11; assert(ix[  0 ] == 11);
-    jx[J(0)] = 11; assert(jx[J(0)] == 11);
+        // indexing with correct type
+        xb[  0 ] = 11; assert(xb[  0 ] == 11);
+        xi[  0 ] = 11; assert(xi[  0 ] == 11);
+        xj[J(0)] = 11; assert(xj[J(0)] == 11);
+        xe[ e0 ] = 11; assert(xe[ e0 ] == 11);
 
-    // slicing with correct type
-    ix[  0  ..   1 ] = 12; assert(ix[  0  ..   1 ] == [12]);
-    jx[J(0) .. J(1)] = 12; assert(jx[J(0) .. J(1)] == [12]);
+        // slicing with correct type
+        xb[  0  ..   1 ] = 12; assert(xb[  0  ..   1 ] == [12]);
+        xi[  0  ..   1 ] = 12; assert(xi[  0  ..   1 ] == [12]);
+        xj[J(0) .. J(1)] = 12; assert(xj[J(0) .. J(1)] == [12]);
+        xe[ e0  ..  e1 ] = 12; assert(xe[ e0  ..  e1 ] == [12]);
 
-    // indexing with wrong type
-    static assert(!__traits(compiles, { ix[J(0)] = 11; }));
-    static assert(!__traits(compiles, { jx[  0 ] = 11; }));
+        // indexing with wrong type
+        static assert(!__traits(compiles, { xb[J(0)] = 11; }));
+        static assert(!__traits(compiles, { xi[J(0)] = 11; }));
+        static assert(!__traits(compiles, { xj[  0 ] = 11; }));
+        static assert(!__traits(compiles, { xe[  0 ] = 11; }));
 
-    // slicing with wrong type
-    static assert(!__traits(compiles, { ix[J(0), J(0)] = 11; }));
-    static assert(!__traits(compiles, { jx[  0 ,   0 ] = 11; }));
+        // slicing with wrong type
+        static assert(!__traits(compiles, { xb[J(0), J(0)] = 11; }));
+        static assert(!__traits(compiles, { xi[J(0), J(0)] = 11; }));
+        static assert(!__traits(compiles, { xj[  0 ,   0 ] = 11; }));
+        static assert(!__traits(compiles, { xe[  0 ,   0 ] = 11; }));
 
-    import std.algorithm: equal;
-    import std.algorithm.iteration: filter;
+        import std.algorithm: equal;
+        import std.algorithm.iteration: filter;
 
-    assert(equal(jx.filter!(a => a < 11), [2, 3]));
+        assert(equal(xb.filter!(a => a < 11), [2, 3]));
+        assert(equal(xi.filter!(a => a < 11), [2, 3]));
+        assert(equal(xj.filter!(a => a < 11), [2, 3]));
+        assert(equal(xe.filter!(a => a < 11), [2, 3]));
+    }
 }
