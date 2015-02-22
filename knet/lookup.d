@@ -43,10 +43,28 @@ Nds ndsByLemmaDirect(S)(Graph gr,
     return nodes;
 }
 
-/** Get All Possible Lemmas related to Expression (set of words) $(D expr).
- */
-Lemmas lemmasOfQualifiedExpr(S)(Graph gr,
-                                S expr)
+Lemmas lemmasOfLanguageQualifiedExpr(S)(Graph gr, S expr, bool trySenseSplit = true)
+    @safe pure nothrow if (isSomeString!S)
+{
+    auto split = expr.findSplit(languageSeparatorString); // TODO use splitter instead to support en:noun:city
+    const langCode = split[2];
+    if (!langCode.empty)
+    {
+        import std.conv: ConvException;
+        try
+        {
+            import std.conv: to;
+            const lang = langCode.to!Lang;
+            return gr.lemmasOfExpr(split[0], false, trySenseSplit)
+                     .filter!(lemma => (lang != Lang.unknown &&
+                                        (lemma.lang == lang))).array;
+        }
+        catch (Exception e) { /* ok for now */ }
+    }
+    return [];
+}
+
+Lemmas lemmasOfSenseQualifiedExpr(S)(Graph gr, S expr, bool tryLanguageSplit = true)
     @safe pure nothrow if (isSomeString!S)
 {
     auto split = expr.findSplit(qualifierSeparatorString); // TODO use splitter instead to support en:noun:city
@@ -59,7 +77,7 @@ Lemmas lemmasOfQualifiedExpr(S)(Graph gr,
             import std.conv: to;
             import knet.senses: specializes;
             const sense = senseCode.to!Sense;
-            return gr.lemmasOfExpr(split[2], false)
+            return gr.lemmasOfExpr(split[2], tryLanguageSplit, false)
                      .filter!(lemma => (sense != Sense.unknown &&
                                         (lemma.sense == sense ||
                                          lemma.sense.specializes(sense)))).array; // TODO functionize
@@ -73,7 +91,8 @@ Lemmas lemmasOfQualifiedExpr(S)(Graph gr,
  */
 Lemmas lemmasOfExpr(S)(Graph gr,
                        S expr,
-                       bool tryQualifierSplit = true)
+                       bool tryLanguageSplit = true,
+                       bool trySenseSplit = true)
     @safe pure /*nothrow*/ if (isSomeString!S)
 {
     static if (is(S == string)) // TODO Is there a prettier way to do this?
@@ -86,11 +105,16 @@ Lemmas lemmasOfExpr(S)(Graph gr,
         typeof(return) lemmas = gr.db.ixes.lemmasByExpr
                                   .get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
     }
-    if (tryQualifierSplit &&
-        lemmas.empty)
+    if (lemmas.empty)
     {
-        import knet.lookup: lemmasOfQualifiedExpr;
-        return gr.lemmasOfQualifiedExpr(expr); // don't try multiple qualifiers for now
+        if (tryLanguageSplit)
+        {
+            return gr.lemmasOfLanguageQualifiedExpr(expr, trySenseSplit); // don't try multiple qualifiers for now
+        }
+        if (trySenseSplit)
+        {
+            return gr.lemmasOfSenseQualifiedExpr(expr, tryLanguageSplit); // don't try multiple qualifiers for now
+        }
     }
     return lemmas;
 }
