@@ -95,19 +95,21 @@ struct IndexedBy(R, I) if (IndexableBy!(R, I))
     alias RI = size_t; /* TODO: Extract this from R somehow. */
 
     auto ref opIndex(I ix) inout { return _r[ix]; }
-    void opIndexAssign(V)(V value, I ix) {_r[ix] = value;}
+    auto ref opIndexAssign(V)(V value, I ix) { return _r[ix] = value; }
 
-    static if(!is(RI == I))
+    auto ref opSlice(I lower, I upper) inout { return _r[lower .. upper]; }
+    auto ref opSliceAssign(V)(V value, I lower, I upper) { return _r[lower .. upper] = value; }
+
+    static if (!is(RI == I))
     {
         @disable void opIndex(RI i);
         @disable void opIndexAssign(V)(V value, RI i);
+        @disable void opSlice(RI i, RI j);
+        @disable void opSliceAssign(V)(V value, RI i, RI j);
     }
 
-    auto ref opSlice(I lower, I upper) inout { return _r[lower .. upper]; }
     R _r;
-    // TODO Use opDispatch instead of alias _r this; to override only opSlice and opIndex
-
-    alias _r this;
+    alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
 }
 
 /** Instantiator for $(D IndexedBy).
@@ -119,20 +121,43 @@ auto indexedBy(I, R)(R range) if (IndexableBy!(R, I))
 
 unittest
 {
+    import std.algorithm: equal;
+
     auto x = [1, 2, 3];
 
     alias I = int;
-    auto ix = x.indexedBy!I;
-    ix[0] = 11;
-
     alias J = Index!size_t;
-    auto jx = x.indexedBy!J;
-    jx[J(0)] = 11;
 
+    auto ix = x.indexedBy!I;
+    auto jx = x.indexedBy!J;
+
+    // indexing with correct type is allowed
+    ix[0] = 11;
+    assert(ix[0] == 11);
+
+    // slicing with correct type is allowed
+    ix[0 .. 1] = 12;
+    assert(ix[0] == 12);
+
+    // indexing with correct type is allowed
+    jx[J(0)] = 11;
+    // TODO assert(jx[J(0)] == 11);
+    // TODO assert(equal(jx[0 .. 1], [11, 2, 3]));
+
+    // slicing with correct type is allowed
+    jx[J(0) .. J(1)] = 12;
+    // TODO assert(jx[J(0)] == 12);
+
+    // indexing with wrong type is disallowed
     static assert(!__traits(compiles, { ix[J(0)] = 11; }));
     static assert(!__traits(compiles, { jx[0] = 11; }));
 
+    // slicing with wrong type is disallowed
+    static assert(!__traits(compiles, { ix[J(0), J(0)] = 11; }));
+    static assert(!__traits(compiles, { jx[0, 0] = 11; }));
+
     import std.algorithm: equal;
     import std.algorithm.iteration: filter;
+
     assert(equal(jx.filter!(a => a < 11), [2, 3]));
 }
