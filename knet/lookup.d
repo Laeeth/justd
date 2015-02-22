@@ -43,10 +43,12 @@ Nds ndsByLemmaDirect(S)(Graph gr,
     return nodes;
 }
 
+import dbg: dln;
+
 Lemmas lemmasOfLanguageQualifiedExpr(S)(Graph gr, S expr, bool trySenseSplit = true)
     @safe pure nothrow if (isSomeString!S)
 {
-    auto split = expr.findSplit(languageSeparatorString); // TODO use splitter instead to support en:noun:city
+    const split = expr.findSplit(languageSeparatorString); // TODO use splitter instead to support en:noun:city
     const langCode = split[2];
     if (!langCode.empty)
     {
@@ -54,7 +56,7 @@ Lemmas lemmasOfLanguageQualifiedExpr(S)(Graph gr, S expr, bool trySenseSplit = t
         try
         {
             import std.conv: to;
-            const lang = langCode.to!Lang;
+            const lang = langCode.toLower.to!Lang;
             return gr.lemmasOfExpr(split[0], false, trySenseSplit)
                      .filter!(lemma => (lang != Lang.unknown &&
                                         (lemma.lang == lang))).array;
@@ -67,7 +69,7 @@ Lemmas lemmasOfLanguageQualifiedExpr(S)(Graph gr, S expr, bool trySenseSplit = t
 Lemmas lemmasOfSenseQualifiedExpr(S)(Graph gr, S expr, bool tryLanguageSplit = true)
     @safe pure nothrow if (isSomeString!S)
 {
-    auto split = expr.findSplit(qualifierSeparatorString); // TODO use splitter instead to support en:noun:city
+    const split = expr.findSplit(qualifierSeparatorString); // TODO use splitter instead to support en:noun:city
     const senseCode = split[0];
     if (!senseCode.empty)
     {
@@ -76,7 +78,7 @@ Lemmas lemmasOfSenseQualifiedExpr(S)(Graph gr, S expr, bool tryLanguageSplit = t
         {
             import std.conv: to;
             import knet.senses: specializes;
-            const sense = senseCode.to!Sense;
+            const sense = senseCode.toLower.to!Sense;
             return gr.lemmasOfExpr(split[2], tryLanguageSplit, false)
                      .filter!(lemma => (sense != Sense.unknown &&
                                         (lemma.sense == sense ||
@@ -105,16 +107,13 @@ Lemmas lemmasOfExpr(S)(Graph gr,
         typeof(return) lemmas = gr.db.ixes.lemmasByExpr
                                   .get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
     }
-    if (lemmas.empty)
+    if (lemmas.empty && tryLanguageSplit)
     {
-        if (tryLanguageSplit)
-        {
-            return gr.lemmasOfLanguageQualifiedExpr(expr, trySenseSplit); // don't try multiple qualifiers for now
-        }
-        if (trySenseSplit)
-        {
-            return gr.lemmasOfSenseQualifiedExpr(expr, tryLanguageSplit); // don't try multiple qualifiers for now
-        }
+        lemmas = gr.lemmasOfLanguageQualifiedExpr(expr, trySenseSplit); // don't try multiple qualifiers for now
+    }
+    if (lemmas.empty && trySenseSplit)
+    {
+        lemmas = gr.lemmasOfSenseQualifiedExpr(expr, tryLanguageSplit); // don't try multiple qualifiers for now
     }
     return lemmas;
 }
