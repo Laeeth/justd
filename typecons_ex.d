@@ -151,7 +151,7 @@ unittest
         static assert(!__traits(compiles, { xj[  0 ] = 11; }));
         static assert(!__traits(compiles, { xe[  0 ] = 11; }));
 
-        import std.algorithm: equal;
+        import std.algorithm.comparison: equal;
         import std.algorithm.iteration: filter;
 
         assert(equal(xb[].filter!(a => a < 11), [2, 3]));
@@ -198,7 +198,7 @@ unittest
         static assert(!__traits(compiles, { xj[  0  ..   0 ] = 11; }));
         static assert(!__traits(compiles, { xe[  0  ..   0 ] = 11; }));
 
-        import std.algorithm: equal;
+        import std.algorithm.comparison: equal;
         import std.algorithm.iteration: filter;
 
         assert(equal(xb.filter!(a => a < 11), [2, 3]));
