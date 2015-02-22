@@ -1,4 +1,5 @@
 # TODO
+  Name specialises noun sense in lang if both are uppercase. Warn about names that are not in uppercase.
 
 # TODO Support in operator: Nd in Graph
 
