@@ -517,6 +517,7 @@ struct Ixes
 
     // All $(D Nds) in language $(D Lang)
     // TODO StaticArrayOfElementTypeIndexedBy!(Nds, Lang.max) ndsByLang;
+    // TODO Better thant Nds[Lang] because Lang is contiguous.
 
     Location[Nd] locations;
 
