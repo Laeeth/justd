@@ -70,7 +70,7 @@ template New(T) if (is(T == class))
 /* } */
 
 import std.traits: isArray, isUnsigned, isInstanceOf;
-import std.range: hasSlicing;
+import std.range.primitives: hasSlicing;
 
 struct Index(T = size_t) if (isUnsigned!T)
 {
@@ -80,10 +80,13 @@ struct Index(T = size_t) if (isUnsigned!T)
     private T _ix = 0;
 }
 
+enum isIndex(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
+
 /** Check if $(D R) is indexable by $(D I). */
-enum isIndexableBy(R, I) = (isArray!R &&     // TODO use hasIndexing!R
+enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
                             (isUnsigned!I || // TODO should we allow isUnsigned here?
                              isInstanceOf!(Index, I) ||
+                             isIndex!I ||
                              is(I == enum)));
 
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
@@ -126,7 +129,7 @@ auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
     return IndexedBy!(R, I)(range);
 }
 
-unittest
+@safe pure nothrow unittest
 {
     int[3] x = [1, 2, 3];
     alias J = Index!size_t;
@@ -161,7 +164,7 @@ unittest
     }
 }
 
-unittest
+@safe pure nothrow unittest
 {
     auto x = [1, 2, 3];
     alias J = Index!size_t;
@@ -206,6 +209,31 @@ unittest
         assert(equal(xj.filter!(a => a < 11), [2, 3]));
         assert(equal(xe.filter!(a => a < 11), [2, 3]));
     }
+}
+
+@safe pure nothrow unittest
+{
+    auto x = [1, 2, 3];
+    struct I(T = size_t)
+    {
+        this(T ix) { this._ix = ix; }
+        T opCast(U : T)() const { return _ix; }
+        private T _ix = 0;
+    }
+    alias J = I!size_t;
+    auto xj = x.indexedBy!J;
+}
+
+@safe pure nothrow unittest
+{
+    auto x = [1, 2, 3];
+    struct I(T = size_t)
+    {
+        this(T ix) { this._ix = ix; }
+        private T _ix = 0;
+    }
+    alias J = I!size_t;
+    static assert(!__traits(compiles, { auto xj = x.indexedBy!J; }));
 }
 
 /** TODO shorter name */
