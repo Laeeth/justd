@@ -53,7 +53,7 @@ Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
     return role;
 }
 
-bool readWordNetIndexLine(R, N)(Graph graph,
+bool readWordNetIndexLine(R, N)(Graph gr,
                                 const R line,
                                 const N lnr,
                                 const Lang lang = Lang.unknown,
@@ -108,7 +108,7 @@ bool readWordNetIndexLine(R, N)(Graph graph,
     //     // auto links = ids.array;
     // }
 
-    auto node = graph.add(lemma, Lang.en, sense, Origin.wordnet);
+    auto node = gr.add(lemma, Lang.en, sense, Origin.wordnet);
 
     // dln(at(node).lemma.expr, " has pointers ", ptr_symbol);
     // auto meaning = Entry!Links(words[1].front.decodeWordSense,
@@ -121,7 +121,7 @@ bool readWordNetIndexLine(R, N)(Graph graph,
 /** Read WordNet Index File $(D fileName).
     Manual page: wndb
 */
-void readWordNetIndex(Graph graph,
+void readWordNetIndex(Graph gr,
                       string fileName,
                       bool useMmFile = false,
                       Lang lang = Lang.unknown,
@@ -134,7 +134,7 @@ void readWordNetIndex(Graph graph,
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            graph.readWordNetIndexLine(line, lnr, lang, sense, useMmFile);
+            gr.readWordNetIndexLine(line, lnr, lang, sense, useMmFile);
             lnr++;
         }
     }
@@ -143,7 +143,7 @@ void readWordNetIndex(Graph graph,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            graph.readWordNetIndexLine(line, lnr, lang, sense);
+            gr.readWordNetIndexLine(line, lnr, lang, sense);
             lnr++;
         }
     }
@@ -176,7 +176,7 @@ import std.typecons: Tuple;
 alias Row = Tuple!(SynSetOffset, Ptrs);
 alias Rows = Row[];
 
-size_t readWordNetDataLine(R, N)(Graph graph,
+size_t readWordNetDataLine(R, N)(Graph gr,
                                  ref Rows rows,
                                  const R line,
                                  const N lnr,
@@ -238,20 +238,20 @@ size_t readWordNetDataLine(R, N)(Graph graph,
         const lex_id = lex_id_s.parse!uint(16);
         parts.popFront;
 
-        synset ~= graph.add(word, lang, sense, Origin.wordnet);
+        synset ~= gr.add(word, lang, sense, Origin.wordnet);
     }
 
     // store it in local associative array
-    if (auto existingSynSet = synset_offset in graph.db.ixes.synsetByOffset)
+    if (auto existingSynSet = synset_offset in gr.db.ixes.synsetByOffset)
     {
         *existingSynSet ~= synset;
     }
     else
     {
-        graph.db.ixes.synsetByOffset[synset_offset] = synset;
+        gr.db.ixes.synsetByOffset[synset_offset] = synset;
     }
 
-    graph.connectCycle(synset, Rel.synonymFor, Origin.wordnet, true); // TODO use connectFully instead?
+    gr.connectCycle(synset, Rel.synonymFor, Origin.wordnet, 1.0, true);
 
     // p_cnt: pointer count
     auto p_cnt = parts.front.to!uint; parts.popFront;
@@ -300,7 +300,7 @@ size_t readWordNetDataLine(R, N)(Graph graph,
 /** Read WordNet Data File $(D fileName).
     Manual page: wndb
 */
-void readWordNetData(Graph graph,
+void readWordNetData(Graph gr,
                      ref Rows rows,
                      string fileName,
                      bool useMmFile = false,
@@ -315,7 +315,7 @@ void readWordNetData(Graph graph,
         import mmfile_ex: mmFileLinesRO;
         foreach (line; mmFileLinesRO(fileName))
         {
-            wordCount += graph.readWordNetDataLine(rows, line, lnr, lang, sense, useMmFile);
+            wordCount += gr.readWordNetDataLine(rows, line, lnr, lang, sense, useMmFile);
             lnr++;
         }
     }
@@ -324,7 +324,7 @@ void readWordNetData(Graph graph,
         import std.stdio: File;
         foreach (line; File(fileName).byLine)
         {
-            wordCount += graph.readWordNetDataLine(rows, line, lnr, lang, sense);
+            wordCount += gr.readWordNetDataLine(rows, line, lnr, lang, sense);
             lnr++;
         }
     }
@@ -335,9 +335,8 @@ void readWordNetData(Graph graph,
     writeln(`Read `, lnr, ` synonym sets (synsets) with `, wordCount, ` words from `, fileName);
 }
 
-
 /// Read WordNet Database (dict) in directory $(D dirPath).
-void readWordNet(Graph graph,
+void readWordNet(Graph gr,
                  string dirPath)
 {
     import std.path: expandTilde, buildNormalizedPath;
@@ -347,36 +346,82 @@ void readWordNet(Graph graph,
 
     if (false)              // these indexes are not needed only data files
     {
-        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
-        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
-        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
-        graph.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
+        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.adj`), false, lang, Sense.adjective);
+        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.adv`), false, lang, Sense.adverb);
+        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.noun`), false, lang, Sense.noun);
+        gr.readWordNetIndex(dirPath.buildNormalizedPath(`index.verb`), false, lang, Sense.verb);
     }
 
     Rows rows;
 
-    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
-    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
-    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
-    graph.readWordNetData(rows, dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
+    gr.readWordNetData(rows, dirPath.buildNormalizedPath(`data.adj`), false, lang, Sense.adjective);
+    gr.readWordNetData(rows, dirPath.buildNormalizedPath(`data.adv`), false, lang, Sense.adverb);
+    gr.readWordNetData(rows, dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
+    gr.readWordNetData(rows, dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
 
     // link them together
     foreach (const row; rows)
     {
-        if (auto srcSynSet_ = row[0] in graph.db.ixes.synsetByOffset)
+        if (auto srcSynSet_ = row[0] in gr.db.ixes.synsetByOffset)
         {
             foreach (const ptr; row[1])
             {
-                if (auto dstSynSet_ = ptr.synset_offset in graph.db.ixes.synsetByOffset)
+                if (auto dstSynSet_ = ptr.synset_offset in gr.db.ixes.synsetByOffset)
                 {
-                    if (ptr.isSemantic)
+                    if (ptr.isSemantic) // semantic M-to-N relation
                     {
-                        graph.connectMtoN(*srcSynSet_,
-                                          ptr.role,
-                                          *dstSynSet_,
-                                          Origin.wordnet, 1.0, true, true);
+                        const optimized = true;
+                        if (optimized)
+                        {
+                            bool done = false;
+                            // See: http://forum.dlang.org/thread/szhxwxldpwsiuewyztqk@forum.dlang.org#post-szhxwxldpwsiuewyztqk:40forum.dlang.org
+                            import std.algorithm: countUntil;
+
+                            if ((*srcSynSet_).length == 1)
+                            {
+                                const Nd srcNd = (*srcSynSet_).front;
+                                const ptrdiff = (*dstSynSet_)[].countUntil!(nd => nd != srcNd);
+                                if (ptrdiff != -1)
+                                {
+                                    const Nd dstNd = (*dstSynSet_)[ptrdiff];
+                                    gr.connect(srcNd,
+                                               ptr.role,
+                                               dstNd,
+                                               Origin.wordnet, 1.0, true, true);
+                                    done = true;
+                                }
+                            }
+                            else
+                            {
+                                const Nd dstNd = (*dstSynSet_).front;
+                                const ptrdiff = (*srcSynSet_)[].countUntil!(nd => nd != dstNd);
+                                if (ptrdiff != -1)
+                                {
+                                    const Nd srcNd = (*srcSynSet_)[ptrdiff];
+                                    gr.connect(srcNd,
+                                               ptr.role,
+                                               dstNd,
+                                               Origin.wordnet, 1.0, true, true);
+                                    done = true;
+                                }
+                            }
+                            if (!done)
+                            {
+                                writeln("Could not connect SynSet ",
+                                        (*srcSynSet_)[],
+                                        " with ",
+                                        (*dstSynSet_)[]);
+                            }
+                        }
+                        else
+                        {
+                            gr.connectMtoN(*srcSynSet_,
+                                           ptr.role,
+                                           *dstSynSet_,
+                                           Origin.wordnet, 1.0, true, true);
+                        }
                     }
-                    else
+                    else        // lexical 1-to-1 relation
                     {
                         assert(ptr.srcSynSetWordNr != 0);
                         assert(ptr.dstSynSetWordNr != 0);
@@ -384,16 +429,16 @@ void readWordNet(Graph graph,
                         const Nd dstNd = (*dstSynSet_)[ptr.dstSynSetWordNr - 1];
                         if (srcNd != dstNd)
                         {
-                            graph.connect(srcNd, ptr.role, dstNd, Origin.wordnet, 1.0, true);
+                            gr.connect(srcNd, ptr.role, dstNd, Origin.wordnet, 1.0, true);
                         }
                         else
                         {
                             if (false)
                             {
                                 writeln("Skipping self connection of ",
-                                        graph[srcNd].lemma.expr,
+                                        gr[srcNd].lemma.expr,
                                         " >=", ptr.role.rel, " => ",
-                                        graph[dstNd].lemma.expr,
+                                        gr[dstNd].lemma.expr,
                                         "");
                             }
                         }
