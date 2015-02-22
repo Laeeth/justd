@@ -602,115 +602,6 @@ class Graph
         ref inout(Link) opUnary(string s)(const Ln ln) inout if (s == `*`) { return at(ln); }
     }
 
-    Nd ndByLemmaMaybe(in Lemma lemma) pure
-    {
-        return get(db.ixes.ndByLemma, lemma, typeof(return).init);
-    }
-
-    /** Try to Get Single Node related to $(D word) in the interpretation
-        (semantic context) $(D sense).
-    */
-    Nds ndsByLemmaDirect(S)(S expr,
-                            Lang lang,
-                            Sense sense,
-                            Ctx context) pure if (isSomeString!S)
-    {
-        typeof(return) nodes;
-        const lemma = Lemma(expr, lang, sense, context);
-        if (const lemmaNd = lemma in db.ixes.ndByLemma)
-        {
-            nodes ~= *lemmaNd; // use it
-        }
-        else
-        {
-            static if (false) // TODO Enable this logic by moving findWordsSplit to Graph
-            {
-                // try to lookup parts of word
-                const wordsSplit = wordnet.findWordsSplit(expr, [lang]); // split in parts
-                if (wordsSplit.length >= 2)
-                {
-                    import std.algorithm.iteration: joiner;
-                    if (const lemmaFixedNd = Lemma(wordsSplit.joiner(`_`).to!S,
-                                                   lang, sense, context) in db.ixes.ndByLemma)
-                    {
-                        nodes ~= *lemmaFixedNd;
-                    }
-                }
-            }
-        }
-        return nodes;
-    }
-
-    /** Get All Possible Lemmas related to Expression (set of words) $(D expr).
-     */
-    Lemmas lemmasOfQualifiedExpr(S)(S expr)
-        @safe pure nothrow if (isSomeString!S)
-    {
-        auto split = expr.findSplit(qualifierSeparatorString); // TODO use splitter instead to support en:noun:city
-        const senseCode = split[0];
-        if (!senseCode.empty)
-        {
-            import std.conv: ConvException;
-            try
-            {
-                import std.conv: to;
-                const sense = senseCode.to!Sense;
-                return lemmasOfExpr(split[2], false).filter!(lemma => (sense != Sense.unknown &&
-                                                                       (lemma.sense == sense ||
-                                                                        lemma.sense.specializes(sense)))).array; // TODO functionize
-            }
-            catch (Exception e) { /* ok for now */ }
-        }
-        return [];
-    }
-
-    /** Get All Possible Lemmas related to Expression (set of words) $(D expr).
-     */
-    Lemmas lemmasOfExpr(S)(S expr, bool tryQualifierSplit = true)
-        @safe pure /*nothrow*/ if (isSomeString!S)
-    {
-        static if (is(S == string)) // TODO Is there a prettier way to do this?
-        {
-            typeof(return) lemmas =  db.ixes.lemmasByExpr.get(expr, typeof(return).init);
-        }
-        else
-        {
-            typeof(return) lemmas = db.ixes.lemmasByExpr.get(expr.dup, typeof(return).init); // TODO Why is dup needed here?
-        }
-        if (tryQualifierSplit &&
-            lemmas.empty)
-        {
-            return lemmasOfQualifiedExpr(expr); // don't try multiple qualifiers for now
-        }
-        return lemmas;
-    }
-
-    /** Get All Possible Lemmas related to Word $(D word).
-     */
-    Lemmas lemmasOfWord(S)(S word) if (isSomeString!S)
-    {
-        static if (is(S == string)) // TODO Is there a prettier way to do this?
-        {
-            return db.lemmasByWord.get(word, typeof(return).init);
-        }
-        else
-        {
-            return db.lemmasByWord.get(word.dup, typeof(return).init); // TODO Why is dup needed here?
-        }
-    }
-
-    /** Try Lookup Already Interned $(D expr.
-     */
-    auto tryReuseExpr(S)(S expr) @safe
-    {
-        if (auto lemmas = expr in db.ixes.lemmasByExpr)
-        {
-            import std.range: front;
-            return (*lemmas).front.expr;
-        }
-        return expr;
-    }
-
     /** Internalize $(D Lemma) of $(D expr).
         Returns: either existing specialized lemma or a reference to the newly stored one.
      */
@@ -800,49 +691,6 @@ class Graph
         catch (std.exception.ErrnoException e)
         {
             writeln(`Could not open file `, path);
-        }
-    }
-
-    /// Get Learn Possible Senses for $(D expr).
-    auto sensesOfExpr(S)(S expr, bool includeUnknown = false) @safe pure if (isSomeString!S)
-    {
-        return lemmasOfExpr(expr).map!(lemma => lemma.sense)
-                                 .filter!(sense => (includeUnknown ||
-                                                    sense != Sense.unknown));
-    }
-
-    /// Get Possible Common Sense for $(D a) and $(D b). TODO N-ary
-    auto commonSenses(S1, S2)(S1 a, S2 b,
-                              bool includeUnknown = false) @safe pure if (isSomeString!S1 &&
-                                                                          isSomeString!S2)
-    {
-        import std.algorithm: setIntersection;
-        return setIntersection(sensesOfExpr(a, includeUnknown).sorted,
-                               sensesOfExpr(b, includeUnknown).sorted);
-    }
-
-    /// Get Possible Unique Common Sense for $(D a) and $(D b). TODO N-ary
-    Sense uniqueCommonSense(S1, S2)(S1 a, S2 b,
-                                    bool includeUnknown = false) @safe pure if (isSomeString!S1 &&
-                                                                                isSomeString!S2)
-    {
-        auto senses = commonSenses(a, b, includeUnknown);
-        return senses.count == 1 ? senses.front : Sense.unknown;
-    }
-
-    /// Learn Opposites.
-    void learnOpposites(Lang lang, Origin origin = Origin.manual)
-    {
-        foreach (expr; File(`../knowledge/` ~ lang.to!string ~ `/opposites.txt`).byLine.filter!(a => !a.empty))
-        {
-            auto split = expr.findSplit(roleSeparatorString); // TODO allow key to be ElementType of Range to prevent array creation here
-            const auto first = split[0], second = split[2];
-            NWeight weight = 1.0;
-            const sense = uniqueCommonSense(first, second);
-            connect(add(first.idup, lang, sense, origin),
-                    Role(Rel.oppositeOf),
-                    add(second.idup, lang, sense, origin),
-                    origin, weight);
         }
     }
 
@@ -999,6 +847,18 @@ class Graph
                            S[3] forms) if (isSomeString!S)
     {
         return learnAdjective(lang, forms[0], forms[1], forms[2]);
+    }
+
+    /** Try Lookup Already Interned $(D expr).
+     */
+    auto tryReuseExpr(S)(S expr) @safe
+    {
+        if (auto lemmas = expr in db.ixes.lemmasByExpr)
+        {
+            import std.range: front;
+            return (*lemmas).front.expr;
+        }
+        return expr;
     }
 
     /** Lookup-or-Store $(D Node) named $(D expr) in language $(D lang). */

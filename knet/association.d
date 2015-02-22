@@ -11,6 +11,7 @@ Nd contextOf(Exprs)(Graph gr,
                                                      isSomeString!(ElementType!Exprs))
 {
     import std.algorithm: joiner;
+    import knet.lookup: lemmasOfExpr;
     auto lemmas = exprs.map!(expr => gr.lemmasOfExpr(expr)).joiner;
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
     return gr.contextOf(nds, filter, durationInMsecs);

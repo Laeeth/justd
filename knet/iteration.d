@@ -70,6 +70,7 @@ auto linksOf(Graph gr,
 auto ndsOf(S)(Graph gr,
               S expr) pure if (isSomeString!S)
 {
+    import knet.lookup: lemmasOfExpr;
     return gr.lemmasOfExpr(expr).map!(lemma => gr.db.ixes.ndByLemma[lemma]);
 }
 
@@ -89,13 +90,15 @@ Nds ndsOf(S)(Graph gr,
         sense != Sense.unknown &&
         context != anyContext) // if exact Lemma key can be used
     {
+        import knet.lookup: ndsByLemmaDirect;
         return gr.ndsByLemmaDirect(expr, lang, sense, context); // fast hash lookup
     }
     else
     {
-        auto tmp = gr.ndsOf(expr).filter!(a => (lang == Lang.unknown ||
-                                                   gr[a].lemma.lang == lang))
-                              .array;
+        auto tmp = gr.ndsOf(expr)
+                     .filter!(a => (lang == Lang.unknown ||
+                                    gr[a].lemma.lang == lang))
+                     .array;
         static if (useArray)
         {
             nodes = Nds(tmp); // TODO avoid allocations
@@ -205,6 +208,7 @@ NWeight[Lang] languagesOf(R)(Graph gr,
     typeof(return) hist;
     foreach (const word; text)
     {
+        import knet.lookup: lemmasOfExpr;
         foreach (const lemma; gr.lemmasOfExpr(word))
         {
             ++hist[lemma.lang];

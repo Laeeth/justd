@@ -329,6 +329,7 @@ void learnPreciseThings(Graph graph)
             try { graph.learnMto1(lang, rdT(buildPath(dirPath, `contronym.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
             catch (FileException e) {}
 
+            import knet.learning: learnOpposites;
             try { graph.learnOpposites(lang); }
             catch (ErrnoException e) {}
         }

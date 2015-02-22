@@ -377,6 +377,7 @@ bool showNodes(Graph gr,
         const arg = split[0];
         if (!arg.empty)
         {
+            import knet.lookup: sensesOfExpr;
             auto senses = gr.sensesOfExpr(arg, true);
             gr.showSenses(senses);
         }
