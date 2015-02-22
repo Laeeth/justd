@@ -209,4 +209,5 @@ unittest
     }
 }
 
-enum StaticArrayOfElementTypeIndexBy(E, I) = IndexedBy!(E[I.elementCountOf!E], I);
+/** TODO shorter name */
+enum StaticArrayOfElementTypeIndexedBy(E, I) = IndexedBy!(E[I.elementCountOf!E], I);
