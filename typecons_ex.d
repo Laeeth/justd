@@ -69,7 +69,10 @@ template New(T) if (is(T == class))
 /*     assert(New!C == new C); */
 /* } */
 
-struct Index(T = size_t)
+import std.traits: isArray, isUnsigned, isInstanceOf;
+import std.range: hasSlicing;
+
+struct Index(T = size_t) if (isUnsigned!T)
 {
     @safe pure: @nogc nothrow:
     this(T ix) { this._ix = ix; }
@@ -77,13 +80,10 @@ struct Index(T = size_t)
     private T _ix = 0;
 }
 
-import std.traits: isArray, isUnsigned, isInstanceOf;
-import std.range: hasSlicing;
-
-enum IndexableBy(R, I) = (isArray!R &&     // TODO use hasIndexing!R
-                          (isUnsigned!I || // TODO should we allow isUnsigned here?
-                           isInstanceOf!(Index, I) ||
-                           is(I == enum)));
+enum isIndexableBy(R, I) = (isArray!R &&     // TODO use hasIndexing!R
+                            (isUnsigned!I || // TODO should we allow isUnsigned here?
+                             isInstanceOf!(Index, I) ||
+                             is(I == enum)));
 
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
@@ -91,7 +91,7 @@ enum IndexableBy(R, I) = (isArray!R &&     // TODO use hasIndexing!R
     TODO Use std.range.indexed when I is an enum with non-contigious enumerators
     TODO Rename to By, by?!
    */
-struct IndexedBy(R, I) if (IndexableBy!(R, I))
+struct IndexedBy(R, I) if (isIndexableBy!(R, I))
 {
     auto ref opIndex(I i) inout             { return _r[cast(size_t)i]; }
     auto ref opIndexAssign(V)(V value, I i) { return _r[cast(size_t)i] = value; }
@@ -120,7 +120,7 @@ struct IndexedBy(R, I) if (IndexableBy!(R, I))
 
 /** Instantiator for $(D IndexedBy).
    */
-auto indexedBy(I, R)(R range) if (IndexableBy!(R, I))
+auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
 {
     return IndexedBy!(R, I)(range);
 }
