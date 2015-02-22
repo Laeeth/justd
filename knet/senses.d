@@ -39,17 +39,30 @@ enum Sense:ubyte
     nounRegular,
     nounIrregular,
 
-    nounSingular,               // skog, forest
-    nounSingularIndefinite, // en skog, a forest
-    nounSingularDefinite, // skogen, the forest
+    nounSingular,               // Swedish: skog, English: forest
+    nounSingularIndefinite,     // Swedish: en skog, English: a forest
+    nounSingularDefinite,       // Swedish: skogen, English: the forest
+
     nounSingularMale,
     nounSingularFemale,
     nounSingularNeuter,
 
     nounPlural,
+    nounPluralMale,
+    nounPluralFemale,
+    nounPluralNeuter,
+
     nounUncountable,
 
     nounNominative,
+
+    nounDemonym,                // https://en.wikipedia.org/wiki/Demonym
+    nounDemonymSingular,
+    nounDemonymSingularMale,
+    nounDemonymSingularFemale,
+    nounDemonymPlural,
+    nounDemonymPluralMale,
+    nounDemonymPluralFemale,
 
     numeric,
 
@@ -89,17 +102,23 @@ enum Sense:ubyte
 
     population,
 
-    name, properNoun = name, properName = properNoun, /// name, or proper noun
+    name, properNoun = name, properName = properNoun, eigenName = properName, /// name, or proper noun
     nameMale,               /// proper name
     nameFemale,             /// proper name
     surname,                /// proper surname
 
-    nameLocation,           /// Stockholm
-    namePerson,             /// John
-    nameOrganisation,       /// CIA
-    city,                   /// Skänninge
-    country,                /// Sweden
-    newspaper,              /// Tidning
+    location,                   /// Stockholm
+    namePerson,                 /// John
+    organisation,               /// CIA
+
+    region,
+    city,                       /// Skänninge
+    county,                     /// Cornwall
+    province,
+    state,                      /// Ohio
+    country,                    /// Sweden
+    continent,                  /// Europe
+    newspaper,                  /// Tidning
 
     timePeriod,
     weekday,
@@ -354,10 +373,24 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nounSingular: return `singular noun`;
         case nounSingularDefinite: return `definite singular noun`;
         case nounSingularIndefinite: return `indefinite singular noun`;
+
         case nounSingularMale: return `male singular noun`;
         case nounSingularFemale: return `female singular noun`;
         case nounSingularNeuter: return `neuter singular noun`;
+
         case nounPlural: return `plural noun`;
+        case nounPluralMale: return `male plural noun`;
+        case nounPluralFemale: return `female plural noun`;
+        case nounPluralNeuter: return `neuter plural noun`;
+
+        case nounDemonym: return "demonym";
+        case nounDemonymSingular: return "singular demonym";
+        case nounDemonymSingularMale: return "singular male demonym";
+        case nounDemonymSingularFemale: return "singular female demonym";
+        case nounDemonymPlural: return "plural demonym";
+        case nounDemonymPluralMale: return "plural male demonym";
+        case nounDemonymPluralFemale: return "plural female demonym";
+
         case nounNominative: return `nominative noun`;
 
         case numeric: return `numeric`;
@@ -400,11 +433,16 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nameFemale: return `female name`;
         case surname: return `surname`;
 
-        case nameLocation: return `location name`;
+        case location: return `location name`;
         case namePerson: return `person name`;
-        case nameOrganisation: return `organisation name`;
+        case organisation: return `organisation name`;
+        case region: return `region`;
         case city: return `city`;
+        case county: return `county`;
+        case province: return `province`;
+        case state: return `state`;
         case country: return `country`;
+        case continent: return `continent`;
         case newspaper: return `newspaper`;
 
         case timePeriod: return `time period`;
@@ -696,8 +734,16 @@ import std.algorithm.comparison: among;
         with (Sense) return (sense.among!(nounSingular,
                                           nounSingularIndefinite,
                                           nounSingularDefinite,
+                                          nounSingularMale,
                                           nounSingularFemale,
                                           nounSingularNeuter) != 0);
+    }
+    bool isNounPlural(Sense sense)
+    {
+        with (Sense) return (sense.among!(nounPlural,
+                                          nounPluralMale,
+                                          nounPluralFemale,
+                                          nounPluralNeuter) != 0);
     }
     bool isNounCollective(Sense sense)
     {
@@ -706,18 +752,37 @@ import std.algorithm.comparison: among;
                                           nounCollectiveCreatures,
                                           nounCollectiveThings) != 0);
     }
+    bool isNounDemonymSingular(Sense sense)
+    {
+        with (Sense) return (sense.among!(nounDemonymSingular,
+                                          nounDemonymSingularMale,
+                                          nounDemonymSingularFemale) != 0);
+    }
+    bool isNounDemonymPlural(Sense sense)
+    {
+        with (Sense) return (sense.among!(nounDemonymPlural,
+                                          nounDemonymPluralMale,
+                                          nounDemonymPluralFemale) != 0);
+    }
+    bool isNounDemonym(Sense sense)
+    {
+        with (Sense) return (sense.among!(nounDemonym) != 0 ||
+                             sense.isNounDemonymSingular ||
+                             sense.isNounDemonymPlural);
+    }
     bool isNoun(Sense sense)
     {
         with (Sense) return (sense.isNounAbstract ||
                              sense.isNounConcrete ||
                              sense.isFood ||
                              sense.isNounSingular ||
+                             sense.isNounPlural ||
                              sense.isNounCollective ||
+                             sense.isNounDemonym ||
                              sense.among!(noun,
                                           nounNeuter,
                                           nounRegular,
                                           nounIrregular,
-                                          nounPlural,
                                           nounNominative,
                                           nounUncountable,
                                           nounAbbrevation,
@@ -774,18 +839,29 @@ import std.algorithm.comparison: among;
                                          nameMale,
                                          nameFemale,
                                          surname,
-                                         nameLocation,
+                                         location,
                                          namePerson,
-                                         nameOrganisation,
+                                         organisation,
+                                         region,
                                          city,
+                                         county,
+                                         province,
+                                         state,
                                          country,
+                                         continent,
                                          newspaper) != 0;
     }
+    alias isProperNoun = isName;
     bool isLocation(Sense sense)
     {
-        with (Sense) return sense.among!(nameLocation,
+        with (Sense) return sense.among!(location,
+                                         region,
                                          city,
-                                         country) != 0;
+                                         county,
+                                         province,
+                                         state,
+                                         country,
+                                         continent) != 0;
     }
     bool isVerb(Sense sense)
     {
@@ -1011,8 +1087,21 @@ bool specializes(Sense special,
                  bool uniquely = true,
                  string expr = null,
                  Lang lang = Lang.unknown)
-    @safe @nogc pure nothrow
+    @safe pure nothrow // @nogc
 {
+    bool capitalized = false;
+
+    try
+    {
+        if (expr)
+        {
+            import std.range: front;
+            import std.uni: isUpper;
+            capitalized = expr.front.isUpper;
+        }
+    }
+    catch (Exception e) { }
+
     if (special == general) return false;
     switch (general) with (Sense)
     {
@@ -1022,9 +1111,26 @@ bool specializes(Sense special,
                                            letterUppercase) != 0;
         case phrase: return special.isPhrase;
         case noun: return (special.isNoun ||
-                           special.isPronoun);
-        case nounSingular: return (special.isNounSingular);
-        case nounCollective: return (special.isNounCollective);
+                           special.isPronoun ||
+                           special.isName);
+        case nounDemonym: return (special.isNounDemonym);
+        case nounDemonymSingular: return (special.isNounDemonymSingular);
+        case nounDemonymPlural: return (special.isNounDemonymPlural);
+
+        // TODO https://en.wikipedia.org/wiki/Capitalization
+        case nounSingular: return (special.isNounSingular ||
+                                   (lang.among!(Lang.en, // TODO don't include weekdays, months, languages
+                                                Lang.sv) &&
+                                    capitalized &&
+                                    special.isName)); // TODO functionize. list of languages that don't capitalize nouns (not German)
+        case nounPlural: return (special.isNounPlural);
+        case nounCollective: return (special.isNounCollective ||
+                                     (lang.among!(Lang.en, Lang.sv) &&
+                                      capitalized &&
+                                      special.isName)); // TODO functionize
+
+        case location: return special.isLocation;
+
         case food: return special.isFood;
         case quantifier: return (special.isQuantifier &&
                                  special == numeral);
@@ -1091,7 +1197,7 @@ bool generalizes(Sense general,
                  bool uniquely = true,
                  string expr = null,
                  Lang lang = Lang.unknown)
-    @safe @nogc pure nothrow
+    @safe pure nothrow // @nogc
 {
     return specializes(special, general, uniquely, expr, lang);
 }
