@@ -1,75 +1,75 @@
 Jack Frostkung Bore
 
-commander in chiefsupreme commanderöverbefälhavare
+nounPhrase:commander in chiefsupreme commanderöverbefälhavare
 
-aggregatesmängdmått
+nounSingular:aggregatesmängdmått
 
-United Nations Children's FundFN:s barnfond
-United States of AmericaAmerikas Förenta Stater
+nounSingular:United Nations Children's FundFN:s barnfond
+nounPlural:United States of AmericaAmerikas Förenta Stater
 
-part of speechordklass
-nounsubstantiv
-verbverb
-pronounpronomen
-conjunctionkonjunktion
-interjectioninterjektion
-adjectiveadjektiv
-determinerdeterminativt pronomen
-demonstrativedemonstrativt pronomen
+nounSingular:part of speechordklass
+nounSingular:nounsubstantiv
+nounSingular:verbverb
+nounSingular:pronounpronomen
+nounSingular:conjunctionkonjunktion
+nounSingular:interjectioninterjektion
+nounSingular:adjectiveadjektiv
+nounSingular:determinerdeterminativt pronomen
+nounSingular:demonstrativedemonstrativt pronomen
 
-figure of speechstilfigur
+nounPhrase:figure of speechstilfigur
 
-sayingproverbadageordspråk
+nounSingular:sayingproverbadageordspråk
 
-umlautomljud
+nounSingular:umlautomljud
 
-actorskådespelare
-judgedomare
-actressskådespelerska
-lawyeradvokat
-authorförfattare
-mechanicmekanikermontör
-bakerbagare
-musicianmusiker
-baker's shopbageri
-nursesjuksköterska
-booksellerbokhandlare
-officialämbetsman
-bookshopbokaffär
-opticianeye doctoroptiker
-businessmanaffärsman
-paintermålare
-butcherslaktare
-photographerfotograf
-pharmacistfarmaceut
-policemanpolis
-pharmacyapotek
-postmanbrevbärare
-cookkockkokerska
-priestpräst
-customerkund
-publisherförläggare
-dentisttandläkare
-scientistvetenskapsman
-doctorläkaredoktor
-shoemakerskomakare
-employeeanställdarbetstagare
-shopstorebutik
-engineeringenjör
-singersångaresångerska
-fishermanfiskare
-studentstudent
-gardenerträdgårdsmästare
-surgeonkirurg
-hairdresserhårfrisör
-tailorskräddare
-jewelerjuvelerare
-teacherlärare
-journalistjournalist
-workmanarbetare
+nounSingular:actorskådespelare
+nounSingular:judgedomare
+nounSingular:actressskådespelerska
+nounSingular:lawyeradvokat
+nounSingular:authorförfattare
+nounSingular:mechanicmekanikermontör
+nounSingular:bakerbagare
+nounSingular:musicianmusiker
+nounPhrase:baker's shopnounSingular:bageri
+nounSingular:nursesjuksköterska
+nounSingular:booksellerbokhandlare
+nounSingular:officialämbetsman
+nounSingular:bookshopbokaffär
+nounSingular:opticianeye doctoroptiker
+nounSingular:businessmanaffärsman
+nounSingular:paintermålare
+nounSingular:butcherslaktare
+nounSingular:photographerfotograf
+nounSingular:pharmacistfarmaceut
+nounSingular:policemanpolis
+nounSingular:pharmacyapotek
+nounSingular:postmanbrevbärare
+nounSingular:cookkockkokerska
+nounSingular:priestpräst
+nounSingular:customerkund
+nounSingular:publisherförläggare
+nounSingular:dentisttandläkare
+nounSingular:scientistvetenskapsman
+nounSingular:doctorläkaredoktor
+nounSingular:shoemakerskomakare
+nounSingular:employeeanställdarbetstagare
+nounSingular:shopstorebutik
+nounSingular:engineeringenjör
+nounSingular:singersångaresångerska
+nounSingular:fishermanfiskare
+nounSingular:studentstudent
+nounSingular:gardenerträdgårdsmästare
+nounSingular:surgeonkirurg
+nounSingular:hairdresserhårfrisör
+nounSingular:tailorskräddare
+nounSingular:jewelerjuvelerare
+nounSingular:teacherlärare
+nounSingular:journalistjournalist
+nounSingular:workmanarbetare
 
-question markfrågetecken
-exclamation markutropstecken
+nounSingular:question markfrågetecken
+nounSingular:exclamation markutropstecken
 
 weekday:Fridayweekday:fredag
 weekday:Saturdayweekday:lördag
@@ -78,3 +78,5 @@ weekday:Wednesdayweekday:onsdag
 weekday:Sundayweekday:söndag
 weekday:Tuesdayweekday:tisdag
 weekday:Thursdayweekday:torsdag
+
+nounSingular:demonyminvånarnamn
