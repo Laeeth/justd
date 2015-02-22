@@ -22,8 +22,10 @@ void load(Graph gr,
     writeln(`Loading tables from "`, cachePath, `" ...`);
     try
     {
+        // TODO functionize
         auto file = File(cachePath, `rb`);
-        ubyte[] dbData; dbData.length = file.size; file.rawRead(dbData);
+        ubyte[] dbData; dbData.length = file.size;
+        file.rawRead(dbData);
         // dbData.unpack(gr.db); // TODO make this compile
         // dbData.unpack(gr.stat); // TODO make this compile
     }
@@ -47,8 +49,12 @@ auto loadUniquelySensedLemmas(Graph gr,
         writeln(`Loading all Lemmas with unique Sense in a given language from "`,
                 cachePath,
                 `" ...`);
+
+        // TODO functionize
         auto file = File(cachePath, `wb`);
-        ubyte[] data; file.rawRead(data);
+        ubyte[] data; data.length = file.size;
+        file.rawRead(data);
+
         size_t cnt = 0;
         while (!data.empty)
         {
