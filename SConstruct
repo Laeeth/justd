@@ -4,7 +4,7 @@ import os.path
 import multiprocessing
 
 # half because DMD is currently too heavy on memory
-num_jobs = int(multiprocessing.cpu_count() + 1)
+num_jobs = min(int(multiprocessing.cpu_count() + 1), 5)
 SetOption("num_jobs", num_jobs)
 print "scons: Using at maximum " + str(num_jobs) + " number of jobs"
 
