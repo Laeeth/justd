@@ -21,8 +21,14 @@ if build_type == "debug-unittest":
     dflags += ["-debug", "-g", "-gs", "-unittest"]
 elif build_type == "release":
     dflags += ["-release"]
+elif build_type == "debug-release":
+    dflags += ["-debug-release"]
 elif build_type == "release-unittest":
     dflags += ["-release", "-unittest"]
+elif build_type == "unittest-release":
+    dflags += ["-unittest", "-release"]
+elif build_type == "debug-unittest-release":
+    dflags += ["-debug", "-unittest", "-release"]
 
 env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
                   DFLAGS=dflags)
