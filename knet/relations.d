@@ -2092,6 +2092,9 @@ struct Ref(T)
     bool defined() const { return this.ix != nullIx; }
     auto opCast(U : bool)() const { return defined(); }
 
+    /** Needed for compatibility with IndexedBy. */
+    size_t opCast(U : size_t)() const { return this.ix(); }
+
     // auto opEquals(const Ref y) const
     // {
     //     assert(this.dir == y.dir);

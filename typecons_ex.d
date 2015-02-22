@@ -72,6 +72,7 @@ template New(T) if (is(T == class))
 import std.traits: isArray, isUnsigned, isInstanceOf;
 import std.range.primitives: hasSlicing;
 
+// TODO Disable this
 struct Index(T = size_t) if (isUnsigned!T)
 {
     @safe pure: @nogc nothrow:

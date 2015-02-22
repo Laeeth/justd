@@ -97,6 +97,7 @@ import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
 import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers, packedBitSizeOf;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf, skipOverPrefixes, skipOverSuffixes;
+import typecons_ex: IndexedBy;
 import predicates: allEqual;
 import dbg;
 
@@ -475,15 +476,14 @@ struct Link4
     Origin origin;
 }
 
-/* static if (useArray) { alias Nodes = Array!Node; } */
-/* else                 { alias Nodes = Node[]; } */
-alias Nodes = Node[]; // no need to use std.container.Array here
-
 static if (false) { alias Lemmas = Array!Lemma; }
 else              { alias Lemmas = Lemma[]; }
 
-static if (useArray) { alias Links = Array!Link; }
-else                 { alias Links = Link[]; }
+static if (useArray) { alias Nodes = IndexedBy!(Array!Node, Nd); }
+else                 { alias Nodes = IndexedBy!(Node[], Nd); }
+
+static if (useArray) { alias Links = IndexedBy!(Array!Link, Ln); }
+else                 { alias Links = IndexedBy!(Link[], Ln); }
 
 static if (false)
 {
@@ -596,8 +596,8 @@ class Graph
 
     @safe pure nothrow @nogc
     {
-        ref inout(Node) at(const Nd nd) inout { return db.tabs.allNodes[nd.ix]; }
-        ref inout(Link) at(const Ln ln) inout { return db.tabs.allLinks[ln.ix]; }
+        ref inout(Node) at(const Nd nd) inout { return db.tabs.allNodes[nd]; }
+        ref inout(Link) at(const Ln ln) inout { return db.tabs.allLinks[ln]; }
 
         ref inout(Node) opIndex(const Nd nd) inout { return at(nd); }
         ref inout(Link) opIndex(const Ln ln) inout { return at(ln); }

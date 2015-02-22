@@ -1,5 +1,7 @@
 # TODO
 
+# TODO Support in operator: Nd in Graph
+
 ## TODO
 Relation description "can be a" is only suitable for nouns not verbs:
 
