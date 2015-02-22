@@ -17,12 +17,20 @@ int main(string[] args)
     debug backtrace.backtrace.install(stderr);
     registerMemoryErrorHandler();
 
+    bool loadUniquelySensedLemmasCache = false;
+    bool saveUniquelySensedLemmasCache = false;
+
     bool loadCache = false;
     bool saveCache = false;
+
     bool useCache = false;
+
     bool helpPrinted = getoptEx("knetquery --- Command Line interface to knet.\n",
                                 args,
                                 std.getopt.config.caseInsensitive,
+                                "load-unique-senses", "\tLoad unique senses upon startup.",  &loadUniquelySensedLemmasCache,
+                                "save-unique-senses", "\tSave unique senses upon shutdown.",  &saveUniquelySensedLemmasCache,
+
                                 "load-cache", "\tLoad database cache upon startup.",  &loadCache,
                                 "save-cache", "\tSave database cache upon shutdown.",  &saveCache,
                                 "use-cache", "\tUse caching of database.",  &useCache);
@@ -43,22 +51,18 @@ int main(string[] args)
     auto graph = new Graph();
 
     // loads
-    if (false) graph.loadUniquelySensedLemmas(cachePath);
+    if (loadUniquelySensedLemmasCache) { graph.loadUniquelySensedLemmas(cachePath); }
 
-    if (loadCache)
-    {
-        graph.load(cachePath);
-    }
-    else
-    {
-        graph.learnDefault;
-    }
+    if (loadCache) { graph.load(cachePath); }
+    else           { graph.learnDefault; }
 
     graph.showRelations;
 
     // saves
     if (false) graph.inferSpecializedSenses;
-    if (saveCache) graph.saveUniquelySensedLemmas(cachePath);
+
+    if (saveUniquelySensedLemmasCache) { graph.saveUniquelySensedLemmas(cachePath); }
+
     if (saveCache) { graph.save(cachePath); }
 
     while (true)
