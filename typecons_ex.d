@@ -77,10 +77,20 @@ struct Index(T = size_t)
     private T _ix = 0;
 }
 
+import std.traits: isIntegral, isInstanceOf;
+import std.range: hasSlicing;
+
+enum IndexableBy(R, I) = (hasSlicing!R &&
+                          (isIntegral!I || // TODO should we allo isIntegral here?
+                           isInstanceOf!(Index, I) ||
+                           is(I == enum)));
+
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
+    TODO Support indexing by tuples
+    TODO Use std.range.indexed
    */
-struct IndexedBy(R, I)
+struct IndexedBy(R, I) if (IndexableBy!(R, I))
 {
     alias RI = size_t; /* TODO: Extract this from R somehow. */
 
@@ -100,7 +110,9 @@ struct IndexedBy(R, I)
     alias _r this;
 }
 
-auto indexedBy(I, R)(R range)
+/** Instantiator for $(D IndexedBy).
+   */
+auto indexedBy(I, R)(R range) if (IndexableBy!(R, I))
 {
     return IndexedBy!(R, I)(range);
 }
