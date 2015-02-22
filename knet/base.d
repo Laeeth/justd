@@ -945,6 +945,45 @@ class Graph
         return nds;
     }
 
+    /** Directed Connect Synonym-Set $(D srcs) to Synonym-Set $(D dsts).
+        Synonym Set (SynSet) is a WordNet construction.
+     */
+    Lns connectSynSets(S, D)(const S srcs,
+                             Role role,
+                             const D dsts,
+                             Origin origin,
+                             NWeight weight = 1.0,
+                             bool checkExisting = true,
+                             bool ignoreSelfConnects = true) if (isIterableOf!(S, Nd) &&
+                                                                 isIterableOf!(D, Nd))
+    {
+        typeof(return) lns;
+        foreach (src; srcs)
+        {
+            foreach (dst; dsts)
+            {
+                if ((!ignoreSelfConnects) ||
+                    src != dst)
+                {
+                    lns ~= connect(src, role, dst, origin, weight, checkExisting);
+                    return lns; // optimization
+                }
+            }
+        }
+        if (lns.empty &&
+            ((!ignoreSelfConnects) ||
+             srcs != dsts))
+        {
+            import knet.relations: RelDir, toHuman;
+            writeln("Could not connect SynSets: ",
+                    srcs[],
+                    "=", role.rel.toHuman(RelDir.fwd), "=>",
+                    dsts[]);
+        }
+        return lns;
+    }
+    alias connectFanInFanOut = connectMtoN;
+
     /** Directed Connect Many Sources $(D srcs) to Many Destinations $(D dsts).
      */
     Lns connectMtoN(S, D)(const S srcs,
@@ -953,15 +992,15 @@ class Graph
                           Origin origin,
                           NWeight weight = 1.0,
                           bool checkExisting = true,
-                          bool skipSelfConnects = false) if (isIterableOf!(S, Nd) &&
-                                                             isIterableOf!(D, Nd))
+                          bool ignoreSelfConnects = false) if (isIterableOf!(S, Nd) &&
+                                                               isIterableOf!(D, Nd))
     {
         typeof(return) lns;
         foreach (src; srcs)
         {
             foreach (dst; dsts)
             {
-                if ((!skipSelfConnects) ||
+                if ((!ignoreSelfConnects) ||
                     src != dst)
                 {
                     lns ~= connect(src, role, dst, origin, weight, checkExisting);
@@ -1071,14 +1110,12 @@ class Graph
     alias connectRing = connectCycle;
 
     /** Add Link from $(D src) to $(D dst) of type $(D rel) and weight $(D weight).
-        TODO checkExisting is currently set to false because searching
-        existing links is currently too slow
      */
     Ln connect(Nd src,
                Role role,
                Nd dst,
                Origin origin = Origin.unknown,
-               NWeight weight = 1.0, // 1.0 means absolutely true for Origin manual
+               NWeight weight = 1.0,
                bool checkExisting = true,
                bool warnExisting = false) in
     {

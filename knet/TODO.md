@@ -1,6 +1,15 @@
 # TODO
 
 ## TODO
+Relation description "can be a" is only suitable for nouns not verbs:
+
+> Line "truck"
+  - in English of sense noun
+  - in English of sense verb
+    - is a:  "transport" (en:verb:100%-WordNet),
+    - can be a:  "transport" (en:verb:100%-WordNet),
+
+## TODO
  - in English of sense singular noun
   - in English of sense male name
   - in Swedish of sense male name

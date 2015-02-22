@@ -370,56 +370,10 @@ void readWordNet(Graph gr,
                 {
                     if (ptr.isSemantic) // semantic M-to-N relation
                     {
-                        const optimized = true;
-                        if (optimized)
-                        {
-                            bool done = false;
-                            // See: http://forum.dlang.org/thread/szhxwxldpwsiuewyztqk@forum.dlang.org#post-szhxwxldpwsiuewyztqk:40forum.dlang.org
-                            import std.algorithm: countUntil;
-
-                            if ((*srcSynSet_).length == 1)
-                            {
-                                const Nd srcNd = (*srcSynSet_).front;
-                                const ptrdiff = (*dstSynSet_)[].countUntil!(nd => nd != srcNd);
-                                if (ptrdiff != -1)
-                                {
-                                    const Nd dstNd = (*dstSynSet_)[ptrdiff];
-                                    gr.connect(srcNd,
-                                               ptr.role,
-                                               dstNd,
-                                               Origin.wordnet, 1.0, true, true);
-                                    done = true;
-                                }
-                            }
-                            else
-                            {
-                                const Nd dstNd = (*dstSynSet_).front;
-                                const ptrdiff = (*srcSynSet_)[].countUntil!(nd => nd != dstNd);
-                                if (ptrdiff != -1)
-                                {
-                                    const Nd srcNd = (*srcSynSet_)[ptrdiff];
-                                    gr.connect(srcNd,
-                                               ptr.role,
-                                               dstNd,
-                                               Origin.wordnet, 1.0, true, true);
-                                    done = true;
-                                }
-                            }
-                            if (!done)
-                            {
-                                writeln("Could not connect SynSet ",
-                                        (*srcSynSet_)[],
-                                        " with ",
-                                        (*dstSynSet_)[]);
-                            }
-                        }
-                        else
-                        {
-                            gr.connectMtoN(*srcSynSet_,
-                                           ptr.role,
-                                           *dstSynSet_,
-                                           Origin.wordnet, 1.0, true, true);
-                        }
+                        gr.connectSynSets(*srcSynSet_,
+                                          ptr.role,
+                                          *dstSynSet_,
+                                          Origin.wordnet, 1.0, true, true);
                     }
                     else        // lexical 1-to-1 relation
                     {

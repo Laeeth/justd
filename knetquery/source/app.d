@@ -54,7 +54,12 @@ int main(string[] args)
     if (loadUniquelySensedLemmasCache) { gr.loadUniquelySensedLemmas(cachePath); }
 
     if (loadCache) { gr.load(cachePath); }
-    else           { gr.learnDefault; }
+    else
+    {
+        import knet.readers.wordnet;
+        gr.readWordNet(`../knowledge/en/wordnet`);
+        // gr.learnDefault;
+    }
 
     gr.showRelations;
 
