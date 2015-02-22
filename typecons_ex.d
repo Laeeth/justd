@@ -128,6 +128,8 @@ unittest
     alias J = Index!size_t;
     auto jx = x.indexedBy!J;
     jx[J(0)] = 11;
+
+    static assert(!__traits(compiles, { ix[J(0)] = 11; }));
     static assert(!__traits(compiles, { jx[0] = 11; }));
 
     import std.algorithm: equal;
