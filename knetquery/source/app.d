@@ -48,22 +48,22 @@ int main(string[] args)
 
     testAll;
 
-    auto graph = new Graph();
+    auto gr = new Graph();
 
     // loads
-    if (loadUniquelySensedLemmasCache) { graph.loadUniquelySensedLemmas(cachePath); }
+    if (loadUniquelySensedLemmasCache) { gr.loadUniquelySensedLemmas(cachePath); }
 
-    if (loadCache) { graph.load(cachePath); }
-    else           { graph.learnDefault; }
+    if (loadCache) { gr.load(cachePath); }
+    else           { gr.learnDefault; }
 
-    graph.showRelations;
+    gr.showRelations;
 
     // saves
-    if (false) graph.inferSpecializedSenses;
+    if (false) gr.inferSpecializedSenses;
 
-    if (saveUniquelySensedLemmasCache) { graph.saveUniquelySensedLemmas(cachePath); }
+    if (saveUniquelySensedLemmasCache) { gr.saveUniquelySensedLemmas(cachePath); }
 
-    if (saveCache) { graph.save(cachePath); }
+    if (saveCache) { gr.save(cachePath); }
 
     while (true)
     {
@@ -72,7 +72,7 @@ int main(string[] args)
         string line;
         if ((line = readln()) !is null)
         {
-            graph.showNodes(line);
+            gr.showNodes(line);
         }
         else
         {
