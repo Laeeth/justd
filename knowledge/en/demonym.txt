@@ -1,0 +1,761 @@
+continent:AfricaAfrican
+continent:AntarcticaAntarctican
+continent:AsiaAsian
+continent:AustraliaAustralian
+continent:EuropeEuropean
+continent:North AmericaNorth American
+continent:South AmericaSouth American
+
+country:ÅlandÅlandish
+county:CornwallCornish
+country:DenmarkDanishDane
+country:EnglandEnglishEnglishman
+country:IrelandIrishIrishman
+country:Northern IrelandNorthern IrishNorthern Irishman
+country:FinlandFinnishFinnFinnic
+country:KurdistanKurdishKurd
+country:PolandPolishPole
+country:ScotlandScottishScot
+country:SpainSpanishSpaniard
+country:SwedenSwedishSwede
+country:TurkeyTurkishTurkicTurk
+country:CairoCairene
+country:CyrenaicaCyrene
+country:DamascusDamascene
+country:HellasHellene
+country:GreeceHellene
+country:NazarethNazarene
+country:SloveniaSloveneSlovenian
+
+country:AbkhaziaAbkhazianAbkhaz
+country:AlbaniaAlbanian
+country:AlgeriaAlgerian
+country:AndorraAndorran
+country:AngolaAngolan
+country:AntiguaAntiguan
+country:ArgentinaArgentineanArgentineArgentinian
+country:ArmeniaArmenianHayastani
+country:AustraliaAustralian
+country:AustriaAustrian
+country:BarbadosBarbadianBajan
+country:BarbudaBarbudan
+country:BelizeBelizean
+country:BoliviaBolivian
+country:BosniaBosnian
+country:BrazilBrazilian
+country:BruneiBruneian
+country:BulgariaBulgarian
+country:BurmaBurmeseMyanmar
+country:CanadaCanadian
+country:ChileChilean
+country:ColombiaColombian
+country:Costa RicaCosta Rican
+country:CroatiaCroatianCroat
+country:CubaCuban
+country:Dominican RepublicDominican
+country:El SalvadorSalvadoran
+country:EritreaEritrean
+country:EstoniaEstonian
+country:EthiopiaEthiopian
+country:FijiFijian
+country:GambiaGambian
+country:GeorgiaGeorgian
+country:GuatemalaGuatemalan
+country:GuineaGuinean
+country:HaitiHaitian
+country:HondurasHonduran
+country:IndiaIndian
+country:IndonesiaIndonesian
+country:ItalyItalian
+country:Ivory CoastIvorian
+country:JamaicaJamaican
+country:KenyaKenyan
+country:North KoreaNorth Korean
+country:South KoreaSouth Korean
+country:LatviaLatvian
+country:LiberiaLiberian
+country:LibyaLibyan
+country:LithuaniaLithuanian
+country:MacedoniaMacedonian
+country:MalawiMalawian
+country:MalaysiaMalaysian
+country:MaliMalian
+country:MauritaniaMauritanian
+country:MauritiusMauritian
+country:MexicoMexican
+country:MicronesiaMicronesian
+country:MoldovaMoldovan
+country:MonacoMonacan
+country:MongoliaMongolian
+country:MoroccoMoroccan
+country:MozambiqueMozambican
+country:NamibiaNamibian
+country:NauruNauruan
+country:NicaraguaNicaraguanNicoya
+country:NigeriaNigerian
+country:NorwayNorwegian
+country:PalauPalauan
+country:ParaguayParaguayan
+country:PersiaPersian
+country:PeruPeruvian
+country:Puerto RicoPuerto Rican
+country:RomaniaRomanian
+country:RussiaRussian
+country:RwandaRwandanRwandese
+country:Saint LuciaSaint Lucian
+country:SamoaSamoan
+country:Saudi ArabiaSaudi Arabian
+country:SerbiaSerbianSerb
+country:Sierra LeoneSierra Leonean
+country:SingaporeSingaporean
+country:SlovakiaSlovakianSlovak
+country:SloveniaSlovenianSlovene
+country:South AfricaSouth African
+country:Sri LankaSri Lankan
+country:St. Kitts and NevisKittitianNevisian
+country:SyriaSyrian
+country:TanzaniaTanzanian
+country:TibetTibetan
+country:TongaTongan
+country:TunisiaTunisian
+country:TuvaluTuvaluan
+country:UgandaUgandan
+country:United States of AmericaAmerican
+country:UruguayUruguayan
+country:VenezuelaVenezuelan
+country:ZambiaZambian
+country:ZimbabweZimbabwean
+
+country:BahamasBahamian
+country:BelarusBelarusian
+country:BelgiumBelgian
+country:BermudaBermudian
+country:CameroonCameroonian
+country:CanadaCanadian
+country:CanadaCanadien@fr
+country:Cayman IslandsCaymanian
+country:ChadChadian
+country:EcuadorEcuadorian
+country:EgyptEgyptian
+country:GhanaGhanaian
+country:GrenadaGrenadian
+country:HungaryHungarian
+country:IranIranianIraniPersian
+country:ItalyItalian
+country:JordanJordanian
+country:LaosLaotian
+country:MaldivesMaldivian
+country:PalestinePalestinian
+country:Saint VincentVincentian
+country:TrinidadTrinidadian
+country:UkraineUkrainian
+
+city:AdelaideAdelaidian
+state:AlabamaAlabamianAlabaman
+city:AthensAthenian
+BallaratBallaratian
+city:BangkokBangkokian
+country:BogotáBogotanian
+city:BostonBostonian
+city:BrisbaneBrisbanianBrisvegaianBrisbanite
+city:BristolBristolian
+Burgundy_sauc eBurgundian
+city:CalgaryCalgarian
+Canary IslandsCanarian
+city:CambridgeCantabrigian
+city:CardiffCardiffian
+CastileCastilian
+CorinthCorinthian
+city:CoventryCoventrian
+CumbriaCumbrian
+city:DaytonDaytonian
+city:EdmontonEdmontonian
+state:FloridaFloridian
+city:Fort WorthFort Worthian
+city:FrederictonFrederictonian
+GibraltarGibraltarian
+city:GreenvilleGreenvillian
+HamiltonHamiltonian
+HartlepoolHartlepudlian
+HesseHessian
+city:HoustonHoustonian
+Isles of ScillyScillonian
+city:Iowa CityIowa Citian
+city:Kansas CityKansas Citian
+state:KentuckyKentuckian
+city:LethbridgeLethbridgian
+city:LiverpoolLiverpudlian
+state:LouisianaLouisianianLouisianan
+city:LouisvilleLouisvillian
+city:MadridMadrilenian
+state:MaharashtraMaharashtrian
+McKinneyMcKinnian
+city:MelbourneMelburnian
+city:MemphisMemphian
+state:MichiganMichiganianMichigander
+country:New GuineaNew Guinian
+city:New OrleansNew Orleanian
+state:New South WalesNew South Walesian
+city:Newcastle upon TyneNovocastrian
+Northern TerritoryTerritorian
+state:OregonOregonian
+city:ParisParisian
+PeterboroughPeterborian
+city:PhoenixPhoenician
+city:PlymouthPlymothian
+city:Port HarcourtHarcourtian
+Rivers StateRiverian
+SaskatchewanSaskatchewanian
+SaskatoonSaskatonian
+SwindonSwindonian
+SicilySicilian
+ThraceThracian
+TowcesterTowcestrian
+state:WashingtonWashingtonian
+city:WellingtonWellingtonian
+
+state:Western AustraliaWestern AustralianWestralian (informal)
+
+country:GuamGuamanian
+
+BendigoBendigonian
+BuffaloBuffalonian
+OxfordOxonian
+PanamaPanamanian
+SligoSligonian
+North CarolinaNorth Carolinian
+South CarolinaSouth Carolinian
+TampaTampanian
+TobagoTobagonian
+state:JeffersonJeffersonian
+
+ByzantiumByzantine
+city:FlorenceFlorentinela:Florentia
+The LevantLevantine
+country:MontenegroMontenegrin
+PalatinatePalatine
+PhilistiaPhilistine
+
+city:AkronAkronite
+city:Ann ArborAnn Arborite
+city:AustinAustinite
+city:BoulderBoulderite
+city:BrisbaneBrisbaniteBrisbanian
+city:Carson CityNVCarsonite
+city:ChennaiChennaite
+city:DallasDallasite
+city:DelhiDelhite
+city:DenverDenverite
+city:DunedinDunedinite
+city:DurbanDurbanite
+city:IrmoIrmite
+country:IsraelIsraeliteIsraeli
+city:IstanbulIstanbulite
+city:JerusalemJerusalemite
+city:KeralaKeralite
+city:KarachiKarachiite
+ManhattanManhattanite
+city:MoscowMuscovitela:Muscovia
+state:New HampshireNew Hampshirite
+city:OdessaOdessite
+city:PerthPerthitePerthianPerthling
+ReadingReadingite
+city:RenoNVRenoite
+city:RuskinRuskinite
+city:SeattleSeattleite
+city:SeoulSeoulite
+city:SpringfieldSpringfieldianite
+city:SpokaneSpokanite
+city:TokyoTokyoite
+city:VancouverVancouverite
+city:WhittierWhittierite
+state:WisconsinWisconsinite
+state:WyomingWyomingite
+city:WenhamWenhamite
+
+city:AmsterdamAmsterdammer
+region:AucklandAucklander
+city:BeijingBeijinger
+city:BelgradeBelgrader
+city:BerlinBerliner
+city:BudapestBudapester
+ClevelandClevelander
+city:CopenhagenCopenhagener
+city:DetroitDetroiter
+city:DublinDubliner
+city:DresdenDresdener
+city:FrankfurtFrankfurter
+city:Green BayGreen Bayer
+city:HamburgHamburger
+city:Hong KongHongkongerHong Konger
+country:IcelandIcelanderIcelandic
+city:LeedsLoiner
+city:LeipzigLeipziger
+region:LiechtensteinLiechtensteiner
+city:LondonLondoner
+region:LorraineLorrainer
+country:LuxembourgLuxembourger
+state:MichiganMichigander
+city:MontrealMontrealer
+country:NetherlandsNetherlanderDutchmanHollander
+region:New EnglandNew Englander
+city:New YorkNew Yorker
+state:New ZealandNew Zealander
+city:PittsburghPittsburgher
+city:PraguePraguer
+province:PuntlandPuntlander
+province:QuebecQuebeckerQuebecer
+state:QueenslandQueenslander
+province:RhinelandRhinelander
+state:Rhode IslandRhode Islander
+city:RotterdamRotterdammer
+city:SaigonSaigoner
+Solomon IslandsSolomon Islander
+state:SomalilandSomalilander
+city:StockholmStockholmer
+city:StuttgartStuttgarter
+city:TallinnTallinner
+state:VermontVermonter
+city:WinnipegWinnipegger
+city:YellowknifeYellowknifer
+city:ZurichZuricher
+
+region:Andorraandorrano
+country:Chinachino
+state:El SalvadorsalvadoreñoSalvadoran
+region:PhilippinesFilipino
+
+city:Los AngelesAngelenoLos Angeleno
+city:Málagamalagüeño
+city:Manilamanileño
+city:Davao CityDavaoeño
+city:Zamboanga Cityzamboangueño
+
+city:AlexandriaAlexandrian
+city:AnnapolisAnnapolitan
+city:AtlantaAtlantan
+city:BaltimoreBaltimorean
+city:CanberraCanberran
+city:CharlotteCharlottean
+city:ChicagoChicagoan
+city:CincinnatiCincinnatian
+city:El PasoEl PasoanEl Paseño
+city:HanoiHanoian
+city:JakartaJakartan
+city:KalamazooKalamazooan
+city:KievKievan
+city:KolkataCalcuttan
+city:Las VegasLas Vegan
+city:Los AngelesAngeleno
+city:MiamiMiamian
+city:MinneapolisMinneapolitan
+city:OttawaOttawan
+city:PhiladelphiaPhiladelphian
+city:PhoenixPhoenician
+city:PisaPisan
+city:PortlandPortlander
+city:ReginaReginan
+city:RigaRigan
+city:RomeRoman
+city:San AntonioSan Antonian
+city:San DiegoSan Diegan
+city:San FranciscoSan Franciscan
+city:San JoseSan Josean
+city:SofiaSofian
+city:St. LouisSt. Louisan
+city:ThebesTheban
+city:ToledoOhioToledoan
+city:TucsonTucsonan
+city:TulsaTulsan
+city:ValenciaValencian
+city:VilniusVilnian
+
+state:AlaskaAlaskan
+state:AlbertaAlbertan
+state:AndalusiaAndalusian
+state:ArizonaArizonan
+state:ArkansasArkansan
+state:AsturiasAsturian
+state:BavariaBavarian
+state:BohemiaBohemian
+state:BorneoBornean
+state:British ColumbiaBritish Columbian
+state:CaliforniaCalifornian
+state:CantabriaCantabrian
+state:CarinthiaCarinthian
+state:CataloniaCatalan
+state:ColoradoColoradoan
+state:CorsicaCorsican
+state:CreteCretan
+state:CrimeaCrimean
+state:DalmatiaDalmatian
+state:DelawareDelawarean
+state:ExtremaduraExtremaduran
+state:GaliciaGalician
+state:GalileeGalilean
+state:HawaiiHawaiian
+state:HebridesHebridean
+state:IdahoIdahoan
+state:IowaIowan
+state:JavaJavanJavanese
+state:JudeaJudean
+state:KareliaKarelian
+state:LiguriaLigurian
+state:LouisianaLouisiananLouisianian
+state:MadeiraMadeiran
+state:MajorcaMajorcan
+state:ManitobaManitoban
+state:MasuriaMasurian
+state:MinnesotaMinnesotan
+state:MinorcaMinorcan
+state:MississippiMississippian
+state:MissouriMissourian
+state:MoluccasMoluccan
+state:MontanaMontanan
+state:MoraviaMoravian
+state:NebraskaNebraskan
+state:NevadaNevadan
+state:New JerseyNew Jerseyan
+state:New MexicoNew Mexican
+state:Nova ScotiaNova Scotian
+state:OhioOhioan
+state:OklahomaOklahoman
+state:OntarioOntarian
+state:PatagoniaPatagonian
+state:PennsylvaniaPennsylvanian
+state:PomeraniaPomeranian
+state:SamogitiaSamogitian
+state:SardiniaSardinian
+state:SilesiaSilesian
+state:Sioux CitySioux Cityan
+state:StyriaStyrian
+state:SumatraSumatran
+state:TahitiTahitian
+state:TasmaniaTasmanian
+state:TennesseeTennesseean
+state:TexasTexan
+state:ThuringiaThuringian
+state:TransylvaniaTransylvanian
+state:UmbriaUmbrian
+state:UtahUtahn
+state:VictoriaVictorian
+state:WallachiaWallachian
+state:West PapuaWest Papuan
+state:WestphaliaWestphalian
+
+city:AlexandriaAlexandrian
+city:AnnapolisAnnapolitan
+city:AtlantaAtlantan
+city:BaltimoreBaltimorean
+city:CanberraCanberran
+city:CharlotteCharlottean
+city:ChicagoChicagoan
+city:CincinnatiCincinnatian
+city:El PasoEl PasoanEl Paseño
+city:HanoiHanoian
+city:JakartaJakartan
+city:KalamazooKalamazooan
+city:KievKievan
+city:KolkataCalcuttan
+city:Las VegasLas Vegan
+city:Los AngelesAngeleno
+city:MiamiMiamian
+city:MinneapolisMinneapolitan
+city:OttawaOttawan
+city:PhiladelphiaPhiladelphian
+city:PhoenixPhoenician
+city:PisaPisan
+city:PortlandPortlander
+city:ReginaReginan
+city:RigaRigan
+city:RomeRoman
+city:San AntonioSan Antonian
+city:San DiegoSan Diegan
+city:San FranciscoSan Franciscan
+city:San JoseSan Josean
+city:SofiaSofian
+city:St. LouisSt. Louisan
+city:ThebesTheban
+city:ToledoOhioToledoan
+city:TucsonTucsonan
+city:TulsaTulsan
+city:ValenciaValencian
+city:VilniusVilnian
+
+city:Kingston-upon-HullHullensian
+region:SavoySavoyard
+
+AbruzzoAbruzzese
+AragonAragonese
+AcehAcehnese
+state:AssamAssamese
+country:BaliBalinese
+BeninBenineseBeninois
+city:BernBernese
+country:BhutanBhutanese
+city:BolognaBolognese
+country:BurmaBurmese
+region:CalabriaCalabrese
+country:ChinaChinese
+country:CongoCongolese
+city:Da LatDalatese
+state:East TimorEast Timorese
+country:Faroe IslandsFaroese
+region:GabonGabonese
+city:GenoaGenovese
+GuangdongCantonese
+CantonCantonese
+GuyanaGuyanese
+HunanHunanese
+country:JapanJapanese
+JavaJavaneseJavan
+country:LebanonLebanese
+country:MacaoMacaneseChinese
+country:MaltaMaltese
+Marshall IslandsMarshallese
+city:MilanMilanese
+country:NepalNepaleseNepali
+PiedmontPiedmontese
+city:PittsburghPittsburghese
+country:PortugalPortuguese
+country:RwandaRwandeseRwandan
+San MarinoSammarinese
+SarkSarkese
+country:SenegalSenegalese
+city:ShanghaiShanghainese
+SiamSiamese
+SikkimSikkimese
+country:SudanSudanese
+country:South SudanSouth Sudanese
+SurinameSurinamese
+country:TaiwanTaiwanese
+country:TogoTogolese
+city:TurinTorinese
+region:TyrolTyrolese
+city:ViennaViennese
+country:VietnamVietnamese
+
+AllahabadAllahabadi
+AzawadAzawadi
+AzerbaijanAzerbaijani
+AzraAzragi
+BalochistanBalochistaniBalochBaluch
+BahrainBahraini
+BangladeshBangladeshi
+BengalBengali
+BiharBihari
+DagestanDagestani
+IndiaDesi
+FaridabadFaridabadi
+GujaratGujarati
+HayastanHayastaniArmenian
+HazaraHazaragiAzragi
+HyderabadHyderabadi
+IraqIraqi
+IsraelIsraeli
+KashmirKashmiri
+KazakhstanKazakhstaniKazakh
+KuwaitKuwaiti
+KyrgyzstanKyrgyzstaniKyrgyz
+OmanOmani
+PakistanPakistani
+PunjabPunjabi
+QatarQatari
+RajasthanRajasthani
+SindhSindhi
+SomaliaSomaliSomalian
+TajikistanTajikistaniTajik
+Tel AvivTel Avivi
+TurkmenistanTurkmenistaniTurkmen
+United Arab EmiratesEmirati
+UzbekistanUzbekistaniUzbek
+YemenYemeni
+
+GreenlandGreenlandic
+HispaniaHispanic
+IcelandIcelandicIcelander
+SemiteSemitic
+
+CorfuCorfiot
+region:CyprusCypriot
+PhanarPhanariote
+
+region:MonacoMonégasque
+MentonMentonasque
+
+GallowayGalwegian
+city:GalwayGalwegian
+city:GlasgowGlaswegian
+country:NorwayNorwegian
+
+city:AberdeenAberdonian
+city:BathBathonian
+city:CorkCorkonian
+city:DundeeDundonian
+city:HalifaxHaligonian
+city:NewportNewportonian
+city:BostonBostonian
+
+Barrow-in-FurnessBarrovian
+region:OamaruOamaruvian
+city:OsloOslovian
+country:PeruPeruvian
+city:WarsawVarsovian
+city:WaterlooWaterluvian
+
+region:AlsaceAlsatianAlsatia
+AshbourneAshburnianEssiburn
+ColchesterColcestrian
+CourlandCouronianCuronia
+ExeterExonian
+country:GermanyGermanGermani
+GuernseySarnianSarnia
+city:LeedsLeodensianLedesia
+LvivLeopolitanLeopolis
+city:ManchesterMancunianMancunia
+city:MelbourneMelburnianMelburnia
+city:NaplesNeapolitanNeapolisNapoletanoNeapolitan
+city:NewcastleNovocastrianNovum Castrum
+region:Orkney IslandsOrcadianOrcadia
+ShropshireSalopianSalopia
+St AlbansVerulamianVerulamium
+city:TripoliTripolitanTripolis
+University of CambridgeCantabrigian
+University of DurhamDunelmensis
+University of OxfordOxonian
+University of North TexasAquilonemtexian
+city:VeniceVenetian
+city:WolverhamptonWulfrunian
+
+AberteifiCardi
+AndhraAndhraite
+city:AguascalientesHidrocálido
+state:AguascalientesHidrocálido
+BangaloreBangalorean
+BarbadosBajanBarbadian
+city:BirminghamBrummie
+BordeauxBordelais
+BotswananounDemonymSingular:Motswana
+BotswananounDemonymPlural:Batswana
+BrittanyBreton@fr
+city:BrusselsBruxellois@fr
+Burkina FasoBurkinabè
+Burma/MyanmarMyanmar
+country:CambodiaKhmerCambodian
+ColchesterColcestrian
+County CorkCorkonian
+DundeeDundonian
+FontainebleauBellifontain@fr
+GasconyGascon@fr
+GlasgowGlaswegian
+HartlepoolHartlepudlian
+KarnatakaKannadiga
+Kiribatii-Kiribati
+KosovoKosovar
+LesothoBasotho (from Sesotho)Mosotho (singular)
+city:LiverpoolLiverpudlianScouse
+LyonLyonnais@fr
+MadagascarMalagasy
+MarseilleMarseillais@fr
+MeruMerian (Residents of MeruKenya)
+MaharashtraMaharashtrian (either gendersingular or plural)
+MumbaiMumbaikar (either gender)Mumbaikars
+country:NetherlandsDutch (from Middle Dutch: DuutsHigh German: Deutschor Proto-Germanic: *þeudiskaz (all three meaning "national/popular"))
+city:Newcastle (both the English and Australian cities)Novocastrian (from Latin: novonewand castriacastle)
+city:NiceNiçois@fr
+NigerNigerie@fr
+county:NormandyNorma@fr
+NunavutNunavummiuq (from Inuktitut)
+OdishaOriya
+PaisleyBuddie
+ParmaParmesan in EnglishParmigiano in ItalianPram'zan in emilianwhile Parmense is for people born in the province of Parma(emilian language: Arijoz)
+PhilippinesPinoy (m.)/ Pinay (f.)
+PicardyPicard@fr
+Puerto RicoPuerto Rican. In SpanishBoricua
+PunePunekar (either gender)Punekars
+PegswoodPegswardian
+QuebecQuébécois@fr
+Rivière-du-LoupLouperivois
+SeychellesSeychellois@fr
+StockportStopfordian
+Tamil NaduTamilian[dubious – discuss]
+The HagueHagenees (people born in the inner city)Hagenaar (people born elsewhere)
+TuscanyTuscan
+TwenteTukker
+Vanuatuni-Vanuatu
+
+country:AfghanistanAfghan
+BalochistanBalochi
+BashkortostanBashkir
+ChechnyaChechen
+country:CroatiaCroatroatia
+country:Czech RepublicCzech
+country:CzechoslovakiaCzechoslovakzechoslovakia
+country:DenmarkDane
+country:FinlandFinn
+country:FranceFrench
+country:GermanyGerman
+country:GreeceGreek
+IngushetiaIngush
+country:Isle of ManManx
+country:KazakhstanKazakh
+country:KurdistanKurd
+country:KyrgyzstanKyrgyz
+country:MongoliaMongol (Mongolian is for citizens of MongoliaMongol is for the ethnic group)
+country:PolandPole
+SaxonySaxon
+country:SerbiaSerbSerbian
+SeychellesSeychellois
+country:SlovakiaSlovak
+Soviet UnionSoviet
+country:SpainSpaniard
+St EtienneStephanois
+country:SwedenSwede
+country:SwitzerlandSwiss
+country:TajikistanTajik
+country:TatarstanTatar
+country:ThailandThai
+country:TurkmenistanTurkmen
+country:UzbekistanUzbek
+WalesWelsh
+WalloniaWalloon
+YakutistanYakut
+
+AnnapolisAnnapolitan
+AntioquiaCaldasRisaralda and QuindíoPaisaalthough the correct term for Antioquia citizen is Antioquenian or Antioqueño (Spanish)
+AustraliaAussie (more formally Australian)
+Buenos AiresPorteño (city)Bonaerense (province)
+CanadaCanadien (male)Canadienne (female)when referring to someone of French-Canadian heritage
+Cape BretonCaper
+ConnecticutNutmegger
+Espírito Santoespírito-santensecapixaba
+HalifaxHaligonian
+IndianapolisIndianapolitan
+IndianaHoosier
+Los AngelesAngeleno
+MaineMainer
+MarylandMarylander (/ˈmærɨləndər/ marr-i-lənd-ərsometimes /ˈmɛərləndər/ mair-lənd-ər)
+MassachusettsBay Stater
+Mexico CityChilango
+MichiganMichiganderMichiganian
+MinneapolisMinneapolitan
+Moose JawMoose Javian
+city:NepalGurkhasNepaliNepalese
+city:New ZealandKiwiNew Zealander (informal)
+Newfoundland and LabradorNewfoundlanderLabradorianNewfie (also Newf or sometimes Newfy)
+state:OklahomaOklahoman
+city:PhoenixPhoenician
+city:QuebecQuebeckerQuebecer:Québécois@fr
+
+city:Rio de JaneiroCarioca
+state:Rio de JaneiroFluminense
+
+city:São PauloPaulistano
+state:São PauloPaulista
+
+city:SydneySydneysider
+state:TexasTexan (see also Texian and Tejano)
+city:TorontoTorontonian
+VitóriaEspírito SantoCapixaba (strictlyfor a person from the cityVitóriabut looselyfor a person from the state)
+city:WaterlooWaterluvian
+WisconsinSconnieCheesehead

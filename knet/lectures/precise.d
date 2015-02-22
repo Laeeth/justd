@@ -205,6 +205,10 @@ void learnPreciseThings(Graph graph)
                                  Sense.adjective, lang, Role(Rel.synonymFor),
                                  Sense.adjective, lang, Origin.manual, 1.0);
 
+            graph.learnMtoNMaybe(buildPath(dirPath, `demonym.txt`),
+                                 Sense.region, lang, Role(Rel.relatedTo),
+                                 Sense.nounDemonym, lang, Origin.manual, 1.0);
+
             // Prefix
             graph.learnMtoNMaybe(buildPath(dirPath, `word_prefix.txt`),
                                  Sense.prefix, lang, Role(Rel.hasMeaning),

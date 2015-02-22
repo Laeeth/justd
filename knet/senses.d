@@ -112,6 +112,7 @@ enum Sense:ubyte
     organisation,               /// CIA
 
     region,
+    island,
     city,                       /// Skänninge
     county,                     /// Cornwall
     province,
@@ -437,6 +438,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case namePerson: return `person name`;
         case organisation: return `organisation name`;
         case region: return `region`;
+        case island: return `island`;
         case city: return `city`;
         case county: return `county`;
         case province: return `province`;
@@ -843,6 +845,7 @@ import std.algorithm.comparison: among;
                                          namePerson,
                                          organisation,
                                          region,
+                                         island,
                                          city,
                                          county,
                                          province,
@@ -856,6 +859,7 @@ import std.algorithm.comparison: among;
     {
         with (Sense) return sense.among!(location,
                                          region,
+                                         island,
                                          city,
                                          county,
                                          province,
@@ -863,6 +867,7 @@ import std.algorithm.comparison: among;
                                          country,
                                          continent) != 0;
     }
+    alias isRegion = isLocation;
     bool isVerb(Sense sense)
     {
         with (Sense) return (sense.isVerbRegular ||
