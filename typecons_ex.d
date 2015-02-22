@@ -134,21 +134,21 @@ unittest
     auto ix = x.indexedBy!I;
     auto jx = x.indexedBy!J;
 
-    // indexing with correct type is allowed
+    // indexing with correct type
     ix[  0 ] = 11; assert(ix[  0 ] == 11);
     jx[J(0)] = 11; assert(jx[J(0)] == 11);
 
-    // slicing with correct type is allowed
+    // slicing with correct type
     ix[  0  ..   1 ] = 12; assert(ix[  0  ..   1 ] == [12]);
     jx[J(0) .. J(1)] = 12; assert(jx[J(0) .. J(1)] == [12]);
 
-    // indexing with wrong type is disallowed
+    // indexing with wrong type
     static assert(!__traits(compiles, { ix[J(0)] = 11; }));
-    static assert(!__traits(compiles, { jx[0] = 11; }));
+    static assert(!__traits(compiles, { jx[  0 ] = 11; }));
 
-    // slicing with wrong type is disallowed
+    // slicing with wrong type
     static assert(!__traits(compiles, { ix[J(0), J(0)] = 11; }));
-    static assert(!__traits(compiles, { jx[0, 0] = 11; }));
+    static assert(!__traits(compiles, { jx[  0 ,   0 ] = 11; }));
 
     import std.algorithm: equal;
     import std.algorithm.iteration: filter;
