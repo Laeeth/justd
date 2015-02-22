@@ -634,29 +634,29 @@ state:AguascalientesHidrocálido
 BangaloreBangalorean
 BarbadosBajanBarbadian
 city:BirminghamBrummie
-BordeauxBordelais
-BotswananounDemonymSingular:Motswana
-BotswananounDemonymPlural:Batswana
+region:BordeauxBordelais
+country:BotswananounDemonymSingular:Motswana
+country:BotswananounDemonymPlural:Batswana
 BrittanyBreton@fr
 city:BrusselsBruxellois@fr
 Burkina FasoBurkinabè
-Burma/MyanmarMyanmar
+country:BurmaMyanmar
+country:MyanmarMyanmar
 country:CambodiaKhmerCambodian
-ColchesterColcestrian
+city:ColchesterColcestrian
 County CorkCorkonian
-DundeeDundonian
 FontainebleauBellifontain@fr
 GasconyGascon@fr
-GlasgowGlaswegian
+city:GlasgowGlaswegian
 HartlepoolHartlepudlian
 KarnatakaKannadiga
 Kiribatii-Kiribati
-KosovoKosovar
+country:KosovoKosovar
 LesothoBasotho (from Sesotho)Mosotho (singular)
 city:LiverpoolLiverpudlianScouse
 LyonLyonnais@fr
-MadagascarMalagasy
-MarseilleMarseillais@fr
+island:MadagascarMalagasy
+city:MarseilleMarseillais@fr
 MeruMerian (Residents of MeruKenya)
 MaharashtraMaharashtrian (either gendersingular or plural)
 MumbaiMumbaikar (either gender)Mumbaikars
@@ -666,12 +666,13 @@ city:NiceNiçois@fr
 NigerNigerie@fr
 county:NormandyNorma@fr
 NunavutNunavummiuq (from Inuktitut)
-OdishaOriya
-PaisleyBuddie
-ParmaParmesan in EnglishParmigiano in ItalianPram'zan in emilianwhile Parmense is for people born in the province of Parma(emilian language: Arijoz)
-PhilippinesPinoy (m.)/ Pinay (f.)
+state:OdishaOriya
+city:PaisleyBuddie
+city:ParmaParmesan@enParmigiano@it
+country:PhilippinesnounDemonymSingularMale:Pinoy
+country:PhilippinesnounDemonymSingularFemale:Pinay
 PicardyPicard@fr
-Puerto RicoPuerto Rican. In SpanishBoricua
+island:Puerto RicoPuerto Rican. In SpanishBoricua
 PunePunekar (either gender)Punekars
 PegswoodPegswardian
 QuebecQuébécois@fr
@@ -680,14 +681,14 @@ SeychellesSeychellois@fr
 StockportStopfordian
 Tamil NaduTamilian[dubious – discuss]
 The HagueHagenees (people born in the inner city)Hagenaar (people born elsewhere)
-TuscanyTuscan
+region:TuscanyTuscan
 TwenteTukker
 Vanuatuni-Vanuatu
 
 country:AfghanistanAfghan
-BalochistanBalochi
-BashkortostanBashkir
-ChechnyaChechen
+province:BalochistanBalochi
+region:BashkortostanBashkir
+region:ChechnyaChechen
 country:CroatiaCroatroatia
 country:Czech RepublicCzech
 country:CzechoslovakiaCzechoslovakzechoslovakia
@@ -696,7 +697,7 @@ country:FinlandFinn
 country:FranceFrench
 country:GermanyGerman
 country:GreeceGreek
-IngushetiaIngush
+region:IngushetiaIngush
 country:Isle of ManManx
 country:KazakhstanKazakh
 country:KurdistanKurd
@@ -709,7 +710,7 @@ SeychellesSeychellois
 country:SlovakiaSlovak
 Soviet UnionSoviet
 country:SpainSpaniard
-St EtienneStephanois
+city:St EtienneStephanois
 country:SwedenSwede
 country:SwitzerlandSwiss
 country:TajikistanTajik
@@ -717,9 +718,9 @@ country:TatarstanTatar
 country:ThailandThai
 country:TurkmenistanTurkmen
 country:UzbekistanUzbek
-WalesWelsh
-WalloniaWalloon
-YakutistanYakut
+region:WalesWelsh
+region:WalloniaWalloon
+region:YakutistanYakut
 
 AnnapolisAnnapolitan
 AntioquiaCaldasRisaralda and QuindíoPaisaalthough the correct term for Antioquia citizen is Antioquenian or Antioqueño (Spanish)
