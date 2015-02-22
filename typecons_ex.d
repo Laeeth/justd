@@ -88,7 +88,8 @@ enum IndexableBy(R, I) = (hasSlicing!R &&
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
     TODO Support indexing by tuples
-    TODO Use std.range.indexed
+    TODO Use std.range.indexed when I is an enum with non-contigious enumerators
+    TODO Rename to By, by?!
    */
 struct IndexedBy(R, I) if (IndexableBy!(R, I))
 {
@@ -134,20 +135,12 @@ unittest
     auto jx = x.indexedBy!J;
 
     // indexing with correct type is allowed
-    ix[0] = 11;
-    assert(ix[0] == 11);
+    ix[  0 ] = 11; assert(ix[  0 ] == 11);
+    jx[J(0)] = 11; assert(jx[J(0)] == 11);
 
     // slicing with correct type is allowed
-    ix[0 .. 1] = 12;
-    assert(ix[0] == 12);
-
-    // indexing with correct type is allowed
-    jx[J(0)] = 11;
-    assert(jx[J(0)] == 11);
-
-    // slicing with correct type is allowed
-    jx[J(0) .. J(1)] = 12;
-    assert(jx[J(0) .. J(1)] == [12]);
+    ix[  0  ..   1 ] = 12; assert(ix[  0  ..   1 ] == [12]);
+    jx[J(0) .. J(1)] = 12; assert(jx[J(0) .. J(1)] == [12]);
 
     // indexing with wrong type is disallowed
     static assert(!__traits(compiles, { ix[J(0)] = 11; }));
