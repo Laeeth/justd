@@ -80,6 +80,7 @@ struct Index(T = size_t) if (isUnsigned!T)
     private T _ix = 0;
 }
 
+/** Check if $(D R) is indexable by $(D I). */
 enum isIndexableBy(R, I) = (isArray!R &&     // TODO use hasIndexing!R
                             (isUnsigned!I || // TODO should we allow isUnsigned here?
                              isInstanceOf!(Index, I) ||
