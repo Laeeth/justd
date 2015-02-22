@@ -73,7 +73,7 @@ struct Index(T = size_t)
 {
     @safe pure: @nogc nothrow:
     this(T ix) { this._ix = ix; }
-    alias _ix this;
+    T opCast(U : T)() const { return _ix; }
     private T _ix = 0;
 }
 
@@ -92,14 +92,16 @@ enum IndexableBy(R, I) = (hasSlicing!R &&
    */
 struct IndexedBy(R, I) if (IndexableBy!(R, I))
 {
+    auto ref opIndex(I i)      inout { return _r[cast(size_t)i]; }
+    auto ref opSlice(I i, I j) inout { return _r[cast(size_t)i ..
+                                                 cast(size_t)j]; }
+
+    auto ref opIndexAssign(V)(V value, I i)      { return _r[cast(size_t)i] = value; }
+    auto ref opSliceAssign(V)(V value, I i, I j) { return _r[cast(size_t)i ..
+                                                             cast(size_t)j] = value; }
+
+    // TODO is this needed?
     alias RI = size_t; /* TODO: Extract this from R somehow. */
-
-    auto ref opIndex(I ix) inout { return _r[ix]; }
-    auto ref opIndexAssign(V)(V value, I ix) { return _r[ix] = value; }
-
-    auto ref opSlice(I lower, I upper) inout { return _r[lower .. upper]; }
-    auto ref opSliceAssign(V)(V value, I lower, I upper) { return _r[lower .. upper] = value; }
-
     static if (!is(RI == I))
     {
         @disable void opIndex(RI i);
@@ -141,12 +143,11 @@ unittest
 
     // indexing with correct type is allowed
     jx[J(0)] = 11;
-    // TODO assert(jx[J(0)] == 11);
-    // TODO assert(equal(jx[0 .. 1], [11, 2, 3]));
+    assert(jx[J(0)] == 11);
 
     // slicing with correct type is allowed
     jx[J(0) .. J(1)] = 12;
-    // TODO assert(jx[J(0)] == 12);
+    assert(jx[J(0) .. J(1)] == [12]);
 
     // indexing with wrong type is disallowed
     static assert(!__traits(compiles, { ix[J(0)] = 11; }));
