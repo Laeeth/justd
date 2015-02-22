@@ -5,17 +5,17 @@ import std.range: empty;
 import knet.base;
 
 /** Store all Data to disk. */
-void save(Graph graph,
+void save(Graph gr,
           string dirPath)
 {
     const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
     writeln(`Saving tables to "`, cachePath, `" ...`);
     auto file = File(cachePath, `wb`);
-    file.rawWrite(graph.db.ixes.pack);
-    file.rawWrite(graph.stat.pack);
+    file.rawWrite(gr.db.ixes.pack);
+    file.rawWrite(gr.stat.pack);
 }
 
-void load(Graph graph,
+void load(Graph gr,
           string dirPath)
 {
     const cachePath = buildNormalizedPath(dirPath.expandTilde, `knet.msgpack`);
@@ -24,8 +24,8 @@ void load(Graph graph,
     {
         auto file = File(cachePath, `rb`);
         ubyte[] dbData; dbData.length = file.size; file.rawRead(dbData);
-        // dbData.unpack(graph.db); // TODO make this compile
-        // dbData.unpack(graph.stat); // TODO make this compile
+        // dbData.unpack(gr.db); // TODO make this compile
+        // dbData.unpack(gr.stat); // TODO make this compile
     }
     catch (std.file.FileException e)
     {
@@ -37,7 +37,7 @@ enum uniquelySenseLemmasFilename = `knet_uniquely_sensed_lemmas_within_language.
 
 /** Load all Lemmas that have unique a Sense in a given language.
  */
-auto loadUniquelySensedLemmas(Graph graph,
+auto loadUniquelySensedLemmas(Graph gr,
                               string dirPath)
 {
     try
@@ -57,7 +57,7 @@ auto loadUniquelySensedLemmas(Graph graph,
 
             // TODO Use learnLemma(lemma, true) instead of these two lines
             lemma.hasUniqueSense = true;
-            graph.db.ixes.lemmasByExpr[expr] = [lemma];
+            gr.db.ixes.lemmasByExpr[expr] = [lemma];
 
             ++cnt;
         }
@@ -69,7 +69,7 @@ auto loadUniquelySensedLemmas(Graph graph,
 
 /** Save all Lemmas that have unique a Sense in a given language.
  */
-auto saveUniquelySensedLemmas(Graph graph,
+auto saveUniquelySensedLemmas(Graph gr,
                               string dirPath,
                               bool ignoreUnknownSense = true)
 {
@@ -80,7 +80,7 @@ auto saveUniquelySensedLemmas(Graph graph,
             `" ...`);
     auto file = File(cachePath, `wb`);
     size_t cnt = 0;
-    foreach (pair; graph.db.ixes.lemmasByExpr.byPair)
+    foreach (pair; gr.db.ixes.lemmasByExpr.byPair)
     {
         const expr = pair[0];
         auto lemmas = pair[1];
