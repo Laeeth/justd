@@ -194,10 +194,6 @@ void showNds(R)(Graph gr,
         import knet.iteration;
         auto lns = gr.lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
 
-        import std.algorithm: multiSort;
-        import dbg: dln;
-        dln("warning: multiSort is disabled");
-
         gr.sortLns(lns);
 
         foreach (ln; lns)
