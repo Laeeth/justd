@@ -507,14 +507,17 @@ struct Tabs
     Links allLinks;
 }
 
-/** Indexes (Maps).
+/** Indexes.
+    Maps or Associative Arrays (AAs).
  */
 struct Ixes
 {
     // Most important index
     Nd[Lemma] ndByLemma;
 
-    // TODO Nds[Lang.max + 1] ndsByLang;
+    // All $(D Nds) in language $(D Lang)
+    // TODO StaticArrayOfElementTypeIndexBy!(Nds, Lang.max) ndsByLang;
+
     Location[Nd] locations;
 
     // Lemmas

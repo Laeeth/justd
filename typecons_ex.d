@@ -208,3 +208,5 @@ unittest
         assert(equal(xe.filter!(a => a < 11), [2, 3]));
     }
 }
+
+enum StaticArrayOfElementTypeIndexBy(E, I) = IndexedBy!(E[I.elementCountOf!E], I);
