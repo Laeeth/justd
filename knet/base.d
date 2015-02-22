@@ -516,7 +516,7 @@ struct Ixes
     Nd[Lemma] ndByLemma;
 
     // All $(D Nds) in language $(D Lang)
-    // TODO StaticArrayOfElementTypeIndexBy!(Nds, Lang.max) ndsByLang;
+    // TODO StaticArrayOfElementTypeIndexedBy!(Nds, Lang.max) ndsByLang;
 
     Location[Nd] locations;
 
