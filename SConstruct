@@ -12,7 +12,7 @@ print "scons: Using at maximum " + str(num_jobs) + " number of jobs"
 # D compilation flags
 dflags = ["-vcolumns", "-wi"]
 
-# build type
+# Build Type
 AddOption("--build-type", dest="build-type", type="string")
 build_type = GetOption("build-type")
 if build_type == "debug":
@@ -20,15 +20,17 @@ if build_type == "debug":
 if build_type == "debug-unittest":
     dflags += ["-debug", "-g", "-gs", "-unittest"]
 elif build_type == "release":
-    dflags += ["-release"]
+    dflags += ["-release", "-O"]
 elif build_type == "debug-release":
-    dflags += ["-debug-release"]
+    dflags += ["-debug", "-release", "-O"]
 elif build_type == "release-unittest":
     dflags += ["-release", "-unittest"]
 elif build_type == "unittest-release":
-    dflags += ["-unittest", "-release"]
+    dflags += ["-unittest", "-release", "-O"]
 elif build_type == "debug-unittest-release":
-    dflags += ["-debug", "-unittest", "-release"]
+    dflags += ["-debug", "-unittest", "-release", "-O"]
+elif (build_type in ["profile-release", "release-profile"]):
+    dflags += ["-profile", "-release", "-O"]
 
 env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
                   DFLAGS=dflags)
