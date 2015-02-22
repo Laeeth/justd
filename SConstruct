@@ -37,7 +37,7 @@ env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd
 env.Decider("MD5-timestamp")
 env.CacheDir(os.path.expanduser("~/.cache/scons"))
 dflags_value = env.Value(dflags)
-ppr(dflags_value.__dict__)
+# ppr(dflags_value.__dict__)
 
 knetquery_srcs = (["knetquery/source/app.d",
                    "stdx/container/fixed_array.d",
