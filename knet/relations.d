@@ -698,7 +698,7 @@ auto toHuman(const Role role,
                 {
                     case sv: words = ["har", not, "del"]; break;
                     case en:
-                    default: words = ["does", not, "have art"]; break;
+                    default: words = ["does", not, "have part"]; break;
                 }
             }
             break;
@@ -1992,7 +1992,8 @@ bool specializes(Rel special, Rel general) @safe @nogc pure nothrow
                                                 abbreviationFor,
                                                 contractionFor,
                                                 emoticonFor) != 0;
-        case abbreviationFor: return special.among!(acronymFor, contractionFor) != 0;
+        case abbreviationFor: return special.among!(acronymFor,
+                                                    contractionFor) != 0;
         case symbolFor: return special.among!(emoticonFor) != 0;
         case atLocation: return special.among!(bornInLocation,
                                                hasCitizenship,
