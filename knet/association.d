@@ -53,7 +53,9 @@ Nd contextOf(Nds)(Graph gr,
     StopWatch stopWatch;
     stopWatch.start();
 
-    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, filter)).array; // TODO avoid Walker postblit
+    // TODO avoid Walker postblit
+    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, filter))
+                      .array;
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)
