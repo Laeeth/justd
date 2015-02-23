@@ -222,6 +222,17 @@ and $(D length == capacity), throws an exception.
         debug(Sorted) assertSorted();
         return 1;
     }
+
+    size_t linearInsert(Value)(Value value0, Value value1) // TODO variadic
+        if (isImplicitlyConvertible!(Value, ElementType!Store))
+        {
+            _store.insertBack(value0);
+            _store.insertBack(value1);
+            std.algorithm.completeSort!(comp)(assumeSorted!comp(_store[0 .. length-2]), _store[length-2 .. length]);
+            debug(Sorted) assertSorted();
+            return 2;
+        }
+
 /**
 Inserts all elements of range $(D stuff) into store. If the underlying
 store is a range and has not enough space left, throws an exception.
@@ -306,7 +317,7 @@ it. This will use the removeBack function of the underlying store.
 /**
 Return SortedRange for _store
     */
-    Range opIndex()
+    Range opIndex() pure
     {
         import std.range : assumeSorted;
         return _store[0 .. length].assumeSorted!comp;
@@ -315,7 +326,7 @@ Return SortedRange for _store
 /**
     Return SortedRange for _store
     */
-    Range opSlice(size_t start, size_t stop)
+    Range opSlice(size_t start, size_t stop) pure
     {
         enforce(stop <= length);
         return _store[0 .. stop].assumeSorted!comp;

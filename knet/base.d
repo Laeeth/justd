@@ -232,9 +232,9 @@ else                 { alias Lns = Ln[]; }
 
 import stdx.container.sorted: Sorted;
 /// Sorted References to Nodes.
-alias SortedNds = Sorted!(Nds, "a.ix < b.ix");
+alias SortedNds = Sorted!(Nd[]);
 /// Sorted References to Links.
-alias SortedLns = Sorted!(Lns, "a.ix < b.ix");
+alias SortedLns = Sorted!(Ln[]);
 
 /// WordNet.
 alias SynSet = Array!Nd;        /// WordNet Synonym Set
@@ -363,14 +363,20 @@ struct Node
     Origin origin;
 }
 
-alias PWeight = ubyte; // link weight pack type
+/** Packed Link Weight.
+ */
+alias PWeight = ubyte;
+
+/** Histogram over Packed Link Weights.
+ */
+alias PWeightHistogram = size_t[PWeight];
+
+alias Actors = Nds;
 
 /** Many-Nodes-to-Many-Nodes Link (Edge).
  */
 struct Link
 {
-    alias WeightHistogram = size_t[PWeight];
-
     /* @safe @nogc pure nothrow: */
 
     this(Nd src,
@@ -382,6 +388,9 @@ struct Link
         // http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org#post-zhndpadqtfareymbnfis:40forum.dlang.org
         // this.actors.append(src.bwd,
         //                    dst.fwd);
+
+        // this.actors.linearInsert(src.bwd, dst.fwd);
+
         this.actors.reserve(this.actors.length + 2);
         this.actors ~= src.bwd;
         this.actors ~= dst.fwd;
@@ -431,14 +440,14 @@ struct Link
         return (1.0 - nweight);
     }
 
-    Nds actors;
+    Actors actors;
     PWeight pweight;
     Role role;
     Origin origin;
 }
 
-auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.bwd).map!(nd => nd.raw); }
-auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.fwd ).map!(ln => ln.raw); }
+// auto ins (in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.bwd).map!(nd => nd.raw); }
+// auto outs(in Link link) { return link.actors[].filter!(nd => nd.dir() == RelDir.fwd).map!(ln => ln.raw); }
 
 /** Binary Relation Link.
  */
@@ -567,13 +576,13 @@ struct Stat
     NWeight weightMinCN5 = NWeight.max;
     NWeight weightMaxCN5 = NWeight.min_normal;
     NWeight weightSumCN5 = 0; // Sum of all link weights.
-    Link.WeightHistogram pweightHistogramCN5; // CN5 Packed Weight Histogram
+    PWeightHistogram pweightHistogramCN5; // CN5 Packed Weight Histogram
 
     // TODO Group to WeightsStatistics
     NWeight weightMinNELL = NWeight.max;
     NWeight weightMaxNELL = NWeight.min_normal;
     NWeight weightSumNELL = 0; // Sum of all link weights.
-    Link.WeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
+    PWeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
 }
 
 /** Node/Link (Traversal) Filter.
@@ -971,7 +980,8 @@ class Graph
             ((!ignoreSelfConnects) ||
              srcs != dsts))
         {
-            import knet.relations: RelDir, toHuman;
+            import knet.relations: RelDir;
+            import knet.roles: toHuman;
             writeln("Could not connect SynSets: ",
                     srcs[],
                     "=", role.toHuman, "=>",
@@ -1256,7 +1266,7 @@ class Graph
 
         foreach (aLn; at(a).links[].map!(ln => ln.raw))
         {
-            const aLink = at(aLn);
+            auto aLink = at(aLn);
             if (aLink.role.rel == role.rel &&
                 aLink.role.negation == role.negation && // no need to check reversion (all links are bidirectional)
                 aLink.origin == origin &&

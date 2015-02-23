@@ -7,7 +7,8 @@ import knet.base;
 import knet.languages: toHuman;
 import knet.senses: toHuman;
 import knet.origins: toNice;
-import knet.relations: RelDir, toHuman;
+import knet.relations: RelDir;
+import knet.roles: toHuman;
 
 /** Show Network Relations.
  */
