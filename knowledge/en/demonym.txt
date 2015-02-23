@@ -176,7 +176,7 @@ city:FrederictonFrederictonian
 GibraltarGibraltarian
 city:GreenvilleGreenvillian
 HamiltonHamiltonian
-HartlepoolHartlepudlian
+city:HartlepoolHartlepudlian
 HesseHessian
 city:HoustonHoustonian
 Isles of ScillyScillonian
@@ -197,7 +197,7 @@ country:New GuineaNew Guinian
 city:New OrleansNew Orleanian
 state:New South WalesNew South Walesian
 city:Newcastle upon TyneNovocastrian
-Northern TerritoryTerritorian
+region:Northern TerritoryTerritorian
 state:OregonOregonian
 city:ParisParisian
 PeterboroughPeterborian
@@ -208,7 +208,7 @@ Rivers StateRiverian
 SaskatchewanSaskatchewanian
 SaskatoonSaskatonian
 SwindonSwindonian
-SicilySicilian
+island:SicilySicilian
 ThraceThracian
 TowcesterTowcestrian
 state:WashingtonWashingtonian
