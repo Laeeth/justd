@@ -2,6 +2,15 @@ module knet.inference;
 
 import knet.base;
 
+/* TODO Infer in multiple steps/passes:
+   synonymFor ==specializes==> abbreviationFor ==specializes=> acronymFor
+   */
+void inferSpecializedRelations(Graph graph)
+{
+}
+
+/* TODO Infer senses in multiple steps/passes:
+*/
 void inferSpecializedSenses(Graph graph)
 {
     bool show = true;
