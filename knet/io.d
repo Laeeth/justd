@@ -93,15 +93,19 @@ void showRelations(Graph gr,
     writeln(indent, `Link Connectedness Average: `, cast(NWeight)gr.stat.linkConnectednessSum/gr.db.tabs.allLinks.length);
 }
 
-void showLink(Graph gr, Role role, Lang lang = Lang.en)
+void showLink(Graph gr, Role role, Lang lang = Lang.en, RelDir dir = RelDir.fwd)
 {
     enum indent = `    - `;
+    if (dir == RelDir.bwd)
+    {
+        role.reversion = true;
+    }
     write(indent, role.toHuman(lang), `: `);
 }
 
 void showLn(Graph gr, Ln ln, Lang lang = Lang.en)
 {
-    gr.showLink(gr[ln].role, lang);
+    gr.showLink(gr[ln].role, lang, ln.dir);
 }
 
 void showNode(Graph gr,
@@ -187,9 +191,7 @@ void showNds(R)(Graph gr,
 
         import knet.iteration;
         auto lns = gr.lnsOf(lineNode, RelDir.any, Role(rel, false, negation)).array;
-
         gr.sortLns(lns);
-
         foreach (ln; lns)
         {
             auto link = gr[ln];
