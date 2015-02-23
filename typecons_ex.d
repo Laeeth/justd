@@ -82,8 +82,7 @@ enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessC
 
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
-    TODO Support indexing by tuples
-    TODO Use std.range.indexed when I is an enum with non-contigious enumerators
+    TODO Use std.range.indexed when I is an enum with non-contigious enumerators. Perhaps use among aswell.
     TODO Rename to By, by?!
    */
 struct IndexedBy(R, I) if (isIndexableBy!(R, I))

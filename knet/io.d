@@ -93,21 +93,15 @@ void showRelations(Graph gr,
     writeln(indent, `Link Connectedness Average: `, cast(NWeight)gr.stat.linkConnectednessSum/gr.db.tabs.allLinks.length);
 }
 
-void showLink(Graph gr,
-              Rel rel,
-              RelDir dir,
-              bool negation = false,
-              Lang lang = Lang.en)
+void showLink(Graph gr, Role role, Lang lang = Lang.en)
 {
-    auto indent = `    - `;
-    write(indent, rel.toHuman(dir, negation, lang), `: `);
+    enum indent = `    - `;
+    write(indent, role.toHuman(lang), `: `);
 }
 
-void showLn(Graph gr,
-            Ln ln)
+void showLn(Graph gr, Ln ln, Lang lang = Lang.en)
 {
-    auto link = gr[ln];
-    gr.showLink(link.role.rel, ln.dir, link.role.negation);
+    gr.showLink(gr[ln].role, lang);
 }
 
 void showNode(Graph gr,
@@ -156,11 +150,11 @@ void showNode(Graph gr,
 
 void showLinkNode(Graph gr,
                   in Node node,
-                  Rel rel,
+                  Role role,
                   NWeight weight,
-                  RelDir dir)
+                  Lang lang = Lang.en)
 {
-    gr.showLink(rel, dir);
+    gr.showLink(role, lang);
     gr.showNode(node, weight);
     writeln;
 }
@@ -293,9 +287,7 @@ bool showNodes(Graph gr,
                                                              node.lemma.expr.toLower.isPalindrome(3)))
         {
             gr.showLinkNode(palindromeNode,
-                            Rel.instanceOf,
-                            NWeight.infinity,
-                            RelDir.bwd);
+                            Role(Rel.instanceOf, true), NWeight.infinity, lang);
         }
     }
     else if (normLine.skipOverShortestOf(`anagramsof(`,
@@ -308,9 +300,7 @@ bool showNodes(Graph gr,
             foreach (anagramNode; gr.anagramsOf(arg))
             {
                 gr.showLinkNode(anagramNode,
-                                Rel.instanceOf,
-                                NWeight.infinity,
-                                RelDir.bwd);
+                                Role(Rel.instanceOf, true), NWeight.infinity, lang);
             }
         }
     }
@@ -324,9 +314,7 @@ bool showNodes(Graph gr,
             foreach (synonymNode; gr.synonymsOf(arg))
             {
                 gr.showLinkNode(gr[synonymNode],
-                                   Rel.instanceOf,
-                                   NWeight.infinity,
-                                   RelDir.bwd);
+                                Role(Rel.instanceOf, true), NWeight.infinity);
             }
         }
     }
@@ -341,9 +329,7 @@ bool showNodes(Graph gr,
             foreach (rhymingNode; gr.rhymesOf(arg))
             {
                 gr.showLinkNode(gr[rhymingNode],
-                                Rel.instanceOf,
-                                NWeight.infinity,
-                                RelDir.bwd);
+                                Role(Rel.instanceOf, true), NWeight.infinity, lang);
             }
         }
     }
@@ -358,9 +344,7 @@ bool showNodes(Graph gr,
             foreach (translationNode; gr.translationsOf(arg))
             {
                 gr.showLinkNode(gr[translationNode],
-                                Rel.instanceOf,
-                                NWeight.infinity,
-                                RelDir.bwd);
+                                Role(Rel.instanceOf, true), NWeight.infinity, lang);
             }
         }
     }

@@ -519,20 +519,23 @@ alias Rank = uint;
 
 }
 
+import knet.roles: Role;
+
 /** Convert $(D rel) to Human Language Representation. */
-auto toHuman(const Rel rel,
-             const RelDir dir,
-             const bool negation = false,
+auto toHuman(const Role role,
              const Lang targetLang = Lang.en, // present statement in this language
              const Lang srcLang = Lang.en, // TODO use
              const Lang dstLang = Lang.en) // TODO use
     @safe pure
 {
+    const Rel rel = role.rel;
+    const bool negation = role.negation;
+
     string[] words;
     import std.array: array;
     import std.algorithm: joiner;
 
-    auto not = negation ? negationIn(targetLang) : null;
+    auto not = negation ? negationIn(targetLang) : null; // negation string
     switch (rel) with (Rel) with (Lang)
     {
         case relatedTo:
@@ -616,7 +619,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case isA:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -638,7 +641,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hypernymOf:
-            if (dir == RelDir.bwd) // just a reversion of isA for now
+            if (role.reversion) // just a reversion of isA for now
             {
                 switch (targetLang)
                 {
@@ -660,7 +663,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case mayBeA:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -680,7 +683,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case partOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -700,7 +703,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case madeOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -720,7 +723,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case madeBy:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -740,7 +743,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case memberOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -762,7 +765,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case topMemberOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -782,7 +785,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case participatesIn:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -802,7 +805,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case worksFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -824,7 +827,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case playsIn:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -846,7 +849,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case plays:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -867,7 +870,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case contributesTo:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -887,7 +890,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case leaderOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -907,7 +910,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case coaches:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -927,7 +930,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case represents:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -947,7 +950,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case ceoOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -967,7 +970,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasA:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -988,7 +991,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case atLocation:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1008,7 +1011,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case causes:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1028,7 +1031,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case creates:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1049,7 +1052,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case foundedIn:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1069,7 +1072,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case eats:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1089,7 +1092,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case atTime:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1109,7 +1112,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case capableOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1129,7 +1132,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case definedAs:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1149,7 +1152,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case derivedFrom:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1169,7 +1172,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case compoundDerivedFrom:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1189,7 +1192,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case etymologicallyDerivedFrom:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1209,7 +1212,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasProperty:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1229,7 +1232,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasAttribute:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1249,7 +1252,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasEmotion:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1311,7 +1314,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasParent:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1331,7 +1334,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasChild:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1351,7 +1354,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasHusband:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1371,7 +1374,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasWife:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1391,7 +1394,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasOfficeIn:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1411,7 +1414,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case causesDesire:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1431,7 +1434,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case proxyFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1451,7 +1454,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case instanceOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1471,7 +1474,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case decreasesRiskOf:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1491,7 +1494,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case desires:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1511,7 +1514,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case uses:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1531,7 +1534,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case controls:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1551,7 +1554,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case treats:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1571,7 +1574,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case togetherWritingFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1591,7 +1594,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case symbolFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1611,7 +1614,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case abbreviationFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1631,7 +1634,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case contractionFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1651,7 +1654,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case acronymFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1671,7 +1674,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case emoticonFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1691,7 +1694,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case playsInstrument:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1711,7 +1714,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasNameDay:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1731,7 +1734,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasOrigin:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1751,7 +1754,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case hasMeaning:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1771,7 +1774,7 @@ auto toHuman(const Rel rel,
             }
             break;
         // case hasPronounciation:
-        //     if (dir == RelDir.fwd)
+        //     if (!role.reversion)
         //     {
         //         switch (targetLang)
         //         {
@@ -1791,7 +1794,7 @@ auto toHuman(const Rel rel,
         //     }
         //     break;
         case slangFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1811,7 +1814,7 @@ auto toHuman(const Rel rel,
             }
             break;
         case idiomFor:
-            if (dir == RelDir.fwd)
+            if (!role.reversion)
             {
                 switch (targetLang)
                 {
@@ -1905,8 +1908,8 @@ auto toHuman(const Rel rel,
         default:
             import std.conv: to;
             const ordered = !rel.isSymmetric;
-            const prefix = (ordered && dir == RelDir.bwd ? `<` : ``);
-            const suffix = (ordered && dir == RelDir.fwd ? `>` : ``);
+            const prefix = (ordered && role.reversion ? `<` : ``);
+            const suffix = (ordered && (!role.reversion) ? `>` : ``);
             words = [prefix ~ `-` ~ rel.to!string ~ `-` ~ suffix];
             break;
     }

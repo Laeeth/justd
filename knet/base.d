@@ -974,7 +974,7 @@ class Graph
             import knet.relations: RelDir, toHuman;
             writeln("Could not connect SynSets: ",
                     srcs[],
-                    "=", role.rel.toHuman(RelDir.fwd), "=>",
+                    "=", role.toHuman, "=>",
                     dsts[]);
         }
         return lns;
