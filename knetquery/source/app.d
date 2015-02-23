@@ -57,8 +57,8 @@ int main(string[] args)
     else
     {
         import knet.readers.wordnet;
-        //gr.readWordNet(`../knowledge/en/wordnet`);
-        gr.learnDefault;
+        gr.readWordNet(`../knowledge/en/wordnet`);
+        //gr.learnDefault;
     }
 
     gr.showRelations;
