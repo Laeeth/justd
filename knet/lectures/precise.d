@@ -209,6 +209,18 @@ void learnPreciseThings(Graph graph)
                                  Sense.region, lang, Role(Rel.relatedTo),
                                  Sense.nounDemonym, lang, Origin.manual, 1.0);
 
+            graph.learnMtoNMaybe(buildPath(dirPath, `region_demonymAdjective.txt`),
+                                 Sense.region, lang, Role(Rel.etymologicallyDerivedFrom, true),
+                                 Sense.adjectiveDemonym, lang, Origin.manual, 1.0);
+
+            graph.learnMtoNMaybe(buildPath(dirPath, `region_maleDemonym.txt`),
+                                 Sense.region, lang, Role(Rel.memberOf, true),
+                                 Sense.nounDemonymSingularMale, lang, Origin.manual, 1.0);
+
+            graph.learnMtoNMaybe(buildPath(dirPath, `region_femaleDemonym.txt`),
+                                 Sense.region, lang, Role(Rel.memberOf, true),
+                                 Sense.nounDemonymSingularFemale, lang, Origin.manual, 1.0);
+
             // Prefix
             graph.learnMtoNMaybe(buildPath(dirPath, `word_prefix.txt`),
                                  Sense.prefix, lang, Role(Rel.hasMeaning),
