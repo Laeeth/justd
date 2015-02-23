@@ -475,7 +475,7 @@ bool showNodes(Graph gr,
         if (!arg.empty)
         {
             import knet.association: contextOf;
-            const ctxNd = gr.contextOf(arg.splitter, Filter.init, 30000);
+            const ctxNd = gr.contextOf(arg.splitter, Filter.init, 3000);
             if (ctxNd.defined)
             {
                 gr.showNode(ctxNd, 1.0);
