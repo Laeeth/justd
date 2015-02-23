@@ -692,10 +692,7 @@ class Graph
                 }
             }
         }
-        catch (std.exception.ErrnoException e)
-        {
-            writeln(`Could not open file `, path);
-        }
+        catch (std.exception.ErrnoException e) { /* ok */ }
     }
 
     /// Learn Verb Reversion.
