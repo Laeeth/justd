@@ -184,6 +184,7 @@ enum Sense:ubyte
     /* Adjective */
 
     adjective,
+    adjectiveDemonym,           // Brittish, bajersk
     adjectiveMale,
     adjectiveFeminine,
     adjectiveNeuter,
@@ -507,6 +508,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case adjective: return `adjective`;
 
+        case adjectiveDemonym: return `demonym adjective`;
         case adjectiveMale: return `male adjective`;
         case adjectiveFeminine: return `feminine adjective`;
         case adjectiveNeuter: return `neuter adjective`;
@@ -731,22 +733,6 @@ import std.algorithm.comparison: among;
         with (Sense) return (sense.among!(phrase,
                                           nounPhrase) != 0);
     }
-    bool isNounSingular(Sense sense)
-    {
-        with (Sense) return (sense.among!(nounSingular,
-                                          nounSingularIndefinite,
-                                          nounSingularDefinite,
-                                          nounSingularMale,
-                                          nounSingularFemale,
-                                          nounSingularNeuter) != 0);
-    }
-    bool isNounPlural(Sense sense)
-    {
-        with (Sense) return (sense.among!(nounPlural,
-                                          nounPluralMale,
-                                          nounPluralFemale,
-                                          nounPluralNeuter) != 0);
-    }
     bool isNounCollective(Sense sense)
     {
         with (Sense) return (sense.among!(nounCollective,
@@ -771,6 +757,29 @@ import std.algorithm.comparison: among;
         with (Sense) return (sense.among!(nounDemonym) != 0 ||
                              sense.isNounDemonymSingular ||
                              sense.isNounDemonymPlural);
+    }
+    bool isDemonym(Sense sense)
+    {
+        with (Sense) return (sense.isNounDemonym ||
+                             sense.among!(adjectiveDemonym));
+    }
+    bool isNounSingular(Sense sense)
+    {
+        with (Sense) return (sense.isNounDemonymSingular ||
+                             sense.among!(nounSingular,
+                                          nounSingularIndefinite,
+                                          nounSingularDefinite,
+                                          nounSingularMale,
+                                          nounSingularFemale,
+                                          nounSingularNeuter) != 0);
+    }
+    bool isNounPlural(Sense sense)
+    {
+        with (Sense) return (sense.isNounDemonymPlural ||
+                             sense.among!(nounPlural,
+                                          nounPluralMale,
+                                          nounPluralFemale,
+                                          nounPluralNeuter) != 0);
     }
     bool isNoun(Sense sense)
     {
@@ -907,6 +916,7 @@ import std.algorithm.comparison: among;
     bool isAdjective(Sense sense)
     {
         with (Sense) return sense.among!(adjective,
+                                         adjectiveDemonym,
                                          adjectiveMale,
                                          adjectiveFeminine,
                                          adjectiveNeuter,
@@ -1078,6 +1088,12 @@ import std.algorithm.comparison: among;
                 sense.isPronoun);
     }
     alias isRole = isActor;
+
+    bool isInPlural(Sense sense)
+    {
+        return (sense.isNounPlural ||
+                sense.isPronounPlural);
+    }
 }
 
 import grammars: Lang;
