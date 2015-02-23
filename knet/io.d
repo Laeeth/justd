@@ -103,16 +103,22 @@ void showLink(Graph gr, Role role, Lang lang = Lang.en, RelDir dir = RelDir.fwd)
     write(indent, role.toHuman(lang), `: `);
 }
 
+void showLink(Graph gr, in Link link, Lang lang = Lang.en)
+{
+    enum indent = `    - `;
+    write(indent, link.role.toHuman(lang), `: `);
+}
+
 void showLn(Graph gr, Ln ln, Lang lang = Lang.en)
 {
     gr.showLink(gr[ln].role, lang, ln.dir);
 }
 
 void showNode(Graph gr,
-              in Node node, NWeight weight)
+              in Node node, NWeight weight = 1.0)
 {
     if (node.lemma.expr)
-        write(` "`, node.lemma.expr, // .replace(`_`, ` `)
+        write(`"`, node.lemma.expr, // .replace(`_`, ` `)
               `"`);
 
     write(` (`); // open
@@ -143,7 +149,7 @@ void showNode(Graph gr,
         write(`:`, gr.db.ixes.contextNameByCtx[node.lemma.context]);
     }
 
-    writef(`:%.0f%%-%s),`, 100*weight, node.origin.toNice); // close
+    writef(`:%.0f%%-%s)`, 100*weight, node.origin.toNice); // close
 }
 
 void showNode(Graph gr,
@@ -480,6 +486,60 @@ bool showNodes(Graph gr,
             {
                 gr.showNode(ctxNd, 1.0);
                 writeln;
+            }
+        }
+    }
+    else if (normLine.skipOver(`nd(`))
+    {
+        normLine.skipOver(` `); // TODO all space using skipOver!isSpace
+        const split = normLine.findSplitBefore(`)`);
+        const arg = split[0];
+        if (!arg.empty)
+        {
+            try
+            {
+                const ix = arg.to!(Nd.Ix);
+                if (ix < gr.db.tabs.allNodes.length)
+                {
+                    write(`> `);
+                    gr.showNode(gr[Nd(ix)], 1.0);
+                    writeln;
+                }
+                else
+                {
+                    writeln("> Node index ", ix, " is too large");
+                }
+            }
+            catch (ConvException e)
+            {
+                writeln("> Cannot convert nd() argument ", arg, " to an Nd");
+            }
+        }
+    }
+    else if (normLine.skipOver(`ln(`))
+    {
+        normLine.skipOver(` `); // TODO all space using skipOver!isSpace
+        const split = normLine.findSplitBefore(`)`);
+        const arg = split[0];
+        if (!arg.empty)
+        {
+            try
+            {
+                const ix = arg.to!(Ln.Ix);
+                if (ix < gr.db.tabs.allNodes.length)
+                {
+                    write(`> `);
+                    gr.showLink(gr[Ln(ix)]);
+                    writeln;
+                }
+                else
+                {
+                    writeln("> Link index ", ix, " is too large");
+                }
+            }
+            catch (ConvException e)
+            {
+                writeln("> Cannot convert ln() argument ", arg, " to an Ln");
             }
         }
     }
