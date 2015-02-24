@@ -58,7 +58,6 @@ Nd contextOf(Nds)(Graph gr,
         intervalInMsecs = 20;
     }
 
-    writeln(`durationInMsecs: `, durationInMsecs);
     foreach (nd; nds)
     {
         writeln(`- `, gr[nd].lemma);
