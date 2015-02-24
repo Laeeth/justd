@@ -6,13 +6,13 @@ import grammars: Tense;
 import std.traits: isSomeString;
 
 /** Decode Relation $(D predicate) together with its possible $(D negation) and
-    $(D reversion). */
+    $(D reversed). */
 Rel decodeRelationPredicate(S)(S predicate,
                                const S entity,
                                const S value,
                                const Origin origin,
                                out bool negation,
-                               out bool reversion,
+                               out bool reversed,
                                out Tense tense) if (isSomeString!S)
 {
     with (Rel)
@@ -23,18 +23,18 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `companyeconomicsector`: return memberOfEconomicSector;
             case `headquarteredin`: tense = Tense.pastMoment; return headquarteredIn;
 
-            case `animalsuchasfish`: reversion = true; return memberOf;
-            case `animalsuchasinsect`: reversion = true; return memberOf;
-            case `animalsuchasinvertebrate`: reversion = true; return memberOf;
-            case `archaeasuchasarchaea`: reversion = true; return memberOf;
+            case `animalsuchasfish`: reversed = true; return memberOf;
+            case `animalsuchasinsect`: reversed = true; return memberOf;
+            case `animalsuchasinvertebrate`: reversed = true; return memberOf;
+            case `archaeasuchasarchaea`: reversed = true; return memberOf;
 
-            case `plantincludeplant`: reversion = true; return memberOf;
+            case `plantincludeplant`: reversed = true; return memberOf;
             case `plantgrowinginplant`: return growsIn;
 
             case `plantrepresentemotion`: return represents;
 
             case `musicianinmusicartist`: return memberOf;
-            case `bookwriter`: reversion = true; return writes;
+            case `bookwriter`: reversed = true; return writes;
 
             case `politicianholdsoffice`:
             case `holdsoffice`: return hasJobPosition;
@@ -44,13 +44,13 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `sportsgamedate`: return atTime;
             case `sportsgamesport`: return plays;
 
-            case `sportsgamewinner`: reversion = true; return wins;
+            case `sportsgamewinner`: reversed = true; return wins;
             case `athletewinsawardtrophytournament`: return wins;
 
-            case `sportsgameloser`: reversion = true; return loses;
-            case `sportsgameteam`: reversion = true; return participatesIn;
+            case `sportsgameloser`: reversed = true; return loses;
+            case `sportsgameteam`: reversed = true; return participatesIn;
 
-            case `teamwontrophy`: reversion = true; tense = Tense.pastMoment; return wins;
+            case `teamwontrophy`: reversed = true; tense = Tense.pastMoment; return wins;
 
             case `teammate`: return hasTeamMate;
 
@@ -65,22 +65,22 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `sportsgameloserscore`: return hasLoserScore;
             case `sportsgamewinnerscore`: return hasWinnerScore;
 
-            case `awardtrophytournamentisthechampionshipgameofthenationalsport`: reversion = true; return hasTournament;
+            case `awardtrophytournamentisthechampionshipgameofthenationalsport`: reversed = true; return hasTournament;
             case `politicsbillconcernsissue`: return concerns;
-            case `politicsbillsponsoredbypoliticianus`: reversion = true; return sponsors;
-            case `booksuchasbook`: reversion = true; return instanceOf;
+            case `politicsbillsponsoredbypoliticianus`: reversed = true; return sponsors;
+            case `booksuchasbook`: reversed = true; return instanceOf;
             case `jobpositionusesacademicfield`: return memberOf;
             case `academicprogramatuniversity`: return partOf; // TODO Ok?
             case `academicfieldsuchasacademicfield`: return relatedTo;
-            case `academicfieldhassubfield`: reversion = true; return partOf;
-            case `academicfieldconcernssubject`: reversion = true; return partOf; // TODO Ok?
-            case `academicfieldusedbyeconomicsector`: reversion = true; return uses;
-            case `languageofcountry`: reversion = true; return hasLanguage;
+            case `academicfieldhassubfield`: reversed = true; return partOf;
+            case `academicfieldconcernssubject`: reversed = true; return partOf; // TODO Ok?
+            case `academicfieldusedbyeconomicsector`: reversed = true; return uses;
+            case `languageofcountry`: reversed = true; return hasLanguage;
             case `countrycurrency`: return hasCurrency;
             case `drughassideeffect`: return causesSideEffect;
 
-            case `languageofcity`: reversion = true; return usesLanguage;
-            case `languageofuniversity`: reversion = true; return usesLanguage;
+            case `languageofcity`: reversed = true; return usesLanguage;
+            case `languageofuniversity`: reversed = true; return usesLanguage;
             case `languageschoolincity`: return languageSchoolInCity;
 
             case `emotionassociatedwithdisease`: return relatedTo;
@@ -91,7 +91,7 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `organizationterminatedperson`: return terminates;
 
             case `led`:
-            case `athleteledsportsteam`: reversion = true; tense = Tense.pastMoment; return leaderOf;
+            case `athleteledsportsteam`: reversed = true; tense = Tense.pastMoment; return leaderOf;
 
             case `persondeathdate`: return diedIn;
 
@@ -99,7 +99,7 @@ Rel decodeRelationPredicate(S)(S predicate,
 
             case `organizationcreatedatdate`: tense = Tense.pastMoment; return createdAtDate;
 
-            case `drugworkedonbyagent`: tense = Tense.pastMoment; reversion = true; return develops;
+            case `drugworkedonbyagent`: tense = Tense.pastMoment; reversed = true; return develops;
 
             case `agriculturalproductcutintogeometricshape`: return cutsInto;
 
@@ -167,7 +167,7 @@ Rel decodeRelationPredicate(S)(S predicate,
 
         if (t.skipOver(`not`))
         {
-            reversion = true;
+            reversed = true;
         }
 
         import std.string: toLower;
@@ -198,7 +198,7 @@ Rel decodeRelationPredicate(S)(S predicate,
 
             case `include`:
             case `including`:
-            case `suchas`:                       reversion = true; return memberOf;
+            case `suchas`:                       reversed = true; return memberOf;
 
             case `topmemberof`:                                    return topMemberOf;
 
@@ -230,7 +230,7 @@ Rel decodeRelationPredicate(S)(S predicate,
 
             case `has`:
             case `hasa`:                                           return hasA;
-            case `usedfor`: reversion = true; tense = Tense.pastMoment; return uses;
+            case `usedfor`: reversed = true; tense = Tense.pastMoment; return uses;
             case `use`:
             case `uses`:                                           return uses;
             case `usestool`:                                       return usesTool;
@@ -256,7 +256,7 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `producedin`: tense = Tense.pastMoment; return producedAtLocation;
             case `movedto`: tense = Tense.pastMoment; return movedTo;
 
-            case `locationof`:                   reversion = true; return atLocation;
+            case `locationof`:                   reversed = true; return atLocation;
             case `locatedwithin`:                                  return atLocation;
             case `home`:                                           return hasHome;
 
@@ -278,7 +278,7 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `leadsto`:                                        return causes;
 
             case `entail`:
-            case `entails`:                      reversion = true; return causes;
+            case `entails`:                      reversed = true; return causes;
 
             case `decreasestheriskof`:                             return decreasesRiskOf;
             case `treats`:                                         return treats;
@@ -288,7 +288,7 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `hasfirstsubevent`:                               return hasFirstSubevent;
             case `haslastsubevent`:                                return hasLastSubevent;
             case `hasprerequisite`:                                return hasPrerequisite;
-            case `prerequisiteof`:               reversion = true; return hasPrerequisite;
+            case `prerequisiteof`:               reversed = true; return hasPrerequisite;
 
                 // properties
             case `hasproperty`:                                    return hasProperty;
@@ -304,7 +304,7 @@ Rel decodeRelationPredicate(S)(S predicate,
 
             case `desire`:
             case `desires`:                                        return desires;
-            case `desireof`:                     reversion = true; return desires;
+            case `desireof`:                     reversed = true; return desires;
 
             case `preyson`:
             case `eat`:                                            return eats;
@@ -330,12 +330,12 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `hire`:
             case `hires`:
             case `hired`: tense = Tense.pastMoment; return hires;
-            case `hiredBy`: reversion = true; tense = Tense.pastMoment; return hires;
+            case `hiredBy`: reversed = true; tense = Tense.pastMoment; return hires;
 
             case `create`:
             case `creates`:
             case `created`: tense = Tense.pastMoment; return creates;
-            case `createdby`:                    reversion = true; return creates;
+            case `createdby`:                    reversed = true; return creates;
             case `develop`:                                        return develops;
             case `produces`:                                       return produces;
 
@@ -402,26 +402,26 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `siblingof`:                                      return hasSibling; // symmetric
 
             case `haschild`:                                       return hasChild;
-            case `childof`:                      reversion = true; return hasChild;
+            case `childof`:                      reversed = true; return hasChild;
 
             case `hasparent`:                                      return hasParent;
-            case `parentof`:                     reversion = true; return hasParent;
+            case `parentof`:                     reversed = true; return hasParent;
 
             case `hasfather`:                                      return hasFather;
-            case `fatherof`:                     reversion = true; return hasFather;
+            case `fatherof`:                     reversed = true; return hasFather;
 
             case `hasmother`:                                      return hasMother;
-            case `motherof`:                     reversion = true; return hasMother;
+            case `motherof`:                     reversed = true; return hasMother;
 
             case `haswikipediaurl`:                                return wikipediaURL;
             case `subpartof`:                                      return partOf;
             case `synonymfor`:                                     return synonymFor;
-            case `generalizations`:              reversion = true; return isA;
+            case `generalizations`:              reversed = true; return isA;
             case `specializationof`:                               return isA;
-            case `conceptprerequisiteof`: reversion = true;        return hasPrerequisite;
+            case `conceptprerequisiteof`: reversed = true;        return hasPrerequisite;
             case `usesequipment`:                                  return uses;
             case `usesstadium`:                                    return uses;
-            case `containsbodypart`: reversion = true;             return partOf;
+            case `containsbodypart`: reversed = true;             return partOf;
 
             case `date`:
             case `atdate`:                                         return atTime;
@@ -438,9 +438,9 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `collaborateswith`:                               return collaboratesWith;
 
             case `contain`:
-            case `contains`: reversion = true;                     return partOf;
+            case `contains`: reversed = true;                     return partOf;
             case `controls`:                                       return controls;
-            case `leads`: reversion = true;                        return leaderOf;
+            case `leads`: reversed = true;                        return leaderOf;
             case `represents`:                                     return represents;
             case `chargedwithcrime`:                               return chargedWithCrime;
 
@@ -459,26 +459,26 @@ Rel decodeRelationPredicate(S)(S predicate,
             case `diedatage`: tense = Tense.pastMoment; return diedAtAge;
 
             case `istallerthan`:                                   return isTallerThan;
-            case `isshorterthan`:                reversion = true; return isTallerThan;
+            case `isshorterthan`:                reversed = true; return isTallerThan;
 
             case `islargerthan`:                                   return isLargerThan;
-            case `issmallerthan`:                reversion = true; return isLargerThan;
+            case `issmallerthan`:                reversed = true; return isLargerThan;
 
             case `isheavierthan`:                                  return isHeavierThan;
-            case `islighterthan`:                reversion = true; return isHeavierThan;
+            case `islighterthan`:                reversed = true; return isHeavierThan;
 
             case `isolderthan`:                                    return isOlderThan;
-            case `isyoungerthan`:                reversion = true; return isOlderThan;
+            case `isyoungerthan`:                reversed = true; return isOlderThan;
 
             case `aremorethan`:                                    return areMoreThan;
-            case `arefewerthan`:                 reversion = true; return areMoreThan;
+            case `arefewerthan`:                 reversed = true; return areMoreThan;
 
             case `hascapital`:                                     return hasCapital;
-            case `capitalof`:                    reversion = true; return hasCapital;
+            case `capitalof`:                    reversed = true; return hasCapital;
 
             case `writtenaboutinpublication`:                      return writtenAboutInPublication;
 
-            case `toattract`:                    reversion = true; return desires;
+            case `toattract`:                    reversed = true; return desires;
 
             case `hasexpert`:
             case `mlareaexpert`:                                   return hasExpert;

@@ -1153,9 +1153,9 @@ class Graph
         assert(db.tabs.allLinks.length <= Ln.nullIx);
         auto ln = Ln(cast(Ln.Ix)db.tabs.allLinks.length);
 
-        auto link = Link(role.reversion ? dst : src,
+        auto link = Link(role.reversed ? dst : src,
                          Role(role.rel, false, role.negation),
-                         role.reversion ? src : dst,
+                         role.reversed ? src : dst,
                          origin);
 
         stat.linkConnectednessSum += 2;
@@ -1205,7 +1205,7 @@ class Graph
                 ` rel:`, role.rel,
                 ` origin:`, origin,
                 ` negation:`, role.negation,
-                ` reversion:`, role.reversion);
+                ` reversed:`, role.reversed);
         }
 
         db.tabs.allLinks ~= link; // TODO Avoid copying here

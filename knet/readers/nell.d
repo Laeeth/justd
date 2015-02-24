@@ -46,7 +46,7 @@ void readNELLLine(R, N)(Graph graph,
 {
     auto rel = Rel.any;
     auto negation = false;
-    auto reversion = false;
+    auto reversed = false;
     auto tense = Tense.unknown;
 
     Nd entityIx;
@@ -117,7 +117,7 @@ void readNELLLine(R, N)(Graph graph,
                         rel = relationName.decodeRelationPredicate(entityContextName,
                                                                    valueContextName,
                                                                    Origin.nell,
-                                                                   negation, reversion, tense);
+                                                                   negation, reversed, tense);
                     }
                 }
                 break;
@@ -137,7 +137,7 @@ void readNELLLine(R, N)(Graph graph,
     if (entityIx.defined &&
         valueIx.defined)
     {
-        auto mainLinkRef = graph.connect(entityIx, Role(rel, reversion, negation), valueIx,
+        auto mainLinkRef = graph.connect(entityIx, Role(rel, reversed, negation), valueIx,
                                          Origin.nell, mainWeight);
     }
 

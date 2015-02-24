@@ -15,7 +15,7 @@ auto lnsOf(Graph gr,
                .map!(ln => ln.raw)
                .filter!(ln => (dir.among(RelDir.any, ln.dir) != 0 &&  // TODO functionize match(RelDir, RelDir)
                                gr[ln].role.negation == role.negation &&
-                               // TODO gr[ln].role.reversion == role.reversion &&
+                               // TODO gr[ln].role.reversed == role.reversed &&
                                (gr[ln].role.rel == role.rel ||
                                 gr[ln].role.rel.specializes(role.rel))));
 }

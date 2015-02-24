@@ -99,7 +99,7 @@ void showLink(Graph gr, Role role, Lang lang = Lang.en, RelDir dir = RelDir.fwd)
     enum indent = `    - `;
     if (dir == RelDir.bwd)
     {
-        role.reversion = true;
+        role.reversed = true;
     }
     write(indent, role.toHuman(lang), `: `);
 }

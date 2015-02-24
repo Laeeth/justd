@@ -7,16 +7,16 @@ struct Role
 {
     @safe @nogc pure nothrow:
     this(Rel rel = Rel.any,
-         bool reversion = false,
+         bool reversed = false,
          bool negation = false)
     {
         this.rel = rel;
-        this.reversion = reversion;
+        this.reversed = reversed;
         this.negation = negation;
     }
     this(string role)
     {
-        this.reversion = false;
+        this.reversed = false;
         this.negation = false;
         switch (role) with (Rel)
         {
@@ -36,10 +36,10 @@ struct Role
 
             case `wholeOf`:
             case `holonym`:
-                this.rel = partOf; this.reversion = true; break;
+                this.rel = partOf; this.reversed = true; break;
 
             case `hypernym`:
-                this.rel = isA; this.reversion = true; break;
+                this.rel = isA; this.reversed = true; break;
 
             case `instanceHypernym`:
             case `instanceHypernymOf`:
@@ -60,7 +60,7 @@ struct Role
 
             case `entail`:
             case `entails`:
-                this.rel = causes; this.reversion = true; break;
+                this.rel = causes; this.reversed = true; break;
 
             default:
                 this.rel = relatedTo;
@@ -69,7 +69,7 @@ struct Role
         }
     }
     Rel rel;
-    mixin(bitfields!(bool, "reversion", 1,
+    mixin(bitfields!(bool, "reversed", 1,
                      bool, "negation", 1,
                      uint, "pad", 6));
 }
@@ -115,7 +115,7 @@ auto toHuman(const Role role,
             {
                 case sv: words = ["är", not, "en omvändning av"]; break;
                 case en:
-                default: words = ["is", not, "a reversion of"]; break;
+                default: words = ["is", not, "a reversed of"]; break;
             }
             break;
         case synonymFor:
@@ -175,7 +175,7 @@ auto toHuman(const Role role,
             }
             break;
         case isA:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -197,7 +197,7 @@ auto toHuman(const Role role,
             }
             break;
         case hypernymOf:
-            if (role.reversion) // just a reversion of isA for now
+            if (role.reversed) // just a reversed of isA for now
             {
                 switch (targetLang)
                 {
@@ -219,7 +219,7 @@ auto toHuman(const Role role,
             }
             break;
         case mayBeA:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -239,7 +239,7 @@ auto toHuman(const Role role,
             }
             break;
         case partOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -259,7 +259,7 @@ auto toHuman(const Role role,
             }
             break;
         case madeOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -279,7 +279,7 @@ auto toHuman(const Role role,
             }
             break;
         case madeBy:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -299,7 +299,7 @@ auto toHuman(const Role role,
             }
             break;
         case memberOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -321,7 +321,7 @@ auto toHuman(const Role role,
             }
             break;
         case topMemberOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -341,7 +341,7 @@ auto toHuman(const Role role,
             }
             break;
         case participatesIn:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -361,7 +361,7 @@ auto toHuman(const Role role,
             }
             break;
         case worksFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -383,7 +383,7 @@ auto toHuman(const Role role,
             }
             break;
         case playsIn:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -405,7 +405,7 @@ auto toHuman(const Role role,
             }
             break;
         case plays:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -426,7 +426,7 @@ auto toHuman(const Role role,
             }
             break;
         case contributesTo:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -446,7 +446,7 @@ auto toHuman(const Role role,
             }
             break;
         case leaderOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -466,7 +466,7 @@ auto toHuman(const Role role,
             }
             break;
         case coaches:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -486,7 +486,7 @@ auto toHuman(const Role role,
             }
             break;
         case represents:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -506,7 +506,7 @@ auto toHuman(const Role role,
             }
             break;
         case ceoOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -526,7 +526,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasA:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -547,7 +547,7 @@ auto toHuman(const Role role,
             }
             break;
         case atLocation:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -567,7 +567,7 @@ auto toHuman(const Role role,
             }
             break;
         case causes:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -587,7 +587,7 @@ auto toHuman(const Role role,
             }
             break;
         case creates:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -608,7 +608,7 @@ auto toHuman(const Role role,
             }
             break;
         case foundedIn:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -628,7 +628,7 @@ auto toHuman(const Role role,
             }
             break;
         case eats:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -648,7 +648,7 @@ auto toHuman(const Role role,
             }
             break;
         case atTime:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -668,7 +668,7 @@ auto toHuman(const Role role,
             }
             break;
         case capableOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -688,7 +688,7 @@ auto toHuman(const Role role,
             }
             break;
         case definedAs:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -708,7 +708,7 @@ auto toHuman(const Role role,
             }
             break;
         case derivedFrom:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -728,7 +728,7 @@ auto toHuman(const Role role,
             }
             break;
         case compoundDerivedFrom:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -748,7 +748,7 @@ auto toHuman(const Role role,
             }
             break;
         case etymologicallyDerivedFrom:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -768,7 +768,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasProperty:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -788,7 +788,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasAttribute:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -808,7 +808,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasEmotion:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -870,7 +870,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasParent:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -890,7 +890,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasChild:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -910,7 +910,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasHusband:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -930,7 +930,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasWife:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -950,7 +950,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasOfficeIn:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -970,7 +970,7 @@ auto toHuman(const Role role,
             }
             break;
         case causesDesire:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -990,7 +990,7 @@ auto toHuman(const Role role,
             }
             break;
         case proxyFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1010,7 +1010,7 @@ auto toHuman(const Role role,
             }
             break;
         case instanceOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1030,7 +1030,7 @@ auto toHuman(const Role role,
             }
             break;
         case decreasesRiskOf:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1050,7 +1050,7 @@ auto toHuman(const Role role,
             }
             break;
         case desires:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1070,7 +1070,7 @@ auto toHuman(const Role role,
             }
             break;
         case uses:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1090,7 +1090,7 @@ auto toHuman(const Role role,
             }
             break;
         case controls:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1110,7 +1110,7 @@ auto toHuman(const Role role,
             }
             break;
         case treats:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1130,7 +1130,7 @@ auto toHuman(const Role role,
             }
             break;
         case togetherWritingFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1150,7 +1150,7 @@ auto toHuman(const Role role,
             }
             break;
         case symbolFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1170,7 +1170,7 @@ auto toHuman(const Role role,
             }
             break;
         case abbreviationFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1190,7 +1190,7 @@ auto toHuman(const Role role,
             }
             break;
         case contractionFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1210,7 +1210,7 @@ auto toHuman(const Role role,
             }
             break;
         case acronymFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1230,7 +1230,7 @@ auto toHuman(const Role role,
             }
             break;
         case emoticonFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1250,7 +1250,7 @@ auto toHuman(const Role role,
             }
             break;
         case playsInstrument:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1270,7 +1270,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasNameDay:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1290,7 +1290,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasOrigin:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1310,7 +1310,7 @@ auto toHuman(const Role role,
             }
             break;
         case hasMeaning:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1330,7 +1330,7 @@ auto toHuman(const Role role,
             }
             break;
         // case hasPronounciation:
-        //     if (!role.reversion)
+        //     if (!role.reversed)
         //     {
         //         switch (targetLang)
         //         {
@@ -1350,7 +1350,7 @@ auto toHuman(const Role role,
         //     }
         //     break;
         case slangFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1370,7 +1370,7 @@ auto toHuman(const Role role,
             }
             break;
         case idiomFor:
-            if (!role.reversion)
+            if (!role.reversed)
             {
                 switch (targetLang)
                 {
@@ -1464,8 +1464,8 @@ auto toHuman(const Role role,
         default:
             import std.conv: to;
             const ordered = !rel.isSymmetric;
-            const prefix = (ordered && role.reversion ? `<` : ``);
-            const suffix = (ordered && (!role.reversion) ? `>` : ``);
+            const prefix = (ordered && role.reversed ? `<` : ``);
+            const suffix = (ordered && (!role.reversed) ? `>` : ``);
             words = [prefix ~ `-` ~ rel.to!string ~ `-` ~ suffix];
             break;
     }

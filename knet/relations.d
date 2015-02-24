@@ -663,11 +663,11 @@ struct Ref(T)
 
     @nogc nothrow:
 
-    this(Ix ix = nullIx, bool reversion = false) in { assert(ix <= nullIx); }
+    this(Ix ix = nullIx, bool reversed = false) in { assert(ix <= nullIx); }
     body
     {
         this._ix = ix;
-        if (reversion) { _ix.setTopBit; }
+        if (reversed) { _ix.setTopBit; }
     }
 
     this(Ref rhs, RelDir dir)
