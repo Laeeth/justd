@@ -821,7 +821,7 @@ class Graph
                                 Sense sense = Sense.unknown,
                                 Origin origin = Origin.manual) if (isSomeString!S)
     {
-        return connectMtoN(add(emoticons, Lang.any, Sense.unknown, origin),
+        return connectMtoN(add(emoticons, Lang.unknown, Sense.unknown, origin),
                            Role(Rel.emoticonFor),
                            add(exprs, Lang.en, sense, origin),
                            origin, weight);

@@ -203,11 +203,11 @@ Ln readCN5Line(R, N)(Graph graph,
             case 7:
                 break;
             case 8:
-                if (origin.among!(Origin.any)) // if still nothing special
+                if (origin.among!(Origin.unknown)) // if still nothing special
                 {
                     origin = decodeCN5OriginPath(part, lang, origin);
                 }
-                if (origin.among!(Origin.any)) // if still nothing special
+                if (origin.among!(Origin.unknown)) // if still nothing special
                 {
                     writeln(`warning: Couldn't decode Origin `, part);
                 }
@@ -219,7 +219,7 @@ Ln readCN5Line(R, N)(Graph graph,
         ix++;
     }
 
-    if (origin.among!(Origin.any)) // if still nothing special
+    if (origin.among!(Origin.unknown)) // if still nothing special
     {
         origin = Origin.cn5;
     }

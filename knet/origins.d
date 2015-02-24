@@ -4,7 +4,6 @@ module knet.origins;
 enum Origin:ubyte
 {
     unknown,
-    any = unknown,
 
     cn5,                        ///< ConceptNet5
 
