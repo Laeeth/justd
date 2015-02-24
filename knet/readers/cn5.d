@@ -112,13 +112,13 @@ Origin decodeCN5OriginPath(S)(S path, out Lang lang,
 
 /** Decode ConceptNet5 Relation $(D path). */
 Rel decodeCN5RelationPath(S)(S path,
-                             out bool negation,
+                             out bool negated,
                              out bool reversed,
                              out Tense tense) if (isSomeString!S)
 {
     import knet.decodings: decodeRelationPredicate;
     return path[3..$].decodeRelationPredicate(null, null, Origin.cn5,
-                                              negation, reversed, tense);
+                                              negated, reversed, tense);
 }
 
 /** Read ConceptNet5 URI.
@@ -156,7 +156,7 @@ Ln readCN5Line(R, N)(Graph graph,
                      R line, N lnr)
 {
     auto rel = Rel.any;
-    auto negation = false;
+    auto negated = false;
     auto reversed = false;
     auto tense = Tense.unknown;
 
@@ -171,7 +171,7 @@ Ln readCN5Line(R, N)(Graph graph,
         switch (ix)
         {
             case 1:
-                rel = decodeCN5RelationPath(part, negation, reversed, tense);
+                rel = decodeCN5RelationPath(part, negated, reversed, tense);
                 break;
             case 2:         // source concept
                 try
@@ -228,7 +228,7 @@ Ln readCN5Line(R, N)(Graph graph,
         dst.defined &&
         src != dst)
     {
-        return graph.connect(src, Role(rel, reversed, negation), dst, origin, weight);
+        return graph.connect(src, Role(rel, reversed, negated), dst, origin, weight);
     }
     else
     {
