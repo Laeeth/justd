@@ -44,6 +44,7 @@ knetquery_srcs = (["knetquery/source/app.d",
                   env.Glob("knet/*.d") +
                   env.Glob("knet/*/*.d"))
 
+# TODO remove when DFLAGS new SCons version with DFLAGS fix is released
 knetquery_objs = []
 for src in knetquery_srcs:
     obj = env.StaticObject(src)
