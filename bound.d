@@ -303,6 +303,11 @@ struct Bound(V,
     /** Get High Inclusive Bound. */
     static auto max() @property @safe pure nothrow { return optional ? high - 1 : high; }
 
+    static if (isIntegral!V && low >= 0)
+    {
+        size_t opCast(U : size_t)() const { return this._value; } // for IndexedBy support
+    }
+
     /** Construct from unbounded value $(D rhs). */
     this(U, string file = __FILE__, int line = __LINE__)(U rhs) if (areBoundable!(V, U))
     {

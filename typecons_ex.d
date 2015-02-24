@@ -69,21 +69,24 @@ template New(T) if (is(T == class))
 /*     assert(New!C == new C); */
 /* } */
 
-import std.traits: isArray, isUnsigned;
+import std.traits: isArray, isUnsigned, isInstanceOf;
 import std.range.primitives: hasSlicing;
 
 enum isIndex(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
 
 /** Check if $(D R) is indexable by $(D I). */
 enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
-                            (isUnsigned!I || // TODO should we allow isUnsigned here?
-                             isIndex!I ||
-                             is(I == enum)));
+                            (is(I == enum) ||
+                             isUnsigned!I || // TODO should we allow isUnsigned here?
+                             isIndex!I));
 
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
-    TODO Use std.range.indexed when I is an enum with non-contigious enumerators. Perhaps use among aswell.
-    TODO Rename to By, by?!
+
+    TODO Use std.range.indexed when I is an enum with non-contigious
+    enumerators. Perhaps use among aswell.
+
+    TODO Rename to something more concise such as [Bb]y.
    */
 struct IndexedBy(R, I) if (isIndexableBy!(R, I))
 {
@@ -240,6 +243,16 @@ auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
     }
     alias J = I!size_t;
     static assert(!__traits(compiles, { auto xj = x.indexedBy!J; }));
+}
+
+@safe pure nothrow unittest
+{
+    auto x = [1, 2, 3];
+    import bound: Bound;
+    alias B = Bound!(ubyte, 0, 2);
+    B b;
+    auto c = cast(size_t)b;
+    auto y = x.indexedBy!B;
 }
 
 /** TODO shorter name */
