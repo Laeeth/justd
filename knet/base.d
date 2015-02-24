@@ -1310,7 +1310,7 @@ class Graph
     enum fuzzyExprMatchMaximumRecursionDepth = 8;
 
     import std.datetime: StopWatch;
-    StopWatch showNodesSW;
+    StopWatch querySW;
 
     /** Sort Lns on relevance.
         TODO Figure out how to put this in knet.sorting

@@ -10,8 +10,8 @@ import std.traits: isSomeString;
 */
 enum Lang:ushort
 {
-    unknown,                    /// Unknown
-    any = unknown,
+    unknown, any = unknown,
+
     en, english = en,            /// English
     en_US, american_english = en_US,    /// American. English
     en_GB, british_english = en_GB,     /// British English

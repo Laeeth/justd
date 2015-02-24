@@ -250,23 +250,23 @@ void showSenses(Senses)(Graph gr,
 
 alias TriedLines = bool[string]; // TODO use std.container.set
 
-bool showNodes(Graph gr,
-               string line,
-               Lang lang = Lang.unknown,
-               Sense sense = Sense.unknown,
-               string lineSeparator = `_`,
-               TriedLines triedLines = TriedLines.init,
-               uint depth = 0)
+bool query(Graph gr,
+           string line,
+           Lang lang = Lang.unknown,
+           Sense sense = Sense.unknown,
+           string lineSeparator = `_`,
+           TriedLines triedLines = TriedLines.init,
+           uint depth = 0)
 {
     import dbg: dln;
 
-    if      (depth == 0) { gr.showNodesSW.start(); } // if top-level call start it
+    if      (depth == 0) { gr.querySW.start(); } // if top-level call start it
     else if (depth >= gr.fuzzyExprMatchMaximumRecursionDepth)
     {
         // writeln(`Maximum recursion depth reached for `, line, ` ...`);
         return false;       // limit maximum recursion depth
     }
-    if (gr.showNodesSW.peek().msecs >= gr.durationInMsecs)
+    if (gr.querySW.peek().msecs >= gr.durationInMsecs)
     {
         // writeln(`Out of time. Skipping testing of `, line, ` ...`);
         return false;
@@ -472,7 +472,10 @@ bool showNodes(Graph gr,
             }
         }
     }
-    else if (normLine.skipOverShortestOf(`context(`,
+    else if (normLine.skipOverShortestOf(`ctx(`,
+                                         `ctx_of(`,
+                                         `ctxof(`,
+                                         `context(`,
                                          `context_of(`,
                                          `contextof(`))
     {
@@ -482,7 +485,12 @@ bool showNodes(Graph gr,
         if (!arg.empty)
         {
             import knet.association: contextOf;
-            const ctxNd = gr.contextOf(arg.splitter, Filter.init, 3000);
+            const ctxNd = gr.contextOf(arg.splitter,
+                                       Filter(lang != Lang.any ? Lang[].init : [lang],
+                                              sense != Sense.any ? Sense[].init : [sense],
+                                              Role[].init,
+                                              Origin[].init),
+                                       3000);
             if (ctxNd.defined)
             {
                 gr.showNode(ctxNd, 1.0);
@@ -508,12 +516,12 @@ bool showNodes(Graph gr,
                 }
                 else
                 {
-                    writeln("> Node index ", ix, " is too large");
+                    writeln(`> Node index `, ix, ` is too large`);
                 }
             }
             catch (ConvException e)
             {
-                writeln("> Cannot convert nd() argument ", arg, " to an Nd");
+                writeln(`> Cannot convert nd() argument `, arg, ` to an Nd`);
             }
         }
     }
@@ -535,12 +543,12 @@ bool showNodes(Graph gr,
                 }
                 else
                 {
-                    writeln("> Link index ", ix, " is too large");
+                    writeln(`> Link index `, ix, ` is too large`);
                 }
             }
             catch (ConvException e)
             {
-                writeln("> Cannot convert ln() argument ", arg, " to an Ln");
+                writeln(`> Cannot convert ln() argument `, arg, ` to an Ln`);
             }
         }
     }
@@ -583,6 +591,7 @@ bool showNodes(Graph gr,
     {
         showFixedLine(normLine);
         gr.showNds(lineNds);
+        return true;
     }
 
     enum commonSplitters = [` `, // prefer space
@@ -596,9 +605,67 @@ bool showNodes(Graph gr,
 
     import std.algorithm.iteration: joiner;
 
-    // try joined
+    // try modified line
     if (lineNds.empty)
     {
+        // try: $(Sense):$(expr)
+        auto qualifierSplit = normLine.findSplit(qualifierSeparatorString);
+        if (!qualifierSplit[0].empty &&
+            !qualifierSplit[1].empty &&
+            !qualifierSplit[2].empty)
+        {
+            try
+            {
+                const inSense = qualifierSplit[0].to!Sense;
+                const hit = gr.query(qualifierSplit[2],
+                                     lang, inSense, lineSeparator,
+                                     triedLines, depth + 1); // recurse
+                if (hit) { return hit; }
+            }
+            catch (Exception e) {}
+            try
+            {
+                const inLang = qualifierSplit[0].to!Lang;
+                const hit = gr.query(qualifierSplit[2],
+                                     inLang, sense, lineSeparator,
+                                     triedLines, depth + 1); // recurse
+                if (hit) { return hit; }
+            }
+            catch (Exception e) {}
+        }
+
+        // try: $(expr) in $(Lang)
+        auto suffixLangedWords = normLine.split(' ');
+        if (suffixLangedWords.length >= 3 &&
+            suffixLangedWords[$ - 2] == `in`)
+        {
+            try
+            {
+                const inLang = suffixLangedWords[$ - 1].to!Lang;
+                const hit = gr.query(suffixLangedWords[0 .. $ - 2].joiner(` `).to!string,
+                                     inLang, sense, lineSeparator,
+                                     triedLines, depth + 1); // recurse
+                if (hit) { return hit; }
+            }
+            catch (Exception e) {}
+        }
+
+        // try: $(expr) as $(Sense)
+        auto suffixSensedWords = normLine.split(' ');
+        if (suffixSensedWords.length >= 3 &&
+            suffixSensedWords[$ - 2] == `as`)
+        {
+            try
+            {
+                const asSense = suffixSensedWords[$ - 1].to!Sense;
+                const hit = gr.query(suffixSensedWords[0 .. $ - 2].joiner(` `).to!string,
+                                     lang, asSense, lineSeparator,
+                                     triedLines, depth + 1); // recurse
+                if (hit) { return hit; }
+            }
+            catch (Exception e) {}
+        }
+
         auto spaceWords = normLine.splitter(' ').filter!(a => !a.empty);
         if (spaceWords.count >= 2)
         {
@@ -606,8 +673,8 @@ bool showNodes(Graph gr,
             {
                 foreach (separator; commonJoiners)
                 {
-                    gr.showNodes(combWords.joiner(separator).to!string,
-                                 lang, sense, lineSeparator, triedLines, depth + 1);
+                    gr.query(combWords.joiner(separator).to!string,
+                             lang, sense, lineSeparator, triedLines, depth + 1); // recurse
                 }
             }
         }
@@ -617,8 +684,8 @@ bool showNodes(Graph gr,
         {
             foreach (separator; commonJoiners)
             {
-                gr.showNodes(minusWords.joiner(separator).to!string,
-                             lang, sense, lineSeparator, triedLines, depth + 1);
+                gr.query(minusWords.joiner(separator).to!string,
+                         lang, sense, lineSeparator, triedLines, depth + 1); // recurse
             }
         }
 
@@ -627,8 +694,8 @@ bool showNodes(Graph gr,
         {
             foreach (separator; commonJoiners)
             {
-                gr.showNodes(quoteWords.joiner(separator).to!string,
-                             lang, sense, lineSeparator, triedLines, depth + 1);
+                gr.query(quoteWords.joiner(separator).to!string,
+                         lang, sense, lineSeparator, triedLines, depth + 1); // recurse
             }
         }
 
@@ -643,7 +710,8 @@ bool showNodes(Graph gr,
             if (stemMoreLine == stemLine)
                 break;
             // writeln(`> Stemmed to ``, stemMoreLine, `` in language `, stemLang);
-            gr.showNodes(stemMoreLine, stemLang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(stemMoreLine,
+                     stemLang, sense, lineSeparator, triedLines, depth + 1); // recurse
             stemLine = stemMoreLine;
         }
 
@@ -655,7 +723,7 @@ bool showNodes(Graph gr,
             import std.range: dropOne;
             const nonIPLine = normLine.dropOne;
             // writeln(`> As a non-interpuncted ``, nonIPLine, `"`);
-            gr.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // non-interpuncted
@@ -664,7 +732,7 @@ bool showNodes(Graph gr,
             import std.range: dropBackOne;
             const nonIPLine = normLine.dropBackOne;
             // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
-            gr.showNodes(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // interpuncted
@@ -675,17 +743,17 @@ bool showNodes(Graph gr,
             // questioned
             const questionedLine = normLine ~ '?';
             // writeln(`> As a question "`, questionedLine, `"`);
-            gr.showNodes(questionedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(questionedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
 
             // exclaimed
             const exclaimedLine = normLine ~ '!';
             // writeln(`> As an exclamation "`, exclaimedLine, `"`);
-            gr.showNodes(exclaimedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(exclaimedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
 
             // dotted
             const dottedLine = normLine ~ '.';
             // writeln(`> As a dotted "`, dottedLine, `"`);
-            gr.showNodes(dottedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(dottedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // lowered
@@ -693,7 +761,7 @@ bool showNodes(Graph gr,
         if (loweredLine != normLine)
         {
             // writeln(`> Lowercased to "`, loweredLine, `"`);
-            gr.showNodes(loweredLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(loweredLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // uppered
@@ -701,7 +769,7 @@ bool showNodes(Graph gr,
         if (upperedLine != normLine)
         {
             // writeln(`> Uppercased to "`, upperedLine, `"`);
-            gr.showNodes(upperedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(upperedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // capitalized
@@ -709,7 +777,7 @@ bool showNodes(Graph gr,
         if (capitalizedLine != normLine)
         {
             // writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
-            gr.showNodes(capitalizedLine, lang, sense, lineSeparator, triedLines, depth + 1);
+            gr.query(capitalizedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
     }
 

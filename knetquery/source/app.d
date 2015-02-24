@@ -77,7 +77,7 @@ int main(string[] args)
         string line;
         if ((line = readln()) !is null)
         {
-            gr.showNodes(line);
+            gr.query(line);
         }
         else
         {

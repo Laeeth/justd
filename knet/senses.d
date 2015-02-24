@@ -5,7 +5,7 @@ import std.traits: isSomeChar, isSomeString;
 /** Human Word Sense (Category). */
 enum Sense:ubyte
 {
-    unknown,
+    unknown, any = unknown,
 
     language,
     languageNatural, languageHuman = languageNatural,
