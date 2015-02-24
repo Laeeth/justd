@@ -32,8 +32,8 @@ auto lnsOf(Graph gr,
     return gr[nd].links[]
                  .map!(ln => ln.raw)
                  .filter!(ln => (ln != skipLn &&
-                                 (roles.empty || roles.canFind(gr[ln].role)) &&
-                                 (origins.empty || origins.canFind(gr[ln].origin))));
+                                 (roles.matches(gr[ln].role)) &&
+                                 (origins.matches(gr[ln].origin))));
 }
 
 /** Get Links References of $(D nd) type $(D rel) learned from $(D origins).
@@ -132,8 +132,8 @@ auto ndsOf(Graph gr,
     return gr[ln].actors[]
                  .map!(nd => nd.raw)
                  .filter!(nd => (nd != skipNd &&
-                                 (langs.empty || langs.canFind(gr[nd].lemma.lang)) &&
-                                 (senses.empty || senses.canFind(gr[nd].lemma.sense))));
+                                 (langs.matches(gr[nd].lemma.lang)) &&
+                                 (senses.matches(gr[nd].lemma.sense))));
 }
 
 alias meaningsOf = ndsOf;
@@ -154,8 +154,7 @@ auto nnsOf(Graph gr,
              .map!(ln =>
                    gr[ln].actors[]
                          .filter!(actorNd => (actorNd.ix != nd.ix &&
-                                              // TODO functionize to Lemma.ofLang
-                                              (dstLangs.empty || dstLangs.canFind(gr[actorNd].lemma.lang)))))
+                                              (dstLangs.matches(gr[actorNd].lemma.lang)))))
              .joiner(); // no self
 }
 

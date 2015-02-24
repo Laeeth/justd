@@ -585,19 +585,25 @@ struct Stat
     PWeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
 }
 
+bool matches(const Lang[] langs, Lang lang) @safe pure nothrow @nogc
+{
+    import std.algorithm.searching: canFind;
+    return langs.empty || langs.canFind(lang);
+}
+
 bool matches(const Role[] roles, Role role) @safe pure nothrow @nogc
 {
     foreach (role_; roles)
     {
         import knet.roles: specializes;
-        if (role.rel.specializes(role_.rel) &&
+        if ((role.rel == role_.rel || role.rel.specializes(role_.rel)) && // TODO functionize
             role.reversed == role_.reversed &&
             role.negation == role_.negation)
         {
             return true;
         }
     }
-    return false;
+    return roles.empty;
 }
 
 bool matches(const Sense[] senses, Sense sense) @safe pure nothrow @nogc
@@ -605,12 +611,18 @@ bool matches(const Sense[] senses, Sense sense) @safe pure nothrow @nogc
     foreach (sense_; senses)
     {
         import knet.senses: specializes;
-        if (sense.specializes(sense_))
+        if (sense == sense_ || sense.specializes(sense_)) // TODO functionize
         {
             return true;
         }
     }
-    return false;
+    return senses.empty;
+}
+
+bool matches(const Origin[] origins, Origin origin) @safe pure nothrow @nogc
+{
+    import std.algorithm.searching: canFind;
+    return origins.empty || origins.canFind(origin);
 }
 
 /** Node/Link (Traversal) Filter.
@@ -633,12 +645,10 @@ struct Filter
 
     bool matches(Lang lang, Sense sense, Role role, Origin origin) const @nogc
     {
-        import std.algorithm.searching: canFind;
-        const langOk = langs.empty || langs.canFind(lang);
-        const senseOk = senses.empty || senses.matches(sense);
-        const roleOk = roles.empty || roles.matches(role);
-        const originOk = origins.empty || origins.canFind(origin);
-        return langOk && senseOk && roleOk && originOk;
+        return (langs.matches(lang) &&
+                senses.matches(sense) &&
+                roles.matches(role) &&
+                origins.matches(origin));
     }
 
     Lang[] langs;
