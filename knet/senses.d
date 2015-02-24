@@ -1098,20 +1098,14 @@ import std.algorithm.comparison: among;
 
 import grammars: Lang;
 
-/** Check if $(D special) (uniquely) specializes $(D general), that is if a word
-    has been found to have sense $(D special) which is a more specialized sense
-    than $(D general it must not have any other meaning less specialized thatn
-    $(D special).
-*/
-bool specializes(Sense special,
-                 Sense general,
-                 bool uniquely = true,
-                 string expr = null,
-                 Lang lang = Lang.unknown)
+bool specializesWithExpr(Sense special,
+                         Sense general,
+                         bool uniquely = true,
+                         string expr = null,
+                         Lang lang = Lang.unknown)
     @safe pure nothrow // @nogc
 {
     bool capitalized = false;
-
     try
     {
         if (expr)
@@ -1122,7 +1116,21 @@ bool specializes(Sense special,
         }
     }
     catch (Exception e) { }
+    return specializes(special, general, uniquely, lang, capitalized);
+}
 
+/** Check if $(D special) (uniquely) specializes $(D general), that is if a word
+    has been found to have sense $(D special) which is a more specialized sense
+    than $(D general it must not have any other meaning less specialized thatn
+    $(D special).
+*/
+bool specializes(Sense special,
+                 Sense general,
+                 bool uniquely = true,
+                 Lang lang = Lang.unknown,
+                 bool capitalized = false)
+    @safe pure nothrow @nogc
+{
     if (special == general) return false;
     switch (general) with (Sense)
     {
@@ -1220,7 +1228,7 @@ bool generalizes(Sense general,
                  Lang lang = Lang.unknown)
     @safe pure nothrow // @nogc
 {
-    return specializes(special, general, uniquely, expr, lang);
+    return specializesWithExpr(special, general, uniquely, expr, lang);
 }
 
 @safe @nogc pure nothrow unittest
