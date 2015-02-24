@@ -256,7 +256,8 @@ bool query(Graph gr,
            Sense sense = Sense.unknown,
            string lineSeparator = `_`,
            TriedLines triedLines = TriedLines.init,
-           uint depth = 0)
+           uint depth = 0,
+           bool exact = false) // perform exact quoted match
 {
     import dbg: dln;
 
@@ -290,6 +291,19 @@ bool query(Graph gr,
     if (normLine.empty)
         return false;
 
+    // exact match
+    if (exact)
+    {
+        auto exactLineNds = gr.ndsOf(normLine, lang, sense);
+        if (!exactLineNds.empty)
+        {
+            showFixedLine(normLine);
+            gr.showNds(exactLineNds);
+            return true;
+        }
+        return false;
+    }
+
     if (normLine == `palindrome`)
     {
         foreach (palindromeNode; gr.db.tabs.allNodes.filter!(node =>
@@ -299,8 +313,7 @@ bool query(Graph gr,
                             Role(Rel.instanceOf, true), NWeight.infinity, lang);
         }
     }
-    else if (normLine.skipOverShortestOf(`anagramsof(`,
-                                         `anagrams_of(`))
+    else if (normLine.skipOverShortestOf(`anagrams(`, `anagramsof(`, `anagrams_of(`))
     {
         const split = normLine.findSplitBefore(`)`);
         const arg = split[0];
@@ -313,8 +326,7 @@ bool query(Graph gr,
             }
         }
     }
-    else if (normLine.skipOverShortestOf(`synonymsof(`,
-                                         `synonyms_of(`))
+    else if (normLine.skipOverShortestOf(`synonymsof(`, `synonyms_of(`))
     {
         const split = normLine.findSplitBefore(`)`);
         const arg = split[0];
@@ -323,6 +335,20 @@ bool query(Graph gr,
             foreach (synonymNode; gr.synonymsOf(arg))
             {
                 gr.showLinkNode(gr[synonymNode],
+                                Role(Rel.instanceOf, true), NWeight.infinity);
+            }
+        }
+    }
+    else if (normLine.skipOverShortestOf(`opposites(`, `oppositesof(`, `opposites_of(`,
+                                         `antonyms(`, `antonymsof(`, `antonyms_of(`))
+    {
+        const split = normLine.findSplitBefore(`)`);
+        const arg = split[0];
+        if (!arg.empty)
+        {
+            foreach (antonymNode; gr.antonymsOf(arg))
+            {
+                gr.showLinkNode(gr[antonymNode],
                                 Role(Rel.instanceOf, true), NWeight.infinity);
             }
         }
@@ -586,7 +612,6 @@ bool query(Graph gr,
 
     // queried line nodes
     auto lineNds = gr.ndsOf(normLine, lang, sense);
-
     if (!lineNds.empty)
     {
         showFixedLine(normLine);
@@ -608,6 +633,17 @@ bool query(Graph gr,
     // try modified line
     if (lineNds.empty)
     {
+        // try: "$(expr)"
+        import std.algorithm.searching: startsWith, endsWith;
+        if (normLine.startsWith(`"`) &&
+            normLine.endsWith(`"`))
+        {
+            const hit = gr.query(normLine[1 .. $ - 1],
+                                 lang, sense, lineSeparator,
+                                 triedLines, depth + 1, true); // recurse
+            if (hit) { return hit; }
+        }
+
         // try: $(Sense):$(expr)
         auto qualifierSplit = normLine.findSplit(qualifierSeparatorString);
         if (!qualifierSplit[0].empty &&

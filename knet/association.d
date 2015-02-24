@@ -2,6 +2,9 @@ module knet.association;
 
 import knet.base;
 
+alias Block = size_t;
+enum maxCount = 8*Block.sizeof;
+
 /** Get Context (node) of Expressions $(D exprs).
  */
 Nd contextOf(Exprs)(Graph gr,
@@ -24,26 +27,36 @@ Nd contextOf(Exprs)(Graph gr,
     - after $(D durationInMsecs) millseconds has passed, or
     - a common (context) node has been found
 
+    If $(D intervalInMsecs) is set to a non-zero value provide feedback in such
+    intervals.
+
     TODO Compare with function Context() in ConceptNet API.
 */
 Nd contextOf(Nds)(Graph gr,
                   Nds nds,
                   const Filter filter = Filter.init,
-                  uint durationInMsecs = 1000) if (isIterable!Nds &&
-                                                   is(Nd == ElementType!Nds))
+                  uint durationInMsecs = 1000,
+                  uint intervalInMsecs = 0) if (isIterable!Nds &&
+                                                is(Nd == ElementType!Nds))
 {
     auto node = typeof(return).init;
     import knet.traversal: dijkstraWalker;
 
-    alias Block = size_t;
-    enum maxCount = 8*Block.sizeof;
-    const count = nds.count;
-
-    if (count < 2)
+    auto count = nds.count;
+    if (count < 2) // need at least two nodes
     {
         return Nd.init;
     }
-    assert(count <= maxCount);
+    if (count > maxCount)
+    {
+        writeln(__FUNCTION__, ": Truncated node count from ", count, " to ", maxCount);
+        count = maxCount;
+    }
+
+    if (intervalInMsecs == 0)
+    {
+        intervalInMsecs = 20;
+    }
 
     import bitset: BitSet;
     alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
@@ -54,8 +67,7 @@ Nd contextOf(Nds)(Graph gr,
     stopWatch.start();
 
     // TODO avoid Walker postblit
-    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, filter))
-                      .array;
+    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, filter)).array;
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)

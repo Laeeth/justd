@@ -239,7 +239,7 @@ auto anagramsOf(S)(Graph gr,
 {
     const lsWord = expr.sorted; // letter-sorted expr
     return gr.db.tabs.allNodes.filter!(node => (lsWord != node.lemma.expr.toLower && // don't include one-self
-                                              lsWord == node.lemma.expr.toLower.sorted));
+                                                lsWord == node.lemma.expr.toLower.sorted));
 }
 
 /** TODO: http://rosettacode.org/wiki/Anagrams/Deranged_anagrams#D */
@@ -254,6 +254,19 @@ auto derangedAnagramsOf(S)(Graph gr,
     help in translating songs with same rhythm.
 */
 auto synonymsOf(S)(Graph gr,
+                   S expr,
+                   const Lang lang = Lang.unknown,
+                   const Sense sense = Sense.unknown,
+                   const bool withSameSyllableCount = false) pure if (isSomeString!S)
+{
+    return gr.ndsOf(expr, lang, sense);
+}
+
+/** Get Antonyms of $(D word) optionally with Matching Syllable Count.
+    Set withSameSyllableCount to true to get antonyms which can be used to
+    help in translating songs with same rhythm.
+*/
+auto antonymsOf(S)(Graph gr,
                    S expr,
                    const Lang lang = Lang.unknown,
                    const Sense sense = Sense.unknown,
