@@ -1,6 +1,7 @@
 module knet.traversal;
 
 import knet.base;
+import knet.filtering: Filter;
 
 /** Bread First Graph Walk(er) (Traverser)
 */

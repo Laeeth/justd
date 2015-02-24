@@ -1,6 +1,7 @@
 module knet.iteration;
 
 import knet.relations: RelDir;
+import knet.filtering;
 import knet.base;
 
 /** Get Links Refs (Ln) of $(D node) with direction $(D dir).

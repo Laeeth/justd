@@ -511,6 +511,7 @@ bool query(Graph gr,
         if (!arg.empty)
         {
             import knet.association: contextOf;
+            import knet.filtering: Filter;
             const ctxNd = gr.contextOf(arg.splitter, Filter([userLang], [sense]), 3000);
             if (ctxNd.defined)
             {

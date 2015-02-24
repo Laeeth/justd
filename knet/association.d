@@ -1,6 +1,7 @@
 module knet.association;
 
 import knet.base;
+import knet.filtering: Filter;
 
 alias Block = size_t;
 enum maxCount = 8*Block.sizeof;
