@@ -585,10 +585,40 @@ struct Stat
     PWeightHistogram pweightHistogramNELL; // NELL Packed Weight Histogram
 }
 
+bool matches(const Role[] roles, Role role) @safe pure nothrow @nogc
+{
+    foreach (role_; roles)
+    {
+        import knet.roles: specializes;
+        if (role.rel.specializes(role_.rel) &&
+            role.reversed == role_.reversed &&
+            role.negation == role_.negation)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool matches(const Sense[] senses, Sense sense) @safe pure nothrow @nogc
+{
+    foreach (sense_; senses)
+    {
+        import knet.senses: specializes;
+        if (sense.specializes(sense_))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 /** Node/Link (Traversal) Filter.
  */
 struct Filter
 {
+    @safe pure nothrow:
+
     this(Lang[] langs,
          Sense[] senses = [],
          Role[] roles = [],
@@ -600,6 +630,17 @@ struct Filter
         this.roles = roles;
         this.origins = origins.filter!(origin => origin != Origin.unknown).array;
     }
+
+    bool matches(Lang lang, Sense sense, Role role, Origin origin) const @nogc
+    {
+        import std.algorithm.searching: canFind;
+        const langOk = langs.empty || langs.canFind(lang);
+        const senseOk = senses.empty || senses.matches(sense);
+        const roleOk = roles.empty || roles.matches(role);
+        const originOk = origins.empty || origins.canFind(origin);
+        return langOk && senseOk && roleOk && originOk;
+    }
+
     Lang[] langs;
     Sense[] senses;
     Role[] roles;
