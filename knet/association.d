@@ -58,6 +58,12 @@ Nd contextOf(Nds)(Graph gr,
         intervalInMsecs = 20;
     }
 
+    writeln(`durationInMsecs: `, durationInMsecs);
+    foreach (nd; nds)
+    {
+        writeln(`- `, gr[nd].lemma);
+    }
+
     import bitset: BitSet;
     alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
     Visits[Nd] visitsByNd;
@@ -65,6 +71,8 @@ Nd contextOf(Nds)(Graph gr,
     import std.datetime: StopWatch;
     StopWatch stopWatch;
     stopWatch.start();
+
+    writeln("filter: ", filter);
 
     // TODO avoid Walker postblit
     auto walkers = nds.map!(nd => gr.nnWalker(nd, filter)).array;
@@ -85,6 +93,7 @@ Nd contextOf(Nds)(Graph gr,
 
                     if ((*visits).allOneBetween(0, count))
                     {
+                        writeln(`All match for `, gr[visitedNd].lemma);
                         return visitedNd;
                     }
                 }
