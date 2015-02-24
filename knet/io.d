@@ -252,7 +252,7 @@ alias TriedLines = bool[string]; // TODO use std.container.set
 
 bool query(Graph gr,
            string line,
-           Lang lang = Lang.unknown,
+           Lang userLang = Lang.unknown,
            Sense sense = Sense.unknown,
            string lineSeparator = `_`,
            TriedLines triedLines = TriedLines.init,
@@ -294,7 +294,7 @@ bool query(Graph gr,
     // exact match
     if (exact)
     {
-        auto exactLineNds = gr.ndsOf(normLine, lang, sense);
+        auto exactLineNds = gr.ndsOf(normLine, userLang, sense);
         if (!exactLineNds.empty)
         {
             showFixedLine(normLine);
@@ -310,7 +310,7 @@ bool query(Graph gr,
                                                              node.lemma.expr.toLower.isPalindrome(3)))
         {
             gr.showLinkNode(palindromeNode,
-                            Role(Rel.instanceOf, true), NWeight.infinity, lang);
+                            Role(Rel.instanceOf, true), NWeight.infinity, userLang);
         }
     }
     else if (normLine.skipOverShortestOf(`anagrams(`, `anagramsof(`, `anagrams_of(`))
@@ -322,7 +322,7 @@ bool query(Graph gr,
             foreach (anagramNode; gr.anagramsOf(arg))
             {
                 gr.showLinkNode(anagramNode,
-                                Role(Rel.instanceOf, true), NWeight.infinity, lang);
+                                Role(Rel.instanceOf, true), NWeight.infinity, userLang);
             }
         }
     }
@@ -364,7 +364,7 @@ bool query(Graph gr,
             foreach (rhymingNode; gr.rhymesOf(arg))
             {
                 gr.showLinkNode(gr[rhymingNode],
-                                Role(Rel.instanceOf, true), NWeight.infinity, lang);
+                                Role(Rel.instanceOf, true), NWeight.infinity, userLang);
             }
         }
     }
@@ -379,7 +379,7 @@ bool query(Graph gr,
             foreach (translationNode; gr.translationsOf(arg))
             {
                 gr.showLinkNode(gr[translationNode],
-                                Role(Rel.instanceOf, true), NWeight.infinity, lang);
+                                Role(Rel.instanceOf, true), NWeight.infinity, userLang);
             }
         }
     }
@@ -511,12 +511,7 @@ bool query(Graph gr,
         if (!arg.empty)
         {
             import knet.association: contextOf;
-            const ctxNd = gr.contextOf(arg.splitter,
-                                       Filter(lang != Lang.any ? Lang[].init : [lang],
-                                              sense != Sense.any ? Sense[].init : [sense],
-                                              Role[].init,
-                                              Origin[].init),
-                                       3000);
+            const ctxNd = gr.contextOf(arg.splitter, Filter([userLang], [sense]), 3000);
             if (ctxNd.defined)
             {
                 gr.showNode(ctxNd, 1.0);
@@ -611,7 +606,7 @@ bool query(Graph gr,
         return false;
 
     // queried line nodes
-    auto lineNds = gr.ndsOf(normLine, lang, sense); // TODO move this calculation up to top
+    auto lineNds = gr.ndsOf(normLine, userLang, sense); // TODO move this calculation up to top
     if (!lineNds.empty)
     {
         showFixedLine(normLine);
@@ -639,7 +634,7 @@ bool query(Graph gr,
             normLine.endsWith(`"`))
         {
             const hit = gr.query(normLine[1 .. $ - 1],
-                                 lang, sense, lineSeparator,
+                                 userLang, sense, lineSeparator,
                                  triedLines, depth + 1, true); // recurse
             if (hit) { return hit; }
         }
@@ -654,7 +649,7 @@ bool query(Graph gr,
             {
                 const inSense = qualifierSplit[0].to!Sense;
                 const hit = gr.query(qualifierSplit[2],
-                                     lang, inSense, lineSeparator,
+                                     userLang, inSense, lineSeparator,
                                      triedLines, depth + 1); // recurse
                 if (hit) { return hit; }
             }
@@ -695,7 +690,7 @@ bool query(Graph gr,
             {
                 const asSense = suffixSensedWords[$ - 1].to!Sense;
                 const hit = gr.query(suffixSensedWords[0 .. $ - 2].joiner(` `).to!string,
-                                     lang, asSense, lineSeparator,
+                                     userLang, asSense, lineSeparator,
                                      triedLines, depth + 1); // recurse
                 if (hit) { return hit; }
             }
@@ -710,7 +705,7 @@ bool query(Graph gr,
                 foreach (separator; commonJoiners)
                 {
                     gr.query(combWords.joiner(separator).to!string,
-                             lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+                             userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
                 }
             }
         }
@@ -721,7 +716,7 @@ bool query(Graph gr,
             foreach (separator; commonJoiners)
             {
                 gr.query(minusWords.joiner(separator).to!string,
-                         lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+                         userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
             }
         }
 
@@ -731,7 +726,7 @@ bool query(Graph gr,
             foreach (separator; commonJoiners)
             {
                 gr.query(quoteWords.joiner(separator).to!string,
-                         lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+                         userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
             }
         }
 
@@ -740,7 +735,7 @@ bool query(Graph gr,
         while (true)
         {
             import stemming;
-            const stemResult = stemLine.stemIn(lang);
+            const stemResult = stemLine.stemIn(userLang);
             auto stemMoreLine = stemResult[0];
             const stemLang = stemResult[1];
             if (stemMoreLine == stemLine)
@@ -759,7 +754,7 @@ bool query(Graph gr,
             import std.range: dropOne;
             const nonIPLine = normLine.dropOne;
             // writeln(`> As a non-interpuncted ``, nonIPLine, `"`);
-            gr.query(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(nonIPLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // non-interpuncted
@@ -768,7 +763,7 @@ bool query(Graph gr,
             import std.range: dropBackOne;
             const nonIPLine = normLine.dropBackOne;
             // writeln(`> As a non-interpuncted "`, nonIPLine, `"`);
-            gr.query(nonIPLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(nonIPLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // interpuncted
@@ -779,17 +774,17 @@ bool query(Graph gr,
             // questioned
             const questionedLine = normLine ~ '?';
             // writeln(`> As a question "`, questionedLine, `"`);
-            gr.query(questionedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(questionedLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
 
             // exclaimed
             const exclaimedLine = normLine ~ '!';
             // writeln(`> As an exclamation "`, exclaimedLine, `"`);
-            gr.query(exclaimedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(exclaimedLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
 
             // dotted
             const dottedLine = normLine ~ '.';
             // writeln(`> As a dotted "`, dottedLine, `"`);
-            gr.query(dottedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(dottedLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // lowered
@@ -797,7 +792,7 @@ bool query(Graph gr,
         if (loweredLine != normLine)
         {
             // writeln(`> Lowercased to "`, loweredLine, `"`);
-            gr.query(loweredLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(loweredLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // uppered
@@ -805,7 +800,7 @@ bool query(Graph gr,
         if (upperedLine != normLine)
         {
             // writeln(`> Uppercased to "`, upperedLine, `"`);
-            gr.query(upperedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(upperedLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
 
         // capitalized
@@ -813,7 +808,7 @@ bool query(Graph gr,
         if (capitalizedLine != normLine)
         {
             // writeln(`> Capitalized to (name) "`, capitalizedLine, `"`);
-            gr.query(capitalizedLine, lang, sense, lineSeparator, triedLines, depth + 1); // recurse
+            gr.query(capitalizedLine, userLang, sense, lineSeparator, triedLines, depth + 1); // recurse
         }
     }
 

@@ -589,6 +589,17 @@ struct Stat
  */
 struct Filter
 {
+    this(Lang[] langs,
+         Sense[] senses = [],
+         Role[] roles = [],
+         Origin[] origins = [])
+    {
+        // TODO may be wanted to include Lang.unknown and Sense.unknown in some future
+        this.langs = langs.filter!(lang => lang != Lang.unknown).array;
+        this.senses = senses.filter!(sense => sense != Sense.unknown).array;
+        this.roles = roles;
+        this.origins = origins.filter!(origin => origin != Origin.unknown).array;
+    }
     Lang[] langs;
     Sense[] senses;
     Role[] roles;
