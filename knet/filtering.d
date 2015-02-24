@@ -3,46 +3,6 @@ module knet.filtering;
 import std.algorithm.searching: canFind;
 import knet.base;
 
-bool matches(const Lang[] langs, Lang lang) @safe pure nothrow @nogc
-{
-    return langs.empty || langs.canFind(lang);
-}
-
-bool matches(const Origin[] origins, Origin origin) @safe pure nothrow @nogc
-{
-    return origins.empty || origins.canFind(origin);
-}
-
-bool matches(const Role[] roles, Role role) @safe pure nothrow @nogc
-{
-    foreach (role_; roles)
-    {
-        import knet.roles: specializes;
-        if ((role.rel == role_.rel ||
-             role.rel.specializes(role_.rel)) && // TODO functionize
-            role.reversed == role_.reversed &&
-            role.negation == role_.negation)
-        {
-            return true;
-        }
-    }
-    return roles.empty;
-}
-
-bool matches(const Sense[] senses, Sense sense) @safe pure nothrow @nogc
-{
-    foreach (sense_; senses)
-    {
-        import knet.senses: specializes;
-        if (sense == sense_ ||
-            sense.specializes(sense_)) // TODO functionize
-        {
-            return true;
-        }
-    }
-    return senses.empty;
-}
-
 /** Node/Link (Traversal) Filter.
  */
 struct Filter
@@ -73,4 +33,46 @@ struct Filter
     Sense[] senses;
     Role[] roles;
     Origin[] origins;
+}
+
+@safe pure nothrow @nogc:
+
+bool matches(const Lang[] langs, Lang lang)
+{
+    return langs.empty || langs.canFind(lang);
+}
+
+bool matches(const Origin[] origins, Origin origin)
+{
+    return origins.empty || origins.canFind(origin);
+}
+
+bool matches(const Role[] roles, Role role)
+{
+    foreach (role_; roles)
+    {
+        import knet.roles: specializes;
+        if ((role.rel == role_.rel ||
+             role.rel.specializes(role_.rel)) && // TODO functionize
+            role.reversed == role_.reversed &&
+            role.negation == role_.negation)
+        {
+            return true;
+        }
+    }
+    return roles.empty;
+}
+
+bool matches(const Sense[] senses, Sense sense)
+{
+    foreach (sense_; senses)
+    {
+        import knet.senses: specializes;
+        if (sense == sense_ ||
+            sense.specializes(sense_)) // TODO functionize
+        {
+            return true;
+        }
+    }
+    return senses.empty;
 }
