@@ -18,7 +18,8 @@ bool matches(const Role[] roles, Role role) @safe pure nothrow @nogc
     foreach (role_; roles)
     {
         import knet.roles: specializes;
-        if ((role.rel == role_.rel || role.rel.specializes(role_.rel)) && // TODO functionize
+        if ((role.rel == role_.rel ||
+             role.rel.specializes(role_.rel)) && // TODO functionize
             role.reversed == role_.reversed &&
             role.negation == role_.negation)
         {
@@ -33,7 +34,8 @@ bool matches(const Sense[] senses, Sense sense) @safe pure nothrow @nogc
     foreach (sense_; senses)
     {
         import knet.senses: specializes;
-        if (sense == sense_ || sense.specializes(sense_)) // TODO functionize
+        if (sense == sense_ ||
+            sense.specializes(sense_)) // TODO functionize
         {
             return true;
         }
