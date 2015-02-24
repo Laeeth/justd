@@ -92,7 +92,7 @@ void testBFWalker()
     writeln(`Connectiveness with ndC `, walker.connectivenessByNd[ndC]);
 }
 
-void testDijkstraWalker()
+void testNNWalker()
 {
     auto gr = new Graph();
     enum sense = Sense.letter;
@@ -115,8 +115,8 @@ void testDijkstraWalker()
     gr.connect(ndD, role, ndE, origin, 0.1, true);
     gr.connect(ndE, role, ndF, origin, 0.1, true);
 
-    import knet.traversal: dijkstraWalker;
-    auto w = gr.dijkstraWalker(ndA);
+    import knet.traversal: nnWalker;
+    auto w = gr.nnWalker(ndA);
     auto wRef = w; // new reference
     auto wCopy = w.save; // copy
 
@@ -198,7 +198,7 @@ void testAll()
     testSymmetricLinkReusage;
 
     testBFWalker;
-    testDijkstraWalker;
+    testNNWalker;
 
     testContextOf;
 }

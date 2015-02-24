@@ -40,7 +40,7 @@ Nd contextOf(Nds)(Graph gr,
                                                 is(Nd == ElementType!Nds))
 {
     auto node = typeof(return).init;
-    import knet.traversal: dijkstraWalker;
+    import knet.traversal: nnWalker;
 
     auto count = nds.count;
     if (count < 2) // need at least two nodes
@@ -67,7 +67,7 @@ Nd contextOf(Nds)(Graph gr,
     stopWatch.start();
 
     // TODO avoid Walker postblit
-    auto walkers = nds.map!(nd => gr.dijkstraWalker(nd, filter)).array;
+    auto walkers = nds.map!(nd => gr.nnWalker(nd, filter)).array;
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)

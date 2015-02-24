@@ -93,6 +93,12 @@ BFWalker bfWalker(Graph gr, Nd start,
     return typeof(return)(gr, start, filter);
 }
 
+enum WalkStrategy
+{
+    dijkstraMinDistance, /// Dijkstra Minimum Path Distance to Start.
+    nordlowMaxConnectiveness, /// Dijkstra Maximum Connectiveness to Start.
+};
+
 /** Nearest-Origin-First Walker/Visitor/Traverser; Dijkstra's Railroad Algorithm
     as a lazy $(D ForwardRange).
 
@@ -108,7 +114,7 @@ BFWalker bfWalker(Graph gr, Nd start,
 
     TODO: Use containers.hashmap.HashMap and tag as @nogc
 */
-struct DijkstraWalker
+struct NNWalker(WalkStrategy strategy = WalkStrategy.dijkstraMinDistance)
 {
     import std.typecons: Tuple, tuple;
     import std.container: redBlackTree, RedBlackTree;
@@ -148,14 +154,14 @@ struct DijkstraWalker
     Nd front() @safe pure nothrow // TODO make const when pending.empty is const
     {
         import std.range: empty;
-        assert(!pending.empty, "Can't fetch front from an empty DijkstraWalker");
+        assert(!pending.empty, "Can't fetch front from an empty NNWalker");
         import std.range: front;
         return pending.front[1];
     }
 
     void popFront()
     {
-        assert(!pending.empty, "Can't pop front from an empty DijkstraWalker");
+        assert(!pending.empty, "Can't pop front from an empty NNWalker");
 
         import std.range: moveFront;
         const curr = pending.front; pending.removeFront;
@@ -205,7 +211,7 @@ struct DijkstraWalker
         return pending.empty;
     }
 
-    DijkstraWalker save() @property // makes this a ForwardRange
+    NNWalker save() @property // makes this a ForwardRange
     {
         typeof(return) copy = this;
         return copy;
@@ -220,15 +226,15 @@ private:
     Graph gr;
 }
 
-DijkstraWalker dijkstraWalker(Graph gr, Nd start, const Filter filter = Filter.init)
+auto nnWalker(WalkStrategy strategy = WalkStrategy.dijkstraMinDistance)(Graph gr, Nd start, const Filter filter = Filter.init)
 {
-    return typeof(return)(gr, start, filter);
+    return NNWalker!(strategy)(gr, start, filter);
 }
 
-/** Perform a Complete Traversal of $(D gr) using DijkstraWalker with $(D start) as origin. */
-DijkstraWalker dijkstraWalk(Graph gr, Nd start, const Filter filter = Filter.init)
+/** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
+auto dijkstraNNWalk(Graph gr, Nd start, const Filter filter = Filter.init)
 {
-    auto walker = dijkstraWalker(gr, start, filter);
+    auto walker = nnWalker!(WalkStrategy.dijkstraMinDistance)(gr, start, filter);
     while (!walker.empty) { walker.popFront; } // TODO functionize to exhaust
     return walker;                             // hopefully this moves
 }
