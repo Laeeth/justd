@@ -611,7 +611,7 @@ bool query(Graph gr,
         return false;
 
     // queried line nodes
-    auto lineNds = gr.ndsOf(normLine, lang, sense);
+    auto lineNds = gr.ndsOf(normLine, lang, sense); // TODO move this calculation up to top
     if (!lineNds.empty)
     {
         showFixedLine(normLine);
