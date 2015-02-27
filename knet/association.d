@@ -26,11 +26,11 @@ struct Hit
     // TODO http://forum.dlang.org/thread/dgriaerekyrcqegrrrer@forum.dlang.org#post-dgriaerekyrcqegrrrer:40forum.dlang.org
     auto opCmp(const Hit rhs) const
     {
-        if      (this.visitCount < rhs.visitCount)
+        if      (this.visitCount > rhs.visitCount) // TODO this is not intuitive
         {
             return -1;
         }
-        else if (this.visitCount > rhs.visitCount)
+        else if (this.visitCount < rhs.visitCount) // TODO this is not intuitive
         {
             return +1;
         }
@@ -176,8 +176,8 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
         }
     }
 
+    // combine walker results
     Hit[Nd] connByNd;       // weights by node
-
     size_t i;
     foreach (nd, const visits; visitsByNd.byPair)
     {
@@ -194,7 +194,9 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
                     }
                     else
                     {
-                        connByNd[nd] = Hit(Visits.init, // no visits from beginning
+                        Visits visits;
+                        visits[walkIx] = true;
+                        connByNd[nd] = Hit(visits,
                                            0.0); // rank sum starts as zero
                     }
                 }
@@ -203,13 +205,12 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
         i++;
     }
 
+    // sort walker restults
     import std.algorithm.sorting: topN;
     import sort_ex: sorted;
     import std.array: array;
-
     Contexts contexts = connByNd.byPair.array;
     maxContextCount = min(maxContextCount, contexts.length); // limit context count
-
     static if (strategy == WalkStrategy.dijkstraMinDistance)
     {
         contexts.topN!"a[1] < b[1]"(maxContextCount); // pick n strongest contexts
@@ -221,6 +222,7 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
         contexts[0 .. maxContextCount].sort!"a[1] > b[1]"; // sort n  strongest contexts
     }
 
+    // print walker statistics
     foreach (ix, ref walker; walkers)
     {
         pln(" walker#", ix, ":",
@@ -228,6 +230,7 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
             " visitByNd.length:", walker.visitByNd.length);
     }
 
+    // return maxContextCount best hits
     return contexts[0 .. maxContextCount];
 }
 

@@ -15,7 +15,17 @@ debug auto trustedPureDebugCall(alias fn, A...) (A args) pure
     debug return fn(args);
 }
 
-pure nothrow:
+nothrow:
+
+void contextual_writeln(string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__, T...)(T t)
+{
+    import std.stdio: writeln;
+    try { writeln(file, ":",line, ":"/* , ": in ",fun */, " debug: ", t); }
+    catch (Exception) { }
+}
+alias pln = contextual_writeln;
+
+pure:
 
 void debug_writeln(string file = __FILE__, uint line = __LINE__, string fun = __FUNCTION__, T...)(T t)
 {
