@@ -1,5 +1,7 @@
 module knet.association;
 
+import std.typecons: Tuple;
+
 import knet.base;
 import knet.filtering: Filter;
 import knet.traversal: WalkStrategy;
@@ -7,25 +9,28 @@ import knet.traversal: WalkStrategy;
 alias Block = size_t;
 enum maxCount = 8*Block.sizeof;
 
-import std.typecons: Tuple;
+import bitset: BitSet;
+alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
 
 alias Rank = NWeight;
 
 struct Hit
 {
-    size_t count; // number of walkers that found this node
+    Visits visits; // walker visits
     NWeight rank; // rank (either minimum distance or maximum strength)
+
+    auto visitCount() const @safe @nogc pure nothrow { return visits.countOnes; }
 
     // TODO Use multiSort instead?
     // TODO reuse opCmp
     // TODO http://forum.dlang.org/thread/dgriaerekyrcqegrrrer@forum.dlang.org#post-dgriaerekyrcqegrrrer:40forum.dlang.org
     auto opCmp(const Hit rhs) const
     {
-        if      (this.count < rhs.count)
+        if      (this.visitCount < rhs.visitCount)
         {
             return -1;
         }
-        else if (this.count > rhs.count)
+        else if (this.visitCount > rhs.visitCount)
         {
             return +1;
         }
@@ -67,6 +72,8 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
     return gr.contextsOf!(strategy)(nds, filter, maxContextCount, durationInMsecs);
 }
 
+import dbg: pln;
+
 /** Get $(D maxContextCount) Strongest Contextual Nodes of Nodes $(D nds).
 
     If $(D maxContextCount) is zero it's set to some default value.
@@ -105,7 +112,7 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
     }
     if (count > maxCount)
     {
-        writeln(__FUNCTION__, ": Truncated node count from ", count, " to ", maxCount);
+        pln("Truncated node count from ", count, " to ", maxCount);
         count = maxCount;
     }
 
@@ -114,20 +121,19 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
         intervalInMsecs = 20;
     }
 
+    pln("Walkers: ");
     foreach (nd; nds)
     {
         writeln(`- `, gr[nd].lemma);
     }
 
-    import bitset: BitSet;
-    alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
     Visits[Nd] visitsByNd;
 
     import std.datetime: StopWatch;
     StopWatch stopWatch;
     stopWatch.start();
 
-    writeln("filter: ", filter);
+    pln("filter: ", filter);
 
     // TODO avoid Walker postblit
     import knet.traversal: nnWalker;
@@ -184,11 +190,12 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
                     if (auto existingHit = nd in connByNd)
                     {
                         (*existingHit).rank += visit[0]; // TODO use prevNd for anything?
-                        (*existingHit).count++; // increase hit count
+                        (*existingHit).visits[walkIx] = true; // increase hit count
                     }
                     else
                     {
-                        connByNd[nd] = Hit(0, 0.0); // distance and connectiveness sum starts as zero
+                        connByNd[nd] = Hit(Visits.init, // no visits from beginning
+                                           0.0); // rank sum starts as zero
                     }
                 }
             }
@@ -216,9 +223,9 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
 
     foreach (ix, ref walker; walkers)
     {
-        writeln("walker#", ix, ":",
-                " pending.length:", walker.pending.length,
-                " visitByNd.length:", walker.visitByNd.length);
+        pln(" walker#", ix, ":",
+            " pending.length:", walker.pending.length,
+            " visitByNd.length:", walker.visitByNd.length);
     }
 
     return contexts[0 .. maxContextCount];

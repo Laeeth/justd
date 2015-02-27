@@ -186,7 +186,7 @@ void testContextOf()
         const nd = context[0];
         const hit = context[1];
         writeln(" - ", gr[nd].lemma,
-                ": count:", hit.count,
+                ": visitCount:", hit.visitCount,
                 ", rank:", hit.rank);
     }
     assert(!contexts.empty);
