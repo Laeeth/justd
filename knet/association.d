@@ -15,6 +15,10 @@ struct Hit
 {
     size_t count; // number of walkers that found this node
     NWeight rank; // rank (either minimum distance or maximum strength)
+
+    // TODO Use multiSort instead?
+    // TODO reuse opCmp
+    // TODO http://forum.dlang.org/thread/dgriaerekyrcqegrrrer@forum.dlang.org#post-dgriaerekyrcqegrrrer:40forum.dlang.org
     auto opCmp(const Hit rhs) const
     {
         if      (this.count < rhs.count)
