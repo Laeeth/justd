@@ -115,7 +115,7 @@ enum WalkStrategy
 
     TODO: Use containers.hashmap.HashMap and tag as @nogc
 */
-struct NNWalker(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectiveness)
+struct NNWalker(WalkStrategy strategy)
 {
     import std.typecons: Tuple, tuple;
     import std.container: redBlackTree, RedBlackTree;
@@ -146,6 +146,7 @@ struct NNWalker(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectiveness)
         }
         else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
         {
+            f;
             const NWeight startWeight = 1.0; // connectiveness
         }
 
@@ -264,7 +265,7 @@ private:
     Graph gr;
 }
 
-auto nnWalker(WalkStrategy strategy = WalkStrategy.dijkstraMinDistance)(Graph gr, Nd start, const Filter filter = Filter.init)
+auto nnWalker(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Filter.init)
 {
     return NNWalker!(strategy)(gr, start, filter);
 }

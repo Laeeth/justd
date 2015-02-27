@@ -115,8 +115,8 @@ void testNNWalker()
     gr.connect(ndD, role, ndE, origin, 0.1, true);
     gr.connect(ndE, role, ndF, origin, 0.1, true);
 
-    import knet.traversal: nnWalker;
-    auto w = gr.nnWalker(ndA);
+    import knet.traversal: nnWalker, WalkStrategy;
+    auto w = gr.nnWalker!(WalkStrategy.dijkstraMinDistance)(ndA);
     auto wRef = w; // new reference
     auto wCopy = w.save; // copy
 
@@ -165,13 +165,11 @@ void testContextOf()
     auto b1 = gr.add(`B1`, lang, sense, origin);
     auto b2 = gr.add(`B2`, lang, sense, origin);
     auto b3 = gr.add(`B3`, lang, sense, origin);
-    auto b4 = gr.add(`B4`, lang, sense, origin);
-    auto b5 = gr.add(`B5`, lang, sense, origin);
 
     auto c  = gr.add(`C`, lang, sense, origin);
     auto d  = gr.add(`D`, lang, sense, origin);
 
-    auto bs = [b1, b2, b3, b4, b5];
+    auto bs = [b1, b2, b3];
 
     auto cLns = gr.connect1toM(c, role, bs, origin, 0.5, true);
     auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
@@ -190,7 +188,7 @@ void testContextOf()
                 ", rank:", hit.rank);
     }
     assert(!contexts.empty);
-    assert(contexts[0][0] == d);
+    assert(contexts[0][0] == c);
 
     // const ctxNd2 = gr.contextsOf("B1 B2 B3 B4 B5".splitter(` `));
 }

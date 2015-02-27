@@ -57,7 +57,7 @@ alias Contexts = Context[];
 
 /** Get Context (node) of Expressions $(D exprs).
  */
-Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectiveness,
+Contexts contextsOf(WalkStrategy strategy,
                     Exprs)(Graph gr,
                            Exprs exprs,
                            const Filter filter = Filter.init,
@@ -89,7 +89,7 @@ import dbg: pln;
 
     TODO Compare with function Context() in ConceptNet API.
 */
-Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectiveness,
+Contexts contextsOf(WalkStrategy strategy,
                     Nds)(Graph gr,
                          Nds nds,
                          const Filter filter = Filter.init,
@@ -187,22 +187,28 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
             {
                 foreach (nd, visit; walkers[walkIx].visitByNd) // Nds visited by walker
                 {
+                    const rank = visit[0];
+                    // store that walkIx has visited nd
                     if (auto existingHit = nd in connByNd)
                     {
-                        (*existingHit).rank += visit[0]; // TODO use prevNd for anything?
-                        (*existingHit).visits[walkIx] = true; // increase hit count
+                        (*existingHit).rank += rank; // TODO use prevNd for anything?
+                        (*existingHit).visits[walkIx] = true;
                     }
                     else
                     {
                         Visits visits;
                         visits[walkIx] = true;
-                        connByNd[nd] = Hit(visits,
-                                           0.0); // rank sum starts as zero
+                        connByNd[nd] = Hit(visits, rank);
                     }
                 }
             }
         }
         i++;
+    }
+
+    foreach (const nd, const hit; connByNd.byPair)
+    {
+        pln("nd:", gr[nd].lemma, ", hit:", hit);
     }
 
     // sort walker restults
