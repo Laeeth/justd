@@ -9,11 +9,41 @@ enum maxCount = 8*Block.sizeof;
 
 import std.typecons: Tuple;
 
-alias Hit = Tuple!(NWeight, // association goodness (either distance or strength)
-                   size_t); // hit count
+alias Rank = NWeight;
 
-alias Context = Tuple!(Nd,      // contextual node
-                       Hit);
+struct Hit
+{
+    size_t count; // number of walkers that found this node
+    NWeight rank; // rank (either minimum distance or maximum strength)
+    auto opCmp(const Hit rhs) const
+    {
+        if      (this.count < rhs.count)
+        {
+            return -1;
+        }
+        else if (this.count > rhs.count)
+        {
+            return +1;
+        }
+        else
+        {
+            if      (this.rank < rhs.rank)
+            {
+                return -1;
+            }
+            else if (this.rank > rhs.rank)
+            {
+                return +1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+}
+
+alias Context = Tuple!(Nd, Hit);
 alias Contexts = Context[];
 
 /** Get Context (node) of Expressions $(D exprs).
@@ -149,12 +179,12 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
                 {
                     if (auto existingHit = nd in connByNd)
                     {
-                        (*existingHit)[0] += visit[0]; // TODO use prevNd for anything?
-                        (*existingHit)[1]++; // increase hit count
+                        (*existingHit).rank += visit[0]; // TODO use prevNd for anything?
+                        (*existingHit).count++; // increase hit count
                     }
                     else
                     {
-                        connByNd[nd] = tuple(0.0, 0); // distance and connectiveness sum starts as zero
+                        connByNd[nd] = Hit(0, 0.0); // distance and connectiveness sum starts as zero
                     }
                 }
             }

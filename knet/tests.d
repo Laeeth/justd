@@ -180,12 +180,14 @@ void testContextOf()
     import knet.traversal: WalkStrategy;
     import knet.association: contextsOf;
 
-    const contexts = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
+    auto contexts = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
     foreach (const context; contexts)
     {
-        writeln(" - ", gr[context[0]].lemma,
-                ": weight:", context[1][0],
-                ": count:", context[1][1]);
+        const nd = context[0];
+        const hit = context[1];
+        writeln(" - ", gr[nd].lemma,
+                ": count:", hit.count,
+                ", rank:", hit.rank);
     }
     assert(!contexts.empty);
     assert(contexts[0][0] == d);
