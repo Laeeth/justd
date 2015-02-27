@@ -168,7 +168,7 @@ void testContextOf()
     auto b4 = gr.add(`B4`, lang, sense, origin);
     auto b5 = gr.add(`B5`, lang, sense, origin);
 
-    auto c  = gr.add(`A`, lang, sense, origin);
+    auto c  = gr.add(`C`, lang, sense, origin);
     auto d  = gr.add(`D`, lang, sense, origin);
 
     auto bs = [b1, b2, b3, b4, b5];
@@ -176,11 +176,19 @@ void testContextOf()
     auto cLns = gr.connect1toM(c, role, bs, origin, 0.5, true);
     auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
 
+    import knet.filtering: Filter;
     import knet.traversal: WalkStrategy;
     import knet.association: contextsOf;
 
-    const ndContexts = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs);
-    assert(ndContexts[0][0] == d);
+    const contexts = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
+    foreach (const context; contexts)
+    {
+        writeln(" - ", gr[context[0]].lemma,
+                ": weight:", context[1][0],
+                ": count:", context[1][1]);
+    }
+    assert(!contexts.empty);
+    assert(contexts[0][0] == d);
 
     // const ctxNd2 = gr.contextsOf("B1 B2 B3 B4 B5".splitter(` `));
 }

@@ -8,8 +8,13 @@ alias Block = size_t;
 enum maxCount = 8*Block.sizeof;
 
 import std.typecons: Tuple;
-alias NdConn = Tuple!(Nd, NWeight);
-alias Contexts = NdConn[];
+
+alias Hit = Tuple!(NWeight, // association goodness (either distance or strength)
+                   size_t); // hit count
+
+alias Context = Tuple!(Nd,      // contextual node
+                       Hit);
+alias Contexts = Context[];
 
 /** Get Context (node) of Expressions $(D exprs).
  */
@@ -17,6 +22,7 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
                     Exprs)(Graph gr,
                            Exprs exprs,
                            const Filter filter = Filter.init,
+                           size_t maxContextCount = 0,
                            uint durationInMsecs = 1000) if (isIterable!Exprs &&
                                                             isSomeString!(ElementType!Exprs))
 {
@@ -24,7 +30,7 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
     import knet.lookup: lemmasOfExpr;
     auto lemmas = exprs.map!(expr => gr.lemmasOfExpr(expr)).joiner;
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
-    return gr.contextsOf!(strategy)(nds, filter, durationInMsecs);
+    return gr.contextsOf!(strategy)(nds, filter, maxContextCount, durationInMsecs);
 }
 
 /** Get $(D maxContextCount) Strongest Contextual Nodes of Nodes $(D nds).
@@ -130,7 +136,7 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
         }
     }
 
-    NWeight[Nd] connByNd;       // connectiveness by node
+    Hit[Nd] connByNd;       // weights by node
 
     size_t i;
     foreach (nd, const visits; visitsByNd.byPair)
@@ -141,13 +147,14 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
             {
                 foreach (nd, visit; walkers[walkIx].visitByNd) // Nds visited by walker
                 {
-                    if (auto existingConn = nd in connByNd)
+                    if (auto existingHit = nd in connByNd)
                     {
-                        *existingConn += visit[0]; // TODO use prevNd for anything?
+                        (*existingHit)[0] += visit[0]; // TODO use prevNd for anything?
+                        (*existingHit)[1]++; // increase hit count
                     }
                     else
                     {
-                        connByNd[nd] = 0; // connectiveness sum starts as zero
+                        connByNd[nd] = tuple(0.0, 0); // distance and connectiveness sum starts as zero
                     }
                 }
             }
@@ -160,11 +167,18 @@ Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectivenes
     import std.array: array;
 
     Contexts contexts = connByNd.byPair.array;
-
     maxContextCount = min(maxContextCount, contexts.length); // limit context count
 
-    contexts.topN!"a[1] > b[1]"(maxContextCount); // pick n strongest contexts
-    contexts[0 .. maxContextCount].sort!"a[1] > b[1]"; // sort n  strongest contexts
+    static if (strategy == WalkStrategy.dijkstraMinDistance)
+    {
+        contexts.topN!"a[1] < b[1]"(maxContextCount); // pick n strongest contexts
+        contexts[0 .. maxContextCount].sort!"a[1] < b[1]"; // sort n  strongest contexts
+    }
+    else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
+    {
+        contexts.topN!"a[1] > b[1]"(maxContextCount); // pick n strongest contexts
+        contexts[0 .. maxContextCount].sort!"a[1] > b[1]"; // sort n  strongest contexts
+    }
 
     foreach (ix, ref walker; walkers)
     {

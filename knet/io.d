@@ -516,7 +516,7 @@ bool query(Graph gr,
             writeln("> Contexts:");
             foreach (const context; contexts)
             {
-                gr.showNode(context[0], context[1]);
+                gr.showNode(context[0], context[1][0]);
                 writeln;
             }
         }
