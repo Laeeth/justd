@@ -498,24 +498,25 @@ bool query(Graph gr,
             }
         }
     }
-    else if (normLine.skipOverShortestOf(`ctx(`,
-                                         `ctx_of(`,
-                                         `ctxof(`,
-                                         `context(`,
-                                         `context_of(`,
-                                         `contextof(`))
+    else if (normLine.skipOverShortestOf(`ctxs(`,
+                                         `ctxs_of(`,
+                                         `ctxsof(`,
+                                         `contexts(`,
+                                         `contexts_of(`,
+                                         `contextsof(`))
     {
         normLine.skipOver(` `); // TODO all space using skipOver!isSpace
         const split = normLine.findSplitBefore(`)`);
         const arg = split[0];
         if (!arg.empty)
         {
-            import knet.association: contextOf;
+            import knet.association: contextsOf;
             import knet.filtering: Filter;
-            const ctxNd = gr.contextOf(arg.splitter, Filter([userLang], [sense]), 3000);
-            if (ctxNd.defined)
+            const contexts = gr.contextsOf(arg.splitter, Filter([userLang], [sense]), 3000);
+            writeln("> Contexts:");
+            foreach (const context; contexts)
             {
-                gr.showNode(ctxNd, 1.0);
+                gr.showNode(context[0], context[1]);
                 writeln;
             }
         }

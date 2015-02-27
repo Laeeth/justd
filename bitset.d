@@ -491,6 +491,13 @@ struct BitSet(size_t len, Block = size_t)
     alias allSetBetween = allOneBetween;
     alias fullBetween = allOneBetween;
 
+    /** Returns: Get indexes of all bits set.
+     */
+    auto indexesOfOnes() const @safe @nogc pure nothrow
+    {
+        // return this[].filter!(bit => bit);
+    }
+
     /** Returns: Number of Bits Set in $(D this).
      */
     ulong countOnes() const @safe @nogc pure nothrow

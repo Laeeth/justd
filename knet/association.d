@@ -2,26 +2,35 @@ module knet.association;
 
 import knet.base;
 import knet.filtering: Filter;
+import knet.traversal: WalkStrategy;
 
 alias Block = size_t;
 enum maxCount = 8*Block.sizeof;
 
+import std.typecons: Tuple;
+alias NdConn = Tuple!(Nd, NWeight);
+alias Contexts = NdConn[];
+
 /** Get Context (node) of Expressions $(D exprs).
  */
-Nd contextOf(Exprs)(Graph gr,
-                    Exprs exprs,
-                    const Filter filter = Filter.init,
-                    uint durationInMsecs = 1000) if (isIterable!Exprs &&
-                                                     isSomeString!(ElementType!Exprs))
+Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectiveness,
+                    Exprs)(Graph gr,
+                           Exprs exprs,
+                           const Filter filter = Filter.init,
+                           uint durationInMsecs = 1000) if (isIterable!Exprs &&
+                                                            isSomeString!(ElementType!Exprs))
 {
     import std.algorithm: joiner;
     import knet.lookup: lemmasOfExpr;
     auto lemmas = exprs.map!(expr => gr.lemmasOfExpr(expr)).joiner;
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
-    return gr.contextOf(nds, filter, durationInMsecs);
+    return gr.contextsOf!(strategy)(nds, filter, durationInMsecs);
 }
 
-/** Get Context (node) of Nodes $(D nds).
+/** Get $(D maxContextCount) Strongest Contextual Nodes of Nodes $(D nds).
+
+    If $(D maxContextCount) is zero it's set to some default value.
+
     Context means the node (Nd) which is most strongly related to $(D nds).
 
     Either exists
@@ -33,20 +42,26 @@ Nd contextOf(Exprs)(Graph gr,
 
     TODO Compare with function Context() in ConceptNet API.
 */
-Nd contextOf(Nds)(Graph gr,
-                  Nds nds,
-                  const Filter filter = Filter.init,
-                  uint durationInMsecs = 1000,
-                  uint intervalInMsecs = 0) if (isIterable!Nds &&
-                                                is(Nd == ElementType!Nds))
+Contexts contextsOf(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectiveness,
+                    Nds)(Graph gr,
+                         Nds nds,
+                         const Filter filter = Filter.init,
+                         size_t maxContextCount = 0,
+                         uint durationInMsecs = 1000,
+                         uint intervalInMsecs = 0) if (isIterable!Nds &&
+                                                       is(Nd == ElementType!Nds))
 {
     auto node = typeof(return).init;
-    import knet.traversal: nnWalker;
+
+    if (maxContextCount == 0)
+    {
+        maxContextCount = 100;
+    }
 
     auto count = nds.count;
     if (count < 2) // need at least two nodes
     {
-        return Nd.init;
+        return typeof(return).init;
     }
     if (count > maxCount)
     {
@@ -75,7 +90,8 @@ Nd contextOf(Nds)(Graph gr,
     writeln("filter: ", filter);
 
     // TODO avoid Walker postblit
-    auto walkers = nds.map!(nd => gr.nnWalker(nd, filter)).array;
+    import knet.traversal: nnWalker;
+    auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, filter)).array;
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)
@@ -90,11 +106,9 @@ Nd contextOf(Nds)(Graph gr,
                 {
                     // log that $(D walker) now (among at least one other) have visited visitedNd
                     (*visits)[wix] = true;
-
                     if ((*visits).allOneBetween(0, count))
                     {
-                        writeln(`All match for `, gr[visitedNd].lemma);
-                        return visitedNd;
+                        // TODO what to do with this?
                     }
                 }
                 else
@@ -116,16 +130,50 @@ Nd contextOf(Nds)(Graph gr,
         }
     }
 
-    writeln("contextOf: Sort visitsByNd on connectiveness");
+    NWeight[Nd] connByNd;       // connectiveness by node
+
+    size_t i;
+    foreach (nd, const visits; visitsByNd.byPair)
+    {
+        for (auto walkIx = 0; walkIx < visits.length; ++walkIx)
+        {
+            if (visits[walkIx])
+            {
+                foreach (nd, visit; walkers[walkIx].visitByNd) // Nds visited by walker
+                {
+                    if (auto existingConn = nd in connByNd)
+                    {
+                        *existingConn += visit[0]; // TODO use prevNd for anything?
+                    }
+                    else
+                    {
+                        connByNd[nd] = 0; // connectiveness sum starts as zero
+                    }
+                }
+            }
+        }
+        i++;
+    }
+
+    import std.algorithm.sorting: topN;
+    import sort_ex: sorted;
+    import std.array: array;
+
+    Contexts contexts = connByNd.byPair.array;
+
+    maxContextCount = min(maxContextCount, contexts.length); // limit context count
+
+    contexts.topN!"a[1] > b[1]"(maxContextCount); // pick n strongest contexts
+    contexts[0 .. maxContextCount].sort!"a[1] > b[1]"; // sort n  strongest contexts
 
     foreach (ix, ref walker; walkers)
     {
         writeln("walker#", ix, ":",
                 " pending.length:", walker.pending.length,
-                " distMap.length:", walker.distMap.length);
+                " visitByNd.length:", walker.visitByNd.length);
     }
 
-    return node;
+    return contexts[0 .. maxContextCount];
 }
 
-alias topicOf = contextOf;
+alias topicsOf = contextsOf;

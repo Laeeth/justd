@@ -106,7 +106,7 @@ enum WalkStrategy
     IMPORTANT: A lazy range is needed in this case in order for knet graph
     searching algorithms to execute in constant (user) time.
 
-    Upon iteration completion $(D distMap) contains a map from node to
+    Upon iteration completion $(D visitByNd) contains a map from node to
     (distance, and closest parent node) to walker starting point (start). This
     can be used to reconstruct the closest path from any given $D(Nd) to start.
 
@@ -115,13 +115,21 @@ enum WalkStrategy
 
     TODO: Use containers.hashmap.HashMap and tag as @nogc
 */
-struct NNWalker(WalkStrategy strategy = WalkStrategy.dijkstraMinDistance)
+struct NNWalker(WalkStrategy strategy = WalkStrategy.nordlowMaxConnectiveness)
 {
     import std.typecons: Tuple, tuple;
     import std.container: redBlackTree, RedBlackTree;
 
     alias Visit = Tuple!(NWeight, Nd);
-    alias Queue = RedBlackTree!Visit;
+
+    static      if (strategy == WalkStrategy.dijkstraMinDistance)
+    {
+        alias Queue = RedBlackTree!(Visit, "a < b");
+    }
+    else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
+    {
+        alias Queue = RedBlackTree!(Visit, "a > b");
+    }
 
     this(Graph gr,
          const Nd start,
@@ -132,24 +140,33 @@ struct NNWalker(WalkStrategy strategy = WalkStrategy.dijkstraMinDistance)
         this.filter = filter;
         this.start = start;
 
-        // WARNING distMap must initialized here to provide reference semantics
-        pending = redBlackTree(Visit(0, start));
-        distMap[start.raw] = Visit(0, Nd.asUndefined);
+        static if (strategy == WalkStrategy.dijkstraMinDistance)
+        {
+            const NWeight startWeight = 0.0; // distance
+        }
+        else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
+        {
+            const NWeight startWeight = 1.0; // connectiveness
+        }
+
+        // WARNING must initialized arrays and AAs here to provide reference semantics
+        pending = new Queue(Visit(startWeight, start));
+        visitByNd[start.raw] = Visit(startWeight, Nd.asUndefined);
 
         assert(!pending.empty); // must be initialized to enable reference semantics
-        assert(distMap !is null); // must be initialized to enable reference semantics
+        assert(visitByNd !is null); // must be initialized to enable reference semantics
     }
 
     /** Postblit. */
     this(this) in { assert(pending !is null &&
-                           distMap !is null); }
+                           visitByNd !is null); }
     body
     {
         pending = pending.dup;
-        distMap = distMap.dup;
+        visitByNd = visitByNd.dup;
         writeln("Called postblit when nextNd is ", gr[pending.front[1]].lemma,
                 " and pending.length=", pending.length,
-                " and distMap.length=", distMap.length);
+                " and visitByNd.length=", visitByNd.length);
     }
 
     Nd front() @safe pure nothrow // TODO make const when pending.empty is const
@@ -177,20 +194,40 @@ struct NNWalker(WalkStrategy strategy = WalkStrategy.dijkstraMinDistance)
             import knet.iteration: ndsOf;
             foreach (const nextNd; gr.ndsOf(frontLn, filter.langs, filter.senses, currNd))
             {
-                const newNextDist = currW + gr[frontLn].ndist; // TODO parameterize on distance funtion
-                if (auto hit = nextNd in distMap)          // if nextNd already visited
+                static if (strategy == WalkStrategy.dijkstraMinDistance)
+                {
+                    const newNextDist = currW + gr[frontLn].ndist;
+                }
+                else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
+                {
+                    const newNextDist = currW * gr[frontLn].ndist; // not actually a distance
+                }
+
+                if (auto hit = nextNd in visitByNd)          // if nextNd already visited
                 {
                     const NWeight currNextDist = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here
-                    if (newNextDist < currNextDist) // a closer way was found
+
+                    static if (strategy == WalkStrategy.dijkstraMinDistance)
                     {
-                        *hit = Visit(newNextDist, currNd); // update distMap with best yet
-                        pending.removeKey(Visit(currNextDist, nextNd)); // remove old
-                        pending.insert(Visit(newNextDist, nextNd));
+                        if (newNextDist < currNextDist) // a stronger connection was found
+                        {
+                            *hit = Visit(newNextDist, currNd); // update visitByNd with best yet
+                            pending.removeKey(Visit(currNextDist, nextNd)); // remove old
+                            pending.insert(Visit(newNextDist, nextNd));
+                        }
                     }
+                    else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
+                    {
+                        const newTotalDist = newNextDist + currNextDist;
+                        *hit = Visit(newTotalDist, currNd); // update visitByNd with best yet
+                        pending.removeKey(Visit(currNextDist, nextNd)); // remove old
+                        pending.insert(Visit(newTotalDist, nextNd));
+                    }
+
                 }
                 else            // if first time we visit nextNd
                 {
-                    distMap[nextNd] = Visit(newNextDist, currNd); // first is best
+                    visitByNd[nextNd] = Visit(newNextDist, currNd); // first is best
                     pending.insert(Visit(newNextDist, nextNd));
                 }
             }
@@ -219,7 +256,7 @@ struct NNWalker(WalkStrategy strategy = WalkStrategy.dijkstraMinDistance)
     }
 
 public:
-    Visit[Nd] distMap;          // Nd => tuple(Nd origin distance, parent Nd)
+    Visit[Nd] visitByNd;        // Nd => tuple(Nd origin distance, parent Nd)
     Queue pending;              // queue of pending (untraversed) nodes
     const Nd start;             // search start node
     const Filter filter;

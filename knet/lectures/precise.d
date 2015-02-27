@@ -136,14 +136,14 @@ void learnPreciseThings(Graph graph)
             // Male Name
             graph.learnMtoNMaybe(buildPath(dirPath, `male_name.txt`), // TODO isA male name
                                  Sense.nameMale, lang,
-                                 Role(Rel.hasMeaning),
+                                 Role(Rel.translationOf),
                                  Sense.unknown, lang,
                                  Origin.manual, 1.0);
 
             // Female Name
             graph.learnMtoNMaybe(buildPath(dirPath, `female_name.txt`), // TODO isA female name
                                  Sense.nameFemale, lang,
-                                 Role(Rel.hasMeaning),
+                                 Role(Rel.translationOf),
                                  Sense.unknown, lang,
                                  Origin.manual, 1.0);
 
@@ -223,10 +223,10 @@ void learnPreciseThings(Graph graph)
 
             // Prefix
             graph.learnMtoNMaybe(buildPath(dirPath, `word_prefix.txt`),
-                                 Sense.prefix, lang, Role(Rel.hasMeaning),
+                                 Sense.prefix, lang, Role(Rel.translationOf),
                                  Sense.unknown, lang, Origin.manual, 1.0);
             graph.learnMtoNMaybe(buildPath(dirPath, `word_suffix.txt`),
-                                 Sense.suffix, lang, Role(Rel.hasMeaning),
+                                 Sense.suffix, lang, Role(Rel.translationOf),
                                  Sense.unknown, lang, Origin.manual, 1.0);
 
             // Homophone
@@ -290,12 +290,12 @@ void learnPreciseThings(Graph graph)
             // Name
             graph.learnMtoNMaybe(buildPath(dirPath, `male_name_meaning.txt`),
                                  Sense.nameMale, lang,
-                                 Role(Rel.hasMeaning),
+                                 Role(Rel.translationOf),
                                  Sense.unknown, lang,
                                  Origin.manual, 0.7);
             graph.learnMtoNMaybe(buildPath(dirPath, `female_name_meaning.txt`),
                                  Sense.nameFemale, lang,
-                                 Role(Rel.hasMeaning),
+                                 Role(Rel.translationOf),
                                  Sense.unknown, lang,
                                  Origin.manual, 0.7);
             graph.learnMtoNMaybe(buildPath(dirPath, `name_day.txt`),

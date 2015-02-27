@@ -124,7 +124,6 @@ enum Rel:ubyte
     headquarteredIn,
 
     hasContext,
-    hasMeaning,
     slangFor,
     idiomFor,
 

@@ -1309,26 +1309,6 @@ auto toHuman(const Role role,
                 }
             }
             break;
-        case hasMeaning:
-            if (!role.reversed)
-            {
-                switch (targetLang)
-                {
-                    case sv: words = ["har", not, "betydelsen"]; break;
-                    case en:
-                    default: words = ["does", not, "have meaning"]; break;
-                }
-            }
-            else
-            {
-                switch (targetLang)
-                {
-                    case sv: words = ["kan", not, "beskrivas av"]; break;
-                    case en:
-                    default: words = ["can", not, "be described by"]; break;
-                }
-            }
-            break;
         // case hasPronounciation:
         //     if (!role.reversed)
         //     {

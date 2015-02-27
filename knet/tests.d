@@ -130,14 +130,14 @@ void testNNWalker()
     assert(!w.empty);
     assert(!wRef.empty);
     assert(!wCopy.empty);
-    assert(w.distMap.length == 1);
+    assert(w.visitByNd.length == 1);
 
     // iterate side-effects
     while (!w.empty) { w.popFront; }
     assert(w.empty);
     assert(w != wRef);
     assert(w != wCopy);
-    foreach (const pair; w.distMap.byPair)
+    foreach (const pair; w.visitByNd.byPair)
     {
         write(`Shortest distance from `, gr[ndA].lemma.expr,
               ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
@@ -148,7 +148,7 @@ void testNNWalker()
         write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
         writeln();
     }
-    assert(w.distMap.length == gr.db.tabs.allNodes.length);
+    assert(w.visitByNd.length == gr.db.tabs.allNodes.length);
     while (!wRef.empty) { wRef.popFront; } // empty with side effects
     assert(wRef.empty);
     assert(w == wRef);
@@ -176,12 +176,13 @@ void testContextOf()
     auto cLns = gr.connect1toM(c, role, bs, origin, 0.5, true);
     auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
 
-    import knet.association: contextOf;
+    import knet.traversal: WalkStrategy;
+    import knet.association: contextsOf;
 
-    const ndContext = gr.contextOf(bs);
-    assert(ndContext == d);
+    const ndContexts = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs);
+    assert(ndContexts[0][0] == d);
 
-    const ctxNd2 = gr.contextOf("B1 B2 B3 B4 B5".splitter(` `));
+    // const ctxNd2 = gr.contextsOf("B1 B2 B3 B4 B5".splitter(` `));
 }
 
 /** Run Unittestsx.
