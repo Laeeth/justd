@@ -513,8 +513,9 @@ bool query(Graph gr,
             import knet.association: contextsOf;
             import knet.filtering: Filter;
             import knet.traversal: WalkStrategy;
-            const contexts = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg.splitter, Filter([userLang], [sense]), 3000);
+            const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg.splitter, Filter([userLang], [sense]), 3000);
             writeln("> Contexts:");
+            const contexts = result[0];
             foreach (const context; contexts)
             {
                 const nd = context[0];

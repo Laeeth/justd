@@ -21,9 +21,23 @@ struct Hit
 
     auto visitCount() const @safe @nogc pure nothrow { return visits.countOnes; }
 
-    // TODO Use multiSort instead?
-    // TODO reuse opCmp
     // TODO http://forum.dlang.org/thread/dgriaerekyrcqegrrrer@forum.dlang.org#post-dgriaerekyrcqegrrrer:40forum.dlang.org
+    auto opCmp_alt(const Hit rhs) const
+    {
+        import std.algorithm: cmp;
+        import std.range: only;
+        if(auto c = cmp(only(visitCount),
+                        only(rhs.visitCount)))
+        {
+            return c;
+        }
+        else                    /* 'count' values are equal. */
+        {
+            return cmp(only(rank),
+                       only(rhs.rank));
+        }
+    }
+
     auto opCmp(const Hit rhs) const
     {
         if      (this.visitCount > rhs.visitCount) // TODO this is not intuitive
@@ -57,13 +71,13 @@ alias Contexts = Context[];
 
 /** Get Context (node) of Expressions $(D exprs).
  */
-Contexts contextsOf(WalkStrategy strategy,
-                    Exprs)(Graph gr,
-                           Exprs exprs,
-                           const Filter filter = Filter.init,
-                           size_t maxContextCount = 0,
-                           uint durationInMsecs = 1000) if (isIterable!Exprs &&
-                                                            isSomeString!(ElementType!Exprs))
+auto contextsOf(WalkStrategy strategy,
+                Exprs)(Graph gr,
+                       Exprs exprs,
+                       const Filter filter = Filter.init,
+                       size_t maxContextCount = 0,
+                       uint durationInMsecs = 1000) if (isIterable!Exprs &&
+                                                        isSomeString!(ElementType!Exprs))
 {
     import std.algorithm: joiner;
     import knet.lookup: lemmasOfExpr;
@@ -89,27 +103,23 @@ import dbg: pln;
 
     TODO Compare with function Context() in ConceptNet API.
 */
-Contexts contextsOf(WalkStrategy strategy,
-                    Nds)(Graph gr,
-                         Nds nds,
-                         const Filter filter = Filter.init,
-                         size_t maxContextCount = 0,
-                         uint durationInMsecs = 1000,
-                         uint intervalInMsecs = 0) if (isIterable!Nds &&
-                                                       is(Nd == ElementType!Nds))
+auto contextsOf(WalkStrategy strategy,
+                Nds)(Graph gr,
+                     Nds nds,
+                     const Filter filter = Filter.init,
+                     size_t maxContextCount = 0,
+                     uint durationInMsecs = 1000,
+                     uint intervalInMsecs = 0) if (isIterable!Nds &&
+                                                   is(Nd == ElementType!Nds))
+    in { assert(nds.count >= 2); }   // need at least two nodes
+body
 {
-    auto node = typeof(return).init;
-
     if (maxContextCount == 0)
     {
         maxContextCount = 100;
     }
 
     auto count = nds.count;
-    if (count < 2) // need at least two nodes
-    {
-        return typeof(return).init;
-    }
     if (count > maxCount)
     {
         pln("Truncated node count from ", count, " to ", maxCount);
@@ -152,10 +162,7 @@ Contexts contextsOf(WalkStrategy strategy,
                 {
                     // log that $(D walker) now (among at least one other) have visited visitedNd
                     (*visits)[wix] = true;
-                    if ((*visits).allOneBetween(0, count))
-                    {
-                        // TODO what to do with this?
-                    }
+                    // TODO if ((*visits).allOneBetween(0, count)) { /* do something? */ }
                 }
                 else
                 {
@@ -174,6 +181,14 @@ Contexts contextsOf(WalkStrategy strategy,
         {
             break; // we're done
         }
+    }
+
+    writeln("=========================================================");
+    writeln("walkers[0].visitByNd: starting at ", gr[walkers[0].start].lemma.expr);
+    foreach (const nd, const visit; walkers[0].visitByNd)
+    {
+        writeln("nd: ", gr[nd].lemma.expr,
+                ", visit: ", visit);
     }
 
     // combine walker results
@@ -237,7 +252,7 @@ Contexts contextsOf(WalkStrategy strategy,
     }
 
     // return maxContextCount best hits
-    return contexts[0 .. maxContextCount];
+    return tuple(contexts[0 .. maxContextCount], walkers);
 }
 
 alias topicsOf = contextsOf;

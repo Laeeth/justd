@@ -174,11 +174,13 @@ void testContextOf()
     auto cLns = gr.connect1toM(c, role, bs, origin, 0.5, true);
     auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
 
+    import knet.traversal: nnWalker, WalkStrategy;
     import knet.filtering: Filter;
-    import knet.traversal: WalkStrategy;
     import knet.association: contextsOf;
 
-    auto contexts = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
+    auto traversal = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
+    auto contexts = traversal[0];
+    auto walkers = traversal[1];
     foreach (const context; contexts)
     {
         const nd = context[0];
