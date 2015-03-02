@@ -146,7 +146,6 @@ struct NNWalker(WalkStrategy strategy)
         }
         else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
         {
-            f;
             const NWeight startWeight = 1.0; // connectiveness
         }
 
@@ -210,11 +209,19 @@ struct NNWalker(WalkStrategy strategy)
 
                     static if (strategy == WalkStrategy.dijkstraMinDistance)
                     {
+                        write("currNd:", gr[currNd].lemma.expr, " ",
+                              "nextNd:", gr[nextNd].lemma.expr,
+                              ", dist:", currNextDist, "=>", newNextDist, " ");
                         if (newNextDist < currNextDist) // a stronger connection was found
                         {
+                            writeln("is updated");
                             *hit = Visit(newNextDist, currNd); // update visitByNd with best yet
                             pending.removeKey(Visit(currNextDist, nextNd)); // remove old
                             pending.insert(Visit(newNextDist, nextNd));
+                        }
+                        else
+                        {
+                            writeln("is not updated");
                         }
                     }
                     else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)

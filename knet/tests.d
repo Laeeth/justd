@@ -154,6 +154,16 @@ void testNNWalker()
     assert(w == wRef);
 }
 
+void showWalker(Walker)(Graph gr, ref Walker walker)
+{
+    writeln("\nWalker-", gr[walker.start].lemma.expr, ": ");
+    foreach (e; walker.visitByNd.byPair)
+    {
+        writeln("nd: ", gr[e[0]].lemma.expr,
+                ", weight: ", e[1][0]);
+    }
+}
+
 void testContextOf()
 {
     auto gr = new Graph();
@@ -178,9 +188,29 @@ void testContextOf()
     import knet.filtering: Filter;
     import knet.association: contextsOf;
 
-    auto traversal = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
-    auto contexts = traversal[0];
-    auto walkers = traversal[1];
+    auto result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
+    auto contexts = result[0];
+    auto walkers = result[1];
+
+    import knet.traversal: nnWalker, WalkStrategy;
+    auto w = gr.nnWalker!(WalkStrategy.dijkstraMinDistance)(b1);
+    while (!w.empty) { w.popFront; }
+    writeln("w ===================");
+    gr.showWalker(w);
+    assert(walkers[0].visitByNd[c][0] == 0.5); // B1 to C
+    assert(walkers[0].visitByNd[d][0] == 1.0); // B1 to D
+    assert(walkers[0].visitByNd[b2][0] == 1.0); // B1 to B2
+    assert(walkers[0].visitByNd[b3][0] == 1.0); // B1 to B3
+
+    // check B1-walker
+    writeln("walkers[0] ===================");
+    gr.showWalker(walkers[0]);
+    assert(walkers[0].visitByNd[c][0] == 0.5); // B1 to C
+    assert(walkers[0].visitByNd[d][0] == 1.0); // B1 to D
+    assert(walkers[0].visitByNd[b2][0] == 1.0); // B1 to B2
+    assert(walkers[0].visitByNd[b3][0] == 1.0); // B1 to B3
+
+    // check context
     foreach (const context; contexts)
     {
         const nd = context[0];
