@@ -117,6 +117,8 @@ enum WalkStrategy
 */
 struct NNWalker(WalkStrategy strategy)
 {
+    // version = debugPrint;
+
     import std.typecons: Tuple, tuple;
     import std.container: redBlackTree, RedBlackTree;
 
@@ -164,9 +166,13 @@ struct NNWalker(WalkStrategy strategy)
     {
         pending = pending.dup;
         visitByNd = visitByNd.dup;
-        writeln("Called postblit when nextNd is ", gr[pending.front[1]].lemma,
-                " and pending.length=", pending.length,
-                " and visitByNd.length=", visitByNd.length);
+        if (visitByNd.length >= 2)
+        {
+            writeln("warning: Called postblit when nextNd is ",
+                    gr[pending.front[1]].lemma,
+                    " and pending.length=", pending.length,
+                    " and visitByNd.length=", visitByNd.length);
+        }
     }
 
     Nd front() @safe pure nothrow // TODO make const when pending.empty is const
@@ -196,47 +202,48 @@ struct NNWalker(WalkStrategy strategy)
             {
                 static if (strategy == WalkStrategy.dijkstraMinDistance)
                 {
-                    const newNextDist = currW + gr[frontLn].ndist;
+                    const newNextGoodness = currW + gr[frontLn].ndist;
                 }
                 else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
                 {
-                    const newNextDist = currW * gr[frontLn].ndist; // not actually a distance
+                    const newNextGoodness = currW * gr[frontLn].nweight;
                 }
 
+                version (debugPrint) write("currNd:", gr[currNd].lemma.expr, " ",
+                                           "nextNd:", gr[nextNd].lemma.expr, " ");
                 if (auto hit = nextNd in visitByNd)          // if nextNd already visited
                 {
-                    const NWeight currNextDist = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here
+                    const NWeight currNextGoodness = (*hit)[0]; // NOTE (*hit)[1] is not needed to compare here
 
                     static if (strategy == WalkStrategy.dijkstraMinDistance)
                     {
-                        write("currNd:", gr[currNd].lemma.expr, " ",
-                              "nextNd:", gr[nextNd].lemma.expr,
-                              ", dist:", currNextDist, "=>", newNextDist, " ");
-                        if (newNextDist < currNextDist) // a stronger connection was found
+                        version (debugPrint) write("dist:", currNextGoodness, "=>", newNextGoodness, " ");
+                        if (newNextGoodness < currNextGoodness) // a stronger connection was found
                         {
-                            writeln("is updated");
-                            *hit = Visit(newNextDist, currNd); // update visitByNd with best yet
-                            pending.removeKey(Visit(currNextDist, nextNd)); // remove old
-                            pending.insert(Visit(newNextDist, nextNd));
+                            version (debugPrint) writeln("is updated");
+                            *hit = Visit(newNextGoodness, currNd); // update visitByNd with best yet
+                            pending.removeKey(Visit(currNextGoodness, nextNd)); // remove old
+                            pending.insert(Visit(newNextGoodness, nextNd));
                         }
                         else
                         {
-                            writeln("is not updated");
+                            version (debugPrint) writeln("is not updated");
                         }
                     }
                     else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
                     {
-                        const newTotalDist = newNextDist + currNextDist;
+                        const newTotalDist = newNextGoodness + currNextGoodness;
                         *hit = Visit(newTotalDist, currNd); // update visitByNd with best yet
-                        pending.removeKey(Visit(currNextDist, nextNd)); // remove old
+                        pending.removeKey(Visit(currNextGoodness, nextNd)); // remove old
                         pending.insert(Visit(newTotalDist, nextNd));
                     }
 
                 }
                 else            // if first time we visit nextNd
                 {
-                    visitByNd[nextNd] = Visit(newNextDist, currNd); // first is best
-                    pending.insert(Visit(newNextDist, nextNd));
+                    version (debugPrint) writeln("dist:", newNextGoodness, " is added");
+                    visitByNd[nextNd] = Visit(newNextGoodness, currNd); // first is best
+                    pending.insert(Visit(newNextGoodness, nextNd));
                 }
             }
         }
@@ -286,7 +293,7 @@ auto nnWalk(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Fil
 }
 
 /** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
-auto dijkstraNNWalk(Graph gr, Nd start, const Filter filter = Filter.init)
+auto dijkstraNNWalk(Graph gr, Nd start, const Filter filter = Filter.init) pure
 {
     return nnWalk!(WalkStrategy.dijkstraMinDistance)(gr, start, filter);
 }

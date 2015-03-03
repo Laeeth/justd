@@ -81,21 +81,31 @@ void testBFWalker()
     gr.connect(ndE, role, ndF, origin, 0.1, true);
 
     auto walker = gr.bfWalker(ndA);
-    foreach (const nds; walker) // for each `connectivity expansion`
+    if (false)
     {
-        foreach (const nd; nds)
+        foreach (const nds; walker) // for each `connectivity expansion`
         {
-            writeln(gr[nd]);
+            foreach (const nd; nds)
+            {
+                writeln(gr[nd]);
+            }
         }
-    }
 
-    writeln(`Connectiveness with ndA `, walker.connectivenessByNd[ndA]);
-    writeln(`Connectiveness with ndB1 `, walker.connectivenessByNd[ndB1]);
-    writeln(`Connectiveness with ndB2 `, walker.connectivenessByNd[ndB2]);
-    writeln(`Connectiveness with ndC `, walker.connectivenessByNd[ndC]);
+        writeln(`Connectiveness with ndA `, walker.connectivenessByNd[ndA]);
+        writeln(`Connectiveness with ndB1 `, walker.connectivenessByNd[ndB1]);
+        writeln(`Connectiveness with ndB2 `, walker.connectivenessByNd[ndB2]);
+        writeln(`Connectiveness with ndC `, walker.connectivenessByNd[ndC]);
+    }
 }
 
-void testNNWalker1()
+// TODO Move somewhere reusable.
+bool similar(A, B)(A a, B b) pure
+{
+    const eps = 5e-3; // epsilon
+    return abs(a - b) / (abs(a) + abs(b)) < eps;
+}
+
+void testNNWalkABCDE() pure
 {
     auto gr = new Graph();
     enum sense = Sense.letter;
@@ -103,17 +113,34 @@ void testNNWalker1()
     enum role = Role(Rel.any);
     enum origin = Origin.manual;
 
+    /* Sample Graph:
+       A ==W:0.5==> B ==W:0.4==> C ==W:0.4==> D ==W:0.4==> E
+       A ==D:0.5==> B ==D:0.6==> C ==W:0.6==> D ==W:0.6==> E
+    */
+
+    // nodes
     auto a = gr.add(`A`, lang, sense, origin);
     auto b = gr.add(`B`, lang, sense, origin);
     auto c = gr.add(`C`, lang, sense, origin);
+    auto d = gr.add(`D`, lang, sense, origin);
+    auto e = gr.add(`E`, lang, sense, origin);
 
+    // links
     Ln ab = gr.connect(a, role, b, origin, 0.5, true);
     Ln bc = gr.connect(b, role, c, origin, 0.4, true);
+    Ln cd = gr.connect(c, role, d, origin, 0.4, true);
+    Ln de = gr.connect(d, role, e, origin, 0.4, true);
 
-    pln("\ntestNNWalker1:");
+    // perform walk
+    // pln("\ntestNNWalker1:");
     auto w = gr.nnWalk!(WalkStrategy.dijkstraMinDistance)(b);
-    gr.showWalker(w);
-    writeln("");
+    assert(w.start == b);
+
+    // check distances from b
+    assert(similar(w.visitByNd[a][0], 1-0.5));
+    assert(similar(w.visitByNd[c][0], 1-0.4));
+    assert(similar(w.visitByNd[d][0], 2*(1-0.4)));
+    assert(similar(w.visitByNd[e][0], 3*(1-0.4)));
 }
 
 void testNNWalker2()
@@ -144,10 +171,7 @@ void testNNWalker2()
     auto wCopy = w.save; // copy
 
     // iterate without side-effects
-    foreach (const nd; w)
-    {
-        writeln(gr[nd]);
-    }
+    foreach (const nd; w) {}
     assert(w == wRef);  // iteration should not change copy
     assert(w == wCopy);  // iteration should not change saved copy
     assert(!w.empty);
@@ -160,17 +184,20 @@ void testNNWalker2()
     assert(w.empty);
     assert(w != wRef);
     assert(w != wCopy);
-    foreach (const pair; w.visitByNd.byPair)
-    {
-        write(`Shortest distance from `, gr[ndA].lemma.expr,
-              ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
-        if (pair[1][1].defined)
-        {
-            write(` and came out of `, gr[pair[1][1]].lemma.expr);
-        }
-        write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
-        writeln();
-    }
+
+    // print some stuff
+    // foreach (const pair; w.visitByNd.byPair)
+    // {
+    //     write(`Shortest distance from `, gr[ndA].lemma.expr,
+    //           ` to `, gr[pair[0]].lemma.expr, ` is `, pair[1][0]);
+    //     if (pair[1][1].defined)
+    //     {
+    //         write(` and came out of `, gr[pair[1][1]].lemma.expr);
+    //     }
+    //     write(` pair: `, `{`, pair[0], `, `, `{`, pair[1][0], `, `, pair[1][1], `}`, `}`);
+    //     writeln();
+    // }
+
     assert(w.visitByNd.length == gr.db.tabs.allNodes.length);
     while (!wRef.empty) { wRef.popFront; } // empty with side effects
     assert(wRef.empty);
@@ -260,7 +287,7 @@ void testAll()
 
     testBFWalker;
 
-    testNNWalker1;
+    testNNWalkABCDE;
     testNNWalker2;
 
     testContextOf;
