@@ -110,7 +110,7 @@ void testNNWalker1()
     Ln ab = gr.connect(a, role, b, origin, 0.5, true);
     Ln bc = gr.connect(b, role, c, origin, 0.4, true);
 
-    writeln("\ntestNNWalker1:");
+    pln("\ntestNNWalker1:");
     auto w = gr.nnWalk!(WalkStrategy.dijkstraMinDistance)(b);
     gr.showWalker(w);
     writeln("");

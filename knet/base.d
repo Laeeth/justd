@@ -352,7 +352,7 @@ struct Node
     /* @safe @nogc pure nothrow: */
     this(in Lemma lemma,
          Origin origin = Origin.unknown,
-         Lns links = Lns.init)
+         Lns links = Lns.init) pure
     {
         this.lemma = lemma;
         this.origin = origin;
@@ -382,7 +382,8 @@ struct Link
     this(Nd src,
          Role role,
          Nd dst,
-         Origin origin = Origin.unknown) in { assert(src.defined && dst.defined); }
+         Origin origin = Origin.unknown) pure
+    in { assert(src.defined && dst.defined); }
     body
     {
         // http://forum.dlang.org/thread/mevnosveagdiswkxtbrv@forum.dlang.org#post-zhndpadqtfareymbnfis:40forum.dlang.org
@@ -870,7 +871,7 @@ class Graph
               Manner manner = Manner.formal,
               bool isRegexp = false,
               ubyte meaningNr = 0,
-              bool normalizeExpr = true) if (isSomeString!S)
+              bool normalizeExpr = true) pure if (isSomeString!S)
         in { assert(!expr.empty); }
     body
     {
@@ -1114,7 +1115,7 @@ class Graph
                Origin origin = Origin.unknown,
                NWeight weight = 1.0,
                bool checkExisting = true,
-               bool warnExisting = false) in
+               bool warnExisting = false) pure in
     {
         assert(src != dst, (at(src).lemma.to!string ~
                             ` must not be equal to ` ~
@@ -1248,7 +1249,7 @@ class Graph
      */
     Ln areLinkedInOrder(Nd a, Role role, Nd b,
                         Origin origin = Origin.unknown,
-                        NWeight nweight = 1.0)
+                        NWeight nweight = 1.0) pure
     {
         const dir = (role.rel.isSymmetric ?
                      RelDir.any :
@@ -1275,7 +1276,7 @@ class Graph
      */
     Ln areLinked(Nd a, Role role, Nd b,
                  Origin origin = Origin.unknown,
-                 NWeight weight = 1.0)
+                 NWeight weight = 1.0) pure
     {
         return either(areLinkedInOrder(a, role, b, origin, weight),
                       areLinkedInOrder(b, role, a, origin, weight));
@@ -1284,7 +1285,7 @@ class Graph
     /** Return Index to Link relating if $(D a) and $(D b) if they are related. */
     Ln areLinked(in Lemma a, Role role, in Lemma b,
                  Origin origin = Origin.unknown,
-                 NWeight weight = 1.0)
+                 NWeight weight = 1.0) pure
     {
         const aNd = a in db.ixes.ndByLemma;
         const bNd = b in db.ixes.ndByLemma;
