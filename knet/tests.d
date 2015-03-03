@@ -1,6 +1,10 @@
 module knet.tests;
 
 import knet.base;
+import knet.traversal: bfWalker, nnWalker, nnWalk, WalkStrategy;
+import knet.filtering: Filter;
+
+import dbg: pln;
 
 void testLinkReusage()
 {
@@ -76,7 +80,6 @@ void testBFWalker()
     gr.connect(ndD, role, ndE, origin, 0.1, true);
     gr.connect(ndE, role, ndF, origin, 0.1, true);
 
-    import knet.traversal: bfWalker;
     auto walker = gr.bfWalker(ndA);
     foreach (const nds; walker) // for each `connectivity expansion`
     {
@@ -92,7 +95,28 @@ void testBFWalker()
     writeln(`Connectiveness with ndC `, walker.connectivenessByNd[ndC]);
 }
 
-void testNNWalker()
+void testNNWalker1()
+{
+    auto gr = new Graph();
+    enum sense = Sense.letter;
+    enum lang = Lang.en;
+    enum role = Role(Rel.any);
+    enum origin = Origin.manual;
+
+    auto a = gr.add(`A`, lang, sense, origin);
+    auto b = gr.add(`B`, lang, sense, origin);
+    auto c = gr.add(`C`, lang, sense, origin);
+
+    Ln ab = gr.connect(a, role, b, origin, 0.5, true);
+    Ln bc = gr.connect(b, role, c, origin, 0.4, true);
+
+    writeln("\ntestNNWalker1:");
+    auto w = gr.nnWalk!(WalkStrategy.dijkstraMinDistance)(b);
+    gr.showWalker(w);
+    writeln("");
+}
+
+void testNNWalker2()
 {
     auto gr = new Graph();
     enum sense = Sense.letter;
@@ -115,7 +139,6 @@ void testNNWalker()
     gr.connect(ndD, role, ndE, origin, 0.1, true);
     gr.connect(ndE, role, ndF, origin, 0.1, true);
 
-    import knet.traversal: nnWalker, WalkStrategy;
     auto w = gr.nnWalker!(WalkStrategy.dijkstraMinDistance)(ndA);
     auto wRef = w; // new reference
     auto wCopy = w.save; // copy
@@ -156,7 +179,7 @@ void testNNWalker()
 
 void showWalker(Walker)(Graph gr, ref Walker walker)
 {
-    writeln("\nWalker-", gr[walker.start].lemma.expr, ": ");
+    writeln("\nWalk with start at \"", gr[walker.start].lemma.expr, "\": ");
     foreach (e; walker.visitByNd.byPair)
     {
         writeln("nd: ", gr[e[0]].lemma.expr,
@@ -184,10 +207,7 @@ void testContextOf()
     auto cLns = gr.connect1toM(c, role, bs, origin, 0.5, true);
     auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
 
-    import knet.traversal: nnWalker, WalkStrategy;
-    import knet.filtering: Filter;
     import knet.association: contextsOf;
-
     auto result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
     auto contexts = result[0];
     auto walkers = result[1];
@@ -239,7 +259,9 @@ void testAll()
     testSymmetricLinkReusage;
 
     testBFWalker;
-    testNNWalker;
+
+    testNNWalker1;
+    testNNWalker2;
 
     testContextOf;
 }

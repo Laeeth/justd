@@ -278,9 +278,15 @@ auto nnWalker(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = F
 }
 
 /** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
-auto dijkstraNNWalk(Graph gr, Nd start, const Filter filter = Filter.init)
+auto nnWalk(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Filter.init)
 {
-    auto walker = nnWalker!(WalkStrategy.dijkstraMinDistance)(gr, start, filter);
+    auto walker = nnWalker!(strategy)(gr, start, filter);
     while (!walker.empty) { walker.popFront; } // TODO functionize to exhaust
     return walker;                             // hopefully this moves
+}
+
+/** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
+auto dijkstraNNWalk(Graph gr, Nd start, const Filter filter = Filter.init)
+{
+    return nnWalk!(WalkStrategy.dijkstraMinDistance)(gr, start, filter);
 }
