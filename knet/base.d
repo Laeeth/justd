@@ -21,6 +21,9 @@
 
     People: Pat Winston, Jerry Sussman, Henry Liebermann (Knowledge base)
 
+    Books:
+    - http://www.adampease.org/OP/book.html
+
     Data Resources:
     - http://meta-guide.com/software-meta-guide/100-best-ai-nlp-resources-aiml/
     - https://www.wordnik.com/
