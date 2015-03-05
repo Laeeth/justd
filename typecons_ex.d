@@ -87,9 +87,16 @@ enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessC
     enumerators. Perhaps use among aswell.
 
     TODO Rename to something more concise such as [Bb]y.
+
+    TODO Allow $(D I) to be a string and if so derive $(D Index) to be that string.
+
+    TODO Support R being a static array:
+         - If I is an enum its number of elements should match R.length
    */
 struct IndexedBy(R, I) if (isIndexableBy!(R, I))
 {
+    alias Index = I; /// indexing type
+
     auto ref opIndex(I i) inout             { return _r[cast(size_t)i]; }
     auto ref opIndexAssign(V)(V value, I i) { return _r[cast(size_t)i] = value; }
 
