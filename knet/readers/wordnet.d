@@ -359,6 +359,8 @@ void readWordNet(Graph gr,
     gr.readWordNetData(rows, dirPath.buildNormalizedPath(`data.noun`), false, lang, Sense.noun);
     gr.readWordNetData(rows, dirPath.buildNormalizedPath(`data.verb`), false, lang, Sense.verb);
 
+    enum weight = 1.0;
+
     // link them together
     foreach (const row; rows)
     {
@@ -373,7 +375,7 @@ void readWordNet(Graph gr,
                         gr.connectSynSets(*srcSynSet_,
                                           ptr.role,
                                           *dstSynSet_,
-                                          Origin.wordnet, 1.0, true, true);
+                                          Origin.wordnet, weight, true, true);
                     }
                     else        // lexical 1-to-1 relation
                     {
@@ -383,7 +385,7 @@ void readWordNet(Graph gr,
                         const Nd dstNd = (*dstSynSet_)[ptr.dstSynSetWordNr - 1];
                         if (srcNd != dstNd)
                         {
-                            gr.connect(srcNd, ptr.role, dstNd, Origin.wordnet, 1.0, true);
+                            gr.connect(srcNd, ptr.role, dstNd, Origin.wordnet, weight, true);
                         }
                         else
                         {

@@ -143,8 +143,6 @@ body
     StopWatch stopWatch;
     stopWatch.start();
 
-    pln("filter: ", filter);
-
     // TODO avoid Walker postblit
     import knet.traversal: nnWalker;
     auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, filter)).array;
@@ -183,13 +181,7 @@ body
         }
     }
 
-    writeln("=========================================================");
-    writeln("walkers[0].visitByNd: starting at ", gr[walkers[0].start].lemma.expr);
-    foreach (const nd, const visit; walkers[0].visitByNd)
-    {
-        writeln("nd: ", gr[nd].lemma.expr,
-                ", visit: ", visit);
-    }
+    pln("Combining walker results");
 
     // combine walker results
     Hit[Nd] connByNd;       // weights by node
@@ -198,39 +190,37 @@ body
     {
         for (auto walkIx = 0; walkIx < visits.length; ++walkIx)
         {
-            if (visits[walkIx])
+            if (visits[walkIx]) // if walker walkerIx visited nd
             {
-                foreach (nd, visit; walkers[walkIx].visitByNd) // Nds visited by walker
+                const visit = walkers[walkIx].visitByNd[nd];
+                const rank = visit[0];
+                // store that walkIx has visited nd
+                if (auto existingHit = nd in connByNd)
                 {
-                    const rank = visit[0];
-                    // store that walkIx has visited nd
-                    if (auto existingHit = nd in connByNd)
-                    {
-                        (*existingHit).rank += rank; // TODO use prevNd for anything?
-                        (*existingHit).visits[walkIx] = true;
-                    }
-                    else
-                    {
-                        Visits visits;
-                        visits[walkIx] = true;
-                        connByNd[nd] = Hit(visits, rank);
-                    }
+                    (*existingHit).rank += rank; // TODO use prevNd for anything?
+                    (*existingHit).visits[walkIx] = true;
+                }
+                else
+                {
+                    Visits visits_;
+                    visits_[walkIx] = true;
+                    connByNd[nd] = Hit(visits_, rank);
                 }
             }
         }
         i++;
     }
 
-    foreach (const nd, const hit; connByNd.byPair)
-    {
-        pln("nd:", gr[nd].lemma, ", hit:", hit);
-    }
+    pln("Sorting walker results");
 
     // sort walker restults
     import std.algorithm.sorting: topN;
     import sort_ex: sorted;
     import std.array: array;
+
     Contexts contexts = connByNd.byPair.array;
+    pragma(msg, typeof(contexts[0]));
+
     maxContextCount = min(maxContextCount, contexts.length); // limit context count
     static if (strategy == WalkStrategy.dijkstraMinDistance)
     {

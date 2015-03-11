@@ -90,7 +90,6 @@ void testBFWalker()
                 writeln(gr[nd]);
             }
         }
-
         writeln(`Connectiveness with ndA `, walker.connectivenessByNd[ndA]);
         writeln(`Connectiveness with ndB1 `, walker.connectivenessByNd[ndB1]);
         writeln(`Connectiveness with ndB2 `, walker.connectivenessByNd[ndB2]);
@@ -132,7 +131,6 @@ void testNNWalkABCDE() pure
     Ln de = gr.connect(d, role, e, origin, 0.4, true);
 
     // perform walk
-    // pln("\ntestNNWalker1:");
     auto w = gr.nnWalk!(WalkStrategy.dijkstraMinDistance)(b);
     assert(w.start == b);
 
@@ -226,36 +224,18 @@ void testContextOf()
     auto b2 = gr.add(`B2`, lang, sense, origin);
     auto b3 = gr.add(`B3`, lang, sense, origin);
 
+    auto a  = gr.add(`A`, lang, sense, origin);
     auto c  = gr.add(`C`, lang, sense, origin);
-    auto d  = gr.add(`D`, lang, sense, origin);
 
     auto bs = [b1, b2, b3];
 
-    auto cLns = gr.connect1toM(c, role, bs, origin, 0.5, true);
-    auto dLns = gr.connect1toM(d, role, bs, origin, 1.0, true);
+    auto aLns = gr.connect1toM(a, role, bs, origin, 0.5, true);
+    auto dLns = gr.connect1toM(c, role, bs, origin, 0.6, true);
 
     import knet.association: contextsOf;
     auto result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, 1);
     auto contexts = result[0];
     auto walkers = result[1];
-
-    import knet.traversal: nnWalker, WalkStrategy;
-    auto w = gr.nnWalker!(WalkStrategy.dijkstraMinDistance)(b1);
-    while (!w.empty) { w.popFront; }
-    writeln("w ===================");
-    gr.showWalker(w);
-    assert(walkers[0].visitByNd[c][0] == 0.5); // B1 to C
-    assert(walkers[0].visitByNd[d][0] == 1.0); // B1 to D
-    assert(walkers[0].visitByNd[b2][0] == 1.0); // B1 to B2
-    assert(walkers[0].visitByNd[b3][0] == 1.0); // B1 to B3
-
-    // check B1-walker
-    writeln("walkers[0] ===================");
-    gr.showWalker(walkers[0]);
-    assert(walkers[0].visitByNd[c][0] == 0.5); // B1 to C
-    assert(walkers[0].visitByNd[d][0] == 1.0); // B1 to D
-    assert(walkers[0].visitByNd[b2][0] == 1.0); // B1 to B2
-    assert(walkers[0].visitByNd[b3][0] == 1.0); // B1 to B3
 
     // check context
     foreach (const context; contexts)
@@ -268,8 +248,6 @@ void testContextOf()
     }
     assert(!contexts.empty);
     assert(contexts[0][0] == c);
-
-    // const ctxNd2 = gr.contextsOf("B1 B2 B3 B4 B5".splitter(` `));
 }
 
 /** Run Unittestsx.
