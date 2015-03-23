@@ -69,7 +69,7 @@ template New(T) if (is(T == class))
 /*     assert(New!C == new C); */
 /* } */
 
-import std.traits: isArray, isUnsigned, isInstanceOf;
+import std.traits: isArray, isUnsigned, isInstanceOf, isSomeString;
 import std.range.primitives: hasSlicing;
 
 enum isIndex(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
@@ -78,7 +78,8 @@ enum isIndex(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
 enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
                             (is(I == enum) ||
                              isUnsigned!I || // TODO should we allow isUnsigned here?
-                             isIndex!I));
+                             isIndex!I ||
+                             isSomeString!I));
 
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
@@ -95,7 +96,20 @@ enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessC
    */
 struct IndexedBy(R, I) if (isIndexableBy!(R, I))
 {
-    alias Index = I; /// indexing type
+    static if (isSomeString!I)
+    {
+        mixin(q{ struct } ~ I ~
+              q{ {
+                      this(T ix) { this._ix = ix; }
+                      T opCast(U : T)() const { return _ix; }
+                      private T _ix = 0;
+                  }
+              });
+    }
+    else
+    {
+        alias Index = I;        /// indexing type
+    }
 
     auto ref opIndex(I i) inout             { return _r[cast(size_t)i]; }
     auto ref opIndexAssign(V)(V value, I i) { return _r[cast(size_t)i] = value; }
@@ -128,6 +142,12 @@ auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
 {
     return IndexedBy!(R, I)(range);
 }
+
+// @safe pure nothrow unittest
+// {
+//     int[3] x = [1, 2, 3];
+//     auto xj = x.indexedBy!"J";
+// }
 
 @safe pure nothrow unittest
 {
