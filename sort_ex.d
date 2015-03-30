@@ -164,7 +164,7 @@ unittest
 auto sorted(R)(const R r) if (isArray!R)
 {
     import std.algorithm: sort;
-    auto s = r.dup;
+    auto s = r.dup; // TODO needed?
     s.sort;
     return s;
 }
