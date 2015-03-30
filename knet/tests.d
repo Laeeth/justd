@@ -240,14 +240,14 @@ void testContextOf()
     // check context
     foreach (const context; contexts)
     {
-        const nd = context[0];
-        const hit = context[1];
+        const Nd nd = context.key;
+        const hit = context.value;
         writeln(" - ", gr[nd].lemma,
                 ": visitCount:", hit.visitCount,
                 ", rank:", hit.rank);
     }
     assert(!contexts.empty);
-    assert(contexts[0][0] == c);
+    assert(contexts[0].key == c);
 }
 
 /** Run Unittestsx.

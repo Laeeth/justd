@@ -10,19 +10,20 @@ alias Block = size_t;
 enum maxCount = 8*Block.sizeof;
 
 import bitset: BitSet;
-alias Visits = BitSet!(maxCount, Block); // bit n is set if walker has visited Nd
+alias Visits = BitSet!(maxCount, Block); // bit $(D n) is set if Walker $(D n) has visited $(D Nd)
 
 alias Rank = NWeight;
 
-struct Hit
+/** Walker Hits for a Specific Node. */
+struct Hits
 {
-    Visits visits; // walker visits
+    Visits visits;
     NWeight rank; // rank (either minimum distance or maximum strength)
 
     auto visitCount() const @safe @nogc pure nothrow { return visits.countOnes; }
 
     // TODO http://forum.dlang.org/thread/dgriaerekyrcqegrrrer@forum.dlang.org#post-dgriaerekyrcqegrrrer:40forum.dlang.org
-    auto opCmp_alt(const Hit rhs) const
+    auto opCmp_alt(const Hits rhs) const
     {
         import std.algorithm: cmp;
         import std.range: only;
@@ -38,7 +39,7 @@ struct Hit
         }
     }
 
-    auto opCmp(const Hit rhs) const
+    auto opCmp(const Hits rhs) const
     {
         if      (this.visitCount > rhs.visitCount) // TODO this is not intuitive
         {
@@ -66,7 +67,7 @@ struct Hit
     }
 }
 
-alias Context = Tuple!(Nd, Hit);
+alias Context = Tuple!(Nd, Hits);
 alias Contexts = Context[];
 
 /** Get Context (node) of Expressions $(D exprs).
@@ -184,53 +185,32 @@ body
     pln("Combining walker results");
 
     // combine walker results
-    Hit[Nd] connByNd;       // weights by node
+    Hits[Nd] hitsByNd;       // weights by node
     size_t i;
     foreach (nd, const visits; visitsByNd.byPair)
     {
-        for (auto walkIx = 0; walkIx < visits.length; ++walkIx)
+        foreach (walkIx; 0 .. visits.length)
         {
             if (visits[walkIx]) // if walker walkerIx visited nd
             {
                 const visit = walkers[walkIx].visitByNd[nd];
                 const rank = visit[0];
+                const Nd prevNd = visit[1]; // TODO use to reconstruct path
                 // store that walkIx has visited nd
-                if (auto existingHit = nd in connByNd)
+                if (auto existingHit = nd in hitsByNd)
                 {
-                    (*existingHit).rank += rank; // TODO use prevNd for anything?
+                    (*existingHit).rank += rank;
                     (*existingHit).visits[walkIx] = true;
                 }
                 else
                 {
                     Visits visits_;
                     visits_[walkIx] = true;
-                    connByNd[nd] = Hit(visits_, rank);
+                    hitsByNd[nd] = Hits(visits_, rank);
                 }
             }
         }
         i++;
-    }
-
-    pln("Sorting walker results");
-
-    // sort walker restults
-    import std.algorithm.sorting: topN;
-    import sort_ex: sorted;
-    import std.array: array;
-
-    Contexts contexts = connByNd.byPair.array;
-    pragma(msg, typeof(contexts[0]));
-
-    maxContextCount = min(maxContextCount, contexts.length); // limit context count
-    static if (strategy == WalkStrategy.dijkstraMinDistance)
-    {
-        contexts.topN!"a[1] < b[1]"(maxContextCount); // pick n strongest contexts
-        contexts[0 .. maxContextCount].sort!"a[1] < b[1]"; // sort n  strongest contexts
-    }
-    else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
-    {
-        contexts.topN!"a[1] > b[1]"(maxContextCount); // pick n strongest contexts
-        contexts[0 .. maxContextCount].sort!"a[1] > b[1]"; // sort n  strongest contexts
     }
 
     // print walker statistics
@@ -241,8 +221,20 @@ body
             " visitByNd.length:", walker.visitByNd.length);
     }
 
-    // return maxContextCount best hits
-    return tuple(contexts[0 .. maxContextCount], walkers);
+    // sort contexts
+    import std.algorithm: topNCopy, SortOutput;
+    alias E = typeof(hitsByNd.byKeyValue.front); // TODO hackish
+    E[] contexts; contexts.length = maxContextCount;
+    static if (strategy == WalkStrategy.dijkstraMinDistance)
+    {
+        hitsByNd.byKeyValue.topNCopy!("a.value < b.value")(contexts, SortOutput.yes); // shortest distances first
+    }
+    else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
+    {
+        hitsByNd.byKeyValue.topNCopy!("a.value > b.value")(contexts, SortOutput.yes); // largest connectiveness first
+    }
+
+    return tuple(contexts, walkers);
 }
 
 alias topicsOf = contextsOf;

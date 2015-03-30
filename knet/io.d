@@ -520,8 +520,8 @@ bool query(Graph gr,
             const contexts = result[0];
             foreach (const context; contexts)
             {
-                const nd = context[0];
-                const hit = context[1];
+                const Nd nd = context.key;
+                const hit = context.value;
                 gr.showNode(nd, hit.rank);
                 writeln;
             }
