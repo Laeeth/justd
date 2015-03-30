@@ -493,10 +493,21 @@ struct BitSet(size_t len, Block = size_t)
 
     /** Returns: Get indexes of all bits set.
      */
-    auto indexesOfOnes() const @safe @nogc pure nothrow
+    auto oneIndexes() const @safe pure nothrow
     {
+        size_t[] ixes;
+        foreach (ix; 0 .. length)
+        {
+            if (this[ix])
+            {
+                ixes ~= ix;
+            }
+        }
+        return ixes;
+        // TODO when opSlice is implemented use:
         // return this[].filter!(bit => bit);
     }
+    alias indexesOfOnes = oneIndexes;
 
     /** Returns: Number of Bits Set in $(D this).
      */
@@ -820,6 +831,7 @@ unittest
     b0[0] = 1;
     b0[m/2] = 1;
     b0[m - 1] = 1;
+    assert(b0.oneIndexes == [0, m/2, m - 1]);
     assert(b0.countOnes == 3);
     assert(b0.denseness == Q(3, m));
 
