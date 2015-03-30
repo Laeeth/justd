@@ -244,7 +244,7 @@ void testContextOf()
         const hit = context.value;
         writeln(" - ", gr[nd].lemma,
                 ": visitCount:", hit.visitCount,
-                ", rank:", hit.rank);
+                ", goodness:", hit.goodnessSum);
     }
     assert(!contexts.empty);
     assert(contexts[0].key == c);

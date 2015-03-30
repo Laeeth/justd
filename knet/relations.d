@@ -416,6 +416,28 @@ alias Rank = uint;
                     return Rank.max;
             }
     }
+
+    double relevance(const Rel rel)
+    {
+        return 0.5;
+        with (Rel)
+            switch (rel)
+            {
+                case synonymFor:
+                    return 0.95;
+                case oppositeOf:
+                    return 0.9;
+                case isA:
+                    return 0.8;
+                case hypernymOf:
+                    return 0.7;
+                case translationOf:
+                    return 0.5;
+                default:
+                    return 0.5;
+            }
+    }
+
     /* TODO Used to infer that
        - X and Y are sisters => (hasSister(X,Y) && hasSister(Y,X))
     */

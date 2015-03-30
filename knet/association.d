@@ -18,7 +18,7 @@ alias Rank = NWeight;
 struct Hits
 {
     Visits visits;
-    NWeight rank; // sum of either minimum distance or maximum strength
+    NWeight goodnessSum; // sum of either minimum distance or maximum strength
 
     auto visitCount() const @safe @nogc pure nothrow { return visits.countOnes; }
 
@@ -34,8 +34,8 @@ struct Hits
         }
         else                    /* 'count' values are equal. */
         {
-            return cmp(only(rank),
-                       only(rhs.rank));
+            return cmp(only(goodnessSum),
+                       only(rhs.goodnessSum));
         }
     }
 
@@ -51,11 +51,11 @@ struct Hits
         }
         else
         {
-            if      (this.rank < rhs.rank)
+            if      (this.goodnessSum < rhs.goodnessSum)
             {
                 return -1;
             }
-            else if (this.rank > rhs.rank)
+            else if (this.goodnessSum > rhs.goodnessSum)
             {
                 return +1;
             }
@@ -112,7 +112,6 @@ auto contextsOf(WalkStrategy strategy,
                      uint durationInMsecs = 1000,
                      uint intervalInMsecs = 0) if (isIterable!Nds &&
                                                    is(Nd == ElementType!Nds))
-    in { assert(nds.count >= 2); }   // need at least two nodes
 body
 {
     if (maxContextCount == 0)
@@ -132,7 +131,6 @@ body
         intervalInMsecs = 20;
     }
 
-    pln("Walkers: ");
     foreach (nd; nds)
     {
         writeln(`- `, gr[nd].lemma);
@@ -146,7 +144,8 @@ body
 
     // TODO avoid Walker postblit
     import knet.traversal: nnWalker;
-    auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, filter)).array;
+    const relevanceFlag = true;
+    auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, filter, relevanceFlag)).array;
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)
@@ -184,33 +183,34 @@ body
 
     pln("Combining walker results");
 
+    pragma(msg, typeof(visitsByNd.byPair.front));
+    pragma(msg, typeof(visitsByNd.byKeyValue.front));
+
     // combine walker results
     Hits[Nd] hitsByNd;       // weights by node
-    size_t i;
-    foreach (nd, const visits; visitsByNd.byPair)
+    foreach (const nd, const visits; visitsByNd.byPair)
     {
         foreach (walkIx; 0 .. visits.length)
         {
             if (visits[walkIx]) // if walker walkerIx visited nd
             {
                 const visit = walkers[walkIx].visitByNd[nd];
-                const rank = visit[0];
+                const goodnessSum = visit[0];
                 const Nd prevNd = visit[1]; // TODO use to reconstruct path
                 // store that walkIx has visited nd
                 if (auto existingHit = nd in hitsByNd)
                 {
-                    (*existingHit).rank += rank;
+                    (*existingHit).goodnessSum += goodnessSum;
                     (*existingHit).visits[walkIx] = true;
                 }
                 else
                 {
                     Visits visits_;
                     visits_[walkIx] = true;
-                    hitsByNd[nd] = Hits(visits_, rank);
+                    hitsByNd[nd] = Hits(visits_, goodnessSum);
                 }
             }
         }
-        i++;
     }
 
     // print walker statistics
@@ -234,7 +234,8 @@ body
         hitsByNd.byKeyValue.topNCopy!("a.value > b.value")(contexts, SortOutput.yes); // largest connectiveness first
     }
 
-    return tuple(contexts, walkers);
+    auto trueContexts = contexts.filter!(a => !nds.canFind(a.key)).array;
+    return tuple(trueContexts, walkers);
 }
 
 alias topicsOf = contextsOf;

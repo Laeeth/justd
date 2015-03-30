@@ -513,18 +513,22 @@ bool query(Graph gr,
             import knet.association: contextsOf, Hits;
             import knet.filtering: Filter;
             import knet.traversal: WalkStrategy;
-            const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg.splitter,
-                                                                            Filter([userLang], [sense]),
-                                                                            100,
-                                                                            3000);
-            writeln("> Contexts:");
-            const contexts = result[0];
-            foreach (const context; contexts)
+            auto arg_splitter = arg.splitter;
+            if (arg_splitter.count >= 2)
             {
-                const Nd nd = context.key;
-                const Hits hits = context.value;
-                gr.showNode(nd, hits.rank);
-                writeln;
+                const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter,
+                                                                                Filter([userLang], [sense]),
+                                                                                15,
+                                                                                3000);
+                writeln("> Contexts:");
+                const contexts = result[0];
+                foreach (const context; contexts)
+                {
+                    const Nd nd = context.key;
+                    const Hits hits = context.value;
+                    gr.showNode(nd, hits.goodnessSum);
+                    writeln(" visitCount: ", hits.visitCount);
+                }
             }
         }
     }

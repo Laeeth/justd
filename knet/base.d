@@ -128,7 +128,7 @@ public import std.algorithm.comparison: among;
 public import knet.separators;
 public import knet.senses: Sense;
 public import knet.languages: Lang;
-public import knet.relations: Rel;
+public import knet.relations: Rel, relevance;
 public import knet.roles: Role;
 public import knet.origins: Origin;
 
@@ -432,16 +432,16 @@ struct Link
     }
 
     /** Get Normalized Link Weight. */
-    @property NWeight nweight() const
+    @property NWeight nweight(NWeight scale = 1.0) const
     {
         return ((cast(typeof(return))pweight)/
-                (cast(typeof(return))PWeight.max));
+                (cast(typeof(return))PWeight.max)) * scale;
     }
 
-    /** Get Normalized Distance. */
-    @property NWeight ndist() const
+    /** Get Normalized Link Distance. */
+    @property NWeight ndist(NWeight scale = 1.0) const
     {
-        return (1.0 - nweight);
+        return (1.0 - nweight(scale));
     }
 
     Actors actors;
