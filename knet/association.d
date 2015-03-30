@@ -18,7 +18,7 @@ alias Rank = NWeight;
 struct Hits
 {
     Visits visits;
-    NWeight rank; // rank (either minimum distance or maximum strength)
+    NWeight rank; // sum of either minimum distance or maximum strength
 
     auto visitCount() const @safe @nogc pure nothrow { return visits.countOnes; }
 
