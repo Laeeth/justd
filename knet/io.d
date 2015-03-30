@@ -515,6 +515,7 @@ bool query(Graph gr,
             import knet.traversal: WalkStrategy;
             const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg.splitter,
                                                                             Filter([userLang], [sense]),
+                                                                            100,
                                                                             3000);
             writeln("> Contexts:");
             const contexts = result[0];
