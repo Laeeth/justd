@@ -24,7 +24,7 @@ if build_type:
         if build_flag == "debug":
             dflags += ["-g", "-gs"]
 
-env = Environment(DC="/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
+env = Environment(DC="/usr/bin/dmd", # "/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
                   DFLAGS=dflags)
 env.Decider("MD5-timestamp")
 env.CacheDir(os.path.expanduser("~/.cache/scons"))
