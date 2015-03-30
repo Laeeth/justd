@@ -510,7 +510,7 @@ bool query(Graph gr,
         const arg = split[0];
         if (!arg.empty)
         {
-            import knet.association: contextsOf;
+            import knet.association: contextsOf, Hits;
             import knet.filtering: Filter;
             import knet.traversal: WalkStrategy;
             const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg.splitter,
@@ -522,8 +522,8 @@ bool query(Graph gr,
             foreach (const context; contexts)
             {
                 const Nd nd = context.key;
-                const hit = context.value;
-                gr.showNode(nd, hit.rank);
+                const Hits hits = context.value;
+                gr.showNode(nd, hits.rank);
                 writeln;
             }
         }
