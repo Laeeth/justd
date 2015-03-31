@@ -52,7 +52,7 @@ enum Rel:ubyte
     usageDomainOfSynset,       ///< WordNet.
     memberOfUsageDomain,       ///< WordNet.
 
-    alsoSee,                   ///< WordNet.
+    alsoSee,                   ///< WordNet. TODO replace with relatedTo
     pertainym,                 ///< WordNet.
 
     memberOfEconomicSector,
@@ -475,7 +475,9 @@ alias Rank = uint;
                                      formOfWord,
                                      formOfVerb,
                                      formOfNoun,
-                                     formOfAdjective) != 0;
+                                     formOfAdjective,
+
+                                     alsoSee) != 0;
     }
 
     /** Return true if $(D relation) is a transitive relation that can used to
