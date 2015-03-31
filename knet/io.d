@@ -513,7 +513,8 @@ bool query(Graph gr,
             import knet.association: contextsOf, Hits;
             import knet.filtering: Filter;
             import knet.traversal: WalkStrategy;
-            auto arg_splitter = arg.splitter;
+            import std.algorithm: uniq;
+            auto arg_splitter = arg.splitter.uniq;
             if (arg_splitter.count >= 2)
             {
                 const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter,

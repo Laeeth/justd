@@ -136,13 +136,13 @@ struct NNWalker(WalkStrategy strategy)
     this(Graph gr,
          const Nd start,
          const Filter filter = Filter.init,
-         bool relevanceFlag = false) in { assert(start.defined); }
+         bool useRelevance = false) in { assert(start.defined); }
     body
     {
         this.gr = gr;
         this.filter = filter;
         this.start = start;
-        this.relevanceFlag = relevanceFlag;
+        this.useRelevance = useRelevance;
 
         static if (strategy == WalkStrategy.dijkstraMinDistance)
         {
@@ -204,7 +204,7 @@ struct NNWalker(WalkStrategy strategy)
             foreach (const nextNd; gr.ndsOf(frontLn, filter.langs, filter.senses, currNd))
             {
                 double relevance = 1.0;
-                if (relevanceFlag)
+                if (useRelevance)
                     relevance = frontLink.role.rel.relevance;
                 static if (strategy == WalkStrategy.dijkstraMinDistance)
                 {
@@ -281,30 +281,30 @@ public:
     Queue pending;              // queue of pending (untraversed) nodes
     const Nd start;             // search start node
     const Filter filter;
-    const relevanceFlag = false;
+    const useRelevance = false;
 private:
     Graph gr;
 }
 
 auto nnWalker(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Filter.init,
-                                     bool relevanceFlag = false)
+                                     bool useRelevance = false)
 {
-    return NNWalker!(strategy)(gr, start, filter, relevanceFlag);
+    return NNWalker!(strategy)(gr, start, filter, useRelevance);
 }
 
 /** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
 auto nnWalk(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Filter.init,
-                                   bool relevanceFlag = false)
+                                   bool useRelevance = false)
 {
-    auto walker = nnWalker!(strategy)(gr, start, filter, relevanceFlag);
+    auto walker = nnWalker!(strategy)(gr, start, filter, useRelevance);
     while (!walker.empty) { walker.popFront; } // TODO functionize to exhaust
     return walker;                             // hopefully this moves
 }
 
 /** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
 auto dijkstraNNWalk(Graph gr, Nd start, const Filter filter = Filter.init,
-                    bool relevanceFlag = false) pure
+                    bool useRelevance = false) pure
 {
     return nnWalk!(WalkStrategy.dijkstraMinDistance)(gr, start, filter,
-                                                     relevanceFlag);
+                                                     useRelevance);
 }

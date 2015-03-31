@@ -91,6 +91,8 @@ import dbg: pln;
 
 /** Get $(D maxContextCount) Strongest Contextual Nodes of Nodes $(D nds).
 
+    Implemented as an Any-Time Algorithm completing after $(D durationInMsecs).
+
     If $(D maxContextCount) is zero it's set to some default value.
 
     Context means the node (Nd) which is most strongly related to $(D nds).
@@ -144,8 +146,8 @@ body
 
     // TODO avoid Walker postblit
     import knet.traversal: nnWalker;
-    const relevanceFlag = true;
-    auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, filter, relevanceFlag)).array;
+    const useRelevance = true;
+    auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, filter, useRelevance)).array;
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)
