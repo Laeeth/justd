@@ -1369,12 +1369,80 @@ auto toHuman(const Role role,
                 }
             }
             break;
+        case pertainym:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "pertainymen"]; break;
+                    case en:
+                    default: words = ["has", not, "the pertainym"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en pertainym till"]; break;
+                    case en:
+                    default: words = ["is", not, "a pertainym of"]; break;
+                }
+            }
+            break;
+        case attribute:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "attribut form"]; break;
+                    case en:
+                    default: words = ["has", not, "attribute form"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en attributform till"]; break;
+                    case en:
+                    default: words = ["is", not, "is an attribute form of"]; break;
+                }
+            }
+            break;
+        case derivationallyRelatedForm:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "en härledd form"]; break;
+                    case en:
+                    default: words = ["has", not, "a derivationally related form"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en härledd form av"]; break;
+                    case en:
+                    default: words = ["is ", not, "a derivationally related form of"]; break;
+                }
+            }
+            break;
         case mutualProxyFor:
             switch (targetLang)
             {
                 case sv: words = ["är", not, "en ömsesidig ställföreträdare för"]; break;
                 case en:
                 default: words = ["is ", not, "a mutual proxy for"]; break;
+            }
+            break;
+        case alsoSee:
+            switch (targetLang)
+            {
+                case sv: words = ["see", not, "också"]; break;
+                case en:
+                default: words = ["also ", not, "see"]; break;
             }
             break;
         case formOfWord:
