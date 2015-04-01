@@ -878,6 +878,12 @@ class Graph
         in { assert(!expr.empty); }
     body
     {
+        import std.algorithm: equal;
+        // if (equal(expr, "Adam"))
+        // {
+        //     debug writeln("origin: ", origin, ", sense: ", sense);
+        // }
+
         auto lemma = Lemma(tryReuseExpr(expr), lang, sense, context, manner, isRegexp, meaningNr, normalizeExpr);
         if (const lemmaNd = lemma in db.ixes.ndByLemma)
         {

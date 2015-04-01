@@ -10,7 +10,7 @@ SetOption("num_jobs", num_jobs)
 print "scons: Using at maximum " + str(num_jobs) + " number of jobs"
 
 # D compilation flags
-dflags = ["-vcolumns", "-wi"]
+dflags = ["-vcolumns", "-wi", "-debug"]
 
 # Build Type
 AddOption("--build-type", dest="build-type", type="string")

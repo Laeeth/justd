@@ -82,8 +82,11 @@ auto contextsOf(WalkStrategy strategy,
 {
     import std.algorithm: joiner;
     import knet.lookup: lemmasOfExpr;
+    writeln("exprs: ", exprs);
     auto lemmas = exprs.map!(expr => gr.lemmasOfExpr(expr)).joiner;
+    writeln("lemmas: ", lemmas);
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
+    writeln("nds: ", nds);
     return gr.contextsOf!(strategy)(nds, filter, maxContextCount, durationInMsecs);
 }
 
@@ -185,8 +188,11 @@ body
 
     pln("Combining walker results");
 
-    pragma(msg, typeof(visitsByNd.byPair.front));
-    pragma(msg, typeof(visitsByNd.byKeyValue.front));
+    // if (!visitsByNd.byPair.empty)
+    // {
+    //     pragma(msg, typeof(visitsByNd.byPair.front));
+    //     pragma(msg, typeof(visitsByNd.byKeyValue.front));
+    // }
 
     // combine walker results
     Hits[Nd] hitsByNd;       // weights by node

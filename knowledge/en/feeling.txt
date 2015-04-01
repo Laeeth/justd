@@ -42,7 +42,7 @@ abysmal
 abyssal
 accelerated
 acceptable
-acceptance
+nounUncountable:acceptance
 accepted
 accepting
 accessible
@@ -108,7 +108,7 @@ adventurous
 adverse
 affable
 affected
-affection
+nounSingular:affection
 affectionate
 affirmed
 afflicted
@@ -195,7 +195,7 @@ animalistic
 animated
 animosity
 annihilated
-annoyance
+nounUncountable:annoyance
 annoyed
 annoying
 anointed
@@ -401,7 +401,7 @@ bitchin'
 bitchy
 biting
 bitter
-bitterness
+nounUncountable:bitterness
 bittersweet
 bizarre
 black
@@ -654,7 +654,7 @@ close
 closed
 closed in
 closed-minded
-closeness
+nounUncountable:closeness
 clouded
 cloudy
 clowned
@@ -911,7 +911,7 @@ defective
 defenseless
 defensive
 deferent
-defiance
+nounUncountable:defiance
 defiant
 deficient
 defiled
@@ -1540,10 +1540,10 @@ foggy
 foiled
 followed
 fond
-fondness
+nounUncountable:fondness
 foolhardy
 foolish
-forbearance
+nounUncountable:forbearance
 forbearing
 forbidden
 forced
@@ -1754,7 +1754,7 @@ handicapped
 handsome
 handsomely
 hapless
-happiness
+nounUncountable:happiness
 happy
 happy-go-lucky
 harangued
@@ -1769,7 +1769,7 @@ hardy
 harmed
 harmless
 harmonious
-harnessed
+nounUncountable:harnessed
 harried
 hassled
 hasty
@@ -2150,7 +2150,7 @@ jinxed
 jittery
 jobless
 jocular
-jolliness
+nounUncountable:jolliness
 jolly
 jolted
 jostled
@@ -2284,7 +2284,7 @@ loathed
 loathing
 loathsome
 logical
-loneliness
+nounUncountable:loneliness
 lonely
 lonesome
 longing
@@ -2308,7 +2308,7 @@ loving
 low
 low-spirited
 lowly
-lowness
+nounUncountable:lowness
 loyal
 lubricious
 luckless
@@ -2379,7 +2379,7 @@ mature
 maudlin
 meager
 mean
-meanness
+nounUncountable:meanness
 measly
 mechanical
 medicated
@@ -2532,7 +2532,7 @@ nebulous
 necessary
 need
 needed
-neediness
+nounUncountable:neediness
 needled
 needless
 needy
@@ -2614,7 +2614,7 @@ obvious
 odd
 off
 off the hook
-off-balance
+nounUncountable:off-balance
 off-center
 offended
 offensive
@@ -2649,7 +2649,7 @@ orphaned
 ostentatious
 ostracized
 ousted
-out of balance
+nounUncountable:out of balance
 out of control
 out of it
 out of place
@@ -3081,7 +3081,7 @@ renown
 renowned
 repatriated
 repelled
-repentance
+nounUncountable:repentance
 repentant
 replaceable
 replaced
@@ -3179,7 +3179,7 @@ sacrificial
 sacrilegious
 sad
 sadistic
-sadness
+nounUncountable:sadness
 safe
 sagacious
 sage
@@ -3250,7 +3250,7 @@ selected
 selective
 self conscious
 self-absorbed
-self-acceptance
+nounUncountable:self-acceptance
 self-acceptant
 self-accepting
 self-agrandizing
@@ -3576,7 +3576,7 @@ systematic
 tactful
 tenacious
 tender
-tenderness
+nounUncountable:tenderness
 tense
 terrific
 terror
@@ -3593,7 +3593,7 @@ tranquil
 treacherous
 trembling
 triumphant
-trust
+nounSingular:trust
 trusting
 truthful
 ultimate
@@ -3604,7 +3604,7 @@ uncouth
 uneasy
 unethical
 unfair
-unhappiness
+nounUncountable:unhappiness
 unhappy
 unique
 unmannerly
@@ -3623,7 +3623,7 @@ vengeful
 versatile
 vexed
 vicious
-vigilance
+nounUncountable:vigilance
 vigilant
 vigorous
 vile
@@ -3635,9 +3635,9 @@ vulnerable
 warm
 wary
 waspish
-watchfulness
+nounUncountable:watchfulness
 weak
-weariness
+nounUncountable:weariness
 weary
 welcoming
 wicked

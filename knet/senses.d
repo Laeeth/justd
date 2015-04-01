@@ -52,11 +52,11 @@ enum Sense:ubyte
     nounPluralFemale,
     nounPluralNeuter,
 
-    nounUncountable,
+    nounUncountable, uncountable = nounUncountable,
 
     nounNominative,
 
-    nounDemonym,                // https://en.wikipedia.org/wiki/Demonym
+    nounDemonym, demonym = nounDemonym, // https://en.wikipedia.org/wiki/Demonym
     nounDemonymSingular,
     nounDemonymSingularMale,
     nounDemonymSingularFemale,
