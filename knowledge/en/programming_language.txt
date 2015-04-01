@@ -77,6 +77,8 @@ C
 C Shell
 C shell
 C#
+C-Sharp
+C-sharp
 C++
 C--
 C/AL

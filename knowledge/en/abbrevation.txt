@@ -122,3 +122,5 @@ nounSingular:capcapital letter
 
 nounSingular:ctorconstructor
 nounSingular:dtordestructor
+
+languageProgramming:C#C-sharpC-Sharp
