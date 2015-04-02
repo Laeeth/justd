@@ -32,14 +32,15 @@ enum Rel:ubyte
 
     partOf, /**< A is a part of B. This is the part meronym relation in
                WordNet. /r/PartOf /c/en/gearshift /c/en/car */
-    meronym = partOf,
+    partHolonym = partOf,      ///< WordNet.
+    meronym = partHolonym,
 
     memberOf, /**< A is a member of B; B is a group that includes A. This is the
                  member meronym relation in WordNet. */
 
-    memberHolonym,             ///< WordNet.
+    memberHolonym = memberOf,   ///< WordNet.
     substanceHolonym,          ///< WordNet.
-    partHolonym,               ///< WordNet.
+
     attribute,                 ///< WordNet. A noun for which adjectives express values. The noun weight is an attribute, for which the adjectives light and heavy express values.
     derivationallyRelatedForm, ///< WordNet.
 

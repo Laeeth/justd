@@ -1159,6 +1159,7 @@ bool specializes(Sense special,
                                       special.isName)); // TODO functionize
 
         case location: return special.isLocation;
+        case region: return special.isRegion;
 
         case food: return special.isFood;
         case quantifier: return (special.isQuantifier &&
@@ -1214,6 +1215,7 @@ bool specializes(Sense special,
         assert(integerPositive.specializes(integer));
         assert(integerNegative.specializes(integer));
         assert(timeAdverb.specializes(adverb));
+        assert(country.specializes(region));
     }
     assert(Sense.noun.isNoun);
 }
