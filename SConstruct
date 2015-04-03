@@ -14,15 +14,19 @@ dflags = ["-vcolumns", "-wi", "-debug"]
 
 # Build Type
 AddOption("--build-type", dest="build-type", type="string")
-build_type = GetOption("build-type")
 
-if build_type:
-    for build_flag in build_type.split("-"):
-        dflags.append("-" + build_flag)
-        if build_flag == "release":
-            dflags.append("-O")
-        if build_flag == "debug":
-            dflags += ["-g", "-gs"]
+default_build_type = "release"
+
+build_type = GetOption("build-type")
+if not build_type:
+    build_type = default_build_type
+
+for build_flag in build_type.split("-"):
+    dflags.append("-" + build_flag)
+    if build_flag == "release":
+        dflags.append("-O")
+    if build_flag == "debug":
+        dflags += ["-g", "-gs"]
 
 env = Environment(DC="/usr/bin/dmd", # "/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
                   DFLAGS=dflags)

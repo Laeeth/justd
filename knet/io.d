@@ -520,7 +520,7 @@ bool query(Graph gr,
                 const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter,
                                                                                 Filter([userLang], [sense]),
                                                                                 15,
-                                                                                3000);
+                                                                                10000);
                 writeln("> Contexts:");
                 const contexts = result[0];
                 foreach (const context; contexts)
