@@ -26,33 +26,50 @@ import std.typecons: Tuple;
 
    See also: http://rosettacode.org/wiki/Combinations
 */
-struct Combinations(T, bool copy = true)
+struct Combinations(T, bool copy = true, bool useArray = true)
 {
+    import std.container: Array;
+
+    static if (useArray)
+        alias Indices = Array!size_t;
+    else
+        alias Indices = size_t[];
+
     Unqual!T[] pool, front;
     size_t r, n;
     bool empty = false;
-    size_t[] indices;
+
+    Indices indices;
+
     size_t len;
     bool lenComputed = false;
 
-    this(T[] pool_, in size_t r_) pure nothrow @safe
+    this(T[] pool_, in size_t r_) // pure nothrow @safe
     {
         this.pool = pool_.dup;
         this.r = r_;
         this.n = pool.length;
         if (r > n)
             empty = true;
+
         indices.length = r;
-        foreach (immutable i, ref ini; indices)
-            ini = i;
+
+        size_t i;
+
+        i = 0;
+        foreach (ref ini; indices[])
+            ini = i++;
+
         front.length = r;
-        foreach (immutable i, immutable idx; indices)
-            front[i] = pool[idx];
+
+        i = 0;
+        foreach (immutable idx; indices[])
+            front[i++] = pool[idx];
     }
 
-    @property size_t length() /*logic_const*/ pure nothrow @nogc
+    @property size_t length() /*logic_const*/ // pure nothrow @nogc
     {
-        static size_t binomial(size_t n, size_t k) pure nothrow @safe @nogc
+        static size_t binomial(size_t n, size_t k) // pure nothrow @safe @nogc
         in
         {
             assert(n > 0, "binomial: n must be > 0.");
@@ -81,7 +98,7 @@ struct Combinations(T, bool copy = true)
         return len;
     }
 
-    void popFront() pure nothrow @safe
+    void popFront() // pure nothrow @safe
     {
         if (!empty)
         {
@@ -106,8 +123,13 @@ struct Combinations(T, bool copy = true)
                 indices[j] = indices[j - 1] + 1;
             static if (copy)
                 front = new Unqual!T[front.length];
-            foreach (immutable i, immutable idx; indices)
+
+            size_t i = 0;
+            foreach (immutable idx; indices[])
+            {
                 front[i] = pool[idx];
+                i++;
+            }
         }
     }
 }
@@ -122,14 +144,15 @@ body
 unittest
 {
     import std.algorithm: equal, map;
-    equal([1, 2, 3, 4].combinations!false(2), [[3, 4], [3, 4], [3, 4], [3, 4], [3, 4], [3, 4]]);
-    equal([1, 2, 3, 4].combinations!true(2), [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]);
-    equal([1, 2, 3, 4].combinations(2).map!(x => x), [[1, 2],
-                                                      [1, 3],
-                                                      [1, 4],
-                                                      [2, 3],
-                                                      [2, 4],
-                                                      [3, 4]]);
+    // assert(equal([1, 2, 3, 4].combinations!false(2), [[3, 4], [3, 4], [3, 4], [3, 4], [3, 4], [3, 4]]));
+    enum solution = [[1, 2],
+                     [1, 3],
+                     [1, 4],
+                     [2, 3],
+                     [2, 4],
+                     [3, 4]];
+    assert(equal([1, 2, 3, 4].combinations!true(2), solution));
+    assert(equal([1, 2, 3, 4].combinations(2).map!(x => x), solution));
 }
 
 /**
