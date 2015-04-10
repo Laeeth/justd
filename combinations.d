@@ -1,5 +1,137 @@
 #!/usr/bin/env rdmd-dev-module
 
+module combinations;
+
+import std.traits: Unqual;
+import std.range: isRandomAccessRange, hasLength, ElementType;
+import std.traits: isNarrowString;
+import std.typecons: Tuple;
+
+/**
+   Given non-negative integers m and n, generate all size m combinations of the
+   integers from 0 to n-1 in sorted order (each combination is sorted and the
+   entire table is sorted).
+
+   For example, 3 comb 5 is
+   0 1 2
+   0 1 3
+   0 1 4
+   0 2 3
+   0 2 4
+   0 3 4
+   1 2 3
+   1 2 4
+   1 3 4
+   2 3 4
+
+   See also: http://rosettacode.org/wiki/Combinations
+*/
+struct Combinations(T, bool copy = true)
+{
+    Unqual!T[] pool, front;
+    size_t r, n;
+    bool empty = false;
+    size_t[] indices;
+    size_t len;
+    bool lenComputed = false;
+
+    this(T[] pool_, in size_t r_) pure nothrow @safe
+    {
+        this.pool = pool_.dup;
+        this.r = r_;
+        this.n = pool.length;
+        if (r > n)
+            empty = true;
+        indices.length = r;
+        foreach (immutable i, ref ini; indices)
+            ini = i;
+        front.length = r;
+        foreach (immutable i, immutable idx; indices)
+            front[i] = pool[idx];
+    }
+
+    @property size_t length() /*logic_const*/ pure nothrow @nogc
+    {
+        static size_t binomial(size_t n, size_t k) pure nothrow @safe @nogc
+        in
+        {
+            assert(n > 0, "binomial: n must be > 0.");
+        }
+        body
+        {
+            if (k < 0 || k > n)
+                return 0;
+            if (k > (n / 2))
+                k = n - k;
+            size_t result = 1;
+            foreach (size_t d; 1 .. k + 1) {
+                result *= n;
+                n--;
+                result /= d;
+            }
+            return result;
+        }
+
+        if (!lenComputed)
+        {
+            // Set cache.
+            len = binomial(n, r);
+            lenComputed = true;
+        }
+        return len;
+    }
+
+    void popFront() pure nothrow @safe
+    {
+        if (!empty)
+        {
+            bool broken = false;
+            size_t pos = 0;
+            foreach_reverse (immutable i; 0 .. r)
+            {
+                pos = i;
+                if (indices[i] != i + n - r)
+                {
+                    broken = true;
+                    break;
+                }
+            }
+            if (!broken)
+            {
+                empty = true;
+                return;
+            }
+            indices[pos]++;
+            foreach (immutable j; pos + 1 .. r)
+                indices[j] = indices[j - 1] + 1;
+            static if (copy)
+                front = new Unqual!T[front.length];
+            foreach (immutable i, immutable idx; indices)
+                front[i] = pool[idx];
+        }
+    }
+}
+
+Combinations!(T, copy) combinations(bool copy = true, T)(T[] items, in size_t k)
+in { assert(items.length, "combinations: items can't be empty."); }
+body
+{
+    return typeof(return)(items, k);
+}
+
+unittest
+{
+    import std.algorithm: equal, map;
+    equal([1, 2, 3, 4].combinations!false(2), [[3, 4], [3, 4], [3, 4], [3, 4], [3, 4], [3, 4]]);
+    equal([1, 2, 3, 4].combinations!true(2), [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]);
+    equal([1, 2, 3, 4].combinations(2).map!(x => x), [[1, 2],
+                                                      [1, 3],
+                                                      [1, 4],
+                                                      [2, 3],
+                                                      [2, 4],
+                                                      [3, 4]]);
+}
+
 /**
    All Unordered Pairs (2-Element Subsets) of a Range.
    TODO Relax restrictions to ForwardRange
@@ -7,12 +139,6 @@
    See also: https://issues.dlang.org/show_bug.cgi?id=6788
    See also: https://issues.dlang.org/show_bug.cgi?id=7128
 */
-module combinations;
-
-import std.range: isRandomAccessRange, hasLength, ElementType;
-import std.traits: isNarrowString;
-import std.typecons: Tuple;
-
 struct Pairwise(Range)
 {
     import std.range: ForeachType;
