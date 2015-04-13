@@ -1025,7 +1025,47 @@ auto toHuman(const Role role,
                 {
                     case sv: words = ["har", not, "instans"]; break;
                     case en:
-                    default: words = ["does", not, "have instance"]; break;
+                    default: words = ["does", not, "have an instance"]; break;
+                }
+            }
+            break;
+        case instanceHypernymOf:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en hypernym instans av"]; break;
+                    case en:
+                    default: words = ["is", not, "an instance hypernym of"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "en hypernym instans"]; break;
+                    case en:
+                    default: words = ["does", not, "have a hypernym instance"]; break;
+                }
+            }
+            break;
+        case instanceHyponymOf:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en hyponym instans av"]; break;
+                    case en:
+                    default: words = ["is", not, "an instance hyponym of"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "en hyponym instans"]; break;
+                    case en:
+                    default: words = ["does", not, "have a hyponym instance"]; break;
                 }
             }
             break;

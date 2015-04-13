@@ -4,6 +4,11 @@
 # TODO Support in operator: Nd in Graph
 
 ## TODO
+Inputs such as contexts(D Java) give too many interpretations.
+Which makes scanning take too long.
+Find ways to limit number of senses in these cases.
+
+## TODO
 Relation description "can be a" is only suitable for nouns not verbs:
 
 > Line "truck"
