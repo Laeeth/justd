@@ -261,6 +261,8 @@ bool query(Graph gr,
 {
     import dbg: dln;
 
+    import std.algorithm.iteration: joiner;
+
     if      (depth == 0) { gr.querySW.start(); } // if top-level call start it
     else if (depth >= gr.fuzzyExprMatchMaximumRecursionDepth)
     {
@@ -302,6 +304,38 @@ bool query(Graph gr,
             return true;
         }
         return false;
+    }
+
+    // try: $(EXPR) in $(Lang)
+    auto suffixLangedWords = normLine.split(' ');
+    if (suffixLangedWords.length >= 3 &&
+        suffixLangedWords[$ - 2] == `in`)
+    {
+        try
+        {
+            const inLang = suffixLangedWords[$ - 1].to!Lang;
+            const hit = gr.query(suffixLangedWords[0 .. $ - 2].joiner(` `).to!string,
+                                 inLang, sense, lineSeparator,
+                                 triedLines, depth + 1); // recurse
+            if (hit) { return hit; }
+        }
+        catch (Exception e) {}
+    }
+
+    // try: $(EXPR) as $(Sense)
+    auto suffixSensedWords = normLine.split(' ');
+    if (suffixSensedWords.length >= 3 &&
+        suffixSensedWords[$ - 2] == `as`)
+    {
+        try
+        {
+            const asSense = suffixSensedWords[$ - 1].to!Sense;
+            const hit = gr.query(suffixSensedWords[0 .. $ - 2].joiner(` `).to!string,
+                                 userLang, asSense, lineSeparator,
+                                 triedLines, depth + 1); // recurse
+            if (hit) { return hit; }
+        }
+        catch (Exception e) {}
     }
 
     if (normLine == `palindrome`)
@@ -637,12 +671,10 @@ bool query(Graph gr,
                           ``,
                           `'`];
 
-    import std.algorithm.iteration: joiner;
-
     // try modified line
     if (lineNds.empty)
     {
-        // try: "$(expr)"
+        // try: "$(EXPR)"
         import std.algorithm.searching: startsWith, endsWith;
         if (normLine.startsWith(`"`) &&
             normLine.endsWith(`"`))
@@ -653,7 +685,7 @@ bool query(Graph gr,
             if (hit) { return hit; }
         }
 
-        // try: $(Sense):$(expr)
+        // try: $(Sense):$(EXPR)
         auto qualifierSplit = normLine.findSplit(qualifierSeparatorString);
         if (!qualifierSplit[0].empty &&
             !qualifierSplit[1].empty &&
@@ -673,38 +705,6 @@ bool query(Graph gr,
                 const inLang = qualifierSplit[0].to!Lang;
                 const hit = gr.query(qualifierSplit[2],
                                      inLang, sense, lineSeparator,
-                                     triedLines, depth + 1); // recurse
-                if (hit) { return hit; }
-            }
-            catch (Exception e) {}
-        }
-
-        // try: $(expr) in $(Lang)
-        auto suffixLangedWords = normLine.split(' ');
-        if (suffixLangedWords.length >= 3 &&
-            suffixLangedWords[$ - 2] == `in`)
-        {
-            try
-            {
-                const inLang = suffixLangedWords[$ - 1].to!Lang;
-                const hit = gr.query(suffixLangedWords[0 .. $ - 2].joiner(` `).to!string,
-                                     inLang, sense, lineSeparator,
-                                     triedLines, depth + 1); // recurse
-                if (hit) { return hit; }
-            }
-            catch (Exception e) {}
-        }
-
-        // try: $(expr) as $(Sense)
-        auto suffixSensedWords = normLine.split(' ');
-        if (suffixSensedWords.length >= 3 &&
-            suffixSensedWords[$ - 2] == `as`)
-        {
-            try
-            {
-                const asSense = suffixSensedWords[$ - 1].to!Sense;
-                const hit = gr.query(suffixSensedWords[0 .. $ - 2].joiner(` `).to!string,
-                                     userLang, asSense, lineSeparator,
                                      triedLines, depth + 1); // recurse
                 if (hit) { return hit; }
             }
