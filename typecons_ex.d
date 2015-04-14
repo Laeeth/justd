@@ -169,6 +169,7 @@ auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
         auto xi = x.indexedBy!uint;
         auto xj = x.indexedBy!J;
         auto xe = x.indexedBy!E;
+        // TODO this work: auto xs = x.indexedBy!"I";
 
         // indexing with correct type
         xb[  0 ] = 11; assert(xb[  0 ] == 11);
