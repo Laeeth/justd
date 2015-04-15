@@ -107,7 +107,7 @@ enum Sense:ubyte
     nameFemale,             /// proper name
     surname,                /// proper surname
 
-    location,                   /// Stockholm
+    nameLocation,                   /// Stockholm
     namePerson,                 /// John
     organisation,               /// CIA
 
@@ -435,7 +435,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case nameFemale: return `female name`;
         case surname: return `surname`;
 
-        case location: return `location name`;
+        case nameLocation: return `location name`;
         case namePerson: return `person name`;
         case organisation: return `organisation name`;
         case region: return `region`;
@@ -850,10 +850,9 @@ import std.algorithm.comparison: among;
                                          nameMale,
                                          nameFemale,
                                          surname,
-                                         location,
+                                         nameLocation,
                                          namePerson,
                                          organisation,
-                                         region,
                                          island,
                                          city,
                                          county,
@@ -866,7 +865,7 @@ import std.algorithm.comparison: among;
     alias isProperNoun = isName;
     bool isLocation(Sense sense)
     {
-        with (Sense) return sense.among!(location,
+        with (Sense) return sense.among!(nameLocation,
                                          region,
                                          island,
                                          city,
@@ -1158,7 +1157,7 @@ bool specializes(Sense special,
                                       capitalized &&
                                       special.isName)); // TODO functionize
 
-        case location: return special.isLocation;
+        case nameLocation: return special.isLocation;
         case region: return special.isRegion;
 
         case food: return special.isFood;
