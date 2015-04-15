@@ -163,6 +163,7 @@ auto indexed(R)(R range) if (isArray!R)
 {
     int[3] x = [1, 2, 3];
 
+    // sample index
     struct Index(T = size_t) if (isUnsigned!T)
     {
         this(T ix) { this._ix = ix; }
@@ -216,6 +217,7 @@ auto indexed(R)(R range) if (isArray!R)
 {
     auto x = [1, 2, 3];
 
+    // sample index
     struct Index(T = size_t) if (isUnsigned!T)
     {
         this(T ix) { this._ix = ix; }
