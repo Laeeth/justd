@@ -72,30 +72,26 @@ template New(T) if (is(T == class))
 import std.traits: isArray, isUnsigned, isInstanceOf, isSomeString;
 import std.range.primitives: hasSlicing;
 
-enum isIndex_(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
-
-enum isIndexType(I) = (is(I == enum) ||
-                       isUnsigned!I || // TODO should we allow isUnsigned here?
-                       isIndex_!I);
-
-enum isCTString(alias I) = (isSomeString!(typeof(I)));
-
-unittest
-{
-    static assert(isCTString!"I");
-}
+enum isIndex(I) = (is(I == enum) ||
+                   isUnsigned!I || // TODO should we allow isUnsigned here?
+                   __traits(compiles, { I i = 0; cast(size_t)i; }));
 
 /** Check if $(D R) is indexable by $(D I). */
 enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
-                            isIndexType!I);
+                            isIndex!I);
 
+unittest
+{
+    static assert(isIndexableBy!(int[3], ubyte));
+}
+
+/** Check if $(D R) is indexable by $(D I). */
 enum isIndexableBy(R, alias I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
-                                  (isCTString!I));
+                                  (isSomeString!(typeof(I))));
 
 unittest
 {
     static assert(isIndexableBy!(int[], "I"));
-    static assert(isIndexableBy!(int[3], ubyte));
 }
 
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
