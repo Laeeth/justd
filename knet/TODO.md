@@ -1,4 +1,18 @@
 # TODO
+
+Works:
+
+< Concept(s) or ? for help: adverb:directly
+> Line "adverb:directly"
+
+but
+
+Concept(s) or ? for help: timeAdverb:now
+> Line "now"
+
+does not. Why is timeAdverb not respected? Add prints in lemmasOfExpr() in knet/lookup.d
+
+# TODO
   Name specialises noun sense in lang if both are uppercase. Warn about names that are not in uppercase.
 
 # TODO Support in operator: Nd in Graph
