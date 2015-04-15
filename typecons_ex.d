@@ -130,9 +130,10 @@ auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
     return IndexedBy!(R, I)(range);
 }
 
-struct IndexedBy(R, string I = "Index") if (isArray!R)
+struct IndexedBy(R, string I_ = "Index") if (isArray!R &&
+                                             I_ != "I_") // prevent strange bug from occurring
 {
-    mixin(q{ struct } ~ I ~
+    mixin(q{ struct } ~ I_ ~
           q{ {
                   alias T = size_t;
                   this(T ix) { this._ix = ix; }
@@ -140,14 +141,15 @@ struct IndexedBy(R, string I = "Index") if (isArray!R)
                   private T _ix = 0;
               }
           });
-    mixin genOps!(mixin(I));
+    mixin genOps!(mixin(I_));
     R _r;
     alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
 }
 
 /** Instantiator for $(D IndexedBy).
  */
-auto indexedBy(string I, R)(R range) if (isArray!R)
+auto indexedBy(string I, R)(R range) if (isArray!R &&
+                                         I != "I_")
 {
     return IndexedBy!(R, I)(range);
 }
@@ -182,7 +184,7 @@ auto indexed(R)(R range) if (isArray!R)
         auto xe = x.indexedBy!E;
         auto xf = x.indexed;
 
-        auto xs = x.indexedBy!"Ix";
+        auto xs = x.indexedBy!"I";
         alias XS = typeof(xs);
         XS xs_;
 
@@ -191,8 +193,8 @@ auto indexed(R)(R range) if (isArray!R)
         xi[  0 ] = 11; assert(xi[  0 ] == 11);
         xj[J(0)] = 11; assert(xj[J(0)] == 11);
         xe[ e0 ] = 11; assert(xe[ e0 ] == 11);
-        xs[XS.Ix(0)] = 11; assert(xs[XS.Ix(0)] == 11);
-        xs_[XS.Ix(0)] = 11; assert(xs_[XS.Ix(0)] == 11);
+        xs[XS.I(0)] = 11; assert(xs[XS.I(0)] == 11);
+        xs_[XS.I(0)] = 11; assert(xs_[XS.I(0)] == 11);
 
         // indexing with wrong type
         static assert(!__traits(compiles, { xb[J(0)] = 11; }));
