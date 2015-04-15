@@ -149,7 +149,7 @@ struct IndexedBy(R, string I_ = "Index") if (isArray!R &&
 /** Instantiator for $(D IndexedBy).
  */
 auto indexedBy(string I, R)(R range) if (isArray!R &&
-                                         I != "I_")
+                                         I != "I_") // prevent strange bug from occurring
 {
     return IndexedBy!(R, I)(range);
 }
