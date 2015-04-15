@@ -307,13 +307,13 @@ bool query(Graph gr,
     }
 
     // try: $(NUMBER) $(Lang)
-    auto countedWords = normLine.split(' ');
-    if (countedWords.length >= 2)
+    auto counted = normLine.split(' ');
+    if (counted.length >= 2)
     {
         try
         {
-            const count = countedWords[0].to!(typeof(userCount));
-            const hit = gr.query(countedWords[0 .. $ - 2].joiner(` `).to!string,
+            const count = counted[0].to!(typeof(userCount));
+            const hit = gr.query(counted[1 .. $].joiner(` `).to!string,
                                  userLang, userSense, count, lineSeparator,
                                  triedLines, depth + 1); // recurse
             if (hit) { return hit; }
