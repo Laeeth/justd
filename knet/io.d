@@ -328,7 +328,7 @@ bool query(Graph gr,
     {
         try
         {
-            const inLang = suffixLangedWords[$ - 1].to!Lang;
+            const inLang = suffixLangedWords[$ - 1].toLower.to!Lang;
             const hit = gr.query(suffixLangedWords[0 .. $ - 2].joiner(` `).to!string,
                                  inLang, userSense, userCount, lineSeparator,
                                  triedLines, depth + 1); // recurse
@@ -344,7 +344,7 @@ bool query(Graph gr,
     {
         try
         {
-            const asSense = suffixSensedWords[$ - 1].to!Sense;
+            const asSense = suffixSensedWords[$ - 1].toLower.to!Sense;
             const hit = gr.query(suffixSensedWords[0 .. $ - 2].joiner(` `).to!string,
                                  userLang, asSense, userCount, lineSeparator,
                                  triedLines, depth + 1); // recurse
