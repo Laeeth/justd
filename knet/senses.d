@@ -109,6 +109,7 @@ enum Sense:ubyte
 
     nameLocation,                   /// Stockholm
     namePerson,                 /// John
+    nameAnimal,                 /// Lajka
     organisation,               /// CIA
 
     region,
@@ -119,6 +120,9 @@ enum Sense:ubyte
     state,                      /// Ohio
     country,                    /// Sweden
     continent,                  /// Europe
+    moon,
+    planet,
+    star,
     newspaper,                  /// Tidning
 
     timePeriod,
@@ -437,6 +441,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
 
         case nameLocation: return `location name`;
         case namePerson: return `person name`;
+        case nameAnimal: return `animal name`;
         case organisation: return `organisation name`;
         case region: return `region`;
         case island: return `island`;
@@ -446,6 +451,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case state: return `state`;
         case country: return `country`;
         case continent: return `continent`;
+        case moon: return `moon`;
+        case planet: return `planet`;
+        case star: return `star`;
         case newspaper: return `newspaper`;
 
         case timePeriod: return `time period`;
@@ -873,7 +881,10 @@ import std.algorithm.comparison: among;
                                          province,
                                          state,
                                          country,
-                                         continent) != 0;
+                                         continent,
+                                         moon,
+                                         planet,
+                                         star) != 0;
     }
     alias isRegion = isLocation;
     bool isVerb(Sense sense)
