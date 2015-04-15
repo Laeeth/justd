@@ -88,6 +88,20 @@ unittest
     static assert(isIndexableBy!(int[], "I"));
 }
 
+mixin template genOps(T)
+{
+    auto ref opIndex(T i) inout             { return _r[cast(size_t)i]; }
+    auto ref opIndexAssign(V)(V value, T i) { return _r[cast(size_t)i] = value; }
+
+    static if (hasSlicing!R)
+    {
+        auto ref opSlice(T i, T j) inout             { return _r[cast(size_t)i ..
+                                                                 cast(size_t)j]; }
+        auto ref opSliceAssign(V)(V value, T i, T j) { return _r[cast(size_t)i ..
+                                                                 cast(size_t)j] = value; }
+    }
+}
+
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
 
@@ -104,18 +118,7 @@ unittest
 struct IndexedBy(R, I) if (isIndexableBy!(R, I))
 {
     alias Index = I;        /// indexing type
-
-    auto ref opIndex(I i) inout             { return _r[cast(size_t)i]; }
-    auto ref opIndexAssign(V)(V value, I i) { return _r[cast(size_t)i] = value; }
-
-    static if (hasSlicing!R)
-    {
-        auto ref opSlice(I i, I j) inout             { return _r[cast(size_t)i ..
-                                                                 cast(size_t)j]; }
-        auto ref opSliceAssign(V)(V value, I i, I j) { return _r[cast(size_t)i ..
-                                                                 cast(size_t)j] = value; }
-    }
-
+    mixin genOps!I;
     R _r;
     alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
 }
@@ -127,7 +130,7 @@ auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
     return IndexedBy!(R, I)(range);
 }
 
-struct IndexedBy(R, string I) if (isArray!R)
+struct IndexedBy(R, string I = "Index") if (isArray!R)
 {
     mixin(q{ struct } ~ I ~
           q{ {
@@ -137,18 +140,7 @@ struct IndexedBy(R, string I) if (isArray!R)
                   private T _ix = 0;
               }
           });
-
-    auto ref opIndex(I i) inout             { return _r[cast(size_t)i]; }
-    auto ref opIndexAssign(V)(V value, I i) { return _r[cast(size_t)i] = value; }
-
-    static if (hasSlicing!R)
-    {
-        auto ref opSlice(I i, I j) inout             { return _r[cast(size_t)i ..
-                                                                 cast(size_t)j]; }
-        auto ref opSliceAssign(V)(V value, I i, I j) { return _r[cast(size_t)i ..
-                                                                 cast(size_t)j] = value; }
-    }
-
+    mixin genOps!I;
     R _r;
     alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
 }
@@ -158,6 +150,13 @@ struct IndexedBy(R, string I) if (isArray!R)
 auto indexedBy(string I, R)(R range) if (isArray!R)
 {
     return IndexedBy!(R, I)(range);
+}
+
+/** Instantiator for $(D IndexedBy).
+ */
+auto indexed(R)(R range) if (isArray!R)
+{
+    return IndexedBy!(R)(range);
 }
 
 @safe pure nothrow unittest
@@ -180,6 +179,7 @@ auto indexedBy(string I, R)(R range) if (isArray!R)
         auto xi = x.indexedBy!uint;
         auto xj = x.indexedBy!J;
         auto xe = x.indexedBy!E;
+        // auto xf = x.indexed;
 
         auto xs = x.indexedBy!"I";
         alias XS = typeof(xs);
