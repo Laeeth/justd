@@ -568,7 +568,7 @@ bool query(Graph gr,
             {
                 const filter = Filter([userLang], [userSense]);
                 writeln("> Contexts of senses(s) ", userSense, " in language(s) ", userLang, ":");
-                const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter, filter, 30, 2000);
+                const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter, filter, userCount, 2000);
                 const contexts = result[0];
                 foreach (const context; contexts)
                 {
