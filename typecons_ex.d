@@ -140,7 +140,7 @@ struct IndexedBy(R, string I = "Index") if (isArray!R)
                   private T _ix = 0;
               }
           });
-    mixin genOps!I;
+    mixin genOps!(mixin(I));
     R _r;
     alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
 }
@@ -180,9 +180,9 @@ auto indexed(R)(R range) if (isArray!R)
         auto xi = x.indexedBy!uint;
         auto xj = x.indexedBy!J;
         auto xe = x.indexedBy!E;
-        // auto xf = x.indexed;
+        auto xf = x.indexed;
 
-        auto xs = x.indexedBy!"I";
+        auto xs = x.indexedBy!"Ix";
         alias XS = typeof(xs);
         XS xs_;
 
@@ -191,8 +191,8 @@ auto indexed(R)(R range) if (isArray!R)
         xi[  0 ] = 11; assert(xi[  0 ] == 11);
         xj[J(0)] = 11; assert(xj[J(0)] == 11);
         xe[ e0 ] = 11; assert(xe[ e0 ] == 11);
-        xs[XS.I(0)] = 11; assert(xs[XS.I(0)] == 11);
-        xs_[XS.I(0)] = 11; assert(xs_[XS.I(0)] == 11);
+        xs[XS.Ix(0)] = 11; assert(xs[XS.Ix(0)] == 11);
+        xs_[XS.Ix(0)] = 11; assert(xs_[XS.Ix(0)] == 11);
 
         // indexing with wrong type
         static assert(!__traits(compiles, { xb[J(0)] = 11; }));
