@@ -74,9 +74,9 @@ import std.range.primitives: hasSlicing;
 
 enum isIndex_(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
 
-enum isIndexType(alias I) = (is(I == enum) ||
-                             isUnsigned!I || // TODO should we allow isUnsigned here?
-                             isIndex_!I);
+enum isIndexType(I) = (is(I == enum) ||
+                       isUnsigned!I || // TODO should we allow isUnsigned here?
+                       isIndex_!I);
 
 enum isCTString(alias I) = (isSomeString!(typeof(I)));
 
@@ -86,9 +86,11 @@ unittest
 }
 
 /** Check if $(D R) is indexable by $(D I). */
+enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
+                            isIndexType!I);
+
 enum isIndexableBy(R, alias I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
-                                  (isCTString!I) ||
-                                  isIndexType!I);
+                                  (isCTString!I));
 
 unittest
 {
@@ -109,22 +111,9 @@ unittest
     TODO Support R being a static array:
          - If I is an enum its number of elements should match R.length
    */
-struct IndexedBy(R, alias I) if (isIndexableBy!(R, I))
+struct IndexedBy(R, I) if (isIndexableBy!(R, I))
 {
-    static if (isSomeString!I)
-    {
-        mixin(q{ struct } ~ I ~
-              q{ {
-                      this(T ix) { this._ix = ix; }
-                      T opCast(U : T)() const { return _ix; }
-                      private T _ix = 0;
-                  }
-              });
-    }
-    else
-    {
-        alias Index = I;        /// indexing type
-    }
+    alias Index = I;        /// indexing type
 
     auto ref opIndex(I i) inout             { return _r[cast(size_t)i]; }
     auto ref opIndexAssign(V)(V value, I i) { return _r[cast(size_t)i] = value; }
@@ -137,32 +126,49 @@ struct IndexedBy(R, alias I) if (isIndexableBy!(R, I))
                                                                  cast(size_t)j] = value; }
     }
 
-    // TODO is this needed?
-    // alias RI = size_t; /* TODO: Extract this from R somehow. */
-    // static if (!is(RI == I))
-    // {
-    //     @disable void opIndex(RI i);
-    //     @disable void opIndexAssign(V)(V value, RI i);
-    //     @disable void opSlice(RI i, RI j);
-    //     @disable void opSliceAssign(V)(V value, RI i, RI j);
-    // }
+    R _r;
+    alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
+}
+
+/** Instantiator for $(D IndexedBy).
+ */
+auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
+{
+    return IndexedBy!(R, I)(range);
+}
+
+struct IndexedBy(R, string I) if (isArray!R)
+{
+    mixin(q{ struct } ~ I ~
+          q{ {
+                  alias T = size_t;
+                  this(T ix) { this._ix = ix; }
+                  T opCast(U : T)() const { return _ix; }
+                  private T _ix = 0;
+              }
+          });
+
+    auto ref opIndex(I i) inout             { return _r[cast(size_t)i]; }
+    auto ref opIndexAssign(V)(V value, I i) { return _r[cast(size_t)i] = value; }
+
+    static if (hasSlicing!R)
+    {
+        auto ref opSlice(I i, I j) inout             { return _r[cast(size_t)i ..
+                                                                 cast(size_t)j]; }
+        auto ref opSliceAssign(V)(V value, I i, I j) { return _r[cast(size_t)i ..
+                                                                 cast(size_t)j] = value; }
+    }
 
     R _r;
     alias _r this; // TODO Use opDispatch instead; to override only opSlice and opIndex
 }
 
 /** Instantiator for $(D IndexedBy).
-   */
-auto indexedBy(alias I, R)(R range) if (isIndexableBy!(R, I))
+ */
+auto indexedBy(string I, R)(R range) if (isArray!R)
 {
     return IndexedBy!(R, I)(range);
 }
-
-// @safe pure nothrow unittest
-// {
-//     int[3] x = [1, 2, 3];
-//     auto xj = x.indexedBy!"J";
-// }
 
 @safe pure nothrow unittest
 {
@@ -184,19 +190,24 @@ auto indexedBy(alias I, R)(R range) if (isIndexableBy!(R, I))
         auto xi = x.indexedBy!uint;
         auto xj = x.indexedBy!J;
         auto xe = x.indexedBy!E;
-        // TODO this work: auto xs = x.indexedBy!"I";
+
+        auto xs = x.indexedBy!"I";
+        alias XS = typeof(xs);
+        XS.I xsi;
 
         // indexing with correct type
         xb[  0 ] = 11; assert(xb[  0 ] == 11);
         xi[  0 ] = 11; assert(xi[  0 ] == 11);
         xj[J(0)] = 11; assert(xj[J(0)] == 11);
         xe[ e0 ] = 11; assert(xe[ e0 ] == 11);
+        xs[XS.I(0)] = 11; assert(xs[XS.I(0)] == 11);
 
         // indexing with wrong type
         static assert(!__traits(compiles, { xb[J(0)] = 11; }));
         static assert(!__traits(compiles, { xi[J(0)] = 11; }));
         static assert(!__traits(compiles, { xj[  0 ] = 11; }));
         static assert(!__traits(compiles, { xe[  0 ] = 11; }));
+        static assert(!__traits(compiles, { xs[  0 ] = 11; }));
 
         import std.algorithm.comparison: equal;
         import std.algorithm.iteration: filter;
