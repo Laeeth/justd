@@ -63,12 +63,6 @@ template New(T) if (is(T == class))
     }
 }
 
-/* unittest */
-/* { */
-/*     class C { int x, y; } */
-/*     assert(New!C == new C); */
-/* } */
-
 import std.traits: isArray, isUnsigned, isInstanceOf, isSomeString;
 import std.range.primitives: hasSlicing;
 
