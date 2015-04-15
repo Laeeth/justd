@@ -1,220 +1,219 @@
-albedo
-alpha centauri
-apastron
-aperature
-aphelion
-apogee
-asterism
-asteroid
-astronaut
-astronomer
-astronomical unit
-astronomy
-axial tilt
-azimuth
-background radiation
-bailey's bead
-big bang theory
-binary star
-black body
-black hole
-bolometer
-celestial
-celestial equator
-cislunar
-cluster
-comet
-conjunction
-constellation
-coriolis force
-corona
-cosmic ray
-cosmology
-cosmonaut
-cosmos
-crater
-crescent moon
-dark matter
-day
-declination
-deep space
-deneb
-density
-docking
-doppler shift
-double star
-drake equation
-dust
-dwarf planet
-dwarf star
-earth
-earthbound
-eccentricity
-eclipse
-ecliptic
-elliptical orbit
-equinox
-escape velocity
-event horizon
-exoplanet
-extragalaxtic
-falling star
-flare
-flyby
-free fall
-full moon
-galaxy
-gamma ray
-gas giant
-gegenschein
-geostationary
-geosynchronous
-gibbous moon
-globular cluster
-gravitation
-gravitational constant
-gravitational lens
-gravity
-h-r diagram
-half moon
-heliocentric
-helium
-hubble telescope
-hubble's law
-hydrogen
+nounSingular:albedo
+star:Alpha Centauri
+nounSingular:apastron
+nounSingular:aperature
+nounSingular:aphelion
+nounSingular:apogee
+nounSingular:asterism
+nounSingular:asteroid
+nounSingular:astronaut
+nounSingular:astronomer
+nounSingular:astronomical unit
+nounSingular:axial tilt
+nounSingular:azimuth
+nounSingular:background radiation
+nounSingular:Bailey's bead
+nounSingular:Big Bang theory
+nounSingular:binary star
+nounSingular:black body
+nounSingular:black hole
+nounSingular:bolometer
+adjective:celestial
+nounSingular:celestial equator
+adjective:cislunar
+nounSingular:cluster
+nounSingular:comet
+nounSingular:conjunction
+nounSingular:constellation
+nounSingular:Coriolis force
+nounSingular:corona
+nounSingular:cosmic ray
+nounUncountable:cosmology
+nounSingular:cosmonaut
+nounSingular:cosmos
+nounSingular:crater
+nounSingular:crescent moon
+nounUncountable:dark matter
+nounSingular:day
+nounSingular:declination
+nounSingular:deep space
+star:Deneb
+nounSingular:density
+nounSingular:docking
+nounSingular:Doppler shift
+nounSingular:double star
+nounSingular:Drake's equation
+nounUncountable:dust
+nounSingular:dwarf planet
+nounSingular:dwarf star
+planet:Earth
+adjective:earthbound
+nounUncountable:eccentricity
+nounSingular:eclipse
+adjective:ecliptic
+nounSingular:elliptical orbit
+nounSingular:equinox
+nounSingular:escape velocity
+nounSingular:event horizon
+nounSingular:exoplanet
+adjective:extragalaxtic
+nounSingular:falling star
+nounSingular:flare
+nounSingular:flyby
+nounSingular:free fall
+nounSingular:full moon
+nounSingular:galaxy
+nounSingular:gamma ray
+nounSingular:gas giant
+nounSingular:gegenschein
+nounName:Gegenschein
+adjective:geostationary
+adjective:geosynchronous
+nounSingular:gibbous moon
+nounSingular:globular cluster
+nounUncountable:gravitation
+nounSingular:gravitational constant
+nounSingular:gravitational lens
+nounUncountable:gravity
+nounSingular:h-r diagram
+nounSingular:half moon
+adjective:heliocentric
+nounUncountable:Helium
+nounSingular:Hubble telescope
+nounSingular:Hubble's law
+nounUncountable:hydrogen
 hyperbolic orbit
-hypernova
-ice giant
-inclination
-inertia
-inferior planet
-inner planet
-interstellar
-interstellar dust
-ionosphere
-jupiter
-kepler's laws
-kiloparsec
-kirkwood gap
-kuiper belt
-lagrange point
-lens
-light-year
-local arm
-local group
-lunar
-magnitude
-mare
-mars
-mass
-mercury
-meteor
-meteor shower
-meteorite
-meteoroid
-milky way
-minor planet
-mir
-moon
-muttnik
-nadir
-nasa
-nebula
-neptune
-neutron star
-new moon
-north star
-nova
-observatory
-occultation
-oort cloud
-opposition
-orbit
-orbital eccentricity
-orbital inclination
-outer planet
-parallax
-parsec
-partial eclipse
-penumbra
-perigee
-perihelion
-perturbation
-phase
-plane of the ecliptic
-planet
-planetary nebula
-planetoid
-pluto
-pole star
-precession
-probe
-pulsar
-quarter moon
-quasar
-radiant
-radiation
-red dwarf
-red giant
-red shift
-revolve
-right ascension
-ring
-roche limit
-rocket
-satellite
-saturn
-scientific notation
-scintillation
-shooting star
-sidereal
-singularity
-sky
-solar
-solar system
-solar wind
-solstice
-space
-space exploration
-space station
-spectroscope
-spectrum
-sputnik
-star
-starlight
-sun
-sunspot
-superior planet
-supernova
-synodic
+nounSingular:hypernova
+nounSingular:ice giant
+nounSingular:inclination
+nounUncountable:inertia
+nounSingular:inferior planet
+nounSingular:inner planet
+adjective:interstellar
+nounUncountable:interstellar dust
+noun:ionosphere
+planet:Jupiter
+nounPlural:Kepler's laws
+derivedSIUnit:kiloparsec
+nounSingular:Kirkwood gap
+nounSingular:Kuiper belt
+nounSingular:Lagrange point
+nounSingular:lens
+nounSingular:light-year
+nounSingular:local arm
+nounSingular:local group
+adjective:lunar
+nounSingular:magnitude
+plnet:Mars
+nounUncountable:mass
+planet:Mercury
+nounSingular:meteor
+nounSingular:meteor shower
+nounSingular:meteorite
+nounSingular:meteoroid
+name:Milky Way
+noun:minor planet
+name:Mir
+noun:moon
+nameAnimal:Muttnik
+nameAnimal:Lajka
+nounUncountable:nadir
+nounAcronym:NASA
+nounSingular:nebula
+planet:Neptune
+nounSingular:neutron star
+nounSingular:new moon
+nounSingular:north star
+nounSingular:nova
+nounSingular:observatory
+nounUncountable:occultation
+nounSingular:Oort cloud
+nounSingular:opposition
+nounSingular:orbit
+nounSingular:orbital eccentricity
+nounSingular:orbital inclination
+nounSingular:outer planet
+nounSingular:parallax
+nounSingular:parsec
+nounSingular:partial eclipse
+nounSingular:perigee
+nounSingular:perihelion
+nounSingular:perturbation
+nounSingular:phase
+nounSingular:plane of the ecliptic
+nounSingular:planet
+nounSingular:planetary nebula
+nounSingular:planetoid
+planet:Pluto
+nounSingular:pole star
+nounSingular:precession
+nounSingular:probe
+nounSingular:pulsar
+nounSingular:quarter moon
+nounSingular:quasar
+adjective:radiant
+nounUncountable:radiation
+nounSingular:red dwarf
+nounSingular:red giant
+nounSingular:red shift
+verb:revolve
+nounSingular:right ascension
+nounSingular:ring
+nounSingular:Roche limit
+nounSingular:rocket
+nounSingular:satellite
+planet:Saturn
+nounSingular:scientific notation
+nounSingular:scintillation
+nounSingular:shooting star
+nounSingular:sidereal
+nounSingular:singularity
+nounSingular:sky
+adjective:solar
+nounSingular:solar system
+nounSingular:solar wind
+nounSingular:solstice
+nounSingular:space
+nounUncountable:space exploration
+nounSingular:space station
+nounSingular:spectroscope
+nounSingular:spectrum
+name:Sputnik
+nounSingular:star
+nounSingular:starlight
+nounSingular:sun
+nounSingular:sunspot
+nounSingular:superior planet
+nounSingular:supernova
+adjective:synodic
 syzygy
-telemetry
-telescope
-terminator
-terrestrial
-total eclipse
-totality
-transit
-translunar
-transneptunian
-twinkling
-umbra
-universe
-uranus
-vacuum
-van allen belt
-variable star
-venus
-vernal equinox
-visual magnitude
-waning
-wavelength
-waxing
-weightless
-white dwarf
-white giant
-wormhole
-x-rays
-yellow dwarf
-zenith
-zodiac
+nounSingular:telemetry
+nounSingular:telescope
+nounSingular:terminator
+nounSingular:terrestrial
+nounSingular:total eclipse
+nounSingular:totality
+nounSingular:transit
+nounSingular:translunar
+nounSingular:transneptunian
+adjective:twinkling
+nounSingular:umbra
+nounSingular:universe
+planet:Uranus
+nounSingular:vacuum
+nounSingular:Van Allen belt
+nounSingular:variable star
+planet:Venus
+nounSingular:vernal equinox
+nounSingular:visual magnitude
+nounSingular:waning
+nounSingular:wavelength
+nounSingular:waxing
+adjective:weightless
+nounSingular:white dwarf
+nounSingular:white giant
+nounSingular:wormhole
+nounPlural:x-rays
+nounSingular:yellow dwarf
+nounSingular:zenith
+nounSingular:zodiac
