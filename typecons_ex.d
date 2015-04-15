@@ -193,7 +193,6 @@ auto indexedBy(string I, R)(R range) if (isArray!R)
 
         auto xs = x.indexedBy!"I";
         alias XS = typeof(xs);
-        XS.I xsi;
 
         // indexing with correct type
         xb[  0 ] = 11; assert(xb[  0 ] == 11);
