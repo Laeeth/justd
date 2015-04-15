@@ -193,6 +193,7 @@ auto indexedBy(string I, R)(R range) if (isArray!R)
 
         auto xs = x.indexedBy!"I";
         alias XS = typeof(xs);
+        XS xs_;
 
         // indexing with correct type
         xb[  0 ] = 11; assert(xb[  0 ] == 11);
@@ -200,6 +201,7 @@ auto indexedBy(string I, R)(R range) if (isArray!R)
         xj[J(0)] = 11; assert(xj[J(0)] == 11);
         xe[ e0 ] = 11; assert(xe[ e0 ] == 11);
         xs[XS.I(0)] = 11; assert(xs[XS.I(0)] == 11);
+        xs_[XS.I(0)] = 11; assert(xs_[XS.I(0)] == 11);
 
         // indexing with wrong type
         static assert(!__traits(compiles, { xb[J(0)] = 11; }));
@@ -207,6 +209,7 @@ auto indexedBy(string I, R)(R range) if (isArray!R)
         static assert(!__traits(compiles, { xj[  0 ] = 11; }));
         static assert(!__traits(compiles, { xe[  0 ] = 11; }));
         static assert(!__traits(compiles, { xs[  0 ] = 11; }));
+        static assert(!__traits(compiles, { xs_[  0 ] = 11; }));
 
         import std.algorithm.comparison: equal;
         import std.algorithm.iteration: filter;
@@ -215,6 +218,7 @@ auto indexedBy(string I, R)(R range) if (isArray!R)
         assert(equal(xi[].filter!(a => a < 11), [2, 3]));
         assert(equal(xj[].filter!(a => a < 11), [2, 3]));
         assert(equal(xe[].filter!(a => a < 11), [2, 3]));
+        assert(equal(xs[].filter!(a => a < 11), [2, 3]));
     }
 }
 
