@@ -221,17 +221,19 @@ body
         }
     }
 
-    // sort contexts
-    import std.algorithm: topNCopy, SortOutput;
-    alias E = typeof(hitsByNd.byKeyValue.front); // TODO hackish
-    E[] contexts; contexts.length = maxContextCount;
-
+    // filter contexts on language and sense
+    writeln("AAA");
     auto filteredHitsByNd = hitsByNd.byKeyValue
                                     .filter!(ndHit => ((contextLangs.empty || // TODO functionize
                                                         contextLangs.canFind(gr[ndHit.key].lemma.lang)) &&
                                                        (contextSenses.empty ||
                                                         contextSenses.canFind(gr[ndHit.key].lemma.sense))));
+    writeln("BBB");
 
+    // sort contexts
+    import std.algorithm: topNCopy, SortOutput;
+    alias E = typeof(hitsByNd.byKeyValue.front); // TODO hackish
+    E[] contexts; contexts.length = maxContextCount;
     static if (strategy == WalkStrategy.dijkstraMinDistance)
     {
         filteredHitsByNd.topNCopy!("a.value < b.value")(contexts, SortOutput.yes); // shortest distances first
@@ -241,7 +243,15 @@ body
         filteredHitsByNd.topNCopy!("a.value > b.value")(contexts, SortOutput.yes); // largest connectiveness first
     }
 
-    auto trueContexts = contexts.filter!(a => !nds.canFind(a.key)).array; // exclude input nodes $(D nds)
+    writeln("contexts.count: ", contexts.count);
+
+    E[] pureContexts;
+    if (!contexts.empty) // TODO check why needed, because otherwise call to .filter throws exception
+    {
+        pureContexts = contexts.filter!(a => !nds.canFind(a.key)).array; // exclude input nodes $(D nds)
+    }
+
+    writeln("111");
 
     sw.stop();
     pln("Combining walker results took ", sw.peek.msecs);
@@ -254,7 +264,7 @@ body
             " visitByNd.length:", walker.visitByNd.length);
     }
 
-    return tuple(trueContexts, walkers);
+    return tuple(pureContexts, walkers);
 }
 
 alias topicsOf = contextsOf;

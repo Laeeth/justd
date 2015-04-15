@@ -600,8 +600,8 @@ bool query(Graph gr,
                 writeln("> Contexts of senses(s) ", userSense, " in language(s) ", userLang, ":");
                 const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter,
                                                                                 walkerFilter,
-                                                                                [userLang],
-                                                                                [userSense],
+                                                                                userLang == Lang.unknown ? [] : [userLang],
+                                                                                userSense == Sense.unknown ? [] : [userSense],
                                                                                 userCount, 2000);
                 const contexts = result[0];
                 foreach (const context; contexts)
