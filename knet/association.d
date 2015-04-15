@@ -186,7 +186,9 @@ body
         }
     }
 
-    pln("Combining walker results");
+    StopWatch sw;
+    sw.start();
+    pln("Combining walker results...");
 
     // if (!visitsByNd.byPair.empty)
     // {
@@ -198,35 +200,27 @@ body
     Hits[Nd] hitsByNd;       // weights by node
     foreach (const nd, const visits; visitsByNd.byPair)
     {
-        foreach (walkIx; 0 .. visits.length)
+        foreach (wix; 0 .. visits.length)
         {
-            if (visits[walkIx]) // if walker walkerIx visited nd
+            if (visits[wix]) // if walker wix visited nd
             {
-                const visit = walkers[walkIx].visitByNd[nd];
+                const visit = walkers[wix].visitByNd[nd];
                 const goodnessSum = visit[0];
                 const Nd prevNd = visit[1]; // TODO use to reconstruct path
-                // store that walkIx has visited nd
+                // store that wix has visited nd
                 if (auto existingHit = nd in hitsByNd)
                 {
                     (*existingHit).goodnessSum += goodnessSum;
-                    (*existingHit).visits[walkIx] = true;
+                    (*existingHit).visits[wix] = true;
                 }
                 else
                 {
                     Visits visits_;
-                    visits_[walkIx] = true;
+                    visits_[wix] = true;
                     hitsByNd[nd] = Hits(visits_, goodnessSum);
                 }
             }
         }
-    }
-
-    // print walker statistics
-    foreach (ix, ref walker; walkers)
-    {
-        pln(" walker#", ix, ":",
-            " pending.length:", walker.pending.length,
-            " visitByNd.length:", walker.visitByNd.length);
     }
 
     // sort contexts
@@ -243,6 +237,18 @@ body
     }
 
     auto trueContexts = contexts.filter!(a => !nds.canFind(a.key)).array;
+
+    sw.stop();
+    pln("Combining walker results took ", sw.peek.msecs);
+
+    // print walker statistics
+    foreach (ix, ref walker; walkers)
+    {
+        pln(" walker#", ix, ":",
+            " pending.length:", walker.pending.length,
+            " visitByNd.length:", walker.visitByNd.length);
+    }
+
     return tuple(trueContexts, walkers);
 }
 
