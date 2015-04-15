@@ -1,5 +1,22 @@
 # TODO
+I propagateLemmaSenses hantera
+- nounSingular
+- nounPlural
+- nounUncountable
 
+# TODO
+Om majoritetn av input är på LANG svara på LANG. Använd languagesOf()
+
+# TODO
+Visa walker vägen och vikta relationer
+
+# BUG
+contexts(Sven Tor)
+
+# TODO
+Add randomization to walker for nodes of equal goodness
+
+# Bug
 Works:
 
 < Concept(s) or ? for help: adverb:directly
