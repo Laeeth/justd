@@ -75,19 +75,22 @@ alias Contexts = Context[];
 auto contextsOf(WalkStrategy strategy,
                 Exprs)(Graph gr,
                        Exprs exprs,
-                       const Filter filter = Filter.init,
+                       const Filter walkerFilter = Filter.init,
+                       Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a target filter
                        size_t maxContextCount = 0,
                        uint durationInMsecs = 1000) if (isIterable!Exprs &&
                                                         isSomeString!(ElementType!Exprs))
 {
     import std.algorithm: joiner;
     import knet.lookup: lemmasOfExpr;
-    writeln("exprs: ", exprs);
+    // writeln("exprs: ", exprs);
     auto lemmas = exprs.map!(expr => gr.lemmasOfExpr(expr)).joiner;
-    writeln("lemmas: ", lemmas);
+    // writeln("lemmas: ", lemmas);
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
-    writeln("nds: ", nds);
-    return gr.contextsOf!(strategy)(nds, filter, maxContextCount, durationInMsecs);
+    // writeln("nds: ", nds);
+    return gr.contextsOf!(strategy)(nds, walkerFilter,
+                                    contextLangs, contextSenses,
+                                    maxContextCount, durationInMsecs);
 }
 
 import dbg: pln;
@@ -112,17 +115,18 @@ import dbg: pln;
 auto contextsOf(WalkStrategy strategy,
                 Nds)(Graph gr,
                      Nds nds,
-                     const Filter filter = Filter.init,
+                     const Filter walkerFilter = Filter.init,
+
+                     Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a target filter
+
                      size_t maxContextCount = 0,
                      uint durationInMsecs = 1000,
                      uint intervalInMsecs = 0) if (isIterable!Nds &&
                                                    is(Nd == ElementType!Nds))
 body
 {
-    if (maxContextCount == 0)
-    {
-        maxContextCount = 100;
-    }
+    if (maxContextCount == 0) { maxContextCount = 100; }
+    if (intervalInMsecs == 0) { intervalInMsecs = 20; }
 
     auto count = nds.count;
     if (count > maxCount)
@@ -131,15 +135,9 @@ body
         count = maxCount;
     }
 
-    if (intervalInMsecs == 0)
-    {
-        intervalInMsecs = 20;
-    }
-
-    foreach (nd; nds)
-    {
-        writeln(`- `, gr[nd].lemma);
-    }
+    // debug prints
+    writeln("walkerFilter: ", walkerFilter);
+    foreach (nd; nds) { writeln(`- `, gr[nd].lemma); }
 
     Visits[Nd] visitsByNd;
 
@@ -150,7 +148,7 @@ body
     // TODO avoid Walker postblit
     import knet.traversal: nnWalker;
     const useRelevance = true;
-    auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, filter, useRelevance)).array;
+    auto walkers = nds.map!(nd => gr.nnWalker!(strategy)(nd, walkerFilter, useRelevance)).array;
 
     // iterate walkers in Round Robin fashion
     while (stopWatch.peek.msecs < durationInMsecs)
@@ -227,16 +225,23 @@ body
     import std.algorithm: topNCopy, SortOutput;
     alias E = typeof(hitsByNd.byKeyValue.front); // TODO hackish
     E[] contexts; contexts.length = maxContextCount;
+
+    auto filteredHitsByNd = hitsByNd.byKeyValue
+                                    .filter!(ndHit => ((contextLangs.empty || // TODO functionize
+                                                        contextLangs.canFind(gr[ndHit.key].lemma.lang)) &&
+                                                       (contextSenses.empty ||
+                                                        contextSenses.canFind(gr[ndHit.key].lemma.sense))));
+
     static if (strategy == WalkStrategy.dijkstraMinDistance)
     {
-        hitsByNd.byKeyValue.topNCopy!("a.value < b.value")(contexts, SortOutput.yes); // shortest distances first
+        filteredHitsByNd.topNCopy!("a.value < b.value")(contexts, SortOutput.yes); // shortest distances first
     }
     else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
     {
-        hitsByNd.byKeyValue.topNCopy!("a.value > b.value")(contexts, SortOutput.yes); // largest connectiveness first
+        filteredHitsByNd.topNCopy!("a.value > b.value")(contexts, SortOutput.yes); // largest connectiveness first
     }
 
-    auto trueContexts = contexts.filter!(a => !nds.canFind(a.key)).array;
+    auto trueContexts = contexts.filter!(a => !nds.canFind(a.key)).array; // exclude input nodes $(D nds)
 
     sw.stop();
     pln("Combining walker results took ", sw.peek.msecs);
