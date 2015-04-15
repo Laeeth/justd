@@ -26,11 +26,10 @@ hay
 hayride
 haystack
 leaf
-leaf
 maize
-november
+November
 nut
-october
+October
 persimmon
 pine cone
 pumpkin
@@ -41,7 +40,7 @@ rake
 reap
 scarecrow
 season
-september
+September
 sleet
 spider
 spider's web
