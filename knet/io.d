@@ -326,15 +326,31 @@ bool query(Graph gr,
     if (suffixLangedWords.length >= 3 &&
         suffixLangedWords[$ - 2] == `in`)
     {
+        Lang inLang = Lang.unknown;
+
+        // try to lookup. TODO functionize to generic fuzzyTo
         try
         {
-            const inLang = suffixLangedWords[$ - 1].toLower.to!Lang;
+            inLang = suffixLangedWords[$ - 1].to!Lang;
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                inLang = suffixLangedWords[$ - 1].toLower.to!Lang;
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        if (inLang != Lang.unknown)
+        {
             const hit = gr.query(suffixLangedWords[0 .. $ - 2].joiner(` `).to!string,
                                  inLang, userSense, userCount, lineSeparator,
                                  triedLines, depth + 1); // recurse
             if (hit) { return hit; }
         }
-        catch (Exception e) {}
     }
 
     // try: $(EXPR) as $(Sense)
@@ -342,15 +358,29 @@ bool query(Graph gr,
     if (suffixSensedWords.length >= 3 &&
         suffixSensedWords[$ - 2] == `as`)
     {
+        Sense asSense = Sense.unknown;
+
+        // try to lookup. TODO functionize to generic fuzzyTo
         try
         {
-            const asSense = suffixSensedWords[$ - 1].toLower.to!Sense;
+            asSense = suffixSensedWords[$ - 1].to!Sense;
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                asSense = suffixSensedWords[$ - 1].toLower.to!Sense;
+            }
+            catch (Exception e) {}
+        }
+
+        if (asSense != Sense.unknown)
+        {
             const hit = gr.query(suffixSensedWords[0 .. $ - 2].joiner(` `).to!string,
                                  userLang, asSense, userCount, lineSeparator,
                                  triedLines, depth + 1); // recurse
             if (hit) { return hit; }
         }
-        catch (Exception e) {}
     }
 
     if (normLine == `palindrome`)
@@ -566,9 +596,13 @@ bool query(Graph gr,
             auto arg_splitter = arg.splitter.uniq;
             if (arg_splitter.count >= 2)
             {
-                const filter = Filter([userLang], [userSense]);
+                const walkerFilter = Filter();
                 writeln("> Contexts of senses(s) ", userSense, " in language(s) ", userLang, ":");
-                const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter, filter, userCount, 2000);
+                const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter,
+                                                                                walkerFilter,
+                                                                                [userLang],
+                                                                                [userSense],
+                                                                                userCount, 2000);
                 const contexts = result[0];
                 foreach (const context; contexts)
                 {
