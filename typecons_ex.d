@@ -72,14 +72,29 @@ template New(T) if (is(T == class))
 import std.traits: isArray, isUnsigned, isInstanceOf, isSomeString;
 import std.range.primitives: hasSlicing;
 
-enum isIndex(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
+enum isIndex_(I) = __traits(compiles, { I i = 0; cast(size_t)i; } );
+
+enum isIndexType(alias I) = (is(I == enum) ||
+                             isUnsigned!I || // TODO should we allow isUnsigned here?
+                             isIndex_!I);
+
+enum isCTString(alias I) = (isSomeString!(typeof(I)));
+
+unittest
+{
+    static assert(isCTString!"I");
+}
 
 /** Check if $(D R) is indexable by $(D I). */
-enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
-                            (is(I == enum) ||
-                             isUnsigned!I || // TODO should we allow isUnsigned here?
-                             isIndex!I ||
-                             isSomeString!I));
+enum isIndexableBy(R, alias I) = (isArray!R &&     // TODO generalize to RandomAccessContainers. Ask on forum for hasIndexing!R.
+                                  (isCTString!I) ||
+                                  isIndexType!I);
+
+unittest
+{
+    static assert(isIndexableBy!(int[], "I"));
+    static assert(isIndexableBy!(int[3], ubyte));
+}
 
 /** Wrapper for $(D R) with Type-Safe $(D I)-Indexing.
     See also: http://forum.dlang.org/thread/gayfjaslyairnzrygbvh@forum.dlang.org#post-gayfjaslyairnzrygbvh:40forum.dlang.org
@@ -94,7 +109,7 @@ enum isIndexableBy(R, I) = (isArray!R &&     // TODO generalize to RandomAccessC
     TODO Support R being a static array:
          - If I is an enum its number of elements should match R.length
    */
-struct IndexedBy(R, I) if (isIndexableBy!(R, I))
+struct IndexedBy(R, alias I) if (isIndexableBy!(R, I))
 {
     static if (isSomeString!I)
     {
@@ -138,7 +153,7 @@ struct IndexedBy(R, I) if (isIndexableBy!(R, I))
 
 /** Instantiator for $(D IndexedBy).
    */
-auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
+auto indexedBy(alias I, R)(R range) if (isIndexableBy!(R, I))
 {
     return IndexedBy!(R, I)(range);
 }
