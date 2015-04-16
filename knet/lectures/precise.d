@@ -354,12 +354,12 @@ void learnPreciseThings(Graph graph)
             graph.learnMtoNMaybe(buildPath(dirPath, `male_name_meaning.txt`),
                                  Sense.nameMale, lang,
                                  Role(Rel.translationOf),
-                                 Sense.unknown, lang,
+                                 Sense.unknown, Lang.en,
                                  Origin.manual, 0.7);
             graph.learnMtoNMaybe(buildPath(dirPath, `female_name_meaning.txt`),
                                  Sense.nameFemale, lang,
                                  Role(Rel.translationOf),
-                                 Sense.unknown, lang,
+                                 Sense.unknown, Lang.en,
                                  Origin.manual, 0.7);
             graph.learnMtoNMaybe(buildPath(dirPath, `name_day.txt`),
                                  Sense.name, lang,
