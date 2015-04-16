@@ -117,7 +117,7 @@ auto contextsOf(WalkStrategy strategy,
                      Nds nds,
                      const Filter walkerFilter = Filter.init,
 
-                     Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a target filter
+                     Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a contextFilter
 
                      size_t maxContextCount = 0,
                      uint durationInMsecs = 1000,
@@ -222,18 +222,17 @@ body
     }
 
     // filter contexts on language and sense
-    writeln("AAA");
+    import knet.filtering: matches;
     auto filteredHitsByNd = hitsByNd.byKeyValue
-                                    .filter!(ndHit => ((contextLangs.empty || // TODO functionize
-                                                        contextLangs.canFind(gr[ndHit.key].lemma.lang)) &&
-                                                       (contextSenses.empty ||
-                                                        contextSenses.canFind(gr[ndHit.key].lemma.sense))));
-    writeln("BBB");
+                                    .filter!(ndHit => ((contextLangs.matches(gr[ndHit.key].lemma.lang)) &&
+                                                       (contextSenses.matches(gr[ndHit.key].lemma.sense))))
+                                    .array;
 
     // sort contexts
     import std.algorithm: topNCopy, SortOutput;
     alias E = typeof(hitsByNd.byKeyValue.front); // TODO hackish
-    E[] contexts; contexts.length = maxContextCount;
+    E[] contexts; contexts.length = min(filteredHitsByNd.length,
+                                        maxContextCount);
     static if (strategy == WalkStrategy.dijkstraMinDistance)
     {
         filteredHitsByNd.topNCopy!("a.value < b.value")(contexts, SortOutput.yes); // shortest distances first
@@ -243,15 +242,9 @@ body
         filteredHitsByNd.topNCopy!("a.value > b.value")(contexts, SortOutput.yes); // largest connectiveness first
     }
 
-    writeln("contexts.count: ", contexts.count);
-
-    E[] pureContexts;
-    if (!contexts.empty) // TODO check why needed, because otherwise call to .filter throws exception
-    {
-        pureContexts = contexts.filter!(a => !nds.canFind(a.key)).array; // exclude input nodes $(D nds)
-    }
-
-    writeln("111");
+    E[] pureContexts = contexts.filter!(context =>
+                                        !nds.canFind(context.key))
+                               .array; // exclude input nodes $(D nds)
 
     sw.stop();
     pln("Combining walker results took ", sw.peek.msecs);
