@@ -131,7 +131,7 @@ auto indexedBy(I, R)(R range) if (isIndexableBy!(R, I))
 }
 
 struct IndexedBy(R, string I_ = "Index") if (isArray!R &&
-                                             I_ != "I_") // prevent strange bug from occurring
+                                             I_ != "I_") // prevent name lookup failure
 {
     mixin(q{ struct } ~ I_ ~
           q{ {
@@ -149,7 +149,7 @@ struct IndexedBy(R, string I_ = "Index") if (isArray!R &&
 /** Instantiator for $(D IndexedBy).
  */
 auto indexedBy(string I, R)(R range) if (isArray!R &&
-                                         I != "I_") // prevent strange bug from occurring
+                                         I != "I_") // prevent name lookup failure
 {
     return IndexedBy!(R, I)(range);
 }
