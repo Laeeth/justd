@@ -70,6 +70,13 @@ enum Sense:ubyte
     food,
     spice,
 
+    information,
+    informationDigital,
+    informationAnalog,
+    document,
+    documentDigital, digitalDocument = documentDigital,
+    documentConcrete, concreteDocument = documentConcrete,
+
     material,
     substance,
     metal,
@@ -137,7 +144,10 @@ enum Sense:ubyte
     abbrevation,
     contraction,            /// can't instead of can not
     nounAbbrevation,
+
+    acronym,
     nounAcronym,
+    verbAcronym,
 
     baseSIUnit,
     derivedSIUnit,
@@ -470,7 +480,10 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case abbrevation: return `abbrevation`;
         case contraction: return `contraction`;
         case nounAbbrevation: return `noun abbrevation`;
+
+        case acronym: return `acronym`;
         case nounAcronym: return `noun acronym`;
+        case verbAcronym: return `verb acronym`;
 
         case baseSIUnit: return `base SI unit`;
         case derivedSIUnit: return `derived SI unit`;
@@ -643,6 +656,13 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case codeVariable: return `code variable`;
         case codeVariableReference: return `code variable reference`;
         case codeType: return `code type`;
+
+        case information: return `information`;
+        case informationDigital: return `digital information`;
+        case informationAnalog: return `analog information`;
+        case document: return `document`;
+        case documentDigital: return `digital document`;
+        case documentConcrete: return `concrete document`;
     }
 }
 
@@ -721,7 +741,23 @@ import std.algorithm.comparison: among;
     {
         with (Sense) return (sense.isNumeric ||
                              sense.isLanguage ||
-                             sense.isTimePeriod);
+                             sense.isTimePeriod ||
+                             sense.isInformation);
+    }
+    bool isInformation(Sense sense)
+    {
+        with (Sense) return (sense.among!(information,
+                                          informationDigital,
+                                          informationAnalog,
+                                          document,
+                                          documentDigital,
+                                          documentConcrete) != 0);
+    }
+    bool isDocument(Sense sense)
+    {
+        with (Sense) return (sense.among!(document,
+                                          documentDigital,
+                                          documentConcrete) != 0);
     }
     bool isNounConcrete(Sense sense)
     {
@@ -806,6 +842,7 @@ import std.algorithm.comparison: among;
                                           nounUncountable,
                                           nounAbbrevation,
                                           nounAcronym,
+                                          nounPhrase,
                                           plant) != 0||
                              sense.isName);
     }
@@ -1084,8 +1121,14 @@ import std.algorithm.comparison: among;
     {
         with (Sense) return (sense.among!(abbrevation,
                                           nounAbbrevation,
-                                          nounAcronym,
-                                          contraction) != 0);
+                                          verbAbbrevation,
+                                          adjectiveAbbrevation,
+                                          contraction) != 0) || sense.isAcronym;
+    }
+    bool isAcronym(Sense sense)
+    {
+        with (Sense) return (sense.among!(nounAcronym,
+                                          verbAcronym) != 0);
     }
     bool isReflexive(Sense sense)
     {
@@ -1152,6 +1195,8 @@ bool specializes(Sense special,
         case noun: return (special.isNoun ||
                            special.isPronoun ||
                            special.isName);
+        case information: return (special.isInformation);
+        case document: return (special.isDocument);
         case nounDemonym: return (special.isNounDemonym);
         case nounDemonymSingular: return (special.isNounDemonymSingular);
         case nounDemonymPlural: return (special.isNounDemonymPlural);
@@ -1180,6 +1225,7 @@ bool specializes(Sense special,
 
         case name: return special.isName;
         case abbrevation: return special.isAbbrevation;
+        case acronym: return special.isAcronym;
 
         case verb: return special.isVerb;
         case verbRegular: return special.isVerbRegular;
