@@ -1,0 +1,64 @@
+ACSnounPhrase:aircraft computer system
+CInounSingular:configuration item
+CRnounSingular:change request
+CSCnounSingular:computer software component
+CSCIdocument:computer software configuration item
+CSUnounSingular:computer software unit
+DALnounSingular:development assurance level
+DDnounSingular:design decision
+HLRnounSingular:high-level requirement
+HSITnounSingular:hardware-software integration test
+ILperson:inspection leader
+IRnounSingular:inspection record
+LLRnounSingular:low-level requirement
+NDInounSingular:non-deliverable software
+PDIinformation:parameter data item
+PRdocument:problem report
+PSACdocument:plan for software aspects of certification
+QAnounSingular:quality assurance
+QMSnounSingular:quality management system
+RTOSnounSingular:real-time operation system
+SASdocument:software accomplishment summary
+SCARdocument:software criticality analysis report
+SCIdocument:software configuration item
+SCMPdocument:software configuration management plan
+SDDdocument:document:software design description
+SDPdocument:software development plan
+SRSdocument:software requirement specification
+SFnounSingular:software function
+SQAPdocument:software quality assurance plan
+SQARperson:software quality assurance representative
+SRCnounSingular:source code
+SSDDdocument:system/sub-system design description
+SSITsoftware-software integration test
+SSSsystem/sub-system specification
+SUMdocument:software user's manual
+SUMdocument:software user manual
+SVCdocument:software verification case
+SVMdocument:software verification matrix
+SVPdocument:software verification plan
+SVRdocument:software verification report
+SVSdocument:software verification summary
+SECIinformation:software life cycle environment configuration index
+SwCDRdocument:software critical design review
+SwCERdocument:software concept evaluation review
+SwCRdocument:software conformity review
+SwCSdocument:software coding standard
+SwDSdocument:software design standard
+SwRRdocument:software requirements review
+SwRSdocument:software requirements standard
+SwPDRdocument:software preliminary design review
+SwPRdocument:software planning review
+SwTRRdocument:software test readiness review
+SwVSdocument:software verification standard
+TASdocument:tool accomplishment summary
+TORdocument:tool operation requirements
+TPdocument:test procedure
+TQPdocument:tool qualification plan
+TUMdocument:tool user's manual
+TUMdocument:tool user manual
+TVCdocument:tool verification cases
+TVRdocument:tool verification result
+UTdocument:unit test
+VCdocument:verification case
+VPdocument:verification procedure
