@@ -158,28 +158,31 @@ StefannounSingular:crown
 
 StennounSingular:stone
 
-StureSwedish name derived from Old Norse stúra, meaning "obstinate."
-SvenSwedish form of Old Norse Sveinn, meaning "boy."
-ThorSwedish and Norwegian form of Old Norse Þórr, meaning "thunder."
-ThorgislOld Swedish form of Old Norse Þorgísl, meaning "Thor's arrow."
-ThorgnySwedish variant spelling of Scandinavian Torgny, meaning "Thor's clash" or "thunder clash."
-ThorirOld Swedish form of Old Norse Þórir, meaning "Thor's warrior."
-ThorketilOld Swedish form of Old Norse Þorketill, meaning "Thor's cauldron."
-ThorvaldDanish and Swedish form of Old Norse Þorvaldr, meaning "Thor's ruler."
-ThyrSwedish form of Old Norse Týr, meaning "god."
-TorbernSwedish short form of Latin Torbernus, meaning Thor's bear."
-TorbjörnSwedish form of Old Norse Þorbiorn, meaning "Thor's bear."
-TorgerSwedish and Norwegian form of Old Norse Þorgeirr, meaning "Thor's spear."
-TorgilsNorwegian and Swedish form of Old Norse Þorgísl, meaning "Thor's arrow."
-TorstenDanish and Swedish form of Old Norse Þorsteinn, meaning "Thor's stone."
-TrulsNorwegian and Swedish form of Old Norse Þorgísl, meaning "Thor's arrow."
-TryggveNorwegian and Swedish form of Icelandic Tryggvi, meaning "trustworthy."
-TureDanish and Swedish form of Scandinavian Tore, meaning "thunder."
-TykoSwedish form of Greek Tychon, meaning "hitting the mark."
-TyrSwedish form of Old Norse Týr, meaning "god."
-ValentinSwedish form of Latin Valentinus, meaning "healthy, strong." Compare with other forms of Valentin
-VendelNorwegian and Swedish form of Old High German Wendel, meaning "a Wend; a wanderer," a term used to refer to migrant Slavs in the sixth century
-VilfridSwedish variant spelling of Scandinavian Vilfred, meaning "desires peace."
-VölundSwedish form of Old Norse Volundr, meaning "war territory" or "battlefield."
-YrianNorwegian and Swedish form of Low German Jurian, meaning "earth-worker, farmer."
-YrjanVariant spelling of Norwegian/Swedish Yrian, meaning "earth-worker, farmer."
+Stureadjective:obstinate
+
+Svennoun:boy
+
+Thornoun:thunder
+Thorgislnoun:Thor's arrow
+Thorgnynoun:Thor's clashnoun:thunder clash
+Thorirnoun:Thor's warrior
+Thorketilnoun:Thor's cauldron
+Thorvaldnoun:Thor's ruler
+
+Thyrnoun:god
+Torbernnoun:Thor's bear
+Torbjörnnoun:Thor's bear
+Torgernoun:Thor's spear
+Torgilsnoun:Thor's arrow
+Torstennoun:Thor's stone
+Trulsnoun:Thor's arrow
+Tryggveadjective:trustworthy
+Turenoun:thunder
+TykoverbPhrase:hit mark
+Tyrnoun:god
+Valentinadjective:healthyadjective:strong
+Vendelnoun:wanderer
+VilfridverbPhrase:desire peace
+Völundnoun:war territorynoun:battlefield
+Yriannoun:earth-workernoun:farmer
+Yrjannoun:earth-workernoun:farmer
