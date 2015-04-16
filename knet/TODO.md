@@ -1,4 +1,7 @@
 # TODO
+Felaktig ordning på Maine, Michigan, .... Kanske från WordNet delen av ConceptNet?
+
+# TODO
 I propagateLemmaSenses hantera
 - nounSingular
 - nounPlural
