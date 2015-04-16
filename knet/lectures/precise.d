@@ -260,6 +260,69 @@ void learnPreciseThings(Graph graph)
             graph.learnMtoNMaybe(buildPath(dirPath, `acronym.txt`),
                                  Sense.nounAcronym, lang, Role(Rel.acronymFor),
                                  Sense.unknown, lang, Origin.manual, 1.0);
+
+            graph.learnMtoNMaybe(buildPath(dirPath, `aircraft_acronym.txt`), // TODO memberOfDomain
+                                 Sense.nounAcronym, lang, Role(Rel.acronymFor),
+                                 Sense.unknown, lang, Origin.manual, 1.0);
+            /*
+              TODO:
+
+              document:verification case => partOf => document:software verification case
+
+              nounPhrase:source code development method => partOf => document:software coding standard
+              nounPhrase:source code development rule => partOf => document:software coding standard
+              nounPhrase:source code development tool => partOf => document:software coding standard
+
+              nounPhrase:software design method => partOf => document:software design standard
+              nounPhrase:software design rule => partOf => document:software design standard
+              nounPhrase:software design tool => partOf => document:software design standard
+
+              nounPhrase:test case method => partOf => document:software verification standard
+              nounPhrase:test case rule => partOf => document:software verification standard
+              nounPhrase:test case tool => partOf => document:software verification standard
+
+              person:inspection leader => isA => person
+              person:software quality assurance representative => isA => person
+
+              noun:requirement => partOf => document:system/sub-system specification
+
+              source code editor => instanceOf => support tool
+
+              hardware component => partOf => document:system/sub-system design description
+              document:computer software configuration item => partOf => document:system/sub-system design description
+
+              document:plan for software aspects of certification => usedFor => communicate the process to a customer or authority
+
+              information:parameter data item => instanceOf => document:computer software configuration item
+
+              software requirement specification => partOf => document:computer software configuration item
+              document:software design description => partOf => document:computer software configuration item
+              information:source code => partOf => document:computer software configuration item
+              document:software verification case => partOf => document:computer software configuration item
+              document:software verification report => partOf => document:computer software configuration item
+
+              software configuration management plan => partOf => software development plan
+
+              software component => partOf => document:software design description
+              software design => partOf => document:software design description
+              software component requirements => partOf => document:software design description
+
+              inspection record =>contains=> claims and comments
+              inspection record =>usedFor=> verification evidence
+              nounPhrase:low-level requirement => partOf => document:computer software configuration item
+
+              development tool => partOf => information:software life cycle environment configuration index
+              verification tool => partOf => information:software life cycle environment configuration index
+              host environment => partOf => information:software life cycle environment configuration index
+
+              software unit => usedBy => document:software design description
+
+              noun:evidence => partOf => document:software verification summary
+
+              noun:evidence => mayBePartOf => document:software verification summary
+
+              */
+
             graph.learnMtoNMaybe(buildPath(dirPath, `newspaper_acronym.txt`),
                                  Sense.newspaper, lang,
                                  Role(Rel.acronymFor),
