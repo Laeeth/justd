@@ -136,8 +136,7 @@ body
     }
 
     // debug prints
-    writeln("walkerFilter: ", walkerFilter);
-    foreach (nd; nds) { writeln(`- `, gr[nd].lemma); }
+    // foreach (nd; nds) { writeln(`- `, gr[nd].lemma); }
 
     Visits[Nd] visitsByNd;
 
