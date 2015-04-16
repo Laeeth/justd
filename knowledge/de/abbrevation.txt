@@ -1,2 +1,5 @@
-noun:GestapoGeheime Staatspolizei
-noun:SiPoSicherheitspolizei
+nounAbbrevation:Gestaponoun:Geheime Staatspolizei
+nounAbbrevation:SiPonoun:Sicherheitspolizei
+nounAbbrevation:SDnoun:Sicherheitsdienst
+nounAbbrevation:SAnoun:Sturmabteilung
+nounAbbrevation:SSnoun:Schutzstaffel
