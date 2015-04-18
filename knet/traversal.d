@@ -1,7 +1,7 @@
 module knet.traversal;
 
 import knet.base;
-import knet.filtering: Filter;
+import knet.filtering: StepFilter;
 
 /** Bread First Graph Walk(er) (Traverser)
 */
@@ -11,7 +11,7 @@ struct BFWalker
 
     this(Graph gr,
          const Nd start,
-         const Filter filter = Filter.init) @safe nothrow in { assert(start.defined); }
+         const StepFilter filter = StepFilter.init) @safe nothrow in { assert(start.defined); }
     body
     {
         this.gr = gr;
@@ -82,14 +82,14 @@ struct BFWalker
 
     // internal state
     NWeight[Nd] connectivenessByNd; // maps frontNds minimum distance from visited to start
-    const Filter filter;
+    const StepFilter filter;
 private:
     Graph gr;
     Nds frontNds;              // current nodes (internal state)
 }
 
 BFWalker bfWalker(Graph gr, Nd start,
-                  const Filter filter = Filter.init) pure
+                  const StepFilter filter = StepFilter.init) pure
 {
     return typeof(return)(gr, start, filter);
 }
@@ -135,7 +135,7 @@ struct NNWalker(WalkStrategy strategy)
 
     this(Graph gr,
          const Nd start,
-         const Filter filter = Filter.init,
+         const StepFilter filter = StepFilter.init,
          bool useRelevance = false) in { assert(start.defined); }
     body
     {
@@ -280,20 +280,20 @@ public:
     Visit[Nd] visitByNd;        // Nd => tuple(Nd origin distance, parent Nd)
     Queue pending;              // queue of pending (untraversed) nodes
     const Nd start;             // search start node
-    const Filter filter;
+    const StepFilter filter;
     const useRelevance = false;
 private:
     Graph gr;
 }
 
-auto nnWalker(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Filter.init,
+auto nnWalker(WalkStrategy strategy)(Graph gr, Nd start, const StepFilter filter = StepFilter.init,
                                      bool useRelevance = false)
 {
     return NNWalker!(strategy)(gr, start, filter, useRelevance);
 }
 
 /** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
-auto nnWalk(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Filter.init,
+auto nnWalk(WalkStrategy strategy)(Graph gr, Nd start, const StepFilter filter = StepFilter.init,
                                    bool useRelevance = false)
 {
     auto walker = nnWalker!(strategy)(gr, start, filter, useRelevance);
@@ -302,7 +302,7 @@ auto nnWalk(WalkStrategy strategy)(Graph gr, Nd start, const Filter filter = Fil
 }
 
 /** Perform a Complete Traversal of $(D gr) using NNWalker with $(D start) as origin. */
-auto dijkstraNNWalk(Graph gr, Nd start, const Filter filter = Filter.init,
+auto dijkstraNNWalk(Graph gr, Nd start, const StepFilter filter = StepFilter.init,
                     bool useRelevance = false) pure
 {
     return nnWalk!(WalkStrategy.dijkstraMinDistance)(gr, start, filter,

@@ -3,38 +3,6 @@ module knet.filtering;
 import std.algorithm.searching: canFind;
 import knet.base;
 
-/** Node/Link (Traversal) Filter.
- */
-struct Filter
-{
-    @safe pure nothrow:
-
-    this(Lang[] langs,
-         Sense[] senses = [],
-         Role[] roles = [],
-         Origin[] origins = [])
-    {
-        // TODO may be wanted to include Lang.unknown and Sense.unknown in some future
-        this.langs = langs.filter!(lang => lang != Lang.unknown).array;
-        this.senses = senses.filter!(sense => sense != Sense.unknown).array;
-        this.roles = roles;
-        this.origins = origins.filter!(origin => origin != Origin.unknown).array;
-    }
-
-    bool matches(Lang lang, Sense sense, Role role, Origin origin) const @nogc
-    {
-        return (langs.matches(lang) &&
-                senses.matches(sense) &&
-                roles.matches(role) &&
-                origins.matches(origin));
-    }
-
-    Lang[] langs;
-    Sense[] senses;
-    Role[] roles;
-    Origin[] origins;
-}
-
 @safe pure nothrow @nogc:
 
 bool matches(const Lang[] langs, Lang lang)
@@ -75,4 +43,101 @@ bool matches(const Sense[] senses, Sense sense)
         }
     }
     return senses.empty;
+}
+
+/** Node Filter.
+ */
+struct NodeFilter
+{
+    @safe pure nothrow:
+
+    // TODO may be wanted to include Lang.unknown and Sense.unknown in some future
+
+    this(Lang[] langs,
+         Sense[] senses = [],
+         Origin[] origins = [])
+    {
+        this.langs = langs.filter!(lang => lang != Lang.unknown).array;
+        this.senses = senses.filter!(sense => sense != Sense.unknown).array;
+        this.origins = origins.filter!(origin => origin != Origin.unknown).array;
+    }
+
+    this(Lang[] langs,
+         Origin[] origins = [])
+    {
+        this.langs = langs.filter!(lang => lang != Lang.unknown).array;
+        this.origins = origins.filter!(origin => origin != Origin.unknown).array;
+    }
+
+    this(Sense[] senses,
+         Origin[] origins)
+    {
+        this.senses = senses.filter!(sense => sense != Sense.unknown).array;
+        this.origins = origins.filter!(origin => origin != Origin.unknown).array;
+    }
+
+    this(Sense[] senses)   { this.senses = senses.filter!(sense => sense != Sense.unknown).array; }
+    this(Origin[] origins) { this.origins = origins.filter!(origin => origin != Origin.unknown).array; }
+
+    bool matches(Lang lang,
+                 Sense sense) const @nogc
+    {
+        return (langs.matches(lang) &&
+                senses.matches(sense));
+    }
+
+    bool matches(Lang lang,
+                 Sense sense,
+                 Origin origin) const @nogc
+    {
+        return (langs.matches(lang) &&
+                senses.matches(sense) &&
+                origins.matches(origin));
+    }
+
+    Lang[] langs;
+    Sense[] senses;
+    Origin[] origins;
+}
+
+/** Node-Link-Step (Traversal) Filter.
+ */
+struct StepFilter
+{
+    @safe pure nothrow:
+
+    this(Lang[] langs,
+         Sense[] senses = [],
+         Role[] roles = [],
+         Origin[] origins = [])
+    {
+        // TODO may be wanted to include Lang.unknown and Sense.unknown in some future
+        this.langs = langs.filter!(lang => lang != Lang.unknown).array;
+        this.senses = senses.filter!(sense => sense != Sense.unknown).array;
+        this.roles = roles;
+        this.origins = origins.filter!(origin => origin != Origin.unknown).array;
+    }
+
+    bool matches(Lang lang,
+                 Sense sense) const @nogc
+    {
+        return (langs.matches(lang) &&
+                senses.matches(sense));
+    }
+
+    bool matches(Lang lang,
+                 Sense sense,
+                 Role role,
+                 Origin origin) const @nogc
+    {
+        return (langs.matches(lang) &&
+                senses.matches(sense) &&
+                roles.matches(role) &&
+                origins.matches(origin));
+    }
+
+    Lang[] langs;
+    Sense[] senses;
+    Role[] roles;
+    Origin[] origins;
 }

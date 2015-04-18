@@ -3,7 +3,7 @@ module knet.association;
 import std.typecons: Tuple;
 
 import knet.base;
-import knet.filtering: Filter;
+import knet.filtering: StepFilter;
 import knet.traversal: WalkStrategy;
 
 alias Block = size_t;
@@ -75,7 +75,7 @@ alias Contexts = Context[];
 auto contextsOf(WalkStrategy strategy,
                 Exprs)(Graph gr,
                        Exprs exprs,
-                       const Filter walkerFilter = Filter.init,
+                       const StepFilter walkerFilter = StepFilter.init,
                        Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a target filter
                        size_t maxContextCount = 0,
                        uint durationInMsecs = 1000) if (isIterable!Exprs &&
@@ -115,7 +115,7 @@ import dbg: pln;
 auto contextsOf(WalkStrategy strategy,
                 Nds)(Graph gr,
                      Nds nds,
-                     const Filter walkerFilter = Filter.init,
+                     const StepFilter walkerFilter = StepFilter.init,
 
                      Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a contextFilter
 

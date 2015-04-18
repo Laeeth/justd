@@ -135,10 +135,10 @@ OddmundnounSingular:protection
 Odennoun:poetrynoun:song
 Odenadjective:eageradjective:frenziedadjective:raging
 
-OlanounSingular:heir of the ancestors
-OllenounSingular:heir of the ancestors
-OlofnounSingular:heir of the ancestors
-OlovnounSingular:heir of the ancestors
+OlanounSingular:heir of the ancestorsnounSingular:heir
+OllenounSingular:heir of the ancestorsnounSingular:heir
+OlofnounSingular:heir of the ancestorsnounSingular:heir
+OlovnounSingular:heir of the ancestorsnounSingular:heir
 
 ÖrjannounSingular:earth-workernounSingular:farmer
 
@@ -158,7 +158,7 @@ StefannounSingular:crown
 
 StennounSingular:stone
 
-Stureadjective:obstinate
+Stureadjective:obstinateadjective:crestfallenadjective:downhearted
 
 Svennoun:boy
 

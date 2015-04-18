@@ -2,7 +2,7 @@ module knet.tests;
 
 import knet.base;
 import knet.traversal: bfWalker, nnWalker, nnWalk, WalkStrategy;
-import knet.filtering: Filter;
+import knet.filtering: StepFilter;
 
 import dbg: pln;
 
@@ -233,7 +233,7 @@ void testContextOf()
     auto dLns = gr.connect1toM(c, role, bs, origin, 0.6, true);
 
     import knet.association: contextsOf;
-    auto result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, Filter.init, [], [], 1);
+    auto result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, StepFilter.init, [], [], 1);
     auto contexts = result[0];
     auto walkers = result[1];
 
