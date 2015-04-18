@@ -124,3 +124,28 @@ nounSingular:ctorconstructor
 nounSingular:dtordestructor
 
 languageProgramming:C#C-sharpC-Sharp
+
+nounSingular:mgmtmgtmanagement
+
+nounSingular:mgrmanagermonseigneur
+
+noun:mgdmillion gallons per day
+
+nounSingular:mgalmilligal
+
+nounSingular:mgmilligram
+nounSingular:mGmilligauss
+nounSingular:MGmachine gunmajor generalmilitary government
+
+verbInfinitive:mfrmanufacture
+nounSingular:mfrmanufacturer
+
+nounxSingular:MFNmost favored nation
+nounxSingular:MFHmaster of foxhounds
+
+nounSingular:mfgmanufacturing
+adjective:mfdmanufactured
+
+nounSingular:MFAmaster of fine arts
+nounSingular:mfmezzo forte
+nounSingular:MFmedium frequencymicrofiche
