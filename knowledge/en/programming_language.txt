@@ -1,3 +1,4 @@
+
 (Visual) Basic
 (Visual) FoxPro
 @Formula
@@ -23,35 +24,56 @@ ALGOL 58
 ALGOL 60
 ALGOL 68
 ALGOL W
+ALGOL, ALGOrithmic Language
 AMOS
 AMPL
+AMPL, A Mathematical Programming Language
+ANI
 APL
+APT
+ARS++
 ARexx
 ASP
 ATLAS
 ATS
 AWK
+AWK, Alfred Aho, Peter Weinberger, and Brian Kernighan
 Accent
 Ace DASL
 Action!
 ActionScript
+Actor
+Actum
 Ada
 Adenine
+Afnix
 Agda
+Agena
 Agilent VEE
 Agora
+Aldor
 Alef
+Aleph
+Algae
+Algo
 Alice
 Alma-0
+Alphard
+Altran
 AmbientTalk
 Amiga E
+AmigaE
 Angelscript
+Anubis
+ApeScript
 Apex
 App Inventor for Android's visual block language
 AppleScript
 Arc
 Arduino
+Argos
 Argus
+Asm
 AspectJ
 Assembly
 Assembly language
@@ -60,16 +82,20 @@ Augeas
 AutoHotkey
 AutoIt
 AutoLISP
-Visual LISP
+Autocode
 Autocoder
 Automator
+Avail
 Avenue
 Averest
 Awk
+Axiom
 Axum
 B
+BAL
 BASIC
 BCPL
+BCPL, Basic Combined Programming Language
 BETA
 BLISS
 BPEL
@@ -83,12 +109,14 @@ Bigwig
 Bistro
 BitC
 BlitzMax
+Blocky
 Blue
 Bon
 Boo
 Boomerang
 Bourne Shell
 Bourne shell
+Bournegol
 Bro
 C
 C Shell
@@ -104,6 +132,7 @@ C/AL
 CDuce
 CFEngine
 CFML
+CFScript
 CHAIN
 CHILL
 CHIP-8
@@ -112,7 +141,9 @@ CICS
 CIL
 CL (IBM)
 CL (OS/400)
+CLIPS
 CLIST
+CLOS
 CLU
 CMS EXEC
 CMS-2
@@ -122,7 +153,9 @@ COMAL
 COMIT
 COMPASS
 COWSEL
+COWSEL, COntrolled Working SpacE Language
 CPL
+CPL, Combined Programming Language
 CSP
 CUDA
 Caché ObjectScript
@@ -130,12 +163,14 @@ Caml
 Candle
 Cayenne
 Cecil
+Cedar
 Cel
 Cesil
 Ceylon
 Cg
 Ch
 Chapel
+Chapel, Cascade High Productivity Language
 Charity
 Charm
 Chef
@@ -143,10 +178,13 @@ ChucK
 Cilk
 Claire
 Clarion
+Clay
 Clean
 Clipper
 Clojure
+Cobol
 Cobra
+Code
 CoffeeScript
 Cola
 ColdC
@@ -162,7 +200,10 @@ Cool
 Coq
 CorVision
 Coral 66
+Coral66
 Corn
+Crack
+Csh
 Csound
 Curl
 Curry
@@ -177,15 +218,20 @@ DCPU-16 ASM
 DIBOL
 DRAKON
 DYNAMO
+DarkBASIC
 Dart
 DataFlex
+Databus
 Datalog
+Deca
 Deesel
 Deesel (formerly G)
 Delphi
 Delphi/Object Pascal
 DiBOL
+DiBOL, Digital's Business Oriented Language
 DinkC
+DisCo
 Dog
 Draco
 Dylan
@@ -205,6 +251,7 @@ Easy PL/I
 Ecl
 Edinburgh IMP
 Eiffel
+Elan
 Elixir
 Elm
 Emacs Lisp
@@ -219,10 +266,12 @@ Euclid
 Euler
 Euphoria
 EusLisp Robot
+Exec
 Executable UML
 F
 F#
 F-Script
+F3, Form Follow Function
 FAUST
 FFP
 FL
@@ -232,8 +281,10 @@ FOCUS
 FOIL
 FORMAC
 FP
+FP, Function Programming
 FPr
 FSProg
+Fabric
 Factor
 Falcon
 Fancy
@@ -243,7 +294,10 @@ Ferite
 Fjölnir
 Flavors
 Flex
+Flow-Matic
+Focal, FOrmula CALculator
 Forth
+Forth, FOuRTH
 Fortran
 Fortress
 FoxBase
@@ -265,10 +319,12 @@ GOM
 GOM (Good Old Mad)
 GOTRAN
 GPSS
+GPSS, General Purpose Simulation System
 GRASS
 Gambas
 Game Maker Language
 GameMonkey Script
+Gams, General Algebraic Modeling System
 Genie
 Gibiane
 Go
@@ -278,13 +334,18 @@ Goo
 Google Apps Script
 Google AppsScript
 Gosu
+Grap
 GraphTalk
 Groovy
 Gödel
 HAL/S
+HAScript, Host Access Script
+HLA, High Level Assembly
 HLSL
 HPL
 Hack
+Hal/S
+Halide
 Hamilton C shell
 Harbour
 Hartmann pipelines
@@ -297,19 +358,23 @@ Hope
 Hugo
 Hume
 HyperTalk
+IAL, International Algebraic Language
 IBM Basic assembly language
 IBM HAScript
 IBM Informix-4GL
 IBM RPG
 ICI
 IDL
+IDL, Interactive Data Language
 IMP
 INTERCAL
 IPL
+IPL, Information Processing Language
 IPTSCRAE
 ISLISP
 ISPF
 ISWIM
+ISWIM, If you See What I Mean
 Icon
 Id
 Idris
@@ -324,6 +389,7 @@ JADE
 JAL
 JASS
 JCL
+JCL, Job Control Language
 JEAN
 JOSS
 JOVIAL
@@ -331,12 +397,15 @@ JScript
 JScript .NET
 JScript.NET
 Jako
+Jal, Just Another Language
 Janus
 Java
 Java FX Script
 JavaFX Script
 JavaScript
+Jif
 Join Java
+Joss, JOHNNIAC Open Shop System
 Joule
 Joy
 Julia
@@ -354,6 +423,7 @@ Karel++
 Kixtart
 Kojo
 Korn Shell
+Korn shell
 Kotlin
 L
 L# .NET
@@ -361,14 +431,18 @@ LANSA
 LC-3
 LIL
 LINC
+LINC 4DL
 LIS
 LISA
+LLJS, Low Level JavaScript
+LLVM bitcode
 LPC
 LSE
 LSL
 LYaPAS
 LaTeX
 LabVIEW
+LabView
 Ladder
 Ladder Logic
 Lagoona
@@ -376,6 +450,7 @@ Lasso
 Lava
 Leda
 Legoscript
+Lfyre
 LilyPond
 Limbo
 Limnor
@@ -383,18 +458,24 @@ Lingo
 Linoleum
 Lisaac
 Lisp
+Lisp, LISt Processing
 Lite-C
 Lithe
 Little b
 LiveCode
 LiveScript
+Lobster
+Loci
 Logo
 Logtalk
 LotusScript
 Lua
+Lua, Moon in portuguese
 Lucid
 Lustre
 Lynx
+M
+M#
 M2001
 M4
 MAD
@@ -445,6 +526,8 @@ MillScript
 Mirah
 Miranda
 Miva
+Miva Script
+Mixal, Mix Assembly Language
 Moby
 Model 204
 Modelica
@@ -452,6 +535,7 @@ Modula
 Modula-2
 Modula-3
 Mohol
+Mondrian
 Monkey
 Mortran
 Moto
@@ -469,16 +553,23 @@ NXT-G
 Napier88
 Neko
 Nemerle
+Nesl
 Net.Data
 NetLogo
 NetRexx
 NewLISP
 Newspeak
+Newsqueak
 NewtonScript
+Ngl, aNGeL
 Nial
+Nial, Nested Interactive Array Language
 Nice
 Nickle
+Nim (formerly Nimrod)
 Nimrod
+Nit
+Noop
 Not Quite C
 Not Quite C (NQC)
 Not eXactly C
@@ -486,17 +577,23 @@ Not eXactly C (NXC)
 Nu
 OBJ2
 OCaml
+OCaml, Objective Caml
 OPL
+OPL, Open Programming Langage
 OPS5
+OPS5, Official Production System 5
 ORCA/Modula-2
 Oak
 Oberon
+Oberon, named after a moon of Uranus
 Obix
 Object Lisp
 Object Pascal
 Object REXX
 Object Rexx
 ObjectLOGO
+Objective J
+Objective Modula 2
 Objective-C
 Objective-J
 Obliq
@@ -516,20 +613,26 @@ Orwell
 Oxygene
 Oz
 P#
+P-TAC
 PARI/GP
+PBASIC
 PCASTL
 PCF
 PDL
 PEARL
 PHP
+PHP, Personal Home Page Hypertext Processor
 PIKT
 PILOT
+PILOT, Programmed Instruction, Learning, or Teaching
 PL-11
 PL/0
 PL/B
+PL/B, Programming Language for Business, formerly DATABUS
 PL/C
 PL/I
 PL/M
+PL/M, Programming Language for Microcomputers
 PL/P
 PL/SQL
 PL360
@@ -537,6 +640,7 @@ PLANC
 PLEX
 PLEXIL
 POP-11
+POP-2
 POV-Ray
 PPL
 PROIV
@@ -547,6 +651,7 @@ ParaSail
 Paradox
 Parrot
 Pascal
+Pascal, after the name of a French mathematician
 Pawn
 PeopleCode
 Perl
@@ -554,6 +659,7 @@ Phrogram
 Pico
 Picolisp
 Pict
+Picture
 Pike
 Pipelines
 Pizza
@@ -575,19 +681,24 @@ Processing.js
 Prograph
 Prolog
 Promela
+Proteus, PROcessor for TExt Easy to USe
 ProvideX
 Puppet
 Pure
 Pure Data
+Purescript
 Python
 Q
 Q (equational)
 Q (from Kx Systems)
+QML, Qt Modeling Language
 QPL
+QPL, Quantum Programming Languages
 Qalb
 Qi
 QtScript
 QuakeC
+Quorum
 R
 R++
 RAPID
@@ -595,29 +706,40 @@ REALBasic
 REBOL
 REFAL
 REXX
+RLaB
 ROOP
 RPG
 RPG (OS/400)
+RPG, Report Program Generator
 RPL
+RPL, ROM-based Procedural Language
 RSL
+RSL, Robot Scripting Language
 RTL/2
 Racket
 Rapira
 Ratfiv
 Ratfor
+Ratfor, Rational Fortran
+Rebol, Relative Expression Based Object Language
 Red
 Redcode
+Refal, REcursive Functions Algorithmic Language
 Reia
 Revolution
+Rexx, REstructured eXtended eXecutor
 Rlab
 RobotC
 Ruby
 RuneScript
 Rust
+Rust, red hair in old English
 S
 S-Lang
 S-PLUS
+S-algol, St Andrews Algol
 S/SL
+S/SL, Syntax/Semantic Language
 S2
 S3
 SA-C
@@ -626,8 +748,10 @@ SALSA
 SAM76
 SAS
 SASL
+SASL, St
 SBL
 SETL
+SETL, SET Language
 SIGNAL
 SIMPOL
 SIMSCRIPT
@@ -637,17 +761,22 @@ SMALL
 SML
 SNOBOL
 SNOBOL(SPITBOL)
+SOAP, Symbolic Optimal Assembly Program
 SOL
 SP/k
 SPARK
 SPIN
+SPL, Shakespeare Programming Language
 SPS
 SPSS
 SQR
 SR
+SR, Synchronizing Resources
 SYMPL
 SabreTalk
+Sail
 Sather
+Sather, after the Jane Sather tower
 Saurus
 Sawzall
 Scala
@@ -655,7 +784,9 @@ Scheme
 Scilab
 Scratch
 Script.NET
+Scriptol
 Sed
+Sed, Stream EDitor
 Seed7
 Self
 SenseTalk
@@ -663,15 +794,18 @@ SequenceL
 Shakespeare
 Shell
 Shift Script
+Short Code
 SiMPLE
 Simula
 Simulink
 Slate
+Slip, Symmetric LIst Processor
 Small Basic
 Smalltalk
 Smarty
 Snap!
 Snowball
+Snowball, imitates SNOBOL
 Span
 Squeak
 Squirrel
@@ -685,41 +819,57 @@ Subtext
 Suneido
 SuperCollider
 SuperTalk
+SuperX++
 Swift
 Swift (Apple)
 Swift (parallel scripting language)
 SyncCharts
+Synergy/DBL
 SystemVerilog
 T
 T-SQL
 TACL
+TACL,Tandem Advanced Command Language
 TACPOL
+TACPOL, Tactical Procedure Oriented Language
 TADS
+TADS, Text Adventure Development System
 TAL
+TAL, Transaction Application Language
 TECO
 TELCOMP
 TEX
+TI-BASIC
 TIE
 TMG, compiler-compiler
 TOM
 TPU
+TRAC, Text Reckoning And Compiling
 TTCN
+TTCN-3, Testing and Test Control Notation
 TTM
 TUTOR
 TXL
+TXL, Turing eXtender Language
 Tcl
+Tcl, Tool Command Language
 TeX
 Tea
+Tempo
 Tex
 Timber
+Titanium
 Tom
 Topspeed
 Trac
 Transact-SQL
+Transcript
 Turbo C++
 Turing
 TypeScript
 UCSD Pascal
+UML, Unified Modeling Language
+UNCOL, Universal Computer Oriented Language
 UNITY
 Ubercode
 Umple
@@ -727,14 +877,19 @@ Unicon
 Uniface
 Unix shell
 UnrealScript
+UrbiScript
 VBA
 VBScript
+VBScript, Visual Basic Script Edition
+VDS
 VHDL
+VHDL, VHSIC Hardware Description Language
 VSXu
 Vala
 Vala/Genie
 Verilog
 Verilog HDL
+Verilog HDL, Verilog Hardware Description Language
 VimL
 Visual Basic
 Visual Basic .NET
@@ -744,17 +899,22 @@ Visual Fortran
 Visual FoxPro
 Visual J#
 Visual J++
+Visual LISP
 Visual Objects
 Visual Prolog
 Vvvv
 WATFIV, WATFOR
+WLanguage
+Water
 WebDNA
 WebQL
 Whitespace
 Winbatch
 Windows PowerShell
+Wiring
 Wolfram
 Wyvern
+Wyvern, name of mythical creature
 X#
 X++
 X10
@@ -763,7 +923,9 @@ XBase++
 XC
 XC (exploits XMOS architecture)
 XL
+XL, eXtensible Language
 XOTcl
+XOTcl, Extended Object Tcl
 XPL
 XPL0
 XQuery
@@ -772,12 +934,16 @@ XSLT
 Xen
 Xojo
 Xtend
+YAFL
 YQL
 Yorick
+Z Notation
 Z notation
 Z shell
 ZOPL
+ZOPL, Version Z, Our Programming Language
 ZPL
+ZPL, Z-level Programming Language
 Zeno
 bash
 bc
@@ -788,12 +954,14 @@ csh
 dBase
 dc
 eC
+elastiC
 es
 haXe
 ksh
 make
 nesC
 o:XML
+o:Xml
 occam
 occam-π
 ooc
@@ -805,7 +973,3 @@ thinBasic
 xBase
 xHarbour
 yacc
-YAFL
-WLanguage
-Wiring
-Water
