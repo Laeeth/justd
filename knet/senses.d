@@ -123,7 +123,7 @@ enum Sense:ubyte
     politicalParty,
     company,
 
-    geographicalRegion,                     // geographical region
+    geographicalRegion,
     island,
     city,                       /// Skänninge
     county,                     /// Cornwall
@@ -927,7 +927,7 @@ import std.algorithm.comparison: among;
     bool isLocation(Sense sense)
     {
         with (Sense) return sense.among!(nameLocation,
-                                         region,
+                                         geographicalRegion,
                                          island,
                                          city,
                                          county,
@@ -1230,7 +1230,7 @@ bool specializes(Sense special,
                                       special.isName)); // TODO functionize
 
         case nameLocation: return special.isLocation;
-        case region: return special.isRegion;
+        case geographicalRegion: return special.isRegion;
 
         case food: return special.isFood;
         case quantifier: return (special.isQuantifier &&
