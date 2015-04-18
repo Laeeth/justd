@@ -3,7 +3,7 @@ module knet.association;
 import std.typecons: Tuple;
 
 import knet.base;
-import knet.filtering: StepFilter;
+import knet.filtering: NodeFilter, StepFilter;
 import knet.traversal: WalkStrategy;
 
 alias Block = size_t;
@@ -76,7 +76,7 @@ auto contextsOf(WalkStrategy strategy,
                 Exprs)(Graph gr,
                        Exprs exprs,
                        const StepFilter walkerFilter = StepFilter.init,
-                       Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a target filter
+                       const NodeFilter contextFilter = NodeFilter.init,
                        size_t maxContextCount = 0,
                        uint durationInMsecs = 1000) if (isIterable!Exprs &&
                                                         isSomeString!(ElementType!Exprs))
@@ -89,7 +89,7 @@ auto contextsOf(WalkStrategy strategy,
     auto nds = lemmas.map!(lemma => gr.db.ixes.ndByLemma[lemma]);
     // writeln("nds: ", nds);
     return gr.contextsOf!(strategy)(nds, walkerFilter,
-                                    contextLangs, contextSenses,
+                                    contextFilter,
                                     maxContextCount, durationInMsecs);
 }
 
@@ -116,9 +116,7 @@ auto contextsOf(WalkStrategy strategy,
                 Nds)(Graph gr,
                      Nds nds,
                      const StepFilter walkerFilter = StepFilter.init,
-
-                     Lang[] contextLangs = [], Sense[] contextSenses = [], // TODO group these into a contextFilter
-
+                     const NodeFilter contextFilter = NodeFilter.init,
                      size_t maxContextCount = 0,
                      uint durationInMsecs = 1000,
                      uint intervalInMsecs = 0) if (isIterable!Nds &&
@@ -223,8 +221,8 @@ body
     // filter contexts on language and sense
     import knet.filtering: matches;
     auto filteredHitsByNd = hitsByNd.byKeyValue
-                                    .filter!(ndHit => ((contextLangs.matches(gr[ndHit.key].lemma.lang)) &&
-                                                       (contextSenses.matches(gr[ndHit.key].lemma.sense))))
+                                    .filter!(ndHit => ((contextFilter.langs.matches(gr[ndHit.key].lemma.lang)) &&
+                                                       (contextFilter.senses.matches(gr[ndHit.key].lemma.sense))))
                                     .array;
 
     // sort contexts

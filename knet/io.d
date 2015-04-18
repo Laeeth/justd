@@ -590,18 +590,17 @@ bool query(Graph gr,
         if (!arg.empty)
         {
             import knet.association: contextsOf, Hits;
-            import knet.filtering: StepFilter;
+            import knet.filtering: NodeFilter, StepFilter;
             import knet.traversal: WalkStrategy;
             import std.algorithm: uniq;
             auto arg_splitter = arg.splitter.uniq;
             if (arg_splitter.count >= 2)
             {
-                const walkerFilter = StepFilter();
                 writeln("> Contexts of senses(s) ", userSense, " in language(s) ", userLang, ":");
                 const result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(arg_splitter,
-                                                                                walkerFilter,
-                                                                                userLang == Lang.unknown ? [] : [userLang],
-                                                                                userSense == Sense.unknown ? [] : [userSense],
+                                                                                StepFilter(),
+                                                                                NodeFilter(userLang != Lang.unknown ? [userLang] : [],
+                                                                                           userSense != Sense.unknown ? [userSense] : []),
                                                                                 userCount, 2000);
                 const contexts = result[0];
                 foreach (const context; contexts)

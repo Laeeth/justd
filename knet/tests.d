@@ -232,8 +232,9 @@ void testContextOf()
     auto aLns = gr.connect1toM(a, role, bs, origin, 0.5, true);
     auto dLns = gr.connect1toM(c, role, bs, origin, 0.6, true);
 
+    import knet.filtering: NodeFilter;
     import knet.association: contextsOf;
-    auto result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, StepFilter.init, [], [], 1);
+    auto result = gr.contextsOf!(WalkStrategy.dijkstraMinDistance)(bs, StepFilter.init, NodeFilter.init, 1);
     auto contexts = result[0];
     auto walkers = result[1];
 
