@@ -203,19 +203,19 @@ body
             if (visits[wix]) // if walker wix visited nd
             {
                 const visit = walkers[wix].visitByNd[nd];
-                const goodnessSum = visit[0];
+                const goodness = visit[0];
                 const Nd prevNd = visit[1]; // TODO use to reconstruct path
                 // store that wix has visited nd
                 if (auto existingHit = nd in hitsByNd)
                 {
-                    (*existingHit).goodnessSum += goodnessSum;
+                    (*existingHit).goodnessSum += goodness;
                     (*existingHit).visits[wix] = true;
                 }
                 else
                 {
                     WalkerVisits visits_;
                     visits_[wix] = true;
-                    hitsByNd[nd] = Hits(visits_, goodnessSum);
+                    hitsByNd[nd] = Hits(visits_, goodness);
                 }
             }
         }
