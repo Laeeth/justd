@@ -156,12 +156,11 @@ body
             if (!walker.empty)
             {
                 const visitedNd = walker.moveFront; // visit new node
-                if (contextFilter.matches(gr[visitedNd]))
+                if (contextFilter.matches(gr[visitedNd])) // only check user queried nodes
                 {
                     if (auto visits = visitedNd in walkerVisitsByNd)
                     {
                         (*visits)[wix] = true; // $(D walker) now (among at least one other) have visited $(D visitedNd)
-                        // TODO if ((*visits).allOneBetween(0, count)) { /* do something? */ }
                     }
                     else
                     {
@@ -180,15 +179,7 @@ body
         }
     }
 
-    StopWatch sw;
-    sw.start();
-    pln("Combining walker results...");
-
-    // if (!walkerVisitsByNd.byPair.empty)
-    // {
-    //     pragma(msg, typeof(walkerVisitsByNd.byPair.front));
-    //     pragma(msg, typeof(walkerVisitsByNd.byKeyValue.front));
-    // }
+    StopWatch sw; sw.start(); sw.stop(); pln("Combining walker results took ", sw.peek.msecs);
 
     // combine walker results
     Hits[Nd] hitsByNd;       // weights by node
@@ -233,9 +224,6 @@ body
 
     // exclude input (query) nodes $(D nds)
     E[] pureContexts = contexts.filter!(context => !nds.canFind(context.key)).array;
-
-    sw.stop();
-    pln("Combining walker results took ", sw.peek.msecs);
 
     // print walker statistics
     foreach (ix, ref walker; walkers)
