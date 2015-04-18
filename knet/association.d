@@ -221,8 +221,7 @@ body
     // filter contexts on language and sense
     import knet.filtering: matches;
     auto filteredHitsByNd = hitsByNd.byKeyValue
-                                    .filter!(ndHit => ((contextFilter.langs.matches(gr[ndHit.key].lemma.lang)) &&
-                                                       (contextFilter.senses.matches(gr[ndHit.key].lemma.sense))))
+                                    .filter!(ndHit => ((contextFilter.matches(gr[ndHit.key]))))
                                     .array;
 
     // sort contexts
