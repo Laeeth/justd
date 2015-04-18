@@ -104,7 +104,7 @@ nounSingular:local arm
 nounSingular:local group
 adjective:lunar
 nounSingular:magnitude
-plnet:Mars
+planet:Mars
 nounUncountable:mass
 planet:Mercury
 nounSingular:meteor
