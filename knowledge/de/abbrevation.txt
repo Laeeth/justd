@@ -3,3 +3,325 @@ nounAbbrevation:SiPonoun:Sicherheitspolizei
 nounAbbrevation:SDnoun:Sicherheitsdienst
 nounAbbrevation:SAnoun:Sturmabteilung
 nounAbbrevation:SSnoun:Schutzstaffel
+
+nounSingular:AAAuswärtiges Amt
+a.a.O.am angegebenen Ort
+nounSingular:Abb.Abbildung
+nounSingular:Abf.Abfahrt
+nounSingular:Abk.Abkürzung
+nounSingular:AboAbonnement
+nounSingular:Abs.Absender
+nounSingular:Abt.Abteilung
+adjective:abzgl.abzüglich
+a.D.an der Donau
+a.D.außer Dienst
+nounSingular:ADACAllgemeiner Deutscher Automobil Club
+nounSingular:Adr.Adresse
+nounSingular:AGAktiengesellschaft
+nounPlural:AGBdie Allgemeinen Geschäftsbedingungen
+nounSingular:AKWAtomkraftwerk
+a.M.am Main
+adjective:am.amerikanisch
+adjective:amtl.amtlich
+nounSingular:Anh.Anhang
+nounSingular:Ank.Ankunft
+nounSingular:Anl.Anlage
+nounSingular:Anm.Anmerkung
+nounSingular:AOKAllgemeine Ortskrankenkasse
+nounSingular:ARDArbeitsgemeinschaft der öffentlich-rechtlichen Rundfunkanstalten der Bundesrepublik Deutschland
+a.Rh.am Rhein
+ASWaußersinnliche Wahrnehmung
+nounSingular:A.T.Altes Testament
+nounSingular:Aufl.Auflage
+nounSingular:AWAntwort
+preposition:b.bei
+Bd.Band
+adjective:beil.beiliegend
+adjective:bes.besonders
+nounSingular:Best.-Nr.Bestellnummer
+nounSingular:Betr.Betreff
+nounSingular:Bez.Bezeichnung
+nounSingular:BGBBürgerliches Gesetzbuch
+nounSingular:BGHBundesgerichtshof
+nounSingular:BHBüstenhalter
+nounSingular:Bhf.Bahnhof
+nounSingular:BIPBruttoinlandsprodukt
+nounSingular:BKABundeskriminalamt
+nounSingular:BLZBankleitzahl
+b.w.bitte wenden
+adjective:bzgl.bezüglich
+bzw.beziehungsweise
+ca.circazirka
+name:C&AClemens & August
+organisation:CDUChristlich-Demokratische Union
+nounSingular:Chr.Christus
+nounSingular:CJKCreutzfeld-Jakob-Krankheit
+organisation:CSUChristlich-Soziale Union
+organisation:CVJFChristlicher Verein Junger Frauen
+organisation:CVJMChristlicher Verein Junger Menschen
+d.Ä.der Ältere
+organisation:DAADDeutscher Akademischer Austauschdienst
+organisation:DaFDeutsch als Fremdsprache
+DAGDeutsche Angestellten-Gewerkschaft
+nounSingular:DBDeutsche Bahn
+nounSingular:DDRDeutsche Demokratische Republik
+organisation:DFBDeutscher Fußballbund
+organisation:DGBDeutscher Gewerkschaftsbund
+dgl.dergleichendesgleichen
+d.h.das heißt
+weekday:DiDienstag
+organisation:DIHKDeutsche Industrie- und Handelskammer
+organisation:DINDeutsches Institut für Normung
+nounSingular:Dipl.-Ing.Diplom-Ingenieur
+nounSingular:Dipl.-Kfm.Diplom-Kaufmann
+nounSingular:Dir.Direktion
+nounSingular:Dir.Direktor
+nounSingular:Dir.Dirigent
+nounSingular:d.J.der Jüngere
+organisation:DJHDeutsches Jugendherbergswerk
+currency:DMDeutsche Mark
+weekday:DoDonnerstag
+organisation:dpaDeutsche Presse-Agentur
+organisation:DPDDeutscher Paketdienst
+organisation:DRKDeutsches Rotes Kreuz
+nounSingular:Dr. med.Doktor der Medizin
+nounSingular:Dr. phil.Doktor der Philosophie
+nounSingular:dt.Deutsch
+nounSingular:Dtzd.Dutzend
+nounSingular:D-ZugDirekt-Zug
+nounSingular:EDVelektronische Datenverarbeitung
+nounSingular:EGEuropäische Gemeinschaft
+e.h.ehrenhalber
+ehem.ehemals/ehemalig
+eigtl.eigentlich
+adjective:einschl.einschließlich
+nounSingular:EKEisernes Kreuz
+organisation:EKDEvangelische Kirche in Deutschland
+nounSingular:ELEsslöffel
+E-Musikerhobene Literatur
+adjective:entspr.entsprechend
+adjective:erb.erbaut
+adjective:erw.erweitert
+nounSingular:Erw.Erwachsene
+adjective:ev.evangelisch
+e.V.eingetragener Verein
+evtl.eventuell
+e.Wz.eingetragenes Warenzeichen
+exkl.exklusive
+EZBEuropäische Zentralbank
+f.und folgende(r, s)
+nounSingular:Fa.Firma
+nounSingular:Fam.Familie
+FAZFrankfurter Allgemeine Zeitung
+nounSingular:FCFußball Club
+FCKWFluor-Chlor-
+Kohlenwasserstofffluorohydrocarbons
+FDPFreie Demokratische Partei
+F.f.Fortsetzung folgt
+Ffm.Frankfurt am Main
+FHFachhochschule
+FKKFreikörperkultur
+Forts. f.Fortsetzung folgt
+Fr.Frau
+FrFreitag
+FRAFrankfurter Flughafen
+Frl.Fräulein
+frz.französisch
+FSKFreiwillige Selbstkontrolle der Filmwirtschaft
+FUFreie Universität Berlin
+gGramm
+geb.geboren, geborene
+Gebr.Gebrüder
+gedr.gedruckt
+gegr.gegründet
+gek.gekürzt
+Ges.Gesellschaft
+gesch.geschieden
+gest.gestorben
+GEWGewerkschaft Erziehung und Wissenschaft
+gez.gezeichnet
+GEZDie Gebühreneinzugszentrale der öffentlich-rechtlichen Rundfunkanstalten in der Bundesrepublik Deutschland
+ggf./ggfs.gegebenfalls
+GmbHGesellschaft mit beschränkter Haftung
+GUSGemeinschaft Unabhängiger Staaten
+haHektar
+Hbf.Hauptbahnhof
+HHHansestadt Hamburg
+HNOHals Nase Ohren
+H+MHennes & Mauritz
+HPHalbpension
+hpts.hauptsächlich
+Hptst.Hauptstadt
+Hr./Hrn.Herr/Herrn
+Hrsg.Herausgeber
+HTBLuVAHöhere Technische Bundes-Lehr- und -Versuchsanstalt
+HTLHöhere Technische Lehranstalt
+i.A.im Auftrag
+i.b.im besonderen
+i.B.im Breisgau
+ICIntercityzug
+ICEIntercity-Expresszug
+i.H.im Hause
+IHKIndustrie- und Handelskammer
+i.J.im Jahre
+IMinoffizieller Mitarbeiter (der Stasi)
+Ing.Ingnieur
+Inh.Inhaber
+Inh.Inhalt
+inkl.inklusive
+IOKInternationales Olympisches Komitee
+i.R.im Ruhestand
+i.V.in Vertretung
+i.V.in Vorbereitung
+i.V.im Vorjahr
+IWFInternationale Währungsfonds
+jew.jeweils
+Jh.Jahrhundert
+JHJugendherberge
+jhrl.jährlich
+KaDeWeKaufhaus des Westens
+Ka-LeutKapitänleutnant
+Kap.Kapitel
+kath.katholisch
+Kfm.Kaufmann
+kfm.kaufmännisch
+KfzKraftfahrzeug
+KGKommanditgesellschaft
+kgl.königlich
+KKWKernkraftwerk
+Kl.Klasse
+KMHKilometer pro Stunde
+k.o./K.o.knocked out/knockout
+KripoKriminalpolizei
+k.u.k.kaiserlich und königlich
+Öster.-Ungarnimperial and royal (Austro-Hungarian)
+KZKonzentrationslager
+l.links
+lLiter
+led.ledig
+LKW/LkwLastkraftwagen
+LokLokomotive
+MAMittlealter
+MADMilitärischer Abschirmdienst
+MdBMitglied des Bundestages
+MdLMitglied des Landtages
+m.E.meines Erachtens
+MEZMitteleuropäische Zeit
+MfGMit freundlichen Grüßen
+MiMittwoch
+Mio.Million(en)
+MoMontag
+möbl.möbliert
+MPMaschinenpistole
+MPMilitärpolizei
+Mrd.Milliarde(n)
+Msp.Messerspitze
+MTAmedizinische(r) technische(r) Assistent(in)
+mtl.monatlich
+m.W.meines Wissens
+MWSt.Mehrwertsteuer
+NNord(en)
+näml.nämlich
+n.Chr.nach Christus
+NNdas Normalnull
+NNONordnordost
+NNWNordnordwest
+NONordosten
+NOKNationales Olympisches Komitee
+NPDNationaldemokratische Partei Deutschlands
+Nr.Nummer
+NRWNordrhein-Westfalen
+NSNachschrift
+n.u.Z.nach unserer Zeitrechnung
+OOsten
+o.oben
+o.A.*ohne Altersbeschränkung
+OBOberbürgermeister
+o.B.ohne Befund
+Obb.Oberbayern
+ÖBBÖsterreichische Bundesbahnen
+od.oder
+OF*Originalfassung
+o.g.oben genannt
+OHGoffene Handelsgesellschaft
+OmU*Originalfassung mit Untertiteln
+ÖPNVöffentlicher Personennahverkehr
+ORFOesterreichischer Rundfunk
+österr.österreichisch
+OSOOstsüdost
+O-Ton*Originalton
+p.Adr.per Adresse
+politicalParty:PDSdie Partei des Demokratischen Sozialismus
+Pfd.Pfund
+Pkw/PKWPersonenkraftwagen
+PHpädagogische Hochschule
+Pl.Platz
+PLZPostleitzahl
+PSPferdestärke
+qkmQuadratkilometer
+qmQuadratmeter
+r.rechts
+RARechtsanwalt
+RAFRote Armee Fraktion
+RBBRundfunk Berlin-Brandenburg
+Reg.-Bez.Regierungbezirk
+R-GesprächRetour-Gespräch
+RIASRundfunk im amer. Sektor
+r.k., r.-k.römisch-katholisch
+röm.römisch
+röm.-kath.römisch-katholisch
+RTLRTL
+SSüden
+SS-Bahn
+S.Seite
+s.sich
+s.a.siehe auch
+Sa.Samstag
+SBSelbstbedienung
+SBBSchweizerische Bundesbahnen
+schles.schlesisch
+schwäb.schwäbisch
+schweiz.schweizerisch
+politicalParty:SEDSozialistiche Einheitspartei
+s.o.siehe oben
+So.Sonntag
+sog.so genannt
+SRSaarlädischer Rundfunk
+SSOSüdsüdost
+SSVSommerschlussverkauf
+SSWSüdsüdwest
+St.Sankt
+St.Stück
+StGBStrafgesetzbuch
+Str.Straße
+StR.Studienrat
+StVOStraßenverkehrsordnung
+s.u.siehe unten
+südd.süddeutsch
+SWSüdwest(en)
+SWRSüdwestrundfunk
+tägl.täglich
+Tb/TbcTuberkulose
+THTechnische Hochschule
+TUTechnische Universität
+TÜVTechnische Überwachungsverein
+politicalParty:AfWAllianz freier Wähler
+politicalParty:CDUChristlich-Demokratische Union
+politicalParty:CSUChristlich-Soziale Union
+politicalParty:DKPDeutsche Kommunistische Partei
+politicalParty:DVUDeutsche Volksunion
+politicalParty:EVPEvangelische Volkspartei der Schweiz
+politicalParty:FDPFreie Demokratische Partei
+politicalParty:FPÖFreiheitliche Partei Österreichs
+politicalParty:KPÖKommunistische Partei Österreichs
+politicalParty:KVPKatholische Volkspartei
+politicalParty:LIFLiberales Forum
+politicalParty:NPDNationaldemokratische Partei Deutschlands
+politicalParty:ÖVPÖsterreichische Volkspartei
+politicalParty:PDS*die Partei des Demokratischen Sozialismus
+politicalParty:REPdie REPublikaner
+politicalParty:SDSchweizer Demokraten
+politicalParty:SLPSozialistische LinksPartei
+politicalParty:SPDSozialdemokratische Partei Deutschlands
+politicalParty:SPÖSozialdemokratische Partei Österreichs
+politicalParty:WASG*Wahlalternative Arbeit und Soziale Gerechtigkeit

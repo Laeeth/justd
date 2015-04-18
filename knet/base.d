@@ -316,6 +316,7 @@ struct Lemma
                 }
                 catch (ConvException e)
                 {
+                    debug writeln(`warning: Can't decode Sense `, split[0], ` of "`, split[2], `"`);
                     /* ok to not be able to downcase */
                 }
             }

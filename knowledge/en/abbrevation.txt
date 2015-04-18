@@ -133,19 +133,21 @@ noun:mgdmillion gallons per day
 
 nounSingular:mgalmilligal
 
-nounSingular:mgmilligram
-nounSingular:mGmilligauss
-nounSingular:MGmachine gunmajor generalmilitary government
+nounSingular:mgmilligram
+nounSingular:mGmilligauss
+nounSingular:MGmachine gunmajor generalmilitary government
 
-verbInfinitive:mfrmanufacture
-nounSingular:mfrmanufacturer
+verbInfinitive:mfrmanufacture
+nounSingular:mfrmanufacturer
 
-nounxSingular:MFNmost favored nation
-nounxSingular:MFHmaster of foxhounds
+nounxSingular:MFNmost favored nation
+nounxSingular:MFHmaster of foxhounds
 
-nounSingular:mfgmanufacturing
-adjective:mfdmanufactured
+nounSingular:mfgmanufacturing
+adjective:mfdmanufactured
 
-nounSingular:MFAmaster of fine arts
-nounSingular:mfmezzo forte
-nounSingular:MFmedium frequencymicrofiche
+nounSingular:MFAmaster of fine arts
+nounSingular:mfmezzo forte
+nounSingular:MFmedium frequencymicrofiche
+
+name:MercedesMercedes-Benz

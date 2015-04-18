@@ -81,6 +81,8 @@ enum Sense:ubyte
     substance,
     metal,
 
+    currency,
+
     quantifier,
     quantifierOfSingularNoun,
     quantifierOfPluralNoun,
@@ -118,6 +120,7 @@ enum Sense:ubyte
     namePerson,                 /// John
     nameAnimal,                 /// Lajka
     organisation,               /// CIA
+    politicalParty,
 
     region,
     island,
@@ -419,6 +422,8 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case material: return `material`;
         case metal: return `metal`;
 
+        case currency: return `currency`;
+
         case quantifier: return `quantifier`;
         case quantifierOfSingularNoun: return `quantifier of singular noun`;
         case quantifierOfPluralNoun: return `quantifier of plural noun`;
@@ -453,6 +458,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case namePerson: return `person name`;
         case nameAnimal: return `animal name`;
         case organisation: return `organisation name`;
+        case politicalParty: return `political party`;
         case region: return `region`;
         case island: return `island`;
         case city: return `city`;
@@ -739,10 +745,11 @@ import std.algorithm.comparison: among;
     }
     bool isNounAbstract(Sense sense)
     {
-        with (Sense) return (sense.isNumeric ||
-                             sense.isLanguage ||
-                             sense.isTimePeriod ||
-                             sense.isInformation);
+        with (Sense) return ((sense.isNumeric ||
+                              sense.isLanguage ||
+                              sense.isTimePeriod ||
+                              sense.isInformation) ||
+                             sense.among!(currency));
     }
     bool isInformation(Sense sense)
     {
@@ -898,6 +905,7 @@ import std.algorithm.comparison: among;
                                          nameLocation,
                                          namePerson,
                                          organisation,
+                                         politicalParty,
                                          island,
                                          city,
                                          county,
@@ -908,6 +916,11 @@ import std.algorithm.comparison: among;
                                          newspaper) != 0;
     }
     alias isProperNoun = isName;
+    bool isOrganisation(Sense sense)
+    {
+        with (Sense) return sense.among!(organisation,
+                                         politicalParty) != 0;
+    }
     bool isLocation(Sense sense)
     {
         with (Sense) return sense.among!(nameLocation,
@@ -1224,6 +1237,7 @@ bool specializes(Sense special,
         case numeric: return special.isNumeric;
 
         case name: return special.isName;
+        case organisation: return special.isOrganisation;
         case abbrevation: return special.isAbbrevation;
         case acronym: return special.isAcronym;
 
