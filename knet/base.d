@@ -771,6 +771,26 @@ class Graph
                            origin, weight);
     }
 
+    /** Learn English $(D words) related to attribute between different languages.
+     */
+    Lns learnMto1MultiLingual(R, S)(Lang lang,
+                                    R words,
+                                    Role role,
+                                    S attribute,
+                                    Sense wordSense = Sense.unknown,
+                                    Lang attributeLang = Lang.unknown,
+                                    Sense attributeSense = Sense.noun,
+                                    NWeight weight = 0.5,
+                                    Origin origin = Origin.manual) if (isInputRange!R &&
+                                                           (isSomeString!(ElementType!R)) &&
+                                                           isSomeString!S)
+    {
+        return connectMto1(add(words, lang, wordSense, origin),
+                           role,
+                           add(attribute, attributeLang, attributeSense, origin),
+                           origin, weight);
+    }
+
     Lns learnMto1Maybe(S)(Lang lang,
                           string wordsPath,
                           Role role,

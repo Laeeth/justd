@@ -225,7 +225,9 @@ body
     // exclude input (query) nodes $(D nds)
     E[] pureContexts = contexts.filter!(context => !nds.canFind(context.key)).array;
 
-    // print walker statistics
+    // print walker statistics.
+    // TODO move to caller in io.d in feedback given at each main iteration when
+    // this is turned into a range
     foreach (ix, ref walker; walkers)
     {
         pln(" walker#", ix, ":",
