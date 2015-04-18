@@ -7,12 +7,14 @@ import knet.base;
 
 bool matches(const Lang[] langs, Lang lang)
 {
-    return langs.empty || langs.canFind(lang);
+    return (langs.empty ||
+            langs.canFind(lang));
 }
 
 bool matches(const Origin[] origins, Origin origin)
 {
-    return origins.empty || origins.canFind(origin);
+    return (origins.empty ||
+            origins.canFind(origin));
 }
 
 bool matches(const Role[] roles, Role role)
