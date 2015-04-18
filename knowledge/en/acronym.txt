@@ -22,3 +22,15 @@ SSGSSG Standard Solutions Group
 CSAConfederate States of America
 ETCElectronic Telecommunications Committee
 OEISOn-Line Encyclopedia of Integer Sequences
+
+languageProgramming:VBScriptVisual Basic Script Edition
+languageProgramming:HDLHardware Description Language
+languageProgramming:VDSVisual DialogScript
+languageProgramming:VHDLVHSIC Hardware Description Language
+
+noun:VHSICvery high speed integrated circuit
+
+noun:CMOScomplementary metal–oxide–semiconductor
+noun:NMOSN-type metal-oxide-semiconductor
+
+noun:MOSFETMOS-FETmetal–oxide–semiconductor field-effect transistor
