@@ -160,16 +160,12 @@ body
                 {
                     if (auto visits = visitedNd in walkerVisitsByNd)
                     {
-                        // log that $(D walker) now (among at least one other) have visited visitedNd
-                        (*visits)[wix] = true;
+                        (*visits)[wix] = true; // $(D walker) now (among at least one other) have visited $(D visitedNd)
                         // TODO if ((*visits).allOneBetween(0, count)) { /* do something? */ }
                     }
                     else
                     {
-                        // log that $(D walker) is (the first) to visit visitedNd
-                        WalkerVisits visits;
-                        visits[wix] = true;
-                        walkerVisitsByNd[visitedNd] = visits;
+                        walkerVisitsByNd[visitedNd] = WalkerVisits().put(wix, true); // $(D walker) is (the first) to visit $(D visitedNd)
                     }
                 }
             }
@@ -235,9 +231,8 @@ body
         hitsByNd.byKeyValue.topNCopy!("a.value > b.value")(contexts, SortOutput.yes); // largest connectiveness first
     }
 
-    E[] pureContexts = contexts.filter!(context =>
-                                        !nds.canFind(context.key))
-                               .array; // exclude input nodes $(D nds)
+    // exclude input (query) nodes $(D nds)
+    E[] pureContexts = contexts.filter!(context => !nds.canFind(context.key)).array;
 
     sw.stop();
     pln("Combining walker results took ", sw.peek.msecs);
