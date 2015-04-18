@@ -39,9 +39,9 @@ struct BitSet(size_t len, Block = size_t)
     /**
      * Gets the $(D i)'th bit in the $(D BitSet).
      */
-    bool opIndex(size_t i) const @trusted pure nothrow in {
-        assert(i < len);
-    } body {
+    bool opIndex(size_t i) const @trusted pure nothrow in { assert(i < len); }
+    body
+    {
         // Andrei: review for @@@64-bit@@@
         return cast(bool) bt(ptr, i);
     }
@@ -50,16 +50,30 @@ struct BitSet(size_t len, Block = size_t)
      * Gets the $(D i)'th bit in the $(D BitSet).
      * Statically verifies that i is < BitSet length.
      */
-    bool at(size_t i)() const @trusted pure nothrow in {
-        static assert(i < len);
-    } body {
+    bool at(size_t i)() const @trusted pure nothrow in { static assert(i < len); }
+    body
+    {
         return cast(bool) bt(ptr, i);
     }
 
+    /**
+     * Puts the $(D i)'th bit in the $(D BitSet) to $(D b).
+     */
+    auto put()(size_t i, bool b) @trusted pure nothrow in { assert(i < len); }
+    body
+    {
+        this[i] = b;
+        return this;
+    }
+
     unittest {
-        BitSet!2 bs = [0, 1];
+        BitSet!4 bs = [0, 1, 0, 0];
+        bs.put(3, true);
+
         assert(bs.at!0 == false);
         assert(bs.at!1 == true);
+        assert(bs.at!2 == false);
+        assert(bs.at!3 == true);
         // Note: This fails during compile-time: assert(bs.at!2 == false);
     }
 
