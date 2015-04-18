@@ -59,7 +59,7 @@ struct BitSet(size_t len, Block = size_t)
     /**
      * Puts the $(D i)'th bit in the $(D BitSet) to $(D b).
      */
-    auto put()(size_t i, bool b) @trusted pure nothrow in { assert(i < len); }
+    auto ref put()(size_t i, bool b) @trusted pure nothrow in { assert(i < len); }
     body
     {
         this[i] = b;
