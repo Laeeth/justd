@@ -734,6 +734,7 @@ VSXu
 Vala
 Vala/Genie
 Verilog
+Verilog HDL
 VimL
 Visual Basic
 Visual Basic .NET
@@ -804,3 +805,7 @@ thinBasic
 xBase
 xHarbour
 yacc
+YAFL
+WLanguage
+Wiring
+Water
