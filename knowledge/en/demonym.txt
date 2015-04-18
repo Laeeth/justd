@@ -197,7 +197,7 @@ country:New GuineaNew Guinian
 city:New OrleansNew Orleanian
 state:New South WalesNew South Walesian
 city:Newcastle upon TyneNovocastrian
-region:Northern TerritoryTerritorian
+geographicalRegion:Northern TerritoryTerritorian
 state:OregonOregonian
 city:ParisParisian
 PeterboroughPeterborian
@@ -274,7 +274,7 @@ state:WyomingWyomingite
 city:WenhamWenhamite
 
 city:AmsterdamAmsterdammer
-region:AucklandAucklander
+geographicalRegion:AucklandAucklander
 city:BeijingBeijinger
 city:BelgradeBelgrader
 city:BerlinBerliner
@@ -291,14 +291,14 @@ city:Hong KongHongkongerHong Konger
 country:IcelandIcelanderIcelandic
 city:LeedsLoiner
 city:LeipzigLeipziger
-region:LiechtensteinLiechtensteiner
+geographicalRegion:LiechtensteinLiechtensteiner
 city:LondonLondoner
-region:LorraineLorrainer
+geographicalRegion:LorraineLorrainer
 country:LuxembourgLuxembourger
 state:MichiganMichigander
 city:MontrealMontrealer
 country:NetherlandsNetherlanderDutchmanHollander
-region:New EnglandNew Englander
+geographicalRegion:New EnglandNew Englander
 city:New YorkNew Yorker
 state:New ZealandNew Zealander
 city:PittsburghPittsburgher
@@ -320,10 +320,10 @@ city:WinnipegWinnipegger
 city:YellowknifeYellowknifer
 city:ZurichZuricher
 
-region:Andorraandorrano
+geographicalRegion:Andorraandorrano
 country:Chinachino
 state:El SalvadorsalvadoreñoSalvadoran
-region:PhilippinesFilipino
+geographicalRegion:PhilippinesFilipino
 
 city:Los AngelesAngelenoLos Angeleno
 city:Málagamalagüeño
@@ -483,7 +483,7 @@ city:ValenciaValencian
 city:VilniusVilnian
 
 city:Kingston-upon-HullHullensian
-region:SavoySavoyard
+geographicalRegion:SavoySavoyard
 
 AbruzzoAbruzzese
 AragonAragonese
@@ -495,13 +495,13 @@ city:BernBernese
 country:BhutanBhutanese
 city:BolognaBolognese
 country:BurmaBurmese
-region:CalabriaCalabrese
+geographicalRegion:CalabriaCalabrese
 country:ChinaChinese
 country:CongoCongolese
 city:Da LatDalatese
 state:East TimorEast Timorese
 country:Faroe IslandsFaroese
-region:GabonGabonese
+geographicalRegion:GabonGabonese
 city:GenoaGenovese
 GuangdongCantonese
 CantonCantonese
@@ -531,7 +531,7 @@ SurinameSurinamese
 country:TaiwanTaiwanese
 country:TogoTogolese
 city:TurinTorinese
-region:TyrolTyrolese
+geographicalRegion:TyrolTyrolese
 city:ViennaViennese
 country:VietnamVietnamese
 
@@ -577,10 +577,10 @@ IcelandIcelandicIcelander
 SemiteSemitic
 
 CorfuCorfiot
-region:CyprusCypriot
+geographicalRegion:CyprusCypriot
 PhanarPhanariote
 
-region:MonacoMonégasque
+geographicalRegion:MonacoMonégasque
 MentonMentonasque
 
 GallowayGalwegian
@@ -597,13 +597,13 @@ city:NewportNewportonian
 city:BostonBostonian
 
 Barrow-in-FurnessBarrovian
-region:OamaruOamaruvian
+geographicalRegion:OamaruOamaruvian
 city:OsloOslovian
 country:PeruPeruvian
 city:WarsawVarsovian
 city:WaterlooWaterluvian
 
-region:AlsaceAlsatianAlsatia
+geographicalRegion:AlsaceAlsatianAlsatia
 AshbourneAshburnianEssiburn
 ColchesterColcestrian
 CourlandCouronianCuronia
@@ -616,7 +616,7 @@ city:ManchesterMancunianMancunia
 city:MelbourneMelburnianMelburnia
 city:NaplesNeapolitanNeapolisNapoletanoNeapolitan
 city:NewcastleNovocastrianNovum Castrum
-region:Orkney IslandsOrcadianOrcadia
+geographicalRegion:Orkney IslandsOrcadianOrcadia
 ShropshireSalopianSalopia
 St AlbansVerulamianVerulamium
 city:TripoliTripolitanTripolis
@@ -634,7 +634,7 @@ state:AguascalientesHidrocálido
 BangaloreBangalorean
 BarbadosBajanBarbadian
 city:BirminghamBrummie
-region:BordeauxBordelais
+geographicalRegion:BordeauxBordelais
 country:BotswananounDemonymSingular:Motswana
 country:BotswananounDemonymPlural:Batswana
 BrittanyBreton@fr
@@ -681,14 +681,14 @@ SeychellesSeychellois@fr
 StockportStopfordian
 Tamil NaduTamilian[dubious – discuss]
 The HagueHagenees (people born in the inner city)Hagenaar (people born elsewhere)
-region:TuscanyTuscan
+geographicalRegion:TuscanyTuscan
 TwenteTukker
 Vanuatuni-Vanuatu
 
 country:AfghanistanAfghan
 province:BalochistanBalochi
-region:BashkortostanBashkir
-region:ChechnyaChechen
+geographicalRegion:BashkortostanBashkir
+geographicalRegion:ChechnyaChechen
 country:CroatiaCroatroatia
 country:Czech RepublicCzech
 country:CzechoslovakiaCzechoslovakzechoslovakia
@@ -697,7 +697,7 @@ country:FinlandFinn
 country:FranceFrench
 country:GermanyGerman
 country:GreeceGreek
-region:IngushetiaIngush
+geographicalRegion:IngushetiaIngush
 country:Isle of ManManx
 country:KazakhstanKazakh
 country:KurdistanKurd
@@ -718,9 +718,9 @@ country:TatarstanTatar
 country:ThailandThai
 country:TurkmenistanTurkmen
 country:UzbekistanUzbek
-region:WalesWelsh
-region:WalloniaWalloon
-region:YakutistanYakut
+geographicalRegion:WalesWelsh
+geographicalRegion:WalloniaWalloon
+geographicalRegion:YakutistanYakut
 
 AnnapolisAnnapolitan
 AntioquiaCaldasRisaralda and QuindíoPaisaalthough the correct term for Antioquia citizen is Antioquenian or Antioqueño (Spanish)

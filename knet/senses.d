@@ -121,8 +121,9 @@ enum Sense:ubyte
     nameAnimal,                 /// Lajka
     organisation,               /// CIA
     politicalParty,
+    company,
 
-    region,
+    geographicalRegion,                     // geographical region
     island,
     city,                       /// Skänninge
     county,                     /// Cornwall
@@ -458,8 +459,9 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case namePerson: return `person name`;
         case nameAnimal: return `animal name`;
         case organisation: return `organisation name`;
+        case company: return `company`;
         case politicalParty: return `political party`;
-        case region: return `region`;
+        case geographicalRegion: return `geographical region`;
         case island: return `island`;
         case city: return `city`;
         case county: return `county`;
@@ -905,6 +907,7 @@ import std.algorithm.comparison: among;
                                          nameLocation,
                                          namePerson,
                                          organisation,
+                                         company,
                                          politicalParty,
                                          island,
                                          city,

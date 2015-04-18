@@ -3,7 +3,6 @@ nounAbbrevation:SiPonoun:Sicherheitspolizei
 nounAbbrevation:SDnoun:Sicherheitsdienst
 nounAbbrevation:SAnoun:Sturmabteilung
 nounAbbrevation:SSnoun:Schutzstaffel
-
 nounSingular:AAAuswärtiges Amt
 a.a.O.am angegebenen Ort
 nounSingular:Abb.Abbildung
@@ -148,163 +147,163 @@ haHektar
 Hbf.Hauptbahnhof
 HHHansestadt Hamburg
 HNOHals Nase Ohren
-H+MHennes & Mauritz
-HPHalbpension
+company:H+MHennes & Mauritz
+nounSingular:HPHalbpension
 hpts.hauptsächlich
-Hptst.Hauptstadt
+nounSingular:Hptst.Hauptstadt
 Hr./Hrn.Herr/Herrn
-Hrsg.Herausgeber
-HTBLuVAHöhere Technische Bundes-Lehr- und -Versuchsanstalt
-HTLHöhere Technische Lehranstalt
+nounSingular:Hrsg.Herausgeber
+nounSingular:HTBLuVAHöhere Technische Bundes-Lehr- und -Versuchsanstalt
+nounSingular:HTLHöhere Technische Lehranstalt
 i.A.im Auftrag
 i.b.im besonderen
 i.B.im Breisgau
-ICIntercityzug
-ICEIntercity-Expresszug
+nounSingular:ICIntercityzug
+nounSingular:ICEIntercity-Expresszug
 i.H.im Hause
 IHKIndustrie- und Handelskammer
 i.J.im Jahre
 IMinoffizieller Mitarbeiter (der Stasi)
-Ing.Ingnieur
-Inh.Inhaber
-Inh.Inhalt
+nounSingular:Ing.Ingnieur
+nounSingular:Inh.Inhaber
+nounSingular:Inh.Inhalt
 inkl.inklusive
 IOKInternationales Olympisches Komitee
 i.R.im Ruhestand
 i.V.in Vertretung
 i.V.in Vorbereitung
 i.V.im Vorjahr
-IWFInternationale Währungsfonds
+organisation:IWFInternationale Währungsfonds
 jew.jeweils
-Jh.Jahrhundert
-JHJugendherberge
-jhrl.jährlich
-KaDeWeKaufhaus des Westens
-Ka-LeutKapitänleutnant
-Kap.Kapitel
-kath.katholisch
-Kfm.Kaufmann
-kfm.kaufmännisch
-KfzKraftfahrzeug
+nounSingular:Jh.Jahrhundert
+nounSingular:JHJugendherberge
+adjective:jhrl.jährlich
+nounSingular:KaDeWeKaufhaus des Westens
+nounSingular:Ka-LeutKapitänleutnant
+nounSingular:Kap.Kapitel
+adjective:kath.katholisch
+nounSingular:Kfm.Kaufmann
+adjective:kfm.kaufmännisch
+nounSingular:KfzKraftfahrzeug
 KGKommanditgesellschaft
-kgl.königlich
-KKWKernkraftwerk
-Kl.Klasse
+adjective:kgl.königlich
+nounSingular:KKWKernkraftwerk
+nounSingular:Kl.Klasse
 KMHKilometer pro Stunde
 k.o./K.o.knocked out/knockout
-KripoKriminalpolizei
+nounSingular:KripoKriminalpolizei
 k.u.k.kaiserlich und königlich
 Öster.-Ungarnimperial and royal (Austro-Hungarian)
-KZKonzentrationslager
+nounSingular:KZKonzentrationslager
 l.links
-lLiter
-led.ledig
+nounSingular:lLiter
+adjective:led.ledig
 LKW/LkwLastkraftwagen
-LokLokomotive
-MAMittlealter
+nounSingular:nounSingular:LokLokomotive
+nounSingular:MAMittlealter
 MADMilitärischer Abschirmdienst
 MdBMitglied des Bundestages
 MdLMitglied des Landtages
 m.E.meines Erachtens
 MEZMitteleuropäische Zeit
 MfGMit freundlichen Grüßen
-MiMittwoch
-Mio.Million(en)
-MoMontag
-möbl.möbliert
-MPMaschinenpistole
-MPMilitärpolizei
-Mrd.Milliarde(n)
-Msp.Messerspitze
+weekday:MiMittwoch
+Mio.nounSingular:Million
+Mio.nounPlural:Millionen
+weekday:MoMontag
+adjective:möbl.möbliert
+nounSingular:MPMaschinenpistole
+nounSingular:MPMilitärpolizei
+nounSingular:Mrd.Milliarde
+nounPlural:Mrd.Milliarden
+nounSingular:Msp.Messerspitze
 MTAmedizinische(r) technische(r) Assistent(in)
-mtl.monatlich
+adjective:mtl.monatlich
 m.W.meines Wissens
-MWSt.Mehrwertsteuer
-NNord(en)
+nounSingular:MWSt.Mehrwertsteuer
+nounSingular:NNord(en)
 näml.nämlich
 n.Chr.nach Christus
-NNdas Normalnull
-NNONordnordost
-NNWNordnordwest
-NONordosten
-NOKNationales Olympisches Komitee
-NPDNationaldemokratische Partei Deutschlands
-Nr.Nummer
-NRWNordrhein-Westfalen
-NSNachschrift
+nounSingular:NNdas Normalnull
+nounSingular:NNONordnordost
+nounSingular:NNWNordnordwest
+nounSingular:NONordosten
+organisation:NOKNationales Olympisches Komitee
+nounSingular:Nr.Nummer
+geographicalRegion:NRWNordrhein-Westfalen
+nounSingular:NSNachschrift
 n.u.Z.nach unserer Zeitrechnung
-OOsten
+nounSingular:OOsten
 o.oben
 o.A.*ohne Altersbeschränkung
-OBOberbürgermeister
+nounSingular:OBOberbürgermeister
 o.B.ohne Befund
-Obb.Oberbayern
-ÖBBÖsterreichische Bundesbahnen
+nounSingular:Obb.Oberbayern
+nounPlural:ÖBBÖsterreichische Bundesbahnen
 od.oder
-OF*Originalfassung
+nounSingular:OF*Originalfassung
 o.g.oben genannt
 OHGoffene Handelsgesellschaft
 OmU*Originalfassung mit Untertiteln
 ÖPNVöffentlicher Personennahverkehr
 ORFOesterreichischer Rundfunk
-österr.österreichisch
+adjective:österr.österreichisch
 OSOOstsüdost
-O-Ton*Originalton
+nounSingular:O-Ton*Originalton
 p.Adr.per Adresse
 politicalParty:PDSdie Partei des Demokratischen Sozialismus
 Pfd.Pfund
-Pkw/PKWPersonenkraftwagen
-PHpädagogische Hochschule
-Pl.Platz
-PLZPostleitzahl
-PSPferdestärke
-qkmQuadratkilometer
-qmQuadratmeter
+nounSingular:Pkw/PKWPersonenkraftwagen
+nounSingular:PHpädagogische Hochschule
+nounSingular:Pl.Platz
+nounSingular:PLZPostleitzahl
+nounSingular:PSPferdestärke
+nounSingular:qkmQuadratkilometer
+nounSingular:qmQuadratmeter
 r.rechts
-RARechtsanwalt
-RAFRote Armee Fraktion
-RBBRundfunk Berlin-Brandenburg
+nounSingular:RARechtsanwalt
+organisation:RAFRote Armee Fraktion
+nounSingular:RBBRundfunk Berlin-Brandenburg
 Reg.-Bez.Regierungbezirk
 R-GesprächRetour-Gespräch
 RIASRundfunk im amer. Sektor
 r.k., r.-k.römisch-katholisch
-röm.römisch
-röm.-kath.römisch-katholisch
-RTLRTL
+adjective:röm.römisch
+adjective:röm.-kath.römisch-katholisch
 SSüden
-SS-Bahn
-S.Seite
-s.sich
+nounSingular:SS-Bahn
+nounSingular:S.Seite
+pronoun:s.sich
 s.a.siehe auch
-Sa.Samstag
-SBSelbstbedienung
-SBBSchweizerische Bundesbahnen
-schles.schlesisch
-schwäb.schwäbisch
-schweiz.schweizerisch
+weekday:Sa.Samstag
+nounSingular:SBSelbstbedienung
+nounSingular:SBBSchweizerische Bundesbahnen
+adjective:schles.schlesisch
+adjective:schwäb.schwäbisch
+adjective:schweiz.schweizerisch
 politicalParty:SEDSozialistiche Einheitspartei
 s.o.siehe oben
-So.Sonntag
+weekday:So.Sonntag
 sog.so genannt
-SRSaarlädischer Rundfunk
-SSOSüdsüdost
-SSVSommerschlussverkauf
-SSWSüdsüdwest
+nounSingular:SRSaarlädischer Rundfunk
+nounSingular:SSOSüdsüdost
+nounSingular:SSVSommerschlussverkauf
+nounSingular:SSWSüdsüdwest
 St.Sankt
-St.Stück
-StGBStrafgesetzbuch
-Str.Straße
-StR.Studienrat
-StVOStraßenverkehrsordnung
+nounSingular:St.Stück
+nounSingular:StGBStrafgesetzbuch
+nounSingular:Str.Straße
+nounSingular:StR.Studienrat
+nounSingular:StVOStraßenverkehrsordnung
 s.u.siehe unten
-südd.süddeutsch
+adjective:südd.süddeutsch
 SWSüdwest(en)
-SWRSüdwestrundfunk
-tägl.täglich
-Tb/TbcTuberkulose
-THTechnische Hochschule
-TUTechnische Universität
-TÜVTechnische Überwachungsverein
+nounSingular:SWRSüdwestrundfunk
+adjective:tägl.täglich
+nounSingular:Tb/TbcTuberkulose
+nounSingular:THTechnische Hochschule
+nounSingular:TUTechnische Universität
+nounSingular:TÜVTechnische Überwachungsverein
 politicalParty:AfWAllianz freier Wähler
 politicalParty:CDUChristlich-Demokratische Union
 politicalParty:CSUChristlich-Soziale Union
