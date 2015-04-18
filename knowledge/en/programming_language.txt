@@ -1,3 +1,5 @@
+(Visual) Basic
+(Visual) FoxPro
 @Formula
 A#
 A# (Axiom)
@@ -16,6 +18,7 @@ ACL2
 ACT-III
 AIMMS
 ALF
+ALGOL
 ALGOL 58
 ALGOL 60
 ALGOL 68
@@ -24,6 +27,8 @@ AMOS
 AMPL
 APL
 ARexx
+ASP
+ATLAS
 ATS
 AWK
 Accent
@@ -40,18 +45,27 @@ Alice
 Alma-0
 AmbientTalk
 Amiga E
+Angelscript
+Apex
 App Inventor for Android's visual block language
 AppleScript
 Arc
+Arduino
 Argus
 AspectJ
+Assembly
 Assembly language
 Ateji PX
+Augeas
 AutoHotkey
 AutoIt
-AutoLISP / Visual LISP
+AutoLISP
+Visual LISP
 Autocoder
+Automator
+Avenue
 Averest
+Awk
 Axum
 B
 BASIC
@@ -68,19 +82,24 @@ Bertrand
 Bigwig
 Bistro
 BitC
+BlitzMax
 Blue
 Bon
 Boo
 Boomerang
+Bourne Shell
 Bourne shell
+Bro
 C
 C Shell
 C shell
 C#
+C++
+C++/CLI
+C--
+C-Omega
 C-Sharp
 C-sharp
-C++
-C--
 C/AL
 CDuce
 CFEngine
@@ -92,6 +111,7 @@ CHR
 CICS
 CIL
 CL (IBM)
+CL (OS/400)
 CLIST
 CLU
 CMS EXEC
@@ -133,6 +153,7 @@ ColdC
 ColdFusion
 Combined Programming Language (CPL)
 Common Intermediate Language (CIL)
+Common Lisp
 Common Lisp (also known as CL)
 Component Pascal
 Constraint Handling Rules (CHR)
@@ -152,7 +173,7 @@ DASL (Datapoint's Advanced Systems Language)
 DASL (Distributed Application Specification Language)
 DATATRIEVE
 DCL
-DCL
+DCPU-16 ASM
 DIBOL
 DRAKON
 DYNAMO
@@ -162,6 +183,8 @@ Datalog
 Deesel
 Deesel (formerly G)
 Delphi
+Delphi/Object Pascal
+DiBOL
 DinkC
 Dog
 Draco
@@ -174,10 +197,12 @@ EGL
 ELAN
 EPL
 ESPOL
+EXEC
 EXEC 2
 Ease
 Easy
 Easy PL/I
+Ecl
 Edinburgh IMP
 Eiffel
 Elixir
@@ -234,12 +259,14 @@ GJ
 GLSL
 GM
 GNU E
+GNU Octave
 GOAL
 GOM
 GOM (Good Old Mad)
 GOTRAN
 GPSS
 GRASS
+Gambas
 Game Maker Language
 GameMonkey Script
 Genie
@@ -249,18 +276,21 @@ Go!
 Godiva
 Goo
 Google Apps Script
+Google AppsScript
 Gosu
 GraphTalk
 Groovy
 Gödel
 HAL/S
 HLSL
+HPL
 Hack
 Hamilton C shell
 Harbour
 Hartmann pipelines
 Haskell
 Haxe
+Heron
 High Level Assembly
 Hop
 Hope
@@ -274,6 +304,7 @@ IBM RPG
 ICI
 IDL
 IMP
+INTERCAL
 IPL
 IPTSCRAE
 ISLISP
@@ -283,6 +314,7 @@ Icon
 Id
 Idris
 Inform
+Informix-4GL
 Io
 Ioke
 J
@@ -297,9 +329,11 @@ JOSS
 JOVIAL
 JScript
 JScript .NET
+JScript.NET
 Jako
 Janus
 Java
+Java FX Script
 JavaFX Script
 JavaScript
 Join Java
@@ -319,6 +353,7 @@ Karel
 Karel++
 Kixtart
 Kojo
+Korn Shell
 Kotlin
 L
 L# .NET
@@ -335,6 +370,7 @@ LYaPAS
 LaTeX
 LabVIEW
 Ladder
+Ladder Logic
 Lagoona
 Lasso
 Lava
@@ -354,6 +390,7 @@ LiveCode
 LiveScript
 Logo
 Logtalk
+LotusScript
 Lua
 Lucid
 Lustre
@@ -363,28 +400,35 @@ M4
 MAD
 MAD (Michigan Algorithm Decoder)
 MAD/I
+MANTIS
 MAPPER now part of BIS
 MARK-IV now VISION:BUILDER
 MASM Microsoft Assembly x86
 MATLAB
+MAXScript
 MDL
+MEL
 MIIS
 MIMIC
 MIVA Script
 ML
 MOO
 MPD
+MS-DOS Batch
 MSIL
 MSL
 MUMPS
 Machine code
+Magic
 Magik
 Magma
+Malbolge
 Maple
 Mary
 Mathematica
 Max
 Max (Max Msp - Graphical Programming Environment)
+Max/MSP
 MaxScript internal language 3D Studio Max
 Maxima
 Maxima (see also Macsyma)
@@ -400,6 +444,7 @@ Microcode
 MillScript
 Mirah
 Miranda
+Miva
 Moby
 Model 204
 Modelica
@@ -407,7 +452,9 @@ Modula
 Modula-2
 Modula-3
 Mohol
+Monkey
 Mortran
+Moto
 Mouse
 NASM
 NATURAL
@@ -415,6 +462,7 @@ NESL
 NEWP
 NGL
 NPL
+NQC
 NSIS
 NWScript
 NXT-G
@@ -430,6 +478,7 @@ NewtonScript
 Nial
 Nice
 Nickle
+Nimrod
 Not Quite C
 Not Quite C (NQC)
 Not eXactly C
@@ -446,11 +495,13 @@ Obix
 Object Lisp
 Object Pascal
 Object REXX
+Object Rexx
 ObjectLOGO
 Objective-C
 Objective-J
 Obliq
 Obol
+Occam
 Octave
 OmniMark
 Onyx
@@ -486,12 +537,15 @@ PLANC
 PLEX
 PLEXIL
 POP-11
+POV-Ray
 PPL
 PROIV
 PROMAL
 PROSE
 PROTEL
 ParaSail
+Paradox
+Parrot
 Pascal
 Pawn
 PeopleCode
@@ -505,10 +559,13 @@ Pipelines
 Pizza
 Plankalkül
 Planner
+Pliant
 Plus
 PortablE
 PostScript
+PowerBasic
 PowerBuilder
+PowerScript
 PowerShell
 Powerhouse
 Pro*C
@@ -519,7 +576,9 @@ Prograph
 Prolog
 Promela
 ProvideX
+Puppet
 Pure
+Pure Data
 Python
 Q
 Q (equational)
@@ -532,11 +591,13 @@ QuakeC
 R
 R++
 RAPID
+REALBasic
 REBOL
 REFAL
 REXX
 ROOP
 RPG
+RPG (OS/400)
 RPL
 RSL
 RTL/2
@@ -581,6 +642,8 @@ SP/k
 SPARK
 SPIN
 SPS
+SPSS
+SQR
 SR
 SYMPL
 SabreTalk
@@ -598,23 +661,28 @@ Self
 SenseTalk
 SequenceL
 Shakespeare
+Shell
 Shift Script
 SiMPLE
 Simula
 Simulink
+Slate
 Small Basic
 Smalltalk
+Smarty
 Snap!
 Snowball
 Span
 Squeak
 Squirrel
 Stackless Python
+Standard ML
 Starlogo
 Stata
 Stateflow
 Strand
 Subtext
+Suneido
 SuperCollider
 SuperTalk
 Swift
@@ -642,10 +710,12 @@ TXL
 Tcl
 TeX
 Tea
+Tex
 Timber
 Tom
 Topspeed
 Trac
+Transact-SQL
 Turbo C++
 Turing
 TypeScript
@@ -662,7 +732,9 @@ VBScript
 VHDL
 VSXu
 Vala
+Vala/Genie
 Verilog
+VimL
 Visual Basic
 Visual Basic .NET
 Visual DataFlex
@@ -677,6 +749,7 @@ Vvvv
 WATFIV, WATFOR
 WebDNA
 WebQL
+Whitespace
 Winbatch
 Windows PowerShell
 Wolfram
@@ -685,6 +758,7 @@ X#
 X++
 X10
 XBL
+XBase++
 XC
 XC (exploits XMOS architecture)
 XL
@@ -694,29 +768,39 @@ XPL0
 XQuery
 XSB
 XSLT
+Xen
 Xojo
 Xtend
 YQL
 Yorick
 Z notation
+Z shell
 ZOPL
 ZPL
 Zeno
 bash
 bc
+cT
+cg
 chomski
 csh
 dBase
 dc
+eC
 es
-ksh
+haXe
 ksh
 make
 nesC
 o:XML
 occam
 occam-π
+ooc
 rc
 rex
+sed
 tcsh
+thinBasic
+xBase
 xHarbour
+yacc
