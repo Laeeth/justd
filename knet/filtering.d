@@ -46,6 +46,10 @@ bool matches(const Sense[] senses, Sense sense)
 }
 
 /** Node Filter.
+    Filters out Nodes
+    - in languages $(D langs)
+    - of senses $(D senses)
+    - read from origins $(D origins).
  */
 struct NodeFilter
 {
@@ -93,6 +97,13 @@ struct NodeFilter
         return (langs.matches(lang) &&
                 senses.matches(sense) &&
                 origins.matches(origin));
+    }
+
+    bool matches(in Node node) const @nogc
+    {
+        return matches(node.lemma.lang,
+                       node.lemma.sense,
+                       node.origin);
     }
 
     Lang[] langs;
