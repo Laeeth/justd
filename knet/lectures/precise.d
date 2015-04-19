@@ -20,6 +20,9 @@ void learnPreciseThings(Graph graph)
     import knet.lectures.punctuations;
     graph.learnPunctuation();
 
+    import knet.lectures.time;
+    graph.learnTime();
+
     import knet.lectures.computers;
     graph.learnEnglishComputerKnowledge();
 

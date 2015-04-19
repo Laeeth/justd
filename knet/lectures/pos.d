@@ -23,9 +23,6 @@ void learnPartOfSpeech(Graph graph)
     import knet.lectures.interjections;
     graph.learnInterjections();
 
-    import knet.lectures.time;
-    graph.learnTime();
-
     // Verb
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/regular_verb.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `regular verb`, Sense.verbRegular, Sense.noun, 1.0);
 
