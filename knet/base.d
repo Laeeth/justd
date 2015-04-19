@@ -295,9 +295,9 @@ struct Lemma
         if (normalizeExpr)
         {
             auto split = expr.findSplit(meaningNrSeparatorString);
-            import std.conv: ConvException;
             if (!split[1].empty) // if a split was found
             {
+                import std.conv: ConvException;
                 try
                 {
                     const exprSense = split[0].to!Sense;
@@ -311,7 +311,7 @@ struct Lemma
                              !sense.specializes(exprSense))
                     {
                         debug writeln(`warning: Can't override `, expr, `'s parameterized sense `, sense,
-                                ` with `, exprSense);
+                                      ` with `, exprSense);
                     }
                 }
                 catch (ConvException e)
@@ -333,15 +333,15 @@ struct Lemma
     Lang lang = Lang.unknown;
     Sense sense = Sense.unknown;
     Ctx context = Ctx.asUndefined; // TODO bitfield
-    bool hasUniqueSense = false; // Expr has unique Sense in Lang
 
     enum bitsizeOfManner = packedBitSizeOf!Manner;
-    enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 1;
+    enum bitsizeOfMeaningNr = 8 - bitsizeOfManner - 2;
     enum MeaningNrMax = 2^^bitsizeOfMeaningNr - 1;
 
     mixin(bitfields!(Manner, `manner`, bitsizeOfManner,
+                     bool, `hasUniqueSense`, 1, // Expr has unique Sense in Lang
+                     bool, `isRegexp`, 1, // true if $(D expr) is a regular expression
                      ubyte, `meaningNr`, bitsizeOfMeaningNr,
-                     bool, `isRegexp`, 1 // true if $(D expr) is a regular expression
               ));
 }
 
@@ -782,8 +782,8 @@ class Graph
                                     Sense attributeSense = Sense.noun,
                                     NWeight weight = 0.5,
                                     Origin origin = Origin.manual) if (isInputRange!R &&
-                                                           (isSomeString!(ElementType!R)) &&
-                                                           isSomeString!S)
+                                                                       (isSomeString!(ElementType!R)) &&
+                                                                       isSomeString!S)
     {
         return connectMto1(add(words, lang, wordSense, origin),
                            role,

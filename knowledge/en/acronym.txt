@@ -38,3 +38,8 @@ noun:MOSFETMOS-FETmetal–oxide–semiconductor field-effect transistor
 noun:MISFETmetal–insulation–semiconductor field-effect transistor
 
 noun:BMWBavarian Motor Works
+
+nounPlural:PLSpartial least squares
+
+nounSingular§0.8:PLSplaylist file
+nounSingular§0.6:PLSpalletized load system

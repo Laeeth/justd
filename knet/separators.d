@@ -17,10 +17,12 @@ enum languageSeparator = '@'; // human@en
 enum qualifierSeparator = ':'; // noun:human
 enum meaningNrSeparator = ';'; // tomten;1 tomten;2
 enum countSeparator = '#'; // gives occurrence count
-enum expressionWordSeparator = " "; // Lemma Expression Separator.
+enum weightSeparator = '§'; // gives occurrence count
+enum expressionWordSeparator = ` `; // Lemma Expression Separator.
 
 enum languageSeparatorString = [languageSeparator]; // human@en, human@english
 enum qualifierSeparatorString = [qualifierSeparator]; // noun:human
 enum roleSeparatorString = [roleSeparator];
 enum countSeparatorString = [countSeparator];
+enum weightSeparatorString = [weightSeparator];
 enum meaningNrSeparatorString = `:`;
