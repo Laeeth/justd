@@ -396,6 +396,15 @@ bool isNewline(S)(S s) if (isSomeString!S)
 auto enumMembers(T)()
 {
     import std.traits: EnumMembers;
+    return [EnumMembers!T];
+}
+
+/** Dynamic Variant of $(D EnumMembers) without Enumerator Aliases.
+    See also: http://forum.dlang.org/thread/bspwlfypfishykezzocx@forum.dlang.org#post-dguqnroxbfewerepomwq:40forum.dlang.org
+*/
+auto uniqueEnumMembers(T)()
+{
+    import std.traits: EnumMembers;
     import std.algorithm: sort, uniq;
     return [EnumMembers!T].sort().uniq;
 }

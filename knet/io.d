@@ -20,7 +20,7 @@ void showRelations(Graph gr,
     import std.range: cycle;
     auto indent = `- `; // TODO use clever range plus indent_depth
 
-    foreach (rel; enumMembers!Rel)
+    foreach (rel; uniqueEnumMembers!Rel)
     {
         const count = gr.stat.relCounts[rel];
         if (count)
@@ -32,7 +32,7 @@ void showRelations(Graph gr,
     writeln(`Node Count: `, gr.db.tabs.allNodes.length);
 
     writeln(`Node Count by Origin:`);
-    foreach (source; enumMembers!Origin)
+    foreach (source; uniqueEnumMembers!Origin)
     {
         const count = gr.stat.linkSourceCounts[source];
         if (count)
@@ -42,7 +42,7 @@ void showRelations(Graph gr,
     }
 
     writeln(`Node Count by Language:`);
-    foreach (lang; enumMembers!Lang)
+    foreach (lang; uniqueEnumMembers!Lang)
     {
         const count = gr.stat.nodeCountByLang[lang];
         if (count)
@@ -52,7 +52,7 @@ void showRelations(Graph gr,
     }
 
     writeln(`Node Count by Sense:`);
-    foreach (sense; enumMembers!Sense)
+    foreach (sense; uniqueEnumMembers!Sense)
     {
         const count = gr.stat.nodeCountBySense[sense];
         if (count)

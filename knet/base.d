@@ -97,7 +97,7 @@ import wordnet: WordNet;
 import algorithm_ex: isPalindrome, either, append;
 import ixes: commonSuffixCount;
 import range_ex: stealFront, stealBack, ElementType, byPair, pairs;
-import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, enumMembers, packedBitSizeOf;
+import traits_ex: isSourceOf, isSourceOfSomeString, isIterableOf, uniqueEnumMembers, packedBitSizeOf;
 import sort_ex: sortBy, rsortBy, sorted;
 import skip_ex: skipOverBack, skipOverShortestOf, skipOverBackShortestOf, skipOverPrefixes, skipOverSuffixes;
 import typecons_ex: IndexedBy;

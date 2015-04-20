@@ -468,9 +468,9 @@ void learnEnumMemberNameHierarchy(T)(Graph graph,
                                      Sense memberSense = Sense.unknown) if (is(T == enum))
 {
     const origin = Origin.manual;
-    foreach (i; enumMembers!T)
+    foreach (i; uniqueEnumMembers!T)
     {
-        foreach (j; enumMembers!T)
+        foreach (j; uniqueEnumMembers!T)
         {
             if (i != T.unknown &&
                 j != T.unknown &&
