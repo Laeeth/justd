@@ -241,7 +241,6 @@ body
 
         foreach (wix, ref walker; walkers)
         {
-            writeln("wix: ", wix);
             if (visits[wix]) // if walker wix visited contextNd
             {
                 const path = walker.pathFrom(contextNd);
