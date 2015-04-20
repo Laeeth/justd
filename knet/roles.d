@@ -92,7 +92,7 @@ auto toHuman(const Role role,
     import std.algorithm: joiner;
 
     auto not = negation ? negationIn(targetLang) : null; // negation string
-    switch (rel) with (Rel) with (Lang)
+    final switch (rel) with (Rel) with (Lang)
     {
         case relatedTo:
             switch (targetLang)
@@ -1063,9 +1063,149 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["har", not, "en hyponym instans"]; break;
+                    case sv: words = ["har", not, "hyponym instansen"]; break;
                     case en:
-                    default: words = ["does", not, "have a hyponym instance"]; break;
+                    default: words = ["does", not, "have the hyponym instance"]; break;
+                }
+            }
+            break;
+        case substanceHolonym:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en substans holonym av"]; break;
+                    case en:
+                    default: words = ["is", not, "a substance holonym of"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "substans holonymen"]; break;
+                    case en:
+                    default: words = ["does", not, "the substance holonym"]; break;
+                }
+            }
+            break;
+        case topicDomainOfSynset:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en tema domän av"]; break;
+                    case en:
+                    default: words = ["is", not, "a topic domain of"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "tema domänen"]; break;
+                    case en:
+                    default: words = ["does", not, "have the topic domain"]; break;
+                }
+            }
+            break;
+        case regionDomainOfSynset:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en region domän av"]; break;
+                    case en:
+                    default: words = ["is", not, "a region domain of"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "region domänen"]; break;
+                    case en:
+                    default: words = ["does", not, "have the region domain"]; break;
+                }
+            }
+            break;
+        case usageDomainOfSynset:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en användningsdomän av"]; break;
+                    case en:
+                    default: words = ["is", not, "a usage domain of"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "användningsdomänen"]; break;
+                    case en:
+                    default: words = ["does", not, "have the usage domain"]; break;
+                }
+            }
+            break;
+        case memberOfTopicDomain:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en medlem av temadomänen"]; break;
+                    case en:
+                    default: words = ["is", not, "a member of the topic domain"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "temadomänmedlemmen"]; break;
+                    case en:
+                    default: words = ["does", not, "have the topic domain member"]; break;
+                }
+            }
+            break;
+        case memberOfRegionDomain:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en medlem av region domänen"]; break;
+                    case en:
+                    default: words = ["is", not, "a member of the region domain"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "regionsdomänmedlemmen"]; break;
+                    case en:
+                    default: words = ["does", not, "have the region domain member"]; break;
+                }
+            }
+            break;
+        case memberOfUsageDomain:
+            if (!role.reversed)
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["är", not, "en medlem av användningsdomänen"]; break;
+                    case en:
+                    default: words = ["is", not, "a member of the usage domain"]; break;
+                }
+            }
+            else
+            {
+                switch (targetLang)
+                {
+                    case sv: words = ["har", not, "användingsdomän medlemmen"]; break;
+                    case en:
+                    default: words = ["does", not, "have the usage domain member"]; break;
                 }
             }
             break;
