@@ -149,158 +149,158 @@ DeannounSingular:great leader
 Declanadjective:full of goodness
 DelmarnounSingular:mariner
 Denleyfrom the valley meadow
-Denniswildcrazy
-Derekgreat ruler
-Dermotwithout enemy
-Derwinfriend of wild animals
+Dennisadjective:wildcrazy
+DereknounSingular:great ruler
+Dermotadjective:without enemy
+DerwinnounSingular:friend of wild animals
 DesDesmondlike an oak
-Dexterdexterous
-Dillonfaithful
+Dexteradjective:dexterous
+Dillonadjective:faithful
 Dionshort for Dionysus
-Dirkruler of people
-Dixonpowerful ruler
+DirknounSingular:ruler of people
+DixonnounSingular:powerful ruler
 Dominicbelonging to the lord
-Donaldruler
-Doriandorian
-Douglasdark
-Doylestranger
-Drakedragon
-Drewtrustworthy
-Driscollinterpreter
-Dudleyresidence name
-Duncandark skinned warrior
-Durwinbeloved friend
-Dwaynefieldmeadow
-Dwightwhitefair
-Dylanfaithfulloyal
-Earlnobleman
+DonaldnounSingular:ruler
+DoriannounSingular:dorian
+Douglasadjective:dark
+DoylenounSingular:stranger
+DrakenounSingular:dragon
+Drewadjective:trustworthy
+DriscollnounSingular:interpreter
+DudleynounSingular:residence name
+DuncannounSingular:dark skinned warrior
+DurwinnounSingular:beloved friend
+DwaynenounSingular:fieldmeadow
+DwightnounSingular:whitefair
+Dylanadjective:faithfulloyal
+EarlnounSingular:nobleman
 Eatonfrom the riverside
-Ebenezerrock of help
-Edanfiery flame
-Edgarfortunate spear
-EdmondEdmundguardian of the riches
-Edricprosperous ruler
-EdwardEddiehappy protector
-Edwinvaluable friend
-Efrainguardian of the mists
-Eganardent
-Egbertformidably brilliant
-Egertonedge
-Egilsting
+EbenezernounSingular:rock of help
+EdannounSingular:fiery flame
+EdgarnounSingular:fortunate spear
+EdmondEdmundnounSingular:guardian of the riches
+EdricnounSingular:prosperous ruler
+EdwardEddienounSingular:happy protector
+EdwinnounSingular:valuable friend
+EfrainnounSingular:guardian of the mists
+Eganadjective:ardent
+Egbertadjective:formidably brilliant
+EgertonnounSingular:edge
+EgilnounSingular:sting
 Elbertnobly brilliant
-Eldonrespected
-Eldwinsage friend
-EliElyElijahhighest
+Eldonadjective:respected
+EldwinnounSingular:sage friend
+EliElyElijahadjective:highest
 EliasJehovah is god
 EliotElliottclose to God
-Ellerycheerful
-Elmerawe-inspiring
-Elroyroyal
-Eltonresidence name
-Elviswise and noble friend
-EmersonEmeryindustrious
-EmmanuelGod-like
-Emmetthard working
-Emrickimmortal
-Enochdedicatedconsecrated
-EricErikhonourable and powerful
-Ernestiron manvigour
-Errolwanderering noble
-Erskinehill dweller
-Erwinfriend of the sea
-Esmondprotective grace
-EthanEthanaelconstantfirmstrong
-Ethenendurance
+Elleryadjective:cheerful
+Elmeradjective:awe-inspiring
+Elroyadjective:royal
+EltonnounSingular:residence name
+ElvisnounSingular:wise and noble friend
+EmersonEmeryadjective:industrious
+Emmanueladjective:God-like
+Emmettadjective:hard working
+Emrickadjective:immortal
+Enochadjective:dedicatedconsecrated
+EricErikadjective:honourable and powerful
+ErnestnounSingular:iron manadjective:vigour
+ErrolnounSingular:wanderering noble
+ErskinenounSingular:hill dweller
+ErwinnounSingular:friend of the sea
+EsmondnounSingular:protective grace
+EthanEthanaeladjective:constantfirmstrong
+EthennounSingular:endurance
 Eugeneborn of the Yew tree
-Evanyoung warrior
-Everettwild boar
-Ezrahelper
-Fabianbean farmer
-Fairfaxfair haired
-Falknerfalcon trainer
-Farleydistant meadow
-Farrellman of valor
-Felixprosperous
+EvannounSingular:young warrior
+EverettnounSingular:wild boar
+EzranounSingular:helper
+FabiannounSingular:bean farmer
+Fairfaxadjective:fair haired
+FalknernounSingular:falcon trainer
+FarleynounSingular:distant meadow
+FarrellnounSingular:man of valor
+Felixadjective:prosperous
 Fentonfrom the flat lands
-Ferdinandadventurous in life
-Fergalbrave and couragous
-FergusFergusonstrong and virile
-Ferrisiron worker
-Finbarfair
-Fitzgeraldson of Gerald
+Ferdinandadjective:adventurous in life
+Fergaladjective:brave and couragous
+FergusFergusonadjective:strong and virile
+FerrisnounSingular:iron worker
+Finbaradjective:fair
+FitzgeraldnounSingular:son of Gerald
 Flemingoriginating from Flanders
-Fletcherarrow maker
-Floydhollow
-Forbesprosperous
-Forrestwoodsman
-Fosterbird catcher
-Foxcunning
-Francisfree
-Frankfree man
-Frasierstrawberry
-Frederickpeaceful ruler
-Freemanfreeman
-Gabrielman of God
-Galestranger
-Galvinsparrow
-Gardnergardener
-Garretspear champion
-Garrickspear king
-Garthherdsman
-Gavinwhite hawk
-Georgefarmer
-GeraldGerardGerretspear carrier
-Gideongreat warrior
-Giffordgift-brave
-Gilbertpledge
-Gilesbearer of shield
-Gilroyservant of the king
-Glennvalley
-Goddarddivinely firm
-GodfreyGod's peace
-Godwindivine friend
-Grahamgrey home
-Grantgreat
-Graysonson of Bailiff
-Gregorywatchful one
+FletchernounSingular:arrow maker
+Floydadjective:hollow
+Forbesadjective:prosperous
+ForrestnounSingular:woodsman
+FosternounSingular:bird catcher
+Foxadjective:cunning
+Francisadjective:free
+FranknounSingular:free man
+FrasiernounSingular:strawberry
+FredericknounSingular:peaceful ruler
+FreemannounSingular:freeman
+GabrielnounSingular:man of God
+GalenounSingular:stranger
+GalvinnounSingular:sparrow
+GardnernounSingular:gardener
+GarretnounSingular:spear champion
+GarricknounSingular:spear king
+GarthnounSingular:herdsman
+GavinnounSingular:white hawk
+GeorgenounSingular:farmer
+GeraldGerardGerretnounSingular:spear carrier
+GideonnounSingular:great warrior
+Giffordadjective:gift-brave
+GilbertnounSingular:pledge
+GilesnounSingular:bearer of shield
+GilroynounSingular:servant of the king
+GlennnounSingular:valley
+Goddardadjective:divinely firm
+GodfreynounSingular:God's peace
+GodwinnounSingular:divine friend
+GrahamnounSingular:grey home
+Grantadjective:great
+GraysonnounSingular:son of Bailiff
+GregorynounSingular:watchful one
 Greshamfrom the grazing land
-GriswaldGriswoldresidence name
-Groverdweller in the grove
-Guyguide
+GriswaldGriswoldnounSingular:residence name
+GrovernounSingular:dweller in the grove
+GuynounSingular:guide
 Haddenfrom the moor
-Hadleyheath covered moorland
-Hadwinfriend in war
+HadleynounSingular:heath covered moorland
+HadwinnounSingular:friend in war
 Halvariant of Henry
-Halbertbright stone
-Haldenhalf-Dane
-Halerobust
-Hallfrom the hallmanor
-Halseyresidence name
-Hamlinruler of the home
+HalbertnounSingular:bright stone
+HaldennounSingular:half-Dane
+Haleadjective:robust
+Hallfrom the hallnounSingular:manor
+HalseynounSingular:residence name
+HamlinnounSingular:ruler of the home
 Hanleyfrom the high meadow
-Hardystrong
-HarlanHarlandmeadow of the hares
-Harleyarmy meadow
-HaroldHarrypower
-HarrisHarrisonson of Harold
-Hartleyresidence name
-HeathHeathclifffrom heathmoorland
-Hectorsteadfast
+Hardyadjective:strong
+HarlanHarlandnounSingular:meadow of the hares
+HarleynounSingular:army meadow
+HaroldHarrynounSingular:power
+HarrisHarrisonnounSingular:son of Harold
+HartleynounSingular:residence name
+HeathHeathclifffrom heathnounSingular:moorland
+Hectoradjectiv:steadfast
 Henryruler of the house
-Herbertbright warrior
-Hermanwarrior
-Homerpledgesecurity
-HoraceHoratiotimekeeper
-Howardstrong minded
-Hubertbright minded
-HughHugofire
-Humphreysupporter of peace
-Hunterhunter
+HerbertnounSingular:bright warrior
+HermannounSingular:warrior
+HomernounSingular:pledgenounSingular:security
+HoraceHorationounSingular:timekeeper
+Howardadjective:strong minded
+Hubertadjective:bright minded
+HughHugonounSingular:fire
+HumphreynounSingular:supporter of peace
+HunternounSingular:hunter
 IanGod is gracious
-Igorheroic warrior
-IrvinIrvinghandsome
-Isaaclaughter
-IsaiahGod's salvation
+IgornounSingular:heroic warrior
+IrvinIrvingadjective:handsome
+IsaacnounSingular:laughter
+IsaiahnounSingular:God's salvation
 Ivanform of John
 IverIvararcher
 Iveslittle archer
