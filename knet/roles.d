@@ -92,7 +92,7 @@ auto toHuman(const Role role,
     import std.algorithm: joiner;
 
     auto not = negation ? negationIn(targetLang) : null; // negation string
-    final switch (rel) with (Rel) with (Lang)
+    switch (rel) with (Rel) with (Lang)
     {
         case relatedTo:
             switch (targetLang)
