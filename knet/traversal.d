@@ -134,6 +134,19 @@ struct NNWalker(WalkStrategy strategy)
         alias Queue = RedBlackTree!(Pending, "a > b");
     }
 
+    Path pathFrom(Nd target)
+    {
+        Path path;
+        auto curr = target;
+        while (curr != start)
+        {
+            Step back = visitByNd[curr][1];
+            path ~= back;
+            curr = back[1];
+        }
+        return path;
+    }
+
     this(Graph gr,
          const Nd start,
          const StepFilter filter = StepFilter.init,
