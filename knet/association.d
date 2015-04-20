@@ -134,7 +134,12 @@ body
     }
 
     // debug prints
-    // foreach (nd; nds) { writeln(`- `, gr[nd].lemma); }
+    size_t nix = 0;
+    foreach (nd; nds)
+    {
+        writeln(`- nix:`, nix, `: `, gr[nd].lemma);
+        nix++;
+    }
 
     WalkerVisits[Nd] walkerVisitsByNd;
 
@@ -224,6 +229,28 @@ body
 
     // exclude input (query) nodes $(D nds)
     E[] pureContexts = contexts.filter!(context => !nds.canFind(context.key)).array;
+
+    foreach (cix, pureContext; pureContexts)
+    {
+        import knet.io: showNode, showPath;
+
+        const Nd contextNd = pureContext.key;
+        const visits = contextNd in walkerVisitsByNd;
+
+        write("cix:", cix, " context: "); gr.showNode(contextNd); writeln;
+
+        foreach (wix, ref walker; walkers)
+        {
+            writeln("wix: ", wix);
+            if (visits[wix]) // if walker wix visited contextNd
+            {
+                const path = walker.pathFrom(contextNd);
+                write("- wix:", wix, " path: ");
+                gr.showPath(path);
+                writeln;
+            }
+        }
+    }
 
     // print walker statistics.
     // TODO move to caller in io.d in feedback given at each main iteration when

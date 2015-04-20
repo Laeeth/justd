@@ -95,7 +95,7 @@ void showRelations(Graph gr,
 
 void showLink(Graph gr, Role role, Lang lang = Lang.en, RelDir dir = RelDir.fwd)
 {
-    enum indent = `    - `;
+    enum indent = ``;
     if (dir == RelDir.bwd)
     {
         role.reversed = true;
@@ -105,7 +105,7 @@ void showLink(Graph gr, Role role, Lang lang = Lang.en, RelDir dir = RelDir.fwd)
 
 void showLink(Graph gr, in Link link, Lang lang = Lang.en)
 {
-    enum indent = `    - `;
+    enum indent = ``;
     write(indent, link.role.toHuman(lang), `: `);
 }
 
@@ -153,7 +153,7 @@ void showNode(Graph gr,
 }
 
 void showNode(Graph gr,
-              const Nd nd, NWeight weight)
+              const Nd nd, NWeight weight = 1.0)
 {
     gr.showNode(gr[nd], weight);
 }
@@ -166,7 +166,26 @@ void showLinkNode(Graph gr,
 {
     gr.showLink(role, lang);
     gr.showNode(node, weight);
-    writeln;
+}
+
+void showStep(Graph gr,
+              Step step)
+{
+    gr.showLn(step[0]);
+    gr.showNode(step[1]);
+}
+
+void showPath(Graph gr,
+              const Path path)
+{
+    foreach (i, step; path)
+    {
+        gr.showStep(step);
+        if (i + 1 != path.length)
+        {
+            write(`, which `);
+        }
+    }
 }
 
 void showNds(R)(Graph gr,
@@ -390,6 +409,7 @@ bool query(Graph gr,
         {
             gr.showLinkNode(palindromeNode,
                             Role(Rel.instanceOf, true), NWeight.infinity, userLang);
+            writeln;
         }
     }
     else if (normLine.skipOverShortestOf(`anagrams(`, `anagramsof(`, `anagrams_of(`))
@@ -402,6 +422,7 @@ bool query(Graph gr,
             {
                 gr.showLinkNode(anagramNode,
                                 Role(Rel.instanceOf, true), NWeight.infinity, userLang);
+                writeln;
             }
         }
     }
@@ -415,6 +436,7 @@ bool query(Graph gr,
             {
                 gr.showLinkNode(gr[synonymNode],
                                 Role(Rel.instanceOf, true), NWeight.infinity);
+                writeln;
             }
         }
     }
@@ -429,6 +451,7 @@ bool query(Graph gr,
             {
                 gr.showLinkNode(gr[antonymNode],
                                 Role(Rel.instanceOf, true), NWeight.infinity);
+                writeln;
             }
         }
     }
@@ -444,6 +467,7 @@ bool query(Graph gr,
             {
                 gr.showLinkNode(gr[rhymingNode],
                                 Role(Rel.instanceOf, true), NWeight.infinity, userLang);
+                writeln;
             }
         }
     }
@@ -459,6 +483,7 @@ bool query(Graph gr,
             {
                 gr.showLinkNode(gr[translationNode],
                                 Role(Rel.instanceOf, true), NWeight.infinity, userLang);
+                writeln;
             }
         }
     }

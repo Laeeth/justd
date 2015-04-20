@@ -136,6 +136,7 @@ struct NNWalker(WalkStrategy strategy)
 
     /** Calculate and Return Path from $(D target) to $(D start) node.
         Returns: empty Path if $(D target) equals $(D start).
+        Throws exception if $(D target) hasn't been visited by this walker.
        */
     Path pathFrom(Nd target)
     {
