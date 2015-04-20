@@ -302,161 +302,161 @@ IrvinIrvingadjective:handsome
 IsaacnounSingular:laughter
 IsaiahnounSingular:God's salvation
 Ivanform of John
-IverIvararcher
-Iveslittle archer
-Jackgodly
-Jacobconqueror
-JamesJimmysupplanter
-Jarvisaccurate arrow
+IverIvarnounSingular:archer
+IvesnounSingular:little archer
+Jackadjective:godly
+JacobnounSingular:conqueror
+JamesJimmynounSingular:supplanter
+JarvisnounSingular:accurate arrow
 JasonGod is my saviour
-Jasperbearer of treasure
-Jedbeloved of the lord
-Jeffreypeace bringer
-JeremiahJeremyexalted
+JaspernounSingular:bearer of treasure
+JednounSingular:beloved of the lord
+JeffreynounSingular:peace bringer
+JeremiahJeremyadjective:exalted
 Jeromeof sacred name
-Jessegift giver
+JessenounSingular:gift giver
 JohnGod is gracious
-Jonathangift
+JonathannounSingular:gift
 JosephJoeyJoeGod multiplies
 JoshuaGod is my salvation
-Justinjust
-Kanehonor
+Justinadjective:just
+KanenounSingular:honor
 Keatonwhere hawks go
-Keeganfiery
-Keenesharp
-Keithforest
-Kelseyisland of ships
-Kelvinfriend of the sea
-Kendallnarrow river
-Kendrickruler
-KennethKenhandsome
-Kentbright white
+Keeganadjective:fiery
+Keeneadjective:sharp
+KeithnounSingular:forest
+KelseynounSingular:island of ships
+KelvinnounSingular:friend of the sea
+KendallnounSingular:narrow river
+KendricknounSingular:ruler
+KennethKenadjective:handsome
+Kentadjective:bright white
 Kenwaycourageous in battle
-Kenyonblonde haired
-Kerrydark
-Kerwindark skinned
-Kevinhandsome
-Kieferbarrel maker
-Kilbyresidence name
-Kilianblind
-Kimchief
-Kimballroyally brave
-Kingsleyresidence name
-Kirbyresidence name
-Kirkchurch
-KitChrist-bearer
-Kodyhelpful
-Konradbold speaker
+Kenyonadjective:blonde haired
+Kerryadjective:dark
+Kerwinadjective:dark skinned
+Kevinadjective:handsome
+KiefernounSingular:barrel maker
+KilbynounSingular:residence name
+Kilianadjective:blind
+KimnounSingular:chief
+Kimballadjective:royally brave
+KingsleynounSingular:residence name
+KirbynounSingular:residence name
+KirknounSingular:church
+KitnounSingular:Christ-bearer
+Kodyadjective:helpful
+KonradnounSingularbold speaker
 Kurtable in counsel
-Kylehandsome
-Lambertland bright
-Lamontlawyer
-Lancelotland
-Landonowner
-Landryruler of the place
-Lanenarrow road
+Kyleadjective:handsome
+Lambertadjective:land bright
+LamontnounSingular:lawyer
+LancelotnounSingular:land
+Landonadjective:owner
+LandrynounSingular:ruler of the place
+LanenounSingular:narrow road
 Larsvariant of Lawrence
-Laurencebaylaurel tree
-Leemeadow
-Leithwide
-LeonardLeoLeonbold lion
-Leroypowerful king
-Leslieresidence name
-Lestercamp of the legion
-Lincolnresidence name
-Lionellion-like
-Lloydgrey
-Logantrenchforest
-Lombardlong-beard
-LouisLewiswarrior
-Lowellbeloved
-LucasLukeluminous
-Lutherwarrior
-Lyndonlinden tree
-Maddoxbeneficient
-Magnusgreat
-Malcolmroyal blood
-Marcuswarlike
+LaurencenounSingular:baynounSingular:laurel tree
+LeenounSingular:meadow
+Leithadjective:wide
+LeonardLeoLeonnounSingular:bold lion
+LeroynounSingular:powerful king
+LeslienounSingular:residence name
+LesternounSingular:camp of the legion
+LincolnnounSingular:residence name
+Lioneladjective:lion-like
+Lloydadjective:grey
+LogannounSingular:trenchnounSingular:forest
+LombardnounSingular:long beard
+LouisLewisnounSingular:warrior
+Lowelladjective:beloved
+LucasLukeadjective:luminous
+LuthernounSingular:warrior
+LyndonnounSingular:linden tree
+Maddoxadjective:beneficient
+Magnusadjective:great
+Malcolmcounsel:royal blood
+Marcusadjective:warlike
 MarkMarcvariant of Marcus
-Marlonfalcon
-Martinwarlike
-Marvinsea
-Matthewgift of the Lord
-Mauricedark skin
-MaxMaxwellgreat
-Medwinpowerful friend
+MarlonnounSingular:falcon
+Martinadjective:warlike
+MarvinnounSingular:sea
+MatthewnounSingular:gift of the Lord
+MauricenounSingular:dark skin
+MaxMaxwelladjective:great
+MedwinnounSingular:powerful friend
 Melvilleform of Malvin
-Melvinservant
-Merlinbird
+MelvinnounSingular:servant
+MerlinnounSingular:bird
 Michaellike God
-Milburnresidence name
-Milessoldier
-Monroewheeler
-Montagueresidence name
-Montgomerymountain
+MilburnnounSingular:residence name
+MilesnounSingular:soldier
+MonroenounSingular:wheeler
+MontaguenounSingular:residence name
+MontgomerynounSingular:mountain
 Morganfrom the sea's edge
-Morrismoorish
-Mortonfrom the farmmoor
-Murrayseaman
-NathanielNathangift of God
-Nealchampion
-Nevillenew town
-Nicholaspeople triumph
-Nigelblack
+Morrisadjective:moorish
+Mortonfrom the farmnounSingular:moor
+MurraynounSingular:seaman
+NathanielNathannounSingular:gift of God
+NealnounSingular:champion
+NevillenounSingular:new town
+NicholasnounSingular:people triumph
+Nigeladjective:black
 Noelto be born
-NormanNorseman
-Norriscaretaker
-Olafrelic
-Olinholly
-Oliverolive tree
+NormannounSingular:Norseman
+NorrisnounSingular:caretaker
+OlafnounSingular:relic
+Olinadjective:holly
+OlivernounSingular:olive tree
 Orsonlike the bear
-Oscarspear of God
+OscarnounSingular:spear of God
 Oswaldof God-like power
 Otishears well
-Owenwell-born
-Paulsmall
-Paxtontravelling trader
-PercivalPercygorge piercer
-Perrypear tree
-Peterrockstone
+Owenadjective:well-born
+Pauladjective:small
+PaxtonnounSingular:travelling trader
+PercivalPercynounSingular:gorge piercer
+PerrynounSingular:pear tree
+PeternounSingular:rocknounSingular:stone
 Peytonform of Patrick
-Philbertillustriously brilliant
-Philiphorse lover
-Phineasbrazen mouth
-Piercerockstone
-Quadefourth
+Philbertadjective:illustriously brilliant
+PhilipnounSingular:horse lover
+PhineasnounSingular:brazen mouth
+PiercenounSingular:rocknounSingular:stone
+Quadeadjective:fourth
 Quenbyform of Quimby
-Quentinfifth child
-Quillancub
-Quimbywoman's estate
-Quinbyresidence name
-Quincyresidence name
-Quinlanstrong
-Quinnwise
+QuentinnounSingular:fifth child
+QuillannounSingular:cub
+QuimbynounSingular:woman's estate
+QuinbynounSingular:residence name
+QuincynounSingular:residence name
+Quinlanadjective:strong
+Quinnadjective:wise
 Ralphvariant of Randolph
-Ramseyisland of ravens
-Randolphstrong shield
-Raymondwise guardian
-Reginaldpower
-Renfredpeacemaker
-Rexking
-Rhettstream
-Richardpowerful ruler
-Ridleyresidence name
+RamseynounSingular:island of ravens
+RandolphnounSingular:strong shield
+RaymondnounSingular:wise guardian
+ReginaldnounSingular:power
+RenfrednounSingular:peacemaker
+RexnounSingular:king
+RhettnounSingular:stream
+RichardnounSingular:powerful ruler
+RidleynounSingular:residence name
 Rileyvaliant
-RobertRobinbright fame
-Roderickfamous ruler
-Rodneyfamous
-Rogerfamous warrior
-Rolandfame of the land
-Rolfwolf
+RobertRobinnounSingular:bright fame
+RodericknounSingular:famous ruler
+Rodneyadjective:famous
+RogernounSingular:famous warrior
+RolandnounSingular:fame of the land
+RolfnounSingular:wolf
 Ronaldof mighty power
-Roryred king
-Rosswood
-Roswellmighty steed
-Royking
-Royceson of Roykingly
-Rufusred-haired
+RorynounSingular:red king
+RossnounSingular:wood
+RoswellnounSingular:mighty steed
+RoynounSingular:king
+Royceson of Royadjective:kingly
+Rufusadjective:red-haired
 Rupertof shining fame
 Russellred
 Ryanvariant of Bryan
