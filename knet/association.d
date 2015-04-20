@@ -191,7 +191,7 @@ body
             {
                 const visit = walkers[wix].visitByNd[nd];
                 const goodness = visit[0];
-                const Nd prevNd = visit[1]; // TODO use to reconstruct path
+                const Step prevStep = visit[1]; // TODO use to reconstruct path
                 // store that wix has visited nd
                 if (auto existingHit = nd in hitsByNd)
                 {

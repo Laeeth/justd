@@ -122,15 +122,16 @@ struct NNWalker(WalkStrategy strategy)
     import std.typecons: Tuple, tuple;
     import std.container: redBlackTree, RedBlackTree;
 
-    alias Visit = Tuple!(NWeight, Nd);
+    alias Pending = Tuple!(NWeight, Nd);
+    alias Visit = Tuple!(NWeight, Step);
 
     static      if (strategy == WalkStrategy.dijkstraMinDistance)
     {
-        alias Queue = RedBlackTree!(Visit, "a < b");
+        alias Queue = RedBlackTree!(Pending, "a < b");
     }
     else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
     {
-        alias Queue = RedBlackTree!(Visit, "a > b");
+        alias Queue = RedBlackTree!(Pending, "a > b");
     }
 
     this(Graph gr,
@@ -154,8 +155,8 @@ struct NNWalker(WalkStrategy strategy)
         }
 
         // WARNING must initialized arrays and AAs here to provide reference semantics
-        pending = new Queue(Visit(startWeight, start));
-        visitByNd[start.raw] = Visit(startWeight, Nd.asUndefined);
+        pending = new Queue(Pending(startWeight, start));
+        visitByNd[start.raw] = Visit(startWeight, Step.init);
 
         assert(!pending.empty); // must be initialized to enable reference semantics
         assert(visitByNd !is null); // must be initialized to enable reference semantics
@@ -227,9 +228,9 @@ struct NNWalker(WalkStrategy strategy)
                         if (newNextGoodness < currNextGoodness) // a stronger connection was found
                         {
                             version (debugPrint) writeln("is updated");
-                            *hit = Visit(newNextGoodness, currNd); // update visitByNd with best yet
-                            pending.removeKey(Visit(currNextGoodness, nextNd)); // remove old
-                            pending.insert(Visit(newNextGoodness, nextNd));
+                            *hit = Visit(newNextGoodness, Step(frontLn, currNd)); // update visitByNd with best yet
+                            pending.removeKey(Pending(currNextGoodness, nextNd)); // remove old
+                            pending.insert(Pending(newNextGoodness, nextNd));
                         }
                         else
                         {
@@ -248,8 +249,8 @@ struct NNWalker(WalkStrategy strategy)
                 else            // if first time we visit nextNd
                 {
                     version (debugPrint) writeln("dist:", newNextGoodness, " is added");
-                    visitByNd[nextNd] = Visit(newNextGoodness, currNd); // first is best
-                    pending.insert(Visit(newNextGoodness, nextNd));
+                    visitByNd[nextNd] = Visit(newNextGoodness, Step(frontLn, currNd)); // first is best
+                    pending.insert(Pending(newNextGoodness, nextNd));
                 }
             }
         }
