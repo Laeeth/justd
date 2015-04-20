@@ -134,6 +134,9 @@ struct NNWalker(WalkStrategy strategy)
         alias Queue = RedBlackTree!(Pending, "a > b");
     }
 
+    /** Calculate and Return Path from $(D target) to $(D start) node.
+        Returns: empty Path if $(D target) equals $(D start).
+       */
     Path pathFrom(Nd target)
     {
         Path path;
