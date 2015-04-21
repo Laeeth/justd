@@ -449,21 +449,21 @@ unittest
     static assert(packedBitSizeOf!E9 == 4);
 }
 
-/**
+/** Get Dimensionality of Type $(D T).
    See also: http://forum.dlang.org/thread/hiuhqdxtpifhzwebewjh@forum.dlang.org?page=2
 */
 
-template dimensionality (S)
+template dimensionality (T)
 {
     template count_dim (uint i = 0)
     {
-        static if (is (typeof(S.init.opSlice!i(0, 0))))
+        static if (is (typeof(T.init.opSlice!i(0, 0))))
         {
             enum count_dim = count_dim!(i+1);
         }
         else static if (i == 0 &&
-                        (isInputRange!S ||
-                         is(typeof(S.init[0]))))
+                        (isInputRange!T ||
+                         is(typeof(T.init[0]))))
         {
             enum count_dim = 1;
         }
