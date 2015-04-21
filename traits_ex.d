@@ -448,3 +448,24 @@ unittest
     enum E9 { a, b, c, d, e, f, g, h, i }
     static assert(packedBitSizeOf!E9 == 4);
 }
+
+/**
+   See also: http://forum.dlang.org/thread/hiuhqdxtpifhzwebewjh@forum.dlang.org?page=2
+*/
+template dimensionality (S)
+{
+  template count_dim (uint i = 0)
+  {
+    static if (is(typeof(S.init.opSlice!i(0,0))))
+        enum count_dim = count_dim!(i+1);
+    else
+        enum count_dim = i;
+  }
+
+  alias dimensionality = count_dim!();
+}
+
+unittest
+{
+    pragma(msg, dimensionality!(int[]));
+}
