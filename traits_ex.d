@@ -452,20 +452,21 @@ unittest
 /**
    See also: http://forum.dlang.org/thread/hiuhqdxtpifhzwebewjh@forum.dlang.org?page=2
 */
+
 template dimensionality (S)
 {
-  template count_dim (uint i = 0)
-  {
-    static if (is(typeof(S.init.opSlice!i(0,0))))
-        enum count_dim = count_dim!(i+1);
-    else
-        enum count_dim = i;
-  }
-
-  alias dimensionality = count_dim!();
+    template count_dim (uint i = 0) {
+        static if (is (typeof(S.init.opSlice!i (0,0))))
+            enum count_dim = count_dim!(i+1);
+        else static if (i == 0 && (isInputRange!S || is
+                                   (typeof(S.init[0]))))
+            enum count_dim = 1;
+        else enum count_dim = i;
+    }
+    alias dimensionality = count_dim!();
 }
 
 unittest
 {
-    pragma(msg, dimensionality!(int[]));
+    static assert(dimensionality!(int[]) == 1);
 }
