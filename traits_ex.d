@@ -457,7 +457,7 @@ template dimensionality (T)
 {
     template count_dim (uint i = 0)
     {
-        static if (is (typeof(T.init.opSlice!i(0, 0))))
+        static if (is(typeof(T.init.opSlice!i(0, 0))))
         {
             enum count_dim = count_dim!(i+1);
         }
