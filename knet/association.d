@@ -230,9 +230,8 @@ body
     // exclude input (query) nodes $(D nds)
     E[] pureContexts = contexts.filter!(context => !nds.canFind(context.key)).array;
 
-    writeln("> Found Contexts:");
-
     // print contexts and paths
+    writeln("> Found Contexts:");
     foreach (cix, context; pureContexts)
     {
         import knet.io: showNd, showPath;
@@ -244,7 +243,7 @@ body
             if (visits[wix]) // if walker wix visited contextNd
             {
                 const path = walker.pathFrom(contextNd);
-                write(`    + Path: `);
+                write(`    + `);
                 gr.showPath(path);
                 writeln;
             }
