@@ -122,16 +122,16 @@ struct NNWalker(WalkStrategy strategy)
     import std.typecons: Tuple, tuple;
     import std.container: RedBlackTree;
 
-    alias Pending = Tuple!(NWeight, Nd);
+    alias Pending = Tuple!(NWeight, LinkCount, Nd);
     alias Visit = Tuple!(NWeight, Step);
 
     static      if (strategy == WalkStrategy.dijkstraMinDistance)
     {
-        alias Queue = RedBlackTree!(Pending, "a < b");
+        alias Queue = RedBlackTree!(Pending, "a[0] == b[0] ? a[1] > b[1] : a[0] < b[0]"); // prefer: 1. smaller NWeights, 2. larger LinkCounts
     }
     else static if (strategy == WalkStrategy.nordlowMaxConnectiveness)
     {
-        alias Queue = RedBlackTree!(Pending, "a > b");
+        alias Queue = RedBlackTree!(Pending, "a[0] == b[0] ? a[1] > b[1] : a[0] > b[0]"); // prefer: 1. larger Connectiveness, 2. larger LinkCounts
     }
 
     /** Calculate and Return Path from $(D target) to $(D start) node.
@@ -172,7 +172,7 @@ struct NNWalker(WalkStrategy strategy)
         }
 
         // WARNING must initialized arrays and AAs here to provide reference semantics
-        pending = new Queue(Pending(startWeight, start));
+        pending = new Queue(Pending(startWeight, gr.linkCount(start), start));
         visitByNd[start.raw] = Visit(startWeight, Step.init);
 
         assert(!pending.empty); // must be initialized to enable reference semantics
@@ -189,7 +189,7 @@ struct NNWalker(WalkStrategy strategy)
         if (visitByNd.length >= 2)
         {
             writeln("warning: Called postblit when nextNd is ",
-                    gr[pending.front[1]].lemma,
+                    gr[pending.front[2]].lemma,
                     " and pending.length=", pending.length,
                     " and visitByNd.length=", visitByNd.length);
         }
@@ -200,7 +200,7 @@ struct NNWalker(WalkStrategy strategy)
         import std.range: empty;
         assert(!pending.empty, "Can't fetch front from an empty NNWalker");
         import std.range: front;
-        return pending.front[1];
+        return pending.front[2];
     }
 
     void popFront()
@@ -209,8 +209,8 @@ struct NNWalker(WalkStrategy strategy)
 
         import std.range: moveFront;
         const curr = pending.front; pending.removeFront;
-        const currW = curr[0];
-        const currNd = curr[1];
+        const NWeight currW = curr[0];
+        const Nd currNd = curr[2];
 
         import knet.iteration: lnsOf;
         foreach (const frontLn; gr.lnsOf(currNd, filter.roles, filter.origins))
@@ -219,6 +219,7 @@ struct NNWalker(WalkStrategy strategy)
             import knet.iteration: ndsOf;
             foreach (const nextNd; gr.ndsOf(frontLn, filter.langs, filter.senses, currNd))
             {
+                const nextLinkCount = gr.linkCount(nextNd);
                 double relevance = 1.0;
                 if (useRelevance)
                     relevance = frontLink.role.rel.relevance;
@@ -244,8 +245,8 @@ struct NNWalker(WalkStrategy strategy)
                         {
                             version (debugPrint) writeln("is updated");
                             *hit = Visit(newNextGoodness, Step(frontLn, currNd)); // update visitByNd with best yet
-                            pending.removeKey(Pending(currNextGoodness, nextNd)); // remove old
-                            pending.insert(Pending(newNextGoodness, nextNd));
+                            pending.removeKey(Pending(currNextGoodness, nextLinkCount, nextNd)); // remove old
+                            pending.insert(Pending(newNextGoodness, nextLinkCount, nextNd));
                         }
                         else
                         {
@@ -265,7 +266,7 @@ struct NNWalker(WalkStrategy strategy)
                 {
                     version (debugPrint) writeln("dist:", newNextGoodness, " is added");
                     visitByNd[nextNd] = Visit(newNextGoodness, Step(frontLn, currNd)); // first is best
-                    pending.insert(Pending(newNextGoodness, nextNd));
+                    pending.insert(Pending(newNextGoodness, nextLinkCount, nextNd));
                 }
             }
         }

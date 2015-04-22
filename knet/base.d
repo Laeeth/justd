@@ -175,6 +175,9 @@ bool isMultiWord(S)(S s) if (isSomeString!S)
 /// Normalized (Link) Weight.
 alias NWeight = double;
 
+/// Number of Links connected to Node.
+alias LinkCount = DbIx;
+
 /** Context or Ontology Category Index (currently from NELL). */
 struct Ctx
 {
@@ -219,6 +222,13 @@ else                    { alias MutExpr = string; }
 
 /// Reference to Node.
 alias Nd = Ref!Node;
+
+LinkCount linkCount(Graph gr, Nd nd) @safe pure @nogc
+{
+    const length = gr[nd].links.length;
+    assert(length <= LinkCount.max);
+    return cast(LinkCount)length;
+}
 
 /// Reference to Link.
 alias Ln = Ref!Link;

@@ -666,6 +666,9 @@ bool generalizes(T)(T general,
     return specializes(special, general);
 }
 
+/** Reference Precision. */
+alias DbIx = uint;
+
 /** Type-Safe Directed Reference to $(D T). */
 struct Ref(T)
 {
@@ -673,7 +676,7 @@ struct Ref(T)
         Set this to $(D uint) if we get low on memory.
         Set this to $(D ulong) when number of link nodes exceed Ix.
     */
-    alias Ix = uint; // TODO Change this to size_t when we have more Concepts and memory.
+    alias Ix = DbIx; // TODO Change this to size_t when we have more Concepts and memory.
     enum nullIx = Ix.max >> 1;
 
     import bitop_ex: setTopBit, getTopBit, resetTopBit;
