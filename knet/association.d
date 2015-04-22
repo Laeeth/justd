@@ -236,13 +236,13 @@ body
 
         const Nd contextNd = context.key;
         const visits = walkerVisitsByNd[contextNd];
-        write("cix:", cix, " context: "); gr.showNd(contextNd); writeln;
+        write(" context: "); gr.showNd(contextNd); writeln;
         foreach (wix, ref walker; walkers)
         {
             if (visits[wix]) // if walker wix visited contextNd
             {
                 const path = walker.pathFrom(contextNd);
-                write("- wix:", wix, " path: ");
+                write("- path: ");
                 gr.showPath(path);
                 writeln;
             }
