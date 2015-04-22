@@ -121,6 +121,9 @@ void learnPreciseThings(Graph graph)
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/mineral_group.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mineral group`, Sense.noun, Sense.noun, 1.0);
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/major_mineral_group.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `major mineral group`, Sense.noun, Sense.noun, 1.0);
 
+    // Names
+    graph.learnMto1(Lang.unknown, rdT(`../knowledge/car_brand.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `car brand`, Sense.carBrand, Sense.brand, 1.0);
+
     // Swedish
     graph.learnMto1(Lang.sv, rdT(`../knowledge/sv/house.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `hus`, Sense.noun, Sense.noun, 1.0);
 

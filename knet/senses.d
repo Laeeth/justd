@@ -123,6 +123,9 @@ enum Sense:ubyte
     politicalParty,
     company,
 
+    brand,
+    carBrand,
+
     geographicalRegion,
     island,
     city,                       /// Skänninge
@@ -459,8 +462,11 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case namePerson: return `person name`;
         case nameAnimal: return `animal name`;
         case organisation: return `organisation name`;
-        case company: return `company`;
         case politicalParty: return `political party`;
+        case company: return `company`;
+        case brand: return `brand`;
+        case carBrand: return `car brand`;
+
         case geographicalRegion: return `geographical region`;
         case island: return `island`;
         case city: return `city`;
@@ -909,6 +915,8 @@ import std.algorithm.comparison: among;
                                          organisation,
                                          company,
                                          politicalParty,
+                                         brand,
+                                         carBrand,
                                          island,
                                          city,
                                          county,
@@ -919,6 +927,11 @@ import std.algorithm.comparison: among;
                                          newspaper) != 0;
     }
     alias isProperNoun = isName;
+    bool isBrand(Sense sense)
+    {
+        with (Sense) return sense.among!(brand,
+                                         carBrand) != 0;
+    }
     bool isOrganisation(Sense sense)
     {
         with (Sense) return sense.among!(organisation,
@@ -1241,6 +1254,8 @@ bool specializes(Sense special,
 
         case name: return special.isName;
         case organisation: return special.isOrganisation;
+        case brand: return special.isBrand;
+
         case abbrevation: return special.isAbbrevation;
         case acronym: return special.isAcronym;
 
