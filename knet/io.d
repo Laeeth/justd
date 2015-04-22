@@ -226,6 +226,7 @@ void showNds(R)(Graph gr,
                                                                nd.ix)) // don't self reference
                                      .map!(nd => gr[nd]))
             {
+                write(`    + `);
                 gr.showNode(linkedNode, link.nweight);
             }
             writeln;
