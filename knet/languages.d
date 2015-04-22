@@ -132,6 +132,8 @@ enum Lang:ushort
     sk, slovak = sk,                      /// Slovak: Slovak Republic
     sl, slovene = sl, slovenian = slovene,                      /// Slovene, Slovenian: Slovenia, Austria, Italy
     es, spanish = es,                      /// Spanish
+    es_ar, spanishArgentina = es_ar,
+    es_bo, spanishBolivia = es_bo,
     sw, swahili = sw,                      /// Swahili: East Africa
     sv, swedish = sv,                      /// Swedish
     tg, tajik = tg,                      /// Tajik: Tajikistan, Afghanistan
