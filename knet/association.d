@@ -134,11 +134,11 @@ body
     }
 
     // debug prints
-    size_t nix = 0;
+    writeln(`> Searching for Contexts of:`);
     foreach (nd; nds)
     {
-        writeln(`- nix:`, nix, `: `, gr[nd].lemma);
-        nix++;
+        import knet.io: showNd;
+        write(`  - `); gr.showNd(nd); writeln;
     }
 
     WalkerVisits[Nd] walkerVisitsByNd;
@@ -184,7 +184,7 @@ body
         }
     }
 
-    StopWatch sw; sw.start(); sw.stop(); pln("Combining walker results took ", sw.peek.msecs);
+    // StopWatch sw; sw.start(); sw.stop(); pln("Combining walker results took ", sw.peek.msecs);
 
     // combine walker results
     Hits[Nd] hitsByNd;       // weights by node
@@ -230,19 +230,21 @@ body
     // exclude input (query) nodes $(D nds)
     E[] pureContexts = contexts.filter!(context => !nds.canFind(context.key)).array;
 
+    writeln("> Found Contexts:");
+
+    // print contexts and paths
     foreach (cix, context; pureContexts)
     {
         import knet.io: showNd, showPath;
-
         const Nd contextNd = context.key;
         const visits = walkerVisitsByNd[contextNd];
-        write(" context: "); gr.showNd(contextNd); writeln;
+        write(`  - Context `); gr.showNd(contextNd); writeln(`:`);
         foreach (wix, ref walker; walkers)
         {
             if (visits[wix]) // if walker wix visited contextNd
             {
                 const path = walker.pathFrom(contextNd);
-                write("- path: ");
+                write(`    + Path: `);
                 gr.showPath(path);
                 writeln;
             }
@@ -254,9 +256,9 @@ body
     // this is turned into a range
     foreach (ix, ref walker; walkers)
     {
-        pln(" walker#", ix, ":",
-            " pending.length:", walker.pending.length,
-            " visitByNd.length:", walker.visitByNd.length);
+        pln(` walker#`, ix, `:`,
+            ` pending.length:`, walker.pending.length,
+            ` visitByNd.length:`, walker.visitByNd.length);
     }
 
     return tuple(pureContexts, walkers);
