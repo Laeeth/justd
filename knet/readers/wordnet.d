@@ -7,51 +7,50 @@ import knet.base;
 Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
 {
     typeof(return) role;
-    Rel rel = Rel.any;
     with (Rel)
     {
         switch (sym)
         {
-            case  `!`: rel = antonymFor; break;
-            case  `@`: rel = hypernymOf, true; break;
-            case `@i`: rel = instanceHypernymOf, true; break;
-            case  `~`: rel = hyponymOf; break;
-            case `~i`: rel = instanceHyponymOf; break;
-            case  `*`: rel = causes, true; break; // entailment.
+            case  `!`: role = Role(antonymFor); break;
+            case  `@`: role = Role(hypernymOf, true); break;
+            case `@i`: role = Role(instanceHypernymOf, true); break;
+            case  `~`: role = Role(hyponymOf); break;
+            case `~i`: role = Role(instanceHyponymOf); break;
+            case  `*`: role = Role(causes, true); break; // entailment.
 
-            case `#m`: rel = memberHolonym; break;
-            case `#s`: rel = substanceHolonym; break;
-            case `#p`: rel = partHolonym; break;
-            case `%m`: rel = memberOf; break;
-            case `%s`: rel = madeOf; break;
-            case `%p`: rel = partOf; break;
+            case `#m`: role = Role(memberHolonym); break;
+            case `#s`: role = Role(substanceHolonym); break;
+            case `#p`: role = Role(partHolonym); break;
+            case `%m`: role = Role(memberOf); break;
+            case `%s`: role = Role(madeOf); break;
+            case `%p`: role = Role(partOf); break;
 
-            case  `=`: rel = attribute; break;
-            case  `+`: rel = derivationallyRelatedForm; break;
+            case  `=`: role = Role(attribute); break;
+            case  `+`: role = Role(derivationallyRelatedForm); break;
 
-            case `;c`: rel = topicDomainOfSynset; break;
-            case `-c`: rel = memberOfTopicDomain; break;
+            case `;c`: role = Role(topicDomainOfSynset); break;
+            case `-c`: role = Role(memberOfTopicDomain); break;
 
-            case `;r`: rel = regionDomainOfSynset; break;
-            case `-r`: rel = memberOfRegionDomain; break;
+            case `;r`: role = Role(regionDomainOfSynset); break;
+            case `-r`: role = Role(memberOfRegionDomain); break;
 
-            case `;u`: rel = usageDomainOfSynset; break;
-            case `-u`: rel = memberOfUsageDomain; break;
+            case `;u`: role = Role(usageDomainOfSynset); break;
+            case `-u`: role = Role(memberOfUsageDomain); break;
 
-            case  `>`: rel = causes; break;
-            case  `^`: rel = alsoSee; break;
-            case  `$`: rel = formOfVerb; break;
+            case  `>`: role = Role(causes); break;
+            case  `^`: role = Role(alsoSee); break;
+            case  `$`: role = Role(formOfVerb); break;
 
-            case  `&`: rel = similarTo; break;
-            case  `<`: rel = participleOfVerb; break;
+            case  `&`: role = Role(similarTo); break;
+            case  `<`: role = Role(participleOfVerb); break;
 
-            case  `\`: rel = pertainym; break; // pertains to noun
+            case  `\`: role = Role(pertainym); break; // pertains to noun
 
             default:
                 assert(false, `Unexpected relation type ` ~ sym);
         }
     }
-    return Role(rel);
+    return role;
 }
 
 bool readWordNetIndexLine(R, N)(Graph gr,
