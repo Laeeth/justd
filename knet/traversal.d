@@ -120,7 +120,7 @@ struct NNWalker(WalkStrategy strategy)
     // version = debugPrint;
 
     import std.typecons: Tuple, tuple;
-    import std.container: redBlackTree, RedBlackTree;
+    import std.container: RedBlackTree;
 
     alias Pending = Tuple!(NWeight, Nd);
     alias Visit = Tuple!(NWeight, Step);
@@ -211,8 +211,6 @@ struct NNWalker(WalkStrategy strategy)
         const curr = pending.front; pending.removeFront;
         const currW = curr[0];
         const currNd = curr[1];
-
-        const savedLength = pending.length;
 
         import knet.iteration: lnsOf;
         foreach (const frontLn; gr.lnsOf(currNd, filter.roles, filter.origins))
