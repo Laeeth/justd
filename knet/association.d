@@ -230,15 +230,13 @@ body
     // exclude input (query) nodes $(D nds)
     E[] pureContexts = contexts.filter!(context => !nds.canFind(context.key)).array;
 
-    foreach (cix, pureContext; pureContexts)
+    foreach (cix, context; pureContexts)
     {
         import knet.io: showNd, showPath;
 
-        const Nd contextNd = pureContext.key;
-        const visits = contextNd in walkerVisitsByNd;
-
+        const Nd contextNd = context.key;
+        const visits = walkerVisitsByNd[contextNd];
         write("cix:", cix, " context: "); gr.showNd(contextNd); writeln;
-
         foreach (wix, ref walker; walkers)
         {
             if (visits[wix]) // if walker wix visited contextNd

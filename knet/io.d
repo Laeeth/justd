@@ -627,7 +627,7 @@ bool query(Graph gr,
                                                                                 StepFilter(),
                                                                                 NodeFilter(userLang != Lang.unknown ? [userLang] : [],
                                                                                            userSense != Sense.unknown ? [userSense] : []),
-                                                                                userCount, 2000);
+                                                                                userCount, 4000);
                 const contexts = result[0];
                 foreach (const context; contexts)
                 {
