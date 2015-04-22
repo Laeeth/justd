@@ -152,8 +152,8 @@ void showNode(Graph gr,
     writef(`:%.0f%%-%s)`, 100*weight, node.origin.toNice); // close
 }
 
-void showNode(Graph gr,
-              const Nd nd, NWeight weight = 1.0)
+void showNd(Graph gr,
+            const Nd nd, NWeight weight = 1.0)
 {
     gr.showNode(gr[nd], weight);
 }
@@ -172,7 +172,7 @@ void showStep(Graph gr,
               Step step)
 {
     gr.showLn(step[0]);
-    gr.showNode(step[1]);
+    gr.showNd(step[1]);
 }
 
 void showPath(Graph gr,
@@ -220,14 +220,14 @@ void showNds(R)(Graph gr,
         foreach (ln; lns)
         {
             auto link = gr[ln];
+            write(`    + `);
             gr.showLn(ln);
-            foreach (linkedNode; link.actors[]
-                                     .filter!(actorNodeRef => (actorNodeRef.ix !=
-                                                               nd.ix)) // don't self reference
-                                     .map!(nd => gr[nd]))
+            foreach (linkedNd; link.actors[]
+                                   .filter!(actorNodeRef => (actorNodeRef.ix !=
+                                                             nd.ix)) // don't self reference
+                                   )
             {
-                write(`    + `);
-                gr.showNode(linkedNode, link.nweight);
+                gr.showNd(linkedNd, link.nweight);
             }
             writeln;
         }
@@ -633,7 +633,7 @@ bool query(Graph gr,
                 {
                     const Nd nd = context.key;
                     const Hits hits = context.value;
-                    gr.showNode(nd, hits.goodnessSum);
+                    gr.showNd(nd, hits.goodnessSum);
                     writeln(" visitCount: ", hits.visitCount);
                 }
             }

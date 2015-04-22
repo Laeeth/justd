@@ -232,12 +232,12 @@ body
 
     foreach (cix, pureContext; pureContexts)
     {
-        import knet.io: showNode, showPath;
+        import knet.io: showNd, showPath;
 
         const Nd contextNd = pureContext.key;
         const visits = contextNd in walkerVisitsByNd;
 
-        write("cix:", cix, " context: "); gr.showNode(contextNd); writeln;
+        write("cix:", cix, " context: "); gr.showNd(contextNd); writeln;
 
         foreach (wix, ref walker; walkers)
         {
