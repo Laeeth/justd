@@ -12,14 +12,20 @@ print "scons: Using at maximum " + str(num_jobs) + " number of jobs"
 # D compilation flags
 dflags = ["-vcolumns", "-wi", "-debug"]
 
-# Build Type
+# Options
 AddOption("--build-type", dest="build-type", type="string")
+AddOption("--d-compiler", dest="d-compiler", type="string")
 
-default_build_type = "release"
+DEFAULT_BUILD_TYPE = "release"
+DEFAULT_D_COMPILER = "/usr/bin/dmd" # /home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
 
 build_type = GetOption("build-type")
 if not build_type:
-    build_type = default_build_type
+    build_type = DEFAULT_BUILD_TYPE
+
+d_compiler = GetOption("d-compiler")
+if not d_compiler:
+    d_compiler = DEFAULT_D_COMPILER
 
 for build_flag in build_type.split("-"):
     dflags.append("-" + build_flag)
@@ -28,7 +34,7 @@ for build_flag in build_type.split("-"):
     if build_flag == "debug":
         dflags += ["-g", "-gs"]
 
-env = Environment(DC="/usr/bin/dmd", # "/home/per/opt/x86_64-unknown-linux-gnu/dmd/linux/bin64/dmd",
+env = Environment(DC=d_compiler,
                   DFLAGS=dflags)
 env.Decider("MD5-timestamp")
 env.CacheDir(os.path.expanduser("~/.cache/scons"))
