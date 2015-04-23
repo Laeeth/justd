@@ -136,7 +136,7 @@ void showNode(Graph gr,
     }
     if (node.lemma.sense != Sense.unknown)
     {
-        write(`:`, node.lemma.sense);
+        write(`:`, node.lemma.sense.toHuman);
         if (node.lemma.hasUniqueSense)
         {
             write("(unique)");

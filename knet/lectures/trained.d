@@ -13,9 +13,9 @@ void learnTrainedThings(Graph graph)
 
     // CN5
     import knet.readers.cn5;
-    // graph.readCN5(`~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
+    graph.readCN5(`~/Knowledge/conceptnet5-5.3/data/assertions/`, maxCount);
 
     // NELL
     import knet.readers.nell;
-    //graph.readNELLFile(`~/Knowledge/nell/NELL.08m.910.esv.csv`, maxCount);
+    //graph.readNELLFile(`~/Knowledge/nell/NELL.08m.920.esv.csv`, maxCount);
 }

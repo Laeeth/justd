@@ -64,7 +64,7 @@ int main(string[] args)
     gr.showRelations;
 
     // saves
-    if (false) gr.inferSpecializedSenses;
+    gr.inferAll;
 
     if (saveUniquelySensedLemmasCache) { gr.saveUniquelySensedLemmas(cachePath); }
 

@@ -28,7 +28,8 @@ enum Origin:ubyte
     folketsLexikon,
     swesaurus, ///< Swesaurus: http://spraakbanken.gu.se/eng/resource/swesaurus
 
-    manual
+    manual,
+    inference,
 }
 
 bool defined(Origin origin) @safe @nogc pure nothrow { return origin != Origin.unknown; }
@@ -59,5 +60,6 @@ string toNice(Origin origin) @safe pure
         case folketsLexikon: return `FolketsLexikon`;
         case swesaurus: return `Swesaurus`;
         case manual: return `Manual`;
+        case inference: return `Inference`;
     }
 }

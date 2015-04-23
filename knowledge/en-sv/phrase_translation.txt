@@ -312,3 +312,15 @@ past participleperfekt particip
 feel wellmå bra
 feel badmå dåligt
 feel sickmå illa
+
+divide bydela med
+divided bydelat med
+
+multiply bymultiplicera med
+multiplied bymultiplicerat med
+
+add withaddera med
+added withadderat med
+
+subtract withsubtrahera med
+subtracted withsubtraherat med
