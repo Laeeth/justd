@@ -517,7 +517,7 @@ auto toHuman(const Role role,
             }
             else
             {
-0                switch (targetLang)
+                switch (targetLang)
                 {
                     case sv: words = ["is", not, "led by"]; break;
                     case en:
@@ -603,7 +603,7 @@ auto toHuman(const Role role,
                 {
                     case sv: words = ["kan", not, "skapas av"]; break;
                     case en:
-0                    default: words = ["can", not, "be created by"]; break;
+                    default: words = ["can", not, "be created by"]; break;
                 }
             }
             break;
