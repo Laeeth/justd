@@ -517,7 +517,7 @@ auto toHuman(const Role role,
             }
             else
             {
-                switch (targetLang)
+0                switch (targetLang)
                 {
                     case sv: words = ["is", not, "led by"]; break;
                     case en:
@@ -603,7 +603,7 @@ auto toHuman(const Role role,
                 {
                     case sv: words = ["kan", not, "skapas av"]; break;
                     case en:
-                    default: words = ["can", not, "be created by"]; break;
+0                    default: words = ["can", not, "be created by"]; break;
                 }
             }
             break;
@@ -1023,9 +1023,9 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["har", not, "instans"]; break;
+                    case sv: words = ["kan", not, "ha instansen"]; break;
                     case en:
-                    default: words = ["does", not, "have an instance"]; break;
+                    default: words = ["may", not, "have the instance"]; break;
                 }
             }
             break;
@@ -1034,7 +1034,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["är", not, "en hypernym instans av"]; break;
+                    case sv: words = ["är", not, "en hypernyminstans av"]; break;
                     case en:
                     default: words = ["is", not, "an instance hypernym of"]; break;
                 }
@@ -1043,9 +1043,9 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["har", not, "en hypernym instans"]; break;
+                    case sv: words = ["kan", not, "ha hypernyminstansen"]; break;
                     case en:
-                    default: words = ["does", not, "have a hypernym instance"]; break;
+                    default: words = ["may", not, "have the hypernym instance"]; break;
                 }
             }
             break;
@@ -1054,7 +1054,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["är", not, "en hyponym instans av"]; break;
+                    case sv: words = ["är", not, "en hyponyminstans av"]; break;
                     case en:
                     default: words = ["is", not, "an instance hyponym of"]; break;
                 }
@@ -1063,9 +1063,9 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["har", not, "hyponym instansen"]; break;
+                    case sv: words = ["kan", not, "ha hyponyminstansen"]; break;
                     case en:
-                    default: words = ["does", not, "have the hyponym instance"]; break;
+                    default: words = ["may", not, "have the hyponym instance"]; break;
                 }
             }
             break;
@@ -1074,7 +1074,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["är", not, "en substans holonym av"]; break;
+                    case sv: words = ["är", not, "en substansholonym av"]; break;
                     case en:
                     default: words = ["is", not, "a substance holonym of"]; break;
                 }
@@ -1083,9 +1083,9 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["har", not, "substans holonymen"]; break;
+                    case sv: words = ["kan", not, "ha substansholonymen"]; break;
                     case en:
-                    default: words = ["does", not, "the substance holonym"]; break;
+                    default: words = ["may", not, "have the substance holonym"]; break;
                 }
             }
             break;
@@ -1094,7 +1094,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["är", not, "en tema domän av"]; break;
+                    case sv: words = ["är", not, "en temadomän av"]; break;
                     case en:
                     default: words = ["is", not, "a topic domain of"]; break;
                 }
@@ -1103,7 +1103,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["har", not, "tema domänen"]; break;
+                    case sv: words = ["har", not, "temadomänen"]; break;
                     case en:
                     default: words = ["does", not, "have the topic domain"]; break;
                 }
@@ -1114,7 +1114,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["är", not, "en region domän av"]; break;
+                    case sv: words = ["är", not, "en regiondomän av"]; break;
                     case en:
                     default: words = ["is", not, "a region domain of"]; break;
                 }
@@ -1123,7 +1123,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["har", not, "region domänen"]; break;
+                    case sv: words = ["har", not, "regiondomänen"]; break;
                     case en:
                     default: words = ["does", not, "have the region domain"]; break;
                 }
@@ -1174,7 +1174,7 @@ auto toHuman(const Role role,
             {
                 switch (targetLang)
                 {
-                    case sv: words = ["är", not, "en medlem av region domänen"]; break;
+                    case sv: words = ["är", not, "en medlem av regiondomänen"]; break;
                     case en:
                     default: words = ["is", not, "a member of the region domain"]; break;
                 }
@@ -1489,26 +1489,6 @@ auto toHuman(const Role role,
                 }
             }
             break;
-        // case hasPronounciation:
-        //     if (!role.reversed)
-        //     {
-        //         switch (targetLang)
-        //         {
-        //             case sv: words = ["utalas", not]; break;
-        //             case en:
-        //             default: words = ["does", not, "have pronouncation"]; break;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         switch (targetLang)
-        //         {
-        //             case sv: words = ["kan", not, "vara uttal av"]; break;
-        //             case en:
-        //             default: words = ["can", not, "be pronouncation of"]; break;
-        //         }
-        //     }
-        //     break;
         case slangFor:
             if (!role.reversed)
             {
