@@ -10,6 +10,8 @@ import knet.origins: toNice;
 import knet.relations: RelDir;
 import knet.roles: toHuman;
 
+import conv_ex: tolerantTo;
+
 /** Show Network Relations.
  */
 void showRelations(Graph gr,
@@ -342,28 +344,28 @@ bool query(Graph gr,
         catch (Exception e) {}
     }
 
-    // try: $(EXPR) in $(Lang)
+    // try: $(EXPR) as $(Lang) $(Sense). Example: $(EXPR) as Swedish noun
+    auto suffixLangSensedWords = normLine.split(' ');
+    if (suffixLangSensedWords.length >= 3 &&
+        suffixLangSensedWords[$ - 3] == `as`)
+    {
+        const Lang inLang = suffixLangSensedWords[$ - 2].tolerantTo!Lang;
+        const Sense asSense = suffixLangSensedWords[$ - 1].tolerantTo!Sense(true);
+        if (asSense != Sense.unknown)
+        {
+            const hit = gr.query(suffixLangSensedWords[0 .. $ - 3].joiner(` `).to!string,
+                                 inLang, asSense, userDelay, userCount, lineSeparator,
+                                 triedLines, depth + 1); // recurse
+            if (hit) { return hit; }
+        }
+    }
+
+    // try: $(EXPR) in $(Lang) Example: $(EXPR) in Swedish
     auto suffixLangedWords = normLine.split(' ');
     if (suffixLangedWords.length >= 3 &&
         suffixLangedWords[$ - 2] == `in`)
     {
-        // try to lookup. TODO functionize to generic fuzzyTo!Lang
-        Lang inLang = Lang.unknown;
-        try
-        {
-            inLang = suffixLangedWords[$ - 1].to!Lang;
-        }
-        catch (Exception e)
-        {
-            try
-            {
-                inLang = suffixLangedWords[$ - 1].toLower.to!Lang;
-            }
-            catch (Exception e)
-            {
-            }
-        }
-
+        const Lang inLang = suffixLangedWords[$ - 1].tolerantTo!Lang;
         if (inLang != Lang.unknown)
         {
             const hit = gr.query(suffixLangedWords[0 .. $ - 2].joiner(` `).to!string,
@@ -378,71 +380,11 @@ bool query(Graph gr,
     if (suffixSensedWords.length >= 3 &&
         suffixSensedWords[$ - 2] == `as`)
     {
-        // try to lookup. TODO functionize to generic fuzzyTo!Sense
-        Sense asSense = Sense.unknown;
-        try
-        {
-            asSense = suffixSensedWords[$ - 1].to!Sense;
-        }
-        catch (Exception e)
-        {
-            try
-            {
-                asSense = suffixSensedWords[$ - 1].toLower.to!Sense;
-            }
-            catch (Exception e) {}
-        }
-
+        const Sense asSense = suffixSensedWords[$ - 1].tolerantTo!Sense(true);
         if (asSense != Sense.unknown)
         {
             const hit = gr.query(suffixSensedWords[0 .. $ - 2].joiner(` `).to!string,
                                  userLang, asSense, userDelay, userCount, lineSeparator,
-                                 triedLines, depth + 1); // recurse
-            if (hit) { return hit; }
-        }
-    }
-
-    // try: $(EXPR) as $(Lang) $(Sense). Example: $(EXPR) as Swedish noun
-    auto suffixLangSensedWords = normLine.split(' ');
-    if (suffixLangSensedWords.length >= 3 &&
-        suffixLangSensedWords[$ - 3] == `as`)
-    {
-        // try to lookup. TODO functionize to generic fuzzyTo!Lang
-        Lang inLang = Lang.unknown;
-        try
-        {
-            inLang = suffixLangSensedWords[$ - 2].to!Lang;
-        }
-        catch (Exception e)
-        {
-            try
-            {
-                inLang = suffixLangSensedWords[$ - 2].toLower.to!Lang;
-            }
-            catch (Exception e)
-            {
-            }
-        }
-
-        // try to lookup. TODO functionize to generic fuzzyTo!Sense
-        Sense asSense = Sense.unknown;
-        try
-        {
-            asSense = suffixLangSensedWords[$ - 1].to!Sense;
-        }
-        catch (Exception e)
-        {
-            try
-            {
-                asSense = suffixLangSensedWords[$ - 1].toLower.to!Sense;
-            }
-            catch (Exception e) {}
-        }
-
-        if (asSense != Sense.unknown)
-        {
-            const hit = gr.query(suffixLangSensedWords[0 .. $ - 3].joiner(` `).to!string,
-                                 inLang, asSense, userDelay, userCount, lineSeparator,
                                  triedLines, depth + 1); // recurse
             if (hit) { return hit; }
         }
@@ -455,12 +397,11 @@ bool query(Graph gr,
                                  `after`))
     {
         uint delay = 0;
-        // try to lookup. TODO functionize to generic fuzzyTo
-        try
+        // try to lookup. TODO functionize to generic tolerantTo
+        try { delay = afterWords[$ - 1].to!(typeof(delay)); }
+        catch (Exception e)
         {
-            delay = afterWords[$ - 1].to!(typeof(delay));
         }
-        catch (Exception e) {}
         if (delay != 0)
         {
             userDelay = delay;
