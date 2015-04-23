@@ -1303,7 +1303,7 @@ bool specializes(Sense special,
         assert(integerPositive.specializes(integer));
         assert(integerNegative.specializes(integer));
         assert(timeAdverb.specializes(adverb));
-        assert(country.specializes(region));
+        assert(country.specializes(geographicalRegion));
     }
     assert(Sense.noun.isNoun);
 }
@@ -1321,7 +1321,7 @@ bool generalizes(Sense general,
     return specializesWithExpr(special, general, uniquely, expr, lang);
 }
 
-@safe @nogc pure nothrow unittest
+@safe pure nothrow unittest
 {
     with (Sense)
     {
