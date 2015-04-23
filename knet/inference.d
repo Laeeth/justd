@@ -99,11 +99,13 @@ void inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
 
 void inferAll(Graph gr)
 {
+    writeln(`Inferring ...`);
     foreach (pair; gr.db.ixes.lemmasByExpr.byPair)
     {
         // gr.inferSpecializedSenses(pair[0], pair[1]);
         gr.inferEnglishPhraseRelations(pair[0], pair[1]);
     }
+    writeln(`Inference done`);
 }
 
 import knet.senses: Sense;
