@@ -33,13 +33,16 @@ bool matches(const Role[] roles, Role role)
     return roles.empty;
 }
 
-bool matches(const Sense[] senses, Sense sense)
+bool matches(const Sense[] senses, Sense sense,
+             bool uniquely = true,
+             Lang lang = Lang.unknown,
+             bool capitalized = false)
 {
     foreach (sense_; senses)
     {
         import knet.senses: specializes;
         if (sense == sense_ ||
-            sense.specializes(sense_)) // TODO functionize
+            sense.specializes(sense_, uniquely, lang, capitalized)) // TODO functionize
         {
             return true;
         }
