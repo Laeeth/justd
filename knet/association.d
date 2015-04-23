@@ -237,7 +237,7 @@ body
         import knet.io: showNd, showPath;
         const Nd contextNd = context.key;
         const visits = walkerVisitsByNd[contextNd];
-        write(`  - Context `); gr.showNd(contextNd); writeln(`:`);
+        write(`  - `); gr.showNd(contextNd); writeln(`:`);
         foreach (wix, ref walker; walkers)
         {
             if (visits[wix]) // if walker wix visited contextNd

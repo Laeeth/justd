@@ -117,7 +117,7 @@ void showLn(Graph gr, Ln ln, Lang lang = Lang.en)
 }
 
 void showNode(Graph gr,
-              in Node node, NWeight weight = 1.0)
+              in Node node, NWeight weight = NWeight.nan)
 {
     if (node.lemma.expr)
         write(`"`, node.lemma.expr, // .replace(`_`, ` `)
@@ -151,11 +151,16 @@ void showNode(Graph gr,
         write(`:`, gr.db.ixes.contextNameByCtx[node.lemma.context]);
     }
 
-    writef(`:%.0f%%-%s)`, 100*weight, node.origin.toNice); // close
+    write(`:`);
+    if (weight !is NWeight.nan)
+    {
+        writef(`%.0f%%-`, 100*weight); // close
+    }
+    writef(`%s)`, node.origin.toNice); // close
 }
 
 void showNd(Graph gr,
-            const Nd nd, NWeight weight = 1.0)
+            const Nd nd, NWeight weight = NWeight.nan)
 {
     gr.showNode(gr[nd], weight);
 }
@@ -271,6 +276,10 @@ void showSenses(Senses)(Graph gr,
 
 alias TriedLines = bool[string]; // TODO use std.container.set
 
+/**
+   User Query.
+   Returns: true if query returned gave one or more matches.
+*/
 bool query(Graph gr,
            string line,
            Lang userLang = Lang.unknown,
@@ -642,12 +651,16 @@ bool query(Graph gr,
                                                                                 userCount,
                                                                                 userDelay*1000);
                 const contexts = result[0];
-                foreach (const context; contexts)
+                if (!contexts.empty)
                 {
-                    const Nd nd = context.key;
-                    const Hits hits = context.value;
-                    gr.showNd(nd, hits.goodnessSum);
-                    writeln(" visitCount: ", hits.visitCount);
+                    foreach (const context; contexts)
+                    {
+                        const Nd nd = context.key;
+                        const Hits hits = context.value;
+                        gr.showNd(nd, hits.goodnessSum);
+                        writeln(" visitCount: ", hits.visitCount);
+                    }
+                    return true;
                 }
             }
         }
