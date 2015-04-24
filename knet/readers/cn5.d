@@ -147,7 +147,8 @@ Nd readCN5ConceptURI(T)(Graph gr,
             sense = relInferredSense;
             // writeln("Inferred sense ", sense, " to ", relInferredSense);
         }
-        else if (relInferredSense != Sense.unknown &&
+        else if (sense != Sense.unknown &&
+                 relInferredSense != Sense.unknown &&
                  sense != relInferredSense &&
                  !sense.specializes(relInferredSense))
         {

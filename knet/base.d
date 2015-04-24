@@ -318,7 +318,9 @@ struct Lemma
                     {
                         sense = exprSense;
                     }
-                    else if (sense != exprSense &&
+                    else if (sense != Sense.unknown &&
+                             exprSense != Sense.unknown &&
+                             sense != exprSense &&
                              !sense.specializes(exprSense))
                     {
                         debug writeln(`warning: Can't override `, expr, `'s parameterized sense `, sense,
