@@ -1210,13 +1210,14 @@ bool specializes(Sense special,
                  Sense general,
                  bool uniquely = true,
                  Lang lang = Lang.unknown,
-                 bool capitalized = false)
+                 bool capitalized = false,
+                 bool specializeUnknowns = false)
     @safe pure nothrow @nogc
 {
     if (special == general) return false;
     switch (general) with (Sense)
     {
-        case unknown: return false; // be strict as an unknown meaning can have different meaning say both a noun and verb
+        case unknown: return specializeUnknowns;
         case language: return special.isLanguage;
         case letter: return special.among!(letterLowercase,
                                            letterUppercase) != 0;
