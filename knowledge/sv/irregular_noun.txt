@@ -128,3 +128,5 @@ cyklistcyklister
 baconbacon
 
 buseböss
+
+botböter

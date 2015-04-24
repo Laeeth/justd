@@ -744,7 +744,7 @@ class Graph
         all ~= add(infinitive, lang, Sense.verbIrregularInfinitive, origin);
         all ~= add(pastSimple, lang, Sense.verbIrregularPast, origin);
         all ~= add(pastParticiple, lang, Sense.verbIrregularPastParticiple, origin);
-        return connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), origin);
+        return connectAll(Role(Rel.formOfWord), all.filter!(a => a.defined), origin);
     }
 
     /** Learn English Acronym.
@@ -854,7 +854,7 @@ class Graph
                     tryAdd(present, lang, Sense.verbPresent, origin),
                     tryAdd(pastSimple, lang, Sense.verbPast, origin),
                     tryAdd(pastParticiple, lang, Sense.verbPastParticiple, origin)];
-        connectAll(Role(Rel.formOfVerb), all.filter!(a => a.defined), origin);
+        connectAll(Role(Rel.formOfWord), all.filter!(a => a.defined), origin);
     }
 
     /** Learn Adjective in language $(D lang).
@@ -872,7 +872,7 @@ class Graph
                     tryAdd(superlative, lang, Sense.adjectiveSuperlative, origin),
                     tryAdd(elative, lang, Sense.adjectiveElative, origin),
                     tryAdd(exzessive, lang, Sense.adjectiveExzessive, origin)];
-        connectAll(Role(Rel.formOfAdjective), all.filter!(a => a.defined), origin);
+        connectAll(Role(Rel.formOfWord), all.filter!(a => a.defined), origin);
     }
 
     void learnAdjective(S)(Lang lang,

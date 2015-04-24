@@ -1613,30 +1613,6 @@ auto toHuman(const Role role,
                 default: words = ["has ", not, "word form"]; break;
             }
             break;
-        case formOfVerb:
-            switch (targetLang)
-            {
-                case sv: words = ["har", not, "verb form"]; break;
-                case en:
-                default: words = ["has", not, "verb form"]; break;
-            }
-            break;
-        case formOfNoun:
-            switch (targetLang)
-            {
-                case sv: words = ["har", not, "substantiv form"]; break;
-                case en:
-                default: words = ["has", not, "noun form"]; break;
-            }
-            break;
-        case formOfAdjective:
-            switch (targetLang)
-            {
-                case sv: words = ["har", not, "adjektiv form"]; break;
-                case en:
-                default: words = ["has", not, "adjective form"]; break;
-            }
-            break;
         case cookedWith:
             switch (targetLang)
             {

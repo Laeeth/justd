@@ -56,8 +56,9 @@ size_t inferPhraseRelations(Graph gr,
     return cnt;
 }
 
-void inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
+size_t inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
 {
+    size_t cnt = 0;
     bool show = true;
     import std.algorithm.iteration: groupBy;
     foreach (lemmasOfSameLang; lemmas.groupBy!((lemmaA,
@@ -81,6 +82,7 @@ void inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
                     }
                     // TODO replace all Nds of lemmas[1] with Nds of lemmas[0]
                     // lemmas[1].sense = lemmas[0].sense;
+                    ++cnt;
                 }
                 else if (lemmas[1].sense.specializes(lemmas[0].sense, true, lang, false, true))
                 {
@@ -92,24 +94,28 @@ void inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
                     }
                     // TODO replace all Nds of lemmas[0] with Nds of lemmas[1]
                     // lemmas[0].sense = lemmas[1].sense;
+                    ++cnt;
                 }
                 break;
             default:
                 break;
         }
     }
+    return cnt;
 }
 
 void inferAll(Graph gr)
 {
     writeln(`Inferring ...`);
-    size_t cnt;
+    size_t inferSpecializedSensesCount = 0;
+    size_t inferPhraseRelationsCount = 0;
     foreach (pair; gr.db.ixes.lemmasByExpr.byPair)
     {
-        gr.inferSpecializedSenses(pair[0], pair[1]);
-        cnt += gr.inferPhraseRelations(pair[0], pair[1], [Lang.en, Lang.de, Lang.sv]);
+        inferSpecializedSensesCount += gr.inferSpecializedSenses(pair[0], pair[1]);
+        inferPhraseRelationsCount += gr.inferPhraseRelations(pair[0], pair[1], [Lang.en, Lang.de, Lang.sv]);
     }
-    writeln(`Inferred `, cnt, ` Noun/Verb Phrase Relations`);
+    writeln(`- Inferred Specializations of `, inferSpecializedSensesCount, ` Lemma Senses`);
+    writeln(`- Inferred `, inferPhraseRelationsCount, ` Noun/Verb Phrase Relations`);
     writeln(`Inference done`);
 }
 

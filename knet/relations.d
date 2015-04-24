@@ -314,10 +314,7 @@ enum Rel:ubyte
     participleOf,
 
     formOfWord,
-    formOfVerb,
     participleOfVerb,
-    formOfNoun,
-    formOfAdjective,
 
     hasNameDay,
 
@@ -474,9 +471,6 @@ alias Rank = uint;
                                      mutualProxyFor,
 
                                      formOfWord,
-                                     formOfVerb,
-                                     formOfNoun,
-                                     formOfAdjective,
 
                                      alsoSee) != 0;
     }
@@ -645,10 +639,7 @@ bool specializes(Rel special, Rel general) @safe @nogc pure nothrow
         case hasWebsite: return special.among!(hasOfficialWebsite) != 0;
         case hasSubevent: return special.among!(hasFirstSubevent,
                                                 hasLastSubevent) != 0;
-        case formOfWord: return special.among!(formOfVerb,
-                                               participleOfVerb,
-                                               formOfNoun,
-                                               formOfAdjective) != 0;
+        case formOfWord: return special.among!(participleOfVerb) != 0;
         case synonymFor: return special.among!(abbreviationFor,
                                                togetherWritingFor) != 0;
         case instanceHypernymOf: return special.among!(instanceOf,

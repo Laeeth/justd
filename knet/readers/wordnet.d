@@ -39,7 +39,7 @@ Role decodeWordNetPointerSymbol(S)(S sym, Sense sense) pure if (isSomeString!S)
 
             case  `>`: role = Role(causes); break;
             case  `^`: role = Role(alsoSee); break;
-            case  `$`: role = Role(formOfVerb); break;
+            case  `$`: role = Role(formOfWord); break; // actually form of verb but this is redundant because Sense can give us this
 
             case  `&`: role = Role(similarTo); break;
             case  `<`: role = Role(participleOfVerb); break;
