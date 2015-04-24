@@ -139,6 +139,8 @@ enum Sense:ubyte
     star,
     newspaper,                  /// Tidning
 
+    timePoint,
+
     timePeriod,
     weekday,
     month,
@@ -480,6 +482,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case star: return `star`;
         case newspaper: return `newspaper`;
 
+        case timePoint: return `time point`;
         case timePeriod: return `time period`;
         case weekday: return `weekday`;
         case month: return `month`;
@@ -757,7 +760,8 @@ import std.algorithm.comparison: among;
                               sense.isLanguage ||
                               sense.isTimePeriod ||
                               sense.isInformation) ||
-                             sense.among!(currency));
+                             sense.among!(timePoint,
+                                          currency));
     }
     bool isInformation(Sense sense)
     {
