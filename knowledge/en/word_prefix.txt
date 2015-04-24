@@ -4,7 +4,7 @@ acroadjective:hightop
 ambiboth
 amphibothon two sides
 antepreposition:before
-antiagainstopposite
+antipreposition:againstopposite
 aquanounUncountable:water
 archhighestworst
 astronounSingular:star
@@ -16,8 +16,8 @@ centione hundredthhundred
 cowithjoint
 comwithtogether
 conwithtogether
-contraagainstopposite
-counteragainstin opposition to
+contrapreposition:againstopposite
+counterpreposition:againstin opposition to
 defromdownaway reverseopposite
 decten
 decione tenth
@@ -106,8 +106,8 @@ thermnounSingular:heat
 transacross
 trithree
 ultrabeyond
-unagainstnotopposite
+unpreposition:againstnotopposite
 underbelowinsufficient
 unione
-upgreaterhigher
-withagainst
+upadjective:greateradjective:higher
+withpreposition:against
