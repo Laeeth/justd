@@ -52,6 +52,7 @@ crime
 cruelty
 culture
 curiosity
+customer service
 death
 deceit
 dedication
@@ -100,6 +101,7 @@ fascination
 fashion
 favoritism
 fear
+feeling
 fiction
 forgiveness
 fragility
