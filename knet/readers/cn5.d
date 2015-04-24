@@ -145,7 +145,7 @@ Nd readCN5ConceptURI(T)(Graph gr,
         if (relInferredSense.specializes(sense, true, lang, false, true))
         {
             sense = relInferredSense;
-            writeln("Inferred sense ", sense, " to ", relInferredSense);
+            // writeln("Inferred sense ", sense, " to ", relInferredSense);
         }
         else if (sense != relInferredSense &&
                  !sense.specializes(relInferredSense))
@@ -190,7 +190,6 @@ Ln readCN5Line(R, N)(Graph gr,
                 rel = decodeCN5RelationPath(part, negated, reversed, tense);
                 import knet.inference: inferredSenses;
                 inferredSrcDstSenses = rel.inferredSenses;
-                writeln("rel: ", rel, ", inferredSrcDstSenses:", inferredSrcDstSenses);
                 break;
             case 2:         // source concept
                 try

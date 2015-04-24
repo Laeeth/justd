@@ -107,6 +107,7 @@ enum Rel:ubyte
                    WordNet. /r/AtLocation /c/en/butter /c/en/refrigerator; /r/AtLocation
                    /c/en/boston /c/en/massachusetts */
     locatedAt = atLocation,
+
     hasCitizenship,
     livesIn = hasCitizenship,
 
