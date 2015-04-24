@@ -212,3 +212,8 @@ mall
 park
 restaurant
 zoo
+human
+person
+animal
+plant
+artifact
