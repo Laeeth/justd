@@ -210,13 +210,14 @@ Tuple!(Sense, Sense) inferredSenses(Rel rel,
             break;
         case locatedNear:
             senses = tuple(Sense.noun,
-                           Sense.noun); // TODO location
+                           Sense.location);
             break;
         default:
-            if (rel.specializes(Rel.atLocation))
+            if (rel == Rel.atLocation &&
+                rel.specializes(Rel.atLocation))
             {
-                senses = tuple(Sense.unknown,
-                               Sense.noun); // TODO location
+                senses = tuple(Sense.noun,
+                               Sense.location);
             }
             break;
     }

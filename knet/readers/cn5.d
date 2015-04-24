@@ -190,6 +190,7 @@ Ln readCN5Line(R, N)(Graph gr,
                 rel = decodeCN5RelationPath(part, negated, reversed, tense);
                 import knet.inference: inferredSenses;
                 inferredSrcDstSenses = rel.inferredSenses;
+                writeln("rel: ", rel, ", inferredSrcDstSenses:", inferredSrcDstSenses);
                 break;
             case 2:         // source concept
                 try
