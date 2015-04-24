@@ -116,7 +116,8 @@ enum Sense:ubyte
     nameFemale,             /// proper name
     surname,                /// proper surname
 
-    nameLocation,                   /// Stockholm
+    // TODO nameOf(...)
+    nameLocation,               /// Stockholm
     namePerson,                 /// John
     nameAnimal,                 /// Lajka
     organisation,               /// CIA
@@ -126,6 +127,7 @@ enum Sense:ubyte
     brand,
     carBrand,
 
+    location,
     geographicalRegion,
     island,
     city,                       /// Skänninge
@@ -469,6 +471,7 @@ string toHuman(Sense sense) @safe pure @nogc nothrow
         case brand: return `brand`;
         case carBrand: return `car brand`;
 
+        case location: return `location`;
         case geographicalRegion: return `geographical region`;
         case island: return `island`;
         case city: return `city`;
@@ -943,7 +946,8 @@ import std.algorithm.comparison: among;
     }
     bool isLocation(Sense sense)
     {
-        with (Sense) return sense.among!(nameLocation,
+        with (Sense) return sense.among!(location,
+                                         nameLocation,
                                          geographicalRegion,
                                          island,
                                          city,

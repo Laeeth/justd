@@ -40,8 +40,6 @@ Tuple!(Sense, Sense) inferredSenses(Rel rel) @safe @nogc pure nothrow
         case inRoom:
         case bornInLocation:
         case diedInLocation:
-        case hasOfficeIn:
-        case headquarteredIn:
         case borderedBy:
         case causes:
         case causesSideEffect:
@@ -140,12 +138,13 @@ Tuple!(Sense, Sense) inferredSenses(Rel rel) @safe @nogc pure nothrow
         case servedWith:
         case wornWith:
 
+        case participatesIn:
             senses = tuple(Sense.noun,
                            Sense.noun);
             break;
         case madeAt:
             senses = tuple(Sense.noun,
-                           Sense.noun); // TODO location
+                           Sense.location);
             break;
 
         case atTime:
@@ -169,13 +168,15 @@ Tuple!(Sense, Sense) inferredSenses(Rel rel) @safe @nogc pure nothrow
                            Sense.substance);
             break;
         case memberOfEconomicSector:
-        case participatesIn:
         case growsIn:
-            senses = tuple(Sense.noun, // TODO plant
-                           Sense.noun);
+        case hasResidenceIn:
+        case hasOfficeIn:
+        case headquarteredIn:
+            senses = tuple(Sense.noun,
+                           Sense.location);
             break;
         case attends:
-            senses = tuple(Sense.noun, // TODO person
+            senses = tuple(Sense.noun,
                            Sense.noun);
             break;
         case worksFor:
@@ -196,7 +197,6 @@ Tuple!(Sense, Sense) inferredSenses(Rel rel) @safe @nogc pure nothrow
         case topMemberOf:
         case hasCitizenship:
         case hasEthnicity:
-        case hasResidenceIn:
             senses = tuple(Sense.noun, // TODO person
                            Sense.noun);
             break;
@@ -248,6 +248,7 @@ size_t inferPhraseRelations(Graph gr,
         case 2:
             import knet.iteration: ndsOf;
             import knet.filtering: matches;
+            import knet.senses: specializes;
             foreach (compoundLemma; compoundLemmas.filter!(lemma => (langs.matches(lemma.lang) &&
                                                                      [Sense.noun].matches(lemma.sense, true, lemma.lang)))) // noun:"red light"
             {
@@ -259,11 +260,13 @@ size_t inferPhraseRelations(Graph gr,
 
                     // TODO functionize?
                     Rel rel;
-                    with (Sense) switch (sense)
+                    if (sense.specializes(Sense.adjective))
                     {
-                        case noun: rel = Rel.relatedTo; break;
-                        case adjective: rel = Rel.hasAttribute; break;
-                        default: break;
+                        rel = Rel.hasAttribute;
+                    }
+                    else if (sense.specializes(Sense.noun))
+                    {
+                        rel = Rel.relatedTo;
                     }
 
                     gr.connect(compoundNd, Role(rel), qualifierNd, Origin.inference, 1.0);
