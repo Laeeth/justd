@@ -10,12 +10,16 @@ void inferSpecializedRelations(Graph gr)
 }
 
 /**
-   Infer Noun/Verb Phrase Relations.
+   Infer Relations of Compound Nouns and Verbs.
 
    noun:"red light"
    - isA noun:"light"
    - hasAttribute adjective:"red"
- */
+
+   noun:"red light"
+   - isA noun:"light"
+   - hasAttribute adjective:"red"
+*/
 size_t inferPhraseRelations(Graph gr,
                             Expr expr,
                             Lemmas compoundLemmas,
@@ -56,10 +60,36 @@ size_t inferPhraseRelations(Graph gr,
     return cnt;
 }
 
-size_t inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
+/** Check if $(D rel) propagates Sense(s). */
+bool propagatesSense(Rel rel) @safe @nogc  nothrow
+{
+    with (Rel) return rel.among!(translationOf,
+                                 synonymFor,
+                                 antonymFor) != 0;
+}
+
+/** Check if $(D sense) always infers instanceOf relation. */
+bool infersInstanceOf(Sense sense) @safe @nogc  nothrow
+{
+    with (Sense) return sense.among!(weekday,
+                                     month,
+                                     dayOfMonth,
+                                     year,
+                                     season) != 0;
+}
+
+size_t propagateSenses(Graph gr,
+                       Lemmas lemmas)
+{
+    // TODO use propagatesSense
+    size_t cnt = 0;
+    return cnt;
+}
+
+size_t inferSpecializedSenses(Graph gr, Lemmas lemmas)
 {
     size_t cnt = 0;
-    bool show = true;
+    bool show = false;
     import std.algorithm.iteration: groupBy;
     foreach (lemmasOfSameLang; lemmas.groupBy!((lemmaA,
                                                 lemmaB) => (lemmaA.lang ==
@@ -76,9 +106,9 @@ size_t inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
                 {
                     if (show)
                     {
-                        writeln(`Specializing Lemma expr "`, expr,
+                        writeln(`Specializing Lemma expr "`, lemmas[1],
                                 `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
-                                lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
+                                lemmas[1].sense, `" to "`, lemmas[0].sense, `": `, lemmas[1], " => ", lemmas[0]);
                     }
                     // TODO replace all Nds of lemmas[1] with Nds of lemmas[0]
                     // lemmas[1].sense = lemmas[0].sense;
@@ -88,10 +118,11 @@ size_t inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
                 {
                     if (show)
                     {
-                        writeln(`Specializing Lemma expr "`, expr,
+                        writeln(`Specializing Lemma expr "`, lemmas[0],
                                 `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
-                                lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
+                                lemmas[0].sense, `" to "`, lemmas[1].sense, `": `, lemmas[1], " => ", lemmas[0]);
                     }
+                    // TODO use propagatesSense
                     // TODO replace all Nds of lemmas[0] with Nds of lemmas[1]
                     // lemmas[0].sense = lemmas[1].sense;
                     ++cnt;
@@ -111,7 +142,7 @@ void inferAll(Graph gr)
     size_t inferPhraseRelationsCount = 0;
     foreach (pair; gr.db.ixes.lemmasByExpr.byPair)
     {
-        inferSpecializedSensesCount += gr.inferSpecializedSenses(pair[0], pair[1]);
+        inferSpecializedSensesCount += gr.inferSpecializedSenses(pair[1]);
         inferPhraseRelationsCount += gr.inferPhraseRelations(pair[0], pair[1], [Lang.en, Lang.de, Lang.sv]);
     }
     writeln(`- Inferred Specializations of `, inferSpecializedSensesCount, ` Lemma Senses`);
@@ -122,21 +153,3 @@ void inferAll(Graph gr)
 import knet.senses: Sense;
 
 import std.algorithm.comparison: among;
-
-/** Check if $(D rel) propagates Sense(s). */
-bool propagatesSense(Rel rel) @safe @nogc  nothrow
-{
-    with (Rel) return rel.among!(translationOf,
-                                 synonymFor,
-                                 antonymFor) != 0;
-}
-
-/** Check if $(D sense) always infers instanceOf relation. */
-bool infersInstanceOf(Sense sense) @safe @nogc  nothrow
-{
-    with (Sense) return sense.among!(weekday,
-                                     month,
-                                     dayOfMonth,
-                                     year,
-                                     season) != 0;
-}
