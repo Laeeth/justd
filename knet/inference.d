@@ -2,6 +2,12 @@ module knet.inference;
 
 import knet.base;
 
+/**
+  TODO:
+  - adjective:great => adjective:greater => specialize adjectiveComparative:greater
+  - adjective:great => adjective:greatest => specialize adjectiveSuperlative:greater
+*/
+
 /* TODO Infer in multiple steps/passes:
    synonymFor ==specializes==> abbreviationFor ==specializes=> acronymFor
    */
