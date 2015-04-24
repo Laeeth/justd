@@ -147,11 +147,12 @@ Nd readCN5ConceptURI(T)(Graph gr,
             sense = relInferredSense;
             // writeln("Inferred sense ", sense, " to ", relInferredSense);
         }
-        else if (sense != relInferredSense &&
+        else if (relInferredSense != Sense.unknown &&
+                 sense != relInferredSense &&
                  !sense.specializes(relInferredSense))
         {
-            debug writeln(`warning: Can't override `, expr, `'s parameterized sense `, sense,
-                          ` with `, relInferredSense);
+            writeln(`warning: Can't override `, expr, `'s parameterized sense `, sense,
+                    ` with `, relInferredSense);
         }
 
         if (sense == Sense.unknown && item != `_`)
