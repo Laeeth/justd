@@ -10,8 +10,8 @@ void learnPreciseThings(Graph graph)
     graph.learnEnumMemberNameHierarchy!Sense(Sense.nounSingular);
 
     // TODO replace with automatics
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/uncountable_noun.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
-    graph.learnMto1(Lang.sv, rdT(`../knowledge/sv/uncountable_noun.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uncountable`, Sense.nounUncountable, Sense.noun, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/uncountable_noun.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uncountable`, Sense.nounUncountable, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.sv, rdT(`../knowledge/sv/uncountable_noun.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uncountable`, Sense.nounUncountable, Sense.nounSingular, 1.0);
 
     // Part of Speech (PoS)
     import knet.lectures.pos;
@@ -49,9 +49,6 @@ void learnPreciseThings(Graph graph)
 
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/people.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `people`, Sense.noun, Sense.nounUncountable, 1.0);
 
-    // TODO functionize to learnGroup
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/compound_word.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `compound word`, Sense.unknown, Sense.nounSingular, 1.0);
-
     // Other
 
     // See also: https://en.wikipedia.org/wiki/Dolch_word_list
@@ -62,70 +59,70 @@ void learnPreciseThings(Graph graph)
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/dolch_2nd_grade.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch 2-nd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/dolch_3rd_grade.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dolch 3-rd grade word`, Sense.unknown, Sense.nounSingular, 1.0);
 
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/personal_quality.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `personal quality`, Sense.adjective, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/color.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `color`, Sense.unknown, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/shapes.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `shape`, Sense.noun, Sense.noun, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/personal_quality.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `personal quality`, Sense.adjective, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/color.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `color`, Sense.unknown, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/shapes.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `shape`, Sense.noun, Sense.nounSingular, 1.0);
 
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/fruits.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `fruit`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/plants.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `plant`, Sense.noun, Sense.noun, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/fruits.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `fruit`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/plants.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `plant`, Sense.noun, Sense.nounSingular, 1.0);
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/trees.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `tree`, Sense.noun, Sense.plant, 1.0);
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/spice.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `spice`, Sense.spice, Sense.food, 1.0);
 
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/shoes.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `shoe`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/dances.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dance`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/landforms.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `landform`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/desserts.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dessert`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/countries.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `country`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/us_states.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `us_state`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/furniture.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `furniture`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/good_luck_symbols.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `good luck symbol`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/leaders.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `leader`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/measurements.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `measurement`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/quantity.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `quantity`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/language.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `language`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/insect.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `insect`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/musical_instrument.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `musical instrument`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/weapon.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `weapon`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/hats.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `hat`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/rooms.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `room`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/containers.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `container`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/virtues.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `virtue`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/vegetables.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vegetable`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/flower.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `flower`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/reptile.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `reptile`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/famous_pair.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `pair`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/season.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `season`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/holiday.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `holiday`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/birthday.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.any), `birthday`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/biomes.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `biome`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/dogs.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dog`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/rodent.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `rodent`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/fish.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `fish`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/birds.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `bird`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/amphibians.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `amphibian`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/animals.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `animal`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/mammals.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mammal`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/food.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `food`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/cars.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `car`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/building.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `building`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/housing.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `housing`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/occupation.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `occupation`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/cooking_tool.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `cooking tool`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/tool.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `tool`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/carparts.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.partOf), `car`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/bodyparts.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.partOf), `body`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/alliterations.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `alliteration`, Sense.unknown, Sense.noun, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/shoes.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `shoe`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/dances.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dance`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/landforms.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `landform`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/desserts.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dessert`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/countries.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `country`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/us_states.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `us_state`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/furniture.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `furniture`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/good_luck_symbols.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `good luck symbol`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/leaders.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `leader`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/measurements.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `measurement`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/quantity.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `quantity`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/language.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `language`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/insect.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `insect`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/musical_instrument.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `musical instrument`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/weapon.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `weapon`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/hats.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `hat`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/rooms.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `room`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/containers.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `container`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/virtues.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `virtue`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/vegetables.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vegetable`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/flower.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `flower`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/reptile.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `reptile`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/famous_pair.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `pair`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/season.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `season`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/holiday.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `holiday`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/birthday.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.any), `birthday`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/biomes.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `biome`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/dogs.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `dog`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/rodent.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `rodent`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/fish.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `fish`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/birds.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `bird`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/amphibians.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `amphibian`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/animals.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `animal`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/mammals.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mammal`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/food.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `food`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/cars.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `car`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/building.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `building`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/housing.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `housing`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/occupation.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `occupation`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/cooking_tool.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `cooking tool`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/tool.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `tool`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/carparts.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.partOf), `car`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/bodyparts.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.partOf), `body`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/alliterations.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `alliteration`, Sense.unknown, Sense.nounSingular, 1.0);
     graph.learnMto1(Lang.en, rdT(`../knowledge/en/positives.txt`).splitter('\n').filter!(word => !word.empty), Role(Rel.hasAttribute), `positive`, Sense.unknown, Sense.adjective, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/mineral.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mineral`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/metal.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `metal`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/mineral_group.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mineral group`, Sense.noun, Sense.noun, 1.0);
-    graph.learnMto1(Lang.en, rdT(`../knowledge/en/major_mineral_group.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `major mineral group`, Sense.noun, Sense.noun, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/mineral.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mineral`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/metal.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `metal`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/mineral_group.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `mineral group`, Sense.noun, Sense.nounSingular, 1.0);
+    graph.learnMto1(Lang.en, rdT(`../knowledge/en/major_mineral_group.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `major mineral group`, Sense.noun, Sense.nounSingular, 1.0);
 
     // Names
     graph.learnMto1(Lang.unknown, rdT(`../knowledge/car_brand.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `car brand`, Sense.carBrand, Sense.brand, 1.0);
 
     // Swedish
-    graph.learnMto1(Lang.sv, rdT(`../knowledge/sv/house.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `hus`, Sense.noun, Sense.noun, 1.0);
+    graph.learnMto1(Lang.sv, rdT(`../knowledge/sv/house.txt`).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `hus`, Sense.noun, Sense.nounSingular, 1.0);
 
     graph.learnChemicalElements();
 
@@ -399,19 +396,22 @@ void learnPreciseThings(Graph graph)
             }
             catch (FileException e) {}
 
-            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `vehicle.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vehicle`, Sense.noun, Sense.noun, 1.0); }
+            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `compound_word.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `compound word`, Sense.unknown, Sense.nounSingular, 1.0); }
             catch (FileException e) {}
 
-            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `lowercase_letter.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `lowercase letter`, Sense.letterLowercase, Sense.noun, 1.0); }
+            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `vehicle.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `vehicle`, Sense.nounSingular, Sense.nounSingular, 1.0); }
             catch (FileException e) {}
 
-            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `uppercase_letter.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uppercase letter`, Sense.letterUppercase, Sense.noun, 1.0); }
+            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `lowercase_letter.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `lowercase letter`, Sense.letterLowercase, Sense.nounSingular, 1.0); }
             catch (FileException e) {}
 
-            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `old_proverb.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `old proverb`, Sense.unknown, Sense.noun, 1.0); }
+            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `uppercase_letter.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `uppercase letter`, Sense.letterUppercase, Sense.nounSingular, 1.0); }
             catch (FileException e) {}
 
-            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `contronym.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.noun, 1.0); }
+            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `old_proverb.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `old proverb`, Sense.unknown, Sense.nounSingular, 1.0); }
+            catch (FileException e) {}
+
+            try { graph.learnMto1(lang, rdT(buildPath(dirPath, `contronym.txt`)).splitter('\n').filter!(w => !w.empty), Role(Rel.instanceOf), `contronym`, Sense.unknown, Sense.nounSingular, 1.0); }
             catch (FileException e) {}
 
             import knet.learning: learnOpposites;
