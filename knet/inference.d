@@ -213,7 +213,7 @@ Tuple!(Sense, Sense) inferredSenses(Rel rel,
                            Sense.location);
             break;
         default:
-            if (rel == Rel.atLocation &&
+            if (rel == Rel.atLocation ||
                 rel.specializes(Rel.atLocation))
             {
                 senses = tuple(Sense.noun,
