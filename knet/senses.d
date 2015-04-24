@@ -786,7 +786,8 @@ import std.algorithm.comparison: among;
         with (Sense) return (sense.among!(plant,
                                           material,
                                           metal,
-                                          substance) != 0);
+                                          substance,
+                                          location) != 0);
     }
     bool isLanguage(Sense sense)
     {
