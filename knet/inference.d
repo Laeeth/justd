@@ -10,33 +10,35 @@ void inferSpecializedRelations(Graph gr)
 }
 
 /**
-   Infer Noun/verb Phrase Relations.
+   Infer Noun/Verb Phrase Relations.
 
    noun:"red light"
    - isA noun:"light"
    - hasAttribute adjective:"red"
  */
-void inferEnglishPhraseRelations(Graph gr, Expr expr, Lemmas compoundLemmas)
+void inferPhraseRelations(Graph gr,
+                          Expr expr,
+                          Lemmas compoundLemmas,
+                          Lang[] langs)
 {
-    enum lang = Lang.en;
     const words = expr.split(` `);
     switch (words.length)
     {
         case 2:
             import knet.iteration: ndsOf;
             import knet.filtering: matches;
-            foreach (compoundLemma; compoundLemmas.filter!(lemma => (lemma.lang == lang &&
-                                                                     [Sense.noun].matches(lemma.sense, true, lang)))) // noun:"red light"
+            foreach (compoundLemma; compoundLemmas.filter!(lemma => (langs.matches(lemma.lang) &&
+                                                                     [Sense.noun].matches(lemma.sense, true, lemma.lang)))) // noun:"red light"
             {
                 const compoundNd = gr.db.ixes.ndByLemma[compoundLemma];
-                foreach (const adjectiveNd; gr.ndsOf(words[0], [lang], [Sense.adjective], false, false)) // adjective:red
+                foreach (const adjectiveNd; gr.ndsOf(words[0], [compoundLemma.lang], [Sense.adjective], false, false)) // adjective:red
                 {
                     gr.connect(compoundNd,
                                Role(Rel.hasAttribute),
                                adjectiveNd,
                                Origin.inference, 1.0);
                 }
-                foreach (const nounNd; gr.ndsOf(words[1], [lang], [Sense.noun], false, false)) // noun:light
+                foreach (const nounNd; gr.ndsOf(words[1], [compoundLemma.lang], [Sense.noun], false, false)) // noun:light
                 {
                     gr.connect(compoundNd,
                                Role(Rel.isA),
@@ -94,7 +96,7 @@ void inferAll(Graph gr)
     foreach (pair; gr.db.ixes.lemmasByExpr.byPair)
     {
         // gr.inferSpecializedSenses(pair[0], pair[1]);
-        gr.inferEnglishPhraseRelations(pair[0], pair[1]);
+        gr.inferPhraseRelations(pair[0], pair[1], [Lang.en, Lang.de, Lang.sv]);
     }
     writeln(`Inference done`);
 }

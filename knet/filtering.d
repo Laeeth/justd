@@ -5,19 +5,19 @@ import knet.base;
 
 @safe pure nothrow @nogc:
 
-bool matches(const Lang[] langs, Lang lang)
+bool matches(const Lang[] langs, const Lang lang)
 {
     return (langs.empty ||
             langs.canFind(lang));
 }
 
-bool matches(const Origin[] origins, Origin origin)
+bool matches(const Origin[] origins, const Origin origin)
 {
     return (origins.empty ||
             origins.canFind(origin));
 }
 
-bool matches(const Role[] roles, Role role)
+bool matches(const Role[] roles, const Role role)
 {
     foreach (role_; roles)
     {
@@ -33,7 +33,7 @@ bool matches(const Role[] roles, Role role)
     return roles.empty;
 }
 
-bool matches(const Sense[] senses, Sense sense,
+bool matches(const Sense[] senses, const Sense sense,
              bool uniquely = true,
              Lang lang = Lang.unknown,
              bool capitalized = false)
