@@ -124,8 +124,9 @@ Rel decodeCN5RelationPath(S)(S path,
 /** Read ConceptNet5 URI.
     See also: https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy-5.0
 */
-Nd readCN5ConceptURI(T)(Graph graph,
-                        const T part)
+Nd readCN5ConceptURI(T)(Graph gr,
+                        const T part,
+                        Sense relInferredSense)
 {
     auto items = part.splitter('/');
 
@@ -137,8 +138,22 @@ Nd readCN5ConceptURI(T)(Graph graph,
     if (!items.empty)
     {
         const item = items.front;
-        import knet.senses: decodeWordSense;
+        import knet.senses: decodeWordSense, specializes;
         sense = item.decodeWordSense;
+
+        // TODO functionize to Sense.trySpecialize(Sense)
+        if (relInferredSense.specializes(sense, true, lang, false, true))
+        {
+            sense = relInferredSense;
+            writeln("Inferred sense ", sense, " to ", relInferredSense);
+        }
+        else if (sense != relInferredSense &&
+                 !sense.specializes(relInferredSense))
+        {
+            debug writeln(`warning: Can't override `, expr, `'s parameterized sense `, sense,
+                          ` with `, relInferredSense);
+        }
+
         if (sense == Sense.unknown && item != `_`)
         {
             writeln(`warning: Unknown Sense code `, items.front);
@@ -146,13 +161,13 @@ Nd readCN5ConceptURI(T)(Graph graph,
     }
 
     import knet.lemmas: correctLemmaExpr;
-    return graph.add(expr.correctLemmaExpr,
-                       lang, sense, Origin.cn5, anyContext,
-                       Manner.formal, false, 0, false);
+    return gr.add(expr.correctLemmaExpr,
+                     lang, sense, Origin.cn5, anyContext,
+                     Manner.formal, false, 0, false);
 }
 
 /** Read ConceptNet5 CSV Line $(D line) at 0-offset line number $(D lnr). */
-Ln readCN5Line(R, N)(Graph graph,
+Ln readCN5Line(R, N)(Graph gr,
                      R line, N lnr)
 {
     auto rel = Rel.any;
@@ -162,6 +177,7 @@ Ln readCN5Line(R, N)(Graph graph,
 
     Nd src, dst;
     NWeight weight;
+    Tuple!(Sense, Sense) inferredSrcDstSenses;
     auto lang = Lang.unknown;
     auto origin = Origin.unknown;
 
@@ -172,11 +188,13 @@ Ln readCN5Line(R, N)(Graph graph,
         {
             case 1:
                 rel = decodeCN5RelationPath(part, negated, reversed, tense);
+                import knet.inference: inferredSenses;
+                inferredSrcDstSenses = rel.inferredSenses;
                 break;
             case 2:         // source concept
                 try
                 {
-                    if (part.skipOver(`/c/`)) { src = graph.readCN5ConceptURI(part); }
+                    if (part.skipOver(`/c/`)) { src = gr.readCN5ConceptURI(part, inferredSrcDstSenses[0]); }
                     else { /* dln(`TODO `, part); */ }
                     /* dln(part); */
                 }
@@ -188,7 +206,7 @@ Ln readCN5Line(R, N)(Graph graph,
                 }
                 break;
             case 3:         // destination concept
-                if (part.skipOver(`/c/`)) { dst = graph.readCN5ConceptURI(part); }
+                if (part.skipOver(`/c/`)) { dst = gr.readCN5ConceptURI(part, inferredSrcDstSenses[1]); }
                 else { /* dln(`TODO `, part); */ }
                 break;
             case 4:
@@ -228,7 +246,7 @@ Ln readCN5Line(R, N)(Graph graph,
         dst.defined &&
         src != dst)
     {
-        return graph.connect(src, Role(rel, reversed, negated), dst, origin, weight);
+        return gr.connect(src, Role(rel, reversed, negated), dst, origin, weight);
     }
     else
     {
@@ -239,7 +257,7 @@ Ln readCN5Line(R, N)(Graph graph,
 /** Read ConceptNet5 Assertions File $(D path) in CSV format.
     Setting $(D useMmFile) to true increases IO-bandwidth by about a magnitude.
 */
-void readCN5File(Graph graph,
+void readCN5File(Graph gr,
                  string path, size_t maxCount = size_t.max, bool useMmFile = false)
 {
     writeln(`Reading ConceptNet from `, path, ` ...`);
@@ -251,7 +269,7 @@ void readCN5File(Graph graph,
             import mmfile_ex: mmFileLinesRO;
             foreach (line; mmFileLinesRO(path))
             {
-                graph.readCN5Line(line, lnr);
+                gr.readCN5Line(line, lnr);
                 if (++lnr >= maxCount) break;
             }
         }
@@ -260,7 +278,7 @@ void readCN5File(Graph graph,
             import std.stdio: File;
             foreach (line; File(path).byLine)
             {
-                graph.readCN5Line(line, lnr);
+                gr.readCN5Line(line, lnr);
                 if (++lnr >= maxCount) break;
             }
         }
@@ -273,7 +291,7 @@ void readCN5File(Graph graph,
 }
 
 /// Read ConceptNet.
-void readCN5(Graph graph,
+void readCN5(Graph gr,
              string path, size_t maxCount)
 {
     try
@@ -283,7 +301,7 @@ void readCN5(Graph graph,
                            .dirEntries(SpanMode.shallow)
                            .filter!(name => name.extension == `.csv`))
         {
-            graph.readCN5File(file, maxCount, false);
+            gr.readCN5File(file, maxCount, false);
         }
     }
     catch (std.file.FileException e)

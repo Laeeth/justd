@@ -24,7 +24,9 @@ bool propagatesSense(Rel rel) @safe @nogc pure nothrow
 }
 
 /** Check if $(D rel) propagates Sense(s). */
-Tuple!(Sense, Sense) inferredSenses(Rel rel) @safe @nogc pure nothrow
+Tuple!(Sense, Sense) inferredSenses(Rel rel,
+                                    Sense srcSense = Sense.unknown,
+                                    Sense dstSense = Sense.unknown) @safe @nogc pure nothrow
 {
     typeof(return) senses;
 

@@ -312,8 +312,9 @@ struct Lemma
                 {
                     const exprSense = split[0].to!Sense;
                     expr = split[2];
-                    if (sense == Sense.unknown ||
-                        exprSense.specializes(sense))
+
+                    // TODO functionize to Sense.trySpecialize(Sense)
+                    if (exprSense.specializes(sense, true, lang, false, true))
                     {
                         sense = exprSense;
                     }
