@@ -170,7 +170,6 @@ rc.I frakturstil användes rc. för &c. = etc. = et cetera
 R:gsRiksgälds
 RIP R.I.P.Vila I Frid , lat. Requiescat in pace
 sistl.sistlidne = förra (månaden, året)
-s.k.så kallad
 s.m.s.som man säger
 spec.speciell
 sssåsom
