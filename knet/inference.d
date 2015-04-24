@@ -16,12 +16,13 @@ void inferSpecializedRelations(Graph gr)
    - isA noun:"light"
    - hasAttribute adjective:"red"
  */
-void inferPhraseRelations(Graph gr,
-                          Expr expr,
-                          Lemmas compoundLemmas,
-                          Lang[] langs)
+size_t inferPhraseRelations(Graph gr,
+                            Expr expr,
+                            Lemmas compoundLemmas,
+                            Lang[] langs)
 {
     const words = expr.split(` `);
+    size_t cnt = 0;
     switch (words.length)
     {
         case 2:
@@ -37,6 +38,7 @@ void inferPhraseRelations(Graph gr,
                                Role(Rel.hasAttribute),
                                adjectiveNd,
                                Origin.inference, 1.0);
+                    ++cnt;
                 }
                 foreach (const nounNd; gr.ndsOf(words[1], [compoundLemma.lang], [Sense.noun], false, false)) // noun:light
                 {
@@ -44,43 +46,51 @@ void inferPhraseRelations(Graph gr,
                                Role(Rel.isA),
                                nounNd,
                                Origin.inference, 1.0);
+                    ++cnt;
                 }
             }
             break;
         default:
             break;
     }
+    return cnt;
 }
 
 void inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
 {
     bool show = true;
-    if (lemmas.map!(lemma => lemma.lang).allEqual)
+    import std.algorithm.iteration: groupBy;
+    foreach (lemmasOfSameLang; lemmas.groupBy!((lemmaA,
+                                                lemmaB) => (lemmaA.lang ==
+                                                            lemmaB.lang)))
     {
-        import dbg: dln;
         import knet.senses: specializes;
         import knet.languages: toHuman;
-        switch (lemmas.length)
+        switch (lemmasOfSameLang.count)
         {
             case 2:
-                if (lemmas[0].sense.specializes(lemmas[1].sense))
+                const lang = lemmas[0].lang;
+                const lemmas_ = lemmasOfSameLang.array;
+                if (lemmas[0].sense.specializes(lemmas[1].sense, true, lang, false, true))
                 {
                     if (show)
                     {
-                        dln(`Specializing Lemma expr "`, expr,
-                            `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
-                            lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
+                        writeln(`Specializing Lemma expr "`, expr,
+                                `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
+                                lemmas[1].sense, `" to "`, lemmas[0].sense, `"`);
                     }
+                    // TODO replace all Nds of lemmas[1] with Nds of lemmas[0]
                     // lemmas[1].sense = lemmas[0].sense;
                 }
-                else if (lemmas[1].sense.specializes(lemmas[0].sense))
+                else if (lemmas[1].sense.specializes(lemmas[0].sense, true, lang, false, true))
                 {
                     if (show)
                     {
-                        dln(`Specializing Lemma expr "`, expr,
-                            `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
-                            lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
+                        writeln(`Specializing Lemma expr "`, expr,
+                                `" in `, lemmas[0].lang.toHuman, ` of sense from "`,
+                                lemmas[0].sense, `" to "`, lemmas[1].sense, `"`);
                     }
+                    // TODO replace all Nds of lemmas[0] with Nds of lemmas[1]
                     // lemmas[0].sense = lemmas[1].sense;
                 }
                 break;
@@ -93,11 +103,13 @@ void inferSpecializedSenses(Graph gr, Expr expr, Lemmas lemmas)
 void inferAll(Graph gr)
 {
     writeln(`Inferring ...`);
+    size_t cnt;
     foreach (pair; gr.db.ixes.lemmasByExpr.byPair)
     {
-        // gr.inferSpecializedSenses(pair[0], pair[1]);
-        gr.inferPhraseRelations(pair[0], pair[1], [Lang.en, Lang.de, Lang.sv]);
+        gr.inferSpecializedSenses(pair[0], pair[1]);
+        cnt += gr.inferPhraseRelations(pair[0], pair[1], [Lang.en, Lang.de, Lang.sv]);
     }
+    writeln(`Inferred `, cnt, ` Noun/Verb Phrase Relations`);
     writeln(`Inference done`);
 }
 
