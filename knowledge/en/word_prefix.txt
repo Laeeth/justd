@@ -6,7 +6,7 @@ amphibothon two sides
 antepreposition:before
 antipreposition:againstopposite
 aquanounUncountable:water
-archhighestworst
+archadjectiveSuperlative:highestadjectiveSuperlative:worst
 astronounSingular:star
 autoself
 becovered withequipped with
@@ -23,7 +23,7 @@ decten
 decione tenth
 demihalf
 ditwo
-diaacrossbetweenthrough
+diapreposition:acrossbetweenthrough
 disnotoppositereverseaway
 dodecatwelve
 dormsleep
@@ -32,9 +32,9 @@ ecorelating to the economythe environment
 ento make intoto put into
 emto make intoto put into
 epiaboveuponin addition
-equiequal
+equiadjective;equal
 exout ofaway fromlackingformer
-extrabeyond
+extrapreposition:beyond
 exoadjective:externaloutside of
 finend
 forepreposition:before
@@ -52,7 +52,7 @@ imnotwithout
 innotwithout
 interpreposition:betweenpreposition:among
 irnot
-isoequal
+isoadjective;equal
 macroadjective:huge
 magnadjective:great
 malbad
@@ -70,10 +70,10 @@ nonnot
 nonanine
 novnew
 octeight
-outadjective:betterbeyond
+outadjective:betterpreposition:beyond
 omniallevery
 overexcessive
-parabesidebeyonddistinct from
+parapreposition:besidepreposition:beyonddistinct from
 pednounSingular:foot
 pentafive
 perthroughcompletely
@@ -96,16 +96,16 @@ retrobackwards
 semihalfpartial
 septseven
 subpreposition:belowpreposition:under
-sufbeforebeyondfrom under
-superoverbeyond
-surabovebeyond
+sufbeforepreposition:beyondfrom under
+superoverpreposition:beyond
+surabovepreposition:beyond
 symtogether
 telefrom afar
 tetrafour
 thermnounSingular:heat
-transacross
+transpreposition:across
 trithree
-ultrabeyond
+ultrapreposition:beyond
 unpreposition:againstnotopposite
 underbelowinsufficient
 unione
