@@ -1,4 +1,11 @@
 # TODO
+can be found at location: "at home"
+should be
+can be found at location: "home"
+
+Track it from "at home".
+
+# TODO
 Felaktig ordning på Maine, Michigan, .... Kanske från WordNet delen av ConceptNet?
 
 # TODO

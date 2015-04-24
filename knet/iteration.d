@@ -69,10 +69,20 @@ auto linksOf(Graph gr,
 
 /** Get All Node Indexes Indexed by a Lemma having expr $(D expr). */
 auto ndsOf(S)(Graph gr,
-              S expr) pure if (isSomeString!S)
+              S expr,
+              Lang[] langs = Lang[].init,
+              Sense[] senses = Sense[].init,
+              bool tryLanguageSplit = true,
+              bool trySenseSplit = true) pure if (isSomeString!S)
 {
     import knet.lookup: lemmasOfExpr;
-    return gr.lemmasOfExpr(expr).map!(lemma => gr.db.ixes.ndByLemma[lemma]);
+    import knet.filtering: matches;
+    return gr.lemmasOfExpr(expr,
+                           tryLanguageSplit,
+                           trySenseSplit)
+             .filter!(lemma => (langs.matches(lemma.lang) &&
+                                senses.matches(lemma.sense)))
+             .map!(lemma => (gr.db.ixes.ndByLemma[lemma]));
 }
 
 /** Get All Possible Nodes related to $(D word) in the interpretation

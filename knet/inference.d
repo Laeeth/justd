@@ -23,34 +23,25 @@ void inferEnglishPhraseRelations(Graph gr, Expr expr, Lemmas compoundLemmas)
     switch (words.length)
     {
         case 2:
-            const hit0 = words[0] in gr.db.ixes.lemmasByExpr;
-            const hit1 = words[1] in gr.db.ixes.lemmasByExpr;
-            if (hit0 && hit1)
+            import knet.iteration: ndsOf;
+            import knet.filtering: matches;
+            foreach (compoundLemma; compoundLemmas.filter!(lemma => (lemma.lang == lang &&
+                                                                     [Sense.noun].matches(lemma.sense, true, lang)))) // noun:"red light"
             {
-                import std.algorithm.iteration: filter;
-                import knet.filtering: matches;
-                foreach (compoundLemma; compoundLemmas.filter!(lemma => (lemma.lang == lang &&
-                                                                         [Sense.noun].matches(lemma.sense, true, lang)))) // noun:"red light"
+                const compoundNd = gr.db.ixes.ndByLemma[compoundLemma];
+                foreach (const adjectiveNd; gr.ndsOf(words[0], [lang], [Sense.adjective], false, false)) // adjective:red
                 {
-                    const compoundNd = gr.db.ixes.ndByLemma[compoundLemma];
-                    foreach (const adjectiveLemma; (*hit0).filter!(lemma => (lemma.lang == lang &&
-                                                                             [Sense.adjective].matches(lemma.sense, true, lang)))) // adjective:red
-                    {
-                        const adjectiveNd = gr.db.ixes.ndByLemma[adjectiveLemma];
-                        gr.connect(compoundNd,
-                                   Role(Rel.hasAttribute),
-                                   adjectiveNd,
-                                   Origin.inference, 1.0);
-                    }
-                    foreach (const nounLemma; (*hit1).filter!(lemma => (lemma.lang == lang &&
-                                                                        [Sense.noun].matches(lemma.sense, true, lang)))) // noun:light
-                    {
-                        const nounNd = gr.db.ixes.ndByLemma[nounLemma];
-                        gr.connect(compoundNd,
-                                   Role(Rel.isA),
-                                   nounNd,
-                                   Origin.inference, 1.0);
-                    }
+                    gr.connect(compoundNd,
+                               Role(Rel.hasAttribute),
+                               adjectiveNd,
+                               Origin.inference, 1.0);
+                }
+                foreach (const nounNd; gr.ndsOf(words[1], [lang], [Sense.noun], false, false)) // noun:light
+                {
+                    gr.connect(compoundNd,
+                               Role(Rel.isA),
+                               nounNd,
+                               Origin.inference, 1.0);
                 }
             }
             break;

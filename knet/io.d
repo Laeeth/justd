@@ -273,6 +273,7 @@ void showSenses(Senses)(Graph gr,
         ++i;
     }
 }
+alias showMeanings = showSenses;
 
 alias TriedLines = bool[string]; // TODO use std.container.set
 
@@ -506,7 +507,10 @@ bool query(Graph gr,
             }
         }
     }
-    else if (normLine.skipOverShortestOf(`sensesof(`,
+    else if (normLine.skipOverShortestOf(`meaningsof(`,
+                                         `meanings_of(`,
+                                         `meanings(`,
+                                         `sensesof(`,
                                          `senses_of(`,
                                          `senses(`))
     {
