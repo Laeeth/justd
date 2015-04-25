@@ -432,7 +432,7 @@ WinonanounSingular:first born
 Wynneadjective:light complexioned
 YolandanounSingular:violet flower
 YvetteGod is merciful
-YvonnenounSingularyoung archer
+YvonnenounSingular:young archer
 ZeanounSingular:grain
 Zeldavariant of Griselda
 ZelenenounSingular:sunshine

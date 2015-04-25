@@ -140,8 +140,8 @@ nounSingular:MGmachine gunmajor generalmilitary government
 verbInfinitive:mfrmanufacture
 nounSingular:mfrmanufacturer
 
-nounxSingular:MFNmost favored nation
-nounxSingular:MFHmaster of foxhounds
+nounSingular:MFNmost favored nation
+nounSingular:MFHmaster of foxhounds
 
 nounSingular:mfgmanufacturing
 adjective:mfdmanufactured

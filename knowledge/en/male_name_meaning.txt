@@ -346,7 +346,7 @@ KirbynounSingular:residence name
 KirknounSingular:church
 KitnounSingular:Christ-bearer
 Kodyadjective:helpful
-KonradnounSingularbold speaker
+KonradnounSingular:bold speaker
 Kurtable in counsel
 Kyleadjective:handsome
 Lambertadjective:land bright
